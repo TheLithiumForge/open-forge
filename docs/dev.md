@@ -29,8 +29,6 @@ dist/             # generated release output
 
 The shipped CLI runs on Node.js. Bun is only used to build this repo.
 
-Framework governance lives in `docs/framework/`: `concepts/` owns cross-cutting behavior (routing, formatting, layers, primitives, extensions, overwrites, payload boundary) and `payload/` mirrors the installable files with one descriptor per installed file. When a descriptor changes required behavior, the matching installed file changes in the same work.
-
 ## Commands
 
 Build all release output:
@@ -79,11 +77,7 @@ The npm package contains:
 
 ```text
 dist/cli.mjs
-docs/cli.md
-docs/dev.md
-docs/extensions.md
 src/open-forge/
-src/extensions/
 README.md
 LICENSE
 package.json

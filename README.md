@@ -39,21 +39,6 @@ Install Open Forge into the current folder:
 npx open-forge install
 ```
 
-Install a local extension overlay:
-
-```sh
-npx open-forge extend {extension-folder}
-```
-
-Select, list, or install bundled first-party extensions:
-
-```sh
-npx open-forge extend
-npx open-forge extend --list
-npx open-forge extend {extension-id}
-npx open-forge extend --ids {extension-id},{extension-id}
-```
-
 Install Open Forge into another folder:
 
 ```sh
@@ -109,49 +94,15 @@ Installed into a target repo, Open Forge creates this shape:
 AGENTS.md                     <- agent entry block
 .agents/
   loader.md                   <- tells the agent what to read and when
-  directives/
-    _directives.md            <- mandatory instructions for applicable work
-  guidance/
-    _guidance.md              <- contextual guidance for recurring decisions
-  memory/
-    _memory.md                <- self-growing workspace memory routes
-    working/
-      _working.md             <- temporary memory for continuing active work
-      handoffs/
-        _handoffs.md          <- concise transfer notes for context breaks
-      sessions/
-        _sessions.md          <- raw chronological work records
-    emerging/
-      _emerging.md            <- candidate memory routes
-      analysis/
-        _analysis.md          <- structured reasoning before acceptance
-      ideas/
-        _ideas.md             <- future potential and candidate options
-      observations/
-        _observations.md      <- agent-noticed findings and learning
-    crystallized/
-      _crystallized.md        <- accepted durable memory and current truth
-      decisions/
-        _decisions.md         <- accepted rationale for important choices
-      documents/
-        _documents.md         <- long-form accepted records and routes
-    archived/
-      _archived.md            <- historical memory routes
-  patterns/
-    _patterns.md              <- concrete reusable shapes for inspectable work
-  skills/
-    _skills.md                <- bounded reusable agent capabilities
-  workflows/
-    _workflows.md             <- goal-oriented agent workflows
-  workspace/
-    _workspace.md             <- project locations and when to use them
+  workspace.md                <- indexes workspace route files
+  workspace/                  <- workspace route files
+  patterns.md                 <- indexes reusable pattern files
+  patterns/                   <- reusable pattern files
 ```
 
 The important thing is not the number of files. The important thing is the routing.
 
-`AGENTS.md` points agents at the loader. The CLI generates the loader's active root-route `entries` from `entrypoint` metadata, so agents immediately see where each root route lives and what it represents. Category `entrypoints` then expose their relevant routed files.
-
-Generated paths are concrete and relative to the folder whose `AGENTS.md` selected the loader. A symlinked `.agents/` folder or a shared submodule does not change those logical paths.
+`AGENTS.md` points agents at the loader. The loader points them at the indexes. The indexes point them at the relevant files with tags and descriptions. The files tell the agent how this workspace works.
 
 ## First Thing After Install
 
@@ -162,25 +113,10 @@ At minimum:
 ```text
 AGENTS.md
 .agents/loader.md
-.agents/directives/_directives.md
-.agents/guidance/_guidance.md
-.agents/memory/_memory.md
-.agents/memory/working/_working.md
-.agents/memory/working/handoffs/_handoffs.md
-.agents/memory/working/sessions/_sessions.md
-.agents/memory/emerging/_emerging.md
-.agents/memory/emerging/analysis/_analysis.md
-.agents/memory/emerging/ideas/_ideas.md
-.agents/memory/emerging/observations/_observations.md
-.agents/memory/crystallized/_crystallized.md
-.agents/memory/crystallized/decisions/_decisions.md
-.agents/memory/crystallized/documents/_documents.md
-.agents/memory/archived/_archived.md
-.agents/patterns/_patterns.md
-.agents/skills/_skills.md
-.agents/workflows/_workflows.md
-.agents/workspace/_workspace.md
+.agents/workspace.md
 .agents/workspace/*.md
+.agents/patterns.md
+.agents/patterns/*.md
 ```
 
 Make sure they are what you need. If they are not, change them.
@@ -191,9 +127,7 @@ The framework files are fair game. They are yours now. The only reason to avoid 
 
 Each file is just markdown. You can edit them directly.
 
-For easier updates, prefer adding local files first, then overwrite files when that keeps behavior clear. Edit managed framework files only when the base file would mislead your workspace or when base plus overwrite would confuse an agent.
-
-This lets you reinstall or update Open Forge later, inspect the diff, and keep your local shape without wrestling every line.
+For easier updates, prefer adding files or using overwrite files when that keeps behavior clear. This lets you reinstall or update Open Forge later, inspect the diff, and keep your local shape without wrestling every line.
 
 The starter files are anchors, not borders. Add your own files where the local shape needs them.
 
@@ -210,14 +144,29 @@ Useful place:
 Examples:
 
 ```text
-.agents/workspace/repositories.md
-.agents/workspace/guides.md
-.agents/workspace/local-docs.md
+.agents/workspace/2.local-docs.md
+.agents/workspace/3.repositories.md
+.agents/workspace/4.guides.md
 ```
 
 Inside those files, point at your actual docs, guides, directives, workflows, repos, tasks, vault folders, or whatever else your workspace needs.
 
-The default install is intentionally small. If you want more specific docs, tasks, project areas, repo maps, or local rituals, add them when they earn their place.
+Use pattern files to describe reusable structure and placement rules.
+
+Useful place:
+
+```text
+.agents/patterns/
+```
+
+Examples:
+
+```text
+.agents/patterns/2.local-docs.md
+.agents/patterns/3.reviewable-work.md
+```
+
+The default install is intentionally small. If you want folders for guides, directives, workflows, observations, sessions, or handoffs, add them when they earn their place.
 
 ### Frontmatter
 
@@ -225,8 +174,8 @@ Index metadata comes from frontmatter:
 
 ```md
 ---
-description: Local documentation routes
-tags: [Doc, Workspace]
+description: Local documentation patterns
+tags: [Docs, Pattern]
 ---
 ```
 
@@ -235,110 +184,50 @@ Nested metadata also works:
 ```md
 ---
 open-forge:
-  description: Local documentation routes
-  tags: [Doc, Workspace]
+  description: Local documentation patterns
+  tags: [Docs, Pattern]
 ---
 ```
 
-The CLI also reads `rune:` metadata in files you add for other tooling. Open Forge-authored files use `open-forge:`.
+`rune:` is accepted the same way for cross-tool compatibility.
 
-### Category Entrypoints
+### Indexes
 
-Category `entrypoints` follow one simple rule: a routed folder contains an `entrypoint` named `_{folder-name}.md`.
+Indexes follow one simple rule: a markdown file can index a sibling folder with the same base name.
 
 ```text
-.agents/knowledge/
-  _knowledge.md
-  architecture.md
+.agents/patterns.md
+.agents/patterns/
+  1.open-forge.md
+  2.local-docs.md
 ```
 
-The installed workspace category uses the same shape:
+The same shape is used for workspace routes:
 
 ```text
+.agents/workspace.md
 .agents/workspace/
-  _workspace.md
-  repositories.md
+  1.open-forge.md
+  2.local-docs.md
 ```
 
-The `_{folder-name}.md` file is the category `entrypoint`. It keeps the short category contract at the beginning and generated navigation at the end.
-
-The CLI also accepts `_index.md`, `index.md`, `_references.md`, and `references.md` as cross-tool compatibility aliases. Open Forge-authored categories always use `_{folder-name}.md`. Keep exactly one recognized `entrypoint` in each folder.
-
-A new top-level category becomes active when a direct child folder contains its matching `entrypoint`. The CLI adds its description, tags, and path to the loader automatically. Nested categories become reachable through their parent category's generated `entries`.
-
-Generated `entries` look like this:
+Generated entries look like this:
 
 ```md
-- `{file}` - {description} - #{Tag1} #{Tag2} ... #{TagN}
-- `{folder/_folder.md}` - {description} - #Index
+- {file} - {description} - #{tag1} #{tag2}
 ```
 
-File names are used as-is. Child folders are routed through their own `_{folder-name}.md` category `entrypoint`. If you number files, the generated `entries` keep those numbers.
+File names are used as-is. If you number files, the index keeps those numbers.
 
-Use `scope routes` when a workspace needs extra ownership or meaning. A `scope route` is a `slug` folder with its own `entrypoint`:
+`open-forge install` rebuilds indexes automatically.
 
-```text
-.agents/memory/
-  _memory.md
-  [scope]/
-    _[scope].md
-    crystallized/
-      _crystallized.md
-      decisions/
-        _decisions.md
-      documents/
-        _documents.md
-
-.agents/guidance/
-  _guidance.md
-  [scope]/
-    _[scope].md
-    cross-platform-apps.md
-```
-
-`[scope]` means a real folder name such as `mobile-app`, `billing-api`, or any other concrete `slug`. It is not installed literally.
-
-Every folder in the visible route chain needs its own `entrypoint`; otherwise the parent index cannot route to deeper files. `Entries` list sibling markdown files and direct child `entrypoints`.
-
-A `scoped framework route` is a `framework route` initialized inside a `scope route`, such as `crystallized/_crystallized.md` under `[scope]/`. Open Forge does not require `projects/`, `domains/`, `teams/`, or any other grouping folder. Add those only when they make your routes easier to read.
-
-Route placement changes meaning:
-
-```text
-.agents/memory/crystallized/[scope]/decisions/
-```
-
-This means `[scope]` is a scope inside crystallized memory.
-
-```text
-.agents/memory/[scope]/crystallized/decisions/
-```
-
-This means `[scope]` owns its own memory states.
-
-Both shapes are valid when every folder has an `entrypoint` and the `entrypoint` descriptions make the scope clear.
-
-The generated region is explicitly bounded:
-
-```md
-## Entries
-
-<!-- open-forge:generated-index:start -->
-- none - No entries - #Empty
-<!-- open-forge:generated-index:end -->
-```
-
-The CLI changes only the content between those markers. Category meaning and axioms stay above the region. Detailed rules, recommendations, and user content belong in separate routed files.
-
-`open-forge install` rebuilds generated index regions automatically.
-
-You can also rebuild only generated index regions:
+You can also rebuild only indexes:
 
 ```sh
 npx open-forge index
 ```
 
-The CLI indexes routed files. Agents follow the routes. If your docs live somewhere unusual, declare that place in a workspace route file.
+The CLI indexes the route files. The agents follow the routes. If your docs live somewhere unusual, declare that place in a workspace route file.
 
 ### Overwrites
 
@@ -350,8 +239,6 @@ Any markdown file can have a companion overwrite file:
 ```
 
 Use an overwrite when the changed behavior is something an AI agent can understand and respect while reading both files together.
-
-Edit the base file when the base behavior is wrong for your workspace. Use an overwrite when the base behavior is mostly right, but needs a local addition, narrowing, exception, or disable.
 
 Good overwrite use:
 
@@ -369,8 +256,6 @@ Bad overwrite use:
 
 If the behavior is divergent enough that both files together would confuse the agent, it is better to edit `{name}.md`. Remove the section that would cause the problem, then add the replacement behavior in `{name}.overwrite.md`.
 
-Do not edit or overwrite generated index regions. Add or edit files in the indexed folder instead.
-
 That way, later updates are still manageable. You can `git diff` the changed base file, see what Open Forge updated, and decide what to keep.
 
 It is a little artisanal. That is fine. The entire point is to make the system fit the workspace instead of making the workspace cosplay someone else's process.
@@ -378,5 +263,4 @@ It is a little artisanal. That is fine. The entire point is to make the system f
 ## Docs
 
 - CLI command details live in [docs/cli.md](docs/cli.md).
-- Extension mechanics live in [docs/extensions.md](docs/extensions.md).
 - Development, build, and publishing notes live in [docs/dev.md](docs/dev.md).
