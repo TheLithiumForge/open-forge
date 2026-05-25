@@ -93,11 +93,33 @@ Installed into a target repo, Open Forge creates this shape:
 ```text
 AGENTS.md                     <- agent entry block
 .agents/
+  constants.md                <- root path constants
   loader.md                   <- tells the agent what to read and when
-  workspace.md                <- indexes workspace route files
-  workspace/                  <- workspace route files
-  patterns.md                 <- indexes reusable pattern files
-  patterns/                   <- reusable pattern files
+  workspace/
+    _workspace.md             <- indexes workspace route files
+    local.md                  <- local workspace routes
+    open-forge.md             <- default Open Forge routes
+  patterns/
+    _patterns.md              <- indexes reusable pattern files
+    open-forge.md             <- default Open Forge patterns
+  workflows/
+    _workflows.md             <- indexes action sequence files
+  templates/
+    _templates.md             <- indexes artifact skeletons
+  observations/
+    _observations.md          <- indexes candidate lessons
+    archive/                  <- archived observations
+  sessions/
+    _sessions.md              <- indexes saved chat summaries
+    archive/                  <- archived sessions
+  handoffs/
+    _handoffs.md              <- indexes temporary continuation notes
+    archive/                  <- archived handoffs
+  skills/
+    _skills.md                <- indexes tool and runtime adapters
+docs/
+  directives/                 <- human-reviewed local rules
+  guides/                     <- human-facing guidance
 ```
 
 The important thing is not the number of files. The important thing is the routing.
@@ -112,11 +134,18 @@ At minimum:
 
 ```text
 AGENTS.md
+.agents/constants.md
 .agents/loader.md
-.agents/workspace.md
+.agents/workspace/_workspace.md
 .agents/workspace/*.md
-.agents/patterns.md
+.agents/patterns/_patterns.md
 .agents/patterns/*.md
+.agents/workflows/_workflows.md
+.agents/templates/_templates.md
+.agents/observations/_observations.md
+.agents/sessions/_sessions.md
+.agents/handoffs/_handoffs.md
+.agents/skills/_skills.md
 ```
 
 Make sure they are what you need. If they are not, change them.
@@ -144,9 +173,9 @@ Useful place:
 Examples:
 
 ```text
-.agents/workspace/2.local-docs.md
-.agents/workspace/3.repositories.md
-.agents/workspace/4.guides.md
+.agents/workspace/local-docs.md
+.agents/workspace/repositories.md
+.agents/workspace/guides.md
 ```
 
 Inside those files, point at your actual docs, guides, directives, workflows, repos, tasks, vault folders, or whatever else your workspace needs.
@@ -162,11 +191,11 @@ Useful place:
 Examples:
 
 ```text
-.agents/patterns/2.local-docs.md
-.agents/patterns/3.reviewable-work.md
+.agents/patterns/local-docs.md
+.agents/patterns/reviewable-work.md
 ```
 
-The default install is intentionally small. If you want folders for guides, directives, workflows, observations, sessions, or handoffs, add them when they earn their place.
+The default install is intentionally small. If you want more specific docs, tasks, project areas, repo maps, or local rituals, add them when they earn their place.
 
 ### Frontmatter
 
@@ -193,31 +222,33 @@ open-forge:
 
 ### Indexes
 
-Indexes follow one simple rule: a markdown file can index a sibling folder with the same base name.
+Indexes follow one simple rule: a folder can contain an index named `_{folder-name}.md`.
 
 ```text
-.agents/patterns.md
 .agents/patterns/
-  1.open-forge.md
-  2.local-docs.md
+  _patterns.md
+  open-forge.md
+  local-docs.md
 ```
 
 The same shape is used for workspace routes:
 
 ```text
-.agents/workspace.md
 .agents/workspace/
-  1.open-forge.md
-  2.local-docs.md
+  _workspace.md
+  local.md
+  open-forge.md
 ```
 
 Generated entries look like this:
 
 ```md
-- {file} - {description} - #{tag1} #{tag2}
+- `{file}` - {description} - #{tag1} #{tag2}
 ```
 
 File names are used as-is. If you number files, the index keeps those numbers.
+
+Index files are intentionally dull. They should contain a short description and generated entries, not rules or recommendations.
 
 `open-forge install` rebuilds indexes automatically.
 
@@ -240,6 +271,8 @@ Any markdown file can have a companion overwrite file:
 
 Use an overwrite when the changed behavior is something an AI agent can understand and respect while reading both files together.
 
+Edit the base file when the base behavior is wrong for your workspace. Use an overwrite when the base behavior is mostly right, but needs a local addition, narrowing, exception, or disable.
+
 Good overwrite use:
 
 - narrow a rule
@@ -255,6 +288,8 @@ Bad overwrite use:
 - ask the agent to guess which incompatible model is real
 
 If the behavior is divergent enough that both files together would confuse the agent, it is better to edit `{name}.md`. Remove the section that would cause the problem, then add the replacement behavior in `{name}.overwrite.md`.
+
+Do not use overwrites for generated index files. Add or edit files in the indexed folder instead.
 
 That way, later updates are still manageable. You can `git diff` the changed base file, see what Open Forge updated, and decide what to keep.
 

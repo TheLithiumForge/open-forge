@@ -71,19 +71,17 @@ async function install(targetArg: string): Promise<void> {
 async function generateIndexes(root: string): Promise<number> {
   const agentsRoot = path.join(root, ".agents");
   const scanRoot = await isDirectory(agentsRoot) ? agentsRoot : root;
-  const markdownFiles = await listFiles(scanRoot, (file) => file.endsWith(".md") && !file.endsWith(".overwrite.md"));
+  const markdownFiles = await listFiles(scanRoot, (file) => isIndexFile(file));
   let count = 0;
 
   for (const indexFile of markdownFiles) {
     const directory = path.dirname(indexFile);
-    const basename = path.basename(indexFile, ".md");
-    const siblingDirectory = path.join(directory, basename);
 
-    if (!(await isDirectory(siblingDirectory))) {
+    if (!(await isDirectory(directory))) {
       continue;
     }
 
-    await generateIndex(indexFile, siblingDirectory);
+    await generateIndex(indexFile, directory);
     count += 1;
   }
 
@@ -95,7 +93,7 @@ async function generateIndex(indexFile: string, folder: string): Promise<void> {
   const children = await fs.readdir(folder, { withFileTypes: true });
 
   for (const child of children.filter((entry) => entry.isFile()).sort((a, b) => a.name.localeCompare(b.name))) {
-    if (!child.name.endsWith(".md") || child.name.endsWith(".overwrite.md")) {
+    if (!child.name.endsWith(".md") || child.name.endsWith(".overwrite.md") || child.name.startsWith("_")) {
       continue;
     }
 
@@ -105,7 +103,7 @@ async function generateIndex(indexFile: string, folder: string): Promise<void> {
     const relativeFile = toPosix(path.relative(path.dirname(indexFile), file));
     const description = metadata.description || "No description";
     const tags = metadata.tags.length > 0 ? metadata.tags : ["Untagged"];
-    entries.push(`- ${relativeFile} - ${description} - ${formatTags(tags)}`);
+    entries.push(`- \`${relativeFile}\` - ${description} - ${formatTags(tags)}`);
   }
 
   const current = await fs.readFile(indexFile, "utf8");
@@ -118,6 +116,11 @@ function getIndexPrefix(text: string): string {
   const marker = "\n## Entries";
   const index = text.indexOf(marker);
   return (index === -1 ? text : text.slice(0, index)).trimEnd();
+}
+
+function isIndexFile(file: string): boolean {
+  const basename = path.basename(file);
+  return basename.startsWith("_") && basename.endsWith(".md") && !basename.endsWith(".overwrite.md");
 }
 
 type Metadata = {
@@ -362,6 +365,6 @@ Usage:
 
 Commands:
   install  Copy files into target, update AGENTS.md, and rebuild generated indexes.
-  index    Rebuild generated indexes from sibling folders.
+  index    Rebuild generated indexes from _*.md files.
 `);
 }
