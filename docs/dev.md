@@ -77,6 +77,8 @@ The npm package contains:
 
 ```text
 dist/cli.mjs
+docs/cli.md
+docs/dev.md
 src/open-forge/
 README.md
 LICENSE

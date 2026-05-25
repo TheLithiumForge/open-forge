@@ -42,22 +42,33 @@ open-forge index {target-folder}
 
 `index` rebuilds generated index files.
 
-An index file is any markdown file that has a sibling folder with the same base name:
+When `.agents/` exists, the CLI scans `.agents/`. Otherwise it scans the target folder.
+
+An index file is any markdown file in that scanned area named with a leading underscore:
 
 ```text
-.agents/patterns.md
 .agents/patterns/
+  _patterns.md
+  open-forge.md
+  local-docs.md
 ```
 
-The CLI reads markdown files in that sibling folder and generates entries like:
+The index file reads markdown siblings in the same folder and generates entries like:
 
 ```md
-- {file} - {description} - #{tag1} #{tag2}
+- `{file}` - {description} - #{tag1} #{tag2}
 ```
+
+Index files keep their text above `## Entries`. The CLI replaces the generated entries below it.
+
+Default index files should stay boring: a short description and entries only.
+
+Do not use overwrite files for indexes. Add or edit files in the indexed folder instead.
 
 It skips:
 
 - `.overwrite.md` files
+- `_*.md` index files
 - `.git/`
 - `.obsidian/`
 - `node_modules/`
@@ -81,4 +92,4 @@ open-forge:
 ---
 ```
 
-`rune:` is accepted the same way.
+`rune:` is accepted the same way for cross-tool compatibility.
