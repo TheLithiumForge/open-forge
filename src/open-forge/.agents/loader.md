@@ -15,7 +15,7 @@ The workspace index owns route discovery. Load additional workspace route files 
 
 - Open Forge is route-based.
 - The current request determines which relevant files are loaded.
-- Load the `_{index}.md` file for a category before exploring that category.
+- Load the `_{category}.md` file for a category before exploring that category.
 - User instructions apply when safe and allowed.
 - Local active truth overrides Open Forge defaults.
 - Generated indexes are navigation, not behavior.
