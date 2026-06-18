@@ -35,11 +35,13 @@ The installed loader must load these files first:
 {forgePath}/workspace/_workspace.md
 ```
 
-The workspace index owns workspace route discovery. The loader may name default and local workspace route files as important route files, but it must not hardcode a large first-load set.
+The workspace index owns workspace route discovery. The loader may name category contracts or route patterns as important route files, but it must not hardcode a large first-load set.
 
 Local route files and local active truth have precedence over Open Forge defaults. Default files may still be loaded as context when useful.
 
 The installed loader must route additional loading by relevance. It must not require loading every workspace, pattern, workflow, template, observation, session, handoff, skill, directive, or guide file upfront.
+
+When an agent enters a routed category, it must load the generated category index named `_{category}.md` before exploring sibling route files. This keeps category discovery cheap and makes routing explicit.
 
 ## Route Contract
 
@@ -97,6 +99,7 @@ The implementation is aligned when it:
 
 - stays small enough to read on every agent start
 - loads constants and the workspace index first
+- loads a category index before exploring that category
 - routes to categories instead of duplicating their contents
 - states that local active truth overrides defaults
 - treats indexes as navigation
