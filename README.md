@@ -101,6 +101,7 @@ AGENTS.md                     <- agent entry block
     open-forge.md             <- default Open Forge routes
   patterns/
     _patterns.md              <- indexes reusable pattern files
+    local.md                  <- local patterns preserved for workspace customization
     open-forge.md             <- default Open Forge patterns
   workflows/
     _workflows.md             <- indexes action sequence files
@@ -152,11 +153,20 @@ Make sure they are what you need. If they are not, change them.
 
 The framework files are fair game. They are yours now. The only reason to avoid editing managed defaults is easier future updates.
 
+Some files are seeded for local customization. Open Forge creates them when missing, then preserves them on normal install:
+
+```text
+.agents/workspace/local.md
+.agents/patterns/local.md
+```
+
 ## Growing Your Framework
 
 Each file is just markdown. You can edit them directly.
 
-For easier updates, prefer adding files or using overwrite files when that keeps behavior clear. This lets you reinstall or update Open Forge later, inspect the diff, and keep your local shape without wrestling every line.
+For easier updates, prefer adding local files first, then overwrite files when that keeps behavior clear. Edit managed framework files only when the base file would mislead your workspace or when base plus overwrite would confuse an agent.
+
+This lets you reinstall or update Open Forge later, inspect the diff, and keep your local shape without wrestling every line.
 
 The starter files are anchors, not borders. Add your own files where the local shape needs them.
 
@@ -191,6 +201,7 @@ Useful place:
 Examples:
 
 ```text
+.agents/patterns/local.md
 .agents/patterns/local-docs.md
 .agents/patterns/reviewable-work.md
 ```

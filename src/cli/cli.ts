@@ -6,6 +6,10 @@ import { fileURLToPath } from "node:url";
 const repoRoot = resolveRepoRoot();
 const sourceRoot = path.join(repoRoot, "src", "open-forge");
 const ignoredDirectoryNames = new Set([".git", ".obsidian", "node_modules"]);
+const userOwnedSeedFiles = new Set([
+  ".agents/workspace/local.md",
+  ".agents/patterns/local.md"
+]);
 
 const args = process.argv.slice(2);
 const command = args[0] ?? "help";
@@ -44,15 +48,21 @@ async function install(targetArg: string): Promise<void> {
   const files = await listFiles(sourceRoot);
   let copied = 0;
   let patched = 0;
+  let preserved = 0;
 
   for (const sourceFile of files) {
-    const relativePath = path.relative(sourceRoot, sourceFile);
+    const relativePath = toPosix(path.relative(sourceRoot, sourceFile));
     const targetFile = path.join(targetRoot, relativePath);
     await ensureDir(path.dirname(targetFile));
 
     if (relativePath === "AGENTS.md") {
       await updateAgents(targetRoot);
       patched += 1;
+      continue;
+    }
+
+    if (userOwnedSeedFiles.has(relativePath) && await fileExists(targetFile)) {
+      preserved += 1;
       continue;
     }
 
@@ -65,7 +75,7 @@ async function install(targetArg: string): Promise<void> {
 
   const indexes = await generateIndexes(targetRoot);
   console.log(`Installed Open Forge into ${targetRoot}`);
-  console.log(`Updated ${copied} managed files, patched ${patched} entry files, rebuilt ${indexes} indexes.`);
+  console.log(`Updated ${copied} managed files, patched ${patched} entry files, preserved ${preserved} local seed files, rebuilt ${indexes} indexes.`);
 }
 
 async function generateIndexes(root: string): Promise<number> {
@@ -312,6 +322,15 @@ async function readTextIfExists(file: string): Promise<string | null> {
     }
 
     throw error;
+  }
+}
+
+async function fileExists(file: string): Promise<boolean> {
+  try {
+    await fs.access(file, fsConstants.F_OK);
+    return true;
+  } catch {
+    return false;
   }
 }
 

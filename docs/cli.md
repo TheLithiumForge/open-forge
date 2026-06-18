@@ -28,10 +28,20 @@ Running it will:
 - append the Open Forge block if missing
 - replace only the Open Forge block if it already exists
 - overwrite Open Forge managed files with the same name
+- preserve seeded local files when they already exist
 - rebuild generated indexes
 - leave user-added files outside managed paths alone
 
 There is no wizard. The command installs the current release payload. If you want a different local shape, install first, then edit or add files. The framework is plain markdown for exactly this reason.
+
+Seeded local files are created when missing, then treated as workspace-owned on later installs:
+
+```text
+.agents/workspace/local.md
+.agents/patterns/local.md
+```
+
+Use them for small local routes or local structure rules. For larger local shape, add new files beside them.
 
 ## index
 

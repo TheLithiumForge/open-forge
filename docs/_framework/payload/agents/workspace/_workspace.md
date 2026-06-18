@@ -23,7 +23,8 @@ Workspace route files tell agents where important things live and what they mean
 - Keep routes short: `` `{entry}` - {description} - #{tag1} #{tag2}``.
 - Keep root-level constants in `{forgePath}/constants.md`.
 - Use only these default constants: `{repoRoot}`, `{forgePath}`, `{docsPath}`.
-- Put local user routes in `{forgePath}/workspace/local.md` when a more specific route file has not earned its place.
+- Seed `{forgePath}/workspace/local.md` for local user routes.
+- Preserve seeded local route files on normal install once they exist.
 - The route tells the agent where to look.
 - The target file tells the agent what is true.
 - Add route files when the workspace grows.
