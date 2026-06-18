@@ -22,7 +22,10 @@ Patterns describe reusable structure and placement rules. They say where and how
 
 - Use the entry shape: `` `{entry}` - {description} - #{tag1} #{tag2}``.
 - Keep entries terse.
-- Prefer local history: `{entry}/archive/`, `{entry}/changelog.md`, `{entry}/decisions/`, `{entry}/work/`.
+- Seed `{forgePath}/patterns/local.md` for local structure and placement rules.
+- Preserve seeded local pattern files on normal install once they exist.
+- Keep Open Forge default patterns generic and non-imposing.
+- Describe local history, work, or handoff structures as patterns only when they are useful to the workspace.
 - Work packages are a locality pattern, not a default top-level folder.
 - Do not create parallel truth.
 - A pattern says where and how things live. A workflow says what to do next.

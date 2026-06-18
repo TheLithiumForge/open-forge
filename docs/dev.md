@@ -29,6 +29,8 @@ dist/             # generated release output
 
 The shipped CLI runs on Node.js. Bun is only used to build this repo.
 
+Framework primitive specs live in `docs/framework/`. Start with `docs/framework/_framework.md` when changing the relationship between installable files, concepts, routes, patterns, workflows, templates, skills, and lifecycle material.
+
 ## Commands
 
 Build all release output:

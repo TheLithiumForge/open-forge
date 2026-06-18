@@ -13,6 +13,7 @@ tags: [OpenForge, Workspace]
 - {forgePath}/workspace/_workspace.md - Index of workspace route files - #AgentOwned #Workspace #Index
 - {forgePath}/workspace/local.md - Local workspace routes preserved for user customization - #AgentOwned #Workspace #Local
 - {forgePath}/patterns/_patterns.md - Pattern index for reusable structure and placement rules - #AgentOwned #Pattern #Index
+- {forgePath}/patterns/local.md - Local pattern routes preserved for user customization - #AgentOwned #Pattern #Local
 - {forgePath}/patterns/ - Pattern files loaded when relevant - #AgentOwned #Pattern
 - {forgePath}/workflows/_workflows.md - Workflow index for action sequences - #AgentOwned #Workflow #Index
 - {forgePath}/workflows/ - Workflow files for design, implementation, testing, review, or handoff - #AgentOwned #Workflow

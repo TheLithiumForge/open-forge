@@ -1,42 +1,52 @@
 # Open Forge Loader
 
-This file is the agent entrypoint. It tells agents where to start.
+This file is the required Open Forge entrypoint after `AGENTS.md`.
 
-## Critical - Must Read
+It defines how agents start loading this workspace.
+
+## Load First
 
 - `.agents/constants.md` - root path constants.
 - `{forgePath}/workspace/_workspace.md` - index of workspace route files.
-- `{forgePath}/patterns/_patterns.md` - index of reusable pattern files.
 
-Read the relevant files listed by each index.
+The workspace index owns route discovery. Load additional workspace route files only when the current request needs them.
 
-For every loaded markdown file, also load its sibling overwrite file when present:
+## Axioms
 
-- `{name}.overwrite.md`
+- Open Forge is route-based.
+- The current request determines which relevant files are loaded.
+- Load the `_{index}.md` file for a category before exploring that category.
+- User instructions apply when safe and allowed.
+- Local active truth overrides Open Forge defaults.
+- Generated indexes are navigation, not behavior.
+- Archive, history, examples, external methods, sessions, handoffs, and observations are contextual unless restored or promoted.
+- Treat observations as candidate learning, not authority.
+- Detailed behavior belongs in the routed file or concept that owns it.
 
-Use overwrites only when the combined behavior stays clear. If base and overwrite would conflict badly, prefer a local edit to the base file plus a small overwrite that states the replacement behavior.
+## Route Categories
 
-## Read If Relevant
-
-- `{forgePath}/workspace/{route}.md` - workspace paths, ownership, and local meaning.
+- `{forgePath}/workspace/{route}.md` - workspace paths, ownership, and route meaning.
+- `{forgePath}/patterns/_patterns.md` - index of reusable structure and placement rules.
 - `{forgePath}/patterns/{pattern}.md` - structural rules for placement, history, work, or handoff.
-- `{forgePath}/workflows/_workflows.md` - action sequences for design, implementation, testing, review, or handoff.
+- `{forgePath}/workflows/_workflows.md` - index of action sequences.
 - `{forgePath}/templates/_templates.md` - reusable artifact skeletons.
 - `{forgePath}/observations/_observations.md` - candidate lessons and repeated friction.
 - `{forgePath}/sessions/_sessions.md` - user-approved saved chat summaries.
 - `{forgePath}/handoffs/_handoffs.md` - temporary continuation notes.
 - `{forgePath}/skills/_skills.md` - tool and agent runtime adapters.
-- Any route declared by `{forgePath}/workspace/{route}.md` when the current request needs it.
 - `{docsPath}/directives/` - human-facing rules when the request touches local authority.
 - `{docsPath}/guides/` - human-facing guidance when the request needs local explanation.
 
-## Extras
+Load route categories only when relevant to the current request.
 
-- Archive, history, examples, and external methods are context, not active truth.
-- Load extras only when the request needs them.
-
-## Work Rules
+## Change Posture
 
 Use the smallest structure that makes the work clear, safe, and resumable.
+
+Customize in this order:
+
+1. Add local files.
+2. Use overwrite files for additive or lightly modifying behavior.
+3. Edit framework files when a complete behavior change is required.
 
 Do not create parallel truth when active truth already exists. Update the active truth and preserve history locally.

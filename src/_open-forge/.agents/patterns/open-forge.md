@@ -5,7 +5,11 @@ tags: [OpenForge, Pattern]
 
 # Open Forge Patterns
 
-## Entry Format
+This file describes generic structure primitives used by Open Forge.
+
+Local workspace structure belongs in `local.md` or another local pattern file.
+
+## Entry Shape
 
 Use this shape:
 
@@ -17,22 +21,18 @@ Keep entries terse. Avoid tables unless the shape of the data truly needs them.
 
 Use names that sort well and say what the file is.
 
-Recommended session name:
-
-- {yyyy-MM-dd}_{HHmm}_{slug}.md - Saved session note - #Session
-
 Use numbering when ordering matters. Skip numbering when it adds nothing.
 
 ## Locality
 
-Keep related material beside the thing it belongs to.
+Keep related material near the thing it belongs to when a useful local owner exists.
 
-Common entries:
+Common local-owner shapes:
 
 - {entry}/archive/ - Old or superseded material for that entry - #History
 - {entry}/changelog.md - Notable changes to that entry - #History
 - {entry}/decisions/ - Decisions that explain current direction - #HumanReviewed #ActiveTruth
-- {entry}/work/ - Reviewable work packages, evidence, and handoffs for that entry - #Work
+- {entry}/work/ - Reviewable work material for that entry when a workflow needs it - #Work
 
 Use a shared archive only for imported, orphaned, abandoned, or no-longer-local material.
 
@@ -41,8 +41,6 @@ Use a shared archive only for imported, orphaned, abandoned, or no-longer-local 
 Archive is for historical, superseded, consumed, rejected, or kept-for-context material.
 
 Archive does not override active truth. Restore archived material explicitly before treating it as current.
-
-Prefer:
 
 - {entry}/archive/ - Archive beside the thing it belongs to - #Archive
 
@@ -70,13 +68,13 @@ Do not create parallel truth.
 
 ## Work
 
-Work belongs to workflows first. Use local work folders only when a workflow needs a reviewable, testable, documented slice of work.
+Work belongs to workflows first.
 
-Preferred place:
+Use local work folders only when a workflow needs a reviewable, testable, documented slice of work.
 
 - {entry}/work/{work-package}/ - Work package beside its local owner - #Work
 
-Useful files:
+If a workspace needs a specific work package shape, define it in a local pattern, workflow, or template.
 
 - {entry}/work/{work-package}/scope.md - Intent, scope, and non-scope - #Work
 - {entry}/work/{work-package}/evidence.md - Required proof and validation results - #Work #Evidence
@@ -85,8 +83,6 @@ Useful files:
 ## Handoff
 
 Create a handoff when context, ownership, or session continuity matters.
-
-Prefer:
 
 - {entry}/work/{work-package}/handoff.md - Local handoff for a work package - #Handoff
 

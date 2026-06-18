@@ -7,6 +7,6 @@ tags: [OpenForge, Constant]
 
 ## Entries
 
-- {repoRoot} - Root of the installed workspace - #Constant
-- {forgePath} - {repoRoot}/.agents - #Constant #AgentOwned
-- {docsPath} - {repoRoot}/docs - #Constant #HumanOwned
+- `{repoRoot}` - Root of the installed workspace - #Constant
+- `{forgePath}` - `{repoRoot}/.agents` - #Constant #AgentOwned
+- `{docsPath}` - `{repoRoot}/docs` - #Constant #HumanOwned
