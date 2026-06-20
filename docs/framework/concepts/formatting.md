@@ -18,7 +18,7 @@ Open Forge markdown files must prefer:
 
 - short headings
 - short paragraphs
-- flat bullet lists
+- line-based lists
 - one-line route entries
 - compact examples
 - stable separators
@@ -31,8 +31,17 @@ Files must stay readable in plain text. They must not rely on tables when a list
 Use this entry shape for compact route, constant, and index-like lists:
 
 ```text
-- {entry} - {description} - #{Tag} #{Tag}
+- {entry} - {description} - #{Tag1} #{Tag2} ... #{TagN}
 ```
+
+Generated index entries list direct route files and direct child indexes:
+
+```text
+- `alpha.md` - Route file - #Route
+- `repos/_repos.md` - Child route index - #Index
+```
+
+Generated index entries keep the full relative file path in backticks. Child folders become visible through their own `_{folder}.md` index. Parent indexes stay at one folder boundary.
 
 This shape is preferred because it is:
 
@@ -72,9 +81,11 @@ open-forge:
 ---
 ```
 
-`rune:` metadata is accepted for cross-tool compatibility.
+Open Forge-authored routed files use only `open-forge:` scoped metadata.
 
-Unscoped `description` and `tags` are accepted for compatibility, but scoped metadata is preferred for Open Forge-authored routed files.
+The index generator accepts `rune:` scoped metadata in external route files for cross-tool compatibility.
+
+Unscoped `description` and `tags` are accepted for compatibility in external route files.
 
 Direct-load files that are not discovered through indexes do not need frontmatter unless another tool needs it.
 
@@ -103,13 +114,13 @@ Routed categories use this filename shape:
 
 `{category}` is the category folder name. For `{forgePath}/patterns/`, the generated index is `_patterns.md` and the managed category contract is `_patterns-open-forge.md`.
 
-Only `_{category}.md` is a generated index. Other underscore-prefixed markdown files are category control files or reserved control files. They must not be regenerated as indexes and they must not appear as generated index entries.
+`_{category}.md` is the generated index for a category. `index.md` and `_index.md` are reserved index aliases. Other underscore-prefixed markdown files are indexable files when they are direct files under the indexed folder.
 
-The managed category contract exists only when Open Forge has category-level behavior to state. It contains the category meaning, category boundaries, and category axioms. It does not contain generated route entries.
+The managed category contract exists when Open Forge has category-level behavior to state. It contains the category meaning, category boundaries, and category axioms. Generated route entries belong in `_{category}.md`.
 
-User files can use any clear filename. A markdown file is indexable when it is a sibling of a generated index, does not start with `_`, and is not an overwrite file.
+User files can use any clear filename. A markdown file is indexable when it is a direct route file in a generated index folder and uses `*.md`, including underscore-prefixed names, except generated index files, `_index.md`, `index.md`, and `.overwrite.md` companions.
 
-Open Forge must not seed generic `local.md` files. Users add local files when local shape earns a file, and those files keep their own names.
+A child folder is indexable from its parent when the child folder contains its own `_{folder}.md` index.
 
 ## Why
 
@@ -123,11 +134,11 @@ Formatting is aligned when:
 
 - route entries use the compact entry shape
 - generated index entries use backticks around file paths
+- generated index entries include direct route files and direct child indexes
 - symbolic constant entries may omit backticks when unambiguous
-- scoped `open-forge:` or `rune:` frontmatter is used for indexed routed files
+- scoped `open-forge:` frontmatter is used for Open Forge-authored indexed routed files
 - direct-load files avoid unnecessary frontmatter
 - tables are used only when a list would be less clear
 - generated index files contain no behavior
 - only `_{category}.md` files are regenerated as indexes
-- `_{category}-open-forge.md` files are treated as managed category contracts
-- generic `local.md` files are not seeded by Open Forge
+- `_{category}-open-forge.md` files are indexed managed category contracts

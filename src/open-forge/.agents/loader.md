@@ -8,8 +8,9 @@ It defines how agents start loading this workspace.
 
 - `.agents/constants.md` - root path constants.
 - `{forgePath}/workspace/_workspace.md` - index of workspace route files.
+- `{forgePath}/workspace/_workspace-open-forge.md` - Open Forge workspace route contract.
 
-The workspace index owns route discovery. Load additional workspace route files only when the current request needs them.
+The workspace index owns user route discovery. The workspace contract owns installed Open Forge route meaning. Load additional workspace route files only when the current request needs them.
 
 ## Axioms
 
@@ -25,6 +26,8 @@ The workspace index owns route discovery. Load additional workspace route files 
 
 ## Route Categories
 
+- `{forgePath}/workspace/_workspace.md` - index of workspace route files.
+- `{forgePath}/workspace/_workspace-open-forge.md` - Open Forge workspace route contract.
 - `{forgePath}/workspace/{route}.md` - workspace paths, ownership, and route meaning.
 - `{forgePath}/patterns/_patterns.md` - index of reusable structure and placement rules.
 - `{forgePath}/patterns/{pattern}.md` - structural rules for placement, history, work, or handoff.
