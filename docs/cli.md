@@ -1,6 +1,6 @@
 # Open Forge CLI
 
-The Open Forge CLI is intentionally small. It installs the released framework files, updates `AGENTS.md`, and rebuilds generated indexes.
+The Open Forge CLI is intentionally small. It installs the released framework files, updates `AGENTS.md`, and rebuilds generated index regions.
 
 The distributed CLI runs on Node.js.
 
@@ -28,7 +28,7 @@ Running it will:
 - append the Open Forge block if missing
 - replace only the Open Forge block if it already exists
 - overwrite Open Forge managed files with the same name
-- rebuild generated indexes
+- rebuild generated index regions
 - leave user-added files outside managed paths alone
 
 There is no wizard. The command installs the current release payload. If you want a different local shape, install first, then edit or add files. The framework is plain markdown for exactly this reason.
@@ -40,44 +40,68 @@ open-forge index
 open-forge index {target-folder}
 ```
 
-`index` rebuilds generated index files.
+`index` rebuilds the loader category registry and the generated regions inside category entrypoints.
 
 When `.agents/` exists, the CLI scans `.agents/`. Otherwise it scans the target folder.
 
-An index file is named `_{folder-name}.md`:
+When `loader.md` exists at the scan root, the CLI generates one loader entry for every direct child folder that contains one recognized category entrypoint. Loader descriptions and tags come from the category entrypoint, preferring supported metadata and falling back to its first body description and `#Index`.
+
+Nested categories stay behind their parent category entrypoint. Folders without a matching entrypoint do not become loader routes.
+
+Open Forge-authored category entrypoints are named `_{folder-name}.md`:
 
 ```text
 .agents/patterns/
   _patterns.md
-  _patterns-open-forge.md
   local-docs.md
 ```
 
-The index file reads direct markdown route files and direct child indexes:
+The category entrypoint contains stable category meaning followed by a generated region. The generated region reads direct markdown route files and direct child category entrypoints:
 
 ```md
 - `{file}` - {description} - #{tag1} #{tag2} ... #{tagN}
 - `{folder/_folder.md}` - {description} - #Index
 ```
 
-Child folders are routed through their own `_{folder-name}.md` index. Parent indexes stay at one folder boundary.
+Child folders are routed through their own `_{folder-name}.md` category entrypoint. Parent entrypoints stay at one folder boundary.
 
-Index files keep their text above `## Entries`. The CLI replaces the generated entries below it.
+For cross-tool compatibility, the CLI also recognizes these entrypoint names:
 
-Default index files should stay boring: a short description and entries only.
+- `_index.md`
+- `index.md`
+- `_references.md`
+- `references.md`
 
-Change index output by adding, editing, moving, or removing route files and child indexes in the indexed folder.
+Open Forge itself uses only `_{folder-name}.md`. A folder must contain exactly one recognized entrypoint name. If multiple candidates exist, the CLI stops before changing any generated region.
+
+The generated region is bounded explicitly:
+
+```md
+## Entries
+
+<!-- open-forge:generated-index:start -->
+- none - No entries - #Empty
+<!-- open-forge:generated-index:end -->
+```
+
+The CLI replaces only the content between the markers. It preserves frontmatter and category content above the region.
+
+When a legacy category entrypoint or loader has a final `## Entries` section containing only generated list entries, the CLI adds the markers automatically. If the heading is absent, the CLI appends the complete section. Malformed or non-final markers stop generation without changing the file.
+
+Change index output by adding, editing, moving, or removing route files and child category entrypoints in the indexed folder.
 
 The index generator reads:
 
-- direct `*.md` route files, including underscore-prefixed files such as `_{name}-open-forge.md`
-- direct child indexes named `_{folder-name}.md`
+- direct `*.md` route files, including underscore-prefixed routed files
+- direct child category entrypoints named `_{folder-name}.md`
 
-Reserved index filenames in the indexed folder are:
+Reserved filenames in an indexed folder are:
 
 - `_{folder-name}.md`
 - `_index.md`
 - `index.md`
+- `_references.md`
+- `references.md`
 
 The index generator ignores tool paths:
 

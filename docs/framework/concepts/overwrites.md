@@ -36,7 +36,9 @@ An overwrite may contain:
 
 Overwrite files apply to markdown source files that agents read as behavior, routes, patterns, workflows, templates, guides, directives, observations, sessions, handoffs, or skills.
 
-Generated index files are output, not behavior. They must be changed by adding, removing, or editing files in the indexed folder, then regenerating the index.
+Generated index regions are output, not behavior. They must be changed by adding, removing, or editing files in the indexed folder, then regenerating the index.
+
+The authored portion of a category entrypoint may define category behavior and follows the normal customization order. Its generated region never has an overwrite.
 
 ## Implementation Requirements
 
@@ -59,6 +61,6 @@ The overwrite concept is aligned when:
 - local files are preferred before overwrites
 - overwrites are used only for additive or lightly modifying behavior
 - direct edits are used for complete behavior changes
-- generated indexes do not have overwrite files
+- generated index regions are changed only through indexed files
 - agents are not asked to reconcile contradictory base and overwrite behavior
 - update behavior keeps local overwrite files visible and reviewable

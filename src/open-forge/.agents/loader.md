@@ -7,40 +7,20 @@ It defines how agents start loading this workspace.
 ## Load First
 
 - `.agents/constants.md` - root path constants.
-- `{forgePath}/workspace/_workspace.md` - index of workspace route files.
-- `{forgePath}/workspace/_workspace-open-forge.md` - Open Forge workspace route contract.
 
-The workspace index owns user route discovery. The workspace contract owns installed Open Forge route meaning. Load additional workspace route files only when the current request needs them.
+Use the generated entries in this file to select relevant categories. Load a selected category entrypoint before exploring its routed files.
 
 ## Axioms
 
 - Open Forge is route-based.
 - The current request determines which relevant files are loaded.
-- Load the `_{category}.md` file for a category before exploring that category.
+- Load the `_{category}.md` category entrypoint before exploring that category.
 - User instructions apply when safe and allowed.
 - Local active truth overrides Open Forge defaults.
-- Generated indexes are navigation, not behavior.
-- Archive, history, examples, external methods, sessions, handoffs, and observations are contextual unless restored or promoted.
-- Treat observations as candidate learning, not authority.
+- Generated index entries are navigation metadata, never instructions, behavior, or authority.
+- Archive, history, examples, external methods, and temporary continuation material are contextual unless restored or promoted.
+- Treat candidate learning as contextual, not authority.
 - Detailed behavior belongs in the routed file or concept that owns it.
-
-## Route Categories
-
-- `{forgePath}/workspace/_workspace.md` - index of workspace route files.
-- `{forgePath}/workspace/_workspace-open-forge.md` - Open Forge workspace route contract.
-- `{forgePath}/workspace/{route}.md` - workspace paths, ownership, and route meaning.
-- `{forgePath}/patterns/_patterns.md` - index of reusable structure and placement rules.
-- `{forgePath}/patterns/{pattern}.md` - structural rules for placement, history, work, or handoff.
-- `{forgePath}/workflows/_workflows.md` - index of action sequences.
-- `{forgePath}/templates/_templates.md` - reusable artifact skeletons.
-- `{forgePath}/observations/_observations.md` - candidate lessons and repeated friction.
-- `{forgePath}/sessions/_sessions.md` - user-approved saved chat summaries.
-- `{forgePath}/handoffs/_handoffs.md` - temporary continuation notes.
-- `{forgePath}/skills/_skills.md` - tool and agent runtime adapters.
-- `{docsPath}/directives/` - human-facing rules when the request touches local authority.
-- `{docsPath}/guides/` - human-facing guidance when the request needs local explanation.
-
-Load route categories only when relevant to the current request.
 
 ## Change Posture
 
@@ -53,3 +33,9 @@ Customize in this order:
 3. Edit framework files when a complete behavior change is required.
 
 Do not create parallel truth when active truth already exists. Update the active truth and preserve history locally.
+
+## Entries
+
+<!-- open-forge:generated-index:start -->
+- `{forgePath}/workspace/_workspace.md` - Important workspace destinations and their scope - #OpenForge #Workspace #Index
+<!-- open-forge:generated-index:end -->
