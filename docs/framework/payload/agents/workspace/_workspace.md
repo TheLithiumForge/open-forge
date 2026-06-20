@@ -46,7 +46,7 @@ Compact route lists must use this shape:
 - {destination} - {description} - #{Tag1} #{Tag2} ... #{TagN}
 ```
 
-Concrete paths use backticks. Symbolic paths may omit backticks when they remain unambiguous.
+Concrete paths use backticks and resolve from the active workspace root unless the route explicitly identifies another base.
 
 Route files can use any clear filename. A workspace can keep several related routes in one file, split routes into separate files, or use nested categories. These organizations implement the same route contract.
 
@@ -81,7 +81,7 @@ Its organization scales through ordinary files and nested categories while remai
 The implementation is aligned when it:
 
 - is named `_workspace.md`
-- lives in `{forgePath}/workspace/`
+- lives in `.agents/workspace/`
 - defines selective workspace routing
 - leaves route-file granularity to the workspace
 - supports nested categories at any useful depth

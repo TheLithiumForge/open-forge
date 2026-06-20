@@ -37,7 +37,7 @@ Every active category entrypoint must define:
 
 An installed category becomes active when its folder contains exactly one recognized category entrypoint. An Open Forge-authored category also requires an approved framework descriptor before it enters the payload.
 
-The CLI must generate a loader entry for each direct active category under `{forgePath}`.
+The CLI must generate a loader entry for each direct active category under `.agents/`.
 
 The category entrypoint must expose a one-line description that provides enough meaning for an agent to decide whether to load the category without opening it first. Open Forge-authored categories use scoped frontmatter. Local categories may use supported metadata or their first body description.
 
@@ -53,16 +53,23 @@ Routes are navigation. They never replace the destination's detailed truth.
 
 Generated route metadata never defines instructions, behavior, or authority.
 
+## Path Contract
+
+Generated paths must be concrete and relative to the active workspace root.
+
+The active workspace root is the directory whose `AGENTS.md` selected the loader. Agents and tooling must resolve `.agents/...` from that directory. They must not infer the root from Git boundaries or from the physical location of a symlink or submodule target.
+
+This contract lets the same routed knowledge work in a repository, monorepo, shared submodule, or symlinked `.agents/` tree without runtime path constants.
+
 ## Load Contract
 
 Agents load routing layers in this order:
 
 1. Load the loader.
-2. Load the constants required to resolve generated category paths.
-3. Select a relevant active category from the loader entries.
-4. Load that category's generated entrypoint path.
-5. Select relevant routed files.
-6. Follow those routes to the destinations that own detailed truth.
+2. Select a relevant active category from the loader entries.
+3. Load that category's generated entrypoint path.
+4. Select relevant routed files.
+5. Follow those routes to the destinations that own detailed truth.
 
 ## Why
 
@@ -78,5 +85,7 @@ Routing is aligned when:
 - every Open Forge-authored category has a matching framework descriptor
 - every category owns its detailed meaning in its entrypoint
 - generated entries remain navigation metadata
+- generated paths are concrete and workspace-root-relative
+- physical repository and link boundaries do not change the active workspace root
 - routed destinations own detailed truth
 - nested categories use the same contract at every depth

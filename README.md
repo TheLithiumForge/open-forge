@@ -93,7 +93,6 @@ Installed into a target repo, Open Forge creates this shape:
 ```text
 AGENTS.md                     <- agent entry block
 .agents/
-  constants.md                <- root path constants
   loader.md                   <- tells the agent what to read and when
   workspace/
     _workspace.md             <- workspace contract and generated routes
@@ -103,6 +102,8 @@ The important thing is not the number of files. The important thing is the routi
 
 `AGENTS.md` points agents at the loader. The CLI generates the loader's active category entries from category metadata, so agents immediately see where each category lives and what it represents. Category entrypoints then expose their relevant routed files.
 
+Generated paths are concrete and relative to the folder whose `AGENTS.md` selected the loader. A symlinked `.agents/` folder or a shared submodule does not change those logical paths.
+
 ## First Thing After Install
 
 Read the files Open Forge installed.
@@ -111,7 +112,6 @@ At minimum:
 
 ```text
 AGENTS.md
-.agents/constants.md
 .agents/loader.md
 .agents/workspace/_workspace.md
 .agents/workspace/*.md

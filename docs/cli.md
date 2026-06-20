@@ -46,6 +46,8 @@ When `.agents/` exists, the CLI scans `.agents/`. Otherwise it scans the target 
 
 When `loader.md` exists at the scan root, the CLI generates one loader entry for every direct child folder that contains one recognized category entrypoint. Loader descriptions and tags come from the category entrypoint, preferring supported metadata and falling back to its first body description and `#Index`.
 
+In an installed workspace, loader paths are concrete and relative to the target folder, such as `.agents/workspace/_workspace.md`. The target folder is the logical workspace root even when `.agents/` is a symlink or its contents come from a submodule. The CLI does not derive routing roots from Git boundaries.
+
 Nested categories stay behind their parent category entrypoint. Folders without a matching entrypoint do not become loader routes.
 
 Open Forge-authored category entrypoints are named `_{folder-name}.md`:

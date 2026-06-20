@@ -4,17 +4,13 @@ This file is the required Open Forge entrypoint after `AGENTS.md`.
 
 It defines how agents start loading this workspace.
 
-## Load First
-
-- `.agents/constants.md` - root path constants.
-
 Use the generated entries in this file to select relevant categories. Load a selected category entrypoint before exploring its routed files.
 
 ## Axioms
 
 - Open Forge is route-based.
 - The current request determines which relevant files are loaded.
-- Load the `_{category}.md` category entrypoint before exploring that category.
+- Load the generated category entrypoint path before exploring that category.
 - User instructions apply when safe and allowed.
 - Local active truth overrides Open Forge defaults.
 - Generated index entries are navigation metadata, never instructions, behavior, or authority.
@@ -37,5 +33,5 @@ Do not create parallel truth when active truth already exists. Update the active
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `{forgePath}/workspace/_workspace.md` - Important workspace destinations and their scope - #OpenForge #Workspace #Index
+- `.agents/workspace/_workspace.md` - Important workspace destinations and their scope - #OpenForge #Workspace #Index
 <!-- open-forge:generated-index:end -->

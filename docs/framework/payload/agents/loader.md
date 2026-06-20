@@ -18,7 +18,6 @@ It is a file primitive and routing primitive. It is not a workflow, template, gu
 
 The installed loader must contain:
 
-- the first file every agent loads after the loader
 - the rule that the current request controls relevance
 - the authority posture for local active truth, defaults, context, and candidate learning
 - the customization posture: add local files first, use overwrites for light changes, edit framework files for complete behavior changes
@@ -28,17 +27,15 @@ The installed loader must stay short, concrete, and easy to diff. Target size is
 
 ## Load Contract
 
-The installed loader must load this file first:
+The installed loader must be immediately routable after `AGENTS.md`. It must not require a secondary bootstrap file before an agent can select a category.
 
-```text
-.agents/constants.md
-```
+Generated category paths must be concrete and relative to the active workspace root. The active workspace root is the directory whose `AGENTS.md` selected this loader. Physical repository, submodule, and symlink boundaries do not change that logical root.
 
-Constants resolve the symbolic paths used by generated category entries. The loader must not require a category entrypoint before relevance has been determined from its generated registry.
+The loader must not infer a Git repository root or require runtime path constants.
 
 Local active truth has precedence over Open Forge defaults. Default files may still be loaded as context when useful.
 
-When an agent selects a category, it must load the `_{category}.md` entrypoint before exploring routed files under that category.
+When an agent selects a category, it must load the generated category entrypoint path before exploring routed files under that category. Open Forge-authored categories use `_{category}.md`; compatibility categories may use another recognized entrypoint name.
 
 ## Category Registry
 
@@ -48,11 +45,11 @@ The loader must end with this generated region:
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `{forgePath}/{category}/_{category}.md` - {description} - #{Tag1} #{Tag2} ... #{TagN}
+- `.agents/{category}/_{category}.md` - {description} - #{Tag1} #{Tag2} ... #{TagN}
 <!-- open-forge:generated-index:end -->
 ```
 
-The CLI must generate one entry for each direct child folder under `{forgePath}` that contains exactly one recognized category entrypoint. Other folders do not become loader routes. Open Forge-authored categories use `_{category}.md`; compatibility aliases are accepted only for external or local tooling.
+The CLI must generate one entry for each direct child folder under `.agents/` that contains exactly one recognized category entrypoint. Other folders do not become loader routes. Open Forge-authored categories use `_{category}.md`; compatibility aliases are accepted only for external or local tooling.
 
 Descriptions and tags must derive from each category entrypoint. Scoped metadata is authoritative when present; the first body description and `#Index` are compatibility fallbacks for local categories. The generated registry must not duplicate routed files inside a category.
 
@@ -91,7 +88,9 @@ Its generated registry exposes every active category's path and meaning in the f
 
 The implementation is aligned when it:
 
-- loads constants before resolving category paths
+- is immediately routable after `AGENTS.md`
+- uses concrete workspace-relative category paths
+- remains valid when `.agents/` resolves through a symlink or into a submodule
 - generates entries for direct active categories only
 - derives descriptions and tags from category entrypoints
 - loads a selected category entrypoint before its routed files

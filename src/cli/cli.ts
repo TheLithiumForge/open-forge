@@ -117,13 +117,17 @@ async function generateLoaderRegistry(loaderFile: string, agentsRoot: string): P
   const categoryFiles = (await listIndexEntryFiles(agentsRoot)).filter(isIndexFile);
 
   for (const file of categoryFiles) {
-    const relativeFile = toPosix(path.relative(agentsRoot, file));
-    entries.push(await createGeneratedEntry(file, `{forgePath}/${relativeFile}`));
+    entries.push(await createGeneratedEntry(file, loaderRoutePath(agentsRoot, file)));
   }
 
   const current = await fs.readFile(loaderFile, "utf8");
   const body = entries.length > 0 ? entries.join("\n") : "- none - No active categories - #Empty";
   await fs.writeFile(loaderFile, updateGeneratedIndexRegion(current, body, loaderFile));
+}
+
+function loaderRoutePath(agentsRoot: string, file: string): string {
+  const relativeFile = toPosix(path.relative(agentsRoot, file));
+  return path.basename(agentsRoot) === ".agents" ? `.agents/${relativeFile}` : relativeFile;
 }
 
 async function createGeneratedEntry(file: string, route: string): Promise<string> {
