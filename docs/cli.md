@@ -28,20 +28,10 @@ Running it will:
 - append the Open Forge block if missing
 - replace only the Open Forge block if it already exists
 - overwrite Open Forge managed files with the same name
-- preserve seeded local files when they already exist
 - rebuild generated indexes
 - leave user-added files outside managed paths alone
 
 There is no wizard. The command installs the current release payload. If you want a different local shape, install first, then edit or add files. The framework is plain markdown for exactly this reason.
-
-Seeded local files are created when missing, then treated as workspace-owned on later installs:
-
-```text
-.agents/workspace/local.md
-.agents/patterns/local.md
-```
-
-Use them for small local routes or local structure rules. For larger local shape, add new files beside them.
 
 ## index
 
@@ -54,31 +44,43 @@ open-forge index {target-folder}
 
 When `.agents/` exists, the CLI scans `.agents/`. Otherwise it scans the target folder.
 
-An index file is any markdown file in that scanned area named with a leading underscore:
+An index file is named `_{folder-name}.md`:
 
 ```text
 .agents/patterns/
   _patterns.md
-  open-forge.md
+  _patterns-open-forge.md
   local-docs.md
 ```
 
-The index file reads markdown siblings in the same folder and generates entries like:
+The index file reads direct markdown route files and direct child indexes:
 
 ```md
-- `{file}` - {description} - #{tag1} #{tag2}
+- `{file}` - {description} - #{tag1} #{tag2} ... #{tagN}
+- `{folder/_folder.md}` - {description} - #Index
 ```
+
+Child folders are routed through their own `_{folder-name}.md` index. Parent indexes stay at one folder boundary.
 
 Index files keep their text above `## Entries`. The CLI replaces the generated entries below it.
 
 Default index files should stay boring: a short description and entries only.
 
-Do not use overwrite files for indexes. Add or edit files in the indexed folder instead.
+Change index output by adding, editing, moving, or removing route files and child indexes in the indexed folder.
 
-It skips:
+The index generator reads:
 
-- `.overwrite.md` files
-- `_*.md` index files
+- direct `*.md` route files, including underscore-prefixed files such as `_{name}-open-forge.md`
+- direct child indexes named `_{folder-name}.md`
+
+Reserved index filenames in the indexed folder are:
+
+- `_{folder-name}.md`
+- `_index.md`
+- `index.md`
+
+The index generator ignores tool paths:
+
 - `.git/`
 - `.obsidian/`
 - `node_modules/`
@@ -102,4 +104,4 @@ open-forge:
 ---
 ```
 
-`rune:` is accepted the same way for cross-tool compatibility.
+The CLI also accepts `rune:` scoped metadata in user-added route files for cross-tool compatibility. Open Forge-authored files use `open-forge:` metadata.

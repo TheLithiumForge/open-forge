@@ -1,4 +1,4 @@
-import { constants as fsConstants, existsSync } from "node:fs";
+import { constants as fsConstants, existsSync, type Dirent } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -6,11 +6,6 @@ import { fileURLToPath } from "node:url";
 const repoRoot = resolveRepoRoot();
 const sourceRoot = path.join(repoRoot, "src", "open-forge");
 const ignoredDirectoryNames = new Set([".git", ".obsidian", "node_modules"]);
-const userOwnedSeedFiles = new Set([
-  ".agents/workspace/local.md",
-  ".agents/patterns/local.md"
-]);
-
 const args = process.argv.slice(2);
 const command = args[0] ?? "help";
 
@@ -48,7 +43,6 @@ async function install(targetArg: string): Promise<void> {
   const files = await listFiles(sourceRoot);
   let copied = 0;
   let patched = 0;
-  let preserved = 0;
 
   for (const sourceFile of files) {
     const relativePath = toPosix(path.relative(sourceRoot, sourceFile));
@@ -61,11 +55,6 @@ async function install(targetArg: string): Promise<void> {
       continue;
     }
 
-    if (userOwnedSeedFiles.has(relativePath) && await fileExists(targetFile)) {
-      preserved += 1;
-      continue;
-    }
-
     const sourceText = await fs.readFile(sourceFile, "utf8");
     const targetText = await readTextIfExists(targetFile);
     const nextText = targetText == null ? sourceText : preserveLocalBlocks(sourceText, targetText);
@@ -75,7 +64,7 @@ async function install(targetArg: string): Promise<void> {
 
   const indexes = await generateIndexes(targetRoot);
   console.log(`Installed Open Forge into ${targetRoot}`);
-  console.log(`Updated ${copied} managed files, patched ${patched} entry files, preserved ${preserved} local seed files, rebuilt ${indexes} indexes.`);
+  console.log(`Updated ${copied} managed files, patched ${patched} entry files, rebuilt ${indexes} indexes.`);
 }
 
 async function generateIndexes(root: string): Promise<number> {
@@ -100,19 +89,14 @@ async function generateIndexes(root: string): Promise<number> {
 
 async function generateIndex(indexFile: string, folder: string): Promise<void> {
   const entries: string[] = [];
-  const children = await fs.readdir(folder, { withFileTypes: true });
+  const files = await listIndexEntryFiles(folder);
 
-  for (const child of children.filter((entry) => entry.isFile()).sort((a, b) => a.name.localeCompare(b.name))) {
-    if (!child.name.endsWith(".md") || child.name.endsWith(".overwrite.md") || child.name.startsWith("_")) {
-      continue;
-    }
-
-    const file = path.join(folder, child.name);
+  for (const file of files) {
     const text = await fs.readFile(file, "utf8");
     const metadata = readMetadata(text);
     const relativeFile = toPosix(path.relative(path.dirname(indexFile), file));
-    const description = metadata.description || "No description";
-    const tags = metadata.tags.length > 0 ? metadata.tags : ["Untagged"];
+    const description = metadata.description || readMarkdownDescription(text) || "No description";
+    const tags = metadata.tags.length > 0 ? metadata.tags : defaultTagsForIndexEntry(file);
     entries.push(`- \`${relativeFile}\` - ${description} - ${formatTags(tags)}`);
   }
 
@@ -130,7 +114,69 @@ function getIndexPrefix(text: string): string {
 
 function isIndexFile(file: string): boolean {
   const basename = path.basename(file);
-  return basename.startsWith("_") && basename.endsWith(".md") && !basename.endsWith(".overwrite.md");
+  const folderName = path.basename(path.dirname(file));
+  return basename === `_${folderName}.md`;
+}
+
+async function listIndexEntryFiles(current: string): Promise<string[]> {
+  const entries = await fs.readdir(current, { withFileTypes: true });
+  const files: string[] = [];
+
+  for (const entry of entries.sort(compareIndexEntries)) {
+    const fullPath = path.join(current, entry.name);
+
+    if (entry.isDirectory()) {
+      if (ignoredDirectoryNames.has(entry.name)) {
+        continue;
+      }
+
+      const childIndex = path.join(fullPath, `_${entry.name}.md`);
+      if (await isFile(childIndex)) {
+        files.push(childIndex);
+      }
+      continue;
+    }
+
+    if (entry.isFile() && isIndexEntryFile(entry.name, path.basename(current))) {
+      files.push(fullPath);
+    }
+  }
+
+  return files;
+}
+
+function compareIndexEntries(left: Dirent, right: Dirent): number {
+  const leftKey = indexSortKey(left);
+  const rightKey = indexSortKey(right);
+  const keyComparison = leftKey.localeCompare(rightKey);
+
+  if (keyComparison !== 0) {
+    return keyComparison;
+  }
+
+  if (left.isFile() !== right.isFile()) {
+    return left.isFile() ? -1 : 1;
+  }
+
+  return left.name.localeCompare(right.name);
+}
+
+function indexSortKey(entry: Dirent): string {
+  return entry.isFile() && entry.name.endsWith(".md") ? entry.name.slice(0, -3) : entry.name;
+}
+
+function isIndexEntryFile(name: string, folderName: string): boolean {
+  return (
+    name.endsWith(".md") &&
+    !name.endsWith(".overwrite.md") &&
+    name !== `_${folderName}.md` &&
+    name !== "_index.md" &&
+    name !== "index.md"
+  );
+}
+
+function defaultTagsForIndexEntry(file: string): string[] {
+  return isIndexFile(file) ? ["Index"] : ["Untagged"];
 }
 
 type Metadata = {
@@ -144,17 +190,18 @@ function readMetadata(text: string): Metadata {
     return { description: "", tags: [] };
   }
 
-  for (const scope of ["open-forge", "rune"]) {
-    const section = readSection(frontmatter, scope);
-    if (!section) {
-      continue;
-    }
-
+  const section = readSection(frontmatter, "open-forge");
+  if (section) {
     const description = readScalar(section, "description");
     const tags = readTags(section);
-    if (description || tags.length > 0) {
-      return { description, tags };
-    }
+    return { description, tags };
+  }
+
+  const runeSection = readSection(frontmatter, "rune");
+  if (runeSection) {
+    const description = readScalar(runeSection, "description");
+    const tags = readTags(runeSection);
+    return { description, tags };
   }
 
   return {
@@ -171,6 +218,37 @@ function readFrontmatter(text: string): string {
 
   const match = normalized.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   return match ? match[1] : "";
+}
+
+function readMarkdownDescription(text: string): string {
+  const body = stripFrontmatter(text);
+  let inFence = false;
+
+  for (const line of body.split(/\r?\n/)) {
+    const trimmed = line.trim();
+
+    if (trimmed.startsWith("```")) {
+      inFence = !inFence;
+      continue;
+    }
+
+    if (inFence || !trimmed || trimmed.startsWith("#") || trimmed.startsWith("<!--") || trimmed.startsWith("- ")) {
+      continue;
+    }
+
+    return trimmed;
+  }
+
+  return "";
+}
+
+function stripFrontmatter(text: string): string {
+  const normalized = text.replace(/^\uFEFF/, "").trimStart();
+  if (!normalized.startsWith("---")) {
+    return normalized;
+  }
+
+  return normalized.replace(/^---\r?\n[\s\S]*?\r?\n---/, "").trimStart();
 }
 
 function readSection(frontmatter: string, name: string): string {
@@ -325,17 +403,17 @@ async function readTextIfExists(file: string): Promise<string | null> {
   }
 }
 
-async function fileExists(file: string): Promise<boolean> {
+async function ensureDir(directory: string): Promise<void> {
+  await fs.mkdir(directory, { recursive: true });
+}
+
+async function isFile(file: string): Promise<boolean> {
   try {
     await fs.access(file, fsConstants.F_OK);
-    return true;
+    return (await fs.stat(file)).isFile();
   } catch {
     return false;
   }
-}
-
-async function ensureDir(directory: string): Promise<void> {
-  await fs.mkdir(directory, { recursive: true });
 }
 
 async function isDirectory(directory: string): Promise<boolean> {
@@ -384,6 +462,6 @@ Usage:
 
 Commands:
   install  Copy files into target, update AGENTS.md, and rebuild generated indexes.
-  index    Rebuild generated indexes from _*.md files.
+  index    Rebuild generated indexes from _{folder}.md files.
 `);
 }

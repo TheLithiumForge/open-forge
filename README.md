@@ -97,12 +97,10 @@ AGENTS.md                     <- agent entry block
   loader.md                   <- tells the agent what to read and when
   workspace/
     _workspace.md             <- indexes workspace route files
-    local.md                  <- local workspace routes
-    open-forge.md             <- default Open Forge routes
+    _workspace-open-forge.md  <- Open Forge workspace route contract
   patterns/
     _patterns.md              <- indexes reusable pattern files
-    local.md                  <- local patterns preserved for workspace customization
-    open-forge.md             <- default Open Forge patterns
+    _patterns-open-forge.md   <- Open Forge pattern category contract
   workflows/
     _workflows.md             <- indexes action sequence files
   templates/
@@ -153,13 +151,6 @@ Make sure they are what you need. If they are not, change them.
 
 The framework files are fair game. They are yours now. The only reason to avoid editing managed defaults is easier future updates.
 
-Some files are seeded for local customization. Open Forge creates them when missing, then preserves them on normal install:
-
-```text
-.agents/workspace/local.md
-.agents/patterns/local.md
-```
-
 ## Growing Your Framework
 
 Each file is just markdown. You can edit them directly.
@@ -183,9 +174,9 @@ Useful place:
 Examples:
 
 ```text
-.agents/workspace/local-docs.md
 .agents/workspace/repositories.md
 .agents/workspace/guides.md
+.agents/workspace/local-docs.md
 ```
 
 Inside those files, point at your actual docs, guides, directives, workflows, repos, tasks, vault folders, or whatever else your workspace needs.
@@ -201,7 +192,6 @@ Useful place:
 Examples:
 
 ```text
-.agents/patterns/local.md
 .agents/patterns/local-docs.md
 .agents/patterns/reviewable-work.md
 ```
@@ -229,7 +219,7 @@ open-forge:
 ---
 ```
 
-`rune:` is accepted the same way for cross-tool compatibility.
+The CLI also reads `rune:` metadata in files you add for other tooling. Open Forge-authored files use `open-forge:`.
 
 ### Indexes
 
@@ -238,7 +228,7 @@ Indexes follow one simple rule: a folder can contain an index named `_{folder-na
 ```text
 .agents/patterns/
   _patterns.md
-  open-forge.md
+  _patterns-open-forge.md
   local-docs.md
 ```
 
@@ -247,17 +237,20 @@ The same shape is used for workspace routes:
 ```text
 .agents/workspace/
   _workspace.md
-  local.md
-  open-forge.md
+  _workspace-open-forge.md
+  repositories.md
 ```
+
+The index is generated. The `_{folder-name}-open-forge.md` file is an Open Forge managed category contract and appears as an index entry when it has metadata.
 
 Generated entries look like this:
 
 ```md
-- `{file}` - {description} - #{tag1} #{tag2}
+- `{file}` - {description} - #{tag1} #{tag2} ... #{tagN}
+- `{folder/_folder.md}` - {description} - #Index
 ```
 
-File names are used as-is. If you number files, the index keeps those numbers.
+File names are used as-is. Child folders are routed through their own `_{folder-name}.md` index. If you number files, the index keeps those numbers.
 
 Index files are intentionally dull. They should contain a short description and generated entries, not rules or recommendations.
 
