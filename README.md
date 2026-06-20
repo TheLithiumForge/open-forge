@@ -96,34 +96,12 @@ AGENTS.md                     <- agent entry block
   constants.md                <- root path constants
   loader.md                   <- tells the agent what to read and when
   workspace/
-    _workspace.md             <- indexes workspace route files
-    _workspace-open-forge.md  <- Open Forge workspace route contract
-  patterns/
-    _patterns.md              <- indexes reusable pattern files
-    _patterns-open-forge.md   <- Open Forge pattern category contract
-  workflows/
-    _workflows.md             <- indexes action sequence files
-  templates/
-    _templates.md             <- indexes artifact skeletons
-  observations/
-    _observations.md          <- indexes candidate lessons
-    archive/                  <- archived observations
-  sessions/
-    _sessions.md              <- indexes saved chat summaries
-    archive/                  <- archived sessions
-  handoffs/
-    _handoffs.md              <- indexes temporary continuation notes
-    archive/                  <- archived handoffs
-  skills/
-    _skills.md                <- indexes tool and runtime adapters
-docs/
-  directives/                 <- human-reviewed local rules
-  guides/                     <- human-facing guidance
+    _workspace.md             <- workspace contract and generated routes
 ```
 
 The important thing is not the number of files. The important thing is the routing.
 
-`AGENTS.md` points agents at the loader. The loader points them at the indexes. The indexes point them at the relevant files with tags and descriptions. The files tell the agent how this workspace works.
+`AGENTS.md` points agents at the loader. The CLI generates the loader's active category entries from category metadata, so agents immediately see where each category lives and what it represents. Category entrypoints then expose their relevant routed files.
 
 ## First Thing After Install
 
@@ -137,14 +115,6 @@ AGENTS.md
 .agents/loader.md
 .agents/workspace/_workspace.md
 .agents/workspace/*.md
-.agents/patterns/_patterns.md
-.agents/patterns/*.md
-.agents/workflows/_workflows.md
-.agents/templates/_templates.md
-.agents/observations/_observations.md
-.agents/sessions/_sessions.md
-.agents/handoffs/_handoffs.md
-.agents/skills/_skills.md
 ```
 
 Make sure they are what you need. If they are not, change them.
@@ -181,21 +151,6 @@ Examples:
 
 Inside those files, point at your actual docs, guides, directives, workflows, repos, tasks, vault folders, or whatever else your workspace needs.
 
-Use pattern files to describe reusable structure and placement rules.
-
-Useful place:
-
-```text
-.agents/patterns/
-```
-
-Examples:
-
-```text
-.agents/patterns/local-docs.md
-.agents/patterns/reviewable-work.md
-```
-
 The default install is intentionally small. If you want more specific docs, tasks, project areas, repo maps, or local rituals, add them when they earn their place.
 
 ### Frontmatter
@@ -204,8 +159,8 @@ Index metadata comes from frontmatter:
 
 ```md
 ---
-description: Local documentation patterns
-tags: [Docs, Pattern]
+description: Local documentation routes
+tags: [Docs, Workspace]
 ---
 ```
 
@@ -214,34 +169,36 @@ Nested metadata also works:
 ```md
 ---
 open-forge:
-  description: Local documentation patterns
-  tags: [Docs, Pattern]
+  description: Local documentation routes
+  tags: [Docs, Workspace]
 ---
 ```
 
 The CLI also reads `rune:` metadata in files you add for other tooling. Open Forge-authored files use `open-forge:`.
 
-### Indexes
+### Category Entrypoints
 
-Indexes follow one simple rule: a folder can contain an index named `_{folder-name}.md`.
+Category entrypoints follow one simple rule: a routed folder contains an entrypoint named `_{folder-name}.md`.
 
 ```text
-.agents/patterns/
-  _patterns.md
-  _patterns-open-forge.md
-  local-docs.md
+.agents/knowledge/
+  _knowledge.md
+  architecture.md
 ```
 
-The same shape is used for workspace routes:
+The installed workspace category uses the same shape:
 
 ```text
 .agents/workspace/
   _workspace.md
-  _workspace-open-forge.md
   repositories.md
 ```
 
-The index is generated. The `_{folder-name}-open-forge.md` file is an Open Forge managed category contract and appears as an index entry when it has metadata.
+The `_{folder-name}.md` file is the category entrypoint. It keeps the short category contract at the beginning and generated navigation at the end.
+
+The CLI also accepts `_index.md`, `index.md`, `_references.md`, and `references.md` as cross-tool compatibility aliases. Open Forge-authored categories always use `_{folder-name}.md`. Keep exactly one recognized entrypoint in each folder.
+
+A new top-level category becomes active when a direct child folder contains its matching entrypoint. The CLI adds its description, tags, and path to the loader automatically. Nested categories become reachable through their parent category's generated entries.
 
 Generated entries look like this:
 
@@ -250,19 +207,29 @@ Generated entries look like this:
 - `{folder/_folder.md}` - {description} - #Index
 ```
 
-File names are used as-is. Child folders are routed through their own `_{folder-name}.md` index. If you number files, the index keeps those numbers.
+File names are used as-is. Child folders are routed through their own `_{folder-name}.md` category entrypoint. If you number files, the generated entries keep those numbers.
 
-Index files are intentionally dull. They should contain a short description and generated entries, not rules or recommendations.
+The generated region is explicitly bounded:
 
-`open-forge install` rebuilds indexes automatically.
+```md
+## Entries
 
-You can also rebuild only indexes:
+<!-- open-forge:generated-index:start -->
+- none - No entries - #Empty
+<!-- open-forge:generated-index:end -->
+```
+
+The CLI changes only the content between those markers. Category meaning and axioms stay above the region. Detailed rules, recommendations, and user content belong in separate routed files.
+
+`open-forge install` rebuilds generated index regions automatically.
+
+You can also rebuild only generated index regions:
 
 ```sh
 npx open-forge index
 ```
 
-The CLI indexes the route files. The agents follow the routes. If your docs live somewhere unusual, declare that place in a workspace route file.
+The CLI indexes routed files. Agents follow the routes. If your docs live somewhere unusual, declare that place in a workspace route file.
 
 ### Overwrites
 
@@ -293,7 +260,7 @@ Bad overwrite use:
 
 If the behavior is divergent enough that both files together would confuse the agent, it is better to edit `{name}.md`. Remove the section that would cause the problem, then add the replacement behavior in `{name}.overwrite.md`.
 
-Do not use overwrites for generated index files. Add or edit files in the indexed folder instead.
+Do not edit or overwrite generated index regions. Add or edit files in the indexed folder instead.
 
 That way, later updates are still manageable. You can `git diff` the changed base file, see what Open Forge updated, and decide what to keep.
 

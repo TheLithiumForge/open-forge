@@ -6,6 +6,10 @@ import { fileURLToPath } from "node:url";
 const repoRoot = resolveRepoRoot();
 const sourceRoot = path.join(repoRoot, "src", "open-forge");
 const ignoredDirectoryNames = new Set([".git", ".obsidian", "node_modules"]);
+const compatibilityEntrypointNames = ["_index.md", "index.md", "_references.md", "references.md"];
+const entriesHeading = "## Entries";
+const generatedIndexStartMarker = "<!-- open-forge:generated-index:start -->";
+const generatedIndexEndMarker = "<!-- open-forge:generated-index:end -->";
 const args = process.argv.slice(2);
 const command = args[0] ?? "help";
 
@@ -62,15 +66,16 @@ async function install(targetArg: string): Promise<void> {
     copied += 1;
   }
 
-  const indexes = await generateIndexes(targetRoot);
+  const generatedRegions = await generateIndexes(targetRoot);
   console.log(`Installed Open Forge into ${targetRoot}`);
-  console.log(`Updated ${copied} managed files, patched ${patched} entry files, rebuilt ${indexes} indexes.`);
+  console.log(`Updated ${copied} managed files, patched ${patched} entry files, rebuilt ${generatedRegions} generated regions.`);
 }
 
 async function generateIndexes(root: string): Promise<number> {
   const agentsRoot = path.join(root, ".agents");
   const scanRoot = await isDirectory(agentsRoot) ? agentsRoot : root;
   const markdownFiles = await listFiles(scanRoot, (file) => isIndexFile(file));
+  assertUnambiguousCategoryEntrypoints(markdownFiles);
   let count = 0;
 
   for (const indexFile of markdownFiles) {
@@ -84,6 +89,12 @@ async function generateIndexes(root: string): Promise<number> {
     count += 1;
   }
 
+  const loaderFile = path.join(scanRoot, "loader.md");
+  if (await isFile(loaderFile)) {
+    await generateLoaderRegistry(loaderFile, scanRoot);
+    count += 1;
+  }
+
   return count;
 }
 
@@ -92,30 +103,165 @@ async function generateIndex(indexFile: string, folder: string): Promise<void> {
   const files = await listIndexEntryFiles(folder);
 
   for (const file of files) {
-    const text = await fs.readFile(file, "utf8");
-    const metadata = readMetadata(text);
     const relativeFile = toPosix(path.relative(path.dirname(indexFile), file));
-    const description = metadata.description || readMarkdownDescription(text) || "No description";
-    const tags = metadata.tags.length > 0 ? metadata.tags : defaultTagsForIndexEntry(file);
-    entries.push(`- \`${relativeFile}\` - ${description} - ${formatTags(tags)}`);
+    entries.push(await createGeneratedEntry(file, relativeFile));
   }
 
   const current = await fs.readFile(indexFile, "utf8");
-  const prefix = getIndexPrefix(current);
   const body = entries.length > 0 ? entries.join("\n") : "- none - No entries - #Empty";
-  await fs.writeFile(indexFile, `${prefix}\n\n## Entries\n\n${body}\n`);
+  await fs.writeFile(indexFile, updateGeneratedIndexRegion(current, body, indexFile));
 }
 
-function getIndexPrefix(text: string): string {
-  const marker = "\n## Entries";
-  const index = text.indexOf(marker);
-  return (index === -1 ? text : text.slice(0, index)).trimEnd();
+async function generateLoaderRegistry(loaderFile: string, agentsRoot: string): Promise<void> {
+  const entries: string[] = [];
+  const categoryFiles = (await listIndexEntryFiles(agentsRoot)).filter(isIndexFile);
+
+  for (const file of categoryFiles) {
+    const relativeFile = toPosix(path.relative(agentsRoot, file));
+    entries.push(await createGeneratedEntry(file, `{forgePath}/${relativeFile}`));
+  }
+
+  const current = await fs.readFile(loaderFile, "utf8");
+  const body = entries.length > 0 ? entries.join("\n") : "- none - No active categories - #Empty";
+  await fs.writeFile(loaderFile, updateGeneratedIndexRegion(current, body, loaderFile));
+}
+
+async function createGeneratedEntry(file: string, route: string): Promise<string> {
+  const text = await fs.readFile(file, "utf8");
+  const metadata = readMetadata(text);
+  const description = metadata.description || readMarkdownDescription(text) || "No description";
+  const tags = metadata.tags.length > 0 ? metadata.tags : defaultTagsForIndexEntry(file);
+  return `- \`${route}\` - ${description} - ${formatTags(tags)}`;
+}
+
+function updateGeneratedIndexRegion(text: string, body: string, indexFile: string): string {
+  const newline = text.includes("\r\n") ? "\r\n" : "\n";
+  const startMarkers = findAllOccurrences(text, generatedIndexStartMarker);
+  const endMarkers = findAllOccurrences(text, generatedIndexEndMarker);
+
+  if (startMarkers.length === 1 && endMarkers.length === 1) {
+    const start = startMarkers[0];
+    const end = endMarkers[0];
+
+    if (end <= start) {
+      throw malformedIndexError(indexFile, "the generated index markers are reversed");
+    }
+
+    assertGeneratedIndexLayout(text, start, end, indexFile);
+    const bodyStart = start + generatedIndexStartMarker.length;
+    return `${text.slice(0, bodyStart)}${newline}${body}${newline}${text.slice(end)}`;
+  }
+
+  if (startMarkers.length !== 0 || endMarkers.length !== 0) {
+    throw malformedIndexError(indexFile, "the generated index markers are incomplete or duplicated");
+  }
+
+  return migrateLegacyIndexRegion(text, body, indexFile, newline);
+}
+
+function assertGeneratedIndexLayout(text: string, start: number, end: number, indexFile: string): void {
+  const beforeMarker = text.slice(0, start);
+  const headings = findEntriesHeadings(beforeMarker);
+
+  if (headings.length !== 1) {
+    throw malformedIndexError(indexFile, `expected exactly one ${entriesHeading} heading before the generated region`);
+  }
+
+  const heading = headings[0];
+  const headingEnd = heading + entriesHeading.length;
+  if (beforeMarker.slice(headingEnd).trim() !== "") {
+    throw malformedIndexError(indexFile, `the generated region must immediately follow ${entriesHeading}`);
+  }
+
+  const afterMarker = text.slice(end + generatedIndexEndMarker.length);
+  if (afterMarker.trim() !== "") {
+    throw malformedIndexError(indexFile, "the generated region must be the final section");
+  }
+}
+
+function migrateLegacyIndexRegion(text: string, body: string, indexFile: string, newline: string): string {
+  const headings = findEntriesHeadings(text);
+
+  if (headings.length > 1) {
+    throw malformedIndexError(indexFile, `found multiple ${entriesHeading} headings without generated-region markers`);
+  }
+
+  if (headings.length === 1) {
+    const legacyBody = text.slice(headings[0] + entriesHeading.length);
+    const invalidLine = legacyBody
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .find((line) => line && !line.startsWith("- "));
+
+    if (invalidLine) {
+      throw malformedIndexError(indexFile, `the legacy ${entriesHeading} section contains authored content`);
+    }
+  }
+
+  const prefix = headings.length === 1 ? text.slice(0, headings[0]).trimEnd() : text.trimEnd();
+  const separator = prefix ? `${newline}${newline}` : "";
+  return `${prefix}${separator}${entriesHeading}${newline}${newline}${generatedIndexStartMarker}${newline}${body}${newline}${generatedIndexEndMarker}${newline}`;
+}
+
+function findEntriesHeadings(text: string): number[] {
+  const indexes: number[] = [];
+  const pattern = /^## Entries\s*$/gm;
+
+  for (const match of text.matchAll(pattern)) {
+    if (match.index != null) {
+      indexes.push(match.index);
+    }
+  }
+
+  return indexes;
+}
+
+function findAllOccurrences(text: string, value: string): number[] {
+  const indexes: number[] = [];
+  let offset = 0;
+
+  while (offset < text.length) {
+    const index = text.indexOf(value, offset);
+    if (index === -1) {
+      break;
+    }
+
+    indexes.push(index);
+    offset = index + value.length;
+  }
+
+  return indexes;
+}
+
+function malformedIndexError(indexFile: string, reason: string): Error {
+  return new Error(`Cannot rebuild ${indexFile}: ${reason}. No changes were written.`);
 }
 
 function isIndexFile(file: string): boolean {
   const basename = path.basename(file);
   const folderName = path.basename(path.dirname(file));
-  return basename === `_${folderName}.md`;
+  return categoryEntrypointNames(folderName).includes(basename);
+}
+
+function assertUnambiguousCategoryEntrypoints(files: string[]): void {
+  const byDirectory = new Map<string, string[]>();
+
+  for (const file of files) {
+    const directory = path.dirname(file);
+    const matches = byDirectory.get(directory) ?? [];
+    matches.push(path.basename(file));
+    byDirectory.set(directory, matches);
+  }
+
+  for (const [directory, matches] of byDirectory) {
+    if (matches.length > 1) {
+      throw new Error(`Multiple category entrypoints found in ${directory}: ${matches.sort().join(", ")}. Keep exactly one.`);
+    }
+  }
+}
+
+function categoryEntrypointNames(folderName: string): string[] {
+  return [`_${folderName}.md`, ...compatibilityEntrypointNames];
 }
 
 async function listIndexEntryFiles(current: string): Promise<string[]> {
@@ -130,8 +276,8 @@ async function listIndexEntryFiles(current: string): Promise<string[]> {
         continue;
       }
 
-      const childIndex = path.join(fullPath, `_${entry.name}.md`);
-      if (await isFile(childIndex)) {
+      const childIndex = await findCategoryEntrypoint(fullPath);
+      if (childIndex) {
         files.push(childIndex);
       }
       continue;
@@ -143,6 +289,24 @@ async function listIndexEntryFiles(current: string): Promise<string[]> {
   }
 
   return files;
+}
+
+async function findCategoryEntrypoint(directory: string): Promise<string | null> {
+  const folderName = path.basename(directory);
+  const matches: string[] = [];
+
+  for (const name of categoryEntrypointNames(folderName)) {
+    const candidate = path.join(directory, name);
+    if (await isFile(candidate)) {
+      matches.push(candidate);
+    }
+  }
+
+  if (matches.length > 1) {
+    throw new Error(`Multiple category entrypoints found in ${directory}: ${matches.map((file) => path.basename(file)).sort().join(", ")}. Keep exactly one.`);
+  }
+
+  return matches[0] ?? null;
 }
 
 function compareIndexEntries(left: Dirent, right: Dirent): number {
@@ -169,9 +333,7 @@ function isIndexEntryFile(name: string, folderName: string): boolean {
   return (
     name.endsWith(".md") &&
     !name.endsWith(".overwrite.md") &&
-    name !== `_${folderName}.md` &&
-    name !== "_index.md" &&
-    name !== "index.md"
+    !categoryEntrypointNames(folderName).includes(name)
   );
 }
 
@@ -461,7 +623,7 @@ Usage:
   open-forge index [target]
 
 Commands:
-  install  Copy files into target, update AGENTS.md, and rebuild generated indexes.
-  index    Rebuild generated indexes from _{folder}.md files.
+  install  Copy files into target, update AGENTS.md, and rebuild generated index regions.
+  index    Rebuild the loader registry and category generated regions.
 `);
 }

@@ -179,7 +179,7 @@ Potential costs:
 
 Open questions:
 
-- Should `{forgePath}` mean `.agents` or `.agents/open-forge`?
+- Should managed files stay directly under `.agents/` or move to `.agents/open-forge/`?
 - Should local routes live beside the framework namespace or inside it?
 - Is `forge/` too generic, and is `open-forge/` too branded or long?
 - Does namespacing make updates safer enough to justify changing the install shape now?

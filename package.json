@@ -19,7 +19,8 @@
   ],
   "scripts": {
     "build": "bun run build.ts",
-    "index": "bun run src/cli/cli.ts index ./src/open-forge"
+    "index": "bun run src/cli/cli.ts index ./src/open-forge",
+    "test": "bun test"
   },
   "engines": {
     "node": ">=18"
