@@ -152,7 +152,7 @@ open-forge:
 
     expect(result.exitCode).toBe(0);
     expect(loader).toContain("Stable loading contract.");
-    expect(loader).toContain("- `{forgePath}/workspace/_workspace.md` - Important workspace destinations - #OpenForge #Workspace #Index");
+    expect(loader).toContain("- `workspace/_workspace.md` - Important workspace destinations - #OpenForge #Workspace #Index");
     expect(loader).not.toContain("repositories/_repositories.md");
     expect(loader).not.toContain("archive");
   });
@@ -175,7 +175,7 @@ tags: [External, Index]
       const entrypoint = await fs.readFile(path.join(external, alias), "utf8");
 
       expect(result.exitCode).toBe(0);
-      expect(loader).toContain(`- \`{forgePath}/external/${alias}\` - External tool routes - #External #Index`);
+      expect(loader).toContain(`- \`external/${alias}\` - External tool routes - #External #Index`);
       expect(entrypoint).toContain("- `source.md` - External source - #External");
     });
   }
@@ -208,8 +208,9 @@ describe("install", () => {
     expect(result.exitCode).toBe(0);
     expect(workspace).toContain("## Axioms");
     expect(workspace).toContain("<!-- open-forge:generated-index:start -->");
-    expect(loader).toContain("- `{forgePath}/workspace/_workspace.md` - Important workspace destinations and their scope - #OpenForge #Workspace #Index");
+    expect(loader).toContain("- `.agents/workspace/_workspace.md` - Important workspace destinations and their scope - #OpenForge #Workspace #Index");
     expect(loader).not.toContain("## Route Categories");
+    expect(await exists(path.join(root, ".agents", "constants.md"))).toBe(false);
     expect(await exists(path.join(root, ".agents", "workspace", "_workspace-open-forge.md"))).toBe(false);
   });
 });

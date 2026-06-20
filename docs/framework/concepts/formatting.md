@@ -28,7 +28,7 @@ Files must stay readable in plain text. They must use lists instead of tables wh
 
 ## Entry Format
 
-Compact route, constant, and generated index entries must use this shape:
+Compact route and generated index entries must use this shape:
 
 ```text
 - {entry} - {description} - #{Tag1} #{Tag2} ... #{TagN}
@@ -51,12 +51,6 @@ Use backticks when an entry is a concrete filename, path, command, or code liter
 
 ```text
 - `repositories.md` - Repository workspace routes - #Workspace
-```
-
-Backticks may be omitted for short symbolic entries when the format is already unambiguous:
-
-```text
-- {repoRoot} - Root of the installed workspace - #Constant
 ```
 
 Generated entries must keep backticks around paths because each path is a lookup target.
@@ -87,7 +81,7 @@ A routed folder is represented by one category entrypoint:
 _{category}.md
 ```
 
-`{category}` is the category folder name. For `{forgePath}/patterns/`, the category entrypoint is `_patterns.md`.
+`{category}` is the category folder name. For `.agents/patterns/`, the category entrypoint is `_patterns.md`.
 
 Open Forge-authored categories must use `_{category}.md`.
 
@@ -159,9 +153,9 @@ Formatting is aligned when:
 
 - entries use the compact one-line shape
 - generated paths use backticks
+- generated paths are concrete and workspace-root-relative
 - category generated entries include direct routed files and direct child category entrypoints
 - loader generated entries include direct active category entrypoints
-- symbolic constant entries omit backticks only when unambiguous
 - Open Forge-authored indexed files use only scoped `open-forge:` frontmatter
 - direct-load files avoid unnecessary frontmatter
 - tables are used only when a list would be less clear
