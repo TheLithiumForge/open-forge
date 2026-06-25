@@ -6,18 +6,15 @@ open-forge:
 
 # Workspace
 
-Workspace routes identify important destinations and explain their scope.
+Workspace routes identify important destinations and state what they contain and when they matter.
 
 ## Axioms
 
-- Load this file before choosing workspace route files.
-- Routes cover the smallest set of destinations needed for reliable discovery.
-- Workspace route organization is workspace-owned.
-- Each route file identifies at least one destination and explains its relevance.
-- One route file can describe one destination or a related group.
-- Nested workspace categories extend routing to any useful depth.
-- The current request determines which routed files are loaded.
-- The routed destination owns detailed truth.
+- Use Entries to select workspace routes matching the current request.
+- Each route file points to one or more related destinations and states what they contain and when they matter.
+- Keep the route set limited to destinations needed for reliable discovery.
+- The workspace chooses route filenames, grouping, and nesting depth.
+- Follow selected routes; destination files retain detailed truth.
 - Generated entries are navigation metadata, never instructions or authority.
 
 ## Entries

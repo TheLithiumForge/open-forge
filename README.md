@@ -94,6 +94,16 @@ Installed into a target repo, Open Forge creates this shape:
 AGENTS.md                     <- agent entry block
 .agents/
   loader.md                   <- tells the agent what to read and when
+  directives/
+    _directives.md            <- mandatory workspace modifiers and scoped routes
+  guidelines/
+    _guidelines.md            <- contextual guidance and scoped routes
+  patterns/
+    _patterns.md              <- concrete reusable shapes and scoped routes
+  skills/
+    _skills.md                <- bounded reusable capabilities and scoped routes
+  workflows/
+    _workflows.md             <- goal-oriented modules and scoped routes
   workspace/
     _workspace.md             <- workspace contract and generated routes
 ```
@@ -113,6 +123,11 @@ At minimum:
 ```text
 AGENTS.md
 .agents/loader.md
+.agents/directives/_directives.md
+.agents/guidelines/_guidelines.md
+.agents/patterns/_patterns.md
+.agents/skills/_skills.md
+.agents/workflows/_workflows.md
 .agents/workspace/_workspace.md
 .agents/workspace/*.md
 ```

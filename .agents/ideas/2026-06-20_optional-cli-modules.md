@@ -10,6 +10,8 @@ open-forge:
 
 Keep the default Open Forge installation limited to the small routing framework and its required primitives.
 
+The core installs the minimum root entrypoints for directives, patterns, guidelines, skills, and workflows. These empty routing surfaces make the framework shape discoverable without seeding opinions or unused capabilities.
+
 Let users explicitly discover and install optional modules through the CLI. A module is a selectable package of reusable files, not a new authority type and not part of the mandatory core.
 
 Possible modules include:
