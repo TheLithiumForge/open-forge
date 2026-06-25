@@ -12,13 +12,15 @@ The loader is intentionally stable. It contains loading axioms, customization po
 
 The loader represents the installed workspace loading contract and root category router.
 
-It is a file primitive and routing primitive. It is not a workflow, template, guide, directive, project map, or task format.
+It is the root file and routing primitive for the installed framework.
 
 ## Contains
 
 The installed loader must contain:
 
+- the rule that the directives category is loaded for every request when present
 - the rule that the current request controls relevance
+- the rule that a loaded markdown file includes its overwrite companion when present
 - the authority posture for local active truth, defaults, context, and candidate learning
 - the customization posture: add local files first, use overwrites for light changes, edit framework files for complete behavior changes
 - a final marker-bounded registry of active categories
@@ -33,9 +35,13 @@ Generated category paths must be concrete and relative to the active workspace r
 
 The loader must not infer a Git repository root or require runtime path constants.
 
+When the generated registry contains the directives category, the loader must load its entrypoint before selecting other categories. The directives entrypoint owns directive scope and recursive loading behavior.
+
 Local active truth has precedence over Open Forge defaults. Default files may still be loaded as context when useful.
 
 When an agent selects a category, it must load the generated category entrypoint path before exploring routed files under that category. Open Forge-authored categories use `_{category}.md`; compatibility categories may use another recognized entrypoint name.
+
+When a markdown file is loaded, its `.overwrite.md` companion must be loaded after it when present. The overwrite applies within the base file's scope.
 
 ## Category Registry
 
@@ -91,9 +97,11 @@ The implementation is aligned when it:
 - is immediately routable after `AGENTS.md`
 - uses concrete workspace-relative category paths
 - remains valid when `.agents/` resolves through a symlink or into a submodule
+- loads the directives category for every request when present
 - generates entries for direct active categories only
 - derives descriptions and tags from category entrypoints
 - loads a selected category entrypoint before its routed files
+- loads overwrite companions after their base files
 - states that local active truth overrides defaults
 - treats generated entries as navigation metadata
 - keeps detailed process behavior in routed files

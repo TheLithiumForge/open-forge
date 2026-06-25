@@ -26,11 +26,11 @@ The authored portion must stay between 15 and 40 non-empty lines. Generated entr
 
 ## Workspace Contract
 
-Workspace routes identify important destinations and explain their scope or relevance.
+Workspace routes identify important destinations and explain their contents and relevance.
 
 Routes cover the smallest set of destinations needed for reliable discovery. Route coverage is intentional rather than exhaustive.
 
-Workspace route organization is owned by the workspace. A route file can represent one destination or a related group. Nested workspace categories extend routing to any useful depth.
+Workspace route filenames, grouping, and nesting depth are owned by the workspace. A route file can represent one destination or a related group. Nested workspace categories extend routing to any useful depth.
 
 A destination can be a file, folder, project, repository, system, or document set. The routed destination owns detailed truth.
 
@@ -84,6 +84,7 @@ The implementation is aligned when it:
 - lives in `.agents/workspace/`
 - defines selective workspace routing
 - leaves route-file granularity to the workspace
+- uses entries to select routes relevant to the current request
 - supports nested categories at any useful depth
 - keeps detailed truth at routed destinations
 - contains no seeded project-layout assumptions

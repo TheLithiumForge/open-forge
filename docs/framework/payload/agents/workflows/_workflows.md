@@ -4,53 +4,47 @@
 
 This descriptor governs `src/open-forge/.agents/workflows/_workflows.md`.
 
-The workflows category `entrypoint` defines how agents discover repeatable markdown workflow recipes for reaching defined goals and how an active workflow owns local #Core routes.
+The workflows category entrypoint defines how agents discover larger goal-oriented modules and how an active workflow owns local supporting material.
 
 ## Represents
 
-The workflows category represents repeatable markdown workflow recipes for reaching defined goals.
+The workflows category represents repeatable agent modules for larger goals.
 
-A workflow recipe organizes work toward an outcome, such as brainstorming, task creation, implementation, review, test-driven development, handoff, or learning.
+A workflow organizes work toward an outcome, such as brainstorming, task creation, implementation, review, test-driven development, handoff, or learning.
 
 ## Contains
 
-The installed workflows category `entrypoint` must contain:
+The installed workflows category entrypoint must contain:
 
-- scoped `open-forge:` frontmatter with a description and useful tags, including `Core`, `Workflow`, and `Index`
+- scoped `open-forge:` frontmatter with a description and useful tags
 - a title
 - one short definition of workflows
-- compact relevance, loading, skill package, step, loop, workflow-local #Core route, and completion axioms
+- compact relevance, loading, workflow-local bundle, and completion axioms
 - a final marker-bounded generated index region
 
-The authored portion must stay between 10 and 40 non-empty lines. Generated `entries` do not count toward this limit.
+The authored portion must stay between 15 and 40 non-empty lines. Generated entries do not count toward this limit.
 
 ## Workflow Contract
 
-Every routed workflow must identify its goal, starting context, required skill packages when it uses skills, ordered steps, loop behavior, expected outputs, and completion or handoff condition.
+Every routed workflow must identify its goal, starting context, ordered work shape, expected outputs, and completion or handoff condition.
 
-Open Forge workflows are routed markdown recipes, not runtime orchestration objects from an agent SDK.
+A workflow may be a direct workflow file or a child workflow category. A child workflow category can contain its own entrypoint, workflow files, nested workflow categories, and local supporting categories.
 
-Required skill packages must be explicit enough that an agent can load the package routes before running the workflow. If a workflow has no required skill packages, it must say so. When a selected workflow lists `Required Skill Packages`, agents must load every listed package before running the workflow steps and report missing routes.
+## Local Bundle Contract
 
-Loop behavior must state whether the workflow is linear or iterative, what causes another pass, and what stops the loop.
+An active workflow may own local `directives/`, `patterns/`, `guidelines/`, and `skills/` categories beneath its workflow folder.
 
-A workflow may be a direct workflow file or a child workflow category. A child workflow category can contain its own `entrypoint`, workflow files, nested workflow categories, and workflow-local #Core routes.
+Workflow-local material applies only while that workflow is active. It is preferred over broader workspace material for that active workflow when safe and allowed. Unresolved conflicts must be reported.
 
-## Local Core Contract
-
-An active workflow may act as a local Open Forge root for its reusable goal by owning workflow-local #Core routes beneath its workflow folder.
-
-Workflow-local #Core routes apply only while that workflow is active. They are preferred over broader routes for that active workflow when safe and allowed. Unresolved conflicts must be reported.
-
-Workflow-local #Core routes reuse the same recursive category contract. They must not create another independent Open Forge installation.
+Workflow-local categories reuse the same recursive category contract. They must not create another `AGENTS.md`, root loader, workspace category, or independent Open Forge installation.
 
 ## Loading Contract
 
-The workflows category is relevant before non-trivial work and whenever current work may match an established repeatable goal.
+The workflows category is relevant when current work matches a repeatable goal that may have an established workflow.
 
-The `entrypoint` must require agents to read `Entries` before non-trivial work and load matching direct workflow files or child workflow categories. Each selected child `entrypoint` applies the same contract recursively.
+The entrypoint must route agents to direct workflow files and child workflow categories whose path, description, or tags match the current work. Each selected child entrypoint applies the same contract recursively.
 
-When a workflow is selected, agents load its workflow `entrypoint` or file first, then load any relevant workflow-local #Core routes routed by that workflow.
+When a workflow is selected, agents load its workflow entrypoint or file first, then load any relevant local supporting categories routed by that workflow.
 
 ## Scope Contract
 
@@ -62,7 +56,7 @@ Workflows in a narrower selected scope are preferred over broader workflows when
 
 ## Generated Region
 
-The final section must use the shared category `entrypoint` shape:
+The final section must use the shared category entrypoint shape:
 
 ```md
 ## Entries
@@ -72,17 +66,17 @@ The final section must use the shared category `entrypoint` shape:
 <!-- open-forge:generated-index:end -->
 ```
 
-Generated `entries` list direct workflow files and direct child workflow categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
+Generated entries list direct workflow files and direct child workflow categories. The shared formatting and routing governors own metadata extraction, entry formatting, naming, recursive discovery, marker validation, and regeneration.
 
 ## Used By
 
-Agents use this category when work may benefit from an established goal-oriented workflow.
+Agents use this category when work may benefit from an established goal-oriented module.
 
 ## Why
 
-Workflows make repeatable agent work explicit while keeping reusable local #Core routes next to the workflow that needs them.
+Workflows make repeatable agent work explicit while keeping reusable local support next to the workflow that needs it.
 
-The empty default route gives each workspace room to add only workflows it actually uses.
+The empty core category gives each workspace room to add only workflows it actually uses.
 
 ## Alignment Checks
 
@@ -90,16 +84,13 @@ The implementation is aligned when it:
 
 - is named `_workflows.md`
 - lives in `.agents/workflows/`
-- includes `Core`, `Workflow`, and `Index` in scoped `open-forge:` tags
-- defines workflows as repeatable markdown workflow recipes for reaching a defined goal
+- defines workflows as larger goal-oriented agent modules
 - selects workflow routes by visible relevance
-- requires agents to check workflows before non-trivial work
-- requires workflows to state goal, required skill packages, steps, loop behavior, outputs, and completion
-- requires selected workflows to load listed required skill packages before steps
-- permits workflow-local #Core routes only under active workflows
-- reuses the recursive category contract for workflow-local #Core routes
-- prevents independent installs under workflows
+- requires workflows to state goal, work shape, outputs, and completion
+- permits local supporting primitive categories only under active workflows
+- reuses the root recursive category contract for local workflow support
+- prevents nested Open Forge roots under workflows
 - supports recursive positive workflow scope
 - prefers narrower selected workflow scopes when safe and allowed
 - routes only through its final generated region
-- remains empty until workflow files or child workflow categories are added
+- remains empty until local files or optional modules add workflow content

@@ -24,6 +24,8 @@ Each framework descriptor governs its corresponding installed category file.
 
 A routed destination owns its detailed truth.
 
+Directive, pattern, guideline, skill, and workflow semantics are governed by `docs/framework/concepts/agent-primitives.md`.
+
 ## Category Contract
 
 Every active category entrypoint must define:
@@ -40,6 +42,12 @@ An installed category becomes active when its folder contains exactly one recogn
 The CLI must generate a loader entry for each direct active category under `.agents/`.
 
 The category entrypoint must expose a one-line description that provides enough meaning for an agent to decide whether to load the category without opening it first. Open Forge-authored categories use scoped frontmatter. Local categories may use supported metadata or their first body description.
+
+Category placement and descriptions expose positive scope. Tags add compact scope signals such as domain, work type, topic, technology, and artifact. Tags must not be the only indication of workspace-wide or mandatory behavior and must not define activation or authority by themselves.
+
+A primitive category may extend its own type recursively at any depth. Workflows may also own mixed local bundles of directives, patterns, guidelines, and skills. Other category types reference root primitives instead of embedding mixed local scopes.
+
+Within a recursively selected category, material in a narrower positive scope is preferred over broader material of the same primitive when safe and allowed. The category entrypoint owns any additional precedence rules for its contents.
 
 ## Route Contract
 
@@ -66,10 +74,14 @@ This contract lets the same routed knowledge work in a repository, monorepo, sha
 Agents load routing layers in this order:
 
 1. Load the loader.
-2. Select a relevant active category from the loader entries.
-3. Load that category's generated entrypoint path.
-4. Select relevant routed files.
-5. Follow those routes to the destinations that own detailed truth.
+2. Load the root directives category when it exists.
+3. Load workspace-wide directives and select applicable scoped directives.
+4. Select another relevant active category from the loader entries.
+5. Load that category's generated entrypoint path.
+6. Select relevant routed files.
+7. Follow those routes to the destinations that own detailed truth.
+
+Whenever a markdown file is loaded, its `.overwrite.md` companion must be loaded after it when present.
 
 ## Why
 
@@ -85,7 +97,13 @@ Routing is aligned when:
 - every Open Forge-authored category has a matching framework descriptor
 - every category owns its detailed meaning in its entrypoint
 - generated entries remain navigation metadata
+- category placement and descriptions keep scope visible
+- tags provide compact scope and classification signals
+- paths or descriptions expose mandatory and workspace-wide scope without relying on tags alone
 - generated paths are concrete and workspace-root-relative
 - physical repository and link boundaries do not change the active workspace root
 - routed destinations own detailed truth
 - nested categories use the same contract at every depth
+- mixed local primitive bundles are limited to workflows
+- overwrite companions load after their base files
+- narrower selected scopes take safe preference within the same primitive

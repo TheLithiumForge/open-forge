@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Mandatory instructions agents must follow when they apply to the current work
-  tags: [LoadNow, Core, Directive, Index]
+    description: Mandatory workspace modifiers; load for every request
+    tags: [OpenForge, Directives, Global, Index]
 ---
 
 # Directives
@@ -10,14 +10,20 @@ Directives are mandatory modifiers within their declared scope.
 
 ## Axioms
 
-- Every directive file beside this `entrypoint` is workspace-wide; read all of them.
-- Child directive `entrypoints` define positive scope through path, description, and tags.
-- Load child directive routes when their path, description, tags, or defined tag behavior match the current work.
+- Load this entrypoint for every request.
+- Every directive file beside(alongside? or sibling file) this entrypoint is workspace-wide; load all of them.
+- Child categories may define a work scope or organize directives under `global/` and `scoped/`.
+- Read the entries: always load global routes and scoped routing indexes; load other child routes when their path, description, or tags match the current work.
+- Follow each loaded child entrypoint's scope and loading axioms recursively.
 - Every loaded directive is mandatory within its scope.
-- Report when a directive cannot be followed, and explain why.
+- Prefer directives from a narrower selected scope over broader directives when safe and allowed; report unresolved conflicts.
+- Current user instructions, platform constraints, and runtime safety take precedence.
+- Generated entries are navigation only.
+- inform the user if a directive cant be followed and why
 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
+
 - none - No entries - #Empty
-<!-- open-forge:generated-index:end -->
+    <!-- open-forge:generated-index:end -->

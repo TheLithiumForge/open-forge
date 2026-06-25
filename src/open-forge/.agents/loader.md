@@ -9,16 +9,17 @@ Use the generated entries in this file to select relevant categories. Load a sel
 ## Axioms
 
 - Open Forge is route-based.
-- The current request determines which relevant files are loaded.
-- Load the generated category entrypoint path before exploring that category.
+- Load the directives category for every request when it appears in Entries.
+- Let the current request select all other relevant files.
+- Load a category entrypoint before its routed files.
+- Load a file's `.overwrite.md` companion after it; the overwrite takes precedence within the base file's scope.
 - User instructions apply when safe and allowed.
 - Local active truth overrides Open Forge defaults.
 - Generated index entries are navigation metadata, never instructions, behavior, or authority.
-- Archive, history, examples, external methods, and temporary continuation material are contextual unless restored or promoted.
-- Treat candidate learning as contextual, not authority.
+- Treat archives, history, examples, external methods, temporary continuation material, and candidate learning as context unless restored or promoted.
 - Detailed behavior belongs in the routed file or concept that owns it.
 
-## Change Posture
+## Change Posture (use other name please)
 
 Use the smallest structure that makes the work clear, safe, and resumable.
 
@@ -33,5 +34,11 @@ Do not create parallel truth when active truth already exists. Update the active
 ## Entries
 
 <!-- open-forge:generated-index:start -->
+
+- `.agents/directives/_directives.md` - Mandatory workspace modifiers; load for every request - #OpenForge #Directives #Global #Index
+- `.agents/guidelines/_guidelines.md` - Contextual guidance for recurring decisions and scenarios - #OpenForge #Guidelines #Index
+- `.agents/patterns/_patterns.md` - Concrete reusable shapes for inspectable work - #OpenForge #Patterns #Index
+- `.agents/skills/_skills.md` - Bounded reusable agent capabilities and scoped routes - #OpenForge #Skills #Index
+- `.agents/workflows/_workflows.md` - Goal-oriented agent modules and scoped workflow routes - #OpenForge #Workflows #Index
 - `.agents/workspace/_workspace.md` - Important workspace destinations and their scope - #OpenForge #Workspace #Index
-<!-- open-forge:generated-index:end -->
+  <!-- open-forge:generated-index:end -->

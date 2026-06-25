@@ -4,7 +4,7 @@
 
 This descriptor governs `src/open-forge/.agents/directives/_directives.md`.
 
-The directives category `entrypoint` defines mandatory instructions agents must follow when they apply to the current work, their recursive scope model, and generated navigation to directive files and child directive categories.
+The directives category entrypoint defines mandatory workspace modifiers, their recursive scope model, and generated navigation to directive files and child directive categories.
 
 ## Represents
 
@@ -14,24 +14,26 @@ The root category represents workspace-wide directive scope. Nested directive ca
 
 ## Contains
 
-The installed directives category `entrypoint` must contain:
+The installed directives category entrypoint must contain:
 
-- scoped `open-forge:` frontmatter with a description and useful tags, including `Core`, `Directive`, `Index`, and `LoadNow`
+- scoped `open-forge:` frontmatter with a description and useful tags
 - a title
 - one short definition of directives
 - compact loading, authority, and scope axioms
 - a final marker-bounded generated index region
 
-The authored portion must stay between 10 and 40 non-empty lines. Generated `entries` do not count toward this limit.
+The authored portion must stay between 15 and 40 non-empty lines. Generated entries do not count toward this limit.
 
 ## Loading Contract
 
-The root directives category is loaded through its generated loader `entry` because its installed metadata includes #LoadNow.
+The loader must load the root directives category for every request when it exists.
 
-The root directives `entrypoint` must require agents to load:
+The root directives entrypoint must require agents to load:
 
 - every direct directive file in the root category
-- every child directive route whose path, description, tags, or defined tag behavior match the current work
+- every child category that explicitly preserves workspace-wide scope
+- every routing-only category needed to discover narrower scopes
+- every child directive category whose positive scope matches the current work
 
 Directive bodies outside the current scope remain routed but unloaded.
 
@@ -47,15 +49,20 @@ Directives in a narrower selected scope are preferred over broader directives wh
 
 Direct directive files under `.agents/directives/` are workspace-wide.
 
-Every child category `entrypoint` must state a positive scope in its description. It must state whether the category narrows its parent scope or preserves that scope for organization.
+Every child category entrypoint must state a positive scope in its description. It must state whether the category narrows its parent scope or preserves that scope for organization.
 
-The directives tree may use direct child categories, organizational routing categories, or deeper nested categories when their `entrypoints` make scope and loading behavior explicit.
+The directives tree may combine:
 
-Folder names, descriptions, and tags work together to make scope cheap to identify. Tags must provide compact signals such as #Directive #Database #Migration. Paths or descriptions must keep workspace-wide and mandatory meaning readable without relying on tags alone.
+- direct workspace-wide directive files
+- direct child categories for concrete work scopes
+- an optional `global/` category that preserves workspace-wide scope
+- an optional `scoped/` routing category whose children define concrete work scopes
+
+Folder names, descriptions, and tags work together to make scope cheap to identify. Tags must provide compact signals such as `#Directive #Database #Migrations`. Paths or descriptions must keep workspace-wide and mandatory meaning readable without relying on tags alone.
 
 ## Generated Region
 
-The final section must use the shared category `entrypoint` shape:
+The final section must use the shared category entrypoint shape:
 
 ```md
 ## Entries
@@ -65,7 +72,7 @@ The final section must use the shared category `entrypoint` shape:
 <!-- open-forge:generated-index:end -->
 ```
 
-Generated `entries` list direct directive files and direct child directive categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
+Generated entries list direct directive files and direct child directive categories. The shared formatting and routing governors own metadata extraction, entry formatting, naming, recursive discovery, marker validation, and regeneration.
 
 ## Used By
 
@@ -75,7 +82,7 @@ The loader exposes this category as mandatory root material. Every request uses 
 
 The directives category makes mandatory behavior continuously discoverable without loading every scoped directive body.
 
-Visible recursive scope supports small workspaces and deeply organized directive trees without broad activation metadata or framework-specific condition logic.
+Visible recursive scope supports small workspaces and deeply organized directive trees without activation metadata or framework-specific condition logic.
 
 ## Alignment Checks
 
@@ -83,11 +90,11 @@ The implementation is aligned when it:
 
 - is named `_directives.md`
 - lives in `.agents/directives/`
-- includes `Core`, `Directive`, `Index`, and `LoadNow` in scoped `open-forge:` tags
+- is loaded for every request
 - defines direct root files as workspace-wide
-- supports recursively scoped child directive categories
+- supports direct scope categories and optional `global/` plus `scoped/` organization together
 - uses descriptions and tags as compact scope signals
 - treats applicable directives as mandatory
 - prefers narrower selected directive scopes when safe and allowed
 - routes only through its final generated region
-- leaves generated `entries` empty until directive files or child directive categories are added
+- leaves generated entries empty until local files or optional modules add directive content

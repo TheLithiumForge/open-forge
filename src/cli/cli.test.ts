@@ -113,19 +113,25 @@ This paragraph is authored content.
     expect(content).toBe(original);
   });
 
-  test("routes nested categories through child entrypoints", async () => {
+  test("routes categories through child entrypoints at arbitrary depth", async () => {
     const root = await createRoot();
     const workspace = await createCategory(root, "workspace", "# Workspace\n");
     const repositories = await createCategory(workspace, "repositories", "# Repositories\n");
+    const services = await createCategory(repositories, "services", "# Services\n");
     await writeRoute(repositories, "api.md", "API repository", ["Repository"]);
+    await writeRoute(services, "billing.md", "Billing service", ["Service"]);
 
     const result = await runCli("index", root);
     const parent = await fs.readFile(path.join(workspace, "_workspace.md"), "utf8");
     const child = await fs.readFile(path.join(repositories, "_repositories.md"), "utf8");
+    const grandchild = await fs.readFile(path.join(services, "_services.md"), "utf8");
 
     expect(result.exitCode).toBe(0);
     expect(parent).toContain("- `repositories/_repositories.md` - No description - #Index");
     expect(child).toContain("- `api.md` - API repository - #Repository");
+    expect(child).toContain("- `services/_services.md` - No description - #Index");
+    expect(parent).not.toContain("services/_services.md");
+    expect(grandchild).toContain("- `billing.md` - Billing service - #Service");
   });
 });
 
@@ -198,16 +204,37 @@ tags: [External, Index]
 });
 
 describe("install", () => {
-  test("installs one merged workspace category entrypoint", async () => {
+  test("installs merged core category entrypoints", async () => {
     const root = await createRoot();
 
     const result = await runCli("install", root);
+    const directives = await fs.readFile(path.join(root, ".agents", "directives", "_directives.md"), "utf8");
+    const guidelines = await fs.readFile(path.join(root, ".agents", "guidelines", "_guidelines.md"), "utf8");
+    const patterns = await fs.readFile(path.join(root, ".agents", "patterns", "_patterns.md"), "utf8");
+    const skills = await fs.readFile(path.join(root, ".agents", "skills", "_skills.md"), "utf8");
+    const workflows = await fs.readFile(path.join(root, ".agents", "workflows", "_workflows.md"), "utf8");
     const workspace = await fs.readFile(path.join(root, ".agents", "workspace", "_workspace.md"), "utf8");
     const loader = await fs.readFile(path.join(root, ".agents", "loader.md"), "utf8");
 
     expect(result.exitCode).toBe(0);
+    expect(directives).toContain("Every directive file beside this entrypoint is workspace-wide; load all of them.");
+    expect(directives).toContain("<!-- open-forge:generated-index:start -->");
+    expect(guidelines).toContain("Every guideline identifies its scenario, preferred approach, reasoning, and relevant tradeoffs.");
+    expect(guidelines).toContain("<!-- open-forge:generated-index:start -->");
+    expect(patterns).toContain("Treat an applicable pattern as the established default shape for its scope.");
+    expect(patterns).toContain("<!-- open-forge:generated-index:start -->");
+    expect(skills).toContain("Every skill file defines one bounded capability, where it applies, and the expected result.");
+    expect(skills).toContain("<!-- open-forge:generated-index:start -->");
+    expect(workflows).toContain("Every workflow defines its goal, starting context, ordered work shape, expected outputs, and completion or handoff condition.");
+    expect(workflows).toContain("<!-- open-forge:generated-index:start -->");
     expect(workspace).toContain("## Axioms");
     expect(workspace).toContain("<!-- open-forge:generated-index:start -->");
+    expect(loader).toContain("Load the directives category for every request when it appears in Entries.");
+    expect(loader).toContain("- `.agents/directives/_directives.md` - Mandatory workspace modifiers; load for every request - #OpenForge #Directives #Global #Index");
+    expect(loader).toContain("- `.agents/guidelines/_guidelines.md` - Contextual guidance for recurring decisions and scenarios - #OpenForge #Guidelines #Index");
+    expect(loader).toContain("- `.agents/patterns/_patterns.md` - Concrete reusable shapes for inspectable work - #OpenForge #Patterns #Index");
+    expect(loader).toContain("- `.agents/skills/_skills.md` - Bounded reusable agent capabilities and scoped routes - #OpenForge #Skills #Index");
+    expect(loader).toContain("- `.agents/workflows/_workflows.md` - Goal-oriented agent modules and scoped workflow routes - #OpenForge #Workflows #Index");
     expect(loader).toContain("- `.agents/workspace/_workspace.md` - Important workspace destinations and their scope - #OpenForge #Workspace #Index");
     expect(loader).not.toContain("## Route Categories");
     expect(await exists(path.join(root, ".agents", "constants.md"))).toBe(false);

@@ -45,6 +45,18 @@ Generated entries keep the full relative path in backticks. Parent category entr
 
 Use one entry per line. Entries must not wrap.
 
+## Tags
+
+Tags must add compact routing information rather than repeat words without adding meaning.
+
+Useful tags identify the primitive type, domain, work type, topic, technology, artifact, lifecycle, or another selection signal. Use as many tags as the entry needs and no tags that do not improve routing.
+
+```text
+- `migrations.md` - Database migration requirements - #Directive #Database #Migrations
+```
+
+Paths and descriptions must keep critical scope readable. Tags reinforce and describe scope, but tags alone must not make a directive workspace-wide, mandatory, or active.
+
 ## Backticks
 
 Use backticks when an entry is a concrete filename, path, command, or code literal:
@@ -152,6 +164,7 @@ The one-line entry shape is easier to scan in raw markdown, easier to regenerate
 Formatting is aligned when:
 
 - entries use the compact one-line shape
+- tags add useful routing information with minimal text
 - generated paths use backticks
 - generated paths are concrete and workspace-root-relative
 - category generated entries include direct routed files and direct child category entrypoints
