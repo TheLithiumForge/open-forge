@@ -40,25 +40,7 @@ Maintainers must review installed files as the final user-facing product.
 
 Implementation wording must use concrete installed routes and terms that are defined in installed files. Governance-only terms must not leak into installed files unless the installed payload defines them first.
 
-Generated `entries` remain navigation metadata plus reserved load policy. They expose routes, but authored installed content must explain how those routes are used.
-
-## Scope Wording Contract
-
-Framework wording must define from the owning scope outward.
-
-A file must define only the route, layer, primitive, state, or concept it owns and the lower-level contracts it directly depends on. It must not make its behavior depend on higher layers, optional packaging, future modules, CLI features, or extension mechanics.
-
-Higher layers describe how they consume or extend lower layers from their own files. Lower layers describe what they accept and what rules any writer must follow.
-
-Use neutral actor wording when a lower layer accepts material from many sources:
-
-```text
-Any process that writes memory must choose the route whose state and scope match the material.
-```
-
-Do not use higher-layer actor wording inside a lower-layer contract. A lower-layer file must not say that an optional higher-layer workflow, package, module, or tool is the actor that writes or owns its material.
-
-Cross-layer dependency wording belongs in the concept that owns the dependency relationship, such as `docs/framework/concepts/layers.md`.
+Generated entries remain navigation metadata plus reserved load policy. They expose routes, but authored installed content must explain how those routes are used.
 
 ## Why
 
@@ -75,6 +57,5 @@ The payload boundary is aligned when:
 - governance descriptors never become hidden runtime context
 - required behavior appears in installed files
 - installed files avoid governance-only terms
-- lower-layer wording does not depend on higher-layer packaging or future modules
 - descriptor changes that affect behavior update the matching payload file
 - user documentation explains but does not replace installed agent instructions

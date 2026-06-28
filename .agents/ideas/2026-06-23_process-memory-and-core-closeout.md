@@ -21,6 +21,8 @@ Current working backlog:
 
 Further analysis refined the name: Layer 2 should probably be Memory, not Process Memory. Process Memory is a subdomain, while the layer also needs project memory such as documents, decisions, rationale, and project essence.
 
+Current naming refinement: use Layer 2 `memory/` with state containers `working/`, `emerging/`, `crystallized/`, and `archived/`. Do not use a root `briefs/` folder because it overlaps with durable documents and compact crystallized memory.
+
 ## Layer 1: Core Status
 
 Layer 1 Core is structurally close to complete.
@@ -267,12 +269,12 @@ Cons:
 - boundaries may feel artificial
 - more governance files to maintain
 
-### Option B: One Process Category
+### Option B: One Memory Category
 
 ```text
 .agents/
-  process/
-    _process.md
+  memory/
+    _memory.md
     active/
       _active.md
     sessions/
@@ -285,6 +287,8 @@ Cons:
       _observations.md
     analysis/
       _analysis.md
+    crystallized/
+      _crystallized.md
 ```
 
 Pros:
@@ -298,7 +302,7 @@ Pros:
 Cons:
 
 - one extra routing hop
-- `process` may be too generic as a name
+- the earlier `process` name is too generic
 - needs clear subcategory meanings to avoid becoming a junk drawer
 
 ### Option C: Memory Category
@@ -327,14 +331,14 @@ Cons:
 
 ## Current Recommendation
 
-Use one Layer 2 umbrella route, but keep the official name undecided until user docs are drafted.
+Use one Layer 2 umbrella route named `memory/`.
 
-Best current structure:
+Superseded earlier structure:
 
 ```text
 .agents/
-  process/
-    _process.md
+  memory/
+    _memory.md
     active/
       _active.md
     sessions/
@@ -345,29 +349,63 @@ Best current structure:
       _observations.md
     analysis/
       _analysis.md
+    crystallized/
+      _crystallized.md
     handoffs/
       _handoffs.md
 ```
 
-Start with active, sessions, ideas, observations, analysis, and handoffs.
+The current recommendation is now the state-container `memory/` structure:
 
-Postpone decisions and tasks:
+```text
+.agents/
+  memory/
+    _memory.md
+    working/
+      _working.md
+      sessions/
+        _sessions.md
+    emerging/
+      _emerging.md
+      observations/
+        _observations.md
+      ideas/
+        _ideas.md
+      analysis/
+        _analysis.md
+    crystallized/
+      _crystallized.md
+      decisions/
+        _decisions.md
+      documents/
+        _documents.md
+    archived/
+      _archived.md
+      working/
+      emerging/
+      crystallized/
+```
 
-- decisions can be extracted from sessions or ideas once the need is proven
+Start with working, emerging, crystallized, and archived memory. Exact default child folders remain open for governance review.
+
+Postpone tasks:
+
+- decisions are likely a default child under `crystallized/`, pending governance review
 - tasks overlap strongly with workflows and external issue trackers
 - backlog may be useful, but should wait until task ownership and planning-module boundaries are clearer
 
-Keep archive as a nested convention, not a root category.
+Use `archived/` as the Memory state for retired material. Its contents should mirror or preserve source paths so it remains navigable rather than becoming a dump.
 
 ## Open Questions
 
-- Should the umbrella folder be `process/`, `memory/`, or `process-memory/`?
-- Should decisions be included in the first Memory package?
-- Should handoffs be a category or a session file type?
+- Should the umbrella folder remain `memory/` after user-facing docs are drafted?
+- Should `crystallized/decisions/` be included in the first Memory package?
+- Should handoffs be a category, a session file type, or workflow-owned output?
 - Should tasks be omitted entirely until workflows define task creation?
-- Should active memory be a dedicated `active/` route or a required section in sessions?
-- Should observations be first-class or a promotion path from sessions and ideas?
-- Should analysis be first-class or a document/session subtype?
+- Should working memory include a `current.md`, or should sessions carry current context first?
+- Should `emerging/observations/` be included by default, or added by workflows?
+- Should `emerging/analysis/` be included by default, or added by workflows?
+- Should compact crystallized files be called crystals, summaries, or simply crystallized files in user docs?
 - Should backlog exist in Memory, or only in a planning/task module?
 - Should Layer 2 ship by default after Core, be offered by the installer, or be installed through an explicit command?
 - How much of Memory should be framework-managed versus immediately user-owned?

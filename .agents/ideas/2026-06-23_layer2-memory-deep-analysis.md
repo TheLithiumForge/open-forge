@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Deep Layer 2 memory analysis across personas, durable project records, and Layer 3 workflows
-  tags: [OpenForge, Layer2, Memory, Personas, ProjectMemory, ProcessMemory, Workflows]
+  tags: [OpenForge, Layer2, Memory, Persona, ProjectMemory, ProcessMemory, Workflow]
 ---
 
 # Layer 2 Memory Deep Analysis
@@ -47,6 +47,7 @@ Layer 2 Memory should support these jobs:
 - capture useful observations found during work
 - store structured analyses that may later become decisions, documents, or tasks
 - store approved decisions and their reasoning
+- store compact crystallized briefs for cheap future loading
 - store or route durable documents such as PRDs, architecture docs, design docs, and research summaries
 - provide small handoffs for agents, threads, and humans
 - give Layer 3 workflows stable places to read from and write to
@@ -206,6 +207,23 @@ Decisions explain what was accepted, why, and what alternatives were rejected.
 
 Accepted memory can influence future work, but it still does not automatically become a directive, pattern, guideline, skill, workflow, or workspace route. Those promotions must be explicit.
 
+### Crystallized Memory
+
+Crystallized memory stores compact current understanding.
+
+Compact direct files in `crystallized/` are the main crystallized memory. They are shorter than documents and more curated than sessions, ideas, observations, or analysis.
+
+Examples:
+
+- project brief
+- product brief
+- architecture brief
+- design brief
+- domain brief
+- user or team preference brief
+
+Crystallized direct files should be cheap for agents to load before deciding whether they need longer documents or raw history.
+
 ### Document Memory
 
 Document memory holds or routes durable artifacts.
@@ -232,7 +250,7 @@ Handoffs are the main transfer memory. They should be short and distilled, not a
 
 ## Proposed Layer 2 Shape
 
-Current best shape:
+Earlier flat candidate:
 
 ```text
 .agents/
@@ -313,6 +331,14 @@ Accepted decisions and rationale.
 Use for "we chose X because Y" records. Architecture decisions, product decisions, design decisions, process decisions, and personal project decisions can all live here.
 
 If a decision creates mandatory behavior, promote that behavior into directives. If it creates a repeatable shape, promote the shape into patterns. If it creates recurring judgment, promote that into guidelines.
+
+### `crystallized/` direct files
+
+Compact current understanding.
+
+Use direct files in `crystallized/` for distilled project, product, architecture, design, domain, user, or team context that should be cheap to load before longer records.
+
+These files are crystallized from sessions, observations, analysis, decisions, and documents.
 
 ### `documents/`
 
@@ -398,7 +424,7 @@ Memory should support a clear promotion flow:
 active work
   -> sessions
   -> observations / ideas / analysis
-  -> decisions / documents
+  -> decisions / crystallized files / documents
   -> core categories or external systems when needed
 ```
 
@@ -427,6 +453,7 @@ ideas/         candidate context, not authority
 observations/  useful findings, verify before promotion
 analysis/      structured reasoning, promote before treating as accepted truth
 decisions/     accepted rationale within stated scope
+crystallized/  compact current understanding through direct files
 documents/     durable project record within stated scope
 handoffs/      resume summary, not full truth
 archive/       historical context only
@@ -446,6 +473,7 @@ Agents and workflows should periodically ask:
 - did this work produce an analysis worth keeping
 - did this brainstorm produce an idea worth keeping
 - did this discussion produce a decision
+- did this change require updating a crystallized file
 - did this project need a document update
 - did this repeated behavior belong in a directive, pattern, guideline, skill, or workflow
 - did this work create or update an external task
@@ -512,6 +540,7 @@ Current bias: install the full Memory Layer when Layer 2 is explicitly installed
 - Should observations be first-class or just extracted session notes?
 - Should analysis be first-class or a document/session subtype?
 - Should decisions be first-class from the start?
+- Should compact crystallized files be called briefs, crystals, summaries, or simply crystallized files?
 - Should handoffs be first-class or generated from active memory and sessions?
 - Should active memory be one `current.md` file or many files by task/session?
 - How should stale active memory be detected?

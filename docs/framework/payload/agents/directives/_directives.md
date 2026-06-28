@@ -16,7 +16,7 @@ The root category represents workspace-wide directive scope. Nested directive ca
 
 The installed directives category entrypoint must contain:
 
-- scoped `open-forge:` frontmatter with a description and useful tags
+- scoped `open-forge:` frontmatter with a description and useful tags, including `Core`, `Directive`, `Index`, and `LoadWithParentEntrypoint`
 - a title
 - one short definition of directives
 - compact loading, authority, and scope axioms
@@ -26,14 +26,12 @@ The authored portion must stay between 15 and 40 non-empty lines. Generated entr
 
 ## Loading Contract
 
-The loader must load the root directives category for every request when it exists.
+The root directives category is loaded through its generated loader entry because its installed metadata includes `LoadWithParentEntrypoint`.
 
 The root directives entrypoint must require agents to load:
 
 - every direct directive file in the root category
-- every child category that explicitly preserves workspace-wide scope
-- every routing-only category needed to discover narrower scopes
-- every child directive category whose positive scope matches the current work
+- every child directive route whose path, description, tags, or defined tag behavior match the current work
 
 Directive bodies outside the current scope remain routed but unloaded.
 
@@ -51,14 +49,9 @@ Direct directive files under `.agents/directives/` are workspace-wide.
 
 Every child category entrypoint must state a positive scope in its description. It must state whether the category narrows its parent scope or preserves that scope for organization.
 
-The directives tree may combine:
+The directives tree may use direct child categories, organizational routing categories, or deeper nested categories when their entrypoints make scope and loading behavior explicit.
 
-- direct workspace-wide directive files
-- direct child categories for concrete work scopes
-- an optional `global/` category that preserves workspace-wide scope
-- an optional `scoped/` routing category whose children define concrete work scopes
-
-Folder names, descriptions, and tags work together to make scope cheap to identify. Tags must provide compact signals such as `#Directive #Database #Migrations`. Paths or descriptions must keep workspace-wide and mandatory meaning readable without relying on tags alone.
+Folder names, descriptions, and tags work together to make scope cheap to identify. Tags must provide compact signals such as `#Directive #Database #Migration`. Paths or descriptions must keep workspace-wide and mandatory meaning readable without relying on tags alone.
 
 ## Generated Region
 
@@ -82,7 +75,7 @@ The loader exposes this category as mandatory root material. Every request uses 
 
 The directives category makes mandatory behavior continuously discoverable without loading every scoped directive body.
 
-Visible recursive scope supports small workspaces and deeply organized directive trees without activation metadata or framework-specific condition logic.
+Visible recursive scope supports small workspaces and deeply organized directive trees without broad activation metadata or framework-specific condition logic.
 
 ## Alignment Checks
 
@@ -90,9 +83,9 @@ The implementation is aligned when it:
 
 - is named `_directives.md`
 - lives in `.agents/directives/`
-- is loaded for every request
+- includes `Core`, `Directive`, `Index`, and `LoadWithParentEntrypoint` in scoped `open-forge:` tags
 - defines direct root files as workspace-wide
-- supports direct scope categories and optional `global/` plus `scoped/` organization together
+- supports recursively scoped child directive categories
 - uses descriptions and tags as compact scope signals
 - treats applicable directives as mandatory
 - prefers narrower selected directive scopes when safe and allowed

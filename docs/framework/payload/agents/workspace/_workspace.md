@@ -16,7 +16,7 @@ It supports a single project, a monorepo, multiple repositories, a document work
 
 The installed workspace category entrypoint must contain:
 
-- scoped `open-forge:` frontmatter with description and tags
+- scoped `open-forge:` frontmatter with description and useful tags, including `Core`, `Workspace`, and `Index`
 - a title
 - one short category description
 - compact workspace routing axioms
@@ -34,7 +34,7 @@ Workspace route filenames, grouping, and nesting depth are owned by the workspac
 
 A destination can be a file, folder, project, repository, system, or document set. The routed destination owns detailed truth.
 
-The current request determines which routed files are loaded. Generated entries provide navigation metadata and never define instructions or authority.
+The current request determines which routed files are loaded. Generated entries provide navigation metadata and reserved load policy only. They never define instructions or authority.
 
 ## Route Files
 
@@ -82,6 +82,7 @@ The implementation is aligned when it:
 
 - is named `_workspace.md`
 - lives in `.agents/workspace/`
+- includes `Core`, `Workspace`, and `Index` in scoped `open-forge:` tags
 - defines selective workspace routing
 - leaves route-file granularity to the workspace
 - uses entries to select routes relevant to the current request

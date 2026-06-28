@@ -16,7 +16,7 @@ A workflow organizes work toward an outcome, such as brainstorming, task creatio
 
 The installed workflows category entrypoint must contain:
 
-- scoped `open-forge:` frontmatter with a description and useful tags
+- scoped `open-forge:` frontmatter with a description and useful tags, including `Core`, `Workflow`, and `Index`
 - a title
 - one short definition of workflows
 - compact relevance, loading, workflow-local bundle, and completion axioms
@@ -84,6 +84,7 @@ The implementation is aligned when it:
 
 - is named `_workflows.md`
 - lives in `.agents/workflows/`
+- includes `Core`, `Workflow`, and `Index` in scoped `open-forge:` tags
 - defines workflows as larger goal-oriented agent modules
 - selects workflow routes by visible relevance
 - requires workflows to state goal, work shape, outputs, and completion

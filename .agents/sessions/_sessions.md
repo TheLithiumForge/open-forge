@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: User-approved Open Forge design sessions
-  tags: [OpenForge, Sessions, Index]
+  tags: [OpenForge, Session, Index]
 ---
 
 # Sessions

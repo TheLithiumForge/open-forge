@@ -98,6 +98,16 @@ AGENTS.md                     <- agent entry block
     _directives.md            <- mandatory workspace modifiers and scoped routes
   guidelines/
     _guidelines.md            <- contextual guidance and scoped routes
+  memory/
+    _memory.md                <- memory states and scoped routes
+    working/
+      _working.md             <- live working memory routes
+    emerging/
+      _emerging.md            <- candidate memory routes
+    crystallized/
+      _crystallized.md        <- accepted current memory routes
+    archived/
+      _archived.md            <- historical memory routes
   patterns/
     _patterns.md              <- concrete reusable shapes and scoped routes
   skills/
@@ -125,6 +135,11 @@ AGENTS.md
 .agents/loader.md
 .agents/directives/_directives.md
 .agents/guidelines/_guidelines.md
+.agents/memory/_memory.md
+.agents/memory/working/_working.md
+.agents/memory/emerging/_emerging.md
+.agents/memory/crystallized/_crystallized.md
+.agents/memory/archived/_archived.md
 .agents/patterns/_patterns.md
 .agents/skills/_skills.md
 .agents/workflows/_workflows.md
@@ -175,7 +190,7 @@ Index metadata comes from frontmatter:
 ```md
 ---
 description: Local documentation routes
-tags: [Docs, Workspace]
+tags: [Doc, Workspace]
 ---
 ```
 
@@ -185,7 +200,7 @@ Nested metadata also works:
 ---
 open-forge:
   description: Local documentation routes
-  tags: [Docs, Workspace]
+  tags: [Doc, Workspace]
 ---
 ```
 
@@ -218,7 +233,7 @@ A new top-level category becomes active when a direct child folder contains its 
 Generated entries look like this:
 
 ```md
-- `{file}` - {description} - #{tag1} #{tag2} ... #{tagN}
+- `{file}` - {description} - #{Tag1} #{Tag2} ... #{TagN}
 - `{folder/_folder.md}` - {description} - #Index
 ```
 

@@ -52,10 +52,16 @@ Tags must add compact routing information rather than repeat words without addin
 Useful tags identify the primitive type, domain, work type, topic, technology, artifact, lifecycle, or another selection signal. Use as many tags as the entry needs and no tags that do not improve routing.
 
 ```text
-- `migrations.md` - Database migration requirements - #Directive #Database #Migrations
+- `migrations.md` - Database migration requirements - #Directive #Database #Migration
 ```
 
 Paths and descriptions must keep critical scope readable. Tags reinforce and describe scope, but tags alone must not make a directive workspace-wide, mandatory, or active.
+
+Open Forge-authored payload tags use singular PascalCase concept names by default. Built-in route type tags are `#Directive`, `#Pattern`, `#Guideline`, `#Skill`, `#Workflow`, and `#Workspace`.
+
+Layer classification tags are singular: `#Core`, `#Memory`, and `#Extension`. These tags classify where material belongs; they do not create authority by themselves.
+
+Reserved load-policy tags are different from ordinary classification tags. Open Forge currently reserves only `#LoadWithParentEntrypoint`, which is governed by `docs/framework/concepts/routing.md` and defined in the installed loader.
 
 ## Backticks
 
@@ -75,7 +81,7 @@ Open Forge-authored category entrypoints and indexed routed files must use scope
 ---
 open-forge:
   description: Local workspace routes
-  tags: [OpenForge, Workspace, Index]
+  tags: [OpenForge, Core, Workspace, Index]
 ---
 ```
 
@@ -117,6 +123,8 @@ A category entrypoint contains:
 
 Category rules belong before `## Entries`. The authored portion must contain only stable category-level meaning and axioms. Detailed behavior, guidance, patterns, and user content belong in routed files.
 
+Installed category entrypoints must be understandable without governance descriptors. Any rule required for agent behavior must appear in installed payload content, not only in `docs/framework/`.
+
 The authored portion of an Open Forge category entrypoint must stay between 5 and 80 non-empty lines. Generated entries do not count toward this limit.
 
 ## Generated Index Region
@@ -133,7 +141,7 @@ The final section of every category entrypoint and the loader must use this shap
 
 The CLI owns only the content between the markers. Index generation must preserve all content outside the markers.
 
-In category entrypoints, the generated region contains direct routed files and direct child category entrypoints. In the loader, it contains direct active category entrypoints. Generated regions contain navigation metadata only. Generated entries never define instructions, behavior, or authority.
+In category entrypoints, the generated region contains direct routed files and direct child category entrypoints. In the loader, it contains direct active category entrypoints. Generated regions contain navigation metadata plus reserved load policy only. Generated entries never define instructions, behavior, or authority.
 
 When the markers are absent from a legacy category entrypoint with a final `## Entries` section, the CLI must migrate that section. When the heading and markers are all absent, the CLI must append the complete generated section.
 
@@ -165,6 +173,9 @@ Formatting is aligned when:
 
 - entries use the compact one-line shape
 - tags add useful routing information with minimal text
+- Open Forge-authored payload tags use singular PascalCase concept names by default
+- layer tags classify material without creating authority
+- reserved load-policy tags are documented before use
 - generated paths use backticks
 - generated paths are concrete and workspace-root-relative
 - category generated entries include direct routed files and direct child category entrypoints
@@ -176,5 +187,6 @@ Formatting is aligned when:
 - compatibility entrypoint names are accepted only by the CLI
 - each routed folder contains at most one recognized entrypoint name
 - category contracts stay before the generated region
+- installed category entrypoints do not depend on governance-only context
 - generated entries stay inside the required markers
 - only marker-bounded content is regenerated
