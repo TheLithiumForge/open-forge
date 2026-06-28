@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Directive scope through category placement and workflow-local bundles
-  tags: [OpenForge, Directives, Scope, Routing, Workflows]
+  tags: [OpenForge, Directive, Scope, Routing, Workflow]
 ---
 
 # Directive Scopes And Workflow Bundles
@@ -111,7 +111,7 @@ directives/
 
 This layout is permitted when it improves scanning. `global/` explicitly preserves workspace-wide scope. `scoped/` is an organizational routing category whose child categories define actual work scopes.
 
-Root directive files, direct work-scope categories, explicit `global/` and `scoped/` folders, or a combination are valid. Scope must remain visible in category paths and descriptions. Tags should reinforce it with compact signals such as `#Directive #Database #Migrations`, but tags alone must not make a directive workspace-wide or mandatory.
+Root directive files, direct work-scope categories, explicit `global/` and `scoped/` folders, or a combination are valid. Scope must remain visible in category paths and descriptions. Tags should reinforce it with compact signals such as `#Directive #Database #Migration`, but tags alone must not make a directive workspace-wide or mandatory.
 
 ## Alternatives Considered
 

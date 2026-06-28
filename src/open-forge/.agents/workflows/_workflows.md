@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Goal-oriented agent modules and scoped workflow routes
-  tags: [OpenForge, Workflows, Index]
+  tags: [OpenForge, Core, Workflow, Index]
 ---
 
 # Workflows
@@ -18,7 +18,7 @@ Workflows are larger goal-oriented agent modules.
 - Prefer safe workflow-local material over broader workspace material for that active workflow; report unresolved conflicts.
 - Do not nest another Open Forge root, loader, or workspace under a workflow.
 - Follow each selected child entrypoint's scope and loading axioms recursively.
-- Generated entries are navigation only.
+- Generated entries are navigation and reserved load policy only.
 
 ## Entries
 

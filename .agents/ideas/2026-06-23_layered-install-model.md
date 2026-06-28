@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Three-layer install model for core context, memory, and extensions
-  tags: [OpenForge, Architecture, Layers, Core, Memory, Extensions, CLI]
+  tags: [OpenForge, Architecture, Layer, Core, Memory, Extension, CLI]
 ---
 
 # Layered Install Model

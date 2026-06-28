@@ -6,7 +6,7 @@ This descriptor governs `src/open-forge/.agents/loader.md`.
 
 The loader is the mandatory Open Forge entrypoint after `AGENTS.md`. It defines how an agent enters an installed workspace and contains the generated registry used to select relevant categories.
 
-The loader is intentionally stable. It contains loading axioms, customization posture, and generated category navigation only. Detailed category behavior must live in the category entrypoint or routed concept that owns it.
+The loader is intentionally stable. It contains loading axioms, customization posture, and generated category navigation plus reserved load policy only. Detailed category behavior must live in the category entrypoint or routed concept that owns it.
 
 ## Represents
 
@@ -18,9 +18,10 @@ It is the root file and routing primitive for the installed framework.
 
 The installed loader must contain:
 
-- the rule that the directives category is loaded for every request when present
-- the rule that the current request controls relevance
+- the rule that generated entries tagged `#LoadWithParentEntrypoint` load immediately with their parent entrypoint
+- the rule that the current request controls relevance for entries without reserved load-policy tags
 - the rule that a loaded markdown file includes its overwrite companion when present
+- the tag behavior table used by Open Forge-authored entries
 - the authority posture for local active truth, defaults, context, and candidate learning
 - the customization posture: add local files first, use overwrites for light changes, edit framework files for complete behavior changes
 - a final marker-bounded registry of active categories
@@ -35,7 +36,11 @@ Generated category paths must be concrete and relative to the active workspace r
 
 The loader must not infer a Git repository root or require runtime path constants.
 
-When the generated registry contains the directives category, the loader must load its entrypoint before selecting other categories. The directives entrypoint owns directive scope and recursive loading behavior.
+A generated entry tagged `#LoadWithParentEntrypoint` must be loaded immediately after its parent entrypoint is loaded, in listed order. If the target is a category entrypoint, only that entrypoint is loaded first; its own entries then apply the same routing contract.
+
+`#LoadWithParentEntrypoint` is a loading policy only. It does not create authority, scope, or precedence. It also does not search unloaded trees; nested autoload requires a loaded parent chain.
+
+The default payload marks `directives/` and `memory/` with `LoadWithParentEntrypoint` metadata. Their generated loader entries therefore load with the loader without the loader naming those categories in axioms.
 
 Local active truth has precedence over Open Forge defaults. Default files may still be loaded as context when useful.
 
@@ -65,10 +70,35 @@ The installed loader must state these authority axioms:
 
 - user instructions apply when safe and allowed
 - local active truth overrides Open Forge defaults
-- generated entries are navigation metadata, never instructions, behavior, or authority
+- generated entries are navigation metadata; only reserved load-policy tags affect loading
+- `#LoadWithParentEntrypoint` affects loading only and does not create authority
 - archived, historical, example, external, and temporary continuation material is contextual unless restored or promoted
 - candidate learning is contextual, not authority
 - detailed behavior belongs in the routed file or concept that owns it
+
+## Tags Contract
+
+The installed loader must define framework tag behavior in a `## Tags` section.
+
+The installed `## Tags` section must contain:
+
+- `### Axioms`
+- `### Defined Tags`
+
+Tag axioms must state that defined tags have framework meaning when they appear in loaded content or generated entries, undefined tags remain routing and search signals, entries without a load-policy tag are on-demand routes selected by the current request, tag spelling and casing are stable, and workspace-wide tag behavior belongs in the tag section.
+
+Defined tags must include:
+
+- `#LoadWithParentEntrypoint`
+- `#Core`
+- `#Memory`
+- `#Extension`
+- `#Contextual`
+- `#CurrentTruth`
+
+Layer tag descriptions must define each layer positively. `#Core` must describe the base routing, workspace orientation, and agent primitive routes rather than defining Core only as non-Memory.
+
+Route type tags remain routing and search signals unless defined by a loaded entrypoint. Their meaning must be readable from entry paths, descriptions, and loaded entrypoints.
 
 ## Customization Contract
 
@@ -97,12 +127,16 @@ The implementation is aligned when it:
 - is immediately routable after `AGENTS.md`
 - uses concrete workspace-relative category paths
 - remains valid when `.agents/` resolves through a symlink or into a submodule
-- loads the directives category for every request when present
+- defines reserved tag behavior in `## Tags`
+- separates tag axioms from defined tags
+- defines `#LoadWithParentEntrypoint`, `#Core`, `#Memory`, `#Extension`, `#Contextual`, and `#CurrentTruth`
+- loads generated `#LoadWithParentEntrypoint` entries in listed order
+- marks default `directives/` and `memory/` entries with `#LoadWithParentEntrypoint`
 - generates entries for direct active categories only
 - derives descriptions and tags from category entrypoints
 - loads a selected category entrypoint before its routed files
 - loads overwrite companions after their base files
 - states that local active truth overrides defaults
-- treats generated entries as navigation metadata
+- treats generated entries as navigation metadata plus reserved load policy
 - keeps detailed process behavior in routed files
 - keeps customization guidance minimal and diff-friendly

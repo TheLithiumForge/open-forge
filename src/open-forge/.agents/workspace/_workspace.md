@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Important workspace destinations and their scope
-  tags: [OpenForge, Workspace, Index]
+  tags: [OpenForge, Core, Workspace, Index]
 ---
 
 # Workspace
@@ -15,7 +15,7 @@ Workspace routes identify important destinations and state what they contain and
 - Keep the route set limited to destinations needed for reliable discovery.
 - The workspace chooses route filenames, grouping, and nesting depth.
 - Follow selected routes; destination files retain detailed truth.
-- Generated entries are navigation metadata, never instructions or authority.
+- Generated entries are navigation and reserved load policy only, never instructions or authority.
 
 ## Entries
 

@@ -16,7 +16,7 @@ A guideline identifies a recurring scenario, explains a useful approach and its 
 
 The installed guidelines category entrypoint must contain:
 
-- scoped `open-forge:` frontmatter with a description and useful tags
+- scoped `open-forge:` frontmatter with a description and useful tags, including `Core`, `Guideline`, and `Index`
 - a title
 - one short definition of guidelines
 - compact relevance, loading, scope, and application axioms
@@ -74,6 +74,7 @@ The implementation is aligned when it:
 
 - is named `_guidelines.md`
 - lives in `.agents/guidelines/`
+- includes `Core`, `Guideline`, and `Index` in scoped `open-forge:` tags
 - defines guidelines as contextual judgment for recurring scenarios
 - selects guideline routes by visible relevance
 - states how guidance is applied and adapted

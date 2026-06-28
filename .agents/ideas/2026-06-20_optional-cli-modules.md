@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Optional CLI modules for skills, technology patterns, and other reusable additions
-  tags: [OpenForge, CLI, Modules, Skills, Patterns]
+  tags: [OpenForge, CLI, Module, Skill, Pattern]
 ---
 
 # Optional CLI Modules

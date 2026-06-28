@@ -1,12 +1,12 @@
 ---
 open-forge:
-    description: Concrete reusable shapes for inspectable work
-    tags: [OpenForge, Patterns, Index]
+  description: Concrete reusable shapes for inspectable work
+  tags: [OpenForge, Core, Pattern, Index]
 ---
 
 # Patterns
 
-Patterns define recognizable arrangements with stable relationships and variable contents. they represent a concrete shape for code, files, naming, placement, boundaries, APIs, documents, or another inspectable result. usually patterns would be crested with examples of the output .
+Patterns define recognizable arrangements with stable relationships and variable contents.
 
 ## Axioms
 
@@ -16,13 +16,12 @@ Patterns define recognizable arrangements with stable relationships and variable
 - Treat an applicable pattern as the established default shape for its scope.
 - Use a different shape only for a deliberate reason.
 - Follow each selected child entrypoint's scope and loading axioms recursively.
-  inform the user why a pattern couldn't fit this shape even thought the case seemed a fit
+- Report when an applicable pattern does not fit the case, and explain why.
 - Prefer patterns from a narrower selected scope over broader patterns when safe and allowed; report unresolved conflicts.
-- Generated entries are navigation only.
+- Generated entries are navigation and reserved load policy only.
 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
 - none - No entries - #Empty
-  <!-- open-forge:generated-index:end -->
+<!-- open-forge:generated-index:end -->

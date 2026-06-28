@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Contextual guidance for recurring decisions and scenarios
-  tags: [OpenForge, Guidelines, Index]
+  tags: [OpenForge, Core, Guideline, Index]
 ---
 
 # Guidelines
@@ -17,7 +17,7 @@ Guidelines provide adaptable judgment for recurring scenarios.
 - State the reason for a context-driven adaptation or alternative.
 - Follow each selected child entrypoint's scope and loading axioms recursively.
 - Prefer guidelines from a narrower selected scope over broader guidelines when safe and allowed.
-- Generated entries are navigation only.
+- Generated entries are navigation and reserved load policy only.
 
 ## Entries
 

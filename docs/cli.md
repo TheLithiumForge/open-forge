@@ -61,7 +61,7 @@ Open Forge-authored category entrypoints are named `_{folder-name}.md`:
 The category entrypoint contains stable category meaning followed by a generated region. The generated region reads direct markdown route files and direct child category entrypoints:
 
 ```md
-- `{file}` - {description} - #{tag1} #{tag2} ... #{tagN}
+- `{file}` - {description} - #{Tag1} #{Tag2} ... #{TagN}
 - `{folder/_folder.md}` - {description} - #Index
 ```
 
@@ -116,7 +116,7 @@ Metadata comes from frontmatter:
 ```md
 ---
 description: Local documentation patterns
-tags: [Docs, Pattern]
+tags: [Doc, Pattern]
 ---
 ```
 
@@ -126,7 +126,7 @@ Nested metadata works too:
 ---
 open-forge:
   description: Local documentation patterns
-  tags: [Docs, Pattern]
+  tags: [Doc, Pattern]
 ---
 ```
 

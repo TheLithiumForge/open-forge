@@ -16,7 +16,7 @@ A pattern has stable relationships and variable contents. It governs recognizabl
 
 The installed patterns category entrypoint must contain:
 
-- scoped `open-forge:` frontmatter with a description and useful tags
+- scoped `open-forge:` frontmatter with a description and useful tags, including `Core`, `Pattern`, and `Index`
 - a title
 - one short definition of patterns
 - compact relevance, loading, scope, and application axioms
@@ -74,6 +74,7 @@ The implementation is aligned when it:
 
 - is named `_patterns.md`
 - lives in `.agents/patterns/`
+- includes `Core`, `Pattern`, and `Index` in scoped `open-forge:` tags
 - defines patterns as concrete recognizable shapes
 - selects pattern routes by visible relevance
 - treats applicable patterns as established defaults

@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Bounded reusable agent capabilities and scoped routes
-  tags: [OpenForge, Skills, Index]
+  tags: [OpenForge, Core, Skill, Index]
 ---
 
 # Skills
@@ -17,7 +17,7 @@ Skills are bounded reusable agent capabilities.
 - Preserve the skill format and invocation model of the active agent runtime.
 - Follow each selected child entrypoint's scope and loading axioms recursively.
 - Prefer skills from a narrower selected scope over broader skills when safe and allowed.
-- Generated entries are navigation only.
+- Generated entries are navigation and reserved load policy only.
 
 ## Entries
 

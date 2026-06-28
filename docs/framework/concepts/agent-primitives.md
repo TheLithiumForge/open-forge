@@ -10,7 +10,7 @@ These primitives separate mandatory behavior, reusable form, contextual judgment
 
 Agent primitives represent the kinds of routed material that shape or perform agent work.
 
-Their type determines how an agent uses their contents. Their category placement, description, and tags communicate scope. Generated entries provide navigation only.
+Their type determines how an agent uses their contents. Their category placement, description, and tags communicate scope. Generated entries provide navigation and reserved load policy only.
 
 ## Directives
 
@@ -90,52 +90,28 @@ Each category must begin with only the minimum category contract and generated i
 
 Users populate these categories with local files. Optional modules may add curated files and nested categories later.
 
+Core primitive entrypoints must use `#Core` plus the singular route type tag that matches the category: `#Directive`, `#Pattern`, `#Guideline`, `#Skill`, or `#Workflow`.
+
 ## Scope Contract
 
 Scope must be visible through category placement, concise descriptions, and useful tags.
 
-Tags must compress useful routing information such as primitive type, domain, work type, topic, technology, or artifact. For example, `#Directive #Database #Migrations` lets an agent identify likely scope without opening the routed file.
+Tags must compress useful routing information such as primitive type, domain, work type, topic, technology, or artifact. Primitive type tags use singular PascalCase. For example, `#Directive #Database #Migration` lets an agent identify likely scope without opening the routed file.
 
-Tags may reinforce and describe scope, but they must not be the only indication that a directive is workspace-wide or mandatory. Tags never activate a primitive or establish authority by themselves.
+Tags may reinforce and describe scope, but they must not be the only indication that a directive is workspace-wide or mandatory. Tags never establish authority by themselves. The reserved `#LoadWithParentEntrypoint` tag affects loading only and is governed by the routing concept.
 
 Every routed primitive file inherits the positive scope of its containing category. A child category must state whether it narrows that scope or preserves it for organization.
 
-The directives tree may use any combination of these layouts:
-
-```text
-directives/
-  _directives.md
-  concise-language.md
-  frontend/
-    _frontend.md
-  global/
-    _global.md
-  scoped/
-    _scoped.md
-    database/
-      _database.md
-```
-
-In this shape:
-
-- direct files under `directives/` are workspace-wide
-- a direct child such as `frontend/` defines its own positive scope
-- `global/` preserves workspace-wide scope while organizing global directives
-- `scoped/` is an optional routing container whose child categories define actual positive scopes
-
-The names `global/` and `scoped/` are permitted conventions, not required framework folders. Root files, direct scope categories, explicit organizational folders, or a combination remain valid.
-
 ## Directive Loading Contract
 
-When a root directives category exists, its entrypoint must be loaded for every request.
+The default root directives category is tagged `LoadWithParentEntrypoint`, so its generated loader entry loads with the loader.
 
 The root entrypoint must route agents to:
 
 - every direct workspace-wide directive file
-- every child category that explicitly preserves workspace-wide scope
-- every applicable scoped directive category
+- every child directive route whose path, description, tags, or defined tag behavior match the current work
 
-An organizational `scoped/` category must be loaded as routing metadata so its child scopes can be evaluated. Directive bodies outside the current scope remain unloaded.
+Directive bodies outside the current scope remain routed but unloaded.
 
 Workspace-wide means mandatory across Open Forge work. Current user instructions, platform constraints, and runtime safety remain higher authority.
 
@@ -153,7 +129,7 @@ The workflow bundle uses the existing recursive category contract. It does not c
 
 ## Why
 
-Visible path-based scope keeps agent behavior reviewable without adding activation fields, inherited metadata, or special tag semantics.
+Visible path-based scope keeps agent behavior reviewable without adding activation fields, inherited metadata, or broad tag semantics.
 
 Workflow-local bundles provide useful locality and reuse while one root framework preserves consistent authority and routing.
 
@@ -167,12 +143,12 @@ Agent primitives are aligned when:
 - skills remain bounded reusable capabilities
 - workflows remain larger goal-oriented modules
 - every core primitive category is installed with its minimum entrypoint
+- core primitive entrypoints use `#Core` and singular primitive tags
 - opinionated primitive content remains local or optional
 - tags provide compact scope and classification signals
 - paths or descriptions expose workspace-wide and mandatory scope without relying on tags alone
 - root directive files are workspace-wide
 - nested categories state whether they narrow or preserve scope
-- `global/` and `scoped/` organization remains optional and composable
 - workspace directives remain active inside workflows
 - safe workflow-local material takes preference within its active workflow
 - mixed local primitive bundles exist only inside workflows

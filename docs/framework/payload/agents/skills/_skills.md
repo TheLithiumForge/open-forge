@@ -16,7 +16,7 @@ A skill packages a bounded ability, procedure, tool use, or reference set that h
 
 The installed skills category entrypoint must contain:
 
-- scoped `open-forge:` frontmatter with a description and useful tags
+- scoped `open-forge:` frontmatter with a description and useful tags, including `Core`, `Skill`, and `Index`
 - a title
 - one short definition of skills
 - compact relevance, loading, scope, and runtime-boundary axioms
@@ -76,6 +76,7 @@ The implementation is aligned when it:
 
 - is named `_skills.md`
 - lives in `.agents/skills/`
+- includes `Core`, `Skill`, and `Index` in scoped `open-forge:` tags
 - defines skills as bounded reusable agent capabilities
 - selects skill routes by visible relevance
 - keeps runtime-specific invocation and packaging outside the category contract
