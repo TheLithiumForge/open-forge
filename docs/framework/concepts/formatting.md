@@ -57,11 +57,13 @@ Useful tags identify the primitive type, domain, work type, topic, technology, a
 
 Paths and descriptions must keep critical scope readable. Tags reinforce and describe scope, but tags alone must not make a directive workspace-wide, mandatory, or active.
 
-Open Forge-authored payload tags use singular PascalCase concept names by default. Built-in route type tags are `#Directive`, `#Pattern`, `#Guideline`, `#Skill`, `#Workflow`, and `#Workspace`.
+Use normal words when naming, defining, or explaining the local concept itself. Use bare tags when the text points to routed ownership, classification, promotion, load policy, truth status, or search/reference targets. For example, a memory entrypoint says "Memory records state"; a promotion rule can say "move to #Core".
 
-Layer classification tags are singular: `#Core`, `#Memory`, and `#Extension`. These tags classify where material belongs; they do not create authority by themselves.
+Open Forge-authored payload tags use singular PascalCase concept names by default. Built-in route type tags are #Directive, #Pattern, #Guideline, #Skill, #Workflow, and #Workspace.
 
-Reserved load-policy tags are different from ordinary classification tags. Open Forge currently reserves only `#LoadWithParentEntrypoint`, which is governed by `docs/framework/concepts/routing.md` and defined in the installed loader.
+Layer classification tags are singular: #Core, #Memory, and #Extension. These tags classify where material belongs; they do not create authority by themselves.
+
+Reserved load-policy tags are different from ordinary classification tags. Open Forge currently reserves only #LoadWithParentEntrypoint, which is governed by `docs/framework/concepts/routing.md` and defined in the installed loader.
 
 ## Backticks
 

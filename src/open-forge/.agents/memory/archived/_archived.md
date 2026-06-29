@@ -16,6 +16,7 @@ Archived memory is preserved context that is no longer current.
 - Load archived memory only when it is relevant to the current request.
 - Preserve enough origin context to explain where archived material came from.
 - Preserve why material was archived and what replaced it when a replacement exists.
+- Use scoped archive routes when they preserve origin better than a global archive route.
 - Extract useful current material before archiving when current material remains.
 - Restore archived material only into an explicit current destination.
 - Validate restored material before treating it as `working/`, `emerging/`, or `crystallized/` memory.

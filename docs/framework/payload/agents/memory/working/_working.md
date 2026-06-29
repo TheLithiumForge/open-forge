@@ -28,7 +28,9 @@ Working memory contains live context for work that is happening now or may need 
 
 Working memory is not accepted truth. It is resumability context. It can be wrong, partial, stale, or superseded by later work.
 
-Child entrypoints, local files, and optional modules define their own taxonomy below this route.
+The base payload installs `sessions/` for raw work history and `handoffs/` for concise transfer notes.
+
+Child entrypoints, local files, and #Extension payloads define their own taxonomy below this route.
 
 ## Loading Contract
 
@@ -36,7 +38,7 @@ The working memory category is relevant when current work needs live or resumabl
 
 The entrypoint must route agents to direct working memory files and child working memory categories whose path, description, or tags match the current request. Each selected child entrypoint applies the same contract recursively.
 
-Agents select the smallest current route that can answer what is happening now.
+Agents select the smallest current route that can answer what is happening now. The installed parent entrypoint must let generated entries carry installed child route names and descriptions instead of repeating those names in axioms.
 
 ## Freshness Contract
 
@@ -72,7 +74,7 @@ Generated entries list direct working memory files and direct child working memo
 
 Agents use this category when they need current context before deciding what to do next.
 
-Layer 3 workflows may use working memory while work is in progress.
+#Extension workflows may use working memory while work is in progress.
 
 ## Why
 
@@ -88,6 +90,8 @@ The implementation is aligned when it:
 - lives in `.agents/memory/working/`
 - includes `Contextual` and `LoadWithParentEntrypoint` in scoped `open-forge:` tags
 - defines working memory as live resumability context
+- exposes installed `handoffs/` and `sessions/` routes
+- avoids repeating installed child route names in implementation axioms
 - keeps working memory contextual rather than authoritative
 - routes current work selectively
 - requires stale working memory to be extracted, cleared, or archived

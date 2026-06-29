@@ -51,7 +51,7 @@ Every child category entrypoint must state a positive scope in its description. 
 
 The directives tree may use direct child categories, organizational routing categories, or deeper nested categories when their entrypoints make scope and loading behavior explicit.
 
-Folder names, descriptions, and tags work together to make scope cheap to identify. Tags must provide compact signals such as `#Directive #Database #Migration`. Paths or descriptions must keep workspace-wide and mandatory meaning readable without relying on tags alone.
+Folder names, descriptions, and tags work together to make scope cheap to identify. Tags must provide compact signals such as #Directive #Database #Migration. Paths or descriptions must keep workspace-wide and mandatory meaning readable without relying on tags alone.
 
 ## Generated Region
 
@@ -90,4 +90,4 @@ The implementation is aligned when it:
 - treats applicable directives as mandatory
 - prefers narrower selected directive scopes when safe and allowed
 - routes only through its final generated region
-- leaves generated entries empty until local files or optional modules add directive content
+- leaves generated entries empty until local files or #Extension payloads add directive content

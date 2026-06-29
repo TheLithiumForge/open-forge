@@ -4,11 +4,11 @@
 
 This descriptor governs `src/open-forge/.agents/workflows/_workflows.md`.
 
-The workflows category entrypoint defines how agents discover larger goal-oriented modules and how an active workflow owns local supporting material.
+The workflows category entrypoint defines how agents discover larger goal-oriented workflows and how an active workflow owns local supporting material.
 
 ## Represents
 
-The workflows category represents repeatable agent modules for larger goals.
+The workflows category represents repeatable agent workflows for larger goals.
 
 A workflow organizes work toward an outcome, such as brainstorming, task creation, implementation, review, test-driven development, handoff, or learning.
 
@@ -70,7 +70,7 @@ Generated entries list direct workflow files and direct child workflow categorie
 
 ## Used By
 
-Agents use this category when work may benefit from an established goal-oriented module.
+Agents use this category when work may benefit from an established goal-oriented workflow.
 
 ## Why
 
@@ -85,7 +85,7 @@ The implementation is aligned when it:
 - is named `_workflows.md`
 - lives in `.agents/workflows/`
 - includes `Core`, `Workflow`, and `Index` in scoped `open-forge:` tags
-- defines workflows as larger goal-oriented agent modules
+- defines workflows as larger goal-oriented agent workflows
 - selects workflow routes by visible relevance
 - requires workflows to state goal, work shape, outputs, and completion
 - permits local supporting primitive categories only under active workflows
@@ -94,4 +94,4 @@ The implementation is aligned when it:
 - supports recursive positive workflow scope
 - prefers narrower selected workflow scopes when safe and allowed
 - routes only through its final generated region
-- remains empty until local files or optional modules add workflow content
+- remains empty until local files or #Extension payloads add workflow content

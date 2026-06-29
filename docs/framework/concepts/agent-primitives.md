@@ -38,7 +38,7 @@ A guideline provides contextual judgment for a recurring scenario.
 
 It explains how to approach the scenario, why the approach is useful, relevant tradeoffs, and the patterns, skills, or workflows that may help. Suggested actions remain adaptable to the current work.
 
-A guideline is advisory. It does not create a mandatory requirement or an executable agent module.
+A guideline is advisory. It does not create a mandatory requirement or an executable workflow.
 
 Guidelines may nest recursively by domain, scenario, decision area, or any other useful positive scope.
 
@@ -50,7 +50,7 @@ Skills preserve the established meaning used by AI tools. They may be invoked di
 
 ## Workflows
 
-A workflow is a larger goal-oriented agent module, such as brainstorming, task creation, test-driven development, review, or implementation.
+A workflow is a larger goal-oriented agent workflow, such as brainstorming, task creation, test-driven development, review, or implementation.
 
 A workflow may organize phases, invoke skills, consult guidelines, apply patterns, and produce artifacts while obeying applicable directives.
 
@@ -88,17 +88,17 @@ The core payload must install these root categories:
 
 Each category must begin with only the minimum category contract and generated index region required for routing. The core payload does not seed opinionated directive, pattern, guideline, skill, or workflow content.
 
-Users populate these categories with local files. Optional modules may add curated files and nested categories later.
+Users populate these categories with local files. #Extension payloads may add curated files and nested categories later.
 
-Core primitive entrypoints must use `#Core` plus the singular route type tag that matches the category: `#Directive`, `#Pattern`, `#Guideline`, `#Skill`, or `#Workflow`.
+Core primitive entrypoints must use #Core plus the singular route type tag that matches the category: #Directive, #Pattern, #Guideline, #Skill, or #Workflow.
 
 ## Scope Contract
 
 Scope must be visible through category placement, concise descriptions, and useful tags.
 
-Tags must compress useful routing information such as primitive type, domain, work type, topic, technology, or artifact. Primitive type tags use singular PascalCase. For example, `#Directive #Database #Migration` lets an agent identify likely scope without opening the routed file.
+Tags must compress useful routing information such as primitive type, domain, work type, topic, technology, or artifact. Primitive type tags use singular PascalCase. For example, #Directive #Database #Migration lets an agent identify likely scope without opening the routed file.
 
-Tags may reinforce and describe scope, but they must not be the only indication that a directive is workspace-wide or mandatory. Tags never establish authority by themselves. The reserved `#LoadWithParentEntrypoint` tag affects loading only and is governed by the routing concept.
+Tags may reinforce and describe scope, but they must not be the only indication that a directive is workspace-wide or mandatory. Tags never establish authority by themselves. The reserved #LoadWithParentEntrypoint tag affects loading only and is governed by the routing concept.
 
 Every routed primitive file inherits the positive scope of its containing category. A child category must state whether it narrows that scope or preserves it for organization.
 
@@ -141,9 +141,9 @@ Agent primitives are aligned when:
 - patterns define concrete inspectable shapes
 - guidelines provide adaptable contextual judgment
 - skills remain bounded reusable capabilities
-- workflows remain larger goal-oriented modules
+- workflows remain larger goal-oriented agent workflows
 - every core primitive category is installed with its minimum entrypoint
-- core primitive entrypoints use `#Core` and singular primitive tags
+- core primitive entrypoints use #Core and singular primitive tags
 - opinionated primitive content remains local or optional
 - tags provide compact scope and classification signals
 - paths or descriptions expose workspace-wide and mandatory scope without relying on tags alone

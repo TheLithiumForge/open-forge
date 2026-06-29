@@ -26,9 +26,11 @@ The authored portion must stay between 15 and 45 non-empty lines. Generated entr
 
 Archived memory is historical context only.
 
-Archived memory contains Memory material after useful current essence has been extracted or the material has stopped being current.
+Archived memory contains memory material after useful current essence has been extracted or the material has stopped being current.
 
 The archive must preserve enough context to answer where the material came from, why it was archived, and what replaced it when a replacement exists.
+
+The base payload does not install default archive subroutes for every memory state. Archive routes may be global or scoped anywhere their owning route makes historical context clearer, but their organization must preserve origin and relevance.
 
 ## Authority Contract
 
@@ -36,7 +38,7 @@ Archived memory is not active truth.
 
 Agents may use archived memory for history, reconstruction, rationale, or comparison. Archived material becomes current only when restored into an explicit current route.
 
-If archived material contradicts current crystallized memory or applicable `#Core` routes, the current material wins unless the user chooses to restore or revise it.
+If archived material contradicts current crystallized memory or applicable #Core routes, the current material wins unless the user chooses to restore or revise it.
 
 ## Loading Contract
 
@@ -84,7 +86,7 @@ Generated entries list direct archived memory files and direct child archived me
 
 Agents use this category when they need history kept outside current truth.
 
-Layer 3 workflows may write archived memory when material stops being current.
+#Extension workflows may write archived memory when material stops being current.
 
 ## Why
 
@@ -100,6 +102,7 @@ The implementation is aligned when it:
 - lives in `.agents/memory/archived/`
 - includes `Contextual` and `Historical` in scoped `open-forge:` tags
 - defines archived memory as historical context only
+- supports global or scoped archive routes without requiring state mirrors
 - preserves origin context
 - requires extraction before archival when useful material remains
 - keeps archived material below current memory authority
