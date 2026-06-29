@@ -1,12 +1,12 @@
 ---
 open-forge:
-  description: Goal-oriented agent modules and scoped workflow routes
+  description: Goal-oriented workflows and scoped workflow routes
   tags: [OpenForge, Core, Workflow, Index]
 ---
 
 # Workflows
 
-Workflows are larger goal-oriented agent modules.
+Workflows are larger goal-oriented agent workflows.
 
 ## Axioms
 
@@ -16,7 +16,7 @@ Workflows are larger goal-oriented agent modules.
 - A workflow may own local `directives/`, `patterns/`, `guidelines/`, and `skills/` categories under its workflow folder.
 - Workflow-local material applies only while that workflow is active.
 - Prefer safe workflow-local material over broader workspace material for that active workflow; report unresolved conflicts.
-- Do not nest another Open Forge root, loader, or workspace under a workflow.
+- Do not nest another Open Forge root, loader, or workspace under a #Workflow.
 - Follow each selected child entrypoint's scope and loading axioms recursively.
 - Generated entries are navigation and reserved load policy only.
 

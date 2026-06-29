@@ -55,11 +55,13 @@ Candidate command responsibilities include:
 - `install` for the initial core installation
 - `update` for reviewing and applying core framework updates
 - `index` for rebuilding generated navigation
-- `list` for discovering available optional modules
+- `list` for discovering available extensions
 - `preview` for showing what an operation would change
-- `add` for installing selected skills, workflows, patterns, or other modules
-- `remove` for removing a managed optional module
+- `add` for installing selected skills, workflows, patterns, or other extension payloads
+- `remove` for removing a managed extension
 - `doctor` for checking structure, generated regions, and installation health
+- category scaffolding for creating routed folders with required description and tags
+- extension scaffolding for creating shareable installable payloads
 
 Exact command names remain undecided. Similar verbs such as patch or modify must not be added as aliases unless they represent a meaningfully different operation.
 
@@ -73,18 +75,19 @@ An optional interactive interface or wizard may support:
 - choosing between compatible variants
 - reviewing updates and conflicts
 
-Interactive use must remain a convenience layer over stable non-interactive commands. Installation, updates, module selection, and CI usage must not require a terminal UI.
+Interactive use must remain a convenience layer over stable non-interactive commands. Installation, updates, extension selection, and CI usage must not require a terminal UI.
 
 ## Constraints
 
 - Keep the default installation small.
-- Require explicit selection before installing optional modules.
+- Require explicit selection before installing extensions.
 - Preview managed file changes before destructive or conflict-prone operations.
-- Clearly distinguish core updates from optional-module updates.
+- Clearly distinguish #Core updates from extension updates.
 - Preserve user-added files and make ownership visible.
 - Keep automation possible through deterministic commands and flags.
-- Do not design the wizard until module ownership, provenance, trust, updates, and removal are defined.
+- Do not design the wizard until extension ownership, provenance, trust, updates, and removal are defined.
+- Do not auto-create missing category entrypoints without description and tags from a user command or extension manifest.
 
 ## Priority
 
-The CLI experience and optional-module selector are low-priority work. They follow the core primitives, user documentation, file-by-file framework refinement, and consistency and security review.
+The CLI experience and extension selector are low-priority work. They follow the #Core primitives, user documentation, file-by-file framework refinement, and consistency and security review.

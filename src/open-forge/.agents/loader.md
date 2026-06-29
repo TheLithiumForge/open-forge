@@ -32,12 +32,12 @@ Use the generated entries in this file to select relevant categories. Load a sel
 
 ### Defined Tags
 
-- `#LoadWithParentEntrypoint` - Load this entry immediately after its parent entrypoint, in listed order. Applies only inside already loaded `Entries`.
-- `#Core` - Layer 1: base routing, workspace orientation, and agent primitive routes.
-- `#Memory` - Layer 2: persisted workspace state and memory routes.
-- `#Extension` - Layer 3: optional module, pack, template, integration, and support routes.
-- `#Contextual` - Supporting context, not accepted current truth unless restored, validated, accepted, or promoted.
-- `#CurrentTruth` - Accepted current memory within its stated scope; still below user instructions, runtime safety, platform constraints, and declared external sources of truth.
+- #LoadWithParentEntrypoint - Load this entry immediately after its parent entrypoint, in listed order. Applies only inside already loaded `Entries`.
+- #Core - Base routing, workspace orientation, and agent primitive routes.
+- #Memory - Persisted workspace state and memory routes.
+- #Extension - Optional extension payload, template, integration, and support routes.
+- #Contextual - Supporting context, not accepted current truth unless restored, validated, accepted, or promoted.
+- #CurrentTruth - Accepted current memory within its stated scope; still below user instructions, runtime safety, platform constraints, and declared external sources of truth.
 
 ## Customization
 
@@ -59,6 +59,6 @@ Do not create parallel truth when active truth already exists. Update the active
 - `.agents/memory/_memory.md` - Memory state routes for human-AI work - #OpenForge #Memory #Index #LoadWithParentEntrypoint
 - `.agents/patterns/_patterns.md` - Concrete reusable shapes for inspectable work - #OpenForge #Core #Pattern #Index
 - `.agents/skills/_skills.md` - Bounded reusable agent capabilities and scoped routes - #OpenForge #Core #Skill #Index
-- `.agents/workflows/_workflows.md` - Goal-oriented agent modules and scoped workflow routes - #OpenForge #Core #Workflow #Index
+- `.agents/workflows/_workflows.md` - Goal-oriented workflows and scoped workflow routes - #OpenForge #Core #Workflow #Index
 - `.agents/workspace/_workspace.md` - Important workspace destinations and their scope - #OpenForge #Core #Workspace #Index
 <!-- open-forge:generated-index:end -->

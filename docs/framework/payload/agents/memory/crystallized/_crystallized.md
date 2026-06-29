@@ -28,15 +28,17 @@ The authored portion must stay between 15 and 45 non-empty lines. Generated entr
 
 Crystallized memory contains validated current understanding.
 
-Child entrypoints, local files, and optional modules define their own taxonomy below this route.
+The base payload installs `documents/` for durable accepted records and routes to them.
+
+Child entrypoints, local files, and #Extension payloads define their own taxonomy below this route.
 
 ## Authority Contract
 
 Crystallized memory is accepted current memory within its stated scope.
 
-It informs future work and still respects current user instructions, platform constraints, runtime safety, applicable `#Core` routes, and declared external sources of truth.
+It informs future work and still respects current user instructions, platform constraints, runtime safety, applicable #Core routes, and declared external sources of truth.
 
-Crystallized memory does not automatically create operational behavior. Behavior, reusable form, guidance, capability, workflow, workspace routing, or other `#Core` material belongs in the matching `#Core` route, including user-created `#Core` categories and files.
+Crystallized memory does not automatically create operational behavior. Behavior, reusable form, guidance, capability, workflow, workspace routing, or other #Core material belongs in the matching #Core route, including user-created #Core categories and files.
 
 ## Loading Contract
 
@@ -44,7 +46,7 @@ The crystallized memory category is relevant when current work needs accepted cu
 
 The entrypoint must route agents to direct crystallized memory files and child crystallized memory categories whose path, description, or tags match the current request. Each selected child entrypoint applies the same contract recursively.
 
-Agents select the smallest crystallized route that can answer the current question.
+Agents select the smallest crystallized route that can answer the current question. The installed parent entrypoint must let generated entries carry installed child route names and descriptions instead of repeating those names in axioms.
 
 ## Consolidation Contract
 
@@ -78,7 +80,7 @@ Generated entries list direct crystallized memory files and direct child crystal
 
 Agents use this category when they need accepted durable memory for current work.
 
-Layer 3 workflows may use crystallized memory as a durable output target.
+#Extension workflows may use crystallized memory as a durable output target.
 
 ## Why
 
@@ -94,9 +96,11 @@ The implementation is aligned when it:
 - lives in `.agents/memory/crystallized/`
 - includes `CurrentTruth` and `LoadWithParentEntrypoint` in scoped `open-forge:` tags
 - defines crystallized memory as accepted current memory
-- leaves child taxonomy to child entrypoints, local files, and optional modules
+- exposes the installed `documents/` route
+- avoids repeating installed child route names in implementation axioms
+- leaves child taxonomy to child entrypoints, local files, and #Extension payloads
 - avoids duplicate current truth
 - archives or links superseded crystallized material
-- keeps operational material in matching `#Core` routes, including user-created `#Core` categories and files
+- keeps operational material in matching #Core routes, including user-created #Core categories and files
 - supports recursive positive scope
 - routes only through its final generated region

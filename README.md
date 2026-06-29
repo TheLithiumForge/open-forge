@@ -102,10 +102,22 @@ AGENTS.md                     <- agent entry block
     _memory.md                <- memory states and scoped routes
     working/
       _working.md             <- live working memory routes
+      handoffs/
+        _handoffs.md          <- concise transfer and resume notes
+      sessions/
+        _sessions.md          <- raw chronological work records
     emerging/
       _emerging.md            <- candidate memory routes
+      analysis/
+        _analysis.md          <- structured reasoning before acceptance
+      ideas/
+        _ideas.md             <- candidate possibilities and options
+      observations/
+        _observations.md      <- useful noticed findings
     crystallized/
       _crystallized.md        <- accepted current memory routes
+      documents/
+        _documents.md         <- durable accepted records and routes
     archived/
       _archived.md            <- historical memory routes
   patterns/
@@ -113,7 +125,7 @@ AGENTS.md                     <- agent entry block
   skills/
     _skills.md                <- bounded reusable capabilities and scoped routes
   workflows/
-    _workflows.md             <- goal-oriented modules and scoped routes
+    _workflows.md             <- goal-oriented workflows and scoped routes
   workspace/
     _workspace.md             <- workspace contract and generated routes
 ```
@@ -137,8 +149,14 @@ AGENTS.md
 .agents/guidelines/_guidelines.md
 .agents/memory/_memory.md
 .agents/memory/working/_working.md
+.agents/memory/working/handoffs/_handoffs.md
+.agents/memory/working/sessions/_sessions.md
 .agents/memory/emerging/_emerging.md
+.agents/memory/emerging/analysis/_analysis.md
+.agents/memory/emerging/ideas/_ideas.md
+.agents/memory/emerging/observations/_observations.md
 .agents/memory/crystallized/_crystallized.md
+.agents/memory/crystallized/documents/_documents.md
 .agents/memory/archived/_archived.md
 .agents/patterns/_patterns.md
 .agents/skills/_skills.md

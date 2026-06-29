@@ -10,14 +10,15 @@ Memory is the workspace state record: current truth, live work, candidate learni
 
 ## Axioms
 
-- Use other Memory state entries when their path, description, or tags match the current request.
+- Use other memory state entries when their path, description, or tags match the current request.
 - State entrypoints expose routes; load only the memory bodies and child categories relevant to the current request.
-- Use loader-defined `#Contextual` and `#CurrentTruth` tags to distinguish context from accepted current truth.
+- Use loader-defined #Contextual and #CurrentTruth tags to distinguish context from accepted current truth.
 - Keep memory below current user instructions, runtime safety, platform constraints, and declared external sources of truth.
 - Memory records state; it must not own operational behavior.
-- Move behavior, reusable form, guidance, capability, workflow, or workspace routing out of Memory and into the matching `#Core` route, including user-created `#Core` categories and files.
+- Move behavior, reusable form, guidance, capability, workflow, or workspace routing out of memory and into the matching #Core route, including user-created #Core categories and files.
 - Add child categories when they improve routing, ownership, or clarity.
-- Discuss new root Memory states with the user before creating them.
+- Add scoped decision or archive routes only when separate routing improves clarity; place them under the route that owns their meaning.
+- Discuss new root memory states with the user before creating them.
 - If memory does not fit the current routes, propose a clearer route before writing it.
 - Generated entries are navigation and reserved load policy only.
 

@@ -10,9 +10,10 @@ Working memory is live context for active or recently interrupted work.
 
 ## Axioms
 
-- This entrypoint exposes live and resumable context routes.
+- This entrypoint exposes live and resumable memory routes.
 - Read `Entries` before deciding that no working memory applies.
 - Treat working memory as resumability context, not accepted truth.
+- Use listed child routes according to their path, description, and tags.
 - Keep working memory small, current, and easy to replace.
 - Extract useful material before clearing or archiving stale working memory.
 - Move material to `emerging/`, `crystallized/`, or `archived/` only when its state changes.
@@ -23,5 +24,6 @@ Working memory is live context for active or recently interrupted work.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- none - No entries - #Empty
+- `handoffs/_handoffs.md` - Concise transfer notes for resuming work - #OpenForge #Memory #Handoff #Index #Contextual
+- `sessions/_sessions.md` - Raw chronological records of work sessions - #OpenForge #Memory #Session #Index #Contextual
 <!-- open-forge:generated-index:end -->

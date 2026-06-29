@@ -49,9 +49,9 @@ The category entrypoint must expose a one-line description that provides enough 
 
 Category placement and descriptions expose positive scope. Tags add compact scope signals such as domain, work type, topic, technology, and artifact.
 
-Tags must not be the only indication of workspace-wide or mandatory behavior. Tags never create authority. The reserved `#LoadWithParentEntrypoint` tag creates only the loading behavior defined in this concept and in the installed loader.
+Tags must not be the only indication of workspace-wide or mandatory behavior. Tags never create authority. The reserved #LoadWithParentEntrypoint tag creates only the loading behavior defined in this concept and in the installed loader.
 
-Layer tags such as `#Core`, `#Memory`, and `#Extension` are classification signals only. Built-in route type tags use singular PascalCase, such as `#Directive`, `#Pattern`, `#Guideline`, `#Skill`, `#Workflow`, and `#Workspace`.
+Layer tags such as #Core, #Memory, and #Extension are classification signals only. Built-in route type tags use singular PascalCase, such as #Directive, #Pattern, #Guideline, #Skill, #Workflow, and #Workspace.
 
 A primitive category may extend its own type recursively at any depth. Workflows may also own mixed local bundles of directives, patterns, guidelines, and skills. Other category types reference root primitives instead of embedding mixed local scopes.
 
@@ -71,11 +71,11 @@ Generated route metadata never defines instructions, behavior, or authority. Onl
 
 ## Load Tags
 
-`#LoadWithParentEntrypoint` is the only built-in reserved load-policy tag.
+#LoadWithParentEntrypoint is the only built-in reserved load-policy tag.
 
-When an entrypoint is loaded, each generated entry tagged `#LoadWithParentEntrypoint` must be loaded immediately after the parent entrypoint, in listed order. If the target is a category entrypoint, only that entrypoint is loaded first; that child entrypoint's own entries then apply the same routing contract.
+When an entrypoint is loaded, each generated entry tagged #LoadWithParentEntrypoint must be loaded immediately after the parent entrypoint, in listed order. If the target is a category entrypoint, only that entrypoint is loaded first; that child entrypoint's own entries then apply the same routing contract.
 
-`#LoadWithParentEntrypoint` does not create authority, scope, or precedence. It does not search unloaded trees. Nested autoload requires a visible chain of loaded parent entrypoints.
+#LoadWithParentEntrypoint does not create authority, scope, or precedence. It does not search unloaded trees. Nested autoload requires a visible chain of loaded parent entrypoints.
 
 The loaded target still gets its meaning from its category and authored content.
 
@@ -92,8 +92,8 @@ This contract lets the same routed knowledge work in a repository, monorepo, sha
 Agents load routing layers in this order:
 
 1. Load the loader.
-2. Load generated entries tagged `#LoadWithParentEntrypoint`, in listed order.
-3. Repeat `#LoadWithParentEntrypoint` loading inside each loaded entrypoint.
+2. Load generated entries tagged #LoadWithParentEntrypoint, in listed order.
+3. Repeat #LoadWithParentEntrypoint loading inside each loaded entrypoint.
 4. Apply every loaded entrypoint's authored axioms.
 5. Let the current request select other relevant entries by path, description, and tags.
 6. Follow selected routes to the destinations that own detailed truth.
@@ -115,7 +115,7 @@ Routing is aligned when:
 - every category owns its detailed meaning in its entrypoint
 - installed files provide enough meaning without governance descriptors
 - generated entries remain navigation metadata plus reserved load policy
-- `#LoadWithParentEntrypoint` affects loading only
+- #LoadWithParentEntrypoint affects loading only
 - category placement and descriptions keep scope visible
 - tags provide compact scope and classification signals
 - layer tags and route type tags remain classification signals unless a loaded entrypoint defines more
@@ -127,5 +127,5 @@ Routing is aligned when:
 - nested autoload exists only through loaded parent entrypoints
 - mixed local primitive bundles are limited to workflows
 - overwrite companions load after their base files
-- default `directives/`, `memory/`, `memory/working/`, and `memory/crystallized/` entrypoints use `#LoadWithParentEntrypoint`
+- default `directives/`, `memory/`, `memory/working/`, and `memory/crystallized/` entrypoints use #LoadWithParentEntrypoint
 - narrower selected scopes take safe preference within the same primitive

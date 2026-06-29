@@ -83,4 +83,4 @@ The implementation is aligned when it:
 - supports recursive positive scope
 - prefers narrower selected skill scopes when safe and allowed
 - routes only through its final generated region
-- remains empty until local files or optional modules add skill content
+- remains empty until local files or #Extension payloads add skill content

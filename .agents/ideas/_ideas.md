@@ -12,7 +12,7 @@ Design idea files are working notes for shaping Open Forge.
 
 <!-- open-forge:generated-index:start -->
 - `2026-05-27_framework-primitives-and-customization.md` - Phase 1 primitives, phase 2 workflow goodies, and edit/overwrite direction - #OpenForge #FrameworkDesign #Customization
-- `2026-06-20_optional-cli-modules.md` - Optional CLI modules for skills, technology patterns, and other reusable additions - #OpenForge #CLI #Module #Skill #Pattern
+- `2026-06-20_optional-cli-extensions.md` - Optional CLI extensions for skills, technology patterns, and other reusable additions - #OpenForge #CLI #Extension #Skill #Pattern
 - `2026-06-22_directive-scopes-and-workflow-bundles.md` - Directive scope through category placement and workflow-local bundles - #OpenForge #Directive #Scope #Routing #Workflow
 - `2026-06-22_scalability-and-cli-experience.md` - User-facing scalability, configurability, and a low-friction CLI experience - #OpenForge #Documentation #Scalability #Customization #CLI #UX
 - `2026-06-23_layer2-memory-deep-analysis.md` - Deep Layer 2 memory analysis across personas, durable project records, and Layer 3 workflows - #OpenForge #Layer2 #Memory #Persona #ProjectMemory #ProcessMemory #Workflow
