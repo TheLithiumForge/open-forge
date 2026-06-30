@@ -32,7 +32,7 @@ A workflow may be a direct workflow file or a child workflow category. A child w
 
 ## Local Bundle Contract
 
-An active workflow may own local `directives/`, `patterns/`, `guidelines/`, and `skills/` categories beneath its workflow folder.
+An active workflow may own local `directives/`, `patterns/`, `guidance/`, and `skills/` categories beneath its workflow folder.
 
 Workflow-local material applies only while that workflow is active. It is preferred over broader workspace material for that active workflow when safe and allowed. Unresolved conflicts must be reported.
 

@@ -55,7 +55,7 @@ Do not create parallel truth when active truth already exists. Update the active
 
 <!-- open-forge:generated-index:start -->
 - `.agents/directives/_directives.md` - Mandatory workspace modifiers; load for every request - #OpenForge #Core #Directive #Index #LoadWithParentEntrypoint
-- `.agents/guidelines/_guidelines.md` - Contextual guidance for recurring decisions and scenarios - #OpenForge #Core #Guideline #Index
+- `.agents/guidance/_guidance.md` - Contextual guidance for recurring decisions and scenarios - #OpenForge #Core #Guidance #Index
 - `.agents/memory/_memory.md` - Memory state routes for human-AI work - #OpenForge #Memory #Index #LoadWithParentEntrypoint
 - `.agents/patterns/_patterns.md` - Concrete reusable shapes for inspectable work - #OpenForge #Core #Pattern #Index
 - `.agents/skills/_skills.md` - Bounded reusable agent capabilities and scoped routes - #OpenForge #Core #Skill #Index

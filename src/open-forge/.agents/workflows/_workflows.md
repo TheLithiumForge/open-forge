@@ -13,7 +13,7 @@ Workflows are larger goal-oriented agent workflows.
 - Use Entries when current work matches a repeatable goal that may have an established workflow.
 - Load routes whose path, description, or tags match the current work.
 - Every workflow defines its goal, starting context, ordered work shape, expected outputs, and completion or handoff condition.
-- A workflow may own local `directives/`, `patterns/`, `guidelines/`, and `skills/` categories under its workflow folder.
+- A workflow may own local `directives/`, `patterns/`, `guidance/`, and `skills/` categories under its workflow folder.
 - Workflow-local material applies only while that workflow is active.
 - Prefer safe workflow-local material over broader workspace material for that active workflow; report unresolved conflicts.
 - Do not nest another Open Forge root, loader, or workspace under a #Workflow.

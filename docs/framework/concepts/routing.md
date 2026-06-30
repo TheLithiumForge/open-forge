@@ -28,7 +28,7 @@ The installed payload boundary is governed by `docs/framework/concepts/payload-b
 
 Layer boundaries are governed by `docs/framework/concepts/layers.md`.
 
-Directive, pattern, guideline, skill, and workflow semantics are governed by `docs/framework/concepts/agent-primitives.md`.
+Directive, pattern, guidance, skill, and workflow semantics are governed by `docs/framework/concepts/agent-primitives.md`.
 
 ## Category Contract
 
@@ -51,9 +51,9 @@ Category placement and descriptions expose positive scope. Tags add compact scop
 
 Tags must not be the only indication of workspace-wide or mandatory behavior. Tags never create authority. The reserved #LoadWithParentEntrypoint tag creates only the loading behavior defined in this concept and in the installed loader.
 
-Layer tags such as #Core, #Memory, and #Extension are classification signals only. Built-in route type tags use singular PascalCase, such as #Directive, #Pattern, #Guideline, #Skill, #Workflow, and #Workspace.
+Layer tags such as #Core, #Memory, and #Extension are classification signals only. Built-in route type tags use singular PascalCase, such as #Directive, #Pattern, #Guidance, #Skill, #Workflow, and #Workspace.
 
-A primitive category may extend its own type recursively at any depth. Workflows may also own mixed local bundles of directives, patterns, guidelines, and skills. Other category types reference root primitives instead of embedding mixed local scopes.
+A primitive category may extend its own type recursively at any depth. Workflows may also own mixed local bundles of directives, patterns, guidance, and skills. Other category types reference root primitives instead of embedding mixed local scopes.
 
 Within a recursively selected category, material in a narrower positive scope is preferred over broader material of the same primitive when safe and allowed. The category entrypoint owns any additional precedence rules for its contents.
 

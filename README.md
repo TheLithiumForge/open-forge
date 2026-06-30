@@ -96,8 +96,8 @@ AGENTS.md                     <- agent entry block
   loader.md                   <- tells the agent what to read and when
   directives/
     _directives.md            <- mandatory workspace modifiers and scoped routes
-  guidelines/
-    _guidelines.md            <- contextual guidance and scoped routes
+  guidance/
+    _guidance.md              <- contextual guidance and scoped routes
   memory/
     _memory.md                <- memory states and scoped routes
     working/
@@ -146,7 +146,7 @@ At minimum:
 AGENTS.md
 .agents/loader.md
 .agents/directives/_directives.md
-.agents/guidelines/_guidelines.md
+.agents/guidance/_guidance.md
 .agents/memory/_memory.md
 .agents/memory/working/_working.md
 .agents/memory/working/handoffs/_handoffs.md
