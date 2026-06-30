@@ -33,6 +33,7 @@ Use the generated entries in this file to select relevant categories. Load a sel
 ### Defined Tags
 
 - #LoadWithParentEntrypoint - Load this entry immediately after its parent entrypoint, in listed order. Applies only inside already loaded `Entries`.
+- #LoadForPostWorkReview - Load this entry before ending meaningful work to route useful material produced during the work. Applies only inside already loaded `Entries`.
 - #Core - Base routing, workspace orientation, and agent primitive routes.
 - #Memory - Persisted workspace state and memory routes.
 - #Extension - Optional extension payload, template, integration, and support routes.

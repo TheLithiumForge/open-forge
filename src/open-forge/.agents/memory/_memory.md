@@ -28,6 +28,6 @@ Memory is the workspace state record: current truth, live work, candidate learni
 <!-- open-forge:generated-index:start -->
 - `archived/_archived.md` - Archived memory preserved as historical context - #OpenForge #Memory #Archived #Index #Contextual #Historical
 - `crystallized/_crystallized.md` - Accepted durable memory and current truth - #OpenForge #Memory #Crystallized #Index #CurrentTruth #LoadWithParentEntrypoint
-- `emerging/_emerging.md` - Candidate memory becoming useful but not accepted truth - #OpenForge #Memory #Emerging #Index #Contextual #Candidate
+- `emerging/_emerging.md` - Candidate memory becoming useful but not accepted truth - #OpenForge #Memory #Emerging #Index #Contextual #Candidate #LoadForPostWorkReview
 - `working/_working.md` - Working memory alive in current work - #OpenForge #Memory #Working #Index #Contextual #LoadWithParentEntrypoint
 <!-- open-forge:generated-index:end -->

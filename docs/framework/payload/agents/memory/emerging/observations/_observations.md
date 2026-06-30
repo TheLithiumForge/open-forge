@@ -4,11 +4,11 @@
 
 This descriptor governs `src/open-forge/.agents/memory/emerging/observations/_observations.md`.
 
-The observations memory category entrypoint defines how agents discover useful noticed facts and signals.
+The observations memory category entrypoint defines how agents discover grounded findings noticed during work.
 
 ## Represents
 
-Observations represent useful findings noticed during work before they become accepted current memory.
+Observations represent grounded findings noticed during work before they become accepted current memory.
 
 They are stronger than ideas because they claim something was observed, but they remain contextual until validated or promoted.
 
@@ -16,7 +16,7 @@ They are stronger than ideas because they claim something was observed, but they
 
 The installed observations entrypoint must contain:
 
-- scoped `open-forge:` frontmatter with description and useful tags, including `Contextual` and `Candidate`
+- scoped `open-forge:` frontmatter with description and useful tags, including `Contextual`, `Candidate`, and `LoadForPostWorkReview`
 - a title
 - one short definition of observations
 - compact finding, loading, promotion, and scope axioms
@@ -26,15 +26,17 @@ The authored portion must stay between 15 and 40 non-empty lines. Generated entr
 
 ## Observation Contract
 
-Observation files record noticed facts, signals, constraints, recurring behavior, risks, or evidence that may matter later.
+Observation files record grounded facts, signals, constraints, recurring behavior, risks, or evidence that may matter later.
 
 They must keep source, scope, and uncertainty visible.
+
+When safe and allowed, agents write observations after work when they notice a grounded finding that may matter later but is not ready to become accepted truth, behavior, or external state.
 
 An observation is not accepted current truth until validated, promoted, or explicitly accepted.
 
 ## Loading Contract
 
-The observations category is relevant when current work may depend on prior noticed facts or signals.
+The observations category is relevant when current work may depend on prior noticed findings.
 
 The entrypoint must route agents to direct observation files and child observation categories whose path, description, or tags match the current request. Each selected child entrypoint applies the same contract recursively.
 
@@ -68,13 +70,13 @@ Generated entries list direct observation files and direct child observation cat
 
 ## Used By
 
-Agents use this category when prior findings may affect current work.
+Agents use this category when prior findings may affect current work or when post-work review reveals a grounded finding worth preserving.
 
 Any process that writes observations must keep source, scope, and uncertainty visible.
 
 ## Why
 
-Observations exist so useful findings do not vanish inside raw sessions.
+Observations exist so grounded findings do not vanish inside raw sessions.
 
 They are the main bridge from incidental agent discovery to durable memory or #Core updates.
 
@@ -84,8 +86,8 @@ The implementation is aligned when it:
 
 - is named `_observations.md`
 - lives in `.agents/memory/emerging/observations/`
-- includes `Contextual` and `Candidate` in scoped `open-forge:` tags
-- defines observations as useful noticed findings
+- includes `Contextual`, `Candidate`, and `LoadForPostWorkReview` in scoped `open-forge:` tags
+- defines observations as grounded noticed findings
 - keeps source, scope, and uncertainty visible
 - keeps observations contextual until validated or promoted
 - allows validated observations to become another #Memory route, matching #Core material, external state, or archived history

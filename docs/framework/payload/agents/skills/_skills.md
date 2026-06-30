@@ -26,11 +26,11 @@ The authored portion must stay between 15 and 35 non-empty lines. Generated entr
 
 ## Skill Contract
 
-Every routed skill must identify one bounded capability, the positive context where it applies, and the expected result of using it.
+Every routed skill must identify one bounded capability, its positive applicability, and the expected result of using it.
 
 Skill files may contain steps, required inputs, tool requirements, output expectations, examples, or references when those details are needed to use the capability reliably.
 
-Open Forge routes skills. It does not define runtime activation, slash-command behavior, packaging format, or installation format for a specific AI tool.
+Open Forge routes skills. The active agent runtime owns skill invocation, activation, packaging, installation, and execution.
 
 ## Loading Contract
 
@@ -79,7 +79,7 @@ The implementation is aligned when it:
 - includes `Core`, `Skill`, and `Index` in scoped `open-forge:` tags
 - defines skills as bounded reusable agent capabilities
 - selects skill routes by visible relevance
-- keeps runtime-specific invocation and packaging outside the category contract
+- keeps runtime-specific invocation, activation, packaging, installation, and execution outside the category contract
 - supports recursive positive scope
 - prefers narrower selected skill scopes when safe and allowed
 - routes only through its final generated region

@@ -14,7 +14,7 @@ Emerging memory represents candidate learning and unsettled useful material that
 
 The installed emerging memory entrypoint must contain:
 
-- scoped `open-forge:` frontmatter with description and useful tags, including `Contextual` and `Candidate`
+- scoped `open-forge:` frontmatter with description and useful tags, including `Contextual`, `Candidate`, and `LoadForPostWorkReview`
 - a title
 - one short definition of emerging memory
 - compact candidate, loading, promotion, and scope axioms
@@ -42,7 +42,7 @@ If emerging memory changes external task state, the change must be promoted to t
 
 ## Loading Contract
 
-The emerging memory category is relevant when current work needs useful material that is not accepted truth yet.
+The emerging memory category is relevant when current work needs or produced useful material that is not accepted truth yet.
 
 The entrypoint must route agents to direct emerging memory files and child emerging memory categories whose path, description, or tags match the current request. Each selected child entrypoint applies the same contract recursively.
 
@@ -96,7 +96,7 @@ The implementation is aligned when it:
 
 - is named `_emerging.md`
 - lives in `.agents/memory/emerging/`
-- includes `Contextual` and `Candidate` in scoped `open-forge:` tags
+- includes `Contextual`, `Candidate`, and `LoadForPostWorkReview` in scoped `open-forge:` tags
 - defines emerging memory as candidate learning
 - exposes installed `analysis/`, `ideas/`, and `observations/` routes
 - avoids repeating installed child route names in implementation axioms
