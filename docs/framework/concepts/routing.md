@@ -49,7 +49,7 @@ The category entrypoint must expose a one-line description that provides enough 
 
 Category placement and descriptions expose positive scope. Tags add compact scope signals such as domain, work type, topic, technology, and artifact.
 
-Tags must not be the only indication of workspace-wide or mandatory behavior. Tags never create authority. The reserved #LoadWithParentEntrypoint tag creates only the loading behavior defined in this concept and in the installed loader.
+Tags must not be the only indication of workspace-wide or mandatory behavior. Tags never create authority. Reserved load-policy tags create only the loading behavior defined in this concept and in the installed loader.
 
 Layer tags such as #Core, #Memory, and #Extension are classification signals only. Built-in route type tags use singular PascalCase, such as #Directive, #Pattern, #Guidance, #Skill, #Workflow, and #Workspace.
 
@@ -71,11 +71,17 @@ Generated route metadata never defines instructions, behavior, or authority. Onl
 
 ## Load Tags
 
-#LoadWithParentEntrypoint is the only built-in reserved load-policy tag.
+#LoadWithParentEntrypoint loads baseline route context.
 
 When an entrypoint is loaded, each generated entry tagged #LoadWithParentEntrypoint must be loaded immediately after the parent entrypoint, in listed order. If the target is a category entrypoint, only that entrypoint is loaded first; that child entrypoint's own entries then apply the same routing contract.
 
 #LoadWithParentEntrypoint does not create authority, scope, or precedence. It does not search unloaded trees. Nested autoload requires a visible chain of loaded parent entrypoints.
+
+#LoadForPostWorkReview loads post-work route context.
+
+Before ending meaningful work, each generated entry tagged #LoadForPostWorkReview inside already loaded `Entries` must be loaded, in listed order, so agents can route useful material produced during the work.
+
+#LoadForPostWorkReview does not create authority, scope, precedence, or a write requirement. It does not search unloaded trees; post-work review requires a visible chain of loaded parent entrypoints.
 
 The loaded target still gets its meaning from its category and authored content.
 
@@ -97,6 +103,7 @@ Agents load routing layers in this order:
 4. Apply every loaded entrypoint's authored axioms.
 5. Let the current request select other relevant entries by path, description, and tags.
 6. Follow selected routes to the destinations that own detailed truth.
+7. Before ending meaningful work, load generated entries tagged #LoadForPostWorkReview inside already loaded entrypoints, in listed order.
 
 Whenever a markdown file is loaded, its `.overwrite.md` companion must be loaded after it when present.
 
@@ -115,7 +122,7 @@ Routing is aligned when:
 - every category owns its detailed meaning in its entrypoint
 - installed files provide enough meaning without governance descriptors
 - generated entries remain navigation metadata plus reserved load policy
-- #LoadWithParentEntrypoint affects loading only
+- reserved load-policy tags affect loading only
 - category placement and descriptions keep scope visible
 - tags provide compact scope and classification signals
 - layer tags and route type tags remain classification signals unless a loaded entrypoint defines more
@@ -125,7 +132,9 @@ Routing is aligned when:
 - routed destinations own detailed truth
 - nested categories use the same contract at every depth
 - nested autoload exists only through loaded parent entrypoints
+- post-work review exists only through loaded parent entrypoints
 - mixed local primitive bundles are limited to workflows
 - overwrite companions load after their base files
 - default `directives/`, `memory/`, `memory/working/`, and `memory/crystallized/` entrypoints use #LoadWithParentEntrypoint
+- default `memory/emerging/` and `memory/emerging/observations/` entrypoints use #LoadForPostWorkReview
 - narrower selected scopes take safe preference within the same primitive

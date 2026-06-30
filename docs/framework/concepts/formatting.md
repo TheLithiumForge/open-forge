@@ -63,7 +63,7 @@ Open Forge-authored payload tags use singular PascalCase concept names by defaul
 
 Layer classification tags are singular: #Core, #Memory, and #Extension. These tags classify where material belongs; they do not create authority by themselves.
 
-Reserved load-policy tags are different from ordinary classification tags. Open Forge currently reserves only #LoadWithParentEntrypoint, which is governed by `docs/framework/concepts/routing.md` and defined in the installed loader.
+Reserved load-policy tags are different from ordinary classification tags. Open Forge currently reserves #LoadWithParentEntrypoint and #LoadForPostWorkReview, which are governed by `docs/framework/concepts/routing.md` and defined in the installed loader.
 
 ## Backticks
 

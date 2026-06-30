@@ -55,7 +55,7 @@ The root memory category is loaded through its generated loader entry because it
 
 The memory entrypoint must rely on the loader-defined #LoadWithParentEntrypoint tag for baseline state routing.
 
-The `working/` and `crystallized/` state entrypoints must use #LoadWithParentEntrypoint. The `emerging/` and `archived/` state entrypoints must remain relevance-routed unless their contract changes.
+The `working/` and `crystallized/` state entrypoints must use #LoadWithParentEntrypoint. The `emerging/` state entrypoint must use #LoadForPostWorkReview. The `archived/` state entrypoint must remain relevance-routed unless its contract changes.
 
 The `working/`, `emerging/`, and `archived/` entries must include #Contextual. The `crystallized/` entry must include #CurrentTruth.
 
@@ -121,6 +121,7 @@ The implementation is aligned when it:
 - defines `working/`, `emerging/`, `crystallized/`, and `archived/`
 - installs only universal child routes under the relevant memory state
 - marks `working/` and `crystallized/` entries with #LoadWithParentEntrypoint
+- marks `emerging/` entries with #LoadForPostWorkReview
 - marks `working/`, `emerging/`, and `archived/` entries with #Contextual
 - marks `crystallized/` entries with #CurrentTruth
 - keeps Memory separate from primitive behavior routes

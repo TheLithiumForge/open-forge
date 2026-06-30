@@ -11,7 +11,7 @@ Ideas are candidate possibilities and unaccepted future options.
 ## Axioms
 
 - This entrypoint exposes possible future work, directions, designs, questions, improvements, and alternatives.
-- Read `Entries` when current work explores possibilities, plans future work, revisits postponed options, or needs prior brainstorm output.
+- Read `Entries` when current work explores possibilities, plans future work, revisits postponed options, or needs prior exploration output.
 - Treat ideas as candidate context, not commitments or accepted truth.
 - Keep the problem, opportunity, or motivation visible enough to revisit later.
 - Accepted ideas must move to the owner of their new state: another #Memory route, a matching #Core route, an external system, or archived history.

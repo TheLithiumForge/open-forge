@@ -34,7 +34,7 @@ Ideas do not create work obligations, current truth, or behavior rules.
 
 ## Loading Contract
 
-The ideas category is relevant when current work explores possibilities, plans future work, revisits postponed options, or needs prior brainstorm output.
+The ideas category is relevant when current work explores possibilities, plans future work, revisits postponed options, or needs prior exploration output.
 
 The entrypoint must route agents to direct idea files and child idea categories whose path, description, or tags match the current request. Each selected child entrypoint applies the same contract recursively.
 

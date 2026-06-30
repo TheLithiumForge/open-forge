@@ -98,7 +98,7 @@ Scope must be visible through category placement, concise descriptions, and usef
 
 Tags must compress useful routing information such as primitive type, domain, work type, topic, technology, or artifact. Primitive type tags use singular PascalCase. For example, #Directive #Database #Migration lets an agent identify likely scope without opening the routed file.
 
-Tags may reinforce and describe scope, but they must not be the only indication that a directive is workspace-wide or mandatory. Tags never establish authority by themselves. The reserved #LoadWithParentEntrypoint tag affects loading only and is governed by the routing concept.
+Tags may reinforce and describe scope, but they must not be the only indication that a directive is workspace-wide or mandatory. Tags never establish authority by themselves. Reserved load-policy tags affect loading only and are governed by the routing concept.
 
 Every routed primitive file inherits the positive scope of its containing category. A child category must state whether it narrows that scope or preserves it for organization.
 

@@ -55,6 +55,8 @@ The base #Memory payload installs only universal child routes. More specialized 
 
 #Memory may be installed with or after #Core. The default #Memory entrypoint is tagged #LoadWithParentEntrypoint, so its generated loader entry loads with the loader when #Memory is installed.
 
+#Memory uses #LoadForPostWorkReview on selected candidate-memory routes so agents can route useful material produced during work without preloading every memory child body.
+
 ## Layer 3: Extensions
 
 #Extension routes are optional installable packages.

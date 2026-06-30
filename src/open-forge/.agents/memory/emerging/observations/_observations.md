@@ -1,17 +1,18 @@
 ---
 open-forge:
-  description: Useful noticed findings that may become durable memory
-  tags: [OpenForge, Memory, Observation, Index, Contextual, Candidate]
+  description: Grounded noticed findings that may become durable memory
+  tags: [OpenForge, Memory, Observation, Index, Contextual, Candidate, LoadForPostWorkReview]
 ---
 
 # Observations
 
-Observations are useful noticed findings that may matter later.
+Observations are grounded noticed findings that may matter later.
 
 ## Axioms
 
-- This entrypoint exposes noticed facts, signals, constraints, recurring behavior, risks, and evidence.
+- This entrypoint exposes grounded facts, signals, constraints, recurring behavior, risks, and evidence noticed during work.
 - Read `Entries` when current work may depend on prior noticed findings.
+- When safe and allowed, write observations after work when a grounded finding may matter later but is not accepted truth.
 - Treat observations as contextual until they are validated, promoted, or explicitly accepted.
 - Keep source, scope, and uncertainty visible.
 - Verify observations before treating them as current.
