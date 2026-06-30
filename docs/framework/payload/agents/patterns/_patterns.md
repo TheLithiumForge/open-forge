@@ -81,4 +81,4 @@ The implementation is aligned when it:
 - supports recursive positive scope
 - prefers narrower selected pattern scopes when safe and allowed
 - routes only through its final generated region
-- remains empty until local files or #Extension payloads add pattern content
+- remains empty until pattern files or child pattern categories are added

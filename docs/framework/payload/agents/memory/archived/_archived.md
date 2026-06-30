@@ -86,7 +86,7 @@ Generated entries list direct archived memory files and direct child archived me
 
 Agents use this category when they need history kept outside current truth.
 
-#Extension workflows may write archived memory when material stops being current.
+Any process that writes archived memory must preserve origin context and keep the material outside current truth.
 
 ## Why
 

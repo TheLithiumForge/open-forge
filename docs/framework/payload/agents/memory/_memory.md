@@ -47,7 +47,7 @@ The lifecycle describes promotion and decay, not a required move sequence. Works
 
 The base memory payload installs only universal child routes: sessions and handoffs under `working/`, observations, ideas, and analysis under `emerging/`, and documents under `crystallized/`.
 
-Scoped decision routes, scoped archive routes, task routes, backlog routes, and other specialized containers are created on demand by users, local files, or #Extension payloads under the route that owns their meaning.
+Scoped decision routes, scoped archive routes, task routes, backlog routes, and other specialized containers are created only when an owning route needs them and their entrypoint defines their scope.
 
 ## Loading Contract
 
@@ -77,7 +77,7 @@ Memory uses the loader-defined #CurrentTruth tag for accepted current memory wit
 
 Memory must remain recursively customizable.
 
-Subcategories are encouraged when they improve routing, ownership, or clarity. Installed child entrypoints, local files, and #Extension payloads own the concrete taxonomy below each memory state.
+Subcategories are encouraged when they improve routing, ownership, or clarity. Child entrypoints and local files own the concrete taxonomy below each memory state.
 
 Agents create child categories first when the installed states are sufficient. A new root memory state requires user agreement because it changes the state model.
 
@@ -101,7 +101,7 @@ Generated entries list direct memory state categories and direct memory files if
 
 The loader uses this entrypoint when Memory is installed. Agents use it to decide which memory state routes to load for the current request.
 
-#Extension workflows and skills use Memory as the stable place to read and write persisted context and extracted learning.
+Any process that writes memory must choose the route whose state and scope match the material.
 
 ## Why
 

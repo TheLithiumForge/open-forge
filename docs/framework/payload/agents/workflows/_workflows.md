@@ -94,4 +94,4 @@ The implementation is aligned when it:
 - supports recursive positive workflow scope
 - prefers narrower selected workflow scopes when safe and allowed
 - routes only through its final generated region
-- remains empty until local files or #Extension payloads add workflow content
+- remains empty until workflow files or child workflow categories are added

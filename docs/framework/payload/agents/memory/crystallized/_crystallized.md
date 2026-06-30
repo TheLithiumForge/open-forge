@@ -30,7 +30,7 @@ Crystallized memory contains validated current understanding.
 
 The base payload installs `documents/` for durable accepted records and routes to them.
 
-Child entrypoints, local files, and #Extension payloads define their own taxonomy below this route.
+Child entrypoints and local files define their own taxonomy below this route.
 
 ## Authority Contract
 
@@ -80,7 +80,7 @@ Generated entries list direct crystallized memory files and direct child crystal
 
 Agents use this category when they need accepted durable memory for current work.
 
-#Extension workflows may use crystallized memory as a durable output target.
+Any process that writes crystallized memory must preserve one accepted current truth per scope.
 
 ## Why
 
@@ -98,7 +98,7 @@ The implementation is aligned when it:
 - defines crystallized memory as accepted current memory
 - exposes the installed `documents/` route
 - avoids repeating installed child route names in implementation axioms
-- leaves child taxonomy to child entrypoints, local files, and #Extension payloads
+- leaves child taxonomy to child entrypoints and local files
 - avoids duplicate current truth
 - archives or links superseded crystallized material
 - keeps operational material in matching #Core routes, including user-created #Core categories and files
