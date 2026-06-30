@@ -90,4 +90,4 @@ The implementation is aligned when it:
 - treats applicable directives as mandatory
 - prefers narrower selected directive scopes when safe and allowed
 - routes only through its final generated region
-- leaves generated entries empty until local files or #Extension payloads add directive content
+- leaves generated entries empty until directive files or child directive categories are added

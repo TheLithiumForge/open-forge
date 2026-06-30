@@ -88,7 +88,7 @@ The core payload must install these root categories:
 
 Each category must begin with only the minimum category contract and generated index region required for routing. The core payload does not seed opinionated directive, pattern, guideline, skill, or workflow content.
 
-Users populate these categories with local files. #Extension payloads may add curated files and nested categories later.
+These categories are populated by ordinary routed files and child categories.
 
 Core primitive entrypoints must use #Core plus the singular route type tag that matches the category: #Directive, #Pattern, #Guideline, #Skill, or #Workflow.
 

@@ -51,7 +51,7 @@ archived/     archived memory preserved for context
 
 #Memory records state. If memory becomes operational behavior, reusable form, guidance, capability, workflow, workspace routing, or other #Core material, it must be promoted into the matching #Core route, including user-created #Core categories and files.
 
-The base #Memory payload installs only universal child routes. More specialized containers, such as scoped decisions, scoped archives, task routes, backlog routes, and workflow-specific outputs, are added by users or #Extension payloads under the route that owns their meaning.
+The base #Memory payload installs only universal child routes. More specialized containers, such as scoped decisions, scoped archives, task routes, backlog routes, and workflow-specific outputs, are created under the route that owns their meaning. #Extension payloads may package those additions, but #Memory rules determine their state and scope.
 
 #Memory may be installed with or after #Core. The default #Memory entrypoint is tagged #LoadWithParentEntrypoint, so its generated loader entry loads with the loader when #Memory is installed.
 
@@ -83,7 +83,7 @@ Workspaces grow by adding ordinary routed files and child categories first.
 
 Overwrites are the local adjustment mechanism for small changes to managed files. Direct edits to managed framework files are reserved for complete replacement or cases where base plus overwrite would confuse an agent.
 
-#Memory child categories and #Extension payloads may expand the framework recursively. New root categories or new #Memory root states require stronger justification because they change the top-level routing model.
+Workspaces expand #Memory through child categories. #Extension payloads expand existing routes by adding ordinary routed material. New root categories or new #Memory root states require stronger justification because they change the top-level routing model.
 
 ## Why
 
@@ -103,7 +103,7 @@ Layers are aligned when:
 - #Memory owns persisted context and extracted learning
 - #Memory does not own operational behavior
 - #Memory promotes operational material into matching #Core routes, including user-created #Core categories and files
-- #Memory installs universal child routes and leaves specialized containers to users or #Extension payloads
+- #Memory installs universal child routes and leaves specialized containers to owning routes
 - #Memory loads for every request when installed
 - #Extension payloads install optional content into existing routes
 - #Extension payloads do not create competing Open Forge roots

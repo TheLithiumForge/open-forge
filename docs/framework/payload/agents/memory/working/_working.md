@@ -30,7 +30,7 @@ Working memory is not accepted truth. It is resumability context. It can be wron
 
 The base payload installs `sessions/` for raw work history and `handoffs/` for concise transfer notes.
 
-Child entrypoints, local files, and #Extension payloads define their own taxonomy below this route.
+Child entrypoints and local files define their own taxonomy below this route.
 
 ## Loading Contract
 
@@ -74,7 +74,7 @@ Generated entries list direct working memory files and direct child working memo
 
 Agents use this category when they need current context before deciding what to do next.
 
-#Extension workflows may use working memory while work is in progress.
+Any process that writes working memory must preserve resumability without presenting it as accepted truth.
 
 ## Why
 

@@ -24,4 +24,5 @@ Design idea files are working notes for shaping Open Forge.
 - `2026-06-25-implementation-language-and-analysis-memory.md` - Implementation wording pass, reserved terms, and possible Layer 2 analysis memory - #OpenForge #Implementation #Language #Terminology #Memory #Analysis
 - `2026-06-26_memory-child-taxonomy-boundary.md` - Boundary between Memory state containers and future child taxonomies - #OpenForge #Memory #Taxonomy #Core #Extension #Documentation
 - `2026-06-26_memory-state-containers.md` - Accepted Memory state containers and next implementation priorities - #OpenForge #Memory #State #Architecture #Governance #Loader #Implementation
+- `2026-06-30_guidance-rename-and-flexible-memory-extras.md` - Rename guidelines to guidance and explore flexible placement for memory extras - #OpenForge #Guidance #Memory #Extension #CLI #Taxonomy
 <!-- open-forge:generated-index:end -->
