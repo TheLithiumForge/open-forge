@@ -26,13 +26,13 @@ Layer tags are classification tags. #Core marks Core material, #Memory marks Mem
 
 #Core is the minimum Open Forge framework.
 
-#Core contains the root entrypoint, loader, routing model, workspace route, formatting and overwrite contracts, and primitive categories for directives, patterns, guidelines, skills, and workflows.
+#Core contains the root entrypoint, loader, routing model, workspace route, formatting and overwrite contracts, and primitive categories for directives, patterns, guidance, skills, and workflows.
 
 #Core must stay small. It installs empty primitive category entrypoints and the axioms needed to route and interpret them. It does not seed opinionated behavior, technology patterns, workflow packs, templates, or project memory.
 
 #Core is the required base for every Open Forge install. Every other layer depends on #Core routing and #Core authority boundaries.
 
-#Core payload routes must include the #Core tag plus their singular route type tag, such as #Directive, #Pattern, #Guideline, #Skill, #Workflow, or #Workspace.
+#Core payload routes must include the #Core tag plus their singular route type tag, such as #Directive, #Pattern, #Guidance, #Skill, #Workflow, or #Workspace.
 
 ## Layer 2: Memory
 
@@ -63,7 +63,7 @@ An #Extension may add primitive files, nested primitive categories, workflow-loc
 
 #Extension payloads consume #Core routing and may read from or write to #Memory when #Memory is installed. They must not create another Open Forge root, another loader, or a competing framework authority model inside the same workspace.
 
-An #Extension is not higher authority because it is installed later. Its content is interpreted by the route where it is installed: directives remain mandatory in scope, patterns shape inspectable results, guidelines inform judgment, skills provide bounded capability, workflows orchestrate goals, and memory remains persisted context.
+An #Extension is not higher authority because it is installed later. Its content is interpreted by the route where it is installed: directives remain mandatory in scope, patterns shape inspectable results, guidance informs judgment, skills provide bounded capability, workflows orchestrate goals, and memory remains persisted context.
 
 ## Installation Contract
 

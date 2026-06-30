@@ -59,7 +59,7 @@ Paths and descriptions must keep critical scope readable. Tags reinforce and des
 
 Use normal words when naming, defining, or explaining the local concept itself. Use bare tags when the text points to routed ownership, classification, promotion, load policy, truth status, or search/reference targets. For example, a memory entrypoint says "Memory records state"; a promotion rule can say "move to #Core".
 
-Open Forge-authored payload tags use singular PascalCase concept names by default. Built-in route type tags are #Directive, #Pattern, #Guideline, #Skill, #Workflow, and #Workspace.
+Open Forge-authored payload tags use singular PascalCase concept names by default. Built-in route type tags are #Directive, #Pattern, #Guidance, #Skill, #Workflow, and #Workspace.
 
 Layer classification tags are singular: #Core, #Memory, and #Extension. These tags classify where material belongs; they do not create authority by themselves.
 

@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Rename guidelines to guidance and explore flexible placement for memory extras
+  description: Guidance rename completion and flexible placement for memory extras
   tags: [OpenForge, Guidance, Memory, Extension, CLI, Taxonomy]
 ---
 
@@ -8,19 +8,23 @@ open-forge:
 
 ## Guidance Rename
 
-The `guidelines/` primitive should be reconsidered before user documentation is finalized.
+Implemented decision: the contextual-judgment primitive is named `guidance/`.
 
-Current meaning is advisory contextual judgment for recurring scenarios. The word "guidelines" can sound like soft rules, which overlaps too much with directives.
+Old names:
 
-Preferred candidate:
+- `guidelines/`
+- `_guidelines.md`
+- #Guideline
+
+Current names:
 
 - `guidance/`
 - `_guidance.md`
-- `#Guidance`
+- #Guidance
 
 `guidance` better describes adaptable judgment, reasoning, and tradeoffs without implying mandatory behavior or human tutorial docs.
 
-If approved, update governance descriptors, installed payload files, README structure, CLI tests, generated indexes, and any migration/update behavior that references `guidelines/`, `_guidelines.md`, or `#Guideline`.
+The rename must remain reflected in governance descriptors, installed payload files, README structure, CLI tests, generated indexes, and future migration/update behavior.
 
 ## Route Template Model
 
@@ -131,6 +135,73 @@ Example manifest shape to explore:
 ```
 
 The exact manifest format is not decided. The important rule is that agents should not need this manifest at runtime; the CLI uses it to create explicit files that become readable local truth.
+
+## CLI Slugged Path Scaffolding
+
+Future CLI work should support generating concrete slugged routed paths from user intent.
+
+Example intents:
+
+- "create a new project route named Mobile App"
+- "add crystallized memory for Billing API"
+- "add working, emerging, and crystallized memory routes for Design System"
+- "add project-scoped documents under this memory route"
+
+The CLI should:
+
+- ask for or accept a human display name
+- propose a stable slug such as `mobile-app`
+- show the concrete paths it will create
+- create only ordinary filesystem folders and entrypoints
+- generate missing ancestor entrypoints only when it has meaningful metadata
+- rebuild generated indexes after creation
+- detect collisions and ask before reusing or changing an existing route
+- preserve existing user paths unless the user explicitly approves a rename
+
+Template placeholders such as `[project]` remain CLI, maintainer, extension-author, and documentation notation only. User workspaces receive concrete folders.
+
+This should support both broad route creation and targeted Memory helpers. For example, a user could ask for project-scoped #Memory and choose which states or extras to create instead of manually spelling every folder path.
+
+Open design questions:
+
+- Should this be one generic scaffold command, a wizard, or both?
+- Should common intents such as `project`, `memory`, or `crystallized-memory` be named presets?
+- How much entrypoint text should the CLI ask for versus generate from a reviewed template?
+- How should the CLI preview a path tree before writing files?
+
+## CLI Extension Template Authoring
+
+Future CLI work should also support generating extension templates for maintainers.
+
+This is separate from installing an extension. It helps Open Forge maintainers and third-party maintainers create shareable extension source folders with the right structure.
+
+Possible output shape:
+
+```text
+src/extensions/{extension-id}/
+  extension.json
+  payload/
+    .agents/
+      ...
+```
+
+The extension authoring CLI should eventually help create:
+
+- extension metadata
+- route templates with named slug parameters
+- concrete payload files
+- scaffold metadata for missing ancestor entrypoints
+- preview data for install commands
+- compatibility and migration notes
+
+This also helps us build Open Forge's own future extensions without hand-writing every package shape.
+
+Open design questions:
+
+- Is an extension template just a route-template package, or a stronger product unit?
+- Which manifest fields are required before an extension is installable?
+- Should the CLI generate example payload files, empty entrypoints, or both?
+- How should extension authors test install, update, and removal locally?
 
 ## Flexible Memory Extras
 

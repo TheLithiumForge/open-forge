@@ -2,7 +2,7 @@
 
 ## Description
 
-This descriptor governs the meaning, relationships, and scope of directives, patterns, guidelines, skills, and workflows across Open Forge.
+This descriptor governs the meaning, relationships, and scope of directives, patterns, guidance, skills, and workflows across Open Forge.
 
 These primitives separate mandatory behavior, reusable form, contextual judgment, bounded capability, and goal-oriented orchestration.
 
@@ -32,15 +32,15 @@ An applicable pattern is the established default shape. A different shape requir
 
 Patterns may nest recursively by technology, domain, artifact, or any other useful positive scope.
 
-## Guidelines
+## Guidance
 
-A guideline provides contextual judgment for a recurring scenario.
+Guidance provides contextual judgment for a recurring scenario.
 
 It explains how to approach the scenario, why the approach is useful, relevant tradeoffs, and the patterns, skills, or workflows that may help. Suggested actions remain adaptable to the current work.
 
-A guideline is advisory. It does not create a mandatory requirement or an executable workflow.
+Guidance is advisory. It does not create a mandatory requirement or an executable workflow.
 
-Guidelines may nest recursively by domain, scenario, decision area, or any other useful positive scope.
+Guidance may nest recursively by domain, scenario, decision area, or any other useful positive scope.
 
 ## Skills
 
@@ -52,7 +52,7 @@ Skills preserve the established meaning used by AI tools. They may be invoked di
 
 A workflow is a larger goal-oriented agent workflow, such as brainstorming, task creation, test-driven development, review, or implementation.
 
-A workflow may organize phases, invoke skills, consult guidelines, apply patterns, and produce artifacts while obeying applicable directives.
+A workflow may organize phases, invoke skills, consult guidance, apply patterns, and produce artifacts while obeying applicable directives.
 
 ## Relationships
 
@@ -62,11 +62,11 @@ The primitives interact in this order of purpose:
 Workflow pursues a larger goal
   -> invokes skills
   -> obeys applicable directives
-  -> uses guidelines for contextual judgment
+  -> uses guidance for contextual judgment
   -> produces work shaped by patterns
 ```
 
-This order describes composition, not one authority ladder. Directives constrain work. Patterns shape results. Guidelines inform judgment. Skills and workflows perform work.
+This order describes composition, not one authority ladder. Directives constrain work. Patterns shape results. Guidance informs judgment. Skills and workflows perform work.
 
 ## Core Payload Contract
 
@@ -78,19 +78,19 @@ The core payload must install these root categories:
     _directives.md
   patterns/
     _patterns.md
-  guidelines/
-    _guidelines.md
+  guidance/
+    _guidance.md
   skills/
     _skills.md
   workflows/
     _workflows.md
 ```
 
-Each category must begin with only the minimum category contract and generated index region required for routing. The core payload does not seed opinionated directive, pattern, guideline, skill, or workflow content.
+Each category must begin with only the minimum category contract and generated index region required for routing. The core payload does not seed opinionated directive, pattern, guidance, skill, or workflow content.
 
 These categories are populated by ordinary routed files and child categories.
 
-Core primitive entrypoints must use #Core plus the singular route type tag that matches the category: #Directive, #Pattern, #Guideline, #Skill, or #Workflow.
+Core primitive entrypoints must use #Core plus the singular route type tag that matches the category: #Directive, #Pattern, #Guidance, #Skill, or #Workflow.
 
 ## Scope Contract
 
@@ -117,11 +117,11 @@ Workspace-wide means mandatory across Open Forge work. Current user instructions
 
 ## Workflow-Local Bundles
 
-A workflow may contain local directive, pattern, guideline, and skill categories beneath its workflow folder.
+A workflow may contain local directive, pattern, guidance, and skill categories beneath its workflow folder.
 
 Workflow-local directives apply while that workflow is active. Workspace directives remain active and are inherited automatically. Local directives are preferred within the workflow when safe and allowed. Unresolved conflicts must be reported.
 
-Workflow-local patterns, guidelines, and skills are preferred over broader workspace material within that workflow when safe and allowed. They apply only to that workflow unless another active route references them.
+Workflow-local patterns, guidance, and skills are preferred over broader workspace material within that workflow when safe and allowed. They apply only to that workflow unless another active route references them.
 
 Mixed local primitive bundles are owned by workflows. Other categories extend their own primitive recursively or reference root primitive categories instead of embedding a separate mixed framework scope.
 
@@ -139,7 +139,7 @@ Agent primitives are aligned when:
 
 - directives are mandatory within visible positive scope
 - patterns define concrete inspectable shapes
-- guidelines provide adaptable contextual judgment
+- guidance provides adaptable contextual judgment
 - skills remain bounded reusable capabilities
 - workflows remain larger goal-oriented agent workflows
 - every core primitive category is installed with its minimum entrypoint
