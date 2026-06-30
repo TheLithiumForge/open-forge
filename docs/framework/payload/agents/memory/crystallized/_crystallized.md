@@ -38,7 +38,7 @@ Crystallized memory is accepted current memory within its stated scope.
 
 It informs future work and still respects current user instructions, platform constraints, runtime safety, applicable #Core routes, and declared external sources of truth.
 
-Crystallized memory does not automatically create operational behavior. Behavior, reusable form, guidance, capability, workflow, workspace routing, or other #Core material belongs in the matching #Core route, including user-created #Core categories and files.
+Crystallized memory does not automatically create operational behavior. Behavior, reusable form, guidance, capability, workflow, workspace routing, or other #Core material must be extracted into the matching #Core route, including user-created #Core categories and files.
 
 ## Loading Contract
 
@@ -101,6 +101,6 @@ The implementation is aligned when it:
 - leaves child taxonomy to child entrypoints and local files
 - avoids duplicate current truth
 - archives or links superseded crystallized material
-- keeps operational material in matching #Core routes, including user-created #Core categories and files
+- extracts operational material into matching #Core routes, including user-created #Core categories and files
 - supports recursive positive scope
 - routes only through its final generated region

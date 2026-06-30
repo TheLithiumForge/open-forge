@@ -17,7 +17,7 @@ Emerging memory is useful material that has not become accepted current memory.
 - Keep uncertainty, source, and scope visible.
 - Refine material here while its validity, owner, or final route is unsettled.
 - Promote accepted memory to `crystallized/`; archive stale, rejected, or superseded material.
-- Move operational material to the matching #Core route, including user-created #Core categories and files, instead of accepting it as memory.
+- Extract resulting #Core material to matching #Core routes instead of accepting it as memory.
 - Suggest promotion or archival when emerging material repeats or stops changing.
 - Load only the emerging memory bodies and child categories relevant to the current request.
 - Add child categories when they improve routing, ownership, or clarity.

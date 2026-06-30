@@ -46,7 +46,7 @@ Working memory must stay small enough to review.
 
 When working memory becomes stale, completed, or no longer useful for resuming, agents must extract useful material before clearing or archiving it.
 
-Useful extracted material moves to the route or system that owns its current state.
+Useful extracted material moves to the route or system that owns its current state. That owner may be another #Memory route, a matching #Core route, or an external system.
 
 ## Scope Contract
 
@@ -95,6 +95,7 @@ The implementation is aligned when it:
 - keeps working memory contextual rather than authoritative
 - routes current work selectively
 - requires stale working memory to be extracted, cleared, or archived
+- allows extracted working memory to become another #Memory route, matching #Core material, or external state
 - supports recursive positive scope
 - encourages useful child categories over mixed working context
 - routes only through its final generated region

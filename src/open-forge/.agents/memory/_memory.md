@@ -15,7 +15,8 @@ Memory is the workspace state record: current truth, live work, candidate learni
 - Use loader-defined #Contextual and #CurrentTruth tags to distinguish context from accepted current truth.
 - Keep memory below current user instructions, runtime safety, platform constraints, and declared external sources of truth.
 - Memory records state; it must not own operational behavior.
-- Move behavior, reusable form, guidance, capability, workflow, or workspace routing out of memory and into the matching #Core route, including user-created #Core categories and files.
+- Move material between #Memory routes when its state or owner changes.
+- Extract behavior, reusable form, guidance, capability, workflow, or workspace routing to the matching #Core route, including user-created #Core categories and files.
 - Add child categories when they improve routing, ownership, or clarity.
 - Add scoped decision or archive routes only when separate routing improves clarity; place them under the route that owns their meaning.
 - Discuss new root memory states with the user before creating them.
