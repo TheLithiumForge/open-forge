@@ -67,7 +67,9 @@ Generated entries are navigation metadata plus reserved load policy. They never 
 
 Memory records state; it is not a behavior primitive.
 
-If memory creates behavior, reusable form, guidance, capability, workflow, workspace routing, or other #Core material, promote it into the matching #Core route, including user-created #Core categories and files.
+Memory material moves between #Memory routes when its state or owner changes.
+
+If memory creates behavior, reusable form, guidance, capability, workflow, workspace routing, or other #Core material, extract it into the matching #Core route, including user-created #Core categories and files.
 
 Memory uses the loader-defined #Contextual tag for supporting context that is not accepted current truth unless restored, validated, accepted, or promoted.
 
@@ -122,7 +124,8 @@ The implementation is aligned when it:
 - marks `working/`, `emerging/`, and `archived/` entries with #Contextual
 - marks `crystallized/` entries with #CurrentTruth
 - keeps Memory separate from primitive behavior routes
-- promotes operational memory material into matching #Core routes, including user-created #Core categories and files
+- moves material between #Memory routes when its state or owner changes
+- extracts operational memory material into matching #Core routes, including user-created #Core categories and files
 - uses loader-defined #Contextual entries as contextual
 - uses loader-defined #CurrentTruth entries as accepted current memory within stated scope
 - encourages recursive child categories before new root memory states

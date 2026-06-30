@@ -16,7 +16,8 @@ Working memory is live context for active or recently interrupted work.
 - Use listed child routes according to their path, description, and tags.
 - Keep working memory small, current, and easy to replace.
 - Extract useful material before clearing or archiving stale working memory.
-- Move material to `emerging/`, `crystallized/`, or `archived/` only when its state changes.
+- Move material to another #Memory route when its memory state changes.
+- Extract resulting #Core material to matching #Core routes.
 - Load only the working memory bodies and child categories relevant to the current request.
 - Add child categories when they improve routing, ownership, or clarity.
 - Generated entries are navigation and reserved load policy only.

@@ -4,25 +4,25 @@
 
 This descriptor governs `src/open-forge/.agents/memory/working/handoffs/_handoffs.md`.
 
-The handoffs memory category `entrypoint` defines how agents discover static, concise, accurate transfer notes for resuming work after context breaks.
+The handoffs memory category entrypoint defines how agents discover concise transfer notes for resuming work.
 
 ## Represents
 
-Handoffs represent static, concise, accurate, rereadable transfer notes for resuming work across agents, subagents, threads, workflows, or humans.
+Handoffs represent distilled working context for transfer between humans, agents, subagents, threads, or workflows.
 
 They are resumability memory, not complete history and not accepted truth.
 
 ## Contains
 
-The installed handoffs `entrypoint` must contain:
+The installed handoffs entrypoint must contain:
 
-- scoped `open-forge:` frontmatter with description and useful tags, including `AgentCommunication`, `Contextual`, and `LoadNow`
+- scoped `open-forge:` frontmatter with description and useful tags, including `Contextual`
 - a title
 - one short definition of handoffs
 - compact transfer, loading, freshness, and scope axioms
 - a final marker-bounded generated index region
 
-The authored portion must stay between 10 and 40 non-empty lines. Generated `entries` do not count toward this limit.
+The authored portion must stay between 15 and 40 non-empty lines. Generated entries do not count toward this limit.
 
 ## Handoff Contract
 
@@ -30,15 +30,13 @@ A handoff states the minimum useful context needed to continue work elsewhere.
 
 It must stay concise and point to sessions, documents, code, or other routes when detail matters.
 
-Handoffs are short static communication packets. They may include status, next action, blockers, relevant loaded context, and verification needs.
-
-When work is transferred, delegated, interrupted, or handed to another agent or human, agents must create or update a handoff unless a more specific route already captures the complete resume context.
+Handoffs may include status, next action, blockers, relevant loaded context, and verification needs.
 
 ## Loading Contract
 
 The handoffs category is relevant when work is resumed, transferred, delegated, interrupted, or reviewed after a context break.
 
-The `entrypoint` must route agents to direct handoff files and child handoff categories whose path, description, or tags match the current request. Each selected child `entrypoint` applies the same contract recursively.
+The entrypoint must route agents to direct handoff files and child handoff categories whose path, description, or tags match the current request. Each selected child entrypoint applies the same contract recursively.
 
 Agents load the handoff closest to the current transfer scope.
 
@@ -56,7 +54,7 @@ Handoff scope must make the intended receiver or resumed work easy to identify.
 
 ## Generated Region
 
-The final section must use the shared category `entrypoint` shape:
+The final section must use the shared category entrypoint shape:
 
 ```md
 ## Entries
@@ -66,7 +64,7 @@ The final section must use the shared category `entrypoint` shape:
 <!-- open-forge:generated-index:end -->
 ```
 
-Generated `entries` list direct handoff files and direct child handoff categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
+Generated entries list direct handoff files and direct child handoff categories. The shared formatting and routing governors own metadata extraction, entry formatting, naming, recursive discovery, marker validation, and regeneration.
 
 ## Used By
 
@@ -86,10 +84,9 @@ The implementation is aligned when it:
 
 - is named `_handoffs.md`
 - lives in `.agents/memory/working/handoffs/`
-- includes `AgentCommunication`, `Contextual`, and `LoadNow` in scoped `open-forge:` tags
-- defines handoffs as static, concise, accurate, rereadable transfer notes
+- includes `Contextual` in scoped `open-forge:` tags
+- defines handoffs as concise transfer notes
 - keeps handoffs contextual rather than authoritative
-- requires handoffs for transfer, delegation, interruption, or agent/human handoff
 - points to source routes when detail matters
 - requires stale handoffs to be updated, replaced, extracted, or archived
 - allows extracted handoff material to become another #Memory route, matching #Core material, or external state

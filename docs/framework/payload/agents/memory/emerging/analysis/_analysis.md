@@ -4,7 +4,7 @@
 
 This descriptor governs `src/open-forge/.agents/memory/emerging/analysis/_analysis.md`.
 
-The analysis memory category `entrypoint` defines how agents discover structured reasoning, investigation, or comparison that is useful but not accepted truth.
+The analysis memory category entrypoint defines how agents discover structured reasoning that is useful but not accepted truth.
 
 ## Represents
 
@@ -14,19 +14,19 @@ It is emerging memory, not a decision and not a final document.
 
 ## Contains
 
-The installed analysis `entrypoint` must contain:
+The installed analysis entrypoint must contain:
 
-- scoped `open-forge:` frontmatter with description and useful tags, including `Reasoning`, `Contextual`, and `Candidate`
+- scoped `open-forge:` frontmatter with description and useful tags, including `Contextual` and `Candidate`
 - a title
 - one short definition of analysis
 - compact reasoning, loading, promotion, and scope axioms
 - a final marker-bounded generated index region
 
-The authored portion must stay between 10 and 40 non-empty lines. Generated `entries` do not count toward this limit.
+The authored portion must stay between 15 and 40 non-empty lines. Generated entries do not count toward this limit.
 
 ## Analysis Contract
 
-Analysis files preserve reasoning in a route easier to find than raw sessions.
+Analysis files preserve reasoning that should be easier to find than raw sessions.
 
 They must keep the question, evidence, assumptions, limits, and current conclusion visible.
 
@@ -36,7 +36,7 @@ Analysis does not become accepted truth until validated, accepted, or promoted.
 
 The analysis category is relevant when current work needs prior reasoning, investigations, comparisons, critiques, or synthesis.
 
-The `entrypoint` must route agents to direct analysis files and child analysis categories whose path, description, or tags match the current request. Each selected child `entrypoint` applies the same contract recursively.
+The entrypoint must route agents to direct analysis files and child analysis categories whose path, description, or tags match the current request. Each selected child entrypoint applies the same contract recursively.
 
 Agents load analysis selectively and check whether its assumptions still hold.
 
@@ -56,7 +56,7 @@ Subcategories are encouraged when they separate unrelated questions or evidence 
 
 ## Generated Region
 
-The final section must use the shared category `entrypoint` shape:
+The final section must use the shared category entrypoint shape:
 
 ```md
 ## Entries
@@ -66,7 +66,7 @@ The final section must use the shared category `entrypoint` shape:
 <!-- open-forge:generated-index:end -->
 ```
 
-Generated `entries` list direct analysis files and direct child analysis categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
+Generated entries list direct analysis files and direct child analysis categories. The shared formatting and routing governors own metadata extraction, entry formatting, naming, recursive discovery, marker validation, and regeneration.
 
 ## Used By
 
@@ -86,7 +86,7 @@ The implementation is aligned when it:
 
 - is named `_analysis.md`
 - lives in `.agents/memory/emerging/analysis/`
-- includes `Reasoning`, `Contextual`, and `Candidate` in scoped `open-forge:` tags
+- includes `Contextual` and `Candidate` in scoped `open-forge:` tags
 - defines analysis as structured reasoning
 - keeps assumptions, evidence, limits, and conclusion visible
 - keeps analysis contextual until accepted or promoted

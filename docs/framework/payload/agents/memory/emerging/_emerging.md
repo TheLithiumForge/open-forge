@@ -36,7 +36,7 @@ Emerging memory is contextual and unapproved by default.
 
 It may guide investigation, suggest future work, or provide evidence. It is accepted only after promotion, validation, or explicit acceptance by the user or workspace process.
 
-If emerging memory becomes operational behavior, reusable form, guidance, capability, workflow, workspace routing, or other #Core material, the material must be promoted into the matching #Core route, including user-created #Core categories and files.
+If emerging memory becomes operational behavior, reusable form, guidance, capability, workflow, workspace routing, or other #Core material, the material must be extracted into the matching #Core route, including user-created #Core categories and files.
 
 If emerging memory changes external task state, the change must be promoted to the external system that owns that authority.
 
@@ -52,7 +52,7 @@ Agents load emerging memory selectively and keep unrelated candidate material ou
 
 Emerging memory must have an obvious next state.
 
-It may be refined, crystallized, moved to the matching authority owner, or archived.
+It may be refined, crystallized, moved to another #Memory route, extracted to the matching #Core route, promoted to an external owner, or archived.
 
 Repeated emerging material must trigger a suggestion to crystallize, promote, or archive it.
 
@@ -103,7 +103,8 @@ The implementation is aligned when it:
 - keeps emerging memory contextual until promoted or accepted
 - leaves child taxonomy to child entrypoints and local files
 - routes candidate material selectively
-- promotes operational emerging memory material into matching #Core routes, including user-created #Core categories and files
+- promotes emerging memory to the route that owns its new state
+- extracts operational emerging memory material into matching #Core routes, including user-created #Core categories and files
 - supports recursive positive scope
 - encourages subcategories that improve validation and promotion
 - routes only through its final generated region

@@ -50,7 +50,7 @@ Agents load archived memory only when it is relevant to the current request.
 
 ## Extraction Contract
 
-Before moving material to `archived/`, agents extract useful current material into the correct route when safe and relevant.
+Before moving material to `archived/`, agents extract useful current material into the correct route when safe and relevant. That route may be another #Memory route, a matching #Core route, or an external system.
 
 The archived copy must preserve enough source context for later review without duplicating current truth.
 
@@ -64,7 +64,7 @@ Archived organization must remain navigable. Agents must create subcategories wh
 
 Restoring archived material requires an explicit current destination.
 
-Restored material must be validated against current workspace state before becoming working, emerging, or crystallized memory.
+Restored material must be validated against current workspace state before becoming current #Memory, #Core material, or external current state.
 
 Restoration conflicts require user review or an explicit decision.
 
@@ -105,6 +105,7 @@ The implementation is aligned when it:
 - supports global or scoped archive routes without requiring state mirrors
 - preserves origin context
 - requires extraction before archival when useful material remains
+- allows extracted archived material to return to another #Memory route, matching #Core material, or external state
 - keeps archived material below current memory authority
 - requires validation before restoration
 - supports recursive positive scope
