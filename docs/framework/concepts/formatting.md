@@ -10,7 +10,7 @@ Formatting is part of the framework contract because agents route through these 
 
 Formatting represents the shared markdown shape for Open Forge files.
 
-It is a cross-cutting concept. It applies to descriptors, category entrypoints, generated index regions, routed files, and compact concept files.
+It is a cross-cutting concept. It applies to descriptors, category `entrypoints`, generated index regions, routed files, and compact concept files.
 
 ## Contains
 
@@ -19,7 +19,7 @@ Open Forge markdown files must prefer:
 - short headings
 - short paragraphs
 - line-based lists
-- one-line route entries
+- one-line route `entries`
 - compact examples
 - stable separators
 - minimal decoration
@@ -28,28 +28,28 @@ Files must stay readable in plain text. They must use lists instead of tables wh
 
 ## Entry Format
 
-Compact route and generated index entries must use this shape:
+Compact route and generated index `entries` must use this shape:
 
 ```text
 - {entry} - {description} - #{Tag1} #{Tag2} ... #{TagN}
 ```
 
-Generated entries list direct routed files and direct child category entrypoints:
+Generated `entries` list direct routed files and direct child category `entrypoints`:
 
 ```text
 - `alpha.md` - Route file - #Route
-- `repos/_repos.md` - Child category entrypoint - #Index
+- `repos/_repos.md` - Child category `entrypoint` - #Index
 ```
 
-Generated entries keep the full relative path in backticks. Parent category entrypoints stay at one folder boundary. A child folder becomes visible through its own `_{folder}.md` entrypoint.
+Generated `entries` keep the full relative path in backticks. Parent category `entrypoints` stay at one folder boundary. A child folder becomes visible through its own `_{folder}.md` `entrypoint`.
 
-Use one entry per line. Entries must not wrap.
+Use one `entry` per line. `Entries` must not wrap.
 
 ## Tags
 
 Tags must add compact routing information rather than repeat words without adding meaning.
 
-Useful tags identify the primitive type, domain, work type, topic, technology, artifact, lifecycle, or another selection signal. Use as many tags as the entry needs and no tags that do not improve routing.
+Useful tags identify the primitive type, domain, work type, topic, technology, artifact, lifecycle, or another selection signal. Use as many tags as the `entry` needs and no tags that do not improve routing.
 
 ```text
 - `migrations.md` - Database migration requirements - #Directive #Database #Migration
@@ -57,27 +57,31 @@ Useful tags identify the primitive type, domain, work type, topic, technology, a
 
 Paths and descriptions must keep critical scope readable. Tags reinforce and describe scope, but tags alone must not make a directive workspace-wide, mandatory, or active.
 
-Use normal words when naming, defining, or explaining the local concept itself. Use bare tags when the text points to routed ownership, classification, promotion, load policy, truth status, or search/reference targets. For example, a memory entrypoint says "Memory records state"; a promotion rule can say "move to #Core".
+Use normal words when naming, defining, or explaining the local concept itself. Use tags when the text points to routed ownership, classification, promotion, load policy, truth status, or search/reference targets. For example, a memory `entrypoint` says "Memory records state"; a promotion rule can say "move to #Core".
 
 Open Forge-authored payload tags use singular PascalCase concept names by default. Built-in route type tags are #Directive, #Pattern, #Guidance, #Skill, #Workflow, and #Workspace.
 
 Layer classification tags are singular: #Core, #Memory, and #Extension. These tags classify where material belongs; they do not create authority by themselves.
 
-Reserved load-policy tags are different from ordinary classification tags. Open Forge currently reserves #LoadWithParentEntrypoint and #LoadForPostWorkReview, which are governed by `docs/framework/concepts/routing.md` and defined in the installed loader.
+Reserved load-policy tags are different from normal classification tags. Open Forge currently reserves #LoadWithParentEntrypoint and #LoadForPostWorkReview, which are governed by `docs/framework/concepts/routing.md` and defined in the installed loader.
 
 ## Backticks
 
-Use backticks when an entry is a concrete filename, path, command, or code literal:
+Use backticks when an `entry` is a concrete filename, path, command, defined Open Forge term, or code literal:
 
 ```text
 - `repositories.md` - Repository workspace routes - #Workspace
 ```
 
-Generated entries must keep backticks around paths because each path is a lookup target.
+Generated `entries` must keep backticks around paths because each path is a lookup target.
+
+Tags must stay bare, including in prose, so graph and search tools can recognize them.
+
+Backtick defined Open Forge terms when precision matters, especially `entrypoint`, `entry`, `Entries`, `framework route`, `scope route`, `scoped framework route`, and `slug`. Do not backtick headings. Use normal words when the text means the ordinary English word rather than the framework term.
 
 ## Frontmatter
 
-Open Forge-authored category entrypoints and indexed routed files must use scoped metadata:
+Open Forge-authored category `entrypoints` and indexed routed files must use scoped metadata:
 
 ```yaml
 ---
@@ -95,26 +99,26 @@ Direct-load files that are not discovered through indexes do not need frontmatte
 
 ## Category Entrypoints
 
-A routed folder is represented by one category entrypoint:
+A routed folder is represented by one category `entrypoint`:
 
 ```text
 _{category}.md
 ```
 
-`{category}` is the category folder name. For `.agents/patterns/`, the category entrypoint is `_patterns.md`.
+`{category}` is the category folder name. For `.agents/patterns/`, the category `entrypoint` is `_patterns.md`.
 
 Open Forge-authored categories must use `_{category}.md`.
 
-For cross-tool compatibility, the CLI also accepts these category entrypoint names:
+For cross-tool compatibility, the CLI also accepts these category `entrypoint` names:
 
 - `_index.md`
 - `index.md`
 - `_references.md`
 - `references.md`
 
-Compatibility aliases are CLI input only. Open Forge framework descriptors, payload files, and examples must use the canonical name. A folder must contain exactly one recognized category entrypoint; generation must stop before writing when multiple candidates exist.
+Compatibility aliases are CLI input only. Open Forge framework descriptors, payload files, and examples must use the canonical name. A folder must contain exactly one recognized category `entrypoint`; generation must stop before writing when multiple candidates exist.
 
-A category entrypoint contains:
+A category `entrypoint` contains:
 
 - scoped metadata when Open Forge authors the file
 - a title
@@ -125,13 +129,34 @@ A category entrypoint contains:
 
 Category rules belong before `## Entries`. The authored portion must contain only stable category-level meaning and axioms. Detailed behavior, guidance, patterns, and user content belong in routed files.
 
-Installed category entrypoints must be understandable without governance descriptors. Any rule required for agent behavior must appear in installed payload content, not only in `docs/framework/`.
+Installed category `entrypoints` must be understandable without governance descriptors. Any rule required for agent behavior must appear in installed payload content, not only in `docs/framework/`.
 
-The authored portion of an Open Forge category entrypoint must stay between 5 and 80 non-empty lines. Generated entries do not count toward this limit.
+The authored portion of an Open Forge category `entrypoint` must stay between 5 and 80 non-empty lines. Generated `entries` do not count toward this limit.
+
+## Scope Route Slugs
+
+A `scope route` is a routed folder used to narrow meaning or ownership for routes below it.
+
+A `slug` is the stable folder segment used to create that route.
+
+`Slug` folders must use concrete, stable names. Prefer lowercase kebab-case unless an existing external name requires another stable spelling.
+
+A `slug` folder becomes a `scope route` only when it contains exactly one recognized `entrypoint`. Use the same canonical shape:
+
+```text
+mobile-app/
+  _mobile-app.md
+```
+
+Every folder in a visible route chain must have its own `entrypoint`. A deep file below a folder without an `entrypoint` is not reachable through generated routing.
+
+Route-template placeholders such as `[scope]`, `[route]`, or `[state]` are maintainer and CLI notation only. Installed payload paths and generated `entries` must contain concrete folder names, not placeholders.
+
+Display names belong in titles, descriptions, or frontmatter. They must not require hidden metadata to explain a `slug` or `scope route`.
 
 ## Generated Index Region
 
-The final section of every category entrypoint and the loader must use this shape:
+The final section of every category `entrypoint` and the loader must use this shape:
 
 ```md
 ## Entries
@@ -143,9 +168,9 @@ The final section of every category entrypoint and the loader must use this shap
 
 The CLI owns only the content between the markers. Index generation must preserve all content outside the markers.
 
-In category entrypoints, the generated region contains direct routed files and direct child category entrypoints. In the loader, it contains direct active category entrypoints. Generated regions contain navigation metadata plus reserved load policy only. Generated entries never define instructions, behavior, or authority.
+In category `entrypoints`, the generated region contains direct routed files and direct child category `entrypoints`. In the loader, it contains direct active category `entrypoints`. Generated regions contain navigation metadata plus reserved load policy only. Generated `entries` never define instructions, behavior, or authority.
 
-When the markers are absent from a legacy category entrypoint with a final `## Entries` section, the CLI must migrate that section. When the heading and markers are all absent, the CLI must append the complete generated section.
+When the markers are absent from a legacy category `entrypoint` with a final `## Entries` section, the CLI must migrate that section. When the heading and markers are all absent, the CLI must append the complete generated section.
 
 Generation must stop without writing when markers are incomplete, duplicated, reversed, detached from `## Entries`, or followed by authored content.
 
@@ -155,40 +180,42 @@ User files can use any clear filename.
 
 A direct markdown file is indexable when it uses `*.md`, including underscore-prefixed names, except:
 
-- the folder's recognized category entrypoint
-- canonical and compatibility entrypoint names
+- the folder's recognized category `entrypoint`
+- canonical and compatibility `entrypoint` names
 - `.overwrite.md` companions
 
-A child folder is indexable when it contains exactly one recognized category entrypoint. The CLI must not create category entrypoints for folders that have not explicitly opted into routing.
+A child folder is indexable when it contains exactly one recognized category `entrypoint`. The CLI must not create category `entrypoints` for folders that have not explicitly opted into routing.
 
 ## Why
 
 Open Forge optimizes for routing. Formatting must make routing cheap.
 
-One category entrypoint gives agents category meaning and navigation without an extra mandatory file. The bounded generated region keeps machine output obvious and prevents index generation from replacing authored content.
+One category `entrypoint` gives agents category meaning and navigation without an extra mandatory file. The bounded generated region keeps machine output obvious and prevents index generation from replacing authored content.
 
-The one-line entry shape is easier to scan in raw markdown, easier to regenerate, cheaper in tokens, and easier to review in git than a table.
+The one-line `entry` shape is easier to scan in raw markdown, easier to regenerate, cheaper in tokens, and easier to review in git than a table.
 
 ## Alignment Checks
 
 Formatting is aligned when:
 
-- entries use the compact one-line shape
+- `entries` use the compact one-line shape
 - tags add useful routing information with minimal text
 - Open Forge-authored payload tags use singular PascalCase concept names by default
 - layer tags classify material without creating authority
 - reserved load-policy tags are documented before use
 - generated paths use backticks
 - generated paths are concrete and workspace-root-relative
-- category generated entries include direct routed files and direct child category entrypoints
-- loader generated entries include direct active category entrypoints
+- category generated `entries` include direct routed files and direct child category `entrypoints`
+- loader generated `entries` include direct active category `entrypoints`
 - Open Forge-authored indexed files use only scoped `open-forge:` frontmatter
 - direct-load files avoid unnecessary frontmatter
 - tables are used only when a list would be less clear
 - Open Forge-authored categories use `_{category}.md`
-- compatibility entrypoint names are accepted only by the CLI
-- each routed folder contains at most one recognized entrypoint name
+- compatibility `entrypoint` names are accepted only by the CLI
+- each routed folder contains at most one recognized `entrypoint` name
+- `scope route` `slugs` use concrete stable names and matching `entrypoints`
+- route-template placeholders stay out of installed payload paths and generated `entries`
 - category contracts stay before the generated region
-- installed category entrypoints do not depend on governance-only context
-- generated entries stay inside the required markers
+- installed category `entrypoints` do not depend on governance-only context
+- generated `entries` stay inside the required markers
 - only marker-bounded content is regenerated

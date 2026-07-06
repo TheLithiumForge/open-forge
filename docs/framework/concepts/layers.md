@@ -26,9 +26,9 @@ Layer tags are classification tags. #Core marks Core material, #Memory marks Mem
 
 #Core is the minimum Open Forge framework.
 
-#Core contains the root entrypoint, loader, routing model, workspace route, formatting and overwrite contracts, and primitive categories for directives, patterns, guidance, skills, and workflows.
+#Core contains the root `entrypoint`, loader, routing model, workspace route, formatting and overwrite contracts, and primitive categories for directives, patterns, guidance, skills, and workflows.
 
-#Core must stay small. It installs empty primitive category entrypoints and the axioms needed to route and interpret them. It does not seed opinionated behavior, technology patterns, workflow packs, templates, or project memory.
+#Core must stay small. It installs empty primitive category `entrypoints` and the axioms needed to route and interpret them. It does not seed opinionated behavior, technology patterns, workflow packs, templates, or project memory.
 
 #Core is the required base for every Open Forge install. Every other layer depends on #Core routing and #Core authority boundaries.
 
@@ -36,7 +36,7 @@ Layer tags are classification tags. #Core marks Core material, #Memory marks Mem
 
 ## Layer 2: Memory
 
-#Memory is the persistence layer for human-AI work.
+#Memory is the durable markdown persistence layer for human-AI work.
 
 #Memory records live work, candidate learning, accepted current memory, and archived history through the installed `memory/` route.
 
@@ -51,9 +51,9 @@ archived/     archived memory preserved for context
 
 #Memory records state. If memory becomes operational behavior, reusable form, guidance, capability, workflow, workspace routing, or other #Core material, it must be promoted into the matching #Core route, including user-created #Core categories and files.
 
-The base #Memory payload installs only universal child routes. More specialized containers, such as scoped decisions, scoped archives, task routes, backlog routes, and workflow-specific outputs, are created under the route that owns their meaning. #Extension payloads may package those additions, but #Memory rules determine their state and scope.
+The base #Memory payload installs only universal child routes, including crystallized decisions for accepted rationale. More specialized containers, such as archive child routes, task routes, backlog routes, and workflow-specific outputs, are created under the route that owns their meaning. #Extension payloads may package those additions, but #Memory rules determine their state and scope.
 
-#Memory may be installed with or after #Core. The default #Memory entrypoint is tagged #LoadWithParentEntrypoint, so its generated loader entry loads with the loader when #Memory is installed.
+#Memory may be installed with or after #Core. The default #Memory `entrypoint` is tagged #LoadWithParentEntrypoint, so its generated loader `entry` loads with the loader when #Memory is installed.
 
 #Memory uses #LoadForPostWorkReview on selected candidate-memory routes so agents can route useful material produced during work without preloading every memory child body.
 
@@ -72,7 +72,7 @@ An #Extension is not higher authority because it is installed later. Its content
 The install model must keep the layers visible even when multiple layers ship together:
 
 - #Core is the required base.
-- #Memory is the official persistence layer and may install its minimum state entrypoints with #Core.
+- #Memory is the official persistence layer and may install its minimum state `entrypoints` with #Core.
 - #Extension payloads are optional extensions added on top.
 
 The CLI may expose commands using product-friendly names, but installed material must still map back to one of these layers.
@@ -81,11 +81,11 @@ The CLI may expose commands using product-friendly names, but installed material
 
 ## Growth Contract
 
-Workspaces grow by adding ordinary routed files and child categories first.
+Workspaces grow by adding routed files and child categories first.
 
 Overwrites are the local adjustment mechanism for small changes to managed files. Direct edits to managed framework files are reserved for complete replacement or cases where base plus overwrite would confuse an agent.
 
-Workspaces expand #Memory through child categories. #Extension payloads expand existing routes by adding ordinary routed material. New root categories or new #Memory root states require stronger justification because they change the top-level routing model.
+Workspaces expand #Memory through child categories. #Extension payloads expand existing routes by adding routed material. New root categories or new #Memory root states require stronger justification because they change the top-level routing model.
 
 ## Why
 

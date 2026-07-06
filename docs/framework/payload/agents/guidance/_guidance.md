@@ -4,7 +4,7 @@
 
 This descriptor governs `src/open-forge/.agents/guidance/_guidance.md`.
 
-The guidance category entrypoint defines how agents discover and use contextual judgment for recurring scenarios.
+The guidance category `entrypoint` defines how agents discover and use contextual judgment for recurring scenarios.
 
 ## Represents
 
@@ -14,7 +14,7 @@ Guidance identifies a recurring scenario, explains a useful approach and its rea
 
 ## Contains
 
-The installed guidance category entrypoint must contain:
+The installed guidance category `entrypoint` must contain:
 
 - scoped `open-forge:` frontmatter with a description and useful tags, including `Core`, `Guidance`, and `Index`
 - a title
@@ -22,7 +22,7 @@ The installed guidance category entrypoint must contain:
 - compact relevance, loading, scope, and application axioms
 - a final marker-bounded generated index region
 
-The authored portion must stay between 15 and 35 non-empty lines. Generated entries do not count toward this limit.
+The authored portion must stay between 15 and 35 non-empty lines. Generated `entries` do not count toward this limit.
 
 ## Guidance Contract
 
@@ -34,7 +34,7 @@ Applicable guidance informs judgment. Agents use its preferred approach when it 
 
 The guidance category is relevant when current work encounters a recurring scenario or decision that may have established guidance.
 
-The entrypoint must route agents to direct guidance files and child guidance categories whose path, description, or tags match the current work. Each selected child entrypoint applies the same contract recursively. Agents load only guidance bodies in the current scope.
+The `entrypoint` must route agents to direct guidance files and child guidance categories whose path, description, or tags match the current work. Each selected child `entrypoint` applies the same contract recursively. Agents load only guidance bodies in the current scope.
 
 ## Scope Contract
 
@@ -46,7 +46,7 @@ Guidance in a narrower selected scope is preferred over broader guidance when sa
 
 ## Generated Region
 
-The final section must use the shared category entrypoint shape:
+The final section must use the shared category `entrypoint` shape:
 
 ```md
 ## Entries
@@ -56,7 +56,7 @@ The final section must use the shared category entrypoint shape:
 <!-- open-forge:generated-index:end -->
 ```
 
-Generated entries list direct guidance files and direct child guidance categories. The shared formatting and routing governors own metadata extraction, entry formatting, naming, recursive discovery, marker validation, and regeneration.
+Generated `entries` list direct guidance files and direct child guidance categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
 
 ## Used By
 
@@ -66,7 +66,7 @@ Agents use this category when a recurring scenario may benefit from established 
 
 Guidance preserves useful reasoning while leaving room for the facts and tradeoffs of the current work.
 
-The empty core category gives each workspace room to grow its own guidance through ordinary files and recursively scoped folders.
+The empty default route gives each workspace room to grow its own guidance through routed files and child categories.
 
 ## Alignment Checks
 

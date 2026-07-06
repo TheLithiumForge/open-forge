@@ -36,7 +36,7 @@ Scalability comes from recursive composition and selective loading. Agents see t
 
 Describe this as user-owned configurability, not as a large configuration system.
 
-Users configure Open Forge primarily by creating ordinary folders and markdown files. The CLI maintains navigation derived from that structure. The framework must not imply that users need to understand every possible category before starting.
+Users configure Open Forge primarily by creating folders and markdown files. The CLI maintains navigation derived from that structure. The framework must not imply that users need to understand every possible category before starting.
 
 ## Primitive Glossary
 

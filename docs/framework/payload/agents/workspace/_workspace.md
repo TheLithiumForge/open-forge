@@ -4,7 +4,7 @@
 
 This descriptor governs `src/open-forge/.agents/workspace/_workspace.md`.
 
-The workspace category entrypoint defines how agents discover important workspace destinations and provides generated navigation to workspace route files.
+The workspace category `entrypoint` defines how agents discover important workspace destinations, understand when to use them, and use generated navigation to workspace route files.
 
 ## Represents
 
@@ -14,7 +14,7 @@ It supports a single project, a monorepo, multiple repositories, a document work
 
 ## Contains
 
-The installed workspace category entrypoint must contain:
+The installed workspace category `entrypoint` must contain:
 
 - scoped `open-forge:` frontmatter with description and useful tags, including `Core`, `Workspace`, and `Index`
 - a title
@@ -22,7 +22,7 @@ The installed workspace category entrypoint must contain:
 - compact workspace routing axioms
 - a final marker-bounded generated index region
 
-The authored portion must stay between 15 and 40 non-empty lines. Generated entries do not count toward this limit.
+The authored portion must stay between 15 and 40 non-empty lines. Generated `entries` do not count toward this limit.
 
 ## Workspace Contract
 
@@ -34,7 +34,7 @@ Workspace route filenames, grouping, and nesting depth are owned by the workspac
 
 A destination can be a file, folder, project, repository, system, or document set. The routed destination owns detailed truth.
 
-The current request determines which routed files are loaded. Generated entries provide navigation metadata and reserved load policy only. They never define instructions or authority.
+The current request determines which routed files are loaded. Generated `entries` provide navigation metadata and reserved load policy only. They never define instructions or authority.
 
 ## Route Files
 
@@ -52,7 +52,7 @@ Route files can use any clear filename. A workspace can keep several related rou
 
 ## Generated Region
 
-The final section must use the shared category entrypoint shape:
+The final section must use the shared category `entrypoint` shape:
 
 ```md
 ## Entries
@@ -62,19 +62,19 @@ The final section must use the shared category entrypoint shape:
 <!-- open-forge:generated-index:end -->
 ```
 
-Generated entries list direct workspace route files and direct child workspace category entrypoints. Child entrypoints may use CLI compatibility aliases. The shared formatting governor owns naming, ambiguity handling, marker validation, legacy migration, and regeneration behavior.
+Generated `entries` list direct workspace route files and direct child workspace category `entrypoints`. Child `entrypoints` may use CLI compatibility aliases. The shared formatting governor owns naming, ambiguity handling, marker validation, legacy migration, and regeneration behavior.
 
 ## Used By
 
 The loader registry exposes this category's path and meaning. Agents load it when the current request needs workspace routes.
 
-Agents use its generated entries to choose relevant workspace route files, then follow those routes to the destinations that own detailed truth.
+Agents use its generated `entries` to choose relevant workspace route files, then follow those routes to the destinations that own detailed truth.
 
 ## Why
 
 The workspace category gives agents durable orientation without requiring a complete project map.
 
-Its organization scales through ordinary files and nested categories while remaining owned by the workspace rather than by an Open Forge project-layout assumption.
+Its organization scales through routed files and nested categories while remaining owned by the workspace rather than by an Open Forge project-layout assumption.
 
 ## Alignment Checks
 
@@ -85,7 +85,7 @@ The implementation is aligned when it:
 - includes `Core`, `Workspace`, and `Index` in scoped `open-forge:` tags
 - defines selective workspace routing
 - leaves route-file granularity to the workspace
-- uses entries to select routes relevant to the current request
+- uses `entries` to select routes relevant to the current request
 - supports nested categories at any useful depth
 - keeps detailed truth at routed destinations
 - contains no seeded project-layout assumptions

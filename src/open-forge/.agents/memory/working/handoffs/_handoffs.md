@@ -1,16 +1,16 @@
 ---
 open-forge:
-  description: Concise transfer notes for resuming work
-  tags: [OpenForge, Memory, Handoff, Index, Contextual]
+  description: Static, concise and accurate transfer notes that help agents or humans resume work after context breaks
+  tags: [OpenForge, Memory, Handoff, AgentCommunication, Index, Contextual]
 ---
 
 # Handoffs
 
-Handoffs are concise memory transfer notes for resuming work across humans, agents, subagents, threads, or workflows.
+Handoffs are Static, concise and accurate rereadable transfer notes for resuming work across agents, subagents, threads, workflows, or humans.
 
 ## Axioms
 
-- This entrypoint exposes resumability and transfer memory routes.
+- This `entrypoint` exposes resumabnle, static short-term communication and transfer memory routes.
 - Read `Entries` when work is resumed, transferred, delegated, interrupted, or reviewed after a context break.
 - Treat handoffs as contextual memory resume notes, not complete history or accepted truth.
 - Keep handoffs short; point to sessions, documents, code, or other routes when detail matters.
@@ -18,7 +18,7 @@ Handoffs are concise memory transfer notes for resuming work across humans, agen
 - Extract useful material to another #Memory route, a matching #Core route, or an external system before replacing or archiving stale handoffs.
 - Load only the handoff bodies and child categories relevant to the current request.
 - Add child categories when they improve routing, ownership, or clarity.
-- Generated entries are navigation and reserved load policy only.
+- Generated `entries` are navigation and reserved load policy only.
 
 ## Entries
 

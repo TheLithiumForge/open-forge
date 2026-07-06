@@ -219,6 +219,7 @@ describe("install", () => {
     const ideasMemory = await fs.readFile(path.join(root, ".agents", "memory", "emerging", "ideas", "_ideas.md"), "utf8");
     const observationsMemory = await fs.readFile(path.join(root, ".agents", "memory", "emerging", "observations", "_observations.md"), "utf8");
     const crystallizedMemory = await fs.readFile(path.join(root, ".agents", "memory", "crystallized", "_crystallized.md"), "utf8");
+    const decisionsMemory = await fs.readFile(path.join(root, ".agents", "memory", "crystallized", "decisions", "_decisions.md"), "utf8");
     const documentsMemory = await fs.readFile(path.join(root, ".agents", "memory", "crystallized", "documents", "_documents.md"), "utf8");
     const archivedMemory = await fs.readFile(path.join(root, ".agents", "memory", "archived", "_archived.md"), "utf8");
     const patterns = await fs.readFile(path.join(root, ".agents", "patterns", "_patterns.md"), "utf8");
@@ -228,77 +229,101 @@ describe("install", () => {
     const loader = await fs.readFile(path.join(root, ".agents", "loader.md"), "utf8");
 
     expect(result.exitCode).toBe(0);
-    expect(directives).toContain("Every directive file beside this entrypoint is workspace-wide; load all of them.");
-    expect(directives).toContain("Child directive entrypoints define positive scope through path, description, and tags.");
+    expect(directives).toContain("Every directive file beside this `entrypoint` is workspace-wide; load all of them.");
+    expect(directives).toContain("Child directive `entrypoints` define positive scope through path, description, and tags.");
     expect(directives).toContain("Load child directive routes when their path, description, tags, or defined tag behavior match the current work.");
     expect(directives).not.toContain("Child categories may define a work scope or organize directives");
     expect(directives).not.toContain("always load");
     expect(directives).toContain("<!-- open-forge:generated-index:start -->");
     expect(guidance).toContain("Every guidance file identifies its scenario, preferred approach, reasoning, and relevant tradeoffs.");
     expect(guidance).toContain("<!-- open-forge:generated-index:start -->");
-    expect(memory).toContain("Memory is the workspace state record: current truth, live work, candidate learning, and useful history.");
+    expect(memory).toContain("Memory is self-growing durable markdown memory for workspace state: current truth, live work, AI communication, written records, candidate learning, and useful history.");
     expect(memory).toContain("- Use loader-defined #Contextual and #CurrentTruth tags to distinguish context from accepted current truth.");
     expect(memory).toContain("- Memory records state; it must not own operational behavior.");
+    expect(memory).toContain("- Write useful durable state to the matching #Memory route when safe and allowed; do not treat private agent memory as the source of truth.");
     expect(memory).toContain("- Move material between #Memory routes when its state or owner changes.");
     expect(memory).toContain("- Extract behavior, reusable form, guidance, capability, workflow, or workspace routing to the matching #Core route, including user-created #Core categories and files.");
-    expect(memory).toContain("- Add scoped decision or archive routes only when separate routing improves clarity; place them under the route that owns their meaning.");
+    expect(memory).toContain("- Add child categories when they improve routing, ownership, or clarity.");
     expect(memory).not.toContain("Core category");
-    expect(memory).toContain("- `working/_working.md` - Working memory alive in current work - #OpenForge #Memory #Working #Index #Contextual #LoadWithParentEntrypoint");
-    expect(memory).toContain("- `crystallized/_crystallized.md` - Accepted durable memory and current truth - #OpenForge #Memory #Crystallized #Index #CurrentTruth #LoadWithParentEntrypoint");
-    expect(memory).toContain("- `emerging/_emerging.md` - Candidate memory becoming useful but not accepted truth - #OpenForge #Memory #Emerging #Index #Contextual #Candidate #LoadForPostWorkReview");
+    expect(memory).toContain("- `working/_working.md` - Temporary context needed to continue or resume active work - #OpenForge #Memory #Working #Index #Contextual #LoadWithParentEntrypoint");
+    expect(memory).toContain("- `crystallized/_crystallized.md` - Accepted current memory that should guide work within its scope - #OpenForge #Memory #Crystallized #Index #CurrentTruth #LoadWithParentEntrypoint");
+    expect(memory).toContain("- `emerging/_emerging.md` - Candidate memory that is useful but not yet accepted as truth - #OpenForge #Memory #Emerging #OrganicGrowth #Index #Contextual #Candidate #LoadForPostWorkReview");
     expect(memory).not.toContain("#Emerging #Index #LoadWithParentEntrypoint");
-    expect(loader).toContain("Open Forge is a routing system.");
+    expect(loader).toContain("- `entrypoint` - Markdown file that makes a folder routable.");
+    expect(loader).toContain("- `entry` - Generated line under `Entries` that points to a sibling markdown file or direct child `entrypoint`.");
+    expect(loader).toContain("- `framework route` - Route installed and managed by Open Forge.");
+    expect(loader).toContain("- `scope route` - Local route used to narrow meaning or ownership for routes below it.");
+    expect(loader).toContain("- `scoped framework route` - `framework route` initialized inside a `scope route`.");
+    expect(loader).toContain("- `slug` - Concrete folder name used in a route path.");
+    expect(loader).toContain("- Open Forge routes agents through small markdown `entrypoints`.");
+    expect(loader).toContain("- A folder is routable only when it contains one recognized `entrypoint`.");
+    expect(loader).toContain("- `Entries` list sibling markdown files and direct child `entrypoints`.");
+    expect(loader).toContain("- To route into nested folders, every folder in the path needs its own `entrypoint`.");
+    expect(loader).toContain("- `scope routes` use the same mechanism: add `slug` folders with `entrypoints` before, after, or between `framework routes` when they make ownership clearer.");
+    expect(loader).toContain("- `scoped framework routes` work only when their framework `entrypoint` exists inside the scope.");
+    expect(loader).toContain("- `.agents/memory/[scope]/crystallized/documents/_documents.md` - `scoped framework route` under a scope that owns memory states.");
     expect(loader).toContain("Apply defined tag behavior when reading generated `Entries`.");
-    expect(loader).toContain("- `.agents/directives/_directives.md` - Mandatory workspace modifiers; load for every request - #OpenForge #Core #Directive #Index #LoadWithParentEntrypoint");
-    expect(loader).toContain("- `.agents/memory/_memory.md` - Memory state routes for human-AI work - #OpenForge #Memory #Index #LoadWithParentEntrypoint");
+    expect(loader).toContain("- `.agents/directives/_directives.md` - Mandatory instructions that change how agents must work in this workspace - #OpenForge #Core #Directive #Index #LoadWithParentEntrypoint");
+    expect(loader).toContain("- `.agents/memory/_memory.md` - Self-growing markdown memory for workspace state, AI communication, records, learning, and history - #OpenForge #Memory #OrganicGrowth #Index #LoadWithParentEntrypoint");
     expect(loader).toContain("## Tags");
     expect(loader).toContain("### Axioms");
     expect(loader).toContain("- Defined tags have framework meaning when they appear in loaded content or generated `Entries`.");
-    expect(loader).toContain("- Undefined tags are routing and search signals; read the entry path, description, and loaded entrypoint for their meaning.");
-    expect(loader).toContain("- Entries without a load-policy tag are on-demand routes selected by the current request.");
+    expect(loader).toContain("- Undefined tags are routing and search signals; read the `entry` path, description, and loaded `entrypoint` for their meaning.");
+    expect(loader).toContain("- `Entries` without a load-policy tag are on-demand routes selected by the current request.");
     expect(loader).toContain("- Tag spelling and casing are stable.");
     expect(loader).toContain("- Workspace-wide tag behavior belongs here and must stay short.");
     expect(loader).toContain("### Defined Tags");
-    expect(loader).toContain("- #LoadWithParentEntrypoint - Load this entry immediately after its parent entrypoint, in listed order. Applies only inside already loaded `Entries`.");
-    expect(loader).toContain("- #LoadForPostWorkReview - Load this entry before ending meaningful work to route useful material produced during the work. Applies only inside already loaded `Entries`.");
+    expect(loader).toContain("- #LoadWithParentEntrypoint - Load this `entry` immediately after its parent `entrypoint`, in listed order. Applies only inside already loaded `Entries`.");
+    expect(loader).toContain("- #LoadForPostWorkReview - Load this `entry` before ending meaningful work to route useful material produced during the work. Applies only inside already loaded `Entries`.");
     expect(loader).toContain("- #Core - Base routing, workspace orientation, and agent primitive routes.");
-    expect(loader).toContain("- #Memory - Persisted workspace state and memory routes.");
+    expect(loader).toContain("- #Memory - Self-growing markdown memory for workspace state, AI communication, records, learning, and history.");
     expect(loader).toContain("- #Extension - Optional extension payload, template, integration, and support routes.");
     expect(loader).toContain("- #Contextual - Supporting context, not accepted current truth unless restored, validated, accepted, or promoted.");
     expect(loader).toContain("- #CurrentTruth - Accepted current memory within its stated scope; still below user instructions, runtime safety, platform constraints, and declared external sources of truth.");
     expect(workingMemory).toContain("Working memory is live context for active or recently interrupted work.");
     expect(workingMemory).toContain("tags: [OpenForge, Memory, Working, Index, Contextual, LoadWithParentEntrypoint]");
-    expect(workingMemory).toContain("- Use listed child routes according to their path, description, and tags.");
+    expect(workingMemory).toContain("- Use listed `entries` according to their path, description, and tags.");
     expect(workingMemory).not.toContain("Use `handoffs/`");
-    expect(workingMemory).toContain("- `handoffs/_handoffs.md` - Concise transfer notes for resuming work - #OpenForge #Memory #Handoff #Index #Contextual");
-    expect(workingMemory).toContain("- `sessions/_sessions.md` - Raw chronological records of work sessions - #OpenForge #Memory #Session #Index #Contextual");
-    expect(handoffsMemory).toContain("Handoffs are concise memory transfer notes for resuming work across humans, agents, subagents, threads, or workflows.");
+    expect(workingMemory).toContain("- `handoffs/_handoffs.md` - Static transfer notes that help agents or humans resume work after context breaks - #OpenForge #Memory #Handoff #AgentCommunication #Index #Contextual");
+    expect(workingMemory).toContain("- `sessions/_sessions.md` - Raw chronological records of what happened during work sessions - #OpenForge #Memory #Session #WorkHistory #Index #Contextual");
+    expect(handoffsMemory).toContain("Handoffs are static, rereadable transfer notes for resuming work across agents, subagents, threads, workflows, or humans.");
+    expect(handoffsMemory).toContain("tags: [OpenForge, Memory, Handoff, AgentCommunication, Index, Contextual]");
     expect(sessionsMemory).toContain("Sessions are raw chronological memory records of work while it happens.");
+    expect(sessionsMemory).toContain("tags: [OpenForge, Memory, Session, WorkHistory, Index, Contextual]");
     expect(emergingMemory).toContain("Emerging memory is useful material that has not become accepted current memory.");
-    expect(emergingMemory).toContain("tags: [OpenForge, Memory, Emerging, Index, Contextual, Candidate, LoadForPostWorkReview]");
-    expect(emergingMemory).toContain("- Read `Entries` when current work needs or produced material that is useful but not accepted truth.");
-    expect(emergingMemory).toContain("- Use listed child routes according to their path, description, and tags.");
+    expect(emergingMemory).toContain("tags: [OpenForge, Memory, Emerging, OrganicGrowth, Index, Contextual, Candidate, LoadForPostWorkReview]");
+    expect(emergingMemory).toContain("- Read `Entries` when current work needs useful material that is not accepted truth or produces candidate material.");
+    expect(emergingMemory).toContain("- Use listed `entries` according to their path, description, and tags.");
     expect(emergingMemory).not.toContain("Use `analysis/`");
     expect(emergingMemory).toContain("- Extract resulting #Core material to matching #Core routes instead of accepting it as memory.");
-    expect(emergingMemory).toContain("- `analysis/_analysis.md` - Structured reasoning that is useful but not accepted truth - #OpenForge #Memory #Analysis #Index #Contextual #Candidate");
-    expect(emergingMemory).toContain("- `ideas/_ideas.md` - Candidate possibilities and unaccepted future options - #OpenForge #Memory #Idea #Index #Contextual #Candidate");
-    expect(emergingMemory).toContain("- `observations/_observations.md` - Grounded noticed findings that may become durable memory - #OpenForge #Memory #Observation #Index #Contextual #Candidate #LoadForPostWorkReview");
+    expect(emergingMemory).toContain("- `analysis/_analysis.md` - Structured reasoning, investigation, or comparison that is not yet accepted truth - #OpenForge #Memory #Analysis #Reasoning #Index #Contextual #Candidate");
+    expect(emergingMemory).toContain("- `ideas/_ideas.md` - Future possibilities, experiments, questions, and options to explore later - #OpenForge #Memory #Idea #Exploration #OrganicGrowth #Index #Contextual #Candidate");
+    expect(emergingMemory).toContain("- `observations/_observations.md` - Agent-noticed findings that may become learning, memory, or Core updates - #OpenForge #Memory #Observation #AgentLearning #OrganicGrowth #Index #Contextual #Candidate #LoadForPostWorkReview");
     expect(analysisMemory).toContain("Analysis is structured reasoning that is useful but not accepted truth.");
-    expect(ideasMemory).toContain("Ideas are candidate possibilities and unaccepted future options.");
-    expect(observationsMemory).toContain("Observations are grounded noticed findings that may matter later.");
-    expect(observationsMemory).toContain("tags: [OpenForge, Memory, Observation, Index, Contextual, Candidate, LoadForPostWorkReview]");
+    expect(analysisMemory).toContain("tags: [OpenForge, Memory, Analysis, Reasoning, Index, Contextual, Candidate]");
+    expect(ideasMemory).toContain("Ideas are future potential, unexplored paths, experiments, and candidate options.");
+    expect(ideasMemory).toContain("tags: [OpenForge, Memory, Idea, Exploration, OrganicGrowth, Index, Contextual, Candidate]");
+    expect(observationsMemory).toContain("Observations are agent-noticed grounded findings that help future agents learn from work.");
+    expect(observationsMemory).toContain("tags: [OpenForge, Memory, Observation, AgentLearning, OrganicGrowth, Index, Contextual, Candidate, LoadForPostWorkReview]");
     expect(observationsMemory).toContain("- When safe and allowed, write observations after work when a grounded finding may matter later but is not accepted truth.");
+    expect(observationsMemory).toContain("- That owner may be another #Memory route, a matching #Core route, an external system, or archived history.");
     expect(crystallizedMemory).toContain("Crystallized memory is accepted current memory within its stated scope.");
     expect(crystallizedMemory).toContain("tags: [OpenForge, Memory, Crystallized, Index, CurrentTruth, LoadWithParentEntrypoint]");
-    expect(crystallizedMemory).toContain("- Use listed child routes according to their path, description, and tags.");
+    expect(crystallizedMemory).toContain("- Use listed `entries` according to their path, description, and tags.");
     expect(crystallizedMemory).not.toContain("Use `documents/`");
     expect(crystallizedMemory).not.toContain("scoped decision route");
     expect(crystallizedMemory).toContain("- Extract resulting #Core material to matching #Core routes instead of keeping it as crystallized memory.");
-    expect(crystallizedMemory).toContain("- `documents/_documents.md` - Durable accepted records and routes to them - #OpenForge #Memory #Document #Index #CurrentTruth");
+    expect(crystallizedMemory).toContain("- `decisions/_decisions.md` - Accepted rationale that explains meaningful choices and consequences - #OpenForge #Memory #Decision #Rationale #Index #CurrentTruth");
+    expect(crystallizedMemory).toContain("- `documents/_documents.md` - Durable records, or routes to records, that hold accepted knowledge - #OpenForge #Memory #Document #Record #Index #CurrentTruth");
+    expect(decisionsMemory).toContain("Decisions are accepted rationale for meaningful choices that may need to be understood later.");
+    expect(decisionsMemory).toContain("tags: [OpenForge, Memory, Decision, Rationale, Index, CurrentTruth]");
+    expect(decisionsMemory).toContain("Decisions explain why a choice was made; the chosen behavior, record, route, or external state belongs to its owning route or system.");
+    expect(decisionsMemory).toContain("- Extract resulting #Core material to matching #Core routes instead of keeping it as decision rationale.");
     expect(documentsMemory).toContain("Documents are durable accepted records or routes to them.");
+    expect(documentsMemory).toContain("tags: [OpenForge, Memory, Document, Record, Index, CurrentTruth]");
     expect(archivedMemory).toContain("Archived memory is preserved context that is no longer current.");
     expect(archivedMemory).toContain("tags: [OpenForge, Memory, Archived, Index, Contextual, Historical]");
-    expect(archivedMemory).toContain("Use scoped archive routes when they preserve origin better than a global archive route.");
+    expect(archivedMemory).toContain("Add child categories when they preserve origin, ownership, or clarity better than a flat archive.");
     expect(patterns).toContain("Treat an applicable pattern as the established default shape for its scope.");
     expect(patterns).toContain("<!-- open-forge:generated-index:start -->");
     expect(skills).toContain("Every skill file defines one bounded capability, its positive applicability, and its expected result.");
@@ -309,14 +334,66 @@ describe("install", () => {
     expect(workspace).toContain("<!-- open-forge:generated-index:start -->");
     expect(loader).not.toContain("Load `directives` for every request when it appears in `Entries`.");
     expect(loader).not.toContain("Load `memory` after `directives` when it appears in `Entries`.");
-    expect(loader).toContain("- `.agents/guidance/_guidance.md` - Contextual guidance for recurring decisions and scenarios - #OpenForge #Core #Guidance #Index");
-    expect(loader).toContain("- `.agents/patterns/_patterns.md` - Concrete reusable shapes for inspectable work - #OpenForge #Core #Pattern #Index");
-    expect(loader).toContain("- `.agents/skills/_skills.md` - Bounded reusable agent capabilities and scoped routes - #OpenForge #Core #Skill #Index");
-    expect(loader).toContain("- `.agents/workflows/_workflows.md` - Goal-oriented workflows and scoped workflow routes - #OpenForge #Core #Workflow #Index");
-    expect(loader).toContain("- `.agents/workspace/_workspace.md` - Important workspace destinations and their scope - #OpenForge #Core #Workspace #Index");
+    expect(loader).toContain("- `.agents/guidance/_guidance.md` - Contextual advice for recurring choices, tradeoffs, and scenarios - #OpenForge #Core #Guidance #Index");
+    expect(loader).toContain("- `.agents/patterns/_patterns.md` - Reusable shapes for code, files, APIs, documents, and other inspectable work - #OpenForge #Core #Pattern #Index");
+    expect(loader).toContain("- `.agents/skills/_skills.md` - Reusable agent capabilities with clear applicability and expected results - #OpenForge #Core #Skill #Index");
+    expect(loader).toContain("- `.agents/workflows/_workflows.md` - Repeatable agent workflows for larger goals and handoff points - #OpenForge #Core #Workflow #Index");
+    expect(loader).toContain("- `.agents/workspace/_workspace.md` - Routes to important workspace destinations and when to use them - #OpenForge #Core #Workspace #Index");
     expect(loader).not.toContain("## Route Categories");
     expect(await exists(path.join(root, ".agents", "constants.md"))).toBe(false);
     expect(await exists(path.join(root, ".agents", "workspace", "_workspace-open-forge.md"))).toBe(false);
+  });
+
+  test("updates scoped framework route entrypoints by path shape", async () => {
+    const root = await createRoot();
+    const scopedDocuments = path.join(root, ".agents", "memory", "customer-facing", "mobile-app", "crystallized", "platform", "documents");
+    const scopedDecisions = path.join(root, ".agents", "memory", "mobile-app", "crystallized", "decisions");
+    await fs.mkdir(scopedDocuments, { recursive: true });
+    await fs.mkdir(scopedDecisions, { recursive: true });
+    await fs.writeFile(path.join(scopedDocuments, "_documents.md"), `# Old Scoped Documents
+
+Old scoped framework copy.
+
+## Entries
+
+<!-- open-forge:generated-index:start -->
+- old.md - Old route - #Old
+<!-- open-forge:generated-index:end -->
+`);
+    await fs.writeFile(path.join(scopedDecisions, "_decisions.md"), `# Old Scoped Decisions
+
+Old scoped decisions framework copy.
+`);
+    await writeRoute(scopedDocuments, "architecture.md", "Scoped architecture truth", ["Memory", "Document", "CurrentTruth"]);
+
+    const result = await runCli("install", root);
+    const scopedContent = await fs.readFile(path.join(scopedDocuments, "_documents.md"), "utf8");
+    const scopedDecisionContent = await fs.readFile(path.join(scopedDecisions, "_decisions.md"), "utf8");
+
+    expect(result.exitCode).toBe(0);
+    expect(scopedContent).toContain("Documents are durable accepted records or routes to them.");
+    expect(scopedContent).not.toContain("Old scoped framework copy.");
+    expect(scopedContent).toContain("- `architecture.md` - Scoped architecture truth - #Memory #Document #CurrentTruth");
+    expect(scopedDecisionContent).toContain("Decisions are accepted rationale for meaningful choices");
+    expect(scopedDecisionContent).not.toContain("Old scoped decisions framework copy.");
+  });
+
+  test("does not treat local scope routes as scoped framework routes", async () => {
+    const root = await createRoot();
+    const reactPatterns = path.join(root, ".agents", "patterns", "mobile-app", "react");
+    await fs.mkdir(reactPatterns, { recursive: true });
+    await fs.writeFile(path.join(reactPatterns, "_react.md"), `# React
+
+Custom React route.
+`);
+
+    const result = await runCli("install", root);
+    const reactContent = await fs.readFile(path.join(reactPatterns, "_react.md"), "utf8");
+
+    expect(result.exitCode).toBe(0);
+    expect(reactContent).toContain("Custom React route.");
+    expect(reactContent).not.toContain("Concrete reusable shapes");
+    expect(reactContent).toContain("- none - No entries - #Empty");
   });
 });
 

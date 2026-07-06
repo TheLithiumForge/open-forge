@@ -4,7 +4,7 @@
 
 This descriptor governs `src/open-forge/.agents/memory/crystallized/_crystallized.md`.
 
-The crystallized memory category entrypoint defines how agents discover accepted current memory.
+The crystallized memory category `entrypoint` defines how agents discover accepted current memory.
 
 ## Represents
 
@@ -14,7 +14,7 @@ It is the durable understanding the workspace accepts as current.
 
 ## Contains
 
-The installed crystallized memory entrypoint must contain:
+The installed crystallized memory `entrypoint` must contain:
 
 - scoped `open-forge:` frontmatter with description and useful tags, including `CurrentTruth` and `LoadWithParentEntrypoint`
 - a title
@@ -22,15 +22,15 @@ The installed crystallized memory entrypoint must contain:
 - compact authority, loading, consolidation, and scope axioms
 - a final marker-bounded generated index region
 
-The authored portion must stay between 15 and 45 non-empty lines. Generated entries do not count toward this limit.
+The authored portion must stay between 15 and 45 non-empty lines. Generated `entries` do not count toward this limit.
 
 ## Crystallized Contract
 
 Crystallized memory contains validated current understanding.
 
-The base payload installs `documents/` for durable accepted records and routes to them.
+The base payload installs child routes for durable accepted records and accepted rationale.
 
-Child entrypoints and local files define their own taxonomy below this route.
+Child `entrypoints` and local files define their own taxonomy below this route.
 
 ## Authority Contract
 
@@ -44,9 +44,9 @@ Crystallized memory does not automatically create operational behavior. Behavior
 
 The crystallized memory category is relevant when current work needs accepted current memory.
 
-The entrypoint must route agents to direct crystallized memory files and child crystallized memory categories whose path, description, or tags match the current request. Each selected child entrypoint applies the same contract recursively.
+The `entrypoint` must route agents to direct crystallized memory files and child crystallized memory categories whose path, description, or tags match the current request. Each selected child `entrypoint` applies the same contract recursively.
 
-Agents select the smallest crystallized route that can answer the current question. The installed parent entrypoint must let generated entries carry installed child route names and descriptions instead of repeating those names in axioms.
+Agents select the smallest crystallized route that can answer the current question. The installed parent `entrypoint` must let generated `entries` carry installed route names and descriptions instead of repeating those names in axioms.
 
 ## Consolidation Contract
 
@@ -64,7 +64,7 @@ Subcategories are encouraged when they keep current truth small, discoverable, a
 
 ## Generated Region
 
-The final section must use the shared category entrypoint shape:
+The final section must use the shared category `entrypoint` shape:
 
 ```md
 ## Entries
@@ -74,7 +74,7 @@ The final section must use the shared category entrypoint shape:
 <!-- open-forge:generated-index:end -->
 ```
 
-Generated entries list direct crystallized memory files and direct child crystallized memory categories. The shared formatting and routing governors own metadata extraction, entry formatting, naming, recursive discovery, marker validation, and regeneration.
+Generated `entries` list direct crystallized memory files and direct child crystallized memory categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
 
 ## Used By
 
@@ -96,9 +96,9 @@ The implementation is aligned when it:
 - lives in `.agents/memory/crystallized/`
 - includes `CurrentTruth` and `LoadWithParentEntrypoint` in scoped `open-forge:` tags
 - defines crystallized memory as accepted current memory
-- exposes the installed `documents/` route
-- avoids repeating installed child route names in implementation axioms
-- leaves child taxonomy to child entrypoints and local files
+- exposes the installed durable-record and decision-rationale routes
+- avoids repeating installed route names in implementation axioms
+- leaves child taxonomy to child `entrypoints` and local files
 - avoids duplicate current truth
 - archives or links superseded crystallized material
 - extracts operational material into matching #Core routes, including user-created #Core categories and files
