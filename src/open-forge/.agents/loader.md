@@ -58,7 +58,7 @@ Use generated `Entries` in this file to select relevant root routes. Load a sele
 - #LoadWithParentEntrypoint - Load this `entry` immediately after its parent `entrypoint`, in listed order. Applies only inside already loaded `Entries`.
 - #LoadForPostWorkReview - Load this `entry` before ending meaningful work to route useful material produced during the work. Applies only inside already loaded `Entries`.
 - #Core - Base routing, workspace orientation, and agent primitive routes.
-- #Memory - Self-growing markdown memory for workspace state, AI communication, records, learning, and history.
+- #Memory - Self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning.
 - #Extension - Optional extension payload, template, integration, and support routes.
 - #Contextual - Supporting context, not accepted current truth unless restored, validated, accepted, or promoted.
 - #CurrentTruth - Accepted current memory within its stated scope; still below user instructions, runtime safety, platform constraints, and declared external sources of truth.
@@ -78,11 +78,11 @@ Do not create parallel truth when active truth already exists. Update the active
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `.agents/directives/_directives.md` - Mandatory instructions that change how agents must work in this workspace - #OpenForge #Core #Directive #Index #LoadWithParentEntrypoint
-- `.agents/guidance/_guidance.md` - Contextual advice for recurring choices, tradeoffs, and scenarios - #OpenForge #Core #Guidance #Index
-- `.agents/memory/_memory.md` - Self-growing markdown memory for workspace state, AI communication, records, learning, and history - #OpenForge #Memory #OrganicGrowth #Index #LoadWithParentEntrypoint
-- `.agents/patterns/_patterns.md` - Reusable shapes for code, files, APIs, documents, and other inspectable work - #OpenForge #Core #Pattern #Index
-- `.agents/skills/_skills.md` - Reusable agent capabilities with clear applicability and expected results - #OpenForge #Core #Skill #Index
-- `.agents/workflows/_workflows.md` - Repeatable agent workflows for larger goals and handoff points - #OpenForge #Core #Workflow #Index
-- `.agents/workspace/_workspace.md` - Routes to important workspace destinations and when to use them - #OpenForge #Core #Workspace #Index
+- `.agents/directives/_directives.md` - Mandatory instructions agents must follow when they apply to the current work - #OpenForge #Core #Directive #Index #LoadWithParentEntrypoint
+- `.agents/guidance/_guidance.md` - Contextual advice for recurring choices, tradeoffs, and work scenarios - #OpenForge #Core #Guidance #Index
+- `.agents/memory/_memory.md` - Self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning - #OpenForge #Memory #OrganicGrowth #Index #LoadWithParentEntrypoint
+- `.agents/patterns/_patterns.md` - Concrete reusable shapes for code, files, APIs, documents, and other inspectable work - #OpenForge #Core #Pattern #Index
+- `.agents/skills/_skills.md` - Reusable agent capabilities with clear use cases and expected results - #OpenForge #Core #Skill #Index
+- `.agents/workflows/_workflows.md` - Repeatable agent workflows for reaching a defined goal - #OpenForge #Core #Workflow #Index
+- `.agents/workspace/_workspace.md` - Workspace routes that point to important project locations and explain when to use them - #OpenForge #Core #Workspace #Index
 <!-- open-forge:generated-index:end -->

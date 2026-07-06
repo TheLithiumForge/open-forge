@@ -124,7 +124,7 @@ Defined tags must include:
 - #Contextual
 - #CurrentTruth
 
-Layer tag descriptions must define each tag positively. #Core must describe the base routing, workspace orientation, and agent primitive routes rather than defining #Core only as non-#Memory. #Memory must describe self-growing markdown memory for workspace state, AI communication, records, learning, and history.
+Layer tag descriptions must define each tag positively. #Core must describe the base routing, workspace orientation, and agent primitive routes rather than defining #Core only as non-#Memory. #Memory must describe self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning.
 
 Route type tags remain routing and search signals unless defined by a loaded `entrypoint`. Their meaning must be readable from `entry` paths, descriptions, and loaded `entrypoints`.
 

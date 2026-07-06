@@ -4,11 +4,11 @@
 
 This descriptor governs `src/open-forge/.agents/memory/archived/_archived.md`.
 
-The archived memory category `entrypoint` defines how agents discover memory preserved for context but no longer current.
+The archived memory category `entrypoint` defines how agents discover historical memory kept for context after it is no longer current truth.
 
 ## Represents
 
-Archived memory represents historical context after material stops being current.
+Archived memory represents historical context after material is no longer current truth.
 
 ## Contains
 

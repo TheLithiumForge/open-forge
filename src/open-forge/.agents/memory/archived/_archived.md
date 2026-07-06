@@ -1,12 +1,12 @@
 ---
 open-forge:
-  description: Historical memory kept for context after it stops being current
+  description: Historical memory kept for context after it is no longer current truth
   tags: [OpenForge, Memory, Archived, Index, Contextual, Historical]
 ---
 
 # Archived Memory
 
-Archived memory is preserved context that is no longer current.
+Archived memory is historical context kept after it is no longer current truth.
 
 ## Axioms
 

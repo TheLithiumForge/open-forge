@@ -5,6 +5,9 @@ import { fileURLToPath } from "node:url";
 
 const repoRoot = resolveRepoRoot();
 const sourceRoot = path.join(repoRoot, "src", "open-forge");
+const bundledExtensionsRoot = process.env.OPEN_FORGE_EXTENSIONS_ROOT
+  ? path.resolve(process.env.OPEN_FORGE_EXTENSIONS_ROOT)
+  : path.join(repoRoot, "src", "extensions");
 const ignoredDirectoryNames = new Set([".git", ".obsidian", "node_modules"]);
 const compatibilityEntrypointNames = ["_index.md", "index.md", "_references.md", "references.md"];
 const portablePathSeparator = "/";
@@ -19,6 +22,8 @@ const command = args[0] ?? "help";
 try {
   if (command === "install") {
     await install(args[1] ?? process.cwd());
+  } else if (command === "extend") {
+    await installExtension(args[1], args[2] ?? process.cwd());
   } else if (command === "index") {
     await generateIndexes(path.resolve(args[1] ?? process.cwd()));
   } else {
@@ -74,6 +79,115 @@ async function install(targetArg: string): Promise<void> {
   const generatedRegions = await generateIndexes(targetRoot);
   console.log(`Installed Open Forge into ${targetRoot}`);
   console.log(`Updated ${copied} managed files, updated ${scopedCopied} scoped framework route files, patched ${patched} entry files, rebuilt ${generatedRegions} generated regions.`);
+}
+
+async function installExtension(extensionArg: string | undefined, targetArg: string): Promise<void> {
+  if (!extensionArg) {
+    throw new Error("Usage: open-forge extend <extension-source-or-id> [target]");
+  }
+
+  if (extensionArg === "--list") {
+    await listBundledExtensions();
+    return;
+  }
+
+  const extension = await resolveExtensionSource(extensionArg);
+  const targetRoot = path.resolve(targetArg);
+
+  if (samePath(extension.root, targetRoot)) {
+    throw new Error("Extension source and target must be different directories");
+  }
+
+  await ensureDir(targetRoot);
+
+  const files = await listFiles(extension.root);
+  let copied = 0;
+
+  for (const sourceFile of files) {
+    const relativePath = toPosix(path.relative(extension.root, sourceFile));
+    const targetFile = path.join(targetRoot, relativePath);
+    await ensureDir(path.dirname(targetFile));
+
+    if (isMarkdownFile(sourceFile)) {
+      const sourceText = await fs.readFile(sourceFile, "utf8");
+      const targetText = await readTextIfExists(targetFile);
+      const nextText = targetText == null ? sourceText : preserveLocalBlocks(sourceText, targetText);
+      await fs.writeFile(targetFile, nextText);
+    } else {
+      await fs.copyFile(sourceFile, targetFile);
+    }
+
+    copied += 1;
+  }
+
+  const generatedRegions = await generateIndexes(targetRoot);
+  console.log(`Installed Open Forge ${extension.kind} extension ${extension.label} into ${targetRoot}`);
+  console.log(`Copied ${copied} extension files and rebuilt ${generatedRegions} generated regions.`);
+}
+
+type ExtensionSource = {
+  root: string;
+  label: string;
+  kind: "local" | "bundled";
+};
+
+async function resolveExtensionSource(value: string): Promise<ExtensionSource> {
+  const localRoot = path.resolve(value);
+  if (await isDirectory(localRoot)) {
+    return { root: localRoot, label: localRoot, kind: "local" };
+  }
+
+  if (!isBundledExtensionId(value)) {
+    throw new Error(`Extension source does not exist or is not a directory: ${localRoot}`);
+  }
+
+  const bundledRoot = path.join(bundledExtensionsRoot, value, "payload");
+  if (await isDirectory(bundledRoot)) {
+    return { root: bundledRoot, label: value, kind: "bundled" };
+  }
+
+  const available = await listBundledExtensionIds();
+  const suffix = available.length > 0 ? ` Available bundled extensions: ${available.join(", ")}.` : " No bundled extensions are installed in this CLI package.";
+  throw new Error(`Unknown bundled Open Forge extension: ${value}.${suffix}`);
+}
+
+function isBundledExtensionId(value: string): boolean {
+  return /^[a-z0-9][a-z0-9-]*$/.test(value);
+}
+
+async function listBundledExtensions(): Promise<void> {
+  const ids = await listBundledExtensionIds();
+
+  if (ids.length === 0) {
+    console.log("No bundled Open Forge extensions are installed in this CLI package.");
+    return;
+  }
+
+  console.log("Bundled Open Forge extensions:");
+  for (const id of ids) {
+    console.log(`- ${id}`);
+  }
+}
+
+async function listBundledExtensionIds(): Promise<string[]> {
+  if (!(await isDirectory(bundledExtensionsRoot))) {
+    return [];
+  }
+
+  const entries = await fs.readdir(bundledExtensionsRoot, { withFileTypes: true });
+  const ids: string[] = [];
+
+  for (const entry of entries) {
+    if (!entry.isDirectory() || !isBundledExtensionId(entry.name)) {
+      continue;
+    }
+
+    if (await isDirectory(path.join(bundledExtensionsRoot, entry.name, "payload"))) {
+      ids.push(entry.name);
+    }
+  }
+
+  return ids.sort();
 }
 
 type FrameworkEntrypointTemplate = {
@@ -459,6 +573,10 @@ function isIndexEntryFile(name: string, folderName: string): boolean {
   );
 }
 
+function isMarkdownFile(file: string): boolean {
+  return path.extname(file).toLowerCase() === ".md";
+}
+
 function defaultTagsForIndexEntry(file: string): string[] {
   return isIndexFile(file) ? ["Index"] : ["Untagged"];
 }
@@ -713,6 +831,11 @@ function toPosix(value: string): string {
   return value.split(path.sep).join("/");
 }
 
+function samePath(left: string, right: string): boolean {
+  const normalize = (value: string) => process.platform === "win32" ? path.resolve(value).toLowerCase() : path.resolve(value);
+  return normalize(left) === normalize(right);
+}
+
 function escapeRegex(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -742,10 +865,13 @@ function printHelp(): void {
 
 Usage:
   open-forge install [target]
+  open-forge extend --list
+  open-forge extend <extension-source-or-id> [target]
   open-forge index [target]
 
 Commands:
   install  Copy files into target, update AGENTS.md, and rebuild generated index regions.
+  extend   Copy a local or bundled extension overlay into target and rebuild generated index regions.
   index    Rebuild the loader registry and category generated regions.
 `);
 }

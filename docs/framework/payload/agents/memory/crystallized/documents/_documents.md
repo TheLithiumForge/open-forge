@@ -4,7 +4,7 @@
 
 This descriptor governs `src/open-forge/.agents/memory/crystallized/documents/_documents.md`.
 
-The documents memory category `entrypoint` defines how agents discover durable long-form records and routes to them.
+The documents memory category `entrypoint` defines how agents discover durable accepted records, or routes to those records, for long-form project knowledge.
 
 ## Represents
 
@@ -70,7 +70,7 @@ Generated `entries` list direct document files and direct child document categor
 
 ## Used By
 
-Agents use this category when they need durable accepted records or routes to them.
+Agents use this category when they need durable accepted records or routes to those records.
 
 Any process that writes documents must keep them as accepted records or routes to accepted records.
 
@@ -87,7 +87,7 @@ The implementation is aligned when it:
 - is named `_documents.md`
 - lives in `.agents/memory/crystallized/documents/`
 - includes `Record` and `CurrentTruth` in scoped `open-forge:` tags
-- defines documents as durable accepted records or routes
+- defines documents as durable accepted records or routes to those records
 - keeps templates and generation behavior out of documents
 - avoids duplicate current truth
 - extracts operational document material into matching #Core routes, including user-created #Core categories and files

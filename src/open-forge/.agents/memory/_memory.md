@@ -1,12 +1,12 @@
 ---
 open-forge:
-    description: Self-growing markdown memory for workspace state, AI communication, current and historical records and learning
+    description: Self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning
     tags: [OpenForge, Memory, OrganicGrowth, Index, LoadWithParentEntrypoint]
 ---
 
 # Memory
 
-Memory is self-growing durable markdown memory for workspace state: current truth, live work, AI communication, written records, candidate learning, and useful history.
+Memory is self-growing markdown memory for workspace state: current truth, live work, AI communication, current records, historical records, and candidate learning.
 
 ## Axioms
 
@@ -27,9 +27,8 @@ Memory is self-growing durable markdown memory for workspace state: current trut
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
-- `archived/_archived.md` - Historical memory kept for context after it stops being current - #OpenForge #Memory #Archived #Index #Contextual #Historical
-- `crystallized/_crystallized.md` - Accepted current memory that should guide work within its scope - #OpenForge #Memory #Crystallized #Index #CurrentTruth #LoadWithParentEntrypoint
-- `emerging/_emerging.md` - Candidate memory that is useful but not yet accepted as truth - #OpenForge #Memory #Emerging #OrganicGrowth #Index #Contextual #Candidate #LoadForPostWorkReview
-- `working/_working.md` - Temporary context needed to continue or resume active work - #OpenForge #Memory #Working #Index #Contextual #LoadWithParentEntrypoint
-  <!-- open-forge:generated-index:end -->
+- `archived/_archived.md` - Historical memory kept for context after it is no longer current truth - #OpenForge #Memory #Archived #Index #Contextual #Historical
+- `crystallized/_crystallized.md` - Accepted durable memory and current truth - #OpenForge #Memory #Crystallized #Index #CurrentTruth #LoadWithParentEntrypoint
+- `emerging/_emerging.md` - Candidate memory that may be useful but is not accepted truth yet - #OpenForge #Memory #Emerging #OrganicGrowth #Index #Contextual #Candidate #LoadForPostWorkReview
+- `working/_working.md` - Temporary memory that helps agents continue or resume active work - #OpenForge #Memory #Working #Index #Contextual #LoadWithParentEntrypoint
+<!-- open-forge:generated-index:end -->

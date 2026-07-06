@@ -10,7 +10,7 @@ The memory category `entrypoint` defines installed Memory, its state containers,
 
 The memory category represents self-growing markdown memory for human-AI work.
 
-Memory records current truth, live work, AI communication, written records, candidate learning, and useful history.
+Memory records current truth, live work, AI communication, current records, historical records, and candidate learning.
 
 It is a self-growing structure that starts from a small shared shape and becomes personal to each workspace over time.
 
@@ -121,7 +121,7 @@ The implementation is aligned when it:
 - lives in `.agents/memory/`
 - includes `OrganicGrowth` and `LoadWithParentEntrypoint` in scoped `open-forge:` tags
 - defines `working/`, `emerging/`, `crystallized/`, and `archived/`
-- describes Memory as self-growing markdown memory for workspace state
+- describes Memory as self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning
 - installs only universal child routes under the relevant memory state
 - marks `working/` and `crystallized/` `entries` with #LoadWithParentEntrypoint
 - marks `emerging/` `entries` with #LoadForPostWorkReview

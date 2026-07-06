@@ -4,7 +4,7 @@
 
 This descriptor governs `src/open-forge/.agents/patterns/_patterns.md`.
 
-The patterns category `entrypoint` defines how agents discover and apply concrete reusable shapes for inspectable work.
+The patterns category `entrypoint` defines how agents discover and apply concrete reusable shapes for code, files, APIs, documents, and other inspectable work.
 
 ## Represents
 

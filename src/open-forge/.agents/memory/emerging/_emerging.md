@@ -1,12 +1,12 @@
 ---
 open-forge:
-  description: Candidate memory that is useful but not yet accepted as truth
+  description: Candidate memory that may be useful but is not accepted truth yet
   tags: [OpenForge, Memory, Emerging, OrganicGrowth, Index, Contextual, Candidate, LoadForPostWorkReview]
 ---
 
 # Emerging Memory
 
-Emerging memory is useful material that has not become accepted current memory.
+Emerging memory is candidate material that may be useful but is not accepted truth yet.
 
 ## Axioms
 
@@ -26,7 +26,7 @@ Emerging memory is useful material that has not become accepted current memory.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `analysis/_analysis.md` - Structured reasoning, investigation, or comparison that is not yet accepted truth - #OpenForge #Memory #Analysis #Reasoning #Index #Contextual #Candidate
-- `ideas/_ideas.md` - Future possibilities, experiments, questions, and options to explore later - #OpenForge #Memory #Idea #Exploration #OrganicGrowth #Index #Contextual #Candidate
+- `analysis/_analysis.md` - Structured reasoning, investigation, or comparison that is useful but not accepted truth - #OpenForge #Memory #Analysis #Reasoning #Index #Contextual #Candidate
+- `ideas/_ideas.md` - Future possibilities, experiments, open questions, and options to explore later - #OpenForge #Memory #Idea #Exploration #OrganicGrowth #Index #Contextual #Candidate
 - `observations/_observations.md` - Agent-noticed findings that may become learning, memory, or Core updates - #OpenForge #Memory #Observation #AgentLearning #OrganicGrowth #Index #Contextual #Candidate #LoadForPostWorkReview
 <!-- open-forge:generated-index:end -->

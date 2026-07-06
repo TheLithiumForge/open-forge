@@ -1,12 +1,12 @@
 ---
 open-forge:
-  description: Future possibilities, experiments, questions, and options to explore later
+  description: Future possibilities, experiments, open questions, and options to explore later
   tags: [OpenForge, Memory, Idea, Exploration, OrganicGrowth, Index, Contextual, Candidate]
 ---
 
 # Ideas
 
-Ideas are future potential, unexplored paths, experiments, and candidate options.
+Ideas are future possibilities, experiments, open questions, and options to explore later.
 
 ## Axioms
 

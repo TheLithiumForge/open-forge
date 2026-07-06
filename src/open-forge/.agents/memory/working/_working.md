@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Temporary context needed to continue or resume active work
+  description: Temporary memory that helps agents continue or resume active work
   tags: [OpenForge, Memory, Working, Index, Contextual, LoadWithParentEntrypoint]
 ---
 
@@ -25,6 +25,6 @@ Working memory is live context for active or recently interrupted work.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `handoffs/_handoffs.md` - Static transfer notes that help agents or humans resume work after context breaks - #OpenForge #Memory #Handoff #AgentCommunication #Index #Contextual
+- `handoffs/_handoffs.md` - Static, concise, accurate transfer notes that help agents or humans resume work after context breaks - #OpenForge #Memory #Handoff #AgentCommunication #Index #Contextual
 - `sessions/_sessions.md` - Raw chronological records of what happened during work sessions - #OpenForge #Memory #Session #WorkHistory #Index #Contextual
 <!-- open-forge:generated-index:end -->

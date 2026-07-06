@@ -8,7 +8,7 @@ The skills category `entrypoint` defines how agents discover bounded reusable ca
 
 ## Represents
 
-The skills category represents reusable agent capabilities with clear applicability and expected results.
+The skills category represents reusable agent capabilities with clear use cases and expected results.
 
 A skill packages a bounded ability, procedure, tool use, or reference set that helps an agent perform a specific kind of work.
 

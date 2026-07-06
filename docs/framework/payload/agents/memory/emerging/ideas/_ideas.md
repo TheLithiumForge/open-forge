@@ -4,7 +4,7 @@
 
 This descriptor governs `src/open-forge/.agents/memory/emerging/ideas/_ideas.md`.
 
-The ideas memory category `entrypoint` defines how agents discover future potential, unexplored paths, experiments, and candidate options.
+The ideas memory category `entrypoint` defines how agents discover future possibilities, experiments, open questions, and options to explore later.
 
 ## Represents
 

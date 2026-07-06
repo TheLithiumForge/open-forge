@@ -4,13 +4,13 @@
 
 This descriptor governs `src/open-forge/.agents/memory/crystallized/decisions/_decisions.md`.
 
-The decisions memory category `entrypoint` defines how agents discover accepted rationale for meaningful choices.
+The decisions memory category `entrypoint` defines how agents discover accepted rationale for important choices and their consequences.
 
 ## Represents
 
 Decisions represent accepted rationale within crystallized memory.
 
-They explain why a meaningful choice was made, what alternatives or constraints mattered, and what the consequence is when that context helps future work.
+They explain why an important choice was made, what alternatives or constraints mattered, and what the consequence is when that context helps future work.
 
 ## Contains
 
@@ -26,7 +26,7 @@ The authored portion must stay between 15 and 40 non-empty lines. Generated `ent
 
 ## Decision Contract
 
-Decision files hold or route accepted rationale for meaningful choices.
+Decision files hold or route accepted rationale for important choices.
 
 A decision records why the choice was made. The current behavior, document, pattern, directive, workflow, workspace route, or external state belongs to the route or system that owns that material.
 
@@ -40,7 +40,7 @@ A decision does not create operational behavior by itself. If decision rationale
 
 ## Loading Contract
 
-The decisions category is relevant when current work needs accepted rationale for a meaningful choice.
+The decisions category is relevant when current work needs accepted rationale for an important choice.
 
 The `entrypoint` must route agents to direct decision files and child decision categories whose path, description, or tags match the current request. Each selected child `entrypoint` applies the same contract recursively.
 
@@ -82,7 +82,7 @@ Any process that writes decisions must keep them as rationale, not as the behavi
 
 ## Why
 
-Decisions exist so meaningful choices remain understandable without mixing rationale into every active rule, pattern, workflow, or document.
+Decisions exist so important choices remain understandable without mixing rationale into every active rule, pattern, workflow, or document.
 
 They keep current rationale discoverable while letting the selected material live in the route that owns it.
 

@@ -1,12 +1,12 @@
 ---
 open-forge:
-  description: Routes to important workspace destinations and when to use them
+  description: Workspace routes that point to important project locations and explain when to use them
   tags: [OpenForge, Core, Workspace, Index]
 ---
 
 # Workspace
 
-Workspace routes identify important destinations and state what they contain and when they matter.
+Workspace routes point to important project locations and explain when to use them.
 
 ## Axioms
 

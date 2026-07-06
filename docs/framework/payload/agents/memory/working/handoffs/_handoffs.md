@@ -4,11 +4,11 @@
 
 This descriptor governs `src/open-forge/.agents/memory/working/handoffs/_handoffs.md`.
 
-The handoffs memory category `entrypoint` defines how agents discover static transfer notes for resuming work after context breaks.
+The handoffs memory category `entrypoint` defines how agents discover static, concise, accurate transfer notes for resuming work after context breaks.
 
 ## Represents
 
-Handoffs represent static, rereadable working context for transfer between agents, subagents, threads, workflows, or humans.
+Handoffs represent static, concise, accurate, rereadable transfer notes for resuming work across agents, subagents, threads, workflows, or humans.
 
 They are resumability memory, not complete history and not accepted truth.
 
@@ -85,7 +85,7 @@ The implementation is aligned when it:
 - is named `_handoffs.md`
 - lives in `.agents/memory/working/handoffs/`
 - includes `AgentCommunication` and `Contextual` in scoped `open-forge:` tags
-- defines handoffs as static, rereadable transfer notes
+- defines handoffs as static, concise, accurate, rereadable transfer notes
 - keeps handoffs contextual rather than authoritative
 - points to source routes when detail matters
 - requires stale handoffs to be updated, replaced, extracted, or archived

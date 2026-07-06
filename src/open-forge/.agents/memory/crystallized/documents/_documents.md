@@ -1,12 +1,12 @@
 ---
 open-forge:
-  description: Durable records, or routes to records, that hold accepted knowledge
+  description: Durable accepted records, or routes to those records, for long-form project knowledge
   tags: [OpenForge, Memory, Document, Record, Index, CurrentTruth]
 ---
 
 # Documents
 
-Documents are durable accepted records or routes to them.
+Documents are durable accepted records, or routes to those records, for long-form project knowledge.
 
 ## Axioms
 

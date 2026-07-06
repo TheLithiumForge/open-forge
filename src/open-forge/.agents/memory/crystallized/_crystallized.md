@@ -6,7 +6,7 @@ open-forge:
 
 # Crystallized Memory
 
-Crystallized memory is accepted durable memory within its stated scope.
+Crystallized memory is accepted durable memory and current truth within its stated scope.
 
 ## Axioms
 
@@ -26,7 +26,6 @@ Crystallized memory is accepted durable memory within its stated scope.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
-- `decisions/_decisions.md` - Accepted rationale that explains meaningful choices and consequences - #OpenForge #Memory #Decision #Rationale #Index #CurrentTruth
-- `documents/_documents.md` - Durable records, or routes to records, that hold accepted knowledge - #OpenForge #Memory #Document #Record #Index #CurrentTruth
-    <!-- open-forge:generated-index:end -->
+- `decisions/_decisions.md` - Accepted rationale that explains important choices and their consequences - #OpenForge #Memory #Decision #Rationale #Index #CurrentTruth
+- `documents/_documents.md` - Durable accepted records, or routes to those records, for long-form project knowledge - #OpenForge #Memory #Document #Record #Index #CurrentTruth
+<!-- open-forge:generated-index:end -->
