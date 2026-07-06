@@ -12,6 +12,7 @@
     "docs/cli.md",
     "docs/dev.md",
     "src/open-forge",
+    "src/extensions",
     "!src/open-forge/**/.obsidian",
     "!src/open-forge/**/.obsidian/**",
     "README.md",
