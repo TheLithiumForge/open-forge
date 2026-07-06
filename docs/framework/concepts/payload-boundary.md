@@ -40,7 +40,7 @@ Maintainers must review installed files as the final user-facing product.
 
 Implementation wording must use concrete installed routes and terms that are defined in installed files. Governance-only terms must not leak into installed files unless the installed payload defines them first.
 
-Generated entries remain navigation metadata plus reserved load policy. They expose routes, but authored installed content must explain how those routes are used.
+Generated `entries` remain navigation metadata plus reserved load policy. They expose routes, but authored installed content must explain how those routes are used.
 
 ## Scope Wording Contract
 

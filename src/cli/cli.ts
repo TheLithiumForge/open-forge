@@ -7,6 +7,9 @@ const repoRoot = resolveRepoRoot();
 const sourceRoot = path.join(repoRoot, "src", "open-forge");
 const ignoredDirectoryNames = new Set([".git", ".obsidian", "node_modules"]);
 const compatibilityEntrypointNames = ["_index.md", "index.md", "_references.md", "references.md"];
+const portablePathSeparator = "/";
+const agentsDirectoryName = ".agents";
+const scopedCoreEntrypointFolders = new Set(["directives", "guidance", "patterns", "skills"]);
 const entriesHeading = "## Entries";
 const generatedIndexStartMarker = "<!-- open-forge:generated-index:start -->";
 const generatedIndexEndMarker = "<!-- open-forge:generated-index:end -->";
@@ -45,6 +48,7 @@ async function install(targetArg: string): Promise<void> {
   await ensureDir(targetRoot);
 
   const files = await listFiles(sourceRoot);
+  const frameworkTemplates = files.flatMap((file) => createFrameworkEntrypointTemplate(sourceRoot, file));
   let copied = 0;
   let patched = 0;
 
@@ -66,9 +70,123 @@ async function install(targetArg: string): Promise<void> {
     copied += 1;
   }
 
+  const scopedCopied = await updateScopedFrameworkEntrypoints(targetRoot, frameworkTemplates);
   const generatedRegions = await generateIndexes(targetRoot);
   console.log(`Installed Open Forge into ${targetRoot}`);
-  console.log(`Updated ${copied} managed files, patched ${patched} entry files, rebuilt ${generatedRegions} generated regions.`);
+  console.log(`Updated ${copied} managed files, updated ${scopedCopied} scoped framework route files, patched ${patched} entry files, rebuilt ${generatedRegions} generated regions.`);
+}
+
+type FrameworkEntrypointTemplate = {
+  relativePath: string;
+  sourceFile: string;
+  folderSegments: string[];
+  anchor: "start" | "any";
+};
+
+function createFrameworkEntrypointTemplate(root: string, sourceFile: string): FrameworkEntrypointTemplate[] {
+  const relativePath = toPosix(path.relative(root, sourceFile));
+
+  if (!relativePath.startsWith(`${agentsDirectoryName}/`)) {
+    return [];
+  }
+
+  const segments = relativePath.slice(`${agentsDirectoryName}/`.length).split(portablePathSeparator);
+  if (!isCanonicalCategoryEntrypointSegments(segments)) {
+    return [];
+  }
+
+  const folderSegments = segments.slice(0, -1);
+  const anchor = folderSegments[0] === "memory" || !scopedCoreEntrypointFolders.has(folderSegments[0]) ? "start" : "any";
+  return [{ relativePath, sourceFile, folderSegments, anchor }];
+}
+
+async function updateScopedFrameworkEntrypoints(targetRoot: string, templates: FrameworkEntrypointTemplate[]): Promise<number> {
+  const agentsRoot = path.join(targetRoot, agentsDirectoryName);
+  if (!(await isDirectory(agentsRoot))) {
+    return 0;
+  }
+
+  const markdownFiles = await listFiles(agentsRoot, (file) => file.endsWith(".md"));
+  let count = 0;
+
+  for (const targetFile of markdownFiles) {
+    const relativePath = toPosix(path.relative(targetRoot, targetFile));
+    const template = findFrameworkEntrypointTemplate(relativePath, templates);
+    if (!template) {
+      continue;
+    }
+
+    await fs.writeFile(targetFile, await fs.readFile(template.sourceFile, "utf8"));
+    count += 1;
+  }
+
+  return count;
+}
+
+function findFrameworkEntrypointTemplate(relativePath: string, templates: FrameworkEntrypointTemplate[]): FrameworkEntrypointTemplate | null {
+  if (!relativePath.startsWith(`${agentsDirectoryName}/`)) {
+    return null;
+  }
+
+  const routePath = relativePath.slice(`${agentsDirectoryName}/`.length);
+  const targetSegments = routePath.split(portablePathSeparator);
+  if (!isCanonicalCategoryEntrypointSegments(targetSegments)) {
+    return null;
+  }
+
+  const matches = templates
+    .filter((template) => template.relativePath !== relativePath && matchesFrameworkEntrypointShape(targetSegments, template))
+    .sort((left, right) => right.folderSegments.length - left.folderSegments.length);
+
+  return matches[0] ?? null;
+}
+
+function matchesFrameworkEntrypointShape(targetSegments: string[], template: FrameworkEntrypointTemplate): boolean {
+  const targetFolders = targetSegments.slice(0, -1);
+  const targetFile = targetSegments[targetSegments.length - 1];
+  const templateFolders = template.folderSegments;
+  const terminalFolder = templateFolders[templateFolders.length - 1];
+
+  if (targetFile !== `_${terminalFolder}.md` || targetFolders[targetFolders.length - 1] !== terminalFolder) {
+    return false;
+  }
+
+  const searchableFolders = targetFolders.slice(0, -1);
+  const fixedPrefix = templateFolders.slice(0, -1);
+  if (template.anchor === "start") {
+    if (searchableFolders[0] !== fixedPrefix[0]) {
+      return false;
+    }
+
+    return containsOrderedSegments(searchableFolders.slice(1), fixedPrefix.slice(1));
+  }
+
+  return containsOrderedSegments(searchableFolders, fixedPrefix);
+}
+
+function containsOrderedSegments(haystack: string[], needles: string[]): boolean {
+  let offset = 0;
+
+  for (const needle of needles) {
+    const index = haystack.indexOf(needle, offset);
+    if (index === -1) {
+      return false;
+    }
+
+    offset = index + 1;
+  }
+
+  return true;
+}
+
+function isCanonicalCategoryEntrypointSegments(segments: string[]): boolean {
+  if (segments.length < 2) {
+    return false;
+  }
+
+  const folderName = segments[segments.length - 2];
+  const fileName = segments[segments.length - 1];
+  return fileName === `_${folderName}.md`;
 }
 
 async function generateIndexes(root: string): Promise<number> {

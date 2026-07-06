@@ -4,13 +4,13 @@
 
 This descriptor governs `src/open-forge/AGENTS.md`.
 
-`AGENTS.md` is the installable root entry block for agents that support repository instruction files.
+`AGENTS.md` is the installable root `entry` block for agents that support repository instruction files.
 
 ## Represents
 
 `AGENTS.md` represents the handoff from generic agent runtime behavior into Open Forge loading behavior.
 
-It is a file primitive and entry primitive. It routes agents to the loader.
+It is a file primitive and `entry` primitive. It routes agents to the loader.
 
 ## Contains
 
@@ -36,13 +36,13 @@ Text outside the marked block belongs to the target workspace.
 
 The CLI uses this file during install.
 
-Agents, wrappers, skills, and runtimes use this file as the first Open Forge entrypoint when they enter an installed workspace.
+Agents, wrappers, skills, and runtimes use this file as the first Open Forge `entrypoint` when they enter an installed workspace.
 
 ## Why
 
 `AGENTS.md` exists so Open Forge can integrate with existing agent runtimes without owning the whole root instruction file.
 
-The marked block gives Open Forge an updateable entrypoint while preserving workspace-owned instructions around it.
+The marked block gives Open Forge an updateable `entrypoint` while preserving workspace-owned instructions around it.
 
 ## Alignment Checks
 

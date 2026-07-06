@@ -4,7 +4,7 @@
 
 This descriptor governs `src/open-forge/.agents/memory/emerging/_emerging.md`.
 
-The emerging memory category entrypoint defines how agents discover useful material that is not accepted truth.
+The emerging memory category `entrypoint` defines how agents discover useful material that is not accepted truth.
 
 ## Represents
 
@@ -12,15 +12,15 @@ Emerging memory represents candidate learning and unsettled useful material that
 
 ## Contains
 
-The installed emerging memory entrypoint must contain:
+The installed emerging memory `entrypoint` must contain:
 
-- scoped `open-forge:` frontmatter with description and useful tags, including `Contextual`, `Candidate`, and `LoadForPostWorkReview`
+- scoped `open-forge:` frontmatter with description and useful tags, including `OrganicGrowth`, `Contextual`, `Candidate`, and `LoadForPostWorkReview`
 - a title
 - one short definition of emerging memory
 - compact candidate, loading, promotion, and scope axioms
 - a final marker-bounded generated index region
 
-The authored portion must stay between 15 and 40 non-empty lines. Generated entries do not count toward this limit.
+The authored portion must stay between 15 and 40 non-empty lines. Generated `entries` do not count toward this limit.
 
 ## Emerging Contract
 
@@ -28,7 +28,7 @@ Emerging memory contains useful material before it becomes accepted current memo
 
 The base payload installs `analysis/` for structured reasoning, `ideas/` for candidate possibilities, and `observations/` for noticed findings.
 
-Child entrypoints and local files define their own taxonomy below this route.
+Child `entrypoints` and local files define their own taxonomy below this route.
 
 ## Authority Contract
 
@@ -42,11 +42,11 @@ If emerging memory changes external task state, the change must be promoted to t
 
 ## Loading Contract
 
-The emerging memory category is relevant when current work needs or produced useful material that is not accepted truth yet.
+The emerging memory category is relevant when current work needs useful material that is not accepted truth yet, or when current work produces candidate material.
 
-The entrypoint must route agents to direct emerging memory files and child emerging memory categories whose path, description, or tags match the current request. Each selected child entrypoint applies the same contract recursively.
+The `entrypoint` must route agents to direct emerging memory files and child emerging memory categories whose path, description, or tags match the current request. Each selected child `entrypoint` applies the same contract recursively.
 
-Agents load emerging memory selectively and keep unrelated candidate material out of current work. The installed parent entrypoint must let generated entries carry installed child route names and descriptions instead of repeating those names in axioms.
+Agents load emerging memory selectively and keep unrelated candidate material out of current work. The installed parent `entrypoint` must let generated `entries` carry installed route names and descriptions instead of repeating those names in axioms.
 
 ## Promotion Contract
 
@@ -66,7 +66,7 @@ Emerging material stays outside crystallized routes until it is accepted.
 
 ## Generated Region
 
-The final section must use the shared category entrypoint shape:
+The final section must use the shared category `entrypoint` shape:
 
 ```md
 ## Entries
@@ -76,7 +76,7 @@ The final section must use the shared category entrypoint shape:
 <!-- open-forge:generated-index:end -->
 ```
 
-Generated entries list direct emerging memory files and direct child emerging memory categories. The shared formatting and routing governors own metadata extraction, entry formatting, naming, recursive discovery, marker validation, and regeneration.
+Generated `entries` list direct emerging memory files and direct child emerging memory categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
 
 ## Used By
 
@@ -96,12 +96,12 @@ The implementation is aligned when it:
 
 - is named `_emerging.md`
 - lives in `.agents/memory/emerging/`
-- includes `Contextual`, `Candidate`, and `LoadForPostWorkReview` in scoped `open-forge:` tags
+- includes `OrganicGrowth`, `Contextual`, `Candidate`, and `LoadForPostWorkReview` in scoped `open-forge:` tags
 - defines emerging memory as candidate learning
 - exposes installed `analysis/`, `ideas/`, and `observations/` routes
-- avoids repeating installed child route names in implementation axioms
+- avoids repeating installed route names in implementation axioms
 - keeps emerging memory contextual until promoted or accepted
-- leaves child taxonomy to child entrypoints and local files
+- leaves child taxonomy to child `entrypoints` and local files
 - routes candidate material selectively
 - promotes emerging memory to the route that owns its new state
 - extracts operational emerging memory material into matching #Core routes, including user-created #Core categories and files

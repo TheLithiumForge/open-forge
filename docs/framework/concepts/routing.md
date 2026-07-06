@@ -10,15 +10,15 @@ Routing lets agents discover relevant context without loading the entire workspa
 
 A route identifies a destination and explains its relevance.
 
-A category groups related routes under one category entrypoint. Open Forge-authored categories use `_{category}.md`; the CLI may recognize compatibility aliases for external tools.
+A category groups related routes under one category `entrypoint`. Open Forge-authored categories use `_{category}.md`; the CLI may recognize compatibility aliases for external tools.
 
-A category entrypoint combines stable category meaning with generated navigation.
+A category `entrypoint` combines stable category meaning with generated navigation.
 
 ## Ownership
 
-The loader contains the generated registry of active categories and their one-line purposes.
+The loader contains the generated registry of active root routes and their one-line purposes.
 
-Each category entrypoint owns its installed meaning, boundaries, authority, and generated entries.
+Each category `entrypoint` owns its installed meaning, boundaries, authority, and generated `entries`.
 
 Each framework descriptor governs its corresponding installed category file.
 
@@ -32,7 +32,7 @@ Directive, pattern, guidance, skill, and workflow semantics are governed by `doc
 
 ## Category Contract
 
-Every active category entrypoint must define:
+Every active category `entrypoint` must define:
 
 - what the category represents
 - what its routed files represent
@@ -41,11 +41,11 @@ Every active category entrypoint must define:
 - how nested categories extend it
 - its final generated index region
 
-An installed category becomes active when its folder contains exactly one recognized category entrypoint. An Open Forge-authored category also requires an approved framework descriptor before it enters the payload.
+An installed category becomes active when its folder contains exactly one recognized category `entrypoint`. An Open Forge-authored category also requires an approved framework descriptor before it enters the payload.
 
-The CLI must generate a loader entry for each direct active category under `.agents/`.
+The CLI must generate a loader `entry` for each direct active root route under `.agents/`.
 
-The category entrypoint must expose a one-line description that provides enough meaning for an agent to decide whether to load the category without opening it first. Open Forge-authored categories use scoped frontmatter. Local categories may use supported metadata or their first body description.
+The category `entrypoint` must expose a one-line description that provides enough meaning for an agent to decide whether to load the category without opening it first. Open Forge-authored categories use scoped frontmatter. Local categories may use supported metadata or their first body description.
 
 Category placement and descriptions expose positive scope. Tags add compact scope signals such as domain, work type, topic, technology, and artifact.
 
@@ -55,7 +55,7 @@ Layer tags such as #Core, #Memory, and #Extension are classification signals onl
 
 A primitive category may extend its own type recursively at any depth. Workflows may also own mixed local bundles of directives, patterns, guidance, and skills. Other category types reference root primitives instead of embedding mixed local scopes.
 
-Within a recursively selected category, material in a narrower positive scope is preferred over broader material of the same primitive when safe and allowed. The category entrypoint owns any additional precedence rules for its contents.
+Within a recursively selected category, material in a narrower positive scope is preferred over broader material of the same primitive when safe and allowed. The category `entrypoint` owns any additional precedence rules for its contents.
 
 ## Route Contract
 
@@ -73,15 +73,15 @@ Generated route metadata never defines instructions, behavior, or authority. Onl
 
 #LoadWithParentEntrypoint loads baseline route context.
 
-When an entrypoint is loaded, each generated entry tagged #LoadWithParentEntrypoint must be loaded immediately after the parent entrypoint, in listed order. If the target is a category entrypoint, only that entrypoint is loaded first; that child entrypoint's own entries then apply the same routing contract.
+When an `entrypoint` is loaded, each generated `entry` tagged #LoadWithParentEntrypoint must be loaded immediately after the parent `entrypoint`, in listed order. If the target is a category `entrypoint`, only that `entrypoint` is loaded first; that child `entrypoint`'s own `entries` then apply the same routing contract.
 
-#LoadWithParentEntrypoint does not create authority, scope, or precedence. It does not search unloaded trees. Nested autoload requires a visible chain of loaded parent entrypoints.
+#LoadWithParentEntrypoint does not create authority, scope, or precedence. It does not search unloaded trees. Nested autoload requires a visible chain of loaded parent `entrypoints`.
 
 #LoadForPostWorkReview loads post-work route context.
 
-Before ending meaningful work, each generated entry tagged #LoadForPostWorkReview inside already loaded `Entries` must be loaded, in listed order, so agents can route useful material produced during the work.
+Before ending meaningful work, each generated `entry` tagged #LoadForPostWorkReview inside already loaded `Entries` must be loaded, in listed order, so agents can route useful material produced during the work.
 
-#LoadForPostWorkReview does not create authority, scope, precedence, or a write requirement. It does not search unloaded trees; post-work review requires a visible chain of loaded parent entrypoints.
+#LoadForPostWorkReview does not create authority, scope, precedence, or a write requirement. It does not search unloaded trees; post-work review requires a visible chain of loaded parent `entrypoints`.
 
 The loaded target still gets its meaning from its category and authored content.
 
@@ -93,17 +93,56 @@ The active workspace root is the directory whose `AGENTS.md` selected the loader
 
 This contract lets the same routed knowledge work in a repository, monorepo, shared submodule, or symlinked `.agents/` tree without runtime path constants.
 
+## Scoped Routes
+
+A `framework route` is an Open Forge-owned route with stable default meaning.
+
+A `scope route` is a local route used to narrow meaning or ownership for routes below it. A `scope route` is created with a concrete `slug` folder and its own `entrypoint`.
+
+A `scoped framework route` is a `framework route` initialized inside a `scope route`. It keeps the framework contract inside that scope unless a local edit or overwrite changes it.
+
+A `slug` is the concrete folder segment used in a route path. Use `child route` when the relationship to a parent `entrypoint` matters. Use `slug` when the folder segment or route-template placeholder matters.
+
+Every folder in a visible route chain needs an `entrypoint`. A deep file below a folder without an `entrypoint` is not reachable through generated routing.
+
+Route patterns may use placeholders such as `[scope]`, `[route]`, or `[state]` before install:
+
+```text
+memory/crystallized/documents/
+memory/[scope]/crystallized/documents/
+memory/crystallized/[scope]/documents/
+memory/[scope]/crystallized/[scope]/documents/
+```
+
+The first pattern is an unscoped `framework route`. The others insert `scope routes` before, after, or between pinned `framework route` segments.
+
+Installed workspaces contain concrete `slugs` only:
+
+```text
+memory/mobile-app/_mobile-app.md
+memory/mobile-app/crystallized/_crystallized.md
+memory/mobile-app/crystallized/documents/_documents.md
+```
+
+Open Forge does not pin typed grouping folders such as `projects/`, `domains/`, `teams/`, or `platforms/`. They are user-created `scope routes` when useful.
+
+`Slug` placement changes meaning. A `slug` below a state route scopes material inside that state. A `slug` above a state route owns its own state routes. Both are valid when `entrypoints` make the scope clear.
+
+Agents route through concrete paths and `entrypoint` content, not template syntax.
+
+The CLI may identify `scoped framework route` `entrypoints` by known path shape and canonical `entrypoint` filename. It must not require hidden template or version metadata in installed framework files for this.
+
 ## Load Contract
 
 Agents load routing layers in this order:
 
 1. Load the loader.
-2. Load generated entries tagged #LoadWithParentEntrypoint, in listed order.
-3. Repeat #LoadWithParentEntrypoint loading inside each loaded entrypoint.
-4. Apply every loaded entrypoint's authored axioms.
-5. Let the current request select other relevant entries by path, description, and tags.
+2. Load generated `entries` tagged #LoadWithParentEntrypoint, in listed order.
+3. Repeat #LoadWithParentEntrypoint loading inside each loaded `entrypoint`.
+4. Apply every loaded `entrypoint`'s authored axioms.
+5. Let the current request select other relevant `entries` by path, description, and tags.
 6. Follow selected routes to the destinations that own detailed truth.
-7. Before ending meaningful work, load generated entries tagged #LoadForPostWorkReview inside already loaded entrypoints, in listed order.
+7. Before ending meaningful work, load generated `entries` tagged #LoadForPostWorkReview inside already loaded `entrypoints`, in listed order.
 
 Whenever a markdown file is loaded, its `.overwrite.md` companion must be loaded after it when present.
 
@@ -115,26 +154,32 @@ This model keeps the loader small, gives every category one authoritative meanin
 
 Routing is aligned when:
 
-- the loader generates entries for direct active categories only
-- loader entries provide enough meaning to route by relevance
-- every loader category has an installed entrypoint
+- the loader generates `entries` for direct active root routes only
+- loader `entries` provide enough meaning to route by relevance
+- every loader category has an installed `entrypoint`
 - every Open Forge-authored category has a matching framework descriptor
-- every category owns its detailed meaning in its entrypoint
+- every category owns its detailed meaning in its `entrypoint`
 - installed files provide enough meaning without governance descriptors
-- generated entries remain navigation metadata plus reserved load policy
+- generated `entries` remain navigation metadata plus reserved load policy
 - reserved load-policy tags affect loading only
 - category placement and descriptions keep scope visible
 - tags provide compact scope and classification signals
-- layer tags and route type tags remain classification signals unless a loaded entrypoint defines more
+- layer tags and route type tags remain classification signals unless a loaded `entrypoint` defines more
 - paths or descriptions expose mandatory and workspace-wide scope without relying on tags alone
 - generated paths are concrete and workspace-root-relative
 - physical repository and link boundaries do not change the active workspace root
+- `framework routes`, `scope routes`, `scoped framework routes`, and `slugs` have distinct meanings
+- `scope routes` are concrete `slug` folders with `entrypoints`
+- every folder in a visible route chain has its own `entrypoint`
+- `scope routes` can appear before, after, or between pinned route segments
+- installed workspaces do not contain route-template placeholders
+- `scoped framework route` `entrypoints` can be identified by path shape and canonical `entrypoint` filename
 - routed destinations own detailed truth
 - nested categories use the same contract at every depth
-- nested autoload exists only through loaded parent entrypoints
-- post-work review exists only through loaded parent entrypoints
+- nested autoload exists only through loaded parent `entrypoints`
+- post-work review exists only through loaded parent `entrypoints`
 - mixed local primitive bundles are limited to workflows
 - overwrite companions load after their base files
-- default `directives/`, `memory/`, `memory/working/`, and `memory/crystallized/` entrypoints use #LoadWithParentEntrypoint
-- default `memory/emerging/` and `memory/emerging/observations/` entrypoints use #LoadForPostWorkReview
+- default `directives/`, `memory/`, `memory/working/`, and `memory/crystallized/` `entrypoints` use #LoadWithParentEntrypoint
+- default `memory/emerging/` and `memory/emerging/observations/` `entrypoints` use #LoadForPostWorkReview
 - narrower selected scopes take safe preference within the same primitive

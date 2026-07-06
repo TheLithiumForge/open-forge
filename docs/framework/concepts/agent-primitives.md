@@ -10,7 +10,7 @@ These primitives separate mandatory behavior, reusable form, contextual judgment
 
 Agent primitives represent the kinds of routed material that shape or perform agent work.
 
-Their type determines how an agent uses their contents. Their category placement, description, and tags communicate scope. Generated entries provide navigation and reserved load policy only.
+Their type determines how an agent uses their contents. Their category placement, description, and tags communicate scope. Generated `entries` provide navigation and reserved load policy only.
 
 ## Directives
 
@@ -88,9 +88,9 @@ The core payload must install these root categories:
 
 Each category must begin with only the minimum category contract and generated index region required for routing. The core payload does not seed opinionated directive, pattern, guidance, skill, or workflow content.
 
-These categories are populated by ordinary routed files and child categories.
+These categories are populated by routed files and child categories.
 
-Core primitive entrypoints must use #Core plus the singular route type tag that matches the category: #Directive, #Pattern, #Guidance, #Skill, or #Workflow.
+Core primitive `entrypoints` must use #Core plus the singular route type tag that matches the category: #Directive, #Pattern, #Guidance, #Skill, or #Workflow.
 
 ## Scope Contract
 
@@ -104,9 +104,9 @@ Every routed primitive file inherits the positive scope of its containing catego
 
 ## Directive Loading Contract
 
-The default root directives category is tagged `LoadWithParentEntrypoint`, so its generated loader entry loads with the loader.
+The default root directives category is tagged #LoadWithParentEntrypoint, so its generated loader `entry` loads with the loader.
 
-The root entrypoint must route agents to:
+The root `entrypoint` must route agents to:
 
 - every direct workspace-wide directive file
 - every child directive route whose path, description, tags, or defined tag behavior match the current work
@@ -142,8 +142,8 @@ Agent primitives are aligned when:
 - guidance provides adaptable contextual judgment
 - skills remain bounded reusable capabilities
 - workflows remain larger goal-oriented agent workflows
-- every core primitive category is installed with its minimum entrypoint
-- core primitive entrypoints use #Core and singular primitive tags
+- every core primitive category is installed with its minimum `entrypoint`
+- core primitive `entrypoints` use #Core and singular primitive tags
 - opinionated primitive content remains local or optional
 - tags provide compact scope and classification signals
 - paths or descriptions expose workspace-wide and mandatory scope without relying on tags alone

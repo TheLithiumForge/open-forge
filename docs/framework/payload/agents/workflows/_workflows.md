@@ -4,7 +4,7 @@
 
 This descriptor governs `src/open-forge/.agents/workflows/_workflows.md`.
 
-The workflows category entrypoint defines how agents discover larger goal-oriented workflows and how an active workflow owns local supporting material.
+The workflows category `entrypoint` defines how agents discover larger goal-oriented workflows and how an active workflow owns local supporting material.
 
 ## Represents
 
@@ -14,7 +14,7 @@ A workflow organizes work toward an outcome, such as brainstorming, task creatio
 
 ## Contains
 
-The installed workflows category entrypoint must contain:
+The installed workflows category `entrypoint` must contain:
 
 - scoped `open-forge:` frontmatter with a description and useful tags, including `Core`, `Workflow`, and `Index`
 - a title
@@ -22,13 +22,13 @@ The installed workflows category entrypoint must contain:
 - compact relevance, loading, workflow-local bundle, and completion axioms
 - a final marker-bounded generated index region
 
-The authored portion must stay between 15 and 40 non-empty lines. Generated entries do not count toward this limit.
+The authored portion must stay between 15 and 40 non-empty lines. Generated `entries` do not count toward this limit.
 
 ## Workflow Contract
 
 Every routed workflow must identify its goal, starting context, ordered work shape, expected outputs, and completion or handoff condition.
 
-A workflow may be a direct workflow file or a child workflow category. A child workflow category can contain its own entrypoint, workflow files, nested workflow categories, and local supporting categories.
+A workflow may be a direct workflow file or a child workflow category. A child workflow category can contain its own `entrypoint`, workflow files, nested workflow categories, and local supporting categories.
 
 ## Local Bundle Contract
 
@@ -42,9 +42,9 @@ Workflow-local categories reuse the same recursive category contract. They must 
 
 The workflows category is relevant when current work matches a repeatable goal that may have an established workflow.
 
-The entrypoint must route agents to direct workflow files and child workflow categories whose path, description, or tags match the current work. Each selected child entrypoint applies the same contract recursively.
+The `entrypoint` must route agents to direct workflow files and child workflow categories whose path, description, or tags match the current work. Each selected child `entrypoint` applies the same contract recursively.
 
-When a workflow is selected, agents load its workflow entrypoint or file first, then load any relevant local supporting categories routed by that workflow.
+When a workflow is selected, agents load its workflow `entrypoint` or file first, then load any relevant local supporting categories routed by that workflow.
 
 ## Scope Contract
 
@@ -56,7 +56,7 @@ Workflows in a narrower selected scope are preferred over broader workflows when
 
 ## Generated Region
 
-The final section must use the shared category entrypoint shape:
+The final section must use the shared category `entrypoint` shape:
 
 ```md
 ## Entries
@@ -66,7 +66,7 @@ The final section must use the shared category entrypoint shape:
 <!-- open-forge:generated-index:end -->
 ```
 
-Generated entries list direct workflow files and direct child workflow categories. The shared formatting and routing governors own metadata extraction, entry formatting, naming, recursive discovery, marker validation, and regeneration.
+Generated `entries` list direct workflow files and direct child workflow categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
 
 ## Used By
 
@@ -76,7 +76,7 @@ Agents use this category when work may benefit from an established goal-oriented
 
 Workflows make repeatable agent work explicit while keeping reusable local support next to the workflow that needs it.
 
-The empty core category gives each workspace room to add only workflows it actually uses.
+The empty default route gives each workspace room to add only workflows it actually uses.
 
 ## Alignment Checks
 

@@ -4,7 +4,7 @@
 
 This descriptor governs `src/open-forge/.agents/memory/working/_working.md`.
 
-The working memory category entrypoint defines how agents discover memory alive in current work.
+The working memory category `entrypoint` defines how agents discover short-lived context for active or resumable work.
 
 ## Represents
 
@@ -12,7 +12,7 @@ Working memory represents short-lived context needed to continue or resume curre
 
 ## Contains
 
-The installed working memory entrypoint must contain:
+The installed working memory `entrypoint` must contain:
 
 - scoped `open-forge:` frontmatter with description and useful tags, including `Contextual` and `LoadWithParentEntrypoint`
 - a title
@@ -20,7 +20,7 @@ The installed working memory entrypoint must contain:
 - compact lifecycle, loading, freshness, and extraction axioms
 - a final marker-bounded generated index region
 
-The authored portion must stay between 15 and 40 non-empty lines. Generated entries do not count toward this limit.
+The authored portion must stay between 15 and 40 non-empty lines. Generated `entries` do not count toward this limit.
 
 ## Working Contract
 
@@ -30,15 +30,15 @@ Working memory is not accepted truth. It is resumability context. It can be wron
 
 The base payload installs `sessions/` for raw work history and `handoffs/` for concise transfer notes.
 
-Child entrypoints and local files define their own taxonomy below this route.
+Child `entrypoints` and local files define their own taxonomy below this route.
 
 ## Loading Contract
 
 The working memory category is relevant when current work needs live or resumable context.
 
-The entrypoint must route agents to direct working memory files and child working memory categories whose path, description, or tags match the current request. Each selected child entrypoint applies the same contract recursively.
+The `entrypoint` must route agents to direct working memory files and child working memory categories whose path, description, or tags match the current request. Each selected child `entrypoint` applies the same contract recursively.
 
-Agents select the smallest current route that can answer what is happening now. The installed parent entrypoint must let generated entries carry installed child route names and descriptions instead of repeating those names in axioms.
+Agents select the smallest current route that can answer what is happening now. The installed parent `entrypoint` must let generated `entries` carry installed route names and descriptions instead of repeating those names in axioms.
 
 ## Freshness Contract
 
@@ -58,7 +58,7 @@ Subcategories are encouraged when they prevent mixed working memory.
 
 ## Generated Region
 
-The final section must use the shared category entrypoint shape:
+The final section must use the shared category `entrypoint` shape:
 
 ```md
 ## Entries
@@ -68,7 +68,7 @@ The final section must use the shared category entrypoint shape:
 <!-- open-forge:generated-index:end -->
 ```
 
-Generated entries list direct working memory files and direct child working memory categories. The shared formatting and routing governors own metadata extraction, entry formatting, naming, recursive discovery, marker validation, and regeneration.
+Generated `entries` list direct working memory files and direct child working memory categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
 
 ## Used By
 
@@ -91,7 +91,7 @@ The implementation is aligned when it:
 - includes `Contextual` and `LoadWithParentEntrypoint` in scoped `open-forge:` tags
 - defines working memory as live resumability context
 - exposes installed `handoffs/` and `sessions/` routes
-- avoids repeating installed child route names in implementation axioms
+- avoids repeating installed route names in implementation axioms
 - keeps working memory contextual rather than authoritative
 - routes current work selectively
 - requires stale working memory to be extracted, cleared, or archived

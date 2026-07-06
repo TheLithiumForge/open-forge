@@ -38,13 +38,13 @@ Overwrite files apply to markdown source files that agents read as behavior, rou
 
 Generated index regions are output, not behavior. They must be changed by adding, removing, or editing files in the indexed folder, then regenerating the index.
 
-The authored portion of a category entrypoint may define category behavior and follows the normal customization order. Its generated region never has an overwrite.
+The authored portion of a category `entrypoint` may define category behavior and follows the normal customization order. Its generated region never has an overwrite.
 
 ## Implementation Requirements
 
 Agents must read `{name}.overwrite.md` after `{name}.md` when both files exist and the base markdown file is loaded.
 
-Index generation must ignore overwrite files as index entries.
+Index generation must ignore overwrite files as index `entries`.
 
 Install/update behavior must keep overwrite files visible as local files. An Open Forge update must not silently merge overwrite content into the base file.
 

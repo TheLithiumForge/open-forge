@@ -95,15 +95,15 @@ AGENTS.md                     <- agent entry block
 .agents/
   loader.md                   <- tells the agent what to read and when
   directives/
-    _directives.md            <- mandatory workspace modifiers and scoped routes
+    _directives.md            <- mandatory workspace modifiers
   guidance/
-    _guidance.md              <- contextual guidance and scoped routes
+    _guidance.md              <- contextual guidance for recurring decisions
   memory/
-    _memory.md                <- memory states and scoped routes
+    _memory.md                <- memory routes
     working/
-      _working.md             <- live working memory routes
+      _working.md             <- active and resumable memory routes
       handoffs/
-        _handoffs.md          <- concise transfer and resume notes
+        _handoffs.md          <- static transfer and resume notes
       sessions/
         _sessions.md          <- raw chronological work records
     emerging/
@@ -111,28 +111,30 @@ AGENTS.md                     <- agent entry block
       analysis/
         _analysis.md          <- structured reasoning before acceptance
       ideas/
-        _ideas.md             <- candidate possibilities and options
+        _ideas.md             <- future potential and candidate options
       observations/
-        _observations.md      <- useful noticed findings
+        _observations.md      <- agent-noticed findings and learning
     crystallized/
       _crystallized.md        <- accepted current memory routes
+      decisions/
+        _decisions.md         <- accepted rationale for meaningful choices
       documents/
         _documents.md         <- durable accepted records and routes
     archived/
       _archived.md            <- historical memory routes
   patterns/
-    _patterns.md              <- concrete reusable shapes and scoped routes
+    _patterns.md              <- concrete reusable shapes for inspectable work
   skills/
-    _skills.md                <- bounded reusable capabilities and scoped routes
+    _skills.md                <- bounded reusable agent capabilities
   workflows/
-    _workflows.md             <- goal-oriented workflows and scoped routes
+    _workflows.md             <- goal-oriented agent workflows
   workspace/
-    _workspace.md             <- workspace contract and generated routes
+    _workspace.md             <- workspace destinations and when to use them
 ```
 
 The important thing is not the number of files. The important thing is the routing.
 
-`AGENTS.md` points agents at the loader. The CLI generates the loader's active category entries from category metadata, so agents immediately see where each category lives and what it represents. Category entrypoints then expose their relevant routed files.
+`AGENTS.md` points agents at the loader. The CLI generates the loader's active root-route `entries` from `entrypoint` metadata, so agents immediately see where each root route lives and what it represents. Category `entrypoints` then expose their relevant routed files.
 
 Generated paths are concrete and relative to the folder whose `AGENTS.md` selected the loader. A symlinked `.agents/` folder or a shared submodule does not change those logical paths.
 
@@ -156,6 +158,7 @@ AGENTS.md
 .agents/memory/emerging/ideas/_ideas.md
 .agents/memory/emerging/observations/_observations.md
 .agents/memory/crystallized/_crystallized.md
+.agents/memory/crystallized/decisions/_decisions.md
 .agents/memory/crystallized/documents/_documents.md
 .agents/memory/archived/_archived.md
 .agents/patterns/_patterns.md
@@ -226,7 +229,7 @@ The CLI also reads `rune:` metadata in files you add for other tooling. Open For
 
 ### Category Entrypoints
 
-Category entrypoints follow one simple rule: a routed folder contains an entrypoint named `_{folder-name}.md`.
+Category `entrypoints` follow one simple rule: a routed folder contains an `entrypoint` named `_{folder-name}.md`.
 
 ```text
 .agents/knowledge/
@@ -242,20 +245,63 @@ The installed workspace category uses the same shape:
   repositories.md
 ```
 
-The `_{folder-name}.md` file is the category entrypoint. It keeps the short category contract at the beginning and generated navigation at the end.
+The `_{folder-name}.md` file is the category `entrypoint`. It keeps the short category contract at the beginning and generated navigation at the end.
 
-The CLI also accepts `_index.md`, `index.md`, `_references.md`, and `references.md` as cross-tool compatibility aliases. Open Forge-authored categories always use `_{folder-name}.md`. Keep exactly one recognized entrypoint in each folder.
+The CLI also accepts `_index.md`, `index.md`, `_references.md`, and `references.md` as cross-tool compatibility aliases. Open Forge-authored categories always use `_{folder-name}.md`. Keep exactly one recognized `entrypoint` in each folder.
 
-A new top-level category becomes active when a direct child folder contains its matching entrypoint. The CLI adds its description, tags, and path to the loader automatically. Nested categories become reachable through their parent category's generated entries.
+A new top-level category becomes active when a direct child folder contains its matching `entrypoint`. The CLI adds its description, tags, and path to the loader automatically. Nested categories become reachable through their parent category's generated `entries`.
 
-Generated entries look like this:
+Generated `entries` look like this:
 
 ```md
 - `{file}` - {description} - #{Tag1} #{Tag2} ... #{TagN}
 - `{folder/_folder.md}` - {description} - #Index
 ```
 
-File names are used as-is. Child folders are routed through their own `_{folder-name}.md` category entrypoint. If you number files, the generated entries keep those numbers.
+File names are used as-is. Child folders are routed through their own `_{folder-name}.md` category `entrypoint`. If you number files, the generated `entries` keep those numbers.
+
+Use `scope routes` when a workspace needs extra ownership or meaning. A `scope route` is a `slug` folder with its own `entrypoint`:
+
+```text
+.agents/memory/
+  _memory.md
+  [scope]/
+    _[scope].md
+    crystallized/
+      _crystallized.md
+      decisions/
+        _decisions.md
+      documents/
+        _documents.md
+
+.agents/guidance/
+  _guidance.md
+  [scope]/
+    _[scope].md
+    cross-platform-apps.md
+```
+
+`[scope]` means a real folder name such as `mobile-app`, `billing-api`, or any other concrete `slug`. It is not installed literally.
+
+Every folder in the visible route chain needs its own `entrypoint`; otherwise the parent index cannot route to deeper files. `Entries` list sibling markdown files and direct child `entrypoints`.
+
+A `scoped framework route` is a `framework route` initialized inside a `scope route`, such as `crystallized/_crystallized.md` under `[scope]/`. Open Forge does not require `projects/`, `domains/`, `teams/`, or any other grouping folder. Add those only when they make your routes easier to read.
+
+Route placement changes meaning:
+
+```text
+.agents/memory/crystallized/[scope]/decisions/
+```
+
+This means `[scope]` is a scope inside crystallized memory.
+
+```text
+.agents/memory/[scope]/crystallized/decisions/
+```
+
+This means `[scope]` owns its own memory states.
+
+Both shapes are valid when every folder has an `entrypoint` and the `entrypoint` descriptions make the scope clear.
 
 The generated region is explicitly bounded:
 

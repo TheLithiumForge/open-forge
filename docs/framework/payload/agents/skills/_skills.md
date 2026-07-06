@@ -4,7 +4,7 @@
 
 This descriptor governs `src/open-forge/.agents/skills/_skills.md`.
 
-The skills category entrypoint defines how agents discover bounded reusable capabilities without redefining any agent runtime's native skill format.
+The skills category `entrypoint` defines how agents discover bounded reusable capabilities without redefining any agent runtime's native skill format.
 
 ## Represents
 
@@ -14,7 +14,7 @@ A skill packages a bounded ability, procedure, tool use, or reference set that h
 
 ## Contains
 
-The installed skills category entrypoint must contain:
+The installed skills category `entrypoint` must contain:
 
 - scoped `open-forge:` frontmatter with a description and useful tags, including `Core`, `Skill`, and `Index`
 - a title
@@ -22,7 +22,7 @@ The installed skills category entrypoint must contain:
 - compact relevance, loading, scope, and runtime-boundary axioms
 - a final marker-bounded generated index region
 
-The authored portion must stay between 15 and 35 non-empty lines. Generated entries do not count toward this limit.
+The authored portion must stay between 15 and 35 non-empty lines. Generated `entries` do not count toward this limit.
 
 ## Skill Contract
 
@@ -36,7 +36,7 @@ Open Forge routes skills. The active agent runtime owns skill invocation, activa
 
 The skills category is relevant when current work may benefit from a reusable agent capability.
 
-The entrypoint must route agents to direct skill files and child skill categories whose path, description, or tags match the current work. Each selected child entrypoint applies the same contract recursively. Agents load only skill bodies in the current scope.
+The `entrypoint` must route agents to direct skill files and child skill categories whose path, description, or tags match the current work. Each selected child `entrypoint` applies the same contract recursively. Agents load only skill bodies in the current scope.
 
 ## Scope Contract
 
@@ -48,7 +48,7 @@ Skills in a narrower selected scope are preferred over broader skills when safe 
 
 ## Generated Region
 
-The final section must use the shared category entrypoint shape:
+The final section must use the shared category `entrypoint` shape:
 
 ```md
 ## Entries
@@ -58,7 +58,7 @@ The final section must use the shared category entrypoint shape:
 <!-- open-forge:generated-index:end -->
 ```
 
-Generated entries list direct skill files and direct child skill categories. The shared formatting and routing governors own metadata extraction, entry formatting, naming, recursive discovery, marker validation, and regeneration.
+Generated `entries` list direct skill files and direct child skill categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
 
 ## Used By
 
@@ -68,7 +68,7 @@ Agents use this category when a reusable capability may help perform the current
 
 Skills make reusable capability discoverable while preserving compatibility with agent runtimes that already define their own skill mechanics.
 
-The empty core category gives each workspace room to add only the capabilities it actually wants.
+The empty default route gives each workspace room to add only the capabilities it actually wants.
 
 ## Alignment Checks
 

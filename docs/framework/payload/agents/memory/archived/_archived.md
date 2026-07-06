@@ -4,7 +4,7 @@
 
 This descriptor governs `src/open-forge/.agents/memory/archived/_archived.md`.
 
-The archived memory category entrypoint defines how agents discover memory preserved for context but no longer current.
+The archived memory category `entrypoint` defines how agents discover memory preserved for context but no longer current.
 
 ## Represents
 
@@ -12,7 +12,7 @@ Archived memory represents historical context after material stops being current
 
 ## Contains
 
-The installed archived memory entrypoint must contain:
+The installed archived memory `entrypoint` must contain:
 
 - scoped `open-forge:` frontmatter with description and useful tags, including `Contextual` and `Historical`
 - a title
@@ -20,7 +20,7 @@ The installed archived memory entrypoint must contain:
 - compact authority, structure, loading, and restoration axioms
 - a final marker-bounded generated index region
 
-The authored portion must stay between 15 and 45 non-empty lines. Generated entries do not count toward this limit.
+The authored portion must stay between 15 and 45 non-empty lines. Generated `entries` do not count toward this limit.
 
 ## Archived Contract
 
@@ -30,7 +30,7 @@ Archived memory contains memory material after useful current essence has been e
 
 The archive must preserve enough context to answer where the material came from, why it was archived, and what replaced it when a replacement exists.
 
-The base payload does not install default archive subroutes for every memory state. Archive routes may be global or scoped anywhere their owning route makes historical context clearer, but their organization must preserve origin and relevance.
+The base payload does not install default archive subroutes for every memory state. Archive child routes may use any useful taxonomy, but their organization must preserve origin and relevance.
 
 ## Authority Contract
 
@@ -44,7 +44,7 @@ If archived material contradicts current crystallized memory or applicable #Core
 
 The archived memory category is relevant when current work needs non-current historical context.
 
-The entrypoint must route agents to direct archived memory files and child archived memory categories whose path, description, or tags match the current request. Each selected child entrypoint applies the same contract recursively.
+The `entrypoint` must route agents to direct archived memory files and child archived memory categories whose path, description, or tags match the current request. Each selected child `entrypoint` applies the same contract recursively.
 
 Agents load archived memory only when it is relevant to the current request.
 
@@ -58,7 +58,7 @@ The archived copy must preserve enough source context for later review without d
 
 Nested archived categories may use any taxonomy that preserves useful origin and routing context.
 
-Archived organization must remain navigable. Agents must create subcategories when they preserve archived meaning more clearly than a flat archive.
+Archived organization must remain navigable. Use subcategories when they preserve archived meaning more clearly than a flat archive.
 
 ## Restoration Contract
 
@@ -70,7 +70,7 @@ Restoration conflicts require user review or an explicit decision.
 
 ## Generated Region
 
-The final section must use the shared category entrypoint shape:
+The final section must use the shared category `entrypoint` shape:
 
 ```md
 ## Entries
@@ -80,7 +80,7 @@ The final section must use the shared category entrypoint shape:
 <!-- open-forge:generated-index:end -->
 ```
 
-Generated entries list direct archived memory files and direct child archived memory categories. The shared formatting and routing governors own metadata extraction, entry formatting, naming, recursive discovery, marker validation, and regeneration.
+Generated `entries` list direct archived memory files and direct child archived memory categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
 
 ## Used By
 
@@ -102,7 +102,7 @@ The implementation is aligned when it:
 - lives in `.agents/memory/archived/`
 - includes `Contextual` and `Historical` in scoped `open-forge:` tags
 - defines archived memory as historical context only
-- supports global or scoped archive routes without requiring state mirrors
+- supports archive child routes without requiring state mirrors
 - preserves origin context
 - requires extraction before archival when useful material remains
 - allows extracted archived material to return to another #Memory route, matching #Core material, or external state
