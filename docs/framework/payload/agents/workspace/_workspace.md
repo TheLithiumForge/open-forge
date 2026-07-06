@@ -4,7 +4,7 @@
 
 This descriptor governs `src/open-forge/.agents/workspace/_workspace.md`.
 
-The workspace category `entrypoint` defines how agents discover important workspace destinations, understand when to use them, and use generated navigation to workspace route files.
+The workspace category `entrypoint` defines how agents discover important project locations, understand when to use them, and use generated navigation to workspace route files.
 
 ## Represents
 

@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Contextual advice for recurring choices, tradeoffs, and scenarios
+  description: Contextual advice for recurring choices, tradeoffs, and work scenarios
   tags: [OpenForge, Core, Guidance, Index]
 ---
 

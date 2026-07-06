@@ -1,6 +1,6 @@
 # Open Forge CLI
 
-The Open Forge CLI is intentionally small. It installs the released framework files, updates `AGENTS.md`, and rebuilds generated index regions.
+The Open Forge CLI is intentionally small. It installs the released framework files, installs local extension overlays, updates `AGENTS.md`, and rebuilds generated index regions.
 
 The distributed CLI runs on Node.js.
 
@@ -8,6 +8,8 @@ The distributed CLI runs on Node.js.
 
 ```sh
 open-forge install [target]
+open-forge extend --list
+open-forge extend <extension-source-or-id> [target]
 open-forge index [target]
 ```
 
@@ -62,6 +64,49 @@ memory/.../crystallized/.../documents/_documents.md
 A local `scope route` such as `.agents/patterns/[scope]/react/_react.md` is not updated as a `scoped framework route` unless it matches a known `framework route` shape.
 
 Manual edits to framework files are visible in git diffs after install. Prefer sibling files, child routes, or `.overwrite.md` companions for durable local customization.
+
+## extend
+
+```sh
+open-forge extend {extension-source}
+open-forge extend {bundled-extension-id}
+open-forge extend {extension-source} {target-folder}
+open-forge extend {bundled-extension-id} {target-folder}
+open-forge extend --list
+```
+
+`extend` installs an extension overlay into the target and rebuilds generated index regions.
+
+The extension can come from:
+
+- a local folder shaped like the files it should add to the workspace
+- a bundled first-party Open Forge extension shipped with the CLI package
+
+Local overlay example:
+
+```text
+my-extension/
+  .agents/
+    patterns/
+      react/
+        _react.md
+        components.md
+```
+
+Running `open-forge extend my-extension {target-folder}` copies those files into `{target-folder}`. Markdown files preserve matching marked local blocks when the target file already exists. Other files are copied over directly.
+
+Bundled first-party extensions live in the CLI package under this source shape:
+
+```text
+src/extensions/{extension-id}/
+  payload/
+    .agents/
+      ...
+```
+
+Use `open-forge extend --list` to show bundled extensions available in the installed CLI package. Use `open-forge extend {extension-id}` to install one.
+
+This is an MVP dogfooding command. It does not provide an external registry, manifest contract, wizard, preview, uninstall, or dependency model yet. Build or select the overlay intentionally, run `extend`, then inspect the git diff.
 
 ## index
 

@@ -4,7 +4,7 @@
 
 This descriptor governs `src/open-forge/.agents/memory/emerging/analysis/_analysis.md`.
 
-The analysis memory category `entrypoint` defines how agents discover structured reasoning that is useful but not accepted truth.
+The analysis memory category `entrypoint` defines how agents discover structured reasoning, investigation, or comparison that is useful but not accepted truth.
 
 ## Represents
 

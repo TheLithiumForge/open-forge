@@ -39,6 +39,12 @@ Install Open Forge into the current folder:
 npx open-forge install
 ```
 
+Install a local extension overlay:
+
+```sh
+npx open-forge extend {extension-folder}
+```
+
 Install Open Forge into another folder:
 
 ```sh
@@ -95,15 +101,15 @@ AGENTS.md                     <- agent entry block
 .agents/
   loader.md                   <- tells the agent what to read and when
   directives/
-    _directives.md            <- mandatory workspace modifiers
+    _directives.md            <- mandatory instructions for applicable work
   guidance/
     _guidance.md              <- contextual guidance for recurring decisions
   memory/
-    _memory.md                <- memory routes
+    _memory.md                <- self-growing workspace memory routes
     working/
-      _working.md             <- active and resumable memory routes
+      _working.md             <- temporary memory for continuing active work
       handoffs/
-        _handoffs.md          <- static transfer and resume notes
+        _handoffs.md          <- concise transfer notes for context breaks
       sessions/
         _sessions.md          <- raw chronological work records
     emerging/
@@ -115,11 +121,11 @@ AGENTS.md                     <- agent entry block
       observations/
         _observations.md      <- agent-noticed findings and learning
     crystallized/
-      _crystallized.md        <- accepted current memory routes
+      _crystallized.md        <- accepted durable memory and current truth
       decisions/
-        _decisions.md         <- accepted rationale for meaningful choices
+        _decisions.md         <- accepted rationale for important choices
       documents/
-        _documents.md         <- durable accepted records and routes
+        _documents.md         <- long-form accepted records and routes
     archived/
       _archived.md            <- historical memory routes
   patterns/
@@ -129,7 +135,7 @@ AGENTS.md                     <- agent entry block
   workflows/
     _workflows.md             <- goal-oriented agent workflows
   workspace/
-    _workspace.md             <- workspace destinations and when to use them
+    _workspace.md             <- project locations and when to use them
 ```
 
 The important thing is not the number of files. The important thing is the routing.

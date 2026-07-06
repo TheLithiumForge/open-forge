@@ -4,7 +4,7 @@
 
 This descriptor governs `src/open-forge/.agents/guidance/_guidance.md`.
 
-The guidance category `entrypoint` defines how agents discover and use contextual judgment for recurring scenarios.
+The guidance category `entrypoint` defines how agents discover contextual advice for recurring choices, tradeoffs, and work scenarios.
 
 ## Represents
 

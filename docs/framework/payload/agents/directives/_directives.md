@@ -4,7 +4,7 @@
 
 This descriptor governs `src/open-forge/.agents/directives/_directives.md`.
 
-The directives category `entrypoint` defines mandatory workspace modifiers, their recursive scope model, and generated navigation to directive files and child directive categories.
+The directives category `entrypoint` defines mandatory instructions agents must follow when they apply to the current work, their recursive scope model, and generated navigation to directive files and child directive categories.
 
 ## Represents
 

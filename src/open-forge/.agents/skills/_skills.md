@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Reusable agent capabilities with clear applicability and expected results
+  description: Reusable agent capabilities with clear use cases and expected results
   tags: [OpenForge, Core, Skill, Index]
 ---
 

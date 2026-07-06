@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Mandatory instructions that change how agents must work in this workspace
+  description: Mandatory instructions agents must follow when they apply to the current work
   tags: [OpenForge, Core, Directive, Index, LoadWithParentEntrypoint]
 ---
 

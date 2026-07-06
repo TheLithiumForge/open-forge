@@ -4,7 +4,7 @@
 
 This descriptor governs `src/open-forge/.agents/memory/emerging/_emerging.md`.
 
-The emerging memory category `entrypoint` defines how agents discover useful material that is not accepted truth.
+The emerging memory category `entrypoint` defines how agents discover candidate memory that may be useful but is not accepted truth yet.
 
 ## Represents
 

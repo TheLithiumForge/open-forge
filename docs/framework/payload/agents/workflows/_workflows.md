@@ -4,11 +4,11 @@
 
 This descriptor governs `src/open-forge/.agents/workflows/_workflows.md`.
 
-The workflows category `entrypoint` defines how agents discover larger goal-oriented workflows and how an active workflow owns local supporting material.
+The workflows category `entrypoint` defines how agents discover repeatable agent workflows for reaching defined goals and how an active workflow owns local supporting material.
 
 ## Represents
 
-The workflows category represents repeatable agent workflows for larger goals.
+The workflows category represents repeatable agent workflows for reaching defined goals.
 
 A workflow organizes work toward an outcome, such as brainstorming, task creation, implementation, review, test-driven development, handoff, or learning.
 
@@ -32,11 +32,11 @@ A workflow may be a direct workflow file or a child workflow category. A child w
 
 ## Local Bundle Contract
 
-An active workflow may own local `directives/`, `patterns/`, `guidance/`, and `skills/` categories beneath its workflow folder.
+An active workflow may own local `directives/`, `patterns/`, `guidance/`, and `skills/` categories beneath its workflow folder when those routes are essential to that workflow.
 
 Workflow-local material applies only while that workflow is active. It is preferred over broader workspace material for that active workflow when safe and allowed. Unresolved conflicts must be reported.
 
-Workflow-local categories reuse the same recursive category contract. They must not create another `AGENTS.md`, root loader, workspace category, or independent Open Forge installation.
+Workflow-local categories reuse the same recursive category contract. They must not create another Open Forge root or independent Open Forge installation.
 
 ## Loading Contract
 
@@ -85,12 +85,12 @@ The implementation is aligned when it:
 - is named `_workflows.md`
 - lives in `.agents/workflows/`
 - includes `Core`, `Workflow`, and `Index` in scoped `open-forge:` tags
-- defines workflows as larger goal-oriented agent workflows
+- defines workflows as repeatable agent workflows for reaching a defined goal
 - selects workflow routes by visible relevance
 - requires workflows to state goal, work shape, outputs, and completion
 - permits local supporting primitive categories only under active workflows
 - reuses the root recursive category contract for local workflow support
-- prevents nested Open Forge roots under workflows
+- prevents nested Open Forge roots or independent installs under workflows
 - supports recursive positive workflow scope
 - prefers narrower selected workflow scopes when safe and allowed
 - routes only through its final generated region

@@ -4,11 +4,11 @@
 
 This descriptor governs `src/open-forge/.agents/memory/working/_working.md`.
 
-The working memory category `entrypoint` defines how agents discover short-lived context for active or resumable work.
+The working memory category `entrypoint` defines how agents discover temporary memory that helps them continue or resume active work.
 
 ## Represents
 
-Working memory represents short-lived context needed to continue or resume current work.
+Working memory represents temporary context needed to continue or resume current work.
 
 ## Contains
 
