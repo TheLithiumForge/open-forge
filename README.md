@@ -45,6 +45,13 @@ Install a local extension overlay:
 npx open-forge extend {extension-folder}
 ```
 
+List and install bundled first-party extensions:
+
+```sh
+npx open-forge extend --list
+npx open-forge extend {extension-id}
+```
+
 Install Open Forge into another folder:
 
 ```sh
