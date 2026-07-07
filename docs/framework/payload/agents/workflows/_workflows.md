@@ -19,14 +19,18 @@ The installed workflows category `entrypoint` must contain:
 - scoped `open-forge:` frontmatter with a description and useful tags, including `Core`, `Workflow`, and `Index`
 - a title
 - one short definition of workflows
-- compact relevance, loading, workflow-local #Core route, and completion axioms
+- compact relevance, loading, skill, step, loop, workflow-local #Core route, and completion axioms
 - a final marker-bounded generated index region
 
 The authored portion must stay between 15 and 40 non-empty lines. Generated `entries` do not count toward this limit.
 
 ## Workflow Contract
 
-Every routed workflow must identify its goal, starting context, ordered work shape, expected outputs, and completion or handoff condition.
+Every routed workflow must identify its goal, starting context, required skills when it uses skills, ordered steps, loop behavior, expected outputs, and completion or handoff condition.
+
+Required skills must be explicit enough that an agent can load the skill routes before running the workflow. If a workflow has no required skills, it must say so.
+
+Loop behavior must state whether the workflow is linear or iterative, what causes another pass, and what stops the loop.
 
 A workflow may be a direct workflow file or a child workflow category. A child workflow category can contain its own `entrypoint`, workflow files, nested workflow categories, and workflow-local #Core routes.
 
@@ -87,7 +91,7 @@ The implementation is aligned when it:
 - includes `Core`, `Workflow`, and `Index` in scoped `open-forge:` tags
 - defines workflows as repeatable agent workflows for reaching a defined goal
 - selects workflow routes by visible relevance
-- requires workflows to state goal, work shape, outputs, and completion
+- requires workflows to state goal, required skills, steps, loop behavior, outputs, and completion
 - permits workflow-local #Core routes only under active workflows
 - reuses the recursive category contract for workflow-local #Core routes
 - prevents independent installs under workflows

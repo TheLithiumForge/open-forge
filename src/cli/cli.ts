@@ -23,7 +23,7 @@ try {
   if (command === "install") {
     await install(args[1] ?? process.cwd());
   } else if (command === "extend") {
-    await installExtension(args[1], args[2] ?? process.cwd());
+    await extend(args.slice(1));
   } else if (command === "index") {
     await generateIndexes(path.resolve(args[1] ?? process.cwd()));
   } else {
@@ -81,25 +81,98 @@ async function install(targetArg: string): Promise<void> {
   console.log(`Updated ${copied} managed files, updated ${scopedCopied} scoped framework route files, patched ${patched} entry files, rebuilt ${generatedRegions} generated regions.`);
 }
 
-async function installExtension(extensionArg: string | undefined, targetArg: string): Promise<void> {
-  if (!extensionArg) {
-    throw new Error("Usage: open-forge extend <extension-source-or-id> [target]");
-  }
-
-  if (extensionArg === "--list") {
+async function extend(extendArgs: string[]): Promise<void> {
+  if (extendArgs[0] === "--list") {
+    assertNoExtraArgs(extendArgs, 1, "Usage: open-forge extend --list");
     await listBundledExtensions();
     return;
   }
 
-  const extension = await resolveExtensionSource(extensionArg);
+  if (extendArgs[0] === "--select" || extendArgs.length === 0) {
+    const target = extendArgs[0] === "--select" ? extendArgs[1] ?? process.cwd() : process.cwd();
+    assertNoExtraArgs(extendArgs, extendArgs[0] === "--select" ? 2 : 0, "Usage: open-forge extend --select [target]");
+    const ids = await selectBundledExtensionIds();
+    if (ids.length === 0) {
+      console.log("No extensions selected.");
+      return;
+    }
+
+    await installExtensions(ids, target);
+    return;
+  }
+
+  const idsValue = readIdsValue(extendArgs);
+  if (idsValue) {
+    const { ids, consumed } = idsValue;
+    const target = extendArgs[consumed] ?? process.cwd();
+    assertNoExtraArgs(extendArgs, consumed + (extendArgs[consumed] ? 1 : 0), "Usage: open-forge extend --ids <id[,id...]> [target]");
+    await installExtensions(ids, target);
+    return;
+  }
+
+  const extensionArg = extendArgs[0];
+  const targetArg = extendArgs[1] ?? process.cwd();
+  assertNoExtraArgs(extendArgs, 2, "Usage: open-forge extend <extension-source-or-id> [target]");
+  await installExtensions([extensionArg], targetArg);
+}
+
+function assertNoExtraArgs(args: string[], allowedCount: number, usage: string): void {
+  if (args.length > allowedCount) {
+    throw new Error(usage);
+  }
+}
+
+function readIdsValue(args: string[]): { ids: string[]; consumed: number } | null {
+  const first = args[0];
+  if (first === "--ids") {
+    const value = args[1];
+    if (!value) {
+      throw new Error("Usage: open-forge extend --ids <id[,id...]> [target]");
+    }
+
+    return { ids: splitExtensionIds(value), consumed: 2 };
+  }
+
+  if (first.startsWith("--ids=")) {
+    return { ids: splitExtensionIds(first.slice("--ids=".length)), consumed: 1 };
+  }
+
+  return null;
+}
+
+function splitExtensionIds(value: string): string[] {
+  const ids = [...new Set(value.split(",").map((id) => id.trim()).filter(Boolean))];
+  if (ids.length === 0 || ids.some((id) => !isBundledExtensionId(id))) {
+    throw new Error("Extension ids must be comma-separated lowercase ids such as vision-workflow,implementation-workflow");
+  }
+
+  return ids;
+}
+
+async function installExtensions(extensionArgs: string[], targetArg: string): Promise<void> {
+  const extensions = await Promise.all(extensionArgs.map(resolveExtensionSource));
   const targetRoot = path.resolve(targetArg);
 
-  if (samePath(extension.root, targetRoot)) {
-    throw new Error("Extension source and target must be different directories");
+  for (const extension of extensions) {
+    if (samePath(extension.root, targetRoot)) {
+      throw new Error("Extension source and target must be different directories");
+    }
   }
 
   await ensureDir(targetRoot);
 
+  let copied = 0;
+  for (const extension of extensions) {
+    copied += await copyExtension(extension, targetRoot);
+  }
+
+  const generatedRegions = await generateIndexes(targetRoot);
+  const labels = extensions.map((extension) => `${extension.kind}:${extension.label}`).join(", ");
+  console.log(`Installed Open Forge extensions ${labels} into ${targetRoot}`);
+  console.log(`Copied ${copied} extension files and rebuilt ${generatedRegions} generated regions.`);
+}
+
+async function copyExtension(extension: ExtensionSource, targetRoot: string): Promise<number> {
   const files = await listFiles(extension.root);
   let copied = 0;
 
@@ -120,9 +193,7 @@ async function installExtension(extensionArg: string | undefined, targetArg: str
     copied += 1;
   }
 
-  const generatedRegions = await generateIndexes(targetRoot);
-  console.log(`Installed Open Forge ${extension.kind} extension ${extension.label} into ${targetRoot}`);
-  console.log(`Copied ${copied} extension files and rebuilt ${generatedRegions} generated regions.`);
+  return copied;
 }
 
 type ExtensionSource = {
@@ -131,10 +202,21 @@ type ExtensionSource = {
   kind: "local" | "bundled";
 };
 
+type BundledExtensionInfo = {
+  id: string;
+  name: string;
+  description: string;
+};
+
 async function resolveExtensionSource(value: string): Promise<ExtensionSource> {
   const localRoot = path.resolve(value);
   if (await isDirectory(localRoot)) {
-    return { root: localRoot, label: localRoot, kind: "local" };
+    const localPayloadRoot = path.join(localRoot, "payload");
+    return {
+      root: await isDirectory(localPayloadRoot) ? localPayloadRoot : localRoot,
+      label: localRoot,
+      kind: "local"
+    };
   }
 
   if (!isBundledExtensionId(value)) {
@@ -156,26 +238,31 @@ function isBundledExtensionId(value: string): boolean {
 }
 
 async function listBundledExtensions(): Promise<void> {
-  const ids = await listBundledExtensionIds();
+  const extensions = await listBundledExtensionInfos();
 
-  if (ids.length === 0) {
+  if (extensions.length === 0) {
     console.log("No bundled Open Forge extensions are installed in this CLI package.");
     return;
   }
 
   console.log("Bundled Open Forge extensions:");
-  for (const id of ids) {
-    console.log(`- ${id}`);
+  for (const extension of extensions) {
+    const description = extension.description ? ` - ${extension.description}` : "";
+    console.log(`- ${extension.id}${description}`);
   }
 }
 
 async function listBundledExtensionIds(): Promise<string[]> {
+  return (await listBundledExtensionInfos()).map((extension) => extension.id);
+}
+
+async function listBundledExtensionInfos(): Promise<BundledExtensionInfo[]> {
   if (!(await isDirectory(bundledExtensionsRoot))) {
     return [];
   }
 
   const entries = await fs.readdir(bundledExtensionsRoot, { withFileTypes: true });
-  const ids: string[] = [];
+  const extensions: BundledExtensionInfo[] = [];
 
   for (const entry of entries) {
     if (!entry.isDirectory() || !isBundledExtensionId(entry.name)) {
@@ -183,11 +270,121 @@ async function listBundledExtensionIds(): Promise<string[]> {
     }
 
     if (await isDirectory(path.join(bundledExtensionsRoot, entry.name, "payload"))) {
-      ids.push(entry.name);
+      extensions.push(await readBundledExtensionInfo(entry.name));
     }
   }
 
-  return ids.sort();
+  return extensions.sort((left, right) => left.id.localeCompare(right.id));
+}
+
+async function readBundledExtensionInfo(id: string): Promise<BundledExtensionInfo> {
+  const metadataFile = path.join(bundledExtensionsRoot, id, "extension.json");
+  const fallback = { id, name: id, description: "" };
+  const text = await readTextIfExists(metadataFile);
+  if (!text) {
+    return fallback;
+  }
+
+  const metadata = JSON.parse(text) as Partial<BundledExtensionInfo>;
+  return {
+    id,
+    name: typeof metadata.name === "string" && metadata.name.trim() ? metadata.name.trim() : fallback.name,
+    description: typeof metadata.description === "string" ? metadata.description.trim() : fallback.description
+  };
+}
+
+async function selectBundledExtensionIds(): Promise<string[]> {
+  const extensions = await listBundledExtensionInfos();
+  if (extensions.length === 0) {
+    console.log("No bundled Open Forge extensions are installed in this CLI package.");
+    return [];
+  }
+
+  if (!process.stdin.isTTY || !process.stdout.isTTY || typeof process.stdin.setRawMode !== "function") {
+    throw new Error("Interactive extension selection requires a TTY. Use open-forge extend --list or open-forge extend --ids <id[,id...]>.");
+  }
+
+  let cursor = 0;
+  let renderedLines = 0;
+  const selected = new Set<string>();
+  const stdin = process.stdin;
+  const stdout = process.stdout;
+
+  const render = (): void => {
+    if (renderedLines > 0) {
+      stdout.write(`\x1b[${renderedLines}A`);
+    }
+
+    const lines = [
+      "Select bundled Open Forge extensions. Space toggles, Enter installs, q cancels.",
+      ...extensions.map((extension, index) => {
+        const pointer = index === cursor ? ">" : " ";
+        const mark = selected.has(extension.id) ? "[x]" : "[ ]";
+        const description = extension.description ? ` - ${extension.description}` : "";
+        return `${pointer} ${mark} ${extension.id}${description}`;
+      })
+    ];
+
+    stdout.write(`${lines.map((line) => `\x1b[2K${line}`).join("\n")}\n`);
+    renderedLines = lines.length;
+  };
+
+  return await new Promise<string[]>((resolve, reject) => {
+    const cleanup = (): void => {
+      stdin.off("data", onData);
+      stdin.setRawMode(false);
+      stdin.pause();
+      stdout.write("\x1b[?25h");
+    };
+
+    const finish = (ids: string[]): void => {
+      cleanup();
+      stdout.write("\n");
+      resolve(ids);
+    };
+
+    const cancel = (): void => {
+      cleanup();
+      stdout.write("\n");
+      reject(new Error("Extension selection cancelled"));
+    };
+
+    const move = (offset: number): void => {
+      cursor = (cursor + offset + extensions.length) % extensions.length;
+      render();
+    };
+
+    const toggle = (): void => {
+      const id = extensions[cursor].id;
+      if (selected.has(id)) {
+        selected.delete(id);
+      } else {
+        selected.add(id);
+      }
+      render();
+    };
+
+    const onData = (chunk: Buffer): void => {
+      const key = chunk.toString("utf8");
+      if (key === "\u0003" || key === "\u001b" || key === "q") {
+        cancel();
+      } else if (key === "\r" || key === "\n") {
+        finish([...selected]);
+      } else if (key === " ") {
+        toggle();
+      } else if (key === "\u001b[A" || key === "k") {
+        move(-1);
+      } else if (key === "\u001b[B" || key === "j") {
+        move(1);
+      }
+    };
+
+    stdout.write("\x1b[?25l");
+    stdin.setRawMode(true);
+    stdin.resume();
+    stdin.on("data", onData);
+    render();
+  });
 }
 
 type FrameworkEntrypointTemplate = {
@@ -865,7 +1062,10 @@ function printHelp(): void {
 
 Usage:
   open-forge install [target]
+  open-forge extend
   open-forge extend --list
+  open-forge extend --select [target]
+  open-forge extend --ids <id[,id...]> [target]
   open-forge extend <extension-source-or-id> [target]
   open-forge index [target]
 

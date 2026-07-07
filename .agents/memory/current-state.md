@@ -55,6 +55,8 @@ The MVP CLI supports:
 - `extend <extension-source> [target]`
 - `extend <bundled-extension-id> [target]`
 - `extend --list`
+- `extend --select [target]`
+- `extend --ids <id[,id...]> [target]`
 - `index [target]`
 
 Current CLI behavior:
@@ -66,9 +68,15 @@ Current CLI behavior:
 - accepts compatibility entrypoints `_index.md`, `index.md`, `_references.md`, and `references.md`
 - updates recognized scoped framework entrypoints by path shape during install
 - installs local extension overlays through `extend` as a dogfooding MVP
+- installs local extension packages that contain `payload/`
 - installs bundled first-party extensions from `src/extensions/{id}/payload` when the CLI package contains them
+- can list bundled extensions, interactively select bundled extensions in a TTY, or install bundled extension ids unattended
 
-The CLI is still MVP. The final extension registry, manifests, previews, wizards, update/remove behavior, and route-template scaffolding are not designed yet.
+The CLI is still MVP. The final extension registry, previews, wizards, update/remove behavior, dependency handling, and route-template scaffolding are not designed yet.
+
+## Current First-Party Extensions
+
+`workflow-essentials` is the first bundled extension. It currently installs vision, architecture, and implementation workflows, plus shared workflow primitive skills and workflow-specific skills.
 
 ## Current Work In Progress
 

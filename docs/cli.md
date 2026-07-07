@@ -8,7 +8,10 @@ The distributed CLI runs on Node.js.
 
 ```sh
 open-forge install [target]
+open-forge extend
 open-forge extend --list
+open-forge extend --select [target]
+open-forge extend --ids <id[,id...]> [target]
 open-forge extend <extension-source-or-id> [target]
 open-forge index [target]
 ```
@@ -68,18 +71,23 @@ Manual edits to framework files are visible in git diffs after install. Prefer s
 ## extend
 
 ```sh
+open-forge extend
 open-forge extend {extension-source}
 open-forge extend {bundled-extension-id}
 open-forge extend {extension-source} {target-folder}
 open-forge extend {bundled-extension-id} {target-folder}
 open-forge extend --list
+open-forge extend --select {target-folder}
+open-forge extend --ids {bundled-extension-id},{bundled-extension-id}
+open-forge extend --ids {bundled-extension-id},{bundled-extension-id} {target-folder}
 ```
 
-`extend` installs an extension overlay into the target and rebuilds generated index regions.
+`extend` installs extension overlays into the target and rebuilds generated index regions.
 
 The extension can come from:
 
 - a local folder shaped like the files it should add to the workspace
+- a local extension package folder that contains `payload/`
 - a bundled first-party Open Forge extension shipped with the CLI package
 
 Local overlay example:
@@ -95,10 +103,26 @@ my-extension/
 
 Running `open-forge extend my-extension {target-folder}` copies those files into `{target-folder}`. Markdown files preserve matching marked local blocks when the target file already exists. Other files are copied over directly.
 
+Local package example:
+
+```text
+my-extension/
+  extension.json
+  README.md
+  payload/
+    .agents/
+      workflows/
+        implementation/
+          _implementation.md
+```
+
+Running `open-forge extend my-extension {target-folder}` copies only `payload/` into `{target-folder}`.
+
 Bundled first-party extensions live in the CLI package under this source shape:
 
 ```text
 src/extensions/{extension-id}/
+  extension.json
   payload/
     .agents/
       ...
@@ -106,7 +130,11 @@ src/extensions/{extension-id}/
 
 Use `open-forge extend --list` to show bundled extensions available in the installed CLI package. Use `open-forge extend {extension-id}` to install one.
 
-This is an MVP dogfooding command. It does not provide an external registry, manifest contract, wizard, preview, uninstall, or dependency model yet. Build or select the overlay intentionally, run `extend`, then inspect the git diff.
+Use `open-forge extend` or `open-forge extend --select {target-folder}` to select bundled extensions in an interactive TTY. Space toggles selection, Enter installs selected extensions, and `q` cancels.
+
+Use `open-forge extend --ids {id},{id} {target-folder}` for unattended bundled extension installs. The CLI resolves each value as a bundled extension id and runs index generation once after copying every selected payload.
+
+This is an MVP dogfooding command. It does not provide an external registry, preview, uninstall, update, route-template scaffolding, or dependency model yet. Build or select the overlay intentionally, run `extend`, then inspect the git diff.
 
 ## index
 
