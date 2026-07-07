@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Understand the current system and define a structural direction future work can follow; use when system structure needs design, evaluation, change, documentation, or review
-  tags: [Extension, Workflow, Architecture, Design, Index]
+  description: Workflow for understanding, designing, and recording architecture changes
+  tags: [OpenForge, Extension, Core, Workflow, Architecture, Design, Index]
 ---
 
 # Architecture
@@ -10,15 +10,21 @@ Architecture is the workflow for understanding the current system, evaluating st
 
 ## Axioms
 
-- Read every `Required Skill Packages` route before running `Steps`; report missing routes.
+- Use this workflow when the user wants to design, evaluate, change, document, or review system structure.
 - Do not propose architecture before mapping the current structure and accepted constraints.
 - Prefer incremental designs that can be implemented, tested, and reviewed in clear slices.
 - Keep rationale, behavior, reusable structures, and migration work in their owning routes.
+- Generated `entries` are navigation and reserved load policy only.
 
-## Required Skill Packages
+## Required Skills
 
-- `.agents/skills/workflow-primitives/SKILL.md` - shared context loading, memory routing, completion, and handoff primitives.
-- `.agents/skills/architecture/SKILL.md` - architecture mapping, option comparison, decision framing, and migration slicing capability.
+- `.agents/skills/workflow-primitives/loaded-context-check.md` - load relevant #Memory, #Workspace, #Directive, #Guidance, and #Pattern routes.
+- `.agents/skills/architecture/map-current-system.md` - map structure, ownership, boundaries, data flow, and constraints.
+- `.agents/skills/architecture/compare-architecture-options.md` - compare viable options by fit, cost, risk, reversibility, and migration path.
+- `.agents/skills/architecture/frame-architecture-decision.md` - frame accepted rationale without hiding behavior in decision notes.
+- `.agents/skills/architecture/slice-migration.md` - break architecture changes into implementation and verification slices.
+- `.agents/skills/workflow-primitives/memory-routing.md` - route decisions, documents, patterns, guidance, and follow-up material.
+- `.agents/skills/workflow-primitives/completion-handoff.md` - finish with status, verification needs, and resume context when useful.
 
 ## Steps
 

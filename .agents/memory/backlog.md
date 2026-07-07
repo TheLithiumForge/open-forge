@@ -39,6 +39,8 @@ This backlog is extracted from the archived sessions and ideas. Keep it current 
 - Support extension manifests, extension metadata, provenance, compatibility, aliases, migrations, and preview.
 - Support extension install, update, remove, list, and local testing.
 - Define how first-party bundled extensions are named, documented, versioned, tested, and shown by `extend --list`.
+- Let users select individual workflows while the CLI auto-selects required shared skills; also allow optional extra skills and related packs to be selected explicitly.
+- Test extension installs and future workflow flows through real OS temp directories instead of mocked filesystem operations.
 - Support extension-template authoring for maintainers.
 - Consider `doctor` or validation commands for generated regions and routing health.
 - Decide forceful versus softer upgrade modes:

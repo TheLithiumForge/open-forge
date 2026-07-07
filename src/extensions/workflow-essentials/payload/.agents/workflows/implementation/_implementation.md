@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Turn an accepted goal into a verified change that fits the current system; use when a concrete change needs design, implementation, testing, review, or handoff preparation
-  tags: [Extension, Workflow, Implementation, Testing, Index]
+  description: Workflow for designing, testing, implementing, and reviewing a change against current patterns
+  tags: [OpenForge, Extension, Core, Workflow, Implementation, Testing, Index]
 ---
 
 # Implementation
@@ -10,16 +10,24 @@ Implementation is the workflow for turning an accepted goal into a verified chan
 
 ## Axioms
 
-- Read every `Required Skill Packages` route before running `Steps`; report missing routes.
+- Use this workflow when the user wants a concrete change implemented, tested, reviewed, or prepared for handoff.
 - Do not edit before loading the routes that constrain the change.
 - Design the fit before writing the implementation.
-- Use tests as the preferred verification when practical; state the substitute when they are not.
+- Use tests as the preferred verification when they are practical.
+- State the verification substitute when tests are not practical.
 - Keep the final result aligned with loaded patterns and directives; report unresolved conflicts.
+- Generated `entries` are navigation and reserved load policy only.
 
-## Required Skill Packages
+## Required Skills
 
-- `.agents/skills/workflow-primitives/SKILL.md` - shared context loading, memory routing, completion, and handoff primitives.
-- `.agents/skills/implementation/SKILL.md` - implementation planning, testing, coding, verification, and review capability.
+- `.agents/skills/workflow-primitives/loaded-context-check.md` - load relevant #Memory, #Workspace, #Directive, #Guidance, and #Pattern routes.
+- `.agents/skills/implementation/fit-change-to-system.md` - design how the requested change fits existing boundaries and patterns.
+- `.agents/skills/implementation/contract-skeleton.md` - define contracts, APIs, file shapes, or skeletons before implementation details when useful.
+- `.agents/skills/implementation/derive-test-cases.md` - derive behavior, edge case, regression, and integration tests.
+- `.agents/skills/implementation/contract-test-implementation-loop.md` - run the contract, failing-test, implementation, and improvement loop when tests are warranted.
+- `.agents/skills/implementation/verification-review.md` - use verification results to review and improve the final implementation.
+- `.agents/skills/workflow-primitives/memory-routing.md` - route useful discoveries, decisions, patterns, and handoff material.
+- `.agents/skills/workflow-primitives/completion-handoff.md` - finish with status, verification, residual risk, and resume context when useful.
 
 ## Steps
 

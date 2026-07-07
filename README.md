@@ -45,11 +45,13 @@ Install a local extension overlay:
 npx open-forge extend {extension-folder}
 ```
 
-List and install bundled first-party extensions:
+Select, list, or install bundled first-party extensions:
 
 ```sh
+npx open-forge extend
 npx open-forge extend --list
 npx open-forge extend {extension-id}
+npx open-forge extend --ids {extension-id},{extension-id}
 ```
 
 Install Open Forge into another folder:
@@ -376,4 +378,5 @@ It is a little artisanal. That is fine. The entire point is to make the system f
 ## Docs
 
 - CLI command details live in [docs/cli.md](docs/cli.md).
+- Extension mechanics live in [docs/extensions.md](docs/extensions.md).
 - Development, build, and publishing notes live in [docs/dev.md](docs/dev.md).

@@ -328,7 +328,7 @@ describe("install", () => {
     expect(patterns).toContain("<!-- open-forge:generated-index:start -->");
     expect(skills).toContain("Every skill file defines one bounded capability, its positive applicability, and its expected result.");
     expect(skills).toContain("<!-- open-forge:generated-index:start -->");
-    expect(workflows).toContain("Every workflow defines its goal, starting context, ordered work shape, expected outputs, and completion or handoff condition.");
+    expect(workflows).toContain("Every workflow defines its goal, starting context, required skills when it uses skills, ordered steps, loop behavior, expected outputs, and completion or handoff condition.");
     expect(workflows).toContain("<!-- open-forge:generated-index:start -->");
     expect(workspace).toContain("## Axioms");
     expect(workspace).toContain("<!-- open-forge:generated-index:start -->");
@@ -423,6 +423,29 @@ React patterns for this workspace.
     expect(react).toContain("- `components.md` - Reusable React component shape - #Pattern #React");
   });
 
+  test("installs only payload from a local extension package", async () => {
+    const root = await createRoot();
+    const extension = await createRoot();
+    const extensionPatterns = path.join(extension, "payload", ".agents", "patterns", "react");
+    await fs.mkdir(extensionPatterns, { recursive: true });
+    await fs.writeFile(path.join(extension, "extension.json"), `${JSON.stringify({ name: "React Pack", description: "React extension" }, null, 2)}\n`);
+    await fs.writeFile(path.join(extensionPatterns, "_react.md"), `---
+open-forge:
+  description: React component patterns for this workspace
+  tags: [OpenForge, Core, Pattern, React, Index]
+---
+
+# React
+`);
+
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    const result = await runCli("extend", extension, root);
+
+    expect(result.exitCode).toBe(0);
+    expect(await exists(path.join(root, "extension.json"))).toBe(false);
+    expect(await exists(path.join(root, ".agents", "patterns", "react", "_react.md"))).toBe(true);
+  });
+
   test("installs a bundled first-party extension by id", async () => {
     const root = await createRoot();
     const extensionsRoot = await createRoot();
@@ -451,6 +474,51 @@ Review patterns bundled with Open Forge.
     expect(patterns).toContain("- `reviews/_reviews.md` - Review patterns bundled with Open Forge - #OpenForge #Core #Pattern #Review #Index");
     expect(reviews).toContain("- `pull-requests.md` - Pull request review shape - #Pattern #Review");
   });
+
+  test("lists bundled first-party extensions with descriptions", async () => {
+    const extensionsRoot = await createRoot();
+    await createBundledExtension(extensionsRoot, "alpha-pack", "Alpha Pack", "Alpha extension");
+    await createBundledExtension(extensionsRoot, "beta-pack", "Beta Pack", "Beta extension");
+
+    const result = await runCliWithEnv("extend", ["--list"], {
+      OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
+    });
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("- alpha-pack - Alpha extension");
+    expect(result.stdout).toContain("- beta-pack - Beta extension");
+  });
+
+  test("installs multiple bundled extensions by id list", async () => {
+    const root = await createRoot();
+    const extensionsRoot = await createRoot();
+    const alphaPatterns = await createBundledExtension(extensionsRoot, "alpha-pack", "Alpha Pack", "Alpha extension");
+    const betaPatterns = await createBundledExtension(extensionsRoot, "beta-pack", "Beta Pack", "Beta extension");
+    await writeRoute(alphaPatterns, "alpha.md", "Alpha pattern", ["Pattern", "Alpha"]);
+    await writeRoute(betaPatterns, "beta.md", "Beta pattern", ["Pattern", "Beta"]);
+
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    const result = await runCliWithEnv("extend", ["--ids", "alpha-pack,beta-pack", root], {
+      OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
+    });
+    const patterns = await fs.readFile(path.join(root, ".agents", "patterns", "_patterns.md"), "utf8");
+
+    expect(result.exitCode).toBe(0);
+    expect(patterns).toContain("- `alpha-pack/_alpha-pack.md` - Alpha extension - #OpenForge #Core #Pattern #Index");
+    expect(patterns).toContain("- `beta-pack/_beta-pack.md` - Beta extension - #OpenForge #Core #Pattern #Index");
+  });
+
+  test("requires a TTY for interactive bundled extension selection", async () => {
+    const extensionsRoot = await createRoot();
+    await createBundledExtension(extensionsRoot, "alpha-pack", "Alpha Pack", "Alpha extension");
+
+    const result = await runCliWithEnv("extend", [], {
+      OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
+    });
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("Interactive extension selection requires a TTY");
+  });
 });
 
 async function createRoot(): Promise<string> {
@@ -477,22 +545,38 @@ open-forge:
 `);
 }
 
-async function runCli(command: "index" | "install" | "extend", ...args: string[]): Promise<{ exitCode: number; stderr: string }> {
+async function createBundledExtension(root: string, id: string, name: string, description: string): Promise<string> {
+  const patterns = path.join(root, id, "payload", ".agents", "patterns", id);
+  await fs.mkdir(patterns, { recursive: true });
+  await fs.writeFile(path.join(root, id, "extension.json"), `${JSON.stringify({ name, description }, null, 2)}\n`);
+  await fs.writeFile(path.join(patterns, `_${id}.md`), `---
+open-forge:
+  description: ${description}
+  tags: [OpenForge, Core, Pattern, Index]
+---
+
+# ${name}
+`);
+  return patterns;
+}
+
+async function runCli(command: "index" | "install" | "extend", ...args: string[]): Promise<{ exitCode: number; stdout: string; stderr: string }> {
   return runCliWithEnv(command, args, {});
 }
 
-async function runCliWithEnv(command: "index" | "install" | "extend", args: string[], env: Record<string, string>): Promise<{ exitCode: number; stderr: string }> {
+async function runCliWithEnv(command: "index" | "install" | "extend", args: string[], env: Record<string, string>): Promise<{ exitCode: number; stdout: string; stderr: string }> {
   const child = Bun.spawn([process.execPath, cliFile, command, ...args], {
     env: { ...process.env, ...env },
-    stdout: "ignore",
+    stdout: "pipe",
     stderr: "pipe"
   });
-  const [exitCode, stderr] = await Promise.all([
+  const [exitCode, stdout, stderr] = await Promise.all([
     child.exited,
+    new Response(child.stdout).text(),
     new Response(child.stderr).text()
   ]);
 
-  return { exitCode, stderr };
+  return { exitCode, stdout, stderr };
 }
 
 async function exists(file: string): Promise<boolean> {

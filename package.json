@@ -11,6 +11,7 @@
     "dist/cli.mjs",
     "docs/cli.md",
     "docs/dev.md",
+    "docs/extensions.md",
     "src/open-forge",
     "src/extensions",
     "!src/open-forge/**/.obsidian",

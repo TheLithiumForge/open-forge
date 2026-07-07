@@ -12,8 +12,6 @@ An extension represents optional installable #Core, #Memory, or #Extension mater
 
 An extension can contain workflows, skills, patterns, guidance, directives, memory routes, workspace routes, or support files when those routes belong in the normal Open Forge tree.
 
-Extension payload routes use #Extension plus the route type and useful scope tags when the file format is Open Forge-authored. They use a reserved load-policy tag only when the extension intentionally adds baseline-loaded material.
-
 ## Source Contract
 
 A first-party extension lives under `src/extensions/{extension-id}/`.
@@ -21,8 +19,6 @@ A first-party extension lives under `src/extensions/{extension-id}/`.
 It may contain maintainer files such as `extension.json` and `README.md`, but installable runtime content must live under `payload/`.
 
 Only `payload/` is copied when the CLI installs a package-shaped extension. Installed markdown remains runtime truth.
-
-Extension payload route files should use #Extension metadata by default when that metadata does not break a native runtime format. Runtime-native files such as `SKILL.md` keep native metadata and may be indexed with default route tags. Load-policy tags stay deliberate choices so installed extensions do not become permanent baseline context by accident.
 
 `extension.json` may help CLI list and select bundled extensions. It must not be required by agents at runtime.
 

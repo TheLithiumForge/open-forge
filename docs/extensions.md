@@ -25,9 +25,9 @@ my-extension/
   README.md
   payload/
     .agents/
-      skills/
+      workflows/
         implementation/
-          SKILL.md
+          _implementation.md
 ```
 
 When `payload/` exists, only `payload/` is installed.
@@ -44,8 +44,6 @@ src/extensions/{extension-id}/
 ```
 
 `extension.json` is for CLI list/select display. Installed markdown remains runtime truth.
-
-Extension payload files should use #Extension plus their route type and useful scope tags when the file format is Open Forge-authored. Runtime-native files such as `SKILL.md` should keep native metadata and may be indexed with default route tags. Use a reserved load-policy tag only when the extension intentionally adds baseline-loaded material.
 
 ## Install
 

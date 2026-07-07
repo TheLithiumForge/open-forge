@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Turn intent into vision, MVP boundary, and growth direction; use when product, project, feature, or workspace direction needs defining, refining, or challenging before execution
-  tags: [Extension, Workflow, Vision, Product, Index]
+  description: Workflow for turning intent into vision, MVP boundary, and growth direction
+  tags: [OpenForge, Extension, Core, Workflow, Vision, Product, Index]
 ---
 
 # Vision
@@ -10,15 +10,20 @@ Vision is the workflow for clarifying what should exist, why it matters, what be
 
 ## Axioms
 
-- Read every `Required Skill Packages` route before running `Steps`; report missing routes.
+- Use this workflow when the user wants to define, refine, or challenge product, project, feature, or workspace direction before execution.
 - Treat the vision as candidate direction until the user accepts it.
 - Separate accepted truth from candidate ideas; do not promote strategic direction to #CurrentTruth without user confirmation.
 - Prefer concise questions and concrete options over broad strategy prose.
+- Generated `entries` are navigation and reserved load policy only.
 
-## Required Skill Packages
+## Required Skills
 
-- `.agents/skills/workflow-primitives/SKILL.md` - shared context loading, memory routing, completion, and handoff primitives.
-- `.agents/skills/vision/SKILL.md` - vision shaping, MVP boundary, fit, risk, and growth-direction capability.
+- `.agents/skills/workflow-primitives/loaded-context-check.md` - load enough #Memory, #Workspace, #Guidance, and #Pattern context to ground the vision.
+- `.agents/skills/vision/clarify-intent.md` - expose problem, audience, desired outcome, constraints, and non-goals.
+- `.agents/skills/vision/shape-mvp.md` - define core value, MVP boundary, future directions, and non-goals.
+- `.agents/skills/vision/fit-and-risk-check.md` - check audience fit, market or use fit, validation signals, and risks.
+- `.agents/skills/workflow-primitives/memory-routing.md` - route accepted truth and candidate ideas to the right owner.
+- `.agents/skills/workflow-primitives/completion-handoff.md` - finish with status, open questions, and resume context when useful.
 
 ## Steps
 

@@ -52,7 +52,9 @@ Skills preserve the established meaning used by AI tools. They may be invoked di
 
 A workflow is a repeatable agent workflow for reaching a defined goal, such as brainstorming, task creation, test-driven development, review, or implementation.
 
-A workflow may organize phases, invoke skills, consult guidance, apply patterns, and produce artifacts while obeying applicable directives.
+A workflow defines required skills when it uses skills, ordered steps, loop behavior, expected outputs, and completion or handoff conditions.
+
+A workflow may consult guidance, apply patterns, invoke skills, and produce artifacts while obeying applicable directives.
 
 ## Relationships
 
@@ -142,6 +144,7 @@ Agent primitives are aligned when:
 - guidance provides adaptable contextual judgment
 - skills remain bounded reusable capabilities
 - workflows remain repeatable agent workflows for reaching defined goals
+- workflows define required skills, steps, loop behavior, outputs, and completion
 - every core primitive category is installed with its minimum `entrypoint`
 - core primitive `entrypoints` use #Core and singular primitive tags
 - opinionated primitive content remains local or optional
