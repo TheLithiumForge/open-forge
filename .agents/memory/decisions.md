@@ -30,7 +30,7 @@ These are the accepted decisions extracted from old sessions and idea notes.
 
 ## Scope And Slugs
 
-- A `framework route` is installed and managed by Open Forge.
+- A `framework route` is an Open Forge core route with stable default meaning.
 - A `scope route` is a routed local folder used to narrow meaning or ownership below it.
 - A `scoped framework route` is a framework route initialized inside a scope route.
 - A `slug` is the concrete folder name used in a route path.
@@ -44,8 +44,9 @@ These are the accepted decisions extracted from old sessions and idea notes.
 - Directives are mandatory instructions agents must follow when they apply.
 - Patterns are concrete reusable shapes for code, files, APIs, documents, and other inspectable work.
 - Guidance is contextual advice for recurring choices, tradeoffs, and scenarios.
-- Skills are bounded reusable agent capabilities with clear use cases and expected results.
-- Workflows are repeatable agent workflows for reaching defined goals.
+- Skills are bounded reusable agent capability packages with clear use cases and expected results.
+- Skills should align with native AI-tool skill shape: `.agents/skills/{skill-name}/SKILL.md` plus optional package resources such as `references/`, `scripts/`, and `assets/`.
+- Workflows are repeatable markdown recipes for reaching defined goals, not runtime orchestration objects from an agent SDK.
 - Workspace routes point to important project locations and explain when to use them.
 - Workflows may own local `directives/`, `patterns/`, `guidance/`, and `skills/` categories when those routes are essential to that workflow.
 
@@ -67,7 +68,7 @@ These are the accepted decisions extracted from old sessions and idea notes.
 ## Tags
 
 - Defined loader tags with behavior or truth-status semantics are #OpenForge, #LoadWithParentEntrypoint, #LoadForPostWorkReview, #Contextual, and #CurrentTruth.
-- #OpenForge loads visible Open Forge-owned routes by default. It creates visibility, not authority, scope, or precedence.
+- #OpenForge loads visible Open Forge core routes by default. It creates visibility, not authority, scope, or precedence.
 - #Core, #Memory, and #Extension are layer/routing tags.
 - Route type tags such as #Directive, #Pattern, #Guidance, #Skill, #Workflow, and #Workspace are routing/search signals unless a loaded entrypoint defines more.
 - Tags stay bare in markdown so tools can parse and graph them.
@@ -77,6 +78,7 @@ These are the accepted decisions extracted from old sessions and idea notes.
 
 - #Extension is optional installable material added on top of #Core and #Memory.
 - Extensions should add files into the existing routed structure instead of creating another framework root.
+- Extension payload routes use #Extension plus route type and scope tags by default when the file format is Open Forge-authored. Runtime-native files such as `SKILL.md` keep native metadata. Extension content does not use #OpenForge because it must stay relevance-routed unless a load-policy tag is deliberately chosen.
 - The current `extend` command installs local overlays, local extension packages with `payload/`, and bundled first-party extensions as a dogfooding MVP.
 - Bundled first-party extensions live under `src/extensions/{id}/payload` in the CLI package.
 - First-party extension metadata outside `payload/` may help CLI list/select behavior, but installed files remain runtime truth.

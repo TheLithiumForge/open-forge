@@ -44,15 +44,19 @@ Guidance may nest recursively by domain, scenario, decision area, or any other u
 
 ## Skills
 
-A skill is a bounded reusable agent capability.
+A skill is a bounded reusable agent capability package.
 
-Skills preserve the established meaning used by AI tools. They may be invoked directly or by workflows. Open Forge routes skills and may package them later without redefining a runtime's skill format or activation mechanism.
+Skills preserve the established meaning used by AI tools. Open Forge prefers the native package shape `.agents/skills/{skill-name}/SKILL.md`, with optional runtime resources under that folder. Skills may be invoked directly or by workflows. Open Forge routes skill packages without redefining a runtime's activation or execution model.
 
 ## Workflows
 
-A workflow is a repeatable agent workflow for reaching a defined goal, such as brainstorming, task creation, test-driven development, review, or implementation.
+A workflow is a repeatable markdown recipe for reaching a defined goal, such as brainstorming, task creation, test-driven development, review, or implementation.
 
-A workflow defines required skills when it uses skills, ordered steps, loop behavior, expected outputs, and completion or handoff conditions.
+Open Forge workflows are not runtime orchestration objects from an agent SDK. They are routed recipes that describe how work should proceed.
+
+A workflow defines required skill packages when it uses skills, ordered steps, loop behavior, expected outputs, and completion or handoff conditions.
+
+`Required Skill Packages` in a selected workflow are load-bearing. Agents must load listed packages before running workflow steps and report missing routes.
 
 A workflow may consult guidance, apply patterns, invoke skills, and produce artifacts while obeying applicable directives.
 
@@ -142,9 +146,11 @@ Agent primitives are aligned when:
 - directives are mandatory within visible positive scope
 - patterns define concrete inspectable shapes
 - guidance provides adaptable contextual judgment
-- skills remain bounded reusable capabilities
-- workflows remain repeatable agent workflows for reaching defined goals
-- workflows define required skills, steps, loop behavior, outputs, and completion
+- skills remain bounded reusable capability packages
+- skills prefer native `SKILL.md` packages
+- workflows remain repeatable markdown recipes for reaching defined goals
+- workflows define required skill packages, steps, loop behavior, outputs, and completion
+- selected workflows load their listed required skill packages before steps
 - every core primitive category is installed with its minimum `entrypoint`
 - core primitive `entrypoints` use #Core and singular primitive tags
 - opinionated primitive content remains local or optional

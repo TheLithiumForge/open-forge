@@ -9,8 +9,8 @@ Use generated `Entries` in this file to select relevant root routes. Load a sele
 ## Terms
 
 - `entrypoint` - Markdown file that makes a folder routable. Open Forge uses `_{folder-name}.md`; compatibility names are `index.md`, `_index.md`, `references.md`, and `_references.md`.
-- `entry` - Generated line under `Entries` that points to a sibling markdown file or direct child `entrypoint`.
-- `framework route` - Route installed and managed by Open Forge.
+- `entry` - Generated line under `Entries` that points to a sibling markdown file, direct child `entrypoint`, or native skill package entrypoint.
+- `framework route` - Core route installed and managed by Open Forge.
 - `scope route` - Local route used to narrow meaning or ownership for routes below it.
 - `scoped framework route` - `framework route` initialized inside a `scope route`.
 - `slug` - Concrete folder name used in a route path.
@@ -20,9 +20,11 @@ Use generated `Entries` in this file to select relevant root routes. Load a sele
 
 - Open Forge routes agents through small markdown `entrypoints`.
 - Follow all loaded `axioms` unless a higher-priority user, platform, safety, or external source-of-truth instruction conflicts; report unresolved conflicts.
+- A required memory action is complete only after its file is written or a blocker is reported; a promise to write it later does not satisfy closeout.
 - A folder is routable only when it contains one recognized `entrypoint`.
 - An `entrypoint` explains what its folder is for and ends with generated `Entries`.
-- `Entries` list sibling markdown files and direct child `entrypoints`.
+- `Entries` list sibling markdown files, direct child `entrypoints`, and supported native skill packages inside skills routes.
+- Native skill package folders are routed by their `SKILL.md`; package internals are loaded only when the skill says they are relevant.
 - To route into nested folders, every folder in the path needs its own `entrypoint`.
 - `scope routes` use the same mechanism: add `slug` folders with `entrypoints` before, after, or between `framework routes` when they make ownership clearer.
 - `scoped framework routes` work only when their framework `entrypoint` exists inside the scope.
@@ -34,6 +36,7 @@ Use generated `Entries` in this file to select relevant root routes. Load a sele
 - User instructions apply when safe and allowed.
 - Local active truth overrides Open Forge defaults.
 - Prefer written #Memory routes over private or opaque agent memory; durable memory belongs in markdown routes and remembered context must be validated against loaded files.
+- Writing files inside existing routes is normal use; adding root routes or child categories changes routing and needs clear scope.
 - Generated `Entries` are navigation metadata; only reserved load-policy tags affect loading.
 - Treat archived memory, historical material, examples, external methods, temporary continuation material, and candidate learning as context unless restored or promoted.
 - Detailed behavior belongs in the routed file or concept that owns it.
@@ -58,9 +61,9 @@ Use generated `Entries` in this file to select relevant root routes. Load a sele
 
 ### Defined Tags
 
-- #OpenForge - Open Forge-owned route. Load this `entry` when it appears in loaded `Entries`, then apply the loaded file's own `Entries`.
+- #OpenForge - Open Forge core route. Load this `entry` when it appears in loaded `Entries`, then apply the loaded file's own `Entries`.
 - #LoadWithParentEntrypoint - Load this `entry` immediately after its parent `entrypoint`, in listed order. Applies only inside already loaded `Entries`.
-- #LoadForPostWorkReview - Load this `entry` before ending meaningful work to route useful material produced during the work. Applies only inside already loaded `Entries`.
+- #LoadForPostWorkReview - Load this `entry` before ending meaningful work to route useful material produced during the work. Applies only inside already loaded `Entries`. Keep all such entries in a stack and then load them in listed order before ending meaningful work.
 - #Core - Base routing, workspace orientation, and agent primitive routes.
 - #Memory - Self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning.
 - #Extension - Optional extension payload, template, integration, and support routes.
@@ -86,7 +89,7 @@ Do not create parallel truth when active truth already exists. Update the active
 - `.agents/guidance/_guidance.md` - Contextual advice for recurring choices, tradeoffs, and work scenarios - #OpenForge #Core #Guidance #Index
 - `.agents/memory/_memory.md` - Self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning - #OpenForge #Memory #OrganicGrowth #Index #LoadWithParentEntrypoint
 - `.agents/patterns/_patterns.md` - Concrete reusable shapes for code, files, APIs, documents, and other inspectable work - #OpenForge #Core #Pattern #Index
-- `.agents/skills/_skills.md` - Reusable agent capabilities with clear use cases and expected results - #OpenForge #Core #Skill #Index
-- `.agents/workflows/_workflows.md` - Repeatable agent workflows for reaching a defined goal - #OpenForge #Core #Workflow #Index
+- `.agents/skills/_skills.md` - Reusable agent capability packages with clear use cases and expected results - #OpenForge #Core #Skill #Index
+- `.agents/workflows/_workflows.md` - Repeatable markdown workflow recipes for reaching a defined goal - #OpenForge #Core #Workflow #Index
 - `.agents/workspace/_workspace.md` - Workspace routes that point to important project locations and explain when to use them - #OpenForge #Core #Workspace #Index
 <!-- open-forge:generated-index:end -->

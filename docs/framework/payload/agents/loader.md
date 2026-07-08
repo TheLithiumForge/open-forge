@@ -25,7 +25,8 @@ The installed loader must contain:
 - the rule that the current request controls relevance for `entries` without reserved load-policy tags
 - a short terms section defining `entrypoint`, `entry`, `framework route`, `scope route`, `scoped framework route`, `slug`, and `axiom`
 - the rule that a folder is routable only when it contains one recognized `entrypoint`
-- the rule that `Entries` list sibling markdown files and direct child `entrypoints`
+- the rule that `Entries` list sibling markdown files, direct child `entrypoints`, and supported native skill packages inside skills routes
+- the rule that native skill package folders are routed by `SKILL.md` and their package internals are loaded only when the skill makes them relevant
 - the rule that every folder in a nested route path needs its own `entrypoint`
 - the rule that `scope routes` use `slug` folders with `entrypoints` before, after, or between `framework routes`
 - the rule that `scoped framework routes` work only when their framework `entrypoint` exists inside the scope
@@ -34,6 +35,7 @@ The installed loader must contain:
 - the tag behavior table used by Open Forge-authored `entries`
 - the authority posture for local active truth, defaults, context, and candidate learning
 - the preference for written #Memory routes over private or opaque agent memory for durable workspace state
+- the distinction that writing files inside existing routes is normal use, while adding root routes or child categories changes routing and needs clear scope
 - the customization posture: add local files first, use overwrites for light changes, edit framework files for complete behavior changes
 - a final marker-bounded registry of active root routes
 
@@ -49,7 +51,7 @@ The loader must not infer a Git repository root or require runtime path constant
 
 A generated `entry` tagged #OpenForge must be loaded when it appears in loaded `Entries`. If the target is a category `entrypoint`, only that `entrypoint` is loaded first; its own `entries` then apply the same routing contract.
 
-#OpenForge is a default load policy for Open Forge-owned routes. It does not create authority, scope, or precedence.
+#OpenForge is a default load policy for Open Forge core routes. It does not create authority, scope, or precedence.
 
 A generated `entry` tagged #LoadWithParentEntrypoint must be loaded immediately after its parent `entrypoint` is loaded, in listed order. If the target is a category `entrypoint`, only that `entrypoint` is loaded first; its own `entries` then apply the same routing contract.
 
@@ -59,7 +61,7 @@ A generated `entry` tagged #LoadForPostWorkReview must be loaded before ending m
 
 #LoadForPostWorkReview is a loading policy only. It does not create authority, scope, precedence, or a write requirement.
 
-The default payload tags every Open Forge-owned `entrypoint` with #OpenForge. Root Open Forge `entries` therefore load with the loader, and nested Open Forge `entrypoints` load as their parent `Entries` become visible.
+The default payload tags every Open Forge core `entrypoint` with #OpenForge. Root Open Forge `entries` therefore load with the loader, and nested Open Forge core `entrypoints` load as their parent `Entries` become visible.
 
 Local active truth has precedence over Open Forge defaults. Default files may still be loaded as context when useful.
 
@@ -75,7 +77,7 @@ The installed loader must define its routing terms plainly enough to understand 
 - `slug`
 - `axiom`
 
-The loader must explain that `entries` point to sibling markdown files and direct child `entrypoints`.
+The loader must explain that `entries` point to sibling markdown files, direct child `entrypoints`, and supported native skill package entrypoints.
 
 The loader may include route patterns with `[scope]` placeholders to explain scoping shape. Those placeholders are examples only. Generated `entries` and installed routes must use concrete paths.
 
@@ -103,8 +105,10 @@ The installed loader must state these authority axioms:
 
 - user instructions apply when safe and allowed
 - loaded `axioms` are mandatory unless higher-priority instructions conflict
+- required memory actions are complete only after the file is written or a blocker is reported
 - local active truth overrides Open Forge defaults
 - written #Memory routes are preferred over private or opaque agent memory for durable workspace state
+- writing files inside existing routes is normal use, while adding root routes or child categories changes routing and needs clear scope
 - generated `entries` are navigation metadata; only reserved load-policy tags affect loading
 - reserved load-policy tags affect loading only and do not create authority
 - archived, historical, example, external, and temporary continuation material is contextual unless restored or promoted
@@ -166,7 +170,8 @@ The implementation is aligned when it:
 - remains valid when `.agents/` resolves through a symlink or into a submodule
 - defines `entrypoint`, `entry`, `framework route`, `scope route`, `scoped framework route`, `slug`, and `axiom`
 - states that folders become routable through recognized `entrypoints`
-- states that generated `entries` list sibling markdown files and direct child `entrypoints`
+- states that generated `entries` list sibling markdown files, direct child `entrypoints`, and supported native skill packages inside skills routes
+- states that native skill package internals are loaded through `SKILL.md` relevance
 - states that nested routes require `entrypoints` at every folder level
 - states that `scope routes` can narrow `framework routes` through concrete `slug` folders
 - states that `scoped framework routes` work only when their framework `entrypoint` exists inside the scope
@@ -178,13 +183,14 @@ The implementation is aligned when it:
 - loads generated #OpenForge `entries` when they appear in loaded `Entries`
 - loads generated #LoadWithParentEntrypoint `entries` in listed order
 - loads generated #LoadForPostWorkReview `entries` before ending meaningful work
-- marks default Open Forge-owned `entrypoints` with #OpenForge
+- marks default Open Forge core `entrypoints` with #OpenForge
 - generates `entries` for direct active root routes only
 - derives descriptions and tags from category `entrypoints`
 - loads a selected category `entrypoint` before its routed files
 - loads overwrite companions after their base files
 - states that local active truth overrides defaults
 - prefers written #Memory routes over private or opaque agent memory for durable workspace state
+- distinguishes normal writes inside existing routes from routing-structure changes
 - treats generated `entries` as navigation metadata plus reserved load policy
 - keeps detailed process behavior in routed files
 - keeps customization guidance minimal and diff-friendly

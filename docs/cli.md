@@ -111,9 +111,9 @@ my-extension/
   README.md
   payload/
     .agents/
-      workflows/
+      skills/
         implementation/
-          _implementation.md
+          SKILL.md
 ```
 
 Running `open-forge extend my-extension {target-folder}` copies only `payload/` into `{target-folder}`.
@@ -133,6 +133,8 @@ Use `open-forge extend --list` to show bundled extensions available in the insta
 Use `open-forge extend` or `open-forge extend --select {target-folder}` to select bundled extensions in an interactive TTY. Space toggles selection, Enter installs selected extensions, and `q` cancels.
 
 Use `open-forge extend --ids {id},{id} {target-folder}` for unattended bundled extension installs. The CLI resolves each value as a bundled extension id and runs index generation once after copying every selected payload.
+
+Extension payload files normally use #Extension plus their route type and useful scope tags. Do not use #OpenForge in extension payloads unless the extension intentionally adds baseline-loaded material; #OpenForge is reserved for Core framework routes by default.
 
 This is an MVP dogfooding command. It does not provide an external registry, preview, uninstall, update, route-template scaffolding, or dependency model yet. Build or select the overlay intentionally, run `extend`, then inspect the git diff.
 
@@ -169,6 +171,19 @@ The category `entrypoint` contains stable category meaning followed by a generat
 ```
 
 Child folders are routed through their own `_{folder-name}.md` category `entrypoint`. Parent `entrypoints` stay at one folder boundary.
+
+The skills route also recognizes native skill packages:
+
+```text
+.agents/skills/
+  _skills.md
+  implementation/
+    SKILL.md
+    references/
+      fit-change-to-system.md
+```
+
+The generated skill `entry` points to `implementation/SKILL.md`. The skill's own `SKILL.md` owns any `references/`, `scripts/`, `assets/`, or other runtime resources inside that folder.
 
 `scope routes` use the same rule. A `scope route` is a concrete `slug` folder with its own `entrypoint`. Every folder in the visible route chain needs its own `entrypoint`:
 
@@ -231,6 +246,9 @@ The index generator reads:
 
 - direct `*.md` route files, including underscore-prefixed routed files
 - direct child category `entrypoints` named `_{folder-name}.md`
+- direct child skill packages under `.agents/skills/` that contain `SKILL.md`
+
+Inside `.agents/skills/`, loose markdown files are not indexed as skill routes. Use skill folders with `SKILL.md`.
 
 Reserved filenames in an indexed folder are:
 
@@ -266,3 +284,5 @@ open-forge:
 ```
 
 The CLI also accepts `rune:` scoped metadata in user-added route files for cross-tool compatibility. Open Forge-authored files use `open-forge:` metadata.
+
+Runtime-native `SKILL.md` files should keep native metadata such as `name` and `description`. The CLI reads the root `description` for generated skill entries and defaults their tag to #Skill when no Open Forge tags are present.

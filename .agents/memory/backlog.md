@@ -17,6 +17,7 @@ This backlog is extracted from the archived sessions and ideas. Keep it current 
 4. Define the user-documentation architecture: README responsibilities, short guide files, primitive glossary, layer glossary, route/scoping examples, and voice.
 5. Rewrite human onboarding after dogfooding, not before it.
 6. Run consistency and security review across routing, generated regions, prompt-injection boundaries, update behavior, and tests.
+7. Document a human-run behavioral dogfood smoke checklist: install into a temp workspace, install selected extensions, run a representative agent task, and inspect whether routing, memory closeout, and workflow behavior happened.
 
 ## User Documentation To Write Later
 
@@ -33,6 +34,8 @@ This backlog is extracted from the archived sessions and ideas. Keep it current 
 
 - Scaffold concrete routed paths from user intent.
 - Preview trees before writing.
+- Design `open-forge dump` as a first-party context loading helper before implementation. Explore `--index`, `--tags`, `--tag <Name>`, and `--path <file> --depth N`; keep it plain, deterministic, and readable.
+- Design an adjacent route inventory command such as `open-forge give <route>` or `open-forge list <route>` that lists routed entries for things like workflows, memory, or crystallized memory without dumping all bodies.
 - Generate missing ancestor entrypoints only with meaningful scaffold content.
 - Detect collisions and ask before reusing or renaming paths.
 - Support route templates with named slug parameters.
@@ -41,6 +44,7 @@ This backlog is extracted from the archived sessions and ideas. Keep it current 
 - Define how first-party bundled extensions are named, documented, versioned, tested, and shown by `extend --list`.
 - Let users select individual workflows while the CLI auto-selects required shared skills; also allow optional extra skills and related packs to be selected explicitly.
 - Test extension installs and future workflow flows through real OS temp directories instead of mocked filesystem operations.
+- Design workflow dependency metadata so selected workflows can install or require shared skills without duplicating extension payloads.
 - Support extension-template authoring for maintainers.
 - Consider `doctor` or validation commands for generated regions and routing health.
 - Investigate an optional all-in-one generated index for agent cold starts; judge token cost, staleness risk, authority confusion, and whether recursive `entrypoints` already solve enough.
@@ -50,6 +54,10 @@ This backlog is extracted from the archived sessions and ideas. Keep it current 
 
 ## Deferred Product Ideas
 
+- Investigate how to word load-policy obligations honestly: they are mandatory framework instructions for compliant agents, not mechanically enforced tool behavior.
+- Investigate whether observations should stay a separate candidate-learning route, become explicitly best-effort, or fold part of their closeout role into sessions.
+- Investigate a small optional reliability/defaults extension for process directives such as memory closeout, language/runtime defaults, and safe technical practices without putting opinionated defaults in #Core.
+- Document directive scope boundaries: directives govern work product, process, and technical/project behavior; agent persona or chat register should not rely on directives for deterministic behavior.
 - Investigate whether route `description` metadata and the first heading/definition text should be identical, intentionally different, or partially deduplicated. If the description already carries the route meaning for generated `Entries`, some installed headings or first sentences may be redundant.
 - Investigate whether the loader needs explicit Memory axioms beyond the generated Memory `entry`. The loader already sees the Memory path, description, tags, and load policy through `Entries`, so some Memory wording may belong only in `.agents/memory/_memory.md`.
 - Archive metadata blocks with origin path, archived date, replacement, and reason.
@@ -58,6 +66,7 @@ This backlog is extracted from the archived sessions and ideas. Keep it current 
 - Technology pattern packs.
 - Workflow packs for brainstorming, task creation, implementation, testing, review, architecture, UI/UX, and refactoring.
 - Orchestration route or extension for workflows that can declare preferred tools, subagents, isolation rules, and CLI usage when multiple agent runtimes are available.
+- Document that directives are reliable for work product, process, and technical defaults, but agent-to-user persona or communication-register directives may conflict with runtime safety behavior and should not be used for deterministic control.
 - Skill packs that remain compatible with native agent/runtime skill concepts.
 - Optional interactive wizard as a convenience over deterministic commands.
 - External `.memory/` or distributed package-local memory as a documented user pattern, not default behavior.
