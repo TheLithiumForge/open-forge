@@ -1,9 +1,3 @@
----
-open-forge:
-  description: Route useful workflow output to the right memory or Core owner
-  tags: [OpenForge, Extension, Core, Skill, WorkflowPrimitive, Memory, OrganicGrowth]
----
-
 # Memory Routing
 
 ## Use When

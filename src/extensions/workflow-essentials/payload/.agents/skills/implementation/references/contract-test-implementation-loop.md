@@ -1,9 +1,3 @@
----
-open-forge:
-  description: Run a contract, failing-test, implementation, and improvement loop
-  tags: [OpenForge, Extension, Core, Skill, Implementation, Testing, TDD]
----
-
 # Contract Test Implementation Loop
 
 ## Use When

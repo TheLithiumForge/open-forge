@@ -1,9 +1,3 @@
----
-open-forge:
-  description: Map current structure, ownership, boundaries, data flow, and constraints
-  tags: [OpenForge, Extension, Core, Skill, Architecture, Discovery]
----
-
 # Map Current System
 
 ## Use When

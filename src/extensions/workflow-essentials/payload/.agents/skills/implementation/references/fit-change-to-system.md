@@ -1,9 +1,3 @@
----
-open-forge:
-  description: Design how a requested change fits existing architecture, patterns, and boundaries
-  tags: [OpenForge, Extension, Core, Skill, Implementation, Architecture, Planning]
----
-
 # Fit Change To System
 
 ## Use When

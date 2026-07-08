@@ -1,9 +1,3 @@
----
-open-forge:
-  description: Define contracts, APIs, file shapes, or skeletons before implementation details
-  tags: [OpenForge, Extension, Core, Skill, Implementation, Contract]
----
-
 # Contract Skeleton
 
 ## Use When

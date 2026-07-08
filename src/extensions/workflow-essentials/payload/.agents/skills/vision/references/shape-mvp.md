@@ -1,9 +1,3 @@
----
-open-forge:
-  description: Distill core value, MVP boundary, non-goals, and next growth directions
-  tags: [OpenForge, Extension, Core, Skill, Vision, MVP]
----
-
 # Shape MVP
 
 ## Use When

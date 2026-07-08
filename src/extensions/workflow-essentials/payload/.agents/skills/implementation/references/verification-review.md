@@ -1,9 +1,3 @@
----
-open-forge:
-  description: Use verification results to review, improve, and explain the final implementation
-  tags: [OpenForge, Extension, Core, Skill, Implementation, Verification, Review]
----
-
 # Verification Review
 
 ## Use When

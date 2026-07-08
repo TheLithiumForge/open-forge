@@ -13,6 +13,7 @@ Observations are agent-noticed grounded findings that help future agents learn f
 - This `entrypoint` exposes grounded facts, signals, constraints, recurring behavior, risks, and evidence noticed during work.
 - Read `Entries` when current work may depend on prior noticed findings.
 - Before ending meaningful work, write observations for grounded findings that may matter later but are not accepted truth.
+- If you identify a finding worth preserving, write the observation before final response or report the blocker.
 - Treat observations as contextual until they are validated, promoted, or explicitly accepted.
 - Keep source, scope, and uncertainty visible.
 - Verify observations before treating them as current.

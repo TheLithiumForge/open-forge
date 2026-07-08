@@ -1,9 +1,3 @@
----
-open-forge:
-  description: Break architecture changes into safe implementation and verification slices
-  tags: [OpenForge, Extension, Core, Skill, Architecture, Migration, Implementation]
----
-
 # Slice Migration
 
 ## Use When

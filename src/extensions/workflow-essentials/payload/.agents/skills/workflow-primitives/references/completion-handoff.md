@@ -1,9 +1,3 @@
----
-open-forge:
-  description: Finish a workflow with status, verification, next action, and resume context
-  tags: [OpenForge, Extension, Core, Skill, WorkflowPrimitive, Handoff, AgentCommunication]
----
-
 # Completion Handoff
 
 ## Use When

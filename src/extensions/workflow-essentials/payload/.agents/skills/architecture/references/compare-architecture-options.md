@@ -1,9 +1,3 @@
----
-open-forge:
-  description: Compare architecture options by fit, cost, risk, reversibility, and migration path
-  tags: [OpenForge, Extension, Core, Skill, Architecture, Tradeoff]
----
-
 # Compare Architecture Options
 
 ## Use When

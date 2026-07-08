@@ -1,9 +1,3 @@
----
-open-forge:
-  description: Derive comprehensive expected test cases from goal, contracts, and risks
-  tags: [OpenForge, Extension, Core, Skill, Implementation, Testing, TDD]
----
-
 # Derive Test Cases
 
 ## Use When

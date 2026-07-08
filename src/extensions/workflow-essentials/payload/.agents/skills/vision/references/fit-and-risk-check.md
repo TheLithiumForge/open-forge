@@ -1,9 +1,3 @@
----
-open-forge:
-  description: Check audience fit, market or use fit, constraints, risks, and validation signals
-  tags: [OpenForge, Extension, Core, Skill, Vision, Risk, Validation]
----
-
 # Fit And Risk Check
 
 ## Use When

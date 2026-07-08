@@ -1,9 +1,3 @@
----
-open-forge:
-  description: Frame accepted architecture rationale without hiding behavior in decision notes
-  tags: [OpenForge, Extension, Core, Skill, Architecture, Decision, Rationale]
----
-
 # Frame Architecture Decision
 
 ## Use When

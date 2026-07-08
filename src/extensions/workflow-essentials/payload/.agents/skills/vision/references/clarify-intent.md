@@ -1,9 +1,3 @@
----
-open-forge:
-  description: Questions that expose what the user wants, needs, constraints, and non-goals
-  tags: [OpenForge, Extension, Core, Skill, Vision, Discovery]
----
-
 # Clarify Intent
 
 ## Use When

@@ -1,9 +1,3 @@
----
-open-forge:
-  description: Check that the workflow has loaded the context needed to act safely
-  tags: [OpenForge, Extension, Core, Skill, WorkflowPrimitive, Context]
----
-
 # Loaded Context Check
 
 ## Use When
