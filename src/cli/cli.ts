@@ -10,8 +10,10 @@ const bundledExtensionsRoot = process.env.OPEN_FORGE_EXTENSIONS_ROOT
   : path.join(repoRoot, "src", "extensions");
 const ignoredDirectoryNames = new Set([".git", ".obsidian", "node_modules"]);
 const compatibilityEntrypointNames = ["_index.md", "index.md", "_references.md", "references.md"];
+const skillEntrypointNames = ["SKILL.md", "Skill.md"];
 const portablePathSeparator = "/";
 const agentsDirectoryName = ".agents";
+const skillsDirectoryName = "skills";
 const scopedCoreEntrypointFolders = new Set(["directives", "guidance", "patterns", "skills"]);
 const entriesHeading = "## Entries";
 const generatedIndexStartMarker = "<!-- open-forge:generated-index:start -->";
@@ -710,13 +712,20 @@ async function listIndexEntryFiles(current: string): Promise<string[]> {
       }
 
       const childIndex = await findCategoryEntrypoint(fullPath);
+      const skillEntrypoint = isSkillsRouteFolder(current) ? await findSkillEntrypoint(fullPath) : null;
+      if (childIndex && skillEntrypoint) {
+        throw new Error(`Both category and skill entrypoints found in ${fullPath}. Keep either a category entrypoint or a skill ${path.basename(skillEntrypoint)}.`);
+      }
+
       if (childIndex) {
         files.push(childIndex);
+      } else if (skillEntrypoint) {
+        files.push(skillEntrypoint);
       }
       continue;
     }
 
-    if (entry.isFile() && isIndexEntryFile(entry.name, path.basename(current))) {
+    if (!isSkillsRouteFolder(current) && entry.isFile() && isIndexEntryFile(entry.name, path.basename(current))) {
       files.push(fullPath);
     }
   }
@@ -740,6 +749,25 @@ async function findCategoryEntrypoint(directory: string): Promise<string | null>
   }
 
   return matches[0] ?? null;
+}
+
+async function findSkillEntrypoint(directory: string): Promise<string | null> {
+  const entries = await fs.readdir(directory, { withFileTypes: true });
+  const matches = entries
+    .filter((entry) => entry.isFile() && skillEntrypointNames.includes(entry.name))
+    .map((entry) => path.join(directory, entry.name));
+
+  if (matches.length > 1) {
+    throw new Error(`Multiple skill entrypoints found in ${directory}: ${matches.map((file) => path.basename(file)).sort().join(", ")}. Keep exactly one.`);
+  }
+
+  return matches[0] ?? null;
+}
+
+function isSkillsRouteFolder(directory: string): boolean {
+  const segments = toPosix(path.resolve(directory)).split(portablePathSeparator);
+  const agentsIndex = segments.lastIndexOf(agentsDirectoryName);
+  return agentsIndex !== -1 && segments[agentsIndex + 1] === skillsDirectoryName;
 }
 
 function compareIndexEntries(left: Dirent, right: Dirent): number {
@@ -766,6 +794,7 @@ function isIndexEntryFile(name: string, folderName: string): boolean {
   return (
     name.endsWith(".md") &&
     !name.endsWith(".overwrite.md") &&
+    !skillEntrypointNames.includes(name) &&
     !categoryEntrypointNames(folderName).includes(name)
   );
 }
@@ -775,6 +804,10 @@ function isMarkdownFile(file: string): boolean {
 }
 
 function defaultTagsForIndexEntry(file: string): string[] {
+  if (skillEntrypointNames.includes(path.basename(file))) {
+    return ["Skill"];
+  }
+
   return isIndexFile(file) ? ["Index"] : ["Untagged"];
 }
 

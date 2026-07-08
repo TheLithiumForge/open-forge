@@ -51,7 +51,7 @@ Category placement and descriptions expose positive scope. Tags add compact scop
 
 Tags must not be the only indication of workspace-wide or mandatory behavior. Tags never create authority. Reserved load-policy tags create only the loading behavior defined in this concept and in the installed loader.
 
-#OpenForge is a reserved load-policy tag for Open Forge-owned routes. Layer tags such as #Core, #Memory, and #Extension are classification signals only. Built-in route type tags use singular PascalCase, such as #Directive, #Pattern, #Guidance, #Skill, #Workflow, and #Workspace.
+#OpenForge is a reserved load-policy tag for Open Forge core routes. Layer tags such as #Core, #Memory, and #Extension are classification signals only. Built-in route type tags use singular PascalCase, such as #Directive, #Pattern, #Guidance, #Skill, #Workflow, and #Workspace.
 
 A primitive category may extend its own type recursively at any depth. Workflows may also own mixed local bundles of directives, patterns, guidance, and skills. Other category types reference root primitives instead of embedding mixed local scopes.
 
@@ -69,13 +69,15 @@ Routes are navigation. They never replace the destination's detailed truth.
 
 Generated route metadata never defines instructions, behavior, or authority. Only reserved load-policy tags may affect loading.
 
+Generated category `entries` may point to direct markdown files, direct child category `entrypoints`, and supported native skill package entrypoints inside skills routes.
+
 ## Load Tags
 
-#OpenForge loads Open Forge-owned route context.
+#OpenForge loads Open Forge core route context.
 
 When an `entrypoint` is loaded, each generated `entry` tagged #OpenForge must be loaded in listed order. If the target is a category `entrypoint`, only that `entrypoint` is loaded first; that child `entrypoint`'s own `entries` then apply the same routing contract.
 
-#OpenForge does not create authority, scope, or precedence. It does not search unloaded trees. It is a load policy for Open Forge-owned routes already visible through loaded `Entries`.
+#OpenForge does not create authority, scope, or precedence. It does not search unloaded trees. It is a load policy for Open Forge core routes already visible through loaded `Entries`.
 
 #LoadWithParentEntrypoint loads baseline route context.
 
@@ -101,7 +103,7 @@ This contract lets the same routed knowledge work in a repository, monorepo, sha
 
 ## Scoped Routes
 
-A `framework route` is an Open Forge-owned route with stable default meaning.
+A `framework route` is an Open Forge core route with stable default meaning.
 
 A `scope route` is a local route used to narrow meaning or ownership for routes below it. A `scope route` is created with a concrete `slug` folder and its own `entrypoint`.
 
@@ -110,6 +112,8 @@ A `scoped framework route` is a `framework route` initialized inside a `scope ro
 A `slug` is the concrete folder segment used in a route path. Use `child route` when the relationship to a parent `entrypoint` matters. Use `slug` when the folder segment or route-template placeholder matters.
 
 Every folder in a visible route chain needs an `entrypoint`. A deep file below a folder without an `entrypoint` is not reachable through generated routing.
+
+A native skill package folder is different: the generated route points to its `SKILL.md`, and files below that folder are runtime skill resources loaded only when `SKILL.md` makes them relevant.
 
 Route patterns may use placeholders such as `[scope]`, `[route]`, or `[state]` before install:
 
@@ -168,7 +172,7 @@ Routing is aligned when:
 - installed files provide enough meaning without governance descriptors
 - generated `entries` remain navigation metadata plus reserved load policy
 - reserved load-policy tags affect loading only
-- #OpenForge loads visible Open Forge-owned routes by default
+- #OpenForge loads visible Open Forge core routes by default
 - category placement and descriptions keep scope visible
 - tags provide compact scope and classification signals
 - layer tags and route type tags remain classification signals unless a loaded `entrypoint` defines more
@@ -182,12 +186,13 @@ Routing is aligned when:
 - installed workspaces do not contain route-template placeholders
 - `scoped framework route` `entrypoints` can be identified by path shape and canonical `entrypoint` filename
 - routed destinations own detailed truth
+- native skill packages route through `SKILL.md` and keep package internals runtime-owned
 - nested categories use the same contract at every depth
 - nested autoload exists only through loaded parent `entrypoints`
 - post-work review exists only through loaded parent `entrypoints`
 - mixed local primitive bundles are limited to workflows
 - overwrite companions load after their base files
-- default Open Forge-owned `entrypoints` use #OpenForge
+- default Open Forge core `entrypoints` use #OpenForge
 - default `directives/`, `memory/`, `memory/working/`, and `memory/crystallized/` `entrypoints` use #LoadWithParentEntrypoint
 - default `memory/emerging/` and `memory/emerging/observations/` `entrypoints` use #LoadForPostWorkReview
 - narrower selected scopes take safe preference within the same primitive

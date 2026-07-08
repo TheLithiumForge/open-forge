@@ -39,6 +39,7 @@ Generated `entries` list direct routed files and direct child category `entrypoi
 ```text
 - `alpha.md` - Route file - #Route
 - `repos/_repos.md` - Child category `entrypoint` - #Index
+- `summarize/SKILL.md` - Native skill package - #Skill
 ```
 
 Generated `entries` keep the full relative path in backticks. Parent category `entrypoints` stay at one folder boundary. A child folder becomes visible through its own `_{folder}.md` `entrypoint`.
@@ -63,7 +64,7 @@ Open Forge-authored payload tags use singular PascalCase concept names by defaul
 
 Layer classification tags are singular: #Core, #Memory, and #Extension. These tags classify where material belongs; they do not create authority by themselves.
 
-Reserved load-policy tags are different from normal classification tags. Open Forge currently reserves #LoadWithParentEntrypoint and #LoadForPostWorkReview, which are governed by `docs/framework/concepts/routing.md` and defined in the installed loader.
+Reserved load-policy tags are different from normal classification tags. Open Forge currently reserves #OpenForge, #LoadWithParentEntrypoint, and #LoadForPostWorkReview, which are governed by `docs/framework/concepts/routing.md` and defined in the installed loader.
 
 ## Backticks
 
@@ -96,6 +97,8 @@ Open Forge-authored files use only `open-forge:` scoped metadata.
 The index generator accepts `rune:` scoped metadata in external files for cross-tool compatibility. It also accepts unscoped `description` and `tags` in external files.
 
 Direct-load files that are not discovered through indexes do not need frontmatter unless another tool needs it.
+
+Runtime-native skill files such as `SKILL.md` must use the metadata required by their runtime. Open Forge index generation can read a root `description` from those files and must not require `open-forge:` metadata in them.
 
 ## Category Entrypoints
 
@@ -168,7 +171,7 @@ The final section of every category `entrypoint` and the loader must use this sh
 
 The CLI owns only the content between the markers. Index generation must preserve all content outside the markers.
 
-In category `entrypoints`, the generated region contains direct routed files and direct child category `entrypoints`. In the loader, it contains direct active category `entrypoints`. Generated regions contain navigation metadata plus reserved load policy only. Generated `entries` never define instructions, behavior, or authority.
+In category `entrypoints`, the generated region contains direct routed files, direct child category `entrypoints`, and supported native skill package entrypoints inside skills routes. In the loader, it contains direct active category `entrypoints`. Generated regions contain navigation metadata plus reserved load policy only. Generated `entries` never define instructions, behavior, or authority.
 
 When the markers are absent from a legacy category `entrypoint` with a final `## Entries` section, the CLI must migrate that section. When the heading and markers are all absent, the CLI must append the complete generated section.
 
@@ -182,7 +185,10 @@ A direct markdown file is indexable when it uses `*.md`, including underscore-pr
 
 - the folder's recognized category `entrypoint`
 - canonical and compatibility `entrypoint` names
+- runtime skill entrypoint names such as `SKILL.md` and `Skill.md`
 - `.overwrite.md` companions
+
+Inside `.agents/skills/`, direct loose markdown files are not indexable skill routes. A direct child folder is indexable as a native skill package when it contains exactly one supported skill entrypoint such as `SKILL.md`. The skill package entry points to the skill entrypoint file. Files under that skill folder are owned by the runtime skill package and are not indexed unless the folder also defines normal Open Forge child categories.
 
 A child folder is indexable when it contains exactly one recognized category `entrypoint`. The CLI must not create category `entrypoints` for folders that have not explicitly opted into routing.
 
@@ -206,8 +212,10 @@ Formatting is aligned when:
 - generated paths use backticks
 - generated paths are concrete and workspace-root-relative
 - category generated `entries` include direct routed files and direct child category `entrypoints`
+- skills category generated `entries` include native skill packages
 - loader generated `entries` include direct active category `entrypoints`
 - Open Forge-authored indexed files use only scoped `open-forge:` frontmatter
+- runtime-native `SKILL.md` files keep runtime-compatible metadata
 - direct-load files avoid unnecessary frontmatter
 - tables are used only when a list would be less clear
 - Open Forge-authored categories use `_{category}.md`

@@ -34,6 +34,8 @@ They must keep source, scope, and uncertainty visible.
 
 Before ending meaningful work, agents write observations for grounded findings that may matter later but are not ready to become accepted truth, behavior, or external state.
 
+If an agent identifies a finding worth preserving, the observation must be written before final response or the blocker must be reported.
+
 An observation is not accepted current truth until validated, promoted, or explicitly accepted.
 
 ## Loading Contract
@@ -92,6 +94,7 @@ The implementation is aligned when it:
 - defines observations as grounded noticed findings
 - describes observations as agent learning material
 - requires post-work observations for grounded findings that may matter later
+- requires preservation-worthy findings to be written or blocked before final response
 - keeps source, scope, and uncertainty visible
 - keeps observations contextual until validated or promoted
 - allows validated observations to become another #Memory route, matching #Core material, external state, or archived history

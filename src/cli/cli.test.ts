@@ -133,6 +133,31 @@ This paragraph is authored content.
     expect(parent).not.toContain("services/_services.md");
     expect(grandchild).toContain("- `billing.md` - Billing service - #Service");
   });
+
+  test("indexes native skill packages under skills routes", async () => {
+    const root = await createRoot();
+    const agents = path.join(root, ".agents");
+    const skills = await createCategory(agents, "skills", "# Skills\n");
+    const implementation = path.join(skills, "implementation");
+    await fs.mkdir(path.join(implementation, "references"), { recursive: true });
+    await fs.writeFile(path.join(implementation, "SKILL.md"), `---
+name: implementation
+description: Implementation capability for fitting, testing, coding, and verifying changes
+---
+
+# Implementation
+`);
+    await fs.writeFile(path.join(implementation, "references", "fit-change.md"), "# Fit Change\n");
+    await writeRoute(skills, "legacy.md", "Legacy skill file", ["Skill"]);
+
+    const result = await runCli("index", root);
+    const content = await fs.readFile(path.join(skills, "_skills.md"), "utf8");
+
+    expect(result.exitCode).toBe(0);
+    expect(content).toContain("- `implementation/SKILL.md` - Implementation capability for fitting, testing, coding, and verifying changes - #Skill");
+    expect(content).not.toContain("references/fit-change.md");
+    expect(content).not.toContain("legacy.md");
+  });
 });
 
 describe("loader category registry", () => {
@@ -250,8 +275,8 @@ describe("install", () => {
     expect(memory).toContain("- `emerging/_emerging.md` - Candidate memory that may be useful but is not accepted truth yet - #OpenForge #Memory #Emerging #OrganicGrowth #Index #Contextual #Candidate #LoadForPostWorkReview");
     expect(memory).not.toContain("#Emerging #Index #LoadWithParentEntrypoint");
     expect(loader).toContain("- `entrypoint` - Markdown file that makes a folder routable.");
-    expect(loader).toContain("- `entry` - Generated line under `Entries` that points to a sibling markdown file or direct child `entrypoint`.");
-    expect(loader).toContain("- `framework route` - Route installed and managed by Open Forge.");
+    expect(loader).toContain("- `entry` - Generated line under `Entries` that points to a sibling markdown file, direct child `entrypoint`, or native skill package entrypoint.");
+    expect(loader).toContain("- `framework route` - Core route installed and managed by Open Forge.");
     expect(loader).toContain("- `scope route` - Local route used to narrow meaning or ownership for routes below it.");
     expect(loader).toContain("- `scoped framework route` - `framework route` initialized inside a `scope route`.");
     expect(loader).toContain("- `slug` - Concrete folder name used in a route path.");
@@ -259,7 +284,7 @@ describe("install", () => {
     expect(loader).toContain("- Open Forge routes agents through small markdown `entrypoints`.");
     expect(loader).toContain("- Follow all loaded `axioms` unless a higher-priority user, platform, safety, or external source-of-truth instruction conflicts; report unresolved conflicts.");
     expect(loader).toContain("- A folder is routable only when it contains one recognized `entrypoint`.");
-    expect(loader).toContain("- `Entries` list sibling markdown files and direct child `entrypoints`.");
+    expect(loader).toContain("- `Entries` list sibling markdown files, direct child `entrypoints`, and supported native skill packages inside skills routes.");
     expect(loader).toContain("- To route into nested folders, every folder in the path needs its own `entrypoint`.");
     expect(loader).toContain("- `scope routes` use the same mechanism: add `slug` folders with `entrypoints` before, after, or between `framework routes` when they make ownership clearer.");
     expect(loader).toContain("- `scoped framework routes` work only when their framework `entrypoint` exists inside the scope.");
@@ -277,7 +302,7 @@ describe("install", () => {
     expect(loader).toContain("- Tag spelling and casing are stable.");
     expect(loader).toContain("- Workspace-wide tag behavior belongs here and must stay short.");
     expect(loader).toContain("### Defined Tags");
-    expect(loader).toContain("- #OpenForge - Open Forge-owned route. Load this `entry` when it appears in loaded `Entries`, then apply the loaded file's own `Entries`.");
+    expect(loader).toContain("- #OpenForge - Open Forge core route. Load this `entry` when it appears in loaded `Entries`, then apply the loaded file's own `Entries`.");
     expect(loader).toContain("- #LoadWithParentEntrypoint - Load this `entry` immediately after its parent `entrypoint`, in listed order. Applies only inside already loaded `Entries`.");
     expect(loader).toContain("- #LoadForPostWorkReview - Load this `entry` before ending meaningful work to route useful material produced during the work. Applies only inside already loaded `Entries`.");
     expect(loader).toContain("- #Core - Base routing, workspace orientation, and agent primitive routes.");
@@ -334,10 +359,10 @@ describe("install", () => {
     expect(archivedMemory).toContain("Add child categories when they preserve origin, ownership, or clarity better than a flat archive.");
     expect(patterns).toContain("Treat an applicable pattern as the established default shape for its scope.");
     expect(patterns).toContain("<!-- open-forge:generated-index:start -->");
-    expect(skills).toContain("Every skill file defines one bounded capability, its positive applicability, and its expected result.");
+    expect(skills).toContain("Prefer the native skill shape: `.agents/skills/{skill-name}/SKILL.md`.");
     expect(skills).toContain("<!-- open-forge:generated-index:start -->");
     expect(workflows).toContain("- Before non-trivial work, read `Entries` and load matching workflows.");
-    expect(workflows).toContain("Every workflow defines its goal, starting context, required skills when it uses skills, ordered steps, loop behavior, expected outputs, and completion or handoff condition.");
+    expect(workflows).toContain("Every workflow defines its goal, starting context, required skill packages when it uses skills, ordered steps, loop behavior, expected outputs, and completion or handoff condition.");
     expect(workflows).toContain("<!-- open-forge:generated-index:start -->");
     expect(workspace).toContain("## Axioms");
     expect(workspace).toContain("<!-- open-forge:generated-index:start -->");
@@ -345,8 +370,8 @@ describe("install", () => {
     expect(loader).not.toContain("Load `memory` after `directives` when it appears in `Entries`.");
     expect(loader).toContain("- `.agents/guidance/_guidance.md` - Contextual advice for recurring choices, tradeoffs, and work scenarios - #OpenForge #Core #Guidance #Index");
     expect(loader).toContain("- `.agents/patterns/_patterns.md` - Concrete reusable shapes for code, files, APIs, documents, and other inspectable work - #OpenForge #Core #Pattern #Index");
-    expect(loader).toContain("- `.agents/skills/_skills.md` - Reusable agent capabilities with clear use cases and expected results - #OpenForge #Core #Skill #Index");
-    expect(loader).toContain("- `.agents/workflows/_workflows.md` - Repeatable agent workflows for reaching a defined goal - #OpenForge #Core #Workflow #Index");
+    expect(loader).toContain("- `.agents/skills/_skills.md` - Reusable agent capability packages with clear use cases and expected results - #OpenForge #Core #Skill #Index");
+    expect(loader).toContain("- `.agents/workflows/_workflows.md` - Repeatable markdown workflow recipes for reaching a defined goal - #OpenForge #Core #Workflow #Index");
     expect(loader).toContain("- `.agents/workspace/_workspace.md` - Workspace routes that point to important project locations and explain when to use them - #OpenForge #Core #Workspace #Index");
     expect(loader).not.toContain("## Route Categories");
     expect(await exists(path.join(root, ".agents", "constants.md"))).toBe(false);
@@ -413,7 +438,7 @@ Custom React route.
     await fs.writeFile(path.join(extensionPatterns, "_react.md"), `---
 open-forge:
   description: React component patterns for this workspace
-  tags: [OpenForge, Core, Pattern, React, Index]
+  tags: [Extension, Core, Pattern, React, Index]
 ---
 
 # React
@@ -428,7 +453,7 @@ React patterns for this workspace.
     const react = await fs.readFile(path.join(root, ".agents", "patterns", "react", "_react.md"), "utf8");
 
     expect(result.exitCode).toBe(0);
-    expect(patterns).toContain("- `react/_react.md` - React component patterns for this workspace - #OpenForge #Core #Pattern #React #Index");
+    expect(patterns).toContain("- `react/_react.md` - React component patterns for this workspace - #Extension #Core #Pattern #React #Index");
     expect(react).toContain("- `components.md` - Reusable React component shape - #Pattern #React");
   });
 
@@ -441,7 +466,7 @@ React patterns for this workspace.
     await fs.writeFile(path.join(extensionPatterns, "_react.md"), `---
 open-forge:
   description: React component patterns for this workspace
-  tags: [OpenForge, Core, Pattern, React, Index]
+  tags: [Extension, Core, Pattern, React, Index]
 ---
 
 # React
@@ -463,7 +488,7 @@ open-forge:
     await fs.writeFile(path.join(extensionPatterns, "_reviews.md"), `---
 open-forge:
   description: Review patterns bundled with Open Forge
-  tags: [OpenForge, Core, Pattern, Review, Index]
+  tags: [Extension, Core, Pattern, Review, Index]
 ---
 
 # Reviews
@@ -480,7 +505,7 @@ Review patterns bundled with Open Forge.
     const reviews = await fs.readFile(path.join(root, ".agents", "patterns", "reviews", "_reviews.md"), "utf8");
 
     expect(result.exitCode).toBe(0);
-    expect(patterns).toContain("- `reviews/_reviews.md` - Review patterns bundled with Open Forge - #OpenForge #Core #Pattern #Review #Index");
+    expect(patterns).toContain("- `reviews/_reviews.md` - Review patterns bundled with Open Forge - #Extension #Core #Pattern #Review #Index");
     expect(reviews).toContain("- `pull-requests.md` - Pull request review shape - #Pattern #Review");
   });
 
@@ -513,8 +538,8 @@ Review patterns bundled with Open Forge.
     const patterns = await fs.readFile(path.join(root, ".agents", "patterns", "_patterns.md"), "utf8");
 
     expect(result.exitCode).toBe(0);
-    expect(patterns).toContain("- `alpha-pack/_alpha-pack.md` - Alpha extension - #OpenForge #Core #Pattern #Index");
-    expect(patterns).toContain("- `beta-pack/_beta-pack.md` - Beta extension - #OpenForge #Core #Pattern #Index");
+    expect(patterns).toContain("- `alpha-pack/_alpha-pack.md` - Alpha extension - #Extension #Core #Pattern #Index");
+    expect(patterns).toContain("- `beta-pack/_beta-pack.md` - Beta extension - #Extension #Core #Pattern #Index");
   });
 
   test("requires a TTY for interactive bundled extension selection", async () => {
@@ -561,7 +586,7 @@ async function createBundledExtension(root: string, id: string, name: string, de
   await fs.writeFile(path.join(patterns, `_${id}.md`), `---
 open-forge:
   description: ${description}
-  tags: [OpenForge, Core, Pattern, Index]
+  tags: [Extension, Core, Pattern, Index]
 ---
 
 # ${name}

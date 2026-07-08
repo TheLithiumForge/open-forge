@@ -4,13 +4,13 @@
 
 This descriptor governs `src/open-forge/.agents/workflows/_workflows.md`.
 
-The workflows category `entrypoint` defines how agents discover repeatable agent workflows for reaching defined goals and how an active workflow owns local #Core routes.
+The workflows category `entrypoint` defines how agents discover repeatable markdown workflow recipes for reaching defined goals and how an active workflow owns local #Core routes.
 
 ## Represents
 
-The workflows category represents repeatable agent workflows for reaching defined goals.
+The workflows category represents repeatable markdown workflow recipes for reaching defined goals.
 
-A workflow organizes work toward an outcome, such as brainstorming, task creation, implementation, review, test-driven development, handoff, or learning.
+A workflow recipe organizes work toward an outcome, such as brainstorming, task creation, implementation, review, test-driven development, handoff, or learning.
 
 ## Contains
 
@@ -19,16 +19,18 @@ The installed workflows category `entrypoint` must contain:
 - scoped `open-forge:` frontmatter with a description and useful tags, including `Core`, `Workflow`, and `Index`
 - a title
 - one short definition of workflows
-- compact relevance, loading, skill, step, loop, workflow-local #Core route, and completion axioms
+- compact relevance, loading, skill package, step, loop, workflow-local #Core route, and completion axioms
 - a final marker-bounded generated index region
 
 The authored portion must stay between 15 and 40 non-empty lines. Generated `entries` do not count toward this limit.
 
 ## Workflow Contract
 
-Every routed workflow must identify its goal, starting context, required skills when it uses skills, ordered steps, loop behavior, expected outputs, and completion or handoff condition.
+Every routed workflow must identify its goal, starting context, required skill packages when it uses skills, ordered steps, loop behavior, expected outputs, and completion or handoff condition.
 
-Required skills must be explicit enough that an agent can load the skill routes before running the workflow. If a workflow has no required skills, it must say so.
+Open Forge workflows are routed markdown recipes, not runtime orchestration objects from an agent SDK.
+
+Required skill packages must be explicit enough that an agent can load the package routes before running the workflow. If a workflow has no required skill packages, it must say so. When a selected workflow lists `Required Skill Packages`, agents must load every listed package before running the workflow steps and report missing routes.
 
 Loop behavior must state whether the workflow is linear or iterative, what causes another pass, and what stops the loop.
 
@@ -89,10 +91,11 @@ The implementation is aligned when it:
 - is named `_workflows.md`
 - lives in `.agents/workflows/`
 - includes `Core`, `Workflow`, and `Index` in scoped `open-forge:` tags
-- defines workflows as repeatable agent workflows for reaching a defined goal
+- defines workflows as repeatable markdown workflow recipes for reaching a defined goal
 - selects workflow routes by visible relevance
 - requires agents to check workflows before non-trivial work
-- requires workflows to state goal, required skills, steps, loop behavior, outputs, and completion
+- requires workflows to state goal, required skill packages, steps, loop behavior, outputs, and completion
+- requires selected workflows to load listed required skill packages before steps
 - permits workflow-local #Core routes only under active workflows
 - reuses the recursive category contract for workflow-local #Core routes
 - prevents independent installs under workflows
