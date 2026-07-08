@@ -10,7 +10,7 @@ Workflows are repeatable agent workflows for reaching a defined goal.
 
 ## Axioms
 
-- Use `Entries` when current work matches a repeatable goal that may have an established workflow.
+- Before non-trivial work, read `Entries` and load matching workflows.
 - Load routes whose path, description, or tags match the current work.
 - Every workflow defines its goal, starting context, required skills when it uses skills, ordered steps, loop behavior, expected outputs, and completion or handoff condition.
 - A workflow may act as a local Open Forge root for its reusable goal by owning workflow-local #Core routes.

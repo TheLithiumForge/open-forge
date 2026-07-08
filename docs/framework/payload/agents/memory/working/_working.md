@@ -28,7 +28,7 @@ Working memory contains live context for work that is happening now or may need 
 
 Working memory is not accepted truth. It is resumability context. It can be wrong, partial, stale, or superseded by later work.
 
-The base payload installs `sessions/` for raw work history and `handoffs/` for concise transfer notes.
+The base payload installs `sessions/` for raw work history and `handoffs/` for concise transfer notes. Both child `entrypoints` are default-loaded because they are bounded resumability routes.
 
 Child `entrypoints` and local files define their own taxonomy below this route.
 
@@ -91,6 +91,7 @@ The implementation is aligned when it:
 - includes `Contextual` and `LoadWithParentEntrypoint` in scoped `open-forge:` tags
 - defines working memory as live resumability context
 - exposes installed `handoffs/` and `sessions/` routes
+- marks installed `handoffs/` and `sessions/` routes with #LoadWithParentEntrypoint
 - avoids repeating installed route names in implementation axioms
 - keeps working memory contextual rather than authoritative
 - routes current work selectively

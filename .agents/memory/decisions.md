@@ -66,7 +66,8 @@ These are the accepted decisions extracted from old sessions and idea notes.
 
 ## Tags
 
-- Defined loader tags with behavior or truth-status semantics are #LoadWithParentEntrypoint, #LoadForPostWorkReview, #Contextual, and #CurrentTruth.
+- Defined loader tags with behavior or truth-status semantics are #OpenForge, #LoadWithParentEntrypoint, #LoadForPostWorkReview, #Contextual, and #CurrentTruth.
+- #OpenForge loads visible Open Forge-owned routes by default. It creates visibility, not authority, scope, or precedence.
 - #Core, #Memory, and #Extension are layer/routing tags.
 - Route type tags such as #Directive, #Pattern, #Guidance, #Skill, #Workflow, and #Workspace are routing/search signals unless a loaded entrypoint defines more.
 - Tags stay bare in markdown so tools can parse and graph them.

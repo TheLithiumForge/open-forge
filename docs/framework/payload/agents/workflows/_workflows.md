@@ -44,9 +44,9 @@ Workflow-local #Core routes reuse the same recursive category contract. They mus
 
 ## Loading Contract
 
-The workflows category is relevant when current work matches a repeatable goal that may have an established workflow.
+The workflows category is relevant before non-trivial work and whenever current work may match an established repeatable goal.
 
-The `entrypoint` must route agents to direct workflow files and child workflow categories whose path, description, or tags match the current work. Each selected child `entrypoint` applies the same contract recursively.
+The `entrypoint` must require agents to read `Entries` before non-trivial work and load matching direct workflow files or child workflow categories. Each selected child `entrypoint` applies the same contract recursively.
 
 When a workflow is selected, agents load its workflow `entrypoint` or file first, then load any relevant workflow-local #Core routes routed by that workflow.
 
@@ -91,6 +91,7 @@ The implementation is aligned when it:
 - includes `Core`, `Workflow`, and `Index` in scoped `open-forge:` tags
 - defines workflows as repeatable agent workflows for reaching a defined goal
 - selects workflow routes by visible relevance
+- requires agents to check workflows before non-trivial work
 - requires workflows to state goal, required skills, steps, loop behavior, outputs, and completion
 - permits workflow-local #Core routes only under active workflows
 - reuses the recursive category contract for workflow-local #Core routes

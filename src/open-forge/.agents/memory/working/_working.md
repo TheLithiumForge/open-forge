@@ -25,6 +25,6 @@ Working memory is live context for active or recently interrupted work.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `handoffs/_handoffs.md` - Static, concise, accurate transfer notes that help agents or humans resume work after context breaks - #OpenForge #Memory #Handoff #AgentCommunication #Index #Contextual
-- `sessions/_sessions.md` - Raw chronological records of what happened during work sessions - #OpenForge #Memory #Session #WorkHistory #Index #Contextual
+- `handoffs/_handoffs.md` - Static, concise, accurate transfer notes that help agents or humans resume work after context breaks - #OpenForge #Memory #Handoff #AgentCommunication #Index #Contextual #LoadWithParentEntrypoint
+- `sessions/_sessions.md` - Raw chronological records of what happened during work sessions - #OpenForge #Memory #Session #WorkHistory #Index #Contextual #LoadWithParentEntrypoint
 <!-- open-forge:generated-index:end -->

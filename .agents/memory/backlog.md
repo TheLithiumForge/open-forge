@@ -43,6 +43,7 @@ This backlog is extracted from the archived sessions and ideas. Keep it current 
 - Test extension installs and future workflow flows through real OS temp directories instead of mocked filesystem operations.
 - Support extension-template authoring for maintainers.
 - Consider `doctor` or validation commands for generated regions and routing health.
+- Investigate an optional all-in-one generated index for agent cold starts; judge token cost, staleness risk, authority confusion, and whether recursive `entrypoints` already solve enough.
 - Decide forceful versus softer upgrade modes:
   - forceful upgrade overwrites and re-adds all framework-owned files
   - softer upgrade updates existing framework-owned files but does not re-add optional/default files the user intentionally deleted
@@ -56,6 +57,7 @@ This backlog is extracted from the archived sessions and ideas. Keep it current 
 - Planning/task/backlog extension that can map to GitHub, Jira, GitLab, Linear, or local markdown.
 - Technology pattern packs.
 - Workflow packs for brainstorming, task creation, implementation, testing, review, architecture, UI/UX, and refactoring.
+- Orchestration route or extension for workflows that can declare preferred tools, subagents, isolation rules, and CLI usage when multiple agent runtimes are available.
 - Skill packs that remain compatible with native agent/runtime skill concepts.
 - Optional interactive wizard as a convenience over deterministic commands.
 - External `.memory/` or distributed package-local memory as a documented user pattern, not default behavior.

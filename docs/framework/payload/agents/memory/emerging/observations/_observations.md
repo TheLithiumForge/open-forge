@@ -32,7 +32,7 @@ Observation files record grounded facts, signals, constraints, recurring behavio
 
 They must keep source, scope, and uncertainty visible.
 
-When safe and allowed, agents write observations after work when they notice a grounded finding that may matter later but is not ready to become accepted truth, behavior, or external state.
+Before ending meaningful work, agents write observations for grounded findings that may matter later but are not ready to become accepted truth, behavior, or external state.
 
 An observation is not accepted current truth until validated, promoted, or explicitly accepted.
 
@@ -91,6 +91,7 @@ The implementation is aligned when it:
 - includes `AgentLearning`, `OrganicGrowth`, `Contextual`, `Candidate`, and `LoadForPostWorkReview` in scoped `open-forge:` tags
 - defines observations as grounded noticed findings
 - describes observations as agent learning material
+- requires post-work observations for grounded findings that may matter later
 - keeps source, scope, and uncertainty visible
 - keeps observations contextual until validated or promoted
 - allows validated observations to become another #Memory route, matching #Core material, external state, or archived history
