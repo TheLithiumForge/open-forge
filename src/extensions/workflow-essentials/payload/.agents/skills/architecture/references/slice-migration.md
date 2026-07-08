@@ -1,5 +1,9 @@
 # Slice Migration
 
+## Use When
+
+Use when the selected architecture requires staged implementation, refactoring, or migration.
+
 ## Capability
 
 - Split the change into small slices with clear behavior, ownership, and verification.

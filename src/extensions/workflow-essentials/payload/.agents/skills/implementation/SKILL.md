@@ -17,7 +17,7 @@ Use this skill to turn an accepted goal into a verified change.
 ## References
 
 - `references/fit-change-to-system.md` - Read before editing when the change touches code, docs, routing, architecture, or shared behavior.
-- `references/contract-skeleton.md` - Read when tests or implementation need a stable contract, API, file shape, or skeleton before behavior is filled in.
-- `references/derive-test-cases.md` - Read before or during implementation when behavior, edge case, regression, or integration tests are needed.
-- `references/contract-test-implementation-loop.md` - Read when the user prefers TDD or the change is safer with tests driving the implementation.
-- `references/verification-review.md` - Read after verification, before final response, handoff, or memory extraction.
+- `references/contract-skeleton.md` - Read when contracts, APIs, file shapes, or skeletons should be defined before implementation details.
+- `references/derive-test-cases.md` - Read when behavior, edge case, regression, or integration tests are needed.
+- `references/contract-test-implementation-loop.md` - Read when tests should drive the implementation loop.
+- `references/verification-review.md` - Read after verification to improve and explain the result.

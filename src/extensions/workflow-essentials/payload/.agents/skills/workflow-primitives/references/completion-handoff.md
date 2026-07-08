@@ -1,5 +1,9 @@
 # Completion Handoff
 
+## Use When
+
+Use before ending meaningful workflow work, especially when work may continue in another context.
+
 ## Capability
 
 - State what changed or was learned.

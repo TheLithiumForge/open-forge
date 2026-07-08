@@ -1,5 +1,9 @@
 # Compare Architecture Options
 
+## Use When
+
+Use when there are multiple plausible structural directions or when a preferred option needs pressure testing.
+
 ## Capability
 
 - Name each viable option in concrete terms.

@@ -17,5 +17,5 @@ Use this skill to turn early intent into grounded direction.
 ## References
 
 - `references/clarify-intent.md` - Read when the direction is broad, contradictory, or missing a clear reason.
-- `references/shape-mvp.md` - Read when a vision needs a first useful version - core value, MVP boundary, non-goals, and future growth.
-- `references/fit-and-risk-check.md` - Read when direction depends on fit with audience, use case, market, constraints, or validation path.
+- `references/shape-mvp.md` - Read when the core value, MVP boundary, non-goals, or future growth need shaping.
+- `references/fit-and-risk-check.md` - Read when fit, validation signals, assumptions, or risks need review.

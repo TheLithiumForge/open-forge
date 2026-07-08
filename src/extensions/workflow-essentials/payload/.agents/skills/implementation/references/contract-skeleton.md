@@ -1,5 +1,9 @@
 # Contract Skeleton
 
+## Use When
+
+Use when tests or implementation need a stable shape before behavior is filled in.
+
 ## Capability
 
 - Define public contracts, inputs, outputs, states, errors, and ownership.

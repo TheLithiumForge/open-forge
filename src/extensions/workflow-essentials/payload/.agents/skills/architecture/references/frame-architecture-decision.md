@@ -1,5 +1,9 @@
 # Frame Architecture Decision
 
+## Use When
+
+Use when an architecture choice is accepted or needs to be prepared for user confirmation.
+
 ## Capability
 
 - State the context, decision, rationale, consequences, and rejected options when useful.

@@ -16,6 +16,6 @@ Use this skill to reason about structure before implementation.
 ## References
 
 - `references/map-current-system.md` - Read before proposing architecture, large refactors, migrations, or structural documentation.
-- `references/compare-architecture-options.md` - Read when multiple structural directions are plausible or a preferred option needs pressure testing.
-- `references/frame-architecture-decision.md` - Read when an architecture choice is accepted or needs preparing for user confirmation.
-- `references/slice-migration.md` - Read when the selected direction needs staged implementation, refactoring, or migration slices.
+- `references/compare-architecture-options.md` - Read when comparing viable structural options.
+- `references/frame-architecture-decision.md` - Read when accepted rationale needs to be recorded.
+- `references/slice-migration.md` - Read when a direction needs implementation and verification slices.

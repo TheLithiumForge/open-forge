@@ -1,5 +1,9 @@
 # Memory Routing
 
+## Use When
+
+Use when workflow output may be worth saving beyond the current response.
+
 ## Capability
 
 - Separate accepted truth, candidate learning, raw session history, transfer notes, and historical context.

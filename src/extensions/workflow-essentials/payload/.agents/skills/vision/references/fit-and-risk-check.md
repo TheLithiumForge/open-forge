@@ -1,5 +1,9 @@
 # Fit And Risk Check
 
+## Use When
+
+Use when direction depends on whether the idea fits its audience, use case, market, constraints, or validation path.
+
 ## Capability
 
 - Identify who benefits and why they would care.

@@ -1,5 +1,9 @@
 # Clarify Intent
 
+## Use When
+
+Use when the requested direction is still broad, contradictory, or missing a clear reason.
+
 ## Capability
 
 - Ask for the problem, user, desired outcome, constraints, and non-goals.
