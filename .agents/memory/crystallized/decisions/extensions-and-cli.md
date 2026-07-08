@@ -10,7 +10,7 @@ Accepted decisions extracted from the design sessions and idea notes on 2026-07-
 
 - #Extension is optional installable material added on top of #Core and #Memory.
 - Extensions should add files into the existing routed structure instead of creating another framework root.
-- Extension payload routes use #Extension plus route type and scope tags by default when the file format is Open Forge-authored. Runtime-native files such as `SKILL.md` keep native metadata. Extension content stays relevance-routed and uses a load-policy tag only when baseline loading is deliberately chosen.
+- Extension payload routes use #Extension plus route type and scope tags by default when the file format is Open Forge-authored. Runtime-native files such as `SKILL.md` keep native metadata. Extension content does not use #OpenForge because it must stay relevance-routed unless a load-policy tag is deliberately chosen.
 - The current `extend` command installs local overlays, local extension packages with `payload/`, and bundled first-party extensions as a dogfooding MVP.
 - Bundled first-party extensions live under `src/extensions/{id}/payload` in the CLI package.
 - First-party extension metadata outside `payload/` may help CLI list/select behavior, but installed files remain runtime truth.

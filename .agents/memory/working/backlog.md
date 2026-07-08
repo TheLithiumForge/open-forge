@@ -17,15 +17,14 @@ Actionable priorities carried forward from the pre-dogfood cleanup. Deferred des
 
 ## Near-Term Priorities
 
-1. Review `.agents/memory/emerging/analysis/2026-07-09_post-rework-review.md` and accept or reject its improvement candidates (descriptor dedup, #Index tag, loader Route Patterns placement, dogfood v5).
-2. Reread every installable payload file and matching governance descriptor for wording, scope separation, tag usage, and route accuracy. The 2026-07-08 wording and CLI pass is committed; verify nothing from it is left dangling.
-3. Replace tool-implying load wording such as "must be loaded" with agent-imperative wording such as "read X before Y" across payload and docs; keep the imperative mandatory.
-4. Deduplicate framework descriptors against concept docs without losing information; concepts and file descriptors stay conceptually separate.
-5. Recheck skills and workflows after route-template and extension terminology settle; apply the workflow redesign idea once accepted.
-6. Define the user-documentation architecture: README responsibilities, short guide files, primitive glossary, layer glossary, route/scoping examples, and voice.
-7. Rewrite human onboarding after dogfooding, not before it.
-8. Run consistency and security review across routing, generated regions, prompt-injection boundaries, update behavior, and tests.
-9. Document a human-run behavioral dogfood smoke checklist: install into a temp workspace, install selected extensions, run a representative agent task, and inspect whether routing, memory closeout, and workflow behavior happened.
+1. Reread every installable payload file and matching governance descriptor for wording, scope separation, tag usage, and route accuracy. The 2026-07-08 wording and CLI pass is committed; verify nothing from it is left dangling.
+2. Replace tool-implying load wording such as "must be loaded" with agent-imperative wording such as "read X before Y" across payload and docs; keep the imperative mandatory.
+3. Deduplicate framework descriptors against concept docs without losing information; concepts and file descriptors stay conceptually separate.
+4. Recheck skills and workflows after route-template and extension terminology settle; apply the workflow redesign idea once accepted.
+5. Define the user-documentation architecture: README responsibilities, short guide files, primitive glossary, layer glossary, route/scoping examples, and voice.
+6. Rewrite human onboarding after dogfooding, not before it.
+7. Run consistency and security review across routing, generated regions, prompt-injection boundaries, update behavior, and tests.
+8. Document a human-run behavioral dogfood smoke checklist: install into a temp workspace, install selected extensions, run a representative agent task, and inspect whether routing, memory closeout, and workflow behavior happened.
 
 ## User Documentation To Write Later
 

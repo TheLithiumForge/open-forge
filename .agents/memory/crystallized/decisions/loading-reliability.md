@@ -16,4 +16,4 @@ Accepted 2026-07-08 from the dogfood evidence synthesis across rounds v2 through
 - Wording stays imperative to the agent without implying tool behavior: prefer "read X before Y" over "X must be loaded". The imperative remains mandatory for compliant agents.
 - Reuse the same structure, rules, and shapes everywhere so agents can trust the structure instead of carrying decision overload.
 
-Evidence: the dogfood and recommendation reports routed by `.agents/memory/crystallized/documents/dogfood-reports/_dogfood-reports.md`.
+Evidence: the dogfood and recommendation reports at the repository root, routed by `.agents/memory/crystallized/documents/dogfood-reports.md`.

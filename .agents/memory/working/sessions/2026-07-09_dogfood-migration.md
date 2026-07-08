@@ -19,11 +19,10 @@ Date: 2026-07-09. Open Forge was installed into its own repository and the tempo
 7. Added new decisions (`loading-reliability.md`, `routing-surfaces.md`), new ideas (`workflow-redesign.md`, `observations-rework.md`, `extension-skill-sharing.md`), an observation on tag load compliance, and a documents route to the dogfood reports.
 8. Regenerated indexes and ran the test suite.
 
-## Follow-Ups Landed In This Session
+## Unresolved
 
-- The tag rework (#LoadNow, #KeepInMind replacing #OpenForge, #LoadWithParentEntrypoint, #LoadForPostWorkReview) was applied across payload, workspace, docs, and tests, then staged for review.
-- The dogfood report files were moved into `.agents/memory/crystallized/documents/dogfood-reports/` so the accepted evidence records are routed memory, not loose root files.
-- A full per-file wording and deduplication pass followed; see `.agents/memory/emerging/analysis/2026-07-09_post-rework-review.md`.
+- A tag system rework proposal was left as unstaged changes on purpose, for review by diff.
+- The dogfood report files at the repository root are untracked in git.
 
 ## Sources
 

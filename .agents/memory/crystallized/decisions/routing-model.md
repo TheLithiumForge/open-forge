@@ -16,5 +16,3 @@ Accepted decisions extracted from the design sessions and idea notes on 2026-07-
 - Nested routing requires an `entrypoint` at every visible folder level.
 - The loader exposes only direct active root routes under `.agents/`.
 - Loose markdown files beside `loader.md` are not root routes.
-- Universal loading and routing rules live once in the loader; category `entrypoints` stay minimal. (accepted 2026-07-09)
-- Axioms of loaded ancestor `entrypoints` apply to all routes below them; a child `entrypoint` adds only scope-specific axioms and does not restate ancestor rules. (accepted 2026-07-09)
