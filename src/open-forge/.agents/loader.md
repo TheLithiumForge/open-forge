@@ -14,18 +14,21 @@ Use generated `Entries` in this file to select relevant root routes. Load a sele
 - `scope route` - Local route used to narrow meaning or ownership for routes below it.
 - `scoped framework route` - `framework route` initialized inside a `scope route`.
 - `slug` - Concrete folder name used in a route path.
+- `axiom` - Mandatory instruction in a loaded Open Forge file.
 
 ## Axioms
 
 - Open Forge routes agents through small markdown `entrypoints`.
+- Follow all loaded `axioms` unless a higher-priority user, platform, safety, or external source-of-truth instruction conflicts; report unresolved conflicts.
 - A folder is routable only when it contains one recognized `entrypoint`.
 - An `entrypoint` explains what its folder is for and ends with generated `Entries`.
 - `Entries` list sibling markdown files and direct child `entrypoints`.
 - To route into nested folders, every folder in the path needs its own `entrypoint`.
 - `scope routes` use the same mechanism: add `slug` folders with `entrypoints` before, after, or between `framework routes` when they make ownership clearer.
 - `scoped framework routes` work only when their framework `entrypoint` exists inside the scope.
-- Use `Entries` to choose the next file or child `entrypoint` by path, description, and tags.
-- Apply defined tag behavior when reading generated `Entries`.
+- In every loaded `entrypoint`, read `Entries` and load entries that fit the request or carry a defined load-policy tag.
+- Immediately load #OpenForge and #LoadWithParentEntrypoint entries when they appear in loaded `Entries`.
+- Before ending meaningful work, load #LoadForPostWorkReview entries that appear in loaded `Entries` and perform any required follow-up.
 - Load an `entrypoint` before its routed files.
 - Load a file's `.overwrite.md` companion after it; the overwrite takes precedence within the base file's scope.
 - User instructions apply when safe and allowed.
@@ -49,12 +52,13 @@ Use generated `Entries` in this file to select relevant root routes. Load a sele
 
 - Defined tags have framework meaning when they appear in loaded content or generated `Entries`.
 - Undefined tags are routing and search signals; read the `entry` path, description, and loaded `entrypoint` for their meaning.
-- `Entries` without a load-policy tag are on-demand routes selected by the current request.
+- `Entries` without #OpenForge or another load-policy tag are on-demand routes selected by the current request.
 - Tag spelling and casing are stable.
 - Workspace-wide tag behavior belongs here and must stay short.
 
 ### Defined Tags
 
+- #OpenForge - Open Forge-owned route. Load this `entry` when it appears in loaded `Entries`, then apply the loaded file's own `Entries`.
 - #LoadWithParentEntrypoint - Load this `entry` immediately after its parent `entrypoint`, in listed order. Applies only inside already loaded `Entries`.
 - #LoadForPostWorkReview - Load this `entry` before ending meaningful work to route useful material produced during the work. Applies only inside already loaded `Entries`.
 - #Core - Base routing, workspace orientation, and agent primitive routes.

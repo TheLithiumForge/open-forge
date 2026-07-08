@@ -16,7 +16,7 @@ They are raw memory: useful for reconstruction and extraction, but not accepted 
 
 The installed sessions `entrypoint` must contain:
 
-- scoped `open-forge:` frontmatter with description and useful tags, including `WorkHistory` and `Contextual`
+- scoped `open-forge:` frontmatter with description and useful tags, including `WorkHistory`, `Contextual`, and `LoadWithParentEntrypoint`
 - a title
 - one short definition of sessions
 - compact raw-history, loading, extraction, and scope axioms
@@ -29,6 +29,8 @@ The authored portion must stay between 15 and 40 non-empty lines. Generated `ent
 Session files record what happened, what was tried, what changed, what remains unresolved, and where source context can be found.
 
 They may be incomplete, noisy, or superseded. They must not become behavior, accepted truth, or a replacement for crystallized memory.
+
+When useful work context has no clear owner yet, agents write it as session context first and reclassify it later.
 
 ## Loading Contract
 
@@ -82,9 +84,10 @@ The implementation is aligned when it:
 
 - is named `_sessions.md`
 - lives in `.agents/memory/working/sessions/`
-- includes `WorkHistory` and `Contextual` in scoped `open-forge:` tags
+- includes `WorkHistory`, `Contextual`, and `LoadWithParentEntrypoint` in scoped `open-forge:` tags
 - defines sessions as raw chronological work records
 - keeps sessions contextual rather than authoritative
+- uses sessions as the low-friction fallback for useful work context without a clear owner
 - requires extraction into the route or system that owns the resulting material
 - allows extracted session material to become another #Memory route, matching #Core material, or external state
 - supports recursive positive scope

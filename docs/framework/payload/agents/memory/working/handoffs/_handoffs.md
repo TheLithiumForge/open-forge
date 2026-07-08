@@ -16,7 +16,7 @@ They are resumability memory, not complete history and not accepted truth.
 
 The installed handoffs `entrypoint` must contain:
 
-- scoped `open-forge:` frontmatter with description and useful tags, including `AgentCommunication` and `Contextual`
+- scoped `open-forge:` frontmatter with description and useful tags, including `AgentCommunication`, `Contextual`, and `LoadWithParentEntrypoint`
 - a title
 - one short definition of handoffs
 - compact transfer, loading, freshness, and scope axioms
@@ -31,6 +31,8 @@ A handoff states the minimum useful context needed to continue work elsewhere.
 It must stay concise and point to sessions, documents, code, or other routes when detail matters.
 
 Handoffs are short static communication packets. They may include status, next action, blockers, relevant loaded context, and verification needs.
+
+When work is transferred, delegated, interrupted, or handed to another agent or human, agents must create or update a handoff unless a more specific route already captures the complete resume context.
 
 ## Loading Contract
 
@@ -84,9 +86,10 @@ The implementation is aligned when it:
 
 - is named `_handoffs.md`
 - lives in `.agents/memory/working/handoffs/`
-- includes `AgentCommunication` and `Contextual` in scoped `open-forge:` tags
+- includes `AgentCommunication`, `Contextual`, and `LoadWithParentEntrypoint` in scoped `open-forge:` tags
 - defines handoffs as static, concise, accurate, rereadable transfer notes
 - keeps handoffs contextual rather than authoritative
+- requires handoffs for transfer, delegation, interruption, or agent/human handoff
 - points to source routes when detail matters
 - requires stale handoffs to be updated, replaced, extracted, or archived
 - allows extracted handoff material to become another #Memory route, matching #Core material, or external state

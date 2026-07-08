@@ -44,6 +44,8 @@ If emerging memory changes external task state, the change must be promoted to t
 
 The emerging memory category is relevant when current work needs useful material that is not accepted truth yet, or when current work produces candidate material.
 
+Before ending meaningful work, agents must read emerging memory `Entries` to route candidate material produced during the work.
+
 The `entrypoint` must route agents to direct emerging memory files and child emerging memory categories whose path, description, or tags match the current request. Each selected child `entrypoint` applies the same contract recursively.
 
 Agents load emerging memory selectively and keep unrelated candidate material out of current work. The installed parent `entrypoint` must let generated `entries` carry installed route names and descriptions instead of repeating those names in axioms.
@@ -103,6 +105,7 @@ The implementation is aligned when it:
 - keeps emerging memory contextual until promoted or accepted
 - leaves child taxonomy to child `entrypoints` and local files
 - routes candidate material selectively
+- requires post-work review of emerging memory `Entries`
 - promotes emerging memory to the route that owns its new state
 - extracts operational emerging memory material into matching #Core routes, including user-created #Core categories and files
 - supports recursive positive scope

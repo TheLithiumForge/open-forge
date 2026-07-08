@@ -51,7 +51,7 @@ Category placement and descriptions expose positive scope. Tags add compact scop
 
 Tags must not be the only indication of workspace-wide or mandatory behavior. Tags never create authority. Reserved load-policy tags create only the loading behavior defined in this concept and in the installed loader.
 
-Layer tags such as #Core, #Memory, and #Extension are classification signals only. Built-in route type tags use singular PascalCase, such as #Directive, #Pattern, #Guidance, #Skill, #Workflow, and #Workspace.
+#OpenForge is a reserved load-policy tag for Open Forge-owned routes. Layer tags such as #Core, #Memory, and #Extension are classification signals only. Built-in route type tags use singular PascalCase, such as #Directive, #Pattern, #Guidance, #Skill, #Workflow, and #Workspace.
 
 A primitive category may extend its own type recursively at any depth. Workflows may also own mixed local bundles of directives, patterns, guidance, and skills. Other category types reference root primitives instead of embedding mixed local scopes.
 
@@ -70,6 +70,12 @@ Routes are navigation. They never replace the destination's detailed truth.
 Generated route metadata never defines instructions, behavior, or authority. Only reserved load-policy tags may affect loading.
 
 ## Load Tags
+
+#OpenForge loads Open Forge-owned route context.
+
+When an `entrypoint` is loaded, each generated `entry` tagged #OpenForge must be loaded in listed order. If the target is a category `entrypoint`, only that `entrypoint` is loaded first; that child `entrypoint`'s own `entries` then apply the same routing contract.
+
+#OpenForge does not create authority, scope, or precedence. It does not search unloaded trees. It is a load policy for Open Forge-owned routes already visible through loaded `Entries`.
 
 #LoadWithParentEntrypoint loads baseline route context.
 
@@ -137,8 +143,8 @@ The CLI may identify `scoped framework route` `entrypoints` by known path shape 
 Agents load routing layers in this order:
 
 1. Load the loader.
-2. Load generated `entries` tagged #LoadWithParentEntrypoint, in listed order.
-3. Repeat #LoadWithParentEntrypoint loading inside each loaded `entrypoint`.
+2. Load generated `entries` tagged #OpenForge or #LoadWithParentEntrypoint, in listed order.
+3. Repeat load-policy loading inside each loaded `entrypoint`.
 4. Apply every loaded `entrypoint`'s authored axioms.
 5. Let the current request select other relevant `entries` by path, description, and tags.
 6. Follow selected routes to the destinations that own detailed truth.
@@ -162,6 +168,7 @@ Routing is aligned when:
 - installed files provide enough meaning without governance descriptors
 - generated `entries` remain navigation metadata plus reserved load policy
 - reserved load-policy tags affect loading only
+- #OpenForge loads visible Open Forge-owned routes by default
 - category placement and descriptions keep scope visible
 - tags provide compact scope and classification signals
 - layer tags and route type tags remain classification signals unless a loaded `entrypoint` defines more
@@ -180,6 +187,7 @@ Routing is aligned when:
 - post-work review exists only through loaded parent `entrypoints`
 - mixed local primitive bundles are limited to workflows
 - overwrite companions load after their base files
+- default Open Forge-owned `entrypoints` use #OpenForge
 - default `directives/`, `memory/`, `memory/working/`, and `memory/crystallized/` `entrypoints` use #LoadWithParentEntrypoint
 - default `memory/emerging/` and `memory/emerging/observations/` `entrypoints` use #LoadForPostWorkReview
 - narrower selected scopes take safe preference within the same primitive

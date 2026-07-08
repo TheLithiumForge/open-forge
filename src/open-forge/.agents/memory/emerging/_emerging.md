@@ -12,6 +12,7 @@ Emerging memory is candidate material that may be useful but is not accepted tru
 
 - This `entrypoint` exposes candidate and unaccepted memory routes.
 - Read `Entries` when current work needs useful material that is not accepted truth or produces candidate material.
+- Before ending meaningful work, read `Entries` to route candidate material produced during the work.
 - Treat emerging memory as contextual until it is validated, promoted, or explicitly accepted.
 - Use listed `entries` according to their path, description, and tags.
 - Keep uncertainty, source, and scope visible.
