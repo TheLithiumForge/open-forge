@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Contextual advice for recurring choices, tradeoffs, and work scenarios
-  tags: [OpenForge, Core, Guidance, Index]
+  tags: [LoadNow, Core, Guidance, Index]
 ---
 
 # Guidance
@@ -11,13 +11,9 @@ Guidance provides adaptable judgment for recurring scenarios.
 ## Axioms
 
 - Use `Entries` when current work encounters a recurring scenario or decision that may have established guidance.
-- Load routes whose path, description, or tags match the current work.
 - Every guidance file identifies its scenario, preferred approach, reasoning, and relevant tradeoffs.
-- Apply applicable guidance when it fits the current context.
+- Guidance is advisory; apply it when it fits the current context.
 - State the reason for a context-driven adaptation or alternative.
-- Follow each selected child `entrypoint`'s scope and loading axioms recursively.
-- Prefer guidance from a narrower selected scope over broader guidance when safe and allowed.
-- Generated `entries` are navigation and reserved load policy only.
 
 ## Entries
 
