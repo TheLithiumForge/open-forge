@@ -110,7 +110,7 @@ Every routed primitive file inherits the positive scope of its containing catego
 
 ## Directive Loading Contract
 
-The default root directives category is tagged #LoadWithParentEntrypoint, so its generated loader `entry` loads with the loader.
+The default root directives category is tagged #LoadNow, so its generated loader `entry` loads with the loader.
 
 The root `entrypoint` must route agents to:
 

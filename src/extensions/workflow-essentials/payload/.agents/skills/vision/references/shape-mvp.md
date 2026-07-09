@@ -1,9 +1,5 @@
 # Shape MVP
 
-## Use When
-
-Use when a vision needs a first useful version instead of an unlimited feature set.
-
 ## Capability
 
 - Identify the core value that must work first.

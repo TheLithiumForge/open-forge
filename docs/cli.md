@@ -134,7 +134,7 @@ Use `open-forge extend` or `open-forge extend --select {target-folder}` to selec
 
 Use `open-forge extend --ids {id},{id} {target-folder}` for unattended bundled extension installs. The CLI resolves each value as a bundled extension id and runs index generation once after copying every selected payload.
 
-Extension payload files normally use #Extension plus their route type and useful scope tags. Do not use #OpenForge in extension payloads unless the extension intentionally adds baseline-loaded material; #OpenForge is reserved for Core framework routes by default.
+Extension payload files normally use #Extension plus their route type and useful scope tags. Do not use load-policy tags in extension payloads unless the extension intentionally adds baseline-loaded material.
 
 This is an MVP dogfooding command. It does not provide an external registry, preview, uninstall, update, route-template scaffolding, or dependency model yet. Build or select the overlay intentionally, run `extend`, then inspect the git diff.
 

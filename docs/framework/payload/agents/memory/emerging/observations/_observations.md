@@ -18,13 +18,13 @@ Observations are the agent learning surface: they let future agents validate, pr
 
 The installed observations `entrypoint` must contain:
 
-- scoped `open-forge:` frontmatter with description and useful tags, including `AgentLearning`, `OrganicGrowth`, `Contextual`, `Candidate`, and `LoadForPostWorkReview`
+- scoped `open-forge:` frontmatter with description and useful tags, including `AgentLearning`, `OrganicGrowth`, `Contextual`, `Candidate`, and `KeepInMind`
 - a title
 - one short definition of observations
 - compact finding, loading, promotion, and scope axioms
 - a final marker-bounded generated index region
 
-The authored portion must stay between 15 and 40 non-empty lines. Generated `entries` do not count toward this limit.
+The authored portion must stay between 10 and 40 non-empty lines. Generated `entries` do not count toward this limit.
 
 ## Observation Contract
 
@@ -90,7 +90,7 @@ The implementation is aligned when it:
 
 - is named `_observations.md`
 - lives in `.agents/memory/emerging/observations/`
-- includes `AgentLearning`, `OrganicGrowth`, `Contextual`, `Candidate`, and `LoadForPostWorkReview` in scoped `open-forge:` tags
+- includes `AgentLearning`, `OrganicGrowth`, `Contextual`, `Candidate`, and `KeepInMind` in scoped `open-forge:` tags
 - defines observations as grounded noticed findings
 - describes observations as agent learning material
 - requires post-work observations for grounded findings that may matter later

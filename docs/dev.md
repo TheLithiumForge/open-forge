@@ -29,7 +29,7 @@ dist/             # generated release output
 
 The shipped CLI runs on Node.js. Bun is only used to build this repo.
 
-Framework primitive specs live in `docs/framework/`. Start with `docs/framework/_framework.md` when changing the relationship between installable files, concepts, routes, patterns, workflows, templates, skills, and lifecycle material.
+Framework governance lives in `docs/framework/`: `concepts/` owns cross-cutting behavior (routing, formatting, layers, primitives, extensions, overwrites, payload boundary) and `payload/` mirrors the installable files with one descriptor per installed file. When a descriptor changes required behavior, the matching installed file changes in the same work.
 
 ## Commands
 
@@ -81,7 +81,9 @@ The npm package contains:
 dist/cli.mjs
 docs/cli.md
 docs/dev.md
+docs/extensions.md
 src/open-forge/
+src/extensions/
 README.md
 LICENSE
 package.json

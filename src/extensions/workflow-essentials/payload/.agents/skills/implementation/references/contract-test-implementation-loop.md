@@ -1,9 +1,5 @@
 # Contract Test Implementation Loop
 
-## Use When
-
-Use when the user prefers TDD or the change is safer with tests first.
-
 ## Capability
 
 - Contract: define the APIs, file shapes, skeletons, or wiring needed for tests to express the design clearly.

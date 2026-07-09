@@ -64,7 +64,7 @@ Open Forge-authored payload tags use singular PascalCase concept names by defaul
 
 Layer classification tags are singular: #Core, #Memory, and #Extension. These tags classify where material belongs; they do not create authority by themselves.
 
-Reserved load-policy tags are different from normal classification tags. Open Forge currently reserves #OpenForge, #LoadWithParentEntrypoint, and #LoadForPostWorkReview, which are governed by `docs/framework/concepts/routing.md` and defined in the installed loader.
+Reserved load-policy tags are different from normal classification tags. Open Forge currently reserves #LoadNow and #KeepInMind, which are governed by `docs/framework/concepts/routing.md` and defined in the installed loader.
 
 ## Backticks
 
@@ -88,7 +88,7 @@ Open Forge-authored category `entrypoints` and indexed routed files must use sco
 ---
 open-forge:
   description: Local workspace routes
-  tags: [OpenForge, Core, Workspace, Index]
+  tags: [LoadNow, Core, Workspace, Index]
 ---
 ```
 

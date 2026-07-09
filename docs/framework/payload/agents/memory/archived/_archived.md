@@ -20,7 +20,7 @@ The installed archived memory `entrypoint` must contain:
 - compact authority, structure, loading, and restoration axioms
 - a final marker-bounded generated index region
 
-The authored portion must stay between 15 and 45 non-empty lines. Generated `entries` do not count toward this limit.
+The authored portion must stay between 10 and 45 non-empty lines. Generated `entries` do not count toward this limit.
 
 ## Archived Contract
 

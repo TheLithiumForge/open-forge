@@ -16,17 +16,17 @@ The root category represents workspace-wide directive scope. Nested directive ca
 
 The installed directives category `entrypoint` must contain:
 
-- scoped `open-forge:` frontmatter with a description and useful tags, including `Core`, `Directive`, `Index`, and `LoadWithParentEntrypoint`
+- scoped `open-forge:` frontmatter with a description and useful tags, including `Core`, `Directive`, `Index`, and `LoadNow`
 - a title
 - one short definition of directives
 - compact loading, authority, and scope axioms
 - a final marker-bounded generated index region
 
-The authored portion must stay between 15 and 40 non-empty lines. Generated `entries` do not count toward this limit.
+The authored portion must stay between 10 and 40 non-empty lines. Generated `entries` do not count toward this limit.
 
 ## Loading Contract
 
-The root directives category is loaded through its generated loader `entry` because its installed metadata includes #LoadWithParentEntrypoint.
+The root directives category is loaded through its generated loader `entry` because its installed metadata includes #LoadNow.
 
 The root directives `entrypoint` must require agents to load:
 
@@ -83,7 +83,7 @@ The implementation is aligned when it:
 
 - is named `_directives.md`
 - lives in `.agents/directives/`
-- includes `Core`, `Directive`, `Index`, and `LoadWithParentEntrypoint` in scoped `open-forge:` tags
+- includes `Core`, `Directive`, `Index`, and `LoadNow` in scoped `open-forge:` tags
 - defines direct root files as workspace-wide
 - supports recursively scoped child directive categories
 - uses descriptions and tags as compact scope signals
