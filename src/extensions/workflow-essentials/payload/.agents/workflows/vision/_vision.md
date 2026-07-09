@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Workflow for turning intent into vision, MVP boundary, and growth direction
-  tags: [Extension, Core, Workflow, Vision, Product, Index]
+  description: Turn intent into vision, MVP boundary, and growth direction; use when product, project, feature, or workspace direction needs defining, refining, or challenging before execution
+  tags: [Extension, Workflow, Vision, Product, Index]
 ---
 
 # Vision
@@ -10,12 +10,10 @@ Vision is the workflow for clarifying what should exist, why it matters, what be
 
 ## Axioms
 
-- Use this workflow when the user wants to define, refine, or challenge product, project, feature, or workspace direction before execution.
-- Load every `Required Skill Packages` route before running `Steps`; report missing routes.
+- Read every `Required Skill Packages` route before running `Steps`; report missing routes.
 - Treat the vision as candidate direction until the user accepts it.
 - Separate accepted truth from candidate ideas; do not promote strategic direction to #CurrentTruth without user confirmation.
 - Prefer concise questions and concrete options over broad strategy prose.
-- Generated `entries` are navigation and reserved load policy only.
 
 ## Required Skill Packages
 

@@ -16,13 +16,13 @@ It is the durable understanding the workspace accepts as current.
 
 The installed crystallized memory `entrypoint` must contain:
 
-- scoped `open-forge:` frontmatter with description and useful tags, including `CurrentTruth` and `LoadWithParentEntrypoint`
+- scoped `open-forge:` frontmatter with description and useful tags, including `CurrentTruth` and `LoadNow`
 - a title
 - one short definition of crystallized memory
 - compact authority, loading, consolidation, and scope axioms
 - a final marker-bounded generated index region
 
-The authored portion must stay between 15 and 45 non-empty lines. Generated `entries` do not count toward this limit.
+The authored portion must stay between 10 and 45 non-empty lines. Generated `entries` do not count toward this limit.
 
 ## Crystallized Contract
 
@@ -94,7 +94,7 @@ The implementation is aligned when it:
 
 - is named `_crystallized.md`
 - lives in `.agents/memory/crystallized/`
-- includes `CurrentTruth` and `LoadWithParentEntrypoint` in scoped `open-forge:` tags
+- includes `CurrentTruth` and `LoadNow` in scoped `open-forge:` tags
 - defines crystallized memory as accepted durable memory and current truth
 - exposes the installed durable-record and decision-rationale routes
 - avoids repeating installed route names in implementation axioms

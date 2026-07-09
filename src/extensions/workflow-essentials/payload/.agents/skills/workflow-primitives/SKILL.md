@@ -15,6 +15,6 @@ Use this skill to keep workflow packs from duplicating basic agent behavior.
 
 ## References
 
-- `references/loaded-context-check.md` - Read before a workflow acts on incomplete context.
-- `references/memory-routing.md` - Read when useful workflow output needs a #Memory or #Core owner.
-- `references/completion-handoff.md` - Read near workflow completion when status, verification, next action, or resume context matters.
+- `references/loaded-context-check.md` - Read before a workflow makes a decision, edits files, creates accepted memory, or hands off work.
+- `references/memory-routing.md` - Read when workflow output may be worth saving beyond the current response and needs a #Memory or #Core owner.
+- `references/completion-handoff.md` - Read before ending meaningful workflow work, especially when work may continue in another context.

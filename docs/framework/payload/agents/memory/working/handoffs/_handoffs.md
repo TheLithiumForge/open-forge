@@ -16,13 +16,13 @@ They are resumability memory, not complete history and not accepted truth.
 
 The installed handoffs `entrypoint` must contain:
 
-- scoped `open-forge:` frontmatter with description and useful tags, including `AgentCommunication`, `Contextual`, and `LoadWithParentEntrypoint`
+- scoped `open-forge:` frontmatter with description and useful tags, including `AgentCommunication`, `Contextual`, and `LoadNow`
 - a title
 - one short definition of handoffs
 - compact transfer, loading, freshness, and scope axioms
 - a final marker-bounded generated index region
 
-The authored portion must stay between 15 and 40 non-empty lines. Generated `entries` do not count toward this limit.
+The authored portion must stay between 10 and 40 non-empty lines. Generated `entries` do not count toward this limit.
 
 ## Handoff Contract
 
@@ -86,7 +86,7 @@ The implementation is aligned when it:
 
 - is named `_handoffs.md`
 - lives in `.agents/memory/working/handoffs/`
-- includes `AgentCommunication`, `Contextual`, and `LoadWithParentEntrypoint` in scoped `open-forge:` tags
+- includes `AgentCommunication`, `Contextual`, and `LoadNow` in scoped `open-forge:` tags
 - defines handoffs as static, concise, accurate, rereadable transfer notes
 - keeps handoffs contextual rather than authoritative
 - requires handoffs for transfer, delegation, interruption, or agent/human handoff

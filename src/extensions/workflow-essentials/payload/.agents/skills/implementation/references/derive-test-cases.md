@@ -1,9 +1,5 @@
 # Derive Test Cases
 
-## Use When
-
-Use before or during implementation when tests are needed for confidence or TDD.
-
 ## Capability
 
 - Cover expected behavior, edge cases, invalid inputs, state transitions, regressions, and integration seams when relevant.

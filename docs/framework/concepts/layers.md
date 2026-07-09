@@ -53,9 +53,9 @@ archived/     archived memory preserved for context
 
 The base #Memory payload installs only universal child routes, including crystallized decisions for accepted rationale. More specialized containers, such as archive child routes, task routes, backlog routes, and workflow-specific outputs, are created under the route that owns their meaning. #Extension payloads may package those additions, but #Memory rules determine their state and scope.
 
-#Memory may be installed with or after #Core. The default #Memory `entrypoint` is tagged #LoadWithParentEntrypoint, so its generated loader `entry` loads with the loader when #Memory is installed.
+#Memory may be installed with or after #Core. The default #Memory `entrypoint` is tagged #LoadNow, so its generated loader `entry` loads with the loader when #Memory is installed.
 
-#Memory uses #LoadForPostWorkReview on selected candidate-memory routes so agents can route useful material produced during work without preloading every memory child body.
+#Memory uses #KeepInMind on selected candidate-memory routes so agents can route useful material produced during work without preloading every memory child body.
 
 ## Layer 3: Extensions
 

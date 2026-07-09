@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Workflow for understanding, designing, and recording architecture changes
-  tags: [Extension, Core, Workflow, Architecture, Design, Index]
+  description: Understand the current system and define a structural direction future work can follow; use when system structure needs design, evaluation, change, documentation, or review
+  tags: [Extension, Workflow, Architecture, Design, Index]
 ---
 
 # Architecture
@@ -10,12 +10,10 @@ Architecture is the workflow for understanding the current system, evaluating st
 
 ## Axioms
 
-- Use this workflow when the user wants to design, evaluate, change, document, or review system structure.
-- Load every `Required Skill Packages` route before running `Steps`; report missing routes.
+- Read every `Required Skill Packages` route before running `Steps`; report missing routes.
 - Do not propose architecture before mapping the current structure and accepted constraints.
 - Prefer incremental designs that can be implemented, tested, and reviewed in clear slices.
 - Keep rationale, behavior, reusable structures, and migration work in their owning routes.
-- Generated `entries` are navigation and reserved load policy only.
 
 ## Required Skill Packages
 

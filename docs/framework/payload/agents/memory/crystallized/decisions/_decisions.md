@@ -22,7 +22,7 @@ The installed decisions `entrypoint` must contain:
 - compact decision, authority, loading, consolidation, and scope axioms
 - a final marker-bounded generated index region
 
-The authored portion must stay between 15 and 40 non-empty lines. Generated `entries` do not count toward this limit.
+The authored portion must stay between 10 and 40 non-empty lines. Generated `entries` do not count toward this limit.
 
 ## Decision Contract
 

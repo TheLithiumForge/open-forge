@@ -1,9 +1,5 @@
 # Verification Review
 
-## Use When
-
-Use after implementation before final response, handoff, or memory extraction.
-
 ## Capability
 
 - Run or inspect the relevant verification.

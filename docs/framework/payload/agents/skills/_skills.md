@@ -22,7 +22,7 @@ The installed skills category `entrypoint` must contain:
 - compact relevance, loading, native skill package, scope, and runtime-boundary axioms
 - a final marker-bounded generated index region
 
-The authored portion must stay between 15 and 35 non-empty lines. Generated `entries` do not count toward this limit.
+The authored portion must stay between 10 and 35 non-empty lines. Generated `entries` do not count toward this limit.
 
 ## Skill Contract
 

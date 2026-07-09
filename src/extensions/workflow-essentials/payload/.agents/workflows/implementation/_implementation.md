@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Workflow for designing, testing, implementing, and reviewing a change against current patterns
-  tags: [Extension, Core, Workflow, Implementation, Testing, Index]
+  description: Turn an accepted goal into a verified change that fits the current system; use when a concrete change needs design, implementation, testing, review, or handoff preparation
+  tags: [Extension, Workflow, Implementation, Testing, Index]
 ---
 
 # Implementation
@@ -10,14 +10,11 @@ Implementation is the workflow for turning an accepted goal into a verified chan
 
 ## Axioms
 
-- Use this workflow when the user wants a concrete change implemented, tested, reviewed, or prepared for handoff.
-- Load every `Required Skill Packages` route before running `Steps`; report missing routes.
+- Read every `Required Skill Packages` route before running `Steps`; report missing routes.
 - Do not edit before loading the routes that constrain the change.
 - Design the fit before writing the implementation.
-- Use tests as the preferred verification when they are practical.
-- State the verification substitute when tests are not practical.
+- Use tests as the preferred verification when practical; state the substitute when they are not.
 - Keep the final result aligned with loaded patterns and directives; report unresolved conflicts.
-- Generated `entries` are navigation and reserved load policy only.
 
 ## Required Skill Packages
 

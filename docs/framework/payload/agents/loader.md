@@ -18,10 +18,11 @@ It is the root file and routing primitive for the installed framework.
 
 The installed loader must contain:
 
-- the rule that generated `entries` tagged #LoadWithParentEntrypoint load immediately with their parent `entrypoint`
-- the rule that generated `entries` tagged #LoadForPostWorkReview load before ending meaningful work
-- the rule that generated `entries` tagged #OpenForge load when they appear in loaded `Entries`
+- the rule that agents read generated `entries` tagged #LoadNow when they appear in loaded `Entries`, in listed order
+- the rule that agents read generated `entries` tagged #KeepInMind immediately and recheck them before ending meaningful work
 - the rule that loaded `axioms` are mandatory unless higher-priority instructions conflict
+- the rule that axioms of loaded ancestor `entrypoints` apply to all routes below them, so child `entrypoints` add only scope-specific axioms
+- the rule that material in a narrower selected scope is preferred over broader material of the same type when safe and allowed
 - the rule that the current request controls relevance for `entries` without reserved load-policy tags
 - a short terms section defining `entrypoint`, `entry`, `framework route`, `scope route`, `scoped framework route`, `slug`, and `axiom`
 - the rule that a folder is routable only when it contains one recognized `entrypoint`
@@ -35,7 +36,7 @@ The installed loader must contain:
 - the tag behavior table used by Open Forge-authored `entries`
 - the authority posture for local active truth, defaults, context, and candidate learning
 - the preference for written #Memory routes over private or opaque agent memory for durable workspace state
-- the distinction that writing files inside existing routes is normal use, while adding root routes or child categories changes routing and needs clear scope
+- the rule that writing files inside existing routes is normal use, child categories are added when they improve routing, ownership, or clarity, and new root routes need clear scope
 - the customization posture: add local files first, use overwrites for light changes, edit framework files for complete behavior changes
 - a final marker-bounded registry of active root routes
 
@@ -49,19 +50,13 @@ Generated loader paths must be concrete and relative to the active workspace roo
 
 The loader must not infer a Git repository root or require runtime path constants.
 
-A generated `entry` tagged #OpenForge must be loaded when it appears in loaded `Entries`. If the target is a category `entrypoint`, only that `entrypoint` is loaded first; its own `entries` then apply the same routing contract.
+Agents read a generated `entry` tagged #LoadNow when it appears in loaded `Entries`, in listed order. If the target is a category `entrypoint`, only that `entrypoint` is read first; its own `entries` then apply the same routing contract.
 
-#OpenForge is a default load policy for Open Forge core routes. It does not create authority, scope, or precedence.
+Agents read a generated `entry` tagged #KeepInMind like #LoadNow, keep its instructions active while working, and recheck it before ending meaningful work to perform the follow-ups it requires.
 
-A generated `entry` tagged #LoadWithParentEntrypoint must be loaded immediately after its parent `entrypoint` is loaded, in listed order. If the target is a category `entrypoint`, only that `entrypoint` is loaded first; its own `entries` then apply the same routing contract.
+Load-policy tags are loading policies only. They do not create authority, scope, precedence, or a write requirement. They do not search unloaded trees; autoload requires a loaded parent chain.
 
-#LoadWithParentEntrypoint is a loading policy only. It does not create authority, scope, or precedence. It also does not search unloaded trees; nested autoload requires a loaded parent chain.
-
-A generated `entry` tagged #LoadForPostWorkReview must be loaded before ending meaningful work so agents can route useful material produced during the work. It applies only inside already loaded `Entries`.
-
-#LoadForPostWorkReview is a loading policy only. It does not create authority, scope, precedence, or a write requirement.
-
-The default payload tags every Open Forge core `entrypoint` with #OpenForge. Root Open Forge `entries` therefore load with the loader, and nested Open Forge core `entrypoints` load as their parent `Entries` become visible.
+The default payload tags every Open Forge core `entrypoint` with #LoadNow, or #KeepInMind where standing follow-up matters. Root `entries` therefore load with the loader, and nested core `entrypoints` load as their parent `Entries` become visible.
 
 Local active truth has precedence over Open Forge defaults. Default files may still be loaded as context when useful.
 
@@ -108,7 +103,8 @@ The installed loader must state these authority axioms:
 - required memory actions are complete only after the file is written or a blocker is reported
 - local active truth overrides Open Forge defaults
 - written #Memory routes are preferred over private or opaque agent memory for durable workspace state
-- writing files inside existing routes is normal use, while adding root routes or child categories changes routing and needs clear scope
+- axioms of loaded ancestor `entrypoints` apply to all routes below them
+- writing files inside existing routes is normal use; child categories are added when they improve routing, ownership, or clarity, and new root routes need clear scope
 - generated `entries` are navigation metadata; only reserved load-policy tags affect loading
 - reserved load-policy tags affect loading only and do not create authority
 - archived, historical, example, external, and temporary continuation material is contextual unless restored or promoted
@@ -124,13 +120,12 @@ The installed `## Tags` section must contain:
 - `### Axioms`
 - `### Defined Tags`
 
-Tag axioms must state that defined tags have framework meaning when they appear in loaded content or generated `entries`, undefined tags remain routing and search signals, entries without #OpenForge or another load-policy tag are on-demand routes selected by the current request, tag spelling and casing are stable, and workspace-wide tag behavior belongs in the tag section.
+Tag axioms must state that defined tags have framework meaning when they appear in loaded content or generated `entries`, undefined tags remain routing and search signals, entries without a load-policy tag are on-demand routes selected by the current request, tag spelling and casing are stable, and workspace-wide tag behavior belongs in the tag section.
 
 Defined tags must include:
 
-- #OpenForge
-- #LoadWithParentEntrypoint
-- #LoadForPostWorkReview
+- #LoadNow
+- #KeepInMind
 - #Core
 - #Memory
 - #Extension
@@ -178,12 +173,11 @@ The implementation is aligned when it:
 - keeps route examples as shape explanations rather than generated paths
 - defines reserved tag behavior in `## Tags`
 - separates tag axioms from defined tags
-- defines #OpenForge, #LoadWithParentEntrypoint, #LoadForPostWorkReview, #Core, #Memory, #Extension, #Contextual, and #CurrentTruth
+- defines #LoadNow, #KeepInMind, #Core, #Memory, #Extension, #Contextual, and #CurrentTruth
 - defines loaded `axioms` as mandatory
-- loads generated #OpenForge `entries` when they appear in loaded `Entries`
-- loads generated #LoadWithParentEntrypoint `entries` in listed order
-- loads generated #LoadForPostWorkReview `entries` before ending meaningful work
-- marks default Open Forge core `entrypoints` with #OpenForge
+- reads generated #LoadNow `entries` when they appear in loaded `Entries`, in listed order
+- rechecks loaded #KeepInMind `entries` before ending meaningful work
+- marks default Open Forge core `entrypoints` with #LoadNow, or #KeepInMind where standing follow-up matters
 - generates `entries` for direct active root routes only
 - derives descriptions and tags from category `entrypoints`
 - loads a selected category `entrypoint` before its routed files

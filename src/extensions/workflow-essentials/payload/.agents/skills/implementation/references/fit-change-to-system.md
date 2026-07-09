@@ -1,9 +1,5 @@
 # Fit Change To System
 
-## Use When
-
-Use before editing when the change touches code, docs, routing, architecture, or shared behavior.
-
 ## Capability
 
 - Read the existing structure before proposing shape.

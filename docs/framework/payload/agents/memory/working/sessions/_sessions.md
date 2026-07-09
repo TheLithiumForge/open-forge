@@ -16,13 +16,13 @@ They are raw memory: useful for reconstruction and extraction, but not accepted 
 
 The installed sessions `entrypoint` must contain:
 
-- scoped `open-forge:` frontmatter with description and useful tags, including `WorkHistory`, `Contextual`, and `LoadWithParentEntrypoint`
+- scoped `open-forge:` frontmatter with description and useful tags, including `WorkHistory`, `Contextual`, and `LoadNow`
 - a title
 - one short definition of sessions
 - compact raw-history, loading, extraction, and scope axioms
 - a final marker-bounded generated index region
 
-The authored portion must stay between 15 and 40 non-empty lines. Generated `entries` do not count toward this limit.
+The authored portion must stay between 10 and 40 non-empty lines. Generated `entries` do not count toward this limit.
 
 ## Session Contract
 
@@ -84,7 +84,7 @@ The implementation is aligned when it:
 
 - is named `_sessions.md`
 - lives in `.agents/memory/working/sessions/`
-- includes `WorkHistory`, `Contextual`, and `LoadWithParentEntrypoint` in scoped `open-forge:` tags
+- includes `WorkHistory`, `Contextual`, and `LoadNow` in scoped `open-forge:` tags
 - defines sessions as raw chronological work records
 - keeps sessions contextual rather than authoritative
 - uses sessions as the low-friction fallback for useful work context without a clear owner

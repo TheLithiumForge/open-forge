@@ -24,7 +24,7 @@ The installed memory category `entrypoint` must contain:
 - compact lifecycle, authority, baseline loading, growth, child-route, and promotion axioms
 - a final marker-bounded generated index region
 
-The authored portion must stay between 20 and 50 non-empty lines. Generated `entries` do not count toward this limit.
+The authored portion must stay between 12 and 50 non-empty lines. Generated `entries` do not count toward this limit.
 
 ## State Contract
 
@@ -51,11 +51,11 @@ Archive child routes, task routes, backlog routes, and other specialized contain
 
 ## Loading Contract
 
-The root memory category is loaded through its generated loader `entry` because its installed metadata includes #LoadWithParentEntrypoint.
+The root memory category is loaded through its generated loader `entry` because its installed metadata includes #LoadNow.
 
-The memory `entrypoint` must rely on the loader-defined #LoadWithParentEntrypoint tag for baseline state routing.
+The memory `entrypoint` must rely on the loader-defined #LoadNow tag for baseline state routing.
 
-The `working/` and `crystallized/` state `entrypoints` must use #LoadWithParentEntrypoint. The `working/handoffs/` and `working/sessions/` child `entrypoints` must also use #LoadWithParentEntrypoint because they are bounded transfer and raw-context routes. The `emerging/` state `entrypoint` must use #LoadForPostWorkReview. The `archived/` state `entrypoint` must remain relevance-routed unless its contract changes.
+The `working/`, `crystallized/`, and `archived/` state `entrypoints` must use #LoadNow. The `working/handoffs/` and `working/sessions/` child `entrypoints` must also use #LoadNow because they are bounded transfer and raw-context routes. The `emerging/` state `entrypoint` must use #KeepInMind. State `entrypoints` expose routes; state bodies stay relevance-routed.
 
 The `working/`, `emerging/`, and `archived/` `entries` must include #Contextual. The `crystallized/` `entry` must include #CurrentTruth.
 
@@ -119,13 +119,13 @@ The implementation is aligned when it:
 
 - is named `_memory.md`
 - lives in `.agents/memory/`
-- includes `OrganicGrowth` and `LoadWithParentEntrypoint` in scoped `open-forge:` tags
+- includes `OrganicGrowth` and `LoadNow` in scoped `open-forge:` tags
 - defines `working/`, `emerging/`, `crystallized/`, and `archived/`
 - describes Memory as self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning
 - installs only universal child routes under the relevant memory state
-- marks `working/` and `crystallized/` `entries` with #LoadWithParentEntrypoint
-- marks `working/handoffs/` and `working/sessions/` `entries` with #LoadWithParentEntrypoint
-- marks `emerging/` `entries` with #LoadForPostWorkReview
+- marks `working/`, `crystallized/`, and `archived/` `entries` with #LoadNow
+- marks `working/handoffs/` and `working/sessions/` `entries` with #LoadNow
+- marks `emerging/` `entries` with #KeepInMind
 - marks `working/`, `emerging/`, and `archived/` `entries` with #Contextual
 - marks `crystallized/` `entries` with #CurrentTruth
 - keeps Memory separate from primitive behavior routes

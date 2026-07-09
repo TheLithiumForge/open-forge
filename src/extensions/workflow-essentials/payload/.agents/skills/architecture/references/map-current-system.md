@@ -1,9 +1,5 @@
 # Map Current System
 
-## Use When
-
-Use before proposing architecture, large refactors, migrations, or structural documentation.
-
 ## Capability
 
 - Identify relevant source roots, modules, packages, boundaries, and owners.

@@ -14,13 +14,13 @@ Working memory represents temporary context needed to continue or resume current
 
 The installed working memory `entrypoint` must contain:
 
-- scoped `open-forge:` frontmatter with description and useful tags, including `Contextual` and `LoadWithParentEntrypoint`
+- scoped `open-forge:` frontmatter with description and useful tags, including `Contextual` and `LoadNow`
 - a title
 - one short definition of working memory
 - compact lifecycle, loading, freshness, and extraction axioms
 - a final marker-bounded generated index region
 
-The authored portion must stay between 15 and 40 non-empty lines. Generated `entries` do not count toward this limit.
+The authored portion must stay between 10 and 40 non-empty lines. Generated `entries` do not count toward this limit.
 
 ## Working Contract
 
@@ -88,10 +88,10 @@ The implementation is aligned when it:
 
 - is named `_working.md`
 - lives in `.agents/memory/working/`
-- includes `Contextual` and `LoadWithParentEntrypoint` in scoped `open-forge:` tags
+- includes `Contextual` and `LoadNow` in scoped `open-forge:` tags
 - defines working memory as live resumability context
 - exposes installed `handoffs/` and `sessions/` routes
-- marks installed `handoffs/` and `sessions/` routes with #LoadWithParentEntrypoint
+- marks installed `handoffs/` and `sessions/` routes with #LoadNow
 - avoids repeating installed route names in implementation axioms
 - keeps working memory contextual rather than authoritative
 - routes current work selectively

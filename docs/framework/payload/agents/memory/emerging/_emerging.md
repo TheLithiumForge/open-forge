@@ -14,13 +14,13 @@ Emerging memory represents candidate learning and unsettled useful material that
 
 The installed emerging memory `entrypoint` must contain:
 
-- scoped `open-forge:` frontmatter with description and useful tags, including `OrganicGrowth`, `Contextual`, `Candidate`, and `LoadForPostWorkReview`
+- scoped `open-forge:` frontmatter with description and useful tags, including `OrganicGrowth`, `Contextual`, `Candidate`, and `KeepInMind`
 - a title
 - one short definition of emerging memory
 - compact candidate, loading, promotion, and scope axioms
 - a final marker-bounded generated index region
 
-The authored portion must stay between 15 and 40 non-empty lines. Generated `entries` do not count toward this limit.
+The authored portion must stay between 10 and 40 non-empty lines. Generated `entries` do not count toward this limit.
 
 ## Emerging Contract
 
@@ -98,7 +98,7 @@ The implementation is aligned when it:
 
 - is named `_emerging.md`
 - lives in `.agents/memory/emerging/`
-- includes `OrganicGrowth`, `Contextual`, `Candidate`, and `LoadForPostWorkReview` in scoped `open-forge:` tags
+- includes `OrganicGrowth`, `Contextual`, `Candidate`, and `KeepInMind` in scoped `open-forge:` tags
 - defines emerging memory as candidate learning
 - exposes installed `analysis/`, `ideas/`, and `observations/` routes
 - avoids repeating installed route names in implementation axioms
