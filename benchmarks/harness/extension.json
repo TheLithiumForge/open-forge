@@ -1,0 +1,4 @@
+{
+  "name": "benchmark-harness",
+  "description": "Shared process rules and worker workflow for Open Forge benchmark runs; orchestrator materials live outside payload"
+}

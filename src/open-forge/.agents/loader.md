@@ -78,7 +78,7 @@ Use the smallest structure that makes the work clear, safe, and resumable.
 Customize in this order:
 
 1. Add local files.
-2. Use overwrite files for additive or lightly modifying behavior.
+2. Use overwrite files (`{file-name}.overwrite.md`) for additive or lightly modifying behavior.
 3. Edit framework files when a complete behavior change is required.
 
 Do not create parallel truth when active truth already exists. Update the active truth and preserve history locally.
@@ -86,6 +86,7 @@ Do not create parallel truth when active truth already exists. Update the active
 ## Entries
 
 <!-- open-forge:generated-index:start -->
+
 - `.agents/directives/_directives.md` - Mandatory instructions agents must follow when they apply to the current work - #LoadNow #Core #Directive #Index
 - `.agents/guidance/_guidance.md` - Contextual advice for recurring choices, tradeoffs, and work scenarios - #LoadNow #Core #Guidance #Index
 - `.agents/memory/_memory.md` - Self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning - #LoadNow #Memory #OrganicGrowth #Index
@@ -93,4 +94,4 @@ Do not create parallel truth when active truth already exists. Update the active
 - `.agents/skills/_skills.md` - Reusable agent capability packages with clear use cases and expected results - #LoadNow #Core #Skill #Index
 - `.agents/workflows/_workflows.md` - Repeatable markdown workflow recipes for reaching a defined goal - #LoadNow #Core #Workflow #Index
 - `.agents/workspace/_workspace.md` - Workspace routes that point to important project locations and explain when to use them - #LoadNow #Core #Workspace #Index
-<!-- open-forge:generated-index:end -->
+  <!-- open-forge:generated-index:end -->
