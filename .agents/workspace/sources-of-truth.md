@@ -16,6 +16,6 @@ Route map for this repository's authoritative locations. Destination files own d
 - `src/extensions/` - bundled first-party extensions, each with `extension.json` plus `payload/`; `workflow-essentials` is the first one.
 - `build.ts` and `dist/` - build script and build output; never edit `dist/` by hand.
 - `docs/dev.md` and `docs/extensions.md` - development and extension authoring docs.
-- `dogfood-*.md` and `recommendations-*.md` at the repository root - dogfood evidence reports, routed by `.agents/memory/crystallized/documents/dogfood-reports.md`.
+- `.agents/memory/crystallized/documents/dogfood-reports/` - accepted records of dogfood evidence reports and recommendation analysis.
 
 Validation commands for this repository: `bun run index`, `bun test`, `bun run build`.
