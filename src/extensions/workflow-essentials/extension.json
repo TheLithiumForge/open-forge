@@ -1,4 +1,6 @@
 {
   "name": "Workflow Essentials",
-  "description": "Vision, architecture, and implementation workflows with shared workflow skills"
+  "description": "Convenience pack for the vision, architecture, and implementation workflows",
+  "version": "0.1.0",
+  "dependencies": ["vision-workflow", "architecture-workflow", "implementation-workflow"]
 }

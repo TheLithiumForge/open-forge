@@ -8,6 +8,8 @@ open-forge:
 
 Analyzed 2026-07-10 against the maintainer's private planning for the companion tools. Kept deliberately high-level here; detailed product truth stays in the private repository.
 
+Status: the conservative `rune-bridge` extension was implemented 2026-07-15 as one Workspace route plus one Guidance route. It adds no directive, command, configuration, installation, or storage contract. More prescriptive integration remains deferred until Rune exposes a stable public contract and benchmark evidence warrants it.
+
 ## What They Are (Boundary-Relevant Summary)
 
 - Rune: a human-first project-knowledge CLI - markdown memories as source of truth, a rebuildable local index, hybrid semantic plus full-text search, relevance features (recency, pins, related), lifecycle commands, agent briefing, and an MCP server. Heavy runtime: local embedding models and a database engine.
@@ -27,11 +29,12 @@ Glyph needs no integration beyond, at most, a workspace route telling agents it 
 
 First-party, install-by-choice, exactly like any other extension - this resolves the "do not push tools on unwanting users" tension: core stays plain; power tooling arrives only through `open-forge extend`.
 
-A `rune-bridge` extension would add:
+A `rune-bridge` extension now adds:
 
-- a workspace route describing the rune commands agents may use for semantic recall over workspace memory and when to prefer them over walking routes manually
-- optionally a directive that memory searches beyond routed navigation go through rune when it is installed
-- optionally a config preset pointing rune's source paths at `.agents/`
+- a workspace route describing the authority boundary and when optional relevance assistance may help
+- guidance for choosing Rune-assisted broad recall or deterministic Open Forge routing
+
+It deliberately does not add the previously considered directive or config preset. Rune's installed documentation owns its interface; Open Forge does not invent or pin a private command/configuration contract.
 
 Coupling stays one-directional: rune reads markdown; open-forge core never depends on rune.
 

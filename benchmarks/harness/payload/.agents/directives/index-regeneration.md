@@ -1,15 +1,15 @@
 ---
 open-forge:
-  description: The open-forge CLI is installed globally; regenerate index regions with it instead of hand-editing generated regions
+  description: Use the declared open-forge CLI when the benchmark runtime provides it; otherwise report and bound any manual index fallback
   tags: [Extension, Directive, Tooling, Routing]
 ---
 
 # Index Regeneration
 
-The `open-forge` CLI is installed globally in this environment.
+The benchmark arm or runtime must declare whether an `open-forge` CLI is available. Do not infer a global installation.
 
 ## Axioms
 
-- After adding, moving, or removing routed markdown files, run `open-forge index .` from the workspace root to regenerate index regions.
+- When the declared runtime provides `open-forge`, after adding, moving, or removing routed Markdown files run `open-forge index .` from the workspace root to regenerate index regions.
 - Do not hand-edit content between generated-index markers; the CLI owns that region.
-- If the CLI is genuinely unavailable, hand-edit as a fallback, keep the edit to exactly what the generator would produce, and report the fallback in the final response.
+- If the CLI is genuinely unavailable, hand-edit only as a bounded fallback, keep the edit to exactly what the generator would produce, and report the missing tool and fallback in the final response.

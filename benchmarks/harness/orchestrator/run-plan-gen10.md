@@ -1,5 +1,7 @@
 # Run Plan - Generation 10 (orchestrator only)
 
+> Historical and frozen. This predates the P0 runner and documents the already-completed generation 10 treatment; do not use it as the current runbook or as causal evidence. Quantitative wording below is preserved as-run and is corrected by `.agents/memory/emerging/observations/2026-07-12_benchmark-validity-gaps.md`.
+
 Paste `orchestrator-prompt.md` first, then this plan. This generation is an A/B against the gen8/gen9 no-variables baseline; see `benchmarks/results/*gen8*`, `*gen9*`, and `.agents/memory/crystallized/documents/evaluations/v9-synthesis.md`.
 
 ## Composition Per Scenario (overrides the default sweep)

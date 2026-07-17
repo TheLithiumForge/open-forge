@@ -22,12 +22,14 @@ The framework is designed to be a bit more work from the start, because it does 
 
 ```text
 src/open-forge/   # installable template payload
+src/extensions/   # optional first-party extension packages
 src/cli/cli.ts    # CLI source
+benchmarks/harness/runner.ts # developer-only benchmark evidence runner
 build.ts          # one build script
 dist/             # generated release output
 ```
 
-The shipped CLI runs on Node.js. Bun is only used to build this repo.
+The shipped CLI runs on Node.js. Bun is the repository-development runtime for builds, tests, source indexing, and the developer benchmark harness; it is not required by users of the distributed CLI.
 
 Framework governance lives in `docs/framework/`: `concepts/` owns cross-cutting behavior (routing, formatting, layers, primitives, extensions, overwrites, payload boundary) and `payload/` mirrors the installable files with one descriptor per installed file. When a descriptor changes required behavior, the matching installed file changes in the same work.
 
@@ -49,6 +51,7 @@ After build, run the CLI with Node:
 
 ```sh
 node ./dist/cli.mjs install .
+node ./dist/cli.mjs extend --list
 node ./dist/cli.mjs index .
 ```
 
@@ -68,6 +71,7 @@ That is local convenience only. The distributed CLI is Node.
 ```text
 dist/cli.mjs
 dist/open-forge-src/
+dist/extensions/
 dist/open-forge-src.tar.gz
 dist/open-forge-src.tar.gz.sha256
 dist/open-forge-src.manifest.json
@@ -114,10 +118,6 @@ open-forge-src.tar.gz.sha256
 open-forge-src.manifest.json
 ```
 
-Optionally attach:
-
-```text
-cli.mjs
-```
+Do not attach `cli.mjs` by itself. The executable resolves install payloads from the npm package layout or from adjacent `open-forge-src/` and `extensions/` directories in the complete `dist/` layout; the lone file is not a standalone distribution.
 
 Open Forge should be consumed from released artifacts, not from a moving branch.

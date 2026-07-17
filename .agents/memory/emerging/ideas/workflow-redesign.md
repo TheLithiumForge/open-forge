@@ -6,7 +6,7 @@ open-forge:
 
 # Workflow Redesign
 
-Status: accepted and applied 2026-07-10. The decision record is `.agents/memory/crystallized/decisions/workflow-shape.md`; this file stays for the rationale detail and the worked example until archived. Remaining follow-up: run a seeded benchmark round against the new shape.
+Status: accepted and applied 2026-07-10. The decision record is `.agents/memory/crystallized/decisions/workflow-shape.md`; this file stays for the rationale detail and historical worked example until archived. The shipped `dev-workflow` later generalized from mandatory TDD to an adaptive implement-test-improve-retest-diagnose-fix cycle; that content evolution does not change the accepted workflow shape. Remaining follow-up: run a seeded benchmark round against the new shape.
 
 ## What A Workflow Is
 

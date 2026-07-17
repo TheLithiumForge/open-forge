@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-forge.local/benchmarks/evaluation-input.schema.json",
+  "title": "Open Forge benchmark evaluation input",
+  "description": "Finalize-only input. This JSON file and every referenced trace must be singly-linked regular files external to the source repository and run, workspace, and evidence directories.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "status", "objectiveAssertions", "subjectiveRatings", "traces", "notes"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "status": { "enum": ["complete", "invalid", "aborted"] },
+    "objectiveAssertions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "status", "command", "exitCode", "durationMs", "evidenceTraceNames", "note"],
+        "properties": {
+          "id": { "$ref": "#/$defs/id" },
+          "status": { "enum": ["pass", "fail", "error"] },
+          "command": { "type": ["string", "null"] },
+          "exitCode": { "type": ["integer", "null"] },
+          "durationMs": { "type": ["number", "null"], "minimum": 0 },
+          "evidenceTraceNames": { "type": "array", "items": { "$ref": "#/$defs/id" } },
+          "note": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "subjectiveRatings": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "score", "maxScore", "rationale"],
+        "properties": {
+          "id": {
+            "oneOf": [
+              { "enum": ["directive-compliance", "memory-growth", "routing-behavior", "communication", "product-fidelity"] },
+              { "type": "string", "pattern": "^seed-[A-Za-z0-9._-]{1,122}$" }
+            ]
+          },
+          "score": { "type": "number", "minimum": 0, "maximum": 2 },
+          "maxScore": { "const": 2 },
+          "rationale": { "type": "string", "minLength": 1 }
+        }
+      },
+      "allOf": [
+        { "contains": { "type": "object", "required": ["id"], "properties": { "id": { "const": "directive-compliance" } } }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "type": "object", "required": ["id"], "properties": { "id": { "const": "memory-growth" } } }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "type": "object", "required": ["id"], "properties": { "id": { "const": "routing-behavior" } } }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "type": "object", "required": ["id"], "properties": { "id": { "const": "communication" } } }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "type": "object", "required": ["id"], "properties": { "id": { "const": "product-fidelity" } } }, "minContains": 1, "maxContains": 1 }
+      ]
+    },
+    "traces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "path"],
+        "properties": {
+          "name": { "$ref": "#/$defs/id" },
+          "path": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "notes": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$" }
+  }
+}

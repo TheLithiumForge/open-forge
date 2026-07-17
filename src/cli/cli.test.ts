@@ -2,12 +2,58 @@ import { afterEach, describe, expect, test } from "bun:test";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { createExtensionSelectionState, toggleExtensionSelection, type ExtensionDependencyInfo } from "./cli.ts";
 
 const cliFile = path.join(import.meta.dir, "cli.ts");
 const temporaryRoots: string[] = [];
 
 afterEach(async () => {
   await Promise.all(temporaryRoots.splice(0).map((root) => fs.rm(root, { recursive: true, force: true })));
+});
+
+describe("extension catalogue selection state", () => {
+  const extensions: ExtensionDependencyInfo[] = [
+    { id: "base-skill", dependencies: [] },
+    { id: "shared-workflow", dependencies: ["base-skill"] },
+    { id: "feature-flow", dependencies: ["shared-workflow"] },
+    { id: "review-flow", dependencies: ["shared-workflow"] }
+  ];
+
+  test("auto-selects transitive dependencies as required", () => {
+    const state = createExtensionSelectionState(extensions, ["feature-flow"]);
+
+    expect([...state.direct]).toEqual(["feature-flow"]);
+    expect([...state.required].sort()).toEqual(["base-skill", "shared-workflow"]);
+  });
+
+  test("keeps directly selected dependencies direct and locks required-only entries", () => {
+    const state = createExtensionSelectionState(extensions, ["feature-flow", "shared-workflow"]);
+    const locked = toggleExtensionSelection(extensions, state, "base-skill");
+
+    expect([...state.direct]).toEqual(["feature-flow", "shared-workflow"]);
+    expect([...state.required]).toEqual(["base-skill"]);
+    expect(locked).toBe(state);
+  });
+
+  test("releases dependencies only after their last dependent is deselected", () => {
+    let state = createExtensionSelectionState(extensions, ["feature-flow", "review-flow"]);
+    state = toggleExtensionSelection(extensions, state, "feature-flow");
+
+    expect([...state.direct]).toEqual(["review-flow"]);
+    expect([...state.required].sort()).toEqual(["base-skill", "shared-workflow"]);
+
+    state = toggleExtensionSelection(extensions, state, "review-flow");
+    expect([...state.direct]).toEqual([]);
+    expect([...state.required]).toEqual([]);
+  });
+
+  test("downgrades a deselected direct dependency to required while it is still needed", () => {
+    const state = createExtensionSelectionState(extensions, ["feature-flow", "shared-workflow"]);
+    const next = toggleExtensionSelection(extensions, state, "shared-workflow");
+
+    expect([...next.direct]).toEqual(["feature-flow"]);
+    expect([...next.required].sort()).toEqual(["base-skill", "shared-workflow"]);
+  });
 });
 
 describe("category index generation", () => {
@@ -111,6 +157,34 @@ This paragraph is authored content.
     expect(result.exitCode).toBe(1);
     expect(result.stderr).toContain("contains authored content");
     expect(content).toBe(original);
+  });
+
+  test("validates every generated index before writing any of them", async () => {
+    const root = await createRoot();
+    const valid = await createCategory(root, "alpha", `# Alpha
+
+## Entries
+
+<!-- open-forge:generated-index:start -->
+- stale.md - Stale - #Old
+<!-- open-forge:generated-index:end -->
+`);
+    await writeRoute(valid, "current.md", "Current route", ["Pattern"]);
+    const invalid = await createCategory(root, "zeta", `# Zeta
+
+## Entries
+
+<!-- open-forge:generated-index:start -->
+- keep.md - Keep - #Keep
+`);
+    const originalValid = await fs.readFile(path.join(valid, "_alpha.md"), "utf8");
+    const originalInvalid = await fs.readFile(path.join(invalid, "_zeta.md"), "utf8");
+
+    const result = await runCli("index", root);
+
+    expect(result.exitCode).toBe(1);
+    expect(await fs.readFile(path.join(valid, "_alpha.md"), "utf8")).toBe(originalValid);
+    expect(await fs.readFile(path.join(invalid, "_zeta.md"), "utf8")).toBe(originalInvalid);
   });
 
   test("routes categories through child entrypoints at arbitrary depth", async () => {
@@ -482,6 +556,20 @@ open-forge:
     expect(await exists(path.join(root, ".agents", "patterns", "react", "_react.md"))).toBe(true);
   });
 
+  test("installs an empty package without requiring a pre-existing target", async () => {
+    const parent = await createRoot();
+    const root = path.join(parent, "target");
+    const extension = await createRoot();
+    await fs.mkdir(path.join(extension, "payload", ".agents"), { recursive: true });
+    await fs.writeFile(path.join(extension, "extension.json"), JSON.stringify({ name: "Empty Pack" }));
+
+    const result = await runCli("extend", extension, root);
+
+    expect(result.exitCode).toBe(0);
+    expect(await exists(root)).toBe(true);
+    expect(result.stdout).toContain("Created 0, updated 0, left 0 extension files unchanged");
+  });
+
   test("installs a bundled first-party extension by id", async () => {
     const root = await createRoot();
     const extensionsRoot = await createRoot();
@@ -523,6 +611,35 @@ Review patterns bundled with Open Forge.
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain("- alpha-pack - Alpha extension");
     expect(result.stdout).toContain("- beta-pack - Beta extension");
+    expect(result.stdout).toContain("- alpha-pack - Alpha extension (contents: pattern)");
+    expect(result.stdout).toContain("- beta-pack - Beta extension (contents: pattern)");
+  });
+
+  test("derives every advertised content kind from payload paths", async () => {
+    const extensionsRoot = await createRoot();
+    const patterns = await createBundledExtension(extensionsRoot, "mixed-pack", "Mixed Pack", "Mixed extension");
+    const payload = path.resolve(patterns, "..", "..", "..");
+    const agents = path.join(payload, ".agents");
+    const files = [
+      path.join(agents, "skills", "mixed", "SKILL.md"),
+      path.join(agents, "workflows", "mixed", "_mixed.md"),
+      path.join(agents, "directives", "mixed.md"),
+      path.join(agents, "guidance", "mixed.md"),
+      path.join(agents, "workspace", "mixed.md"),
+      path.join(agents, "memory", "mixed.md"),
+      path.join(payload, "templates", "mixed.md")
+    ];
+    for (const file of files) {
+      await fs.mkdir(path.dirname(file), { recursive: true });
+      await fs.writeFile(file, "content\n");
+    }
+
+    const result = await runCliWithEnv("extend", ["--list"], {
+      OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
+    });
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("(contents: skill, workflow, directive, guidance, pattern, workspace, memory, other)");
   });
 
   test("installs multiple bundled extensions by id list", async () => {
@@ -542,6 +659,544 @@ Review patterns bundled with Open Forge.
     expect(result.exitCode).toBe(0);
     expect(patterns).toContain("- `alpha-pack/_alpha-pack.md` - Alpha extension - #Extension #Core #Pattern");
     expect(patterns).toContain("- `beta-pack/_beta-pack.md` - Beta extension - #Extension #Core #Pattern");
+  });
+
+  test("installs bundled dependencies before the requested extension", async () => {
+    const root = await createRoot();
+    const extensionsRoot = await createRoot();
+    const sharedPatterns = await createBundledExtension(extensionsRoot, "shared-pack", "Shared Pack", "Shared extension");
+    const featurePatterns = await createBundledExtension(extensionsRoot, "feature-pack", "Feature Pack", "Feature extension", ["shared-pack"]);
+    await writeRoute(sharedPatterns, "shared.md", "Shared pattern", ["Pattern", "Shared"]);
+    await writeRoute(featurePatterns, "feature.md", "Feature pattern", ["Pattern", "Feature"]);
+
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    const result = await runCliWithEnv("extend", ["feature-pack", root], {
+      OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
+    });
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("bundled:shared-pack, bundled:feature-pack");
+    expect(await exists(path.join(root, ".agents", "patterns", "shared-pack", "shared.md"))).toBe(true);
+    expect(await exists(path.join(root, ".agents", "patterns", "feature-pack", "feature.md"))).toBe(true);
+  });
+
+  test("rejects a missing dependency before writing any files", async () => {
+    const root = await createRoot();
+    const extensionsRoot = await createRoot();
+    await createBundledExtension(extensionsRoot, "feature-pack", "Feature Pack", "Feature extension", ["missing-pack"]);
+    const sentinel = path.join(root, "sentinel.txt");
+    await fs.writeFile(sentinel, "keep\n");
+
+    const result = await runCliWithEnv("extend", ["feature-pack", root], {
+      OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
+    });
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("missing-pack (required by feature-pack)");
+    expect(await fs.readdir(root)).toEqual(["sentinel.txt"]);
+    expect(await fs.readFile(sentinel, "utf8")).toBe("keep\n");
+  });
+
+  test("rejects dependency cycles before writing any files", async () => {
+    const root = await createRoot();
+    const extensionsRoot = await createRoot();
+    await createBundledExtension(extensionsRoot, "alpha-pack", "Alpha Pack", "Alpha extension", ["beta-pack"]);
+    await createBundledExtension(extensionsRoot, "beta-pack", "Beta Pack", "Beta extension", ["alpha-pack"]);
+
+    const result = await runCliWithEnv("extend", ["alpha-pack", root], {
+      OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
+    });
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("Extension dependency cycle: alpha-pack -> beta-pack -> alpha-pack");
+    expect(await fs.readdir(root)).toEqual([]);
+  });
+
+  test("rejects conflicting extension files before writing any files", async () => {
+    const root = await createRoot();
+    const extensionsRoot = await createRoot();
+    await createBundledExtension(extensionsRoot, "alpha-pack", "Alpha Pack", "Alpha extension");
+    await createBundledExtension(extensionsRoot, "beta-pack", "Beta Pack", "Beta extension");
+    const alphaShared = path.join(extensionsRoot, "alpha-pack", "payload", ".agents", "shared.md");
+    const betaShared = path.join(extensionsRoot, "beta-pack", "payload", ".agents", "shared.md");
+    await fs.writeFile(alphaShared, "alpha\n");
+    await fs.writeFile(betaShared, "beta\n");
+
+    const result = await runCliWithEnv("extend", ["--ids", "alpha-pack,beta-pack", root], {
+      OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
+    });
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("Extension file collision at .agents/shared.md");
+    expect(await fs.readdir(root)).toEqual([]);
+  });
+
+  test("rejects case-only extension collisions for portable compositions", async () => {
+    const root = await createRoot();
+    const extensionsRoot = await createRoot();
+    const alphaPayload = path.join(extensionsRoot, "alpha-pack", "payload", ".agents");
+    const betaPayload = path.join(extensionsRoot, "beta-pack", "payload", ".agents");
+    await fs.mkdir(alphaPayload, { recursive: true });
+    await fs.mkdir(betaPayload, { recursive: true });
+    await fs.writeFile(path.join(extensionsRoot, "alpha-pack", "extension.json"), JSON.stringify({ name: "Alpha" }));
+    await fs.writeFile(path.join(extensionsRoot, "beta-pack", "extension.json"), JSON.stringify({ name: "Beta" }));
+    await fs.writeFile(path.join(alphaPayload, "Route.md"), "alpha\n");
+    await fs.writeFile(path.join(betaPayload, "route.md"), "beta\n");
+
+    const result = await runCliWithEnv("extend", ["--ids", "alpha-pack,beta-pack", root, "--dry-run"], {
+      OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
+    });
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("Extension file collision at .agents/route.md");
+    expect(await fs.readdir(root)).toEqual([]);
+  });
+
+  test("rejects a planned file that is also another planned file's parent", async () => {
+    const root = await createRoot();
+    const extensionsRoot = await createRoot();
+    const alphaPayload = path.join(extensionsRoot, "alpha-pack", "payload");
+    const betaAgents = path.join(extensionsRoot, "beta-pack", "payload", ".agents");
+    await fs.mkdir(alphaPayload, { recursive: true });
+    await fs.mkdir(betaAgents, { recursive: true });
+    await fs.writeFile(path.join(extensionsRoot, "alpha-pack", "extension.json"), JSON.stringify({ name: "Alpha" }));
+    await fs.writeFile(path.join(extensionsRoot, "beta-pack", "extension.json"), JSON.stringify({ name: "Beta" }));
+    await fs.writeFile(path.join(alphaPayload, ".agents"), "parent file\n");
+    await fs.writeFile(path.join(betaAgents, "route.md"), "child file\n");
+
+    const result = await runCliWithEnv("extend", ["--ids", "alpha-pack,beta-pack", root, "--dry-run"], {
+      OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
+    });
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("planned file .agents is also a parent of .agents/route.md");
+    expect(await fs.readdir(root)).toEqual([]);
+  });
+
+  test("deduplicates byte-identical files shared by extensions", async () => {
+    const root = await createRoot();
+    const extensionsRoot = await createRoot();
+    await createBundledExtension(extensionsRoot, "alpha-pack", "Alpha Pack", "Alpha extension");
+    await createBundledExtension(extensionsRoot, "beta-pack", "Beta Pack", "Beta extension");
+    const alphaShared = path.join(extensionsRoot, "alpha-pack", "payload", ".agents", "shared.md");
+    const betaShared = path.join(extensionsRoot, "beta-pack", "payload", ".agents", "shared.md");
+    await fs.writeFile(alphaShared, "same\n");
+    await fs.writeFile(betaShared, "same\n");
+
+    const result = await runCliWithEnv("extend", ["--ids", "alpha-pack,beta-pack", root], {
+      OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
+    });
+
+    expect(result.exitCode).toBe(0);
+    expect(await fs.readFile(path.join(root, ".agents", "shared.md"), "utf8")).toBe("same\n");
+    expect(result.stdout).toContain("Created 3");
+  });
+
+  test("previews the resolved plan without writing the target", async () => {
+    const parent = await createRoot();
+    const root = path.join(parent, "not-created");
+    const extensionsRoot = await createRoot();
+    await createBundledExtension(extensionsRoot, "shared-pack", "Shared Pack", "Shared extension");
+    await createBundledExtension(extensionsRoot, "feature-pack", "Feature Pack", "Feature extension", ["shared-pack"]);
+
+    const result = await runCliWithEnv("extend", ["feature-pack", root, "--dry-run"], {
+      OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
+    });
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("Resolved in dependency order: bundled:shared-pack, bundled:feature-pack");
+    expect(result.stdout).toContain("No files were written");
+    expect(result.stdout).toContain("Planned files:");
+    expect(result.stdout).toContain("- create .agents/patterns/feature-pack/_feature-pack.md");
+    expect(await exists(root)).toBe(false);
+  });
+
+  test("lists bundled dependencies", async () => {
+    const extensionsRoot = await createRoot();
+    await createBundledExtension(extensionsRoot, "feature-pack", "Feature Pack", "Feature extension", ["shared-pack"]);
+
+    const result = await runCliWithEnv("extend", ["--list"], {
+      OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
+    });
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("- feature-pack - Feature extension (requires: shared-pack) (contents: pattern)");
+  });
+
+  test("lists and installs dependency-only convenience packs without writing package files", async () => {
+    const root = await createRoot();
+    const extensionsRoot = await createRoot();
+    await createBundledExtension(extensionsRoot, "shared-pack", "Shared Pack", "Shared extension");
+    await createBundledExtension(extensionsRoot, "feature-pack", "Feature Pack", "Feature extension");
+    await createDependencyPack(extensionsRoot, "workflow-suite", "Workflow Suite", "Convenience selection", ["shared-pack", "feature-pack"]);
+
+    const listed = await runCliWithEnv("extend", ["--list"], {
+      OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
+    });
+    const installed = await runCliWithEnv("extend", ["workflow-suite", root], {
+      OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
+    });
+
+    expect(listed.exitCode).toBe(0);
+    expect(listed.stdout).toContain("- workflow-suite - Convenience selection (requires: shared-pack, feature-pack) (contents: pack)");
+    expect(installed.exitCode).toBe(0);
+    expect(installed.stdout).toContain("bundled:shared-pack, bundled:feature-pack, bundled:workflow-suite");
+    expect(await exists(path.join(root, "extension.json"))).toBe(false);
+    expect(await exists(path.join(root, "README.md"))).toBe(false);
+    expect(await exists(path.join(root, ".agents", "patterns", "shared-pack", "_shared-pack.md"))).toBe(true);
+    expect(await exists(path.join(root, ".agents", "patterns", "feature-pack", "_feature-pack.md"))).toBe(true);
+  });
+
+  test("preserves dependency-only pack semantics when installing a copied local pack", async () => {
+    const root = await createRoot();
+    const extensionsRoot = await createRoot();
+    const copiedPack = await createRoot();
+    await createBundledExtension(extensionsRoot, "shared-pack", "Shared Pack", "Shared extension");
+    await fs.writeFile(path.join(copiedPack, "extension.json"), `${JSON.stringify({
+      name: "Copied Workflow Suite",
+      description: "A locally copied dependency-only pack",
+      dependencies: ["shared-pack"]
+    }, null, 2)}\n`);
+    await fs.writeFile(path.join(copiedPack, "README.md"), "Pack authoring documentation that must not replace the project README.\n");
+
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    await fs.writeFile(path.join(root, "README.md"), "Project README sentinel.\n");
+    const result = await runCliWithEnv("extend", [copiedPack, root], {
+      OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
+    });
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("bundled:shared-pack");
+    expect(result.stdout).toContain(`local:${copiedPack}`);
+    expect(await fs.readFile(path.join(root, "README.md"), "utf8")).toBe("Project README sentinel.\n");
+    expect(await exists(path.join(root, ".agents", "patterns", "shared-pack", "_shared-pack.md"))).toBe(true);
+  });
+
+  test("does not catalogue or install a manifest-only no-op extension", async () => {
+    const root = await createRoot();
+    const extensionsRoot = await createRoot();
+    await createDependencyPack(extensionsRoot, "empty-pack", "Empty Pack", "Does nothing", []);
+    await fs.mkdir(path.join(extensionsRoot, "empty-pack", "payload", ".agents"), { recursive: true });
+
+    const listed = await runCliWithEnv("extend", ["--list"], {
+      OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
+    });
+    const installed = await runCliWithEnv("extend", ["empty-pack", root], {
+      OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
+    });
+
+    expect(listed.exitCode).toBe(0);
+    expect(listed.stdout).toContain("No bundled Open Forge extensions");
+    expect(listed.stdout).not.toContain("empty-pack");
+    expect(installed.exitCode).toBe(1);
+    expect(installed.stderr).toContain("empty-pack has neither payload files nor dependencies");
+    expect(await fs.readdir(root)).toEqual([]);
+  });
+
+  test("rejects malformed extension manifests before writing", async () => {
+    const root = await createRoot();
+    const extensionsRoot = await createRoot();
+    await createBundledExtension(extensionsRoot, "feature-pack", "Feature Pack", "Feature extension");
+    await fs.writeFile(path.join(extensionsRoot, "feature-pack", "extension.json"), JSON.stringify({ name: "Feature", dependencies: "shared-pack" }));
+
+    const result = await runCliWithEnv("extend", ["feature-pack", root], {
+      OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
+    });
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("dependencies must be an array");
+    expect(await fs.readdir(root)).toEqual([]);
+  });
+
+  test("rejects null manifest fields instead of treating them as absent", async () => {
+    const root = await createRoot();
+    const extensionsRoot = await createRoot();
+    await createBundledExtension(extensionsRoot, "feature-pack", "Feature Pack", "Feature extension");
+    await fs.writeFile(path.join(extensionsRoot, "feature-pack", "extension.json"), JSON.stringify({ name: null, dependencies: null }));
+
+    const result = await runCliWithEnv("extend", ["feature-pack", root, "--dry-run"], {
+      OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
+    });
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("name must be a non-empty string");
+    expect(await fs.readdir(root)).toEqual([]);
+  });
+
+  test("rejects unknown manifest fields before dependency resolution", async () => {
+    const root = await createRoot();
+    const extension = await createRoot();
+    const payload = path.join(extension, "payload");
+    await fs.mkdir(payload, { recursive: true });
+    await fs.writeFile(path.join(payload, "sentinel.txt"), "must not install\n");
+    await fs.writeFile(path.join(extension, "extension.json"), JSON.stringify({
+      name: "Misspelled Dependencies",
+      dependancies: ["shared-pack"]
+    }));
+
+    const result = await runCli("extend", extension, root, "--dry-run");
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("unknown field dependancies");
+    expect(await fs.readdir(root)).toEqual([]);
+  });
+
+  test("rolls back extension payload files when index validation fails", async () => {
+    const root = await createRoot();
+    const extension = await createRoot();
+    const badRoute = path.join(extension, "payload", ".agents", "patterns", "bad");
+    await fs.mkdir(badRoute, { recursive: true });
+    await fs.writeFile(path.join(extension, "extension.json"), JSON.stringify({ name: "Bad Pack" }));
+    await fs.writeFile(path.join(badRoute, "_bad.md"), `---
+open-forge:
+  description: Invalid generated region for rollback coverage
+  tags: [Extension, Pattern]
+---
+
+# Bad
+
+## Entries
+
+<!-- open-forge:generated-index:start -->
+- incomplete.md - Incomplete - #Bad
+`);
+
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    const patternsBefore = await fs.readFile(path.join(root, ".agents", "patterns", "_patterns.md"), "utf8");
+    const preview = await runCli("extend", extension, root, "--dry-run");
+    const result = await runCli("extend", extension, root);
+
+    expect(preview.exitCode).toBe(1);
+    expect(preview.stderr).toContain("markers are incomplete");
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("markers are incomplete");
+    expect(await exists(path.join(root, ".agents", "patterns", "bad"))).toBe(false);
+    expect(await fs.readFile(path.join(root, ".agents", "patterns", "_patterns.md"), "utf8")).toBe(patternsBefore);
+  });
+
+  test("rejects installing an extension into its own source tree", async () => {
+    const extension = await createRoot();
+    const payload = path.join(extension, "payload", ".agents");
+    await fs.mkdir(payload, { recursive: true });
+    await fs.writeFile(path.join(payload, "route.md"), "route\n");
+    const target = path.join(extension, "nested-target");
+
+    const result = await runCli("extend", extension, target);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("must not be the extension source or a directory inside it");
+    expect(await exists(target)).toBe(false);
+  });
+
+  test("rejects a non-existent target projected through a link into its extension source", async () => {
+    const parent = await createRoot();
+    const extension = await createRoot();
+    const payload = path.join(extension, "payload", ".agents");
+    const linkedExtension = path.join(parent, "linked-extension");
+    const target = path.join(linkedExtension, "nested-target");
+    await fs.mkdir(payload, { recursive: true });
+    await fs.writeFile(path.join(payload, "route.md"), "must not write back into the extension\n");
+    await fs.symlink(extension, linkedExtension, process.platform === "win32" ? "junction" : "dir");
+
+    const preview = await runCli("extend", extension, target, "--dry-run");
+    const result = await runCli("extend", extension, target);
+
+    expect(preview.exitCode).toBe(1);
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("must not be the extension source or a directory inside it");
+    expect(await exists(path.join(extension, "nested-target"))).toBe(false);
+  });
+
+  test("rejects a target symlink or junction that redirects extension writes", async () => {
+    const root = await createRoot();
+    const outside = await createRoot();
+    const extension = await createRoot();
+    const payload = path.join(extension, "payload", ".agents");
+    await fs.mkdir(payload, { recursive: true });
+    await fs.writeFile(path.join(payload, "escaped.md"), "must stay contained\n");
+    await fs.symlink(outside, path.join(root, ".agents"), process.platform === "win32" ? "junction" : "dir");
+
+    const result = await runCli("extend", extension, root);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("contains a symbolic link or junction");
+    expect(await exists(path.join(outside, "escaped.md"))).toBe(false);
+  });
+
+  test("rejects a target root that is itself a symlink or junction", async () => {
+    const parent = await createRoot();
+    const outside = await createRoot();
+    const extension = await createRoot();
+    const payload = path.join(extension, "payload", ".agents");
+    const linkedTarget = path.join(parent, "linked-target");
+    await fs.mkdir(payload, { recursive: true });
+    await fs.writeFile(path.join(payload, "escaped.md"), "must stay contained\n");
+    await fs.symlink(outside, linkedTarget, process.platform === "win32" ? "junction" : "dir");
+
+    const result = await runCli("extend", extension, linkedTarget);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("target root is a symbolic link or junction");
+    expect(await exists(path.join(outside, ".agents", "escaped.md"))).toBe(false);
+  });
+
+  test("rejects symlinks or junctions inside an extension source", async () => {
+    const root = await createRoot();
+    const outside = await createRoot();
+    const extension = await createRoot();
+    const payload = path.join(extension, "payload");
+    await fs.mkdir(payload, { recursive: true });
+    await fs.writeFile(path.join(outside, "escaped.md"), "must not be imported\n");
+    await fs.symlink(outside, path.join(payload, "linked-source"), process.platform === "win32" ? "junction" : "dir");
+
+    const result = await runCli("extend", extension, root);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("source contains a symbolic link or junction");
+    expect(await exists(path.join(root, "linked-source", "escaped.md"))).toBe(false);
+  });
+
+  test("rejects a local extension source root that is itself a symlink or junction", async () => {
+    const root = await createRoot();
+    const parent = await createRoot();
+    const extension = await createRoot();
+    const payload = path.join(extension, "payload", ".agents");
+    const linkedSource = path.join(parent, "linked-extension");
+    await fs.mkdir(payload, { recursive: true });
+    await fs.writeFile(path.join(payload, "route.md"), "must not be imported through an alias\n");
+    await fs.symlink(extension, linkedSource, process.platform === "win32" ? "junction" : "dir");
+
+    const result = await runCli("extend", linkedSource, root);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("source root is a symbolic link or junction");
+    expect(await exists(path.join(root, ".agents", "route.md"))).toBe(false);
+  });
+
+  test("rejects a hard-linked planned target before preview or installation", async () => {
+    const root = await createRoot();
+    const outside = await createRoot();
+    const extension = await createRoot();
+    const payload = path.join(extension, "payload");
+    const outsideFile = path.join(outside, "shared-inode.txt");
+    const targetFile = path.join(root, "artifact.txt");
+    await fs.mkdir(payload, { recursive: true });
+    await fs.writeFile(path.join(payload, "artifact.txt"), "replacement\n");
+    await fs.writeFile(outsideFile, "external sentinel\n");
+    await fs.link(outsideFile, targetFile);
+
+    const preview = await runCli("extend", extension, root, "--dry-run");
+    const result = await runCli("extend", extension, root);
+
+    expect(preview.exitCode).toBe(1);
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("multiple hard links");
+    expect(await fs.readFile(outsideFile, "utf8")).toBe("external sentinel\n");
+    expect(await fs.readFile(targetFile, "utf8")).toBe("external sentinel\n");
+  });
+
+  test("rejects hard-linked index files before an empty extension can regenerate them", async () => {
+    const root = await createRoot();
+    const outside = await createRoot();
+    const extension = await createRoot();
+    await fs.mkdir(path.join(extension, "payload"), { recursive: true });
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    const indexFile = path.join(root, ".agents", "workflows", "_workflows.md");
+    const outsideLink = path.join(outside, "linked-workflows-index.md");
+    await fs.link(indexFile, outsideLink);
+    const before = await fs.readFile(indexFile, "utf8");
+
+    const result = await runCli("extend", extension, root);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("Extension target index file has multiple hard links");
+    expect(await fs.readFile(indexFile, "utf8")).toBe(before);
+    expect(await fs.readFile(outsideLink, "utf8")).toBe(before);
+  });
+
+  test("rejects a linked .agents index root before writing an outside-only payload", async () => {
+    const root = await createRoot();
+    const outside = await createRoot();
+    const extension = await createRoot();
+    const payload = path.join(extension, "payload");
+    expect((await runCli("install", outside)).exitCode).toBe(0);
+    await fs.mkdir(payload, { recursive: true });
+    await fs.writeFile(path.join(payload, "support.txt"), "must not install\n");
+    await fs.symlink(path.join(outside, ".agents"), path.join(root, ".agents"), process.platform === "win32" ? "junction" : "dir");
+
+    const result = await runCli("extend", extension, root);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("target index root contains a symbolic link or junction");
+    expect(await exists(path.join(root, "support.txt"))).toBe(false);
+  });
+
+  test("rejects a linked .agents index root even when the extension plan is empty", async () => {
+    const root = await createRoot();
+    const outside = await createRoot();
+    const extension = await createRoot();
+    expect((await runCli("install", outside)).exitCode).toBe(0);
+    await fs.mkdir(path.join(extension, "payload"), { recursive: true });
+    await fs.symlink(path.join(outside, ".agents"), path.join(root, ".agents"), process.platform === "win32" ? "junction" : "dir");
+
+    const result = await runCli("extend", extension, root);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("target index root contains a symbolic link or junction");
+  });
+
+  test("rejects portable path aliases already present in the target", async () => {
+    const root = await createRoot();
+    const extension = await createRoot();
+    const existingSkill = path.join(root, ".agents", "skills", "Quality", "SKILL.md");
+    const payloadSkill = path.join(extension, "payload", ".agents", "skills", "quality", "SKILL.md");
+    await fs.mkdir(path.dirname(existingSkill), { recursive: true });
+    await fs.mkdir(path.dirname(payloadSkill), { recursive: true });
+    await fs.writeFile(existingSkill, "existing skill\n");
+    await fs.writeFile(payloadSkill, "replacement skill\n");
+
+    const result = await runCli("extend", extension, root, "--dry-run");
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("aliases planned portable path");
+    expect(await fs.readFile(existingSkill, "utf8")).toBe("existing skill\n");
+  });
+
+  test("classifies a Windows case-folded AGENTS.md plan as baseline-loading", async () => {
+    if (process.platform !== "win32") {
+      return;
+    }
+
+    const root = await createRoot();
+    const extension = await createRoot();
+    const payload = path.join(extension, "payload");
+    await fs.mkdir(payload, { recursive: true });
+    await fs.writeFile(path.join(payload, "agents.md"), "new entrypoint\n");
+
+    const result = await runCli("extend", extension, root, "--dry-run");
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("Scope review: 0 routed, 1 baseline-loading, 0 skill-executable, 0 outside-.agents files.");
+    expect(result.stdout).toContain("- create agents.md");
+    expect(await exists(path.join(root, "agents.md"))).toBe(false);
+  });
+
+  test("classifies only a skill package's direct scripts child as executable", async () => {
+    const parent = await createRoot();
+    const root = path.join(parent, "target");
+    const extension = await createRoot();
+    const referencesScripts = path.join(extension, "payload", ".agents", "skills", "quality", "references", "scripts");
+    const skillScripts = path.join(extension, "payload", ".agents", "skills", "quality", "scripts");
+    await fs.mkdir(referencesScripts, { recursive: true });
+    await fs.mkdir(skillScripts, { recursive: true });
+    await fs.writeFile(path.join(referencesScripts, "example.md"), "documentation\n");
+    await fs.writeFile(path.join(skillScripts, "verify.mjs"), "export {};\n");
+
+    const result = await runCli("extend", extension, root, "--dry-run");
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("Scope review: 1 routed, 0 baseline-loading, 1 skill-executable, 0 outside-.agents files.");
+    expect(await exists(root)).toBe(false);
   });
 
   test("requires a TTY for interactive bundled extension selection", async () => {
@@ -807,10 +1462,10 @@ open-forge:
 `);
 }
 
-async function createBundledExtension(root: string, id: string, name: string, description: string): Promise<string> {
+async function createBundledExtension(root: string, id: string, name: string, description: string, dependencies: string[] = []): Promise<string> {
   const patterns = path.join(root, id, "payload", ".agents", "patterns", id);
   await fs.mkdir(patterns, { recursive: true });
-  await fs.writeFile(path.join(root, id, "extension.json"), `${JSON.stringify({ name, description }, null, 2)}\n`);
+  await fs.writeFile(path.join(root, id, "extension.json"), `${JSON.stringify({ name, description, dependencies }, null, 2)}\n`);
   await fs.writeFile(path.join(patterns, `_${id}.md`), `---
 open-forge:
   description: ${description}
@@ -820,6 +1475,13 @@ open-forge:
 # ${name}
 `);
   return patterns;
+}
+
+async function createDependencyPack(root: string, id: string, name: string, description: string, dependencies: string[]): Promise<void> {
+  const packageRoot = path.join(root, id);
+  await fs.mkdir(packageRoot, { recursive: true });
+  await fs.writeFile(path.join(packageRoot, "extension.json"), `${JSON.stringify({ name, description, dependencies }, null, 2)}\n`);
+  await fs.writeFile(path.join(packageRoot, "README.md"), "Authoring documentation that must not be installed.\n");
 }
 
 async function runCli(command: "index" | "install" | "extend" | "find" | "doctor" | "create", ...args: string[]): Promise<{ exitCode: number; stdout: string; stderr: string }> {

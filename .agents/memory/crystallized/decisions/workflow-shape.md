@@ -15,4 +15,4 @@ Accepted 2026-07-10 and applied to the payload, the workflows descriptor, the ag
 - Orchestration: a step may invoke a skill, consult guidance, delegate to a subagent, or hand off to another workflow by route; a sub-workflow's Required Routes are read at that activation; delegation handoffs name the workflow route and active step.
 - Workflow-local #Core routes remain a narrow capability, typically local directives, as the natural consequence of the loader's narrower-scope preference; local skills are discouraged in favor of native packages shared through Required Routes.
 
-Rationale detail and the worked TDD dev-workflow example: `.agents/memory/emerging/ideas/workflow-redesign.md` (applied; kept for reference until archived).
+Rationale detail and the historical TDD dev-workflow example: `.agents/memory/emerging/ideas/workflow-redesign.md` (applied; kept for reference until archived). The shipped `dev-workflow` later generalized to an adaptive implement-test-improve-retest-diagnose-fix cycle without changing this workflow shape.

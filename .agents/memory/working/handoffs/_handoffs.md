@@ -23,4 +23,5 @@ Handoffs are static, concise, accurate, rereadable transfer notes for resuming w
 - `2026-07-12_framework-assessment.md` - Active transfer note for the 2026-07-12 multi-perspective Open Forge framework assessment - #Memory #Handoff #AgentCommunication #Contextual #Framework #Review #Dogfood
 - `2026-07-13_framework-direction-options.md` - Active transfer note for expanding the framework assessment with naming and implementable S++ direction options - #Memory #Handoff #AgentCommunication #Contextual #Framework #Review #Naming #Roadmap
 - `2026-07-13_naming-atlas.md` - Completed transfer note for the creative, screened methodology naming atlas and full-report revision - #Memory #Handoff #AgentCommunication #Contextual #Framework #Naming #Brand #Category
+- `2026-07-15_harness-and-extensions.md` - Active transfer note for dependency-safe extensions and reproducible benchmark harness hardening - #Memory #Handoff #AgentCommunication #Contextual #Extension #CLI #Benchmark #Reliability
 <!-- open-forge:generated-index:end -->

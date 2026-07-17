@@ -1,13 +1,15 @@
-import { constants as fsConstants, existsSync, type Dirent } from "node:fs";
+import { constants as fsConstants, existsSync, realpathSync, type Dirent, type Stats } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const repoRoot = resolveRepoRoot();
-const sourceRoot = path.join(repoRoot, "src", "open-forge");
+const entryFile = fileURLToPath(import.meta.url);
+const entryDirectory = path.dirname(entryFile);
+const repoRoot = resolveRepoRoot(entryDirectory);
+const sourceRoot = resolveFrameworkSourceRoot(repoRoot, entryDirectory);
 const bundledExtensionsRoot = process.env.OPEN_FORGE_EXTENSIONS_ROOT
   ? path.resolve(process.env.OPEN_FORGE_EXTENSIONS_ROOT)
-  : path.join(repoRoot, "src", "extensions");
+  : resolveBundledExtensionsRoot(repoRoot, entryDirectory);
 const ignoredDirectoryNames = new Set([".git", ".obsidian", "node_modules"]);
 const compatibilityEntrypointNames = ["_index.md", "index.md", "_references.md", "references.md"];
 const skillEntrypointNames = ["SKILL.md", "Skill.md"];
@@ -28,28 +30,48 @@ const categoryTypeTags: Record<string, string> = {
   workspace: "Workspace",
   memory: "Memory"
 };
-const args = process.argv.slice(2);
-const command = args[0] ?? "help";
+const extensionContentKindOrder = ["skill", "workflow", "directive", "guidance", "pattern", "workspace", "memory", "pack", "other"] as const;
+if (isCliEntrypoint()) {
+  await main();
+}
 
-try {
-  if (command === "install") {
-    await install(args[1] ?? process.cwd());
-  } else if (command === "extend") {
-    await extend(args.slice(1));
-  } else if (command === "index") {
-    await generateIndexes(path.resolve(args[1] ?? process.cwd()));
-  } else if (command === "find") {
-    await find(args.slice(1));
-  } else if (command === "doctor") {
-    await doctor(args.slice(1));
-  } else if (command === "create") {
-    await create(args.slice(1));
-  } else {
-    printHelp();
+async function main(): Promise<void> {
+  const args = process.argv.slice(2);
+  const command = args[0] ?? "help";
+
+  try {
+    if (command === "install") {
+      await install(args[1] ?? process.cwd());
+    } else if (command === "extend") {
+      await extend(args.slice(1));
+    } else if (command === "index") {
+      await generateIndexes(path.resolve(args[1] ?? process.cwd()));
+    } else if (command === "find") {
+      await find(args.slice(1));
+    } else if (command === "doctor") {
+      await doctor(args.slice(1));
+    } else if (command === "create") {
+      await create(args.slice(1));
+    } else {
+      printHelp();
+    }
+  } catch (error) {
+    console.error(`open-forge: ${error instanceof Error ? error.message : String(error)}`);
+    process.exitCode = 1;
   }
-} catch (error) {
-  console.error(`open-forge: ${error instanceof Error ? error.message : String(error)}`);
-  process.exitCode = 1;
+}
+
+function isCliEntrypoint(): boolean {
+  const invokedFile = process.argv[1];
+  if (invokedFile == null) {
+    return false;
+  }
+
+  try {
+    return samePath(realpathSync(path.resolve(invokedFile)), realpathSync(entryFile));
+  } catch {
+    return samePath(path.resolve(invokedFile), entryFile);
+  }
 }
 
 async function updateAgents(targetArg: string): Promise<void> {
@@ -100,38 +122,53 @@ async function install(targetArg: string): Promise<void> {
 }
 
 async function extend(extendArgs: string[]): Promise<void> {
-  if (extendArgs[0] === "--list") {
-    assertNoExtraArgs(extendArgs, 1, "Usage: open-forge extend --list");
+  const { args: normalizedArgs, present: dryRun } = extractBooleanFlag(extendArgs, "--dry-run");
+
+  if (normalizedArgs[0] === "--list") {
+    if (dryRun) {
+      throw new Error("--dry-run previews an installation and cannot be combined with --list");
+    }
+
+    assertNoExtraArgs(normalizedArgs, 1, "Usage: open-forge extend --list");
     await listBundledExtensions();
     return;
   }
 
-  if (extendArgs[0] === "--select" || extendArgs.length === 0) {
-    const target = extendArgs[0] === "--select" ? extendArgs[1] ?? process.cwd() : process.cwd();
-    assertNoExtraArgs(extendArgs, extendArgs[0] === "--select" ? 2 : 0, "Usage: open-forge extend --select [target]");
+  if (normalizedArgs[0] === "--select" || normalizedArgs.length === 0) {
+    const target = normalizedArgs[0] === "--select" ? normalizedArgs[1] ?? process.cwd() : process.cwd();
+    assertNoExtraArgs(normalizedArgs, normalizedArgs[0] === "--select" ? 2 : 0, "Usage: open-forge extend --select [target] [--dry-run]");
     const ids = await selectBundledExtensionIds();
     if (ids.length === 0) {
       console.log("No extensions selected.");
       return;
     }
 
-    await installExtensions(ids, target);
+    await installExtensions(ids, target, dryRun);
     return;
   }
 
-  const idsValue = readIdsValue(extendArgs);
+  const idsValue = readIdsValue(normalizedArgs);
   if (idsValue) {
     const { ids, consumed } = idsValue;
-    const target = extendArgs[consumed] ?? process.cwd();
-    assertNoExtraArgs(extendArgs, consumed + (extendArgs[consumed] ? 1 : 0), "Usage: open-forge extend --ids <id[,id...]> [target]");
-    await installExtensions(ids, target);
+    const target = normalizedArgs[consumed] ?? process.cwd();
+    assertNoExtraArgs(normalizedArgs, consumed + (normalizedArgs[consumed] ? 1 : 0), "Usage: open-forge extend --ids <id[,id...]> [target] [--dry-run]");
+    await installExtensions(ids, target, dryRun);
     return;
   }
 
-  const extensionArg = extendArgs[0];
-  const targetArg = extendArgs[1] ?? process.cwd();
-  assertNoExtraArgs(extendArgs, 2, "Usage: open-forge extend <extension-source-or-id> [target]");
-  await installExtensions([extensionArg], targetArg);
+  const extensionArg = normalizedArgs[0];
+  const targetArg = normalizedArgs[1] ?? process.cwd();
+  assertNoExtraArgs(normalizedArgs, 2, "Usage: open-forge extend <extension-source-or-id> [target] [--dry-run]");
+  await installExtensions([extensionArg], targetArg, dryRun);
+}
+
+function extractBooleanFlag(args: string[], flag: string): { args: string[]; present: boolean } {
+  const matches = args.filter((value) => value === flag).length;
+  if (matches > 1) {
+    throw new Error(`${flag} may be specified only once`);
+  }
+
+  return { args: args.filter((value) => value !== flag), present: matches === 1 };
 }
 
 function assertNoExtraArgs(args: string[], allowedCount: number, usage: string): void {
@@ -167,73 +204,502 @@ function splitExtensionIds(value: string): string[] {
   return ids;
 }
 
-async function installExtensions(extensionArgs: string[], targetArg: string): Promise<void> {
-  const extensions = await Promise.all(extensionArgs.map(resolveExtensionSource));
+async function installExtensions(extensionArgs: string[], targetArg: string, dryRun = false): Promise<void> {
+  const extensions = await resolveExtensionClosure(extensionArgs);
   const targetRoot = path.resolve(targetArg);
+  const projectedTargetRoot = await projectPathThroughExistingAncestor(targetRoot);
 
   for (const extension of extensions) {
-    if (samePath(extension.root, targetRoot)) {
-      throw new Error("Extension source and target must be different directories");
+    const realSourceRoot = await fs.realpath(extension.root);
+    const realPackageRoot = await fs.realpath(extension.packageRoot);
+    if (
+      samePath(extension.root, targetRoot)
+      || samePath(extension.packageRoot, targetRoot)
+      || isPathInside(targetRoot, extension.packageRoot)
+      || samePath(realSourceRoot, projectedTargetRoot)
+      || samePath(realPackageRoot, projectedTargetRoot)
+      || isPathInside(projectedTargetRoot, realPackageRoot)
+    ) {
+      throw new Error("Extension target must not be the extension source or a directory inside it");
     }
   }
 
-  await ensureDir(targetRoot);
+  const plan = await createExtensionInstallPlan(extensions, targetRoot);
+  await validateExtensionIndexPreflight(plan, targetRoot);
+  const counts = countExtensionPlanStatuses(plan);
+  const scopes = countExtensionPlanScopes(plan);
+  const labels = extensions.map((extension) => `${extension.kind}:${extension.label}`).join(", ");
 
-  let copied = 0;
-  for (const extension of extensions) {
-    copied += await copyExtension(extension, targetRoot);
+  if (dryRun) {
+    console.log(`Open Forge extension plan for ${targetRoot}`);
+    console.log(`Resolved in dependency order: ${labels}`);
+    console.log(`Would create ${counts.create}, update ${counts.update}, and leave ${counts.unchanged} extension files unchanged. No files were written.`);
+    console.log(`Scope review: ${scopes.routed} routed, ${scopes.baseline} baseline-loading, ${scopes.executable} skill-executable, ${scopes.workspace} outside-.agents files.`);
+    if (plan.length > 0) {
+      console.log("Planned files:");
+      for (const entry of plan) {
+        console.log(`- ${entry.status} ${entry.relativePath}`);
+      }
+    }
+    return;
   }
 
-  const generatedRegions = await generateIndexes(targetRoot);
-  const labels = extensions.map((extension) => `${extension.kind}:${extension.label}`).join(", ");
+  const receipt = await applyExtensionInstallPlan(plan, targetRoot);
+  let generatedRegions: number;
+  try {
+    generatedRegions = await generateIndexes(targetRoot);
+  } catch (error) {
+    try {
+      await rollbackExtensionInstall(receipt);
+    } catch (rollbackError) {
+      throw new Error(`Extension indexing failed (${error instanceof Error ? error.message : String(error)}) and rollback also failed (${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)})`);
+    }
+    throw error;
+  }
   console.log(`Installed Open Forge extensions ${labels} into ${targetRoot}`);
-  console.log(`Copied ${copied} extension files and rebuilt ${generatedRegions} generated regions.`);
+  console.log(`Created ${counts.create}, updated ${counts.update}, left ${counts.unchanged} extension files unchanged, and rebuilt ${generatedRegions} generated regions.`);
+  console.log(`Scope review: ${scopes.routed} routed, ${scopes.baseline} baseline-loading, ${scopes.executable} skill-executable, ${scopes.workspace} outside-.agents files.`);
 }
 
-async function copyExtension(extension: ExtensionSource, targetRoot: string): Promise<number> {
-  const files = await listFiles(extension.root);
-  let copied = 0;
+type ExtensionPlanStatus = "create" | "update" | "unchanged";
 
-  for (const sourceFile of files) {
-    const relativePath = toPosix(path.relative(extension.root, sourceFile));
-    const targetFile = path.join(targetRoot, relativePath);
-    await ensureDir(path.dirname(targetFile));
+type ExtensionInstallPlanEntry = {
+  relativePath: string;
+  targetFile: string;
+  content: Buffer;
+  originalContent: Buffer | null;
+  status: ExtensionPlanStatus;
+};
 
-    if (isMarkdownFile(sourceFile)) {
-      const sourceText = await fs.readFile(sourceFile, "utf8");
-      const targetText = await readTextIfExists(targetFile);
-      const nextText = targetText == null ? sourceText : preserveLocalBlocks(sourceText, targetText);
-      await fs.writeFile(targetFile, nextText);
-    } else {
-      await fs.copyFile(sourceFile, targetFile);
-    }
+type ExtensionApplyReceipt = {
+  applied: ExtensionInstallPlanEntry[];
+  createdDirectories: string[];
+};
 
-    copied += 1;
+type ExtensionFileCandidate = {
+  relativePath: string;
+  sourceFile: string;
+  extension: ExtensionSource;
+  sourceContent: Buffer;
+};
+
+async function createExtensionInstallPlan(extensions: ExtensionSource[], targetRoot: string): Promise<ExtensionInstallPlanEntry[]> {
+  if (await isFile(targetRoot)) {
+    throw new Error(`Extension target is a file, not a directory: ${targetRoot}`);
   }
 
-  return copied;
+  const targetRootStat = await lstatIfExists(targetRoot);
+  if (targetRootStat?.isSymbolicLink()) {
+    throw new Error(`Extension target root is a symbolic link or junction: ${targetRoot}`);
+  }
+
+  const candidates = new Map<string, ExtensionFileCandidate>();
+  for (const extension of extensions) {
+    if (extension.payloadMode === "none") {
+      continue;
+    }
+
+    const sourceRootStat = await fs.lstat(extension.root);
+    if (sourceRootStat.isSymbolicLink()) {
+      throw new Error(`Extension source root is a symbolic link or junction: ${extension.root}`);
+    }
+    const files = await listFiles(extension.root, () => true, { rejectLinksAndSpecialEntries: true });
+    for (const sourceFile of files) {
+      const relativePath = toPosix(path.relative(extension.root, sourceFile));
+      if (extension.payloadMode === "overlay" && relativePath === "extension.json") {
+        continue;
+      }
+
+      const sourceContent = await fs.readFile(sourceFile);
+      const collisionKey = portableExtensionPathKey(relativePath);
+      const existing = candidates.get(collisionKey);
+      if (existing) {
+        if (!existing.sourceContent.equals(sourceContent)) {
+          throw new Error(`Extension file collision at ${relativePath}: ${extensionDisplayName(existing.extension)} and ${extensionDisplayName(extension)} provide different content`);
+        }
+
+        continue;
+      }
+
+      candidates.set(collisionKey, { relativePath, sourceFile, extension, sourceContent });
+    }
+  }
+
+  const sortedCandidates = [...candidates.values()].sort((left, right) => left.relativePath.localeCompare(right.relativePath));
+  assertNoPlannedFileDirectoryConflicts(sortedCandidates);
+
+  const plan: ExtensionInstallPlanEntry[] = [];
+  for (const candidate of sortedCandidates) {
+    await assertNoPortableTargetAlias(targetRoot, candidate.relativePath);
+    const targetFile = path.join(targetRoot, candidate.relativePath);
+    await assertExtensionTargetPath(targetRoot, targetFile);
+    const currentContent = await readBufferIfExists(targetFile);
+    let nextContent = candidate.sourceContent;
+
+    if (isMarkdownFile(candidate.sourceFile) && currentContent != null) {
+      const sourceText = candidate.sourceContent.toString("utf8");
+      const targetText = currentContent.toString("utf8");
+      nextContent = Buffer.from(preserveLocalBlocks(sourceText, targetText), "utf8");
+    }
+
+    const status: ExtensionPlanStatus = currentContent == null
+      ? "create"
+      : currentContent.equals(nextContent) ? "unchanged" : "update";
+    plan.push({ relativePath: candidate.relativePath, targetFile, content: nextContent, originalContent: currentContent, status });
+  }
+
+  return plan;
+}
+
+function assertNoPlannedFileDirectoryConflicts(candidates: ExtensionFileCandidate[]): void {
+  const paths = new Map<string, string>();
+  for (const candidate of candidates) {
+    paths.set(portableExtensionPathKey(candidate.relativePath), candidate.relativePath);
+  }
+
+  for (const candidate of candidates) {
+    const segments = candidate.relativePath.split("/");
+    for (let index = 1; index < segments.length; index += 1) {
+      const parent = segments.slice(0, index).join("/");
+      const key = portableExtensionPathKey(parent);
+      const plannedFile = paths.get(key);
+      if (plannedFile) {
+        throw new Error(`Extension path conflict: planned file ${plannedFile} is also a parent of ${candidate.relativePath}`);
+      }
+    }
+  }
+}
+
+async function validateExtensionIndexPreflight(plan: ExtensionInstallPlanEntry[], targetRoot: string): Promise<void> {
+  const plannedAgentsRoot = plan.some((entry) => portableExtensionPathKey(entry.relativePath).startsWith(".agents/"));
+  const agentsRoot = path.join(targetRoot, ".agents");
+  const scanRoot = (plannedAgentsRoot || await isDirectory(agentsRoot)) ? agentsRoot : targetRoot;
+  const indexes = new Map<string, { file: string; content: Buffer | null }>();
+
+  await assertExtensionIndexRootSafe(targetRoot, scanRoot);
+
+  if (await isDirectory(scanRoot)) {
+    for (const file of await listFiles(scanRoot, isIndexFile, {
+      rejectLinksAndSpecialEntries: true,
+      entryContext: "Extension target index tree"
+    })) {
+      await assertFileIsNotHardLinked(file, "Extension target index file");
+      indexes.set(portableExtensionPathKey(toPosix(path.relative(scanRoot, file))), { file, content: null });
+    }
+  }
+
+  for (const entry of plan) {
+    if (!isIndexFile(entry.targetFile) || (!samePath(entry.targetFile, scanRoot) && !isPathInside(entry.targetFile, scanRoot))) {
+      continue;
+    }
+    indexes.set(portableExtensionPathKey(toPosix(path.relative(scanRoot, entry.targetFile))), { file: entry.targetFile, content: entry.content });
+  }
+
+  const finalIndexes = [...indexes.values()];
+  assertUnambiguousCategoryEntrypoints(finalIndexes.map((entry) => entry.file));
+  for (const entry of finalIndexes) {
+    const text = (entry.content ?? await fs.readFile(entry.file)).toString("utf8");
+    updateGeneratedIndexRegion(text, "- none - Extension preflight - #Empty", entry.file);
+  }
+}
+
+async function assertExtensionIndexRootSafe(targetRoot: string, scanRoot: string): Promise<void> {
+  if (!(await lstatIfExists(scanRoot))) {
+    return;
+  }
+
+  let current = scanRoot;
+  while (true) {
+    const stat = await fs.lstat(current);
+    if (stat.isSymbolicLink()) {
+      throw new Error(`Extension target index root contains a symbolic link or junction: ${current}`);
+    }
+    if (samePath(current, targetRoot)) {
+      return;
+    }
+
+    const parent = path.dirname(current);
+    if (samePath(parent, current) || !isPathInside(current, targetRoot)) {
+      throw new Error(`Extension target index root escapes the target: ${scanRoot}`);
+    }
+    current = parent;
+  }
+}
+
+async function assertNoPortableTargetAlias(targetRoot: string, relativePath: string): Promise<void> {
+  let current = targetRoot;
+  for (const segment of toPosix(relativePath).split("/")) {
+    if (!(await isDirectory(current))) {
+      return;
+    }
+
+    const matches = (await fs.readdir(current)).filter((entry) => portableExtensionPathKey(entry) === portableExtensionPathKey(segment));
+    if (matches.length > 1) {
+      throw new Error(`Extension target has multiple portable aliases for ${path.join(current, segment)}: ${matches.join(", ")}`);
+    }
+    if (matches.length === 0) {
+      return;
+    }
+    if (matches[0] !== segment) {
+      throw new Error(`Extension target path ${path.join(current, matches[0])} aliases planned portable path ${path.join(current, segment)}`);
+    }
+    current = path.join(current, matches[0]);
+  }
+}
+
+async function assertExtensionTargetPath(targetRoot: string, targetFile: string): Promise<void> {
+  const relative = path.relative(targetRoot, targetFile);
+  if (relative.startsWith("..") || path.isAbsolute(relative)) {
+    throw new Error(`Extension file resolves outside the target: ${targetFile}`);
+  }
+
+  if (await isDirectory(targetFile)) {
+    throw new Error(`Extension file target is an existing directory: ${targetFile}`);
+  }
+
+  let current = targetFile;
+  while (!samePath(current, targetRoot)) {
+    const stat = await lstatIfExists(current);
+    if (stat?.isSymbolicLink()) {
+      throw new Error(`Extension target path contains a symbolic link or junction: ${current}`);
+    }
+    if (stat?.isFile() && !samePath(current, targetFile)) {
+      throw new Error(`Extension target parent is an existing file: ${current}`);
+    }
+    if (stat?.isFile() && samePath(current, targetFile)) {
+      await assertFileIsNotHardLinked(current, "Extension target file");
+    }
+
+    const parent = path.dirname(current);
+    if (samePath(parent, current)) {
+      break;
+    }
+    current = parent;
+  }
+}
+
+async function assertFileIsNotHardLinked(file: string, context: string): Promise<void> {
+  const stat = await fs.lstat(file);
+  if (stat.isFile() && stat.nlink > 1) {
+    throw new Error(`${context} has multiple hard links and cannot be safely rewritten: ${file}`);
+  }
+}
+
+function countExtensionPlanStatuses(plan: ExtensionInstallPlanEntry[]): Record<ExtensionPlanStatus, number> {
+  const counts: Record<ExtensionPlanStatus, number> = { create: 0, update: 0, unchanged: 0 };
+  for (const entry of plan) {
+    counts[entry.status] += 1;
+  }
+  return counts;
+}
+
+type ExtensionPlanScope = "routed" | "baseline" | "executable" | "workspace";
+
+function countExtensionPlanScopes(plan: ExtensionInstallPlanEntry[]): Record<ExtensionPlanScope, number> {
+  const counts: Record<ExtensionPlanScope, number> = { routed: 0, baseline: 0, executable: 0, workspace: 0 };
+  for (const entry of plan) {
+    counts[classifyExtensionPlanScope(entry.relativePath)] += 1;
+  }
+  return counts;
+}
+
+function classifyExtensionPlanScope(relativePath: string): ExtensionPlanScope {
+  const caseInsensitive = process.platform === "win32" || process.platform === "darwin";
+  const comparable = caseInsensitive ? relativePath.toLowerCase() : relativePath;
+  const agentsFile = caseInsensitive ? "agents.md" : "AGENTS.md";
+  const isWorkspaceDirective = /^\.agents\/directives\/[^/]+\.md$/.test(comparable);
+  if (comparable === agentsFile || comparable === ".agents/loader.md" || comparable === ".agents/loader.overwrite.md" || isWorkspaceDirective) {
+    return "baseline";
+  }
+  if (/^\.agents\/skills\/[^/]+\/scripts\//.test(comparable)) {
+    return "executable";
+  }
+  if (!comparable.startsWith(".agents/")) {
+    return "workspace";
+  }
+  return "routed";
+}
+
+async function applyExtensionInstallPlan(plan: ExtensionInstallPlanEntry[], targetRoot: string): Promise<ExtensionApplyReceipt> {
+  const receipt: ExtensionApplyReceipt = { applied: [], createdDirectories: [] };
+  const createdDirectories = new Set<string>();
+
+  try {
+    if (!(await isDirectory(targetRoot))) {
+      createdDirectories.add(targetRoot);
+      await ensureDir(targetRoot);
+    }
+
+    for (const entry of plan) {
+      if (entry.status === "unchanged") {
+        continue;
+      }
+
+      for (const directory of await missingDirectories(path.dirname(entry.targetFile), targetRoot)) {
+        createdDirectories.add(directory);
+      }
+      await ensureDir(path.dirname(entry.targetFile));
+      receipt.applied.push(entry);
+      await fs.writeFile(entry.targetFile, entry.content);
+    }
+  } catch (error) {
+    receipt.createdDirectories = sortDeepestFirst([...createdDirectories]);
+    await rollbackExtensionInstall(receipt);
+    throw error;
+  }
+
+  receipt.createdDirectories = sortDeepestFirst([...createdDirectories]);
+  return receipt;
+}
+
+async function missingDirectories(directory: string, targetRoot: string): Promise<string[]> {
+  const missing: string[] = [];
+  let current = directory;
+  while (samePath(current, targetRoot) || isPathInside(current, targetRoot)) {
+    if (await isDirectory(current)) {
+      break;
+    }
+    missing.push(current);
+    if (samePath(current, targetRoot)) {
+      break;
+    }
+    current = path.dirname(current);
+  }
+  return missing;
+}
+
+function sortDeepestFirst(directories: string[]): string[] {
+  return directories.sort((left, right) => right.split(path.sep).length - left.split(path.sep).length);
+}
+
+async function rollbackExtensionInstall(receipt: ExtensionApplyReceipt): Promise<void> {
+  for (const entry of [...receipt.applied].reverse()) {
+    if (entry.originalContent == null) {
+      await fs.rm(entry.targetFile, { force: true });
+    } else {
+      await ensureDir(path.dirname(entry.targetFile));
+      await fs.writeFile(entry.targetFile, entry.originalContent);
+    }
+  }
+
+  for (const directory of receipt.createdDirectories) {
+    try {
+      await fs.rmdir(directory);
+    } catch (error) {
+      if (!isNodeError(error) || (error.code !== "ENOENT" && error.code !== "ENOTEMPTY")) {
+        throw error;
+      }
+    }
+  }
 }
 
 type ExtensionSource = {
+  packageRoot: string;
   root: string;
   label: string;
   kind: "local" | "bundled";
+  id: string | null;
+  dependencies: string[];
+  payloadMode: "directory" | "overlay" | "none";
 };
 
-type BundledExtensionInfo = {
+type ExtensionContentKind = typeof extensionContentKindOrder[number];
+
+export type ExtensionDependencyInfo = {
+  id: string;
+  dependencies: readonly string[];
+};
+
+export type ExtensionSelectionState = {
+  direct: ReadonlySet<string>;
+  required: ReadonlySet<string>;
+};
+
+type BundledExtensionInfo = ExtensionDependencyInfo & {
   id: string;
   name: string;
   description: string;
+  version: string | null;
+  dependencies: string[];
+  contents: ExtensionContentKind[];
 };
+
+type ExtensionManifest = {
+  name: string;
+  description: string;
+  version: string | null;
+  dependencies: string[];
+};
+
+async function resolveExtensionClosure(values: string[]): Promise<ExtensionSource[]> {
+  const roots = await Promise.all(values.map(resolveExtensionSource));
+  const resolved: ExtensionSource[] = [];
+  const visited = new Set<string>();
+  const visiting: string[] = [];
+
+  const visit = async (extension: ExtensionSource): Promise<void> => {
+    const key = extensionSourceKey(extension);
+    if (visited.has(key)) {
+      return;
+    }
+
+    const cycleStart = visiting.indexOf(key);
+    if (cycleStart !== -1) {
+      const cycleKeys = [...visiting.slice(cycleStart), key];
+      throw new Error(`Extension dependency cycle: ${cycleKeys.map(extensionKeyLabel).join(" -> ")}`);
+    }
+
+    visiting.push(key);
+    for (const dependency of extension.dependencies) {
+      await visit(await resolveBundledExtensionSource(dependency, `required by ${extensionDisplayName(extension)}`));
+    }
+    visiting.pop();
+    visited.add(key);
+    resolved.push(extension);
+  };
+
+  for (const root of roots) {
+    await visit(root);
+  }
+
+  return resolved;
+}
+
+function extensionSourceKey(extension: ExtensionSource): string {
+  return extension.kind === "bundled"
+    ? `bundled:${extension.id}`
+    : `local:${pathIdentity(extension.packageRoot)}`;
+}
+
+function extensionKeyLabel(key: string): string {
+  return key.startsWith("bundled:") ? key.slice("bundled:".length) : key.slice("local:".length);
+}
+
+function extensionDisplayName(extension: ExtensionSource): string {
+  return extension.kind === "bundled" ? extension.id ?? extension.label : extension.label;
+}
 
 async function resolveExtensionSource(value: string): Promise<ExtensionSource> {
   const localRoot = path.resolve(value);
+  const localRootStat = await lstatIfExists(localRoot);
+  if (localRootStat?.isSymbolicLink()) {
+    throw new Error(`Extension source root is a symbolic link or junction: ${localRoot}`);
+  }
   if (await isDirectory(localRoot)) {
     const localPayloadRoot = path.join(localRoot, "payload");
+    const hasPayloadDirectory = await isDirectory(localPayloadRoot);
+    const manifest = await readExtensionManifest(localRoot, path.basename(localRoot));
+    const isDependencyOnlyPack = !hasPayloadDirectory
+      && manifest.dependencies.length > 0
+      && !(await hasLocalOverlayPayloadFiles(localRoot));
     return {
-      root: await isDirectory(localPayloadRoot) ? localPayloadRoot : localRoot,
+      packageRoot: localRoot,
+      root: hasPayloadDirectory ? localPayloadRoot : localRoot,
       label: localRoot,
-      kind: "local"
+      kind: "local",
+      id: null,
+      dependencies: manifest.dependencies,
+      payloadMode: hasPayloadDirectory ? "directory" : isDependencyOnlyPack ? "none" : "overlay"
     };
   }
 
@@ -241,14 +707,39 @@ async function resolveExtensionSource(value: string): Promise<ExtensionSource> {
     throw new Error(`Extension source does not exist or is not a directory: ${localRoot}`);
   }
 
-  const bundledRoot = path.join(bundledExtensionsRoot, value, "payload");
-  if (await isDirectory(bundledRoot)) {
-    return { root: bundledRoot, label: value, kind: "bundled" };
+  return resolveBundledExtensionSource(value);
+}
+
+async function hasLocalOverlayPayloadFiles(packageRoot: string): Promise<boolean> {
+  const maintainerFiles = new Set(["extension.json", "readme.md"]);
+  const files = await listFiles(packageRoot, () => true, { rejectLinksAndSpecialEntries: true });
+  return files.some((file) => !maintainerFiles.has(portableExtensionPathKey(toPosix(path.relative(packageRoot, file)))));
+}
+
+async function resolveBundledExtensionSource(id: string, context = "requested directly"): Promise<ExtensionSource> {
+  const packageRoot = path.join(bundledExtensionsRoot, id);
+  const bundledRoot = path.join(packageRoot, "payload");
+  if (await isDirectory(packageRoot)) {
+    const manifest = await readExtensionManifest(packageRoot, id);
+    const hasPayload = await hasExtensionPayloadFiles(bundledRoot);
+    if (hasPayload || manifest.dependencies.length > 0) {
+      return {
+        packageRoot,
+        root: hasPayload ? bundledRoot : packageRoot,
+        label: id,
+        kind: "bundled",
+        id,
+        dependencies: manifest.dependencies,
+        payloadMode: hasPayload ? "directory" : "none"
+      };
+    }
+
+    throw new Error(`Bundled Open Forge extension ${id} has neither payload files nor dependencies and cannot be installed`);
   }
 
   const available = await listBundledExtensionIds();
   const suffix = available.length > 0 ? ` Available bundled extensions: ${available.join(", ")}.` : " No bundled extensions are installed in this CLI package.";
-  throw new Error(`Unknown bundled Open Forge extension: ${value}.${suffix}`);
+  throw new Error(`Unknown bundled Open Forge extension ${id} (${context}).${suffix}`);
 }
 
 function isBundledExtensionId(value: string): boolean {
@@ -266,49 +757,217 @@ async function listBundledExtensions(): Promise<void> {
   console.log("Bundled Open Forge extensions:");
   for (const extension of extensions) {
     const description = extension.description ? ` - ${extension.description}` : "";
-    console.log(`- ${extension.id}${description}`);
+    const dependencies = extension.dependencies.length > 0 ? ` (requires: ${extension.dependencies.join(", ")})` : "";
+    const contents = ` (contents: ${extension.contents.length > 0 ? extension.contents.join(", ") : "empty"})`;
+    console.log(`- ${extension.id}${description}${dependencies}${contents}`);
   }
 }
 
 async function listBundledExtensionIds(): Promise<string[]> {
-  return (await listBundledExtensionInfos()).map((extension) => extension.id);
-}
-
-async function listBundledExtensionInfos(): Promise<BundledExtensionInfo[]> {
   if (!(await isDirectory(bundledExtensionsRoot))) {
     return [];
   }
 
   const entries = await fs.readdir(bundledExtensionsRoot, { withFileTypes: true });
-  const extensions: BundledExtensionInfo[] = [];
-
+  const ids: string[] = [];
   for (const entry of entries) {
     if (!entry.isDirectory() || !isBundledExtensionId(entry.name)) {
       continue;
     }
 
-    if (await isDirectory(path.join(bundledExtensionsRoot, entry.name, "payload"))) {
-      extensions.push(await readBundledExtensionInfo(entry.name));
+    const packageRoot = path.join(bundledExtensionsRoot, entry.name);
+    if (await hasExtensionPayloadFiles(path.join(packageRoot, "payload"))) {
+      ids.push(entry.name);
+      continue;
+    }
+
+    const manifest = await readExtensionManifest(packageRoot, entry.name);
+    if (manifest.dependencies.length > 0) {
+      ids.push(entry.name);
     }
   }
+  return ids.sort((left, right) => left.localeCompare(right));
+}
 
-  return extensions.sort((left, right) => left.id.localeCompare(right.id));
+async function listBundledExtensionInfos(): Promise<BundledExtensionInfo[]> {
+  return Promise.all((await listBundledExtensionIds()).map(readBundledExtensionInfo));
 }
 
 async function readBundledExtensionInfo(id: string): Promise<BundledExtensionInfo> {
-  const metadataFile = path.join(bundledExtensionsRoot, id, "extension.json");
-  const fallback = { id, name: id, description: "" };
-  const text = await readTextIfExists(metadataFile);
-  if (!text) {
-    return fallback;
-  }
-
-  const metadata = JSON.parse(text) as Partial<BundledExtensionInfo>;
+  const packageRoot = path.join(bundledExtensionsRoot, id);
+  const [metadata, contents] = await Promise.all([
+    readExtensionManifest(packageRoot, id),
+    classifyExtensionPayloadContents(path.join(packageRoot, "payload"))
+  ]);
   return {
     id,
-    name: typeof metadata.name === "string" && metadata.name.trim() ? metadata.name.trim() : fallback.name,
-    description: typeof metadata.description === "string" ? metadata.description.trim() : fallback.description
+    ...metadata,
+    contents
   };
+}
+
+async function classifyExtensionPayloadContents(payloadRoot: string): Promise<ExtensionContentKind[]> {
+  if (!(await isDirectory(payloadRoot))) {
+    return ["pack"];
+  }
+
+  const kinds = new Set<ExtensionContentKind>();
+  const routeKinds: Record<string, Exclude<ExtensionContentKind, "pack" | "other">> = {
+    skills: "skill",
+    workflows: "workflow",
+    directives: "directive",
+    guidance: "guidance",
+    patterns: "pattern",
+    workspace: "workspace",
+    memory: "memory"
+  };
+
+  const files = await listFiles(payloadRoot, () => true, { rejectLinksAndSpecialEntries: true });
+  if (files.length === 0) {
+    return ["pack"];
+  }
+
+  for (const file of files) {
+    const segments = toPosix(path.relative(payloadRoot, file)).normalize("NFC").toLowerCase().split("/");
+    const kind = segments[0] === ".agents" ? routeKinds[segments[1] ?? ""] : undefined;
+    kinds.add(kind ?? "other");
+  }
+
+  return extensionContentKindOrder.filter((kind) => kinds.has(kind));
+}
+
+async function hasExtensionPayloadFiles(payloadRoot: string): Promise<boolean> {
+  return await isDirectory(payloadRoot)
+    && (await listFiles(payloadRoot, () => true, { rejectLinksAndSpecialEntries: true })).length > 0;
+}
+
+async function readExtensionManifest(packageRoot: string, fallbackName: string): Promise<ExtensionManifest> {
+  const metadataFile = path.join(packageRoot, "extension.json");
+  const text = await readTextIfExists(metadataFile);
+  if (text == null) {
+    return { name: fallbackName, description: "", version: null, dependencies: [] };
+  }
+
+  let value: unknown;
+  try {
+    value = JSON.parse(text);
+  } catch (error) {
+    throw new Error(`Invalid extension manifest ${metadataFile}: ${error instanceof Error ? error.message : String(error)}`);
+  }
+
+  if (!isRecord(value)) {
+    throw new Error(`Invalid extension manifest ${metadataFile}: expected a JSON object`);
+  }
+
+  const allowedFields = new Set(["name", "description", "version", "dependencies"]);
+  const unknownFields = Object.keys(value).filter((key) => !allowedFields.has(key));
+  if (unknownFields.length > 0) {
+    throw new Error(`Invalid extension manifest ${metadataFile}: unknown field${unknownFields.length === 1 ? "" : "s"} ${unknownFields.join(", ")}`);
+  }
+
+  const name = readOptionalManifestString(value, "name", metadataFile) ?? fallbackName;
+  const description = readOptionalManifestString(value, "description", metadataFile) ?? "";
+  const version = readOptionalManifestString(value, "version", metadataFile);
+  const hasDependencies = Object.prototype.hasOwnProperty.call(value, "dependencies");
+  const rawDependencies = value.dependencies;
+  if (hasDependencies && !Array.isArray(rawDependencies)) {
+    throw new Error(`Invalid extension manifest ${metadataFile}: dependencies must be an array of bundled extension ids`);
+  }
+
+  const dependencies = !hasDependencies ? [] : (rawDependencies as unknown[]).map((dependency, index) => {
+    if (typeof dependency !== "string" || !isBundledExtensionId(dependency)) {
+      throw new Error(`Invalid extension manifest ${metadataFile}: dependencies[${index}] must be a lowercase bundled extension id`);
+    }
+    return dependency;
+  });
+
+  if (new Set(dependencies).size !== dependencies.length) {
+    throw new Error(`Invalid extension manifest ${metadataFile}: dependencies must not contain duplicates`);
+  }
+
+  return { name, description, version, dependencies };
+}
+
+function readOptionalManifestString(value: Record<string, unknown>, key: string, metadataFile: string): string | null {
+  if (!Object.prototype.hasOwnProperty.call(value, key)) {
+    return null;
+  }
+  const raw = value[key];
+  if (typeof raw !== "string" || !raw.trim()) {
+    throw new Error(`Invalid extension manifest ${metadataFile}: ${key} must be a non-empty string`);
+  }
+  return raw.trim();
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value != null && !Array.isArray(value);
+}
+
+export function createExtensionSelectionState(
+  extensions: readonly ExtensionDependencyInfo[],
+  directIds: Iterable<string> = [],
+): ExtensionSelectionState {
+  const catalog = new Map(extensions.map((extension) => [extension.id, extension]));
+  const direct = new Set(directIds);
+  const required = new Set<string>();
+  const visited = new Set<string>();
+
+  const visit = (id: string, context: string, visiting: string[]): void => {
+    const cycleStart = visiting.indexOf(id);
+    if (cycleStart !== -1) {
+      throw new Error(`Extension dependency cycle: ${[...visiting.slice(cycleStart), id].join(" -> ")}`);
+    }
+
+    const extension = catalog.get(id);
+    if (!extension) {
+      throw new Error(`Unknown bundled Open Forge extension ${id} (${context})`);
+    }
+    if (visited.has(id)) {
+      return;
+    }
+
+    visiting.push(id);
+    for (const dependency of extension.dependencies) {
+      if (!direct.has(dependency)) {
+        required.add(dependency);
+      }
+      visit(dependency, `required by ${id}`, visiting);
+    }
+    visiting.pop();
+    visited.add(id);
+  };
+
+  for (const id of direct) {
+    visit(id, "selected directly", []);
+  }
+  for (const id of direct) {
+    required.delete(id);
+  }
+
+  return { direct, required };
+}
+
+export function toggleExtensionSelection(
+  extensions: readonly ExtensionDependencyInfo[],
+  state: ExtensionSelectionState,
+  id: string,
+): ExtensionSelectionState {
+  const direct = new Set(state.direct);
+  if (direct.has(id)) {
+    direct.delete(id);
+  } else if (state.required.has(id)) {
+    return state;
+  } else {
+    direct.add(id);
+  }
+
+  return createExtensionSelectionState(extensions, direct);
+}
+
+function validateExtensionSelectionGraph(extensions: readonly ExtensionDependencyInfo[]): void {
+  for (const extension of extensions) {
+    createExtensionSelectionState(extensions, [extension.id]);
+  }
 }
 
 async function selectBundledExtensionIds(): Promise<string[]> {
@@ -322,9 +981,10 @@ async function selectBundledExtensionIds(): Promise<string[]> {
     throw new Error("Interactive extension selection requires a TTY. Use open-forge extend --list or open-forge extend --ids <id[,id...]>.");
   }
 
+  validateExtensionSelectionGraph(extensions);
   let cursor = 0;
   let renderedLines = 0;
-  const selected = new Set<string>();
+  let selection = createExtensionSelectionState(extensions);
   const stdin = process.stdin;
   const stdout = process.stdout;
 
@@ -334,12 +994,16 @@ async function selectBundledExtensionIds(): Promise<string[]> {
     }
 
     const lines = [
-      "Select bundled Open Forge extensions. Space toggles, Enter installs, q cancels.",
+      "Select bundled Open Forge extensions. Space toggles, Enter installs, q cancels. Dependencies are locked while required.",
       ...extensions.map((extension, index) => {
         const pointer = index === cursor ? ">" : " ";
-        const mark = selected.has(extension.id) ? "[x]" : "[ ]";
+        const mark = selection.direct.has(extension.id)
+          ? "[direct]"
+          : selection.required.has(extension.id) ? "[required]" : "[ ]";
         const description = extension.description ? ` - ${extension.description}` : "";
-        return `${pointer} ${mark} ${extension.id}${description}`;
+        const dependencies = extension.dependencies.length > 0 ? ` (requires: ${extension.dependencies.join(", ")})` : "";
+        const contents = ` (contents: ${extension.contents.length > 0 ? extension.contents.join(", ") : "empty"})`;
+        return `${pointer} ${mark} ${extension.id}${description}${dependencies}${contents}`;
       })
     ];
 
@@ -374,11 +1038,11 @@ async function selectBundledExtensionIds(): Promise<string[]> {
 
     const toggle = (): void => {
       const id = extensions[cursor].id;
-      if (selected.has(id)) {
-        selected.delete(id);
-      } else {
-        selected.add(id);
+      const nextSelection = toggleExtensionSelection(extensions, selection, id);
+      if (nextSelection === selection) {
+        stdout.write("\x07");
       }
+      selection = nextSelection;
       render();
     };
 
@@ -387,7 +1051,7 @@ async function selectBundledExtensionIds(): Promise<string[]> {
       if (key === "\u0003" || key === "\u001b" || key === "q") {
         cancel();
       } else if (key === "\r" || key === "\n") {
-        finish([...selected]);
+        finish([...selection.direct]);
       } else if (key === " ") {
         toggle();
       } else if (key === "\u001b[A" || key === "k") {
@@ -1001,7 +1665,7 @@ async function createExtensionScaffold(idArg: string | undefined, directoryArg: 
   await ensureDir(path.join(baseDirectory, "payload", agentsDirectoryName));
   await fs.writeFile(
     path.join(baseDirectory, "extension.json"),
-    `${JSON.stringify({ name, description: "TODO - one line shown by open-forge extend --list" }, null, 2)}\n`
+    `${JSON.stringify({ name, description: "TODO - one line shown by open-forge extend --list", version: "0.1.0", dependencies: [] }, null, 2)}\n`
   );
   await fs.writeFile(
     path.join(baseDirectory, "README.md"),
@@ -1141,7 +1805,7 @@ async function generateIndexes(root: string): Promise<number> {
   const scanRoot = await isDirectory(agentsRoot) ? agentsRoot : root;
   const markdownFiles = await listFiles(scanRoot, (file) => isIndexFile(file));
   assertUnambiguousCategoryEntrypoints(markdownFiles);
-  let count = 0;
+  const plan: GeneratedIndexPlanEntry[] = [];
 
   for (const indexFile of markdownFiles) {
     const directory = path.dirname(indexFile);
@@ -1150,23 +1814,43 @@ async function generateIndexes(root: string): Promise<number> {
       continue;
     }
 
-    await generateIndex(indexFile, directory);
-    count += 1;
+    plan.push(await planGeneratedIndex(indexFile, directory));
   }
 
   const loaderFile = path.join(scanRoot, "loader.md");
   if (await isFile(loaderFile)) {
-    await generateLoaderRegistry(loaderFile, scanRoot);
-    count += 1;
+    plan.push(await planLoaderRegistry(loaderFile, scanRoot));
   }
 
-  return count;
+  const written: GeneratedIndexPlanEntry[] = [];
+  try {
+    for (const entry of plan) {
+      if (entry.current === entry.next) {
+        continue;
+      }
+      written.push(entry);
+      await fs.writeFile(entry.file, entry.next);
+    }
+  } catch (error) {
+    for (const entry of written.reverse()) {
+      await fs.writeFile(entry.file, entry.current);
+    }
+    throw error;
+  }
+
+  return plan.length;
 }
 
-async function generateIndex(indexFile: string, folder: string): Promise<void> {
+type GeneratedIndexPlanEntry = {
+  file: string;
+  current: string;
+  next: string;
+};
+
+async function planGeneratedIndex(indexFile: string, folder: string): Promise<GeneratedIndexPlanEntry> {
   const current = await fs.readFile(indexFile, "utf8");
   const body = await computeIndexBody(indexFile, folder);
-  await fs.writeFile(indexFile, updateGeneratedIndexRegion(current, body, indexFile));
+  return { file: indexFile, current, next: updateGeneratedIndexRegion(current, body, indexFile) };
 }
 
 async function computeIndexBody(indexFile: string, folder: string): Promise<string> {
@@ -1181,10 +1865,10 @@ async function computeIndexBody(indexFile: string, folder: string): Promise<stri
   return entries.length > 0 ? entries.join("\n") : "- none - No entries - #Empty";
 }
 
-async function generateLoaderRegistry(loaderFile: string, agentsRoot: string): Promise<void> {
+async function planLoaderRegistry(loaderFile: string, agentsRoot: string): Promise<GeneratedIndexPlanEntry> {
   const current = await fs.readFile(loaderFile, "utf8");
   const body = await computeLoaderBody(agentsRoot);
-  await fs.writeFile(loaderFile, updateGeneratedIndexRegion(current, body, loaderFile));
+  return { file: loaderFile, current, next: updateGeneratedIndexRegion(current, body, loaderFile) };
 }
 
 async function computeLoaderBody(agentsRoot: string): Promise<string> {
@@ -1546,9 +2230,33 @@ function readSection(frontmatter: string, name: string): string {
 }
 
 function readScalar(text: string, key: string, rootOnly = false): string {
-  const prefix = rootOnly ? "" : "\\s*";
-  const match = text.match(new RegExp(`^${prefix}${escapeRegex(key)}:\\s*(.+)$`, "m"));
-  return match ? cleanValue(match[1]) : "";
+  const lines = text.split(/\r?\n/);
+  for (let index = 0; index < lines.length; index += 1) {
+    const match = lines[index].match(new RegExp(`^(\\s*)${escapeRegex(key)}:\\s*(.*)$`));
+    if (!match || (rootOnly && match[1].length > 0)) {
+      continue;
+    }
+
+    const value = match[2].trim();
+    if (!/^[>|](?:[1-9]?[+-]?|[+-]?[1-9]?)$/.test(value)) {
+      return value ? cleanValue(value) : "";
+    }
+
+    const indent = match[1].length;
+    const block: string[] = [];
+    for (const next of lines.slice(index + 1)) {
+      const nextIndent = next.match(/^(\s*)/)?.[1].length ?? 0;
+      if (next.trim() && nextIndent <= indent) {
+        break;
+      }
+      if (next.trim()) {
+        block.push(next.trim());
+      }
+    }
+    return block.join(" ").replace(/\s+/g, " ").trim();
+  }
+
+  return "";
 }
 
 function readTags(text: string, rootOnly = false): string[] {
@@ -1644,19 +2352,34 @@ function markedBlockRegex(markerName: string): RegExp {
   return new RegExp(`<!--\\s*${escaped}:start\\s*-->[\\s\\S]*?<!--\\s*${escaped}:end\\s*-->`);
 }
 
-async function listFiles(root: string, predicate: (file: string) => boolean = () => true): Promise<string[]> {
+async function listFiles(
+  root: string,
+  predicate: (file: string) => boolean = () => true,
+  options: { rejectLinksAndSpecialEntries?: boolean; entryContext?: string } = {},
+): Promise<string[]> {
   const entries = await fs.readdir(root, { withFileTypes: true });
   const files: string[] = [];
 
   for (const entry of entries) {
     const fullPath = path.join(root, entry.name);
 
+    if (options.rejectLinksAndSpecialEntries) {
+      const entryContext = options.entryContext ?? "Extension source";
+      const stat = await fs.lstat(fullPath);
+      if (stat.isSymbolicLink()) {
+        throw new Error(`${entryContext} contains a symbolic link or junction: ${fullPath}`);
+      }
+      if (!stat.isDirectory() && !stat.isFile()) {
+        throw new Error(`${entryContext} contains an unsupported filesystem entry: ${fullPath}`);
+      }
+    }
+
     if (entry.isDirectory()) {
       if (ignoredDirectoryNames.has(entry.name)) {
         continue;
       }
 
-      files.push(...await listFiles(fullPath, predicate));
+      files.push(...await listFiles(fullPath, predicate, options));
     } else if (entry.isFile() && predicate(fullPath)) {
       files.push(fullPath);
     }
@@ -1668,6 +2391,30 @@ async function listFiles(root: string, predicate: (file: string) => boolean = ()
 async function readTextIfExists(file: string): Promise<string | null> {
   try {
     return await fs.readFile(file, "utf8");
+  } catch (error) {
+    if (isNodeError(error) && error.code === "ENOENT") {
+      return null;
+    }
+
+    throw error;
+  }
+}
+
+async function readBufferIfExists(file: string): Promise<Buffer | null> {
+  try {
+    return await fs.readFile(file);
+  } catch (error) {
+    if (isNodeError(error) && error.code === "ENOENT") {
+      return null;
+    }
+
+    throw error;
+  }
+}
+
+async function lstatIfExists(file: string): Promise<Stats | null> {
+  try {
+    return await fs.lstat(file);
   } catch (error) {
     if (isNodeError(error) && error.code === "ENOENT") {
       return null;
@@ -1704,8 +2451,44 @@ function toPosix(value: string): string {
 }
 
 function samePath(left: string, right: string): boolean {
-  const normalize = (value: string) => process.platform === "win32" ? path.resolve(value).toLowerCase() : path.resolve(value);
-  return normalize(left) === normalize(right);
+  return pathIdentity(left) === pathIdentity(right);
+}
+
+function isPathInside(candidate: string, parent: string): boolean {
+  const relative = path.relative(pathIdentity(parent), pathIdentity(candidate));
+  return relative !== "" && !relative.startsWith("..") && !path.isAbsolute(relative);
+}
+
+function pathIdentity(value: string): string {
+  const resolved = path.resolve(value).normalize("NFC");
+  return process.platform === "win32" || process.platform === "darwin" ? resolved.toLowerCase() : resolved;
+}
+
+async function projectPathThroughExistingAncestor(candidate: string): Promise<string> {
+  let ancestor = path.resolve(candidate);
+  const missingSegments: string[] = [];
+  while (true) {
+    try {
+      await fs.lstat(ancestor);
+      const realAncestor = await fs.realpath(ancestor);
+      return path.resolve(realAncestor, ...missingSegments.reverse());
+    } catch (error) {
+      if (!isNodeError(error) || error.code !== "ENOENT") {
+        throw error;
+      }
+
+      const parent = path.dirname(ancestor);
+      if (samePath(parent, ancestor)) {
+        throw new Error(`Unable to resolve an existing ancestor for extension target: ${candidate}`);
+      }
+      missingSegments.push(path.basename(ancestor));
+      ancestor = parent;
+    }
+  }
+}
+
+function portableExtensionPathKey(value: string): string {
+  return value.normalize("NFC").toLowerCase();
 }
 
 function escapeRegex(value: string): string {
@@ -1716,8 +2499,7 @@ function isNodeError(error: unknown): error is NodeJS.ErrnoException {
   return error instanceof Error && "code" in error;
 }
 
-function resolveRepoRoot(): string {
-  const entryDirectory = path.dirname(fileURLToPath(import.meta.url));
+function resolveRepoRoot(entryDirectory: string): string {
   const candidates = [
     path.resolve(entryDirectory, ".."),
     path.resolve(entryDirectory, "../..")
@@ -1732,6 +2514,22 @@ function resolveRepoRoot(): string {
   return candidates[0];
 }
 
+function resolveFrameworkSourceRoot(repoRoot: string, entryDirectory: string): string {
+  const candidates = [
+    path.join(entryDirectory, "open-forge-src"),
+    path.join(repoRoot, "src", "open-forge")
+  ];
+  return candidates.find((candidate) => existsSync(path.join(candidate, "AGENTS.md"))) ?? candidates[0];
+}
+
+function resolveBundledExtensionsRoot(repoRoot: string, entryDirectory: string): string {
+  const candidates = [
+    path.join(entryDirectory, "extensions"),
+    path.join(repoRoot, "src", "extensions")
+  ];
+  return candidates.find((candidate) => existsSync(candidate)) ?? candidates[0];
+}
+
 function printHelp(): void {
   console.log(`open-forge
 
@@ -1739,9 +2537,9 @@ Usage:
   open-forge install [target]
   open-forge extend
   open-forge extend --list
-  open-forge extend --select [target]
-  open-forge extend --ids <id[,id...]> [target]
-  open-forge extend <extension-source-or-id> [target]
+  open-forge extend --select [target] [--dry-run]
+  open-forge extend --ids <id[,id...]> [target] [--dry-run]
+  open-forge extend <extension-source-or-id> [target] [--dry-run]
   open-forge index [target]
   open-forge find [--tag <Tag>]... [--route <path>] [--depth <n>] [--follow-required] [--bodies|--paths|--json] [target]
   open-forge doctor [--json] [target]
@@ -1750,7 +2548,7 @@ Usage:
 
 Commands:
   install  Copy files into target, update AGENTS.md, and rebuild generated index regions.
-  extend   Copy a local or bundled extension overlay into target and rebuild generated index regions.
+  extend   Resolve and install local or bundled extension overlays; --dry-run previews without writes.
   index    Rebuild the loader registry and category generated regions.
   find     List routed files by tag or route; --bodies prints contents, --follow-required includes Required Routes.
   doctor   Validate route integrity: entrypoints, generated regions, entry resolution, retired tags, required routes.
