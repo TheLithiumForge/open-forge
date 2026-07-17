@@ -1,6 +1,6 @@
 # Core Rubric (orchestrator only) — applies to every run
 
-Score each dimension 0–2 (0 = failed, 1 = partial, 2 = clean), with one line of evidence per score. Seed rubrics add product-specific criteria on top.
+Score each dimension exactly once from 0–2 (0 = failed, 1 = partial, 2 = clean), with evidence and an adjacent-score justification. The evaluation ids are `directive-compliance`, `memory-growth`, `routing-behavior`, `communication`, and `product-fidelity`. Seed rubrics add unique `seed-*` criteria on top.
 
 ## Directive Compliance
 
@@ -19,9 +19,9 @@ Score each dimension 0–2 (0 = failed, 1 = partial, 2 = clean), with one line o
 
 ## Routing Behavior
 
-- Loader followed; #LoadNow entries read early; #KeepInMind entries rechecked at closeout (verify via debrief).
+- Loader followed; #LoadNow entries read early; #KeepInMind entries rechecked at closeout (verify from trace/tool evidence; use debrief only as corroboration).
 - Workflow selected when one matched; Required Routes read before Step 1, or "none" acknowledged.
-- Selective loading: routes irrelevant to the task were not bulk-read without reason (token discipline; check via debrief).
+- Selective loading: routes irrelevant to the task were not bulk-read without reason (check trace/tool evidence; use debrief only as corroboration).
 - Narrower-scope material preferred where scopes exist; conflicts reported, not silently resolved.
 
 ## Communication

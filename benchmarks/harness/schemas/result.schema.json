@@ -1,0 +1,233 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-forge.local/benchmarks/result.schema.json",
+  "title": "Open Forge benchmark canonical result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "runId",
+    "experimentId",
+    "caseId",
+    "armId",
+    "replicate",
+    "evidenceClass",
+    "status",
+    "preparedAt",
+    "finalizedAt",
+    "model",
+    "runtime",
+    "isolation",
+    "controls",
+    "provenance",
+    "hashes",
+    "objectiveAssertions",
+    "subjectiveRatings",
+    "traces",
+    "notes",
+    "contamination",
+    "eligibility"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "runId": { "type": "string", "format": "uuid", "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89aAbB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$" },
+    "experimentId": { "$ref": "#/$defs/id" },
+    "caseId": { "$ref": "#/$defs/id" },
+    "armId": { "$ref": "#/$defs/id" },
+    "replicate": { "type": "integer", "minimum": 0 },
+    "evidenceClass": { "enum": ["engineering-smoke", "pilot", "confirmatory"] },
+    "status": { "enum": ["complete", "invalid", "aborted"] },
+    "preparedAt": { "type": "string", "format": "date-time" },
+    "finalizedAt": { "type": "string", "format": "date-time" },
+    "model": { "$ref": "run-spec.schema.json#/properties/model" },
+    "runtime": { "$ref": "run-spec.schema.json#/properties/runtime" },
+    "isolation": { "$ref": "run-spec.schema.json#/properties/isolation" },
+    "controls": { "$ref": "run-spec.schema.json#/properties/controls" },
+    "provenance": { "$ref": "#/$defs/provenance" },
+    "hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "normalizedSpecSha256",
+        "inputManifestSha256",
+        "initialWorkerVisibleSha256",
+        "initialWorkerTreeDigest",
+        "finalWorkerTreeDigest",
+        "finalWorkspaceSnapshotDigest",
+        "evaluationSha256",
+        "cliSha256",
+        "promptSha256",
+        "rubricSha256",
+        "harnessSha256"
+      ],
+      "properties": {
+        "normalizedSpecSha256": { "$ref": "#/$defs/sha256" },
+        "inputManifestSha256": { "$ref": "#/$defs/sha256" },
+        "initialWorkerVisibleSha256": { "$ref": "#/$defs/sha256" },
+        "initialWorkerTreeDigest": { "$ref": "#/$defs/sha256" },
+        "finalWorkerTreeDigest": { "$ref": "#/$defs/sha256" },
+        "finalWorkspaceSnapshotDigest": { "$ref": "#/$defs/sha256" },
+        "evaluationSha256": { "$ref": "#/$defs/sha256" },
+        "cliSha256": { "$ref": "#/$defs/sha256" },
+        "promptSha256": { "$ref": "#/$defs/sha256" },
+        "rubricSha256": { "$ref": "#/$defs/sha256" },
+        "harnessSha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "objectiveAssertions": { "$ref": "evaluation.schema.json#/properties/objectiveAssertions" },
+    "subjectiveRatings": { "$ref": "evaluation.schema.json#/properties/subjectiveRatings" },
+    "traces": { "$ref": "evaluation.schema.json#/properties/traces" },
+    "notes": { "$ref": "evaluation.schema.json#/properties/notes" },
+    "contamination": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["canaryHits"],
+      "properties": { "canaryHits": { "type": "array", "items": { "type": "string" } } }
+    },
+    "eligibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["engineeringEligible", "causalEligible", "publicEligible", "causalReasonCodes", "publicReasonCodes", "warnings"],
+      "properties": {
+        "engineeringEligible": { "type": "boolean" },
+        "causalEligible": { "const": false },
+        "publicEligible": { "const": false },
+        "causalReasonCodes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "contains": { "const": "P0_CAUSAL_CONTROL_VERIFIER_UNAVAILABLE" }
+        },
+        "publicReasonCodes": { "type": "array", "items": { "$ref": "#/$defs/id" } },
+        "warnings": { "type": "array", "items": { "$ref": "#/$defs/id" } }
+      }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$" },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "objectId": { "type": "string", "pattern": "^[0-9a-fA-F]{40,64}$" },
+    "executableFingerprint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "bytes"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "bytes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "harnessProducer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourcePath", "snapshotPath", "sha256", "bytes"],
+      "properties": {
+        "sourcePath": { "type": "string", "minLength": 1 },
+        "snapshotPath": { "type": "string", "pattern": "^snapshot/meta/harness" },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "bytes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "gitState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["head", "tree", "status", "statusSha256", "stagedDiffSha256", "unstagedDiffSha256", "clean"],
+      "properties": {
+        "head": { "$ref": "#/$defs/objectId" },
+        "tree": { "$ref": "#/$defs/objectId" },
+        "status": { "type": "string" },
+        "statusSha256": { "$ref": "#/$defs/sha256" },
+        "stagedDiffSha256": { "$ref": "#/$defs/sha256" },
+        "unstagedDiffSha256": { "$ref": "#/$defs/sha256" },
+        "clean": { "type": "boolean" }
+      }
+    },
+    "workspaceBaseline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commit", "tree", "status", "statusSha256", "stagedDiffSha256", "unstagedDiffSha256"],
+      "properties": {
+        "commit": { "$ref": "#/$defs/objectId" },
+        "tree": { "$ref": "#/$defs/objectId" },
+        "status": { "type": "string" },
+        "statusSha256": { "$ref": "#/$defs/sha256" },
+        "stagedDiffSha256": { "$ref": "#/$defs/sha256" },
+        "unstagedDiffSha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "workspaceFinal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "baselineCommit", "baselineTree", "head", "tree", "status", "statusSha256", "stagedDiffSha256",
+        "unstagedDiffSha256", "baselineDiffSha256", "baselineToHeadDiffSha256", "clean"
+      ],
+      "properties": {
+        "baselineCommit": { "$ref": "#/$defs/objectId" },
+        "baselineTree": { "$ref": "#/$defs/objectId" },
+        "head": { "$ref": "#/$defs/objectId" },
+        "tree": { "$ref": "#/$defs/objectId" },
+        "status": { "type": "string" },
+        "statusSha256": { "$ref": "#/$defs/sha256" },
+        "stagedDiffSha256": { "$ref": "#/$defs/sha256" },
+        "unstagedDiffSha256": { "$ref": "#/$defs/sha256" },
+        "baselineDiffSha256": { "$ref": "#/$defs/sha256" },
+        "baselineToHeadDiffSha256": { "$ref": "#/$defs/sha256" },
+        "clean": { "type": "boolean" }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion", "sourceRepo", "harnessProducer", "gitExecutable", "gitControl", "git", "traceHashes",
+        "cliInvocation", "workspaceBaseline", "snapshotExact", "workspaceFinal"
+      ],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "sourceRepo": { "type": "string", "minLength": 1 },
+        "harnessProducer": { "$ref": "#/$defs/harnessProducer" },
+        "gitExecutable": { "$ref": "#/$defs/executableFingerprint" },
+        "gitControl": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["environment", "commandConfig"],
+          "properties": {
+            "environment": { "type": "object", "additionalProperties": { "type": "string" } },
+            "commandConfig": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "git": { "$ref": "#/$defs/gitState" },
+        "traceHashes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["gitStatus", "gitDiffStaged", "gitDiffUnstaged", "cliStdout", "cliStderr", "workspaceBaselineStatus"],
+          "properties": {
+            "gitStatus": { "$ref": "#/$defs/sha256" },
+            "gitDiffStaged": { "$ref": "#/$defs/sha256" },
+            "gitDiffUnstaged": { "$ref": "#/$defs/sha256" },
+            "cliStdout": { "$ref": "#/$defs/sha256" },
+            "cliStderr": { "$ref": "#/$defs/sha256" },
+            "workspaceBaselineStatus": { "$ref": "#/$defs/sha256" }
+          }
+        },
+        "cliInvocation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["command", "exitCode", "durationMs", "stdoutSha256", "stderrSha256", "runtimeExecutable", "commandExecutable"],
+          "properties": {
+            "command": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+            "exitCode": { "type": "integer" },
+            "durationMs": { "type": "number", "minimum": 0 },
+            "stdoutSha256": { "$ref": "#/$defs/sha256" },
+            "stderrSha256": { "$ref": "#/$defs/sha256" },
+            "runtimeExecutable": { "$ref": "#/$defs/executableFingerprint" },
+            "commandExecutable": { "$ref": "#/$defs/executableFingerprint" }
+          }
+        },
+        "workspaceBaseline": { "$ref": "#/$defs/workspaceBaseline" },
+        "snapshotExact": { "const": true },
+        "workspaceFinal": { "$ref": "#/$defs/workspaceFinal" }
+      }
+    }
+  }
+}

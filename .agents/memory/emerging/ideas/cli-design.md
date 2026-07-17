@@ -15,6 +15,7 @@ Revised 2026-07-10. The viability core shipped this date: `find`, `doctor`, `cre
 - `doctor` - read-only integrity report, nonzero exit on errors, `--json` for CI: ambiguous entrypoints, malformed markers, unresolved generated entries, unresolved Required Routes, stale regions, retired load-policy tags, orphan overwrites, unreachable files. `index` remains the repair tool; no `--fix-index`.
 - `create category <route-path>` - scaffolds the whole missing chain with canonical entrypoints, placement-derived type tags, placeholder descriptions, and a reindex. Refuses already-routable paths.
 - `create extension <id>` - scaffolds `extension.json`, an authoring README, and an empty `payload/.agents/`.
+- `extend` catalogue - derives payload contents, supports manifest-only dependency packs, and visibly auto-selects and locks transitive extension dependencies while keeping skill, workflow, directive, mixed, and pack payloads under one install contract.
 
 Design principles that held: behavior keys to contract features (generated `Entries`, `Required Routes`, load-policy tags), never to route types, so new primitives need no new CLI surface. One earlier idea merged away: the separate `routes`/`context` verbs collapsed into `find` with body emission opt-in, and the named tiers became documented invocations - closeout is `find --tag KeepInMind --bodies`, a workflow bundle is `find --route <workflow> --follow-required --bodies`.
 
@@ -41,7 +42,6 @@ The rule that resolves every overlap: if the output depends on relevance judgmen
 - Detect collisions and ask before reusing paths (ancestor entrypoint generation shipped in create category).
 - Route templates with named slug parameters.
 - Extension manifests, provenance, compatibility, aliases, migrations, preview; install, update, remove, list, and local testing; see `extension-skill-sharing.md` for dependency handling.
-- Let users select individual workflows while the CLI auto-selects required shared skills.
 - Test extension installs through real OS temp directories instead of mocked filesystem operations.
 - Extension-template authoring for maintainers.
 - Forceful versus softer upgrade modes: forceful overwrites and re-adds all framework-owned files; softer updates existing framework-owned files without re-adding intentionally deleted defaults.

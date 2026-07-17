@@ -52,7 +52,10 @@ npx open-forge extend
 npx open-forge extend --list
 npx open-forge extend {extension-id}
 npx open-forge extend --ids {extension-id},{extension-id}
+npx open-forge extend {extension-id} --dry-run
 ```
+
+An extension may contain one skill, one workflow, directives, mixed routed material, or only dependencies as a convenience pack. The catalogue derives and shows those contents; interactive selection marks transitive dependencies as required and locks them while needed. Bundled dependencies resolve offline and install automatically. `--dry-run` shows dependency order, every planned file, change status, and baseline/executable scope without writing.
 
 Install Open Forge into another folder:
 

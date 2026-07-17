@@ -19,7 +19,7 @@ Decisions are accepted rationale for important choices that may need to be under
 <!-- open-forge:generated-index:start -->
 - `core-primitives.md` - The Core layer installs directives, patterns, guidance, skills, workflows, and workspace with their accepted meanings - #Memory #Decision #CurrentTruth #Core #Primitive
 - `do-not-revive.md` - Do-not-revive list - constants.md, local.md, _open-forge.md companions, default references/, base tasks route, external default memory, hidden version metadata, loader flattening - #Memory #Decision #CurrentTruth #Rejected
-- `extensions-and-cli.md` - Extensions add optional routed files into the existing tree; the extend command is a dogfooding MVP; installed files remain runtime truth - #Memory #Decision #CurrentTruth #Extension #CLI
+- `extensions-and-cli.md` - Extensions add optional routed files through offline dependency-safe install plans while installed files remain runtime truth - #Memory #Decision #CurrentTruth #Extension #CLI
 - `loading-reliability.md` - Reliability-critical context loads unconditionally and early; conditional context must be cheap to skip and cheap to recover from - #Memory #Decision #CurrentTruth #Loading #Routing #Reliability
 - `memory-model.md` - Memory is self-growing markdown state with working, emerging, crystallized, and archived states; it records state and never owns behavior - #Memory #Decision #CurrentTruth #MemoryModel
 - `product-direction.md` - Open Forge stays markdown-first, human-led, small by default, and optimized for recursive customization - #Memory #Decision #CurrentTruth #Product

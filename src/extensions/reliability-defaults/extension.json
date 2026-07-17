@@ -1,0 +1,6 @@
+{
+  "name": "Reliability Defaults",
+  "description": "Optional workspace-wide directives for scope, mutation safety, and evidence-based closeout",
+  "version": "0.1.0",
+  "dependencies": []
+}

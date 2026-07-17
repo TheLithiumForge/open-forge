@@ -9,6 +9,8 @@ const repoRoot = process.cwd();
 const sourceRoot = path.join(repoRoot, "src", "open-forge");
 const distRoot = path.join(repoRoot, "dist");
 const standaloneRoot = path.join(distRoot, "open-forge-src");
+const extensionsRoot = path.join(repoRoot, "src", "extensions");
+const bundledExtensionsRoot = path.join(distRoot, "extensions");
 const cliOutfile = path.join(distRoot, "cli.mjs");
 const ignoredDirectoryNames = new Set([".git", ".obsidian", "node_modules"]);
 
@@ -18,11 +20,13 @@ await fs.mkdir(distRoot, { recursive: true });
 
 await buildCli();
 await copyTree(sourceRoot, standaloneRoot);
+await copyTree(extensionsRoot, bundledExtensionsRoot);
 await writeSourceArtifacts();
 
 console.log("Built Open Forge:");
 console.log(`- ${path.relative(repoRoot, cliOutfile)}`);
 console.log(`- ${path.relative(repoRoot, standaloneRoot)}`);
+console.log(`- ${path.relative(repoRoot, bundledExtensionsRoot)}`);
 console.log(`- ${path.relative(repoRoot, path.join(distRoot, "open-forge-src.manifest.json"))}`);
 console.log(`- ${path.relative(repoRoot, path.join(distRoot, "open-forge-src.tar.gz"))}`);
 console.log(`- ${path.relative(repoRoot, path.join(distRoot, "open-forge-src.tar.gz.sha256"))}`);

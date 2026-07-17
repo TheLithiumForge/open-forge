@@ -1,0 +1,6 @@
+{
+  "name": "Vision Workflow",
+  "description": "Shape intent into core value, a first useful version, non-goals, risks, and growth direction",
+  "version": "0.1.0",
+  "dependencies": ["vision-capability"]
+}

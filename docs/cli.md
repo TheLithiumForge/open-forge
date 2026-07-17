@@ -8,11 +8,11 @@ The distributed CLI runs on Node.js.
 
 ```sh
 open-forge install [target]
-open-forge extend
+open-forge extend [--dry-run]
 open-forge extend --list
-open-forge extend --select [target]
-open-forge extend --ids <id[,id...]> [target]
-open-forge extend <extension-source-or-id> [target]
+open-forge extend --select [target] [--dry-run]
+open-forge extend --ids <id[,id...]> [target] [--dry-run]
+open-forge extend <extension-source-or-id> [target] [--dry-run]
 open-forge index [target]
 open-forge find [--tag <Tag>]... [--route <path>] [--depth <n>] [--follow-required] [--bodies|--paths|--json] [target]
 open-forge doctor [--json] [target]
@@ -75,7 +75,7 @@ Manual edits to framework files are visible in git diffs after install. Prefer s
 ## extend
 
 ```sh
-open-forge extend
+open-forge extend [--dry-run]
 open-forge extend {extension-source}
 open-forge extend {bundled-extension-id}
 open-forge extend {extension-source} {target-folder}
@@ -84,9 +84,11 @@ open-forge extend --list
 open-forge extend --select {target-folder}
 open-forge extend --ids {bundled-extension-id},{bundled-extension-id}
 open-forge extend --ids {bundled-extension-id},{bundled-extension-id} {target-folder}
+open-forge extend --dry-run {extension-source-or-id} {target-folder}
+open-forge extend --ids {bundled-extension-id},{bundled-extension-id} --dry-run {target-folder}
 ```
 
-`extend` installs extension overlays into the target and rebuilds generated index regions.
+`extend` resolves an extension and its bundled dependencies, plans the complete overlay, installs it into the target, and rebuilds generated index regions. Extension is a content-agnostic installation unit: the payload may be one skill, one workflow, directives, other routed material, support files, or any mix. Dependency resolution and installation are offline; the CLI reads only local folders and first-party extensions already shipped in the installed package.
 
 The extension can come from:
 
@@ -107,6 +109,8 @@ my-extension/
 
 Running `open-forge extend my-extension {target-folder}` copies those files into `{target-folder}`. Markdown files preserve matching marked local blocks when the target file already exists. Other files are copied over directly.
 
+A direct overlay without `payload/` is unmanaged. The CLI copies its files, but it does not record ownership or create an installed-package identity. If the overlay contains `extension.json`, the CLI reads that file for the current installation and does not copy it into the target; this still does not turn the overlay into managed runtime state.
+
 Local package example:
 
 ```text
@@ -122,7 +126,26 @@ my-extension/
 
 Running `open-forge extend my-extension {target-folder}` copies only `payload/` into `{target-folder}`.
 
-Bundled first-party extensions live in the CLI package under this source shape:
+`extension.json` is optional. The current manifest fields are:
+
+```json
+{
+  "name": "My Extension",
+  "description": "One line shown by list and selection views",
+  "version": "0.1.0",
+  "dependencies": ["implementation-capability"]
+}
+```
+
+- `name`, `description`, and `version` are optional non-empty strings. `version` is descriptive; the CLI does not perform version selection or compatibility solving.
+- `dependencies` is an optional duplicate-free array of lowercase bundled extension ids.
+- A dependency id may refer to any bundled extension shape, including a skill-only capability or a dependency-only convenience pack.
+- A local package or overlay may depend on bundled ids, but not on another arbitrary local path.
+- Invalid JSON, unknown fields, invalid field types, invalid dependency ids, duplicate dependencies, missing bundled dependencies, and dependency cycles stop the command before files are written.
+
+The manifest is install-time metadata only. It is not copied from a package-shaped extension, is not required by agents, and is never a hidden routing source. The installed payload remains runtime truth.
+
+Payload-bearing bundled first-party extensions live in the CLI package under this source shape:
 
 ```text
 src/extensions/{extension-id}/
@@ -132,15 +155,40 @@ src/extensions/{extension-id}/
       ...
 ```
 
-Use `open-forge extend --list` to show bundled extensions available in the installed CLI package. Use `open-forge extend {extension-id}` to install one.
+A dependency-only convenience pack may omit `payload/` when its manifest declares at least one dependency. It installs that closure and writes no package file of its own. This works by bundled id or from a copied local directory containing only `extension.json` and optional `README.md`. A bundled package with neither payload files nor dependencies is not catalogued and is rejected if addressed directly. A local directory with another root file and no `payload/` retains direct-overlay semantics.
 
-Use `open-forge extend` or `open-forge extend --select {target-folder}` to select bundled extensions in an interactive TTY. Space toggles selection, Enter installs selected extensions, and `q` cancels.
+Use `open-forge extend --list` to show the complete bundled catalogue available in the installed CLI package. Each line includes direct dependencies and a `contents` summary derived from its payload paths, such as `skill`, `workflow`, `directive`, `guidance`, `pattern`, `workspace`, `memory`, `other`, or `pack`. The summary is display metadata derived from runtime files, not a manifest claim. Use `open-forge extend {extension-id}` to install one.
 
-Use `open-forge extend --ids {id},{id} {target-folder}` for unattended bundled extension installs. The CLI resolves each value as a bundled extension id and runs index generation once after copying every selected payload.
+Use `open-forge extend` or `open-forge extend --select {target-folder}` to select bundled extensions in an interactive TTY. `[direct]` marks what the user selected and `[required]` marks automatically selected transitive dependencies. Space toggles a direct selection, but a required-only dependency is locked while another selection needs it. Removing the last dependent releases an orphaned requirement; a dependency selected directly remains direct. Enter installs and `q` cancels.
+
+Use `open-forge extend --ids {id},{id} {target-folder}` for unattended bundled extension installs. The CLI resolves transitive dependencies from the bundled first-party extensions, orders dependencies before dependents, deduplicates repeated packages, and runs index generation once after installing the complete plan.
+
+Before writing, the CLI validates strict manifest fields and reads every source file in the resolved extension set. Relative paths are Unicode-normalized and case-folded for portable composition, so case-only aliases within the plan or already in the target are collisions even on a case-sensitive host. If two extensions provide the same portable path with different bytes, installation stops; if the bytes are identical, that file is deduplicated. The plan also rejects a file that would be another planned file's parent, lexical or real-path source containment violations, a linked target root, symbolic links or junctions below that root, and multiply linked files that may be rewritten. The selected index tree is validated independently, including for an empty or outside-`.agents` payload. Existing target files are then classified as create, update, or unchanged; marked local blocks in Markdown remain preserved.
+
+Payload application and index regeneration are one in-process operation. A payload write failure restores overwritten files, removes files created by the attempt, and cleans up newly created empty directories. Index changes are planned before their write phase; an index validation or write failure restores index files and rolls back the payload application. This is best-effort process-level rollback, not a persistent journal or crash-recovery mechanism.
+
+Add `--dry-run` anywhere in an extension-install command to print the dependency order, create/update/unchanged counts, and every planned relative path with its status, without creating the target, copying files, or rebuilding indexes:
+
+```sh
+open-forge extend --dry-run workflow-essentials ./my-project
+open-forge extend dev-workflow ./my-project --dry-run
+open-forge extend --ids planning-workflows,quality-workflows --dry-run ./my-project
+```
+
+`--dry-run` cannot be combined with `--list`. With no explicit ids, it applies after interactive selection. It also checks existing generated-index marker/layout validity and entrypoint ambiguity that can be established without applying the payload. It does not preview generated-index body changes or include generated index writes in its file counts.
+
+Dry runs and normal installs also print a concise scope review:
+
+- `routed` - files under `.agents/` that use normal relevance routing
+- `baseline-loading` - `AGENTS.md`, `.agents/loader.md`, `.agents/loader.overwrite.md`, and direct Markdown files in `.agents/directives/`
+- `skill-executable` - files in a native skill package's direct `scripts/` subtree
+- `outside-.agents` - workspace files outside the routed tree
+
+Normal installs print the four counts; dry runs add the per-file plan so baseline, executable, and workspace-wide effects can be reviewed before approval.
 
 Extension payload files normally use #Extension plus their route type and useful scope tags. Do not use load-policy tags in extension payloads unless the extension intentionally adds baseline-loaded material.
 
-This is an MVP dogfooding command. It does not provide an external registry, preview, uninstall, update, route-template scaffolding, or dependency model yet. Build or select the overlay intentionally, run `extend`, then inspect the git diff.
+This remains a local, install-only extension command. It has no external registry or network resolution, lock file, persistent ownership record, crash-recovery journal, version solver, update, remove, or migration lifecycle. Route-template scaffolding is also still future work. Use `--dry-run`, install intentionally, then inspect the git diff.
 
 ## index
 
@@ -188,6 +236,8 @@ The skills route also recognizes native skill packages:
 ```
 
 The generated skill `entry` points to `implementation/SKILL.md`. The skill's own `SKILL.md` owns any `references/`, `scripts/`, `assets/`, or other runtime resources inside that folder.
+
+The same rule applies to a native skill copied directly or deployed by an external manager such as Microsoft APM: place or deploy the complete package at `.agents/skills/{skill-name}/`, then run `open-forge index` and `open-forge doctor`. Indexing updates only generated route regions; it does not rewrite the skill package.
 
 `scope routes` use the same rule. A `scope route` is a concrete `slug` folder with its own `entrypoint`. Every folder in the visible route chain needs its own `entrypoint`:
 
@@ -340,4 +390,4 @@ open-forge create extension my-patterns
 
 `create category` scaffolds a route chain: every missing folder in the path gets a canonical `_{folder}.md` `entrypoint` with placeholder metadata, a type tag derived from the top category, and an empty generated region, then all indexes are rebuilt. It refuses paths that are already routable. Fill in the TODO descriptions, then run `open-forge index` again.
 
-`create extension` scaffolds an extension package: `extension.json`, a README with authoring rules, and an empty `payload/.agents/` tree ready for routed files. Install it with `open-forge extend <directory-or-id>`.
+`create extension` scaffolds an extension package: `extension.json` with starter `version` and `dependencies` fields, a README with authoring rules, and an empty `payload/.agents/` tree ready for routed files. Install it with `open-forge extend <directory-or-id>`.

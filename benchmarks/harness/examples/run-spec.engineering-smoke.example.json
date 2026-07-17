@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "experimentId": "example-engineering-smoke",
+  "caseId": "seed-1-rebuild-small",
+  "armId": "core-harness",
+  "replicate": 0,
+  "evidenceClass": "engineering-smoke",
+  "sourceRepo": "../../..",
+  "components": [
+    {
+      "name": "core",
+      "source": "../../../src/open-forge",
+      "destination": ""
+    },
+    {
+      "name": "harness",
+      "source": "../payload",
+      "destination": ""
+    },
+    {
+      "name": "seed",
+      "source": "../../seed-1-rebuild-small/payload",
+      "destination": ""
+    }
+  ],
+  "overrides": [],
+  "inputs": {
+    "cli": {
+      "path": "../../../dist/cli.mjs",
+      "invocation": ["{runtime}", "{cli}", "index", "{workspace}"]
+    },
+    "prompt": {
+      "path": "worker-prompt.engineering-smoke.example.txt"
+    },
+    "rubric": {
+      "path": "../orchestrator/rubric-core.md"
+    }
+  },
+  "model": {
+    "provider": "example",
+    "id": "replace-with-worker-model",
+    "revision": "recorded-revision",
+    "settings": {}
+  },
+  "runtime": {
+    "name": "manual-worker",
+    "version": "recorded-version",
+    "adapter": "human-orchestrated",
+    "settings": {
+      "openForgeCommand": {
+        "available": false,
+        "delivery": "The worker prompt states that no open-forge command is provisioned."
+      }
+    }
+  },
+  "isolation": {
+    "freshContext": "unverified",
+    "inheritedContext": "unknown",
+    "workerReceivesOnlyWorkspace": false,
+    "network": "unknown",
+    "filesystem": "unknown"
+  },
+  "controls": {
+    "planned": false,
+    "randomized": false,
+    "declaredTreatmentOnly": false,
+    "replicatePlanned": false,
+    "planId": null,
+    "planSha256": null
+  }
+}

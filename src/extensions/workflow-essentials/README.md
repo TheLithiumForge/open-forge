@@ -1,13 +1,17 @@
 # Workflow Essentials
 
-Workflow Essentials is a first-party Open Forge extension for early dogfooding.
+Workflow Essentials is a convenience extension pack for on-demand vision, architecture, and implementation work.
 
-It installs:
+It selects:
 
-- vision workflow routes
-- architecture workflow routes
-- implementation workflow routes
-- shared workflow skills
-- workflow-specific vision, architecture, and implementation skills
+- `vision-workflow`
+- `architecture-workflow`
+- `implementation-workflow`
 
-The installed payload remains the runtime truth. This metadata exists only so the CLI can list and select bundled extensions.
+Each workflow then selects its required skill-only capability extension. This pack adds no parallel runtime route of its own; it is an ordinary dependency-only extension.
+
+```sh
+open-forge extend workflow-essentials
+```
+
+Installed workflow and skill files remain runtime truth. The pack manifest only composes installation.
