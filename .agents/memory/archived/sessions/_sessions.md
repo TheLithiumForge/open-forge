@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Archived Open Forge design sessions and the original prompt material
-  tags: [Memory, Archived, Session, Index, Contextual, Historical]
+  tags: [Memory, Archived, Session, Contextual, Historical]
 ---
 
 # Archived Sessions

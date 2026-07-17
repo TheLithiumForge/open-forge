@@ -14,15 +14,7 @@ A skill packages a bounded ability, procedure, tool use, or reference set that h
 
 ## Contains
 
-The installed skills category `entrypoint` must contain:
-
-- scoped `open-forge:` frontmatter with description `Reusable agent capability packages with clear use cases and expected results` and useful tags, including `Core`, `Skill`, and `Index`
-- a title
-- one short definition of skills
-- compact relevance, loading, native skill package, scope, and runtime-boundary axioms
-- a final marker-bounded generated index region
-
-The authored portion must stay between 10 and 35 non-empty lines. Generated `entries` do not count toward this limit.
+The installed file follows the shared category `entrypoint` shape owned by the formatting concept: scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
 
 ## Skill Contract
 
@@ -52,15 +44,7 @@ Skills in a narrower selected scope are preferred over broader skills when safe 
 
 ## Generated Region
 
-The final section must use the shared category `entrypoint` shape:
-
-```md
-## Entries
-
-<!-- open-forge:generated-index:start -->
-- none - No entries - #Empty
-<!-- open-forge:generated-index:end -->
-```
+The final generated region uses the shared category `entrypoint` shape owned by the formatting concept.
 
 Generated `entries` list direct skill packages and direct child skill categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
 
@@ -80,7 +64,7 @@ The implementation is aligned when it:
 
 - is named `_skills.md`
 - lives in `.agents/skills/`
-- includes `Core`, `Skill`, and `Index` in scoped `open-forge:` tags
+- includes `Core` and `Skill` in scoped `open-forge:` tags
 - defines skills as bounded reusable agent capability packages
 - selects skill routes by visible relevance
 - prefers `.agents/skills/{skill-name}/SKILL.md` for skill packages
@@ -90,3 +74,6 @@ The implementation is aligned when it:
 - prefers narrower selected skill scopes when safe and allowed
 - routes only through its final generated region
 - remains empty until skill packages or child skill categories are added
+- keeps compact relevance, loading, native skill package, scope, and runtime-boundary axioms
+- keeps the authored portion between 10 and 35 non-empty lines
+- keeps the frontmatter description `Reusable agent capability packages with clear use cases and expected results`

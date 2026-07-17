@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Patterns scoped to the CLI client package
-  tags: [Extension, Pattern, Cli, Scope, Index]
+  tags: [Extension, Pattern, Cli, Scope]
 ---
 
 # CLI Package Patterns

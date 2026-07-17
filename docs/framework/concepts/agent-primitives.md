@@ -50,15 +50,15 @@ Skills preserve the established meaning used by AI tools. Open Forge prefers the
 
 ## Workflows
 
-A workflow is a repeatable markdown recipe for reaching a defined goal, such as brainstorming, task creation, test-driven development, review, or implementation.
+A workflow is a repeatable markdown recipe for reaching a defined goal that takes more than one step or more than one skill, such as brainstorming, task creation, test-driven development, review, or implementation.
 
 Open Forge workflows are not runtime orchestration objects from an agent SDK. They are routed recipes that describe how work should proceed.
 
-A workflow defines required skill packages when it uses skills, ordered steps, loop behavior, expected outputs, and completion or handoff conditions.
+A workflow defines `Goal` (outcome, acceptance, stop), `Required Routes`, ordered `Steps`, `Loop` behavior, expected `Outputs`, and a `Completion` checklist, plus `Constraints` when cross-step invariants exist. Generated `Entries` express what a workflow contains; `Required Routes` express cross-tree dependencies it needs from elsewhere.
 
-`Required Skill Packages` in a selected workflow are load-bearing. Agents must load listed packages before running workflow steps and report missing routes.
+Agents read every `Required Routes` route before Step 1 and report a route that cannot be read as a blocker. "none" is a valid value.
 
-A workflow may consult guidance, apply patterns, invoke skills, and produce artifacts while obeying applicable directives.
+A workflow step may consult guidance, apply patterns, invoke skills, delegate to a subagent, or hand off to another workflow by route while obeying applicable directives.
 
 ## Relationships
 
@@ -149,8 +149,8 @@ Agent primitives are aligned when:
 - skills remain bounded reusable capability packages
 - skills prefer native `SKILL.md` packages
 - workflows remain repeatable markdown recipes for reaching defined goals
-- workflows define required skill packages, steps, loop behavior, outputs, and completion
-- selected workflows load their listed required skill packages before steps
+- workflows define Goal, Required Routes, Steps, Loop, Outputs, and Completion, with Constraints only when invariants exist
+- agents read every Required Routes route before Step 1 and report unreadable routes as blockers
 - every core primitive category is installed with its minimum `entrypoint`
 - core primitive `entrypoints` use #Core and singular primitive tags
 - opinionated primitive content remains local or optional

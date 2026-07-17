@@ -16,6 +16,11 @@
 - Worker: implements and gives a final response. A worker claiming "no subagent facility exists" while being one is a reporting error — score it.
 - Persona (seed-0): the orchestrator speaking as the user. Stay in character; do not leak evaluation intent.
 
+## Tooling
+
+- The `open-forge` CLI is installed globally; use it for composition and for `open-forge index` when verifying generated regions.
+- For your own verification reading you may run `benchmarks/variable-dump-tool/payload/tools/forge-dump.mjs` against a workspace. Never install that overlay into a workspace unless it is the run's declared variable.
+
 ## Variables Discipline
 
 Change one variable per comparison pair. Record framework commit, seed commit, model, and overlays in every report. If a seed file must change, change it in the benchmarks folder and commit — never edit seed content inside a run workspace.

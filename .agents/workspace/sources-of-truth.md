@@ -14,8 +14,9 @@ Route map for this repository's authoritative locations. Destination files own d
 - `src/open-forge/` - the installable payload users receive; runtime truth for installed workspaces, including this one.
 - `src/cli/cli.ts` - the MVP CLI implementation; `src/cli/cli.test.ts` is its behavior coverage.
 - `src/extensions/` - bundled first-party extensions, each with `extension.json` plus `payload/`; `workflow-essentials` is the first one.
+- `benchmarks/` - the reproducible evaluation instrument: harness, seeds, optional variable overlays, and one report per run under `benchmarks/results/` named `<date>-<seed>-<model>-<variables>.md`.
 - `build.ts` and `dist/` - build script and build output; never edit `dist/` by hand.
 - `docs/dev.md` and `docs/extensions.md` - development and extension authoring docs.
-- `.agents/memory/crystallized/documents/dogfood-reports/` - accepted records of dogfood evidence reports and recommendation analysis.
+- `.agents/memory/crystallized/documents/evaluations/` - accepted evaluation syntheses; raw run reports live in `benchmarks/results/` and pre-harness reports in `benchmarks/results/pre-harness/`.
 
 Validation commands for this repository: `bun run index`, `bun test`, `bun run build`.

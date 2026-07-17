@@ -14,15 +14,7 @@ It is a file primitive and `entry` primitive. It routes agents to the loader.
 
 ## Contains
 
-The installed `AGENTS.md` must contain:
-
-- an `<!-- open-forge:start -->` marker
-- an `<!-- open-forge:end -->` marker
-- a short title
-- the instruction to read `.agents/loader.md`
-- the instruction to follow the loader
-
-The installed `AGENTS.md` must stay small. Target size is 5-20 non-empty lines inside the managed block.
+The installed `AGENTS.md` contains one managed Open Forge block. The normative content requirements are the Alignment Checks below.
 
 ## Patch Contract
 
@@ -48,7 +40,8 @@ The marked block gives Open Forge an updateable `entrypoint` while preserving wo
 
 The implementation is aligned when it:
 
-- contains exactly one Open Forge marked block
-- routes to `.agents/loader.md`
+- contains exactly one block bounded by `<!-- open-forge:start -->` and `<!-- open-forge:end -->` markers
+- carries a short title and instructs agents to read and follow `.agents/loader.md`
 - keeps detailed behavior in the loader
 - preserves target workspace text outside the marked block during install
+- stays within 5-20 non-empty lines inside the managed block

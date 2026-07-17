@@ -1,7 +1,7 @@
 ---
 open-forge:
     description: Self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning
-    tags: [LoadNow, Memory, OrganicGrowth, Index]
+    tags: [LoadNow, Memory, OrganicGrowth]
 ---
 
 # Memory
@@ -22,8 +22,8 @@ Memory is self-growing markdown memory for workspace state: current truth, live 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `archived/_archived.md` - Historical memory kept for context after it is no longer current truth - #LoadNow #Memory #Archived #Index #Contextual #Historical
-- `crystallized/_crystallized.md` - Accepted durable memory and current truth - #LoadNow #Memory #Crystallized #Index #CurrentTruth
-- `emerging/_emerging.md` - Candidate memory that may be useful but is not accepted truth yet - #KeepInMind #Memory #Emerging #OrganicGrowth #Index #Contextual #Candidate
-- `working/_working.md` - Temporary memory that helps agents continue or resume active work - #LoadNow #Memory #Working #Index #Contextual
+- `archived/_archived.md` - Historical memory kept for context after it is no longer current truth - #LoadNow #Memory #Archived #Contextual #Historical
+- `crystallized/_crystallized.md` - Accepted durable memory and current truth - #LoadNow #Memory #Crystallized #CurrentTruth
+- `emerging/_emerging.md` - Candidate memory that may be useful but is not accepted truth yet - #KeepInMind #Memory #Emerging #OrganicGrowth #Contextual #Candidate
+- `working/_working.md` - Temporary memory that helps agents continue or resume active work - #LoadNow #Memory #Working #Contextual
 <!-- open-forge:generated-index:end -->

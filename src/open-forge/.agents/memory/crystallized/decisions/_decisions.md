@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Accepted rationale that explains important choices and their consequences
-  tags: [LoadNow, Memory, Decision, Rationale, Index, CurrentTruth]
+  tags: [LoadNow, Memory, Decision, Rationale, CurrentTruth]
 ---
 
 # Decisions

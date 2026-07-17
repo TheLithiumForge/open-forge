@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Workspace routes that point to important project locations and explain when to use them
-  tags: [LoadNow, Core, Workspace, Index]
+  tags: [LoadNow, Core, Workspace]
 ---
 
 # Workspace

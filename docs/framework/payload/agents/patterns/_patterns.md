@@ -14,15 +14,7 @@ A pattern has stable relationships and variable contents. It governs recognizabl
 
 ## Contains
 
-The installed patterns category `entrypoint` must contain:
-
-- scoped `open-forge:` frontmatter with a description and useful tags, including `Core`, `Pattern`, and `Index`
-- a title
-- one short definition of patterns
-- compact relevance, loading, scope, and application axioms
-- a final marker-bounded generated index region
-
-The authored portion must stay between 10 and 35 non-empty lines. Generated `entries` do not count toward this limit.
+The installed file follows the shared category `entrypoint` shape owned by the formatting concept: scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
 
 ## Pattern Contract
 
@@ -46,15 +38,7 @@ Patterns in a narrower selected scope are preferred over broader patterns when s
 
 ## Generated Region
 
-The final section must use the shared category `entrypoint` shape:
-
-```md
-## Entries
-
-<!-- open-forge:generated-index:start -->
-- none - No entries - #Empty
-<!-- open-forge:generated-index:end -->
-```
+The final generated region uses the shared category `entrypoint` shape owned by the formatting concept.
 
 Generated `entries` list direct pattern files and direct child pattern categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
 
@@ -74,7 +58,7 @@ The implementation is aligned when it:
 
 - is named `_patterns.md`
 - lives in `.agents/patterns/`
-- includes `Core`, `Pattern`, and `Index` in scoped `open-forge:` tags
+- includes `Core` and `Pattern` in scoped `open-forge:` tags
 - defines patterns as concrete recognizable shapes
 - selects pattern routes by visible relevance
 - treats applicable patterns as established defaults
@@ -82,3 +66,5 @@ The implementation is aligned when it:
 - prefers narrower selected pattern scopes when safe and allowed
 - routes only through its final generated region
 - remains empty until pattern files or child pattern categories are added
+- keeps compact relevance, loading, scope, and application axioms
+- keeps the authored portion between 10 and 35 non-empty lines

@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Contextual advice for recurring choices, tradeoffs, and work scenarios
-  tags: [LoadNow, Core, Guidance, Index]
+  tags: [LoadNow, Core, Guidance]
 ---
 
 # Guidance

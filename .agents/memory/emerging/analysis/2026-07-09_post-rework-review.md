@@ -30,8 +30,8 @@ Date: 2026-07-09. Question: after the dogfood migration, the tag rework, and the
 
 1. Ship `open-forge dump` (bulk context loading); still the highest-leverage build, unchanged by today's work.
 2. Decide the workflow Required Routes redesign (`.agents/memory/emerging/ideas/workflow-redesign.md`) and apply it to workflow-essentials.
-3. Deduplicate descriptors: make Alignment Checks the single normative list and cut Contains to what the checks do not cover, or the reverse; concepts stay separate files. Estimated 25-35% descriptor size reduction with no information loss.
-4. Consider dropping the #Index tag from generated `entries`; every category `entrypoint` is an index by definition, so the tag adds a token per entry without selection value. Needs a CLI change and a compatibility check.
+3. Deduplicate descriptors: make Alignment Checks the single normative list. Done 2026-07-09; roughly 300 lines removed losslessly, unique mandates moved into checks.
+4. Drop the #Index tag from authored metadata. Done 2026-07-09; the CLI keeps #Index only as the fallback for metadata-less local categories, where it carries real information.
 5. Consider moving the loader's Route Patterns section and the scoping terms (`scope route`, `scoped framework route`, `slug`) into a routed concept file with a one-line loader pointer; they are always loaded but matter only when creating scope routes. Needs a loader-descriptor change.
 6. Rework observations into the recurrence-driven mechanism (`.agents/memory/emerging/ideas/observations-rework.md`).
 7. Run dogfood v5 against today's semantics before any release: #LoadNow chain loading, #KeepInMind end-of-work compliance, and whether the ancestor-inheritance axiom holds in practice when agents open deep routes.

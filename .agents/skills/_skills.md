@@ -1,7 +1,7 @@
 ---
 open-forge:
     description: Reusable agent capability packages with clear use cases and expected results
-    tags: [LoadNow, Core, Skill, Index]
+    tags: [LoadNow, Core, Skill]
 ---
 
 # Skills

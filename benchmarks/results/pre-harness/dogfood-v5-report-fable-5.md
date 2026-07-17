@@ -31,7 +31,7 @@ v5a used `forge-dump` as its *primary* loading mechanism (`--help`, `--path --de
 
 ## Two smaller findings
 
-- **Same machine, opposite environment conclusions.** v5a concluded "Node is not installed; Bun is the runtime" (and wrote an observation saying so). v5b found working Node 26 at `C:\nvm4w\nodejs` and used npm throughout. v5a's observation is, per v5b, wrong — Node exists, just not on the default PATH. This is an accidental but excellent validation of the memory taxonomy's design: the observation was correctly filed as *candidate* material with a verify-before-promoting suggestion, and the framework's "verify observations before treating them as current" axiom is exactly what would catch it. Had observations been treated as truth, a falsehood would have crystallized.
+- **Same machine, opposite environment conclusions.** v5a concluded "Node is not installed; Bun is the runtime" (and wrote an observation saying so). v5b found a working Node 26 install off the default PATH and used npm throughout. v5a's observation is, per v5b, wrong — Node exists, just not on the default PATH. This is an accidental but excellent validation of the memory taxonomy's design: the observation was correctly filed as *candidate* material with a verify-before-promoting suggestion, and the framework's "verify observations before treating them as current" axiom is exactly what would catch it. Had observations been treated as truth, a falsehood would have crystallized.
 - **Interruption recovery worked.** v5b hit a usage limit mid-closeout; a single resume message completed verification and produced a full, intact final report. The framework's file-based state (memory writes already on disk before the interruption) is what made that cheap.
 
 ## Net read

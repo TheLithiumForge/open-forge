@@ -1,31 +1,34 @@
 ---
 open-forge:
-  description: Pending priorities and planned passes for Open Forge before and during formal dogfooding
+  description: Pending priorities and planned passes for Open Forge before and during formal release preparation
   tags: [Memory, Working, Backlog, Contextual]
 ---
 
 # Backlog
 
-Actionable priorities carried forward from the pre-dogfood cleanup. Deferred designs and product ideas live in `.agents/memory/emerging/ideas/`.
+Actionable priorities. Deferred designs and product ideas live in `.agents/memory/emerging/ideas/`.
 
 ## Alpha Sequence
 
 1. Finish the alpha version.
-2. Dogfood Open Forge by migrating this project's notes into its own workflow and memory. Done 2026-07-09; see `.agents/memory/working/sessions/2026-07-09_dogfood-migration.md`.
-3. Extract meaningful project-specific patterns, guidance, workflows, and extensions from dogfooding.
-4. Restructure and re-review every maintained file.
+2. Extract meaningful project-specific patterns, guidance, workflows, and extensions from the dogfood and benchmark evidence.
 
 ## Near-Term Priorities
 
-1. Review `.agents/memory/emerging/analysis/2026-07-09_post-rework-review.md` and accept or reject its improvement candidates (descriptor dedup, #Index tag, loader Route Patterns placement, dogfood v5).
-2. Reread every installable payload file and matching governance descriptor for wording, scope separation, tag usage, and route accuracy. The 2026-07-08 wording and CLI pass is committed; verify nothing from it is left dangling.
-3. Replace tool-implying load wording such as "must be loaded" with agent-imperative wording such as "read X before Y" across payload and docs; keep the imperative mandatory.
-4. Deduplicate framework descriptors against concept docs without losing information; concepts and file descriptors stay conceptually separate.
-5. Recheck skills and workflows after route-template and extension terminology settle; apply the workflow redesign idea once accepted.
-6. Define the user-documentation architecture: README responsibilities, short guide files, primitive glossary, layer glossary, route/scoping examples, and voice.
-7. Rewrite human onboarding after dogfooding, not before it.
-8. Run consistency and security review across routing, generated regions, prompt-injection boundaries, update behavior, and tests.
-9. Document a human-run behavioral dogfood smoke checklist: install into a temp workspace, install selected extensions, run a representative agent task, and inspect whether routing, memory closeout, and workflow behavior happened.
+1. Run the v11 sessions A/B per `benchmarks/harness/orchestrator/run-plan-gen11.md`: closeout-command plus sessions-keepinmind overlays on seeds 1-3 against gen10 as control; on success promote the sessions #KeepInMind tag and write axiom to core payload. Optional model comparison rides along. v10 verdict: recheck compliance 3/3 vs ~50% baseline, loader wording promoted 2026-07-11 (see v10-synthesis).
+2. Design the `rune-bridge` extension per `.agents/memory/emerging/ideas/rune-glyph-integration.md`: workspace route for semantic recall commands, optional search directive, optional config preset pointing rune at `.agents/`; keep coupling one-directional.
+3. Run v9 as a model comparison on the now-stable harness: same seeds, Fable and Sonnet against the GPT-5 baseline; the seed-0 curveball and closeout discipline are the discriminators. Also include one run with the `dev-workflow` extension (still unexercised). Commit before running so report provenance is clean.
+4. Explore when time allows: `.agents/memory/emerging/ideas/workspace-usage.md`, the docs-versus-crystallized reconciliation and description-rot notes in `.agents/memory/emerging/analysis/2026-07-09_open-question-recommendations.md`, and the CLI design in `.agents/memory/emerging/ideas/cli-design.md`.
+5. Review `.agents/memory/emerging/analysis/2026-07-09_open-question-recommendations.md`; promote accepted recommendations (workspace category, docs placement, loader route patterns, no native backlog route, description rubric) to `crystallized/decisions/`.
+6. Audit on-demand route descriptions against the description rubric: trigger plus outcome, selectable from the one line alone; leave #LoadNow identity descriptions as they are.
+7. Reread every installable payload file and matching governance descriptor for wording, scope separation, tag usage, and route accuracy; include the concepts-versus-descriptors dedup sweep.
+8. Ship the observations rework (`.agents/memory/emerging/ideas/observations-rework.md`) and validate it with a seeded round where recurrence detection produces an accepted promotion.
+9. Design the extension skill-sharing mechanism (`.agents/memory/emerging/ideas/extension-skill-sharing.md`) plus extension update and remove lifecycle.
+10. Add CI that mechanically verifies descriptor alignment checks against installed payload files, and explore running the benchmark harness as CI on payload changes; see `.agents/memory/emerging/ideas/rating-ladder.md` for the full ladder.
+11. Decide whether git commit history (author name and email) needs rewriting before the repository goes public; file contents are already scrubbed of personal identifiers.
+12. Define the user-documentation architecture: README responsibilities, short guide files, primitive glossary, layer glossary, route/scoping examples, and voice.
+13. Rewrite human onboarding after dogfooding, not before it.
+14. Run consistency and security review across routing, generated regions, prompt-injection boundaries, update behavior, and tests.
 
 ## User Documentation To Write Later
 
@@ -55,6 +58,17 @@ Use the vocabulary to clean route descriptions, loader tag meanings, user docs, 
 
 ## Low-Priority Review
 
-- Check whether repeated Memory axioms should remain local for clarity or be moved to shared Memory-level wording.
-- Reorder axioms across installed files only if it improves readability without creating a large noisy diff.
 - Review old archived ideas only when reconstructing why a decision was made.
+
+## Done Or Superseded
+
+- Dogfood migration into this repository's own `.agents/` (2026-07-09).
+- Tool-implying load wording replaced with agent-imperative wording (2026-07-09 pass plus the streamlining commit).
+- Descriptor dedup with Alignment Checks as the single normative list (2026-07-09).
+- #Index dropped from Open Forge-authored metadata (2026-07-09).
+- Repeated memory axioms hoisted into the loader; ancestor axioms apply below (2026-07-09).
+- Human-run dogfood smoke checklist superseded by the reproducible benchmark seeds under `benchmarks/`.
+- Workflow shape accepted and applied; dev-workflow extension shipped (2026-07-10).
+- v7 scope-control fixes applied to the harness: root pinning in worker templates, verify-cwd axiom in scope-control, first-attempt rubric scoring, index-regeneration directive (2026-07-10).
+- worker-vision workflow added to the harness for seed-0 vision runs (2026-07-10).
+- Evidence reorganized: crystallized `documents/evaluations/` holds syntheses only; per-run reports in `benchmarks/results/`, pre-harness reports in `benchmarks/results/pre-harness/` (2026-07-10).

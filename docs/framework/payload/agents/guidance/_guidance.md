@@ -14,15 +14,7 @@ Guidance identifies a recurring scenario, explains a useful approach and its rea
 
 ## Contains
 
-The installed guidance category `entrypoint` must contain:
-
-- scoped `open-forge:` frontmatter with a description and useful tags, including `Core`, `Guidance`, and `Index`
-- a title
-- one short definition of guidance
-- compact relevance, loading, scope, and application axioms
-- a final marker-bounded generated index region
-
-The authored portion must stay between 10 and 35 non-empty lines. Generated `entries` do not count toward this limit.
+The installed file follows the shared category `entrypoint` shape owned by the formatting concept: scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
 
 ## Guidance Contract
 
@@ -46,15 +38,7 @@ Guidance in a narrower selected scope is preferred over broader guidance when sa
 
 ## Generated Region
 
-The final section must use the shared category `entrypoint` shape:
-
-```md
-## Entries
-
-<!-- open-forge:generated-index:start -->
-- none - No entries - #Empty
-<!-- open-forge:generated-index:end -->
-```
+The final generated region uses the shared category `entrypoint` shape owned by the formatting concept.
 
 Generated `entries` list direct guidance files and direct child guidance categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
 
@@ -74,7 +58,7 @@ The implementation is aligned when it:
 
 - is named `_guidance.md`
 - lives in `.agents/guidance/`
-- includes `Core`, `Guidance`, and `Index` in scoped `open-forge:` tags
+- includes `Core` and `Guidance` in scoped `open-forge:` tags
 - defines guidance as contextual judgment for recurring scenarios
 - selects guidance routes by visible relevance
 - states how guidance is applied and adapted
@@ -82,3 +66,5 @@ The implementation is aligned when it:
 - prefers narrower selected guidance scopes when safe and allowed
 - routes only through its final generated region
 - remains empty until guidance files or child guidance categories are added
+- keeps compact relevance, loading, scope, and application axioms
+- keeps the authored portion between 10 and 35 non-empty lines

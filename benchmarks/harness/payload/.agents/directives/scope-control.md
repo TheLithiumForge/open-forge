@@ -10,6 +10,7 @@ All task work belongs inside the current workspace unless the user explicitly sa
 
 ## Axioms
 
+- Before the first file operation in a session, verify the working directory is the workspace root; prefer workspace-absolute paths for patch and edit tools whose defaults may resolve elsewhere.
 - Create implementation files under the project folder routed by workspace docs.
 - Keep test fixtures, integration-test data, smoke-test data, and temporary files inside the workspace. This includes test code: do not use the operating system temp directory (`os.tmpdir()` or equivalents) in tests or scripts; use a workspace-local temp folder that is cleaned up and git-ignored.
 - Do not read prior or sibling implementations of similar projects for design or code unless the user explicitly asks for comparison.

@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Archived Open Forge design idea notes kept for historical reconstruction
-  tags: [Memory, Archived, Idea, Index, Contextual, Historical]
+  tags: [Memory, Archived, Idea, Contextual, Historical]
 ---
 
 # Archived Ideas

@@ -14,15 +14,7 @@ The root category represents workspace-wide directive scope. Nested directive ca
 
 ## Contains
 
-The installed directives category `entrypoint` must contain:
-
-- scoped `open-forge:` frontmatter with a description and useful tags, including `Core`, `Directive`, `Index`, and `LoadNow`
-- a title
-- one short definition of directives
-- compact loading, authority, and scope axioms
-- a final marker-bounded generated index region
-
-The authored portion must stay between 10 and 40 non-empty lines. Generated `entries` do not count toward this limit.
+The installed file follows the shared category `entrypoint` shape owned by the formatting concept: scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
 
 ## Loading Contract
 
@@ -55,15 +47,7 @@ Folder names, descriptions, and tags work together to make scope cheap to identi
 
 ## Generated Region
 
-The final section must use the shared category `entrypoint` shape:
-
-```md
-## Entries
-
-<!-- open-forge:generated-index:start -->
-- none - No entries - #Empty
-<!-- open-forge:generated-index:end -->
-```
+The final generated region uses the shared category `entrypoint` shape owned by the formatting concept.
 
 Generated `entries` list direct directive files and direct child directive categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
 
@@ -83,7 +67,7 @@ The implementation is aligned when it:
 
 - is named `_directives.md`
 - lives in `.agents/directives/`
-- includes `Core`, `Directive`, `Index`, and `LoadNow` in scoped `open-forge:` tags
+- includes `Core`, `Directive`, and `LoadNow` in scoped `open-forge:` tags
 - defines direct root files as workspace-wide
 - supports recursively scoped child directive categories
 - uses descriptions and tags as compact scope signals
@@ -91,3 +75,5 @@ The implementation is aligned when it:
 - prefers narrower selected directive scopes when safe and allowed
 - routes only through its final generated region
 - leaves generated `entries` empty until directive files or child directive categories are added
+- keeps compact loading, authority, and scope axioms
+- keeps the authored portion between 10 and 40 non-empty lines
