@@ -14,15 +14,7 @@ They may be files in memory or route files pointing to the destination that owns
 
 ## Contains
 
-The installed documents `entrypoint` must contain:
-
-- scoped `open-forge:` frontmatter with description and useful tags, including `Record` and `CurrentTruth`
-- a title
-- one short definition of documents
-- compact document, loading, consolidation, and scope axioms
-- a final marker-bounded generated index region
-
-The authored portion must stay between 10 and 40 non-empty lines. Generated `entries` do not count toward this limit.
+The installed file follows the shared category `entrypoint` shape owned by the formatting concept: scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
 
 ## Document Contract
 
@@ -56,15 +48,7 @@ Superseded documents must be archived or linked with enough context to understan
 
 ## Generated Region
 
-The final section must use the shared category `entrypoint` shape:
-
-```md
-## Entries
-
-<!-- open-forge:generated-index:start -->
-- none - No entries - #Empty
-<!-- open-forge:generated-index:end -->
-```
+The final generated region uses the shared category `entrypoint` shape owned by the formatting concept.
 
 Generated `entries` list direct document files and direct child document categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
 
@@ -93,3 +77,5 @@ The implementation is aligned when it:
 - extracts operational document material into matching #Core routes, including user-created #Core categories and files
 - supports recursive positive scope
 - routes only through its final generated region
+- keeps compact document, loading, consolidation, and scope axioms
+- keeps the authored portion between 10 and 40 non-empty lines

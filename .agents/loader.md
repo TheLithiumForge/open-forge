@@ -32,7 +32,7 @@ Use generated `Entries` in this file to select relevant root routes. Load a sele
 - Axioms of loaded ancestor `entrypoints` apply to all routes below them; a child `entrypoint` adds only what is specific to its scope.
 - Prefer material in a narrower selected scope over broader material of the same type when safe and allowed; report unresolved conflicts.
 - Immediately read #LoadNow and #KeepInMind entries when they appear in loaded `Entries`, in listed order.
-- Before ending meaningful work, recheck loaded #KeepInMind entries and perform the follow-ups they require.
+- Before ending meaningful work, recheck loaded #KeepInMind entries and perform the follow-ups they require; `open-forge find --tag KeepInMind --bodies` prints them in one call when the CLI is available.
 - Load an `entrypoint` before its routed files.
 - Load a file's `.overwrite.md` companion after it; the overwrite takes precedence within the base file's scope.
 - User instructions apply when safe and allowed.
@@ -86,11 +86,11 @@ Do not create parallel truth when active truth already exists. Update the active
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `.agents/directives/_directives.md` - Mandatory instructions agents must follow when they apply to the current work - #LoadNow #Core #Directive #Index
-- `.agents/guidance/_guidance.md` - Contextual advice for recurring choices, tradeoffs, and work scenarios - #LoadNow #Core #Guidance #Index
-- `.agents/memory/_memory.md` - Self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning - #LoadNow #Memory #OrganicGrowth #Index
-- `.agents/patterns/_patterns.md` - Concrete reusable shapes for code, files, APIs, documents, and other inspectable work - #LoadNow #Core #Pattern #Index
-- `.agents/skills/_skills.md` - Reusable agent capability packages with clear use cases and expected results - #LoadNow #Core #Skill #Index
-- `.agents/workflows/_workflows.md` - Repeatable markdown workflow recipes for reaching a defined goal - #LoadNow #Core #Workflow #Index
-- `.agents/workspace/_workspace.md` - Workspace routes that point to important project locations and explain when to use them - #LoadNow #Core #Workspace #Index
+- `.agents/directives/_directives.md` - Mandatory instructions agents must follow when they apply to the current work - #LoadNow #Core #Directive
+- `.agents/guidance/_guidance.md` - Contextual advice for recurring choices, tradeoffs, and work scenarios - #LoadNow #Core #Guidance
+- `.agents/memory/_memory.md` - Self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning - #LoadNow #Memory #OrganicGrowth
+- `.agents/patterns/_patterns.md` - Concrete reusable shapes for code, files, APIs, documents, and other inspectable work - #LoadNow #Core #Pattern
+- `.agents/skills/_skills.md` - Reusable agent capability packages with clear use cases and expected results - #LoadNow #Core #Skill
+- `.agents/workflows/_workflows.md` - Repeatable markdown workflow recipes for reaching a defined goal - #LoadNow #Core #Workflow
+- `.agents/workspace/_workspace.md` - Workspace routes that point to important project locations and explain when to use them - #LoadNow #Core #Workspace
 <!-- open-forge:generated-index:end -->

@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Patterns scoped to the pure core package
-  tags: [Extension, Pattern, Core, Scope, Index]
+  tags: [Extension, Pattern, Core, Scope]
 ---
 
 # Core Package Patterns

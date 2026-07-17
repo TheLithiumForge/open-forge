@@ -14,6 +14,10 @@ open-forge extend --select [target]
 open-forge extend --ids <id[,id...]> [target]
 open-forge extend <extension-source-or-id> [target]
 open-forge index [target]
+open-forge find [--tag <Tag>]... [--route <path>] [--depth <n>] [--follow-required] [--bodies|--paths|--json] [target]
+open-forge doctor [--json] [target]
+open-forge create category <route-path> [target]
+open-forge create extension <id> [directory]
 ```
 
 If `target` is omitted, the current directory is used.
@@ -167,7 +171,7 @@ The category `entrypoint` contains stable category meaning followed by a generat
 
 ```md
 - `{file}` - {description} - #{Tag1} #{Tag2} ... #{TagN}
-- `{folder/_folder.md}` - {description} - #Index
+- `{folder/_folder.md}` - {description} - #{Tag1} #{Tag2} ... #{TagN}
 ```
 
 Child folders are routed through their own `_{folder-name}.md` category `entrypoint`. Parent `entrypoints` stay at one folder boundary.
@@ -286,3 +290,54 @@ open-forge:
 The CLI also accepts `rune:` scoped metadata in user-added route files for cross-tool compatibility. Open Forge-authored files use `open-forge:` metadata.
 
 Runtime-native `SKILL.md` files should keep native metadata such as `name` and `description`. The CLI reads the root `description` for generated skill entries and defaults their tag to #Skill when no Open Forge tags are present.
+
+## find
+
+```sh
+open-forge find --tag KeepInMind --bodies
+open-forge find --tag Decision --tag Routing
+open-forge find --route .agents/workflows/dev/_dev.md --follow-required --bodies
+open-forge find --route .agents/memory/crystallized/_crystallized.md --depth 1
+open-forge find --tag Workflow --json
+```
+
+`find` is deterministic routing-contract lookup, not search. It walks routed files only - the loader, category `entrypoints`, their direct route files, and native skill package entrypoints - and never guesses relevance.
+
+- `--tag <Tag>` filters by effective tags (metadata tags, or the generated defaults); repeat the flag to require every tag. Matching is case-insensitive; canonical spelling still comes from the loader.
+- `--route <path>` selects one file or routable folder; `--depth <n>` also follows its generated `entries` n levels.
+- `--follow-required` adds every target of the selected files' `## Required Routes` sections. A required route that cannot be read fails the command - it is a blocker, not a skip.
+- Output is entry lines by default; `--paths` prints paths only, `--bodies` prints file contents with `----- {route} -----` separators, `--json` prints structured output.
+
+The closeout recheck is one command: `open-forge find --tag KeepInMind --bodies`.
+
+## doctor
+
+```sh
+open-forge doctor
+open-forge doctor --json
+```
+
+`doctor` validates route integrity without writing anything. It reports:
+
+- folders with multiple recognized `entrypoints` (error)
+- malformed generated-region markers (error)
+- generated `entries` that do not resolve to files (error)
+- `Required Routes` that do not resolve (error), or sections that state neither routes nor `none` (warning)
+- stale generated regions that no longer match what `index` would produce (warning; run `open-forge index`)
+- retired load-policy tags in metadata (warning)
+- `.overwrite.md` companions without a base file (warning)
+- markdown files not reachable through generated routing (warning)
+
+Exit code is non-zero when errors exist, so `doctor` is safe for CI. `index` remains the repair tool for generated regions; `doctor` only reports.
+
+## create
+
+```sh
+open-forge create category patterns/react/components
+open-forge create category .agents/memory/crystallized/mobile-app
+open-forge create extension my-patterns
+```
+
+`create category` scaffolds a route chain: every missing folder in the path gets a canonical `_{folder}.md` `entrypoint` with placeholder metadata, a type tag derived from the top category, and an empty generated region, then all indexes are rebuilt. It refuses paths that are already routable. Fill in the TODO descriptions, then run `open-forge index` again.
+
+`create extension` scaffolds an extension package: `extension.json`, a README with authoring rules, and an empty `payload/.agents/` tree ready for routed files. Install it with `open-forge extend <directory-or-id>`.

@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Static, concise, accurate transfer notes that help agents or humans resume work after context breaks
-  tags: [LoadNow, Memory, Handoff, AgentCommunication, Index, Contextual]
+  tags: [LoadNow, Memory, Handoff, AgentCommunication, Contextual]
 ---
 
 # Handoffs
@@ -19,5 +19,8 @@ Handoffs are static, concise, accurate, rereadable transfer notes for resuming w
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `2026-07-06_cleanup-pass.md` - Resume note for the uncommitted wording and CLI pass started before formal dogfooding - #Memory #Handoff #Contextual #CLI #Wording
+- `2026-07-06_cleanup-pass.md` - Resume note for the pre-dogfood wording and CLI pass, committed 2026-07-08; superseded context for later passes - #Memory #Handoff #Contextual #CLI #Wording
+- `2026-07-12_framework-assessment.md` - Active transfer note for the 2026-07-12 multi-perspective Open Forge framework assessment - #Memory #Handoff #AgentCommunication #Contextual #Framework #Review #Dogfood
+- `2026-07-13_framework-direction-options.md` - Active transfer note for expanding the framework assessment with naming and implementable S++ direction options - #Memory #Handoff #AgentCommunication #Contextual #Framework #Review #Naming #Roadmap
+- `2026-07-13_naming-atlas.md` - Completed transfer note for the creative, screened methodology naming atlas and full-report revision - #Memory #Handoff #AgentCommunication #Contextual #Framework #Naming #Brand #Category
 <!-- open-forge:generated-index:end -->

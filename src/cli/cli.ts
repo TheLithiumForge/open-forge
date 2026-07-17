@@ -18,6 +18,16 @@ const scopedCoreEntrypointFolders = new Set(["directives", "guidance", "patterns
 const entriesHeading = "## Entries";
 const generatedIndexStartMarker = "<!-- open-forge:generated-index:start -->";
 const generatedIndexEndMarker = "<!-- open-forge:generated-index:end -->";
+const retiredLoadPolicyTags = new Set(["openforge", "loadwithparententrypoint", "loadforpostworkreview"]);
+const categoryTypeTags: Record<string, string> = {
+  directives: "Directive",
+  guidance: "Guidance",
+  patterns: "Pattern",
+  skills: "Skill",
+  workflows: "Workflow",
+  workspace: "Workspace",
+  memory: "Memory"
+};
 const args = process.argv.slice(2);
 const command = args[0] ?? "help";
 
@@ -28,6 +38,12 @@ try {
     await extend(args.slice(1));
   } else if (command === "index") {
     await generateIndexes(path.resolve(args[1] ?? process.cwd()));
+  } else if (command === "find") {
+    await find(args.slice(1));
+  } else if (command === "doctor") {
+    await doctor(args.slice(1));
+  } else if (command === "create") {
+    await create(args.slice(1));
   } else {
     printHelp();
   }
@@ -389,6 +405,624 @@ async function selectBundledExtensionIds(): Promise<string[]> {
   });
 }
 
+type FindOptions = {
+  tags: string[];
+  route: string | null;
+  depth: number;
+  followRequired: boolean;
+  output: "entries" | "paths" | "bodies" | "json";
+  target: string;
+};
+
+async function find(findArgs: string[]): Promise<void> {
+  const options = parseFindArgs(findArgs);
+  const targetRoot = path.resolve(options.target);
+  const scanRoot = await isDirectory(path.join(targetRoot, agentsDirectoryName))
+    ? path.join(targetRoot, agentsDirectoryName)
+    : targetRoot;
+
+  let selected: string[];
+  if (options.route) {
+    const routeFile = await resolveRouteArg(options.route, targetRoot, scanRoot);
+    selected = await expandRouteByDepth(routeFile, options.depth, targetRoot);
+  } else {
+    selected = await collectRoutedFiles(scanRoot);
+  }
+
+  if (options.tags.length > 0) {
+    const wanted = options.tags.map((tag) => tag.toLowerCase());
+    const filtered: string[] = [];
+    for (const file of selected) {
+      const effective = (await effectiveTags(file)).map((tag) => tag.toLowerCase());
+      if (wanted.every((tag) => effective.includes(tag))) {
+        filtered.push(file);
+      }
+    }
+    selected = filtered;
+  }
+
+  if (options.followRequired) {
+    const missing: string[] = [];
+    const required: string[] = [];
+    for (const file of selected) {
+      const parsed = readRequiredRoutes(await fs.readFile(file, "utf8"));
+      for (const requiredPath of parsed.paths) {
+        const resolved = path.join(targetRoot, requiredPath);
+        if (await isFile(resolved)) {
+          required.push(resolved);
+        } else {
+          missing.push(`${workspaceRoute(targetRoot, file)} -> ${requiredPath}`);
+        }
+      }
+    }
+    if (missing.length > 0) {
+      throw new Error(`Required routes could not be read (blocker, not a skip):\n${missing.map((line) => `  ${line}`).join("\n")}`);
+    }
+    selected = dedupePaths([...selected, ...required]);
+  }
+
+  selected = dedupePaths(selected);
+  if (selected.length === 0) {
+    console.log("No routed files matched.");
+    return;
+  }
+
+  if (options.output === "json") {
+    const items = [];
+    for (const file of selected) {
+      const text = await fs.readFile(file, "utf8");
+      const metadata = readMetadata(text);
+      items.push({
+        route: workspaceRoute(targetRoot, file),
+        description: metadata.description || readMarkdownDescription(text) || "No description",
+        tags: metadata.tags.length > 0 ? metadata.tags : defaultTagsForIndexEntry(file)
+      });
+    }
+    console.log(JSON.stringify(items, null, 2));
+    return;
+  }
+
+  for (const file of selected) {
+    const route = workspaceRoute(targetRoot, file);
+    if (options.output === "paths") {
+      console.log(route);
+    } else if (options.output === "bodies") {
+      const text = await fs.readFile(file, "utf8");
+      console.log(`----- ${route} -----`);
+      console.log(text.trimEnd());
+      console.log("");
+    } else {
+      console.log(await createGeneratedEntry(file, route));
+    }
+  }
+}
+
+function parseFindArgs(findArgs: string[]): FindOptions {
+  const usage = "Usage: open-forge find [--tag <Tag>]... [--route <path>] [--depth <n>] [--follow-required] [--bodies|--paths|--json] [target]";
+  const options: FindOptions = { tags: [], route: null, depth: 0, followRequired: false, output: "entries", target: process.cwd() };
+  let positional: string | null = null;
+
+  for (let index = 0; index < findArgs.length; index += 1) {
+    const value = findArgs[index];
+    if (value === "--tag") {
+      const tag = findArgs[++index];
+      if (!tag) throw new Error(usage);
+      options.tags.push(tag.replace(/^#/, ""));
+    } else if (value === "--route") {
+      options.route = findArgs[++index] ?? null;
+      if (!options.route) throw new Error(usage);
+    } else if (value === "--depth") {
+      const depth = Number(findArgs[++index]);
+      if (!Number.isInteger(depth) || depth < 0) throw new Error(usage);
+      options.depth = depth;
+    } else if (value === "--follow-required") {
+      options.followRequired = true;
+    } else if (value === "--bodies") {
+      options.output = "bodies";
+    } else if (value === "--paths") {
+      options.output = "paths";
+    } else if (value === "--json") {
+      options.output = "json";
+    } else if (value.startsWith("--")) {
+      throw new Error(usage);
+    } else if (positional == null) {
+      positional = value;
+    } else {
+      throw new Error(usage);
+    }
+  }
+
+  if (options.depth > 0 && !options.route) {
+    throw new Error("open-forge find: --depth requires --route");
+  }
+
+  options.target = positional ?? process.cwd();
+  return options;
+}
+
+async function resolveRouteArg(routeArg: string, targetRoot: string, scanRoot: string): Promise<string> {
+  const normalized = toPosix(routeArg).replace(/^\.\//, "");
+  const candidates = [
+    path.join(targetRoot, normalized),
+    path.join(scanRoot, normalized)
+  ];
+
+  for (const candidate of candidates) {
+    if (await isFile(candidate)) {
+      return candidate;
+    }
+    if (await isDirectory(candidate)) {
+      const entrypoint = await findCategoryEntrypoint(candidate);
+      if (entrypoint) {
+        return entrypoint;
+      }
+    }
+  }
+
+  throw new Error(`Route not found or not routable: ${routeArg}`);
+}
+
+async function expandRouteByDepth(routeFile: string, depth: number, targetRoot: string): Promise<string[]> {
+  const visited = new Set<string>([path.resolve(routeFile)]);
+  const ordered = [routeFile];
+  let frontier = [routeFile];
+
+  for (let level = 0; level < depth; level += 1) {
+    const next: string[] = [];
+    for (const file of frontier) {
+      for (const entryPath of readGeneratedEntryPaths(await fs.readFile(file, "utf8"))) {
+        const resolved = entryPath.startsWith(`${agentsDirectoryName}/`)
+          ? path.join(targetRoot, entryPath)
+          : path.join(path.dirname(file), entryPath);
+        const key = path.resolve(resolved);
+        if (!visited.has(key) && await isFile(resolved)) {
+          visited.add(key);
+          ordered.push(resolved);
+          next.push(resolved);
+        }
+      }
+    }
+    frontier = next;
+  }
+
+  return ordered;
+}
+
+async function collectRoutedFiles(scanRoot: string): Promise<string[]> {
+  const files: string[] = [];
+  const loaderFile = path.join(scanRoot, "loader.md");
+  if (await isFile(loaderFile)) {
+    files.push(loaderFile);
+  }
+
+  const rootCategories = (await listIndexEntryFiles(scanRoot)).filter(isIndexFile);
+  for (const entrypoint of rootCategories) {
+    files.push(entrypoint);
+    await collectRoutedFolder(path.dirname(entrypoint), files);
+  }
+
+  return files;
+}
+
+async function collectRoutedFolder(folder: string, out: string[]): Promise<void> {
+  for (const file of await listIndexEntryFiles(folder)) {
+    out.push(file);
+    if (isIndexFile(file) && !samePath(path.dirname(file), folder)) {
+      await collectRoutedFolder(path.dirname(file), out);
+    }
+  }
+}
+
+async function effectiveTags(file: string): Promise<string[]> {
+  const metadata = readMetadata(await fs.readFile(file, "utf8"));
+  return metadata.tags.length > 0 ? metadata.tags : defaultTagsForIndexEntry(file);
+}
+
+function readGeneratedEntryPaths(text: string): string[] {
+  const region = readGeneratedRegion(text);
+  if (region.status !== "ok") {
+    return [];
+  }
+
+  const paths: string[] = [];
+  for (const line of region.body.split(/\r?\n/)) {
+    const match = line.match(/^- `([^`]+)`/);
+    if (match) {
+      paths.push(match[1]);
+    }
+  }
+
+  return paths;
+}
+
+type RequiredRoutes = {
+  paths: string[];
+  none: boolean;
+  invalid: string[];
+  present: boolean;
+};
+
+function readRequiredRoutes(rawText: string): RequiredRoutes {
+  const result: RequiredRoutes = { paths: [], none: false, invalid: [], present: false };
+  const text = stripFencedCodeBlocks(rawText);
+  const match = text.match(/^## Required Routes\s*$/m);
+  if (!match || match.index == null) {
+    return result;
+  }
+
+  result.present = true;
+  const after = text.slice(match.index + match[0].length);
+  const nextHeading = after.search(/^## /m);
+  const section = nextHeading === -1 ? after : after.slice(0, nextHeading);
+
+  for (const raw of section.split(/\r?\n/)) {
+    const line = raw.trim();
+    if (!line) {
+      continue;
+    }
+
+    const entry = line.match(/^- `([^`]+)`/);
+    if (entry) {
+      result.paths.push(toPosix(entry[1]));
+      continue;
+    }
+
+    if (/^(- )?none\b/i.test(line)) {
+      result.none = true;
+      continue;
+    }
+
+    if (line.startsWith("- ")) {
+      result.invalid.push(line);
+    }
+  }
+
+  return result;
+}
+
+function stripFencedCodeBlocks(text: string): string {
+  const lines = text.split(/\r?\n/);
+  const kept: string[] = [];
+  let inFence = false;
+
+  for (const line of lines) {
+    if (line.trimStart().startsWith("```")) {
+      inFence = !inFence;
+      continue;
+    }
+    if (!inFence) {
+      kept.push(line);
+    }
+  }
+
+  return kept.join("\n");
+}
+
+type GeneratedRegion =
+  | { status: "ok"; body: string }
+  | { status: "none" }
+  | { status: "malformed"; reason: string };
+
+function readGeneratedRegion(text: string): GeneratedRegion {
+  const startMarkers = findAllOccurrences(text, generatedIndexStartMarker);
+  const endMarkers = findAllOccurrences(text, generatedIndexEndMarker);
+
+  if (startMarkers.length === 0 && endMarkers.length === 0) {
+    return { status: "none" };
+  }
+
+  if (startMarkers.length !== 1 || endMarkers.length !== 1) {
+    return { status: "malformed", reason: "the generated index markers are incomplete or duplicated" };
+  }
+
+  if (endMarkers[0] <= startMarkers[0]) {
+    return { status: "malformed", reason: "the generated index markers are reversed" };
+  }
+
+  const body = text.slice(startMarkers[0] + generatedIndexStartMarker.length, endMarkers[0]).trim();
+  return { status: "ok", body };
+}
+
+function workspaceRoute(targetRoot: string, file: string): string {
+  return toPosix(path.relative(targetRoot, file));
+}
+
+function dedupePaths(files: string[]): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const file of files) {
+    const key = path.resolve(file);
+    if (!seen.has(key)) {
+      seen.add(key);
+      result.push(file);
+    }
+  }
+  return result;
+}
+
+type DoctorFinding = {
+  level: "error" | "warning";
+  route: string;
+  message: string;
+};
+
+async function doctor(doctorArgs: string[]): Promise<void> {
+  const usage = "Usage: open-forge doctor [--json] [target]";
+  let json = false;
+  let positional: string | null = null;
+  for (const value of doctorArgs) {
+    if (value === "--json") {
+      json = true;
+    } else if (value.startsWith("--")) {
+      throw new Error(usage);
+    } else if (positional == null) {
+      positional = value;
+    } else {
+      throw new Error(usage);
+    }
+  }
+
+  const targetRoot = path.resolve(positional ?? process.cwd());
+  const scanRoot = await isDirectory(path.join(targetRoot, agentsDirectoryName))
+    ? path.join(targetRoot, agentsDirectoryName)
+    : targetRoot;
+  const findings: DoctorFinding[] = [];
+  const report = (level: DoctorFinding["level"], file: string, message: string): void => {
+    findings.push({ level, route: workspaceRoute(targetRoot, file), message });
+  };
+
+  const markdownFiles = await listFiles(scanRoot, isMarkdownFile);
+
+  for (const [directory, names] of await groupEntrypointCandidates(markdownFiles)) {
+    if (names.length > 1) {
+      report("error", directory, `multiple recognized entrypoints: ${names.sort().join(", ")}; keep exactly one`);
+    }
+  }
+
+  let routedFiles: string[] = [];
+  try {
+    routedFiles = dedupePaths(await collectRoutedFiles(scanRoot));
+  } catch (error) {
+    report("error", scanRoot, error instanceof Error ? error.message : String(error));
+  }
+
+  const loaderFile = path.join(scanRoot, "loader.md");
+  const regionOwners = routedFiles.filter((file) => isIndexFile(file));
+
+  for (const owner of [...(await isFile(loaderFile) ? [loaderFile] : []), ...regionOwners]) {
+    const text = await fs.readFile(owner, "utf8");
+    const region = readGeneratedRegion(text);
+    if (region.status === "malformed") {
+      report("error", owner, region.reason);
+      continue;
+    }
+    if (region.status === "none") {
+      report("warning", owner, "no generated index region; run open-forge index");
+      continue;
+    }
+
+    const expected = samePath(owner, loaderFile)
+      ? await computeLoaderBody(scanRoot)
+      : await computeIndexBody(owner, path.dirname(owner));
+    if (region.body !== expected.trim()) {
+      report("warning", owner, "generated region is stale; run open-forge index");
+    }
+
+    for (const entryPath of readGeneratedEntryPaths(text)) {
+      const resolved = entryPath.startsWith(`${agentsDirectoryName}/`)
+        ? path.join(targetRoot, entryPath)
+        : path.join(path.dirname(owner), entryPath);
+      if (!(await isFile(resolved))) {
+        report("error", owner, `generated entry does not resolve: ${entryPath}`);
+      }
+    }
+  }
+
+  for (const file of markdownFiles) {
+    const text = await fs.readFile(file, "utf8");
+    const metadata = readMetadata(text);
+    for (const tag of metadata.tags) {
+      if (retiredLoadPolicyTags.has(tag.toLowerCase())) {
+        report("warning", file, `retired load-policy tag in metadata: ${tag}`);
+      }
+    }
+
+    if (file.endsWith(".overwrite.md")) {
+      const base = file.slice(0, -".overwrite.md".length) + ".md";
+      if (!(await isFile(base))) {
+        report("warning", file, "overwrite companion has no base file");
+      }
+    }
+
+    const required = readRequiredRoutes(text);
+    if (required.present) {
+      if (!required.none && required.paths.length === 0) {
+        report("warning", file, "Required Routes section has no parseable routes and does not state none");
+      }
+      for (const requiredPath of required.paths) {
+        if (!(await isFile(path.join(targetRoot, requiredPath)))) {
+          report("error", file, `required route does not resolve: ${requiredPath}`);
+        }
+      }
+      for (const invalid of required.invalid) {
+        report("warning", file, `Required Routes line is not in entry format: ${invalid}`);
+      }
+    }
+  }
+
+  const routedSet = new Set(routedFiles.map((file) => path.resolve(file)));
+  for (const file of markdownFiles) {
+    if (routedSet.has(path.resolve(file))) continue;
+    if (samePath(file, loaderFile)) continue;
+    if (file.endsWith(".overwrite.md")) continue;
+    if (await insideSkillPackage(file, scanRoot)) continue;
+    if (samePath(path.dirname(file), scanRoot)) continue;
+    report("warning", file, "not reachable through generated routing");
+  }
+
+  const errors = findings.filter((finding) => finding.level === "error");
+  if (json) {
+    console.log(JSON.stringify({ errors: errors.length, warnings: findings.length - errors.length, findings }, null, 2));
+  } else if (findings.length === 0) {
+    console.log(`open-forge doctor: no problems found in ${targetRoot}`);
+  } else {
+    for (const finding of findings) {
+      console.log(`${finding.level}: ${finding.route} - ${finding.message}`);
+    }
+    console.log(`open-forge doctor: ${errors.length} error(s), ${findings.length - errors.length} warning(s)`);
+  }
+
+  if (errors.length > 0) {
+    process.exitCode = 1;
+  }
+}
+
+async function groupEntrypointCandidates(markdownFiles: string[]): Promise<Map<string, string[]>> {
+  const byDirectory = new Map<string, string[]>();
+  for (const file of markdownFiles) {
+    if (!isIndexFile(file)) continue;
+    const directory = path.dirname(file);
+    const names = byDirectory.get(directory) ?? [];
+    names.push(path.basename(file));
+    byDirectory.set(directory, names);
+  }
+  return byDirectory;
+}
+
+async function insideSkillPackage(file: string, scanRoot: string): Promise<boolean> {
+  let current = path.dirname(file);
+  while (!samePath(current, scanRoot) && current !== path.dirname(current)) {
+    for (const name of skillEntrypointNames) {
+      if (await isFile(path.join(current, name))) {
+        return true;
+      }
+    }
+    current = path.dirname(current);
+  }
+  return false;
+}
+
+async function create(createArgs: string[]): Promise<void> {
+  const kind = createArgs[0];
+  if (kind === "category") {
+    await createCategoryRoute(createArgs[1], createArgs[2] ?? process.cwd());
+    return;
+  }
+  if (kind === "extension") {
+    await createExtensionScaffold(createArgs[1], createArgs[2] ?? process.cwd());
+    return;
+  }
+  throw new Error("Usage: open-forge create category <route-path> [target] | open-forge create extension <id> [directory]");
+}
+
+async function createCategoryRoute(routeArg: string | undefined, targetArg: string): Promise<void> {
+  if (!routeArg) {
+    throw new Error("Usage: open-forge create category <route-path> [target]");
+  }
+
+  const targetRoot = path.resolve(targetArg);
+  const normalized = toPosix(routeArg).replace(/^\.\//, "").replace(/\/+$/, "");
+  const routePath = normalized.startsWith(`${agentsDirectoryName}/`) ? normalized : `${agentsDirectoryName}/${normalized}`;
+  const segments = routePath.split(portablePathSeparator).slice(1);
+
+  if (segments.length === 0 || segments.some((segment) => !/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(segment))) {
+    throw new Error(`Route path segments must be concrete slug folders: ${routeArg}`);
+  }
+
+  const created: string[] = [];
+  let currentFolder = path.join(targetRoot, agentsDirectoryName);
+  for (const segment of segments) {
+    currentFolder = path.join(currentFolder, segment);
+    await ensureDir(currentFolder);
+    const existing = await findCategoryEntrypoint(currentFolder);
+    if (existing) {
+      continue;
+    }
+
+    const entrypointFile = path.join(currentFolder, `_${segment}.md`);
+    await fs.writeFile(entrypointFile, categoryEntrypointTemplate(segment, segments[0]));
+    created.push(workspaceRoute(targetRoot, entrypointFile));
+  }
+
+  if (created.length === 0) {
+    throw new Error(`Route is already routable: ${routePath}`);
+  }
+
+  const generatedRegions = await generateIndexes(targetRoot);
+  console.log(`Created ${created.length} category entrypoint(s):`);
+  for (const file of created) {
+    console.log(`- ${file}`);
+  }
+  console.log(`Rebuilt ${generatedRegions} generated regions. Fill in the TODO descriptions, then run open-forge index again.`);
+}
+
+function categoryEntrypointTemplate(segment: string, topSegment: string): string {
+  const typeTag = categoryTypeTags[topSegment];
+  const tagsLine = typeTag ? `\n  tags: [${typeTag}]` : "";
+  const title = segment
+    .split(/[-_.]/)
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+
+  return `---
+open-forge:
+  description: TODO - when to select this route and what it provides${tagsLine}
+---
+
+# ${title}
+
+TODO - one short definition of this category.
+
+## Entries
+
+${generatedIndexStartMarker}
+- none - No entries - #Empty
+${generatedIndexEndMarker}
+`;
+}
+
+async function createExtensionScaffold(idArg: string | undefined, directoryArg: string): Promise<void> {
+  if (!idArg || !isBundledExtensionId(idArg)) {
+    throw new Error("Usage: open-forge create extension <id> [directory]; ids are lowercase kebab-case such as my-patterns");
+  }
+
+  const baseDirectory = path.join(path.resolve(directoryArg), idArg);
+  if (await isDirectory(baseDirectory) || await isFile(baseDirectory)) {
+    throw new Error(`Extension directory already exists: ${baseDirectory}`);
+  }
+
+  const name = idArg
+    .split("-")
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+
+  await ensureDir(path.join(baseDirectory, "payload", agentsDirectoryName));
+  await fs.writeFile(
+    path.join(baseDirectory, "extension.json"),
+    `${JSON.stringify({ name, description: "TODO - one line shown by open-forge extend --list" }, null, 2)}\n`
+  );
+  await fs.writeFile(
+    path.join(baseDirectory, "README.md"),
+    `# ${name}
+
+TODO - what this extension installs and when to use it.
+
+Installable runtime content lives under \`payload/.agents/\`. Only \`payload/\` is copied on install. Use #Extension plus route type and scope tags in Open Forge-authored payload files; use a load-policy tag only when baseline loading is deliberate.
+
+Install with:
+
+\`\`\`sh
+open-forge extend ${idArg} <target>
+\`\`\`
+`
+  );
+
+  console.log(`Created extension scaffold at ${baseDirectory}`);
+  console.log("Add routed files under payload/.agents/, then install with open-forge extend.");
+}
+
 type FrameworkEntrypointTemplate = {
   relativePath: string;
   sourceFile: string;
@@ -530,6 +1164,12 @@ async function generateIndexes(root: string): Promise<number> {
 }
 
 async function generateIndex(indexFile: string, folder: string): Promise<void> {
+  const current = await fs.readFile(indexFile, "utf8");
+  const body = await computeIndexBody(indexFile, folder);
+  await fs.writeFile(indexFile, updateGeneratedIndexRegion(current, body, indexFile));
+}
+
+async function computeIndexBody(indexFile: string, folder: string): Promise<string> {
   const entries: string[] = [];
   const files = await listIndexEntryFiles(folder);
 
@@ -538,12 +1178,16 @@ async function generateIndex(indexFile: string, folder: string): Promise<void> {
     entries.push(await createGeneratedEntry(file, relativeFile));
   }
 
-  const current = await fs.readFile(indexFile, "utf8");
-  const body = entries.length > 0 ? entries.join("\n") : "- none - No entries - #Empty";
-  await fs.writeFile(indexFile, updateGeneratedIndexRegion(current, body, indexFile));
+  return entries.length > 0 ? entries.join("\n") : "- none - No entries - #Empty";
 }
 
 async function generateLoaderRegistry(loaderFile: string, agentsRoot: string): Promise<void> {
+  const current = await fs.readFile(loaderFile, "utf8");
+  const body = await computeLoaderBody(agentsRoot);
+  await fs.writeFile(loaderFile, updateGeneratedIndexRegion(current, body, loaderFile));
+}
+
+async function computeLoaderBody(agentsRoot: string): Promise<string> {
   const entries: string[] = [];
   const categoryFiles = (await listIndexEntryFiles(agentsRoot)).filter(isIndexFile);
 
@@ -551,9 +1195,7 @@ async function generateLoaderRegistry(loaderFile: string, agentsRoot: string): P
     entries.push(await createGeneratedEntry(file, loaderRoutePath(agentsRoot, file)));
   }
 
-  const current = await fs.readFile(loaderFile, "utf8");
-  const body = entries.length > 0 ? entries.join("\n") : "- none - No active categories - #Empty";
-  await fs.writeFile(loaderFile, updateGeneratedIndexRegion(current, body, loaderFile));
+  return entries.length > 0 ? entries.join("\n") : "- none - No active categories - #Empty";
 }
 
 function loaderRoutePath(agentsRoot: string, file: string): string {
@@ -1101,10 +1743,17 @@ Usage:
   open-forge extend --ids <id[,id...]> [target]
   open-forge extend <extension-source-or-id> [target]
   open-forge index [target]
+  open-forge find [--tag <Tag>]... [--route <path>] [--depth <n>] [--follow-required] [--bodies|--paths|--json] [target]
+  open-forge doctor [--json] [target]
+  open-forge create category <route-path> [target]
+  open-forge create extension <id> [directory]
 
 Commands:
   install  Copy files into target, update AGENTS.md, and rebuild generated index regions.
   extend   Copy a local or bundled extension overlay into target and rebuild generated index regions.
   index    Rebuild the loader registry and category generated regions.
+  find     List routed files by tag or route; --bodies prints contents, --follow-required includes Required Routes.
+  doctor   Validate route integrity: entrypoints, generated regions, entry resolution, retired tags, required routes.
+  create   Scaffold a category route chain with entrypoints, or a new extension package.
 `);
 }

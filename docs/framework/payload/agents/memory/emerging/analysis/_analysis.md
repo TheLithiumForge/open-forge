@@ -14,15 +14,7 @@ It is emerging memory, not a decision and not a final document.
 
 ## Contains
 
-The installed analysis `entrypoint` must contain:
-
-- scoped `open-forge:` frontmatter with description and useful tags, including `Reasoning`, `Contextual`, and `Candidate`
-- a title
-- one short definition of analysis
-- compact reasoning, loading, promotion, and scope axioms
-- a final marker-bounded generated index region
-
-The authored portion must stay between 10 and 40 non-empty lines. Generated `entries` do not count toward this limit.
+The installed file follows the shared category `entrypoint` shape owned by the formatting concept: scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
 
 ## Analysis Contract
 
@@ -56,15 +48,7 @@ Subcategories are encouraged when they separate unrelated questions or evidence 
 
 ## Generated Region
 
-The final section must use the shared category `entrypoint` shape:
-
-```md
-## Entries
-
-<!-- open-forge:generated-index:start -->
-- none - No entries - #Empty
-<!-- open-forge:generated-index:end -->
-```
+The final generated region uses the shared category `entrypoint` shape owned by the formatting concept.
 
 Generated `entries` list direct analysis files and direct child analysis categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
 
@@ -93,3 +77,5 @@ The implementation is aligned when it:
 - allows accepted analysis to become another #Memory route, matching #Core material, external state, or archived history
 - supports recursive positive scope
 - routes only through its final generated region
+- keeps compact reasoning, loading, promotion, and scope axioms
+- keeps the authored portion between 10 and 40 non-empty lines

@@ -127,9 +127,9 @@ This paragraph is authored content.
     const grandchild = await fs.readFile(path.join(services, "_services.md"), "utf8");
 
     expect(result.exitCode).toBe(0);
-    expect(parent).toContain("- `repositories/_repositories.md` - No description - #Index");
+    expect(parent).toContain("- `repositories/_repositories.md` - No description -");
     expect(child).toContain("- `api.md` - API repository - #Repository");
-    expect(child).toContain("- `services/_services.md` - No description - #Index");
+    expect(child).toContain("- `services/_services.md` - No description -");
     expect(parent).not.toContain("services/_services.md");
     expect(grandchild).toContain("- `billing.md` - Billing service - #Service");
   });
@@ -170,7 +170,7 @@ Stable loading contract.
     const workspace = await createCategory(root, "workspace", `---
 open-forge:
   description: Workspace routes that point to important project locations and explain when to use them
-  tags: [LoadNow, Workspace, Index]
+  tags: [LoadNow, Workspace]
 ---
 
 # Workspace
@@ -183,7 +183,7 @@ open-forge:
 
     expect(result.exitCode).toBe(0);
     expect(loader).toContain("Stable loading contract.");
-    expect(loader).toContain("- `workspace/_workspace.md` - Workspace routes that point to important project locations and explain when to use them - #LoadNow #Workspace #Index");
+    expect(loader).toContain("- `workspace/_workspace.md` - Workspace routes that point to important project locations and explain when to use them - #LoadNow #Workspace");
     expect(loader).not.toContain("repositories/_repositories.md");
     expect(loader).not.toContain("archive");
   });
@@ -194,7 +194,7 @@ open-forge:
       await fs.writeFile(path.join(root, "loader.md"), "# Loader\n");
       const external = await createCategory(root, "external", `---
 description: External tool routes
-tags: [External, Index]
+tags: [External, Tool]
 ---
 
 # External
@@ -206,7 +206,7 @@ tags: [External, Index]
       const entrypoint = await fs.readFile(path.join(external, alias), "utf8");
 
       expect(result.exitCode).toBe(0);
-      expect(loader).toContain(`- \`external/${alias}\` - External tool routes - #External #Index`);
+      expect(loader).toContain(`- \`external/${alias}\` - External tool routes - #External #Tool`);
       expect(entrypoint).toContain("- `source.md` - External source - #External");
     });
   }
@@ -271,9 +271,9 @@ describe("install", () => {
     expect(loader).toContain("- Axioms of loaded ancestor `entrypoints` apply to all routes below them; a child `entrypoint` adds only what is specific to its scope.");
     expect(loader).toContain("- Writing files inside existing routes is normal use; add child categories when they improve routing, ownership, or clarity, and give new root routes clear scope.");
     expect(memory).not.toContain("Core category");
-    expect(memory).toContain("- `working/_working.md` - Temporary memory that helps agents continue or resume active work - #LoadNow #Memory #Working #Index #Contextual");
-    expect(memory).toContain("- `crystallized/_crystallized.md` - Accepted durable memory and current truth - #LoadNow #Memory #Crystallized #Index #CurrentTruth");
-    expect(memory).toContain("- `emerging/_emerging.md` - Candidate memory that may be useful but is not accepted truth yet - #KeepInMind #Memory #Emerging #OrganicGrowth #Index #Contextual #Candidate");
+    expect(memory).toContain("- `working/_working.md` - Temporary memory that helps agents continue or resume active work - #LoadNow #Memory #Working #Contextual");
+    expect(memory).toContain("- `crystallized/_crystallized.md` - Accepted durable memory and current truth - #LoadNow #Memory #Crystallized #CurrentTruth");
+    expect(memory).toContain("- `emerging/_emerging.md` - Candidate memory that may be useful but is not accepted truth yet - #KeepInMind #Memory #Emerging #OrganicGrowth #Contextual #Candidate");
     expect(memory).not.toContain("Candidate memory that may be useful but is not accepted truth yet - #LoadNow");
     expect(loader).toContain("- `entrypoint` - Markdown file that makes a folder routable.");
     expect(loader).toContain("- `entry` - Generated line under `Entries` that points to a sibling markdown file, direct child `entrypoint`, or native skill package entrypoint.");
@@ -292,9 +292,9 @@ describe("install", () => {
     expect(loader).toContain("- `.agents/memory/[scope]/crystallized/documents/_documents.md` - `scoped framework route` under a scope that owns memory states.");
     expect(loader).toContain("- In every loaded `entrypoint`, read `Entries` and load entries that fit the request or carry a defined load-policy tag.");
     expect(loader).toContain("- Immediately read #LoadNow and #KeepInMind entries when they appear in loaded `Entries`, in listed order.");
-    expect(loader).toContain("- Before ending meaningful work, recheck loaded #KeepInMind entries and perform the follow-ups they require.");
-    expect(loader).toContain("- `.agents/directives/_directives.md` - Mandatory instructions agents must follow when they apply to the current work - #LoadNow #Core #Directive #Index");
-    expect(loader).toContain("- `.agents/memory/_memory.md` - Self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning - #LoadNow #Memory #OrganicGrowth #Index");
+    expect(loader).toContain("- Before ending meaningful work, recheck loaded #KeepInMind entries and perform the follow-ups they require; `open-forge find --tag KeepInMind --bodies` prints them in one call when the CLI is available.");
+    expect(loader).toContain("- `.agents/directives/_directives.md` - Mandatory instructions agents must follow when they apply to the current work - #LoadNow #Core #Directive");
+    expect(loader).toContain("- `.agents/memory/_memory.md` - Self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning - #LoadNow #Memory #OrganicGrowth");
     expect(loader).toContain("## Tags");
     expect(loader).toContain("### Axioms");
     expect(loader).toContain("- Defined tags have framework meaning when they appear in loaded content or generated `Entries`.");
@@ -311,68 +311,70 @@ describe("install", () => {
     expect(loader).toContain("- #Contextual - Supporting context, not accepted current truth unless restored, validated, accepted, or promoted.");
     expect(loader).toContain("- #CurrentTruth - Accepted current memory within its stated scope; still below user instructions, runtime safety, platform constraints, and declared external sources of truth.");
     expect(workingMemory).toContain("Working memory is live context for active or recently interrupted work.");
-    expect(workingMemory).toContain("tags: [LoadNow, Memory, Working, Index, Contextual]");
+    expect(workingMemory).toContain("tags: [LoadNow, Memory, Working, Contextual]");
     expect(workingMemory).toContain("- Keep working memory small, current, and easy to replace.");
     expect(workingMemory).not.toContain("Use `handoffs/`");
-    expect(workingMemory).toContain("- `handoffs/_handoffs.md` - Static, concise, accurate transfer notes that help agents or humans resume work after context breaks - #LoadNow #Memory #Handoff #AgentCommunication #Index #Contextual");
-    expect(workingMemory).toContain("- `sessions/_sessions.md` - Raw chronological records of what happened during work sessions - #LoadNow #Memory #Session #WorkHistory #Index #Contextual");
+    expect(workingMemory).toContain("- `handoffs/_handoffs.md` - Static, concise, accurate transfer notes that help agents or humans resume work after context breaks - #LoadNow #Memory #Handoff #AgentCommunication #Contextual");
+    expect(workingMemory).toContain("- `sessions/_sessions.md` - Raw chronological records of what happened during work sessions - #LoadNow #Memory #Session #WorkHistory #Contextual");
     expect(handoffsMemory).toContain("Handoffs are static, concise, accurate, rereadable transfer notes for resuming work across agents, subagents, threads, workflows, or humans.");
-    expect(handoffsMemory).toContain("tags: [LoadNow, Memory, Handoff, AgentCommunication, Index, Contextual]");
+    expect(handoffsMemory).toContain("tags: [LoadNow, Memory, Handoff, AgentCommunication, Contextual]");
     expect(handoffsMemory).toContain("- Create or update a handoff when work is transferred, delegated, interrupted, or handed to another agent or human.");
     expect(sessionsMemory).toContain("Sessions are raw chronological memory records of work while it happens.");
-    expect(sessionsMemory).toContain("tags: [LoadNow, Memory, Session, WorkHistory, Index, Contextual]");
+    expect(sessionsMemory).toContain("tags: [LoadNow, Memory, Session, WorkHistory, Contextual]");
     expect(sessionsMemory).toContain("- If useful work context does not clearly belong elsewhere yet, write it as session context first and reclassify it later.");
     expect(emergingMemory).toContain("Emerging memory is candidate material that may be useful but is not accepted truth yet.");
-    expect(emergingMemory).toContain("tags: [KeepInMind, Memory, Emerging, OrganicGrowth, Index, Contextual, Candidate]");
+    expect(emergingMemory).toContain("tags: [KeepInMind, Memory, Emerging, OrganicGrowth, Contextual, Candidate]");
     expect(emergingMemory).toContain("- Read `Entries` when current work needs useful material that is not accepted truth or produces candidate material.");
     expect(emergingMemory).toContain("- Before ending meaningful work, read `Entries` to route candidate material produced during the work.");
     expect(emergingMemory).toContain("- Keep uncertainty, source, and scope visible.");
     expect(emergingMemory).not.toContain("Use `analysis/`");
     expect(emergingMemory).toContain("- Promote accepted memory to a crystallized #Memory route; archive stale, rejected, or superseded material.");
-    expect(emergingMemory).toContain("- `analysis/_analysis.md` - Structured reasoning, investigation, or comparison that is useful but not accepted truth - #LoadNow #Memory #Analysis #Reasoning #Index #Contextual #Candidate");
-    expect(emergingMemory).toContain("- `ideas/_ideas.md` - Future possibilities, experiments, open questions, and options to explore later - #LoadNow #Memory #Idea #Exploration #OrganicGrowth #Index #Contextual #Candidate");
-    expect(emergingMemory).toContain("- `observations/_observations.md` - Agent-noticed findings that may become learning, memory, or Core updates - #KeepInMind #Memory #Observation #AgentLearning #OrganicGrowth #Index #Contextual #Candidate");
+    expect(emergingMemory).toContain("- `analysis/_analysis.md` - Structured reasoning, investigation, or comparison that is useful but not accepted truth - #LoadNow #Memory #Analysis #Reasoning #Contextual #Candidate");
+    expect(emergingMemory).toContain("- `ideas/_ideas.md` - Future possibilities, experiments, open questions, and options to explore later - #LoadNow #Memory #Idea #Exploration #OrganicGrowth #Contextual #Candidate");
+    expect(emergingMemory).toContain("- `observations/_observations.md` - Agent-noticed findings that may become learning, memory, or Core updates - #KeepInMind #Memory #Observation #AgentLearning #OrganicGrowth #Contextual #Candidate");
     expect(analysisMemory).toContain("Analysis is structured reasoning, investigation, or comparison that is useful but not accepted truth.");
-    expect(analysisMemory).toContain("tags: [LoadNow, Memory, Analysis, Reasoning, Index, Contextual, Candidate]");
+    expect(analysisMemory).toContain("tags: [LoadNow, Memory, Analysis, Reasoning, Contextual, Candidate]");
     expect(ideasMemory).toContain("Ideas are future possibilities, experiments, open questions, and options to explore later.");
-    expect(ideasMemory).toContain("tags: [LoadNow, Memory, Idea, Exploration, OrganicGrowth, Index, Contextual, Candidate]");
+    expect(ideasMemory).toContain("tags: [LoadNow, Memory, Idea, Exploration, OrganicGrowth, Contextual, Candidate]");
     expect(observationsMemory).toContain("Observations are agent-noticed grounded findings - facts, signals, constraints, recurring behavior, risks, and evidence - that help future agents learn from work.");
-    expect(observationsMemory).toContain("tags: [KeepInMind, Memory, Observation, AgentLearning, OrganicGrowth, Index, Contextual, Candidate]");
+    expect(observationsMemory).toContain("tags: [KeepInMind, Memory, Observation, AgentLearning, OrganicGrowth, Contextual, Candidate]");
     expect(observationsMemory).toContain("- Before ending meaningful work, write observations for grounded findings that may matter later; write them before the final response or report the blocker.");
     expect(observationsMemory).toContain("- Verify observations before treating them as current.");
     expect(crystallizedMemory).toContain("Crystallized memory is accepted durable memory and current truth within its stated scope.");
-    expect(crystallizedMemory).toContain("tags: [LoadNow, Memory, Crystallized, Index, CurrentTruth]");
+    expect(crystallizedMemory).toContain("tags: [LoadNow, Memory, Crystallized, CurrentTruth]");
     expect(crystallizedMemory).toContain("- Update, split, merge, or reshape existing crystallized memory instead of creating parallel current truth.");
     expect(crystallizedMemory).not.toContain("Use `documents/`");
     expect(crystallizedMemory).not.toContain("scoped decision route");
     expect(crystallizedMemory).toContain("- Archive or link superseded crystallized material with enough context to understand the change.");
-    expect(crystallizedMemory).toContain("- `decisions/_decisions.md` - Accepted rationale that explains important choices and their consequences - #LoadNow #Memory #Decision #Rationale #Index #CurrentTruth");
-    expect(crystallizedMemory).toContain("- `documents/_documents.md` - Durable accepted records, or routes to those records, for long-form project knowledge - #LoadNow #Memory #Document #Record #Index #CurrentTruth");
+    expect(crystallizedMemory).toContain("- `decisions/_decisions.md` - Accepted rationale that explains important choices and their consequences - #LoadNow #Memory #Decision #Rationale #CurrentTruth");
+    expect(crystallizedMemory).toContain("- `documents/_documents.md` - Durable accepted records, or routes to those records, for long-form project knowledge - #LoadNow #Memory #Document #Record #CurrentTruth");
     expect(decisionsMemory).toContain("Decisions are accepted rationale for important choices that may need to be understood later.");
-    expect(decisionsMemory).toContain("tags: [LoadNow, Memory, Decision, Rationale, Index, CurrentTruth]");
+    expect(decisionsMemory).toContain("tags: [LoadNow, Memory, Decision, Rationale, CurrentTruth]");
     expect(decisionsMemory).toContain("Decisions explain why a choice was made; the chosen behavior, record, route, or external state belongs to its owning route or system.");
     expect(decisionsMemory).toContain("- Keep alternatives, tradeoffs, constraints, and consequences only when they help future work.");
     expect(documentsMemory).toContain("Documents are durable accepted records, or routes to those records, for long-form project knowledge.");
-    expect(documentsMemory).toContain("tags: [LoadNow, Memory, Document, Record, Index, CurrentTruth]");
+    expect(documentsMemory).toContain("tags: [LoadNow, Memory, Document, Record, CurrentTruth]");
     expect(archivedMemory).toContain("Archived memory is historical context kept after it is no longer current truth.");
-    expect(archivedMemory).toContain("tags: [LoadNow, Memory, Archived, Index, Contextual, Historical]");
+    expect(archivedMemory).toContain("tags: [LoadNow, Memory, Archived, Contextual, Historical]");
     expect(archivedMemory).toContain("- Preserve origin, the reason material was archived, and what replaced it when a replacement exists.");
     expect(patterns).toContain("Treat an applicable pattern as the established default shape for its scope; use a different shape only for a deliberate reason.");
     expect(patterns).toContain("<!-- open-forge:generated-index:start -->");
     expect(skills).toContain("Prefer the native skill shape: `.agents/skills/{skill-name}/SKILL.md`.");
     expect(skills).toContain("<!-- open-forge:generated-index:start -->");
     expect(workflows).toContain("- Before non-trivial work, read `Entries` and load matching workflows.");
-    expect(workflows).toContain("Every workflow defines its goal, starting context, required skill packages when it uses skills, ordered steps, loop behavior, expected outputs, and completion or handoff condition.");
+    expect(workflows).toContain("- Every workflow defines `Goal`, `Required Routes`, `Steps`, `Loop`, `Outputs`, and `Completion`; it adds `Constraints` only when cross-step invariants exist.");
+    expect(workflows).toContain("- Generated `Entries` list what a workflow contains; `Required Routes` list what it needs from elsewhere.");
+    expect(workflows).toContain("- Read every `Required Routes` route before Step 1; a route that cannot be read is a blocker to report, not a step to skip. \"none\" is a valid value.");
     expect(workflows).toContain("<!-- open-forge:generated-index:start -->");
     expect(workspace).toContain("## Axioms");
     expect(workspace).toContain("<!-- open-forge:generated-index:start -->");
     expect(loader).not.toContain("Load `directives` for every request when it appears in `Entries`.");
     expect(loader).not.toContain("Load `memory` after `directives` when it appears in `Entries`.");
-    expect(loader).toContain("- `.agents/guidance/_guidance.md` - Contextual advice for recurring choices, tradeoffs, and work scenarios - #LoadNow #Core #Guidance #Index");
-    expect(loader).toContain("- `.agents/patterns/_patterns.md` - Concrete reusable shapes for code, files, APIs, documents, and other inspectable work - #LoadNow #Core #Pattern #Index");
-    expect(loader).toContain("- `.agents/skills/_skills.md` - Reusable agent capability packages with clear use cases and expected results - #LoadNow #Core #Skill #Index");
-    expect(loader).toContain("- `.agents/workflows/_workflows.md` - Repeatable markdown workflow recipes for reaching a defined goal - #LoadNow #Core #Workflow #Index");
-    expect(loader).toContain("- `.agents/workspace/_workspace.md` - Workspace routes that point to important project locations and explain when to use them - #LoadNow #Core #Workspace #Index");
+    expect(loader).toContain("- `.agents/guidance/_guidance.md` - Contextual advice for recurring choices, tradeoffs, and work scenarios - #LoadNow #Core #Guidance");
+    expect(loader).toContain("- `.agents/patterns/_patterns.md` - Concrete reusable shapes for code, files, APIs, documents, and other inspectable work - #LoadNow #Core #Pattern");
+    expect(loader).toContain("- `.agents/skills/_skills.md` - Reusable agent capability packages with clear use cases and expected results - #LoadNow #Core #Skill");
+    expect(loader).toContain("- `.agents/workflows/_workflows.md` - Repeatable markdown workflow recipes for reaching a defined goal - #LoadNow #Core #Workflow");
+    expect(loader).toContain("- `.agents/workspace/_workspace.md` - Workspace routes that point to important project locations and explain when to use them - #LoadNow #Core #Workspace");
     expect(loader).not.toContain("## Route Categories");
     expect(await exists(path.join(root, ".agents", "constants.md"))).toBe(false);
     expect(await exists(path.join(root, ".agents", "workspace", "_workspace-open-forge.md"))).toBe(false);
@@ -438,7 +440,7 @@ Custom React route.
     await fs.writeFile(path.join(extensionPatterns, "_react.md"), `---
 open-forge:
   description: React component patterns for this workspace
-  tags: [Extension, Core, Pattern, React, Index]
+  tags: [Extension, Core, Pattern, React]
 ---
 
 # React
@@ -453,7 +455,7 @@ React patterns for this workspace.
     const react = await fs.readFile(path.join(root, ".agents", "patterns", "react", "_react.md"), "utf8");
 
     expect(result.exitCode).toBe(0);
-    expect(patterns).toContain("- `react/_react.md` - React component patterns for this workspace - #Extension #Core #Pattern #React #Index");
+    expect(patterns).toContain("- `react/_react.md` - React component patterns for this workspace - #Extension #Core #Pattern #React");
     expect(react).toContain("- `components.md` - Reusable React component shape - #Pattern #React");
   });
 
@@ -466,7 +468,7 @@ React patterns for this workspace.
     await fs.writeFile(path.join(extensionPatterns, "_react.md"), `---
 open-forge:
   description: React component patterns for this workspace
-  tags: [Extension, Core, Pattern, React, Index]
+  tags: [Extension, Core, Pattern, React]
 ---
 
 # React
@@ -488,7 +490,7 @@ open-forge:
     await fs.writeFile(path.join(extensionPatterns, "_reviews.md"), `---
 open-forge:
   description: Review patterns bundled with Open Forge
-  tags: [Extension, Core, Pattern, Review, Index]
+  tags: [Extension, Core, Pattern, Review]
 ---
 
 # Reviews
@@ -505,7 +507,7 @@ Review patterns bundled with Open Forge.
     const reviews = await fs.readFile(path.join(root, ".agents", "patterns", "reviews", "_reviews.md"), "utf8");
 
     expect(result.exitCode).toBe(0);
-    expect(patterns).toContain("- `reviews/_reviews.md` - Review patterns bundled with Open Forge - #Extension #Core #Pattern #Review #Index");
+    expect(patterns).toContain("- `reviews/_reviews.md` - Review patterns bundled with Open Forge - #Extension #Core #Pattern #Review");
     expect(reviews).toContain("- `pull-requests.md` - Pull request review shape - #Pattern #Review");
   });
 
@@ -538,8 +540,8 @@ Review patterns bundled with Open Forge.
     const patterns = await fs.readFile(path.join(root, ".agents", "patterns", "_patterns.md"), "utf8");
 
     expect(result.exitCode).toBe(0);
-    expect(patterns).toContain("- `alpha-pack/_alpha-pack.md` - Alpha extension - #Extension #Core #Pattern #Index");
-    expect(patterns).toContain("- `beta-pack/_beta-pack.md` - Beta extension - #Extension #Core #Pattern #Index");
+    expect(patterns).toContain("- `alpha-pack/_alpha-pack.md` - Alpha extension - #Extension #Core #Pattern");
+    expect(patterns).toContain("- `beta-pack/_beta-pack.md` - Beta extension - #Extension #Core #Pattern");
   });
 
   test("requires a TTY for interactive bundled extension selection", async () => {
@@ -552,6 +554,232 @@ Review patterns bundled with Open Forge.
 
     expect(result.exitCode).toBe(1);
     expect(result.stderr).toContain("Interactive extension selection requires a TTY");
+  });
+});
+
+describe("find command", () => {
+  async function createFindRoot(): Promise<string> {
+    const root = await createRoot();
+    await fs.writeFile(path.join(root, "loader.md"), `# Loader
+
+## Entries
+
+<!-- open-forge:generated-index:start -->
+- none - No entries - #Empty
+<!-- open-forge:generated-index:end -->
+`);
+    const guides = await createCategory(root, "guides", `---
+open-forge:
+  description: Guide routes
+  tags: [Guide]
+---
+
+# Guides
+
+## Entries
+
+<!-- open-forge:generated-index:start -->
+- none - No entries - #Empty
+<!-- open-forge:generated-index:end -->
+`);
+    await writeRoute(guides, "alpha.md", "Alpha guide", ["Guide", "KeepInMind"]);
+    const notes = await createCategory(root, "notes", "# Notes\n");
+    await writeRoute(notes, "beta.md", "Beta note", ["Note"]);
+    await runCli("index", root);
+    return root;
+  }
+
+  test("filters routed files by tag", async () => {
+    const root = await createFindRoot();
+
+    const result = await runCli("find", "--tag", "KeepInMind", root);
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("- `guides/alpha.md` - Alpha guide - #Guide #KeepInMind");
+    expect(result.stdout).not.toContain("beta.md");
+  });
+
+  test("prints paths and bodies", async () => {
+    const root = await createFindRoot();
+
+    const paths = await runCli("find", "--tag", "Note", "--paths", root);
+    const bodies = await runCli("find", "--tag", "Note", "--bodies", root);
+
+    expect(paths.stdout.trim()).toBe("notes/beta.md");
+    expect(bodies.stdout).toContain("----- notes/beta.md -----");
+    expect(bodies.stdout).toContain("# Beta note");
+  });
+
+  test("expands a route by depth through generated entries", async () => {
+    const root = await createFindRoot();
+
+    const result = await runCli("find", "--route", "guides/_guides.md", "--depth", "1", "--paths", root);
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("guides/_guides.md");
+    expect(result.stdout).toContain("guides/alpha.md");
+    expect(result.stdout).not.toContain("beta.md");
+  });
+
+  test("emits machine-readable json", async () => {
+    const root = await createFindRoot();
+
+    const result = await runCli("find", "--tag", "KeepInMind", "--json", root);
+    const items = JSON.parse(result.stdout) as Array<{ route: string; description: string; tags: string[] }>;
+
+    expect(items).toHaveLength(1);
+    expect(items[0].route).toBe("guides/alpha.md");
+    expect(items[0].tags).toContain("KeepInMind");
+  });
+
+  test("follows required routes and reports missing ones as blockers", async () => {
+    const root = await createFindRoot();
+    const workflows = await createCategory(root, "workflows", "# Workflows\n");
+    const skillFolder = path.join(root, "skills", "helper");
+    await fs.mkdir(skillFolder, { recursive: true });
+    await createCategory(root, "skills", "# Skills\n");
+    await fs.writeFile(path.join(skillFolder, "SKILL.md"), `---
+name: helper
+description: Helper capability
+---
+
+# Helper
+`);
+    await fs.writeFile(path.join(workflows, "ship.md"), `# Ship
+
+## Required Routes
+
+Read every route below before Step 1.
+
+- \`skills/helper/SKILL.md\` - helper capability
+
+## Steps
+
+1. Ship it.
+`);
+    await runCli("index", root);
+
+    const followed = await runCli("find", "--route", "workflows/ship.md", "--follow-required", "--paths", root);
+    expect(followed.exitCode).toBe(0);
+    expect(followed.stdout).toContain("workflows/ship.md");
+    expect(followed.stdout).toContain("skills/helper/SKILL.md");
+
+    await fs.rm(path.join(skillFolder, "SKILL.md"));
+    const missing = await runCli("find", "--route", "workflows/ship.md", "--follow-required", "--paths", root);
+    expect(missing.exitCode).toBe(1);
+    expect(missing.stderr).toContain("blocker");
+  });
+});
+
+describe("doctor command", () => {
+  test("reports no problems for a fresh install", async () => {
+    const root = await createRoot();
+    await runCli("install", root);
+
+    const result = await runCli("doctor", root);
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("no problems found");
+  });
+
+  test("warns on stale regions and errors on unresolved entries", async () => {
+    const root = await createRoot();
+    const guides = await createCategory(root, "guides", "# Guides\n");
+    await writeRoute(guides, "alpha.md", "Alpha guide", ["Guide"]);
+    await runCli("index", root);
+
+    await writeRoute(guides, "gamma.md", "Gamma guide", ["Guide"]);
+    const stale = await runCli("doctor", root);
+    expect(stale.exitCode).toBe(0);
+    expect(stale.stdout).toContain("stale");
+
+    await fs.rm(path.join(guides, "alpha.md"));
+    const broken = await runCli("doctor", root);
+    expect(broken.exitCode).toBe(1);
+    expect(broken.stdout).toContain("does not resolve: alpha.md");
+  });
+
+  test("warns on retired tags, orphan overwrites, and unreachable files", async () => {
+    const root = await createRoot();
+    const guides = await createCategory(root, "guides", "# Guides\n");
+    await writeRoute(guides, "old.md", "Old guide", ["OpenForge", "Guide"]);
+    await fs.writeFile(path.join(guides, "ghost.overwrite.md"), "# Ghost overwrite\n");
+    const unrouted = path.join(root, "loose");
+    await fs.mkdir(unrouted, { recursive: true });
+    await fs.writeFile(path.join(unrouted, "stray.md"), "# Stray\n");
+    await runCli("index", root);
+
+    const result = await runCli("doctor", "--json", root);
+    const report = JSON.parse(result.stdout) as { errors: number; warnings: number; findings: Array<{ level: string; message: string }> };
+
+    expect(result.exitCode).toBe(0);
+    expect(report.errors).toBe(0);
+    expect(report.findings.some((finding) => finding.message.includes("retired load-policy tag"))).toBe(true);
+    expect(report.findings.some((finding) => finding.message.includes("overwrite companion has no base file"))).toBe(true);
+    expect(report.findings.some((finding) => finding.message.includes("not reachable through generated routing"))).toBe(true);
+  });
+
+  test("errors on required routes that do not resolve", async () => {
+    const root = await createRoot();
+    const workflows = await createCategory(root, "workflows", "# Workflows\n");
+    await fs.writeFile(path.join(workflows, "ship.md"), `# Ship
+
+## Required Routes
+
+- \`skills/missing/SKILL.md\` - not installed
+
+## Steps
+
+1. Ship it.
+`);
+    await runCli("index", root);
+
+    const result = await runCli("doctor", root);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stdout).toContain("required route does not resolve: skills/missing/SKILL.md");
+  });
+});
+
+describe("create command", () => {
+  test("scaffolds a category chain with entrypoints and reindexes", async () => {
+    const root = await createRoot();
+    await runCli("install", root);
+
+    const result = await runCli("create", "category", "patterns/react/components", root);
+    const parent = await fs.readFile(path.join(root, ".agents", "patterns", "_patterns.md"), "utf8");
+    const react = await fs.readFile(path.join(root, ".agents", "patterns", "react", "_react.md"), "utf8");
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain(".agents/patterns/react/_react.md");
+    expect(result.stdout).toContain(".agents/patterns/react/components/_components.md");
+    expect(react).toContain("tags: [Pattern]");
+    expect(parent).toContain("- `react/_react.md` - TODO - when to select this route and what it provides - #Pattern");
+
+    const doctorResult = await runCli("doctor", root);
+    expect(doctorResult.exitCode).toBe(0);
+  });
+
+  test("refuses an already routable category", async () => {
+    const root = await createRoot();
+    await runCli("install", root);
+
+    const result = await runCli("create", "category", "patterns", root);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("already routable");
+  });
+
+  test("scaffolds an extension package", async () => {
+    const root = await createRoot();
+
+    const result = await runCli("create", "extension", "my-pack", root);
+    const metadata = JSON.parse(await fs.readFile(path.join(root, "my-pack", "extension.json"), "utf8")) as { name: string };
+
+    expect(result.exitCode).toBe(0);
+    expect(metadata.name).toBe("My Pack");
+    expect(await exists(path.join(root, "my-pack", "README.md"))).toBe(true);
+    expect(await exists(path.join(root, "my-pack", "payload", ".agents"))).toBe(true);
   });
 });
 
@@ -586,7 +814,7 @@ async function createBundledExtension(root: string, id: string, name: string, de
   await fs.writeFile(path.join(patterns, `_${id}.md`), `---
 open-forge:
   description: ${description}
-  tags: [Extension, Core, Pattern, Index]
+  tags: [Extension, Core, Pattern]
 ---
 
 # ${name}
@@ -594,11 +822,11 @@ open-forge:
   return patterns;
 }
 
-async function runCli(command: "index" | "install" | "extend", ...args: string[]): Promise<{ exitCode: number; stdout: string; stderr: string }> {
+async function runCli(command: "index" | "install" | "extend" | "find" | "doctor" | "create", ...args: string[]): Promise<{ exitCode: number; stdout: string; stderr: string }> {
   return runCliWithEnv(command, args, {});
 }
 
-async function runCliWithEnv(command: "index" | "install" | "extend", args: string[], env: Record<string, string>): Promise<{ exitCode: number; stdout: string; stderr: string }> {
+async function runCliWithEnv(command: "index" | "install" | "extend" | "find" | "doctor" | "create", args: string[], env: Record<string, string>): Promise<{ exitCode: number; stdout: string; stderr: string }> {
   const child = Bun.spawn([process.execPath, cliFile, command, ...args], {
     env: { ...process.env, ...env },
     stdout: "pipe",

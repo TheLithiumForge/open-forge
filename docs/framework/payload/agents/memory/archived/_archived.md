@@ -12,15 +12,7 @@ Archived memory represents historical context after material is no longer curren
 
 ## Contains
 
-The installed archived memory `entrypoint` must contain:
-
-- scoped `open-forge:` frontmatter with description and useful tags, including `Contextual` and `Historical`
-- a title
-- one short definition of archived memory
-- compact authority, structure, loading, and restoration axioms
-- a final marker-bounded generated index region
-
-The authored portion must stay between 10 and 45 non-empty lines. Generated `entries` do not count toward this limit.
+The installed file follows the shared category `entrypoint` shape owned by the formatting concept: scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
 
 ## Archived Contract
 
@@ -70,15 +62,7 @@ Restoration conflicts require user review or an explicit decision.
 
 ## Generated Region
 
-The final section must use the shared category `entrypoint` shape:
-
-```md
-## Entries
-
-<!-- open-forge:generated-index:start -->
-- none - No entries - #Empty
-<!-- open-forge:generated-index:end -->
-```
+The final generated region uses the shared category `entrypoint` shape owned by the formatting concept.
 
 Generated `entries` list direct archived memory files and direct child archived memory categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
 
@@ -111,3 +95,5 @@ The implementation is aligned when it:
 - supports recursive positive scope
 - encourages navigable structure over flat accumulation
 - routes only through its final generated region
+- keeps compact authority, structure, loading, and restoration axioms
+- keeps the authored portion between 10 and 45 non-empty lines

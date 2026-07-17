@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Static, concise, accurate transfer notes that help agents or humans resume work after context breaks
-  tags: [LoadNow, Memory, Handoff, AgentCommunication, Index, Contextual]
+  tags: [LoadNow, Memory, Handoff, AgentCommunication, Contextual]
 ---
 
 # Handoffs

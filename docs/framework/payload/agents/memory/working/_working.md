@@ -12,15 +12,7 @@ Working memory represents temporary context needed to continue or resume current
 
 ## Contains
 
-The installed working memory `entrypoint` must contain:
-
-- scoped `open-forge:` frontmatter with description and useful tags, including `Contextual` and `LoadNow`
-- a title
-- one short definition of working memory
-- compact lifecycle, loading, freshness, and extraction axioms
-- a final marker-bounded generated index region
-
-The authored portion must stay between 10 and 40 non-empty lines. Generated `entries` do not count toward this limit.
+The installed file follows the shared category `entrypoint` shape owned by the formatting concept: scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
 
 ## Working Contract
 
@@ -58,15 +50,7 @@ Subcategories are encouraged when they prevent mixed working memory.
 
 ## Generated Region
 
-The final section must use the shared category `entrypoint` shape:
-
-```md
-## Entries
-
-<!-- open-forge:generated-index:start -->
-- none - No entries - #Empty
-<!-- open-forge:generated-index:end -->
-```
+The final generated region uses the shared category `entrypoint` shape owned by the formatting concept.
 
 Generated `entries` list direct working memory files and direct child working memory categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
 
@@ -100,3 +84,5 @@ The implementation is aligned when it:
 - supports recursive positive scope
 - encourages useful child categories over mixed working context
 - routes only through its final generated region
+- keeps compact lifecycle, loading, freshness, and extraction axioms
+- keeps the authored portion between 10 and 40 non-empty lines

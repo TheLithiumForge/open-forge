@@ -6,7 +6,7 @@ open-forge:
 
 # Dogfood v3 — Compliance Report
 
-Same demands as v2, rerun against the newly updated framework: identical test content (3 directives, orchestration skill + guidance, 2 patterns, 1 seeded decision), identical two-session structure, identical task prompts (same "bookmarks" CLI, same near-duplicate-URL follow-up), so the framework version is the only variable that changed. Sandbox: `D:\Repositories\open-forge-dogfood-v3` (`9788087` baseline). Every claim below is independently verified against the actual files, not taken from self-report, and both sessions were debriefed afterward with the same precision questions asked in v2.
+Same demands as v2, rerun against the newly updated framework: identical test content (3 directives, orchestration skill + guidance, 2 patterns, 1 seeded decision), identical two-session structure, identical task prompts (same "bookmarks" CLI, same near-duplicate-URL follow-up), so the framework version is the only variable that changed. Sandbox: `{repos}\open-forge-dogfood-v3` (`9788087` baseline). Every claim below is independently verified against the actual files, not taken from self-report, and both sessions were debriefed afterward with the same precision questions asked in v2.
 
 This round's diff targeted three things directly: the `#OpenForge` extension-cascade issue, workflow "Required Skills" being unenforced prose, and observations being satisfied by a stated intention instead of a written file. Results are mixed — one fix clearly worked, one had no measurable effect, and one is inconclusive for a structural reason that's itself informative.
 

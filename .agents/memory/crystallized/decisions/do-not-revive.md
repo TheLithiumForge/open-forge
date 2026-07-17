@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Rejected structures that must not return without a new explicit decision
+  description: Do-not-revive list - constants.md, local.md, _open-forge.md companions, default references/, base tasks route, external default memory, hidden version metadata, loader flattening
   tags: [Memory, Decision, CurrentTruth, Rejected]
 ---
 

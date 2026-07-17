@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Patterns scoped to the HTTP server package
-  tags: [Extension, Pattern, Server, Scope, Index]
+  tags: [Extension, Pattern, Server, Scope]
 ---
 
 # Server Package Patterns

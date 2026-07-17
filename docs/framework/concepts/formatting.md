@@ -38,13 +38,15 @@ Generated `entries` list direct routed files and direct child category `entrypoi
 
 ```text
 - `alpha.md` - Route file - #Route
-- `repos/_repos.md` - Child category `entrypoint` - #Index
+- `repos/_repos.md` - Child category `entrypoint` - #Repository #Workspace
 - `summarize/SKILL.md` - Native skill package - #Skill
 ```
 
 Generated `entries` keep the full relative path in backticks. Parent category `entrypoints` stay at one folder boundary. A child folder becomes visible through its own `_{folder}.md` `entrypoint`.
 
 Use one `entry` per line. `Entries` must not wrap.
+
+Authored `Required Routes` lines in workflows use the same one-line shape with the reason in the description position, so tooling can parse and follow them like generated `entries`.
 
 ## Tags
 
@@ -88,7 +90,7 @@ Open Forge-authored category `entrypoints` and indexed routed files must use sco
 ---
 open-forge:
   description: Local workspace routes
-  tags: [LoadNow, Core, Workspace, Index]
+  tags: [LoadNow, Core, Workspace]
 ---
 ```
 

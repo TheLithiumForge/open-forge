@@ -1,29 +1,48 @@
 ---
 open-forge:
-  description: CLI capabilities to design later - scaffolding, bulk dump, route inventory, extension lifecycle, upgrade modes
-  tags: [Memory, Idea, Contextual, Candidate, CLI, Extension]
+  description: CLI design - shipped find/doctor/create surface, remaining flags, rune boundary, and deferred capabilities
+  tags: [Memory, Idea, Contextual, Candidate, CLI, Extension, Tooling]
 ---
 
-# CLI Design Backlog
+# CLI Design
 
-Deferred CLI design work carried from the cleanup backlog. Candidate designs, not commitments.
+Revised 2026-07-10. The viability core shipped this date: `find`, `doctor`, `create category`, and `create extension` landed in `src/cli/cli.ts` with tests; `docs/cli.md` is the behavior truth. This file keeps the rationale and what remains.
 
-- Scaffold concrete routed paths from user intent.
-- Preview trees before writing.
-- Design `open-forge dump` as a first-party context loading helper before implementation. Explore `--index`, `--tags`, `--tag <Name>`, and `--path <file> --depth N`; keep it plain, deterministic, and readable. The dogfood v4 Experiment B prototype validated bulk dumping as the highest-leverage, lowest-risk tooling investment.
-- Design an adjacent route inventory command such as `open-forge give <route>` or `open-forge list <route>` that lists routed entries for things like workflows, memory, or crystallized memory without dumping all bodies.
-- Generate missing ancestor entrypoints only with meaningful scaffold content.
-- Detect collisions and ask before reusing or renaming paths.
-- Support route templates with named slug parameters.
-- Support extension manifests, extension metadata, provenance, compatibility, aliases, migrations, and preview.
-- Support extension install, update, remove, list, and local testing.
-- Define how first-party bundled extensions are named, documented, versioned, tested, and shown by `extend --list`.
-- Let users select individual workflows while the CLI auto-selects required shared skills; also allow optional extra skills and related packs to be selected explicitly.
-- Test extension installs and future workflow flows through real OS temp directories instead of mocked filesystem operations.
-- Design workflow dependency metadata so selected workflows can install or require shared skills without duplicating extension payloads; see `extension-skill-sharing.md`.
-- Support extension-template authoring for maintainers.
-- `doctor` or validation commands for generated regions and routing health are currently judged unlikely to help; revisit only with a demonstrated need.
-- Investigate an optional all-in-one generated index for agent cold starts; judge token cost, staleness risk, authority confusion, and whether recursive `entrypoints` already solve enough.
-- Decide forceful versus softer upgrade modes:
-  - forceful upgrade overwrites and re-adds all framework-owned files
-  - softer upgrade updates existing framework-owned files but does not re-add optional or default files the user intentionally deleted
+## Shipped Surface
+
+- `install`, `extend`, `index` - unchanged lifecycle commands.
+- `find` - deterministic routing-contract lookup: `--tag` (repeatable, AND), `--route` plus `--depth` over generated `entries`, `--follow-required` over `Required Routes` (a missing required route fails as a blocker), output as entry lines, `--paths`, `--bodies`, or `--json`. Metadata by default, bodies only on request, so exploring cannot accidentally dump a workspace.
+- `doctor` - read-only integrity report, nonzero exit on errors, `--json` for CI: ambiguous entrypoints, malformed markers, unresolved generated entries, unresolved Required Routes, stale regions, retired load-policy tags, orphan overwrites, unreachable files. `index` remains the repair tool; no `--fix-index`.
+- `create category <route-path>` - scaffolds the whole missing chain with canonical entrypoints, placement-derived type tags, placeholder descriptions, and a reindex. Refuses already-routable paths.
+- `create extension <id>` - scaffolds `extension.json`, an authoring README, and an empty `payload/.agents/`.
+
+Design principles that held: behavior keys to contract features (generated `Entries`, `Required Routes`, load-policy tags), never to route types, so new primitives need no new CLI surface. One earlier idea merged away: the separate `routes`/`context` verbs collapsed into `find` with body emission opt-in, and the named tiers became documented invocations - closeout is `find --tag KeepInMind --bodies`, a workflow bundle is `find --route <workflow> --follow-required --bodies`.
+
+## Remaining Flags To Add
+
+- `--max-tokens <n>` on `find --bodies`: warn or fail, never silently truncate - silent truncation would corrupt the reliability model.
+- `--dry-run` companion output with approximate token counts per file.
+- doctor token-budget warning when the #LoadNow startup tier grows past a threshold, keeping token cost flat as workspaces grow.
+
+## Rune Boundary
+
+Rune is the maintainer's standalone companion tool for project knowledge - markdown memories with hybrid semantic search, lifecycle, and agent integration; glyph is its LSP code-intelligence sibling. The index generator already accepts `rune:` scoped frontmatter. Full boundary analysis and the bridge-extension design: `rune-glyph-integration.md`.
+
+- open-forge owns contract operations: install, extend, index, find, doctor, create. Deterministic, spec-bound, no ranking, no guessing.
+- rune owns relevance: free-text and semantic search, relatedness, recency, memory lifecycle tooling, briefing-style summaries. This is why free-text query stays out of open-forge permanently; `find --tag` stays because tag matching is deterministic and the closeout recheck needs it.
+- Integration ships as an optional first-party bridge extension, never as core coupling; rune indexes the workspace's markdown as-is.
+- Tree rendering and exploration UX are rune territory.
+
+The rule that resolves every overlap: if the output depends on relevance judgment, it is rune; if it depends only on the routing contract, it is open-forge.
+
+## Deferred Capabilities
+
+- Scaffold concrete routed paths from user intent; preview trees before writing.
+- Detect collisions and ask before reusing paths (ancestor entrypoint generation shipped in create category).
+- Route templates with named slug parameters.
+- Extension manifests, provenance, compatibility, aliases, migrations, preview; install, update, remove, list, and local testing; see `extension-skill-sharing.md` for dependency handling.
+- Let users select individual workflows while the CLI auto-selects required shared skills.
+- Test extension installs through real OS temp directories instead of mocked filesystem operations.
+- Extension-template authoring for maintainers.
+- Forceful versus softer upgrade modes: forceful overwrites and re-adds all framework-owned files; softer updates existing framework-owned files without re-adding intentionally deleted defaults.
+- The benchmark `variable-dump-tool` overlay stays as an A/B variable; `find` supersedes it as the product feature.

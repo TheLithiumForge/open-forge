@@ -16,15 +16,7 @@ Observations are the agent learning surface: they let future agents validate, pr
 
 ## Contains
 
-The installed observations `entrypoint` must contain:
-
-- scoped `open-forge:` frontmatter with description and useful tags, including `AgentLearning`, `OrganicGrowth`, `Contextual`, `Candidate`, and `KeepInMind`
-- a title
-- one short definition of observations
-- compact finding, loading, promotion, and scope axioms
-- a final marker-bounded generated index region
-
-The authored portion must stay between 10 and 40 non-empty lines. Generated `entries` do not count toward this limit.
+The installed file follows the shared category `entrypoint` shape owned by the formatting concept: scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
 
 ## Observation Contract
 
@@ -60,15 +52,7 @@ Subcategories are encouraged when they make validation or promotion easier.
 
 ## Generated Region
 
-The final section must use the shared category `entrypoint` shape:
-
-```md
-## Entries
-
-<!-- open-forge:generated-index:start -->
-- none - No entries - #Empty
-<!-- open-forge:generated-index:end -->
-```
+The final generated region uses the shared category `entrypoint` shape owned by the formatting concept.
 
 Generated `entries` list direct observation files and direct child observation categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
 
@@ -100,3 +84,5 @@ The implementation is aligned when it:
 - allows validated observations to become another #Memory route, matching #Core material, external state, or archived history
 - supports recursive positive scope
 - routes only through its final generated region
+- keeps compact finding, loading, promotion, and scope axioms
+- keeps the authored portion between 10 and 40 non-empty lines

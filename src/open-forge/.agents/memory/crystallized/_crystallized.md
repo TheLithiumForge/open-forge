@@ -1,7 +1,7 @@
 ---
 open-forge:
     description: Accepted durable memory and current truth
-    tags: [LoadNow, Memory, Crystallized, Index, CurrentTruth]
+    tags: [LoadNow, Memory, Crystallized, CurrentTruth]
 ---
 
 # Crystallized Memory
@@ -17,6 +17,6 @@ Crystallized memory is accepted durable memory and current truth within its stat
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `decisions/_decisions.md` - Accepted rationale that explains important choices and their consequences - #LoadNow #Memory #Decision #Rationale #Index #CurrentTruth
-- `documents/_documents.md` - Durable accepted records, or routes to those records, for long-form project knowledge - #LoadNow #Memory #Document #Record #Index #CurrentTruth
+- `decisions/_decisions.md` - Accepted rationale that explains important choices and their consequences - #LoadNow #Memory #Decision #Rationale #CurrentTruth
+- `documents/_documents.md` - Durable accepted records, or routes to those records, for long-form project knowledge - #LoadNow #Memory #Document #Record #CurrentTruth
 <!-- open-forge:generated-index:end -->

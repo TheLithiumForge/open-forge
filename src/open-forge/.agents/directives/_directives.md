@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Mandatory instructions agents must follow when they apply to the current work
-  tags: [LoadNow, Core, Directive, Index]
+  tags: [LoadNow, Core, Directive]
 ---
 
 # Directives

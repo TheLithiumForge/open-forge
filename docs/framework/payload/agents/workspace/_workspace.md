@@ -14,15 +14,7 @@ It supports a single project, a monorepo, multiple repositories, a document work
 
 ## Contains
 
-The installed workspace category `entrypoint` must contain:
-
-- scoped `open-forge:` frontmatter with description and useful tags, including `Core`, `Workspace`, and `Index`
-- a title
-- one short category description
-- compact workspace routing axioms
-- a final marker-bounded generated index region
-
-The authored portion must stay between 10 and 40 non-empty lines. Generated `entries` do not count toward this limit.
+The installed file follows the shared category `entrypoint` shape owned by the formatting concept: scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
 
 ## Workspace Contract
 
@@ -52,15 +44,7 @@ Route files can use any clear filename. A workspace can keep several related rou
 
 ## Generated Region
 
-The final section must use the shared category `entrypoint` shape:
-
-```md
-## Entries
-
-<!-- open-forge:generated-index:start -->
-- none - No entries - #Empty
-<!-- open-forge:generated-index:end -->
-```
+The final generated region uses the shared category `entrypoint` shape owned by the formatting concept.
 
 Generated `entries` list direct workspace route files and direct child workspace category `entrypoints`. Child `entrypoints` may use CLI compatibility aliases. The shared formatting governor owns naming, ambiguity handling, marker validation, legacy migration, and regeneration behavior.
 
@@ -82,7 +66,7 @@ The implementation is aligned when it:
 
 - is named `_workspace.md`
 - lives in `.agents/workspace/`
-- includes `Core`, `Workspace`, and `Index` in scoped `open-forge:` tags
+- includes `Core` and `Workspace` in scoped `open-forge:` tags
 - defines selective workspace routing
 - leaves route-file granularity to the workspace
 - uses `entries` to select routes relevant to the current request
@@ -90,3 +74,5 @@ The implementation is aligned when it:
 - keeps detailed truth at routed destinations
 - contains no seeded project-layout assumptions
 - places generated navigation last inside the required markers
+- keeps compact workspace routing axioms
+- keeps the authored portion between 10 and 40 non-empty lines

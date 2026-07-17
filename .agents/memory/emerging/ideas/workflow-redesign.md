@@ -1,41 +1,126 @@
 ---
 open-forge:
-  description: Redesign workflow bodies around Required Routes, constraints, and two-tier loading; selection stays in entry descriptions
-  tags: [Memory, Idea, Contextual, Candidate, Workflow, Routing, Loading]
+  description: Full workflow redesign - Goal/Steps/Loop ergonomics, Required Routes for cross-tree dependencies, orchestration rules, worked dev-workflow example
+  tags: [Memory, Idea, Contextual, Candidate, Workflow, Routing, Loading, Orchestration]
 ---
 
-# Workflow Redesign: Required Routes
+# Workflow Redesign
 
-Direction agreed 2026-07-08, not implemented yet. Applies the loading-reliability and routing-surfaces decisions to the workflow primitive.
+Status: accepted and applied 2026-07-10. The decision record is `.agents/memory/crystallized/decisions/workflow-shape.md`; this file stays for the rationale detail and the worked example until archived. Remaining follow-up: run a seeded benchmark round against the new shape.
 
-## Accepted Direction
+## What A Workflow Is
 
-- Remove selection prose such as "use this workflow when..." from workflow bodies; the generated `entry` description is the selection surface.
-- The body opens with one goal statement so a mis-selected agent can confirm fit or back out.
-- Replace `Required Skill Packages` with a generalized `Required Routes` section for cross-tree dependencies. Generated `Entries` express containment (siblings and children); `Required Routes` express dependency (cross-tree edges that generated entries cannot carry).
-- State load timing inside the section, unconditionally and without implying tooling: "Read every route below before Step 1. A route that cannot be loaded is a blocker to report, not a step to skip."
-- Keep `Required Routes` flat, small (about five entries), unconditional, and entrypoint-level only (`SKILL.md`, never `references/*`). Conditional depth belongs inside skill packages, where a missed read is cheap to recover from.
-- Keep a short `Constraints` section for cross-step invariants that are neither steps nor outcomes, such as "design the fit before writing the implementation".
-- Collapse end-state sections to `Outputs` (artifacts) plus `Completion` (a checklist that is the stop condition, including the memory-routing follow-up).
-- Write `Required Routes` lines in the generated entry format (backtick path, dash, description) so future tooling such as `open-forge dump --follow-required` can parse and follow them.
-- Do not list directives in `Required Routes`; they are already loaded workspace-wide. Keep the list semantically pure: material that is not otherwise loaded and that the workflow cannot run correctly without.
+A workflow is a routed markdown recipe for reaching a defined goal that takes more than one step or more than one skill. It is goal-oriented by contract, deterministic where steps are known, iterative where they are not, and an orchestration surface where work spans skills, subagents, or other workflows. It is not a runtime orchestration object from an agent SDK; that line stays so Open Forge never redefines SDK-native or tool-native workflow concepts.
 
-## Proposed Body Shape
+## Two Distinct Routes, By Design
 
-Goal line, `Required Routes`, `Constraints`, `Steps`, `Loop`, `Outputs`, `Completion`, generated `Entries`.
+- Generated `Entries` express containment: workflow-local files and child categories under the workflow folder. The CLI owns them.
+- `Required Routes` express dependency: cross-tree edges to routes the workflow needs but does not contain. The author owns them. Generated entries structurally cannot carry these edges, so the two sections never compete.
 
-## Loading Tiers
+Humans and agents reason about them the same way: "what is inside me" versus "what I need from elsewhere".
 
-1. Session baseline: loader plus load-policy chain, unconditional and small.
-2. Selection: `_workflows.md` entries scan, descriptions only.
-3. Activation: workflow body plus all `Required Routes`, unconditional, before Step 1. Front-loaded deliberately because closeout compliance is the weakest tier and early exposure measurably improves it.
-4. Execution: skill `references/*` loaded per step through each `SKILL.md` router.
-5. Closeout: post-work routes plus the `Completion` checklist.
+## Body Shape
 
-## Open Questions
+```md
+---
+open-forge:
+  description: {trigger plus outcome, decision-grade; this is the selection surface}
+  tags: [{Layer}, Workflow, {topic tags}]
+---
 
-- Whether `Required Routes` should name skill package ids and let the CLI convert them into generated entries; currently leaning to two distinct sections with concrete paths, keeping containment and dependency visibly different for humans too.
-- Whether workflow entries need richer activation metadata, such as example user phrases ("activate when the user asks for help shaping a product vision").
-- Whether the primitive should be renamed (for example "workloads"); unresolved, low priority.
-- Whether workflows should own local overwrites for #Core routes such as directives and guidance, as originally intended, since no other mechanism provides scoped overwrites today.
-- Contract updates needed on acceptance: `_workflows.md` and the agent-primitives and formatting descriptors currently hardcode `Required Skill Packages` wording.
+# {Name}
+
+{One sentence: the outcome this workflow produces. Selection confirmation, not selection prose.}
+
+## Goal
+
+- outcome: what exists when this workflow succeeds
+- acceptance: how agent and user recognize success
+- stop: what ends the workflow early (user decision, blocker, scope change)
+
+## Required Routes
+
+Read every route below before Step 1. A route that cannot be read is a blocker to report, not a step to skip.
+
+- `{path}` - {why this workflow needs it}
+
+## Constraints
+
+- {cross-step invariants; neither steps nor outcomes}
+
+## Steps
+
+1. {ordered actions; a step may invoke a skill, consult guidance, delegate to a subagent, or hand off to another workflow by route}
+
+## Loop
+
+{What triggers another pass, which steps repeat, and what stops it. Linear workflows state "linear; no loop".}
+
+## Outputs
+
+- {artifacts produced}
+
+## Completion
+
+- [ ] {checklist that is the stop condition; acceptance from Goal, verification, memory routing follow-up}
+- [ ] final response or handoff names the workflow for auditability
+
+## Entries
+
+{generated; workflow-local routes only}
+```
+
+Section presence rules: `Goal`, `Steps`, `Loop`, `Outputs`, and `Completion` are always present. `Required Routes` states "none" when the workflow needs nothing beyond baseline context. `Constraints` is omitted when the workflow has no cross-step invariants; forcing it everywhere creates filler. The auditability line lives in `Completion`, not as a global workflow axiom.
+
+## Execution Ergonomics
+
+One shape covers the three modes; the mode emerges from which sections carry weight:
+
+- Deterministic: rich `Steps`, `Loop` says linear. The recipe is the path.
+- Iterative: `Steps` plus a `Loop` that repeats a step range until a condition. The recipe is the cycle.
+- Goal-seeking: rich `Goal`, minimal assess-act-check `Steps`, `Loop` runs until acceptance. The recipe is the target.
+
+Orchestration rules:
+
+- A step may hand off to another workflow by its route. The sub-workflow's `Required Routes` are read at that activation, not before; activation is the loading event.
+- A step may delegate to a subagent or worker. The delegation handoff names the workflow route and the active step so the worker enters the same contract (validated need in the v6 orchestrator-worker seeds).
+- Composition stays in `Steps`; a workflow never silently absorbs another workflow's axioms.
+
+## Worked Example: Dev Workflow (TDD Red-Green-Blue)
+
+The maintainer's primary extension workflow, mapped onto the shape to prove the ergonomics:
+
+- Goal: outcome - the selected task's behavior change exists and is verified; acceptance - task acceptance criteria met and tests green after refactor; stop - blocker, scope change, or user pause.
+- Required Routes: the implementation skill package, the shared workflow-primitives skill package, and the tasks route (backlog, issues folder, or external tracker route).
+- Constraints: tests stay untouched during refactor; contracts before implementation.
+- Steps: (1) select the task from the user or the next backlog/issues entry; (2) plan the change - for new behavior establish contracts (class shapes, function signatures, API surfaces), for existing behavior state the behavior delta and identify the moving parts; (3) red - write failing tests from the contracts, and for existing code ensure or add tests pinning current behavior of affected parts; (4) implement - fill the contracts or adjust the behavior; (5) green - run tests until they pass; (6) blue - review against the greater picture, record observations, refactor while tests stay green without being edited; (7) hand off to the post-work subflow - check acceptance criteria, route memory, write the handover.
+- Loop: steps 4-5 repeat until green; step 6 repeats until the refactor stabilizes with green tests; return to step 2 when the plan proves wrong.
+- Completion: acceptance criteria checked, tests green after refactor without test edits, memory routed, handover written, workflow named.
+
+Every phase lands in an existing section; the post-work subflow is a workflow handoff, which is exactly the orchestration rule above. No new primitive needed.
+
+## Required Routes Rules
+
+- Name: `Required Routes`. "Required Skill Entries" is too narrow (dependencies may be skills, guidance, patterns, memory routes, workspace routes, or other workflows); "Required Route Entries" collides with the defined term `entry`, which belongs to generated regions.
+- Flat and unconditional. Prefer entrypoint-level targets (`SKILL.md`, `_category.md`, workflow files); stable routed files such as one exact pattern or guidance file are allowed when the workflow truly depends on that one file.
+- Keep the list short; when it grows, split the workflow or route through a package instead. Length is guidance, not contract.
+- "none" is a valid value when the workflow needs nothing beyond baseline context.
+- Lines use the generated entry format (backtick path, dash, reason) so tooling such as `open-forge context --follow-required` can parse and follow them.
+- No directives in the list; workspace directives are already loaded. Required Routes hold only material that is not otherwise loaded and that the workflow cannot run correctly without.
+- Loading stays two-tier per the loading-reliability decision: activation reads the workflow body plus all Required Routes; execution reads skill references per step.
+
+## Workflow-Local Core
+
+A workflow may own local #Core routes under its folder; they apply only while the workflow is active and are preferred over broader routes when safe - the natural consequence of the loader's narrower-scope preference, alongside `.overwrite.md` companions and direct edits. This is a brief capability note, not a headline feature.
+
+- Typical use: local directives that are mandatory only while the workflow runs.
+- Local skills are discouraged: native skill packages belong under `.agents/skills/` where runtimes discover them; share them through `Required Routes` instead.
+- Local patterns and guidance stay possible through the normal recursive category contract; nothing workflow-specific is needed.
+- A workflow is not an independent install: no loader, no AGENTS.md, no root categories.
+
+## Contract Changes On Acceptance
+
+- `_workflows.md`: replace the `Required Skill Packages` axiom with `Required Routes`; require Goal, Steps, Loop, Outputs, Completion; Constraints optional; Required Routes may state "none".
+- Workflows descriptor and agent-primitives concept: same rename plus the two-routes distinction and the orchestration rules.
+- Formatting concept: Required Routes lines use the entry format.
+- workflow-essentials and benchmark seeds: migrate the three workflows, add the dev workflow as the fourth, and rerun a seeded round to validate compliance before release.

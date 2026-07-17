@@ -1,6 +1,6 @@
 # Run Report Template (orchestrator only)
 
-Save as `benchmarks/results/<date>-<seed>-<model>-<variables>.md`.
+Save as `benchmarks/results/<date>-<seed>-<model>-<generation>-<variables>.md`.
 
 ```markdown
 # Benchmark Run — <seed> / <model> / <variables>

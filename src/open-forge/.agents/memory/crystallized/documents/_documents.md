@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Durable accepted records, or routes to those records, for long-form project knowledge
-  tags: [LoadNow, Memory, Document, Record, Index, CurrentTruth]
+  tags: [LoadNow, Memory, Document, Record, CurrentTruth]
 ---
 
 # Documents

@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Resume note for the uncommitted wording and CLI pass started before formal dogfooding
+  description: Resume note for the pre-dogfood wording and CLI pass, committed 2026-07-08; superseded context for later passes
   tags: [Memory, Handoff, Contextual, CLI, Wording]
 ---
 

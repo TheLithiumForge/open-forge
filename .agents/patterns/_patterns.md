@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Concrete reusable shapes for code, files, APIs, documents, and other inspectable work
-  tags: [LoadNow, Core, Pattern, Index]
+  tags: [LoadNow, Core, Pattern]
 ---
 
 # Patterns

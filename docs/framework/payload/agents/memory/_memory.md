@@ -16,15 +16,7 @@ It is a self-growing structure that starts from a small shared shape and becomes
 
 ## Contains
 
-The installed memory category `entrypoint` must contain:
-
-- scoped `open-forge:` frontmatter with description and useful tags, including `OrganicGrowth`
-- a title
-- one short definition of Memory
-- compact lifecycle, authority, baseline loading, growth, child-route, and promotion axioms
-- a final marker-bounded generated index region
-
-The authored portion must stay between 12 and 50 non-empty lines. Generated `entries` do not count toward this limit.
+The installed file follows the shared category `entrypoint` shape owned by the formatting concept: scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
 
 ## State Contract
 
@@ -89,15 +81,7 @@ When no existing route fits safely, agents must suggest a clearer child route an
 
 ## Generated Region
 
-The final section must use the shared category `entrypoint` shape:
-
-```md
-## Entries
-
-<!-- open-forge:generated-index:start -->
-- none - No entries - #Empty
-<!-- open-forge:generated-index:end -->
-```
+The final generated region uses the shared category `entrypoint` shape owned by the formatting concept.
 
 Generated `entries` list direct memory state categories and direct memory files if a workspace adds any. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
 
@@ -138,3 +122,5 @@ The implementation is aligned when it:
 - allows specialized child routes only under the route that owns their meaning
 - keeps generated `entries` from defining instructions or authority
 - routes only through its final generated region
+- keeps compact lifecycle, authority, baseline loading, growth, child-route, and promotion axioms
+- keeps the authored portion between 12 and 50 non-empty lines

@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Durable accepted records, or routes to those records, for long-form project knowledge
-  tags: [LoadNow, Memory, Document, Record, Index, CurrentTruth]
+  tags: [LoadNow, Memory, Document, Record, CurrentTruth]
 ---
 
 # Documents
@@ -17,5 +17,5 @@ Documents are durable accepted records, or routes to those records, for long-for
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `dogfood-reports/_dogfood-reports.md` - Accepted records of dogfood evidence, experiments, and recommendation analysis - #Memory #Document #Record #CurrentTruth #Dogfood #Evidence #Index
+- `evaluations/_evaluations.md` - Accepted evaluation syntheses; load when a loading, routing, or design decision needs its source evidence - #Memory #Document #Record #CurrentTruth #Evaluation #Evidence
 <!-- open-forge:generated-index:end -->

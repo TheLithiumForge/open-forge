@@ -8,7 +8,7 @@ open-forge:
 
 ## Setup and seed baseline
 
-- Workspace: `D:\Repositories\open-forge-dogfood-v6`
+- Workspace: `{repos}\open-forge-dogfood-v6`
 - Seed commit present before implementation: `f69c06e Seed OpenForge dogfood v6`
 - Initial implementation state: no source project existed under `bookmarks/`; only OpenForge seed routes and root docs were present.
 - Write scope: implementation files were created under `bookmarks/`; this report was written at the workspace root per `.agents/workspace/dogfood-artifacts.md`.
@@ -30,7 +30,7 @@ The OpenForge dogfood workflow prefers a fresh subagent with a minimal prompt. T
 
 ## Verification commands and results
 
-From `D:\Repositories\open-forge-dogfood-v6\bookmarks`:
+From `{repos}\open-forge-dogfood-v6\bookmarks`:
 
 - `bun install` passed and wrote `bun.lock`.
 - `bun test` passed: 12 tests, 0 failures.
@@ -67,7 +67,7 @@ Strong compliance signals:
 
 Notable issue:
 
-- The first `apply_patch` call used paths relative to `D:\Repositories`, so it created an accidental sibling `D:\Repositories\bookmarks`. The files were moved/recreated under the seed, and the accidental sibling directory was removed. The final repository state has no remaining `D:\Repositories\bookmarks` directory.
+- The first `apply_patch` call used paths relative to the parent repos folder, so it created an accidental sibling `{repos}\bookmarks`. The files were moved/recreated under the seed, and the accidental sibling directory was removed. The final repository state has no remaining `{repos}\bookmarks` directory.
 
 ## Worker communication review
 

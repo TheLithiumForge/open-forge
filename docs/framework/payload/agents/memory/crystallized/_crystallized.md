@@ -14,15 +14,7 @@ It is the durable understanding the workspace accepts as current.
 
 ## Contains
 
-The installed crystallized memory `entrypoint` must contain:
-
-- scoped `open-forge:` frontmatter with description and useful tags, including `CurrentTruth` and `LoadNow`
-- a title
-- one short definition of crystallized memory
-- compact authority, loading, consolidation, and scope axioms
-- a final marker-bounded generated index region
-
-The authored portion must stay between 10 and 45 non-empty lines. Generated `entries` do not count toward this limit.
+The installed file follows the shared category `entrypoint` shape owned by the formatting concept: scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
 
 ## Crystallized Contract
 
@@ -64,15 +56,7 @@ Subcategories are encouraged when they keep current truth small, discoverable, a
 
 ## Generated Region
 
-The final section must use the shared category `entrypoint` shape:
-
-```md
-## Entries
-
-<!-- open-forge:generated-index:start -->
-- none - No entries - #Empty
-<!-- open-forge:generated-index:end -->
-```
+The final generated region uses the shared category `entrypoint` shape owned by the formatting concept.
 
 Generated `entries` list direct crystallized memory files and direct child crystallized memory categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
 
@@ -104,3 +88,5 @@ The implementation is aligned when it:
 - extracts operational material into matching #Core routes, including user-created #Core categories and files
 - supports recursive positive scope
 - routes only through its final generated region
+- keeps compact authority, loading, consolidation, and scope axioms
+- keeps the authored portion between 10 and 45 non-empty lines

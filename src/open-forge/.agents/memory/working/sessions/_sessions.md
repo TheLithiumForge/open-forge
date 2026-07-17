@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Raw chronological records of what happened during work sessions
-  tags: [LoadNow, Memory, Session, WorkHistory, Index, Contextual]
+  tags: [LoadNow, Memory, Session, WorkHistory, Contextual]
 ---
 
 # Sessions

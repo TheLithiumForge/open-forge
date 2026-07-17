@@ -6,7 +6,7 @@ open-forge:
 
 # Dogfood v2 — Compliance Report
 
-Sandbox: `D:\Repositories\open-forge-dogfood-v2`, git-tracked (`50ed5eb` baseline). Framework: the staged changes reviewed in `opinion-on-staged-changes.md`, plus `workflow-essentials`, plus new test content authored for this round: three directives (`chat-tone`, `no-unsafe-code`, `typescript-default`), one skill (`orchestration/ad-hoc-cli-subagent`) with matching guidance (`delegating-subtasks`), two patterns (`pure-core-thin-edges`, `one-concern-per-file`), and one seeded crystallized decision (`dependency-policy`). Test content was deliberately left off the `#OpenForge` autoload tag (directives excepted, where it's inert anyway) so guidance/skill/pattern/memory discovery would be a genuine on-demand test, not force-fed.
+Sandbox: `{repos}\open-forge-dogfood-v2`, git-tracked (`50ed5eb` baseline). Framework: the staged changes reviewed in `opinion-on-staged-changes.md`, plus `workflow-essentials`, plus new test content authored for this round: three directives (`chat-tone`, `no-unsafe-code`, `typescript-default`), one skill (`orchestration/ad-hoc-cli-subagent`) with matching guidance (`delegating-subtasks`), two patterns (`pure-core-thin-edges`, `one-concern-per-file`), and one seeded crystallized decision (`dependency-policy`). Test content was deliberately left off the `#OpenForge` autoload tag (directives excepted, where it's inert anyway) so guidance/skill/pattern/memory discovery would be a genuine on-demand test, not force-fed.
 
 Two sessions: a cold build (told only "needs a Node environment," nothing about TypeScript, directives, patterns, or subagents) and a cold continuation (told only that prior work exists and one concrete feature to add). I independently verified every claim below against the actual files — not just the agents' self-reports — and sent session 1 a technical debrief afterward to separate genuine routing-driven compliance from coincidence.
 
@@ -40,7 +40,7 @@ This is not a framework bug. The loader's own authority order already puts "curr
 
 This is a gap the previous round didn't surface: routing competes not only against an agent's task-focus and judgment calls, but against whatever native capabilities its own harness already provides for free. A workspace-authored skill describing "how to delegate to an external CLI" will lose to "the thing I already know how to do" whenever both produce an acceptable result, regardless of how well the skill is tagged or worded. If external-CLI delegation specifically matters (as opposed to delegation via any mechanism), the workspace may need to say so explicitly, or the skill's value proposition needs to be something the native tool can't already do.
 
-Side note: this also meant the skill's "verify the CLI actually works before relying on it, fall back if not" instruction never got exercised. Both sessions independently rediscovered that `node`/`npm` weren't resolving on `PATH` in their shell and located a working install via `nvm4w` themselves — competently handled, but it means the skill's specific availability-check guidance remains untested.
+Side note: this also meant the skill's "verify the CLI actually works before relying on it, fall back if not" instruction never got exercised. Both sessions independently rediscovered that `node`/`npm` weren't resolving on `PATH` in their shell and located a working install via a Node version manager themselves — competently handled, but it means the skill's specific availability-check guidance remains untested.
 
 ### Workflow (`implementation`)
 

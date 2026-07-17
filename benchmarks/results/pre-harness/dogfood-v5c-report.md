@@ -7,20 +7,20 @@ open-forge:
 # OpenForge Dogfood v5C Report
 
 Date: 2026-07-09
-Folder: `D:\Repositories\open-forge-dogfood-v5c`
+Folder: `{repos}\open-forge-dogfood-v5c`
 Subagent: `019f45c3-da99-7893-ae6e-db7a5e0556ae` (`Locke`)
 
 ## Test Setup
 
 I created one isolated sibling folder beside `open-forge`:
 
-- `D:\Repositories\open-forge-dogfood-v5c`
+- `{repos}\open-forge-dogfood-v5c`
 
 The setup used the installed CLI:
 
 ```powershell
-open-forge install D:\Repositories\open-forge-dogfood-v5c
-open-forge extend workflow-essentials D:\Repositories\open-forge-dogfood-v5c
+open-forge install {repos}\open-forge-dogfood-v5c
+open-forge extend workflow-essentials {repos}\open-forge-dogfood-v5c
 ```
 
 I then added only seed material derived from v5B's initial tracked baseline and the bookmarks project idea:
@@ -39,7 +39,7 @@ I then added only seed material derived from v5B's initial tracked baseline and 
 Then I ran:
 
 ```powershell
-open-forge index D:\Repositories\open-forge-dogfood-v5c
+open-forge index {repos}\open-forge-dogfood-v5c
 git init
 git add AGENTS.md .agents
 git commit -m "Seed OpenForge bookmarks CLI dogfood"
@@ -73,7 +73,7 @@ Overall assessment: strong compliance with the seed and isolation constraints.
 
 What went well:
 
-- It stayed inside `D:\Repositories\open-forge-dogfood-v5c`.
+- It stayed inside `{repos}\open-forge-dogfood-v5c`.
 - It created the project under `bookmarks/`, matching the workspace route.
 - It used TypeScript, strict compiler settings, and Node built-ins.
 - It added no runtime dependencies.
@@ -172,7 +172,7 @@ npm run build
 npm test
 ```
 
-Both passed in `D:\Repositories\open-forge-dogfood-v5c\bookmarks`.
+Both passed in `{repos}\open-forge-dogfood-v5c\bookmarks`.
 
 Observed test result:
 

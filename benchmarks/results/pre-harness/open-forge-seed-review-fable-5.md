@@ -8,7 +8,7 @@ open-forge:
 
 **Model note:** reviewed and written by **Claude Fable 5** (`claude-fable-5`).
 
-Reviewed `D:\Repositories\open-forge-seed` in full: README, `extension.json`, and the payload's 30 route files across directives, guidance, memory (5 decisions, 3 documents, 2 analyses, 4 observations, 1 ideas), patterns, workflows, and workspace.
+Reviewed `{repos}\open-forge-seed` in full: README, `extension.json`, and the payload's 30 route files across directives, guidance, memory (5 decisions, 3 documents, 2 analyses, 4 observations, 1 ideas), patterns, workflows, and workspace.
 
 ## Verdict
 
@@ -30,7 +30,7 @@ Well designed — genuinely. It hits the stated target ("somewhere between green
 
 ## Issues and refinements
 
-1. **The Bun decision quietly bakes in a half-wrong environment observation.** v5a concluded "no Node on this machine"; v5b then found working Node 26 at `C:\nvm4w\nodejs` (off-PATH, not absent). `runtime-and-tooling.md` chooses Bun as if the environment settled the question. The fallback clause saves it in practice, but consider one sentence acknowledging Node exists off-PATH — otherwise every future seeded run inherits a premise the very next session after it was formed already contradicted. It's also a nice live demo of why the framework's verify-before-promoting axiom for observations exists.
+1. **The Bun decision quietly bakes in a half-wrong environment observation.** v5a concluded "no Node on this machine"; v5b then found a working Node 26 install (off-PATH, not absent). `runtime-and-tooling.md` chooses Bun as if the environment settled the question. The fallback clause saves it in practice, but consider one sentence acknowledging Node exists off-PATH — otherwise every future seeded run inherits a premise the very next session after it was formed already contradicted. It's also a nice live demo of why the framework's verify-before-promoting axiom for observations exists.
 2. **`extension.json` name won't survive becoming a bundled extension.** `"OpenForge Dogfood Seed"` with spaces is fine for local-folder installs, but the CLI's bundled-id path expects lowercase kebab ids. If this ever ships in `src/extensions/`, it needs an id like `dogfood-seed`. Cheap to align now.
 3. **Two documents carry near-duplicate spec fragments.** The command list appears in both `product-vision.md` and (implicitly, as "the command set was right") `rebuild-brief.md` — fine — but watch that future edits keep the behavior contract in exactly one place (vision) so the seed doesn't develop the parallel-truth problem the framework itself warns about. Currently OK; flagging the seam.
 4. **No seeded handoff.** For a "restart after an MVP" fiction, a `working/handoffs/` note from the fictional MVP session ("here's where the old build stood, why we're restarting clean") would complete the brownfield illusion and give the handoff route a read-side test in seeded runs — currently the seed exercises crystallized/emerging reads but working-memory reads only happen if a run is multi-session.

@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Agent-noticed findings that may become learning, memory, or Core updates
-  tags: [KeepInMind, Memory, Observation, AgentLearning, OrganicGrowth, Index, Contextual, Candidate]
+  tags: [KeepInMind, Memory, Observation, AgentLearning, OrganicGrowth, Contextual, Candidate]
 ---
 
 # Observations

@@ -7,8 +7,8 @@ open-forge:
 # Orchestrator Dogfood V6 Report
 
 Date: 2026-07-09
-Workspace: `D:\Repositories\open-forge-dogfood-v6`
-Seed source: `D:\Repositories\open-forge-seed` at `ade0011`
+Workspace: `{repos}\open-forge-dogfood-v6`
+Seed source: `{repos}\open-forge-seed` at `ade0011`
 Seed baseline commit: `f69c06e Seed OpenForge dogfood v6`
 Worker: `019f45e8-bae3-7dc3-9ef5-afc5da65addd` (`Linnaeus`)
 
@@ -123,8 +123,8 @@ Good:
 
 - The worker clearly absorbed the improved seed. The result reflects the new post-MVP docs, not just the original command list.
 - It reported an initial typecheck failure and the fix.
-- It admitted an accidental out-of-scope patch to `D:\Repositories\bookmarks`, then cleaned it up.
-- I verified `D:\Repositories\bookmarks` no longer exists.
+- It admitted an accidental out-of-scope patch to `{repos}\bookmarks`, then cleaned it up.
+- I verified `{repos}\bookmarks` no longer exists.
 
 Bad:
 

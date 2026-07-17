@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Historical memory kept for context after it is no longer current truth
-  tags: [LoadNow, Memory, Archived, Index, Contextual, Historical]
+  tags: [LoadNow, Memory, Archived, Contextual, Historical]
 ---
 
 # Archived Memory
