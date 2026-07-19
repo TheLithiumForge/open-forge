@@ -6,7 +6,7 @@ open-forge:
 
 # Workspace
 
-Workspace routes point to important project locations and explain when to use them.
+Workspace routes point to important project locations and explain when/why to use them. //Hn: They do not replace memory, but serves more like a map with small descriptions of places. The granularity should be at the user's discretion but it is adviced to be coarse, e.g. modules, classes, projects, scopes, etc rsther than class members, functions, etc 
 
 ## Axioms
 

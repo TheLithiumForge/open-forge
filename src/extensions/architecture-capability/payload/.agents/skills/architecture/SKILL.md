@@ -13,6 +13,8 @@ Reason about structure before committing to a direction or transition.
 - Separate current state, proposed direction, rejected options, and transition slices.
 - Keep rationale in the route that owns accepted memory; keep behavior in the route that owns behavior.
 
+//Hn: are References the canon way if doing things ? Because we can kind of self insert otherwise and do the same Entries (or update the cli to write references if inside a skill.md file) and we can read the same description from the file underneath. It would still act as a normal skill but with support for our cli
+
 ## References
 
 - `references/map-current-system.md` - Read before proposing architecture, large restructures, transitions, or structural documentation.
