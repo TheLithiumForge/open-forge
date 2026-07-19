@@ -8,10 +8,6 @@ open-forge:
 
 All task work belongs inside the current workspace unless the user explicitly says otherwise.
 
-## Applies To
-
-- Every benchmark worker read, write, command, generated artifact, test fixture, and comparison source.
-
 ## Axioms
 
 - Before the first file operation in a session, verify the working directory is the workspace root; prefer workspace-absolute paths for patch and edit tools whose defaults may resolve elsewhere.

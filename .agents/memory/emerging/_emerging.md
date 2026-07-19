@@ -10,8 +10,8 @@ Emerging memory is candidate material that may be useful but is not accepted tru
 
 ## Axioms
 
-- Read `Entries` when current work needs useful material that is not accepted truth or produces candidate material.
-- Before ending meaningful work, read `Entries` to route candidate material produced during the work.
+- At every continuity refresh, read `Entries` for useful candidate material that may affect the current direction and route candidate material produced so far before it can be lost.
+- "No durable candidate material warranted" is a valid refresh result; do not convert raw activity into memory.
 - Treat emerging memory as contextual until it is validated, promoted, or explicitly accepted.
 - Keep uncertainty, source, and scope visible.
 - Refine material here while its validity, owner, or final route is unsettled.

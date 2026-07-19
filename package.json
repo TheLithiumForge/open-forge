@@ -24,7 +24,10 @@
     "bench:validate": "bun run benchmarks/harness/runner.ts validate",
     "build": "bun run build.ts",
     "index": "bun run src/cli/cli.ts index ./src/open-forge",
-    "test": "bun test"
+    "test": "bun run test:fast",
+    "test:fast": "bun run tests/run-tests.ts unit",
+    "test:closure": "bun run tests/run-tests.ts closure",
+    "test:ci": "bun run tests/run-tests.ts all"
   },
   "engines": {
     "node": ">=18"

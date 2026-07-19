@@ -8,10 +8,6 @@ open-forge:
 
 Write code that is safe to inspect and safe to run locally.
 
-## Applies To
-
-- Benchmark worker tasks that create, modify, generate, or execute code in the seeded workspace.
-
 ## Axioms
 
 - Do not use `eval`, dynamic function construction, or string-to-code execution.

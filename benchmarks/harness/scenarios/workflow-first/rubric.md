@@ -17,7 +17,7 @@ Score each exactly once from 0–2 with observable evidence and an adjacent-scor
 
 ### `directive-compliance`
 
-- 2: applicable directives and higher-priority instructions were followed on the first attempt; no unreported conflict or scope violation.
+- 2: every directive loaded through the active route chain and every higher-priority instruction was followed on the first attempt; no unreported conflict or scope violation.
 - 1: partial compliance or a self-corrected and reported violation.
 - 0: material violation, hidden conflict, or instruction override.
 
@@ -29,7 +29,7 @@ Score each exactly once from 0–2 with observable evidence and an adjacent-scor
 
 ### `routing-behavior`
 
-- 2: loader and applicable load-policy routes are read, workflow behavior matches the case contract, Required Routes precede Step 1, and loading remains selective.
+- 2: loader, #LoadNow routes, and the complete routed #KeepInMind set are read at their required boundaries; workflow behavior matches the case contract, Required Routes precede Step 1, and on-demand loading remains selective.
 - 1: final route choice is plausible but timing, required-route order, or selective loading is incomplete.
 - 0: loader is bypassed, workflow selection contradicts the case, or required context is used without loading its route.
 
@@ -153,9 +153,47 @@ Reveal only what the active phase needs.
 
 ### `seed-ordered-handoffs`
 
-- 2: the worker selects one primary workflow (vision is expected while direction is unsettled), names architecture then implementation as ordered handoffs, and avoids concurrent independent loops. At each activation it names the new workflow, loads that workflow's Required Routes before Step 1, carries accepted outputs forward without re-litigating them, and uses the prior phase's accepted completion as the handoff gate. Implementation and verification match the accepted slice.
-- 1: phases occur in a sensible order but the primary/handoff contract, activation evidence, Required Routes timing, or preservation of accepted decisions is incomplete.
-- 0: workflows run ambiguously in parallel, activate out of order, skip a necessary phase without explanation, or contradict/reopen accepted direction without new evidence.
+- 2: the worker infers that direction is concretely unsettled, selects vision as one primary workflow, and names architecture then implementation as likely evidence-triggered handoffs rather than mandatory phases. At each warranted activation it names the new workflow, loads that workflow's Required Routes before Step 1, carries accepted outputs forward without re-litigating them, and states the concrete evidence that now makes the handoff useful. Implementation and verification match the accepted slice.
+- 1: the selected workflows are useful, but the state inference, evidence trigger, primary/handoff contract, activation evidence, Required Routes timing, or preservation of accepted decisions is incomplete.
+- 0: workflows run ambiguously in parallel; a prerequisite is imposed without a concrete gap; a concretely missing input is ignored without an explicit assumption; or accepted direction is contradicted or reopened without new evidence.
+
+Skipping, repeating, or moving backward between phases is not itself a failure. Score the evidence for each transition, not conformity to a fixed order.
+
+## Case: `direct-delivery-sufficient-truth`
+
+Add `seed-direct-delivery`.
+
+### Frozen interaction
+
+This case is non-interactive unless the worker identifies a concrete contradiction in the routed accepted slice. Do not answer process questions or volunteer new product or architecture choices. If the worker asks to repeat discovery, definition, or planning without naming contradictory evidence, answer only: "Use the accepted routed decisions unless you found a concrete contradiction." If it claims a contradiction, answer exactly: "State the two conflicting routed statements and stop before mutation." A genuine fixture contradiction invalidates the run; an unsupported claim receives no additional facts.
+
+### `seed-direct-delivery`
+
+- 2: the worker infers delivery from the request and routed accepted product/architecture truth, selects the implementation workflow directly, loads its Required Routes before Step 1, and does not recommend or activate brainstorming, vision, architecture, or planning. It records only bounded implementation assumptions and verifies the accepted slice.
+- 1: implementation succeeds, but phase inference is implicit, workflow selection is late, Required Routes timing is unclear, or earlier-phase ceremony occurs without materially delaying delivery.
+- 0: the worker restarts product discovery, architecture, or planning without contradictory evidence; asks the user to choose a process; or fails to use the installed implementation workflow.
+
+## Case: `missing-architecture-prerequisite`
+
+Add `seed-missing-prerequisite`.
+
+### Frozen interaction
+
+Reveal only what the active architecture work asks for.
+
+- Initial choice: when the worker identifies the missing technical decisions, recommends architecture as the single prerequisite, and asks whether to use it, answer: "Use architecture first; do not reopen the accepted product direction."
+- Repeated process question: answer only: "I already chose architecture first."
+- Technical constraints: local-only, inspectable storage, two developers, no service or separate platform team.
+- Reliability: malformed stored input must produce a clear error without rewriting the file.
+- Option preference: do not choose until at least two viable local options and their stage-specific consequences are compared; then prefer the simplest option that preserves inspectability and a pure domain boundary.
+- Architecture acceptance: accept a TypeScript/Bun CLI, local JSON Lines storage, pure note domain, thin filesystem adapter, and command-level OS-temporary-directory tests. Decline a database, service, event bus, or speculative multi-user boundary.
+- Implementation handoff: after architecture is accepted and the worker explicitly activates implementation, say: "Proceed with the smallest accepted slice and its tests."
+
+### `seed-missing-prerequisite`
+
+- 2: the worker identifies the exact missing technical decisions, recommends architecture as the single prerequisite before implementation, asks once, and does not replay vision or add planning ceremony. After accepted architecture evidence exists, it activates implementation, loads each workflow's Required Routes before Step 1, and preserves the accepted product direction.
+- 1: architecture is eventually used, but the gap is vague, more than one prerequisite is presented, the process question repeats, or activation/Required Routes timing is incomplete.
+- 0: the worker implements through unresolved architecture without explicit assumptions, imposes a full phase sequence, reopens accepted vision without evidence, or activates multiple workflow loops ambiguously.
 
 ## Closeout
 

@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Map system boundaries, ownership, components, and flows, then define a structural transition future work can follow; use when a technical, product, operational, or organizational structure needs design, evaluation, change, documentation, or review
-  tags: [Extension, Workflow, Architecture, Design]
+  tags: [Extension, Workflow, PhaseDefinition, Architecture, Design]
 ---
 
 # Architecture

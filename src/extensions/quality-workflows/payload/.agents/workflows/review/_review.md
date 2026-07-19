@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Review a code change, technical design, or repository state and report prioritized evidence-backed findings; use when correctness, regressions, safety, or maintainability need independent scrutiny
-  tags: [Extension, Workflow, Quality, Review]
+  tags: [Extension, Workflow, PhaseVerification, Quality, Review]
 ---
 
 # Review

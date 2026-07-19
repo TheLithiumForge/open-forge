@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Explore user journeys, interaction states, and experience directions before implementation; use when a product flow or interface problem needs evidence, alternatives, and an explicit design decision
-  tags: [Extension, Workflow, Design, UX, Exploration]
+  tags: [Extension, Workflow, PhaseDiscovery, Design, UX, Exploration]
 ---
 
 # UX Exploration

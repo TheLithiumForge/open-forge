@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Create one actionable task in its declared authority; use when accepted work needs a durable owner, scope, acceptance criteria, and execution context
-  tags: [Extension, Workflow, Planning, Task]
+  tags: [Extension, Workflow, PhasePlanning, Planning, Task]
 ---
 
 # Task Creation

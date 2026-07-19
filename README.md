@@ -14,6 +14,8 @@ The core of the methodology is patterns and knowledge routes. Patterns make stru
 
 An AI agent does not need to know everything, but it needs to know where everything is. Open Forge gives it a loader and index-like files for knowledge routing. Modern agents are smart enough to load only what is needed for the task at hand, provided the workspace tells them where to look.
 
+This is probability-shaping, not mechanical control. Deterministic routes, validators, memory, and review checkpoints make a nondeterministic agent more likely to see and follow the right context; they cannot guarantee that it will. Keep important choices visible, verify consequential work, and treat evidence as stronger than agent self-report.
+
 Open Forge is intentionally a bit more work from the start than other SDD frameworks. It does not ship a complete set of defaults because complete defaults usually assume everyone works the same way. They do not.
 
 The framework is meant to support one project, many projects together, a monorepo, a private document vault or second brain, or whatever shape your work actually has. My use cases will differ from your use cases. Your use cases will differ from the next person's use cases. Optimizing for some imaginary middle ground would quietly harm everyone's projects, just in slightly different ways.
@@ -63,13 +65,16 @@ npx open-forge extend --list
 npx open-forge extend {extension-id}
 npx open-forge extend --ids {extension-id},{extension-id}
 npx open-forge extend {extension-id} --dry-run
+npx open-forge extend --remove {installed-extension-id} --dry-run
 ```
 
 An extension may contain one skill, one workflow, directives, patterns, guidance, workspace or memory routes, support-only material, any deliberate mix, or only dependencies as a convenience pack. The catalogue derives and shows those contents; interactive selection marks transitive dependencies as required and locks them while needed. Bundled dependencies resolve offline and install automatically. `--dry-run` shows dependency order, every planned file, change status, and baseline/executable scope without writing.
 
-Each normal extension invocation starts from a clean target-scoped Git checkpoint and ends by asking you to review and commit the selected dependency closure. Install separate roots in separate commands when you want separate diffs; multi-select and `--ids` intentionally make one combined review unit. Catalogue listing and dry runs are read-only and remain available at any time.
+Stable-id extensions are safely updateable and removable. Open Forge stores ownership and hashes in transparent, Git-visible `open-forge.extensions.json`, while agents continue to route from the installed Markdown and native files. Receipt `sha256` protects extension-authored bytes; CLI-owned generated `Entries` bodies may change through `index` or Core without invalidating ownership. A local source opts into this managed lifecycle by declaring a stable manifest `id`; local dependencies or augmentations require that identity, while an idless plain overlay or direct/APM skill install remains unmanaged. Manifest and payload paths are portable slash-separated relative paths; literal backslashes are rejected. Extensions that need to contribute to a shared already-loaded Markdown file use an explicit target-owned augmentation slot and receive a deterministic removable block.
 
-Expert users may add `--pro` to `install` or a writing `extend` command to intentionally bypass the Git/Core lifecycle checkpoints. This does not disable dependency, manifest, containment, collision, link, index, or rollback safety.
+Each normal extension invocation starts from a clean target-scoped Git checkpoint and ends by asking you to review and commit the selected dependency closure. Install separate roots in separate commands when you want separate diffs; multi-select and `--ids` intentionally make one combined review unit. Removal changes exactly the requested ids and blocks when retained extensions still depend on them; orphan dependencies are not pruned automatically. Updating or removing an owned entrypoint is also blocked when the final route tree would strand retained descendants; move or remove those descendants in the same plan, or keep another owner for the route host. Catalogue listing and dry runs are read-only and remain available at any time.
+
+Expert users may add `--pro` to `install` or a writing `extend` command to intentionally bypass the Git/Core lifecycle checkpoints. This does not disable dependency, manifest, receipt, ownership, containment, collision, link, index, or rollback safety.
 
 Install Open Forge into another folder:
 
@@ -131,7 +136,7 @@ AGENTS.md                     <- agent entry block
 .agents/
   loader.md                   <- tells the agent what to read and when
   directives/
-    _directives.md            <- mandatory instructions for applicable work
+    _directives.md            <- binding instructions selected through routes
   guidance/
     _guidance.md              <- contextual guidance for recurring decisions
   memory/
@@ -172,7 +177,11 @@ The important thing is not the number of files. The important thing is the routi
 
 `AGENTS.md` points agents at the loader. The CLI generates the loader's active root-route `entries` from `entrypoint` metadata, so agents immediately see where each root route lives and what it represents. Category `entrypoints` then expose their relevant routed files.
 
-For non-trivial work, the loader defaults to one clearly matching installed workflow. If several are useful, one stays primary and the rest become ordered handoffs. If none matches exactly, the agent recommends the nearest workflow or workflows once and offers direct execution; an explicit “no workflow” request proceeds directly without another prompt.
+The root directive route is baseline-loaded, so every direct directive file there is binding workspace-wide. Put narrower directives below a positively described child directive `entrypoint`; selecting that route establishes scope before its direct files are loaded. A direct directive file contains one substantive level-2 `## Axioms` section and no `Applies To` gate. Use guidance, a skill, or a workflow when behavior is optional rather than mandatory.
+
+For non-trivial work, the loader infers the current development phase and requested transition from the request plus routed current truth, then selects the installed workflow whose Goal best covers that transition. Phases are wayfinding, not a waterfall: work may start anywhere, skip, repeat, or move backward. The agent recommends at most one earlier workflow only when a concrete missing or contradictory input makes the requested transition unreliable. If no installed Goal matches, it presents the closest installed option or options and direct execution once. One workflow stays primary, additional workflows become evidence-triggered handoffs, and an explicit workflow choice or opt-out wins.
+
+#KeepInMind routes protect long-running work from context loss. At task start or resume, after context restoration or compaction, at meaningful phase transitions or handoffs, and before closeout, agents recheck the complete routed #KeepInMind catalogue and keep its follow-up instructions binding. When the CLI is available, `open-forge find --tag KeepInMind --bodies` is the single complete lookup.
 
 Generated paths are concrete and relative to the folder whose `AGENTS.md` selected the loader. A shared submodule does not change those logical paths. For safety, deterministic CLI reads and writes reject a symlinked or junction-mounted route tree that resolves outside the selected target; plain Markdown loading of an explicitly trusted external mount remains a manual trust decision.
 
@@ -375,6 +384,8 @@ Any markdown file can have a companion overwrite file:
 Use an overwrite when the changed behavior is something an AI agent can understand and respect while reading both files together.
 
 Edit the base file when the base behavior is wrong for your workspace. Use an overwrite when the base behavior is mostly right, but needs a local addition, narrowing, exception, or disable.
+
+Extension augmentation slots are separate from workspace overwrites. A managed extension may add its owned removable block only inside an explicit slot in the base file; it may not own the overwrite companion. Agents read the materialized base first and the workspace-owned overwrite afterward, so your overwrite remains the final local-precedence layer.
 
 Good overwrite use:
 

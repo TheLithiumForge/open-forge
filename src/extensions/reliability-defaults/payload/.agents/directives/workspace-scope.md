@@ -8,10 +8,6 @@ open-forge:
 
 Keep all work inside the authorized workspace and requested scope.
 
-## Applies To
-
-- Workspace-wide reads, writes, commands, generated artifacts, and external operations performed for a task.
-
 ## Axioms
 
 - Establish the workspace root and the task's read and write boundaries before the first mutation.

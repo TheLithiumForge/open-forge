@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Resolve an unsettled problem, audience, core value, and first-useful-version boundary into a candidate or accepted direction; use when product, project, feature, service, process, or workspace intent needs defining, refining, or challenging before execution
-  tags: [Extension, Workflow, Vision, Product]
+  tags: [Extension, Workflow, PhaseDefinition, Vision, Product]
 ---
 
 # Vision

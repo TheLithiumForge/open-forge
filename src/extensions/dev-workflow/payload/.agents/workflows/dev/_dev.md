@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Deliver a concrete change through an adaptive implement, test, improve, retest, diagnose, and fix cycle; use when one task warrants full iterative delivery rather than a focused implementation pass or testing-only work
-  tags: [Extension, Workflow, Development, Delivery, Implementation, Testing, Refactoring, Debugging]
+  tags: [Extension, Workflow, PhaseDelivery, Development, Delivery, Implementation, Testing, Refactoring, Debugging]
 ---
 
 # Development Cycle

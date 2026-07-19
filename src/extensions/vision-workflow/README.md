@@ -8,4 +8,5 @@ It depends on `vision-capability`; the selector marks that skill extension as re
 
 ```sh
 open-forge extend vision-workflow
+open-forge extend --remove vision-workflow --dry-run
 ```

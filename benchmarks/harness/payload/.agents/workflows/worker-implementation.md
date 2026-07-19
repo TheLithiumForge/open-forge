@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Implement this workspace's seeded project from its Open Forge routes; use when asked to build, continue, or finish the project the routes describe
-  tags: [Extension, Workflow, Implementation, Benchmark]
+  tags: [Extension, Workflow, PhaseDelivery, Implementation, Benchmark]
 ---
 
 # Worker Implementation Workflow

@@ -24,13 +24,15 @@ They may be incomplete, noisy, or superseded. They must not become behavior, acc
 
 When useful work context has no clear owner yet, agents write it as session context first and reclassify it later.
 
+Long-running work keeps one bounded active checkpoint for the current task. That file is tagged #Active and #KeepInMind, records the current goal, phase, accepted decisions, evidence, unresolved questions, and next action, and is refreshed at every continuity boundary. At closeout or transfer, agents extract durable truth, remove active #KeepInMind status, and archive the checkpoint.
+
 ## Loading Contract
 
 The sessions category is relevant when current work needs work history, reconstruction, extraction, audit context, or resume context.
 
 The `entrypoint` must route agents to direct session files and child session categories whose path, description, or tags match the current request. Each selected child `entrypoint` applies the same contract recursively.
 
-Agents load sessions selectively and prefer the narrowest session route that can answer the current question.
+Agents load sessions selectively and prefer the narrowest session route that can answer the current question. The one active #KeepInMind checkpoint is the continuity exception: the loader's complete #KeepInMind lookup must include it until closeout.
 
 ## Extraction Contract
 
@@ -71,6 +73,7 @@ The implementation is aligned when it:
 - includes `WorkHistory`, `Contextual`, and `LoadNow` in scoped `open-forge:` tags
 - defines sessions as raw chronological work records
 - keeps sessions contextual rather than authoritative
+- requires one bounded #Active #KeepInMind checkpoint for the current long-running task and archives it after closeout
 - uses sessions as the low-friction fallback for useful work context without a clear owner
 - requires extraction into the route or system that owns the resulting material
 - allows extracted session material to become another #Memory route, matching #Core material, or external state

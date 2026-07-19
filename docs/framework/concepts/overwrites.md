@@ -18,6 +18,8 @@ The customization order is:
 2. Use overwrite files when the base file is mostly right and needs a small local addition, narrowing, exception, or disable.
 3. Edit the base framework file when the desired behavior is a complete replacement or when base plus overwrite would confuse an agent.
 
+An extension augmentation is different. It is an install-time composition mechanism for a stable-id package to add an owned, removable block to an explicit slot in a shared base file. It is not a workspace customization layer and does not replace the overwrite decision.
+
 ## Contains
 
 An overwrite file must contain only the local adjustment.
@@ -48,6 +50,13 @@ Index generation must ignore overwrite files as index `entries`.
 
 Install/update behavior must keep overwrite files visible as local files. An Open Forge update must not silently merge overwrite content into the base file.
 
+Managed extensions must not own `.overwrite.md` files merely to change a shared target. They use an explicit augmentation slot in the base file instead. The resulting read order is:
+
+1. base Markdown, including materialized extension-owned augmentation blocks
+2. workspace-owned overwrite companion
+
+The overwrite therefore remains the final local-precedence layer. Extension update or removal may change only its verified block in the base and must leave the overwrite untouched.
+
 ## Why
 
 Overwrites exist to keep local adjustments reviewable.
@@ -64,3 +73,4 @@ The overwrite concept is aligned when:
 - generated index regions are changed only through indexed files
 - agents are not asked to reconcile contradictory base and overwrite behavior
 - update behavior keeps local overwrite files visible and reviewable
+- extension augmentations remain explicit owned blocks in the base, while the workspace overwrite remains last

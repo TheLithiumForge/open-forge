@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Evaluate an experience design against user needs, states, accessibility, consistency, and feasibility; use before acceptance or implementation handoff to surface prioritized design risks
-  tags: [Extension, Workflow, Design, UX, Review]
+  tags: [Extension, Workflow, PhaseVerification, Design, UX, Review]
 ---
 
 # Design Review

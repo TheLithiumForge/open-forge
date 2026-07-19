@@ -1,8 +1,8 @@
 # CLI Testing Patterns
 
-Optional pattern-only extension for testing command-line contracts through the public executable boundary.
+Optional pattern-only extension for balancing fast development feedback with command-line closure confidence.
 
-It installs a routed pattern for fresh OS temporary workspaces, real subprocess invocation, real Git checkpoint fixtures, filesystem assertions, failure atomicity, cleanup, and packaged-command smoke tests.
+It installs a routed pattern for pure unit tests, explicit OS-temporary closure tests, shared cwd-independent utilities, real Git checkpoint fixtures, semantic assertions, failure atomicity, and packaged-command smoke tests.
 
 Install with:
 

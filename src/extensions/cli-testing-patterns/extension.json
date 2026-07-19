@@ -1,6 +1,6 @@
 {
   "name": "CLI Testing Patterns",
-  "description": "Black-box CLI command testing with isolated OS temporary workspaces and real process boundaries",
+  "description": "Tiered CLI testing with fast pure checks and explicit real-process closure coverage",
   "version": "0.1.0",
   "dependencies": []
 }

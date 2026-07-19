@@ -24,7 +24,7 @@ Observation files record grounded facts, signals, constraints, recurring behavio
 
 They must keep source, scope, and uncertainty visible.
 
-Before ending meaningful work, agents write observations for grounded findings that may matter later but are not ready to become accepted truth, behavior, or external state.
+At each meaningful continuity boundary, agents preserve grounded findings that may matter later but are not ready to become accepted truth, behavior, or external state. A preservation-worthy finding is written before the boundary, promoted immediately when its owner is already clear, or reported as blocked; agents do not defer it solely to closeout.
 
 If an agent identifies a finding worth preserving, the observation must be written before final response or the blocker must be reported.
 
@@ -33,6 +33,8 @@ An observation is not accepted current truth until validated, promoted, or expli
 ## Loading Contract
 
 The observations category is relevant when current work may depend on prior noticed findings or when current work produced a grounded finding that may help future agents.
+
+Because this route is #KeepInMind, agents read or recheck it through the complete routed continuity catalogue at task start or resume, after context restoration or compaction, at meaningful phase transitions or handoffs, and before closeout.
 
 The `entrypoint` must route agents to direct observation files and child observation categories whose path, description, or tags match the current request. Each selected child `entrypoint` applies the same contract recursively.
 
@@ -58,7 +60,7 @@ Generated `entries` list direct observation files and direct child observation c
 
 ## Used By
 
-Agents use this category when prior findings may affect current work or when post-work review reveals a grounded finding worth preserving.
+Agents use this category when prior findings may affect current work or when a continuity review reveals a grounded finding worth preserving.
 
 Any process that writes observations must keep source, scope, and uncertainty visible.
 
@@ -77,7 +79,7 @@ The implementation is aligned when it:
 - includes `AgentLearning`, `OrganicGrowth`, `Contextual`, `Candidate`, and `KeepInMind` in scoped `open-forge:` tags
 - defines observations as grounded noticed findings
 - describes observations as agent learning material
-- requires post-work observations for grounded findings that may matter later
+- requires continuity-boundary preservation of grounded findings that may matter later instead of deferring them solely to closeout
 - requires preservation-worthy findings to be written or blocked before final response
 - keeps source, scope, and uncertainty visible
 - keeps observations contextual until validated or promoted

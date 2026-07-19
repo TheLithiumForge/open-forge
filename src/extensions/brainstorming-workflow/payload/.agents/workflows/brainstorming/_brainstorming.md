@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Deliberately diverge among distinct mechanisms, scopes, priorities, or value tradeoffs for a consequential ambiguous idea; use before planning when the desired direction is not yet settled
-  tags: [Extension, Workflow, Planning, Brainstorming]
+  tags: [Extension, Workflow, PhaseDiscovery, Brainstorming]
 ---
 
 # Brainstorming

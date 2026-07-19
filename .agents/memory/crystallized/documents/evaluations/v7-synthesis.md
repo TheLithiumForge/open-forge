@@ -22,7 +22,7 @@ The strongest evidence round so far. Routing carried non-obvious seeded opinions
 
 ## What Failed
 
-- Scope control at the tool boundary, four of four occurrences (three v7 build seeds plus the earlier v6 worker): the first `apply_patch` call resolved paths against the parent repos folder and created an accidental sibling directory before self-correction. Routing was not the cause - the same workers self-reported the violation unprompted. Prose scope instructions lose to operational tool defaults. Tracked as `.agents/memory/emerging/observations/2026-07-10_patch-scope-violations.md`; fix is backlog item 1.
+- Scope control at the tool boundary, four of four occurrences (three v7 build seeds plus the earlier v6 worker): the first `apply_patch` call resolved paths against the parent repos folder and created an accidental sibling directory before self-correction. Routing was not the cause - the same workers self-reported the violation unprompted. Prose scope instructions lose to operational tool defaults. Tracked historically as `.agents/memory/archived/observations/2026-07-10_patch-scope-violations.md`; the operational harness fix was validated in v8.
 - Vision mode was under-equipped, not under-performed. Seed-0's weak process scores (no workflow used, no promotion confirmation, candidate ideas embedded in crystallized truth, no handoff) trace to the harness shipping only a build workflow - there was no vision workflow to select. The constraints the worker missed are exactly the ones the reworked workflow-essentials vision workflow now carries. Fix is backlog item 2.
 - #KeepInMind closeout compliance is real but not uniform: seed-3 performed the literal recheck, seed-2 admitted skipping it while still writing closeout memory. Better than the pre-rework rounds; not yet a guarantee.
 - Recurring smell: workers hand-edit generated index regions because benchmark workspaces carry no CLI. Either document the manual fallback as acceptable or ship the index tool into test workspaces.
@@ -33,7 +33,7 @@ Across the three build seeds, Directive Compliance landed at 1 (the scope violat
 
 ## Consequences Already Routed
 
-- Observation: `emerging/observations/2026-07-10_patch-scope-violations.md` (recurrence-driven, four occurrences).
+- Historical observation: `.agents/memory/archived/observations/2026-07-10_patch-scope-violations.md` (recurrence-driven, four occurrences).
 - Backlog: operational scope-control fix (item 1), harness vision workflow (item 2), dev-workflow seeded validation (item 3).
 - Results placement confirmed and routed: per-run reports stay in `benchmarks/results/`; this route holds the synthesis.
 
