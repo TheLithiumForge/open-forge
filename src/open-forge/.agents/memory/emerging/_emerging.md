@@ -6,7 +6,7 @@ open-forge:
 
 # Emerging Memory
 
-Emerging memory is candidate material that may be useful but is not accepted truth yet.
+Emerging memory is candidate material that may be useful but is not accepted truth yet. //Hn: this reminded me, our memory is tachnically fluid and cristalized, hmm i still like the name emerging, but anyway, the idea is, with user consent, the ai should be able to promote emerhing memory to crystalized since the user can git diff before pushing. 
 
 ## Axioms
 

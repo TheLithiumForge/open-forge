@@ -12,7 +12,7 @@ Guidance provides adaptable judgment for recurring scenarios.
 
 - Use `Entries` when current work encounters a recurring scenario or decision that may have established guidance.
 - Every guidance file identifies its scenario, preferred approach, reasoning, and relevant tradeoffs.
-- Guidance is advisory; apply it when it fits the current context.
+- Guidance is advisory; apply it when it fits the current context. //Hn: exactly this is the difference with directives, very good
 - State the reason for a context-driven adaptation or alternative.
 
 ## Entries

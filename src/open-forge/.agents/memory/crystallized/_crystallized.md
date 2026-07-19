@@ -6,7 +6,7 @@ open-forge:
 
 # Crystallized Memory
 
-Crystallized memory is accepted durable memory and current truth within its stated scope.
+Crystallized memory is accepted durable memory and current truth within its stated scope. //Hn: nit, should we use punctuation at the end of single sentences or things like lists with a single sentence ? I feel like it doesn't look better and it's more or less useless
 
 ## Axioms
 

@@ -6,7 +6,7 @@ open-forge:
 
 # Observations
 
-Observations are agent-noticed grounded findings - facts, signals, constraints, recurring behavior, risks, and evidence - that help future agents learn from work.
+Observations are agent-noticed grounded findings like facts, signals, constraints, recurring behavior, risks, and evidence, that help future agents learn from work. //Hn: prefer natural language to dashes. 
 
 ## Axioms
 

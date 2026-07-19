@@ -6,7 +6,7 @@ open-forge:
 
 # Skills
 
-Skills are bounded reusable agent capability packages.
+Skills are bounded reusable agent capability packages. //Hn: At most here we can explain that our skills sre just skills but i feel this would be overreaching too. 
 
 ## Axioms
 
