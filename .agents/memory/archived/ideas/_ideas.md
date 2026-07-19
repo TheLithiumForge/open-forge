@@ -1,12 +1,12 @@
 ---
 open-forge:
-  description: Archived Open Forge design idea notes kept for historical reconstruction
+  description: Historical Open Forge ideas and snapshots kept after application, supersession, or pruning
   tags: [Memory, Archived, Idea, Contextual, Historical]
 ---
 
 # Archived Ideas
 
-Archived design exploration notes that were useful while shaping Open Forge. Historical context, not current truth.
+Applied, superseded, or pruned design exploration retained as historical context, not current truth.
 
 Load an idea note only when a deferred design needs its detailed original reasoning.
 
@@ -27,4 +27,10 @@ Load an idea note only when a deferred design needs its detailed original reason
 - `2026-06-26_memory-child-taxonomy-boundary.md` - Boundary between Memory state containers and future child taxonomies - #Memory #Taxonomy #Core #Extension #Documentation
 - `2026-06-26_memory-state-containers.md` - Accepted Memory state containers and next implementation priorities - #Memory #State #Architecture #Governance #Loader #Implementation
 - `2026-06-30_guidance-rename-and-flexible-memory-extras.md` - Guidance rename completion and flexible placement for memory extras - #Guidance #Memory #Extension #CLI #Taxonomy
+- `2026-07-18_deferred-product-ideas-snapshot.md` - Historical snapshot of deferred product ideas before the 2026-07-18 current-review pruning pass - #Memory #Archived #Idea #Contextual #Historical #Product #Extension
+- `cli-design.md` - Historical CLI design rationale for shipped commands, remaining flags, the Rune boundary, and deferred lifecycle options - #Memory #Archived #Idea #Contextual #Historical #CLI #Extension #Tooling
+- `extension-skill-sharing.md` - Historical design for native skill sharing through content-agnostic dependency extensions and one installed-path owner - #Memory #Archived #Idea #Contextual #Historical #Extension #Skill #CLI
+- `rune-glyph-integration.md` - Historical boundary analysis for keeping Rune and Glyph standalone while integrating through an optional bridge - #Memory #Archived #Idea #Contextual #Historical #CLI #Extension #Rune #Glyph #Integration
+- `workflow-redesign.md` - Historical pre-Mode and optional-Constraints workflow rationale superseded by the current phase-aware contract - #Memory #Archived #Idea #Contextual #Historical #Workflow #Routing #Loading #Orchestration
+- `workspace-usage.md` - Historical workspace-routing exploration covering map-versus-knowledge boundaries, split criteria, and example shapes - #Memory #Archived #Idea #Contextual #Historical #Workspace #Routing
 <!-- open-forge:generated-index:end -->

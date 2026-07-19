@@ -8,10 +8,6 @@ open-forge:
 
 Closeout must be grounded in commands, files, and observed behavior.
 
-## Applies To
-
-- Every benchmark worker final response, handoff, completion claim, and requested report.
-
 ## Axioms
 
 - State which verification commands ran and whether they passed.

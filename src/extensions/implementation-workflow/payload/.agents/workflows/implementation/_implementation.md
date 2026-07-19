@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Implement one accepted concrete change with proportionate verification; use for a focused code, configuration, documentation, design-asset, or other deliverable change that does not need the full iterative development cycle
-  tags: [Extension, Workflow, Implementation, Testing]
+  tags: [Extension, Workflow, PhaseDelivery, Implementation, Testing]
 ---
 
 # Implementation

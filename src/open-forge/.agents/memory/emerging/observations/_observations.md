@@ -10,8 +10,8 @@ Observations are agent-noticed grounded findings - facts, signals, constraints, 
 
 ## Axioms
 
-- Read `Entries` when current work may depend on prior noticed findings.
-- Before ending meaningful work, write observations for grounded findings that may matter later; write them before the final response or report the blocker.
+- At every continuity refresh, read `Entries` for prior noticed findings that may affect the current direction.
+- At a meaningful continuity boundary, write verified grounded findings that may matter later before they can be lost; "no observation warranted" is valid, and a required write must happen before final closeout or be reported as blocked.
 - Verify observations before treating them as current.
 - Use observations as agent learning material until a route accepts, rejects, or supersedes them.
 

@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Improve internal structure while preserving observable behavior; use when duplication, boundaries, naming, complexity, or maintainability need correction without a feature change
-  tags: [Extension, Workflow, Quality, Refactoring]
+  tags: [Extension, Workflow, PhaseDelivery, Quality, Refactoring]
 ---
 
 # Refactoring

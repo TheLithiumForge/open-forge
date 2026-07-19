@@ -14,6 +14,8 @@ Sessions are raw chronological memory records of work while it happens.
 - Treat sessions as contextual history, not accepted truth.
 - Preserve what happened, useful source pointers, and unresolved state without polishing it into final memory.
 - If useful work context does not clearly belong elsewhere yet, write it as session context first and reclassify it later.
+- During long-running work, maintain one bounded active checkpoint for the current task, tag it #Active and #KeepInMind, and refresh its goal, phase, decisions, evidence, unresolved questions, and next action at every continuity boundary.
+- At closeout or transfer, extract durable truth, remove active #KeepInMind status, and archive the checkpoint rather than leaving stale baseline context.
 - Archive stale sessions after useful material is extracted.
 
 ## Entries

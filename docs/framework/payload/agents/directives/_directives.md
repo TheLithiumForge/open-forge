@@ -4,13 +4,13 @@
 
 This descriptor governs `src/open-forge/.agents/directives/_directives.md`.
 
-The directives category `entrypoint` defines mandatory instructions agents must follow when they apply to the current work, their recursive scope model, and generated navigation to directive files and child directive categories.
+The directives category `entrypoint` defines binding instructions, the route-selected scope in which they bind, and generated navigation to directive files and child directive categories.
 
 ## Represents
 
-The directives category represents requirements that govern how applicable agent work is performed.
+The directives category represents mandatory requirements for work reached through the active directive route chain.
 
-The root category routes directive scope but does not silently make every direct file applicable. Each directive states a positive `Applies To`; nested directive categories narrow that scope to a work type, topic, domain, project area, or other positively described context, or use the hybrid `inherited` declaration when they add no narrower scope.
+The root category is baseline-loaded, so every direct directive file beneath it is workspace-wide and binding. Nested directive categories narrow scope to a positively described work type, topic, domain, project area, or other context before their direct files are opened.
 
 ## Contains
 
@@ -22,28 +22,30 @@ The root directives category is loaded through its generated loader `entry` beca
 
 The root directives `entrypoint` must require agents to load:
 
-- every direct directive file far enough to evaluate its explicit `Applies To`
+- every direct directive file fully
 - every child directive route whose path, description, tags, or defined tag behavior match the current work
 
-Directive bodies outside the current scope remain routed but unloaded.
+After a child directive route is selected, every direct directive file exposed by that loaded child `entrypoint` is read. Directive bodies outside the active route chain remain routed but inactive.
 
 ## Authority Contract
 
-An applicable directive is mandatory throughout its scope.
+A directive loaded through the active directive route chain is binding throughout that selected scope. Inspecting an example, archive, source payload, or inactive route does not activate it.
 
-Current user instructions, platform constraints, and runtime safety remain higher authority. Conflicting applicable directives require an explicit decision or exception. Agents must not invent implicit precedence between conflicting directives.
+Current user instructions, platform constraints, runtime safety, and declared external sources of truth remain higher authority. Conflicting loaded directives require an explicit decision or exception. Agents must not invent implicit precedence between conflicting directives.
 
-Directives in a narrower selected scope are preferred over broader directives when safe and allowed. Unresolved conflicts require an explicit decision or exception.
+Loaded child directives add to loaded ancestor directives. Narrower routing changes scope, not authority; unresolved conflicts require an explicit decision or exception.
 
 ## Scope Contract
 
-Every directive file declares one non-empty `## Applies To` before `## Axioms`. A direct file under `.agents/directives/` says `workspace-wide` explicitly when that is intended; root placement and tags are not substitutes.
+Every direct directive file declares exactly one substantive level-2 `## Axioms` section and no `Applies To` gate. Operational conditions may live inside an Axiom, but a loaded directive cannot deactivate itself.
 
-Every child category `entrypoint` must state a positive scope in its description. It must state whether the category narrows its parent scope or preserves that scope for organization; `inherited` is allowed for this hybrid category role.
+Every child category `entrypoint` must expose a positive selection scope through its path, description, tags, and ancestor meaning. Its Axioms may add scope-specific rules or use `inherited` or `none` when it adds no local Axioms.
 
 The directives tree may use direct child categories, organizational routing categories, or deeper nested categories when their `entrypoints` make scope and loading behavior explicit.
 
-Folder names, descriptions, and tags work together to make scope cheap to identify. Tags must provide compact signals such as #Directive #Database #Migration. Paths or descriptions must keep workspace-wide and mandatory meaning readable without relying on tags alone.
+Folder names, descriptions, and tags work together to make scope cheap to identify before the body is opened. Tags provide compact signals such as #Directive #Database #Migration, but route selection creates scope and loaded Axioms create authority.
+
+Optional or advisory behavior belongs in guidance, a skill, or a workflow rather than a directive.
 
 ## Generated Region
 
@@ -53,11 +55,11 @@ Generated `entries` list direct directive files and direct child directive categ
 
 ## Used By
 
-The loader exposes this category as mandatory root material. Every request evaluates direct applicability and follows its routes to additional applicable scopes.
+The loader exposes this category as mandatory root material. Every request loads its direct workspace-wide directives and follows selected child routes to narrower binding scopes.
 
 ## Why
 
-The directives category makes mandatory behavior continuously discoverable without loading every scoped directive body.
+The directives category makes mandatory behavior continuously discoverable while keeping one top-to-bottom decision: select the route, then obey every directive loaded through it.
 
 Visible recursive scope supports small workspaces and deeply organized directive trees without broad activation metadata or framework-specific condition logic.
 
@@ -68,12 +70,12 @@ The implementation is aligned when it:
 - is named `_directives.md`
 - lives in `.agents/directives/`
 - includes `Core`, `Directive`, and `LoadNow` in scoped `open-forge:` tags
-- requires every directive file to declare explicit `Applies To` before Axioms
-- requires direct root files to say workspace-wide when that is intended
+- requires every direct directive file to declare one substantive level-2 Axioms section and no `Applies To` gate
+- defines direct root files as workspace-wide and binding
 - supports recursively scoped child directive categories
-- uses descriptions and tags as compact scope signals
-- treats applicable directives as mandatory
-- prefers narrower selected directive scopes when safe and allowed
+- uses paths, descriptions, tags, and ancestor meaning as the pre-load scope-selection surface
+- treats every directive loaded through the active route chain as binding
+- makes child routes additive without inventing hidden authority precedence
 - routes only through its final generated region
 - leaves generated `entries` empty until directive files or child directive categories are added
 - keeps compact loading, authority, and scope axioms

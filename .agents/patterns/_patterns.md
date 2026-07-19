@@ -18,5 +18,5 @@ Patterns define recognizable arrangements with stable relationships and variable
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- none - No entries - #Empty
+- `open-forge/_open-forge.md` - Reusable structural patterns for changing and operating Open Forge without losing its minimal routed design - #Pattern #Framework #Dogfood
 <!-- open-forge:generated-index:end -->

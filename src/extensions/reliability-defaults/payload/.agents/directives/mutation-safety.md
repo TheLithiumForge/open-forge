@@ -8,10 +8,6 @@ open-forge:
 
 Make every mutation deliberate, contained, and recoverable in proportion to its risk.
 
-## Applies To
-
-- Workspace-wide work that may mutate files, repositories, generated artifacts, tools, external systems, or durable state.
-
 ## Axioms
 
 - Inspect the current target state, applicable instructions, and existing local changes before editing or invoking a mutating tool.

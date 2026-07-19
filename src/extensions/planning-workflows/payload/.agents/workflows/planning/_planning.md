@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Turn an accepted direction into an executable, verifiable plan; use when scope, ordering, dependencies, and completion evidence must be made explicit before implementation
-  tags: [Extension, Workflow, Planning]
+  tags: [Extension, Workflow, PhasePlanning, Planning]
 ---
 
 # Planning

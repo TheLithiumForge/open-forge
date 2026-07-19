@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Translate an accepted experience design into implementation-ready behavior, states, assets, and acceptance evidence; use when engineers need a precise handoff without design intent being lost
-  tags: [Extension, Workflow, Design, Handoff, Implementation]
+  tags: [Extension, Workflow, PhasePlanning, Design, Handoff, Implementation]
 ---
 
 # Implementation Handoff

@@ -1,6 +1,7 @@
 import { constants as fsConstants, existsSync, realpathSync, type Dirent, type Stats } from "node:fs";
 import fs from "node:fs/promises";
 import { spawn } from "node:child_process";
+import { createHash } from "node:crypto";
 import path from "node:path";
 import { createInterface } from "node:readline/promises";
 import { fileURLToPath } from "node:url";
@@ -22,7 +23,14 @@ const scopedCoreEntrypointFolders = new Set(["directives", "guidance", "patterns
 const entriesHeading = "## Entries";
 const generatedIndexStartMarker = "<!-- open-forge:generated-index:start -->";
 const generatedIndexEndMarker = "<!-- open-forge:generated-index:end -->";
+const extensionReceiptFileName = "open-forge.extensions.json";
+const extensionReceiptSchema = 1;
+const augmentationMarkerPrefix = "open-forge-augment.";
+const extensionBlockMarkerPrefix = "open-forge-extension.";
+const windowsReservedPathBasenames = /^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])$/i;
 const retiredLoadPolicyTags = new Set(["openforge", "loadwithparententrypoint", "loadforpostworkreview"]);
+const workflowPhaseTags = ["PhaseDiscovery", "PhaseDefinition", "PhasePlanning", "PhaseDelivery", "PhaseVerification"] as const;
+const workflowPhaseTagSet = new Set(workflowPhaseTags.map((tag) => tag.toLowerCase()));
 const categoryTypeTags: Record<string, string> = {
   directives: "Directive",
   guidance: "Guidance",
@@ -32,7 +40,7 @@ const categoryTypeTags: Record<string, string> = {
   workspace: "Workspace",
   memory: "Memory"
 };
-const extensionContentKindOrder = ["skill", "workflow", "directive", "guidance", "pattern", "workspace", "memory", "pack", "other"] as const;
+const extensionContentKindOrder = ["skill", "workflow", "directive", "guidance", "pattern", "workspace", "memory", "augmentation", "pack", "other"] as const;
 if (isCliEntrypoint()) {
   await main();
 }
@@ -83,17 +91,17 @@ async function install(installArgs: string[]): Promise<void> {
   assertNoExtraArgs(args, 1, "Usage: open-forge install [target] [--pro]");
   const targetArg = args[0] ?? process.cwd();
   const targetRoot = path.resolve(targetArg);
+  await assertExtensionTargetRootNotLinked(targetRoot, "Core");
+  const currentReceipt = await readExtensionReceipt(targetRoot);
+  await validateExtensionReceiptFiles(currentReceipt, targetRoot);
   await enforceGitCheckpoint(targetRoot, "Core installation", proMode);
   const files = await listFiles(sourceRoot);
-  const targetRootStat = await lstatIfExists(targetRoot);
-  if (targetRootStat?.isSymbolicLink()) {
-    throw new Error(`Core target root is a symbolic link or junction: ${targetRoot}`);
-  }
   for (const file of files) {
     await assertExtensionTargetPath(targetRoot, path.join(targetRoot, path.relative(sourceRoot, file)), "Core");
   }
   const frameworkTemplates = files.flatMap((file) => createFrameworkEntrypointTemplate(sourceRoot, file));
   const corePlan = await createCoreInstallPlan(files, targetRoot, frameworkTemplates);
+  await validateReceiptAgainstPlannedState(currentReceipt, corePlan.entries, targetRoot, "Core installation", true);
   const potentialIndexFiles = await collectPotentialIndexWriteFiles(corePlan.entries, targetRoot);
   for (const file of potentialIndexFiles) {
     await assertExtensionTargetPath(targetRoot, file, "Core index");
@@ -138,6 +146,16 @@ async function extend(extendArgs: string[]): Promise<void> {
 
     assertNoExtraArgs(normalizedArgs, 1, "Usage: open-forge extend --list");
     await listBundledExtensions();
+    return;
+  }
+
+  if (normalizedArgs[0] === "--remove") {
+    const value = normalizedArgs[1];
+    if (!value) throw new Error("Usage: open-forge extend --remove <id[,id...]> [target] [--dry-run] [--pro]");
+    const ids = splitExtensionIds(value);
+    const target = normalizedArgs[2] ?? process.cwd();
+    assertNoExtraArgs(normalizedArgs, normalizedArgs[2] ? 3 : 2, "Usage: open-forge extend --remove <id[,id...]> [target] [--dry-run] [--pro]");
+    await removeExtensions(ids, target, dryRun, proMode);
     return;
   }
 
@@ -214,6 +232,7 @@ function splitExtensionIds(value: string): string[] {
 async function installExtensions(extensionArgs: string[], targetArg: string, dryRun = false, proMode = false): Promise<void> {
   const extensions = await resolveExtensionClosure(extensionArgs);
   const targetRoot = path.resolve(targetArg);
+  await assertExtensionTargetRootNotLinked(targetRoot, "Extension");
   const projectedTargetRoot = await projectPathThroughExistingAncestor(targetRoot);
 
   for (const extension of extensions) {
@@ -231,7 +250,11 @@ async function installExtensions(extensionArgs: string[], targetArg: string, dry
     }
   }
 
-  const plan = await createExtensionInstallPlan(extensions, targetRoot);
+  const currentReceipt = await readExtensionReceipt(targetRoot);
+  await validateExtensionReceiptFiles(currentReceipt, targetRoot);
+  const transaction = await createExtensionInstallPlan(extensions, targetRoot, currentReceipt);
+  const plan = transaction.entries;
+  const receiptPreview = await createExtensionReceiptPlanEntry(transaction.nextReceipt, targetRoot);
   assertNoGitControlFiles(plan);
   await validateExtensionIndexPreflight(plan, targetRoot);
   if (!dryRun) {
@@ -243,6 +266,7 @@ async function installExtensions(extensionArgs: string[], targetArg: string, dry
       await assertCoreCheckpointTracked(targetRoot);
       await assertPlannedFilesAreGitVisible(targetRoot, [
         ...plan.map((entry) => entry.targetFile),
+        ...(receiptPreview ? [receiptPreview.targetFile] : []),
         ...await collectPotentialIndexWriteFiles(plan, targetRoot)
       ]);
     }
@@ -254,7 +278,7 @@ async function installExtensions(extensionArgs: string[], targetArg: string, dry
   if (dryRun) {
     console.log(`Open Forge extension plan for ${targetRoot}`);
     console.log(`Resolved in dependency order: ${labels}`);
-    console.log(`Would create ${counts.create}, update ${counts.update}, and leave ${counts.unchanged} extension files unchanged. No files were written.`);
+    console.log(`Would create ${counts.create}, update ${counts.update}, delete ${counts.delete}, and leave ${counts.unchanged} extension files unchanged. No files were written.`);
     console.log(`Scope review: ${scopes.routed} routed, ${scopes.baseline} baseline-loading, ${scopes.executable} skill-executable, ${scopes.workspace} outside-.agents files.`);
     if (plan.length > 0) {
       console.log("Planned files:");
@@ -262,25 +286,125 @@ async function installExtensions(extensionArgs: string[], targetArg: string, dry
         console.log(`- ${entry.status} ${entry.relativePath}`);
       }
     }
+    if (receiptPreview) console.log(`- ${receiptPreview.status} ${receiptPreview.relativePath}`);
     return;
   }
 
-  const receipt = await applyExtensionInstallPlan(plan, targetRoot);
-  let generatedRegions: number;
-  try {
-    generatedRegions = await generateIndexes(targetRoot);
-  } catch (error) {
-    try {
-      await rollbackExtensionInstall(receipt);
-    } catch (rollbackError) {
-      throw new Error(`Extension indexing failed (${error instanceof Error ? error.message : String(error)}) and rollback also failed (${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)})`);
-    }
-    throw error;
-  }
+  const generatedRegions = await applyExtensionTransaction(plan, transaction.nextReceipt, targetRoot);
   console.log(`Installed Open Forge extensions ${labels} into ${targetRoot}`);
-  console.log(`Created ${counts.create}, updated ${counts.update}, left ${counts.unchanged} extension files unchanged, and rebuilt ${generatedRegions} generated regions.`);
+  console.log(`Created ${counts.create}, updated ${counts.update}, deleted ${counts.delete}, left ${counts.unchanged} extension files unchanged, and rebuilt ${generatedRegions} generated regions.`);
   console.log(`Scope review: ${scopes.routed} routed, ${scopes.baseline} baseline-loading, ${scopes.executable} skill-executable, ${scopes.workspace} outside-.agents files.`);
   await printPostInstallCheckpoint(targetRoot, "Extension transaction", proMode);
+}
+
+async function removeExtensions(ids: string[], targetArg: string, dryRun = false, proMode = false): Promise<void> {
+  const targetRoot = path.resolve(targetArg);
+  await assertExtensionTargetRootNotLinked(targetRoot, "Extension removal");
+  const currentReceipt = await readExtensionReceipt(targetRoot);
+  await validateExtensionReceiptFiles(currentReceipt, targetRoot);
+  const removing = new Set(ids);
+  for (const id of ids) {
+    if (!currentReceipt.extensions[id]) throw new Error(`Extension ${id} is not recorded as installed in ${extensionReceiptFileName}`);
+  }
+  for (const [id, installed] of Object.entries(currentReceipt.extensions)) {
+    if (removing.has(id)) continue;
+    const blocked = installed.dependencies.filter((dependency) => removing.has(dependency));
+    if (blocked.length > 0) {
+      throw new Error(`Cannot remove ${blocked.join(", ")}; installed extension ${id} still depends on ${blocked.join(", ")}`);
+    }
+  }
+
+  const nextReceipt = cloneExtensionReceipt(currentReceipt);
+  const plan = new Map<string, ExtensionInstallPlanEntry>();
+  for (const id of ids) {
+    const installed = currentReceipt.extensions[id];
+    for (const augmentation of installed.augmentations) {
+      const key = portableExtensionPathKey(augmentation.target);
+      const targetFile = path.join(targetRoot, ...augmentation.target.split("/"));
+      await assertExtensionTargetPath(targetRoot, targetFile, `Extension ${id} augmentation removal`);
+      const existingPlan = plan.get(key);
+      const originalContent = existingPlan?.originalContent ?? await readBufferIfExists(targetFile);
+      const baseContent = existingPlan?.content ?? originalContent;
+      if (baseContent == null) throw new Error(`Extension ${id} augmentation target is missing: ${augmentation.target}`);
+      const content = Buffer.from(removeAugmentationBlock(baseContent.toString("utf8"), augmentation, id, augmentation.target), "utf8");
+      plan.set(key, {
+        relativePath: augmentation.target,
+        targetFile,
+        originalContent,
+        content,
+        status: originalContent?.equals(content) ? "unchanged" : "update"
+      });
+    }
+  }
+
+  for (const id of ids) {
+    const installed = currentReceipt.extensions[id];
+    for (const relativePath of installed.files) {
+      const owned = nextReceipt.files[relativePath];
+      if (!owned || !owned.owners.includes(id)) {
+        throw new Error(`Ownership receipt is inconsistent for ${id} file ${relativePath}`);
+      }
+      owned.owners = owned.owners.filter((owner) => owner !== id);
+      if (owned.owners.length > 0) continue;
+      const key = portableExtensionPathKey(relativePath);
+      const targetFile = path.join(targetRoot, ...relativePath.split("/"));
+      await assertExtensionTargetPath(targetRoot, targetFile, `Extension ${id} removal`);
+      const existingPlan = plan.get(key);
+      const originalContent = existingPlan?.originalContent ?? await readBufferIfExists(targetFile);
+      if (originalContent == null) throw new Error(`Owned extension file is missing: ${relativePath}`);
+      const remainingAugmentationOwners = Object.entries(nextReceipt.extensions)
+        .filter(([owner, extension]) => !removing.has(owner) && extension.augmentations.some((augmentation) =>
+          portableExtensionPathKey(augmentation.target) === key
+        ))
+        .map(([owner]) => owner);
+      if (remainingAugmentationOwners.length > 0) {
+        throw new Error(`Cannot remove owned file ${relativePath}; augmentation blocks from installed extensions still depend on it: ${remainingAugmentationOwners.join(", ")}`);
+      }
+      const effectiveContent = existingPlan ? existingPlan.content : originalContent;
+      if (effectiveContent != null && relativePath.toLowerCase().endsWith(".md")) {
+        const remainingBlocks = [...parseAugmentationSlots(effectiveContent.toString("utf8"), relativePath).values()]
+          .some((slot) => slot.blocks.size > 0);
+        if (remainingBlocks) throw new Error(`Cannot remove owned file ${relativePath}; augmentation blocks from installed extensions still depend on it`);
+      }
+      plan.set(key, { relativePath, targetFile, originalContent, content: null, status: "delete" });
+      delete nextReceipt.files[relativePath];
+    }
+    delete nextReceipt.extensions[id];
+    nextReceipt.roots = nextReceipt.roots.filter((root) => root !== id);
+  }
+
+  const entries = [...plan.values()].sort((left, right) => left.relativePath.localeCompare(right.relativePath));
+  const normalizedReceipt = normalizeExtensionReceipt(nextReceipt);
+  validateExtensionReceiptIntegrity(normalizedReceipt, "planned extension removal receipt");
+  const receiptPreview = await createExtensionReceiptPlanEntry(normalizedReceipt, targetRoot);
+  assertNoGitControlFiles(entries);
+  await validateExtensionIndexPreflight(entries, targetRoot);
+  if (!dryRun) {
+    if (!proMode && !(await hasCoreInstallation(targetRoot))) {
+      throw new Error(`Core is not installed at ${targetRoot}; use --pro only to intentionally bypass this checkpoint.`);
+    }
+    await enforceGitCheckpoint(targetRoot, "Extension removal", proMode);
+    if (!proMode) {
+      await assertCoreCheckpointTracked(targetRoot);
+      await assertPlannedFilesAreGitVisible(targetRoot, [
+        ...entries.map((entry) => entry.targetFile),
+        ...(receiptPreview ? [receiptPreview.targetFile] : []),
+        ...await collectPotentialIndexWriteFiles(entries, targetRoot)
+      ]);
+    }
+  }
+  const counts = countExtensionPlanStatuses(entries);
+  if (dryRun) {
+    console.log(`Open Forge extension removal plan for ${targetRoot}`);
+    console.log(`Would delete ${counts.delete}, update ${counts.update}, and leave ${counts.unchanged} files unchanged. No files were written.`);
+    for (const entry of entries) console.log(`- ${entry.status} ${entry.relativePath}`);
+    if (receiptPreview) console.log(`- ${receiptPreview.status} ${receiptPreview.relativePath}`);
+    return;
+  }
+  const generatedRegions = await applyExtensionTransaction(entries, normalizedReceipt, targetRoot);
+  console.log(`Removed Open Forge extensions ${ids.join(", ")} from ${targetRoot}`);
+  console.log(`Deleted ${counts.delete}, updated ${counts.update}, and rebuilt ${generatedRegions} generated regions.`);
+  await printPostInstallCheckpoint(targetRoot, "Extension removal", proMode);
 }
 
 type GitCommandResult = {
@@ -481,14 +605,15 @@ async function runGit(args: string[], cwd: string, stdin: string | null = null):
   });
 }
 
-type ExtensionPlanStatus = "create" | "update" | "unchanged";
+type ExtensionPlanStatus = "create" | "update" | "unchanged" | "delete";
 
 type ExtensionInstallPlanEntry = {
   relativePath: string;
   targetFile: string;
-  content: Buffer;
+  content: Buffer | null;
   originalContent: Buffer | null;
   status: ExtensionPlanStatus;
+  managedOwners?: string[];
 };
 
 type ExtensionApplyReceipt = {
@@ -560,9 +685,483 @@ async function createCoreInstallPlan(
 type ExtensionFileCandidate = {
   relativePath: string;
   sourceFile: string;
-  extension: ExtensionSource;
+  extensions: ExtensionSource[];
   sourceContent: Buffer;
 };
+
+type ParsedAugmentationBlock = {
+  id: string;
+  fullStart: number;
+  fullEnd: number;
+  contentStart: number;
+  contentEnd: number;
+  content: string;
+};
+
+type ParsedAugmentationSlot = {
+  slot: string;
+  contentStart: number;
+  contentEnd: number;
+  blocks: Map<string, ParsedAugmentationBlock>;
+};
+
+function sha256(content: Buffer | string): string {
+  return createHash("sha256").update(content).digest("hex");
+}
+
+function extensionOwnedFileSha256(relativePath: string, content: Buffer | string): string {
+  const bytes = Buffer.isBuffer(content) ? content : Buffer.from(content, "utf8");
+  if (!relativePath.toLowerCase().endsWith(".md")) {
+    return sha256(bytes);
+  }
+
+  const text = bytes.toString("utf8");
+  const region = readGeneratedRegion(text);
+  if (region.status !== "ok") {
+    return sha256(bytes);
+  }
+
+  const bodyStart = text.indexOf(generatedIndexStartMarker) + generatedIndexStartMarker.length;
+  const bodyEnd = text.indexOf(generatedIndexEndMarker);
+  const authoredProjection = `${text.slice(0, bodyStart)}\n${text.slice(bodyEnd)}`;
+  return sha256(Buffer.from(authoredProjection, "utf8"));
+}
+
+function normalizeAugmentationFragment(text: string): string {
+  return text.replace(/\r\n/g, "\n").trim();
+}
+
+function renderAugmentationBlock(id: string, content: string): string {
+  return `<!-- ${extensionBlockMarkerPrefix}${id}:start -->\n${content}\n<!-- ${extensionBlockMarkerPrefix}${id}:end -->`;
+}
+
+function parseAugmentationSlots(text: string, context: string): Map<string, ParsedAugmentationSlot> {
+  const comments = [...text.matchAll(/<!--[\s\S]*?-->/g)];
+  const tokens: Array<{ kind: "augment" | "extension"; id: string; edge: "start" | "end"; start: number; end: number }> = [];
+  const exact = /^<!--\s*open-forge-(augment|extension)\.([a-z0-9][a-z0-9.-]*):(start|end)\s*-->$/;
+  for (const comment of comments) {
+    if (!comment[0].includes(augmentationMarkerPrefix) && !comment[0].includes(extensionBlockMarkerPrefix)) continue;
+    const parsed = comment[0].match(exact);
+    if (!parsed || comment.index == null) {
+      throw new Error(`${context} contains a malformed or reserved augmentation marker: ${comment[0]}`);
+    }
+    tokens.push({
+      kind: parsed[1] as "augment" | "extension",
+      id: parsed[2],
+      edge: parsed[3] as "start" | "end",
+      start: comment.index,
+      end: comment.index + comment[0].length
+    });
+  }
+
+  const slots = new Map<string, ParsedAugmentationSlot>();
+  let activeSlot: { id: string; contentStart: number; blocks: ParsedAugmentationBlock[] } | null = null;
+  let activeBlock: { id: string; fullStart: number; contentStart: number } | null = null;
+  for (const token of tokens) {
+    if (token.kind === "augment") {
+      if (token.edge === "start") {
+        if (activeSlot || activeBlock) throw new Error(`${context} contains nested augmentation slots`);
+        if (slots.has(token.id)) throw new Error(`${context} contains duplicate augmentation slot ${token.id}`);
+        activeSlot = { id: token.id, contentStart: token.end, blocks: [] };
+      } else {
+        if (!activeSlot || activeSlot.id !== token.id || activeBlock) {
+          throw new Error(`${context} contains an unmatched augmentation slot marker for ${token.id}`);
+        }
+        const blockMap = new Map<string, ParsedAugmentationBlock>();
+        let cursor = activeSlot.contentStart;
+        for (const block of activeSlot.blocks) {
+          if (text.slice(cursor, block.fullStart).trim()) {
+            throw new Error(`${context} augmentation slot ${token.id} contains unowned content outside extension blocks`);
+          }
+          if (blockMap.has(block.id)) throw new Error(`${context} augmentation slot ${token.id} repeats extension ${block.id}`);
+          blockMap.set(block.id, block);
+          cursor = block.fullEnd;
+        }
+        if (text.slice(cursor, token.start).trim()) {
+          throw new Error(`${context} augmentation slot ${token.id} contains unowned content outside extension blocks`);
+        }
+        slots.set(token.id, { slot: token.id, contentStart: activeSlot.contentStart, contentEnd: token.start, blocks: blockMap });
+        activeSlot = null;
+      }
+      continue;
+    }
+
+    if (token.edge === "start") {
+      if (!activeSlot || activeBlock) throw new Error(`${context} contains an extension block outside one augmentation slot`);
+      activeBlock = { id: token.id, fullStart: token.start, contentStart: token.end };
+    } else {
+      if (!activeSlot || !activeBlock || activeBlock.id !== token.id) {
+        throw new Error(`${context} contains an unmatched extension block marker for ${token.id}`);
+      }
+      activeSlot.blocks.push({
+        id: token.id,
+        fullStart: activeBlock.fullStart,
+        fullEnd: token.end,
+        contentStart: activeBlock.contentStart,
+        contentEnd: token.start,
+        content: normalizeAugmentationFragment(text.slice(activeBlock.contentStart, token.start))
+      });
+      activeBlock = null;
+    }
+  }
+  if (activeSlot || activeBlock) throw new Error(`${context} contains an incomplete augmentation marker pair`);
+  return slots;
+}
+
+function setAugmentationBlock(text: string, slotId: string, extensionId: string, fragment: string, context: string): string {
+  const slots = parseAugmentationSlots(text, context);
+  const slot = slots.get(slotId);
+  if (!slot) throw new Error(`${context} does not declare augmentation slot ${slotId}`);
+  const contents = new Map([...slot.blocks].map(([id, block]) => [id, block.content]));
+  contents.set(extensionId, fragment);
+  const rendered = [...contents]
+    .sort(([left], [right]) => left < right ? -1 : left > right ? 1 : 0)
+    .map(([id, content]) => renderAugmentationBlock(id, content))
+    .join("\n");
+  const replacement = rendered ? `\n${rendered}\n` : "\n";
+  return `${text.slice(0, slot.contentStart)}${replacement}${text.slice(slot.contentEnd)}`;
+}
+
+function removeAugmentationBlock(text: string, installed: InstalledAugmentation, extensionId: string, context: string): string {
+  const slots = parseAugmentationSlots(text, context);
+  const slot = slots.get(installed.slot);
+  const block = slot?.blocks.get(extensionId);
+  if (!slot || !block) throw new Error(`${context} is missing the owned ${extensionId} block in slot ${installed.slot}`);
+  if (sha256(block.content) !== installed.sha256) {
+    throw new Error(`${context} has a locally modified ${extensionId} augmentation block; restore it before removal`);
+  }
+  const contents = new Map([...slot.blocks]
+    .filter(([id]) => id !== extensionId)
+    .map(([id, value]) => [id, value.content]));
+  const rendered = [...contents]
+    .sort(([left], [right]) => left < right ? -1 : left > right ? 1 : 0)
+    .map(([id, content]) => renderAugmentationBlock(id, content))
+    .join("\n");
+  return `${text.slice(0, slot.contentStart)}${rendered ? `\n${rendered}\n` : "\n"}${text.slice(slot.contentEnd)}`;
+}
+
+function emptyExtensionReceipt(): ExtensionOwnershipReceipt {
+  return {
+    schema: extensionReceiptSchema,
+    roots: [],
+    extensions: Object.create(null) as Record<string, InstalledExtension>,
+    files: Object.create(null) as Record<string, OwnedExtensionFile>
+  };
+}
+
+function cloneExtensionReceipt(receipt: ExtensionOwnershipReceipt): ExtensionOwnershipReceipt {
+  return normalizeExtensionReceipt(JSON.parse(JSON.stringify(receipt)) as ExtensionOwnershipReceipt);
+}
+
+async function readExtensionReceipt(targetRoot: string): Promise<ExtensionOwnershipReceipt> {
+  const receiptFile = path.join(targetRoot, extensionReceiptFileName);
+  const text = await readTextIfExists(receiptFile);
+  if (text == null) return emptyExtensionReceipt();
+  let raw: unknown;
+  try {
+    raw = JSON.parse(text);
+  } catch (error) {
+    throw new Error(`Invalid extension ownership receipt ${receiptFile}: ${error instanceof Error ? error.message : String(error)}`);
+  }
+  if (!isRecord(raw) || raw.schema !== extensionReceiptSchema || !Array.isArray(raw.roots) || !isRecord(raw.extensions) || !isRecord(raw.files)) {
+    throw new Error(`Invalid extension ownership receipt ${receiptFile}: expected schema ${extensionReceiptSchema}`);
+  }
+  const roots = raw.roots.map((id, index) => assertReceiptId(id, `${receiptFile} roots[${index}]`));
+  const extensions = Object.create(null) as Record<string, InstalledExtension>;
+  for (const [id, value] of Object.entries(raw.extensions)) {
+    assertReceiptId(id, `${receiptFile} extension id`);
+    if (!isRecord(value) || !Array.isArray(value.dependencies) || !Array.isArray(value.files) || !Array.isArray(value.augmentations)) {
+      throw new Error(`Invalid extension ownership receipt ${receiptFile}: malformed extension ${id}`);
+    }
+    const version = value.version == null ? null : typeof value.version === "string" ? value.version : invalidReceipt(`${receiptFile} extension ${id} version`);
+    const dependencies = value.dependencies.map((dependency, index) => assertReceiptId(dependency, `${receiptFile} ${id}.dependencies[${index}]`));
+    const files = value.files.map((file, index) => assertReceiptPath(file, `${receiptFile} ${id}.files[${index}]`));
+    const augmentations = value.augmentations.map((entry, index) => readInstalledAugmentation(entry, `${receiptFile} ${id}.augmentations[${index}]`));
+    extensions[id] = { version, dependencies, files, augmentations };
+  }
+  const files = Object.create(null) as Record<string, OwnedExtensionFile>;
+  for (const [file, value] of Object.entries(raw.files)) {
+    assertReceiptPath(file, `${receiptFile} file path`);
+    if (!isRecord(value) || typeof value.sha256 !== "string" || !/^[a-f0-9]{64}$/.test(value.sha256) || !Array.isArray(value.owners)) {
+      throw new Error(`Invalid extension ownership receipt ${receiptFile}: malformed owned file ${file}`);
+    }
+    files[file] = { sha256: value.sha256, owners: value.owners.map((owner, index) => assertReceiptId(owner, `${receiptFile} ${file}.owners[${index}]`)) };
+  }
+  const receipt: ExtensionOwnershipReceipt = { schema: extensionReceiptSchema, roots, extensions, files };
+  validateExtensionReceiptIntegrity(receipt, receiptFile);
+  return normalizeExtensionReceipt(receipt);
+}
+
+function invalidReceipt(context: string): never {
+  throw new Error(`Invalid extension ownership receipt: ${context}`);
+}
+
+function assertReceiptId(value: unknown, context: string): string {
+  if (typeof value !== "string" || !isBundledExtensionId(value)) return invalidReceipt(context);
+  return value;
+}
+
+function assertReceiptPath(value: unknown, context: string): string {
+  if (typeof value !== "string") return invalidReceipt(context);
+  assertPortableManifestPath(value, extensionReceiptFileName, context);
+  return value;
+}
+
+function readInstalledAugmentation(value: unknown, context: string): InstalledAugmentation {
+  if (!isRecord(value) || typeof value.target !== "string" || typeof value.slot !== "string" || typeof value.sha256 !== "string") {
+    return invalidReceipt(context);
+  }
+  assertReceiptPath(value.target, `${context}.target`);
+  if (!value.target.toLowerCase().endsWith(".md") || value.target.toLowerCase().endsWith(".overwrite.md")) return invalidReceipt(`${context}.target`);
+  if (portableExtensionPathKey(value.target) === portableExtensionPathKey(extensionReceiptFileName)) return invalidReceipt(`${context}.target`);
+  if (!/^[a-z0-9][a-z0-9.-]*$/.test(value.slot) || !/^[a-f0-9]{64}$/.test(value.sha256)) return invalidReceipt(context);
+  return { target: value.target, slot: value.slot, sha256: value.sha256 };
+}
+
+function validateExtensionReceiptIntegrity(receipt: ExtensionOwnershipReceipt, context: string): void {
+  assertUniqueReceiptValues(receipt.roots, `${context} roots`);
+  const filePathsByPortableKey = new Map<string, string>();
+  for (const file of Object.keys(receipt.files)) {
+    assertReceiptPath(file, `${context} owned file path`);
+    const key = portableExtensionPathKey(file);
+    const existing = filePathsByPortableKey.get(key);
+    if (existing) invalidReceipt(`${context} file paths ${existing} and ${file} are portable aliases`);
+    filePathsByPortableKey.set(key, file);
+  }
+
+  for (const root of receipt.roots) {
+    if (!receipt.extensions[root]) invalidReceipt(`${context} root ${root} is not a recorded extension`);
+  }
+
+  for (const [id, extension] of Object.entries(receipt.extensions)) {
+    assertUniqueReceiptValues(extension.dependencies, `${context} extension ${id} dependencies`);
+    assertUniqueReceiptValues(extension.files, `${context} extension ${id} files`, portableExtensionPathKey);
+    assertUniqueReceiptValues(
+      extension.augmentations.map((augmentation) => `${portableExtensionPathKey(augmentation.target)}\0${augmentation.slot}`),
+      `${context} extension ${id} augmentations`
+    );
+    for (const dependency of extension.dependencies) {
+      if (!receipt.extensions[dependency]) invalidReceipt(`${context} extension ${id} dependency ${dependency} is not recorded`);
+    }
+    for (const file of extension.files) {
+      assertReceiptPath(file, `${context} extension ${id} file`);
+      const ownedPath = filePathsByPortableKey.get(portableExtensionPathKey(file));
+      if (!ownedPath || ownedPath !== file) invalidReceipt(`${context} extension ${id} file ${file} has no exact owned-file record`);
+      if (!receipt.files[ownedPath].owners.includes(id)) invalidReceipt(`${context} extension ${id} file ${file} does not reciprocally list its owner`);
+    }
+    for (const augmentation of extension.augmentations) {
+      assertReceiptPath(augmentation.target, `${context} extension ${id} augmentation target`);
+    }
+  }
+
+  for (const [file, owned] of Object.entries(receipt.files)) {
+    if (owned.owners.length === 0) invalidReceipt(`${context} owned file ${file} has no owners`);
+    assertUniqueReceiptValues(owned.owners, `${context} owned file ${file} owners`);
+    for (const owner of owned.owners) {
+      const extension = receipt.extensions[owner];
+      if (!extension) invalidReceipt(`${context} owned file ${file} owner ${owner} is not recorded`);
+      if (!extension.files.includes(file)) invalidReceipt(`${context} owned file ${file} owner ${owner} does not reciprocally list the file`);
+    }
+  }
+}
+
+function assertUniqueReceiptValues(values: string[], context: string, key: (value: string) => string = (value) => value): void {
+  const seen = new Set<string>();
+  for (const value of values) {
+    const comparable = key(value);
+    if (seen.has(comparable)) invalidReceipt(`${context} contains duplicate ${value}`);
+    seen.add(comparable);
+  }
+}
+
+function normalizeExtensionReceipt(receipt: ExtensionOwnershipReceipt): ExtensionOwnershipReceipt {
+  const extensions = Object.create(null) as Record<string, InstalledExtension>;
+  for (const id of Object.keys(receipt.extensions).sort()) {
+    const value = receipt.extensions[id];
+    extensions[id] = {
+      version: value.version,
+      dependencies: [...new Set(value.dependencies)].sort(),
+      files: [...new Set(value.files)].sort(),
+      augmentations: [...value.augmentations].sort((left, right) => `${left.target}\0${left.slot}`.localeCompare(`${right.target}\0${right.slot}`))
+    };
+  }
+  const files = Object.create(null) as Record<string, OwnedExtensionFile>;
+  for (const file of Object.keys(receipt.files).sort()) {
+    files[file] = { sha256: receipt.files[file].sha256, owners: [...new Set(receipt.files[file].owners)].sort() };
+  }
+  return { schema: extensionReceiptSchema, roots: [...new Set(receipt.roots)].sort(), extensions, files };
+}
+
+function serializeExtensionReceipt(receipt: ExtensionOwnershipReceipt): Buffer {
+  return Buffer.from(`${JSON.stringify(normalizeExtensionReceipt(receipt), null, 2)}\n`, "utf8");
+}
+
+async function validateExtensionReceiptFiles(receipt: ExtensionOwnershipReceipt, targetRoot: string): Promise<void> {
+  for (const [relativePath, owned] of Object.entries(receipt.files)) {
+    const targetFile = path.join(targetRoot, relativePath);
+    await assertExtensionTargetPath(targetRoot, targetFile, "Owned extension");
+    const content = await readBufferIfExists(targetFile);
+    if (content == null || extensionOwnedFileSha256(relativePath, content) !== owned.sha256) {
+      throw new Error(`Owned extension file ${relativePath} was modified or removed outside Open Forge; restore it before changing managed extensions`);
+    }
+  }
+
+  const parsedTargets = new Map<string, Map<string, ParsedAugmentationSlot>>();
+  for (const [id, extension] of Object.entries(receipt.extensions)) {
+    for (const augmentation of extension.augmentations) {
+      const key = portableExtensionPathKey(augmentation.target);
+      let slots = parsedTargets.get(key);
+      if (!slots) {
+        const targetFile = path.join(targetRoot, ...augmentation.target.split("/"));
+        await assertExtensionTargetPath(targetRoot, targetFile, `Installed extension ${id} augmentation`);
+        const content = await readBufferIfExists(targetFile);
+        if (content == null) {
+          throw new Error(`Installed extension ${id} augmentation target is missing: ${augmentation.target}`);
+        }
+        slots = parseAugmentationSlots(content.toString("utf8"), augmentation.target);
+        parsedTargets.set(key, slots);
+      }
+      const block = slots.get(augmentation.slot)?.blocks.get(id);
+      if (!block || sha256(block.content) !== augmentation.sha256) {
+        throw new Error(`Installed extension ${id} augmentation block is missing or locally modified in ${augmentation.target} slot ${augmentation.slot}; restore it before changing managed extensions`);
+      }
+    }
+  }
+}
+
+async function validateReceiptAgainstPlannedState(
+  receipt: ExtensionOwnershipReceipt,
+  plan: ExtensionInstallPlanEntry[],
+  targetRoot: string,
+  context: string,
+  verifyOwnedFiles: boolean,
+): Promise<void> {
+  const planned = new Map(plan.map((entry) => [portableExtensionPathKey(entry.relativePath), entry]));
+  const effectiveContent = async (relativePath: string): Promise<Buffer | null> => {
+    const entry = planned.get(portableExtensionPathKey(relativePath));
+    return entry ? entry.content : readBufferIfExists(path.join(targetRoot, ...relativePath.split("/")));
+  };
+
+  if (verifyOwnedFiles) {
+    for (const [relativePath, owned] of Object.entries(receipt.files)) {
+      const content = await effectiveContent(relativePath);
+      if (content == null || extensionOwnedFileSha256(relativePath, content) !== owned.sha256) {
+        throw new Error(`${context} would modify or remove receipt-owned extension file ${relativePath}; update or remove its owning extension explicitly first`);
+      }
+    }
+  }
+
+  const parsedTargets = new Map<string, Map<string, ParsedAugmentationSlot>>();
+  for (const [id, extension] of Object.entries(receipt.extensions)) {
+    for (const augmentation of extension.augmentations) {
+      const key = portableExtensionPathKey(augmentation.target);
+      let slots = parsedTargets.get(key);
+      if (!slots) {
+        const content = await effectiveContent(augmentation.target);
+        if (content == null) {
+          throw new Error(`${context} would remove installed extension ${id} augmentation target ${augmentation.target}`);
+        }
+        slots = parseAugmentationSlots(content.toString("utf8"), augmentation.target);
+        parsedTargets.set(key, slots);
+      }
+      const block = slots.get(augmentation.slot)?.blocks.get(id);
+      if (!block || sha256(block.content) !== augmentation.sha256) {
+        throw new Error(`${context} would modify or remove installed extension ${id} augmentation block in ${augmentation.target} slot ${augmentation.slot}`);
+      }
+    }
+  }
+}
+
+function extensionReceiptHasState(receipt: ExtensionOwnershipReceipt): boolean {
+  return Object.keys(receipt.extensions).length > 0 || Object.keys(receipt.files).length > 0 || receipt.roots.length > 0;
+}
+
+async function createExtensionReceiptPlanEntry(
+  receipt: ExtensionOwnershipReceipt,
+  targetRoot: string,
+): Promise<ExtensionInstallPlanEntry | null> {
+  const targetFile = path.join(targetRoot, extensionReceiptFileName);
+  await assertExtensionTargetPath(targetRoot, targetFile, "Extension ownership receipt");
+  const originalContent = await readBufferIfExists(targetFile);
+  const content = extensionReceiptHasState(receipt) ? serializeExtensionReceipt(receipt) : null;
+  if (content == null && originalContent == null) return null;
+  const status: ExtensionPlanStatus = content == null
+    ? "delete"
+    : originalContent == null ? "create" : originalContent.equals(content) ? "unchanged" : "update";
+  return { relativePath: extensionReceiptFileName, targetFile, content, originalContent, status };
+}
+
+async function finalizeExtensionReceiptDigests(
+  receipt: ExtensionOwnershipReceipt,
+  targetRoot: string,
+): Promise<ExtensionOwnershipReceipt> {
+  const finalized = cloneExtensionReceipt(receipt);
+  for (const [relativePath, owned] of Object.entries(finalized.files)) {
+    const content = await readBufferIfExists(path.join(targetRoot, relativePath));
+    if (content == null) throw new Error(`Owned extension file disappeared during the transaction: ${relativePath}`);
+    owned.sha256 = extensionOwnedFileSha256(relativePath, content);
+  }
+  return normalizeExtensionReceipt(finalized);
+}
+
+async function applyExtensionTransaction(
+  plan: ExtensionInstallPlanEntry[],
+  nextReceipt: ExtensionOwnershipReceipt,
+  targetRoot: string,
+): Promise<number> {
+  let payloadReceipt: ExtensionApplyReceipt | null = null;
+  let indexReceipt: GeneratedIndexPlanEntry[] = [];
+  let ownershipReceipt: ExtensionApplyReceipt | null = null;
+  try {
+    payloadReceipt = await applyExtensionInstallPlan(plan, targetRoot);
+    injectExtensionTransactionFailure("after-payload");
+    const indexPlan = await createGeneratedIndexPlan(targetRoot);
+    indexReceipt = await applyGeneratedIndexPlan(indexPlan);
+    injectExtensionTransactionFailure("after-index");
+    const finalized = await finalizeExtensionReceiptDigests(nextReceipt, targetRoot);
+    const ownershipPlan = await createExtensionReceiptPlanEntry(finalized, targetRoot);
+    if (ownershipPlan) ownershipReceipt = await applyExtensionInstallPlan([ownershipPlan], targetRoot);
+    injectExtensionTransactionFailure("after-receipt");
+    return indexPlan.length;
+  } catch (error) {
+    try {
+      if (ownershipReceipt) await rollbackExtensionInstall(ownershipReceipt);
+      if (indexReceipt.length > 0) await rollbackGeneratedIndexPlan(indexReceipt);
+      if (payloadReceipt) await rollbackExtensionInstall(payloadReceipt);
+    } catch (rollbackError) {
+      throw new Error(`Extension transaction failed (${error instanceof Error ? error.message : String(error)}) and rollback also failed (${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)})`);
+    }
+    throw error;
+  }
+}
+
+function injectExtensionTransactionFailure(stage: "after-payload" | "after-index" | "after-receipt"): void {
+  if (process.env.OPEN_FORGE_TEST_FAIL_EXTENSION_TRANSACTION === stage) {
+    throw new Error(`Injected extension transaction failure ${stage}`);
+  }
+}
+
+async function readAugmentationFragment(extension: ExtensionSource, augmentation: ExtensionAugmentation): Promise<string> {
+  const sourceFile = path.resolve(extension.packageRoot, ...augmentation.source.split("/"));
+  assertLexicallyInside(sourceFile, extension.packageRoot, `Augmentation source ${augmentation.source}`);
+  let current = sourceFile;
+  while (!samePath(current, extension.packageRoot)) {
+    const stat = await fs.lstat(current);
+    if (stat.isSymbolicLink()) throw new Error(`Augmentation source contains a symbolic link or junction: ${current}`);
+    const parent = path.dirname(current);
+    if (samePath(parent, current)) break;
+    current = parent;
+  }
+  const stat = await fs.lstat(sourceFile);
+  if (!stat.isFile() || stat.isSymbolicLink()) throw new Error(`Augmentation source is not a regular file: ${sourceFile}`);
+  await assertExistingPathInside(sourceFile, extension.packageRoot, `Augmentation source ${augmentation.source}`);
+  const fragment = normalizeAugmentationFragment(await fs.readFile(sourceFile, "utf8"));
+  if (!fragment) throw new Error(`Augmentation source is empty: ${augmentation.source}`);
+  if (/<!--\s*open-forge-(?:augment|extension)\./i.test(fragment)) {
+    throw new Error(`Augmentation source ${augmentation.source} contains a reserved augmentation marker`);
+  }
+  return fragment;
+}
 
 function assertNoGitControlFiles(plan: ExtensionInstallPlanEntry[]): void {
   for (const entry of plan) {
@@ -598,7 +1197,11 @@ async function collectPotentialIndexWriteFiles(plan: ExtensionInstallPlanEntry[]
   return [...files];
 }
 
-async function createExtensionInstallPlan(extensions: ExtensionSource[], targetRoot: string): Promise<ExtensionInstallPlanEntry[]> {
+async function createExtensionInstallPlan(
+  extensions: ExtensionSource[],
+  targetRoot: string,
+  currentReceipt: ExtensionOwnershipReceipt,
+): Promise<ExtensionTransactionPlan> {
   if (await isFile(targetRoot)) {
     throw new Error(`Extension target is a file, not a directory: ${targetRoot}`);
   }
@@ -606,6 +1209,19 @@ async function createExtensionInstallPlan(extensions: ExtensionSource[], targetR
   const targetRootStat = await lstatIfExists(targetRoot);
   if (targetRootStat?.isSymbolicLink()) {
     throw new Error(`Extension target root is a symbolic link or junction: ${targetRoot}`);
+  }
+
+  const nextReceipt = cloneExtensionReceipt(currentReceipt);
+  const refreshingIds = new Set(extensions.map((extension) => extension.id).filter((id): id is string => id != null));
+  for (const extension of extensions) {
+    if (extension.id == null) continue;
+    if (extension.direct) nextReceipt.roots.push(extension.id);
+    nextReceipt.extensions[extension.id] = {
+      version: extension.version,
+      dependencies: [...extension.dependencies],
+      files: [],
+      augmentations: []
+    };
   }
 
   const candidates = new Map<string, ExtensionFileCandidate>();
@@ -623,31 +1239,87 @@ async function createExtensionInstallPlan(extensions: ExtensionSource[], targetR
       rejectGitControlEntries: true,
       entryContext: "Extension source"
     });
+    const augmentationSourceKeys = new Set(extension.augmentations.map((augmentation) =>
+      portableExtensionPathKey(toPosix(path.relative(
+        extension.root,
+        path.resolve(extension.packageRoot, ...augmentation.source.split("/"))
+      )))
+    ));
     for (const sourceFile of files) {
       const relativePath = toPosix(path.relative(extension.root, sourceFile));
+      assertPortablePayloadPath(relativePath, extensionDisplayName(extension));
       if (extension.payloadMode === "overlay" && relativePath === "extension.json") {
         continue;
       }
+      if (augmentationSourceKeys.has(portableExtensionPathKey(relativePath))) {
+        continue;
+      }
+      if (portableExtensionPathKey(relativePath) === portableExtensionPathKey(extensionReceiptFileName)) {
+        throw new Error(`Extension payload may not write reserved ownership receipt ${extensionReceiptFileName}`);
+      }
+      if (extension.id != null && relativePath.toLowerCase().endsWith(".overwrite.md")) {
+        throw new Error(`Managed extension ${extension.id} may not own local overwrite ${relativePath}; use an augmentation slot or a workspace-owned overwrite`);
+      }
 
       const sourceContent = await fs.readFile(sourceFile);
+      if (extension.id != null && isMarkdownFile(sourceFile)) {
+        const slots = parseAugmentationSlots(sourceContent.toString("utf8"), `Managed extension ${extension.id} payload ${relativePath}`);
+        const preownedBlocks = [...slots.values()].flatMap((slot) => [...slot.blocks.keys()]);
+        if (preownedBlocks.length > 0) {
+          throw new Error(`Managed extension ${extension.id} payload ${relativePath} may declare empty augmentation slots but may not ship pre-owned extension blocks: ${preownedBlocks.join(", ")}`);
+        }
+      }
       const collisionKey = portableExtensionPathKey(relativePath);
       const existing = candidates.get(collisionKey);
       if (existing) {
         if (!existing.sourceContent.equals(sourceContent)) {
-          throw new Error(`Extension file collision at ${relativePath}: ${extensionDisplayName(existing.extension)} and ${extensionDisplayName(extension)} provide different content`);
+          throw new Error(`Extension file collision at ${relativePath}: ${extensionDisplayName(existing.extensions[0])} and ${extensionDisplayName(extension)} provide different content`);
         }
-
+        existing.extensions.push(extension);
         continue;
       }
 
-      candidates.set(collisionKey, { relativePath, sourceFile, extension, sourceContent });
+      candidates.set(collisionKey, { relativePath, sourceFile, extensions: [extension], sourceContent });
     }
   }
 
   const sortedCandidates = [...candidates.values()].sort((left, right) => left.relativePath.localeCompare(right.relativePath));
   assertNoPlannedFileDirectoryConflicts(sortedCandidates);
 
-  const plan: ExtensionInstallPlanEntry[] = [];
+  const desiredFiles = new Map<string, Set<string>>([...refreshingIds].map((id) => [id, new Set<string>()]));
+  for (const candidate of sortedCandidates) {
+    for (const extension of candidate.extensions) {
+      if (extension.id != null) desiredFiles.get(extension.id)?.add(portableExtensionPathKey(candidate.relativePath));
+    }
+  }
+  const desiredAugmentations = new Map<string, Set<string>>();
+  for (const extension of extensions) {
+    if (extension.id == null) continue;
+    desiredAugmentations.set(extension.id, new Set(extension.augmentations.map((augmentation) =>
+      `${portableExtensionPathKey(augmentation.target)}\0${augmentation.slot}`
+    )));
+  }
+
+  const releasedOwnedFiles = new Set<string>();
+  const staleAugmentations: Array<{ id: string; augmentation: InstalledAugmentation }> = [];
+  for (const id of refreshingIds) {
+    const existing = currentReceipt.extensions[id];
+    if (!existing) continue;
+    for (const relativePath of existing.files) {
+      if (desiredFiles.get(id)?.has(portableExtensionPathKey(relativePath))) continue;
+      const owned = nextReceipt.files[relativePath];
+      if (!owned || !owned.owners.includes(id)) throw new Error(`Ownership receipt is inconsistent for ${id} file ${relativePath}`);
+      owned.owners = owned.owners.filter((owner) => owner !== id);
+      if (owned.owners.length === 0) delete nextReceipt.files[relativePath];
+      releasedOwnedFiles.add(relativePath);
+    }
+    for (const augmentation of existing.augmentations) {
+      const key = `${portableExtensionPathKey(augmentation.target)}\0${augmentation.slot}`;
+      if (!desiredAugmentations.get(id)?.has(key)) staleAugmentations.push({ id, augmentation });
+    }
+  }
+
+  const plan = new Map<string, ExtensionInstallPlanEntry>();
   for (const candidate of sortedCandidates) {
     await assertNoPortableTargetAlias(targetRoot, candidate.relativePath);
     const targetFile = path.join(targetRoot, candidate.relativePath);
@@ -664,10 +1336,151 @@ async function createExtensionInstallPlan(extensions: ExtensionSource[], targetR
     const status: ExtensionPlanStatus = currentContent == null
       ? "create"
       : currentContent.equals(nextContent) ? "unchanged" : "update";
-    plan.push({ relativePath: candidate.relativePath, targetFile, content: nextContent, originalContent: currentContent, status });
+    const managedOwners = [...new Set(candidate.extensions.map((extension) => extension.id).filter((id): id is string => id != null))].sort();
+    if (managedOwners.length > 0 && candidate.extensions.some((extension) => extension.id == null)) {
+      throw new Error(`Extension file ${candidate.relativePath} is provided by both managed and unmanaged packages; give every provider a stable manifest id or keep their payload paths distinct`);
+    }
+    const existingOwnership = currentReceipt.files[candidate.relativePath];
+    if (existingOwnership && managedOwners.length === 0) {
+      throw new Error(`Unmanaged extension may not replace receipt-owned file ${candidate.relativePath}; update or remove its owning managed extension instead`);
+    }
+    if (currentContent != null && managedOwners.length > 0 && !existingOwnership) {
+      throw new Error(`Managed extension may not claim or replace unowned existing file ${candidate.relativePath}; use an explicit augmentation slot, remove the unowned path after review, or use an unmanaged direct overlay`);
+    }
+    const remainingOwners = nextReceipt.files[candidate.relativePath]?.owners ?? [];
+    if (existingOwnership && status === "update" && existingOwnership.owners.some((owner) => !managedOwners.includes(owner))) {
+      throw new Error(`Extension file ${candidate.relativePath} cannot be updated unless every existing owner participates and supplies the same bytes; missing owners: ${existingOwnership.owners.filter((owner) => !managedOwners.includes(owner)).join(", ")}`);
+    }
+    if (managedOwners.length > 0 && (status === "create" || existingOwnership)) {
+      const owners = [...new Set([...remainingOwners, ...managedOwners])].sort();
+      nextReceipt.files[candidate.relativePath] = {
+        sha256: extensionOwnedFileSha256(candidate.relativePath, nextContent),
+        owners
+      };
+      for (const owner of managedOwners) {
+        const installed = nextReceipt.extensions[owner];
+        if (installed) installed.files.push(candidate.relativePath);
+      }
+    }
+    plan.set(portableExtensionPathKey(candidate.relativePath), {
+      relativePath: candidate.relativePath,
+      targetFile,
+      content: nextContent,
+      originalContent: currentContent,
+      status,
+      managedOwners
+    });
   }
 
-  return plan;
+  staleAugmentations.sort((left, right) =>
+    `${left.augmentation.target}\0${left.augmentation.slot}\0${left.id}`.localeCompare(`${right.augmentation.target}\0${right.augmentation.slot}\0${right.id}`)
+  );
+  for (const { id, augmentation } of staleAugmentations) {
+    const key = portableExtensionPathKey(augmentation.target);
+    const targetFile = path.join(targetRoot, ...augmentation.target.split("/"));
+    await assertExtensionTargetPath(targetRoot, targetFile, `Extension ${id} stale augmentation`);
+    const existingPlan = plan.get(key);
+    const originalContent = existingPlan?.originalContent ?? await readBufferIfExists(targetFile);
+    if (originalContent == null) throw new Error(`Extension ${id} stale augmentation target is missing: ${augmentation.target}`);
+    const originalSlots = parseAugmentationSlots(originalContent.toString("utf8"), augmentation.target);
+    const originalBlock = originalSlots.get(augmentation.slot)?.blocks.get(id);
+    if (!originalBlock || sha256(originalBlock.content) !== augmentation.sha256) {
+      throw new Error(`${augmentation.target} has a locally modified or missing ${id} augmentation block`);
+    }
+    const baseContent = existingPlan?.content ?? originalContent;
+    if (baseContent == null) throw new Error(`Extension ${id} stale augmentation target is scheduled for deletion before its block can be verified`);
+    const baseSlots = parseAugmentationSlots(baseContent.toString("utf8"), augmentation.target);
+    const baseBlock = baseSlots.get(augmentation.slot)?.blocks.get(id);
+    const content = baseBlock
+      ? Buffer.from(removeAugmentationBlock(baseContent.toString("utf8"), augmentation, id, augmentation.target), "utf8")
+      : baseContent;
+    const status: ExtensionPlanStatus = originalContent.equals(content) ? "unchanged" : "update";
+    plan.set(key, {
+      relativePath: augmentation.target,
+      targetFile,
+      content,
+      originalContent,
+      status,
+      managedOwners: existingPlan?.managedOwners
+    });
+  }
+
+  for (const extension of extensions) {
+    if (extension.augmentations.length === 0) continue;
+    if (extension.id == null) throw new Error(`Extension ${extension.label} needs a stable id to own augmentations`);
+    for (const augmentation of extension.augmentations) {
+      await assertNoPortableTargetAlias(targetRoot, augmentation.target, `Extension ${extension.id} augmentation`);
+      const targetFile = path.join(targetRoot, ...augmentation.target.split("/"));
+      await assertExtensionTargetPath(targetRoot, targetFile, `Extension ${extension.id} augmentation`);
+      const key = portableExtensionPathKey(augmentation.target);
+      const existingPlan = plan.get(key);
+      const originalContent = existingPlan?.originalContent ?? await readBufferIfExists(targetFile);
+      const baseContent = existingPlan?.content ?? originalContent;
+      if (baseContent == null) throw new Error(`Extension ${extension.id} augmentation target does not exist: ${augmentation.target}`);
+      const baseText = baseContent.toString("utf8");
+      const fragment = await readAugmentationFragment(extension, augmentation);
+      const prior = currentReceipt.extensions[extension.id]?.augmentations.find((entry) =>
+        portableExtensionPathKey(entry.target) === key && entry.slot === augmentation.slot
+      );
+      const parsed = parseAugmentationSlots(baseText, augmentation.target);
+      const existingBlock = parsed.get(augmentation.slot)?.blocks.get(extension.id);
+      if (existingBlock && !prior) {
+        throw new Error(`${augmentation.target} contains an unowned ${extension.id} block in slot ${augmentation.slot}`);
+      }
+      if (prior && (!existingBlock || sha256(existingBlock.content) !== prior.sha256)) {
+        throw new Error(`${augmentation.target} has a locally modified or missing ${extension.id} augmentation block`);
+      }
+      const nextText = setAugmentationBlock(baseText, augmentation.slot, extension.id, fragment, augmentation.target);
+      const content = Buffer.from(nextText, "utf8");
+      const status: ExtensionPlanStatus = originalContent == null
+        ? "create"
+        : originalContent.equals(content) ? "unchanged" : "update";
+      plan.set(key, {
+        relativePath: augmentation.target,
+        targetFile,
+        content,
+        originalContent,
+        status,
+        managedOwners: existingPlan?.managedOwners
+      });
+      const installed = nextReceipt.extensions[extension.id];
+      if (installed) {
+        installed.augmentations = installed.augmentations.filter((entry) =>
+          portableExtensionPathKey(entry.target) !== key || entry.slot !== augmentation.slot
+        );
+        installed.augmentations.push({ target: augmentation.target, slot: augmentation.slot, sha256: sha256(fragment) });
+      }
+    }
+  }
+
+  for (const relativePath of [...releasedOwnedFiles].sort()) {
+    if (nextReceipt.files[relativePath] || candidates.has(portableExtensionPathKey(relativePath))) continue;
+    const key = portableExtensionPathKey(relativePath);
+    const targetFile = path.join(targetRoot, ...relativePath.split("/"));
+    await assertExtensionTargetPath(targetRoot, targetFile, "Stale extension file removal");
+    const existingPlan = plan.get(key);
+    const originalContent = existingPlan?.originalContent ?? await readBufferIfExists(targetFile);
+    if (originalContent == null) throw new Error(`Stale owned extension file is missing: ${relativePath}`);
+    const remainingAugmentationOwners = Object.entries(nextReceipt.extensions)
+      .filter(([, extension]) => extension.augmentations.some((augmentation) => portableExtensionPathKey(augmentation.target) === key))
+      .map(([owner]) => owner);
+    if (remainingAugmentationOwners.length > 0) {
+      throw new Error(`Cannot remove stale owned file ${relativePath}; augmentation blocks from installed extensions still depend on it: ${remainingAugmentationOwners.join(", ")}`);
+    }
+    const effectiveContent = existingPlan ? existingPlan.content : originalContent;
+    if (effectiveContent != null && relativePath.toLowerCase().endsWith(".md")) {
+      const remainingBlocks = [...parseAugmentationSlots(effectiveContent.toString("utf8"), relativePath).values()]
+        .some((slot) => slot.blocks.size > 0);
+      if (remainingBlocks) throw new Error(`Cannot remove stale owned file ${relativePath}; unclaimed augmentation blocks still depend on it`);
+    }
+    plan.set(key, { relativePath, targetFile, originalContent, content: null, status: "delete" });
+  }
+
+  const normalizedReceipt = normalizeExtensionReceipt(nextReceipt);
+  validateExtensionReceiptIntegrity(normalizedReceipt, "planned extension installation receipt");
+  const entries = [...plan.values()].sort((left, right) => left.relativePath.localeCompare(right.relativePath));
+  await validateReceiptAgainstPlannedState(normalizedReceipt, entries, targetRoot, "Extension transaction", false);
+  return { entries, nextReceipt: normalizedReceipt };
 }
 
 function assertNoPlannedFileDirectoryConflicts(candidates: ExtensionFileCandidate[]): void {
@@ -696,6 +1509,7 @@ async function validateExtensionIndexPreflight(plan: ExtensionInstallPlanEntry[]
   const indexes = new Map<string, { file: string; content: Buffer | null }>();
 
   await assertExtensionIndexRootSafe(targetRoot, scanRoot);
+  await assertNoRoutedDescendantsDependOnDeletedEntrypoints(plan, targetRoot);
 
   if (await isDirectory(scanRoot)) {
     for (const file of await listFiles(scanRoot, isIndexFile, {
@@ -711,7 +1525,9 @@ async function validateExtensionIndexPreflight(plan: ExtensionInstallPlanEntry[]
     if (!isIndexFile(entry.targetFile) || (!samePath(entry.targetFile, scanRoot) && !isPathInside(entry.targetFile, scanRoot))) {
       continue;
     }
-    indexes.set(portableExtensionPathKey(toPosix(path.relative(scanRoot, entry.targetFile))), { file: entry.targetFile, content: entry.content });
+    const key = portableExtensionPathKey(toPosix(path.relative(scanRoot, entry.targetFile)));
+    if (entry.status === "delete") indexes.delete(key);
+    else indexes.set(key, { file: entry.targetFile, content: entry.content });
   }
 
   const finalIndexes = [...indexes.values()];
@@ -719,6 +1535,69 @@ async function validateExtensionIndexPreflight(plan: ExtensionInstallPlanEntry[]
   for (const entry of finalIndexes) {
     const text = (entry.content ?? await fs.readFile(entry.file)).toString("utf8");
     updateGeneratedIndexRegion(text, "- none - Extension preflight - #Empty", entry.file);
+  }
+}
+
+async function assertNoRoutedDescendantsDependOnDeletedEntrypoints(
+  plan: ExtensionInstallPlanEntry[],
+  targetRoot: string,
+): Promise<void> {
+  const plannedEntryFor = (file: string): ExtensionInstallPlanEntry | undefined =>
+    plan.find((entry) => samePath(entry.targetFile, file));
+
+  for (const host of plan.filter((entry) => entry.content == null && isIndexFile(entry.targetFile))) {
+    const directory = path.dirname(host.targetFile);
+    const candidates = new Map<string, string>();
+    const addCandidate = (file: string): void => {
+      candidates.set(portableExtensionPathKey(toPosix(path.resolve(file))), path.resolve(file));
+    };
+
+    if (await isDirectory(directory)) {
+      for (const entry of await fs.readdir(directory, { withFileTypes: true })) {
+        const direct = path.join(directory, entry.name);
+        if (entry.isFile()) {
+          addCandidate(direct);
+        } else if (entry.isDirectory() && !ignoredDirectoryNames.has(entry.name)) {
+          for (const child of await fs.readdir(direct, { withFileTypes: true })) {
+            if (child.isFile()) addCandidate(path.join(direct, child.name));
+          }
+        }
+      }
+    }
+
+    for (const entry of plan) {
+      const parent = path.dirname(entry.targetFile);
+      if (samePath(parent, directory) || samePath(path.dirname(parent), directory)) {
+        addCandidate(entry.targetFile);
+      }
+    }
+
+    const dependents: string[] = [];
+    for (const candidate of candidates.values()) {
+      if (samePath(candidate, host.targetFile)) continue;
+      const planned = plannedEntryFor(candidate);
+      if (planned ? planned.content == null : !(await isFile(candidate))) continue;
+
+      const parent = path.dirname(candidate);
+      const directDependency = samePath(parent, directory) && (
+        isIndexEntryFile(path.basename(candidate), path.basename(directory))
+        || samePath(candidate, overwriteCompanion(host.targetFile))
+      );
+      const childDependency = samePath(path.dirname(parent), directory) && (
+        categoryEntrypointNames(path.basename(parent)).includes(path.basename(candidate))
+        || (isSkillsRouteFolder(directory) && skillEntrypointNames.includes(path.basename(candidate)))
+      );
+      if (directDependency || childDependency) {
+        dependents.push(workspaceRoute(targetRoot, candidate));
+      }
+    }
+
+    if (dependents.length > 0) {
+      const routes = dependents.sort().slice(0, 4).join(", ");
+      throw new Error(
+        `Cannot remove managed route entrypoint ${host.relativePath}; retained routed descendant ${routes} still depends on it. Move or remove the descendant, or provide another reviewed route host first.`
+      );
+    }
   }
 }
 
@@ -766,6 +1645,13 @@ async function assertNoPortableTargetAlias(targetRoot: string, relativePath: str
   }
 }
 
+async function assertExtensionTargetRootNotLinked(targetRoot: string, context: string): Promise<void> {
+  const stat = await lstatIfExists(targetRoot);
+  if (stat?.isSymbolicLink()) {
+    throw new Error(`${context} target root is a symbolic link or junction: ${targetRoot}`);
+  }
+}
+
 async function assertExtensionTargetPath(targetRoot: string, targetFile: string, context = "Extension"): Promise<void> {
   const relative = path.relative(targetRoot, targetFile);
   if (relative.startsWith("..") || path.isAbsolute(relative)) {
@@ -805,7 +1691,7 @@ async function assertFileIsNotHardLinked(file: string, context: string): Promise
 }
 
 function countExtensionPlanStatuses(plan: ExtensionInstallPlanEntry[]): Record<ExtensionPlanStatus, number> {
-  const counts: Record<ExtensionPlanStatus, number> = { create: 0, update: 0, unchanged: 0 };
+  const counts: Record<ExtensionPlanStatus, number> = { create: 0, update: 0, unchanged: 0, delete: 0 };
   for (const entry of plan) {
     counts[entry.status] += 1;
   }
@@ -859,7 +1745,12 @@ async function applyExtensionInstallPlan(plan: ExtensionInstallPlanEntry[], targ
       }
       await ensureDir(path.dirname(entry.targetFile));
       receipt.applied.push(entry);
-      await fs.writeFile(entry.targetFile, entry.content);
+      if (entry.status === "delete") {
+        await fs.rm(entry.targetFile, { force: true });
+      } else {
+        if (entry.content == null) throw new Error(`Extension plan has no content for ${entry.relativePath}`);
+        await fs.writeFile(entry.targetFile, entry.content);
+      }
     }
   } catch (error) {
     receipt.createdDirectories = sortDeepestFirst([...createdDirectories]);
@@ -918,8 +1809,17 @@ type ExtensionSource = {
   label: string;
   kind: "local" | "bundled";
   id: string | null;
+  version: string | null;
   dependencies: string[];
+  augmentations: ExtensionAugmentation[];
+  direct: boolean;
   payloadMode: "directory" | "overlay" | "none";
+};
+
+type ExtensionAugmentation = {
+  target: string;
+  slot: string;
+  source: string;
 };
 
 type ExtensionContentKind = typeof extensionContentKindOrder[number];
@@ -944,14 +1844,47 @@ type BundledExtensionInfo = ExtensionDependencyInfo & {
 };
 
 type ExtensionManifest = {
+  id: string | null;
   name: string;
   description: string;
   version: string | null;
   dependencies: string[];
+  augmentations: ExtensionAugmentation[];
+};
+
+type InstalledAugmentation = {
+  target: string;
+  slot: string;
+  sha256: string;
+};
+
+type InstalledExtension = {
+  version: string | null;
+  dependencies: string[];
+  files: string[];
+  augmentations: InstalledAugmentation[];
+};
+
+type OwnedExtensionFile = {
+  sha256: string;
+  owners: string[];
+};
+
+type ExtensionOwnershipReceipt = {
+  schema: 1;
+  roots: string[];
+  extensions: Record<string, InstalledExtension>;
+  files: Record<string, OwnedExtensionFile>;
+};
+
+type ExtensionTransactionPlan = {
+  entries: ExtensionInstallPlanEntry[];
+  nextReceipt: ExtensionOwnershipReceipt;
 };
 
 async function resolveExtensionClosure(values: string[]): Promise<ExtensionSource[]> {
   const roots = await Promise.all(values.map(resolveExtensionSource));
+  const directKeys = new Set(roots.map(extensionSourceKey));
   const resolved: ExtensionSource[] = [];
   const visited = new Set<string>();
   const visiting: string[] = [];
@@ -974,11 +1907,22 @@ async function resolveExtensionClosure(values: string[]): Promise<ExtensionSourc
     }
     visiting.pop();
     visited.add(key);
-    resolved.push(extension);
+    resolved.push({ ...extension, direct: directKeys.has(key) });
   };
 
   for (const root of roots) {
     await visit(root);
+  }
+
+  const managedIds = new Map<string, string>();
+  for (const extension of resolved) {
+    if (extension.id == null) continue;
+    const key = extensionSourceKey(extension);
+    const existing = managedIds.get(extension.id);
+    if (existing && existing !== key) {
+      throw new Error(`Extension id ${extension.id} is claimed by more than one package source`);
+    }
+    managedIds.set(extension.id, key);
   }
 
   return resolved;
@@ -1009,15 +1953,21 @@ async function resolveExtensionSource(value: string): Promise<ExtensionSource> {
     const hasPayloadDirectory = await isDirectory(localPayloadRoot);
     const manifest = await readExtensionManifest(localRoot, path.basename(localRoot));
     const isDependencyOnlyPack = !hasPayloadDirectory
-      && manifest.dependencies.length > 0
-      && !(await hasLocalOverlayPayloadFiles(localRoot));
+      && (manifest.dependencies.length > 0 || manifest.augmentations.length > 0)
+      && !(await hasLocalOverlayPayloadFiles(localRoot, manifest));
+    if ((manifest.dependencies.length > 0 || manifest.augmentations.length > 0) && manifest.id == null) {
+      throw new Error(`Extension manifest ${path.join(localRoot, "extension.json")} needs a stable id when dependencies or augmentations are declared`);
+    }
     return {
       packageRoot: localRoot,
       root: hasPayloadDirectory ? localPayloadRoot : localRoot,
       label: localRoot,
       kind: "local",
-      id: null,
+      id: manifest.id,
+      version: manifest.version,
       dependencies: manifest.dependencies,
+      augmentations: manifest.augmentations,
+      direct: false,
       payloadMode: hasPayloadDirectory ? "directory" : isDependencyOnlyPack ? "none" : "overlay"
     };
   }
@@ -1029,8 +1979,11 @@ async function resolveExtensionSource(value: string): Promise<ExtensionSource> {
   return resolveBundledExtensionSource(value);
 }
 
-async function hasLocalOverlayPayloadFiles(packageRoot: string): Promise<boolean> {
+async function hasLocalOverlayPayloadFiles(packageRoot: string, manifest: ExtensionManifest): Promise<boolean> {
   const maintainerFiles = new Set(["extension.json", "readme.md"]);
+  for (const augmentation of manifest.augmentations) {
+    maintainerFiles.add(portableExtensionPathKey(augmentation.source));
+  }
   const files = await listFiles(packageRoot, () => true, { rejectLinksAndSpecialEntries: true });
   return files.some((file) => !maintainerFiles.has(portableExtensionPathKey(toPosix(path.relative(packageRoot, file)))));
 }
@@ -1038,22 +1991,33 @@ async function hasLocalOverlayPayloadFiles(packageRoot: string): Promise<boolean
 async function resolveBundledExtensionSource(id: string, context = "requested directly"): Promise<ExtensionSource> {
   const packageRoot = path.join(bundledExtensionsRoot, id);
   const bundledRoot = path.join(packageRoot, "payload");
-  if (await isDirectory(packageRoot)) {
+  const packageRootStat = await lstatIfExists(packageRoot);
+  if (packageRootStat?.isSymbolicLink()) {
+    throw new Error(`Bundled extension package root is a symbolic link or junction: ${packageRoot}`);
+  }
+  if (packageRootStat?.isDirectory()) {
+    await assertExistingPathInside(packageRoot, bundledExtensionsRoot, `Bundled extension ${id}`);
     const manifest = await readExtensionManifest(packageRoot, id);
+    if (manifest.id != null && manifest.id !== id) {
+      throw new Error(`Bundled extension manifest id ${manifest.id} must match its catalogue id ${id}`);
+    }
     const hasPayload = await hasExtensionPayloadFiles(bundledRoot);
-    if (hasPayload || manifest.dependencies.length > 0) {
+    if (hasPayload || manifest.dependencies.length > 0 || manifest.augmentations.length > 0) {
       return {
         packageRoot,
         root: hasPayload ? bundledRoot : packageRoot,
         label: id,
         kind: "bundled",
         id,
+        version: manifest.version,
         dependencies: manifest.dependencies,
+        augmentations: manifest.augmentations,
+        direct: false,
         payloadMode: hasPayload ? "directory" : "none"
       };
     }
 
-    throw new Error(`Bundled Open Forge extension ${id} has neither payload files nor dependencies and cannot be installed`);
+    throw new Error(`Bundled Open Forge extension ${id} has neither payload files nor dependencies and declares no augmentations, so it cannot be installed`);
   }
 
   const available = await listBundledExtensionIds();
@@ -1101,7 +2065,7 @@ async function listBundledExtensionIds(): Promise<string[]> {
     }
 
     const manifest = await readExtensionManifest(packageRoot, entry.name);
-    if (manifest.dependencies.length > 0) {
+    if (manifest.dependencies.length > 0 || manifest.augmentations.length > 0) {
       ids.push(entry.name);
     }
   }
@@ -1114,13 +2078,19 @@ async function listBundledExtensionInfos(): Promise<BundledExtensionInfo[]> {
 
 async function readBundledExtensionInfo(id: string): Promise<BundledExtensionInfo> {
   const packageRoot = path.join(bundledExtensionsRoot, id);
-  const [metadata, contents] = await Promise.all([
-    readExtensionManifest(packageRoot, id),
-    classifyExtensionPayloadContents(path.join(packageRoot, "payload"))
-  ]);
+  const metadata = await readExtensionManifest(packageRoot, id);
+  const contents = await classifyExtensionPayloadContents(path.join(packageRoot, "payload"));
+  if (metadata.augmentations.length > 0 && !contents.includes("augmentation")) {
+    if (contents.length === 1 && contents[0] === "pack" && metadata.dependencies.length === 0) contents.length = 0;
+    contents.push("augmentation");
+    contents.sort((left, right) => extensionContentKindOrder.indexOf(left) - extensionContentKindOrder.indexOf(right));
+  }
   return {
     id,
-    ...metadata,
+    name: metadata.name,
+    description: metadata.description,
+    version: metadata.version,
+    dependencies: metadata.dependencies,
     contents
   };
 }
@@ -1131,7 +2101,7 @@ async function classifyExtensionPayloadContents(payloadRoot: string): Promise<Ex
   }
 
   const kinds = new Set<ExtensionContentKind>();
-  const routeKinds: Record<string, Exclude<ExtensionContentKind, "pack" | "other">> = {
+  const routeKinds: Record<string, Exclude<ExtensionContentKind, "augmentation" | "pack" | "other">> = {
     skills: "skill",
     workflows: "workflow",
     directives: "directive",
@@ -1164,7 +2134,7 @@ async function readExtensionManifest(packageRoot: string, fallbackName: string):
   const metadataFile = path.join(packageRoot, "extension.json");
   const text = await readTextIfExists(metadataFile);
   if (text == null) {
-    return { name: fallbackName, description: "", version: null, dependencies: [] };
+    return { id: null, name: fallbackName, description: "", version: null, dependencies: [], augmentations: [] };
   }
 
   let value: unknown;
@@ -1178,12 +2148,16 @@ async function readExtensionManifest(packageRoot: string, fallbackName: string):
     throw new Error(`Invalid extension manifest ${metadataFile}: expected a JSON object`);
   }
 
-  const allowedFields = new Set(["name", "description", "version", "dependencies"]);
+  const allowedFields = new Set(["id", "name", "description", "version", "dependencies", "augmentations"]);
   const unknownFields = Object.keys(value).filter((key) => !allowedFields.has(key));
   if (unknownFields.length > 0) {
     throw new Error(`Invalid extension manifest ${metadataFile}: unknown field${unknownFields.length === 1 ? "" : "s"} ${unknownFields.join(", ")}`);
   }
 
+  const id = readOptionalManifestString(value, "id", metadataFile);
+  if (id != null && !isBundledExtensionId(id)) {
+    throw new Error(`Invalid extension manifest ${metadataFile}: id must be a lowercase extension id`);
+  }
   const name = readOptionalManifestString(value, "name", metadataFile) ?? fallbackName;
   const description = readOptionalManifestString(value, "description", metadataFile) ?? "";
   const version = readOptionalManifestString(value, "version", metadataFile);
@@ -1204,7 +2178,91 @@ async function readExtensionManifest(packageRoot: string, fallbackName: string):
     throw new Error(`Invalid extension manifest ${metadataFile}: dependencies must not contain duplicates`);
   }
 
-  return { name, description, version, dependencies };
+  const hasAugmentations = Object.prototype.hasOwnProperty.call(value, "augmentations");
+  const rawAugmentations = value.augmentations;
+  if (hasAugmentations && !Array.isArray(rawAugmentations)) {
+    throw new Error(`Invalid extension manifest ${metadataFile}: augmentations must be an array`);
+  }
+  const augmentations = !hasAugmentations ? [] : (rawAugmentations as unknown[]).map((raw, index) =>
+    readExtensionAugmentation(raw, index, metadataFile)
+  );
+  const augmentationKeys = augmentations.map((entry) => `${portableExtensionPathKey(entry.target)}\0${entry.slot}`);
+  if (new Set(augmentationKeys).size !== augmentationKeys.length) {
+    throw new Error(`Invalid extension manifest ${metadataFile}: augmentations must not repeat a target and slot`);
+  }
+
+  return { id, name, description, version, dependencies, augmentations };
+}
+
+function readExtensionAugmentation(value: unknown, index: number, metadataFile: string): ExtensionAugmentation {
+  if (!isRecord(value)) {
+    throw new Error(`Invalid extension manifest ${metadataFile}: augmentations[${index}] must be an object`);
+  }
+  const allowedFields = new Set(["target", "slot", "source"]);
+  const unknownFields = Object.keys(value).filter((key) => !allowedFields.has(key));
+  if (unknownFields.length > 0) {
+    throw new Error(`Invalid extension manifest ${metadataFile}: augmentations[${index}] has unknown fields ${unknownFields.join(", ")}`);
+  }
+  const target = readRequiredManifestString(value, "target", metadataFile, `augmentations[${index}]`);
+  const slot = readRequiredManifestString(value, "slot", metadataFile, `augmentations[${index}]`);
+  const source = readRequiredManifestString(value, "source", metadataFile, `augmentations[${index}]`);
+  assertPortableManifestPath(target, metadataFile, `augmentations[${index}].target`);
+  assertPortableManifestPath(source, metadataFile, `augmentations[${index}].source`);
+  if (!target.toLowerCase().endsWith(".md") || target.toLowerCase().endsWith(".overwrite.md")) {
+    throw new Error(`Invalid extension manifest ${metadataFile}: augmentations[${index}].target must be a Markdown base file, not an overwrite`);
+  }
+  if (!source.toLowerCase().endsWith(".md")) {
+    throw new Error(`Invalid extension manifest ${metadataFile}: augmentations[${index}].source must be Markdown`);
+  }
+  if (!/^[a-z0-9][a-z0-9.-]*$/.test(slot)) {
+    throw new Error(`Invalid extension manifest ${metadataFile}: augmentations[${index}].slot must be a lowercase slot id`);
+  }
+  if (portableExtensionPathKey(target) === portableExtensionPathKey(extensionReceiptFileName)) {
+    throw new Error(`Invalid extension manifest ${metadataFile}: augmentations may not target ${extensionReceiptFileName}`);
+  }
+  return { target, slot, source };
+}
+
+function readRequiredManifestString(value: Record<string, unknown>, key: string, metadataFile: string, context: string): string {
+  const raw = value[key];
+  if (typeof raw !== "string" || !raw.trim()) {
+    throw new Error(`Invalid extension manifest ${metadataFile}: ${context}.${key} must be a non-empty string`);
+  }
+  return raw.trim();
+}
+
+function assertPortableManifestPath(value: string, metadataFile: string, context: string): void {
+  const pathContext = `Invalid extension manifest ${metadataFile}: ${context}`;
+  const segments = assertPortableRelativePath(value, pathContext);
+  const comparable = segments.map((segment) => segment.normalize("NFC").toLowerCase());
+  if (comparable.includes(".git") || comparable.at(-1) === ".gitignore") {
+    throw new Error(`Invalid extension manifest ${metadataFile}: ${context} may not use Git control paths`);
+  }
+}
+
+function assertPortablePayloadPath(value: string, extension: string): void {
+  assertPortableRelativePath(value, `Extension ${extension} payload path`);
+}
+
+function assertPortableRelativePath(value: string, context: string): string[] {
+  if (value.includes("\\") || path.posix.isAbsolute(value) || value.includes("\0")) {
+    throw new Error(`${context} must be a portable relative path`);
+  }
+  const segments = value.split("/");
+  if (segments.some((segment) => !segment || segment === "." || segment === "..")) {
+    throw new Error(`${context} must not escape or change the package path`);
+  }
+  assertPortablePathSegments(value, context);
+  return segments;
+}
+
+function assertPortablePathSegments(value: string, context: string): void {
+  for (const segment of value.split("/")) {
+    const baseName = segment.split(".", 1)[0] ?? "";
+    if (/[<>:"|?*\u0000-\u001f]/.test(segment) || /[ .]$/.test(segment) || windowsReservedPathBasenames.test(baseName)) {
+      throw new Error(`${context} contains a path segment that is not portable across Windows: ${segment}`);
+    }
+  }
 }
 
 function readOptionalManifestString(value: Record<string, unknown>, key: string, metadataFile: string): string | null {
@@ -1282,6 +2340,23 @@ export function toggleExtensionSelection(
 
   return createExtensionSelectionState(extensions, direct);
 }
+
+// Pure internal contracts exposed for fast regression tests. These are not part of the distributed CLI surface.
+export const cliTestInternals = Object.freeze({
+  assertPortableManifestPath,
+  assertPortablePayloadPath,
+  extensionOwnedFileSha256,
+  normalizeExtensionReceipt,
+  parseAugmentationSlots,
+  readRequiredRoutes,
+  removeAugmentationBlock,
+  setAugmentationBlock,
+  sha256,
+  updateGeneratedIndexRegion,
+  validateDirectiveDocument,
+  validateExtensionReceiptIntegrity,
+  validateWorkflowDocument
+});
 
 function validateExtensionSelectionGraph(extensions: readonly ExtensionDependencyInfo[]): void {
   for (const extension of extensions) {
@@ -2169,19 +3244,19 @@ async function doctor(doctorArgs: string[]): Promise<void> {
       for (const finding of validateWorkflowDocument(text)) {
         report("error", file, finding);
       }
+      const phases = metadata.tags.filter((tag) => workflowPhaseTagSet.has(tag.toLowerCase()));
+      if (phases.length !== 1) {
+        report("error", file, `workflow recipe must declare exactly one phase tag: ${workflowPhaseTags.join(", ")}`);
+      }
+      const unknownPhases = metadata.tags.filter((tag) => tag.toLowerCase().startsWith("phase") && !workflowPhaseTagSet.has(tag.toLowerCase()));
+      if (unknownPhases.length > 0) {
+        report("error", file, `workflow recipe has unknown phase tag(s): ${unknownPhases.join(", ")}`);
+      }
     }
 
-    if (inferredPrimitive === "directive" && !isIndexFile(file)) {
-      const appliesTo = readMarkdownHeadingSections(text, "Applies To");
-      if (appliesTo.length !== 1 || !appliesTo[0].body.trim()) {
-        report("error", file, "directive must declare one non-empty Applies To section");
-      } else if (/^-?\s*(?:inherited|none)\b/i.test(appliesTo[0].body.trim())) {
-        report("error", file, "directive applicability must be explicit; inherited/none is reserved for hybrid category entrypoints");
-      }
-      const appliesIndex = headingPosition(text, "Applies To");
-      const axiomsIndex = headingPosition(text, "Axioms");
-      if (appliesIndex !== -1 && axiomsIndex !== -1 && appliesIndex > axiomsIndex) {
-        report("error", file, "directive Applies To must appear before Axioms");
+    if (inferredPrimitive === "directive") {
+      for (const finding of validateDirectiveDocument(text, isIndexFile(file))) {
+        report("error", file, finding);
       }
     }
 
@@ -2212,15 +3287,13 @@ async function inferPrimitiveTypeFromRoute(file: string, scanRoot: string, expli
     return null;
   }
   const fileTags = explicitFileTags ?? readMetadata(await fs.readFile(file, "utf8")).tags.map((tag) => tag.toLowerCase());
-  if (["pattern", "guidance", "skill", "workspace", "memory"].some((tag) => fileTags.includes(tag))) return null;
-  const explicitBehaviorTypes = (["workflow", "directive"] as const).filter((tag) => fileTags.includes(tag));
-  if (explicitBehaviorTypes.length === 1) return explicitBehaviorTypes[0];
   const entrypoint = await findCategoryEntrypoint(folder);
-  if (!entrypoint) return null;
-  const entrypointTags = readMetadata(await fs.readFile(entrypoint, "utf8")).tags.map((tag) => tag.toLowerCase());
-  if (["pattern", "guidance", "skill", "workspace", "memory"].some((tag) => entrypointTags.includes(tag))) return null;
-  const ownedBehaviorTypes = (["workflow", "directive"] as const).filter((tag) => entrypointTags.includes(tag));
-  if (ownedBehaviorTypes.length === 1) return ownedBehaviorTypes[0];
+  if (entrypoint) {
+    const entrypointTags = readMetadata(await fs.readFile(entrypoint, "utf8")).tags.map((tag) => tag.toLowerCase());
+    const ownedBehaviorTypes = (["workflow", "directive"] as const).filter((tag) => entrypointTags.includes(tag));
+    if (ownedBehaviorTypes.length === 1) return ownedBehaviorTypes[0];
+    if (["pattern", "guidance", "skill", "workspace", "memory"].some((tag) => entrypointTags.includes(tag))) return null;
+  }
 
   const relativeFolder = path.relative(scanRoot, folder);
   const segments = relativeFolder.split(path.sep).filter(Boolean).map((segment) => segment.toLowerCase());
@@ -2234,8 +3307,13 @@ async function inferPrimitiveTypeFromRoute(file: string, scanRoot: string, expli
     ["memory", segments.lastIndexOf("memory")]
   ]);
   const nearest = [...primitiveIndexes.entries()].sort((left, right) => right[1] - left[1])[0];
-  if (!nearest || nearest[1] === -1) return null;
-  return nearest[0] === "workflow" || nearest[0] === "directive" ? nearest[0] : null;
+  if (nearest && nearest[1] !== -1) {
+    return nearest[0] === "workflow" || nearest[0] === "directive" ? nearest[0] : null;
+  }
+
+  if (["pattern", "guidance", "skill", "workspace", "memory"].some((tag) => fileTags.includes(tag))) return null;
+  const explicitBehaviorTypes = (["workflow", "directive"] as const).filter((tag) => fileTags.includes(tag));
+  return explicitBehaviorTypes.length === 1 ? explicitBehaviorTypes[0] : null;
 }
 
 function declaresWorkflowContract(text: string): boolean {
@@ -2275,6 +3353,29 @@ function validateWorkflowDocument(text: string): string[] {
     findings.push("workflow Constraints cannot mix none/inherited with substantive constraints");
   } else if (headingStatus(readMarkdownHeadingSections(text, "Constraints")) === "declared-inherited") {
     findings.push("workflow Constraints must state substantive invariants or - none; inherited is not a workflow constraint sentinel");
+  }
+  return findings;
+}
+
+function validateDirectiveDocument(text: string, entrypoint: boolean): string[] {
+  const findings: string[] = [];
+  if (readMarkdownHeadingSections(text, "Applies To").length > 0) {
+    findings.push("directive scope belongs to routing; remove the legacy Applies To section");
+  }
+  if (entrypoint) {
+    return findings;
+  }
+
+  const axioms = readMarkdownHeadingSections(text, "Axioms");
+  if (axioms.length !== 1 || !axioms[0].body.trim()) {
+    findings.push("directive must declare exactly one non-empty Axioms section");
+    return findings;
+  }
+  if (axioms[0].level !== 2) {
+    findings.push("directive Axioms section must use a level-2 Markdown heading");
+  }
+  if (/^-?\s*(?:inherited|none)\b/i.test(axioms[0].body.trim())) {
+    findings.push("direct directive Axioms must be substantive; inherited/none is reserved for category entrypoints");
   }
   return findings;
 }
@@ -2422,7 +3523,7 @@ async function createExtensionScaffold(idArg: string | undefined, directoryArg: 
   await ensureDir(path.join(baseDirectory, "payload", agentsDirectoryName));
   await fs.writeFile(
     path.join(baseDirectory, "extension.json"),
-    `${JSON.stringify({ name, description: "TODO - one line shown by open-forge extend --list", version: "0.1.0", dependencies: [] }, null, 2)}\n`
+    `${JSON.stringify({ id: idArg, name, description: "TODO - one line shown by open-forge extend --list", version: "0.1.0", dependencies: [], augmentations: [] }, null, 2)}\n`
   );
   await fs.writeFile(
     path.join(baseDirectory, "README.md"),
@@ -3296,6 +4397,7 @@ Usage:
   open-forge extend --list
   open-forge extend --select [target] [--dry-run] [--pro]
   open-forge extend --ids <id[,id...]> [target] [--dry-run] [--pro]
+  open-forge extend --remove <id[,id...]> [target] [--dry-run] [--pro]
   open-forge extend <extension-source-or-id> [target] [--dry-run] [--pro]
   open-forge index [target]
   open-forge find [--tag <Tag>]... [--route <path>] [--depth <n>] [--follow-required] [--bodies|--paths|--json] [target]
@@ -3310,7 +4412,7 @@ Commands:
   index    Rebuild the loader registry and category generated regions.
   find     List routed files by tag or route; --bodies prints contents, --follow-required includes Required Routes.
   chain    Show loader-to-target route inheritance, optionally extracting any Markdown heading.
-  doctor   Validate route integrity, workflow shape, directive scope, generated regions, and dependencies.
+  doctor   Validate route integrity, workflow shape, directive binding, generated regions, and dependencies.
   create   Scaffold a category route chain with entrypoints, or a new extension package.
 `);
 }

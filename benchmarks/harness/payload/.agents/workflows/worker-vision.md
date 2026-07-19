@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Shape this workspace's product direction with the user; use when asked to figure out what a tool should be before anything gets built
-  tags: [Extension, Workflow, Vision, Benchmark]
+  tags: [Extension, Workflow, PhaseDefinition, Vision, Benchmark]
 ---
 
 # Worker Vision Workflow

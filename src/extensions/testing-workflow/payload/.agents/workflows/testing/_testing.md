@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Produce evidence for a behavior or deliverable without implementing the product change; use to design, run, interpret, or improve tests and checks when confidence, regression coverage, edge cases, or verification gaps are the task
-  tags: [Extension, Workflow, Quality, Testing]
+  tags: [Extension, Workflow, PhaseVerification, Quality, Testing]
 ---
 
 # Testing

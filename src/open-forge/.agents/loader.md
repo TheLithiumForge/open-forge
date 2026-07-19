@@ -29,12 +29,17 @@ Use generated `Entries` in this file to select relevant root routes. Load a sele
 - `scope routes` use the same mechanism: add `slug` folders with `entrypoints` before, after, or between `framework routes` when they make ownership clearer.
 - `scoped framework routes` work only when their framework `entrypoint` exists inside the scope.
 - In every loaded `entrypoint`, read `Entries` and load entries that fit the request or carry a defined load-policy tag.
-- Before non-trivial work, default to one clearly matching workflow. If none matches exactly, recommend the closest installed workflow or ordered workflow handoffs and ask once whether to adapt them or proceed directly.
+- Before non-trivial work, infer the established development state from routed current truth and the transition requested by the user, then select the installed workflow whose Goal best covers that transition.
+- Recommend at most one prerequisite workflow first only when a concrete missing or contradictory input would make the requested work unreliable; name the gap and ask once whether to use that handoff or proceed with explicit assumptions.
+- Workflow phases are wayfinding, not a waterfall: work may start anywhere, skip, repeat, or move backward, and an explicit workflow choice or opt-out wins.
 - Honor an explicit user request to use no workflow, proceed directly, or equivalent language without asking again.
+<!-- open-forge-augment.workflow-selection:start -->
+<!-- open-forge-augment.workflow-selection:end -->
 - Axioms of loaded ancestor `entrypoints` apply to all routes below them; a child `entrypoint` adds only what is specific to its scope.
 - Prefer material in a narrower selected scope over broader material of the same type when safe and allowed; report unresolved conflicts.
-- Immediately read #LoadNow and #KeepInMind entries when they appear in loaded `Entries`, in listed order.
-- Before ending meaningful work, recheck the #KeepInMind entries actually loaded and perform their follow-ups; `open-forge find --tag KeepInMind --bodies` discovers workspace-wide candidates but is not a receipt of the active loaded chain.
+- Immediately read #LoadNow entries when they appear in loaded `Entries`, in listed order.
+- Treat the complete routed #KeepInMind catalogue as baseline-loaded, binding follow-up context. At task start or resume, after context restoration or compaction, at meaningful phase transitions or handoffs, and before closeout, read or recheck every result; when the CLI is available, use `open-forge find --tag KeepInMind --bodies` as the single complete lookup.
+- For long-running work, maintain one concise active working-session checkpoint with the accepted direction, current phase, decisions, evidence, unresolved questions, and next action. Refresh it at the same continuity boundaries and reread it with this loader after context restoration.
 - Load an `entrypoint` before its routed files.
 - Load a file's `.overwrite.md` companion after it; the overwrite takes precedence within the base file's scope.
 - User instructions apply when safe and allowed.
@@ -67,7 +72,7 @@ Use generated `Entries` in this file to select relevant root routes. Load a sele
 ### Defined Tags
 
 - #LoadNow - Read this `entry` when it appears in loaded `Entries`, in listed order. If the target is a category `entrypoint`, read that file first; its own `Entries` then apply the same rule.
-- #KeepInMind - Read this `entry` like #LoadNow, keep its instructions active while working, and recheck it before ending meaningful work to perform the follow-ups it requires.
+- #KeepInMind - Baseline-loaded, binding follow-up context. Read the complete routed set at every loader or continuity refresh and perform its follow-ups at the stated trigger.
 - #Core - Base routing, workspace orientation, and agent primitive routes.
 - #Memory - Self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning.
 - #Extension - Optional extension payload, template, integration, and support routes.
@@ -77,8 +82,8 @@ Use generated `Entries` in this file to select relevant root routes. Load a sele
 ## CLI
 
 - `open-forge find` - find routed context by tag or route and optionally follow Required Routes.
-- `open-forge chain <route> --heading <title>` - inspect loader, ancestor, skill, target, and overwrite context for any Markdown heading such as Axioms, Applies To, Mode, Goal, or Constraints.
-- `open-forge doctor` - validate routing, workflow shape, directive applicability, generated regions, and route dependencies.
+- `open-forge chain <route> --heading <title>` - inspect loader, ancestor, skill, target, and overwrite context for any Markdown heading such as Axioms, Mode, Goal, Constraints, or a local category heading.
+- `open-forge doctor` - validate routing, workflow shape and phase, directive binding, generated regions, and route dependencies.
 - `open-forge index` - rebuild generated routing after adding, moving, or removing routed material.
 - `open-forge extend --list` - inspect optional capabilities before choosing what earns installation and context cost.
 - CLI reads and writes reject route trees that escape the selected target through a symbolic link or junction; an explicitly trusted external Markdown mount is a manual plain-file boundary.
@@ -98,7 +103,7 @@ Do not create parallel truth when active truth already exists. Update the active
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `.agents/directives/_directives.md` - Mandatory instructions agents must follow when they apply to the current work - #LoadNow #Core #Directive
+- `.agents/directives/_directives.md` - Binding instructions whose route is selected before their contents are loaded - #LoadNow #Core #Directive
 - `.agents/guidance/_guidance.md` - Contextual advice for recurring choices, tradeoffs, and work scenarios - #LoadNow #Core #Guidance
 - `.agents/memory/_memory.md` - Self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning - #LoadNow #Memory #OrganicGrowth
 - `.agents/patterns/_patterns.md` - Concrete reusable shapes for code, files, APIs, documents, and other inspectable work - #LoadNow #Core #Pattern

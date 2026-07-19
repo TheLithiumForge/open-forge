@@ -32,7 +32,9 @@ Local active truth has precedence over Open Forge defaults. Default files may st
 
 When an agent selects a generated loader route, it must load the generated `entrypoint` path before exploring routed files under that route. Open Forge-authored `entrypoints` use `_{folder}.md`; compatibility `entrypoints` may use another recognized `entrypoint` name.
 
-Before non-trivial work, the loader defaults to one clearly matching installed workflow. When none matches exactly, it requires one recommendation of the closest workflow or ordered handoffs plus direct execution as a choice. An explicit workflow opt-out proceeds directly without another prompt.
+Before non-trivial work, the loader infers the established development state from routed current truth and the transition requested by the user, then selects the installed workflow whose Goal best covers that transition. It recommends at most one prerequisite workflow first only when a concrete missing or contradictory input would make the requested transition unreliable. Phase order is wayfinding rather than a waterfall: work may start anywhere, skip, repeat, or move backward. An explicit workflow choice or opt-out wins.
+
+The complete routed #KeepInMind catalogue is baseline-loaded, binding follow-up context. The loader requires a full read or recheck at task start or resume, after context restoration or compaction, at meaningful phase transitions or handoffs, and before closeout. When available, `open-forge find --tag KeepInMind --bodies` is the single complete lookup. Long-running work keeps one concise active working-session checkpoint and refreshes it at the same continuity boundaries.
 
 When the CLI is available, the loader prefers `find` for deterministic routed lookup, `chain` for inherited heading inspection, `doctor` for structural validation, `index` for regeneration, and `extend --list` for optional capability discovery. Plain-file traversal remains a complete fallback.
 
@@ -97,7 +99,7 @@ The implementation is aligned when it:
 - states that axioms of loaded ancestor `entrypoints` apply to all routes below them, so child `entrypoints` add only scope-specific axioms
 - states that material in a narrower selected scope is preferred over broader material of the same type when safe and allowed
 - states that the current request controls relevance for `entries` without reserved load-policy tags
-- defaults non-trivial work to a clearly matching workflow, recommends nearest routes when none matches, and honors explicit workflow opt-out
+- infers the current development state and requested transition, chooses the workflow whose Goal covers it, recommends at most one evidence-backed prerequisite, treats phases as non-waterfall wayfinding, and honors explicit workflow choice or opt-out
 - states that folders become routable through recognized `entrypoints`
 - states that generated `entries` list sibling markdown files, direct child `entrypoints`, and supported native skill packages inside skills routes
 - states that native skill package internals are loaded through `SKILL.md` relevance
@@ -109,7 +111,8 @@ The implementation is aligned when it:
 - separates tag axioms from defined tags
 - defines #LoadNow, #KeepInMind, #Core, #Memory, #Extension, #Contextual, and #CurrentTruth
 - reads generated #LoadNow `entries` when they appear in loaded `Entries`, in listed order
-- rechecks loaded #KeepInMind `entries` before ending meaningful work
+- treats the complete routed #KeepInMind catalogue as baseline-loaded and binding, and rechecks every result at loader entry, context restoration, meaningful phase transitions or handoffs, and closeout
+- requires a concise active working-session checkpoint for long-running work and refreshes it at the same continuity boundaries
 - includes a compact CLI section for find, chain, doctor, index, and extension catalogue inspection
 - keeps tool references optional and tool-assisted, never load-bearing; the framework works from plain files alone
 - marks default Open Forge core `entrypoints` with #LoadNow, or #KeepInMind where standing follow-up matters

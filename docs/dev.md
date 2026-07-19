@@ -64,11 +64,31 @@ bun run src/cli/cli.ts index .
 
 These mutating examples expect a clean Git checkpoint. During CLI development, add `--pro` only when intentionally exercising the expert bypass; lifecycle tests should use fresh real repositories. That is local convenience only. The distributed CLI is Node.
 
-## CLI Test Pattern
+## Tests
 
-Command-contract tests use a fresh OS temporary directory per case and invoke the public CLI as a real child process with argument arrays. Use real Git repositories for checkpoint behavior. Assert exit code, stdout, stderr, filesystem bytes, generated routes, and Git status as applicable; every rejected mutation must also prove that no partial output appeared. Clean temporary roots in `afterEach` or `finally`.
+The default development suite is fast and storage-light:
 
-Keep direct helper tests for pure algorithms and state transitions, but do not use them as substitutes when parsing, executable lookup, packaging, process output, filesystem effects, Git scope, or rollback is part of the contract. Packaged-layout smoke tests must execute the built Node CLI from both supported distribution layouts. The installable version of this convention lives in the optional `cli-testing-patterns` extension.
+```sh
+bun run test
+bun run test:fast
+```
+
+Files named `*.unit.test.ts` exercise pure algorithms and state transitions without OS temporary directories, Git repositories, builds, or child CLI processes. Run them freely while developing.
+
+Files named `*.closure.test.ts` cross a real process, filesystem, Git, packaging, or benchmark-lifecycle boundary. They are intentionally explicit because they are slower and write substantially more temporary data:
+
+```sh
+bun run test:closure
+bun run test:ci
+```
+
+CI runs both tiers. Run closure tests locally before closing work that changes the command boundary, installation effects, rollback, containment, Git behavior, packaged layouts, or benchmark evidence. Both tiers remain normal Bun test files, so an IDE test extension can run one file or case directly.
+
+Use the package scripts for tier selection. A raw `bun test` intentionally follows Bun's normal discovery and runs both `*.unit.test.ts` and `*.closure.test.ts`; it is therefore a full run, not the routine fast command. In an IDE, select unit files for fast feedback and closure files deliberately.
+
+`tests/run-tests.ts` resolves the repository from its own location and passes absolute test paths, so the test tier does not depend on the caller's current directory. All suites use `tests/support/index.ts` for temporary sandboxes, subprocesses, Git fixtures, path checks, tree snapshots, and repository paths. Prefer one suite-scoped OS temporary root with isolated case directories and one cleanup at suite closeout.
+
+Closure tests invoke the public CLI as a real child process with argument arrays and explicit cwd. Use real Git repositories when checkpoint behavior is the contract. Assert behavior, bytes, ownership, generated-route validity, Git state, and failure atomicity as applicable. A successful file-existence assertion alone is not useful coverage; prove that the file has the intended semantics or that a rejected mutation left no partial output. Packaged-layout smoke tests execute the built Node CLI from both supported distribution layouts. The installable version of this convention lives in the optional `cli-testing-patterns` extension.
 
 ## Release Output
 

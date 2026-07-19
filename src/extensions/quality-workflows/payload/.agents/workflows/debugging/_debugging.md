@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Reproduce and isolate a defect, identify its root cause, and verify an authorized minimal fix; use for failures, regressions, flaky behavior, or unexplained state
-  tags: [Extension, Workflow, Quality, Debugging]
+  tags: [Extension, Workflow, PhaseDelivery, Quality, Debugging]
 ---
 
 # Debugging

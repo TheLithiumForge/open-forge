@@ -2,7 +2,7 @@
 
 Status: **UNRUN**. These are frozen engineering-scenario templates, not benchmark results. No agent-compliance claim may be made from their presence or from the mechanical preparation test.
 
-The five cases isolate the behavioral questions introduced by the workflow-first loader contract:
+The seven cases isolate the behavioral questions introduced by the workflow-first, phase-aware loader contract:
 
 | Case | Installed workflow surface | Behavioral question |
 | --- | --- | --- |
@@ -10,13 +10,15 @@ The five cases isolate the behavioral questions introduced by the workflow-first
 | `exact-vision-support` | vision | Does an exact vision request select the vision workflow and keep inferred support material candidate until the user accords it? |
 | `no-match-direct-choice` | vision + architecture | With no matching localization workflow, does the worker ask once whether to adapt a closest route or proceed directly, then honor the user's direct choice? |
 | `explicit-no-workflow` | vision + architecture | Does an explicit workflow opt-out bypass recommendation and selection without bypassing the rest of the loader? |
-| `ordered-handoffs` | vision + architecture + implementation | Does a cross-phase request choose one primary workflow and activate the other workflows as ordered handoffs instead of ambiguous concurrent loops? |
+| `ordered-handoffs` | vision + architecture + implementation | Does a cross-phase request infer the unsettled state, choose one primary workflow, and activate other workflows only through evidence-triggered handoffs rather than a mandatory phase order? |
+| `direct-delivery-sufficient-truth` | representative workflows from all five phases | When routed current truth already establishes product and technical direction, does the worker start with the delivery workflow without replaying earlier phases? |
+| `missing-architecture-prerequisite` | representative workflows from all five phases | When product direction is accepted but technical direction is concretely absent, does the worker recommend exactly the architecture prerequisite before delivery rather than imposing a full phase sequence? |
 
 Each run-spec template uses Core plus only the capability/workflow payloads needed for its catalogue. The architecture and localization cases also include a small raw worker-visible input. The runner's composition CLI is snapshotted from `src/cli/cli.ts`; it is not automatically provisioned to the worker.
 
 ## What The Automated Test Establishes
 
-`runner.test.ts` parses every template through the executable run-spec validator, checks every declared input exists, prepares each composition in an OS temporary directory through the real CLI invocation, authenticates the prepared evidence, and checks the expected routed workflow files are worker-visible.
+`benchmarks/harness/runner.closure.test.ts` parses every template through the executable run-spec validator, checks every declared input exists, prepares each composition in an OS temporary directory through the real CLI invocation, authenticates the prepared evidence, runs `doctor`, and checks that expected workflow files, phase tags, and case-defining current truth are worker-visible and routed.
 
 That establishes only that the cases are structurally valid and mechanically runnable. It does **not** establish workflow selection, route-read order, user interaction, artifact quality, or agent compliance.
 

@@ -55,7 +55,7 @@ The base #Memory payload installs only universal child routes, including crystal
 
 #Memory may be installed with or after #Core. The default #Memory `entrypoint` is tagged #LoadNow, so its generated loader `entry` loads with the loader when #Memory is installed.
 
-#Memory uses #KeepInMind on selected candidate-memory routes so agents can route useful material produced during work without preloading every memory child body.
+#Memory uses #KeepInMind on continuity-critical candidate-memory `entrypoints`. Agents recover the complete routed set of tagged routes at every continuity boundary so they can preserve and route useful material produced during work; unrelated descendant memory bodies remain selectively loaded through those `entrypoints`.
 
 ## Layer 3: Extensions
 
@@ -107,6 +107,7 @@ Layers are aligned when:
 - #Memory promotes operational material into matching #Core routes, including user-created #Core categories and files
 - #Memory installs universal child routes and leaves specialized containers to owning routes
 - #Memory loads for every request when installed
+- continuity-critical #Memory routes participate in the complete routed #KeepInMind catalogue without preloading unrelated descendant bodies
 - #Extension payloads install optional content into existing routes
 - #Extension payloads do not create competing Open Forge roots
 - #Extension payloads remain removable and understandable as layer additions

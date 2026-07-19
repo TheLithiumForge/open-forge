@@ -36,7 +36,7 @@ If emerging memory changes external task state, the change must be promoted to t
 
 The emerging memory category is relevant when current work needs useful material that is not accepted truth yet, or when current work produces candidate material.
 
-Before ending meaningful work, agents must read emerging memory `Entries` to route candidate material produced during the work.
+Because this route is #KeepInMind, agents read or recheck it through the complete routed continuity catalogue at task start or resume, after context restoration or compaction, at meaningful phase transitions or handoffs, and before closeout. At each boundary they inspect its `Entries` as needed to route candidate material, preserve unresolved work, and avoid losing promotion or archival follow-ups.
 
 The `entrypoint` must route agents to direct emerging memory files and child emerging memory categories whose path, description, or tags match the current request. Each selected child `entrypoint` applies the same contract recursively.
 
@@ -89,7 +89,7 @@ The implementation is aligned when it:
 - keeps emerging memory contextual until promoted or accepted
 - leaves child taxonomy to child `entrypoints` and local files
 - routes candidate material selectively
-- requires post-work review of emerging memory `Entries`
+- requires continuity-boundary review of emerging memory `Entries` through the complete routed #KeepInMind catalogue
 - promotes emerging memory to the route that owns its new state
 - extracts operational emerging memory material into matching #Core routes, including user-created #Core categories and files
 - supports recursive positive scope

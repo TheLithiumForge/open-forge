@@ -58,7 +58,7 @@ Useful tags identify the primitive type, domain, work type, topic, technology, a
 - `migrations.md` - Database migration requirements - #Directive #Database #Migration
 ```
 
-Paths and descriptions must keep critical scope readable. Tags reinforce and describe scope, but tags alone must not make a directive workspace-wide, mandatory, or active.
+Paths and descriptions must keep critical scope readable. Tags reinforce route selection, but tags alone must not create directive authority. Direct root files are workspace-wide because the root directive route is baseline-loaded; child directive scope is selected before its body is opened.
 
 Use normal words when naming, defining, or explaining the local concept itself. Use tags when the text points to routed ownership, classification, promotion, load policy, truth status, or search/reference targets. For example, a memory `entrypoint` says "Memory records state"; a promotion rule can say "move to #Core".
 
@@ -142,9 +142,9 @@ The authored portion of an Open Forge category `entrypoint` must stay between 5 
 
 ## Primitive Contracts
 
-A direct directive file declares exactly one non-empty `## Applies To` section before `## Axioms`. Applicability is positive and explicit; path placement and tags may help route the file but never silently establish its scope. A hybrid directive category `entrypoint` may use `inherited` when it adds no narrower applicability.
+A direct directive file declares exactly one non-empty level-2 `## Axioms` section. It does not declare `## Applies To`; the active directive route already established scope before loading the file. `inherited` and `none` are category-entrypoint sentinels, not direct directive contents. Operational conditions may appear inside an Axiom without making the loaded directive optional.
 
-A workflow starts with `## Mode`, followed in order by `## Goal`, `## Required Routes`, `## Constraints`, `## Steps`, `## Loop`, `## Outputs`, and `## Completion`. Mode is exactly `linear` or `iterative`. Constraints is always present and uses `- none` when no workflow-specific invariant applies. Every workflow seeks its Goal; goal-seeking is not a separate mode.
+A workflow starts with `## Mode`, followed in order by `## Goal`, `## Required Routes`, `## Constraints`, `## Steps`, `## Loop`, `## Outputs`, and `## Completion`. Mode is exactly `linear` or `iterative`. Constraints is always present and uses `- none` when no workflow-specific invariant applies. Every workflow seeks its Goal; goal-seeking is not a separate mode. Every complete recipe declares exactly one of `PhaseDiscovery`, `PhaseDefinition`, `PhasePlanning`, `PhaseDelivery`, or `PhaseVerification` in frontmatter; phase tags are routing wayfinding, not extra body sections or mandatory chronology.
 
 ## Scope Route Slugs
 
@@ -234,6 +234,9 @@ Formatting is aligned when:
 - `scope route` `slugs` use concrete stable names and matching `entrypoints`
 - route-template placeholders stay out of installed payload paths and generated `entries`
 - category contracts stay before the generated region
+- direct directive files contain one substantive level-2 Axioms section and no `Applies To` gate
+- directive scope is visible on the route selection surface before the directive body is opened
+- complete workflow recipes declare exactly one recognized primary phase tag without adding phase sections or physical routing layers
 - installed category `entrypoints` do not depend on governance-only context
 - generated `entries` stay inside the required markers
 - only marker-bounded content is regenerated

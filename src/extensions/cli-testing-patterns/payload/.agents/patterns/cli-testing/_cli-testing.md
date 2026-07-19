@@ -1,12 +1,12 @@
 ---
 open-forge:
-  description: Concrete black-box patterns for command-line interfaces, process boundaries, Git lifecycle behavior, and installation effects
+  description: Concrete tiered patterns for fast CLI development feedback and explicit process-boundary closure confidence
   tags: [Extension, Pattern, Testing, CLI]
 ---
 
 # CLI Testing
 
-CLI testing patterns define inspectable test arrangements for public command behavior.
+CLI testing patterns define inspectable test arrangements for pure mechanisms and public command behavior.
 
 ## Axioms
 
@@ -15,5 +15,5 @@ CLI testing patterns define inspectable test arrangements for public command beh
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `os-temp-command-tests.md` - Exercise public CLI commands in fresh OS temporary workspaces and assert process, filesystem, Git, and no-partial-write contracts - #Extension #Pattern #Testing #CLI #Integration #Git
+- `tiered-cli-tests.md` - Keep pure tests fast by default and reserve real process, filesystem, Git, packaging, and rollback coverage for explicit closure runs - #Extension #Pattern #Testing #CLI #Unit #Closure #CI #Git
 <!-- open-forge:generated-index:end -->
