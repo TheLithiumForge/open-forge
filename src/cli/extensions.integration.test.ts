@@ -9,6 +9,7 @@ const advertisedExtensionIds = [
   "architecture-capability",
   "architecture-workflow",
   "brainstorming-workflow",
+  "cli-testing-patterns",
   "design-workflows",
   "dev-workflow",
   "implementation-capability",
@@ -41,6 +42,40 @@ describe("first-party extension integration", () => {
     for (const id of advertisedExtensionIds) {
       expect(await isFile(path.join(extensionsRoot, id, "extension.json"))).toBe(true);
     }
+  });
+
+  test("derives representative real catalogue content labels from payloads", async () => {
+    const result = await runCli("extend", "--list");
+
+    expect(result.stderr).toBe("");
+    expect(result.exitCode).toBe(0);
+    expect(catalogueLine(result.stdout, "architecture-capability")).toEndWith("(contents: skill)");
+    expect(catalogueLine(result.stdout, "architecture-workflow")).toEndWith("(contents: workflow)");
+    expect(catalogueLine(result.stdout, "cli-testing-patterns")).toEndWith("(contents: pattern)");
+    expect(catalogueLine(result.stdout, "reliability-defaults")).toEndWith("(contents: directive)");
+    expect(catalogueLine(result.stdout, "rune-bridge")).toEndWith("(contents: guidance, workspace)");
+    expect(catalogueLine(result.stdout, "workflow-essentials")).toEndWith("(contents: pack)");
+  });
+
+  test("keeps canonical source payload indexes idempotent before installation", async () => {
+    const root = await createRoot();
+
+    for (const id of advertisedExtensionIds) {
+      const payload = path.join(extensionsRoot, id, "payload");
+      if (await isDirectory(payload)) {
+        await copyTreeContents(payload, root);
+      }
+    }
+
+    const before = await snapshotTree(root);
+    const result = await runCli("index", root);
+    const after = await snapshotTree(root);
+
+    expect(result.stderr).toBe("");
+    expect(result.exitCode).toBe(0);
+    expect(Object.keys(after)).toEqual(Object.keys(before));
+    const changedPaths = Object.keys(before).filter((file) => after[file] !== before[file]);
+    expect(changedPaths).toEqual([]);
   });
 
   test("gives every first-party installed path one canonical package owner", async () => {
@@ -143,6 +178,30 @@ describe("first-party extension integration", () => {
     expect(await pathExists(target)).toBe(false);
   });
 
+  test("uses a real bundled dependency closure through the default Git checkpoint lifecycle", async () => {
+    const root = await createRoot();
+    await initializeGitRepository(root);
+
+    const installResult = await runCliDefault("install", root);
+    expect(installResult.stderr).toBe("");
+    expect(installResult.exitCode).toBe(0);
+    expect(installResult.stdout).toContain("review the resulting diff and commit it before the next install");
+    await commitAll(root, "Install Open Forge Core");
+
+    const extensionResult = await runCliDefault("extend", "dev-workflow", root);
+    expect(extensionResult.stderr).toBe("");
+    expect(extensionResult.exitCode).toBe(0);
+    expect(extensionResult.stdout).toContain("bundled:implementation-capability, bundled:quality-capability, bundled:dev-workflow");
+    expect(extensionResult.stdout).toContain("review the resulting diff and commit it before the next install");
+
+    const doctorResult = await runCliDefault("doctor", "--json", root);
+    expect(doctorResult.stderr).toBe("");
+    expect(doctorResult.exitCode).toBe(0);
+    expect(JSON.parse(doctorResult.stdout)).toMatchObject({ errors: 0, warnings: 0 });
+    expect((await gitCommand(root, "status", "--porcelain=v1")).stdout).not.toBe("");
+    await assertEveryWorkflowRequiredRouteResolves(root);
+  });
+
   test("indexes a native skill installed directly into the shared skill directory", async () => {
     const root = await createRoot();
     const installResult = await runCli("install", root);
@@ -165,40 +224,118 @@ describe("first-party extension integration", () => {
     expect(doctorResult.exitCode).toBe(0);
     expect(JSON.parse(doctorResult.stdout)).toMatchObject({ errors: 0, warnings: 0 });
   });
+
+  test("lets an additive external skill satisfy a local workflow without changing its bytes", async () => {
+    const root = await createRoot();
+    const extension = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+
+    const skillRoot = path.join(root, ".agents", "skills", "external-review");
+    await fs.mkdir(path.join(skillRoot, "references"), { recursive: true });
+    await fs.writeFile(path.join(skillRoot, "SKILL.md"), `---
+name: external-review
+description: Review an external work product through an externally managed native skill.
+---
+
+# External Review
+
+Review the requested work product without changing this package.
+`);
+    await fs.writeFile(path.join(skillRoot, "references", "checklist.md"), "# Checklist\n\n- Check the evidence.\n");
+    expect((await runCli("index", root)).exitCode).toBe(0);
+
+    const workflowRoot = path.join(extension, "payload", ".agents", "workflows", "external-review");
+    await fs.mkdir(workflowRoot, { recursive: true });
+    await fs.writeFile(path.join(extension, "extension.json"), `${JSON.stringify({
+      name: "External Review Workflow",
+      description: "Workflow-only fixture consuming an externally managed native skill",
+      version: "1.0.0",
+      dependencies: []
+    }, null, 2)}\n`);
+    await fs.writeFile(path.join(workflowRoot, "_external-review.md"), `---
+open-forge:
+  description: Use an externally managed review skill in a focused workflow
+  tags: [Extension, Workflow, Review]
+---
+
+# External Review
+
+## Mode
+
+linear
+
+## Goal
+
+- outcome: review one external work product
+- acceptance: review evidence is recorded
+- stop: evidence is recorded or a blocker is reported
+
+## Required Routes
+
+- \`.agents/skills/external-review/SKILL.md\` - externally managed review capability
+
+## Constraints
+
+- Do not modify the externally managed skill package.
+
+## Steps
+
+1. Use the external review skill to inspect the requested work product.
+2. Record the evidence and conclusion.
+
+## Loop
+
+Execute the Steps once; no loop.
+
+## Outputs
+
+- review evidence and conclusion
+
+## Completion
+
+- [ ] evidence and conclusion recorded
+
+## Entries
+
+<!-- open-forge:generated-index:start -->
+- none - No entries - #Empty
+<!-- open-forge:generated-index:end -->
+`);
+
+    const skillBefore = await snapshotTree(skillRoot);
+    const workflowResult = await runCli("extend", extension, root);
+    expect(workflowResult.stderr).toBe("");
+    expect(workflowResult.exitCode).toBe(0);
+
+    const unrelatedResult = await runCli("extend", "cli-testing-patterns", root);
+    expect(unrelatedResult.stderr).toBe("");
+    expect(unrelatedResult.exitCode).toBe(0);
+    const indexResult = await runCli("index", root);
+    expect(indexResult.stderr).toBe("");
+    expect(indexResult.exitCode).toBe(0);
+
+    const doctorResult = await runCli("doctor", "--json", root);
+    expect(doctorResult.stderr).toBe("");
+    expect(doctorResult.exitCode).toBe(0);
+    expect(JSON.parse(doctorResult.stdout)).toMatchObject({ errors: 0, warnings: 0 });
+    expect(await snapshotTree(skillRoot)).toEqual(skillBefore);
+    await assertEveryWorkflowRequiredRouteResolves(root);
+  });
 });
 
 async function assertEveryWorkflowRequiredRouteResolves(root: string): Promise<void> {
-  const workflowsRoot = path.join(root, ".agents", "workflows");
-  const workflowFiles = await listFiles(workflowsRoot, (file) => file.toLowerCase().endsWith(".md"));
+  const result = await runCli("find", "--tag", "Workflow", "--json", root);
+  expect(result.stderr).toBe("");
+  expect(result.exitCode).toBe(0);
+  const workflows = JSON.parse(result.stdout) as Array<{ route: string }>;
 
-  for (const workflowFile of workflowFiles) {
-    const text = await fs.readFile(workflowFile, "utf8");
-    const relativeWorkflowFile = toPosix(path.relative(root, workflowFile));
-    if (relativeWorkflowFile === ".agents/workflows/_workflows.md") {
+  for (const workflow of workflows) {
+    if (workflow.route === ".agents/workflows/_workflows.md") {
       continue;
     }
-    if (!/^\s*tags:\s*\[[^\]]*\bWorkflow\b[^\]]*\]/m.test(text)) {
-      continue;
-    }
-
-    const requiredHeading = /^## Required Routes\s*$/m.exec(text);
-    if (!requiredHeading) {
-      throw new Error(`Workflow has no Required Routes section: ${relativeWorkflowFile}`);
-    }
-
-    const afterHeading = text.slice(requiredHeading.index + requiredHeading[0].length).replace(/^\r?\n/, "");
-    const nextHeading = afterHeading.search(/^## /m);
-    const requiredBody = nextHeading === -1 ? afterHeading : afterHeading.slice(0, nextHeading);
-    const requiredPaths = [...requiredBody.matchAll(/^- `([^`]+)`/gm)].map((match) => match[1]);
-    if (requiredPaths.length === 0 && !/^(- )?none\b/im.test(requiredBody.trim())) {
-      throw new Error(`Workflow Required Routes neither resolve paths nor state none: ${relativeWorkflowFile}`);
-    }
-
-    for (const requiredPath of requiredPaths) {
-      if (!(await isFile(path.join(root, requiredPath)))) {
-        throw new Error(`Workflow ${relativeWorkflowFile} has unresolved Required Route: ${requiredPath}`);
-      }
-    }
+    const followed = await runCli("find", "--route", workflow.route, "--follow-required", "--paths", root);
+    expect(followed.stderr).toBe("");
+    expect(followed.exitCode).toBe(0);
   }
 }
 
@@ -209,6 +346,15 @@ async function createRoot(): Promise<string> {
 }
 
 async function runCli(...args: string[]): Promise<{ exitCode: number; stdout: string; stderr: string }> {
+  const commandArgs = (args[0] === "install" || args[0] === "extend") && !args.includes("--pro") ? [...args, "--pro"] : args;
+  return spawnCli(commandArgs);
+}
+
+async function runCliDefault(...args: string[]): Promise<{ exitCode: number; stdout: string; stderr: string }> {
+  return spawnCli(args);
+}
+
+async function spawnCli(args: string[]): Promise<{ exitCode: number; stdout: string; stderr: string }> {
   const child = Bun.spawn([process.execPath, cliFile, ...args], {
     env: { ...process.env, OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot },
     stdout: "pipe",
@@ -220,6 +366,27 @@ async function runCli(...args: string[]): Promise<{ exitCode: number; stdout: st
     new Response(child.stderr).text()
   ]);
 
+  return { exitCode, stdout, stderr };
+}
+
+async function initializeGitRepository(root: string): Promise<void> {
+  expect((await gitCommand(root, "init")).exitCode).toBe(0);
+  expect((await gitCommand(root, "config", "user.email", "open-forge-tests@example.invalid")).exitCode).toBe(0);
+  expect((await gitCommand(root, "config", "user.name", "Open Forge Tests")).exitCode).toBe(0);
+}
+
+async function commitAll(root: string, message: string): Promise<void> {
+  expect((await gitCommand(root, "add", "-A")).exitCode).toBe(0);
+  expect((await gitCommand(root, "commit", "-m", message)).exitCode).toBe(0);
+}
+
+async function gitCommand(root: string, ...args: string[]): Promise<{ exitCode: number; stdout: string; stderr: string }> {
+  const child = Bun.spawn(["git", "-C", root, ...args], { stdout: "pipe", stderr: "pipe" });
+  const [exitCode, stdout, stderr] = await Promise.all([
+    child.exited,
+    new Response(child.stdout).text(),
+    new Response(child.stderr).text()
+  ]);
   return { exitCode, stdout, stderr };
 }
 
@@ -237,6 +404,30 @@ async function listFiles(root: string, predicate: (file: string) => boolean = ()
   }
 
   return files;
+}
+
+async function copyTreeContents(source: string, target: string): Promise<void> {
+  for (const sourceFile of await listFiles(source)) {
+    const targetFile = path.join(target, path.relative(source, sourceFile));
+    await fs.mkdir(path.dirname(targetFile), { recursive: true });
+    await fs.copyFile(sourceFile, targetFile);
+  }
+}
+
+async function snapshotTree(root: string): Promise<Record<string, string>> {
+  const snapshot: Record<string, string> = {};
+  for (const file of await listFiles(root)) {
+    snapshot[toPosix(path.relative(root, file))] = (await fs.readFile(file)).toString("base64");
+  }
+  return snapshot;
+}
+
+function catalogueLine(stdout: string, id: string): string {
+  const line = stdout.split(/\r?\n/).find((candidate) => candidate.startsWith(`- ${id} - `));
+  if (!line) {
+    throw new Error(`Catalogue output did not contain ${id}`);
+  }
+  return line;
 }
 
 async function pathExists(value: string): Promise<boolean> {

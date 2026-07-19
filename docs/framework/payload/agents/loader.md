@@ -16,13 +16,13 @@ It is the root file and routing primitive for the installed framework.
 
 ## Contains
 
-The installed loader contains its terms, axioms, route patterns, tag behavior, customization order, and a final marker-bounded registry of active root routes. The normative content requirements are the Alignment Checks below.
+The installed loader contains its terms, axioms, route patterns, tag behavior, compact CLI reference, customization order, and a final marker-bounded registry of active root routes. The normative content requirements are the Alignment Checks below.
 
 ## Load Contract
 
 The installed loader must be immediately routable after `AGENTS.md`. It must not require a secondary bootstrap file before an agent can select a root route.
 
-Generated loader paths must be concrete and relative to the active workspace root. The active workspace root is the directory whose `AGENTS.md` selected this loader. Physical repository, submodule, and symlink boundaries do not change that logical root.
+Generated loader paths must be concrete and relative to the active workspace root. The active workspace root is the directory whose `AGENTS.md` selected this loader. Repository and submodule boundaries do not change that logical root. Security-sensitive CLI commands additionally reject routes that resolve outside the target through a symlink or junction.
 
 The loader must not infer a Git repository root or require runtime path constants.
 
@@ -31,6 +31,10 @@ Load-policy tag semantics are governed by the routing concept. The installed loa
 Local active truth has precedence over Open Forge defaults. Default files may still be loaded as context when useful.
 
 When an agent selects a generated loader route, it must load the generated `entrypoint` path before exploring routed files under that route. Open Forge-authored `entrypoints` use `_{folder}.md`; compatibility `entrypoints` may use another recognized `entrypoint` name.
+
+Before non-trivial work, the loader defaults to one clearly matching installed workflow. When none matches exactly, it requires one recommendation of the closest workflow or ordered handoffs plus direct execution as a choice. An explicit workflow opt-out proceeds directly without another prompt.
+
+When the CLI is available, the loader prefers `find` for deterministic routed lookup, `chain` for inherited heading inspection, `doctor` for structural validation, `index` for regeneration, and `extend --list` for optional capability discovery. Plain-file traversal remains a complete fallback.
 
 ## Category Registry
 
@@ -84,7 +88,8 @@ The implementation is aligned when it:
 
 - is immediately routable after `AGENTS.md`
 - uses concrete workspace-relative loader paths
-- remains valid when `.agents/` resolves through a symlink or into a submodule
+- remains logically workspace-relative across repository and submodule boundaries
+- states that CLI reads and writes reject external symlink or junction escapes from the target
 - defines `entrypoint`, `entry`, `framework route`, `scope route`, `scoped framework route`, `slug`, and `axiom` plainly enough to understand without maintainer docs
 - states that user instructions apply when safe and allowed
 - defines loaded `axioms` as mandatory unless higher-priority instructions conflict
@@ -92,6 +97,7 @@ The implementation is aligned when it:
 - states that axioms of loaded ancestor `entrypoints` apply to all routes below them, so child `entrypoints` add only scope-specific axioms
 - states that material in a narrower selected scope is preferred over broader material of the same type when safe and allowed
 - states that the current request controls relevance for `entries` without reserved load-policy tags
+- defaults non-trivial work to a clearly matching workflow, recommends nearest routes when none matches, and honors explicit workflow opt-out
 - states that folders become routable through recognized `entrypoints`
 - states that generated `entries` list sibling markdown files, direct child `entrypoints`, and supported native skill packages inside skills routes
 - states that native skill package internals are loaded through `SKILL.md` relevance
@@ -104,6 +110,7 @@ The implementation is aligned when it:
 - defines #LoadNow, #KeepInMind, #Core, #Memory, #Extension, #Contextual, and #CurrentTruth
 - reads generated #LoadNow `entries` when they appear in loaded `Entries`, in listed order
 - rechecks loaded #KeepInMind `entries` before ending meaningful work
+- includes a compact CLI section for find, chain, doctor, index, and extension catalogue inspection
 - keeps tool references optional and tool-assisted, never load-bearing; the framework works from plain files alone
 - marks default Open Forge core `entrypoints` with #LoadNow, or #KeepInMind where standing follow-up matters
 - generates `entries` for direct active root routes only

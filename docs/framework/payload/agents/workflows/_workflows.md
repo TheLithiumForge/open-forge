@@ -18,7 +18,9 @@ The installed file follows the shared category `entrypoint` shape owned by the f
 
 ## Workflow Contract
 
-Every routed workflow defines `Goal` (outcome, acceptance, stop), `Required Routes`, ordered `Steps`, `Loop` behavior, expected `Outputs`, and a `Completion` checklist. It adds `Constraints` only when cross-step invariants exist; forcing the section everywhere creates filler.
+Every workflow recipe defines `Mode`, `Goal` (outcome, acceptance, stop), `Required Routes`, `Constraints`, ordered `Steps`, `Loop` behavior, expected `Outputs`, and a `Completion` checklist, in that order. Every contract section is a level-2 Markdown heading so schema validation and Required Routes parsing use the same structure. `Mode` is exactly `linear` or `iterative`. `Constraints` states `- none` when no workflow-specific invariant exists.
+
+A child workflow `entrypoint` may be organizational: it can narrow scope and route descendant workflows using category Axioms and Entries without pretending to be a recipe. If an `entrypoint` declares any workflow-recipe heading, it declares the complete ordered contract. Every non-entrypoint file owned as a workflow is a complete recipe. Workflow-local directive, pattern, guidance, skill, workspace, or memory categories keep their own explicit primitive type; the nearest primitive route owns validation.
 
 Open Forge workflows are routed markdown recipes, not runtime orchestration objects from an agent SDK.
 
@@ -26,7 +28,7 @@ Generated `Entries` express containment: what lives under the workflow folder. `
 
 `Required Routes` are flat and unconditional; agents read every listed route before Step 1 and report a route that cannot be read as a blocker, not a step to skip. "none" is a valid value. Entrypoint-level targets are preferred; stable routed files are allowed. Lines use the generated entry format so tooling can parse and follow them. Directives never appear in the list because workspace directives are already loaded. Keep the list short; split the workflow or route through a package when it grows.
 
-Loop behavior must state whether the workflow is linear or iterative, what causes another pass, and what stops the loop. The workflow mode emerges from section weight: deterministic work carries rich `Steps`, iterative work carries a `Loop` over a step range, and goal-seeking work carries a rich `Goal` with an assess-act-check loop until acceptance.
+Mode is visible before Goal so an agent knows whether to expect one pass or repetition before entering the contract. Loop behavior supplies the detail: linear workflows execute Steps once; iterative workflows state what causes another pass, which steps repeat, what evidence each pass adds, and what Goal condition stops it. Every workflow seeks its Goal, so goal-seeking is not a separate mode.
 
 A step may invoke a skill, consult guidance, delegate to a subagent, or hand off to another workflow by route. A sub-workflow's `Required Routes` are read at that activation. Delegation handoffs name the workflow route and the active step. Composition stays in `Steps`; a workflow never silently absorbs another workflow's axioms.
 
@@ -42,7 +44,7 @@ Workflow-local #Core routes reuse the same recursive category contract. They mus
 
 ## Loading Contract
 
-The workflows category is relevant before non-trivial work and whenever current work may match an established repeatable goal.
+The workflows category is relevant before non-trivial work and whenever current work may match an established repeatable goal. A clear match is selected by default without ceremony. Several matches compose as one primary workflow with ordered handoffs. When no exact match exists, the agent recommends the closest installed route or routes plus direct execution and asks once; explicit workflow opt-out proceeds directly.
 
 The `entrypoint` must require agents to read `Entries` before non-trivial work and load matching direct workflow files or child workflow categories. Each selected child `entrypoint` applies the same contract recursively.
 
@@ -82,7 +84,11 @@ The implementation is aligned when it:
 - defines workflows as repeatable markdown workflow recipes for reaching a defined goal
 - selects workflow routes by visible relevance
 - requires agents to check workflows before non-trivial work
-- requires workflows to define Goal, Required Routes, Steps, Loop, Outputs, and Completion, with Constraints only when invariants exist
+- requires workflow recipes to define Mode, Goal, Required Routes, Constraints, Steps, Loop, Outputs, and Completion in order
+- requires every recipe contract section to use a level-2 Markdown heading
+- permits category-only workflow `entrypoints` without recipe headings and requires the full contract as soon as any recipe heading appears
+- preserves the nearest explicit primitive type for workflow-local directive, pattern, guidance, skill, workspace, or memory routes
+- restricts Mode to linear or iterative and requires `- none` for empty Constraints
 - requires agents to read every Required Routes route before Step 1 and report unreadable routes as blockers
 - keeps generated `Entries` as containment and `Required Routes` as cross-tree dependency
 - lets steps invoke skills, consult guidance, delegate to subagents, or hand off to other workflows by route
@@ -94,5 +100,6 @@ The implementation is aligned when it:
 - prefers narrower selected workflow scopes when safe and allowed
 - routes only through its final generated region
 - remains empty until workflow files or child workflow categories are added
+- defaults clear matches, composes multiple matches as ordered handoffs, and honors explicit workflow opt-out
 - keeps compact relevance, loading, skill package, step, loop, workflow-local #Core route, and completion axioms
 - keeps the authored portion between 10 and 40 non-empty lines

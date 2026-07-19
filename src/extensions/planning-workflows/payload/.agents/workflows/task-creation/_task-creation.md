@@ -8,6 +8,10 @@ open-forge:
 
 Task Creation produces one actionable task without creating a second source of truth.
 
+## Mode
+
+iterative
+
 ## Goal
 
 - outcome: one well-scoped task in, or proposed for, the declared task authority

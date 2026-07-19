@@ -8,6 +8,10 @@ open-forge:
 
 Worker implementation turns this workspace's routed project truth into a working implementation.
 
+## Mode
+
+iterative
+
 ## Goal
 
 - outcome: a working implementation that satisfies the routed vision and decisions

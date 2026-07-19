@@ -8,6 +8,10 @@ open-forge:
 
 UX Exploration turns a user problem into evidence-grounded experience directions without prematurely implementing one.
 
+## Mode
+
+iterative
+
 ## Goal
 
 - outcome: a mapped user journey, critical states, distinct design directions, tradeoffs, and a recommended decision or experiment

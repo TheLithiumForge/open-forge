@@ -18,3 +18,5 @@ Accepted decisions extracted from the design sessions and idea notes on 2026-07-
 - Loose markdown files beside `loader.md` are not root routes.
 - Universal loading and routing rules live once in the loader; category `entrypoints` stay minimal. (accepted 2026-07-09)
 - Axioms of loaded ancestor `entrypoints` apply to all routes below them; a child `entrypoint` adds only scope-specific axioms and does not restate ancestor rules. (accepted 2026-07-09)
+- Missing, empty, `inherited`, and `none` local Axioms declarations all add no local axioms and never disable loaded ancestor axioms. A sentinel cannot be mixed with substantive local axioms. (accepted 2026-07-17)
+- `open-forge chain <route> [--heading <title>]` exposes loader, ancestor entrypoints, native skill boundary, target, and overwrite companions in load order. It accepts any Markdown heading and reports absent, empty, inherited, none, or substantive local sections without leaving the logical workspace target. (accepted 2026-07-17)

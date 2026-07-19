@@ -8,6 +8,10 @@ open-forge:
 
 Planning turns an accepted direction into an executable sequence with one source of task truth.
 
+## Mode
+
+iterative
+
 ## Goal
 
 - outcome: an ordered plan with scope, dependencies, verification, decision points, and a clear completion boundary

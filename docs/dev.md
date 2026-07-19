@@ -62,7 +62,13 @@ bun run src/cli/cli.ts install .
 bun run src/cli/cli.ts index .
 ```
 
-That is local convenience only. The distributed CLI is Node.
+These mutating examples expect a clean Git checkpoint. During CLI development, add `--pro` only when intentionally exercising the expert bypass; lifecycle tests should use fresh real repositories. That is local convenience only. The distributed CLI is Node.
+
+## CLI Test Pattern
+
+Command-contract tests use a fresh OS temporary directory per case and invoke the public CLI as a real child process with argument arrays. Use real Git repositories for checkpoint behavior. Assert exit code, stdout, stderr, filesystem bytes, generated routes, and Git status as applicable; every rejected mutation must also prove that no partial output appeared. Clean temporary roots in `afterEach` or `finally`.
+
+Keep direct helper tests for pure algorithms and state transitions, but do not use them as substitutes when parsing, executable lookup, packaging, process output, filesystem effects, Git scope, or rollback is part of the contract. Packaged-layout smoke tests must execute the built Node CLI from both supported distribution layouts. The installable version of this convention lives in the optional `cli-testing-patterns` extension.
 
 ## Release Output
 

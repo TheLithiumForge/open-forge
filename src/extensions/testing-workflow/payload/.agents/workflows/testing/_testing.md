@@ -8,6 +8,10 @@ open-forge:
 
 Testing produces trustworthy evidence about behavior or outcomes while keeping test intent distinct from implementation details.
 
+## Mode
+
+iterative
+
 ## Goal
 
 - outcome: proportionate verification of the requested behavior or outcome, with failures and coverage gaps explained

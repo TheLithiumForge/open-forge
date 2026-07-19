@@ -1,6 +1,8 @@
 import { constants as fsConstants, existsSync, realpathSync, type Dirent, type Stats } from "node:fs";
 import fs from "node:fs/promises";
+import { spawn } from "node:child_process";
 import path from "node:path";
+import { createInterface } from "node:readline/promises";
 import { fileURLToPath } from "node:url";
 
 const entryFile = fileURLToPath(import.meta.url);
@@ -41,13 +43,15 @@ async function main(): Promise<void> {
 
   try {
     if (command === "install") {
-      await install(args[1] ?? process.cwd());
+      await install(args.slice(1));
     } else if (command === "extend") {
       await extend(args.slice(1));
     } else if (command === "index") {
       await generateIndexes(path.resolve(args[1] ?? process.cwd()));
     } else if (command === "find") {
       await find(args.slice(1));
+    } else if (command === "chain") {
+      await chain(args.slice(1));
     } else if (command === "doctor") {
       await doctor(args.slice(1));
     } else if (command === "create") {
@@ -74,55 +78,58 @@ function isCliEntrypoint(): boolean {
   }
 }
 
-async function updateAgents(targetArg: string): Promise<void> {
+async function install(installArgs: string[]): Promise<void> {
+  const { args, present: proMode } = extractBooleanFlag(installArgs, "--pro");
+  assertNoExtraArgs(args, 1, "Usage: open-forge install [target] [--pro]");
+  const targetArg = args[0] ?? process.cwd();
   const targetRoot = path.resolve(targetArg);
-  const sourceFile = path.join(sourceRoot, "AGENTS.md");
-  const targetFile = path.join(targetRoot, "AGENTS.md");
-
-  await ensureDir(targetRoot);
-
-  const sourceText = await fs.readFile(sourceFile, "utf8");
-  const targetText = await readTextIfExists(targetFile);
-  const nextText = targetText == null ? sourceText : patchMarkedBlock(targetText, sourceText, "open-forge");
-
-  await fs.writeFile(targetFile, nextText);
-}
-
-async function install(targetArg: string): Promise<void> {
-  const targetRoot = path.resolve(targetArg);
-  await ensureDir(targetRoot);
-
+  await enforceGitCheckpoint(targetRoot, "Core installation", proMode);
   const files = await listFiles(sourceRoot);
-  const frameworkTemplates = files.flatMap((file) => createFrameworkEntrypointTemplate(sourceRoot, file));
-  let copied = 0;
-  let patched = 0;
-
-  for (const sourceFile of files) {
-    const relativePath = toPosix(path.relative(sourceRoot, sourceFile));
-    const targetFile = path.join(targetRoot, relativePath);
-    await ensureDir(path.dirname(targetFile));
-
-    if (relativePath === "AGENTS.md") {
-      await updateAgents(targetRoot);
-      patched += 1;
-      continue;
-    }
-
-    const sourceText = await fs.readFile(sourceFile, "utf8");
-    const targetText = await readTextIfExists(targetFile);
-    const nextText = targetText == null ? sourceText : preserveLocalBlocks(sourceText, targetText);
-    await fs.writeFile(targetFile, nextText);
-    copied += 1;
+  const targetRootStat = await lstatIfExists(targetRoot);
+  if (targetRootStat?.isSymbolicLink()) {
+    throw new Error(`Core target root is a symbolic link or junction: ${targetRoot}`);
   }
-
-  const scopedCopied = await updateScopedFrameworkEntrypoints(targetRoot, frameworkTemplates);
-  const generatedRegions = await generateIndexes(targetRoot);
+  for (const file of files) {
+    await assertExtensionTargetPath(targetRoot, path.join(targetRoot, path.relative(sourceRoot, file)), "Core");
+  }
+  const frameworkTemplates = files.flatMap((file) => createFrameworkEntrypointTemplate(sourceRoot, file));
+  const corePlan = await createCoreInstallPlan(files, targetRoot, frameworkTemplates);
+  const potentialIndexFiles = await collectPotentialIndexWriteFiles(corePlan.entries, targetRoot);
+  for (const file of potentialIndexFiles) {
+    await assertExtensionTargetPath(targetRoot, file, "Core index");
+  }
+  if (!proMode) {
+    await assertPlannedFilesAreGitVisible(targetRoot, [
+      ...corePlan.entries.map((entry) => entry.targetFile),
+      ...potentialIndexFiles
+    ]);
+  }
+  let coreReceipt: ExtensionApplyReceipt | null = null;
+  let indexReceipt: GeneratedIndexPlanEntry[] = [];
+  let generatedRegions = 0;
+  try {
+    coreReceipt = await applyExtensionInstallPlan(corePlan.entries, targetRoot);
+    const indexPlan = await createGeneratedIndexPlan(targetRoot);
+    generatedRegions = indexPlan.length;
+    indexReceipt = await applyGeneratedIndexPlan(indexPlan);
+  } catch (error) {
+    try {
+      if (indexReceipt.length > 0) await rollbackGeneratedIndexPlan(indexReceipt);
+      if (coreReceipt) await rollbackExtensionInstall(coreReceipt);
+    } catch (rollbackError) {
+      throw new Error(`Core installation failed (${error instanceof Error ? error.message : String(error)}) and rollback also failed (${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)})`);
+    }
+    throw error;
+  }
   console.log(`Installed Open Forge into ${targetRoot}`);
-  console.log(`Updated ${copied} managed files, updated ${scopedCopied} scoped framework route files, patched ${patched} entry files, rebuilt ${generatedRegions} generated regions.`);
+  console.log(`Updated ${corePlan.copied} managed files, updated ${corePlan.scoped} scoped framework route files, patched ${corePlan.patched} entry files, rebuilt ${generatedRegions} generated regions.`);
+  await printPostInstallCheckpoint(targetRoot, "Core", proMode);
+  console.log(`After reviewing and checkpointing Core, inspect optional extensions with open-forge extend --list or open-forge extend --select ${JSON.stringify(targetRoot)}.`);
 }
 
 async function extend(extendArgs: string[]): Promise<void> {
-  const { args: normalizedArgs, present: dryRun } = extractBooleanFlag(extendArgs, "--dry-run");
+  const { args: withoutPro, present: proMode } = extractBooleanFlag(extendArgs, "--pro");
+  const { args: normalizedArgs, present: dryRun } = extractBooleanFlag(withoutPro, "--dry-run");
 
   if (normalizedArgs[0] === "--list") {
     if (dryRun) {
@@ -136,14 +143,14 @@ async function extend(extendArgs: string[]): Promise<void> {
 
   if (normalizedArgs[0] === "--select" || normalizedArgs.length === 0) {
     const target = normalizedArgs[0] === "--select" ? normalizedArgs[1] ?? process.cwd() : process.cwd();
-    assertNoExtraArgs(normalizedArgs, normalizedArgs[0] === "--select" ? 2 : 0, "Usage: open-forge extend --select [target] [--dry-run]");
+    assertNoExtraArgs(normalizedArgs, normalizedArgs[0] === "--select" ? 2 : 0, "Usage: open-forge extend --select [target] [--dry-run] [--pro]");
     const ids = await selectBundledExtensionIds();
     if (ids.length === 0) {
       console.log("No extensions selected.");
       return;
     }
 
-    await installExtensions(ids, target, dryRun);
+    await installExtensions(ids, target, dryRun, proMode);
     return;
   }
 
@@ -151,15 +158,15 @@ async function extend(extendArgs: string[]): Promise<void> {
   if (idsValue) {
     const { ids, consumed } = idsValue;
     const target = normalizedArgs[consumed] ?? process.cwd();
-    assertNoExtraArgs(normalizedArgs, consumed + (normalizedArgs[consumed] ? 1 : 0), "Usage: open-forge extend --ids <id[,id...]> [target] [--dry-run]");
-    await installExtensions(ids, target, dryRun);
+    assertNoExtraArgs(normalizedArgs, consumed + (normalizedArgs[consumed] ? 1 : 0), "Usage: open-forge extend --ids <id[,id...]> [target] [--dry-run] [--pro]");
+    await installExtensions(ids, target, dryRun, proMode);
     return;
   }
 
   const extensionArg = normalizedArgs[0];
   const targetArg = normalizedArgs[1] ?? process.cwd();
-  assertNoExtraArgs(normalizedArgs, 2, "Usage: open-forge extend <extension-source-or-id> [target] [--dry-run]");
-  await installExtensions([extensionArg], targetArg, dryRun);
+  assertNoExtraArgs(normalizedArgs, 2, "Usage: open-forge extend <extension-source-or-id> [target] [--dry-run] [--pro]");
+  await installExtensions([extensionArg], targetArg, dryRun, proMode);
 }
 
 function extractBooleanFlag(args: string[], flag: string): { args: string[]; present: boolean } {
@@ -182,7 +189,7 @@ function readIdsValue(args: string[]): { ids: string[]; consumed: number } | nul
   if (first === "--ids") {
     const value = args[1];
     if (!value) {
-      throw new Error("Usage: open-forge extend --ids <id[,id...]> [target]");
+      throw new Error("Usage: open-forge extend --ids <id[,id...]> [target] [--dry-run] [--pro]");
     }
 
     return { ids: splitExtensionIds(value), consumed: 2 };
@@ -204,7 +211,7 @@ function splitExtensionIds(value: string): string[] {
   return ids;
 }
 
-async function installExtensions(extensionArgs: string[], targetArg: string, dryRun = false): Promise<void> {
+async function installExtensions(extensionArgs: string[], targetArg: string, dryRun = false, proMode = false): Promise<void> {
   const extensions = await resolveExtensionClosure(extensionArgs);
   const targetRoot = path.resolve(targetArg);
   const projectedTargetRoot = await projectPathThroughExistingAncestor(targetRoot);
@@ -225,7 +232,21 @@ async function installExtensions(extensionArgs: string[], targetArg: string, dry
   }
 
   const plan = await createExtensionInstallPlan(extensions, targetRoot);
+  assertNoGitControlFiles(plan);
   await validateExtensionIndexPreflight(plan, targetRoot);
+  if (!dryRun) {
+    if (!proMode && !(await hasCoreInstallation(targetRoot))) {
+      throw new Error(`Core is not installed at ${targetRoot}. Run open-forge install ${JSON.stringify(targetRoot)}, review and commit Core, then install extensions; use --pro only to intentionally bypass this checkpoint.`);
+    }
+    await enforceGitCheckpoint(targetRoot, "Extension installation", proMode);
+    if (!proMode) {
+      await assertCoreCheckpointTracked(targetRoot);
+      await assertPlannedFilesAreGitVisible(targetRoot, [
+        ...plan.map((entry) => entry.targetFile),
+        ...await collectPotentialIndexWriteFiles(plan, targetRoot)
+      ]);
+    }
+  }
   const counts = countExtensionPlanStatuses(plan);
   const scopes = countExtensionPlanScopes(plan);
   const labels = extensions.map((extension) => `${extension.kind}:${extension.label}`).join(", ");
@@ -259,6 +280,205 @@ async function installExtensions(extensionArgs: string[], targetArg: string, dry
   console.log(`Installed Open Forge extensions ${labels} into ${targetRoot}`);
   console.log(`Created ${counts.create}, updated ${counts.update}, left ${counts.unchanged} extension files unchanged, and rebuilt ${generatedRegions} generated regions.`);
   console.log(`Scope review: ${scopes.routed} routed, ${scopes.baseline} baseline-loading, ${scopes.executable} skill-executable, ${scopes.workspace} outside-.agents files.`);
+  await printPostInstallCheckpoint(targetRoot, "Extension transaction", proMode);
+}
+
+type GitCommandResult = {
+  exitCode: number | null;
+  stdout: string;
+  stderr: string;
+  error: Error | null;
+};
+
+type GitCheckpointState =
+  | { kind: "repo"; root: string; pathspec: string | null; changes: string }
+  | { kind: "none" }
+  | { kind: "error"; message: string };
+
+async function hasCoreInstallation(targetRoot: string): Promise<boolean> {
+  const agentsFile = path.join(targetRoot, "AGENTS.md");
+  const loaderFile = path.join(targetRoot, agentsDirectoryName, "loader.md");
+  const [agentsStat, loaderStat] = await Promise.all([lstatIfExists(agentsFile), lstatIfExists(loaderFile)]);
+  if (!agentsStat?.isFile() || agentsStat.isSymbolicLink() || !loaderStat?.isFile() || loaderStat.isSymbolicLink()) return false;
+  try {
+    await Promise.all([
+      assertExistingPathInside(agentsFile, targetRoot, "Core AGENTS.md"),
+      assertExistingPathInside(loaderFile, targetRoot, "Core loader")
+    ]);
+  } catch {
+    return false;
+  }
+  const [agentsText, loaderText] = await Promise.all([
+    fs.readFile(agentsFile, "utf8"),
+    fs.readFile(loaderFile, "utf8")
+  ]);
+  return agentsText.includes("<!-- open-forge:start -->")
+    && agentsText.includes("<!-- open-forge:end -->")
+    && /^# Open Forge Loader\s*$/m.test(loaderText)
+    && readGeneratedRegion(loaderText).status === "ok";
+}
+
+async function enforceGitCheckpoint(targetRoot: string, action: string, proMode: boolean): Promise<void> {
+  if (proMode) {
+    console.log(`${action}: --pro bypassed Git and Core checkpoint policy; installation safety preflight remains active.`);
+    return;
+  }
+
+  const state = await inspectGitCheckpoint(targetRoot);
+  if (state.kind === "error") {
+    throw new Error(`${action} could not verify Git checkpoint state: ${state.message}. Resolve Git access or rerun intentionally with --pro.`);
+  }
+  if (state.kind === "none") {
+    if (await approveNonGitInstall(action, targetRoot)) {
+      return;
+    }
+    throw new Error(`${action} requires a Git repository for reviewable diffs. Run git init in ${JSON.stringify(targetRoot)} and establish a clean baseline, or rerun intentionally with --pro.`);
+  }
+  if (state.changes) {
+    const preview = state.changes.split(/\r?\n/).filter(Boolean).slice(0, 8).join("; ");
+    throw new Error(`${action} requires a clean Git checkpoint for ${JSON.stringify(targetRoot)}. Review and commit or stash the current target changes first${preview ? `: ${preview}` : ""}; use --pro only to intentionally combine diffs.`);
+  }
+}
+
+async function approveNonGitInstall(action: string, targetRoot: string): Promise<boolean> {
+  if (!process.stdin.isTTY || !process.stdout.isTTY) {
+    return false;
+  }
+
+  const prompt = createInterface({ input: process.stdin, output: process.stdout });
+  try {
+    const answer = await prompt.question(`${action} target ${targetRoot} is not in Git. Initialize and checkpoint it first, or type "continue" to approve this one untracked install: `);
+    return /^(?:c|continue|yes|y)$/i.test(answer.trim());
+  } finally {
+    prompt.close();
+  }
+}
+
+async function inspectGitCheckpoint(targetRoot: string): Promise<GitCheckpointState> {
+  const ancestor = await nearestExistingDirectory(targetRoot);
+  const resolved = await runGit(["rev-parse", "--show-toplevel"], ancestor);
+  if (resolved.error) {
+    return { kind: "error", message: resolved.error.message };
+  }
+  if (resolved.exitCode !== 0) {
+    const combined = `${resolved.stderr}\n${resolved.stdout}`.trim();
+    if (/not a git repository/i.test(combined)) {
+      return { kind: "none" };
+    }
+    return { kind: "error", message: combined || `git rev-parse exited ${resolved.exitCode}` };
+  }
+
+  const gitRoot = path.resolve(resolved.stdout.trim());
+  const projectedTarget = await projectPathThroughExistingAncestor(targetRoot);
+  if (!samePath(projectedTarget, gitRoot) && !isPathInside(projectedTarget, gitRoot)) {
+    return { kind: "none" };
+  }
+  const relative = path.relative(gitRoot, projectedTarget);
+  const pathspec = relative && relative !== "." ? relative : null;
+  const statusArgs = ["--literal-pathspecs", "status", "--porcelain=v1", "--untracked-files=all"];
+  if (pathspec) {
+    statusArgs.push("--", toPosix(pathspec));
+  }
+  const status = await runGit(statusArgs, gitRoot);
+  if (status.error || status.exitCode !== 0) {
+    return { kind: "error", message: status.error?.message ?? (status.stderr.trim() || `git status exited ${status.exitCode}`) };
+  }
+  return { kind: "repo", root: gitRoot, pathspec, changes: status.stdout.trim() };
+}
+
+async function assertPlannedFilesAreGitVisible(targetRoot: string, files: string[]): Promise<void> {
+  if (files.length === 0) {
+    return;
+  }
+  const state = await inspectGitCheckpoint(targetRoot);
+  if (state.kind !== "repo") {
+    return;
+  }
+
+  const relativeFiles = files
+    .filter((file) => samePath(file, state.root) || isPathInside(file, state.root))
+    .map((file) => toPosix(path.relative(state.root, file)))
+    .map((file) => file.startsWith(":") ? `./${file}` : file);
+  if (relativeFiles.length === 0) {
+    return;
+  }
+  const ignored = await runGit(["check-ignore", "-z", "--stdin"], state.root, `${relativeFiles.join("\0")}\0`);
+  if (ignored.error) {
+    throw new Error(`Could not verify whether planned install files are ignored by Git: ${ignored.error.message}`);
+  }
+  if (ignored.exitCode !== 0 && ignored.exitCode !== 1) {
+    throw new Error(`Could not verify whether planned install files are ignored by Git: ${ignored.stderr.trim() || `git check-ignore exited ${ignored.exitCode}`}`);
+  }
+  const ignoredFiles = ignored.stdout.split("\0").filter(Boolean);
+  if (ignoredFiles.length > 0) {
+    throw new Error(`Git ignores planned install file${ignoredFiles.length === 1 ? "" : "s"}: ${ignoredFiles.join(", ")}. Reviewable checkpoints require Git-visible output; change the ignore rules or rerun intentionally with --pro.`);
+  }
+}
+
+async function assertCoreCheckpointTracked(targetRoot: string): Promise<void> {
+  const state = await inspectGitCheckpoint(targetRoot);
+  if (state.kind !== "repo") return;
+  const anchors = [
+    path.join(targetRoot, "AGENTS.md"),
+    path.join(targetRoot, agentsDirectoryName, "loader.md")
+  ].map((file) => toPosix(path.relative(state.root, file)));
+  const tracked = await runGit(["--literal-pathspecs", "ls-files", "--error-unmatch", "--", ...anchors], state.root);
+  if (tracked.error || tracked.exitCode !== 0) {
+    throw new Error("Extension installation requires committed Core anchors. Review and commit AGENTS.md and .agents/loader.md before installing extensions; use --pro only to intentionally bypass this checkpoint.");
+  }
+}
+
+async function printPostInstallCheckpoint(targetRoot: string, label: string, proMode: boolean): Promise<void> {
+  const state = await inspectGitCheckpoint(targetRoot);
+  if (state.kind === "repo" && !state.changes) {
+    console.log(`${label} checkpoint: Git reports no target changes; no new commit is needed.`);
+    return;
+  }
+  const suffix = proMode ? " --pro bypassed the pre-install checkpoint guard." : "";
+  console.log(`${label} checkpoint: review the resulting diff and commit it before the next install.${suffix}`);
+}
+
+async function nearestExistingDirectory(candidate: string): Promise<string> {
+  let current = path.resolve(candidate);
+  while (true) {
+    const stat = await lstatIfExists(current);
+    if (stat) {
+      return stat.isDirectory() ? current : path.dirname(current);
+    }
+    const parent = path.dirname(current);
+    if (samePath(parent, current)) {
+      return current;
+    }
+    current = parent;
+  }
+}
+
+async function runGit(args: string[], cwd: string, stdin: string | null = null): Promise<GitCommandResult> {
+  return await new Promise((resolve) => {
+    let stdout = "";
+    let stderr = "";
+    let settled = false;
+    const child = spawn("git", args, { cwd, windowsHide: true, stdio: [stdin == null ? "ignore" : "pipe", "pipe", "pipe"] });
+    child.stdout.setEncoding("utf8");
+    child.stderr.setEncoding("utf8");
+    child.stdout.on("data", (chunk: string) => { stdout += chunk; });
+    child.stderr.on("data", (chunk: string) => { stderr += chunk; });
+    child.on("error", (error) => {
+      if (!settled) {
+        settled = true;
+        resolve({ exitCode: null, stdout, stderr, error });
+      }
+    });
+    child.on("close", (exitCode) => {
+      if (!settled) {
+        settled = true;
+        resolve({ exitCode, stdout, stderr, error: null });
+      }
+    });
+    if (stdin != null) {
+      child.stdin.end(stdin);
+    }
+  });
 }
 
 type ExtensionPlanStatus = "create" | "update" | "unchanged";
@@ -276,12 +496,107 @@ type ExtensionApplyReceipt = {
   createdDirectories: string[];
 };
 
+type CoreInstallPlan = {
+  entries: ExtensionInstallPlanEntry[];
+  copied: number;
+  patched: number;
+  scoped: number;
+};
+
+async function createCoreInstallPlan(
+  sourceFiles: string[],
+  targetRoot: string,
+  templates: FrameworkEntrypointTemplate[],
+): Promise<CoreInstallPlan> {
+  const entries = new Map<string, ExtensionInstallPlanEntry>();
+  let copied = 0;
+  let patched = 0;
+
+  const add = async (relativePath: string, targetFile: string, content: Buffer): Promise<void> => {
+    await assertNoPortableTargetAlias(targetRoot, relativePath, "Core");
+    await assertExtensionTargetPath(targetRoot, targetFile, "Core");
+    const originalContent = await readBufferIfExists(targetFile);
+    const status: ExtensionPlanStatus = originalContent == null
+      ? "create"
+      : originalContent.equals(content) ? "unchanged" : "update";
+    entries.set(portableExtensionPathKey(relativePath), { relativePath, targetFile, content, originalContent, status });
+  };
+
+  for (const sourceFile of sourceFiles) {
+    const relativePath = toPosix(path.relative(sourceRoot, sourceFile));
+    const targetFile = path.join(targetRoot, relativePath);
+    const sourceText = await fs.readFile(sourceFile, "utf8");
+    const originalContent = await readBufferIfExists(targetFile);
+    const targetText = originalContent?.toString("utf8") ?? null;
+    const nextText = relativePath === "AGENTS.md"
+      ? targetText == null ? sourceText : patchMarkedBlock(targetText, sourceText, "open-forge")
+      : targetText == null ? sourceText : preserveLocalBlocks(sourceText, targetText);
+    await add(relativePath, targetFile, Buffer.from(nextText, "utf8"));
+    if (relativePath === "AGENTS.md") patched += 1;
+    else copied += 1;
+  }
+
+  let scoped = 0;
+  const agentsRoot = path.join(targetRoot, agentsDirectoryName);
+  await assertExtensionIndexRootSafe(targetRoot, agentsRoot, "Core index root");
+  if (await isDirectory(agentsRoot)) {
+    const markdownFiles = await listFiles(agentsRoot, (file) => file.endsWith(".md"), {
+      rejectLinksAndSpecialEntries: true,
+      entryContext: "Core target tree"
+    });
+    for (const targetFile of markdownFiles) {
+      const relativePath = toPosix(path.relative(targetRoot, targetFile));
+      if (entries.has(portableExtensionPathKey(relativePath))) continue;
+      const template = findFrameworkEntrypointTemplate(relativePath, templates);
+      if (!template) continue;
+      await add(relativePath, targetFile, await fs.readFile(template.sourceFile));
+      scoped += 1;
+    }
+  }
+
+  return { entries: [...entries.values()], copied, patched, scoped };
+}
+
 type ExtensionFileCandidate = {
   relativePath: string;
   sourceFile: string;
   extension: ExtensionSource;
   sourceContent: Buffer;
 };
+
+function assertNoGitControlFiles(plan: ExtensionInstallPlanEntry[]): void {
+  for (const entry of plan) {
+    const comparable = entry.relativePath.toLowerCase();
+    const segments = comparable.split("/").filter(Boolean);
+    const basename = path.posix.basename(comparable);
+    if (segments.includes(".git") || basename === ".gitignore") {
+      throw new Error(`Extension payload may not write Git control path ${entry.relativePath}; apply reviewed Git ignore or repository-control changes separately.`);
+    }
+  }
+}
+
+async function collectPotentialIndexWriteFiles(plan: ExtensionInstallPlanEntry[], targetRoot: string): Promise<string[]> {
+  const agentsRoot = path.join(targetRoot, agentsDirectoryName);
+  const plannedAgentsRoot = plan.some((entry) => portableExtensionPathKey(entry.relativePath).startsWith(`${agentsDirectoryName}/`));
+  const scanRoot = plannedAgentsRoot || await isDirectory(agentsRoot) ? agentsRoot : targetRoot;
+  const files = new Set<string>();
+  if (await isDirectory(scanRoot)) {
+    for (const file of await listFiles(scanRoot, isIndexFile, {
+      rejectLinksAndSpecialEntries: true,
+      entryContext: "Extension target index tree"
+    })) {
+      files.add(path.resolve(file));
+    }
+    const loader = path.join(scanRoot, "loader.md");
+    if (await isFile(loader)) files.add(path.resolve(loader));
+  }
+  for (const entry of plan) {
+    if (isIndexFile(entry.targetFile) || samePath(entry.targetFile, path.join(scanRoot, "loader.md"))) {
+      files.add(path.resolve(entry.targetFile));
+    }
+  }
+  return [...files];
+}
 
 async function createExtensionInstallPlan(extensions: ExtensionSource[], targetRoot: string): Promise<ExtensionInstallPlanEntry[]> {
   if (await isFile(targetRoot)) {
@@ -303,7 +618,11 @@ async function createExtensionInstallPlan(extensions: ExtensionSource[], targetR
     if (sourceRootStat.isSymbolicLink()) {
       throw new Error(`Extension source root is a symbolic link or junction: ${extension.root}`);
     }
-    const files = await listFiles(extension.root, () => true, { rejectLinksAndSpecialEntries: true });
+    const files = await listFiles(extension.root, () => true, {
+      rejectLinksAndSpecialEntries: true,
+      rejectGitControlEntries: true,
+      entryContext: "Extension source"
+    });
     for (const sourceFile of files) {
       const relativePath = toPosix(path.relative(extension.root, sourceFile));
       if (extension.payloadMode === "overlay" && relativePath === "extension.json") {
@@ -403,7 +722,7 @@ async function validateExtensionIndexPreflight(plan: ExtensionInstallPlanEntry[]
   }
 }
 
-async function assertExtensionIndexRootSafe(targetRoot: string, scanRoot: string): Promise<void> {
+async function assertExtensionIndexRootSafe(targetRoot: string, scanRoot: string, context = "Extension target index root"): Promise<void> {
   if (!(await lstatIfExists(scanRoot))) {
     return;
   }
@@ -412,7 +731,7 @@ async function assertExtensionIndexRootSafe(targetRoot: string, scanRoot: string
   while (true) {
     const stat = await fs.lstat(current);
     if (stat.isSymbolicLink()) {
-      throw new Error(`Extension target index root contains a symbolic link or junction: ${current}`);
+      throw new Error(`${context} contains a symbolic link or junction: ${current}`);
     }
     if (samePath(current, targetRoot)) {
       return;
@@ -420,13 +739,13 @@ async function assertExtensionIndexRootSafe(targetRoot: string, scanRoot: string
 
     const parent = path.dirname(current);
     if (samePath(parent, current) || !isPathInside(current, targetRoot)) {
-      throw new Error(`Extension target index root escapes the target: ${scanRoot}`);
+      throw new Error(`${context} escapes the target: ${scanRoot}`);
     }
     current = parent;
   }
 }
 
-async function assertNoPortableTargetAlias(targetRoot: string, relativePath: string): Promise<void> {
+async function assertNoPortableTargetAlias(targetRoot: string, relativePath: string, context = "Extension"): Promise<void> {
   let current = targetRoot;
   for (const segment of toPosix(relativePath).split("/")) {
     if (!(await isDirectory(current))) {
@@ -435,39 +754,39 @@ async function assertNoPortableTargetAlias(targetRoot: string, relativePath: str
 
     const matches = (await fs.readdir(current)).filter((entry) => portableExtensionPathKey(entry) === portableExtensionPathKey(segment));
     if (matches.length > 1) {
-      throw new Error(`Extension target has multiple portable aliases for ${path.join(current, segment)}: ${matches.join(", ")}`);
+      throw new Error(`${context} target has multiple portable aliases for ${path.join(current, segment)}: ${matches.join(", ")}`);
     }
     if (matches.length === 0) {
       return;
     }
     if (matches[0] !== segment) {
-      throw new Error(`Extension target path ${path.join(current, matches[0])} aliases planned portable path ${path.join(current, segment)}`);
+      throw new Error(`${context} target path ${path.join(current, matches[0])} aliases planned portable path ${path.join(current, segment)}`);
     }
     current = path.join(current, matches[0]);
   }
 }
 
-async function assertExtensionTargetPath(targetRoot: string, targetFile: string): Promise<void> {
+async function assertExtensionTargetPath(targetRoot: string, targetFile: string, context = "Extension"): Promise<void> {
   const relative = path.relative(targetRoot, targetFile);
   if (relative.startsWith("..") || path.isAbsolute(relative)) {
-    throw new Error(`Extension file resolves outside the target: ${targetFile}`);
+    throw new Error(`${context} file resolves outside the target: ${targetFile}`);
   }
 
   if (await isDirectory(targetFile)) {
-    throw new Error(`Extension file target is an existing directory: ${targetFile}`);
+    throw new Error(`${context} file target is an existing directory: ${targetFile}`);
   }
 
   let current = targetFile;
   while (!samePath(current, targetRoot)) {
     const stat = await lstatIfExists(current);
     if (stat?.isSymbolicLink()) {
-      throw new Error(`Extension target path contains a symbolic link or junction: ${current}`);
+      throw new Error(`${context} target path contains a symbolic link or junction: ${current}`);
     }
     if (stat?.isFile() && !samePath(current, targetFile)) {
-      throw new Error(`Extension target parent is an existing file: ${current}`);
+      throw new Error(`${context} target parent is an existing file: ${current}`);
     }
     if (stat?.isFile() && samePath(current, targetFile)) {
-      await assertFileIsNotHardLinked(current, "Extension target file");
+      await assertFileIsNotHardLinked(current, `${context} target file`);
     }
 
     const parent = path.dirname(current);
@@ -1078,6 +1397,31 @@ type FindOptions = {
   target: string;
 };
 
+type ChainOptions = {
+  route: string;
+  heading: string | null;
+  json: boolean;
+  target: string;
+};
+
+type HeadingMatch = {
+  level: number;
+  body: string;
+};
+
+type HeadingStatus = "absent" | "empty" | "declared-inherited" | "declared-none" | "content";
+
+type ChainItem = {
+  route: string;
+  kind: "loader" | "entrypoint" | "skill" | "target" | "overwrite";
+  overwriteOf?: string;
+  heading?: {
+    title: string;
+    status: HeadingStatus;
+    matches: HeadingMatch[];
+  };
+};
+
 async function find(findArgs: string[]): Promise<void> {
   const options = parseFindArgs(findArgs);
   const targetRoot = path.resolve(options.target);
@@ -1090,7 +1434,16 @@ async function find(findArgs: string[]): Promise<void> {
     const routeFile = await resolveRouteArg(options.route, targetRoot, scanRoot);
     selected = await expandRouteByDepth(routeFile, options.depth, targetRoot);
   } else {
+    await assertExistingPathInside(scanRoot, targetRoot, "Find scan root");
+    await listFiles(scanRoot, () => false, {
+      rejectLinksAndSpecialEntries: true,
+      entryContext: "Find route tree"
+    });
     selected = await collectRoutedFiles(scanRoot);
+  }
+
+  for (const file of selected) {
+    await assertExistingPathInside(file, targetRoot, `Routed file ${workspaceRoute(targetRoot, file)}`);
   }
 
   if (options.tags.length > 0) {
@@ -1111,10 +1464,10 @@ async function find(findArgs: string[]): Promise<void> {
     for (const file of selected) {
       const parsed = readRequiredRoutes(await fs.readFile(file, "utf8"));
       for (const requiredPath of parsed.paths) {
-        const resolved = path.join(targetRoot, requiredPath);
-        if (await isFile(resolved)) {
+        try {
+          const resolved = await resolveWorkspaceRelativeFile(requiredPath, targetRoot);
           required.push(resolved);
-        } else {
+        } catch {
           missing.push(`${workspaceRoute(targetRoot, file)} -> ${requiredPath}`);
         }
       }
@@ -1161,6 +1514,220 @@ async function find(findArgs: string[]): Promise<void> {
   }
 }
 
+async function chain(chainArgs: string[]): Promise<void> {
+  const options = parseChainArgs(chainArgs);
+  const targetRoot = path.resolve(options.target);
+  const scanRoot = await isDirectory(path.join(targetRoot, agentsDirectoryName))
+    ? path.join(targetRoot, agentsDirectoryName)
+    : targetRoot;
+  const targetFile = await resolveRouteArg(options.route, targetRoot, scanRoot);
+  if (!isMarkdownFile(targetFile)) {
+    throw new Error(`Chain target must be Markdown: ${options.route}`);
+  }
+
+  const sources = await buildRouteChain(targetFile, targetRoot, scanRoot);
+  const items: ChainItem[] = [];
+  for (const source of sources) {
+    const route = workspaceRoute(targetRoot, source.file);
+    const item: ChainItem = {
+      route,
+      kind: source.kind,
+      ...(source.overwriteOf ? { overwriteOf: workspaceRoute(targetRoot, source.overwriteOf) } : {})
+    };
+    if (options.heading) {
+      const matches = readMarkdownHeadingSections(await fs.readFile(source.file, "utf8"), options.heading);
+      item.heading = {
+        title: options.heading,
+        status: headingStatus(matches),
+        matches
+      };
+    }
+    items.push(item);
+  }
+
+  if (options.json) {
+    console.log(JSON.stringify({ target: workspaceRoute(targetRoot, targetFile), heading: options.heading, chain: items }, null, 2));
+    return;
+  }
+
+  if (!options.heading) {
+    for (const item of items) {
+      console.log(item.route);
+    }
+    return;
+  }
+
+  for (const item of items) {
+    console.log(`----- ${item.route} [${item.heading?.status}] -----`);
+    for (const match of item.heading?.matches ?? []) {
+      if (match.body) {
+        console.log(match.body);
+      }
+    }
+    console.log("");
+  }
+}
+
+function parseChainArgs(args: string[]): ChainOptions {
+  const usage = "Usage: open-forge chain <route> [--heading <title>] [--json] [target]";
+  let route: string | null = null;
+  let target: string | null = null;
+  let heading: string | null = null;
+  let json = false;
+
+  for (let index = 0; index < args.length; index += 1) {
+    const value = args[index];
+    if (value === "--heading") {
+      heading = args[++index] ?? null;
+      if (!heading?.trim()) throw new Error(usage);
+      heading = heading.trim();
+    } else if (value === "--json") {
+      json = true;
+    } else if (value.startsWith("--")) {
+      throw new Error(usage);
+    } else if (route == null) {
+      route = value;
+    } else if (target == null) {
+      target = value;
+    } else {
+      throw new Error(usage);
+    }
+  }
+
+  if (!route) {
+    throw new Error(usage);
+  }
+  return { route, heading, json, target: target ?? process.cwd() };
+}
+
+async function buildRouteChain(
+  targetFileInput: string,
+  targetRoot: string,
+  scanRoot: string,
+): Promise<Array<{ file: string; kind: ChainItem["kind"]; overwriteOf?: string }>> {
+  const targetFile = targetFileInput.endsWith(".overwrite.md")
+    ? targetFileInput.slice(0, -".overwrite.md".length) + ".md"
+    : targetFileInput;
+  if (!(await isFile(targetFile))) {
+    throw new Error(`Overwrite route has no base file: ${workspaceRoute(targetRoot, targetFileInput)}`);
+  }
+  if (!samePath(targetFile, scanRoot) && !isPathInside(targetFile, scanRoot)) {
+    throw new Error(`Route is outside the routed tree: ${workspaceRoute(targetRoot, targetFile)}`);
+  }
+
+  const chain: Array<{ file: string; kind: ChainItem["kind"]; overwriteOf?: string }> = [];
+  const add = async (file: string, kind: ChainItem["kind"]): Promise<void> => {
+    await assertExistingPathInside(file, targetRoot, `Chain source ${workspaceRoute(targetRoot, file)}`);
+    if (!chain.some((item) => samePath(item.file, file))) {
+      chain.push({ file, kind });
+    }
+    const overwrite = overwriteCompanion(file);
+    if (await isFile(overwrite) && !chain.some((item) => samePath(item.file, overwrite))) {
+      await assertExistingPathInside(overwrite, targetRoot, `Chain overwrite ${workspaceRoute(targetRoot, overwrite)}`);
+      chain.push({ file: overwrite, kind: "overwrite", overwriteOf: file });
+    }
+  };
+
+  const loader = path.join(scanRoot, "loader.md");
+  if (await isFile(loader)) {
+    await add(loader, "loader");
+  }
+
+  const relative = path.relative(scanRoot, targetFile);
+  const segments = relative.split(path.sep).filter(Boolean);
+  let current = scanRoot;
+  for (let index = 0; index < Math.max(0, segments.length - 1); index += 1) {
+    current = path.join(current, segments[index]);
+    const skillEntrypoint = await findSkillEntrypoint(current);
+    if (skillEntrypoint) {
+      await add(skillEntrypoint, "skill");
+      if (samePath(current, path.dirname(targetFile)) || isPathInside(targetFile, current)) {
+        break;
+      }
+    }
+    const entrypoint = await findCategoryEntrypoint(current);
+    if (entrypoint) {
+      await add(entrypoint, "entrypoint");
+      continue;
+    }
+    throw new Error(`Route chain is discontinuous at ${workspaceRoute(targetRoot, current)}; add a category entrypoint or run open-forge create category.`);
+  }
+
+  await add(targetFile, "target");
+  if (!samePath(targetFileInput, targetFile) && await isFile(targetFileInput) && !chain.some((item) => samePath(item.file, targetFileInput))) {
+    chain.push({ file: targetFileInput, kind: "overwrite", overwriteOf: targetFile });
+  }
+  return chain;
+}
+
+function overwriteCompanion(file: string): string {
+  return file.toLowerCase().endsWith(".md") ? `${file.slice(0, -3)}.overwrite.md` : `${file}.overwrite.md`;
+}
+
+type ScannedHeading = { line: number; level: number; title: string };
+
+function scanMarkdownHeadings(text: string): { lines: string[]; headings: ScannedHeading[]; fencedLines: Set<number> } {
+  const lines = stripFrontmatter(text).split(/\r?\n/);
+  const headings: ScannedHeading[] = [];
+  const fencedLines = new Set<number>();
+  let fence: { character: "`" | "~"; length: number } | null = null;
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
+    const fenceMatch = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line);
+    if (fence) {
+      fencedLines.add(index);
+      if (fenceMatch) {
+        const marker = fenceMatch[1];
+        const character = marker[0] as "`" | "~";
+        if (character === fence.character && marker.length >= fence.length && /^\s*$/.test(fenceMatch[2])) {
+          fence = null;
+        }
+      }
+      continue;
+    }
+    if (fenceMatch) {
+      const marker = fenceMatch[1];
+      const character = marker[0] as "`" | "~";
+      fence = { character, length: marker.length };
+      fencedLines.add(index);
+      continue;
+    }
+
+    const match = /^ {0,3}(#{1,6})(?:[ \t]+|$)(.*)$/.exec(line);
+    if (!match) continue;
+    const rawTitle = match[2].replace(/[ \t]+#+[ \t]*$/, "").trim();
+    headings.push({ line: index, level: match[1].length, title: rawTitle });
+  }
+  return { lines, headings, fencedLines };
+}
+
+function readMarkdownHeadingSections(text: string, title: string): HeadingMatch[] {
+  const scanned = scanMarkdownHeadings(text);
+  const wanted = title.trim().toLowerCase();
+  const matches: HeadingMatch[] = [];
+  for (let index = 0; index < scanned.headings.length; index += 1) {
+    const heading = scanned.headings[index];
+    if (heading.title.toLowerCase() !== wanted) continue;
+    const boundary = scanned.headings.slice(index + 1).find((candidate) => candidate.level <= heading.level);
+    const endLine = boundary?.line ?? scanned.lines.length;
+    matches.push({
+      level: heading.level,
+      body: scanned.lines.slice(heading.line + 1, endLine).join("\n").trim()
+    });
+  }
+  return matches;
+}
+
+function headingStatus(matches: HeadingMatch[]): HeadingStatus {
+  if (matches.length === 0) return "absent";
+  const combined = matches.map((match) => match.body).join("\n").trim();
+  if (!combined) return "empty";
+  if (/^-?\s*inherited(?:\s+-[^\n]*)?\.?$/i.test(combined)) return "declared-inherited";
+  if (/^-?\s*none(?:\s+-[^\n]*)?\.?$/i.test(combined)) return "declared-none";
+  return "content";
+}
+
 function parseFindArgs(findArgs: string[]): FindOptions {
   const usage = "Usage: open-forge find [--tag <Tag>]... [--route <path>] [--depth <n>] [--follow-required] [--bodies|--paths|--json] [target]";
   const options: FindOptions = { tags: [], route: null, depth: 0, followRequired: false, output: "entries", target: process.cwd() };
@@ -1205,19 +1772,23 @@ function parseFindArgs(findArgs: string[]): FindOptions {
 }
 
 async function resolveRouteArg(routeArg: string, targetRoot: string, scanRoot: string): Promise<string> {
-  const normalized = toPosix(routeArg).replace(/^\.\//, "");
+  const normalized = normalizeSafeRelativeRoute(routeArg);
   const candidates = [
-    path.join(targetRoot, normalized),
-    path.join(scanRoot, normalized)
+    path.resolve(targetRoot, normalized),
+    path.resolve(scanRoot, normalized)
   ];
 
-  for (const candidate of candidates) {
+  for (const candidate of dedupePaths(candidates)) {
+    assertLexicallyInside(candidate, targetRoot, `Route ${routeArg}`);
     if (await isFile(candidate)) {
+      await assertExistingPathInside(candidate, targetRoot, `Route ${routeArg}`);
       return candidate;
     }
     if (await isDirectory(candidate)) {
+      await assertExistingPathInside(candidate, targetRoot, `Route ${routeArg}`);
       const entrypoint = await findCategoryEntrypoint(candidate);
       if (entrypoint) {
+        await assertExistingPathInside(entrypoint, targetRoot, `Route ${routeArg}`);
         return entrypoint;
       }
     }
@@ -1235,11 +1806,9 @@ async function expandRouteByDepth(routeFile: string, depth: number, targetRoot: 
     const next: string[] = [];
     for (const file of frontier) {
       for (const entryPath of readGeneratedEntryPaths(await fs.readFile(file, "utf8"))) {
-        const resolved = entryPath.startsWith(`${agentsDirectoryName}/`)
-          ? path.join(targetRoot, entryPath)
-          : path.join(path.dirname(file), entryPath);
+        const resolved = await resolveGeneratedRouteFile(entryPath, file, targetRoot);
         const key = path.resolve(resolved);
-        if (!visited.has(key) && await isFile(resolved)) {
+        if (!visited.has(key)) {
           visited.add(key);
           ordered.push(resolved);
           next.push(resolved);
@@ -1250,6 +1819,57 @@ async function expandRouteByDepth(routeFile: string, depth: number, targetRoot: 
   }
 
   return ordered;
+}
+
+function normalizeSafeRelativeRoute(routeArg: string): string {
+  const value = routeArg.trim();
+  if (!value || value.includes("\0") || path.isAbsolute(value) || path.win32.isAbsolute(value)) {
+    throw new Error(`Route must be a workspace-relative path: ${routeArg}`);
+  }
+  const normalized = toPosix(value).replace(/^\.\//, "");
+  const segments = normalized.split("/");
+  if (segments.some((segment) => !segment || segment === "." || segment === ".." || segment.includes(":"))) {
+    throw new Error(`Route must not escape or change the workspace path: ${routeArg}`);
+  }
+  return normalized;
+}
+
+function assertLexicallyInside(candidate: string, targetRoot: string, context: string): void {
+  if (!samePath(candidate, targetRoot) && !isPathInside(candidate, targetRoot)) {
+    throw new Error(`${context} resolves outside the target workspace`);
+  }
+}
+
+async function assertExistingPathInside(candidate: string, targetRoot: string, context: string): Promise<void> {
+  assertLexicallyInside(candidate, targetRoot, context);
+  const [realCandidate, realTarget] = await Promise.all([fs.realpath(candidate), fs.realpath(targetRoot)]);
+  if (!samePath(realCandidate, realTarget) && !isPathInside(realCandidate, realTarget)) {
+    throw new Error(`${context} escapes the target workspace through a symbolic link or junction`);
+  }
+}
+
+async function resolveWorkspaceRelativeFile(route: string, targetRoot: string): Promise<string> {
+  const normalized = normalizeSafeRelativeRoute(route);
+  const candidate = path.resolve(targetRoot, normalized);
+  assertLexicallyInside(candidate, targetRoot, `Required route ${route}`);
+  if (!(await isFile(candidate))) {
+    throw new Error(`required route does not resolve: ${route}`);
+  }
+  await assertExistingPathInside(candidate, targetRoot, `Required route ${route}`);
+  return candidate;
+}
+
+async function resolveGeneratedRouteFile(entryPath: string, sourceFile: string, targetRoot: string): Promise<string> {
+  const normalized = normalizeSafeRelativeRoute(entryPath);
+  const candidate = normalized.startsWith(`${agentsDirectoryName}/`)
+    ? path.resolve(targetRoot, normalized)
+    : path.resolve(path.dirname(sourceFile), normalized);
+  assertLexicallyInside(candidate, targetRoot, `Generated route ${entryPath}`);
+  if (!(await isFile(candidate))) {
+    throw new Error(`generated entry does not resolve: ${entryPath} (from ${workspaceRoute(targetRoot, sourceFile)})`);
+  }
+  await assertExistingPathInside(candidate, targetRoot, `Generated route ${entryPath}`);
+  return candidate;
 }
 
 async function collectRoutedFiles(scanRoot: string): Promise<string[]> {
@@ -1308,18 +1928,19 @@ type RequiredRoutes = {
 
 function readRequiredRoutes(rawText: string): RequiredRoutes {
   const result: RequiredRoutes = { paths: [], none: false, invalid: [], present: false };
-  const text = stripFencedCodeBlocks(rawText);
-  const match = text.match(/^## Required Routes\s*$/m);
-  if (!match || match.index == null) {
+  const scanned = scanMarkdownHeadings(rawText);
+  const headingIndex = scanned.headings.findIndex((heading) => heading.level === 2 && heading.title.toLowerCase() === "required routes");
+  if (headingIndex === -1) {
     return result;
   }
 
   result.present = true;
-  const after = text.slice(match.index + match[0].length);
-  const nextHeading = after.search(/^## /m);
-  const section = nextHeading === -1 ? after : after.slice(0, nextHeading);
-
-  for (const raw of section.split(/\r?\n/)) {
+  const heading = scanned.headings[headingIndex];
+  const boundary = scanned.headings.slice(headingIndex + 1).find((candidate) => candidate.level <= heading.level);
+  const endLine = boundary?.line ?? scanned.lines.length;
+  for (let index = heading.line + 1; index < endLine; index += 1) {
+    if (scanned.fencedLines.has(index)) continue;
+    const raw = scanned.lines[index];
     const line = raw.trim();
     if (!line) {
       continue;
@@ -1342,24 +1963,6 @@ function readRequiredRoutes(rawText: string): RequiredRoutes {
   }
 
   return result;
-}
-
-function stripFencedCodeBlocks(text: string): string {
-  const lines = text.split(/\r?\n/);
-  const kept: string[] = [];
-  let inFence = false;
-
-  for (const line of lines) {
-    if (line.trimStart().startsWith("```")) {
-      inFence = !inFence;
-      continue;
-    }
-    if (!inFence) {
-      kept.push(line);
-    }
-  }
-
-  return kept.join("\n");
 }
 
 type GeneratedRegion =
@@ -1434,8 +2037,49 @@ async function doctor(doctorArgs: string[]): Promise<void> {
   const report = (level: DoctorFinding["level"], file: string, message: string): void => {
     findings.push({ level, route: workspaceRoute(targetRoot, file), message });
   };
+  const emit = (): void => {
+    const errors = findings.filter((finding) => finding.level === "error");
+    if (json) {
+      console.log(JSON.stringify({ errors: errors.length, warnings: findings.length - errors.length, findings }, null, 2));
+    } else if (findings.length === 0) {
+      console.log(`open-forge doctor: no problems found in ${targetRoot}`);
+    } else {
+      for (const finding of findings) {
+        console.log(`${finding.level}: ${finding.route} - ${finding.message}`);
+      }
+      console.log(`open-forge doctor: ${errors.length} error(s), ${findings.length - errors.length} warning(s)`);
+    }
 
-  const markdownFiles = await listFiles(scanRoot, isMarkdownFile);
+    if (errors.length > 0) {
+      process.exitCode = 1;
+    }
+  };
+
+  let scanRootContained = true;
+  try {
+    await assertExistingPathInside(scanRoot, targetRoot, "Doctor scan root");
+  } catch (error) {
+    scanRootContained = false;
+    report("error", scanRoot, error instanceof Error ? error.message : String(error));
+  }
+  let routeTreeSafe = scanRootContained;
+  let markdownFiles: string[] = [];
+  if (scanRootContained) {
+    try {
+      markdownFiles = await listFiles(scanRoot, isMarkdownFile, {
+        rejectLinksAndSpecialEntries: true,
+        entryContext: "Doctor route tree"
+      });
+    } catch (error) {
+      routeTreeSafe = false;
+      report("error", scanRoot, error instanceof Error ? error.message : String(error));
+    }
+  }
+
+  if (!routeTreeSafe) {
+    emit();
+    return;
+  }
 
   for (const [directory, names] of await groupEntrypointCandidates(markdownFiles)) {
     if (names.length > 1) {
@@ -1445,6 +2089,9 @@ async function doctor(doctorArgs: string[]): Promise<void> {
 
   let routedFiles: string[] = [];
   try {
+    if (!routeTreeSafe) {
+      throw new Error("Doctor route tree is not safe to read");
+    }
     routedFiles = dedupePaths(await collectRoutedFiles(scanRoot));
   } catch (error) {
     report("error", scanRoot, error instanceof Error ? error.message : String(error));
@@ -1473,11 +2120,10 @@ async function doctor(doctorArgs: string[]): Promise<void> {
     }
 
     for (const entryPath of readGeneratedEntryPaths(text)) {
-      const resolved = entryPath.startsWith(`${agentsDirectoryName}/`)
-        ? path.join(targetRoot, entryPath)
-        : path.join(path.dirname(owner), entryPath);
-      if (!(await isFile(resolved))) {
-        report("error", owner, `generated entry does not resolve: ${entryPath}`);
+      try {
+        await resolveGeneratedRouteFile(entryPath, owner, targetRoot);
+      } catch (error) {
+        report("error", owner, error instanceof Error ? error.message : `generated entry does not resolve: ${entryPath}`);
       }
     }
   }
@@ -1485,6 +2131,8 @@ async function doctor(doctorArgs: string[]): Promise<void> {
   for (const file of markdownFiles) {
     const text = await fs.readFile(file, "utf8");
     const metadata = readMetadata(text);
+    const tags = metadata.tags.map((tag) => tag.toLowerCase());
+    const inferredPrimitive = await inferPrimitiveTypeFromRoute(file, scanRoot, tags);
     for (const tag of metadata.tags) {
       if (retiredLoadPolicyTags.has(tag.toLowerCase())) {
         report("warning", file, `retired load-policy tag in metadata: ${tag}`);
@@ -1504,12 +2152,43 @@ async function doctor(doctorArgs: string[]): Promise<void> {
         report("warning", file, "Required Routes section has no parseable routes and does not state none");
       }
       for (const requiredPath of required.paths) {
-        if (!(await isFile(path.join(targetRoot, requiredPath)))) {
-          report("error", file, `required route does not resolve: ${requiredPath}`);
+        try {
+          await resolveWorkspaceRelativeFile(requiredPath, targetRoot);
+        } catch (error) {
+          report("error", file, error instanceof Error ? error.message : `required route does not resolve: ${requiredPath}`);
         }
       }
       for (const invalid of required.invalid) {
         report("warning", file, `Required Routes line is not in entry format: ${invalid}`);
+      }
+    }
+
+    const rootWorkflowEntrypoint = samePath(path.dirname(file), path.join(scanRoot, "workflows")) && isIndexFile(file);
+    const workflowContract = !isIndexFile(file) || declaresWorkflowContract(text);
+    if (inferredPrimitive === "workflow" && !rootWorkflowEntrypoint && workflowContract) {
+      for (const finding of validateWorkflowDocument(text)) {
+        report("error", file, finding);
+      }
+    }
+
+    if (inferredPrimitive === "directive" && !isIndexFile(file)) {
+      const appliesTo = readMarkdownHeadingSections(text, "Applies To");
+      if (appliesTo.length !== 1 || !appliesTo[0].body.trim()) {
+        report("error", file, "directive must declare one non-empty Applies To section");
+      } else if (/^-?\s*(?:inherited|none)\b/i.test(appliesTo[0].body.trim())) {
+        report("error", file, "directive applicability must be explicit; inherited/none is reserved for hybrid category entrypoints");
+      }
+      const appliesIndex = headingPosition(text, "Applies To");
+      const axiomsIndex = headingPosition(text, "Axioms");
+      if (appliesIndex !== -1 && axiomsIndex !== -1 && appliesIndex > axiomsIndex) {
+        report("error", file, "directive Applies To must appear before Axioms");
+      }
+    }
+
+    if (isIndexFile(file)) {
+      const axioms = readMarkdownHeadingSections(text, "Axioms");
+      if (axioms.length === 1 && hasMixedInheritanceSentinel(axioms[0].body)) {
+        report("warning", file, "Axioms mixes inherited/none with local axioms; omit the sentinel when adding local axioms");
       }
     }
   }
@@ -1524,21 +2203,91 @@ async function doctor(doctorArgs: string[]): Promise<void> {
     report("warning", file, "not reachable through generated routing");
   }
 
-  const errors = findings.filter((finding) => finding.level === "error");
-  if (json) {
-    console.log(JSON.stringify({ errors: errors.length, warnings: findings.length - errors.length, findings }, null, 2));
-  } else if (findings.length === 0) {
-    console.log(`open-forge doctor: no problems found in ${targetRoot}`);
-  } else {
-    for (const finding of findings) {
-      console.log(`${finding.level}: ${finding.route} - ${finding.message}`);
+  emit();
+}
+
+async function inferPrimitiveTypeFromRoute(file: string, scanRoot: string, explicitFileTags?: string[]): Promise<"workflow" | "directive" | null> {
+  const folder = path.dirname(file);
+  if (!samePath(folder, scanRoot) && !isPathInside(folder, scanRoot)) {
+    return null;
+  }
+  const fileTags = explicitFileTags ?? readMetadata(await fs.readFile(file, "utf8")).tags.map((tag) => tag.toLowerCase());
+  if (["pattern", "guidance", "skill", "workspace", "memory"].some((tag) => fileTags.includes(tag))) return null;
+  const explicitBehaviorTypes = (["workflow", "directive"] as const).filter((tag) => fileTags.includes(tag));
+  if (explicitBehaviorTypes.length === 1) return explicitBehaviorTypes[0];
+  const entrypoint = await findCategoryEntrypoint(folder);
+  if (!entrypoint) return null;
+  const entrypointTags = readMetadata(await fs.readFile(entrypoint, "utf8")).tags.map((tag) => tag.toLowerCase());
+  if (["pattern", "guidance", "skill", "workspace", "memory"].some((tag) => entrypointTags.includes(tag))) return null;
+  const ownedBehaviorTypes = (["workflow", "directive"] as const).filter((tag) => entrypointTags.includes(tag));
+  if (ownedBehaviorTypes.length === 1) return ownedBehaviorTypes[0];
+
+  const relativeFolder = path.relative(scanRoot, folder);
+  const segments = relativeFolder.split(path.sep).filter(Boolean).map((segment) => segment.toLowerCase());
+  const primitiveIndexes = new Map([
+    ["workflow", segments.lastIndexOf("workflows")],
+    ["directive", segments.lastIndexOf("directives")],
+    ["pattern", segments.lastIndexOf("patterns")],
+    ["guidance", segments.lastIndexOf("guidance")],
+    ["skill", segments.lastIndexOf("skills")],
+    ["workspace", segments.lastIndexOf("workspace")],
+    ["memory", segments.lastIndexOf("memory")]
+  ]);
+  const nearest = [...primitiveIndexes.entries()].sort((left, right) => right[1] - left[1])[0];
+  if (!nearest || nearest[1] === -1) return null;
+  return nearest[0] === "workflow" || nearest[0] === "directive" ? nearest[0] : null;
+}
+
+function declaresWorkflowContract(text: string): boolean {
+  return ["Mode", "Goal", "Required Routes", "Constraints", "Steps", "Loop", "Outputs", "Completion"]
+    .some((heading) => readMarkdownHeadingSections(text, heading).length > 0);
+}
+
+function validateWorkflowDocument(text: string): string[] {
+  const workflowHeadingOrder = ["Mode", "Goal", "Required Routes", "Constraints", "Steps", "Loop", "Outputs", "Completion"] as const;
+  const findings: string[] = [];
+  let previous = -1;
+  for (const heading of workflowHeadingOrder) {
+    const sections = readMarkdownHeadingSections(text, heading);
+    if (sections.length !== 1) {
+      findings.push(`workflow must define exactly one ${heading} section`);
+      continue;
     }
-    console.log(`open-forge doctor: ${errors.length} error(s), ${findings.length - errors.length} warning(s)`);
+    if (sections[0].level !== 2) {
+      findings.push(`workflow ${heading} section must use a level-2 Markdown heading`);
+    }
+    const position = headingPosition(text, heading);
+    if (position < previous) {
+      findings.push(`workflow section ${heading} is out of order`);
+    }
+    previous = position;
+    if (!sections[0].body.trim()) {
+      findings.push(`workflow ${heading} section must not be empty${heading === "Constraints" ? "; use - none when no local constraints apply" : ""}`);
+    }
   }
 
-  if (errors.length > 0) {
-    process.exitCode = 1;
+  const mode = readMarkdownHeadingSections(text, "Mode")[0]?.body.trim().toLowerCase() ?? "";
+  if (mode && mode !== "linear" && mode !== "iterative") {
+    findings.push("workflow Mode must be linear or iterative; goal-seeking is expressed through the Goal of an iterative workflow");
   }
+  const constraints = readMarkdownHeadingSections(text, "Constraints")[0]?.body ?? "";
+  if (hasMixedInheritanceSentinel(constraints)) {
+    findings.push("workflow Constraints cannot mix none/inherited with substantive constraints");
+  } else if (headingStatus(readMarkdownHeadingSections(text, "Constraints")) === "declared-inherited") {
+    findings.push("workflow Constraints must state substantive invariants or - none; inherited is not a workflow constraint sentinel");
+  }
+  return findings;
+}
+
+function headingPosition(text: string, title: string): number {
+  const wanted = title.trim().toLowerCase();
+  return scanMarkdownHeadings(text).headings.find((heading) => heading.title.toLowerCase() === wanted)?.line ?? -1;
+}
+
+function hasMixedInheritanceSentinel(body: string): boolean {
+  const lines = body.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  const sentinels = lines.filter((line) => /^-?\s*(?:none|inherited)\b/i.test(line));
+  return sentinels.length > 0 && lines.length > sentinels.length;
 }
 
 async function groupEntrypointCandidates(markdownFiles: string[]): Promise<Map<string, string[]>> {
@@ -1595,7 +2344,8 @@ async function createCategoryRoute(routeArg: string | undefined, targetArg: stri
 
   const created: string[] = [];
   let currentFolder = path.join(targetRoot, agentsDirectoryName);
-  for (const segment of segments) {
+  for (let index = 0; index < segments.length; index += 1) {
+    const segment = segments[index];
     currentFolder = path.join(currentFolder, segment);
     await ensureDir(currentFolder);
     const existing = await findCategoryEntrypoint(currentFolder);
@@ -1604,7 +2354,7 @@ async function createCategoryRoute(routeArg: string | undefined, targetArg: stri
     }
 
     const entrypointFile = path.join(currentFolder, `_${segment}.md`);
-    await fs.writeFile(entrypointFile, categoryEntrypointTemplate(segment, segments[0]));
+    await fs.writeFile(entrypointFile, categoryEntrypointTemplate(segment, segments.slice(0, index + 1)));
     created.push(workspaceRoute(targetRoot, entrypointFile));
   }
 
@@ -1620,8 +2370,11 @@ async function createCategoryRoute(routeArg: string | undefined, targetArg: stri
   console.log(`Rebuilt ${generatedRegions} generated regions. Fill in the TODO descriptions, then run open-forge index again.`);
 }
 
-function categoryEntrypointTemplate(segment: string, topSegment: string): string {
-  const typeTag = categoryTypeTags[topSegment];
+function categoryEntrypointTemplate(segment: string, ancestorSegments: string[]): string {
+  const nearestPrimitiveSegment = [...ancestorSegments]
+    .reverse()
+    .find((candidate) => categoryTypeTags[candidate.toLowerCase()]);
+  const typeTag = nearestPrimitiveSegment ? categoryTypeTags[nearestPrimitiveSegment.toLowerCase()] : undefined;
   const tagsLine = typeTag ? `\n  tags: [${typeTag}]` : "";
   const title = segment
     .split(/[-_.]/)
@@ -1637,6 +2390,10 @@ open-forge:
 # ${title}
 
 TODO - one short definition of this category.
+
+## Axioms
+
+- inherited - No local axioms; loaded ancestor axioms remain active.
 
 ## Entries
 
@@ -1711,29 +2468,6 @@ function createFrameworkEntrypointTemplate(root: string, sourceFile: string): Fr
   return [{ relativePath, sourceFile, folderSegments, anchor }];
 }
 
-async function updateScopedFrameworkEntrypoints(targetRoot: string, templates: FrameworkEntrypointTemplate[]): Promise<number> {
-  const agentsRoot = path.join(targetRoot, agentsDirectoryName);
-  if (!(await isDirectory(agentsRoot))) {
-    return 0;
-  }
-
-  const markdownFiles = await listFiles(agentsRoot, (file) => file.endsWith(".md"));
-  let count = 0;
-
-  for (const targetFile of markdownFiles) {
-    const relativePath = toPosix(path.relative(targetRoot, targetFile));
-    const template = findFrameworkEntrypointTemplate(relativePath, templates);
-    if (!template) {
-      continue;
-    }
-
-    await fs.writeFile(targetFile, await fs.readFile(template.sourceFile, "utf8"));
-    count += 1;
-  }
-
-  return count;
-}
-
 function findFrameworkEntrypointTemplate(relativePath: string, templates: FrameworkEntrypointTemplate[]): FrameworkEntrypointTemplate | null {
   if (!relativePath.startsWith(`${agentsDirectoryName}/`)) {
     return null;
@@ -1801,13 +2535,24 @@ function isCanonicalCategoryEntrypointSegments(segments: string[]): boolean {
 }
 
 async function generateIndexes(root: string): Promise<number> {
+  const plan = await createGeneratedIndexPlan(root);
+  await applyGeneratedIndexPlan(plan);
+  return plan.length;
+}
+
+async function createGeneratedIndexPlan(root: string): Promise<GeneratedIndexPlanEntry[]> {
   const agentsRoot = path.join(root, ".agents");
   const scanRoot = await isDirectory(agentsRoot) ? agentsRoot : root;
-  const markdownFiles = await listFiles(scanRoot, (file) => isIndexFile(file));
+  await assertExtensionIndexRootSafe(root, scanRoot, "Index root");
+  const markdownFiles = await listFiles(scanRoot, (file) => isIndexFile(file), {
+    rejectLinksAndSpecialEntries: true,
+    entryContext: "Index tree"
+  });
   assertUnambiguousCategoryEntrypoints(markdownFiles);
   const plan: GeneratedIndexPlanEntry[] = [];
 
   for (const indexFile of markdownFiles) {
+    await assertExtensionTargetPath(root, indexFile, "Index");
     const directory = path.dirname(indexFile);
 
     if (!(await isDirectory(directory))) {
@@ -1819,9 +2564,14 @@ async function generateIndexes(root: string): Promise<number> {
 
   const loaderFile = path.join(scanRoot, "loader.md");
   if (await isFile(loaderFile)) {
+    await assertExtensionTargetPath(root, loaderFile, "Index");
     plan.push(await planLoaderRegistry(loaderFile, scanRoot));
   }
 
+  return plan;
+}
+
+async function applyGeneratedIndexPlan(plan: GeneratedIndexPlanEntry[]): Promise<GeneratedIndexPlanEntry[]> {
   const written: GeneratedIndexPlanEntry[] = [];
   try {
     for (const entry of plan) {
@@ -1832,13 +2582,16 @@ async function generateIndexes(root: string): Promise<number> {
       await fs.writeFile(entry.file, entry.next);
     }
   } catch (error) {
-    for (const entry of written.reverse()) {
-      await fs.writeFile(entry.file, entry.current);
-    }
+    await rollbackGeneratedIndexPlan(written);
     throw error;
   }
+  return written;
+}
 
-  return plan.length;
+async function rollbackGeneratedIndexPlan(written: GeneratedIndexPlanEntry[]): Promise<void> {
+  for (const entry of [...written].reverse()) {
+    await fs.writeFile(entry.file, entry.current);
+  }
 }
 
 type GeneratedIndexPlanEntry = {
@@ -2355,13 +3108,17 @@ function markedBlockRegex(markerName: string): RegExp {
 async function listFiles(
   root: string,
   predicate: (file: string) => boolean = () => true,
-  options: { rejectLinksAndSpecialEntries?: boolean; entryContext?: string } = {},
+  options: { rejectLinksAndSpecialEntries?: boolean; rejectGitControlEntries?: boolean; entryContext?: string } = {},
 ): Promise<string[]> {
   const entries = await fs.readdir(root, { withFileTypes: true });
   const files: string[] = [];
 
   for (const entry of entries) {
     const fullPath = path.join(root, entry.name);
+
+    if (options.rejectGitControlEntries && entry.name.toLowerCase() === ".git") {
+      throw new Error(`Extension payload may not include Git control path ${fullPath}; apply reviewed repository-control changes separately.`);
+    }
 
     if (options.rejectLinksAndSpecialEntries) {
       const entryContext = options.entryContext ?? "Extension source";
@@ -2534,24 +3291,26 @@ function printHelp(): void {
   console.log(`open-forge
 
 Usage:
-  open-forge install [target]
-  open-forge extend
+  open-forge install [target] [--pro]
+  open-forge extend [--dry-run] [--pro]
   open-forge extend --list
-  open-forge extend --select [target] [--dry-run]
-  open-forge extend --ids <id[,id...]> [target] [--dry-run]
-  open-forge extend <extension-source-or-id> [target] [--dry-run]
+  open-forge extend --select [target] [--dry-run] [--pro]
+  open-forge extend --ids <id[,id...]> [target] [--dry-run] [--pro]
+  open-forge extend <extension-source-or-id> [target] [--dry-run] [--pro]
   open-forge index [target]
   open-forge find [--tag <Tag>]... [--route <path>] [--depth <n>] [--follow-required] [--bodies|--paths|--json] [target]
+  open-forge chain <route> [--heading <title>] [--json] [target]
   open-forge doctor [--json] [target]
   open-forge create category <route-path> [target]
   open-forge create extension <id> [directory]
 
 Commands:
-  install  Copy files into target, update AGENTS.md, and rebuild generated index regions.
-  extend   Resolve and install local or bundled extension overlays; --dry-run previews without writes.
+  install  Install Core behind a clean Git review checkpoint; --pro intentionally bypasses lifecycle guards.
+  extend   Install one dependency closure behind Core/Git checkpoints; --dry-run previews and --pro bypasses lifecycle guards.
   index    Rebuild the loader registry and category generated regions.
   find     List routed files by tag or route; --bodies prints contents, --follow-required includes Required Routes.
-  doctor   Validate route integrity: entrypoints, generated regions, entry resolution, retired tags, required routes.
+  chain    Show loader-to-target route inheritance, optionally extracting any Markdown heading.
+  doctor   Validate route integrity, workflow shape, directive scope, generated regions, and dependencies.
   create   Scaffold a category route chain with entrypoints, or a new extension package.
 `);
 }

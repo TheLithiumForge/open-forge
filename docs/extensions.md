@@ -64,11 +64,11 @@ Extension payload files should use #Extension plus their route type and useful s
 ## Install
 
 ```sh
-open-forge extend [--dry-run]
+open-forge extend [--dry-run] [--pro]
 open-forge extend --list
-open-forge extend --select [target] [--dry-run]
-open-forge extend --ids <id[,id...]> [target] [--dry-run]
-open-forge extend <extension-source-or-id> [target] [--dry-run]
+open-forge extend --select [target] [--dry-run] [--pro]
+open-forge extend --ids <id[,id...]> [target] [--dry-run] [--pro]
+open-forge extend <extension-source-or-id> [target] [--dry-run] [--pro]
 ```
 
 The CLI resolves a local folder first. If no local folder exists and the value is a valid bundled id, it installs the bundled first-party extension.
@@ -78,6 +78,10 @@ Interactive selection requires a TTY. It shows the complete catalogue with paylo
 `--dry-run` can appear anywhere in an extension-install form. It resolves and validates the same source and dependency closure, prints dependency order plus create/update/unchanged counts, lists every planned relative path with its status, and writes nothing. It also validates existing generated-index markers/layout and entrypoint ambiguity that can be determined without applying the payload, but it does not preview generated-index body changes or count generated index writes. It cannot be combined with `--list`.
 
 Both dry runs and normal installs print scope counts for normally routed files; baseline-loading files (`AGENTS.md`, both loader forms, and direct Markdown files in `.agents/directives/`); files in a native skill package's direct `scripts/` subtree; and files outside `.agents/`. A dry run exposes the paths behind those counts so broader or executable effects are visible before installation.
+
+Normal writes are checkpointed. Recognizable Core anchors must already be installed and tracked, and the target scope must be clean in its containing Git repository. Outside Git, an interactive terminal recommends `git init` and requires explicit approval; non-interactive writes stop without mutation. Ignored planned or derived-index paths are rejected because the resulting change could not be reviewed or committed. One command installs one complete selected dependency closure and then asks the user to review and commit it before another mutation. Run roots separately for separate diffs; multi-select or `--ids` deliberately combines them into one review unit.
+
+`--list` and `--dry-run` are read-only and need neither Core nor a clean checkpoint. `--pro` intentionally bypasses only the Git/Core lifecycle guard for expert workflows; strict manifests, dependency closure, containment, portable collision checks, link protection, index validation, local-block preservation, and rollback remain mandatory.
 
 ## Manifest
 
@@ -110,6 +114,7 @@ The CLI builds the complete source plan before writing anything.
 - A planned file cannot also be another planned file's parent.
 - Sources and targets must remain lexically and physically separate. A linked target root, symbolic links or junctions below it, and multiply linked files that may be rewritten are rejected; real-path projection also prevents an aliased target ancestor from redirecting installation back into the extension package. The selected index tree is checked independently even when a payload is empty or writes only outside `.agents/`.
 - Local source roots and payload entries must be regular directories/files; symbolic links, junctions, and special entries are rejected instead of followed or silently omitted.
+- Extension payloads cannot contain `.git` as any path segment or write any `.gitignore`; those controls could mutate repository state or hide the same transaction and must be applied as a separate reviewed change.
 - Existing target files are classified as create, update, or unchanged.
 - Matching marked blocks in existing Markdown targets are preserved.
 - Indexes rebuild once after the complete plan is written.
@@ -132,6 +137,8 @@ This layout is compatible with Microsoft APM's Agent Skills support. APM accepts
 
 Do not assign the same installed skill path to both managers. APM records deployed-file ownership and hashes in its lockfile, while the current Open Forge installer intentionally has no persistent ownership receipt. `open-forge index` changes generated route regions, not the skill package contents, so it is the safe handoff after an external skill install.
 
+Current interoperability is additive, not capability substitution. A bundled workflow dependency still resolves its named Open Forge capability extension; an unrelated direct/APM skill at a distinct route can satisfy a local workflow Required Route and remains byte-unchanged, but an externally owned skill does not automatically satisfy or replace a first-party extension id. Today, use a local workflow/Required Route for the external skill and keep paths distinct. Future stronger options are an explicit reviewed `extension-id=route` satisfaction map or manifest `provides`/`requires` plus ownership receipts.
+
 Official APM references: [package anatomy](https://microsoft.github.io/apm/concepts/package-anatomy/), [skills authoring](https://microsoft.github.io/apm/producer/author-primitives/skills/), and [package installation](https://microsoft.github.io/apm/consumer/install-packages/).
 
 ## Lifecycle Boundary
@@ -140,4 +147,4 @@ Direct overlays are unmanaged: they add or replace files but create no ownership
 
 ## Tests
 
-CLI extension tests install into OS temp folders and inspect the resulting files and generated indexes. First-party integration tests use the real bundled packages, install each advertised extension over a fresh core workspace, run `doctor`, and verify every workflow Required Route resolves. Packaged-layout tests bundle the real CLI and exercise both adjacent `dist/extensions/` and npm-style `src/extensions/` resolution. A direct-install fixture proves a native multiline-frontmatter skill is indexed without an Open Forge wrapper.
+CLI extension tests install into fresh OS temporary folders through real CLI subprocess commands and inspect exit codes, output, target bytes, Git state, and generated indexes. Rejected mutation cases prove no partial output. First-party integration tests use the real bundled packages, install each advertised extension over a fresh core workspace, run `doctor`, and verify every workflow Required Route resolves. Packaged-layout tests bundle the real CLI and exercise both adjacent `dist/extensions/` and npm-style `src/extensions/` resolution. A direct-install fixture proves a native multiline-frontmatter skill is indexed without an Open Forge wrapper. The optional `cli-testing-patterns` extension makes this test shape reusable in installed workspaces.

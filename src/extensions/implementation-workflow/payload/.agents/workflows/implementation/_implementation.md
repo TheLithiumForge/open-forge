@@ -8,6 +8,10 @@ open-forge:
 
 Implementation turns an accepted goal into a verified change that fits the current system.
 
+## Mode
+
+iterative
+
 ## Goal
 
 - outcome: the requested change exists and fits the current system, patterns, and directives

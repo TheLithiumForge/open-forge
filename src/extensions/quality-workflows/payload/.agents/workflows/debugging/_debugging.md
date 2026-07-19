@@ -8,6 +8,10 @@ open-forge:
 
 Debugging turns a symptom into a reproducible root cause and, when authorized, a verified minimal fix.
 
+## Mode
+
+iterative
+
 ## Goal
 
 - outcome: a root-cause explanation supported by evidence, plus an authorized fix and regression proof when requested

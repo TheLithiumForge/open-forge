@@ -1,6 +1,6 @@
 {
   "name": "Vision Workflow",
-  "description": "Shape intent into core value, a first useful version, non-goals, risks, and growth direction",
+  "description": "Shape intent and a first useful version, then derive provenance-labelled supporting routes for explicit user accord",
   "version": "0.1.0",
   "dependencies": ["vision-capability"]
 }

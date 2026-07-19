@@ -8,6 +8,10 @@ open-forge:
 
 Refactoring improves internal design under explicit behavior-preservation evidence.
 
+## Mode
+
+iterative
+
 ## Goal
 
 - outcome: simpler or safer internal structure with intended observable behavior preserved

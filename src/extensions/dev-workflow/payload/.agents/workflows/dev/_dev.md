@@ -8,6 +8,10 @@ open-forge:
 
 Development Cycle delivers one concrete change end to end with an evidence-driven loop that adapts test-first or implement-first ordering to the work.
 
+## Mode
+
+iterative
+
 ## Goal
 
 - outcome: the accepted behavior or deliverable exists, fits the current system, and is guarded by proportionate evidence

@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "experimentId": "workflow-first-support-v1",
+  "caseId": "no-match-direct-choice",
+  "armId": "core-vision-architecture",
+  "replicate": 0,
+  "evidenceClass": "engineering-smoke",
+  "sourceRepo": "../../../..",
+  "components": [
+    {
+      "name": "core",
+      "source": "../../../../src/open-forge",
+      "destination": ""
+    },
+    {
+      "name": "vision-capability",
+      "source": "../../../../src/extensions/vision-capability/payload",
+      "destination": ""
+    },
+    {
+      "name": "vision-workflow",
+      "source": "../../../../src/extensions/vision-workflow/payload",
+      "destination": ""
+    },
+    {
+      "name": "architecture-capability",
+      "source": "../../../../src/extensions/architecture-capability/payload",
+      "destination": ""
+    },
+    {
+      "name": "architecture-workflow",
+      "source": "../../../../src/extensions/architecture-workflow/payload",
+      "destination": ""
+    },
+    {
+      "name": "scenario",
+      "source": "payload/localization",
+      "destination": ""
+    }
+  ],
+  "overrides": [],
+  "inputs": {
+    "cli": {
+      "path": "../../../../src/cli/cli.ts",
+      "invocation": ["{runtime}", "{cli}", "index", "{workspace}"]
+    },
+    "prompt": {
+      "path": "prompts/no-match-direct-choice.txt"
+    },
+    "rubric": {
+      "path": "rubric.md"
+    }
+  },
+  "model": {
+    "provider": "unassigned",
+    "id": "replace-before-run",
+    "revision": "unrun",
+    "settings": {
+      "scenarioDefinitionOnly": true
+    }
+  },
+  "runtime": {
+    "name": "unassigned-external-worker",
+    "version": "unrun",
+    "adapter": "manual-frozen-script",
+    "settings": {
+      "scenarioStatus": "unrun",
+      "interaction": "Follow only the no-match-direct-choice section of the snapshotted rubric.",
+      "openForgeCommand": {
+        "available": false,
+        "delivery": "The runner composition CLI is not automatically provisioned to the worker."
+      }
+    }
+  },
+  "isolation": {
+    "freshContext": "unverified",
+    "inheritedContext": "unknown",
+    "workerReceivesOnlyWorkspace": false,
+    "network": "unknown",
+    "filesystem": "unknown"
+  },
+  "controls": {
+    "planned": false,
+    "randomized": false,
+    "declaredTreatmentOnly": false,
+    "replicatePlanned": false,
+    "planId": null,
+    "planSha256": null
+  }
+}

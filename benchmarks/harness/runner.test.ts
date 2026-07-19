@@ -2,6 +2,7 @@ import { afterEach, describe, expect, test } from "bun:test";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import {
   buildTreeManifest,
   finalizeRun,
@@ -13,6 +14,7 @@ import {
   validateEvaluationDocument,
   validateResultDocument,
   validateRun,
+  validateRunSpecDocument,
 } from "./runner.ts";
 
 const temporaryRoots: string[] = [];
@@ -476,6 +478,128 @@ await fs.writeFile(path.join(workspace, ".git", "hooks", "pre-commit"), "malicio
       notes: [],
     })).toThrow("must match seed-");
   });
+
+  test("validates and prepares the explicitly unrun workflow-first behavior scenarios", async () => {
+    const sourceScenarioDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "scenarios", "workflow-first");
+    const sourceRepo = path.resolve(sourceScenarioDir, "../../../..");
+    const cases = [
+      {
+        spec: "run-spec.exact-architecture-greenfield.json",
+        caseId: "exact-architecture-greenfield",
+        workflows: ["architecture/_architecture.md"],
+        absent: ["vision/_vision.md", "implementation/_implementation.md"],
+      },
+      {
+        spec: "run-spec.exact-vision-support.json",
+        caseId: "exact-vision-support",
+        workflows: ["vision/_vision.md"],
+        absent: ["architecture/_architecture.md", "implementation/_implementation.md"],
+      },
+      {
+        spec: "run-spec.no-match-direct-choice.json",
+        caseId: "no-match-direct-choice",
+        workflows: ["vision/_vision.md", "architecture/_architecture.md"],
+        absent: ["implementation/_implementation.md"],
+      },
+      {
+        spec: "run-spec.explicit-no-workflow.json",
+        caseId: "explicit-no-workflow",
+        workflows: ["vision/_vision.md", "architecture/_architecture.md"],
+        absent: ["implementation/_implementation.md"],
+      },
+      {
+        spec: "run-spec.ordered-handoffs.json",
+        caseId: "ordered-handoffs",
+        workflows: ["vision/_vision.md", "architecture/_architecture.md", "implementation/_implementation.md"],
+        absent: [],
+      },
+    ];
+    const temporary = await createTemporaryRoot();
+    const isolatedRepo = path.join(temporary, "source-repo");
+    const scenarioDir = path.join(isolatedRepo, "benchmarks", "harness", "scenarios", "workflow-first");
+    const runsRoot = path.join(temporary, "workflow-first-runs");
+    const seenCaseIds = new Set<string>();
+
+    await fs.mkdir(path.join(isolatedRepo, "src", "cli"), { recursive: true });
+    await fs.mkdir(path.dirname(scenarioDir), { recursive: true });
+    await fs.copyFile(path.join(sourceRepo, "src", "cli", "cli.ts"), path.join(isolatedRepo, "src", "cli", "cli.ts"));
+    await fs.cp(path.join(sourceRepo, "src", "open-forge"), path.join(isolatedRepo, "src", "open-forge"), { recursive: true });
+    for (const extension of [
+      "architecture-capability",
+      "architecture-workflow",
+      "vision-capability",
+      "vision-workflow",
+      "implementation-capability",
+      "implementation-workflow",
+    ]) {
+      await fs.cp(
+        path.join(sourceRepo, "src", "extensions", extension),
+        path.join(isolatedRepo, "src", "extensions", extension),
+        { recursive: true },
+      );
+    }
+    await fs.cp(sourceScenarioDir, scenarioDir, { recursive: true });
+    await run(isolatedRepo, ["git", "init", "--quiet"]);
+    await run(isolatedRepo, ["git", "config", "user.name", "Benchmark Scenario Test"]);
+    await run(isolatedRepo, ["git", "config", "user.email", "benchmark-scenario-test@example.invalid"]);
+    await run(isolatedRepo, ["git", "add", "-A"]);
+    await run(isolatedRepo, ["git", "commit", "--quiet", "-m", "isolated scenario fixture"]);
+
+    for (const scenario of cases) {
+      const specPath = path.join(scenarioDir, scenario.spec);
+      const sourceDocument = JSON.parse(await fs.readFile(specPath, "utf8"));
+      const spec = validateRunSpecDocument(sourceDocument, scenarioDir);
+
+      expect(spec.caseId).toBe(scenario.caseId);
+      expect(seenCaseIds.has(spec.caseId)).toBe(false);
+      seenCaseIds.add(spec.caseId);
+      expect(spec.evidenceClass).toBe("engineering-smoke");
+      expect(spec.model).toMatchObject({ provider: "unassigned", id: "replace-before-run", revision: "unrun" });
+      expect(spec.runtime).toMatchObject({
+        name: "unassigned-external-worker",
+        version: "unrun",
+        settings: { scenarioStatus: "unrun" },
+      });
+      expect(spec.isolation).toEqual({
+        freshContext: "unverified",
+        inheritedContext: "unknown",
+        workerReceivesOnlyWorkspace: false,
+        network: "unknown",
+        filesystem: "unknown",
+      });
+      expect(spec.controls).toEqual({
+        planned: false,
+        randomized: false,
+        declaredTreatmentOnly: false,
+        replicatePlanned: false,
+        planId: null,
+        planSha256: null,
+      });
+
+      for (const declaredPath of [
+        spec.sourceRepo,
+        spec.inputs.cli.path,
+        spec.inputs.prompt.path,
+        spec.inputs.rubric.path,
+        ...spec.components.map((component) => component.source),
+      ]) {
+        expect(await fs.stat(declaredPath)).toBeTruthy();
+      }
+
+      const prepared = await prepareRun({ specPath, runsRoot });
+      expect(await validateRun(prepared.runDir, validationCredentials(prepared))).toEqual({ ok: true, errors: [] });
+      expect(await fs.readFile(prepared.workerPromptPath, "utf8")).toBe(await fs.readFile(spec.inputs.prompt.path, "utf8"));
+
+      for (const workflow of scenario.workflows) {
+        expect(await exists(path.join(prepared.workspaceDir, ".agents", "workflows", ...workflow.split("/")))).toBe(true);
+      }
+      for (const workflow of scenario.absent) {
+        expect(await exists(path.join(prepared.workspaceDir, ".agents", "workflows", ...workflow.split("/")))).toBe(false);
+      }
+    }
+
+    expect(seenCaseIds.size).toBe(cases.length);
+  }, 60_000);
 
   test("never grants P0 causal eligibility from declared controls and a text isolation receipt", async () => {
     const fixture = await createFixture();

@@ -1,0 +1,5 @@
+Work only in the current working directory and verify it before your first write. Read AGENTS.md and follow the workspace's routed instructions.
+
+For this request, do not use, recommend, or ask me about a workflow. Proceed directly. Copyedit COPY.md and produce a careful German localization at LOCALIZED.de.md. Preserve the meaning and Markdown structure, keep command names and `entrypoint` in English, add the requested short glossary, and call out any wording whose product meaning is ambiguous.
+
+When you stop, report the direct-execution choice, the file written, and the checks you performed.

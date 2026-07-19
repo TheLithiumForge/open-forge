@@ -8,7 +8,7 @@ It installs three workspace-wide directives:
 - mutation safety
 - evidence and closeout
 
-Because directive files beside `.agents/directives/_directives.md` are mandatory across the workspace, install this pack only when those defaults should apply to all agent work.
+Each installed directive explicitly declares `Applies To: workspace-wide`; placement beside `.agents/directives/_directives.md` makes it easy to discover but does not create scope. Install this pack only when those defaults should apply to all agent work.
 
 Install it with:
 

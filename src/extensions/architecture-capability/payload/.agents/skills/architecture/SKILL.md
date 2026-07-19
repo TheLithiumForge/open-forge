@@ -16,6 +16,8 @@ Reason about structure before committing to a direction or transition.
 ## References
 
 - `references/map-current-system.md` - Read before proposing architecture, large restructures, transitions, or structural documentation.
+- `references/bootstrap-greenfield.md` - Read when no current architecture exists or an unstructured project needs an early structural baseline.
 - `references/compare-architecture-options.md` - Read when multiple structural directions are plausible or a preferred option needs pressure testing.
 - `references/frame-architecture-decision.md` - Read when an architecture choice is accepted or needs preparing for user confirmation.
+- `references/derive-supporting-routes.md` - Read when a direction should produce candidate directives, patterns, guidance, workspace routes, decisions, or operational support material.
 - `references/slice-migration.md` - Read when the selected direction needs staged execution, refactoring, adoption, or migration slices.

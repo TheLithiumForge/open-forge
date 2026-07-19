@@ -8,6 +8,10 @@ open-forge:
 
 Close work with evidence that matches the claims being made.
 
+## Applies To
+
+- Workspace-wide closeout for any task that reports a changed artifact, verified result, diagnosis, recommendation, or completion claim.
+
 ## Axioms
 
 - Run or inspect proportionate verification for the changed behavior, artifact, or conclusion before calling the work complete.
