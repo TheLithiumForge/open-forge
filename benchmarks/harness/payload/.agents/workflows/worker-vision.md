@@ -8,6 +8,10 @@ open-forge:
 
 Worker vision turns a rough user idea into recorded direction that a cold future session can build from.
 
+## Mode
+
+iterative
+
 ## Goal
 
 - outcome: an accepted direction - problem, core value, MVP boundary, non-goals, growth directions - recorded in routed memory

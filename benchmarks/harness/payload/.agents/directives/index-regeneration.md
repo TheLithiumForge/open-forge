@@ -8,6 +8,10 @@ open-forge:
 
 The benchmark arm or runtime must declare whether an `open-forge` CLI is available. Do not infer a global installation.
 
+## Applies To
+
+- Benchmark worker tasks that add, move, remove, or repair routed Open Forge Markdown and its generated indexes.
+
 ## Axioms
 
 - When the declared runtime provides `open-forge`, after adding, moving, or removing routed Markdown files run `open-forge index .` from the workspace root to regenerate index regions.

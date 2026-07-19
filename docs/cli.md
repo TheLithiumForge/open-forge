@@ -7,14 +7,15 @@ The distributed CLI runs on Node.js.
 ## Commands
 
 ```sh
-open-forge install [target]
-open-forge extend [--dry-run]
+open-forge install [target] [--pro]
+open-forge extend [--dry-run] [--pro]
 open-forge extend --list
-open-forge extend --select [target] [--dry-run]
-open-forge extend --ids <id[,id...]> [target] [--dry-run]
-open-forge extend <extension-source-or-id> [target] [--dry-run]
+open-forge extend --select [target] [--dry-run] [--pro]
+open-forge extend --ids <id[,id...]> [target] [--dry-run] [--pro]
+open-forge extend <extension-source-or-id> [target] [--dry-run] [--pro]
 open-forge index [target]
 open-forge find [--tag <Tag>]... [--route <path>] [--depth <n>] [--follow-required] [--bodies|--paths|--json] [target]
+open-forge chain <route> [--heading <title>] [--json] [target]
 open-forge doctor [--json] [target]
 open-forge create category <route-path> [target]
 open-forge create extension <id> [directory]
@@ -27,9 +28,16 @@ If `target` is omitted, the current directory is used.
 ```sh
 open-forge install
 open-forge install {target-folder}
+open-forge install {target-folder} --pro
 ```
 
 `install` is idempotent.
+
+By default, `install` is the first review checkpoint. It detects the Git repository that contains the target and requires the target scope to be clean before writing. If the target is outside Git, an interactive terminal asks for explicit confirmation after recommending `git init`; a non-interactive invocation stops without mutation. Planned and derived index files ignored by Git are also rejected because they cannot produce a reviewable checkpoint.
+
+The command installs only the Open Forge base payload: #Core plus the minimum #Memory routes needed for resumability, with no optional extensions. After it succeeds, review `git diff` and `git status`, then commit that base baseline before installing optional extensions. The CLI prints the catalogue and selector commands for the next step. A no-op reinstall reports that no commit is needed.
+
+`--pro` is an explicit expert bypass for the Git-repository, clean-checkpoint, Git-visible-output, and Core-first lifecycle guards. It does not bypass manifest validation, dependency resolution, source or target containment, collision checks, link and hardlink protection, index validation, local-block preservation, or rollback. Core managed, scoped-framework, and generated-index writes are preflighted and rolled back together on failure. Use `--pro` when combining diffs is an intentional expert decision, not as a generic force flag.
 
 Running it will:
 
@@ -75,7 +83,7 @@ Manual edits to framework files are visible in git diffs after install. Prefer s
 ## extend
 
 ```sh
-open-forge extend [--dry-run]
+open-forge extend [--dry-run] [--pro]
 open-forge extend {extension-source}
 open-forge extend {bundled-extension-id}
 open-forge extend {extension-source} {target-folder}
@@ -86,6 +94,7 @@ open-forge extend --ids {bundled-extension-id},{bundled-extension-id}
 open-forge extend --ids {bundled-extension-id},{bundled-extension-id} {target-folder}
 open-forge extend --dry-run {extension-source-or-id} {target-folder}
 open-forge extend --ids {bundled-extension-id},{bundled-extension-id} --dry-run {target-folder}
+open-forge extend {bundled-extension-id} {target-folder} --pro
 ```
 
 `extend` resolves an extension and its bundled dependencies, plans the complete overlay, installs it into the target, and rebuilds generated index regions. Extension is a content-agnostic installation unit: the payload may be one skill, one workflow, directives, other routed material, support files, or any mix. Dependency resolution and installation are offline; the CLI reads only local folders and first-party extensions already shipped in the installed package.
@@ -163,7 +172,11 @@ Use `open-forge extend` or `open-forge extend --select {target-folder}` to selec
 
 Use `open-forge extend --ids {id},{id} {target-folder}` for unattended bundled extension installs. The CLI resolves transitive dependencies from the bundled first-party extensions, orders dependencies before dependents, deduplicates repeated packages, and runs index generation once after installing the complete plan.
 
-Before writing, the CLI validates strict manifest fields and reads every source file in the resolved extension set. Relative paths are Unicode-normalized and case-folded for portable composition, so case-only aliases within the plan or already in the target are collisions even on a case-sensitive host. If two extensions provide the same portable path with different bytes, installation stops; if the bytes are identical, that file is deduplicated. The plan also rejects a file that would be another planned file's parent, lexical or real-path source containment violations, a linked target root, symbolic links or junctions below that root, and multiply linked files that may be rewritten. The selected index tree is validated independently, including for an empty or outside-`.agents` payload. Existing target files are then classified as create, update, or unchanged; marked local blocks in Markdown remain preserved.
+Normal extension installation requires recognizable Open Forge Core anchors (`AGENTS.md` with the managed Open Forge block and `.agents/loader.md` with the Open Forge loader contract). Inside Git, both anchors must be tracked, the target scope must be clean, and planned output must remain Git-visible. Outside Git, an interactive terminal recommends `git init` and requires explicit approval; a non-interactive write stops without mutation. One invocation installs one selected dependency closure as one review unit. After success, the CLI asks the user to review and commit that unit before another mutation. To keep independent extensions in independently reviewable diffs, install them in separate commands; `--ids` and multi-select deliberately combine their requested roots and automatically required dependencies into one unit.
+
+Read-only catalogue listing and `--dry-run` remain available before Core and do not require Git cleanliness. `--pro` intentionally bypasses the Git/Core lifecycle guard for normal writes while all installation-safety preflight remains active.
+
+Before writing, the CLI validates strict manifest fields and reads every source file in the resolved extension set. Relative paths are Unicode-normalized and case-folded for portable composition, so case-only aliases within the plan or already in the target are collisions even on a case-sensitive host. If two extensions provide the same portable path with different bytes, installation stops; if the bytes are identical, that file is deduplicated. The plan also rejects a file that would be another planned file's parent, lexical or real-path source containment violations, a linked target root, symbolic links or junctions below that root, multiply linked files that may be rewritten, and Git control paths: `.git` in any path segment or `.gitignore` at any depth. Those controls could hide or mutate the transaction and must be applied as separate reviewed changes. The selected index tree is validated independently, including for an empty or outside-`.agents` payload. Existing target files are then classified as create, update, or unchanged; marked local blocks in Markdown remain preserved.
 
 Payload application and index regeneration are one in-process operation. A payload write failure restores overwritten files, removes files created by the attempt, and cleans up newly created empty directories. Index changes are planned before their write phase; an index validation or write failure restores index files and rolls back the payload application. This is best-effort process-level rollback, not a persistent journal or crash-recovery mechanism.
 
@@ -188,7 +201,7 @@ Normal installs print the four counts; dry runs add the per-file plan so baselin
 
 Extension payload files normally use #Extension plus their route type and useful scope tags. Do not use load-policy tags in extension payloads unless the extension intentionally adds baseline-loaded material.
 
-This remains a local, install-only extension command. It has no external registry or network resolution, lock file, persistent ownership record, crash-recovery journal, version solver, update, remove, or migration lifecycle. Route-template scaffolding is also still future work. Use `--dry-run`, install intentionally, then inspect the git diff.
+This remains a local, install-only extension command. It has no external registry or network resolution, lock file, persistent ownership record, crash-recovery journal, version solver, update, remove, or migration lifecycle. Route-template scaffolding is also still future work. Use `--dry-run`, install intentionally, then inspect and commit the Git diff before the next extension transaction.
 
 ## index
 
@@ -203,7 +216,7 @@ When `.agents/` exists, the CLI scans `.agents/`. Otherwise it scans the target 
 
 When `loader.md` exists at the scan root, the CLI generates one loader `entry` for every direct child folder that contains one recognized category `entrypoint`. Loader descriptions and tags come from the category `entrypoint`, preferring supported metadata and falling back to its first body description and #Index.
 
-In an installed workspace, loader paths are concrete and relative to the target folder, such as `.agents/workspace/_workspace.md`. The target folder is the logical workspace root even when `.agents/` is a symlink or its contents come from a submodule. The CLI does not derive routing roots from Git boundaries.
+In an installed workspace, loader paths are concrete and relative to the target folder, such as `.agents/workspace/_workspace.md`. Git and submodule boundaries do not redefine that logical root. For deterministic CLI reads and writes, the route tree must also be physically contained below the target: a symlinked or junction-mounted `.agents/` tree that resolves outside it is rejected. Plain Markdown agents may still follow an explicitly trusted external mount, but the CLI will not read or mutate through that trust boundary.
 
 Nested categories stay behind their parent category `entrypoint`. Folders without a matching `entrypoint` do not become loader routes.
 
@@ -358,7 +371,23 @@ open-forge find --tag Workflow --json
 - `--follow-required` adds every target of the selected files' `## Required Routes` sections. A required route that cannot be read fails the command - it is a blocker, not a skip.
 - Output is entry lines by default; `--paths` prints paths only, `--bodies` prints file contents with `----- {route} -----` separators, `--json` prints structured output.
 
-The closeout recheck is one command: `open-forge find --tag KeepInMind --bodies`.
+`open-forge find --tag KeepInMind --bodies` is workspace-wide routed discovery, not an active-context receipt. Use it to find candidate closeout routes, then recheck the #KeepInMind entries that were actually loaded through the active parent chain. A future resolver receipt may make that active-set check deterministic.
+
+Explicit routes, generated-entry expansion, and Required Routes are lexical and physical containment boundaries. `find` rejects absolute paths, parent traversal, drive changes, and real-path link escapes from the selected target. Global routed discovery likewise rejects linked or special entries before reading them.
+
+## chain
+
+```sh
+open-forge chain .agents/patterns/react/components.md
+open-forge chain .agents/patterns/react/components.md --heading Axioms
+open-forge chain .agents/workflows/dev/_dev.md --heading Constraints --json
+```
+
+`chain` explains inherited Markdown context for one routed file. It emits the loader, each visible ancestor category `entrypoint`, a native skill's `SKILL.md` when the target is inside a skill package, the target, and every existing `.overwrite.md` companion in base-then-overwrite order. With no `--heading`, it lists the route chain. With `--heading`, it also reports every matching section from every chain member as `content`, `absent`, `empty`, `declared-inherited`, or `declared-none`.
+
+The heading is arbitrary, so the same command can inspect Axioms, Applies To, Mode, Goal, Constraints, or a local category heading. A missing, empty, `inherited`, or `none` local Axioms section contributes no local axioms; it never disables loaded ancestor axioms. `--json` provides stable structured output for tools.
+
+Routes are resolved inside the selected logical target. Absolute paths, parent traversal, drive changes, and real-path or symlink escapes are rejected without mutation. `chain` reports the currently visible file chain; run `doctor` when route-index continuity itself must be validated.
 
 ## doctor
 
@@ -373,12 +402,17 @@ open-forge doctor --json
 - malformed generated-region markers (error)
 - generated `entries` that do not resolve to files (error)
 - `Required Routes` that do not resolve (error), or sections that state neither routes nor `none` (warning)
+- workflow recipes whose level-2, ordered Mode, Goal, Required Routes, Constraints, Steps, Loop, Outputs, and Completion contract is missing or invalid (error); category-only workflow `entrypoints` may omit the recipe contract until they declare any recipe heading
+- directive files without one non-empty `Applies To` section before Axioms (error)
+- category Axioms sections that mix an inherited/none sentinel with substantive local axioms (warning)
 - stale generated regions that no longer match what `index` would produce (warning; run `open-forge index`)
 - retired load-policy tags in metadata (warning)
 - `.overwrite.md` companions without a base file (warning)
 - markdown files not reachable through generated routing (warning)
 
 Exit code is non-zero when errors exist, so `doctor` is safe for CI. `index` remains the repair tool for generated regions; `doctor` only reports.
+
+`doctor` uses the same target-containment boundary as `find`: an external symlink/junction route tree or linked routed entry is an error and is not consumed as workspace context.
 
 ## create
 
@@ -388,6 +422,6 @@ open-forge create category .agents/memory/crystallized/mobile-app
 open-forge create extension my-patterns
 ```
 
-`create category` scaffolds a route chain: every missing folder in the path gets a canonical `_{folder}.md` `entrypoint` with placeholder metadata, a type tag derived from the top category, and an empty generated region, then all indexes are rebuilt. It refuses paths that are already routable. Fill in the TODO descriptions, then run `open-forge index` again.
+`create category` scaffolds a route chain: every missing folder in the path gets a canonical `_{folder}.md` `entrypoint` with placeholder metadata, a type tag inherited from the nearest recognized primitive segment, an explicit inherited Axioms sentinel, and an empty generated region, then all indexes are rebuilt. This lets `workflows/frontend/patterns/` remain a Pattern route inside a workflow scope. It refuses paths that are already routable. Fill in the TODO descriptions, then run `open-forge index` again. A local category may instead omit Axioms, leave it empty, or state `none`; all four shapes mean no local additions while loaded ancestor axioms remain active.
 
 `create extension` scaffolds an extension package: `extension.json` with starter `version` and `dependencies` fields, a README with authoring rules, and an empty `payload/.agents/` tree ready for routed files. Install it with `open-forge extend <directory-or-id>`.

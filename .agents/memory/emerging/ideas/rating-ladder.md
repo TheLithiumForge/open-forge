@@ -6,43 +6,61 @@ open-forge:
 
 # Rating Ladder: The Path To S And S++
 
-Captured 2026-07-09 from the post-hardening review. Current ratings in parentheses. The through-line: every S means "the claim is measured, not asserted"; every S++ means "the measurement is automatic and survives without the maintainer". The benchmark seeds are the instrument for most of these.
+Captured 2026-07-09 and rebaselined 2026-07-17. The governing rule remains: S means the important claim is measured rather than asserted; S++ means the measurement is automatic, independently reproducible, and survives without the maintainer.
 
-## Core Routing (A)
+## Shipped Baseline
 
-- S: a published, versioned routing spec a third party could reimplement from docs alone, plus route-chain integrity validation (every folder reachable, every entry resolvable, zero dead routes) running in CI.
-- S++: the contract proven by a second independent runtime or tool implementation (the `rune:` compatibility promise made real), with a conformance test suite both implementations pass.
+- Routing has `find`, `chain`, `doctor`, generated-index validation, containment checks, overwrite order, and explicit ancestor-Axioms inspection.
+- Workflows use early Mode (`linear` or `iterative`), Goal, Required Routes, mandatory Constraints, Steps, Loop, Outputs, and Completion. The loader is workflow-first and preserves explicit direct-execution opt-out.
+- The 18-unit catalogue composes skill-only, workflow-only, directive-only, pattern-only, mixed, and dependency-only extensions. Dependencies auto-select and native skills can coexist additively with direct/APM installation.
+- Install is Core-first and Git-checkpointed by default. `--pro` bypasses lifecycle gates only; path, link, collision, index, and rollback safety remain active.
+- CLI contracts run as real subprocesses in fresh OS temporary roots with real Git, packaged-layout smoke tests, no-partial-write assertions, and real first-party integration.
+- The harness captures reproducible engineering evidence, but existing runs are raw legacy evidence rather than causal proof.
 
-## Load Policy (B+)
+## Core Routing And Active Context (A)
 
-- S: two consecutive seeded benchmark generations with near-100% #LoadNow chain compliance and #KeepInMind closeout compliance across multiple models.
-- S++: full compliance made cheaper than partial for any agent via first-party `open-forge dump --follow-required`, plus a measured per-tier token budget that stays flat as workspaces grow.
+- S gate: publish a versioned routing/conformance spec and run route-chain, containment, overwrite, Required Routes, and token-budget checks in CI.
+- S++ gate: prove the spec with an independently implemented resolver and shared conformance corpus.
+- Option A — minimal: extend `chain` with `--follow-required`, effective heading output, cost estimate, and a stable context digest.
+- Option B — robust: add an active-context receipt that records selected workflow, ancestors, overwrites, Required Routes, opt-outs, and closeout obligations; `find --tag KeepInMind` remains discovery only.
+- Option C — independent: publish fixtures and a language-neutral JSON schema so Rune or another implementation can produce byte-comparable receipts.
 
-## Memory (A-)
+## Workflow Compliance (B+)
 
-- S: the observations rework shipped and evidenced - a seeded round where an agent spontaneously detects recurrence and proposes a promotion a human accepts; the self-growth loop actually closing.
-- S++: demonstrated long-horizon value - a workspace through dozens of sessions where crystallized memory measurably changes agent behavior (fewer rediscoveries, correct decision citations) versus a memoryless baseline.
+- S gate: repeated multi-model seeds show exact-match selection, ordered handoffs, no-match recommendation/direct choice, explicit opt-out, Required Routes loading, and Completion closeout without harness prompting.
+- S++ gate: multi-workflow goals remain reconstructable from workflow receipts and handoffs alone, including interruption and resumption.
+- Option A — low ceremony: add benchmark seeds for the four loader branches and greenfield architecture/vision support-bundle behavior.
+- Option B — assisted: `open-forge start <workflow>` emits a reviewable activation receipt but never becomes a runtime orchestrator.
+- Option C — strongest: a runtime adapter consumes the same receipt schema while Markdown remains authoritative and direct execution remains possible.
 
-## Workflows (B-)
+## Memory And Organic Growth (A-)
 
-- S: the redesign accepted, applied to workflow-essentials and the seeds, and a benchmark round showing Required Routes loading at eight-of-eight levels without harness babysitting, across deterministic, iterative, and goal-seeking workflows.
-- S++: orchestration proven - the v6 orchestrator-worker pattern completing a multi-workflow goal with clean handoffs, where the audit trail alone (named workflows, completion checklists) reconstructs what happened without reading transcripts.
+- S gate: longitudinal evidence shows observations being proposed, accepted, promoted, superseded, or rejected with correct provenance and user accord.
+- S++ gate: dozens of sessions show fewer rediscoveries and better decision citation than a memoryless control without uncontrolled context growth.
+- Option A: periodic human review queues over emerging memory.
+- Option B: advisory staleness/recurrence signals with no automatic promotion.
+- Option C: comparative cohort studies across real repositories, with privacy-preserving aggregate metrics.
 
-## Extensions (B-)
+## Extensions And Lifecycle (A-)
 
-- S: the skill-sharing mechanism designed and shipped (declare by name, build copies, install dedupes into `skills/`), plus update and remove lifecycle.
-- S++: a third-party author ships a working extension without asking the maintainer anything.
+- S gate: visible install receipts, provenance, compatibility checks, update/remove/migration, and a third-party authoring/conformance kit.
+- S++ gate: independent authors ship, upgrade, and remove extensions safely across supported agents and package layouts without maintainer help.
+- Option A — Git-native: one receipt per installed dependency closure, content hashes, and uninstall/update as reviewed inverse plans.
+- Option B — lockfile: a visible Open Forge lock records owners, versions, hashes, capabilities, and migrations.
+- Option C — capability model: manifests declare `provides`/`requires`, allowing an APM-owned skill to satisfy a workflow dependency only through an explicit reviewed mapping. Until then, APM interop is distinct-path additive, not substitutional.
 
-## Governance (B)
+## Governance And Evidence (B+)
 
-- S: the concepts-versus-descriptors sweep done, plus CI that mechanically verifies alignment checks against installed files, turning "aligned when" from prose into a gate.
-- S++: governance that provably cannot drift - descriptor changes fail CI until the payload matches in the same commit.
+- S gate: descriptor/payload alignment, skill validation, package layout, CLI contracts, and harness schemas are required CI gates; behavioral claims identify evidence class and limitations.
+- S++ gate: independent conformance plus repeated multi-model, multi-repository, longitudinal evidence detects regressions before release.
+- Option A: fast per-change static/CLI conformance and nightly behavioral seeds.
+- Option B: release-candidate matrix across models, operating systems, clean/dirty repos, monorepos, interruptions, and adversarial routes.
+- Option C: an external evaluator signs public evidence bundles and reproduces the report from captured inputs.
 
-## CLI And Tests (B+)
+## Shortest Credible Path
 
-- S: `open-forge dump` shipped from the variable-dump-tool seed evidence, and extension lifecycle covered by real temp-directory install tests.
-- S++: the benchmark harness runs as CI on payload changes - every framework edit gets a compliance score before merge; regression-tested behavior, not just regression-tested text.
-
-## Shortest Path To The Biggest Jump
-
-Accept the workflow redesign, migrate the extension and seeds, run one benchmark generation, and let the numbers say whether the redesign holds.
+1. Measure workflow-first behavior with the four loader branches and greenfield support derivation.
+2. Replace global-closeout ambiguity with an active-context receipt and digest.
+3. Add Git-native ownership receipts plus update/remove before adding a registry.
+4. Publish a conformance corpus and obtain one independent implementation.
+5. Run repeated multi-model and longitudinal evaluations. Until those pass, the framework can be an S-tier design candidate but should not claim S++ outcomes.

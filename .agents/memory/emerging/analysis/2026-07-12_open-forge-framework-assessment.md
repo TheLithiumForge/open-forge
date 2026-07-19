@@ -6,13 +6,15 @@ open-forge:
 
 # Open Forge Assessment: From SDD To Context-Routed Development
 
-Date: 2026-07-12. Revised: 2026-07-13 with an expanded naming atlas and implementable S++ decision options. Status: candidate analysis, not accepted current truth.
+Date: 2026-07-12. Revised: 2026-07-13 with an expanded naming atlas and implementable S++ decision options; implementation addendum 2026-07-17. Status: candidate analysis, not accepted current truth.
 
 ## Technical Summary
 
+> **Snapshot notice:** The verdict and priority list in this opening section describe the 2026-07-12 implementation. Containment, in-process transaction rollback, dependency closure, collision handling, and Git review checkpoints were materially improved on 2026-07-17; read the [2026-07-17 Implementation Addendum](#2026-07-17-implementation-addendum) for current shipped state before using this snapshot to prioritize work.
+
 Open Forge has evolved beyond spec-driven development. Its defining unit is no longer the specification; it is the smallest useful set of routed context for a goal. The best precise category name remains **Context-Routed Development**. The strongest organic companion is **Routed Context Cultivation**; the leading experimental frontier coinage is **Routecology**; and the authority language should be **human-governed** or **human-stewarded**, not human-like. Specifications are one possible #CurrentTruth source among decisions, directives, patterns, workflows, skills, evidence, and lifecycle memory.
 
-The current verdict is deliberately split:
+The 2026-07-12 verdict was deliberately split:
 
 - **Design kernel: A-.** The routing model, primitive boundaries, epistemic memory states, and plain-file reviewability are unusually coherent.
 - **Shipped alpha: B.** The core works and the CLI is useful, but context resolution, mutation safety, update ownership, onboarding, and extension lifecycle are not release-grade.
@@ -21,7 +23,7 @@ The current verdict is deliberately split:
 
 The best parts should remain: plain Markdown, bounded generated regions, recursive entrypoints, decision-grade descriptions, typed agent primitives, the four memory states, optional extensions, and the human-led philosophy.
 
-The highest-priority problems are not missing features. They are trust boundaries:
+The highest-priority problems in that 2026-07-12 snapshot were not missing features. They were trust boundaries:
 
 1. `find --route` and Required Routes can escape the selected workspace through unchecked `..` paths.
 2. `find --tag KeepInMind --bodies` is a global tag search, not the active loaded-parent closeout chain, and it omits overwrite companions.
@@ -1297,6 +1299,29 @@ Questions for the maintainer after this report:
 8. Is the first adoption target Solo Starter, Team Review, or a bare integrator kernel? Building all three simultaneously would dilute the next evidence round.
 9. Which public S++ claims are actually worth funding: kernel conformance, context efficiency, memory value, runtime portability, or the complete research matrix?
 10. Is Open Forge ultimately limited to software repositories, or should non-software `Context-Routed Work` remain a later evidence-backed expansion?
+
+## 2026-07-17 Implementation Addendum
+
+This addendum records what changed after the assessment. It does not retroactively inflate the historical ratings or turn candidate judgment into accepted truth.
+
+Implemented since the original review:
+
+- Route lookup, generated expansion, Required Routes, `doctor`, `chain`, and index planning now reject absolute, parent-traversing, cross-drive, and physical link escapes. `chain` exposes loader, ancestor entrypoints, native skill boundary, target, and overwrite companions for any Markdown heading.
+- Normal installation is Core-first and target-scoped Git-checkpointed. Noninteractive work outside Git fails without mutation; interactive use requires explicit approval. Core managed, scoped, and generated writes share link/hardlink preflight and rollback. Extensions cannot install Git control paths that would hide their own diff. `--pro` bypasses lifecycle gates only.
+- The first-party catalogue now has 18 independently selectable or composable units across skill-only, workflow-only, directive-only, pattern-only, mixed, and dependency-only shapes. Transitive dependencies auto-select as required. Native/APM skills work additively at distinct paths; substituting one for a first-party capability is deliberately not claimed.
+- Workflows now start with Mode (`linear` or `iterative`), keep Constraints always present, and use one common goal-oriented contract. The loader defaults non-trivial work to a matching workflow, makes multiple matches ordered handoffs, recommends workflow/direct choice once when no exact match exists, and honors explicit no-workflow requests.
+- Directive applicability is explicit through `Applies To`; root placement no longer silently means workspace-wide. Missing, empty, inherited, and none local category Axioms add nothing while ancestor axioms remain active.
+- Architecture and vision now classify starting state, elucidate provenance, derive warranted directives/patterns/guidance/workspace/memory support, require user accord before normative promotion, and keep useful unaccepted deductions emerging.
+- CLI command contracts run through real subprocesses in fresh OS temporary workspaces with real Git, filesystem and no-partial-write assertions, packaged-layout smoke tests, real catalogue integration, and additive external-skill byte-preservation coverage.
+
+What still prevents an honest S++ claim:
+
+- `find --tag KeepInMind` is global discovery, not an active loaded-context receipt. The system still lacks a stable context digest, budget, and recursively composed Required Routes/overwrite receipt.
+- Extension ownership, provenance receipts, compatibility solving, update/remove/migration, and substitution of externally managed capabilities remain unimplemented.
+- Workflow-first wording and static contracts are not behavioral proof. Exact-match, no-match, opt-out, ordered-handoff, and greenfield support derivation still need repeated multi-model seeds without harness prompting.
+- Independent conformance, third-party author success, cross-OS release evidence, longitudinal memory value, and causal/public benchmark controls remain absent.
+
+The revised option matrix and shortest credible sequence live in `.agents/memory/emerging/ideas/rating-ladder.md`. The framework is materially safer and more coherent than the 2026-07-12 snapshot, but the evidence still supports “S-tier design candidate,” not “S++ demonstrated system.”
 
 ## Artifact Source Notes
 

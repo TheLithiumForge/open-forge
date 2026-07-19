@@ -16,9 +16,9 @@ Their type determines how an agent uses their contents. Their category placement
 
 A directive is a mandatory modifier within its declared scope.
 
-An applicable directive governs every task and workflow in that scope. If applicable directives conflict or cannot be followed, the agent must report the conflict and obtain an explicit decision or exception.
+Every directive declares an early positive `Applies To` scope before its Axioms. An applicable directive governs every task and workflow in that scope. If applicable directives conflict or cannot be followed, the agent must report the conflict and obtain an explicit decision or exception.
 
-The root directives category represents workspace-wide directive scope. Direct directive files in that category apply to all workspace work.
+Root placement does not silently establish applicability. A direct root directive explicitly says `workspace-wide` when that is its scope. Hybrid directive category entrypoints may state `inherited` when they add no narrower scope.
 
 Nested directive categories must define a positive work type, topic, domain, project area, or organizational scope. A nested category may narrow its parent scope or explicitly preserve it while grouping related directives.
 
@@ -54,7 +54,7 @@ A workflow is a repeatable markdown recipe for reaching a defined goal that take
 
 Open Forge workflows are not runtime orchestration objects from an agent SDK. They are routed recipes that describe how work should proceed.
 
-A workflow defines `Goal` (outcome, acceptance, stop), `Required Routes`, ordered `Steps`, `Loop` behavior, expected `Outputs`, and a `Completion` checklist, plus `Constraints` when cross-step invariants exist. Generated `Entries` express what a workflow contains; `Required Routes` express cross-tree dependencies it needs from elsewhere.
+A workflow defines an early `Mode` (`linear` or `iterative`), `Goal` (outcome, acceptance, stop), `Required Routes`, always-present `Constraints`, ordered `Steps`, `Loop` behavior, expected `Outputs`, and a `Completion` checklist, in that order. `Constraints` states `- none` when no workflow-specific invariant applies. Every workflow seeks its Goal; goal-seeking is not a separate mode. Generated `Entries` express what a workflow contains; `Required Routes` express cross-tree dependencies it needs from elsewhere.
 
 Agents read every `Required Routes` route before Step 1 and report a route that cannot be read as a blocker. "none" is a valid value.
 
@@ -100,11 +100,11 @@ Core primitive `entrypoints` must use #Core plus the singular route type tag tha
 
 ## Scope Contract
 
-Scope must be visible through category placement, concise descriptions, and useful tags.
+Scope must be visible through authored declarations, category placement, concise descriptions, and useful tags.
 
 Tags must compress useful routing information such as primitive type, domain, work type, topic, technology, or artifact. Primitive type tags use singular PascalCase. For example, #Directive #Database #Migration lets an agent identify likely scope without opening the routed file.
 
-Tags may reinforce and describe scope, but they must not be the only indication that a directive is workspace-wide or mandatory. Tags never establish authority by themselves. Reserved load-policy tags affect loading only and are governed by the routing concept.
+Tags may reinforce and describe scope, but they must not replace a directive's explicit `Applies To`. Tags never establish authority by themselves. Reserved load-policy tags affect loading only and are governed by the routing concept.
 
 Every routed primitive file inherits the positive scope of its containing category. A child category must state whether it narrows that scope or preserves it for organization.
 
@@ -114,7 +114,7 @@ The default root directives category is tagged #LoadNow, so its generated loader
 
 The root `entrypoint` must route agents to:
 
-- every direct workspace-wide directive file
+- every direct directive file, read far enough to evaluate its explicit `Applies To`
 - every child directive route whose path, description, tags, or defined tag behavior match the current work
 
 Directive bodies outside the current scope remain routed but unloaded.
@@ -149,14 +149,15 @@ Agent primitives are aligned when:
 - skills remain bounded reusable capability packages
 - skills prefer native `SKILL.md` packages
 - workflows remain repeatable markdown recipes for reaching defined goals
-- workflows define Goal, Required Routes, Steps, Loop, Outputs, and Completion, with Constraints only when invariants exist
+- workflows define Mode, Goal, Required Routes, Constraints, Steps, Loop, Outputs, and Completion in order
+- workflow Mode is linear or iterative, and Constraints uses `- none` when no local invariant applies
 - agents read every Required Routes route before Step 1 and report unreadable routes as blockers
 - every core primitive category is installed with its minimum `entrypoint`
 - core primitive `entrypoints` use #Core and singular primitive tags
 - opinionated primitive content remains local or optional
 - tags provide compact scope and classification signals
-- paths or descriptions expose workspace-wide and mandatory scope without relying on tags alone
-- root directive files are workspace-wide
+- every directive file exposes positive applicability in `Applies To` without relying on placement or tags alone
+- root directive files say workspace-wide explicitly when that scope is intended
 - nested categories state whether they narrow or preserve scope
 - workspace directives remain active inside workflows
 - safe workflow-local material takes preference within its active workflow

@@ -28,5 +28,5 @@ Decisions are accepted rationale for important choices that may need to be under
 - `scope-and-slugs.md` - Framework routes, scope routes, scoped framework routes, and slugs are distinct; placeholders are notation only and slug placement changes meaning - #Memory #Decision #CurrentTruth #Routing #Scope
 - `source-and-packaging.md` - Users receive src/open-forge as the payload; docs/framework governs maintainers and is never hidden runtime context - #Memory #Decision #CurrentTruth #Packaging #Governance
 - `tags.md` - Accepted tag semantics - two load-policy tags (LoadNow, KeepInMind), layer and route type tags classify, tags stay bare and parseable - #Memory #Decision #CurrentTruth #Tags #Routing
-- `workflow-shape.md` - Accepted workflow shape - Goal, Required Routes, Steps, Loop, Outputs, Completion; generated Entries are containment, Required Routes are cross-tree dependency - #Memory #Decision #CurrentTruth #Workflow #Routing #Orchestration
+- `workflow-shape.md` - Accepted workflow shape - Mode, Goal, Required Routes, Constraints, Steps, Loop, Outputs, Completion; generated Entries are containment, Required Routes are cross-tree dependency - #Memory #Decision #CurrentTruth #Workflow #Routing #Orchestration
 <!-- open-forge:generated-index:end -->

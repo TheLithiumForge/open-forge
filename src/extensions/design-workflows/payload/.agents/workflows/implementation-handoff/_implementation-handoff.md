@@ -8,6 +8,10 @@ open-forge:
 
 Implementation Handoff converts an accepted design into precise build context without performing the implementation.
 
+## Mode
+
+iterative
+
 ## Goal
 
 - outcome: an implementation-ready specification of user behavior, states, content, assets, constraints, and acceptance evidence

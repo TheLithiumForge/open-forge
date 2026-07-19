@@ -1,12 +1,12 @@
 ---
 open-forge:
-  description: Full workflow redesign - Goal/Steps/Loop ergonomics, Required Routes for cross-tree dependencies, orchestration rules, worked dev-workflow example
+  description: Historical pre-Mode and optional-Constraints workflow rationale, superseded by the current linear/iterative workflow-first contract
   tags: [Memory, Idea, Contextual, Candidate, Workflow, Routing, Loading, Orchestration]
 ---
 
 # Workflow Redesign
 
-Status: accepted and applied 2026-07-10. The decision record is `.agents/memory/crystallized/decisions/workflow-shape.md`; this file stays for the rationale detail and historical worked example until archived. The shipped `dev-workflow` later generalized from mandatory TDD to an adaptive implement-test-improve-retest-diagnose-fix cycle; that content evolution does not change the accepted workflow shape. Remaining follow-up: run a seeded benchmark round against the new shape.
+Status: historical rationale accepted 2026-07-10 and superseded in part by the 2026-07-17 revision in `.agents/memory/crystallized/decisions/workflow-shape.md`. The current contract adds an early `Mode`, makes `Constraints` mandatory with `- none`, reduces modes to linear/iterative, and adds workflow-first loader behavior. The body below preserves the earlier design context and worked example; do not treat its optional-Constraints or three-mode wording as current truth.
 
 ## What A Workflow Is
 

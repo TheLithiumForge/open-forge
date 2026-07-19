@@ -30,6 +30,7 @@ Broader packs and integrations:
 - `quality-workflows` - review, refactoring, and debugging plus testing
 - `design-workflows` - UX exploration, experience-design review, and implementation handoff
 - `reliability-defaults` - directive-only workspace safeguards
+- `cli-testing-patterns` - pattern-only OS-temporary black-box CLI command testing
 - `rune-bridge` - guidance and workspace routes for optional Rune-assisted relevance
 
 Install only the capabilities that earn their context and maintenance cost. `open-forge extend --list` reads the shipped catalog, and dependency packs install automatically.
@@ -50,7 +51,7 @@ A dependency-only convenience pack may omit `payload/`; it must declare at least
 The MVP CLI installs bundled extensions with:
 
 ```sh
-open-forge extend [--dry-run]
+open-forge extend [--dry-run] [--pro]
 open-forge extend --list
 open-forge extend --ids {extension-id},{extension-id}
 open-forge extend {extension-id}
@@ -65,4 +66,6 @@ Shared behavior should have one canonical package owner. Put a shared native ski
 
 The CLI validates every manifest and builds a complete source plan before writing. Portable paths are Unicode-normalized and case-folded; different bytes targeting the same portable path are a collision error, identical files are deduplicated, file-parent conflicts and existing portable aliases are rejected, and target links or multiply linked files cannot redirect writes. The selected index tree is validated independently even for an empty or outside-`.agents` payload. Local source roots and entries must be regular directories/files; links and special entries are rejected. Use `--dry-run` to inspect dependency order, scope counts, and every planned relative path with its create/update/unchanged status without writes. Dry runs validate existing index shape but do not preview generated-index body changes. Normal installs also report counts for routed, baseline-loading, direct skill-script, and outside-`.agents` files.
 
-Payload and index writes roll back on in-process installation failures. This is installation metadata, not a package manager lifecycle: there is no registry, network resolution, lock file, persistent ownership or recovery journal, version solver, update, remove, or migration yet. First-party tests must install the real extension over a fresh core workspace, run `doctor`, and prove its workflow Required Routes resolve.
+Normal writes require recognizable tracked Core anchors and a clean target-scoped Git checkpoint, then ask for review and commit of the complete selected dependency closure. Planned and derived-index paths must remain Git-visible; payloads may not write `.git/` or `.gitignore` and must leave repository-control changes to a separate review. Install roots separately when separate diffs matter. `--list` and `--dry-run` stay ungated; `--pro` bypasses only the Git/Core checkpoint lifecycle and never the installation-safety preflight.
+
+Payload and index writes roll back on in-process installation failures. This is installation metadata, not a package manager lifecycle: there is no registry, network resolution, lock file, persistent ownership or recovery journal, version solver, update, remove, or migration yet. First-party command-contract tests use a fresh OS temporary root, invoke the real CLI subprocess, use real Git for lifecycle behavior, assert exit/output/filesystem/Git effects plus no partial writes on rejection, then run `doctor` and prove workflow Required Routes resolve.

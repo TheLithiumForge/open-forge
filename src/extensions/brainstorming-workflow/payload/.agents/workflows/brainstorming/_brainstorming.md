@@ -8,6 +8,10 @@ open-forge:
 
 Brainstorming turns uncertain intent into distinct, comparable options and a clear next decision.
 
+## Mode
+
+iterative
+
 ## Goal
 
 - outcome: a bounded problem, credible options, tradeoffs, and a recommended direction or explicit decision point

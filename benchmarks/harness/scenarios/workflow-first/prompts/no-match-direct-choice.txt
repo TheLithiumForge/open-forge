@@ -1,0 +1,5 @@
+Work only in the current working directory and verify it before your first write. Read AGENTS.md and follow the workspace's routed instructions.
+
+Copyedit COPY.md and produce a careful German localization at LOCALIZED.de.md. Preserve the meaning and Markdown structure, keep command names and `entrypoint` in English, add the requested short glossary, and call out any wording whose product meaning is ambiguous. This is a focused content-localization task; I am available for one process choice before you begin.
+
+When you stop, report the choice made, the file written, and the checks you performed.

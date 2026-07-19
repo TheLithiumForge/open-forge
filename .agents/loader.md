@@ -29,10 +29,12 @@ Use generated `Entries` in this file to select relevant root routes. Load a sele
 - `scope routes` use the same mechanism: add `slug` folders with `entrypoints` before, after, or between `framework routes` when they make ownership clearer.
 - `scoped framework routes` work only when their framework `entrypoint` exists inside the scope.
 - In every loaded `entrypoint`, read `Entries` and load entries that fit the request or carry a defined load-policy tag.
+- Before non-trivial work, default to one clearly matching workflow. If none matches exactly, recommend the closest installed workflow or ordered workflow handoffs and ask once whether to adapt them or proceed directly.
+- Honor an explicit user request to use no workflow, proceed directly, or equivalent language without asking again.
 - Axioms of loaded ancestor `entrypoints` apply to all routes below them; a child `entrypoint` adds only what is specific to its scope.
 - Prefer material in a narrower selected scope over broader material of the same type when safe and allowed; report unresolved conflicts.
 - Immediately read #LoadNow and #KeepInMind entries when they appear in loaded `Entries`, in listed order.
-- Before ending meaningful work, recheck loaded #KeepInMind entries and perform the follow-ups they require; `open-forge find --tag KeepInMind --bodies` prints them in one call when the CLI is available.
+- Before ending meaningful work, recheck the #KeepInMind entries actually loaded and perform their follow-ups; `open-forge find --tag KeepInMind --bodies` discovers workspace-wide candidates but is not a receipt of the active loaded chain.
 - Load an `entrypoint` before its routed files.
 - Load a file's `.overwrite.md` companion after it; the overwrite takes precedence within the base file's scope.
 - User instructions apply when safe and allowed.
@@ -42,6 +44,7 @@ Use generated `Entries` in this file to select relevant root routes. Load a sele
 - Generated `Entries` are navigation metadata; only reserved load-policy tags affect loading.
 - Treat archived memory, historical material, examples, external methods, temporary continuation material, and candidate learning as context unless restored or promoted.
 - Detailed behavior belongs in the routed file or concept that owns it.
+- When the Open Forge CLI is available, prefer it for deterministic route lookup, inherited-chain inspection, index regeneration, and structural validation; plain-file traversal remains the fallback.
 
 ## Route Patterns
 
@@ -71,6 +74,15 @@ Use generated `Entries` in this file to select relevant root routes. Load a sele
 - #Contextual - Supporting context, not accepted current truth unless restored, validated, accepted, or promoted.
 - #CurrentTruth - Accepted current memory within its stated scope; still below user instructions, runtime safety, platform constraints, and declared external sources of truth.
 
+## CLI
+
+- `open-forge find` - find routed context by tag or route and optionally follow Required Routes.
+- `open-forge chain <route> --heading <title>` - inspect loader, ancestor, skill, target, and overwrite context for any Markdown heading such as Axioms, Applies To, Mode, Goal, or Constraints.
+- `open-forge doctor` - validate routing, workflow shape, directive applicability, generated regions, and route dependencies.
+- `open-forge index` - rebuild generated routing after adding, moving, or removing routed material.
+- `open-forge extend --list` - inspect optional capabilities before choosing what earns installation and context cost.
+- CLI reads and writes reject route trees that escape the selected target through a symbolic link or junction; an explicitly trusted external Markdown mount is a manual plain-file boundary.
+
 ## Customization
 
 Use the smallest structure that makes the work clear, safe, and resumable.
@@ -78,7 +90,7 @@ Use the smallest structure that makes the work clear, safe, and resumable.
 Customize in this order:
 
 1. Add local files.
-2. Use overwrite files for additive or lightly modifying behavior.
+2. Use overwrite files (`{file-name}.overwrite.md`) for additive or lightly modifying behavior.
 3. Edit framework files when a complete behavior change is required.
 
 Do not create parallel truth when active truth already exists. Update the active truth and preserve history locally.

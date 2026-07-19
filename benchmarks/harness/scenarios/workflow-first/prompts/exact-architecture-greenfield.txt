@@ -1,0 +1,5 @@
+Work only in the current working directory and verify it before your first write. Read AGENTS.md and follow the workspace's routed instructions.
+
+I need a technical direction for the greenfield incident-intake service described in PROJECT-NOTES.md before anyone writes product code. Map a stage-appropriate first architecture, compare meaningful alternatives, and leave future implementation work enough routed support to stay structurally consistent. Do not implement the service. Ask focused questions when a value choice or acceptance decision belongs to me; I am available.
+
+When you stop, report what is accepted, what remains candidate, which routed artifacts you created or changed, and what evidence supports each deduction.

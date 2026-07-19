@@ -22,7 +22,7 @@ describe("packaged bundled-extension resolution", () => {
     await writeFixtureExtension(path.join(packageRoot, "dist", "extensions"), extensionId, marker);
 
     const target = path.join(packageRoot, "workspace");
-    const result = await runPackagedCli(cliFile, "extend", extensionId, target);
+    const result = await runPackagedCli(cliFile, "extend", extensionId, target, "--pro");
 
     expect(result.stderr).toBe("");
     expect(result.exitCode).toBe(0);
@@ -40,7 +40,7 @@ describe("packaged bundled-extension resolution", () => {
     await writeFixtureExtension(path.join(packageRoot, "src", "extensions"), extensionId, marker);
 
     const target = path.join(packageRoot, "workspace");
-    const result = await runPackagedCli(cliFile, "extend", extensionId, target);
+    const result = await runPackagedCli(cliFile, "extend", extensionId, target, "--pro");
 
     expect(result.stderr).toBe("");
     expect(result.exitCode).toBe(0);

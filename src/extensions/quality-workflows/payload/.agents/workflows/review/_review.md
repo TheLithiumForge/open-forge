@@ -8,6 +8,10 @@ open-forge:
 
 Review produces prioritized findings grounded in observable evidence and leaves the reviewed state unchanged by default.
 
+## Mode
+
+iterative
+
 ## Goal
 
 - outcome: actionable findings ordered by impact, or an explicit no-findings result with residual risk

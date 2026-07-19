@@ -1,12 +1,14 @@
 ---
 open-forge:
-  description: Fresh review found workspace-escape, active-chain, and overwrite omissions in deterministic context lookup
+  description: Partially resolved context-boundary review - route/link escape and overwrite-chain gaps fixed; active closeout receipt remains
   tags: [Memory, Observation, AgentLearning, Contextual, Candidate, CLI, Routing, Security, Loading]
 ---
 
 # Observation: Deterministic Context Lookup Does Not Preserve Its Declared Boundaries
 
 Date: 2026-07-12. Source: current `src/cli/cli.ts`, a safe local path-escape proof, generation-11 raw reports, and the Open Forge routing contract.
+
+Status: partially resolved in the 2026-07-17 CLI hardening. The Findings below preserve the original evidence; the Resolution records current behavior and its residual boundary.
 
 ## Findings
 
@@ -28,3 +30,10 @@ Date: 2026-07-12. Source: current `src/cli/cli.ts`, a safe local path-escape pro
 - Replace the normative global closeout lookup with an active-context resolver that traverses from the loader, emits ancestor contracts and base-plus-overwrite order, follows Required Routes when requested, explains selection, reports cost, and produces a stable context digest.
 
 Suggested promotion destinations after validation: #Core routing/CLI behavior plus a crystallized security decision.
+
+## Resolution
+
+- `find`, Required Routes, generated-route expansion, and `doctor` now share lexical and real-path containment checks that reject absolute paths, parent traversal, drive changes, and link escapes.
+- `chain` now emits loader, ancestor entrypoints, native skill boundary, target, and base-then-overwrite context for any requested heading.
+- Adversarial command-level tests exercise traversal rejection and prove no mutation.
+- Residual: `find --tag KeepInMind --bodies` remains a global deterministic discovery query, not the actually loaded #KeepInMind set. `chain` does not yet recursively compose Required Routes, retain an active-context receipt, report a context budget, or emit a stable context digest. The loader chain selected by the agent still determines active closeout obligations.

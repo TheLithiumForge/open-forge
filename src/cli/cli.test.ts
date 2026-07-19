@@ -328,9 +328,9 @@ describe("install", () => {
     const loader = await fs.readFile(path.join(root, ".agents", "loader.md"), "utf8");
 
     expect(result.exitCode).toBe(0);
-    expect(directives).toContain("Every directive file beside this `entrypoint` is workspace-wide; read all of them.");
-    expect(directives).toContain("Child directive `entrypoints` define positive scope through path, description, and tags.");
-    expect(directives).toContain("Load child directive routes when their path, description, tags, or defined tag behavior match the current work.");
+    expect(directives).toContain("Read every direct directive file far enough to evaluate its explicit `Applies To`; root placement alone does not make a directive workspace-wide.");
+    expect(directives).toContain("Every directive file declares one positive `Applies To` scope before its Axioms.");
+    expect(directives).toContain("a hybrid category entrypoint may state `inherited`");
     expect(directives).not.toContain("Child categories may define a work scope or organize directives");
     expect(directives).not.toContain("always load");
     expect(directives).toContain("<!-- open-forge:generated-index:start -->");
@@ -342,6 +342,7 @@ describe("install", () => {
     expect(memory).toContain("- Write useful durable state to the matching #Memory route when safe and allowed.");
     expect(memory).toContain("- Move material between #Memory routes when its state or owner changes.");
     expect(memory).toContain("- Extract behavior, reusable form, guidance, capability, workflow, or workspace routing to the matching #Core route, including user-created #Core categories and files.");
+    expect(memory).toContain("Obtain user accord before promoting inferred material or creating normative #Core/#CurrentTruth from it.");
     expect(loader).toContain("- Axioms of loaded ancestor `entrypoints` apply to all routes below them; a child `entrypoint` adds only what is specific to its scope.");
     expect(loader).toContain("- Writing files inside existing routes is normal use; add child categories when they improve routing, ownership, or clarity, and give new root routes clear scope.");
     expect(memory).not.toContain("Core category");
@@ -365,8 +366,12 @@ describe("install", () => {
     expect(loader).toContain("- `scoped framework routes` work only when their framework `entrypoint` exists inside the scope.");
     expect(loader).toContain("- `.agents/memory/[scope]/crystallized/documents/_documents.md` - `scoped framework route` under a scope that owns memory states.");
     expect(loader).toContain("- In every loaded `entrypoint`, read `Entries` and load entries that fit the request or carry a defined load-policy tag.");
+    expect(loader).toContain("- Before non-trivial work, default to one clearly matching workflow.");
+    expect(loader).toContain("- Honor an explicit user request to use no workflow, proceed directly, or equivalent language without asking again.");
+    expect(loader).toContain("## CLI");
+    expect(loader).toContain("`open-forge chain <route> --heading <title>`");
     expect(loader).toContain("- Immediately read #LoadNow and #KeepInMind entries when they appear in loaded `Entries`, in listed order.");
-    expect(loader).toContain("- Before ending meaningful work, recheck loaded #KeepInMind entries and perform the follow-ups they require; `open-forge find --tag KeepInMind --bodies` prints them in one call when the CLI is available.");
+    expect(loader).toContain("- Before ending meaningful work, recheck the #KeepInMind entries actually loaded and perform their follow-ups; `open-forge find --tag KeepInMind --bodies` discovers workspace-wide candidates but is not a receipt of the active loaded chain.");
     expect(loader).toContain("- `.agents/directives/_directives.md` - Mandatory instructions agents must follow when they apply to the current work - #LoadNow #Core #Directive");
     expect(loader).toContain("- `.agents/memory/_memory.md` - Self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning - #LoadNow #Memory #OrganicGrowth");
     expect(loader).toContain("## Tags");
@@ -436,7 +441,10 @@ describe("install", () => {
     expect(skills).toContain("Prefer the native skill shape: `.agents/skills/{skill-name}/SKILL.md`.");
     expect(skills).toContain("<!-- open-forge:generated-index:start -->");
     expect(workflows).toContain("- Before non-trivial work, read `Entries` and load matching workflows.");
-    expect(workflows).toContain("- Every workflow defines `Goal`, `Required Routes`, `Steps`, `Loop`, `Outputs`, and `Completion`; it adds `Constraints` only when cross-step invariants exist.");
+    expect(workflows).toContain("- Every workflow recipe defines `Mode`, `Goal`, `Required Routes`, `Constraints`, `Steps`, `Loop`, `Outputs`, and `Completion`, in that order.");
+    expect(workflows).toContain("- A child `entrypoint` used only to organize descendant workflows may contain category Axioms and Entries without recipe headings.");
+    expect(workflows).toContain("- `Mode` is `linear` or `iterative`.");
+    expect(workflows).toContain("- `Constraints` always exists and states `- none` when no workflow-specific invariant applies.");
     expect(workflows).toContain("- Generated `Entries` list what a workflow contains; `Required Routes` list what it needs from elsewhere.");
     expect(workflows).toContain("- Read every `Required Routes` route before Step 1; a route that cannot be read is a blocker to report, not a step to skip. \"none\" is a valid value.");
     expect(workflows).toContain("<!-- open-forge:generated-index:start -->");
@@ -1212,6 +1220,280 @@ open-forge:
   });
 });
 
+describe("Git-checkpointed install commands", () => {
+  test("fails closed outside Git in noninteractive mode without mutating the target", async () => {
+    const parent = await createRoot();
+    const target = path.join(parent, "untracked-target");
+
+    const result = await runCliDefault("install", target);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("requires a Git repository for reviewable diffs");
+    expect(result.stderr).toContain("--pro");
+    expect(await exists(target)).toBe(false);
+  });
+
+  test("uses Core and each extension transaction as real Git review checkpoints", async () => {
+    const root = await createRoot();
+    const extension = await createRoot();
+    await initializeGitRepository(root);
+    const extensionFile = path.join(extension, "payload", ".agents", "patterns", "checkpoint.md");
+    await fs.mkdir(path.dirname(extensionFile), { recursive: true });
+    await fs.writeFile(extensionFile, "checkpoint pattern\n");
+
+    const core = await runCliDefault("install", root);
+    expect(core.exitCode).toBe(0);
+    expect(core.stdout).toContain("review the resulting diff and commit it before the next install");
+    expect(core.stdout).toContain("open-forge extend --list");
+
+    const blocked = await runCliDefault("extend", extension, root);
+    expect(blocked.exitCode).toBe(1);
+    expect(blocked.stderr).toContain("requires a clean Git checkpoint");
+    expect(await exists(path.join(root, ".agents", "patterns", "checkpoint.md"))).toBe(false);
+
+    await commitAll(root, "Install Core");
+    const installed = await runCliDefault("extend", extension, root);
+    expect(installed.exitCode).toBe(0);
+    expect(installed.stdout).toContain("Extension transaction checkpoint: review the resulting diff and commit it before the next install");
+    expect(await fs.readFile(path.join(root, ".agents", "patterns", "checkpoint.md"), "utf8")).toBe("checkpoint pattern\n");
+
+    const nextBlocked = await runCliDefault("install", root);
+    expect(nextBlocked.exitCode).toBe(1);
+    expect(nextBlocked.stderr).toContain("requires a clean Git checkpoint");
+  });
+
+  test("scopes cleanliness to a nested target instead of unrelated monorepo files", async () => {
+    const root = await createRoot();
+    const target = path.join(root, "apps", "demo");
+    await fs.mkdir(target, { recursive: true });
+    await fs.writeFile(path.join(root, "outside.txt"), "baseline\n");
+    await fs.writeFile(path.join(target, ".keep"), "baseline\n");
+    await initializeGitRepository(root);
+    await commitAll(root, "Baseline");
+    await fs.writeFile(path.join(root, "outside.txt"), "unrelated dirty sibling\n");
+
+    const result = await runCliDefault("install", target);
+
+    expect(result.exitCode).toBe(0);
+    expect(await exists(path.join(target, "AGENTS.md"))).toBe(true);
+    expect((await gitCommand(root, "status", "--porcelain=v1", "--", "outside.txt")).stdout).toContain("outside.txt");
+  });
+
+  test("rejects ignored planned Core files because Git cannot protect their diff", async () => {
+    const root = await createRoot();
+    await fs.writeFile(path.join(root, ".gitignore"), ".agents/\n");
+    await initializeGitRepository(root);
+    await commitAll(root, "Ignore routed tree");
+
+    const blocked = await runCliDefault("install", root);
+
+    expect(blocked.exitCode).toBe(1);
+    expect(blocked.stderr).toContain("Git ignores planned install file");
+    expect(await exists(path.join(root, "AGENTS.md"))).toBe(false);
+    expect(await exists(path.join(root, ".agents"))).toBe(false);
+
+    const bypassed = await runCliDefault("install", root, "--pro");
+    expect(bypassed.exitCode).toBe(0);
+    expect(bypassed.stdout).toContain("--pro bypassed Git and Core checkpoint policy");
+  });
+
+  test("rejects an ignored planned extension file without partial output", async () => {
+    const root = await createRoot();
+    const extension = await createRoot();
+    await initializeGitRepository(root);
+    expect((await runCliDefault("install", root)).exitCode).toBe(0);
+    await commitAll(root, "Install Core");
+    await fs.appendFile(path.join(root, ".gitignore"), ".agents/patterns/ignored.md\n");
+    await commitAll(root, "Ignore extension target");
+    const extensionFile = path.join(extension, "payload", ".agents", "patterns", "ignored.md");
+    await fs.mkdir(path.dirname(extensionFile), { recursive: true });
+    await fs.writeFile(extensionFile, "ignored extension pattern\n");
+
+    const blocked = await runCliDefault("extend", extension, root);
+
+    expect(blocked.exitCode).toBe(1);
+    expect(blocked.stderr).toContain("Git ignores planned install file");
+    expect(await exists(path.join(root, ".agents", "patterns", "ignored.md"))).toBe(false);
+    expect((await gitCommand(root, "status", "--porcelain=v1")).stdout).toBe("");
+  });
+
+  test("rejects an extension that could hide its own outputs with Git control files", async () => {
+    const root = await createRoot();
+    const extension = await createRoot();
+    await initializeGitRepository(root);
+    expect((await runCliDefault("install", root)).exitCode).toBe(0);
+    await commitAll(root, "Install Core");
+    await fs.mkdir(path.join(extension, "payload", ".agents", "patterns"), { recursive: true });
+    await fs.writeFile(path.join(extension, "payload", ".gitignore"), ".agents/patterns/hidden.md\n");
+    await fs.writeFile(path.join(extension, "payload", ".agents", "patterns", "hidden.md"), "hidden pattern\n");
+
+    const blocked = await runCliDefault("extend", extension, root);
+
+    expect(blocked.exitCode).toBe(1);
+    expect(blocked.stderr).toContain("may not write Git control path .gitignore");
+    expect(await exists(path.join(root, ".gitignore"))).toBe(false);
+    expect(await exists(path.join(root, ".agents", "patterns", "hidden.md"))).toBe(false);
+    expect((await gitCommand(root, "status", "--porcelain=v1")).stdout).toBe("");
+  });
+
+  test("rejects nested .git control directories instead of silently omitting them", async () => {
+    const root = await createRoot();
+    const extension = await createRoot();
+    await initializeGitRepository(root);
+    expect((await runCliDefault("install", root)).exitCode).toBe(0);
+    await commitAll(root, "Install Core");
+    const nestedGitConfig = path.join(extension, "payload", "nested", ".git", "config");
+    await fs.mkdir(path.dirname(nestedGitConfig), { recursive: true });
+    await fs.writeFile(nestedGitConfig, "[core]\n");
+
+    const blocked = await runCliDefault("extend", extension, root);
+
+    expect(blocked.exitCode).toBe(1);
+    expect(blocked.stderr).toContain("may not include Git control path");
+    expect(blocked.stderr).toContain(".git");
+    expect(await exists(path.join(root, "nested"))).toBe(false);
+    expect((await gitCommand(root, "status", "--porcelain=v1")).stdout).toBe("");
+  });
+
+  test("treats Git pathspec-magic target names literally", async () => {
+    if (process.platform === "win32") return;
+    const root = await createRoot();
+    const target = path.join(root, ":!demo");
+    await fs.mkdir(target, { recursive: true });
+    await fs.writeFile(path.join(target, "baseline.txt"), "baseline\n");
+    await initializeGitRepository(root);
+    await commitAll(root, "Baseline");
+    await fs.writeFile(path.join(target, "baseline.txt"), "dirty\n");
+
+    const blocked = await runCliDefault("install", target);
+
+    expect(blocked.exitCode).toBe(1);
+    expect(blocked.stderr).toContain("requires a clean Git checkpoint");
+    expect(await exists(path.join(target, "AGENTS.md"))).toBe(false);
+  });
+
+  test("keeps read-only catalogue and dry-run commands available without Git or Core", async () => {
+    const parent = await createRoot();
+    const target = path.join(parent, "preview-target");
+
+    const listed = await runCliDefault("extend", "--list");
+    const preview = await runCliDefault("extend", "dev-workflow", target, "--dry-run");
+
+    expect(listed.exitCode).toBe(0);
+    expect(listed.stdout).toContain("dev-workflow");
+    expect(preview.exitCode).toBe(0);
+    expect(preview.stdout).toContain("No files were written");
+    expect(await exists(target)).toBe(false);
+  });
+
+  test("requires Core before a normal extension but preserves expert overlay-only installation", async () => {
+    const root = await createRoot();
+    const extension = await createRoot();
+    await initializeGitRepository(root);
+    await fs.mkdir(path.join(extension, "payload"), { recursive: true });
+    await fs.writeFile(path.join(extension, "payload", "overlay.txt"), "expert overlay\n");
+
+    const blocked = await runCliDefault("extend", extension, root);
+    expect(blocked.exitCode).toBe(1);
+    expect(blocked.stderr).toContain("Core is not installed");
+    expect(await exists(path.join(root, "overlay.txt"))).toBe(false);
+
+    const bypassed = await runCliDefault("extend", extension, root, "--pro");
+    expect(bypassed.exitCode).toBe(0);
+    expect(await fs.readFile(path.join(root, "overlay.txt"), "utf8")).toBe("expert overlay\n");
+  });
+
+  test("does not mistake unrelated anchor filenames for an installed Core checkpoint", async () => {
+    const root = await createRoot();
+    const extension = await createRoot();
+    await fs.mkdir(path.join(root, ".agents"), { recursive: true });
+    await fs.writeFile(path.join(root, "AGENTS.md"), "# Unrelated agent notes\n");
+    await fs.writeFile(path.join(root, ".agents", "loader.md"), "# Unrelated loader\n");
+    await fs.mkdir(path.join(extension, "payload"), { recursive: true });
+    await fs.writeFile(path.join(extension, "payload", "overlay.txt"), "must not install\n");
+    await initializeGitRepository(root);
+    await commitAll(root, "Unrelated anchors");
+
+    const blocked = await runCliDefault("extend", extension, root);
+
+    expect(blocked.exitCode).toBe(1);
+    expect(blocked.stderr).toContain("Core is not installed");
+    expect(await exists(path.join(root, "overlay.txt"))).toBe(false);
+  });
+
+  test("reports that an unchanged clean reinstall needs no new commit", async () => {
+    const root = await createRoot();
+    await initializeGitRepository(root);
+    expect((await runCliDefault("install", root)).exitCode).toBe(0);
+    await commitAll(root, "Install Core");
+
+    const result = await runCliDefault("install", root);
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("Git reports no target changes; no new commit is needed");
+    expect((await gitCommand(root, "status", "--porcelain=v1")).stdout).toBe("");
+  });
+
+  test("rolls back all Core writes when a derived index plan is invalid", async () => {
+    const root = await createRoot();
+    const custom = path.join(root, ".agents", "custom", "_custom.md");
+    await fs.mkdir(path.dirname(custom), { recursive: true });
+    await fs.writeFile(path.join(root, "AGENTS.md"), "# Existing agent notes\n");
+    await fs.writeFile(custom, `# Custom
+
+## Entries
+
+<!-- open-forge:generated-index:start -->
+- none - Broken region - #Empty
+`);
+    await initializeGitRepository(root);
+    await commitAll(root, "Malformed baseline");
+    const beforeAgents = await fs.readFile(path.join(root, "AGENTS.md"), "utf8");
+    const beforeCustom = await fs.readFile(custom, "utf8");
+
+    const blocked = await runCliDefault("install", root);
+
+    expect(blocked.exitCode).toBe(1);
+    expect(blocked.stderr).toContain("generated index markers");
+    expect(await fs.readFile(path.join(root, "AGENTS.md"), "utf8")).toBe(beforeAgents);
+    expect(await fs.readFile(custom, "utf8")).toBe(beforeCustom);
+    expect(await exists(path.join(root, ".agents", "loader.md"))).toBe(false);
+    expect((await gitCommand(root, "status", "--porcelain=v1")).stdout).toBe("");
+  });
+
+  test("rejects a hard-linked scoped Core rewrite before mutation", async () => {
+    const root = await createRoot();
+    const shared = path.join(root, "shared.md");
+    const scoped = path.join(root, ".agents", "memory", "demo", "crystallized", "_crystallized.md");
+    await fs.mkdir(path.dirname(scoped), { recursive: true });
+    await fs.writeFile(shared, "# Shared inode\n");
+    await fs.link(shared, scoped);
+    await initializeGitRepository(root);
+    await commitAll(root, "Hard-linked baseline");
+
+    const blocked = await runCliDefault("install", root);
+
+    expect(blocked.exitCode).toBe(1);
+    expect(blocked.stderr).toContain("multiple hard links");
+    expect(await fs.readFile(shared, "utf8")).toBe("# Shared inode\n");
+    expect(await exists(path.join(root, ".agents", "loader.md"))).toBe(false);
+    expect((await gitCommand(root, "status", "--porcelain=v1")).stdout).toBe("");
+  });
+
+  test("rejects a portable case alias before writing the Core baseline", async () => {
+    const root = await createRoot();
+    const alias = path.join(root, "agents.md");
+    await fs.writeFile(alias, "# Existing lower-case file\n");
+
+    const blocked = await runCli("install", root);
+
+    expect(blocked.exitCode).toBe(1);
+    expect(blocked.stderr).toContain("aliases planned portable path");
+    expect(await fs.readFile(alias, "utf8")).toBe("# Existing lower-case file\n");
+    expect(await exists(path.join(root, ".agents", "loader.md"))).toBe(false);
+  });
+});
+
 describe("find command", () => {
   async function createFindRoot(): Promise<string> {
     const root = await createRoot();
@@ -1324,6 +1606,159 @@ Read every route below before Step 1.
     expect(missing.exitCode).toBe(1);
     expect(missing.stderr).toContain("blocker");
   });
+
+  test("ignores Required Routes examples inside tilde fences while honoring explicit none", async () => {
+    const root = await createFindRoot();
+    const workflows = await createCategory(root, "workflows", "# Workflows\n");
+    await fs.writeFile(path.join(workflows, "direct.md"), [
+      "# Direct",
+      "",
+      "## Required Routes",
+      "",
+      "~~~~markdown",
+      "- `skills/missing/SKILL.md` - fenced example only",
+      "```",
+      "~~~~",
+      "",
+      "- none",
+      "",
+      "## Steps",
+      "",
+      "1. Proceed directly.",
+      ""
+    ].join("\n"));
+    await runCli("index", root);
+
+    const followed = await runCli("find", "--route", "workflows/direct.md", "--follow-required", "--paths", root);
+
+    expect(followed.exitCode).toBe(0);
+    expect(followed.stderr).toBe("");
+    expect(followed.stdout.trim()).toBe("workflows/direct.md");
+  });
+
+  test("rejects a linked routed category across find, chain, doctor, and index", async () => {
+    const root = await createRoot();
+    const outside = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    const outsidePatterns = path.join(outside, "patterns");
+    await fs.mkdir(outsidePatterns, { recursive: true });
+    await fs.writeFile(path.join(outsidePatterns, "_patterns.md"), `---
+open-forge:
+  description: Outside patterns
+  tags: [Pattern]
+---
+
+# Outside Patterns
+`);
+    const linkedPatterns = path.join(root, ".agents", "patterns");
+    await fs.rm(linkedPatterns, { recursive: true });
+    await fs.symlink(outsidePatterns, linkedPatterns, process.platform === "win32" ? "junction" : "dir");
+
+    const found = await runCli("find", "--tag", "Pattern", root);
+    const chained = await runCli("chain", ".agents/patterns/_patterns.md", root);
+    const diagnosed = await runCli("doctor", "--json", root);
+    const indexed = await runCli("index", root);
+
+    expect(found.exitCode).toBe(1);
+    expect(found.stderr).toContain("symbolic link or junction");
+    expect(chained.exitCode).toBe(1);
+    expect(chained.stderr).toContain("escapes the target workspace");
+    expect(diagnosed.exitCode).toBe(1);
+    expect(JSON.parse(diagnosed.stdout).errors).toBeGreaterThan(0);
+    expect(diagnosed.stdout).toContain("symbolic link or junction");
+    expect(indexed.exitCode).toBe(1);
+    expect(indexed.stderr).toContain("symbolic link or junction");
+  });
+});
+
+describe("chain command", () => {
+  test("prints loader-to-target heading inheritance with overwrite adjacency", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    expect((await runCli("create", "category", "patterns/product/components", root)).exitCode).toBe(0);
+    const productEntrypoint = path.join(root, ".agents", "patterns", "product", "_product.md");
+    const componentEntrypoint = path.join(root, ".agents", "patterns", "product", "components", "_components.md");
+    const target = path.join(root, ".agents", "patterns", "product", "components", "rules.md");
+    const targetOverwrite = path.join(root, ".agents", "patterns", "product", "components", "rules.overwrite.md");
+    const productText = await fs.readFile(productEntrypoint, "utf8");
+    await fs.writeFile(productEntrypoint, productText);
+    await fs.writeFile(path.join(path.dirname(productEntrypoint), "_product.overwrite.md"), "# Product Override\n\n## Axioms\n\n- Keep product vocabulary stable.\n");
+    const componentText = (await fs.readFile(componentEntrypoint, "utf8")).replace(
+      "- inherited - No local axioms; loaded ancestor axioms remain active.",
+      "- none"
+    );
+    await fs.writeFile(componentEntrypoint, componentText);
+    await fs.writeFile(target, "# Rules\n\n## Axioms\n\n- Keep component boundaries visible.\n\n## Evidence\n\n- Target evidence.\n");
+    await fs.writeFile(targetOverwrite, "# Rules Override\n\n## Axioms\n\n- Prefer the narrower component owner.\n");
+    expect((await runCli("index", root)).exitCode).toBe(0);
+    const before = await fs.readFile(target, "utf8");
+
+    const result = await runCli("chain", ".agents/patterns/product/components/rules.md", "--heading", "Axioms", "--json", root);
+
+    expect(result.exitCode).toBe(0);
+    const parsed = JSON.parse(result.stdout) as { chain: Array<{ route: string; kind: string; overwriteOf?: string; heading: { status: string } }> };
+    expect(parsed.chain.map((item) => item.route)).toEqual([
+      ".agents/loader.md",
+      ".agents/patterns/_patterns.md",
+      ".agents/patterns/product/_product.md",
+      ".agents/patterns/product/_product.overwrite.md",
+      ".agents/patterns/product/components/_components.md",
+      ".agents/patterns/product/components/rules.md",
+      ".agents/patterns/product/components/rules.overwrite.md"
+    ]);
+    expect(parsed.chain.map((item) => item.heading.status)).toEqual([
+      "content",
+      "content",
+      "declared-inherited",
+      "content",
+      "declared-none",
+      "content",
+      "content"
+    ]);
+    expect(parsed.chain[3].overwriteOf).toBe(".agents/patterns/product/_product.md");
+    expect(parsed.chain[6].overwriteOf).toBe(".agents/patterns/product/components/rules.md");
+    expect(await fs.readFile(target, "utf8")).toBe(before);
+
+    const arbitrary = await runCli("chain", ".agents/patterns/product/components/rules.md", "--heading", "Evidence", root);
+    expect(arbitrary.exitCode).toBe(0);
+    expect(arbitrary.stdout).toContain("Target evidence.");
+    expect(arbitrary.stdout).toContain("[absent]");
+  });
+
+  test("includes a native skill entrypoint before an internal skill resource", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    const skill = path.join(root, ".agents", "skills", "external", "SKILL.md");
+    const reference = path.join(root, ".agents", "skills", "external", "references", "check.md");
+    await fs.mkdir(path.dirname(reference), { recursive: true });
+    await fs.writeFile(skill, "---\nname: external\ndescription: External fixture skill.\n---\n\n# External\n\n## Axioms\n\n- Use the skill contract.\n");
+    await fs.writeFile(reference, "# Check\n\n## Axioms\n\n- Check the external result.\n");
+    expect((await runCli("index", root)).exitCode).toBe(0);
+
+    const result = await runCli("chain", ".agents/skills/external/references/check.md", "--json", root);
+
+    expect(result.exitCode).toBe(0);
+    const routes = (JSON.parse(result.stdout) as { chain: Array<{ route: string }> }).chain.map((item) => item.route);
+    expect(routes).toEqual([
+      ".agents/loader.md",
+      ".agents/skills/_skills.md",
+      ".agents/skills/external/SKILL.md",
+      ".agents/skills/external/references/check.md"
+    ]);
+  });
+
+  test("rejects traversal and leaves the OS-temporary workspace unchanged", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    const loader = path.join(root, ".agents", "loader.md");
+    const before = await fs.readFile(loader, "utf8");
+
+    const result = await runCli("chain", "../outside.md", "--heading", "Axioms", root);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("must not escape or change the workspace path");
+    expect(await fs.readFile(loader, "utf8")).toBe(before);
+  });
 });
 
 describe("doctor command", () => {
@@ -1335,6 +1770,54 @@ describe("doctor command", () => {
 
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain("no problems found");
+  });
+
+  test("stops before reading a symlinked loader after route-tree safety fails", async () => {
+    const root = await createRoot();
+    const outside = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    const loader = path.join(root, ".agents", "loader.md");
+    const outsideLoader = path.join(outside, "loader.md");
+    await fs.writeFile(outsideLoader, "# Outside\n\n<!-- open-forge:generated-index:start -->\n");
+    await fs.rm(loader);
+    try {
+      await fs.symlink(outsideLoader, loader, "file");
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === "EPERM" || (error as NodeJS.ErrnoException).code === "EACCES") return;
+      throw error;
+    }
+
+    const result = await runCli("doctor", "--json", root);
+    const report = JSON.parse(result.stdout) as { errors: number; warnings: number; findings: Array<{ message: string }> };
+
+    expect(result.exitCode).toBe(1);
+    expect(report.errors).toBeGreaterThan(0);
+    expect(report.findings.some((finding) => finding.message.includes("symbolic link or junction"))).toBe(true);
+    expect(report.findings.some((finding) => finding.message.includes("generated index markers"))).toBe(false);
+  });
+
+  test("stops before recomputing regions when a category entrypoint is a file symlink", async () => {
+    const root = await createRoot();
+    const outside = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    const entrypoint = path.join(root, ".agents", "patterns", "_patterns.md");
+    const outsideEntrypoint = path.join(outside, "_patterns.md");
+    await fs.writeFile(outsideEntrypoint, "# Outside Patterns\n");
+    await fs.rm(entrypoint);
+    try {
+      await fs.symlink(outsideEntrypoint, entrypoint, "file");
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === "EPERM" || (error as NodeJS.ErrnoException).code === "EACCES") return;
+      throw error;
+    }
+
+    const result = await runCli("doctor", "--json", root);
+    const report = JSON.parse(result.stdout) as { errors: number; warnings: number; findings: Array<{ message: string }> };
+
+    expect(result.exitCode).toBe(1);
+    expect(report.errors).toBeGreaterThan(0);
+    expect(report.findings.some((finding) => finding.message.includes("symbolic link or junction"))).toBe(true);
+    expect(report.findings.some((finding) => finding.message.includes("stale"))).toBe(false);
   });
 
   test("warns on stale regions and errors on unresolved entries", async () => {
@@ -1391,8 +1874,375 @@ describe("doctor command", () => {
 
     const result = await runCli("doctor", root);
 
+    expect(result.stderr).toBe("");
     expect(result.exitCode).toBe(1);
     expect(result.stdout).toContain("required route does not resolve: skills/missing/SKILL.md");
+  });
+
+  test("enforces ordered workflow Mode and always-present Constraints", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    const workflow = path.join(root, ".agents", "workflows", "invalid.md");
+    await fs.writeFile(workflow, `---
+open-forge:
+  description: Invalid workflow fixture
+  tags: [Workflow]
+---
+
+# Invalid
+
+## Mode
+
+goal-seeking
+
+## Goal
+
+- outcome: demonstrate validation
+
+## Required Routes
+
+none
+
+## Steps
+
+1. Run.
+
+## Loop
+
+Linear.
+
+## Outputs
+
+- result
+
+## Completion
+
+- [ ] done
+`);
+    expect((await runCli("index", root)).exitCode).toBe(0);
+
+    const result = await runCli("doctor", root);
+
+    expect(result.stderr).toBe("");
+    expect(result.exitCode).toBe(1);
+    expect(result.stdout).toContain("workflow must define exactly one Constraints section");
+    expect(result.stdout).toContain("workflow Mode must be linear or iterative");
+  });
+
+  test("accepts a linear workflow with explicit none constraints", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    const workflow = path.join(root, ".agents", "workflows", "linear.md");
+    await fs.writeFile(workflow, `---
+open-forge:
+  description: Valid linear workflow fixture
+  tags: [Workflow]
+---
+
+# Linear
+
+~~~text
+## Goal
+\`\`\`
+~~~
+
+## Mode
+
+linear
+
+## Goal
+
+- outcome: one result
+
+## Required Routes
+
+none
+
+## Constraints
+
+- none
+
+## Steps
+
+1. Produce the result.
+
+## Loop
+
+Execute the Steps once; no loop.
+
+## Outputs
+
+- result
+
+## Completion
+
+- [ ] result exists
+`);
+    expect((await runCli("index", root)).exitCode).toBe(0);
+
+    const result = await runCli("doctor", "--json", root);
+
+    expect(result.stderr).toBe("");
+    expect(result.exitCode).toBe(0);
+    expect(JSON.parse(result.stdout)).toMatchObject({ errors: 0, warnings: 0 });
+  });
+
+  test("rejects workflow contract sections that are not level-2 headings", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    const workflow = path.join(root, ".agents", "workflows", "wrong-level.md");
+    await fs.writeFile(workflow, [
+      "---",
+      "open-forge:",
+      "  description: Wrong heading level workflow fixture",
+      "  tags: [Workflow]",
+      "---",
+      "",
+      "# Wrong Level",
+      "",
+      "## Mode",
+      "",
+      "linear",
+      "",
+      "## Goal",
+      "",
+      "- outcome: one result",
+      "",
+      "### Required Routes",
+      "",
+      "- none",
+      "",
+      "## Constraints",
+      "",
+      "- none",
+      "",
+      "## Steps",
+      "",
+      "1. Produce the result.",
+      "",
+      "## Loop",
+      "",
+      "Execute once.",
+      "",
+      "## Outputs",
+      "",
+      "- result",
+      "",
+      "## Completion",
+      "",
+      "- [ ] result exists",
+      ""
+    ].join("\n"));
+    expect((await runCli("index", root)).exitCode).toBe(0);
+
+    const result = await runCli("doctor", root);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stdout).toContain("workflow Required Routes section must use a level-2 Markdown heading");
+  });
+
+  test("rejects misordered workflow sections and invalid Constraints sentinels", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    const workflow = path.join(root, ".agents", "workflows", "misordered.md");
+    await fs.writeFile(workflow, `---
+open-forge:
+  description: Misordered workflow fixture
+  tags: [Workflow]
+---
+
+# Misordered
+
+## Goal
+
+- outcome: demonstrate validation
+
+## Mode
+
+iterative
+
+## Required Routes
+
+none
+
+## Constraints
+
+- inherited
+
+## Steps
+
+1. Run.
+
+## Loop
+
+Repeat until accepted.
+
+## Outputs
+
+- result
+
+## Completion
+
+- [ ] done
+`);
+    expect((await runCli("index", root)).exitCode).toBe(0);
+
+    const result = await runCli("doctor", root);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stdout).toContain("workflow section Goal is out of order");
+    expect(result.stdout).toContain("inherited is not a workflow constraint sentinel");
+  });
+
+  test("requires explicit directive applicability before Axioms", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    const directive = path.join(root, ".agents", "directives", "fixture.md");
+    await fs.writeFile(directive, `---
+open-forge:
+  description: Directive without explicit scope
+  tags: [Directive]
+---
+
+# Fixture
+
+## Axioms
+
+- Do the thing.
+`);
+    expect((await runCli("index", root)).exitCode).toBe(0);
+
+    const result = await runCli("doctor", root);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stdout).toContain("directive must declare one non-empty Applies To section");
+  });
+
+  test("does not treat headings inside mismatched fenced-code markers as directive scope", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    const directive = path.join(root, ".agents", "directives", "fenced.md");
+    await fs.writeFile(directive, `---
+open-forge:
+  description: Fenced directive fixture
+  tags: [Directive]
+---
+
+# Fenced
+
+~~~text
+## Applies To
+
+workspace-wide
+\`\`\`
+~~~
+
+## Axioms
+
+- Do the thing.
+`);
+    expect((await runCli("index", root)).exitCode).toBe(0);
+
+    const result = await runCli("doctor", root);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stdout).toContain("directive must declare one non-empty Applies To section");
+  });
+
+  test("infers workflow and directive validation from routed category ancestry", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    await fs.writeFile(path.join(root, ".agents", "workflows", "untagged.md"), "# Untagged Workflow\n\n## Steps\n\n1. Run.\n");
+    await fs.writeFile(path.join(root, ".agents", "directives", "untagged.md"), "# Untagged Directive\n\n## Axioms\n\n- Be explicit.\n");
+    expect((await runCli("index", root)).exitCode).toBe(0);
+
+    const result = await runCli("doctor", root);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stdout).toContain("workflow must define exactly one Mode section");
+    expect(result.stdout).toContain("directive must declare one non-empty Applies To section");
+  });
+
+  test("validates explicitly tagged primitives under a neutral custom route", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    expect((await runCli("create", "category", "custom", root)).exitCode).toBe(0);
+    const custom = path.join(root, ".agents", "custom");
+    await fs.writeFile(path.join(custom, "flow.md"), [
+      "---",
+      "open-forge:",
+      "  description: Explicit workflow in a neutral route",
+      "  tags: [Workflow]",
+      "---",
+      "",
+      "# Flow",
+      "",
+      "## Steps",
+      "",
+      "1. Run.",
+      ""
+    ].join("\n"));
+    await fs.writeFile(path.join(custom, "rule.md"), [
+      "---",
+      "open-forge:",
+      "  description: Explicit directive in a neutral route",
+      "  tags: [Directive]",
+      "---",
+      "",
+      "# Rule",
+      "",
+      "## Axioms",
+      "",
+      "- Be explicit.",
+      ""
+    ].join("\n"));
+    expect((await runCli("index", root)).exitCode).toBe(0);
+
+    const result = await runCli("doctor", root);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stdout).toContain("workflow must define exactly one Mode section");
+    expect(result.stdout).toContain("directive must declare one non-empty Applies To section");
+  });
+
+  test("treats Workflow and Directive as topical tags when another primitive owns the file", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    const topical = path.join(root, ".agents", "memory", "emerging", "ideas", "topical.md");
+    await fs.writeFile(topical, [
+      "---",
+      "open-forge:",
+      "  description: Memory about workflow and directive design",
+      "  tags: [Idea, Workflow, Directive]",
+      "---",
+      "",
+      "# Topical Memory",
+      "",
+      "This is a memory record, not an executable workflow or directive.",
+      ""
+    ].join("\n"));
+    expect((await runCli("index", root)).exitCode).toBe(0);
+
+    const result = await runCli("doctor", "--json", root);
+
+    expect(result.exitCode).toBe(0);
+    expect(JSON.parse(result.stdout)).toMatchObject({ errors: 0, warnings: 0 });
+  });
+
+  test("allows organizational workflow categories and workflow-local primitive routes", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    expect((await runCli("create", "category", "workflows/frontend/patterns", root)).exitCode).toBe(0);
+    const localPatterns = path.join(root, ".agents", "workflows", "frontend", "patterns");
+    const localEntrypoint = await fs.readFile(path.join(localPatterns, "_patterns.md"), "utf8");
+    expect(localEntrypoint).toContain("tags: [Pattern]");
+    await writeRoute(localPatterns, "shape.md", "Frontend shape", ["Pattern"]);
+    expect((await runCli("index", root)).exitCode).toBe(0);
+
+    const result = await runCli("doctor", "--json", root);
+
+    expect(result.exitCode).toBe(0);
+    expect(JSON.parse(result.stdout)).toMatchObject({ errors: 0, warnings: 0 });
   });
 });
 
@@ -1484,11 +2334,22 @@ async function createDependencyPack(root: string, id: string, name: string, desc
   await fs.writeFile(path.join(packageRoot, "README.md"), "Authoring documentation that must not be installed.\n");
 }
 
-async function runCli(command: "index" | "install" | "extend" | "find" | "doctor" | "create", ...args: string[]): Promise<{ exitCode: number; stdout: string; stderr: string }> {
+type CliCommand = "index" | "install" | "extend" | "find" | "chain" | "doctor" | "create";
+
+async function runCli(command: CliCommand, ...args: string[]): Promise<{ exitCode: number; stdout: string; stderr: string }> {
   return runCliWithEnv(command, args, {});
 }
 
-async function runCliWithEnv(command: "index" | "install" | "extend" | "find" | "doctor" | "create", args: string[], env: Record<string, string>): Promise<{ exitCode: number; stdout: string; stderr: string }> {
+async function runCliWithEnv(command: CliCommand, args: string[], env: Record<string, string>): Promise<{ exitCode: number; stdout: string; stderr: string }> {
+  const commandArgs = (command === "install" || command === "extend") && !args.includes("--pro") ? [...args, "--pro"] : args;
+  return spawnCli(command, commandArgs, env);
+}
+
+async function runCliDefault(command: CliCommand, ...args: string[]): Promise<{ exitCode: number; stdout: string; stderr: string }> {
+  return spawnCli(command, args, {});
+}
+
+async function spawnCli(command: CliCommand, args: string[], env: Record<string, string>): Promise<{ exitCode: number; stdout: string; stderr: string }> {
   const child = Bun.spawn([process.execPath, cliFile, command, ...args], {
     env: { ...process.env, ...env },
     stdout: "pipe",
@@ -1500,6 +2361,27 @@ async function runCliWithEnv(command: "index" | "install" | "extend" | "find" | 
     new Response(child.stderr).text()
   ]);
 
+  return { exitCode, stdout, stderr };
+}
+
+async function initializeGitRepository(root: string): Promise<void> {
+  expect((await gitCommand(root, "init")).exitCode).toBe(0);
+  expect((await gitCommand(root, "config", "user.email", "open-forge-tests@example.invalid")).exitCode).toBe(0);
+  expect((await gitCommand(root, "config", "user.name", "Open Forge Tests")).exitCode).toBe(0);
+}
+
+async function commitAll(root: string, message: string): Promise<void> {
+  expect((await gitCommand(root, "add", "-A")).exitCode).toBe(0);
+  expect((await gitCommand(root, "commit", "-m", message)).exitCode).toBe(0);
+}
+
+async function gitCommand(root: string, ...args: string[]): Promise<{ exitCode: number; stdout: string; stderr: string }> {
+  const child = Bun.spawn(["git", "-C", root, ...args], { stdout: "pipe", stderr: "pipe" });
+  const [exitCode, stdout, stderr] = await Promise.all([
+    child.exited,
+    new Response(child.stdout).text(),
+    new Response(child.stderr).text()
+  ]);
   return { exitCode, stdout, stderr };
 }
 

@@ -33,10 +33,20 @@ Before asking: yes, you should definitely read the files on initial install and 
 
 ## Usage
 
-Install Open Forge into the current folder:
+Start in a Git repository, then install Core into the current folder:
 
 ```sh
+git init
 npx open-forge install
+```
+
+Review the small Core diff and commit it before adding optional material:
+
+```sh
+git status
+git diff
+git add AGENTS.md .agents
+git commit -m "Install Open Forge Core"
 ```
 
 Install a local extension overlay:
@@ -55,13 +65,19 @@ npx open-forge extend --ids {extension-id},{extension-id}
 npx open-forge extend {extension-id} --dry-run
 ```
 
-An extension may contain one skill, one workflow, directives, mixed routed material, or only dependencies as a convenience pack. The catalogue derives and shows those contents; interactive selection marks transitive dependencies as required and locks them while needed. Bundled dependencies resolve offline and install automatically. `--dry-run` shows dependency order, every planned file, change status, and baseline/executable scope without writing.
+An extension may contain one skill, one workflow, directives, patterns, guidance, workspace or memory routes, support-only material, any deliberate mix, or only dependencies as a convenience pack. The catalogue derives and shows those contents; interactive selection marks transitive dependencies as required and locks them while needed. Bundled dependencies resolve offline and install automatically. `--dry-run` shows dependency order, every planned file, change status, and baseline/executable scope without writing.
+
+Each normal extension invocation starts from a clean target-scoped Git checkpoint and ends by asking you to review and commit the selected dependency closure. Install separate roots in separate commands when you want separate diffs; multi-select and `--ids` intentionally make one combined review unit. Catalogue listing and dry runs are read-only and remain available at any time.
+
+Expert users may add `--pro` to `install` or a writing `extend` command to intentionally bypass the Git/Core lifecycle checkpoints. This does not disable dependency, manifest, containment, collision, link, index, or rollback safety.
 
 Install Open Forge into another folder:
 
 ```sh
 npx open-forge install {target-folder}
 ```
+
+Outside Git, an interactive install recommends `git init` and asks for explicit approval; a non-interactive install stops without writing. This keeps the first Core diff and every later extension transaction independently reviewable by default.
 
 ## GitHub Release Install
 
@@ -103,6 +119,8 @@ open-forge-src.manifest.json
 ```
 
 That manifest contains per-file SHA-256 hashes.
+
+Manual archive copying bypasses the CLI checkpoint guard. Start from a clean Git baseline, verify the archive hash or manifest, review the copied Core diff, and commit it before installing optional extensions.
 
 ## What Gets Installed
 
@@ -154,11 +172,13 @@ The important thing is not the number of files. The important thing is the routi
 
 `AGENTS.md` points agents at the loader. The CLI generates the loader's active root-route `entries` from `entrypoint` metadata, so agents immediately see where each root route lives and what it represents. Category `entrypoints` then expose their relevant routed files.
 
-Generated paths are concrete and relative to the folder whose `AGENTS.md` selected the loader. A symlinked `.agents/` folder or a shared submodule does not change those logical paths.
+For non-trivial work, the loader defaults to one clearly matching installed workflow. If several are useful, one stays primary and the rest become ordered handoffs. If none matches exactly, the agent recommends the nearest workflow or workflows once and offers direct execution; an explicit “no workflow” request proceeds directly without another prompt.
+
+Generated paths are concrete and relative to the folder whose `AGENTS.md` selected the loader. A shared submodule does not change those logical paths. For safety, deterministic CLI reads and writes reject a symlinked or junction-mounted route tree that resolves outside the selected target; plain Markdown loading of an explicitly trusted external mount remains a manual trust decision.
 
 ## First Thing After Install
 
-Read the files Open Forge installed.
+Review and read the files Open Forge installed, then commit the base baseline (#Core plus minimum #Memory, with no optional extensions) before installing extensions.
 
 At minimum:
 

@@ -57,7 +57,7 @@ A primitive category may extend its own type recursively at any depth. Workflows
 
 Within a recursively selected category, material in a narrower positive scope is preferred over broader material of the same primitive when safe and allowed. The category `entrypoint` owns any additional precedence rules for its contents.
 
-Axioms of loaded ancestor `entrypoints` apply to all routes below them. A child `entrypoint` adds only what is specific to its scope and does not restate ancestor axioms.
+Axioms of loaded ancestor `entrypoints` apply to all routes below them. A child `entrypoint` adds only what is specific to its scope and does not restate ancestor axioms. A missing or empty local Axioms section, or one declared as `inherited` or `none`, means no local additions; none of those forms disables an ancestor axiom.
 
 ## Route Contract
 
@@ -91,9 +91,9 @@ The loaded target still gets its meaning from its category and authored content.
 
 Generated paths must be concrete and relative to the active workspace root.
 
-The active workspace root is the directory whose `AGENTS.md` selected the loader. Agents and tooling must resolve `.agents/...` from that directory. They must not infer the root from Git boundaries or from the physical location of a symlink or submodule target.
+The active workspace root is the directory whose `AGENTS.md` selected the loader. Agents and tooling resolve `.agents/...` from that directory and do not infer a different logical root from Git or submodule boundaries.
 
-This contract lets the same routed knowledge work in a repository, monorepo, shared submodule, or symlinked `.agents/` tree without runtime path constants.
+Generated path identity remains workspace-relative without runtime constants. Security-sensitive CLI lookup, validation, indexing, installation, and extension writes additionally require every consumed or mutated route to remain physically below that target, and reject an externally resolving symlink or junction. A plain Markdown agent may follow an explicitly trusted external mount, but that is outside the CLI trust boundary.
 
 ## Scoped Routes
 
@@ -150,6 +150,8 @@ Agents load routing layers in this order:
 
 Whenever a markdown file is loaded, its `.overwrite.md` companion must be loaded after it when present.
 
+The CLI `chain` command exposes the inherited context for one route in loader-to-target order, inserting each overwrite after its base and a native skill's `SKILL.md` before an internal target. Its optional heading view works for any heading and distinguishes content, absence, emptiness, inherited, and none declarations. Chain resolution must reject absolute paths, parent traversal, drive changes, and physical link escapes from the logical target. The command explains file inheritance; `doctor` remains responsible for validating generated-route continuity.
+
 ## Why
 
 This model keeps the loader small, gives every category one authoritative meaning, supports recursive routing, and avoids a duplicated central registry.
@@ -172,7 +174,8 @@ Routing is aligned when:
 - layer tags and route type tags remain classification signals unless a loaded `entrypoint` defines more
 - paths or descriptions expose mandatory and workspace-wide scope without relying on tags alone
 - generated paths are concrete and workspace-root-relative
-- physical repository and link boundaries do not change the active workspace root
+- repository and submodule boundaries do not change the logical active workspace root
+- deterministic CLI reads and writes reject routes that escape the target through a symbolic link or junction
 - `framework routes`, `scope routes`, `scoped framework routes`, and `slugs` have distinct meanings
 - `scope routes` are concrete `slug` folders with `entrypoints`
 - every folder in a visible route chain has its own `entrypoint`
@@ -183,6 +186,8 @@ Routing is aligned when:
 - native skill packages route through `SKILL.md` and keep package internals runtime-owned
 - nested categories use the same contract at every depth
 - ancestor axioms apply within loaded route chains without restatement
+- absent, empty, inherited, and none local Axioms declarations add nothing and never cancel ancestor axioms
+- deterministic chain inspection emits loader, ancestors, skills, targets, and overwrites in load order without leaving the logical target
 - nested autoload exists only through loaded parent `entrypoints`
 - standing follow-ups exist only through loaded parent `entrypoints`
 - mixed local primitive bundles are limited to workflows

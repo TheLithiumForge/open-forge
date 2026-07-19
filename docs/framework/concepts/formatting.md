@@ -134,9 +134,17 @@ A category `entrypoint` contains:
 
 Category rules belong before `## Entries`. The authored portion must contain only stable category-level meaning and axioms. Detailed behavior, guidance, patterns, and user content belong in routed files.
 
+An `## Axioms` section in a local or user-created category is optional. Missing, empty, `inherited`, or `none` all mean that the category adds no local axioms; loaded ancestor axioms remain active. When a sentinel is used, it must not be mixed with substantive local axioms.
+
 Installed category `entrypoints` must be understandable without governance descriptors. Any rule required for agent behavior must appear in installed payload content, not only in `docs/framework/`.
 
 The authored portion of an Open Forge category `entrypoint` must stay between 5 and 80 non-empty lines. Generated `entries` do not count toward this limit.
+
+## Primitive Contracts
+
+A direct directive file declares exactly one non-empty `## Applies To` section before `## Axioms`. Applicability is positive and explicit; path placement and tags may help route the file but never silently establish its scope. A hybrid directive category `entrypoint` may use `inherited` when it adds no narrower applicability.
+
+A workflow starts with `## Mode`, followed in order by `## Goal`, `## Required Routes`, `## Constraints`, `## Steps`, `## Loop`, `## Outputs`, and `## Completion`. Mode is exactly `linear` or `iterative`. Constraints is always present and uses `- none` when no workflow-specific invariant applies. Every workflow seeks its Goal; goal-seeking is not a separate mode.
 
 ## Scope Route Slugs
 

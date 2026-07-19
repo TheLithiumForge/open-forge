@@ -8,6 +8,10 @@ open-forge:
 
 Design Review produces prioritized experience findings and an acceptance recommendation without modifying the design by default.
 
+## Mode
+
+iterative
+
 ## Goal
 
 - outcome: evidence-backed design findings, strengths, unresolved questions, and a clear accept, revise, or validate recommendation

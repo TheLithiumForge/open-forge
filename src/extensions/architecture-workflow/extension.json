@@ -1,6 +1,6 @@
 {
   "name": "Architecture Workflow",
-  "description": "Map a current system, compare structural options, and define an adoptable direction",
+  "description": "Bootstrap greenfield or rescue architecture, compare options, and derive accorded directives, patterns, guidance, and transition slices",
   "version": "0.1.0",
   "dependencies": ["architecture-capability"]
 }

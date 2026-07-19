@@ -43,8 +43,9 @@ Coupling stays one-directional: rune reads markdown; open-forge core never depen
 Keep (contract operations rune structurally cannot own):
 
 - `index` - generated regions are the contract.
-- `context` with tiers (startup, closeout, path, `--follow-required`) - load-policy tags, ancestor chains, and Required Routes are contract semantics invisible to an IR engine.
-- `routes --tag` / find-by-tags - deterministic tag matching over generated entries; needed as the closeout primitive.
+- `find --route ... --follow-required` - deterministic route and Required Routes lookup over the Open Forge contract.
+- `find --tag` - deterministic tag matching over routed entries; useful for discovery, including the current global #KeepInMind recheck.
+- `chain <route>` - loader, ancestor entrypoint, native skill, target, overwrite, and arbitrary-heading inspection.
 - `doctor` - route-contract validation; rune's own integrity checks validate its index, a different artifact.
 - `install` / `extend` - unchanged.
 
@@ -57,12 +58,12 @@ Cut or never build (rune territory):
 
 ## Closeout Mechanism Decision
 
-Implement find-by-tag as the primitive and `context closeout` as the named tier (print the #KeepInMind route bodies plus their follow-ups). Loader wording gains a tool-assisted, never tool-dependent line - "recheck loaded #KeepInMind entries; `open-forge context closeout` prints them when the CLI is available" - shipped only together with the command, because the framework must not reference tools that do not exist and must keep working from a tarball install with no CLI.
+`find --tag KeepInMind --bodies` shipped as deterministic global discovery, and `chain` shipped for inherited context inspection. They do not yet equal an active closeout set. A future active-context receipt may compose the actually selected loader chain, overwrite companions, Required Routes, closeout obligations, cost, and digest; it belongs to Open Forge because those are contract semantics, while Rune remains the relevance engine. Any loader reference must ship only with a real command and plain-file fallback.
 
 Validation path per the fixed-seeds discipline: ship the command, add it as a benchmark variable overlay first, A/B closeout compliance against the v8 baseline, and only then promote the loader wording to core. Same experiment shape that validated the dump tool in v4.
 
 ## Idea Pruning Driven By This Analysis
 
-- Needless now: any all-in-one generated cold-start index (context startup plus rune cover both halves); route inventory beyond flat `routes`; open-forge-side search flags.
+- Needless now: any all-in-one generated cold-start index; a second route inventory beside `find`/`chain`; open-forge-side semantic search flags.
 - Reframed: "external or distributed memory as a documented user pattern" becomes concrete through rune's configurable source paths; document it in the bridge extension, not core.
 - Unchanged and still valuable: observations rework, extension skill-sharing, defaults pack, planning/tasks extension, CI ladder items.
