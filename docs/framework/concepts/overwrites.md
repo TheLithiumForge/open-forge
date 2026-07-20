@@ -4,9 +4,9 @@
 
 This descriptor governs the overwrite concept across the installable Open Forge payload.
 
-An overwrite is a markdown companion file named `{name}.overwrite.md`. It is read after `{name}.md` when the base file is loaded.
+An overwrite is a user-owned Markdown companion named `{name}.overwrite.md`. Agents read it immediately after `{name}.md` whenever the base is loaded.
 
-Overwrites are a customization mechanism, not a separate workflow system. They let a workspace make small local adjustments while keeping upstream framework changes visible in git.
+Overwrites are a customization mechanism, not a separate route or workflow system.
 
 ## Represents
 
@@ -14,17 +14,15 @@ Overwrites represent the middle customization layer between adding local files a
 
 The customization order is:
 
-1. Add local files when the behavior can be expressed as a new route, pattern, workflow, template, guide, directive, or skill.
-2. Use overwrite files when the base file is mostly right and needs a small local addition, narrowing, exception, or disable.
-3. Edit the base framework file when the desired behavior is a complete replacement or when base plus overwrite would confuse an agent.
+1. Add a local routed file when the behavior can stand on its own.
+2. Use an overwrite when the base is mostly right and needs a small local addition, narrowing, exception, or disable.
+3. Edit the base framework file when the desired behavior is a complete replacement or base plus overwrite would confuse an agent.
 
-An extension augmentation is different. It is an install-time composition mechanism for a stable-id package to add an owned, removable block to an explicit slot in a shared base file. It is not a workspace customization layer and does not replace the overwrite decision.
+Extensions contribute whole files through ordinary routes. They do not own overwrites or use a companion mechanism to mutate shared Markdown.
 
 ## Contains
 
-An overwrite file must contain only the local adjustment.
-
-It must make its relationship to the base file clear. It must not require an agent to reconcile competing models.
+An overwrite contains only the local adjustment and makes its relationship to the base clear.
 
 An overwrite may contain:
 
@@ -34,43 +32,36 @@ An overwrite may contain:
 - a narrowed interpretation
 - an explicit disable of a small behavior with a reason
 
+It must not leave competing models that an agent has to reconcile.
+
 ## Scope
 
-Overwrite files apply to markdown source files that agents read as behavior, routes, patterns, workflows, templates, guides, directives, observations, sessions, handoffs, or skills.
+An overwrite inherits the base file's route, scope, and load behavior. It is never indexed or selected independently.
 
-Generated index regions are output, not behavior. They must be changed by adding, removing, or editing files in the indexed folder, then regenerating the index.
+Generated index regions are output, not behavior. Change them by adding, removing, or editing routed files, then regenerate the index manually or with the CLI.
 
-The authored portion of a category `entrypoint` may define category behavior and follows the normal customization order. Its generated region never has an overwrite.
+The authored portion of a category `entrypoint` follows the normal customization order. Its generated region never has a separate overwrite.
 
 ## Implementation Requirements
 
-Agents must read `{name}.overwrite.md` after `{name}.md` when both files exist and the base markdown file is loaded.
+Agents read `{name}.md` and then `{name}.overwrite.md` when the overwrite exists. The overwrite has final precedence within that file's scope.
 
-Index generation must ignore overwrite files as index `entries`.
+Index generation ignores `.overwrite.md` companions as generated entries.
 
-Install/update behavior must keep overwrite files visible as local files. An Open Forge update must not silently merge overwrite content into the base file.
-
-Managed extensions must not own `.overwrite.md` files merely to change a shared target. They use an explicit augmentation slot in the base file instead. The resulting read order is:
-
-1. base Markdown, including materialized extension-owned augmentation blocks
-2. workspace-owned overwrite companion
-
-The overwrite therefore remains the final local-precedence layer. Extension update or removal may change only its verified block in the base and must leave the overwrite untouched.
+Install and update behavior keeps overwrite files visible and user-owned. Open Forge must not silently merge them into a base, and a managed extension must not claim them as payload.
 
 ## Why
 
-Overwrites exist to keep local adjustments reviewable.
-
-They reduce the need to edit managed framework files while still allowing a workspace to adapt installed behavior. They also keep future updates diffable: upstream changes appear in the base file, local changes remain in the overwrite file.
+Overwrites keep small local adjustments reviewable and preserve a clear diff between upstream behavior and workspace choices.
 
 ## Alignment Checks
 
 The overwrite concept is aligned when:
 
-- local files are preferred before overwrites
-- overwrites are used only for additive or lightly modifying behavior
+- local routed files are preferred before overwrites
+- overwrites are used only for small local adjustments
 - direct edits are used for complete behavior changes
-- generated index regions are changed only through indexed files
+- generated indexes change through routed sources rather than overwrite content
 - agents are not asked to reconcile contradictory base and overwrite behavior
-- update behavior keeps local overwrite files visible and reviewable
-- extension augmentations remain explicit owned blocks in the base, while the workspace overwrite remains last
+- overwrites remain visible, user-owned, and last within their base file's scope
+- extensions add whole routed files instead of mutating shared Markdown

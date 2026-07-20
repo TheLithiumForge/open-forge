@@ -4,7 +4,7 @@
 
 This descriptor governs `src/open-forge/.agents/directives/_directives.md`.
 
-The directives category `entrypoint` defines binding instructions, the route-selected scope in which they bind, and generated navigation to directive files and child directive categories.
+The directives category `entrypoint` defines binding instructions, their visible route-selected scope, and generated navigation to directive files and child directive categories.
 
 ## Represents
 
@@ -20,12 +20,14 @@ The installed file follows the shared category `entrypoint` shape owned by the f
 
 The root directives category is loaded through its generated loader `entry` because its installed metadata includes #LoadNow.
 
-The root directives `entrypoint` must require agents to load:
+Every direct directive file carries #LoadNow in its metadata, so its generated entry is read whenever its parent directive `entrypoint` has already been loaded.
 
-- every direct directive file fully
-- every child directive route whose path, description, tags, or defined tag behavior match the current work
+The root directives `entrypoint` must require agents to:
 
-After a child directive route is selected, every direct directive file exposed by that loaded child `entrypoint` is read. Directive bodies outside the active route chain remain routed but inactive.
+- read every direct directive entry through #LoadNow
+- select every child directive route whose path, description, tags, or ancestor meaning match the current work
+
+Selecting and loading a child directive `entrypoint` establishes its narrower scope before its direct entries are considered. Those direct entries also carry #LoadNow, so every direct directive file in the selected route is read without a directive-specific traversal rule. Directive bodies outside the active route chain remain routed but inactive.
 
 ## Authority Contract
 
@@ -37,7 +39,7 @@ Loaded child directives add to loaded ancestor directives. Narrower routing chan
 
 ## Scope Contract
 
-Every direct directive file declares exactly one substantive level-2 `## Axioms` section and no `Applies To` gate. Operational conditions may live inside an Axiom, but a loaded directive cannot deactivate itself.
+Every direct directive file carries #LoadNow and contains exactly one non-empty level-2 `## Axioms` section. Operational conditions belong inside the relevant Axiom, while optional behavior belongs in guidance, a skill, or a workflow.
 
 Every child category `entrypoint` must expose a positive selection scope through its path, description, tags, and ancestor meaning. Its Axioms may add scope-specific rules or use `inherited` or `none` when it adds no local Axioms.
 
@@ -45,13 +47,11 @@ The directives tree may use direct child categories, organizational routing cate
 
 Folder names, descriptions, and tags work together to make scope cheap to identify before the body is opened. Tags provide compact signals such as #Directive #Database #Migration, but route selection creates scope and loaded Axioms create authority.
 
-Optional or advisory behavior belongs in guidance, a skill, or a workflow rather than a directive.
-
 ## Generated Region
 
 The final generated region uses the shared category `entrypoint` shape owned by the formatting concept.
 
-Generated `entries` list direct directive files and direct child directive categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
+Generated `entries` list direct directive files and direct child directive categories. Direct file entries expose their authored #LoadNow tag. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
 
 ## Used By
 
@@ -70,7 +70,8 @@ The implementation is aligned when it:
 - is named `_directives.md`
 - lives in `.agents/directives/`
 - includes `Core`, `Directive`, and `LoadNow` in scoped `open-forge:` tags
-- requires every direct directive file to declare one substantive level-2 Axioms section and no `Applies To` gate
+- requires #LoadNow on every direct directive file so ordinary loaded-parent traversal reads it
+- requires every direct directive file to contain one non-empty level-2 Axioms section
 - defines direct root files as workspace-wide and binding
 - supports recursively scoped child directive categories
 - uses paths, descriptions, tags, and ancestor meaning as the pre-load scope-selection surface

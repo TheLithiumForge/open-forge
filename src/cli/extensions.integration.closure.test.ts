@@ -40,6 +40,26 @@ const advertisedExtensionIds = [
   "vision-workflow",
   "workflow-essentials"
 ] as const;
+const catalogueExtensionIds = [
+  "architecture-capability",
+  "implementation-capability",
+  "planning-capability",
+  "quality-capability",
+  "vision-capability",
+  "architecture-workflow",
+  "brainstorming-workflow",
+  "dev-workflow",
+  "implementation-workflow",
+  "testing-workflow",
+  "vision-workflow",
+  "design-workflows",
+  "planning-workflows",
+  "quality-workflows",
+  "workflow-essentials",
+  "cli-testing-patterns",
+  "reliability-defaults",
+  "rune-bridge"
+] as const;
 const sandbox = useTestSandbox("open-forge-extensions-integration");
 
 describe("first-party extension integration", () => {
@@ -49,9 +69,12 @@ describe("first-party extension integration", () => {
     expect(result.stderr).toBe("");
     expect(result.exitCode).toBe(0);
     const listedIds = [...result.stdout.matchAll(/^- ([a-z0-9][a-z0-9-]*)/gm)].map((match) => match[1]);
-    expect(listedIds).toEqual([...advertisedExtensionIds]);
+    expect(listedIds).toEqual([...catalogueExtensionIds]);
+    expect(result.stdout.indexOf("Skills:")).toBeLessThan(result.stdout.indexOf("Workflows:"));
+    expect(result.stdout.indexOf("Workflows:")).toBeLessThan(result.stdout.indexOf("Packs:"));
+    expect(result.stdout.indexOf("Packs:")).toBeLessThan(result.stdout.indexOf("Support:"));
     for (const id of advertisedExtensionIds) {
-      expect(await isFile(path.join(extensionsRoot, id, "extension.json"))).toBe(true);
+      expect(await isFile(path.join(await extensionPackagePath(id), "extension.json"))).toBe(true);
     }
   });
 
@@ -73,7 +96,7 @@ describe("first-party extension integration", () => {
     const root = await createRoot();
 
     for (const id of advertisedExtensionIds) {
-      const payload = path.join(extensionsRoot, id, "payload");
+      const payload = path.join(await extensionPackagePath(id), "payload");
       if (await isDirectory(payload)) {
         await copyTreeContents(payload, root);
       }
@@ -94,7 +117,7 @@ describe("first-party extension integration", () => {
     const owners = new Map<string, string>();
 
     for (const id of advertisedExtensionIds) {
-      const payload = path.join(extensionsRoot, id, "payload");
+      const payload = path.join(await extensionPackagePath(id), "payload");
       if (!(await isDirectory(payload))) {
         continue;
       }
@@ -128,18 +151,13 @@ describe("first-party extension integration", () => {
     expect(doctorResult.exitCode).toBe(0);
     expect(JSON.parse(doctorResult.stdout)).toMatchObject({ errors: 0, warnings: 0 });
 
-    const loader = await fs.readFile(path.join(root, ".agents", "loader.md"), "utf8");
-    expect(loader).not.toContain("<!-- open-forge-extension.");
-    expect(await pathExists(path.join(root, "augmentations", "workflow-selection.md"))).toBe(false);
     const receipt = JSON.parse(await fs.readFile(path.join(root, "open-forge.extensions.json"), "utf8")) as {
       roots: string[];
       extensions: Record<string, {
         files: string[];
-        augmentations: Array<{ target: string; slot: string; sha256: string }>;
       }>;
       files: Record<string, { sha256: string; owners: string[] }>;
     };
-    expect(receipt.extensions["vision-workflow"].augmentations).toEqual([]);
     expect(receipt.roots).toEqual([...advertisedExtensionIds].sort());
     expect(Object.keys(receipt.extensions)).toEqual([...advertisedExtensionIds].sort());
     await assertReceiptMatchesInstalledState(root, receipt);
@@ -318,7 +336,6 @@ async function assertReceiptMatchesInstalledState(
   receipt: {
     extensions: Record<string, {
       files: string[];
-      augmentations: Array<{ target: string; slot: string; sha256: string }>;
     }>;
     files: Record<string, { sha256: string; owners: string[] }>;
   }
@@ -326,13 +343,6 @@ async function assertReceiptMatchesInstalledState(
   for (const [id, extension] of Object.entries(receipt.extensions)) {
     for (const file of extension.files) {
       expect(receipt.files[file]?.owners).toContain(id);
-    }
-    for (const augmentation of extension.augmentations) {
-      const target = await fs.readFile(path.join(root, ...augmentation.target.split("/")), "utf8");
-      const block = cliTestInternals.parseAugmentationSlots(target, augmentation.target)
-        .get(augmentation.slot)?.blocks.get(id);
-      expect(block).toBeDefined();
-      expect(cliTestInternals.sha256(block!.content)).toBe(augmentation.sha256);
     }
   }
 
@@ -343,6 +353,14 @@ async function assertReceiptMatchesInstalledState(
     const bytes = await fs.readFile(path.join(root, ...file.split("/")));
     expect(cliTestInternals.extensionOwnedFileSha256(file, bytes)).toBe(ownership.sha256);
   }
+}
+
+async function extensionPackagePath(id: string): Promise<string> {
+  for (const manifestFile of await listFiles(extensionsRoot, (file) => path.basename(file) === "extension.json")) {
+    const manifest = JSON.parse(await fs.readFile(manifestFile, "utf8")) as { id?: string };
+    if (manifest.id === id) return path.dirname(manifestFile);
+  }
+  throw new Error(`Missing first-party extension package ${id}`);
 }
 
 async function createRoot(): Promise<string> {

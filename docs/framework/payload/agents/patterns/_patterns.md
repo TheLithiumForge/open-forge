@@ -10,7 +10,7 @@ The patterns category `entrypoint` defines how agents discover and apply concret
 
 The patterns category represents established arrangements for code, files, naming, placement, boundaries, APIs, documents, and other inspectable results.
 
-A pattern has stable relationships and variable contents. It governs recognizable form within its positive scope.
+A pattern has stable relationships and variable contents. It makes repeated work consistent across modules, projects, repositories, or other scopes and easier to review.
 
 ## Contains
 
@@ -20,7 +20,7 @@ The installed file follows the shared category `entrypoint` shape owned by the f
 
 Every routed pattern must define a concrete, recognizable shape and identify enough positive context for an agent to determine where it applies.
 
-An applicable pattern is the established default shape for its scope. A different shape requires a deliberate reason.
+An applicable pattern is the established default shape for its scope. A different shape requires a deliberate reason, preserving consistency without forcing a shape that does not fit.
 
 ## Loading Contract
 
@@ -59,7 +59,7 @@ The implementation is aligned when it:
 - is named `_patterns.md`
 - lives in `.agents/patterns/`
 - includes `Core` and `Pattern` in scoped `open-forge:` tags
-- defines patterns as concrete recognizable shapes
+- defines patterns as concrete recognizable shapes that support consistency and review
 - selects pattern routes by visible relevance
 - treats applicable patterns as established defaults
 - supports recursive positive scope

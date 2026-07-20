@@ -9,17 +9,17 @@
   "components": [
     { "name": "core", "source": "../../../../src/open-forge", "destination": "" },
     { "name": "delivery-current-truth", "source": "payload/delivery", "destination": "" },
-    { "name": "vision-capability", "source": "../../../../src/extensions/vision-capability/payload", "destination": "" },
-    { "name": "vision-workflow", "source": "../../../../src/extensions/vision-workflow/payload", "destination": "" },
-    { "name": "architecture-capability", "source": "../../../../src/extensions/architecture-capability/payload", "destination": "" },
-    { "name": "architecture-workflow", "source": "../../../../src/extensions/architecture-workflow/payload", "destination": "" },
-    { "name": "planning-capability", "source": "../../../../src/extensions/planning-capability/payload", "destination": "" },
-    { "name": "brainstorming-workflow", "source": "../../../../src/extensions/brainstorming-workflow/payload", "destination": "" },
-    { "name": "planning-workflows", "source": "../../../../src/extensions/planning-workflows/payload", "destination": "" },
-    { "name": "implementation-capability", "source": "../../../../src/extensions/implementation-capability/payload", "destination": "" },
-    { "name": "implementation-workflow", "source": "../../../../src/extensions/implementation-workflow/payload", "destination": "" },
-    { "name": "quality-capability", "source": "../../../../src/extensions/quality-capability/payload", "destination": "" },
-    { "name": "testing-workflow", "source": "../../../../src/extensions/testing-workflow/payload", "destination": "" }
+    { "name": "vision-capability", "source": "../../../../src/extensions/skills/vision-capability/payload", "destination": "" },
+    { "name": "vision-workflow", "source": "../../../../src/extensions/workflows/vision-workflow/payload", "destination": "" },
+    { "name": "architecture-capability", "source": "../../../../src/extensions/skills/architecture-capability/payload", "destination": "" },
+    { "name": "architecture-workflow", "source": "../../../../src/extensions/workflows/architecture-workflow/payload", "destination": "" },
+    { "name": "planning-capability", "source": "../../../../src/extensions/skills/planning-capability/payload", "destination": "" },
+    { "name": "brainstorming-workflow", "source": "../../../../src/extensions/workflows/brainstorming-workflow/payload", "destination": "" },
+    { "name": "planning-workflows", "source": "../../../../src/extensions/packs/planning-workflows/payload", "destination": "" },
+    { "name": "implementation-capability", "source": "../../../../src/extensions/skills/implementation-capability/payload", "destination": "" },
+    { "name": "implementation-workflow", "source": "../../../../src/extensions/workflows/implementation-workflow/payload", "destination": "" },
+    { "name": "quality-capability", "source": "../../../../src/extensions/skills/quality-capability/payload", "destination": "" },
+    { "name": "testing-workflow", "source": "../../../../src/extensions/workflows/testing-workflow/payload", "destination": "" }
   ],
   "overrides": [],
   "inputs": {

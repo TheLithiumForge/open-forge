@@ -6,15 +6,15 @@ open-forge:
 
 # Workspace
 
-Workspace routes point to important project locations and explain when/why to use them. //Hn: They do not replace memory, but serves more like a map with small descriptions of places. The granularity should be at the user's discretion but it is adviced to be coarse, e.g. modules, classes, projects, scopes, etc rsther than class members, functions, etc 
+Workspace routes form a concise map of important project locations and explain when to use them
 
 ## Axioms
 
-- Use `Entries` when current work needs an important project location.
-- Each route file points to one or more related destinations and states what they contain and when they matter.
-- Keep the route set limited to destinations needed for reliable discovery.
-- The workspace chooses route filenames, grouping, and nesting depth.
-- Destination files retain detailed truth.
+- Use `Entries` when current work needs an important project location
+- Each route file points to one or more related destinations and states what they contain and when they matter
+- Keep the map intentionally coarse; prefer modules, projects, repositories, systems, or scopes over members and functions unless finer routing earns its cost
+- The workspace chooses route filenames, grouping, and nesting depth
+- Workspace routes do not replace #Memory or destination truth; the routed destination retains the details
 
 ## Entries
 

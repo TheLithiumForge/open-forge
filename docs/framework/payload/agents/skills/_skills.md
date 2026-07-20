@@ -4,13 +4,13 @@
 
 This descriptor governs `src/open-forge/.agents/skills/_skills.md`.
 
-The skills category `entrypoint` defines how agents discover native skill packages without redefining any agent runtime's skill format.
+The skills category `entrypoint` defines how agents discover skills through the standard `SKILL.md` format supported by their runtime.
 
 ## Represents
 
-The skills category represents reusable agent capability packages with clear use cases and expected results.
+The skills category represents ordinary skills in the format understood by the active agent runtime.
 
-A skill packages a bounded ability, procedure, tool use, or reference set that helps an agent perform a specific kind of work.
+A skill is a bounded ability, procedure, tool use, or resource set that helps an agent perform a specific kind of work.
 
 ## Contains
 
@@ -18,25 +18,21 @@ The installed file follows the shared category `entrypoint` shape owned by the f
 
 ## Skill Contract
 
-Every routed skill package must identify one bounded capability, its positive applicability, and the expected result of using it.
+Every routed skill identifies one bounded capability, its positive applicability, and the expected result of using its `SKILL.md`.
 
-Open Forge-authored skills must prefer the native package shape `.agents/skills/{skill-name}/SKILL.md`.
+The CLI recognizes `.agents/skills/{skill-name}/SKILL.md` for routing but does not rewrite the file or define a package-internal `References` or `Entries` schema. The selected `SKILL.md` owns its metadata, instructions, resource organization, and on-demand loading. The active agent runtime owns invocation, activation, installation, and execution.
 
-The `SKILL.md` file owns the capability instructions and runtime-compatible metadata. Optional details belong under the skill folder, such as `references/`, `scripts/`, or `assets/`, and must be loaded only when `SKILL.md` makes them relevant.
-
-Open Forge routes skills. The active agent runtime owns skill invocation, activation, packaging, installation, and execution.
-
-Loose markdown files in `.agents/skills/` are not skill packages. Skills use folders.
+Loose Markdown files in `.agents/skills/` are not routed skills.
 
 ## Loading Contract
 
 The skills category is relevant when current work may benefit from a reusable agent capability.
 
-The `entrypoint` must route agents to direct skill packages and child skill categories whose path, description, or tags match the current work. Each selected child `entrypoint` applies the same contract recursively. Agents load only selected skill packages in the current scope.
+The installed `entrypoint` stays small: agents use `Entries`, follow the selected `SKILL.md`, and load its resources only when that file makes them relevant.
 
 ## Scope Contract
 
-Direct skill packages describe capabilities available across the workspace within their stated applicability.
+Direct skills describe capabilities available across the workspace within their stated applicability.
 
 Nested skill categories narrow or explicitly preserve their parent scope by tool, domain, work type, artifact, project area, or another positive context. Placement, descriptions, and tags must make that scope cheap to identify.
 
@@ -46,7 +42,7 @@ Skills in a narrower selected scope are preferred over broader skills when safe 
 
 The final generated region uses the shared category `entrypoint` shape owned by the formatting concept.
 
-Generated `entries` list direct skill packages and direct child skill categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
+Generated `entries` list direct skills and direct child skill categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
 
 ## Used By
 
@@ -65,15 +61,16 @@ The implementation is aligned when it:
 - is named `_skills.md`
 - lives in `.agents/skills/`
 - includes `Core` and `Skill` in scoped `open-forge:` tags
-- defines skills as bounded reusable agent capability packages
+- defines skills through their standard `SKILL.md` and runtime behavior
 - selects skill routes by visible relevance
-- prefers `.agents/skills/{skill-name}/SKILL.md` for skill packages
-- keeps runtime-native `SKILL.md` metadata compatible with the active agent runtime
+- routes `.agents/skills/{skill-name}/SKILL.md` packages without rewriting them
+- keeps `SKILL.md` metadata compatible with the active agent runtime
 - keeps runtime-specific invocation, activation, packaging, installation, and execution outside the category contract
+- does not impose an Open Forge package-internal References or Entries format
 - supports recursive positive scope
 - prefers narrower selected skill scopes when safe and allowed
 - routes only through its final generated region
-- remains empty until skill packages or child skill categories are added
-- keeps compact relevance, loading, native skill package, scope, and runtime-boundary axioms
+- remains empty until skills or child skill categories are added
+- keeps installed Axioms limited to selection, native behavior, and on-demand resources
 - keeps the authored portion between 10 and 35 non-empty lines
-- keeps the frontmatter description `Reusable agent capability packages with clear use cases and expected results`
+- keeps the frontmatter description `Skills available through standard SKILL.md files`

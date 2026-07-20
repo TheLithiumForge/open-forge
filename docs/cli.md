@@ -15,6 +15,7 @@ open-forge extend --ids <id[,id...]> [target] [--dry-run] [--pro]
 open-forge extend --remove <id[,id...]> [target] [--dry-run] [--pro]
 open-forge extend <extension-source-or-id> [target] [--dry-run] [--pro]
 open-forge index [target]
+open-forge load [--bodies|--paths|--json] [target]
 open-forge find [--tag <Tag>]... [--route <path>] [--depth <n>] [--follow-required] [--bodies|--paths|--json] [target]
 open-forge chain <route> [--heading <title>] [--json] [target]
 open-forge doctor [--json] [target]
@@ -40,7 +41,7 @@ The command installs only the Open Forge base payload: #Core plus the minimum #M
 
 `--pro` is an explicit expert bypass for the Git-repository, clean-checkpoint, Git-visible-output, and Core-first lifecycle guards. It does not bypass manifest validation, dependency resolution, source or target containment, collision checks, link and hardlink protection, index validation, local-block preservation, or rollback. Core managed, scoped-framework, and generated-index writes are preflighted and rolled back together on failure. Use `--pro` when combining diffs is an intentional expert decision, not as a generic force flag.
 
-Core reinstall also reads and validates `open-forge.extensions.json` when managed extensions are present. It refuses a Core plan that would modify or remove a receipt-owned file, remove an occupied augmentation slot, or alter a retained owned block. Update or remove the owning extension explicitly; `--pro` does not cross this ownership boundary.
+Core reinstall also reads and validates `open-forge.extensions.json` when managed extensions are present. It refuses a Core plan that would modify or remove a receipt-owned file. Update or remove the owning extension explicitly; `--pro` does not cross this ownership boundary.
 
 Running it will:
 
@@ -94,23 +95,18 @@ open-forge extend {bundled-extension-id} {target-folder}
 open-forge extend --list
 open-forge extend --select {target-folder}
 open-forge extend --ids {bundled-extension-id},{bundled-extension-id}
-open-forge extend --ids {bundled-extension-id},{bundled-extension-id} {target-folder}
-open-forge extend --dry-run {extension-source-or-id} {target-folder}
-open-forge extend --ids {bundled-extension-id},{bundled-extension-id} --dry-run {target-folder}
 open-forge extend --remove {installed-extension-id}
-open-forge extend --remove {installed-extension-id},{installed-extension-id} {target-folder} --dry-run
-open-forge extend {bundled-extension-id} {target-folder} --pro
 ```
 
-`extend` resolves an extension and its bundled dependencies, plans the complete overlay, installs it into the target, and rebuilds generated index regions. Extension is a content-agnostic installation unit: the payload may be one skill, one workflow, directives, other routed material, support files, or any mix. Dependency resolution and installation are offline; the CLI reads only local folders and first-party extensions already shipped in the installed package.
+`extend` resolves an extension and its bundled dependencies, plans the complete payload, copies whole files into the target, and rebuilds affected generated index regions. Extension is a content-agnostic installation unit: installed payload files retain their ordinary runtime meaning.
 
-The extension can come from:
+Sources may be:
 
-- a local folder shaped like the files it should add to the workspace
-- a local extension package folder that contains `payload/`
-- a bundled first-party Open Forge extension shipped with the CLI package
+- a local direct overlay shaped like the files it adds
+- a local package with `payload/`
+- a bundled first-party package selected by stable id
 
-Local overlay example:
+A direct overlay maps into the target:
 
 ```text
 my-extension/
@@ -121,11 +117,7 @@ my-extension/
         components.md
 ```
 
-Running `open-forge extend my-extension {target-folder}` copies those files into `{target-folder}`. Markdown files preserve matching marked local blocks when the target file already exists. Other files are copied over directly.
-
-An idless direct overlay is unmanaged. The CLI copies its files but records no ownership. If the source declares a stable `id` in `extension.json`, it deliberately opts into receipt-managed ownership even without `payload/`; direct-overlay describes source layout, not lifecycle. The manifest itself is read for planning and is not copied into the target.
-
-Local package example:
+A package keeps runtime files below `payload/`:
 
 ```text
 my-extension/
@@ -138,9 +130,7 @@ my-extension/
           SKILL.md
 ```
 
-Running `open-forge extend my-extension {target-folder}` copies only `payload/` into `{target-folder}`.
-
-`extension.json` is optional only for an idless plain payload or overlay with no dependencies or augmentations. It is required when a local source wants managed identity or declares any dependency or augmentation. The current manifest fields are:
+The manifest is optional for an idless unmanaged local source. A managed local source and every bundled package use:
 
 ```json
 {
@@ -148,118 +138,68 @@ Running `open-forge extend my-extension {target-folder}` copies only `payload/` 
   "name": "My Extension",
   "description": "One line shown by list and selection views",
   "version": "0.1.0",
-  "dependencies": ["implementation-capability"],
-  "augmentations": [
-    {
-      "target": ".agents/loader.md",
-      "slot": "workflow-selection",
-      "source": "augmentations/workflow-selection.md"
-    }
-  ]
+  "dependencies": ["implementation-capability"]
 }
 ```
 
-- `id` is an optional lowercase stable extension id for bundled metadata and plain local overlays. It opts a local source into receipt-managed install, update, and removal. Bundled packages already have their catalogue id; a declared manifest id must match it. Any local source that declares dependencies or augmentations requires stable identity.
-- `name`, `description`, and `version` are optional non-empty strings. `version` is descriptive; the CLI does not perform version selection or compatibility solving.
-- `dependencies` is an optional duplicate-free array of lowercase bundled extension ids.
-- `augmentations` is an optional array of unique target-slot declarations. Each item has exactly one portable base-Markdown `target`, lowercase `slot`, and package-local Markdown `source`. Target and source use slash-separated relative paths; literal backslashes are invalid.
-- A dependency id may refer to any bundled extension shape, including a skill-only capability or a dependency-only convenience pack.
-- A local package or overlay may depend on bundled ids, but not on another arbitrary local path.
-- Invalid JSON, unknown fields, invalid field types or ids, duplicate dependencies or augmentations, missing bundled dependencies, dependency cycles, invalid paths, and reserved augmentation markers stop the command before files are written.
+- `id` is the stable lowercase selection and ownership identity, independent of source grouping
+- `name`, `description`, and `version` are optional display metadata; version is descriptive
+- `dependencies` is an optional duplicate-free array of bundled extension ids
+- local sources may depend on bundled ids, not arbitrary local paths
+- invalid or unknown fields, invalid ids, duplicate dependencies, missing bundled dependencies, and dependency cycles stop the command before writes
 
-The manifest is CLI metadata only. It is not copied from a package-shaped extension, is not required by agents, and is never a hidden routing source. Installed payload files and materialized augmentation blocks remain runtime truth.
+Bundled sources are organized below `src/extensions/{skills,workflows,packs,support}/{package-folder}/`. Those groups and folder names aid maintenance and catalogue presentation only. The manifest id owns install identity, and installed payload files own runtime meaning. A dependency-only pack may omit `payload/` when it declares at least one dependency.
 
-### Augmentations And Precedence
+The manifest, catalogue, source grouping, and ownership receipt are install metadata only. Agents route from installed files and never need those install surfaces.
 
-An augmentation target must already contain an explicit empty slot owned by that target:
+The CLI is optional. A manual install can copy `payload/` into the workspace and update affected generated `Entries` by hand. The CLI automates copying, dependency resolution, index regeneration, lifecycle checks, and receipts; it does not create a separate runtime contract.
 
-```md
-<!-- open-forge-augment.workflow-selection:start -->
-<!-- open-forge-augment.workflow-selection:end -->
-```
+Use `open-forge extend --list` for the grouped bundled catalogue, `open-forge extend` or `--select` for interactive selection, and `--ids` for unattended selection. Dependency resolution is offline, transitive, dependency-first, and deduplicated.
 
-For each declaring extension, the CLI inserts one owned block and sorts all blocks by extension id:
+Normal installation requires recognizable tracked Open Forge Core anchors, a clean target scope, and Git-visible planned output. Outside Git, interactive use asks for approval after recommending initialization; non-interactive writes stop. One invocation and its dependency closure form one review unit. `--pro` bypasses only these Git/Core lifecycle guards.
 
-```md
-<!-- open-forge-extension.my-extension:start -->
-- Prefer this workflow when its Goal matches the requested transition.
-<!-- open-forge-extension.my-extension:end -->
-```
+Before writing, the CLI validates the complete resolved payload plan. Paths must be portable and target-relative. Linked roots, physical escapes, Git control paths, reserved receipt and overwrite paths, portable aliases, file/parent collisions, and conflicting bytes stop the operation. Identical managed bytes may share owners. A managed package never silently adopts an unowned path, and an unmanaged overlay cannot replace a receipt-owned path.
 
-The source fragment is trimmed and materialized into the target; it is not installed or routed separately. A declared source is excluded from payload copying even when it lives below `payload/`. Slots may contain only whitespace and owned blocks. The target must be an existing base Markdown file, not an `.overwrite.md` file or `open-forge.extensions.json`. The installer never guesses a heading or merges unmarked prose.
+Extensions add whole files through ordinary routes. They do not inject blocks into shared Markdown, and managed payloads cannot claim workspace-owned `.overwrite.md` files.
 
-A managed payload may ship empty augmentation slots in base Markdown files. It may not ship pre-owned extension blocks or malformed, nested, duplicate, or non-empty slots; those states are rejected before target mutation.
+Payload, generated-index, and receipt changes form one rollback-capable in-process transaction. Git remains the durable recovery boundary.
 
-Managed extensions cannot own `.overwrite.md` files as a shared-file mutation strategy. The base file, including materialized augmentation blocks, loads first; a workspace-owned overwrite companion loads afterward and remains the final local-precedence layer.
-
-Payload-bearing bundled first-party extensions live in the CLI package under this source shape:
-
-```text
-src/extensions/{extension-id}/
-  extension.json
-  payload/
-    .agents/
-      ...
-```
-
-A dependency-only or augmentation-only package may omit `payload/` when its manifest declares at least one dependency or augmentation. A dependency-only pack installs that closure and writes no package file of its own; an augmentation-only package writes only its owned block into an existing target. This works by bundled id or from a copied local directory containing only `extension.json`, optional `README.md`, and declared fragment files; the local copy must declare a stable `id`. A bundled package with no payload, dependencies, or augmentations is not catalogued and is rejected if addressed directly. A local directory with another root file and no `payload/` retains direct-overlay layout; an idless plain overlay stays unmanaged only while it declares neither dependencies nor augmentations.
-
-Use `open-forge extend --list` to show the complete bundled catalogue available in the installed CLI package. Each line includes direct dependencies and a `contents` summary derived from payload paths and augmentation declarations, such as `skill`, `workflow`, `directive`, `guidance`, `pattern`, `workspace`, `memory`, `augmentation`, `other`, or `pack`. The summary is display metadata, not agent runtime truth. Use `open-forge extend {extension-id}` to install one.
-
-Use `open-forge extend` or `open-forge extend --select {target-folder}` to select bundled extensions in an interactive TTY. `[direct]` marks what the user selected and `[required]` marks automatically selected transitive dependencies. Space toggles a direct selection, but a required-only dependency is locked while another selection needs it. Removing the last dependent releases an orphaned requirement; a dependency selected directly remains direct. Enter installs and `q` cancels.
-
-Use `open-forge extend --ids {id},{id} {target-folder}` for unattended bundled extension installs. The CLI resolves transitive dependencies from the bundled first-party extensions, orders dependencies before dependents, deduplicates repeated packages, and runs index generation once after installing the complete plan.
-
-Normal extension installation requires recognizable Open Forge Core anchors (`AGENTS.md` with the managed Open Forge block and `.agents/loader.md` with the Open Forge loader contract). Inside Git, both anchors must be tracked, the target scope must be clean, and planned output—including the ownership receipt and derived indexes—must remain Git-visible. Outside Git, an interactive terminal recommends `git init` and requires explicit approval; a non-interactive write stops without mutation. One invocation installs one selected dependency closure as one review unit. After success, the CLI asks the user to review and commit that unit before another mutation. To keep independent extensions in independently reviewable diffs, install them in separate commands; `--ids` and multi-select deliberately combine their requested roots and automatically required dependencies into one unit.
-
-Read-only catalogue listing and `--dry-run` remain available before Core and do not require Git cleanliness. `--pro` intentionally bypasses the Git/Core lifecycle guard for normal writes while all installation-safety preflight remains active.
-
-Before writing, the CLI validates strict manifest and receipt fields and reads every source file in the resolved extension set. Manifest and payload paths must be portable slash-separated relative paths; literal backslashes are rejected rather than interpreted as separators. Relative paths are Unicode-normalized and case-folded for portable composition, so case-only aliases within the plan or already in the target are collisions even on a case-sensitive host. Their segments also reject Windows-invalid characters, trailing dots or spaces, and reserved device basenames. If two extensions provide the same portable path with different bytes, installation stops; identical bytes are deduplicated within the plan. A managed package may not claim an existing unowned target, even when the bytes match, and an unmanaged overlay may not replace a receipt-owned path. Identical managed payloads may share recorded owners, but updating a shared file requires every existing owner to participate and supply the same new bytes. The plan also rejects a file that would be another planned file's parent, lexical or real-path source containment violations, linked local or direct bundled package roots, a linked target root, symbolic links or junctions below those roots, multiply linked files that may be rewritten, and Git control paths: `.git` in any path segment or `.gitignore` at any depth. Those controls could hide or mutate the transaction and must be applied as separate reviewed changes. The selected index tree is validated independently, including for an empty or outside-`.agents` payload. Existing target files are then classified as create, update, delete, or unchanged; marked local blocks in Markdown remain preserved.
-
-Payload and augmentation application, index regeneration, and `open-forge.extensions.json` update are one in-process transaction. A handled failure restores overwritten files and blocks, removes files created by the attempt, cleans up newly created empty directories, restores indexes, and restores the previous receipt. This is process-level rollback, not a persistent journal or recovery mechanism for abrupt termination or machine failure; Git remains the durable recovery boundary.
-
-Add `--dry-run` anywhere in an extension install or removal command to print create/update/delete/unchanged effects and every planned relative path, including the receipt change, without creating the target, copying files, changing augmentation blocks, or rebuilding indexes. Installation previews also print dependency order:
+Add `--dry-run` to an install or removal command to validate and print dependency order plus create/update/delete/unchanged effects without writing:
 
 ```sh
 open-forge extend --dry-run workflow-essentials ./my-project
-open-forge extend dev-workflow ./my-project --dry-run
 open-forge extend --ids planning-workflows,quality-workflows --dry-run ./my-project
 ```
 
-`--dry-run` cannot be combined with `--list`. With no explicit ids, it applies after interactive selection. It also checks existing generated-index marker/layout validity and entrypoint ambiguity that can be established without applying the payload. It does not preview generated-index body changes or include generated index writes in its file counts.
-
 ### Managed Receipt, Update, And Removal
 
-A bundled id or local manifest `id` is the managed ownership key. The CLI records managed state at the target root in transparent, Git-visible `open-forge.extensions.json`. Its schema records explicitly requested roots, installed dependency edges and versions, each extension's owned paths and augmentation target-slots, payload SHA-256 digests, and complete file owner sets. Receipt `sha256` protects extension-authored bytes. In an owned entrypoint, the bounded generated `Entries` body belongs to the CLI and may be rebuilt by `index` or Core without invalidating ownership. This is CLI state only; agents route from the materialized Markdown and native files and never need the receipt.
+A bundled id or local manifest id is the managed ownership key. The CLI stores transparent Git-visible state at `open-forge.extensions.json`: requested roots, dependency edges, descriptive versions, owned payload paths and SHA-256 digests, and complete owner sets. Generated `Entries` bodies may be rebuilt without invalidating ownership of the surrounding entrypoint.
 
-Before any managed install, update, or removal, the CLI validates receipt relationships and verifies every recorded file and augmentation-block digest. It also checks every retained block against the complete planned final target, so another payload in the same transaction cannot erase a slot or disturb a retained block. A malformed receipt, a missing or modified owned file, a missing or modified block, or a destructive final plan stops the command. `--pro` does not bypass ownership checks.
+This receipt is CLI state, not agent context. Installed routed files remain complete runtime truth.
 
-Reinstalling the same managed id updates it. The new package shape is reconciled against the receipt: changed owned content updates, and dropped files or augmentation declarations are released and removed only when their recorded extension-authored bytes still match and no other owner or installed block needs them. An update that removes an owned entrypoint as a route host is blocked if retained descendants would become unreachable; the same plan must move or remove those descendants, or another owner must keep the route host.
+Before a managed write, the CLI validates receipt reciprocity and every recorded file digest. Missing or modified owned content, destructive route changes, or inconsistent owner sets stop the command. `--pro` never bypasses ownership checks.
+
+Reinstalling the same id reconciles owned whole files. Dropped paths are removed only when their recorded bytes still match and no owner remains. Removing an entrypoint is blocked when retained descendants would become unreachable.
 
 Remove installed ids with:
 
 ```sh
 open-forge extend --remove vision-workflow
-open-forge extend --remove vision-workflow,vision-capability ./my-project
 open-forge extend --remove vision-workflow ./my-project --dry-run
 ```
 
-Removal acts on exactly the ids named. It stops when a retained extension still depends on one of them. Verified extension blocks are removed from their slots; verified payload files are deleted only after their last owner is removed and only when no remaining augmentation depends on the target. Removing an owned entrypoint is blocked when it would strand retained routed descendants; move or remove them in the same plan, or keep another owner for the route host. Dependencies that become installed orphans are not pruned automatically. Preview and remove those ids explicitly when that is the intended review unit; a future `--prune` would need its own explicit, previewable root and legacy-package policy.
+Removal acts on exactly the named ids and stops while a retained extension depends on one of them. Dependencies that become orphans are not pruned automatically.
 
-A writing removal uses the same Core, clean-Git, tracked-anchor, Git-visible-output, transaction, and post-review checkpoint as installation. `--pro` bypasses only that lifecycle checkpoint; it cannot force removal of modified, shared, or still-required content.
+Installation previews and normal installs report:
 
-Installation dry runs and normal installs also print a concise scope review:
-
-- `routed` - files under `.agents/` that use normal relevance routing
-- `baseline-loading` - `AGENTS.md`, `.agents/loader.md`, `.agents/loader.overwrite.md`, and direct Markdown files in `.agents/directives/`
-- `skill-executable` - files in a native skill package's direct `scripts/` subtree
+- `routed` - files under `.agents/` that use ordinary relevance routing
+- `baseline-loading` - `AGENTS.md`, the loader, overwrites of baseline files, and files explicitly tagged #LoadNow or #KeepInMind
+- `skill-executable` - files in a skill's direct `scripts/` subtree
 - `outside-.agents` - workspace files outside the routed tree
 
-Normal installs print the four counts; dry runs add the per-file plan so baseline, executable, and workspace-wide effects can be reviewed before approval.
+Extension-authored Open Forge files normally use #Extension plus their primitive and useful scope tags. Runtime-native files keep native metadata. Use a load-policy tag only when the installed content deliberately belongs in baseline or continuity loading.
 
-Extension payload files normally use #Extension plus their route type and useful scope tags. Do not use load-policy tags in extension payloads unless the extension intentionally adds baseline-loaded material.
-
-This remains a local, offline extension command. It provides receipt-backed install, update, and explicit removal for stable-id packages, while idless plain overlays and direct/APM skill installs remain unmanaged. An idless local source cannot declare dependencies or augmentations. The CLI has no external registry or network resolution, compatibility or version solver, migration hooks, automatic orphan pruning, persistent crash-recovery journal, or remote trust policy. Route-template scaffolding is also still future work. Use `--dry-run`, mutate intentionally, then inspect and commit the Git diff before the next extension transaction.
+This remains a local, offline command. It has no external registry, network resolution, compatibility solver, migration hooks, automatic orphan pruning, persistent crash-recovery journal, or remote trust policy.
 
 ## index
 
@@ -295,7 +235,7 @@ The category `entrypoint` contains stable category meaning followed by a generat
 
 Child folders are routed through their own `_{folder-name}.md` category `entrypoint`. Parent `entrypoints` stay at one folder boundary.
 
-The skills route also recognizes native skill packages:
+The skills route also recognizes ordinary skills:
 
 ```text
 .agents/skills/
@@ -308,7 +248,7 @@ The skills route also recognizes native skill packages:
 
 The generated skill `entry` points to `implementation/SKILL.md`. The skill's own `SKILL.md` owns any `references/`, `scripts/`, `assets/`, or other runtime resources inside that folder.
 
-The same rule applies to a native skill copied directly or deployed by an external manager such as Microsoft APM: place or deploy the complete package at `.agents/skills/{skill-name}/`, then run `open-forge index` and `open-forge doctor`. Indexing updates only generated route regions; it does not rewrite the skill package.
+The same rule applies to a skill copied directly or deployed by an external manager: place its complete folder at `.agents/skills/{skill-name}/`, then run `open-forge index` and `open-forge doctor`. Indexing updates only generated route regions; it does not rewrite the skill or generate `Entries` inside `SKILL.md`.
 
 `scope routes` use the same rule. A `scope route` is a concrete `slug` folder with its own `entrypoint`. Every folder in the visible route chain needs its own `entrypoint`:
 
@@ -371,7 +311,7 @@ The index generator reads:
 
 - direct `*.md` route files, including underscore-prefixed routed files
 - direct child category `entrypoints` named `_{folder-name}.md`
-- direct child skill packages under `.agents/skills/` that contain `SKILL.md`
+- direct child skills under `.agents/skills/` that contain `SKILL.md`
 
 Inside `.agents/skills/`, loose markdown files are not indexed as skill routes. Use skill folders with `SKILL.md`.
 
@@ -410,12 +350,25 @@ open-forge:
 
 The CLI also accepts `rune:` scoped metadata in user-added route files for cross-tool compatibility. Open Forge-authored files use `open-forge:` metadata.
 
-Runtime-native `SKILL.md` files should keep native metadata such as `name` and `description`. The CLI reads the root `description` for generated skill entries and defaults their tag to #Skill when no Open Forge tags are present.
+`SKILL.md` files should keep runtime-required metadata such as `name` and `description`. The CLI reads the root `description` for generated skill entries and defaults their tag to #Skill when no Open Forge tags are present.
+
+The indexer ignores `.overwrite.md` companions because they inherit the base route and load immediately after it rather than through generated navigation.
+
+## load
+
+```sh
+open-forge load --bodies
+open-forge load --paths
+open-forge load --json
+```
+
+`load` optionally batches the same plain traversal: the loader, each transitive #LoadNow entry reachable through already-loaded parents in generated order, and the complete routed #KeepInMind catalogue. Each base is immediately followed by its user-owned `.overwrite.md` when present. Installed files and ordinary traversal remain complete without this command.
+
+The traversal does not enter an on-demand parent merely because a hidden descendant has #LoadNow. #KeepInMind is the deliberate catalogue-wide exception. Use `--bodies` when an agent needs the actual context, `--paths` for a compact audit, or `--json` for tooling.
 
 ## find
 
 ```sh
-open-forge find --tag KeepInMind --bodies
 open-forge find --tag Decision --tag Routing
 open-forge find --tag Workflow --tag PhaseDelivery
 open-forge find --route .agents/workflows/dev/_dev.md --follow-required --bodies
@@ -423,7 +376,7 @@ open-forge find --route .agents/memory/crystallized/_crystallized.md --depth 1
 open-forge find --tag Workflow --json
 ```
 
-`find` is deterministic routing-contract lookup, not search. It walks routed files only - the loader, category `entrypoints`, their direct route files, and native skill package entrypoints - and never guesses relevance.
+`find` is deterministic routing-contract lookup, not search. It walks routed files only: the loader, category `entrypoints`, their direct route files, and skill entrypoints. It never guesses relevance or expands user-owned overwrites.
 
 Combine `Workflow` with one of `PhaseDiscovery`, `PhaseDefinition`, `PhasePlanning`, `PhaseDelivery`, or `PhaseVerification` to inspect phase candidates. Those tags provide non-waterfall wayfinding; the workflow Goal and routed current truth still decide fit.
 
@@ -432,7 +385,7 @@ Combine `Workflow` with one of `PhaseDiscovery`, `PhaseDefinition`, `PhasePlanni
 - `--follow-required` adds every target of the selected files' `## Required Routes` sections. A required route that cannot be read fails the command - it is a blocker, not a skip.
 - Output is entry lines by default; `--paths` prints paths only, `--bodies` prints file contents with `----- {route} -----` separators, `--json` prints structured output.
 
-`open-forge find --tag KeepInMind --bodies` is the deterministic complete routed #KeepInMind lookup. Run it at task start or resume, after context restoration or compaction, at meaningful phase transitions or handoffs, and before closeout; every result remains binding follow-up context within the authority of its owning content. The command proves which routed files match, not that an agent actually read or performed their instructions, so it is not an execution receipt.
+Use `open-forge load --bodies` when batched effective baseline context is convenient. `find` remains useful for catalogue queries; neither command replaces the complete parent-aware plain traversal defined by the loader.
 
 Explicit routes, generated-entry expansion, and Required Routes are lexical and physical containment boundaries. `find` rejects absolute paths, parent traversal, drive changes, and real-path link escapes from the selected target. Global routed discovery likewise rejects linked or special entries before reading them.
 
@@ -444,7 +397,7 @@ open-forge chain .agents/patterns/react/components.md --heading Axioms
 open-forge chain .agents/workflows/dev/_dev.md --heading Constraints --json
 ```
 
-`chain` explains inherited Markdown context for one routed file. It emits the loader, each visible ancestor category `entrypoint`, a native skill's `SKILL.md` when the target is inside a skill package, the target, and every existing `.overwrite.md` companion in base-then-overwrite order. With no `--heading`, it lists the route chain. With `--heading`, it also reports every matching section from every chain member as `content`, `absent`, `empty`, `declared-inherited`, or `declared-none`.
+`chain` explains inherited Markdown context for one routed file. It emits the loader, each visible ancestor category `entrypoint`, a skill's `SKILL.md` when the target is inside its folder, the target, and each user-owned overwrite immediately after its base. With no `--heading`, it lists the route chain. With `--heading`, it reports every matching section from every chain member as `content`, `absent`, `empty`, `declared-inherited`, or `declared-none`.
 
 The heading is arbitrary, so the same command can inspect Axioms, Mode, Goal, Constraints, or a local category heading. A missing, empty, `inherited`, or `none` local category Axioms section contributes no local axioms; it never disables loaded ancestor axioms. `--json` provides stable structured output for tools.
 
@@ -463,8 +416,8 @@ open-forge doctor --json
 - malformed generated-region markers (error)
 - generated `entries` that do not resolve to files (error)
 - `Required Routes` that do not resolve (error), or sections that state neither routes nor `none` (warning)
-- workflow recipes whose level-2, ordered Mode, Goal, Required Routes, Constraints, Steps, Loop, Outputs, and Completion contract is missing or invalid (error); category-only workflow `entrypoints` may omit the recipe contract until they declare any recipe heading
-- direct directive files without exactly one substantive level-2 `Axioms` section (error)
+- workflow recipes whose level-2, ordered Mode, Goal, Required Routes, Constraints, Steps, Loop, Outputs, and Completion contract is missing or invalid (error); Goal may contain the optional advisory `- helpful before: ...` item, and category-only workflow `entrypoints` may omit the recipe contract until they declare any recipe heading
+- direct directive files without #LoadNow metadata or exactly one substantive level-2 `Axioms` section (error)
 - directive files that retain the legacy `Applies To` second applicability gate (error)
 - complete workflow recipes without exactly one recognized primary phase tag (error)
 - category Axioms sections that mix an inherited/none sentinel with substantive local axioms (warning)
@@ -487,4 +440,4 @@ open-forge create extension my-patterns
 
 `create category` scaffolds a route chain: every missing folder in the path gets a canonical `_{folder}.md` `entrypoint` with placeholder metadata, a type tag inherited from the nearest recognized primitive segment, an explicit inherited Axioms sentinel, and an empty generated region, then all indexes are rebuilt. This lets `workflows/frontend/patterns/` remain a Pattern route inside a workflow scope. It refuses paths that are already routable. Fill in the TODO descriptions, then run `open-forge index` again. A local category may instead omit Axioms, leave it empty, or state `none`; all four shapes mean no local additions while loaded ancestor axioms remain active.
 
-`create extension` scaffolds a managed extension package: `extension.json` with the requested stable `id` plus starter `name`, `description`, `version`, `dependencies`, and `augmentations` fields; a README with authoring rules; and an empty `payload/.agents/` tree ready for routed files. Install it with `open-forge extend <directory-or-id>`.
+`create extension` scaffolds a managed extension package: `extension.json` with the requested stable `id` plus starter `name`, `description`, `version`, and `dependencies` fields; a README with authoring rules; and an empty `payload/.agents/` tree ready for whole routed files. Install it with `open-forge extend <directory-or-id>` or copy the payload and update generated `Entries` manually.

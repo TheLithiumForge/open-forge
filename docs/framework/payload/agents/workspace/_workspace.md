@@ -18,13 +18,13 @@ The installed file follows the shared category `entrypoint` shape owned by the f
 
 ## Workspace Contract
 
-Workspace routes identify important destinations and explain their contents and relevance.
+Workspace routes form a concise map of important destinations and explain their contents and relevance.
 
-Routes cover the smallest set of destinations needed for reliable discovery. Route coverage is intentional rather than exhaustive.
+Routes cover the smallest set of destinations needed for reliable discovery. Prefer coarse locations such as modules, projects, repositories, systems, or scopes; route individual members or functions only when that detail earns its ongoing cost.
 
 Workspace route filenames, grouping, and nesting depth are owned by the workspace. A route file can represent one destination or a related group. Nested workspace categories extend routing to any useful depth.
 
-A destination can be a file, folder, project, repository, system, or document set. The routed destination owns detailed truth.
+A destination can be a file, folder, project, repository, system, or document set. The routed destination owns detailed truth, and workspace maps do not duplicate #Memory or destination content.
 
 The current request determines which routed files are loaded. Generated `entries` provide navigation metadata and reserved load policy only. They never define instructions or authority.
 
@@ -69,6 +69,8 @@ The implementation is aligned when it:
 - includes `Core` and `Workspace` in scoped `open-forge:` tags
 - defines selective workspace routing
 - leaves route-file granularity to the workspace
+- prefers coarse maps unless finer routing earns its cost
+- keeps workspace navigation distinct from #Memory and destination truth
 - uses `entries` to select routes relevant to the current request
 - supports nested categories at any useful depth
 - keeps detailed truth at routed destinations

@@ -1,0 +1,7 @@
+{
+  "id": "planning-workflows",
+  "name": "Planning Workflows",
+  "description": "Planning and authoritative task-creation workflows plus the separately selectable brainstorming workflow",
+  "version": "0.1.0",
+  "dependencies": ["planning-capability", "brainstorming-workflow"]
+}

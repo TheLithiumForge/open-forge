@@ -26,6 +26,8 @@ Open Forge markdown files must prefer:
 
 Files must stay readable in plain text. They must use lists instead of tables when a list communicates the same structure with fewer tokens and less visual noise.
 
+User-facing Open Forge files state the positive current contract in complete natural language. Avoid compressed fragments, dash-delimited asides, and mentions of rejected prototypes that make readers wonder whether the old shape still matters. Isolated one-sentence definitions and single-sentence bullets may omit terminal periods; multi-sentence prose keeps normal punctuation.
+
 ## Entry Format
 
 Compact route and generated index `entries` must use this shape:
@@ -39,7 +41,7 @@ Generated `entries` list direct routed files and direct child category `entrypoi
 ```text
 - `alpha.md` - Route file - #Route
 - `repos/_repos.md` - Child category `entrypoint` - #Repository #Workspace
-- `summarize/SKILL.md` - Native skill package - #Skill
+- `summarize/SKILL.md` - Summarize content - #Skill
 ```
 
 Generated `entries` keep the full relative path in backticks. Parent category `entrypoints` stay at one folder boundary. A child folder becomes visible through its own `_{folder}.md` `entrypoint`.
@@ -100,7 +102,7 @@ The index generator accepts `rune:` scoped metadata in external files for cross-
 
 Direct-load files that are not discovered through indexes do not need frontmatter unless another tool needs it.
 
-Runtime-native skill files such as `SKILL.md` must use the metadata required by their runtime. Open Forge index generation can read a root `description` from those files and must not require `open-forge:` metadata in them.
+Standard skill files such as `SKILL.md` use the metadata required by their runtime. Open Forge index generation can read a root `description` from those files and must not require `open-forge:` metadata in them.
 
 ## Category Entrypoints
 
@@ -142,9 +144,9 @@ The authored portion of an Open Forge category `entrypoint` must stay between 5 
 
 ## Primitive Contracts
 
-A direct directive file declares exactly one non-empty level-2 `## Axioms` section. It does not declare `## Applies To`; the active directive route already established scope before loading the file. `inherited` and `none` are category-entrypoint sentinels, not direct directive contents. Operational conditions may appear inside an Axiom without making the loaded directive optional.
+A direct directive file declares #LoadNow in its metadata and exactly one non-empty level-2 `## Axioms` section. It does not declare `## Applies To`; the active directive route already established scope before loading the file. `inherited` and `none` are category-entrypoint sentinels, not direct directive contents. Operational conditions may appear inside an Axiom without making the loaded directive optional.
 
-A workflow starts with `## Mode`, followed in order by `## Goal`, `## Required Routes`, `## Constraints`, `## Steps`, `## Loop`, `## Outputs`, and `## Completion`. Mode is exactly `linear` or `iterative`. Constraints is always present and uses `- none` when no workflow-specific invariant applies. Every workflow seeks its Goal; goal-seeking is not a separate mode. Every complete recipe declares exactly one of `PhaseDiscovery`, `PhaseDefinition`, `PhasePlanning`, `PhaseDelivery`, or `PhaseVerification` in frontmatter; phase tags are routing wayfinding, not extra body sections or mandatory chronology.
+A workflow starts with `## Mode`, followed in order by `## Goal`, `## Required Routes`, `## Constraints`, `## Steps`, `## Loop`, `## Outputs`, and `## Completion`. Goal may include one optional `- helpful before: ...` item naming prior work that would improve the result. The item is advisory, never a route dependency or blocker. Mode is exactly `linear` or `iterative`. Constraints is always present and uses `- none` when no workflow-specific invariant applies. Every workflow seeks its Goal; goal-seeking is not a separate mode. Every complete recipe declares exactly one of `PhaseDiscovery`, `PhaseDefinition`, `PhasePlanning`, `PhaseDelivery`, or `PhaseVerification` in frontmatter; phase tags are routing wayfinding, not extra body sections or mandatory chronology.
 
 ## Scope Route Slugs
 
@@ -181,7 +183,7 @@ The final section of every category `entrypoint` and the loader must use this sh
 
 The CLI owns only the content between the markers. Index generation must preserve all content outside the markers.
 
-In category `entrypoints`, the generated region contains direct routed files, direct child category `entrypoints`, and supported native skill package entrypoints inside skills routes. In the loader, it contains direct active category `entrypoints`. Generated regions contain navigation metadata plus reserved load policy only. Generated `entries` never define instructions, behavior, or authority.
+In category `entrypoints`, the generated region contains direct routed files, direct child category `entrypoints`, and standard `SKILL.md` files inside skills routes. In the loader, it contains direct active category `entrypoints`. Generated regions contain navigation metadata plus reserved load policy only. Generated `entries` never define instructions, behavior, or authority.
 
 When the markers are absent from a legacy category `entrypoint` with a final `## Entries` section, the CLI must migrate that section. When the heading and markers are all absent, the CLI must append the complete generated section.
 
@@ -198,7 +200,7 @@ A direct markdown file is indexable when it uses `*.md`, including underscore-pr
 - runtime skill entrypoint names such as `SKILL.md` and `Skill.md`
 - `.overwrite.md` companions
 
-Inside `.agents/skills/`, direct loose markdown files are not indexable skill routes. A direct child folder is indexable as a native skill package when it contains exactly one supported skill entrypoint such as `SKILL.md`. The skill package entry points to the skill entrypoint file. Files under that skill folder are owned by the runtime skill package and are not indexed unless the folder also defines normal Open Forge child categories.
+Inside `.agents/skills/`, direct loose markdown files are not indexable skill routes. A direct child folder is indexable as a skill when it contains exactly one supported entrypoint such as `SKILL.md`. The generated route points to that file. Other files in the skill folder remain skill resources and are not indexed unless the folder also defines normal Open Forge child categories.
 
 A child folder is indexable when it contains exactly one recognized category `entrypoint`. The CLI must not create category `entrypoints` for folders that have not explicitly opted into routing.
 
@@ -222,10 +224,10 @@ Formatting is aligned when:
 - generated paths use backticks
 - generated paths are concrete and workspace-root-relative
 - category generated `entries` include direct routed files and direct child category `entrypoints`
-- skills category generated `entries` include native skill packages
+- skills category generated `entries` include standard `SKILL.md` skills
 - loader generated `entries` include direct active category `entrypoints`
 - Open Forge-authored indexed files use only scoped `open-forge:` frontmatter
-- runtime-native `SKILL.md` files keep runtime-compatible metadata
+- `SKILL.md` files keep runtime-compatible metadata
 - direct-load files avoid unnecessary frontmatter
 - tables are used only when a list would be less clear
 - Open Forge-authored categories use `_{category}.md`
@@ -234,9 +236,10 @@ Formatting is aligned when:
 - `scope route` `slugs` use concrete stable names and matching `entrypoints`
 - route-template placeholders stay out of installed payload paths and generated `entries`
 - category contracts stay before the generated region
-- direct directive files contain one substantive level-2 Axioms section and no `Applies To` gate
+- direct directive files carry #LoadNow, contain one substantive level-2 Axioms section, and have no `Applies To` gate
 - directive scope is visible on the route selection surface before the directive body is opened
 - complete workflow recipes declare exactly one recognized primary phase tag without adding phase sections or physical routing layers
 - installed category `entrypoints` do not depend on governance-only context
+- user-facing prose states positive current behavior in complete natural language
 - generated `entries` stay inside the required markers
 - only marker-bounded content is regenerated

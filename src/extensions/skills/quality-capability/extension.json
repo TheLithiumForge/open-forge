@@ -1,0 +1,7 @@
+{
+  "id": "quality-capability",
+  "name": "Quality Skill",
+  "description": "Quality skill for testing, evidence review, behavior-preserving refactoring, and systematic debugging",
+  "version": "0.1.0",
+  "dependencies": []
+}

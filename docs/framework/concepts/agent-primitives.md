@@ -20,7 +20,7 @@ A directive loaded through the active directive route chain governs the work in 
 
 The root directives category is baseline-loaded, so every direct directive file beneath it is workspace-wide and binding. A narrower directive belongs below a positively described child directive `entrypoint`; path, description, tags, and ancestor meaning make the scope decision before the directive body is opened.
 
-Every direct directive file defines exactly one substantive level-2 `## Axioms` section and no `Applies To` gate. Operational conditions may be stated by an Axiom, but the loaded directive itself remains binding. Use directives only for mandatory work, process, artifact, technical, or project behavior; put optional behavior in guidance, a skill, or a workflow.
+Every direct directive file contains exactly one non-empty level-2 `## Axioms` section. Operational conditions belong inside the relevant Axiom. Use directives only for mandatory work, process, artifact, technical, or project behavior; put optional behavior in guidance, a skill, or a workflow.
 
 Loaded child directives add to loaded ancestor directives. Narrower routing changes scope, not authority. If loaded directives conflict or cannot be followed, the agent must report the conflict and obtain an explicit decision or exception.
 
@@ -46,9 +46,9 @@ Guidance may nest recursively by domain, scenario, decision area, or any other u
 
 ## Skills
 
-A skill is a bounded reusable agent capability package.
+A skill follows the standard `SKILL.md` format supported by the active agent runtime.
 
-Skills preserve the established meaning used by AI tools. Open Forge prefers the native package shape `.agents/skills/{skill-name}/SKILL.md`, with optional runtime resources under that folder. Skills may be invoked directly or by workflows. Open Forge routes skill packages without redefining a runtime's activation or execution model.
+Open Forge routes `.agents/skills/{skill-name}/SKILL.md` without rewriting it or imposing Open Forge `References` or `Entries` inside the skill. The selected `SKILL.md` owns its metadata, instructions, resources, and on-demand loading. Skills may be invoked directly or by workflows, while the runtime owns activation and execution.
 
 ## Workflows
 
@@ -56,9 +56,9 @@ A workflow is a repeatable markdown recipe for reaching a defined goal that take
 
 Open Forge workflows are not runtime orchestration objects from an agent SDK. They are routed recipes that describe how work should proceed.
 
-A workflow defines an early `Mode` (`linear` or `iterative`), `Goal` (outcome, acceptance, stop), `Required Routes`, always-present `Constraints`, ordered `Steps`, `Loop` behavior, expected `Outputs`, and a `Completion` checklist, in that order. `Constraints` states `- none` when no workflow-specific invariant applies. Every workflow seeks its Goal; goal-seeking is not a separate mode. Generated `Entries` express what a workflow contains; `Required Routes` express cross-tree dependencies it needs from elsewhere.
+A workflow defines an early `Mode` (`linear` or `iterative`), `Goal` (outcome, acceptance, stop, and optional `- helpful before: ...` prior work), `Required Routes`, always-present `Constraints`, ordered `Steps`, `Loop` behavior, expected `Outputs`, and a `Completion` checklist, in that order. The optional item is advisory and never a route dependency or blocker. `Constraints` states `- none` when no workflow-specific invariant applies. Every workflow seeks its Goal; goal-seeking is not a separate mode. Generated `Entries` express what a workflow contains; `Required Routes` express cross-tree dependencies it needs from elsewhere.
 
-Every complete workflow recipe declares exactly one primary phase tag: `PhaseDiscovery`, `PhaseDefinition`, `PhasePlanning`, `PhaseDelivery`, or `PhaseVerification`. Phases are non-waterfall wayfinding for inferring current state and choosing the Goal that covers the requested transition; work may start anywhere, skip, repeat, or move backward. An earlier prerequisite is recommended only when routed current truth exposes a concrete missing or contradictory input. If no installed Goal matches at all, the agent presents the closest installed option or options and direct execution once.
+Every complete workflow recipe declares exactly one primary phase tag: `PhaseDiscovery`, `PhaseDefinition`, `PhasePlanning`, `PhaseDelivery`, or `PhaseVerification`. Phases are non-waterfall wayfinding; work may start anywhere, skip, repeat, or move backward. Agents select from visible descriptions and tags before opening a workflow, confirm its Goal, and may recommend one available earlier workflow once when its `- helpful before: ...` work would help. The recommendation never blocks, and work proceeds with explicit assumptions when the prior work is unavailable or skipped. If no installed workflow matches, the agent presents the closest installed route or direct execution once.
 
 Agents read every `Required Routes` route before Step 1 and report a route that cannot be read as a blocker. "none" is a valid value.
 
@@ -123,7 +123,7 @@ The root `entrypoint` must route agents to:
 
 After a child directive route is selected, agents read every direct directive file exposed by that loaded child `entrypoint`. Directive bodies outside the active route chain remain routed but inactive.
 
-Every direct directive file contains exactly one non-empty level-2 `## Axioms` section. It does not contain an `Applies To` section; the active route has already established scope.
+Every direct directive file contains exactly one non-empty level-2 `## Axioms` section; the active route has already established its scope.
 
 Workspace-wide means mandatory across Open Forge work. Current user instructions, platform constraints, runtime safety, and declared external sources of truth remain higher authority.
 
@@ -151,18 +151,19 @@ Agent primitives are aligned when:
 
 - active directive routes establish scope before their direct files are loaded
 - every directive loaded through the active route chain is binding
-- direct directive files contain one substantive level-2 Axioms section and no `Applies To` gate
+- direct directive files contain one substantive level-2 Axioms section
 - optional behavior uses guidance, skills, or workflows instead of directives
 - patterns define concrete inspectable shapes
 - guidance provides adaptable contextual judgment
-- skills remain bounded reusable capability packages
-- skills prefer native `SKILL.md` packages
+- skills retain their standard runtime format and behavior
+- skills route through `SKILL.md` without an internal Open Forge schema
 - workflows remain repeatable markdown recipes for reaching defined goals
 - workflows define Mode, Goal, Required Routes, Constraints, Steps, Loop, Outputs, and Completion in order
+- workflows allow one optional advisory Goal `- helpful before: ...` item
 - workflow Mode is linear or iterative, and Constraints uses `- none` when no local invariant applies
 - every complete workflow declares one primary development phase tag and treats phases as non-waterfall wayfinding
-- workflow selection uses the request plus routed current truth and recommends at most one evidence-backed earlier prerequisite
-- a no-match case presents the closest installed option or options and direct execution once, while explicit choice or opt-out wins
+- workflow selection uses visible descriptions and tags, then may recommend one available earlier workflow once when declared prior work would help without blocking execution
+- a no-match case presents the closest installed route or direct execution once, while explicit choice or opt-out wins
 - agents read every Required Routes route before Step 1 and report unreadable routes as blockers
 - every core primitive category is installed with its minimum `entrypoint`
 - core primitive `entrypoints` use #Core and singular primitive tags

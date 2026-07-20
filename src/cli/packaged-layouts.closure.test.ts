@@ -2,7 +2,6 @@ import { beforeAll, describe, expect, test } from "bun:test";
 import fs from "node:fs/promises";
 import path from "node:path";
 import {
-  pathExists,
   repoPath,
   repoRoot,
   runProcess,
@@ -54,30 +53,30 @@ describe("packaged bundled-extension resolution", () => {
     expect(await fs.readFile(path.join(target, "layout-marker.txt"), "utf8")).toBe(`${marker}\n`);
   });
 
-  test("resolves augmentation assets from an npm-style extension package", async () => {
-    const { packageRoot, cliFile } = await createPackageLayout("npm-augmentation");
-    const extensionId = "npm-augmentation-fixture";
+  test("discovers a nested npm-style package by manifest id rather than folder name", async () => {
+    const { packageRoot, cliFile } = await createPackageLayout("npm-nested-id");
+    const extensionId = "nested-layout-fixture";
+    const marker = "resolved nested manifest id";
     const target = path.join(packageRoot, "workspace");
 
     await writeText(path.join(packageRoot, "src", "open-forge", "AGENTS.md"), "# Fixture payload\n");
-    await writeFixtureAugmentationExtension(path.join(packageRoot, "src", "extensions"), extensionId);
-    await writeText(path.join(target, ".agents", "loader.md"), [
-      "# Fixture loader",
-      "",
-      "<!-- open-forge-augment.workflow-selection:start -->",
-      "<!-- open-forge-augment.workflow-selection:end -->",
-      ""
-    ].join("\n"));
+    await writeFixtureExtension(
+      path.join(packageRoot, "src", "extensions", "support"),
+      extensionId,
+      marker,
+      "physical-folder-name"
+    );
 
+    const listed = await runPackagedCli(cliFile, "extend", "--list");
     const result = await runPackagedCli(cliFile, "extend", extensionId, target, "--pro");
 
+    expect(listed.stderr).toBe("");
+    expect(listed.exitCode).toBe(0);
+    expect(listed.stdout).toContain(extensionId);
     expect(result.stderr).toBe("");
     expect(result.exitCode).toBe(0);
-    const loader = await fs.readFile(path.join(target, ".agents", "loader.md"), "utf8");
-    expect(loader).toContain(`<!-- open-forge-extension.${extensionId}:start -->`);
-    expect(loader).toContain("Packaged augmentation was resolved.");
+    expect(await fs.readFile(path.join(target, "layout-marker.txt"), "utf8")).toBe(`${marker}\n`);
     expect(await fs.readFile(path.join(target, "open-forge.extensions.json"), "utf8")).toContain(extensionId);
-    expect(await pathExists(path.join(target, "augmentations", "workflow-selection.md"))).toBe(false);
   });
 });
 
@@ -108,34 +107,16 @@ async function buildPackagedCli(packageRoot: string): Promise<string> {
   return cliFile;
 }
 
-async function writeFixtureExtension(extensionsRoot: string, id: string, marker: string): Promise<void> {
-  const packageRoot = path.join(extensionsRoot, id);
+async function writeFixtureExtension(extensionsRoot: string, id: string, marker: string, folderName = id): Promise<void> {
+  const packageRoot = path.join(extensionsRoot, folderName);
   await writeText(path.join(packageRoot, "extension.json"), `${JSON.stringify({
+    id,
     name: id,
     description: `Fixture for ${id}`,
     version: "1.0.0",
     dependencies: []
   }, null, 2)}\n`);
   await writeText(path.join(packageRoot, "payload", "layout-marker.txt"), `${marker}\n`);
-}
-
-async function writeFixtureAugmentationExtension(extensionsRoot: string, id: string): Promise<void> {
-  const packageRoot = path.join(extensionsRoot, id);
-  await writeText(path.join(packageRoot, "extension.json"), `${JSON.stringify({
-    id,
-    name: id,
-    description: `Fixture for ${id}`,
-    version: "1.0.0",
-    dependencies: [],
-    augmentations: [
-      {
-        target: ".agents/loader.md",
-        slot: "workflow-selection",
-        source: "augmentations/workflow-selection.md"
-      }
-    ]
-  }, null, 2)}\n`);
-  await writeText(path.join(packageRoot, "augmentations", "workflow-selection.md"), "Packaged augmentation was resolved.\n");
 }
 
 async function runPackagedCli(cliFile: string, ...args: string[]): Promise<{ exitCode: number; stdout: string; stderr: string }> {

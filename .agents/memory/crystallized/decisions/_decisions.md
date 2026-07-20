@@ -19,7 +19,7 @@ Decisions are accepted rationale for important choices that may need to be under
 <!-- open-forge:generated-index:start -->
 - `core-primitives.md` - The Core layer installs directives, patterns, guidance, skills, workflows, and workspace with their accepted meanings - #Memory #Decision #CurrentTruth #Core #Primitive
 - `do-not-revive.md` - Do-not-revive list for rejected files, hidden mechanics, directive gates, continuity gaps, and workflow ceremony - #Memory #Decision #CurrentTruth #Rejected
-- `extensions-and-cli.md` - Extensions add optional routed files through offline dependency-safe install plans while installed files remain runtime truth - #Memory #Decision #CurrentTruth #Extension #CLI
+- `extensions-and-cli.md` - Extensions add optional whole routed files while installed files remain complete runtime truth - #Memory #Decision #CurrentTruth #Extension #CLI
 - `loading-reliability.md` - Reliability-critical context loads unconditionally and early; conditional context must be cheap to skip and cheap to recover from - #Memory #Decision #CurrentTruth #Loading #Routing #Reliability
 - `memory-model.md` - Memory is self-growing markdown state with working, emerging, crystallized, and archived states; it records state and never owns behavior - #Memory #Decision #CurrentTruth #MemoryModel
 - `product-direction.md` - Open Forge stays markdown-first, human-led, small by default, and optimized for recursive customization - #Memory #Decision #CurrentTruth #Product
@@ -28,5 +28,6 @@ Decisions are accepted rationale for important choices that may need to be under
 - `scope-and-slugs.md` - Framework routes, scope routes, scoped framework routes, and slugs are distinct; placeholders are notation only and slug placement changes meaning - #Memory #Decision #CurrentTruth #Routing #Scope
 - `source-and-packaging.md` - Users receive src/open-forge as the payload; docs/framework governs maintainers and is never hidden runtime context - #Memory #Decision #CurrentTruth #Packaging #Governance
 - `tags.md` - Accepted tag semantics - LoadNow follows visible parent chains, KeepInMind restores the complete continuity catalogue, other tags classify - #Memory #Decision #CurrentTruth #Tags #Routing
+- `user-facing-writing.md` - User-facing Open Forge files use positive natural language and compact selection surfaces - #Memory #Decision #CurrentTruth #Formatting #Documentation #Routing
 - `workflow-shape.md` - Accepted workflow shape - Mode, Goal, Required Routes, Constraints, Steps, Loop, Outputs, Completion; generated Entries are containment, Required Routes are cross-tree dependency - #Memory #Decision #CurrentTruth #Workflow #Routing #Orchestration
 <!-- open-forge:generated-index:end -->

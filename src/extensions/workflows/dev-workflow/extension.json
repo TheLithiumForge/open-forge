@@ -1,0 +1,7 @@
+{
+  "id": "dev-workflow",
+  "name": "Dev Workflow",
+  "description": "Adaptive delivery loop: implement, test, review or refactor, retest, diagnose and fix, then close out",
+  "version": "0.1.0",
+  "dependencies": ["implementation-capability", "quality-capability"]
+}

@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Preserve Open Forge's minimal, flexible, memory-backed, human-governed design while improving agent outcomes
-  tags: [Directive, Framework, Essence, Minimalism, HumanGoverned, Dogfood]
+  tags: [LoadNow, Directive, Framework, Essence, Minimalism, HumanGoverned, Dogfood]
 ---
 
 # Framework Essence

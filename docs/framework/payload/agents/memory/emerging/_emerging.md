@@ -26,7 +26,7 @@ Child `entrypoints` and local files define their own taxonomy below this route.
 
 Emerging memory is contextual and unapproved by default.
 
-It may guide investigation, suggest future work, or provide evidence. It is accepted only after promotion, validation, or explicit acceptance by the user or workspace process.
+It may guide investigation, suggest future work, or provide evidence. It becomes #CurrentTruth or normative #Core only with user accord, and the promotion remains reviewable.
 
 If emerging memory becomes operational behavior, reusable form, guidance, capability, workflow, workspace routing, or other #Core material, the material must be extracted into the matching #Core route, including user-created #Core categories and files.
 
@@ -36,7 +36,7 @@ If emerging memory changes external task state, the change must be promoted to t
 
 The emerging memory category is relevant when current work needs useful material that is not accepted truth yet, or when current work produces candidate material.
 
-Because this route is #KeepInMind, agents read or recheck it through the complete routed continuity catalogue at task start or resume, after context restoration or compaction, at meaningful phase transitions or handoffs, and before closeout. At each boundary they inspect its `Entries` as needed to route candidate material, preserve unresolved work, and avoid losing promotion or archival follow-ups.
+Because this route is #KeepInMind, agents read it at task start or resume, after detected context restoration, and before a handoff or closeout. They recheck it during work only when its follow-ups may have changed, inspecting `Entries` as needed to preserve or route candidate material.
 
 The `entrypoint` must route agents to direct emerging memory files and child emerging memory categories whose path, description, or tags match the current request. Each selected child `entrypoint` applies the same contract recursively.
 
@@ -46,7 +46,7 @@ Agents load emerging memory selectively and keep unrelated candidate material ou
 
 Emerging memory must have an obvious next state.
 
-It may be refined, crystallized, moved to another #Memory route, extracted to the matching #Core route, promoted to an external owner, or archived.
+It may be refined, moved to another candidate #Memory route, promoted with user accord to the matching crystallized or #Core route, promoted to an external owner, or archived.
 
 Repeated emerging material must trigger a suggestion to crystallize, promote, or archive it.
 
@@ -89,7 +89,8 @@ The implementation is aligned when it:
 - keeps emerging memory contextual until promoted or accepted
 - leaves child taxonomy to child `entrypoints` and local files
 - routes candidate material selectively
-- requires continuity-boundary review of emerging memory `Entries` through the complete routed #KeepInMind catalogue
+- follows the loader-defined narrowed #KeepInMind refresh triggers
+- requires user accord and a reviewable change before promotion into #CurrentTruth or normative #Core
 - promotes emerging memory to the route that owns its new state
 - extracts operational emerging memory material into matching #Core routes, including user-created #Core categories and files
 - supports recursive positive scope

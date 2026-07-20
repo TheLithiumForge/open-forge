@@ -16,6 +16,7 @@ Accepted decisions extracted from the design sessions and idea notes on 2026-07-
 - `emerging/` is candidate memory that may be useful but is not accepted truth yet.
 - `crystallized/` is accepted durable memory and current truth.
 - `archived/` is historical memory kept for context after it is no longer current truth.
+- An agent may promote accepted emerging material to the matching crystallized route when the user has given accord for that promotion. The resulting Git-visible diff remains reviewable; absent accord, the material stays candidate.
 - `decisions/` is installed under `crystallized/` because decisions are accepted rationale, not a lifecycle state.
 - `documents/` is installed under `crystallized/` for durable accepted records or routes to those records.
 - `references/` is not installed for now.

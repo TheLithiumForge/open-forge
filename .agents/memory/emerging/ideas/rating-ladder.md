@@ -12,7 +12,7 @@ Captured 2026-07-09 and rebaselined 2026-07-17. The governing rule remains: S me
 
 - Routing has `find`, `chain`, `doctor`, generated-index validation, containment checks, overwrite order, and explicit ancestor-Axioms inspection.
 - Workflows use early Mode (`linear` or `iterative`), Goal, Required Routes, mandatory Constraints, Steps, Loop, Outputs, and Completion. The loader is workflow-first and preserves explicit direct-execution opt-out.
-- The 18-unit catalogue composes skill-only, workflow-only, directive-only, pattern-only, mixed, and dependency-only extensions. Dependencies auto-select and native skills can coexist additively with direct/APM installation.
+- The 18-unit catalogue composes skill-only, workflow-only, directive-only, pattern-only, mixed, and dependency-only extensions. Dependencies auto-select, while standard skills can also be installed directly by other supported runtimes.
 - Install is Core-first and Git-checkpointed by default. `--pro` bypasses lifecycle gates only; path, link, collision, index, and rollback safety remain active.
 - CLI contracts run as real subprocesses in fresh OS temporary roots with real Git, packaged-layout smoke tests, no-partial-write assertions, and real first-party integration.
 - The harness captures reproducible engineering evidence, but existing runs are raw legacy evidence rather than causal proof.
@@ -47,7 +47,7 @@ Captured 2026-07-09 and rebaselined 2026-07-17. The governing rule remains: S me
 - S++ gate: independent authors ship, upgrade, and remove extensions safely across supported agents and package layouts without maintainer help.
 - Option A — Git-native: one receipt per installed dependency closure, content hashes, and uninstall/update as reviewed inverse plans.
 - Option B — lockfile: a visible Open Forge lock records owners, versions, hashes, capabilities, and migrations.
-- Option C — capability model: manifests declare `provides`/`requires`, allowing an APM-owned skill to satisfy a workflow dependency only through an explicit reviewed mapping. Until then, APM interop is distinct-path additive, not substitutional.
+- Option C — capability model: manifests declare `provides`/`requires`, allowing an externally managed skill to satisfy a workflow dependency only through an explicit reviewed mapping. Until then, external-manager interoperability is distinct-path additive, not substitutional.
 
 ## Governance And Evidence (B+)
 

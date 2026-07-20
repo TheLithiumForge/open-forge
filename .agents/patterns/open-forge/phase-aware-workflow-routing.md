@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Infer the current development phase and recommend the closest workflow plus an earlier prerequisite only when current truth is insufficient
+  description: Select workflows from visible routing signals and recommend helpful prior work once without blocking progress
   tags: [Pattern, Workflow, Routing, DevelopmentPhase, Minimalism]
 ---
 
@@ -21,11 +21,13 @@ At workflow selection:
 ```text
 user request + routed current truth
   -> infer current development state and requested transition
-  -> use phase tags to orient the candidate scan
-  -> select the workflow whose Goal best covers the transition
-  -> detect a material missing prerequisite
-  -> when warranted, recommend the earlier workflow first
-  -> when no Goal matches exactly, offer closest installed route(s) or direct execution
+  -> use generated descriptions and phase tags to orient the candidate scan
+  -> select a workflow before opening its body
+  -> confirm that its Goal covers the transition
+  -> read any optional Goal `- helpful before: ...` item
+  -> when useful and available, recommend one matching earlier workflow once
+  -> if it is skipped or unavailable, proceed with explicit assumptions
+  -> when no workflow matches exactly, offer the closest installed route or direct execution
   -> otherwise begin at the current phase
 ```
 
@@ -37,6 +39,7 @@ An explicit workflow choice wins. An explicit no-workflow or direct-execution re
 
 - Every workflow recipe declares exactly one stable phase tag.
 - Phase narrows attention; the selected workflow Goal, request, and routed state justify the recommendation.
-- An earlier workflow is suggested only for a concrete missing prerequisite, never as mandatory ceremony.
+- Helpful prior work may prompt one available earlier-workflow recommendation, but it never blocks the selected workflow.
+- When prior work is skipped or unavailable, the selected workflow states its assumptions and proceeds.
 - One workflow remains primary; additional workflows are ordered handoffs.
 - No exact match presents the established closest-route/direct-execution choice, while an explicit opt-out is honored immediately.

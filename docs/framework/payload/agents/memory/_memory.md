@@ -35,7 +35,7 @@ The normal lifecycle is:
 working -> emerging -> crystallized -> archived
 ```
 
-The lifecycle describes promotion and decay, not a required move sequence. Workspaces may create, update, archive, or promote memory directly when the state is clear.
+The lifecycle describes promotion and decay, not a required move sequence. Workspaces may create, update, or archive memory directly when the state is clear; promotion into #CurrentTruth or normative #Core requires user accord.
 
 The base memory payload installs only universal child routes: sessions and handoffs under `working/`, observations, ideas, and analysis under `emerging/`, and documents and decisions under `crystallized/`.
 
@@ -64,6 +64,8 @@ Memory material moves between #Memory routes when its state or owner changes.
 Useful durable state must be written to the matching #Memory route when safe and allowed. Private or opaque agent memory is a hint, not the source of truth for workspace state.
 
 If memory creates behavior, reusable form, guidance, capability, workflow, workspace routing, or other #Core material, extract it into the matching #Core route, including user-created #Core categories and files.
+
+Deduced material keeps user-stated, observed, or inferred provenance. Candidate material enters #CurrentTruth or normative #Core only with user accord, and the promotion remains reviewable.
 
 Memory uses the loader-defined #Contextual tag for supporting context that is not accepted current truth unless restored, validated, accepted, or promoted.
 
@@ -116,6 +118,7 @@ The implementation is aligned when it:
 - prefers written #Memory routes over private agent memory for workspace state
 - moves material between #Memory routes when its state or owner changes
 - extracts operational memory material into matching #Core routes, including user-created #Core categories and files
+- requires user accord and a reviewable change before candidate material becomes #CurrentTruth or normative #Core
 - uses loader-defined #Contextual `entries` as contextual
 - uses loader-defined #CurrentTruth `entries` as accepted current memory within stated scope
 - encourages recursive child categories before new root memory states

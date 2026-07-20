@@ -6,15 +6,16 @@ open-forge:
 
 # Handoffs
 
-Handoffs are static, concise, accurate, rereadable transfer notes for resuming work across agents, subagents, threads, workflows, or humans.
+Handoffs are static, concise, accurate, rereadable transfer notes for resuming work across agents, subagents, threads, workflows, or humans
 
 ## Axioms
 
-- Read `Entries` when work is resumed, transferred, delegated, interrupted, or reviewed after a context break.
-- Treat handoffs as contextual memory resume notes, not complete history or accepted truth.
-- Create or update a handoff when work is transferred, delegated, interrupted, or handed to another agent or human.
-- Keep handoffs short; point to sessions, documents, code, or other routes when detail matters.
-- State the current status, next action, blockers, relevant loaded context, and verification needs when useful.
+- Read `Entries` when work is resumed, transferred, delegated, interrupted, or reviewed after a context break
+- Treat handoffs as contextual memory resume notes, not complete history or accepted truth
+- Create or update a handoff when work is transferred, delegated, interrupted, or handed to another agent or human
+- Keep handoffs short; point to sessions, documents, code, or other routes when detail matters
+- State the current status, next action, blockers, relevant loaded context, and verification needs when useful
+- After a handoff no longer supports an active transfer, extract useful material and archive it
 
 ## Entries
 

@@ -6,14 +6,14 @@ open-forge:
 
 # Observations
 
-Observations are agent-noticed grounded findings like facts, signals, constraints, recurring behavior, risks, and evidence, that help future agents learn from work. //Hn: prefer natural language to dashes. 
+Observations capture grounded facts, signals, constraints, recurring behavior, risks, and evidence that agents notice during work
 
 ## Axioms
 
-- At every continuity refresh, read `Entries` for prior noticed findings that may affect the current direction.
-- At a meaningful continuity boundary, write verified grounded findings that may matter later before they can be lost; "no observation warranted" is valid, and a required write must happen before final closeout or be reported as blocked.
-- Verify observations before treating them as current.
-- Use observations as agent learning material until a route accepts, rejects, or supersedes them.
+- At each loader-defined #KeepInMind refresh, read `Entries` for prior findings that may affect the current direction
+- When a grounded finding may matter after the current context, record it before a handoff or closeout; "no observation warranted" is valid, and a blocked required write must be reported
+- Verify observations before treating them as current
+- Use observations as agent learning material until a route accepts, rejects, or supersedes them
 
 ## Entries
 

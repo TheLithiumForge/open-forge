@@ -6,12 +6,6 @@ import {
   type ExtensionDependencyInfo
 } from "./cli.ts";
 
-const augmentationHost = `# Loader
-
-<!-- open-forge-augment.workflow-selection:start -->
-<!-- open-forge-augment.workflow-selection:end -->
-`;
-
 describe("extension catalogue selection state", () => {
   const extensions: ExtensionDependencyInfo[] = [
     { id: "base-skill", dependencies: [] },
@@ -57,99 +51,6 @@ describe("extension catalogue selection state", () => {
   });
 });
 
-describe("extension augmentation mechanics", () => {
-  test("sets and parses owned blocks in stable extension-id order", () => {
-    const withZeta = cliTestInternals.setAugmentationBlock(
-      augmentationHost,
-      "workflow-selection",
-      "zeta-extension",
-      "Zeta guidance.",
-      "fixture loader"
-    );
-    const composed = cliTestInternals.setAugmentationBlock(
-      withZeta,
-      "workflow-selection",
-      "alpha-extension",
-      "Alpha guidance.",
-      "fixture loader"
-    );
-
-    const slot = cliTestInternals.parseAugmentationSlots(composed, "fixture loader").get("workflow-selection");
-    expect([...slot!.blocks.keys()]).toEqual(["alpha-extension", "zeta-extension"]);
-    expect(slot!.blocks.get("alpha-extension")!.content).toBe("Alpha guidance.");
-    expect(composed.indexOf("alpha-extension:start")).toBeLessThan(composed.indexOf("zeta-extension:start"));
-  });
-
-  test("replaces one owner without duplicating its block", () => {
-    const initial = cliTestInternals.setAugmentationBlock(
-      augmentationHost,
-      "workflow-selection",
-      "alpha-extension",
-      "Old guidance.",
-      "fixture loader"
-    );
-    const updated = cliTestInternals.setAugmentationBlock(
-      initial,
-      "workflow-selection",
-      "alpha-extension",
-      "New guidance.",
-      "fixture loader"
-    );
-
-    expect(updated).not.toContain("Old guidance.");
-    expect(updated).toContain("New guidance.");
-    expect(updated.match(/alpha-extension:start/g)).toHaveLength(1);
-  });
-
-  test("removes only the matching unmodified owner and refuses local edits", () => {
-    const alpha = cliTestInternals.setAugmentationBlock(
-      augmentationHost,
-      "workflow-selection",
-      "alpha-extension",
-      "Alpha guidance.",
-      "fixture loader"
-    );
-    const composed = cliTestInternals.setAugmentationBlock(
-      alpha,
-      "workflow-selection",
-      "zeta-extension",
-      "Zeta guidance.",
-      "fixture loader"
-    );
-    const installed = {
-      target: ".agents/loader.md",
-      slot: "workflow-selection",
-      sha256: cliTestInternals.sha256("Alpha guidance.")
-    };
-
-    const removed = cliTestInternals.removeAugmentationBlock(composed, installed, "alpha-extension", "fixture loader");
-    expect(removed).not.toContain("alpha-extension:start");
-    expect(removed).toContain("zeta-extension:start");
-
-    const locallyEdited = composed.replace("Alpha guidance.", "Locally edited guidance.");
-    expect(() => cliTestInternals.removeAugmentationBlock(
-      locallyEdited,
-      installed,
-      "alpha-extension",
-      "fixture loader"
-    )).toThrow("locally modified");
-  });
-
-  test("refuses malformed slots and unowned slot content", () => {
-    expect(() => cliTestInternals.parseAugmentationSlots(
-      augmentationHost.replace("<!-- open-forge-augment.workflow-selection:end -->", "Manual content\n<!-- open-forge-augment.workflow-selection:end -->"),
-      "fixture loader"
-    )).toThrow("unowned content");
-    expect(() => cliTestInternals.setAugmentationBlock(
-      augmentationHost,
-      "missing-slot",
-      "alpha-extension",
-      "Guidance.",
-      "fixture loader"
-    )).toThrow("does not declare augmentation slot");
-  });
-});
-
 describe("extension ownership receipt mechanics", () => {
   test("hashes authored entrypoint bytes while excluding generated Entries metadata", () => {
     const original = `# Managed Route
@@ -181,20 +82,18 @@ Authored contract v1.
     const digestA = "a".repeat(64);
     const digestB = "b".repeat(64);
     const receipt = {
-      schema: 1 as const,
+      schema: 2 as const,
       roots: ["zeta-extension", "alpha-extension"],
       extensions: {
         "zeta-extension": {
           version: "1.0.0",
           dependencies: ["alpha-extension"],
-          files: ["zeta.md"],
-          augmentations: []
+          files: ["zeta.md"]
         },
         "alpha-extension": {
           version: null,
           dependencies: [],
-          files: ["alpha.md"],
-          augmentations: []
+          files: ["alpha.md"]
         }
       },
       files: {
@@ -212,14 +111,13 @@ Authored contract v1.
 
   test("rejects duplicate roots and non-reciprocal file ownership", () => {
     const receipt = {
-      schema: 1 as const,
+      schema: 2 as const,
       roots: ["alpha-extension", "alpha-extension"],
       extensions: {
         "alpha-extension": {
           version: null,
           dependencies: [],
-          files: ["alpha.md"],
-          augmentations: []
+          files: ["alpha.md"]
         }
       },
       files: {
@@ -311,7 +209,7 @@ describe("portable extension paths", () => {
     expect(() => cliTestInternals.assertPortableManifestPath(
       ".agents/loader.md",
       "extension.json",
-      "augmentations[0].target"
+      "files[0]"
     )).not.toThrow();
     expect(() => cliTestInternals.assertPortablePayloadPath(
       ".agents/patterns/review/_review.md",
@@ -332,7 +230,7 @@ describe("portable extension paths", () => {
       expect(() => cliTestInternals.assertPortableManifestPath(
         invalid,
         "extension.json",
-        "augmentations[0].source"
+        "files[0]"
       )).toThrow("not portable across Windows");
       expect(() => cliTestInternals.assertPortablePayloadPath(invalid, "fixture-pack")).toThrow(
         "not portable across Windows"
@@ -345,7 +243,7 @@ describe("portable extension paths", () => {
     expect(() => cliTestInternals.assertPortableManifestPath(
       invalid,
       "extension.json",
-      "augmentations[0].source"
+      "files[0]"
     )).toThrow("must be a portable relative path");
     expect(() => cliTestInternals.assertPortablePayloadPath(invalid, "fixture-pack")).toThrow(
       "must be a portable relative path"
