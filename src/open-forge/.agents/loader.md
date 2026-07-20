@@ -33,7 +33,11 @@ This is the main Open Forge `entrypoint`. Read it after `AGENTS.md` to enter thi
 
 ### Tags And Loading
 
-- Defined tags have the meanings below when they appear in loaded content or generated `Entries`; undefined tags remain routing and search signals
+- Defined tags have the meanings below when they appear in loaded content or generated `Entries`;
+- undefined tags remain routing and search signals
+
+#### Defined Tags
+
 - #LoadNow - When this `entry` appears in an already-loaded parent's `Entries`, read it immediately in listed order. When it points to an `entrypoint`, apply the same rule to that file's `Entries`.
 - #KeepInMind - Read the complete routed set at task start or resume, after detected context restoration, and before a handoff or closeout. Recheck it during work only when its follow-ups may have changed, and follow each result within its owner's authority.
 - #Core - Base routing, workspace orientation, and agent primitive routes
@@ -41,6 +45,13 @@ This is the main Open Forge `entrypoint`. Read it after `AGENTS.md` to enter thi
 - #Extension - Optional extension payload, template, integration, and support routes
 - #Contextual - Supporting context, not accepted current truth unless restored, validated, accepted, or promoted
 - #CurrentTruth - Accepted current memory within its stated scope, below user instructions, runtime safety, platform constraints, and declared external sources of truth
+
+### CLI
+
+- Open forge exposes a CLI to help agents achieve faster results. If available cli usage is higly encouraged to be used for all tasks.
+
+#### CLI Usage useful examples
+
 - `open-forge load --bodies` may batch this same traversal when available; plain-file traversal remains complete
 
 ## Entries
@@ -54,4 +65,4 @@ This is the main Open Forge `entrypoint`. Read it after `AGENTS.md` to enter thi
 - `.agents/skills/_skills.md` - Skills available through standard SKILL.md files - #LoadNow #Core #Skill
 - `.agents/workflows/_workflows.md` - Repeatable markdown workflow recipes for reaching a defined goal - #LoadNow #Core #Workflow
 - `.agents/workspace/_workspace.md` - Workspace routes that point to important project locations and explain when to use them - #LoadNow #Core #Workspace
-  <!-- open-forge:generated-index:end -->
+      <!-- open-forge:generated-index:end -->
