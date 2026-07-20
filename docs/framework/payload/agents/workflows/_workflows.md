@@ -30,7 +30,7 @@ Open Forge workflows are routed markdown recipes, not runtime orchestration obje
 
 Generated `Entries` express containment: what lives under the workflow folder. `Required Routes` express dependency: cross-tree edges to routes the workflow needs but does not contain. The two never compete.
 
-`Required Routes` are flat and unconditional; agents read every listed route before Step 1 and report a route that cannot be read as a blocker, not a step to skip. "none" is a valid value. Entrypoint-level targets are preferred; stable routed files are allowed. Lines use the generated entry format so tooling can parse and follow them. Individual directive files never appear in the list because binding instructions enter through active directive routes: workspace-wide root directives are already loaded, and workflow-specific directives belong under a workflow-local directive `entrypoint` selected with the workflow. Keep the list short; split the workflow or route through a package when it grows.
+`Required Routes` are flat and unconditional; agents read every listed route before Step 1 and report a route that cannot be read as a blocker, not a step to skip. "none" is a valid value. Entrypoint-level targets are preferred; stable routed files are allowed. Every route line uses `- [Reason](relative/path.md) - #Tags`, resolves from the workflow file containing it, and carries useful tags with at least the target primitive type. Individual directive files never appear in the list because binding instructions enter through active directive routes: workspace-wide root directives are already loaded, and workflow-specific directives belong under a workflow-local directive `entrypoint` selected with the workflow. Keep the list short; split the workflow or route through a package when it grows.
 
 Mode is visible before Goal so an agent knows whether to expect one pass or repetition before entering the contract. Loop behavior supplies the detail: linear workflows execute Steps once; iterative workflows state what causes another pass, which steps repeat, what evidence each pass adds, and what Goal condition stops it. Every workflow seeks its Goal, so goal-seeking is not a separate mode.
 
@@ -99,6 +99,7 @@ The implementation is aligned when it:
 - preserves the nearest explicit primitive type for workflow-local directive, pattern, guidance, skill, workspace, or memory routes
 - restricts Mode to linear or iterative and requires `- none` for empty Constraints
 - requires agents to read every Required Routes route before Step 1 and report unreadable routes as blockers
+- requires Required Routes to use containing-file-relative Markdown links and a tag suffix that includes the target primitive type
 - keeps generated `Entries` as containment and `Required Routes` as cross-tree dependency
 - lets steps invoke skills, consult guidance, delegate to subagents, or hand off to other workflows by route
 - discourages workflow-local skills in favor of standard skills shared through Required Routes

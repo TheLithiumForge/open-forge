@@ -16,5 +16,5 @@ Patterns here apply to `ledger/packages/core` and narrow the general workspace p
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `money-and-validation.md` - Money type, parsing, and validation live in core and nowhere else - #Extension #Pattern #Core #Money #Validation
+- [Money type, parsing, and validation live in core and nowhere else](money-and-validation.md) - #Extension #Pattern #Core #Money #Validation
 <!-- open-forge:generated-index:end -->

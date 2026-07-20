@@ -250,8 +250,7 @@ Review the requested work product without changing this package.
     await fs.writeFile(path.join(skillRoot, "references", "checklist.md"), "# Checklist\n\n- Check the evidence.\n");
     expect((await runCli("index", root)).exitCode).toBe(0);
     const skillsIndex = await fs.readFile(path.join(root, ".agents", "skills", "_skills.md"), "utf8");
-    expect(skillsIndex).toContain("`external-review/SKILL.md`");
-    expect(skillsIndex).toContain("Review an external work product through an externally managed native skill.");
+    expect(skillsIndex).toContain("[Review an external work product through an externally managed native skill.](external-review/SKILL.md) - #Skill");
 
     const workflowRoot = path.join(extension, "payload", ".agents", "workflows", "external-review");
     await fs.mkdir(workflowRoot, { recursive: true });
@@ -281,7 +280,7 @@ linear
 
 ## Required Routes
 
-- \`.agents/skills/external-review/SKILL.md\` - externally managed review capability
+- [Externally managed review capability](../../skills/external-review/SKILL.md) - #Skill #Required
 
 ## Constraints
 
@@ -328,6 +327,35 @@ Execute the Steps once; no loop.
     expect(doctorResult.exitCode).toBe(0);
     expect(JSON.parse(doctorResult.stdout)).toMatchObject({ errors: 0, warnings: 0 });
     expect(await snapshotTree(skillRoot)).toEqual(skillBefore);
+  });
+
+  test("resolves a same-pack Required Route inside an isolated extension payload", async () => {
+    const extension = await createRoot();
+    const payload = path.join(extension, "payload");
+    const skill = path.join(payload, ".agents", "skills", "helper", "SKILL.md");
+    const workflow = path.join(payload, ".agents", "workflows", "use-helper", "_use-helper.md");
+    await fs.mkdir(path.dirname(skill), { recursive: true });
+    await fs.mkdir(path.dirname(workflow), { recursive: true });
+    await fs.writeFile(skill, "# Helper\n");
+    await fs.writeFile(workflow, `# Use Helper
+
+## Required Routes
+
+- [Same-pack helper](../../skills/helper/SKILL.md) - #Skill #Required
+`);
+
+    const result = await runCli(
+      "find",
+      "--route",
+      ".agents/workflows/use-helper/_use-helper.md",
+      "--follow-required",
+      "--paths",
+      payload
+    );
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain(".agents/workflows/use-helper/_use-helper.md");
+    expect(result.stdout).toContain(".agents/skills/helper/SKILL.md");
   });
 });
 

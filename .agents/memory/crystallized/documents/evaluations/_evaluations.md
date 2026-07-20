@@ -20,9 +20,9 @@ This route holds coagulated summaries only. Per-run reports from the reproducibl
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `recommendations-synthesis.md` - Accepted record of dogfood evidence and recommendation synthesis across critique and v2 through v4 experiments - #Memory #Document #Record #CurrentTruth #Dogfood #Recommendation #Synthesis #Evidence
-- `v10-synthesis.md` - Cross-run synthesis of the v10 A/B generation - the closeout command moved recheck compliance from ~50% to 3 of 3, and the printout proved to be the compliance surface - #Memory #Document #Record #CurrentTruth #Evaluation #Evidence #Synthesis #Benchmark
-- `v7-synthesis.md` - Cross-run synthesis of the v7 benchmark generation - first validation of the new workflow shape, narrower-scope precedence proven at scale, scope control failing at the tool boundary - #Memory #Document #Record #CurrentTruth #Evaluation #Evidence #Synthesis #Benchmark
-- `v8-synthesis.md` - Cross-run synthesis of the v8 benchmark generation - scope-control and vision-workflow fixes validated, closeout recheck now the isolated persistent gap - #Memory #Document #Record #CurrentTruth #Evaluation #Evidence #Synthesis #Benchmark
-- `v9-synthesis.md` - Cross-run synthesis of the v9 benchmark generation - a same-configuration replication of v8 that confirms fidelity and scope stability and quantifies the closeout compliance ceiling - #Memory #Document #Record #CurrentTruth #Evaluation #Evidence #Synthesis #Benchmark
+- [Accepted record of dogfood evidence and recommendation synthesis across critique and v2 through v4 experiments](recommendations-synthesis.md) - #Memory #Document #Record #CurrentTruth #Dogfood #Recommendation #Synthesis #Evidence
+- [Cross-run synthesis of the v10 A/B generation - the closeout command moved recheck compliance from ~50% to 3 of 3, and the printout proved to be the compliance surface](v10-synthesis.md) - #Memory #Document #Record #CurrentTruth #Evaluation #Evidence #Synthesis #Benchmark
+- [Cross-run synthesis of the v7 benchmark generation - first validation of the new workflow shape, narrower-scope precedence proven at scale, scope control failing at the tool boundary](v7-synthesis.md) - #Memory #Document #Record #CurrentTruth #Evaluation #Evidence #Synthesis #Benchmark
+- [Cross-run synthesis of the v8 benchmark generation - scope-control and vision-workflow fixes validated, closeout recheck now the isolated persistent gap](v8-synthesis.md) - #Memory #Document #Record #CurrentTruth #Evaluation #Evidence #Synthesis #Benchmark
+- [Cross-run synthesis of the v9 benchmark generation - a same-configuration replication of v8 that confirms fidelity and scope stability and quantifies the closeout compliance ceiling](v9-synthesis.md) - #Memory #Document #Record #CurrentTruth #Evaluation #Evidence #Synthesis #Benchmark
 <!-- open-forge:generated-index:end -->

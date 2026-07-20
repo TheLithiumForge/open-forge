@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Deferred product ideas for reliability evaluation, route presets, provider adapters, technology packs, orchestration, and memory placement
+  description: Deferred product ideas for reliability evaluation, route presets, provider adapters, formatting, technology packs, orchestration, and memory placement
   tags: [Memory, Idea, Contextual, Candidate, Product, Extension]
 ---
 
@@ -15,4 +15,5 @@ Open product candidates after the 2026-07-18 pruning pass. These are options, no
 - Additional workflow packs only where real use shows a missing outcome; the initial brainstorming, task creation, implementation, testing, review, architecture, UI/UX, refactoring, and debugging set now exists.
 - Orchestration route or extension for workflows that can declare preferred tools, subagents, isolation rules, and CLI usage when multiple agent runtimes are available.
 - Optional interactive wizard as a convenience over deterministic commands.
+- Optional CLI post-write formatting: discover an explicit workspace formatter configuration or format-fix script, limit it to files Open Forge changed where possible, then re-index and validate generated regions. Do not format user files automatically until command scope and generated-marker safety are defined.
 - External `.memory/` or distributed package-local memory as a documented user pattern, not default behavior.

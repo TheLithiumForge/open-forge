@@ -214,7 +214,7 @@ When `.agents/` exists, the CLI scans `.agents/`. Otherwise it scans the target 
 
 When `loader.md` exists at the scan root, the CLI generates one loader `entry` for every direct child folder that contains one recognized category `entrypoint`. Loader descriptions and tags come from the category `entrypoint`, preferring supported metadata and falling back to its first body description and #Index.
 
-In an installed workspace, loader paths are concrete and relative to the target folder, such as `.agents/workspace/_workspace.md`. Git and submodule boundaries do not redefine that logical root. For deterministic CLI reads and writes, the route tree must also be physically contained below the target: a symlinked or junction-mounted `.agents/` tree that resolves outside it is rejected. Plain Markdown agents may still follow an explicitly trusted external mount, but the CLI will not read or mutate through that trust boundary.
+Generated `Entries` use standard Markdown links whose destinations resolve relative to the file containing them. A loader at `.agents/loader.md` therefore links to `workspace/_workspace.md`; a category `entrypoint` links from its own folder. CLI arguments and output route identities remain relative to the selected target, such as `.agents/workspace/_workspace.md`. Git and submodule boundaries do not redefine that logical root. For deterministic CLI reads and writes, the route tree must also be physically contained below the target: a symlinked or junction-mounted `.agents/` tree that resolves outside it is rejected. Plain Markdown agents may still follow an explicitly trusted external mount, but the CLI will not read or mutate through that trust boundary.
 
 Nested categories stay behind their parent category `entrypoint`. Folders without a matching `entrypoint` do not become loader routes.
 
@@ -229,11 +229,13 @@ Open Forge-authored category `entrypoints` are named `_{folder-name}.md`:
 The category `entrypoint` contains stable category meaning followed by a generated region. The generated region reads direct markdown route files and direct child category `entrypoints`:
 
 ```md
-- `{file}` - {description} - #{Tag1} #{Tag2} ... #{TagN}
-- `{folder/_folder.md}` - {description} - #{Tag1} #{Tag2} ... #{TagN}
+- [Local documentation patterns](local-docs.md) - #Pattern #Documentation
+- [React patterns](react/_react.md) - #Pattern #React
 ```
 
 Child folders are routed through their own `_{folder-name}.md` category `entrypoint`. Parent `entrypoints` stay at one folder boundary.
+
+The link label carries the generated description, and the link destination carries the containing-file-relative route. The same canonical shape applies to authored `Required Routes`; each line keeps a tag suffix with useful tags, including at least the target primitive type.
 
 The skills route also recognizes ordinary skills:
 
@@ -303,7 +305,7 @@ The generated region is bounded explicitly:
 
 The CLI replaces only the content between the markers. It preserves frontmatter and category content above the region.
 
-When a legacy category `entrypoint` or loader has a final `## Entries` section containing only generated list `entries`, the CLI adds the markers automatically. If the heading is absent, the CLI appends the complete section. Malformed or non-final markers stop generation without changing the file.
+When a legacy category `entrypoint` or loader has a final `## Entries` section containing only generated list `entries`, the CLI adds the markers automatically. The parser continues to accept the former backtick-path entry shape during migration, but `index` emits only canonical relative Markdown links. Authored legacy `Required Routes` remain readable with their former workspace-root-relative resolution and should be converted to containing-file-relative canonical links when touched. If the heading is absent, the CLI appends the complete section. Malformed or non-final markers stop generation without changing the file.
 
 Change index output by adding, editing, moving, or removing route files and child category `entrypoints` in the indexed folder.
 
@@ -381,13 +383,13 @@ open-forge find --tag Workflow --json
 Combine `Workflow` with one of `PhaseDiscovery`, `PhaseDefinition`, `PhasePlanning`, `PhaseDelivery`, or `PhaseVerification` to inspect phase candidates. Those tags provide non-waterfall wayfinding; the workflow Goal and routed current truth still decide fit.
 
 - `--tag <Tag>` filters by effective tags (metadata tags, or the generated defaults); repeat the flag to require every tag. Matching is case-insensitive; canonical spelling still comes from the loader.
-- `--route <path>` selects one file or routable folder; `--depth <n>` also follows its generated `entries` n levels.
-- `--follow-required` adds every target of the selected files' `## Required Routes` sections. A required route that cannot be read fails the command - it is a blocker, not a skip.
+- `--route <path>` selects one file or routable folder using a workspace-relative CLI path such as `.agents/workflows/dev/_dev.md`; `--depth <n>` also follows its generated `entries` n levels.
+- `--follow-required` adds every target of the selected files' `## Required Routes` sections. Markdown link destinations resolve relative to the workflow file containing them. A required route that cannot be read fails the command - it is a blocker, not a skip.
 - Output is entry lines by default; `--paths` prints paths only, `--bodies` prints file contents with `----- {route} -----` separators, `--json` prints structured output.
 
 Use `open-forge load --bodies` when batched effective baseline context is convenient. `find` remains useful for catalogue queries; neither command replaces the complete parent-aware plain traversal defined by the loader.
 
-Explicit routes, generated-entry expansion, and Required Routes are lexical and physical containment boundaries. `find` rejects absolute paths, parent traversal, drive changes, and real-path link escapes from the selected target. Global routed discovery likewise rejects linked or special entries before reading them.
+Explicit CLI routes, generated-entry expansion, and Required Routes are lexical and physical containment boundaries. `find --route` rejects absolute paths, parent traversal, drive changes, and real-path link escapes from the selected target. A containing-file-relative Markdown link may use `..` only when its resolved target remains inside the selected workspace. Global routed discovery likewise rejects linked or special entries before reading them.
 
 ## chain
 
@@ -429,6 +431,8 @@ open-forge doctor --json
 Exit code is non-zero when errors exist, so `doctor` is safe for CI. `index` remains the repair tool for generated regions; `doctor` only reports.
 
 `doctor` uses the same target-containment boundary as `find`: an external symlink/junction route tree or linked routed entry is an error and is not consumed as workspace context.
+
+`doctor` and `find --follow-required` treat the selected target as a complete workspace and do not consult extension manifests or dependency metadata. Running either command against an isolated extension source payload therefore reports intentionally absent #Core or declared-dependency routes; validate those cross-package routes after assembly instead of adding source-only stubs.
 
 ## create
 

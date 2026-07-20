@@ -31,7 +31,7 @@ The group and package folder aid maintenance and catalogue presentation only. Th
 
 Package-shaped standalone runtime content lives under `payload/`. A dependency-only pack may omit `payload/` when it declares at least one bundled dependency. An extension never uses a shared-file mutation block or companion addition; every installed contribution is a whole file in the ordinary routed tree.
 
-Extension-authored Open Forge route files normally use #Extension plus their primitive and useful scope tags. Standard files such as `SKILL.md` keep their runtime-required metadata. Load-policy tags are added only when the installed content intentionally belongs in baseline or continuity loading.
+Extension-authored Open Forge route files normally use #Extension plus their primitive and useful scope tags. Standard files such as `SKILL.md` keep their runtime-required metadata. Markdown route links use containing-file-relative destinations in the assembled workspace. Load-policy tags are added only when the installed content intentionally belongs in baseline or continuity loading.
 
 ## Plain-File Contract
 
@@ -63,7 +63,9 @@ Workspace-owned `.overwrite.md` files are outside extension ownership. Extension
 
 ## Sharing Contract
 
-A reusable skill belongs in one skill extension. Dependent workflows declare the extension dependency for installation and the concrete installed `SKILL.md` route in Required Routes for runtime use.
+A reusable skill belongs in one skill extension. Dependent workflows declare the extension dependency for installation and link the concrete installed `SKILL.md` route in Required Routes for runtime use with `- [Reason](relative/path.md) - #Skill #Tags`.
+
+Same-package Markdown links must resolve inside the isolated extension source payload. Framework and declared-dependency links may remain unresolved in isolated source because their containing-file-relative destinations target the final assembled workspace; they must resolve after #Core and the complete dependency closure are installed. Extension validation must not require fake duplicates or source-only stubs for those cross-package targets. `doctor` and `find --follow-required` remain manifest-agnostic complete-workspace validators, so isolated-source cross-package links are validated through the assembled workspace rather than tolerated through a hidden source-mode exception.
 
 Convenience packs contain dependency edges rather than duplicate payload files. Keep dependency graphs small, acyclic, and explicit.
 

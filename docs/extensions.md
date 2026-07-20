@@ -95,7 +95,7 @@ The manifest is install metadata only. It is not copied as runtime context and a
 
 ## Payload And Routing
 
-Payload paths are target-relative and portable. Open Forge-authored route files normally use #Extension plus their primitive and useful scope tags. Standard files such as `SKILL.md` keep their runtime-required metadata.
+Payload paths are target-relative and portable. Markdown route links inside payload files use the normal containing-file-relative contract and resolve against the assembled workspace after installation. Open Forge-authored route files normally use #Extension plus their primitive and useful scope tags. Standard files such as `SKILL.md` keep their runtime-required metadata.
 
 Use #LoadNow or #KeepInMind only when the installed file deliberately belongs in baseline or continuity loading. Otherwise its path, description, and tags keep it on demand.
 
@@ -143,7 +143,11 @@ Payload, generated-index, and receipt changes are one rollback-capable in-proces
 
 ## Sharing And Packs
 
-Put a reusable skill in one skill extension and declare that id from dependent workflows or packs. A workflow still names the concrete installed `SKILL.md` under Required Routes because manifest dependencies install files but do not create runtime meaning.
+Put a reusable skill in one skill extension and declare that id from dependent workflows or packs. A workflow still links the concrete installed `SKILL.md` under Required Routes because manifest dependencies install files but do not create runtime meaning. Required Route links use the canonical `- [Description](relative/path.md) - #Tags` shape, resolve from the workflow file, and include at least #Skill for a skill target.
+
+Links to files in the same extension package must resolve in the isolated source payload. A link to #Core or a declared extension dependency may be unresolved when that extension source is inspected alone, because its containing-file-relative destination is defined against the final assembled workspace. It must resolve after the base and complete dependency closure are installed. Do not duplicate dependency files or add source-only stubs merely to make a cross-package link resolve in isolation.
+
+`doctor` and `find --follow-required` remain manifest-agnostic complete-workspace validators. If either command is aimed directly at an isolated source payload, an intentionally absent #Core or declared-dependency route is reported; validate that route after assembly rather than weakening the link or duplicating its target.
 
 Convenience packs contain dependency edges rather than duplicate payload files. Keep dependency graphs small and acyclic.
 

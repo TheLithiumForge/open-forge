@@ -23,7 +23,7 @@ iterative
 
 Read every route below before Step 1. A route that cannot be read is a blocker to report, not a step to skip.
 
-- `.agents/skills/architecture/SKILL.md` - architecture mapping, option comparison, decision framing, and migration slicing skill
+- [architecture mapping, option comparison, decision framing, and migration slicing skill](../../skills/architecture/SKILL.md) - #Skill #Architecture
 
 ## Constraints
 

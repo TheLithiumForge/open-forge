@@ -17,17 +17,17 @@ Decisions are accepted rationale for important choices that may need to be under
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `core-primitives.md` - The Core layer installs directives, patterns, guidance, skills, workflows, and workspace with their accepted meanings - #Memory #Decision #CurrentTruth #Core #Primitive
-- `do-not-revive.md` - Do-not-revive list for rejected files, hidden mechanics, directive gates, continuity gaps, and workflow ceremony - #Memory #Decision #CurrentTruth #Rejected
-- `extensions-and-cli.md` - Extensions add optional whole routed files while installed files remain complete runtime truth - #Memory #Decision #CurrentTruth #Extension #CLI
-- `loading-reliability.md` - Reliability-critical context loads unconditionally and early; conditional context must be cheap to skip and cheap to recover from - #Memory #Decision #CurrentTruth #Loading #Routing #Reliability
-- `memory-model.md` - Memory is self-growing markdown state with working, emerging, crystallized, and archived states; it records state and never owns behavior - #Memory #Decision #CurrentTruth #MemoryModel
-- `product-direction.md` - Open Forge stays markdown-first, human-led, small by default, and optimized for recursive customization - #Memory #Decision #CurrentTruth #Product
-- `routing-model.md` - Routing goes through small markdown entrypoints; one recognized entrypoint per folder; the loader exposes only direct root routes - #Memory #Decision #CurrentTruth #Routing
-- `routing-surfaces.md` - The entry description is the selection surface; the routed body is the execution recipe - #Memory #Decision #CurrentTruth #Routing #Formatting
-- `scope-and-slugs.md` - Framework routes, scope routes, scoped framework routes, and slugs are distinct; placeholders are notation only and slug placement changes meaning - #Memory #Decision #CurrentTruth #Routing #Scope
-- `source-and-packaging.md` - Users receive src/open-forge as the payload; docs/framework governs maintainers and is never hidden runtime context - #Memory #Decision #CurrentTruth #Packaging #Governance
-- `tags.md` - Accepted tag semantics - LoadNow follows visible parent chains, KeepInMind restores the complete continuity catalogue, other tags classify - #Memory #Decision #CurrentTruth #Tags #Routing
-- `user-facing-writing.md` - User-facing Open Forge files use positive natural language and compact selection surfaces - #Memory #Decision #CurrentTruth #Formatting #Documentation #Routing
-- `workflow-shape.md` - Accepted workflow shape - Mode, Goal, Required Routes, Constraints, Steps, Loop, Outputs, Completion; generated Entries are containment, Required Routes are cross-tree dependency - #Memory #Decision #CurrentTruth #Workflow #Routing #Orchestration
+- [The Core layer installs directives, patterns, guidance, skills, workflows, and workspace with their accepted meanings](core-primitives.md) - #Memory #Decision #CurrentTruth #Core #Primitive
+- [Do-not-revive list for rejected files, hidden mechanics, directive gates, continuity gaps, and workflow ceremony](do-not-revive.md) - #Memory #Decision #CurrentTruth #Rejected
+- [Extensions add optional whole routed files while installed files remain complete runtime truth](extensions-and-cli.md) - #Memory #Decision #CurrentTruth #Extension #CLI
+- [Reliability-critical context loads unconditionally and early; conditional context must be cheap to skip and cheap to recover from](loading-reliability.md) - #Memory #Decision #CurrentTruth #Loading #Routing #Reliability
+- [Memory is self-growing markdown state with working, emerging, crystallized, and archived states; it records state and never owns behavior](memory-model.md) - #Memory #Decision #CurrentTruth #MemoryModel
+- [Open Forge stays markdown-first, human-led, small by default, and optimized for recursive customization](product-direction.md) - #Memory #Decision #CurrentTruth #Product
+- [Routing goes through small markdown entrypoints; one recognized entrypoint per folder; the loader exposes only direct root routes](routing-model.md) - #Memory #Decision #CurrentTruth #Routing
+- [The entry description is the selection surface; the routed body is the execution recipe](routing-surfaces.md) - #Memory #Decision #CurrentTruth #Routing #Formatting
+- [Framework routes, scope routes, scoped framework routes, and slugs are distinct; placeholders are notation only and slug placement changes meaning](scope-and-slugs.md) - #Memory #Decision #CurrentTruth #Routing #Scope
+- [Users receive src/open-forge as the payload; docs/framework governs maintainers and is never hidden runtime context](source-and-packaging.md) - #Memory #Decision #CurrentTruth #Packaging #Governance
+- [Accepted tag semantics - LoadNow follows visible parent chains, KeepInMind restores the complete continuity catalogue, other tags classify](tags.md) - #Memory #Decision #CurrentTruth #Tags #Routing
+- [User-facing Open Forge files use positive natural language and compact selection surfaces](user-facing-writing.md) - #Memory #Decision #CurrentTruth #Formatting #Documentation #Routing
+- [Accepted workflow shape - Mode, Goal, Required Routes, Constraints, Steps, Loop, Outputs, Completion; generated Entries are containment, Required Routes are cross-tree dependency](workflow-shape.md) - #Memory #Decision #CurrentTruth #Workflow #Routing #Orchestration
 <!-- open-forge:generated-index:end -->

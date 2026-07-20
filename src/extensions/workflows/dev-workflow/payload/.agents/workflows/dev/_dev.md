@@ -22,8 +22,8 @@ iterative
 
 Read every route below before Step 1. A route that cannot be read is a blocker to report, not a step to skip.
 
-- `.agents/skills/implementation/SKILL.md` - fit design, contracts, test derivation, verification review
-- `.agents/skills/quality/SKILL.md` - test design, evidence review, behavior preservation, failure diagnosis, and regression control
+- [fit design, contracts, test derivation, verification review](../../skills/implementation/SKILL.md) - #Skill #Implementation
+- [test design, evidence review, behavior preservation, failure diagnosis, and regression control](../../skills/quality/SKILL.md) - #Skill #Quality
 
 ## Constraints
 

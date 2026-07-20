@@ -16,6 +16,6 @@ Patterns here apply to `ledger/packages/server` and narrow the general workspace
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `handler-shape.md` - One handler per route, wired through a small hand-rolled router - #Extension #Pattern #Server #Http
-- `error-responses.md` - All error paths flow through one response helper implementing the error contract - #Extension #Pattern #Server #Error #Contract
+- [All error paths flow through one response helper implementing the error contract](error-responses.md) - #Extension #Pattern #Server #Error #Contract
+- [One handler per route, wired through a small hand-rolled router](handler-shape.md) - #Extension #Pattern #Server #Http
 <!-- open-forge:generated-index:end -->

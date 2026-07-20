@@ -22,7 +22,7 @@ iterative
 
 Read every route below before Step 1. A route that cannot be read is a blocker to report, not a step to skip.
 
-- `.agents/skills/vision/SKILL.md` - vision shaping, first-useful-version boundary, fit, risk, and growth-direction skill
+- [vision shaping, first-useful-version boundary, fit, risk, and growth-direction skill](../../skills/vision/SKILL.md) - #Skill #Vision
 
 ## Constraints
 

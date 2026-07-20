@@ -22,7 +22,7 @@ iterative
 
 Read every route below before Step 1. A route that cannot be read is a blocker to report, not a step to skip.
 
-- `.agents/skills/planning/SKILL.md` - task shaping, duplicate prevention, and task-authority discipline
+- [task shaping, duplicate prevention, and task-authority discipline](../../skills/planning/SKILL.md) - #Skill #Planning
 
 ## Constraints
 

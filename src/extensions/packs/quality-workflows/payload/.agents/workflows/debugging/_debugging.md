@@ -22,7 +22,7 @@ iterative
 
 Read every route below before Step 1. A route that cannot be read is a blocker to report, not a step to skip.
 
-- `.agents/skills/quality/SKILL.md` - systematic reproduction, hypothesis testing, minimal fixes, and regression evidence
+- [systematic reproduction, hypothesis testing, minimal fixes, and regression evidence](../../skills/quality/SKILL.md) - #Skill #Quality
 
 ## Constraints
 

@@ -18,5 +18,5 @@ Patterns define recognizable arrangements that make related work consistent acro
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `open-forge/_open-forge.md` - Reusable structural patterns for changing and operating Open Forge without losing its minimal routed design - #Pattern #Framework #Dogfood
+- [Reusable structural patterns for changing and operating Open Forge without losing its minimal routed design](open-forge/_open-forge.md) - #Pattern #Framework #Dogfood
 <!-- open-forge:generated-index:end -->

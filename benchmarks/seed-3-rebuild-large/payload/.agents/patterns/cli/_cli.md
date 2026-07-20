@@ -16,5 +16,5 @@ Patterns here apply to `ledger/packages/cli` and narrow the general workspace pa
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `thin-client.md` - The CLI renders and relays; it never computes business results - #Extension #Pattern #Cli #Boundary
+- [The CLI renders and relays; it never computes business results](thin-client.md) - #Extension #Pattern #Cli #Boundary
 <!-- open-forge:generated-index:end -->

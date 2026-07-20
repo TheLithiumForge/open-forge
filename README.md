@@ -181,7 +181,7 @@ The important thing is not the number of files. The important thing is the routi
 
 Every direct directive file carries #LoadNow relative to its already-loaded parent. The root directive route is baseline-loaded, so its direct files bind workspace-wide. Put narrower directives below a positively described child directive `entrypoint`; selecting and loading that route establishes scope before ordinary #LoadNow traversal reads its direct files. A direct directive file contains one substantive level-2 `## Axioms` section and no `Applies To` gate. Use guidance, a skill, or a workflow when behavior is optional rather than mandatory.
 
-For non-trivial work, agents use the request, routed current truth, and visible workflow descriptions and tags to select a relevant workflow before opening it, then confirm its Goal. A Goal may include an optional `- helpful before: ...` item. When that work would help and a matching earlier workflow is available, the agent recommends it once without blocking progress; if it is skipped or unavailable, the selected workflow proceeds with explicit assumptions. Phases are wayfinding, not a waterfall. One workflow stays primary, additional workflows become ordered handoffs, and an explicit workflow choice or opt-out wins.
+For non-trivial work, agents use the request, routed current truth, and visible workflow descriptions and tags to select a relevant workflow before opening it, then confirm its Goal. A Goal may include an optional `- helpful before: ...` item. When that work would help and a matching earlier workflow is available, the agent recommends it once without blocking progress; if it is skipped or unavailable, the selected workflow proceeds with explicit assumptions. Phases are wayfinding, not a waterfall. One workflow stays primary, additional workflows become ordered handoffs, and an explicit workflow choice or opt-out wins. Required Routes use `- [Reason](relative/path.md) - #Tags`, with useful tags that include at least the target primitive type.
 
 #KeepInMind routes protect long-running work from context loss. At task start or resume, after actual context restoration, before handoff, and before closeout, agents recheck the complete catalogue and keep its follow-ups binding within their owner's authority. They also refresh it when a transition may have changed those follow-ups.
 
@@ -193,7 +193,7 @@ npx open-forge load --bodies
 
 It optionally batches the same plain traversal: the visible transitive #LoadNow chain plus the complete #KeepInMind catalogue, with each user-owned `.overwrite.md` immediately after its base.
 
-Generated paths are concrete and relative to the folder whose `AGENTS.md` selected the loader. A shared submodule does not change those logical paths. For safety, deterministic CLI reads and writes reject a symlinked or junction-mounted route tree that resolves outside the selected target; plain Markdown loading of an explicitly trusted external mount remains a manual trust decision.
+Generated `Entries` are standard Markdown links resolved relative to the file containing each link. For example, `.agents/loader.md` links to `workspace/_workspace.md`, while a category `entrypoint` links from its own folder. CLI `--route` arguments remain workspace-relative, such as `.agents/workspace/_workspace.md`. A shared submodule does not change the active workspace root. For safety, deterministic CLI reads and writes reject a symlinked or junction-mounted route tree that resolves outside the selected target; plain Markdown loading of an explicitly trusted external mount remains a manual trust decision.
 
 ## First Thing After Install
 
@@ -311,11 +311,11 @@ A new top-level category becomes active when a direct child folder contains its 
 Generated `entries` look like this:
 
 ```md
-- `{file}` - {description} - #{Tag1} #{Tag2} ... #{TagN}
-- `{folder/_folder.md}` - {description} - #Index
+- [Architecture knowledge](architecture.md) - #Knowledge #Architecture
+- [Guide routes](guides/_guides.md) - #Index #Guide
 ```
 
-File names are used as-is. Child folders are routed through their own `_{folder-name}.md` category `entrypoint`. If you number files, the generated `entries` keep those numbers.
+Link destinations are relative to the `entrypoint` containing them, so editors and graph tools can follow them directly. File names are used as-is. Child folders are routed through their own `_{folder-name}.md` category `entrypoint`. If you number files, the generated `entries` keep those numbers.
 
 Use `scope routes` when a workspace needs extra ownership or meaning. A `scope route` is a `slug` folder with its own `entrypoint`:
 
