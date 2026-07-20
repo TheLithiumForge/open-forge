@@ -409,6 +409,12 @@ open-forge:
     const extensionsRoot = await createRoot();
     const extensionPatterns = path.join(extensionsRoot, "review-pack", "payload", ".agents", "patterns", "reviews");
     await fs.mkdir(extensionPatterns, { recursive: true });
+    await fs.writeFile(path.join(extensionsRoot, "review-pack", "extension.json"), JSON.stringify({
+      id: "review-pack",
+      name: "Review Pack",
+      description: "Review patterns bundled with Open Forge",
+      dependencies: []
+    }));
     await fs.writeFile(path.join(extensionPatterns, "_reviews.md"), `---
 open-forge:
   description: Review patterns bundled with Open Forge
@@ -447,6 +453,62 @@ Review patterns bundled with Open Forge.
     expect(result.stdout).toContain("- beta-pack - Beta extension");
     expect(result.stdout).toContain("- alpha-pack - Alpha extension (contents: pattern)");
     expect(result.stdout).toContain("- beta-pack - Beta extension (contents: pattern)");
+  });
+
+  test("discovers nested bundled packages by stable manifest id instead of folder name", async () => {
+    const root = await createRoot();
+    const extensionsRoot = await createRoot();
+    const packageRoot = path.join(extensionsRoot, "support", "physical-folder");
+    await fs.mkdir(path.join(packageRoot, "payload"), { recursive: true });
+    await fs.writeFile(path.join(packageRoot, "extension.json"), `${JSON.stringify({
+      id: "stable-package-id",
+      name: "Stable Package",
+      description: "Nested support fixture",
+      dependencies: []
+    }, null, 2)}\n`);
+    await fs.writeFile(path.join(packageRoot, "payload", "nested-marker.txt"), "nested package\n");
+
+    const listed = await runCliWithEnv("extend", ["--list"], { OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot });
+    const installed = await runCliWithEnv("extend", ["stable-package-id", root], { OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot });
+
+    expect(listed.exitCode).toBe(0);
+    expect(listed.stdout).toContain("Support:");
+    expect(listed.stdout).toContain("- stable-package-id - Nested support fixture (contents: other)");
+    expect(listed.stdout).not.toContain("physical-folder -");
+    expect(installed.exitCode).toBe(0);
+    expect(await fs.readFile(path.join(root, "nested-marker.txt"), "utf8")).toBe("nested package\n");
+  });
+
+  test("rejects nested bundled packages without stable manifest ids", async () => {
+    const extensionsRoot = await createRoot();
+    const packageRoot = path.join(extensionsRoot, "packs", "missing-id");
+    await fs.mkdir(path.join(packageRoot, "payload"), { recursive: true });
+    await fs.writeFile(path.join(packageRoot, "extension.json"), JSON.stringify({ name: "Missing Id", dependencies: [] }));
+    await fs.writeFile(path.join(packageRoot, "payload", "marker.txt"), "marker\n");
+
+    const result = await runCliWithEnv("extend", ["--list"], { OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot });
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("must declare a stable id");
+  });
+
+  test("rejects duplicate bundled manifest ids across nested organization folders", async () => {
+    const extensionsRoot = await createRoot();
+    for (const group of ["skills", "support"]) {
+      const packageRoot = path.join(extensionsRoot, group, `${group}-folder`);
+      await fs.mkdir(path.join(packageRoot, "payload"), { recursive: true });
+      await fs.writeFile(path.join(packageRoot, "extension.json"), JSON.stringify({
+        id: "duplicate-id",
+        name: group,
+        dependencies: []
+      }));
+      await fs.writeFile(path.join(packageRoot, "payload", `${group}.txt`), `${group}\n`);
+    }
+
+    const result = await runCliWithEnv("extend", ["--list"], { OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot });
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("Bundled extension id duplicate-id is duplicated");
   });
 
   test("derives every advertised content kind from payload paths", async () => {
@@ -572,8 +634,8 @@ Review patterns bundled with Open Forge.
     const betaPayload = path.join(extensionsRoot, "beta-pack", "payload", ".agents");
     await fs.mkdir(alphaPayload, { recursive: true });
     await fs.mkdir(betaPayload, { recursive: true });
-    await fs.writeFile(path.join(extensionsRoot, "alpha-pack", "extension.json"), JSON.stringify({ name: "Alpha" }));
-    await fs.writeFile(path.join(extensionsRoot, "beta-pack", "extension.json"), JSON.stringify({ name: "Beta" }));
+    await fs.writeFile(path.join(extensionsRoot, "alpha-pack", "extension.json"), JSON.stringify({ id: "alpha-pack", name: "Alpha" }));
+    await fs.writeFile(path.join(extensionsRoot, "beta-pack", "extension.json"), JSON.stringify({ id: "beta-pack", name: "Beta" }));
     await fs.writeFile(path.join(alphaPayload, "Route.md"), "alpha\n");
     await fs.writeFile(path.join(betaPayload, "route.md"), "beta\n");
 
@@ -593,8 +655,8 @@ Review patterns bundled with Open Forge.
     const betaAgents = path.join(extensionsRoot, "beta-pack", "payload", ".agents");
     await fs.mkdir(alphaPayload, { recursive: true });
     await fs.mkdir(betaAgents, { recursive: true });
-    await fs.writeFile(path.join(extensionsRoot, "alpha-pack", "extension.json"), JSON.stringify({ name: "Alpha" }));
-    await fs.writeFile(path.join(extensionsRoot, "beta-pack", "extension.json"), JSON.stringify({ name: "Beta" }));
+    await fs.writeFile(path.join(extensionsRoot, "alpha-pack", "extension.json"), JSON.stringify({ id: "alpha-pack", name: "Alpha" }));
+    await fs.writeFile(path.join(extensionsRoot, "beta-pack", "extension.json"), JSON.stringify({ id: "beta-pack", name: "Beta" }));
     await fs.writeFile(path.join(alphaPayload, ".agents"), "parent file\n");
     await fs.writeFile(path.join(betaAgents, "route.md"), "child file\n");
 
@@ -751,115 +813,48 @@ Review patterns bundled with Open Forge.
     expect(await exists(path.join(root, ".agents", "patterns", "shared-pack", "_shared-pack.md"))).toBe(true);
   });
 
-  test("composes augmentation-only extensions deterministically, preserves them through Core reinstall, and removes only their owned blocks", async () => {
-    const root = await createRoot();
-    const extensionsRoot = await createRoot();
-    await createAugmentationExtension(extensionsRoot, "zeta-routing", "Zeta routing axiom.");
-    await createAugmentationExtension(extensionsRoot, "alpha-routing", "Alpha routing axiom.");
-    expect((await runCli("install", root)).exitCode).toBe(0);
-    const overwrite = path.join(root, ".agents", "loader.overwrite.md");
-    await fs.writeFile(overwrite, "# Local Loader Override\n\n- Local truth remains last.\n");
-
-    const installed = await runCliWithEnv("extend", ["--ids=zeta-routing,alpha-routing", root], {
-      OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
-    });
-    expect(installed.exitCode).toBe(0);
-    let loader = await fs.readFile(path.join(root, ".agents", "loader.md"), "utf8");
-    expect(loader.indexOf("open-forge-extension.alpha-routing:start")).toBeLessThan(loader.indexOf("open-forge-extension.zeta-routing:start"));
-    expect(loader).toContain("Alpha routing axiom.");
-    expect(loader).toContain("Zeta routing axiom.");
-    expect(await exists(path.join(root, "augmentations", "workflow-selection.md"))).toBe(false);
-    const receiptFile = path.join(root, "open-forge.extensions.json");
-    const receipt = JSON.parse(await fs.readFile(receiptFile, "utf8")) as { roots: string[]; extensions: Record<string, unknown> };
-    expect(receipt.roots).toEqual(["alpha-routing", "zeta-routing"]);
-    expect(Object.keys(receipt.extensions)).toEqual(["alpha-routing", "zeta-routing"]);
-
-    expect((await runCli("install", root)).exitCode).toBe(0);
-    loader = await fs.readFile(path.join(root, ".agents", "loader.md"), "utf8");
-    expect(loader).toContain("Alpha routing axiom.");
-    expect(loader).toContain("Zeta routing axiom.");
-
-    const removed = await runCliWithEnv("extend", ["--remove", "alpha-routing", root], {
-      OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
-    });
-    expect(removed.exitCode).toBe(0);
-    loader = await fs.readFile(path.join(root, ".agents", "loader.md"), "utf8");
-    expect(loader).not.toContain("Alpha routing axiom.");
-    expect(loader).toContain("Zeta routing axiom.");
-    expect(await fs.readFile(overwrite, "utf8")).toContain("Local truth remains last.");
-  });
-
-  test("reconciles payload paths and augmentation blocks dropped by a managed reinstall", async () => {
+  test("reconciles whole-file payload paths dropped by a managed reinstall", async () => {
     const root = await createRoot();
     const extensionsRoot = await createRoot();
     const packageRoot = path.join(extensionsRoot, "evolving-pack");
     const payloadRoot = path.join(packageRoot, "payload");
-    await fs.mkdir(path.join(packageRoot, "augmentations"), { recursive: true });
     await fs.mkdir(payloadRoot, { recursive: true });
-    const manifest = (augmentations: unknown[]) => `${JSON.stringify({
+    const manifest = `${JSON.stringify({
       id: "evolving-pack",
       name: "Evolving Pack",
       version: "0.2.0",
-      dependencies: [],
-      augmentations
+      dependencies: []
     }, null, 2)}\n`;
-    const loaderAugmentation = {
-      target: ".agents/loader.md",
-      slot: "workflow-selection",
-      source: "augmentations/workflow-selection.md"
-    };
-    await fs.writeFile(path.join(packageRoot, "extension.json"), manifest([loaderAugmentation]));
-    await fs.writeFile(path.join(packageRoot, "augmentations", "workflow-selection.md"), "- Evolving routing rule.\n");
+    await fs.writeFile(path.join(packageRoot, "extension.json"), manifest);
     await fs.writeFile(path.join(payloadRoot, "current.txt"), "current\n");
     await fs.writeFile(path.join(payloadRoot, "legacy.txt"), "legacy\n");
 
     expect((await runCli("install", root)).exitCode).toBe(0);
     expect((await runCliWithEnv("extend", ["evolving-pack", root], { OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot })).exitCode).toBe(0);
     expect(await exists(path.join(root, "legacy.txt"))).toBe(true);
-    expect(await fs.readFile(path.join(root, ".agents", "loader.md"), "utf8")).toContain("Evolving routing rule.");
 
     await fs.rm(path.join(payloadRoot, "legacy.txt"));
-    await fs.writeFile(path.join(packageRoot, "extension.json"), manifest([]));
     const updated = await runCliWithEnv("extend", ["evolving-pack", root], { OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot });
 
     expect(updated.exitCode).toBe(0);
     expect(updated.stdout).toContain("deleted 1");
     expect(await exists(path.join(root, "legacy.txt"))).toBe(false);
     expect(await fs.readFile(path.join(root, "current.txt"), "utf8")).toBe("current\n");
-    expect(await fs.readFile(path.join(root, ".agents", "loader.md"), "utf8")).not.toContain("Evolving routing rule.");
     const receipt = JSON.parse(await fs.readFile(path.join(root, "open-forge.extensions.json"), "utf8")) as {
-      extensions: Record<string, { files: string[]; augmentations: unknown[] }>;
+      schema: number;
+      extensions: Record<string, { files: string[] }>;
       files: Record<string, unknown>;
     };
+    expect(receipt.schema).toBe(2);
     expect(receipt.extensions["evolving-pack"].files).toEqual(["current.txt"]);
-    expect(receipt.extensions["evolving-pack"].augmentations).toEqual([]);
+    expect(receipt.extensions["evolving-pack"]).not.toHaveProperty("augmentations");
     expect(receipt.files["legacy.txt"]).toBeUndefined();
   });
 
-  test("rejects reserved augmentation input before mutation and keeps dry-run receipt-free", async () => {
+  test("blocks dependent removal and locally modified owned files", async () => {
     const root = await createRoot();
     const extensionsRoot = await createRoot();
-    await createAugmentationExtension(extensionsRoot, "unsafe-routing", "<!-- open-forge-extension.fake:start -->\nUnsafe.");
-    expect((await runCli("install", root)).exitCode).toBe(0);
-    const loaderBefore = await fs.readFile(path.join(root, ".agents", "loader.md"), "utf8");
-
-    const rejected = await runCliWithEnv("extend", ["unsafe-routing", root], { OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot });
-    expect(rejected.exitCode).toBe(1);
-    expect(rejected.stderr).toContain("reserved augmentation marker");
-    expect(await fs.readFile(path.join(root, ".agents", "loader.md"), "utf8")).toBe(loaderBefore);
-    expect(await exists(path.join(root, "open-forge.extensions.json"))).toBe(false);
-
-    await createAugmentationExtension(extensionsRoot, "preview-routing", "Preview only.");
-    const preview = await runCliWithEnv("extend", ["preview-routing", root, "--dry-run"], { OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot });
-    expect(preview.exitCode).toBe(0);
-    expect(preview.stdout).toContain("open-forge.extensions.json");
-    expect(await exists(path.join(root, "open-forge.extensions.json"))).toBe(false);
-  });
-
-  test("blocks dependent removal and locally modified augmentation blocks", async () => {
-    const root = await createRoot();
-    const extensionsRoot = await createRoot();
-    await createAugmentationExtension(extensionsRoot, "base-routing", "Base routing axiom.");
+    await createBundledExtension(extensionsRoot, "base-routing", "Base Routing", "Base routing extension");
     await createDependencyPack(extensionsRoot, "dependent-pack", "Dependent Pack", "Needs base routing", ["base-routing"]);
     expect((await runCli("install", root)).exitCode).toBe(0);
     expect((await runCliWithEnv("extend", ["dependent-pack", root], { OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot })).exitCode).toBe(0);
@@ -869,18 +864,17 @@ Review patterns bundled with Open Forge.
     expect(blocked.stderr).toContain("dependent-pack still depends");
 
     expect((await runCliWithEnv("extend", ["--remove", "dependent-pack", root], { OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot })).exitCode).toBe(0);
-    const loaderFile = path.join(root, ".agents", "loader.md");
-    const loader = await fs.readFile(loaderFile, "utf8");
-    await fs.writeFile(loaderFile, loader.replace("Base routing axiom.", "Locally changed routing axiom."));
+    const ownedFile = path.join(root, ".agents", "patterns", "base-routing", "_base-routing.md");
+    await fs.appendFile(ownedFile, "\nLocally changed.\n");
     const modified = await runCliWithEnv("extend", ["--remove", "base-routing", root], { OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot });
     expect(modified.exitCode).toBe(1);
-    expect(modified.stderr).toContain("locally modified");
+    expect(modified.stderr).toContain("was modified or removed outside Open Forge");
     expect(await exists(path.join(root, "open-forge.extensions.json"))).toBe(true);
 
     await createBundledExtension(extensionsRoot, "unrelated-pack", "Unrelated Pack", "Unrelated extension");
     const unrelated = await runCliWithEnv("extend", ["unrelated-pack", root], { OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot });
     expect(unrelated.exitCode).toBe(1);
-    expect(unrelated.stderr).toContain("Installed extension base-routing augmentation block is missing or locally modified");
+    expect(unrelated.stderr).toContain("Owned extension file .agents/patterns/base-routing/_base-routing.md was modified");
     expect(await exists(path.join(root, ".agents", "patterns", "unrelated-pack", "_unrelated-pack.md"))).toBe(false);
   });
 
@@ -891,7 +885,7 @@ Review patterns bundled with Open Forge.
     for (const id of ["alpha-owner", "beta-owner"]) {
       const packageRoot = path.join(extensionsRoot, id);
       await fs.mkdir(path.dirname(path.join(packageRoot, sharedRelative)), { recursive: true });
-      await fs.writeFile(path.join(packageRoot, "extension.json"), JSON.stringify({ name: id, dependencies: [] }));
+      await fs.writeFile(path.join(packageRoot, "extension.json"), JSON.stringify({ id, name: id, dependencies: [] }));
       await fs.writeFile(path.join(packageRoot, sharedRelative), "# Shared Rule\n");
     }
     expect((await runCli("install", root)).exitCode).toBe(0);
@@ -940,48 +934,38 @@ Review patterns bundled with Open Forge.
     expect(await exists(managedTarget)).toBe(true);
   });
 
-  test("refuses to delete an owned file while another installed extension augments it", async () => {
+  test("migrates empty schema-1 augmentation arrays but rejects retained legacy augmentation state", async () => {
     const root = await createRoot();
     const extensionsRoot = await createRoot();
-    const hostRoot = path.join(extensionsRoot, "slot-host");
-    await fs.mkdir(path.join(hostRoot, "payload", ".agents", "patterns", "host"), { recursive: true });
-    await fs.writeFile(path.join(hostRoot, "extension.json"), JSON.stringify({ name: "slot-host", dependencies: [] }));
-    await fs.writeFile(path.join(hostRoot, "payload", ".agents", "patterns", "host", "host.md"), [
-      "# Extension Host",
-      "",
-      "<!-- open-forge-augment.shared-rules:start -->",
-      "<!-- open-forge-augment.shared-rules:end -->",
-      ""
-    ].join("\n"));
+    await createBundledExtension(extensionsRoot, "legacy-pack", "Legacy Pack", "Legacy receipt fixture");
+    const receiptFile = path.join(root, "open-forge.extensions.json");
 
-    const guestRoot = path.join(extensionsRoot, "slot-guest");
-    await fs.mkdir(path.join(guestRoot, "augmentations"), { recursive: true });
-    await fs.writeFile(path.join(guestRoot, "extension.json"), `${JSON.stringify({
-      id: "slot-guest",
-      name: "slot-guest",
-      dependencies: [],
-      augmentations: [
-        {
-          target: ".agents/patterns/host/host.md",
-          slot: "shared-rules",
-          source: "augmentations/shared-rules.md"
-        }
-      ]
-    }, null, 2)}\n`);
-    await fs.writeFile(path.join(guestRoot, "augmentations", "shared-rules.md"), "- Guest-owned rule.\n");
+    expect((await runCliWithEnv("extend", ["legacy-pack", root], { OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot })).exitCode).toBe(0);
+    let receipt = JSON.parse(await fs.readFile(receiptFile, "utf8")) as {
+      schema: number;
+      extensions: Record<string, Record<string, unknown>>;
+    };
+    receipt.schema = 1;
+    receipt.extensions["legacy-pack"].augmentations = [];
+    await fs.writeFile(receiptFile, `${JSON.stringify(receipt, null, 2)}\n`);
 
-    expect((await runCli("install", root)).exitCode).toBe(0);
-    expect((await runCliWithEnv("extend", ["slot-host", root], { OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot })).exitCode).toBe(0);
-    expect((await runCliWithEnv("extend", ["slot-guest", root], { OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot })).exitCode).toBe(0);
+    const removed = await runCliWithEnv("extend", ["--remove", "legacy-pack", root], { OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot });
+    expect(removed.exitCode).toBe(0);
+    expect(await exists(receiptFile)).toBe(false);
 
-    const blocked = await runCliWithEnv("extend", ["--remove", "slot-host", root], { OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot });
-    expect(blocked.exitCode).toBe(1);
-    expect(blocked.stderr).toContain("augmentation blocks from installed extensions still depend on it");
-    expect(await fs.readFile(path.join(root, ".agents", "patterns", "host", "host.md"), "utf8")).toContain("Guest-owned rule.");
+    expect((await runCliWithEnv("extend", ["legacy-pack", root], { OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot })).exitCode).toBe(0);
+    receipt = JSON.parse(await fs.readFile(receiptFile, "utf8"));
+    receipt.schema = 1;
+    receipt.extensions["legacy-pack"].augmentations = [{
+      target: ".agents/loader.md",
+      sha256: "a".repeat(64)
+    }];
+    await fs.writeFile(receiptFile, `${JSON.stringify(receipt, null, 2)}\n`);
 
-    expect((await runCliWithEnv("extend", ["--remove", "slot-guest", root], { OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot })).exitCode).toBe(0);
-    expect((await runCliWithEnv("extend", ["--remove", "slot-host", root], { OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot })).exitCode).toBe(0);
-    expect(await exists(path.join(root, ".agents", "patterns", "host", "host.md"))).toBe(false);
+    const rejected = await runCliWithEnv("extend", ["--remove", "legacy-pack", root], { OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot });
+    expect(rejected.exitCode).toBe(1);
+    expect(rejected.stderr).toContain("Legacy extension receipt contains augmentation state for legacy-pack");
+    expect(await exists(path.join(root, ".agents", "patterns", "legacy-pack", "_legacy-pack.md"))).toBe(true);
   });
 
   test("does not catalogue or install a manifest-only no-op extension", async () => {
@@ -1009,7 +993,7 @@ Review patterns bundled with Open Forge.
     const root = await createRoot();
     const extensionsRoot = await createRoot();
     await createBundledExtension(extensionsRoot, "feature-pack", "Feature Pack", "Feature extension");
-    await fs.writeFile(path.join(extensionsRoot, "feature-pack", "extension.json"), JSON.stringify({ name: "Feature", dependencies: "shared-pack" }));
+    await fs.writeFile(path.join(extensionsRoot, "feature-pack", "extension.json"), JSON.stringify({ id: "feature-pack", name: "Feature", dependencies: "shared-pack" }));
 
     const result = await runCliWithEnv("extend", ["feature-pack", root], {
       OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
@@ -1024,7 +1008,7 @@ Review patterns bundled with Open Forge.
     const root = await createRoot();
     const extensionsRoot = await createRoot();
     await createBundledExtension(extensionsRoot, "feature-pack", "Feature Pack", "Feature extension");
-    await fs.writeFile(path.join(extensionsRoot, "feature-pack", "extension.json"), JSON.stringify({ name: null, dependencies: null }));
+    await fs.writeFile(path.join(extensionsRoot, "feature-pack", "extension.json"), JSON.stringify({ id: "feature-pack", name: null, dependencies: null }));
 
     const result = await runCliWithEnv("extend", ["feature-pack", root, "--dry-run"], {
       OPEN_FORGE_EXTENSIONS_ROOT: extensionsRoot
@@ -1775,6 +1759,89 @@ open-forge:
   });
 });
 
+describe("load command", () => {
+  const routedDocument = (title: string, tags: string[], entries: string[] = []): string => `---
+open-forge:
+  description: ${title} fixture
+  tags: [${tags.join(", ")}]
+---
+
+# ${title}
+
+## Axioms
+
+- ${title} axiom.
+
+## Entries
+
+<!-- open-forge:generated-index:start -->
+${entries.length > 0 ? entries.join("\n") : "- none - No entries - #Empty"}
+<!-- open-forge:generated-index:end -->
+`;
+
+  test("emits loader-first visible LoadNow routes, adjacent overwrites, and complete KeepInMind context", async () => {
+    const root = await createRoot();
+    const agents = path.join(root, ".agents");
+    const directives = path.join(agents, "directives");
+    const nested = path.join(directives, "nested");
+    const memory = path.join(agents, "memory");
+    await fs.mkdir(nested, { recursive: true });
+    await fs.mkdir(memory, { recursive: true });
+
+    const loader = path.join(agents, "loader.md");
+    const directivesIndex = path.join(directives, "_directives.md");
+    await fs.writeFile(loader, routedDocument("Loader", ["Core"], [
+      "- `directives/_directives.md` - Directives fixture - #LoadNow #Directive"
+    ]));
+    await fs.writeFile(path.join(agents, "loader.overwrite.md"), "# Loader local overwrite\n");
+    await fs.writeFile(directivesIndex, routedDocument("Directives", ["LoadNow", "Directive"], [
+      "- `root-rule.md` - Root directive - #LoadNow #Directive",
+      "- `duplicate.md` - Visible and remembered directive - #LoadNow #KeepInMind #Directive",
+      "- `nested/_nested.md` - On-demand nested directives - #Directive"
+    ]));
+    await fs.writeFile(path.join(directives, "root-rule.md"), routedDocument("Root Rule", ["LoadNow", "Directive"]));
+    await fs.writeFile(path.join(directives, "root-rule.overwrite.md"), "# Root rule local overwrite\n");
+    await fs.writeFile(path.join(directives, "duplicate.md"), routedDocument("Duplicate", ["LoadNow", "KeepInMind", "Directive"]));
+    await fs.writeFile(path.join(nested, "_nested.md"), routedDocument("Nested Directives", ["Directive"], [
+      "- `child-rule.md` - Nested direct directive - #LoadNow #Directive"
+    ]));
+    await fs.writeFile(path.join(nested, "child-rule.md"), routedDocument("Child Rule", ["LoadNow", "Directive"]));
+    await fs.writeFile(path.join(memory, "_memory.md"), routedDocument("Memory", ["KeepInMind", "Memory"], [
+      "- `detail.md` - Remembered detail - #LoadNow #Memory"
+    ]));
+    await fs.writeFile(path.join(memory, "detail.md"), routedDocument("Memory Detail", ["LoadNow", "Memory"]));
+
+    const initial = await runCli("load", "--paths", root);
+    expect(initial.exitCode).toBe(0);
+    expect(initial.stdout.trim().split(/\r?\n/)).toEqual([
+      ".agents/loader.md",
+      ".agents/loader.overwrite.md",
+      ".agents/directives/_directives.md",
+      ".agents/directives/root-rule.md",
+      ".agents/directives/root-rule.overwrite.md",
+      ".agents/directives/duplicate.md",
+      ".agents/memory/_memory.md",
+      ".agents/memory/detail.md"
+    ]);
+    expect(initial.stdout).not.toContain("nested/_nested.md");
+    expect(initial.stdout.match(/duplicate\.md/g)).toHaveLength(1);
+
+    const exposedParent = (await fs.readFile(directivesIndex, "utf8"))
+      .replace("#Directive\n<!-- open-forge:generated-index:end -->", "#LoadNow #Directive\n<!-- open-forge:generated-index:end -->");
+    await fs.writeFile(directivesIndex, exposedParent);
+    const withNestedParent = await runCli("load", "--json", root);
+    const items = JSON.parse(withNestedParent.stdout) as Array<{ route: string; kind: string; companionOf?: string }>;
+    const routes = items.map((item) => item.route);
+    expect(withNestedParent.exitCode).toBe(0);
+    expect(routes.indexOf(".agents/directives/nested/_nested.md")).toBeGreaterThan(routes.indexOf(".agents/directives/duplicate.md"));
+    expect(routes.indexOf(".agents/directives/nested/child-rule.md")).toBe(routes.indexOf(".agents/directives/nested/_nested.md") + 1);
+    expect(items.find((item) => item.route === ".agents/loader.overwrite.md")).toMatchObject({
+      kind: "overwrite",
+      companionOf: ".agents/loader.md"
+    });
+  });
+});
+
 describe("chain command", () => {
   test("prints loader-to-target heading inheritance with overwrite adjacency", async () => {
     const root = await createRoot();
@@ -2281,6 +2348,36 @@ open-forge:
     expect(result.stdout).toContain("directive scope belongs to routing; remove the legacy Applies To section");
   });
 
+  test("requires direct directive files to declare LoadNow for parent-relative activation", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    const directive = path.join(root, ".agents", "directives", "activation.md");
+    await fs.writeFile(directive, `---
+open-forge:
+  description: Explicit direct directive activation fixture
+  tags: [Directive]
+---
+
+# Activation
+
+## Axioms
+
+- Keep direct activation explicit.
+`);
+    expect((await runCli("index", root)).exitCode).toBe(0);
+
+    const missing = await runCli("doctor", root);
+    expect(missing.exitCode).toBe(1);
+    expect(missing.stdout).toContain("direct directive must declare #LoadNow so its loaded parent activates it explicitly");
+
+    const activated = (await fs.readFile(directive, "utf8")).replace("tags: [Directive]", "tags: [LoadNow, Directive]");
+    await fs.writeFile(directive, activated);
+    expect((await runCli("index", root)).exitCode).toBe(0);
+    const healthy = await runCli("doctor", "--json", root);
+    expect(healthy.exitCode).toBe(0);
+    expect(JSON.parse(healthy.stdout)).toMatchObject({ errors: 0, warnings: 0 });
+  });
+
   test("requires substantive level-2 Axioms on direct directive files", async () => {
     const root = await createRoot();
     expect((await runCli("install", root)).exitCode).toBe(0);
@@ -2454,8 +2551,7 @@ describe("create command", () => {
       name: "My Pack",
       description: "TODO - one line shown by open-forge extend --list",
       version: "0.1.0",
-      dependencies: [],
-      augmentations: []
+      dependencies: []
     });
     expect(await fs.readFile(path.join(packageRoot, "README.md"), "utf8")).toContain("open-forge extend my-pack <target>");
 
@@ -2517,7 +2613,7 @@ open-forge:
 async function createBundledExtension(root: string, id: string, name: string, description: string, dependencies: string[] = []): Promise<string> {
   const patterns = path.join(root, id, "payload", ".agents", "patterns", id);
   await fs.mkdir(patterns, { recursive: true });
-  await fs.writeFile(path.join(root, id, "extension.json"), `${JSON.stringify({ name, description, dependencies }, null, 2)}\n`);
+  await fs.writeFile(path.join(root, id, "extension.json"), `${JSON.stringify({ id, name, description, dependencies }, null, 2)}\n`);
   await fs.writeFile(path.join(patterns, `_${id}.md`), `---
 open-forge:
   description: ${description}
@@ -2529,43 +2625,14 @@ open-forge:
   return patterns;
 }
 
-async function createAugmentationExtension(
-  root: string,
-  id: string,
-  fragment: string,
-  dependencies: string[] = []
-): Promise<void> {
-  const packageRoot = path.join(root, id);
-  const augmentationRoot = path.join(packageRoot, "augmentations");
-  await fs.mkdir(augmentationRoot, { recursive: true });
-  await fs.writeFile(
-    path.join(packageRoot, "extension.json"),
-    `${JSON.stringify({
-      id,
-      name: id,
-      description: `${id} augmentation`,
-      version: "0.1.0",
-      dependencies,
-      augmentations: [
-        {
-          target: ".agents/loader.md",
-          slot: "workflow-selection",
-          source: "augmentations/workflow-selection.md"
-        }
-      ]
-    }, null, 2)}\n`
-  );
-  await fs.writeFile(path.join(augmentationRoot, "workflow-selection.md"), `${fragment}\n`);
-}
-
 async function createDependencyPack(root: string, id: string, name: string, description: string, dependencies: string[]): Promise<void> {
   const packageRoot = path.join(root, id);
   await fs.mkdir(packageRoot, { recursive: true });
-  await fs.writeFile(path.join(packageRoot, "extension.json"), `${JSON.stringify({ name, description, dependencies }, null, 2)}\n`);
+  await fs.writeFile(path.join(packageRoot, "extension.json"), `${JSON.stringify({ id, name, description, dependencies }, null, 2)}\n`);
   await fs.writeFile(path.join(packageRoot, "README.md"), "Authoring documentation that must not be installed.\n");
 }
 
-type CliCommand = "index" | "install" | "extend" | "find" | "chain" | "doctor" | "create";
+type CliCommand = "index" | "install" | "extend" | "load" | "find" | "chain" | "doctor" | "create";
 
 async function runCli(command: CliCommand, ...args: string[]): Promise<{ exitCode: number; stdout: string; stderr: string }> {
   return runCliWithEnv(command, args, {});

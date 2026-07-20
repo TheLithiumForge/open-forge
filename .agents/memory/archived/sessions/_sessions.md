@@ -21,5 +21,6 @@ Load a session only when reconstructing original intent or old rationale.
 - `2026-07-10_workflow-shape-applied.md` - Historical session record of applying the accepted workflow shape and shipping the dev-workflow extension - #Memory #Archived #Session #Contextual #Historical #Workflow #Extension
 - `2026-07-11_v10-analysis-and-promotion.md` - Historical session record of the v10 A/B analysis, loader-wording promotion, and sessions contract-gap discovery - #Memory #Archived #Session #Contextual #Historical #Benchmark #Loader #Closeout
 - `2026-07-17_essence-and-routing-alignment.md` - Completed alignment of route-scoped directives, phase-aware workflows, extension lifecycle, binding continuity, archives, and tiered tests - #Memory #Session #Contextual #Historical #Archived #Framework #Directive #Workflow #Extension #Testing
+- `2026-07-19_review-note-framework-improvements.md` - Historical record of applying the 2026-07-19 human review notes through a minimal route-native Open Forge dogfood pass - #Memory #Archived #Session #Contextual #Historical #Framework #Dogfood #Review
 - `original-prompt.md` - The raw original prompt and AI handover material that seeded Open Forge - #Session #Origin #Contextual #Historical
 <!-- open-forge:generated-index:end -->

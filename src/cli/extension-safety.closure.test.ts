@@ -37,63 +37,6 @@ describe("extension lifecycle safety closure", () => {
     expect(await snapshotTreeState(target)).toEqual(before);
   });
 
-  test("unmanaged overlay cannot erase a retained augmentation block", async () => {
-    const target = await sandbox.createDirectory("retained-block-target");
-    await installCore(target);
-    const guest = await sandbox.createDirectory("retained-block-guest");
-    await writeExtensionPackage(guest, {
-      id: "routing-guest",
-      name: "Routing Guest",
-      augmentations: [{
-        target: ".agents/loader.md",
-        slot: "workflow-selection",
-        source: "augmentations/guidance.md"
-      }]
-    }, {}, { "augmentations/guidance.md": "- Guest guidance.\n" });
-    requireSuccess(await runCli(["extend", guest, target]), "install routing guest");
-
-    const overlay = await sandbox.createDirectory("retained-block-overlay");
-    await writeExtensionPackage(overlay, { name: "Unmanaged Loader Overlay" }, {
-      ".agents/loader.md": "# Replacement loader without the occupied slot\n"
-    });
-    const before = await snapshotTreeState(target);
-    const rejected = await runCli(["extend", overlay, target]);
-
-    expect(rejected.exitCode).toBe(1);
-    expect(rejected.stderr).toContain("would modify or remove installed extension routing-guest augmentation block");
-    expect(await snapshotTreeState(target)).toEqual(before);
-  });
-
-  test("host update cannot remove a retained guest slot or block", async () => {
-    const target = await sandbox.createDirectory("host-update-target");
-    await installCore(target);
-    const host = await sandbox.createDirectory("host-update-host");
-    await writeExtensionPackage(host, { id: "slot-host", name: "Slot Host" }, {
-      ".agents/patterns/host/host.md": augmentationHost("shared-rules")
-    });
-    requireSuccess(await runCli(["extend", host, target]), "install slot host");
-
-    const guest = await sandbox.createDirectory("host-update-guest");
-    await writeExtensionPackage(guest, {
-      id: "slot-guest",
-      name: "Slot Guest",
-      augmentations: [{
-        target: ".agents/patterns/host/host.md",
-        slot: "shared-rules",
-        source: "augmentations/rules.md"
-      }]
-    }, {}, { "augmentations/rules.md": "- Guest-owned rule.\n" });
-    requireSuccess(await runCli(["extend", guest, target]), "install slot guest");
-
-    await writeText(path.join(host, "payload", ".agents", "patterns", "host", "host.md"), "# Host without its former slot\n");
-    const before = await snapshotTreeState(target);
-    const rejected = await runCli(["extend", host, target]);
-
-    expect(rejected.exitCode).toBe(1);
-    expect(rejected.stderr).toContain("would modify or remove installed extension slot-guest augmentation block");
-    expect(await snapshotTreeState(target)).toEqual(before);
-  });
-
   test("extension removal rejects a linked target root", async () => {
     const target = await sandbox.createDirectory("linked-removal-real-target");
     const managed = await sandbox.createDirectory("linked-removal-owner");
@@ -130,101 +73,6 @@ describe("extension lifecycle safety closure", () => {
     expect(await snapshotTreeState(target)).toEqual(before);
   });
 
-  test("Core reinstall cannot remove an occupied scoped slot", async () => {
-    const target = await sandbox.createDirectory("core-occupied-slot-target");
-    await installCore(target);
-    const scopedTarget = path.join(
-      target,
-      ".agents",
-      "memory",
-      "customer-facing",
-      "mobile-app",
-      "crystallized",
-      "platform",
-      "documents",
-      "_documents.md"
-    );
-    await writeText(scopedTarget, scopedDocumentHost());
-
-    const guest = await sandbox.createDirectory("core-occupied-slot-guest");
-    await writeExtensionPackage(guest, {
-      id: "scoped-doc-guest",
-      name: "Scoped Document Guest",
-      augmentations: [{
-        target: ".agents/memory/customer-facing/mobile-app/crystallized/platform/documents/_documents.md",
-        slot: "document-rules",
-        source: "augmentations/document-rules.md"
-      }]
-    }, {}, { "augmentations/document-rules.md": "- Preserve the guest rule.\n" });
-    requireSuccess(await runCli(["extend", guest, target]), "install scoped document guest");
-
-    const before = await snapshotTreeState(target);
-    const rejected = await runCli(["install", target]);
-
-    expect(rejected.exitCode).toBe(1);
-    expect(rejected.stderr).toContain("would modify or remove installed extension scoped-doc-guest augmentation block");
-    expect(await snapshotTreeState(target)).toEqual(before);
-  });
-
-  test("payload-contained augmentation fragment is materialized only as an owned block", async () => {
-    const target = await sandbox.createDirectory("payload-fragment-target");
-    await installCore(target);
-    const extension = await sandbox.createDirectory("payload-fragment-extension");
-    await writeExtensionPackage(extension, {
-      id: "payload-fragment",
-      name: "Payload Fragment",
-      augmentations: [{
-        target: ".agents/loader.md",
-        slot: "workflow-selection",
-        source: "payload/fragments/guidance.md"
-      }]
-    }, { "fragments/guidance.md": "- Payload-contained guidance.\n" });
-
-    const result = await runCli(["extend", extension, target]);
-
-    expect(result.exitCode).toBe(0);
-    expect(await pathExists(path.join(target, "fragments", "guidance.md"))).toBe(false);
-    expect(await fs.readFile(path.join(target, ".agents", "loader.md"), "utf8")).toContain("Payload-contained guidance.");
-  });
-
-  test("managed payload permits empty slots but rejects pre-owned and malformed blocks", async () => {
-    const target = await sandbox.createDirectory("managed-marker-target");
-    await installCore(target);
-    const emptySlot = await sandbox.createDirectory("managed-empty-slot");
-    await writeExtensionPackage(emptySlot, { id: "empty-slot", name: "Empty Slot" }, {
-      ".agents/patterns/slot-fixtures/empty.md": augmentationHost("shared")
-    });
-    expect((await runCli(["extend", emptySlot, target])).exitCode).toBe(0);
-
-    const preowned = await sandbox.createDirectory("managed-preowned-slot");
-    await writeExtensionPackage(preowned, { id: "preowned-slot", name: "Preowned Slot" }, {
-      ".agents/patterns/slot-fixtures/preowned.md": [
-        "# Preowned",
-        "",
-        "<!-- open-forge-augment.shared:start -->",
-        "<!-- open-forge-extension.some-owner:start -->",
-        "- Pre-owned content.",
-        "<!-- open-forge-extension.some-owner:end -->",
-        "<!-- open-forge-augment.shared:end -->",
-        ""
-      ].join("\n")
-    });
-    const before = await snapshotTreeState(target);
-    const preownedResult = await runCli(["extend", preowned, target]);
-    expect(preownedResult.exitCode).toBe(1);
-    expect(preownedResult.stderr).toContain("may not ship pre-owned extension blocks");
-    expect(await snapshotTreeState(target)).toEqual(before);
-
-    const malformed = await sandbox.createDirectory("managed-malformed-slot");
-    await writeExtensionPackage(malformed, { id: "malformed-slot", name: "Malformed Slot" }, {
-      ".agents/patterns/slot-fixtures/malformed.md": "# Malformed\n\n<!-- open-forge-augment.shared:start -->\n"
-    });
-    const malformedResult = await runCli(["extend", malformed, target]);
-    expect(malformedResult.exitCode).toBe(1);
-    expect(malformedResult.stderr).toContain("incomplete augmentation marker pair");
-    expect(await snapshotTreeState(target)).toEqual(before);
-  });
-
   test("direct bundled id rejects a linked catalogue package root", async () => {
     const target = await sandbox.createDirectory("bundled-link-target");
     const catalogue = await sandbox.createDirectory("bundled-link-catalogue");
@@ -237,11 +85,11 @@ describe("extension lifecycle safety closure", () => {
     const result = await runCli(["extend", "linked-pack", target], { OPEN_FORGE_EXTENSIONS_ROOT: catalogue });
 
     expect(result.exitCode).toBe(1);
-    expect(result.stderr).toContain("Bundled extension package root is a symbolic link or junction");
+    expect(result.stderr).toContain("Bundled extension catalogue contains an unsupported linked or special entry");
     expect(await snapshotTreeState(target)).toEqual({});
   });
 
-  test("local dependencies and augmentations require a stable manifest id", async () => {
+  test("local dependencies require a stable manifest id", async () => {
     const target = await sandbox.createDirectory("stable-id-target");
     await installCore(target);
     const dependencyPack = await sandbox.createDirectory("stable-id-dependency-pack");
@@ -251,20 +99,7 @@ describe("extension lifecycle safety closure", () => {
     });
     const dependencyResult = await runCli(["extend", dependencyPack, target]);
     expect(dependencyResult.exitCode).toBe(1);
-    expect(dependencyResult.stderr).toContain("needs a stable id when dependencies or augmentations are declared");
-
-    const augmentationPack = await sandbox.createDirectory("stable-id-augmentation-pack");
-    await writeExtensionPackage(augmentationPack, {
-      name: "Idless Augmentation",
-      augmentations: [{
-        target: ".agents/loader.md",
-        slot: "workflow-selection",
-        source: "augmentations/guidance.md"
-      }]
-    }, {}, { "augmentations/guidance.md": "- Idless guidance.\n" });
-    const augmentationResult = await runCli(["extend", augmentationPack, target]);
-    expect(augmentationResult.exitCode).toBe(1);
-    expect(augmentationResult.stderr).toContain("needs a stable id when dependencies or augmentations are declared");
+    expect(dependencyResult.stderr).toContain("needs a stable id when dependencies are declared");
   });
 
   test("standalone index keeps managed entrypoint ownership usable around unmanaged routed children", async () => {
@@ -407,48 +242,17 @@ async function expectHealthyTarget(target: string): Promise<void> {
 async function writeExtensionPackage(
   packageRoot: string,
   manifest: Record<string, unknown>,
-  payloadFiles: Record<string, string> = {},
-  packageFiles: Record<string, string> = {}
+  payloadFiles: Record<string, string> = {}
 ): Promise<void> {
   await writeText(path.join(packageRoot, "extension.json"), `${JSON.stringify({
     description: "Lifecycle safety fixture",
     version: "1.0.0",
     dependencies: [],
-    augmentations: [],
     ...manifest
   }, null, 2)}\n`);
   for (const [relative, contents] of Object.entries(payloadFiles)) {
     await writeText(path.join(packageRoot, "payload", ...relative.split("/")), contents);
   }
-  for (const [relative, contents] of Object.entries(packageFiles)) {
-    await writeText(path.join(packageRoot, ...relative.split("/")), contents);
-  }
-}
-
-function augmentationHost(slot: string): string {
-  return [
-    "# Augmentation Host",
-    "",
-    `<!-- open-forge-augment.${slot}:start -->`,
-    `<!-- open-forge-augment.${slot}:end -->`,
-    ""
-  ].join("\n");
-}
-
-function scopedDocumentHost(): string {
-  return [
-    "# Scoped Documents",
-    "",
-    "<!-- open-forge-augment.document-rules:start -->",
-    "<!-- open-forge-augment.document-rules:end -->",
-    "",
-    "## Entries",
-    "",
-    "<!-- open-forge:generated-index:start -->",
-    "- none - No entries - #Empty",
-    "<!-- open-forge:generated-index:end -->",
-    ""
-  ].join("\n");
 }
 
 function transactionEntrypoint(): string {

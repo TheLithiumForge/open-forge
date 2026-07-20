@@ -1,6 +1,0 @@
-{
-  "name": "Implementation Workflow",
-  "description": "Implement one focused accepted change with proportionate verification, without the full mixed delivery cycle",
-  "version": "0.1.0",
-  "dependencies": ["implementation-capability"]
-}

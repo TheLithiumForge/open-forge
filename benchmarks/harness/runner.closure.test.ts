@@ -523,8 +523,8 @@ await fs.writeFile(path.join(workspace, ".git", "hooks", "pre-commit"), "malicio
         currentTruth: "accepted-note-cli-slice.md",
       },
       {
-        spec: "run-spec.missing-architecture-prerequisite.json",
-        caseId: "missing-architecture-prerequisite",
+        spec: "run-spec.helpful-prior-architecture-work.json",
+        caseId: "helpful-prior-architecture-work",
         workflows: [
           "brainstorming/_brainstorming.md",
           "vision/_vision.md",
@@ -548,22 +548,22 @@ await fs.writeFile(path.join(workspace, ".git", "hooks", "pre-commit"), "malicio
     await fs.mkdir(path.dirname(scenarioDir), { recursive: true });
     await fs.copyFile(path.join(sourceRepo, "src", "cli", "cli.ts"), path.join(isolatedRepo, "src", "cli", "cli.ts"));
     await fs.cp(path.join(sourceRepo, "src", "open-forge"), path.join(isolatedRepo, "src", "open-forge"), { recursive: true });
-    for (const extension of [
-      "architecture-capability",
-      "architecture-workflow",
-      "vision-capability",
-      "vision-workflow",
-      "planning-capability",
-      "brainstorming-workflow",
-      "planning-workflows",
-      "implementation-capability",
-      "implementation-workflow",
-      "quality-capability",
-      "testing-workflow",
+    for (const [group, extension] of [
+      ["skills", "architecture-capability"],
+      ["workflows", "architecture-workflow"],
+      ["skills", "vision-capability"],
+      ["workflows", "vision-workflow"],
+      ["skills", "planning-capability"],
+      ["workflows", "brainstorming-workflow"],
+      ["packs", "planning-workflows"],
+      ["skills", "implementation-capability"],
+      ["workflows", "implementation-workflow"],
+      ["skills", "quality-capability"],
+      ["workflows", "testing-workflow"],
     ]) {
       await fs.cp(
-        path.join(sourceRepo, "src", "extensions", extension),
-        path.join(isolatedRepo, "src", "extensions", extension),
+        path.join(sourceRepo, "src", "extensions", group, extension),
+        path.join(isolatedRepo, "src", "extensions", group, extension),
         { recursive: true },
       );
     }

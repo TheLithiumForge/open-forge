@@ -9,8 +9,8 @@ open-forge:
 Extracted 2026-07-06; load-policy semantics reworked 2026-07-09 from the dogfood evidence.
 
 - Defined loader tags with behavior or truth-status semantics are #LoadNow, #KeepInMind, #Contextual, and #CurrentTruth.
-- #LoadNow: read the entry when it appears in loaded `Entries`, in listed order. It creates visibility, not authority, scope, or precedence.
-- #KeepInMind: read or recheck the complete routed #KeepInMind catalogue at task start or resume, after context restoration or compaction, at meaningful phase transitions or handoffs, and before closeout. Keep every result active as binding follow-up context within the authority of its owning content. It replaces closeout-only loading and is deliberately not limited to the current parent chain.
+- #LoadNow: read the entry when it appears in an already-loaded parent's `Entries`, in listed order. It creates visibility, not authority, scope, or precedence. Direct directive files carry it so generic parent traversal loads every direct file after the directive route has established scope.
+- #KeepInMind: read or recheck the complete routed #KeepInMind catalogue at task start or resume, after actual context restoration, before handoff, and before closeout, plus a transition where its follow-ups may have changed. Keep every result active as binding follow-up context within the authority of its owner. It remains deliberately independent of the current parent chain.
 - #OpenForge, #LoadWithParentEntrypoint, and #LoadForPostWorkReview are retired: #OpenForge fused core identity with load policy (identity is carried by #Core, #Memory, and framework paths); #LoadWithParentEntrypoint duplicated the same visibility rule; #LoadForPostWorkReview asked for a load at the moment agents demonstrably forget.
 - No load-policy tag creates authority, scope, precedence, or mechanical enforcement; compliance is agent self-enforcement, so tag definitions use agent-imperative wording ("read X") rather than tool-implying wording ("X is loaded").
 - #Core, #Memory, and #Extension are layer/routing tags.

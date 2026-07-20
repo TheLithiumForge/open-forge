@@ -1,0 +1,7 @@
+{
+  "id": "implementation-capability",
+  "name": "Implementation Skill",
+  "description": "Implementation skill for system fit, contracts, test derivation, verification, and review",
+  "version": "0.1.0",
+  "dependencies": []
+}

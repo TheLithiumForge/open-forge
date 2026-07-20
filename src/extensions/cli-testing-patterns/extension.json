@@ -1,6 +1,0 @@
-{
-  "name": "CLI Testing Patterns",
-  "description": "Tiered CLI testing with fast pure checks and explicit real-process closure coverage",
-  "version": "0.1.0",
-  "dependencies": []
-}

@@ -14,12 +14,12 @@
     },
     {
       "name": "architecture-capability",
-      "source": "../../../../src/extensions/architecture-capability/payload",
+      "source": "../../../../src/extensions/skills/architecture-capability/payload",
       "destination": ""
     },
     {
       "name": "architecture-workflow",
-      "source": "../../../../src/extensions/architecture-workflow/payload",
+      "source": "../../../../src/extensions/workflows/architecture-workflow/payload",
       "destination": ""
     },
     {

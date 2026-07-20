@@ -6,14 +6,14 @@ open-forge:
 
 # Patterns
 
-Patterns define recognizable arrangements with stable relationships and variable contents.
+Patterns define recognizable arrangements that make related work consistent across modules, projects, and repositories and easier to review
 
 ## Axioms
 
-- Use `Entries` when current work creates, changes, or reviews an inspectable result.
-- Every pattern defines a concrete shape for code, files, naming, placement, boundaries, APIs, documents, or another inspectable result.
-- Treat an applicable pattern as the established default shape for its scope; use a different shape only for a deliberate reason.
-- Report when an applicable pattern does not fit the case, and explain why.
+- Use `Entries` when current work creates, changes, or reviews an inspectable result
+- Every pattern defines a concrete shape for code, files, naming, placement, boundaries, APIs, documents, or another inspectable result
+- Treat an applicable pattern as the established default shape for its scope; use a different shape only for a deliberate reason
+- Report when an applicable pattern does not fit the case, and explain why
 
 ## Entries
 

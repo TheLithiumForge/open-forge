@@ -24,7 +24,7 @@ Observation files record grounded facts, signals, constraints, recurring behavio
 
 They must keep source, scope, and uncertainty visible.
 
-At each meaningful continuity boundary, agents preserve grounded findings that may matter later but are not ready to become accepted truth, behavior, or external state. A preservation-worthy finding is written before the boundary, promoted immediately when its owner is already clear, or reported as blocked; agents do not defer it solely to closeout.
+When a grounded finding may matter after the current context, agents record it before a handoff or closeout, promote it when its owner is already clear, or report a blocked required write. "No observation warranted" remains valid.
 
 If an agent identifies a finding worth preserving, the observation must be written before final response or the blocker must be reported.
 
@@ -34,7 +34,7 @@ An observation is not accepted current truth until validated, promoted, or expli
 
 The observations category is relevant when current work may depend on prior noticed findings or when current work produced a grounded finding that may help future agents.
 
-Because this route is #KeepInMind, agents read or recheck it through the complete routed continuity catalogue at task start or resume, after context restoration or compaction, at meaningful phase transitions or handoffs, and before closeout.
+Because this route is #KeepInMind, agents read it at task start or resume, after detected context restoration, and before a handoff or closeout. They recheck it during work only when its follow-ups may have changed.
 
 The `entrypoint` must route agents to direct observation files and child observation categories whose path, description, or tags match the current request. Each selected child `entrypoint` applies the same contract recursively.
 
@@ -79,7 +79,8 @@ The implementation is aligned when it:
 - includes `AgentLearning`, `OrganicGrowth`, `Contextual`, `Candidate`, and `KeepInMind` in scoped `open-forge:` tags
 - defines observations as grounded noticed findings
 - describes observations as agent learning material
-- requires continuity-boundary preservation of grounded findings that may matter later instead of deferring them solely to closeout
+- preserves grounded findings before handoff or closeout when they may outlive the current context
+- follows the loader-defined narrowed #KeepInMind refresh triggers
 - requires preservation-worthy findings to be written or blocked before final response
 - keeps source, scope, and uncertainty visible
 - keeps observations contextual until validated or promoted

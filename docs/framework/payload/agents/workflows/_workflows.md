@@ -18,7 +18,9 @@ The installed file follows the shared category `entrypoint` shape owned by the f
 
 ## Workflow Contract
 
-Every workflow recipe defines `Mode`, `Goal` (outcome, acceptance, stop), `Required Routes`, `Constraints`, ordered `Steps`, `Loop` behavior, expected `Outputs`, and a `Completion` checklist, in that order. Every contract section is a level-2 Markdown heading so schema validation and Required Routes parsing use the same structure. `Mode` is exactly `linear` or `iterative`. `Constraints` states `- none` when no workflow-specific invariant exists. Every complete recipe declares exactly one primary phase tag: `PhaseDiscovery`, `PhaseDefinition`, `PhasePlanning`, `PhaseDelivery`, or `PhaseVerification`; other tags remain topical.
+Every workflow recipe defines `Mode`, `Goal` (outcome, acceptance, stop, and optional `- helpful before: ...` prior work), `Required Routes`, `Constraints`, ordered `Steps`, `Loop` behavior, expected `Outputs`, and a `Completion` checklist, in that order. Every contract section is a level-2 Markdown heading so schema validation and Required Routes parsing use the same structure. `Mode` is exactly `linear` or `iterative`. `Constraints` states `- none` when no workflow-specific invariant exists. Every complete recipe declares exactly one primary phase tag: `PhaseDiscovery`, `PhaseDefinition`, `PhasePlanning`, `PhaseDelivery`, or `PhaseVerification`; other tags remain topical.
+
+An optional `- helpful before: ...` Goal item names prior work that would improve the result. It is advisory, never a route dependency or blocker. When the prior work is useful and an available earlier workflow matches, the agent recommends it once; if it is unavailable or skipped, the selected workflow proceeds with explicit assumptions.
 
 Phases describe increasing commitment, not mandatory chronology. Work may begin at any phase when enough current truth exists, skip, repeat, move backward, or use verification evidence to reopen an earlier phase. The taxonomy remains metadata on existing routes rather than adding physical phase folders and routing layers.
 
@@ -42,15 +44,15 @@ A workflow may own workflow-local #Core routes beneath its folder; they become a
 
 A selected workflow-local directive route follows the stricter directive contract: its route settles scope before bodies are opened, every direct directive file there is binding while that workflow scope is active, and it adds to rather than silently overriding loaded ancestor directives. Unresolved conflicts must be reported.
 
-Local directives are the typical use. Local skills are discouraged: native skill packages belong under `.agents/skills/` where runtimes discover them; workflows share them through `Required Routes` instead.
+Local directives are the typical use. Local skills are discouraged: standard skills belong under `.agents/skills/` where runtimes discover them; workflows share them through `Required Routes` instead.
 
 Workflow-local #Core routes reuse the same recursive category contract. They must not create another independent Open Forge installation.
 
 ## Loading Contract
 
-The workflows category is relevant before non-trivial work and whenever current work may match an established repeatable goal. The agent infers the established development state from routed current truth and the transition requested by the user, then selects the workflow whose Goal best covers that transition. It recommends at most one prerequisite only when a concrete missing or contradictory input would make the requested transition unreliable; otherwise it starts at the matching phase without ceremony. If no installed Goal matches, it presents the closest installed option or options and direct execution once. Several matches compose as one primary workflow with evidence-triggered handoffs. Explicit workflow choice or opt-out wins.
+The workflows category is relevant before non-trivial work and whenever current work may match an established repeatable goal. The agent uses the request and routed #CurrentTruth to select a relevant workflow from visible generated descriptions and tags before opening its body, then confirms the routed Goal. After selection, it reads any `- helpful before: ...` item and may recommend one available earlier workflow once when that prior work would help. The recommendation never blocks; work proceeds with explicit assumptions when the prior work is unavailable or skipped. If no installed workflow matches, the agent presents the closest installed route or direct execution once. Several matches compose as one primary workflow with ordered handoffs. Explicit workflow choice or opt-out wins.
 
-The `entrypoint` must require agents to read `Entries` before non-trivial work and load matching direct workflow files or child workflow categories. Each selected child `entrypoint` applies the same contract recursively.
+The installed `entrypoint` keeps runtime choices only: select from descriptions and tags, confirm Goal, interpret optional `- helpful before: ...` prior work, treat phase tags as wayfinding, read Required Routes before Step 1, keep one workflow primary, honor explicit choice or opt-out, and name the active workflow. Authoring schema and validation detail remain in this descriptor, the CLI scaffold, and `doctor`.
 
 When a workflow is selected, agents load its workflow `entrypoint` or file first, then load relevant workflow-local #Core routes routed by that workflow. Entering a workflow-local directive route loads every direct directive file in that selected scope; those files cannot add another applicability gate.
 
@@ -89,6 +91,7 @@ The implementation is aligned when it:
 - selects workflow routes by visible relevance
 - requires agents to check workflows before non-trivial work
 - requires workflow recipes to define Mode, Goal, Required Routes, Constraints, Steps, Loop, Outputs, and Completion in order
+- allows one optional Goal `- helpful before: ...` item to name useful prior work without creating a blocker
 - requires exactly one recognized primary phase tag on every complete workflow recipe and none on category-only entrypoints
 - treats phases as non-waterfall wayfinding that may start anywhere, skip, repeat, or move backward
 - requires every recipe contract section to use a level-2 Markdown heading
@@ -98,7 +101,7 @@ The implementation is aligned when it:
 - requires agents to read every Required Routes route before Step 1 and report unreadable routes as blockers
 - keeps generated `Entries` as containment and `Required Routes` as cross-tree dependency
 - lets steps invoke skills, consult guidance, delegate to subagents, or hand off to other workflows by route
-- discourages workflow-local skills in favor of native packages shared through Required Routes
+- discourages workflow-local skills in favor of standard skills shared through Required Routes
 - permits workflow-local #Core routes only under active workflows
 - reuses the recursive category contract for workflow-local #Core routes
 - makes every direct directive file in a selected workflow-local directive scope binding without silently overriding ancestor directives
@@ -107,6 +110,6 @@ The implementation is aligned when it:
 - prefers narrower selected workflow scopes when safe and allowed
 - routes only through its final generated region
 - remains empty until workflow files or child workflow categories are added
-- infers state and requested transition, defaults to the Goal that covers it, recommends at most one evidence-backed prerequisite, presents closest installed option or options plus direct execution once when no Goal matches, composes multiple matches as evidence-triggered handoffs, and honors explicit workflow choice or opt-out
-- keeps compact relevance, loading, skill package, step, loop, workflow-local #Core route, and completion axioms
+- selects from visible descriptions and tags, confirms the routed Goal, recommends one available earlier workflow once when `- helpful before: ...` work would help, proceeds with explicit assumptions when it is skipped or absent, presents the closest installed route or direct execution once when no workflow matches, composes multiple matches as ordered handoffs, and honors explicit workflow choice or opt-out
+- keeps the installed entrypoint runtime-focused while authoring mechanics remain in governance and CLI validation
 - keeps the authored portion between 10 and 40 non-empty lines

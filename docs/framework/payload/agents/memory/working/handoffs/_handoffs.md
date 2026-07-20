@@ -38,7 +38,7 @@ Agents load the handoff closest to the current transfer scope.
 
 Handoffs are temporary unless explicitly preserved as history.
 
-When work resumes, agents must extract useful material before replacing or archiving stale handoffs. Extracted material may become another #Memory route, matching #Core material, or external state.
+After a handoff no longer supports an active transfer, agents extract useful material and archive it. Extracted material may become another #Memory route, matching #Core material, or external state.
 
 ## Scope Contract
 
@@ -75,7 +75,7 @@ The implementation is aligned when it:
 - keeps handoffs contextual rather than authoritative
 - requires handoffs for transfer, delegation, interruption, or agent/human handoff
 - points to source routes when detail matters
-- requires stale handoffs to be updated, replaced, extracted, or archived
+- archives handoffs after they no longer support an active transfer and extracts useful material first
 - allows extracted handoff material to become another #Memory route, matching #Core material, or external state
 - supports recursive positive scope
 - routes only through its final generated region

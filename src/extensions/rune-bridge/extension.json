@@ -1,6 +1,0 @@
-{
-  "name": "Rune Bridge",
-  "description": "Route-only workspace and guidance context for optional Rune-assisted relevance without changing Open Forge truth",
-  "version": "0.1.0",
-  "dependencies": []
-}

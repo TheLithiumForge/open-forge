@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Keep Open Forge contract changes deliberate, current, dogfooded, reviewable, and evidence-backed
-  tags: [Directive, Framework, Change, Dogfood, Review, Evidence]
+  tags: [LoadNow, Directive, Framework, Change, Dogfood, Review, Evidence]
 ---
 
 # Deliberate Framework Change

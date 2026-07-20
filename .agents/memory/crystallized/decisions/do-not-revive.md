@@ -18,5 +18,8 @@ Accepted decisions extracted from the design sessions and idea notes on 2026-07-
 - A transparent Git-visible CLI ownership receipt is allowed when it is required for safe extension update/removal and agents do not depend on it for runtime routing or meaning.
 - Do not flatten nested category entries into the loader.
 - Do not add a directive-body `Applies To` section or any other second applicability decision after routing already selected the directive's scope.
+- Do not expose rejected prototypes in installed files merely to forbid them; installed wording states the positive current contract while decisions and governance preserve historical rejection.
 - Do not reduce #KeepInMind to closeout-only review or to entries reachable through only the current active parent chain.
 - Do not turn workflow phases into physical routing layers, a mandatory waterfall, or automatic earlier-phase ceremony when routed current truth already supports the requested transition.
+- Do not add extension-owned mutation slots, blocks, or companion additions to shared Markdown. Extensions contribute whole routed files; only users own `.overwrite.md` adjustments beside a base file.
+- Do not generate Open Forge `Entries` inside runtime-owned `SKILL.md` files; a skill owns its own on-demand resource links.

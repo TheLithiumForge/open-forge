@@ -57,7 +57,7 @@ A primitive category may extend its own type recursively at any depth. Workflows
 
 Within a recursively selected non-directive category, material in a narrower positive scope is preferred over broader material of the same primitive when safe and allowed. The category `entrypoint` owns any additional precedence rules for its contents.
 
-Directive routes use scope without hidden precedence. Selecting an active directive `entrypoint` settles scope before its bodies are opened, and every direct directive file loaded from that scope is binding. Direct files under the baseline-loaded root directive route bind workspace-wide. A positively described child directive route narrows where its direct files bind, but it only adds to loaded ancestors; conflicts are reported rather than resolved through silent override. Directive bodies contain Axioms and no second applicability gate. Reading an inactive archive, example, or source payload for inspection does not activate that directive route.
+Directive routes use scope without hidden precedence. Every direct directive file carries #LoadNow, so loading a directive `entrypoint` reads its direct files through the ordinary loaded-parent rule. Direct files under the baseline-loaded root directive route bind workspace-wide. Selecting and loading a positively described child directive route establishes the narrower scope before its direct #LoadNow entries are read. Child directives add to loaded ancestors; conflicts are reported rather than resolved through silent override. Directive bodies contain Axioms and no second applicability gate. Reading an inactive archive, example, or source payload for inspection does not activate that directive route.
 
 Axioms of loaded ancestor `entrypoints` apply to all routes below them. A child `entrypoint` adds only what is specific to its scope and does not restate ancestor axioms. A missing or empty local Axioms section, or one declared as `inherited` or `none`, means no local additions; none of those forms disables an ancestor axiom.
 
@@ -73,19 +73,19 @@ Routes are navigation. They never replace the destination's detailed truth.
 
 Generated route metadata never defines instructions, behavior, or authority. Only reserved load-policy tags may affect loading.
 
-Generated category `entries` may point to direct markdown files, direct child category `entrypoints`, and supported native skill package entrypoints inside skills routes.
+Generated category `entries` may point to direct markdown files, direct child category `entrypoints`, and standard `SKILL.md` files inside skills routes.
 
 Complete workflow recipes carry exactly one primary development-phase tag for cheap wayfinding. Phase tags help infer the current state from the request and routed truth; they do not create physical phase routes, mandatory chronology, or authority over the workflow Goal.
 
 ## Load Tags
 
-#LoadNow loads baseline route context.
+#LoadNow reads an entry relative to its already-loaded parent.
 
-When an `entrypoint` is loaded, agents read each generated `entry` tagged #LoadNow, in listed order. If the target is a category `entrypoint`, only that `entrypoint` is read first; that child `entrypoint`'s own `entries` then apply the same routing contract.
+When an `entrypoint` is loaded, agents read each generated `entry` tagged #LoadNow, in listed order. If the target is a category `entrypoint`, only that `entrypoint` is read first; that child `entrypoint`'s own `entries` then apply the same routing contract. A hidden descendant never becomes visible merely because it carries #LoadNow.
 
 #KeepInMind loads standing follow-up context as a complete routed catalogue.
 
-At task start or resume, after context restoration or compaction, at meaningful phase transitions or handoffs, and before closeout, agents read or recheck every routed #KeepInMind result and treat its follow-up instructions as binding within the authority of the owning content. When the CLI is available, `open-forge find --tag KeepInMind --bodies` provides the single complete lookup; plain traversal of generated route trees remains the fallback. A broken chain is a routing defect to repair, not permission to silently omit the result.
+At task start or resume, after actual context restoration, before handoff, and before closeout, agents read or recheck every routed #KeepInMind result and treat its follow-up instructions as binding within the authority of the owning content. They also refresh it at a transition when its follow-ups may have changed. When the CLI is available, `open-forge load --bodies` provides the complete effective baseline; plain traversal of generated route trees remains the fallback. A broken chain is a routing defect to repair, not permission to silently omit the result.
 
 Load-policy tags do not create authority, scope, precedence, or a write requirement. #LoadNow autoload follows visible loaded-parent chains. #KeepInMind is the deliberate catalogue-wide continuity exception because lost follow-up context is most costly across long sessions and context restoration.
 
@@ -111,7 +111,7 @@ A `slug` is the concrete folder segment used in a route path. Use `child route` 
 
 Every folder in a visible route chain needs an `entrypoint`. A deep file below a folder without an `entrypoint` is not reachable through generated routing.
 
-A native skill package folder is different: the generated route points to its `SKILL.md`, and files below that folder are runtime skill resources loaded only when `SKILL.md` makes them relevant.
+A skill folder is different: the generated route points to its standard `SKILL.md`, and files below that folder are loaded only when the skill makes them relevant.
 
 Route patterns may use placeholders such as `[scope]`, `[route]`, or `[state]` before install:
 
@@ -144,16 +144,16 @@ The CLI may identify `scoped framework route` `entrypoints` by known path shape 
 
 Agents load routing layers in this order:
 
-1. Load the loader and its overwrite companion when present; its authored axioms bind immediately.
-2. Read generated `entries` tagged #LoadNow in listed order. Whenever an `entrypoint` and optional overwrite are loaded, bind their axioms before traversing that entrypoint's own `Entries`.
-3. Read the complete routed #KeepInMind catalogue; each loaded target and overwrite binds immediately and remains active as follow-up context.
+1. Load the loader; its authored axioms bind immediately.
+2. Read generated `entries` tagged #LoadNow in listed order. Bind each loaded `entrypoint` before traversing its own `Entries`.
+3. Read the complete routed #KeepInMind catalogue; each result binds within its owner's authority and remains active as follow-up context.
 4. Let the current request select other relevant `entries` by path, description, and tags, binding each selected route as it is loaded.
 5. Follow selected routes to the destinations that own detailed truth.
-6. At every continuity boundary and before closeout, recheck the complete routed #KeepInMind catalogue and perform the follow-ups it requires.
+6. At context restoration, handoff, closeout, or a transition that may have changed follow-ups, recheck the complete routed #KeepInMind catalogue and perform its required actions.
 
-Whenever a markdown file is loaded, its `.overwrite.md` companion must be loaded after it when present.
+Whenever a Markdown file has a user-owned `.overwrite.md` companion, read it immediately after the base. The overwrite inherits the base route, is never an independent generated entry, and has final precedence within that file's scope.
 
-The CLI `chain` command exposes the inherited context for one route in loader-to-target order, inserting each overwrite after its base and a native skill's `SKILL.md` before an internal target. Its optional heading view works for any heading and distinguishes content, absence, emptiness, inherited, and none declarations. Chain resolution must reject absolute paths, parent traversal, drive changes, and physical link escapes from the logical target. The command explains file inheritance; `doctor` remains responsible for validating generated-route continuity.
+The CLI `load --bodies` command may batch the same plain traversal by emitting the loader, transitive visible #LoadNow closure, and complete #KeepInMind catalogue without entering on-demand parents. It adds each existing `.overwrite.md` after its base. The `chain` command may inspect inherited context for one route in loader-to-target order, adding an overwrite after its base and a skill's `SKILL.md` before an internal target. These commands automate traversal but do not define runtime meaning; installed files remain complete without them.
 
 ## Why
 
@@ -174,14 +174,14 @@ Routing is aligned when:
 - generated `entries` remain navigation metadata plus reserved load policy
 - reserved load-policy tags affect loading only
 - #LoadNow reads visible baseline routes by default
-- #KeepInMind reads the complete routed catalogue at task entry, context restoration, meaningful phase transitions or handoffs, and closeout
+- #KeepInMind reads the complete routed catalogue at task entry or resume, actual context restoration, handoff, closeout, and transitions where its follow-ups may have changed
 - category placement and descriptions keep scope visible
 - tags provide compact scope and classification signals
 - layer tags and route type tags remain classification signals unless a loaded `entrypoint` defines more
 - paths or descriptions expose mandatory and workspace-wide scope without relying on tags alone
-- active directive routes settle scope before bodies are read, root direct directive files bind workspace-wide, and selected child direct directive files bind within their visible positive scope
+- direct directive files carry #LoadNow; active directive routes settle scope before bodies are read, root direct files bind workspace-wide, and selected child direct files bind within their visible positive scope
 - directive bodies add no second applicability gate, child directive scopes do not silently override ancestors, and inactive archive, example, or source inspection does not activate a directive
-- workflow phase tags remain non-waterfall wayfinding while routed Goals own selection and completion
+- workflow descriptions and tags support selection, phase tags remain non-waterfall wayfinding, and routed Goals own execution and completion
 - generated paths are concrete and workspace-root-relative
 - repository and submodule boundaries do not change the logical active workspace root
 - deterministic CLI reads and writes reject routes that escape the target through a symbolic link or junction
@@ -192,15 +192,16 @@ Routing is aligned when:
 - installed workspaces do not contain route-template placeholders
 - `scoped framework route` `entrypoints` can be identified by path shape and canonical `entrypoint` filename
 - routed destinations own detailed truth
-- native skill packages route through `SKILL.md` and keep package internals runtime-owned
+- skills route through their standard `SKILL.md` and keep their resources skill-owned
 - nested categories use the same contract at every depth
 - ancestor axioms apply within loaded route chains without restatement
 - absent, empty, inherited, and none local Axioms declarations add nothing and never cancel ancestor axioms
-- deterministic chain inspection emits loader, ancestors, skills, targets, and overwrites in load order without leaving the logical target
+- optional batched loading mirrors the visible #LoadNow closure plus complete effective #KeepInMind traversal
+- optional deterministic chain inspection emits loader, ancestors, skills, targets, and user-owned overwrites in load order without defining runtime truth
 - #LoadNow nested autoload exists only through loaded parent `entrypoints`
 - standing #KeepInMind follow-ups remain complete even across context loss or a changed active route chain
 - mixed local primitive bundles are limited to workflows
-- overwrite companions load after their base files
+- workspace overwrites load immediately after their base files and have final precedence within that file's scope
 - default Open Forge core `entrypoints` use #LoadNow
 - default `memory/emerging/` and `memory/emerging/observations/` `entrypoints` use #KeepInMind
 - narrower selected non-directive scopes take safe preference within the same primitive, while selected directive scopes add binding instructions and report conflicts

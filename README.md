@@ -70,7 +70,9 @@ npx open-forge extend --remove {installed-extension-id} --dry-run
 
 An extension may contain one skill, one workflow, directives, patterns, guidance, workspace or memory routes, support-only material, any deliberate mix, or only dependencies as a convenience pack. The catalogue derives and shows those contents; interactive selection marks transitive dependencies as required and locks them while needed. Bundled dependencies resolve offline and install automatically. `--dry-run` shows dependency order, every planned file, change status, and baseline/executable scope without writing.
 
-Stable-id extensions are safely updateable and removable. Open Forge stores ownership and hashes in transparent, Git-visible `open-forge.extensions.json`, while agents continue to route from the installed Markdown and native files. Receipt `sha256` protects extension-authored bytes; CLI-owned generated `Entries` bodies may change through `index` or Core without invalidating ownership. A local source opts into this managed lifecycle by declaring a stable manifest `id`; local dependencies or augmentations require that identity, while an idless plain overlay or direct/APM skill install remains unmanaged. Manifest and payload paths are portable slash-separated relative paths; literal backslashes are rejected. Extensions that need to contribute to a shared already-loaded Markdown file use an explicit target-owned augmentation slot and receive a deterministic removable block.
+Stable-id extensions are safely updateable and removable. Every bundled package declares an id independent of its source-folder grouping, and the catalogue presents Skills, Workflows, Packs, and Support without changing those keys. Open Forge stores ownership and hashes in transparent, Git-visible `open-forge.extensions.json`, while agents route from installed files. A local source opts into this managed lifecycle by declaring a stable manifest `id`; idless plain overlays and directly installed skills remain unmanaged.
+
+Extensions add whole files through the ordinary route tree; they do not mutate shared Markdown. The CLI is optional: a manual install can copy an extension's `payload/` and update affected generated `Entries` by hand. Manifests, catalogue grouping, and receipts are install metadata only, while installed routed files remain complete agent-readable truth.
 
 Each normal extension invocation starts from a clean target-scoped Git checkpoint and ends by asking you to review and commit the selected dependency closure. Install separate roots in separate commands when you want separate diffs; multi-select and `--ids` intentionally make one combined review unit. Removal changes exactly the requested ids and blocks when retained extensions still depend on them; orphan dependencies are not pruned automatically. Updating or removing an owned entrypoint is also blocked when the final route tree would strand retained descendants; move or remove those descendants in the same plan, or keep another owner for the route host. Catalogue listing and dry runs are read-only and remain available at any time.
 
@@ -177,11 +179,19 @@ The important thing is not the number of files. The important thing is the routi
 
 `AGENTS.md` points agents at the loader. The CLI generates the loader's active root-route `entries` from `entrypoint` metadata, so agents immediately see where each root route lives and what it represents. Category `entrypoints` then expose their relevant routed files.
 
-The root directive route is baseline-loaded, so every direct directive file there is binding workspace-wide. Put narrower directives below a positively described child directive `entrypoint`; selecting that route establishes scope before its direct files are loaded. A direct directive file contains one substantive level-2 `## Axioms` section and no `Applies To` gate. Use guidance, a skill, or a workflow when behavior is optional rather than mandatory.
+Every direct directive file carries #LoadNow relative to its already-loaded parent. The root directive route is baseline-loaded, so its direct files bind workspace-wide. Put narrower directives below a positively described child directive `entrypoint`; selecting and loading that route establishes scope before ordinary #LoadNow traversal reads its direct files. A direct directive file contains one substantive level-2 `## Axioms` section and no `Applies To` gate. Use guidance, a skill, or a workflow when behavior is optional rather than mandatory.
 
-For non-trivial work, the loader infers the current development phase and requested transition from the request plus routed current truth, then selects the installed workflow whose Goal best covers that transition. Phases are wayfinding, not a waterfall: work may start anywhere, skip, repeat, or move backward. The agent recommends at most one earlier workflow only when a concrete missing or contradictory input makes the requested transition unreliable. If no installed Goal matches, it presents the closest installed option or options and direct execution once. One workflow stays primary, additional workflows become evidence-triggered handoffs, and an explicit workflow choice or opt-out wins.
+For non-trivial work, agents use the request, routed current truth, and visible workflow descriptions and tags to select a relevant workflow before opening it, then confirm its Goal. A Goal may include an optional `- helpful before: ...` item. When that work would help and a matching earlier workflow is available, the agent recommends it once without blocking progress; if it is skipped or unavailable, the selected workflow proceeds with explicit assumptions. Phases are wayfinding, not a waterfall. One workflow stays primary, additional workflows become ordered handoffs, and an explicit workflow choice or opt-out wins.
 
-#KeepInMind routes protect long-running work from context loss. At task start or resume, after context restoration or compaction, at meaningful phase transitions or handoffs, and before closeout, agents recheck the complete routed #KeepInMind catalogue and keep its follow-up instructions binding. When the CLI is available, `open-forge find --tag KeepInMind --bodies` is the single complete lookup.
+#KeepInMind routes protect long-running work from context loss. At task start or resume, after actual context restoration, before handoff, and before closeout, agents recheck the complete catalogue and keep its follow-ups binding within their owner's authority. They also refresh it when a transition may have changed those follow-ups.
+
+When the CLI is available, one command emits effective startup context in the correct order:
+
+```sh
+npx open-forge load --bodies
+```
+
+It optionally batches the same plain traversal: the visible transitive #LoadNow chain plus the complete #KeepInMind catalogue, with each user-owned `.overwrite.md` immediately after its base.
 
 Generated paths are concrete and relative to the folder whose `AGENTS.md` selected the loader. A shared submodule does not change those logical paths. For safety, deterministic CLI reads and writes reject a symlinked or junction-mounted route tree that resolves outside the selected target; plain Markdown loading of an explicitly trusted external mount remains a manual trust decision.
 
@@ -385,7 +395,7 @@ Use an overwrite when the changed behavior is something an AI agent can understa
 
 Edit the base file when the base behavior is wrong for your workspace. Use an overwrite when the base behavior is mostly right, but needs a local addition, narrowing, exception, or disable.
 
-Extension augmentation slots are separate from workspace overwrites. A managed extension may add its owned removable block only inside an explicit slot in the base file; it may not own the overwrite companion. Agents read the materialized base first and the workspace-owned overwrite afterward, so your overwrite remains the final local-precedence layer.
+Agents read `{name}.md` and then your `{name}.overwrite.md`, so the overwrite has final precedence within that file's scope. Extensions add whole routed files and must not own workspace overwrite files.
 
 Good overwrite use:
 

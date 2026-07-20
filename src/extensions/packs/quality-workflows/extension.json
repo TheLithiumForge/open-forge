@@ -1,0 +1,7 @@
+{
+  "id": "quality-workflows",
+  "name": "Quality Workflows",
+  "description": "Review, refactoring, and debugging workflows plus the separately selectable testing workflow",
+  "version": "0.1.0",
+  "dependencies": ["quality-capability", "testing-workflow"]
+}

@@ -6,13 +6,13 @@ open-forge:
 
 # Crystallized Memory
 
-Crystallized memory is accepted durable memory and current truth within its stated scope.
+Crystallized memory contains accepted, durable #CurrentTruth within its stated scope
 
 ## Axioms
 
-- Read `Entries` before deciding that no crystallized memory applies.
-- Update, split, merge, or reshape existing crystallized memory instead of creating parallel current truth.
-- Archive or link superseded crystallized material with enough context to understand the change.
+- Read `Entries` before deciding that no crystallized memory applies
+- Update, split, merge, or reshape existing crystallized memory instead of creating parallel current truth
+- Archive or link superseded crystallized material with enough context to understand the change
 
 ## Entries
 

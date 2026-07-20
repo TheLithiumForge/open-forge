@@ -4,11 +4,11 @@
 
 This descriptor governs `src/open-forge/.agents/memory/crystallized/_crystallized.md`.
 
-The crystallized memory category `entrypoint` defines how agents discover accepted durable memory and current truth.
+The crystallized memory category `entrypoint` defines how agents discover accepted, durable #CurrentTruth.
 
 ## Represents
 
-Crystallized memory represents accepted durable memory and current truth within its stated scope.
+Crystallized memory represents accepted, durable #CurrentTruth within its stated scope.
 
 It is the durable understanding the workspace accepts as current.
 
@@ -26,7 +26,7 @@ Child `entrypoints` and local files define their own taxonomy below this route.
 
 ## Authority Contract
 
-Crystallized memory is accepted durable memory and current truth within its stated scope.
+Crystallized memory contains accepted, durable #CurrentTruth within its stated scope.
 
 It informs future work and still respects current user instructions, platform constraints, runtime safety, applicable #Core routes, and declared external sources of truth.
 
@@ -79,7 +79,7 @@ The implementation is aligned when it:
 - is named `_crystallized.md`
 - lives in `.agents/memory/crystallized/`
 - includes `CurrentTruth` and `LoadNow` in scoped `open-forge:` tags
-- defines crystallized memory as accepted durable memory and current truth
+- defines crystallized memory as accepted, durable #CurrentTruth
 - exposes the installed durable-record and decision-rationale routes
 - avoids repeating installed route names in implementation axioms
 - leaves child taxonomy to child `entrypoints` and local files

@@ -14,12 +14,12 @@
     },
     {
       "name": "vision-capability",
-      "source": "../../../../src/extensions/vision-capability/payload",
+      "source": "../../../../src/extensions/skills/vision-capability/payload",
       "destination": ""
     },
     {
       "name": "vision-workflow",
-      "source": "../../../../src/extensions/vision-workflow/payload",
+      "source": "../../../../src/extensions/workflows/vision-workflow/payload",
       "destination": ""
     }
   ],

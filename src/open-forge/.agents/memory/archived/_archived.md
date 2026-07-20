@@ -6,14 +6,14 @@ open-forge:
 
 # Archived Memory
 
-Archived memory is historical context kept after it is no longer current truth. //Hn: the current truth or just current truth? I think we should use a complete voice in all of our user files, not newspaper like, also shouldn't it be backticked? One more note, again, extract all of these ideas into memory so we do not have issues like this again
+Archived memory preserves historical context after it stops being #CurrentTruth
 
 ## Axioms
 
-- Read `Entries` when current work may need archived context.
-- Preserve origin, the reason material was archived, and what replaced it when a replacement exists.
-- Extract useful current material to its owner before archiving; the owner may be another #Memory route, a matching #Core route, or an external system.
-- Restore archived material only into an explicit current destination and validate it before treating it as current.
+- Read `Entries` when current work may need archived context
+- Preserve origin, the reason material was archived, and what replaced it when a replacement exists
+- Extract useful current material to its owner before archiving; the owner may be another #Memory route, a matching #Core route, or an external system
+- Restore archived material only into an explicit current destination and validate it before treating it as current
 
 ## Entries
 

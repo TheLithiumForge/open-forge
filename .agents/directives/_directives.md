@@ -6,21 +6,21 @@ open-forge:
 
 # Directives
 
-Directives are binding instructions selected through the route tree.
+Directives are binding instructions selected through the route tree
 
 ## Axioms
 
-- Read every direct directive file exposed by a loaded directive `entrypoint`; direct files inherit the scope already selected by that route.
-- A directive loaded through the active directive route chain is binding. It has no second applicability decision inside the file; merely inspecting an example, archive, source payload, or inactive route does not activate it.
-- Direct files under this root are workspace-wide because this root route is always loaded. Put narrower directives under a positively described child route and select that route before opening its contents.
-- Select child directive routes from their path, description, tags, and ancestor meaning. Do not open a directive speculatively and then decide whether to ignore it.
-- Loaded child `entrypoint` Axioms and direct directive files add to loaded ancestor directives; narrower routing changes scope, not authority.
-- Every direct directive file defines exactly one substantive level-2 `## Axioms` section and no `## Applies To` gate. Put optional behavior in guidance, a skill, or a workflow; put operational conditions inside the relevant Axiom.
-- Report when a directive cannot be followed, and explain why.
+- Every direct directive file carries #LoadNow, so an already-loaded directive `entrypoint` reads all of its direct files
+- Direct files loaded from this root bind workspace-wide
+- Select a child directive route only when its path, description, tags, and ancestor meaning match the work; loading that route establishes its narrower scope before its direct files are read
+- Direct files loaded from a selected child route bind within that visible scope
+- Loaded child directives add to loaded ancestor directives; narrower routing changes scope, not authority
+- Every direct directive file contains exactly one non-empty `## Axioms` section. Put optional behavior in guidance, a skill, or a workflow.
+- Report any directive conflict or directive that cannot be followed, and explain why
 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `deliberate-framework-change.md` - Keep Open Forge contract changes deliberate, current, dogfooded, reviewable, and evidence-backed - #Directive #Framework #Change #Dogfood #Review #Evidence
-- `framework-essence.md` - Preserve Open Forge's minimal, flexible, memory-backed, human-governed design while improving agent outcomes - #Directive #Framework #Essence #Minimalism #HumanGoverned #Dogfood
+- `deliberate-framework-change.md` - Keep Open Forge contract changes deliberate, current, dogfooded, reviewable, and evidence-backed - #LoadNow #Directive #Framework #Change #Dogfood #Review #Evidence
+- `framework-essence.md` - Preserve Open Forge's minimal, flexible, memory-backed, human-governed design while improving agent outcomes - #LoadNow #Directive #Framework #Essence #Minimalism #HumanGoverned #Dogfood
 <!-- open-forge:generated-index:end -->

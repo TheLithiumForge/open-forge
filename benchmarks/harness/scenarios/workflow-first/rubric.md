@@ -155,7 +155,7 @@ Reveal only what the active phase needs.
 
 - 2: the worker infers that direction is concretely unsettled, selects vision as one primary workflow, and names architecture then implementation as likely evidence-triggered handoffs rather than mandatory phases. At each warranted activation it names the new workflow, loads that workflow's Required Routes before Step 1, carries accepted outputs forward without re-litigating them, and states the concrete evidence that now makes the handoff useful. Implementation and verification match the accepted slice.
 - 1: the selected workflows are useful, but the state inference, evidence trigger, primary/handoff contract, activation evidence, Required Routes timing, or preservation of accepted decisions is incomplete.
-- 0: workflows run ambiguously in parallel; a prerequisite is imposed without a concrete gap; a concretely missing input is ignored without an explicit assumption; or accepted direction is contradicted or reopened without new evidence.
+- 0: workflows run ambiguously in parallel; an earlier workflow is imposed without a concrete gap; a concretely missing input is ignored without an explicit assumption; or accepted direction is contradicted or reopened without new evidence.
 
 Skipping, repeating, or moving backward between phases is not itself a failure. Score the evidence for each transition, not conformity to a fixed order.
 
@@ -173,15 +173,15 @@ This case is non-interactive unless the worker identifies a concrete contradicti
 - 1: implementation succeeds, but phase inference is implicit, workflow selection is late, Required Routes timing is unclear, or earlier-phase ceremony occurs without materially delaying delivery.
 - 0: the worker restarts product discovery, architecture, or planning without contradictory evidence; asks the user to choose a process; or fails to use the installed implementation workflow.
 
-## Case: `missing-architecture-prerequisite`
+## Case: `helpful-prior-architecture-work`
 
-Add `seed-missing-prerequisite`.
+Add `seed-helpful-prior-architecture-work`.
 
 ### Frozen interaction
 
 Reveal only what the active architecture work asks for.
 
-- Initial choice: when the worker identifies the missing technical decisions, recommends architecture as the single prerequisite, and asks whether to use it, answer: "Use architecture first; do not reopen the accepted product direction."
+- Initial choice: when the worker identifies the missing technical decisions, recommends architecture once as helpful prior work, and asks whether to use it, answer: "Use architecture first; do not reopen the accepted product direction."
 - Repeated process question: answer only: "I already chose architecture first."
 - Technical constraints: local-only, inspectable storage, two developers, no service or separate platform team.
 - Reliability: malformed stored input must produce a clear error without rewriting the file.
@@ -189,10 +189,10 @@ Reveal only what the active architecture work asks for.
 - Architecture acceptance: accept a TypeScript/Bun CLI, local JSON Lines storage, pure note domain, thin filesystem adapter, and command-level OS-temporary-directory tests. Decline a database, service, event bus, or speculative multi-user boundary.
 - Implementation handoff: after architecture is accepted and the worker explicitly activates implementation, say: "Proceed with the smallest accepted slice and its tests."
 
-### `seed-missing-prerequisite`
+### `seed-helpful-prior-architecture-work`
 
-- 2: the worker identifies the exact missing technical decisions, recommends architecture as the single prerequisite before implementation, asks once, and does not replay vision or add planning ceremony. After accepted architecture evidence exists, it activates implementation, loads each workflow's Required Routes before Step 1, and preserves the accepted product direction.
-- 1: architecture is eventually used, but the gap is vague, more than one prerequisite is presented, the process question repeats, or activation/Required Routes timing is incomplete.
+- 2: the worker identifies the exact missing technical decisions, recommends architecture once as helpful prior work before implementation without making it a gate, asks once, and does not replay vision or add planning ceremony. After the user accepts and architecture evidence exists, it activates implementation, loads each workflow's Required Routes before Step 1, and preserves the accepted product direction.
+- 1: architecture is eventually used, but the gap is vague, more than one earlier workflow is presented, the process question repeats, or activation/Required Routes timing is incomplete.
 - 0: the worker implements through unresolved architecture without explicit assumptions, imposes a full phase sequence, reopens accepted vision without evidence, or activates multiple workflow loops ambiguously.
 
 ## Closeout
