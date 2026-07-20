@@ -35,10 +35,10 @@ Each workspace route file must identify at least one destination and provide eno
 Compact route lists must use this shape:
 
 ```md
-- {destination} - {description} - #{Tag1} #{Tag2} ... #{TagN}
+- [Description](relative/destination) - #Tag1 #Tag2 ... #TagN
 ```
 
-Concrete paths use backticks and resolve from the active workspace root unless the route explicitly identifies another base.
+Local link destinations resolve relative to the workspace route file containing them. External destinations use their normal URL. The link label explains what the destination contains and when it matters; the tag suffix supplies compact routing signals.
 
 Route files can use any clear filename. A workspace can keep several related routes in one file, split routes into separate files, or use nested categories. These organizations implement the same route contract.
 
@@ -74,6 +74,7 @@ The implementation is aligned when it:
 - uses `entries` to select routes relevant to the current request
 - supports nested categories at any useful depth
 - keeps detailed truth at routed destinations
+- uses containing-file-relative Markdown links for local destinations
 - contains no seeded project-layout assumptions
 - places generated navigation last inside the required markers
 - keeps compact workspace routing axioms

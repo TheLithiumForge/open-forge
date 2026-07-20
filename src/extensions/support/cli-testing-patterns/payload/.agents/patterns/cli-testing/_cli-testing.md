@@ -15,5 +15,5 @@ CLI testing patterns define inspectable test arrangements for pure mechanisms an
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `tiered-cli-tests.md` - Keep pure tests fast by default and reserve real process, filesystem, Git, packaging, and rollback coverage for explicit closure runs - #Extension #Pattern #Testing #CLI #Unit #Closure #CI #Git
+- [Keep pure tests fast by default and reserve real process, filesystem, Git, packaging, and rollback coverage for explicit closure runs](tiered-cli-tests.md) - #Extension #Pattern #Testing #CLI #Unit #Closure #CI #Git
 <!-- open-forge:generated-index:end -->

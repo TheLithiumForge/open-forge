@@ -29,12 +29,11 @@ This is the main Open Forge `entrypoint`. Read it after `AGENTS.md` to enter thi
 - A folder is routable only when it contains one recognized `entrypoint`; every folder in a nested route path needs its own `entrypoint`
 - A `scope route` uses the same mechanism with a concrete `slug`; initialize a framework `entrypoint` inside it only when that scoped framework route is needed
 - Generated `Entries` are navigation metadata. Entries without a load-policy tag are on-demand, and detailed behavior belongs to the routed owner.
-- When `{filename}.overwrite.md` exists, read it immediately after `{filename}.md`; it inherits the base route and has final precedence within that file's scope
+- When `{name}.overwrite.md` exists, read it immediately after `{name}.md`; it inherits the base route and has final precedence within that file's scope
 
 ### Tags And Loading
 
-- Defined tags have the meanings below when they appear in loaded content or generated `Entries`;
-- undefined tags remain routing and search signals
+Defined tags have the meanings below when they appear in loaded content or generated `Entries`; undefined tags remain routing and search signals.
 
 #### Defined Tags
 
@@ -48,21 +47,23 @@ This is the main Open Forge `entrypoint`. Read it after `AGENTS.md` to enter thi
 
 ### CLI
 
-- Open forge exposes a CLI to help agents achieve faster results. If available cli usage is higly encouraged to be used for all tasks.
+When the Open Forge CLI is available, use each applicable command below. Every command automates the same plain-file contract, which remains complete without the CLI.
 
-#### CLI Usage useful examples
+#### Applicable Commands
 
-- `open-forge load --bodies` may batch this same traversal when available; plain-file traversal remains complete
+- `open-forge load --bodies` - Read effective baseline context at task start or resume
+- `open-forge chain <route> --heading Axioms` - Read inherited rules after selecting a route
+- `open-forge index` - Rebuild generated `Entries` after adding, moving, or removing a routed file or changing its route metadata
+- `open-forge doctor` - Validate routing after structural framework changes and before closing them out
 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
-- `.agents/directives/_directives.md` - Binding instructions whose route is selected before their contents are loaded - #LoadNow #Core #Directive
-- `.agents/guidance/_guidance.md` - Contextual advice for recurring choices, tradeoffs, and work scenarios - #LoadNow #Core #Guidance
-- `.agents/memory/_memory.md` - Self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning - #LoadNow #Memory #OrganicGrowth
-- `.agents/patterns/_patterns.md` - Concrete reusable shapes for code, files, APIs, documents, and other inspectable work - #LoadNow #Core #Pattern
-- `.agents/skills/_skills.md` - Skills available through standard SKILL.md files - #LoadNow #Core #Skill
-- `.agents/workflows/_workflows.md` - Repeatable markdown workflow recipes for reaching a defined goal - #LoadNow #Core #Workflow
-- `.agents/workspace/_workspace.md` - Workspace routes that point to important project locations and explain when to use them - #LoadNow #Core #Workspace
-      <!-- open-forge:generated-index:end -->
+- [Binding instructions whose route is selected before their contents are loaded](directives/_directives.md) - #LoadNow #Core #Directive
+- [Contextual advice for recurring choices, tradeoffs, and work scenarios](guidance/_guidance.md) - #LoadNow #Core #Guidance
+- [Self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning](memory/_memory.md) - #LoadNow #Memory #OrganicGrowth
+- [Concrete reusable shapes for code, files, APIs, documents, and other inspectable work](patterns/_patterns.md) - #LoadNow #Core #Pattern
+- [Skills available through standard SKILL.md files](skills/_skills.md) - #LoadNow #Core #Skill
+- [Repeatable markdown workflow recipes for reaching a defined goal](workflows/_workflows.md) - #LoadNow #Core #Workflow
+- [Workspace routes that point to important project locations and explain when to use them](workspace/_workspace.md) - #LoadNow #Core #Workspace
+<!-- open-forge:generated-index:end -->

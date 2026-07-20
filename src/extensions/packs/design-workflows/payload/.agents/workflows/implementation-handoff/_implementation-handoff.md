@@ -22,7 +22,7 @@ iterative
 
 Read every route below before Step 1. A route that cannot be read is a blocker to report, not a step to skip.
 
-- `.agents/skills/experience-design/SKILL.md` - accepted-decision capture, state specification, asset inventory, and handoff validation
+- [accepted-decision capture, state specification, asset inventory, and handoff validation](../../skills/experience-design/SKILL.md) - #Skill #Design #UX
 
 ## Constraints
 

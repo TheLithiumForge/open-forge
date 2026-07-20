@@ -28,27 +28,39 @@ Files must stay readable in plain text. They must use lists instead of tables wh
 
 User-facing Open Forge files state the positive current contract in complete natural language. Avoid compressed fragments, dash-delimited asides, and mentions of rejected prototypes that make readers wonder whether the old shape still matters. Isolated one-sentence definitions and single-sentence bullets may omit terminal periods; multi-sentence prose keeps normal punctuation.
 
+When prose introduces a following list, keep the introducer as prose followed by the list, or give the child list an explicit subheading or true nested-list structure. Do not express an introducer and the items it introduces as adjacent peer bullets.
+
 ## Entry Format
 
 Compact route and generated index `entries` must use this shape:
 
-```text
-- {entry} - {description} - #{Tag1} #{Tag2} ... #{TagN}
+```md
+- [Description](relative/path.md) - #Tag1 #Tag2 ... #TagN
 ```
 
 Generated `entries` list direct routed files and direct child category `entrypoints`:
 
-```text
-- `alpha.md` - Route file - #Route
-- `repos/_repos.md` - Child category `entrypoint` - #Repository #Workspace
-- `summarize/SKILL.md` - Summarize content - #Skill
+```md
+- [Route file](alpha.md) - #Route
+- [Repository workspace routes](repos/_repos.md) - #Repository #Workspace
+- [Summarize content](summarize/SKILL.md) - #Skill
 ```
 
-Generated `entries` keep the full relative path in backticks. Parent category `entrypoints` stay at one folder boundary. A child folder becomes visible through its own `_{folder}.md` `entrypoint`.
+The link label is the decision-grade description. The link destination is the complete path from the Markdown file containing the link to the routed target. Standard relative-link resolution therefore works in editors, renderers, graph tools, and plain Markdown-aware agents without an Open Forge-specific path convention.
+
+Loader `entries` follow the same rule. Because the loader lives at `.agents/loader.md`, its direct category links use destinations such as `workspace/_workspace.md`, not `.agents/workspace/_workspace.md`. A category `entrypoint` links to its direct files and child `entrypoints` relative to its own folder. Parent category `entrypoints` stay at one folder boundary, and a child folder becomes visible through its own `_{folder}.md` `entrypoint`.
 
 Use one `entry` per line. `Entries` must not wrap.
 
-Authored `Required Routes` lines in workflows use the same one-line shape with the reason in the description position, so tooling can parse and follow them like generated `entries`.
+Authored `Required Routes` lines use the same one-line link shape. Their link label explains why the workflow needs the target, their destination resolves relative to the workflow file, and their suffix includes useful routing tags with at least the target primitive type:
+
+```md
+## Required Routes
+
+- [Implementation capability](../skills/implementation/SKILL.md) - #Skill #Implementation
+```
+
+The generated empty-state sentinel `- none - No entries - #Empty` is the only `Entries` line without a link destination.
 
 ## Tags
 
@@ -56,8 +68,8 @@ Tags must add compact routing information rather than repeat words without addin
 
 Useful tags identify the primitive type, domain, work type, topic, technology, artifact, lifecycle, or another selection signal. Use as many tags as the `entry` needs and no tags that do not improve routing.
 
-```text
-- `migrations.md` - Database migration requirements - #Directive #Database #Migration
+```md
+- [Database migration requirements](migrations.md) - #Directive #Database #Migration
 ```
 
 Paths and descriptions must keep critical scope readable. Tags reinforce route selection, but tags alone must not create directive authority. Direct root files are workspace-wide because the root directive route is baseline-loaded; child directive scope is selected before its body is opened.
@@ -70,15 +82,17 @@ Layer classification tags are singular: #Core, #Memory, and #Extension. These ta
 
 Reserved load-policy tags are different from normal classification tags. Open Forge currently reserves #LoadNow and #KeepInMind, which are governed by `docs/framework/concepts/routing.md` and defined in the installed loader.
 
-## Backticks
+## Links And Backticks
 
-Use backticks when an `entry` is a concrete filename, path, command, defined Open Forge term, or code literal:
+Use Markdown links for routed destinations and other clickable references:
 
-```text
-- `repositories.md` - Repository workspace routes - #Workspace
+```md
+- [Repository workspace routes](repositories.md) - #Workspace
 ```
 
-Generated `entries` must keep backticks around paths because each path is a lookup target.
+Use backticks for commands, code literals, defined Open Forge terms, and concrete paths discussed as text rather than used as link destinations.
+
+The CLI may read the legacy backtick entry shape during migration, including legacy `Required Routes`, which retain workspace-root-relative resolution. Generated output and newly authored entries use containing-file-relative Markdown links. Parser compatibility is not a second canonical authoring format.
 
 Tags must stay bare, including in prose, so graph and search tools can recognize them.
 
@@ -216,13 +230,15 @@ The one-line `entry` shape is easier to scan in raw markdown, easier to regenera
 
 Formatting is aligned when:
 
-- `entries` use the compact one-line shape
+- `entries` use the compact one-line Markdown-link shape with a tag suffix
 - tags add useful routing information with minimal text
 - Open Forge-authored payload tags use singular PascalCase concept names by default
 - layer tags classify material without creating authority
 - reserved load-policy tags are documented before use
-- generated paths use backticks
-- generated paths are concrete and workspace-root-relative
+- generated link targets are concrete and relative to the Markdown file containing them
+- loader link targets resolve from `.agents/loader.md` without repeating the `.agents/` prefix
+- `Required Routes` use the same link shape and carry useful tags, including at least the target primitive type
+- legacy backtick entries remain parser-compatible during migration but are not emitted or newly authored
 - category generated `entries` include direct routed files and direct child category `entrypoints`
 - skills category generated `entries` include standard `SKILL.md` skills
 - loader generated `entries` include direct active category `entrypoints`
@@ -241,5 +257,6 @@ Formatting is aligned when:
 - complete workflow recipes declare exactly one recognized primary phase tag without adding phase sections or physical routing layers
 - installed category `entrypoints` do not depend on governance-only context
 - user-facing prose states positive current behavior in complete natural language
+- prose that introduces a following list is not represented as an adjacent peer bullet to its children
 - generated `entries` stay inside the required markers
 - only marker-bounded content is regenerated

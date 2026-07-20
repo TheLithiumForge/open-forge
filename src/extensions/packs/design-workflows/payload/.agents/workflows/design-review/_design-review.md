@@ -22,7 +22,7 @@ iterative
 
 Read every route below before Step 1. A route that cannot be read is a blocker to report, not a step to skip.
 
-- `.agents/skills/experience-design/SKILL.md` - experience criteria, state coverage, accessibility review, and implementation feasibility
+- [experience criteria, state coverage, accessibility review, and implementation feasibility](../../skills/experience-design/SKILL.md) - #Skill #Design #UX
 
 ## Constraints
 

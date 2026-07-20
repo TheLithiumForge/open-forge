@@ -6,10 +6,11 @@ open-forge:
 
 # User-Facing Writing
 
-Accepted from the user's review notes on 2026-07-19
+Accepted from the user's review notes on 2026-07-19 and revised 2026-07-20 for canonical route links
 
 - Installed files describe the current positive contract; rejected prototypes and historical alternatives stay in decisions, governance, or archives
 - Use complete natural sentences instead of compressed newspaper-style fragments or dash-delimited asides
 - Omit terminal periods from isolated one-sentence definitions and single-sentence list items; keep normal punctuation when a paragraph or list item contains several sentences
-- Use backticks for concrete paths, commands, code literals, and defined framework terms when precision matters, not as decoration around ordinary language
+- Use Markdown links for routed destinations and clickable references. Use backticks for commands, code literals, defined framework terms, and concrete paths discussed as text rather than used as destinations
+- Route entries use `- [Description](relative/path.md) - #Tags`; the link label carries the decision-grade description and the target resolves relative to the file containing it
 - Keep route descriptions decision-grade but compact: enough trigger and outcome to select the route, with execution detail in the routed body

@@ -37,7 +37,7 @@ Stable category contract.
     expect(result.exitCode).toBe(0);
     expect(content).toContain("Stable category contract.");
     expect(content).toContain("<!-- open-forge:generated-index:start -->");
-    expect(content).toContain("- `repositories.md` - Repository routes - #Workspace #Route");
+    expect(content).toContain("- [Repository routes](repositories.md) - #Workspace #Route");
     expect(content).not.toContain("Old entry");
   });
 
@@ -59,7 +59,7 @@ Stable category contract.
     expect(result.exitCode).toBe(0);
     expect(content).toContain("Stable category contract.");
     expect(content).toContain("<!-- open-forge:generated-index:start -->");
-    expect(content).toContain("- `components.md` - Component patterns - #Pattern");
+    expect(content).toContain("- [Component patterns](components.md) - #Pattern");
     expect(content).not.toContain("Old entry");
   });
 
@@ -161,11 +161,11 @@ This paragraph is authored content.
     const grandchild = await fs.readFile(path.join(services, "_services.md"), "utf8");
 
     expect(result.exitCode).toBe(0);
-    expect(parent).toContain("- `repositories/_repositories.md` - No description -");
-    expect(child).toContain("- `api.md` - API repository - #Repository");
-    expect(child).toContain("- `services/_services.md` - No description -");
+    expect(parent).toContain("- [No description](repositories/_repositories.md) - #Index");
+    expect(child).toContain("- [API repository](api.md) - #Repository");
+    expect(child).toContain("- [No description](services/_services.md) - #Index");
     expect(parent).not.toContain("services/_services.md");
-    expect(grandchild).toContain("- `billing.md` - Billing service - #Service");
+    expect(grandchild).toContain("- [Billing service](billing.md) - #Service");
   });
 
   test("indexes native skill packages under skills routes", async () => {
@@ -188,9 +188,26 @@ description: Implementation capability for fitting, testing, coding, and verifyi
     const content = await fs.readFile(path.join(skills, "_skills.md"), "utf8");
 
     expect(result.exitCode).toBe(0);
-    expect(content).toContain("- `implementation/SKILL.md` - Implementation capability for fitting, testing, coding, and verifying changes - #Skill");
+    expect(content).toContain("- [Implementation capability for fitting, testing, coding, and verifying changes](implementation/SKILL.md) - #Skill");
     expect(content).not.toContain("references/fit-change.md");
     expect(content).not.toContain("legacy.md");
+  });
+
+  test("escapes link labels, encodes route segments, and follows the decoded generated route", async () => {
+    const root = await createRoot();
+    const guides = await createCategory(root, "guides", "# Guides\n");
+    const routeName = "route (draft) #1% ready.md";
+    await writeRoute(guides, routeName, "Use [draft] \\ path #NotATag", ["Guide", "Actual"]);
+
+    expect((await runCli("index", root)).exitCode).toBe(0);
+    const index = await fs.readFile(path.join(guides, "_guides.md"), "utf8");
+    expect(index).toContain(
+      "- [Use \\[draft\\] \\\\ path #NotATag](route%20%28draft%29%20%231%25%20ready.md) - #Guide #Actual"
+    );
+
+    const expanded = await runCli("find", "--route", "guides/_guides.md", "--depth", "1", "--paths", root);
+    expect(expanded.exitCode).toBe(0);
+    expect(expanded.stdout).toContain(`guides/${routeName}`);
   });
 });
 
@@ -217,7 +234,7 @@ open-forge:
 
     expect(result.exitCode).toBe(0);
     expect(loader).toContain("Stable loading contract.");
-    expect(loader).toContain("- `workspace/_workspace.md` - Workspace routes that point to important project locations and explain when to use them - #LoadNow #Workspace");
+    expect(loader).toContain("- [Workspace routes that point to important project locations and explain when to use them](workspace/_workspace.md) - #LoadNow #Workspace");
     expect(loader).not.toContain("repositories/_repositories.md");
     expect(loader).not.toContain("archive");
   });
@@ -240,8 +257,8 @@ tags: [External, Tool]
       const entrypoint = await fs.readFile(path.join(external, alias), "utf8");
 
       expect(result.exitCode).toBe(0);
-      expect(loader).toContain(`- \`external/${alias}\` - External tool routes - #External #Tool`);
-      expect(entrypoint).toContain("- `source.md` - External source - #External");
+      expect(loader).toContain(`- [External tool routes](external/${alias}) - #External #Tool`);
+      expect(entrypoint).toContain("- [External source](source.md) - #External");
     });
   }
 
@@ -269,6 +286,9 @@ describe("install", () => {
     const result = await runCli("install", root);
     expect(result.stderr).toBe("");
     expect(result.exitCode).toBe(0);
+    const installedLoader = await fs.readFile(path.join(root, ".agents", "loader.md"), "utf8");
+    expect(installedLoader).toContain("](directives/_directives.md) - #LoadNow");
+    expect(installedLoader).not.toContain("](.agents/");
 
     const doctorResult = await runCli("doctor", "--json", root);
     expect(doctorResult.stderr).toBe("");
@@ -331,7 +351,7 @@ Old scoped decisions framework copy.
     expect(result.exitCode).toBe(0);
     expect(scopedContent).toContain("Documents are durable accepted records, or routes to those records, for long-form project knowledge.");
     expect(scopedContent).not.toContain("Old scoped framework copy.");
-    expect(scopedContent).toContain("- `architecture.md` - Scoped architecture truth - #Memory #Document #CurrentTruth");
+    expect(scopedContent).toContain("- [Scoped architecture truth](architecture.md) - #Memory #Document #CurrentTruth");
     expect(scopedDecisionContent).toContain("Decisions are accepted rationale for important choices");
     expect(scopedDecisionContent).not.toContain("Old scoped decisions framework copy.");
   });
@@ -377,8 +397,8 @@ React patterns for this workspace.
     const react = await fs.readFile(path.join(root, ".agents", "patterns", "react", "_react.md"), "utf8");
 
     expect(result.exitCode).toBe(0);
-    expect(patterns).toContain("- `react/_react.md` - React component patterns for this workspace - #Extension #Core #Pattern #React");
-    expect(react).toContain("- `components.md` - Reusable React component shape - #Pattern #React");
+    expect(patterns).toContain("- [React component patterns for this workspace](react/_react.md) - #Extension #Core #Pattern #React");
+    expect(react).toContain("- [Reusable React component shape](components.md) - #Pattern #React");
   });
 
   test("installs only payload from a local extension package", async () => {
@@ -435,8 +455,8 @@ Review patterns bundled with Open Forge.
     const reviews = await fs.readFile(path.join(root, ".agents", "patterns", "reviews", "_reviews.md"), "utf8");
 
     expect(result.exitCode).toBe(0);
-    expect(patterns).toContain("- `reviews/_reviews.md` - Review patterns bundled with Open Forge - #Extension #Core #Pattern #Review");
-    expect(reviews).toContain("- `pull-requests.md` - Pull request review shape - #Pattern #Review");
+    expect(patterns).toContain("- [Review patterns bundled with Open Forge](reviews/_reviews.md) - #Extension #Core #Pattern #Review");
+    expect(reviews).toContain("- [Pull request review shape](pull-requests.md) - #Pattern #Review");
   });
 
   test("lists bundled first-party extensions with descriptions", async () => {
@@ -553,8 +573,8 @@ Review patterns bundled with Open Forge.
     const patterns = await fs.readFile(path.join(root, ".agents", "patterns", "_patterns.md"), "utf8");
 
     expect(result.exitCode).toBe(0);
-    expect(patterns).toContain("- `alpha-pack/_alpha-pack.md` - Alpha extension - #Extension #Core #Pattern");
-    expect(patterns).toContain("- `beta-pack/_beta-pack.md` - Beta extension - #Extension #Core #Pattern");
+    expect(patterns).toContain("- [Alpha extension](alpha-pack/_alpha-pack.md) - #Extension #Core #Pattern");
+    expect(patterns).toContain("- [Beta extension](beta-pack/_beta-pack.md) - #Extension #Core #Pattern");
   });
 
   test("installs bundled dependencies before the requested extension", async () => {
@@ -1620,7 +1640,7 @@ open-forge:
     const result = await runCli("find", "--tag", "KeepInMind", root);
 
     expect(result.exitCode).toBe(0);
-    expect(result.stdout).toContain("- `guides/alpha.md` - Alpha guide - #Guide #KeepInMind");
+    expect(result.stdout).toContain("- [Alpha guide](guides/alpha.md) - #Guide #KeepInMind");
     expect(result.stdout).not.toContain("beta.md");
   });
 
@@ -1657,7 +1677,7 @@ open-forge:
     expect(items[0].tags).toContain("KeepInMind");
   });
 
-  test("follows required routes and reports missing ones as blockers", async () => {
+  test("follows legacy workspace-relative required routes and reports missing ones as blockers", async () => {
     const root = await createFindRoot();
     const workflows = await createCategory(root, "workflows", "# Workflows\n");
     const skillFolder = path.join(root, "skills", "helper");
@@ -1695,6 +1715,130 @@ Read every route below before Step 1.
     expect(missing.stderr).toContain("blocker");
   });
 
+  test("follows canonical Required Route links relative to their Markdown owner", async () => {
+    const root = await createFindRoot();
+    const workflows = await createCategory(root, "workflows", "# Workflows\n");
+    const delivery = path.join(workflows, "delivery");
+    const skillFolder = path.join(root, "skills", "helper kit");
+    const balancedSkillFolder = path.join(root, "skills", "helper(v2)");
+    const escapedSkillFolder = path.join(root, "skills", "helper(v3)");
+    const escapedHashFile = path.join(root, "skills", "helper#draft.md");
+    await fs.mkdir(delivery, { recursive: true });
+    await fs.mkdir(skillFolder, { recursive: true });
+    await fs.mkdir(balancedSkillFolder, { recursive: true });
+    await fs.mkdir(escapedSkillFolder, { recursive: true });
+    await createCategory(root, "skills", "# Skills\n");
+    await fs.writeFile(path.join(skillFolder, "SKILL.md"), "# Helper kit\n");
+    await fs.writeFile(path.join(balancedSkillFolder, "SKILL.md"), "# Balanced helper\n");
+    await fs.writeFile(path.join(escapedSkillFolder, "SKILL.md"), "# Escaped helper\n");
+    await fs.writeFile(escapedHashFile, "# Escaped hash helper\n");
+    await fs.writeFile(path.join(delivery, "ship.md"), `# Ship
+
+## Required Routes
+
+- [Helper kit](../../skills/helper%20kit/SKILL.md) - #Skill #Required
+- [Use [draft] helper](../../skills/helper(v2)/SKILL.md) - #Skill #Required
+- [Use escaped helper](../../skills/helper\\(v3\\)/SKILL.md) - #Skill #Required
+- [Use escaped hash helper](../../skills/helper\\#draft.md) - #Document #Required
+
+## Steps
+
+1. Ship it.
+`);
+    await runCli("index", root);
+
+    const followed = await runCli("find", "--route", "workflows/delivery/ship.md", "--follow-required", "--paths", root);
+    expect(followed.stderr).toBe("");
+    expect(followed.exitCode).toBe(0);
+    expect(followed.stdout).toContain("workflows/delivery/ship.md");
+    expect(followed.stdout).toContain("skills/helper kit/SKILL.md");
+    expect(followed.stdout).toContain("skills/helper(v2)/SKILL.md");
+    expect(followed.stdout).toContain("skills/helper(v3)/SKILL.md");
+    expect(followed.stdout).toContain("skills/helper#draft.md");
+
+    const escapedCliRoute = await runCli("find", "--route", "../outside.md", "--paths", root);
+    expect(escapedCliRoute.exitCode).toBe(1);
+    expect(escapedCliRoute.stderr).toContain("must not escape or change the workspace path");
+  });
+
+  test("blocks invalid and empty Required Routes sections instead of silently skipping them", async () => {
+    const root = await createFindRoot();
+    const workflows = await createCategory(root, "workflows", "# Workflows\n");
+    await fs.writeFile(path.join(workflows, "invalid.md"), `# Invalid
+
+## Required Routes
+
+- [Missing tags](../skills/helper/SKILL.md)
+`);
+    await fs.writeFile(path.join(workflows, "empty.md"), `# Empty
+
+## Required Routes
+
+Routes will be selected later.
+`);
+
+    const invalid = await runCli("find", "--route", "workflows/invalid.md", "--follow-required", "--paths", root);
+    expect(invalid.exitCode).toBe(1);
+    expect(invalid.stderr).toContain("blocker, not a skip");
+    expect(invalid.stderr).toContain("invalid Required Routes line");
+
+    const empty = await runCli("find", "--route", "workflows/empty.md", "--follow-required", "--paths", root);
+    expect(empty.exitCode).toBe(1);
+    expect(empty.stderr).toContain("blocker, not a skip");
+    expect(empty.stderr).toContain("has no parseable routes and does not state none");
+  });
+
+  test("blocks encoded parent traversal outside the target from Required Route links", async () => {
+    const root = await createFindRoot();
+    const workflows = await createCategory(root, "workflows", "# Workflows\n");
+    await fs.writeFile(path.join(workflows, "escape.md"), `# Escape
+
+## Required Routes
+
+- [Outside](%2E%2E/%2E%2E/outside.md) - #Required
+
+## Steps
+
+1. Do not escape.
+`);
+    await runCli("index", root);
+
+    const followed = await runCli("find", "--route", "workflows/escape.md", "--follow-required", "--paths", root);
+    expect(followed.exitCode).toBe(1);
+    expect(followed.stderr).toContain("blocker");
+
+    const diagnosed = await runCli("doctor", root);
+    expect(diagnosed.exitCode).toBe(1);
+    expect(diagnosed.stdout).toContain("resolves outside the target workspace");
+  });
+
+  test("blocks a Required Route link that escapes physically through a junction or symlink", async () => {
+    const root = await createFindRoot();
+    const outside = await createRoot();
+    const workflows = await createCategory(root, "workflows", "# Workflows\n");
+    await fs.writeFile(path.join(outside, "outside.md"), "# Outside\n");
+    try {
+      await fs.symlink(outside, path.join(root, "linked-content"), process.platform === "win32" ? "junction" : "dir");
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === "EPERM" || (error as NodeJS.ErrnoException).code === "EACCES") return;
+      throw error;
+    }
+    await fs.writeFile(path.join(workflows, "linked.md"), `# Linked
+
+## Required Routes
+
+- [Outside](../linked-content/outside.md) - #Required
+
+## Steps
+
+1. Stay inside.
+`);
+
+    const followed = await runCli("find", "--route", "workflows/linked.md", "--follow-required", "--paths", root);
+    expect(followed.exitCode).toBe(1);
+    expect(followed.stderr).toContain("blocker");
+  });
+
   test("ignores Required Routes examples inside tilde fences while honoring explicit none", async () => {
     const root = await createFindRoot();
     const workflows = await createCategory(root, "workflows", "# Workflows\n");
@@ -1704,7 +1848,7 @@ Read every route below before Step 1.
       "## Required Routes",
       "",
       "~~~~markdown",
-      "- `skills/missing/SKILL.md` - fenced example only",
+      "- [Fenced example only](../skills/missing/SKILL.md) - #Skill",
       "```",
       "~~~~",
       "",
@@ -1779,6 +1923,24 @@ ${entries.length > 0 ? entries.join("\n") : "- none - No entries - #Empty"}
 <!-- open-forge:generated-index:end -->
 `;
 
+  test("keeps legacy .agents-prefixed generated routes readable during migration", async () => {
+    const root = await createRoot();
+    const agents = path.join(root, ".agents");
+    const directives = path.join(agents, "directives");
+    await fs.mkdir(directives, { recursive: true });
+    await fs.writeFile(path.join(agents, "loader.md"), routedDocument("Loader", ["Core"], [
+      "- `.agents/directives/_directives.md` - Legacy root route - #LoadNow #Directive"
+    ]));
+    await fs.writeFile(path.join(directives, "_directives.md"), routedDocument("Directives", ["LoadNow", "Directive"]));
+
+    const loaded = await runCli("load", "--paths", root);
+    expect(loaded.exitCode).toBe(0);
+    expect(loaded.stdout.trim().split(/\r?\n/)).toEqual([
+      ".agents/loader.md",
+      ".agents/directives/_directives.md"
+    ]);
+  });
+
   test("emits loader-first visible LoadNow routes, adjacent overwrites, and complete KeepInMind context", async () => {
     const root = await createRoot();
     const agents = path.join(root, ".agents");
@@ -1791,23 +1953,23 @@ ${entries.length > 0 ? entries.join("\n") : "- none - No entries - #Empty"}
     const loader = path.join(agents, "loader.md");
     const directivesIndex = path.join(directives, "_directives.md");
     await fs.writeFile(loader, routedDocument("Loader", ["Core"], [
-      "- `directives/_directives.md` - Directives fixture - #LoadNow #Directive"
+      "- [Directives fixture](directives/_directives.md) - #LoadNow #Directive"
     ]));
     await fs.writeFile(path.join(agents, "loader.overwrite.md"), "# Loader local overwrite\n");
     await fs.writeFile(directivesIndex, routedDocument("Directives", ["LoadNow", "Directive"], [
-      "- `root-rule.md` - Root directive - #LoadNow #Directive",
-      "- `duplicate.md` - Visible and remembered directive - #LoadNow #KeepInMind #Directive",
-      "- `nested/_nested.md` - On-demand nested directives - #Directive"
+      "- [Root directive](root-rule.md) - #LoadNow #Directive",
+      "- [Visible and remembered directive](duplicate.md) - #LoadNow #KeepInMind #Directive",
+      "- [On-demand nested directives](nested/_nested.md) - #Directive"
     ]));
     await fs.writeFile(path.join(directives, "root-rule.md"), routedDocument("Root Rule", ["LoadNow", "Directive"]));
     await fs.writeFile(path.join(directives, "root-rule.overwrite.md"), "# Root rule local overwrite\n");
     await fs.writeFile(path.join(directives, "duplicate.md"), routedDocument("Duplicate", ["LoadNow", "KeepInMind", "Directive"]));
     await fs.writeFile(path.join(nested, "_nested.md"), routedDocument("Nested Directives", ["Directive"], [
-      "- `child-rule.md` - Nested direct directive - #LoadNow #Directive"
+      "- [Nested direct directive](child-rule.md) - #LoadNow #Directive"
     ]));
     await fs.writeFile(path.join(nested, "child-rule.md"), routedDocument("Child Rule", ["LoadNow", "Directive"]));
     await fs.writeFile(path.join(memory, "_memory.md"), routedDocument("Memory", ["KeepInMind", "Memory"], [
-      "- `detail.md` - Remembered detail - #LoadNow #Memory"
+      "- [Remembered detail](detail.md) - #LoadNow #Memory"
     ]));
     await fs.writeFile(path.join(memory, "detail.md"), routedDocument("Memory Detail", ["LoadNow", "Memory"]));
 
@@ -2048,6 +2210,24 @@ describe("doctor command", () => {
     expect(result.stderr).toBe("");
     expect(result.exitCode).toBe(1);
     expect(result.stdout).toContain("required route does not resolve: skills/missing/SKILL.md");
+  });
+
+  test("warns when a linked Required Route omits its canonical tag suffix", async () => {
+    const root = await createRoot();
+    const guides = await createCategory(root, "guides", "# Guides\n");
+    await fs.writeFile(path.join(guides, "guide.md"), `# Guide
+
+## Required Routes
+
+- [Incomplete](other.md)
+`);
+    await fs.writeFile(path.join(guides, "other.md"), "# Other\n");
+    await runCli("index", root);
+
+    const result = await runCli("doctor", root);
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("Required Routes line is not in entry format: - [Incomplete](other.md)");
   });
 
   test("enforces ordered workflow Mode and always-present Constraints", async () => {
@@ -2522,7 +2702,7 @@ describe("create command", () => {
     expect(result.stdout).toContain(".agents/patterns/react/_react.md");
     expect(result.stdout).toContain(".agents/patterns/react/components/_components.md");
     expect(react).toContain("tags: [Pattern]");
-    expect(parent).toContain("- `react/_react.md` - TODO - when to select this route and what it provides - #Pattern");
+    expect(parent).toContain("- [TODO - when to select this route and what it provides](react/_react.md) - #Pattern");
 
     const doctorResult = await runCli("doctor", root);
     expect(doctorResult.exitCode).toBe(0);
@@ -2583,7 +2763,7 @@ open-forge:
     expect(doctorResult.exitCode).toBe(0);
     expect(JSON.parse(doctorResult.stdout)).toMatchObject({ errors: 0, warnings: 0 });
     expect(await fs.readFile(path.join(target, ".agents", "patterns", "_patterns.md"), "utf8")).toContain(
-      "`my-pack/_my-pack.md` - Semantic scaffold installation fixture - #Extension #Pattern"
+      "[Semantic scaffold installation fixture](my-pack/_my-pack.md) - #Extension #Pattern"
     );
   });
 });

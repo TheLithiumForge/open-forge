@@ -60,7 +60,7 @@ A workflow defines an early `Mode` (`linear` or `iterative`), `Goal` (outcome, a
 
 Every complete workflow recipe declares exactly one primary phase tag: `PhaseDiscovery`, `PhaseDefinition`, `PhasePlanning`, `PhaseDelivery`, or `PhaseVerification`. Phases are non-waterfall wayfinding; work may start anywhere, skip, repeat, or move backward. Agents select from visible descriptions and tags before opening a workflow, confirm its Goal, and may recommend one available earlier workflow once when its `- helpful before: ...` work would help. The recommendation never blocks, and work proceeds with explicit assumptions when the prior work is unavailable or skipped. If no installed workflow matches, the agent presents the closest installed route or direct execution once.
 
-Agents read every `Required Routes` route before Step 1 and report a route that cannot be read as a blocker. "none" is a valid value.
+Agents read every `Required Routes` route before Step 1 and report a route that cannot be read as a blocker. "none" is a valid value. Every route line uses `- [Reason](relative/path.md) - #Tags`, resolves from the workflow file containing it, and includes useful tags with at least the target primitive type.
 
 A workflow step may consult guidance, apply patterns, invoke skills, delegate to a subagent, or hand off to another workflow by route while obeying directives loaded through the active route chain.
 
@@ -165,6 +165,7 @@ Agent primitives are aligned when:
 - workflow selection uses visible descriptions and tags, then may recommend one available earlier workflow once when declared prior work would help without blocking execution
 - a no-match case presents the closest installed route or direct execution once, while explicit choice or opt-out wins
 - agents read every Required Routes route before Step 1 and report unreadable routes as blockers
+- Required Routes use containing-file-relative Markdown links with a tag suffix that includes the target primitive type
 - every core primitive category is installed with its minimum `entrypoint`
 - core primitive `entrypoints` use #Core and singular primitive tags
 - opinionated primitive content remains local or optional

@@ -17,5 +17,5 @@ Documents are durable accepted records, or routes to those records, for long-for
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `evaluations/_evaluations.md` - Accepted evaluation syntheses; load when a loading, routing, or design decision needs its source evidence - #Memory #Document #Record #CurrentTruth #Evaluation #Evidence
+- [Accepted evaluation syntheses; load when a loading, routing, or design decision needs its source evidence](evaluations/_evaluations.md) - #Memory #Document #Record #CurrentTruth #Evaluation #Evidence
 <!-- open-forge:generated-index:end -->

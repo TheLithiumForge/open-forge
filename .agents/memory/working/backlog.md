@@ -11,8 +11,7 @@ Only open work belongs here. The mixed pre-review history is preserved in `.agen
 ## Complete The Current Alpha Pass
 
 1. Have the maintainer review and accept or revise the completed review-note alignment diff before committing it.
-2. Decide whether authored cross-file relationships should prefer relative Markdown links, backlinks, or neither; keep the current framework-wide policy unchanged until that choice is explicit.
-3. After maintainer feedback, extract only recurring project-specific patterns, guidance, workflows, or extensions that earn their context cost.
+2. After maintainer feedback, extract only recurring project-specific patterns, guidance, workflows, or extensions that earn their context cost.
 
 ## Prove The S++ Claims
 

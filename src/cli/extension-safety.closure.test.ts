@@ -118,7 +118,7 @@ describe("extension lifecycle safety closure", () => {
     requireSuccess(await runCli(["index", target]), "route unmanaged child through managed entrypoint");
     const indexed = await fs.readFile(entrypoint, "utf8");
     expect(indexed).toContain("Authored contract v1.");
-    expect(indexed).toContain("`local-note.md` - Locally owned routed child");
+    expect(indexed).toContain("[Locally owned routed child](local-note.md)");
 
     await writeText(
       path.join(extension, "payload", ...entrypointRelative.split("/")),
@@ -128,7 +128,7 @@ describe("extension lifecycle safety closure", () => {
     const updated = await fs.readFile(entrypoint, "utf8");
     expect(updated).toContain("Authored contract v2.");
     expect(updated).not.toContain("Authored contract v1.");
-    expect(updated).toContain("`local-note.md` - Locally owned routed child");
+    expect(updated).toContain("[Locally owned routed child](local-note.md)");
     const receipt = JSON.parse(await fs.readFile(path.join(target, "open-forge.extensions.json"), "utf8"));
     expect(receipt.roots).toContain("managed-route");
     expect(receipt.extensions["managed-route"].files).toContain(entrypointRelative);
@@ -160,7 +160,7 @@ describe("extension lifecycle safety closure", () => {
     requireSuccess(await runCli(["install", target]), "reinstall Core and regenerate managed entrypoint index");
     const coreIndexed = await fs.readFile(entrypoint, "utf8");
     expect(coreIndexed).toContain("Core-index contract v1.");
-    expect(coreIndexed).toContain("`local-note.md` - Locally owned routed child");
+    expect(coreIndexed).toContain("[Locally owned routed child](local-note.md)");
 
     await writeText(
       path.join(extension, "payload", ...entrypointRelative.split("/")),
@@ -170,7 +170,7 @@ describe("extension lifecycle safety closure", () => {
     const updated = await fs.readFile(entrypoint, "utf8");
     expect(updated).toContain("Core-index contract v2.");
     expect(updated).not.toContain("Core-index contract v1.");
-    expect(updated).toContain("`local-note.md` - Locally owned routed child");
+    expect(updated).toContain("[Locally owned routed child](local-note.md)");
     await expectHealthyTarget(target);
   });
 

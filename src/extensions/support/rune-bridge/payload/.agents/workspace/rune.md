@@ -10,8 +10,9 @@ Rune may assist relevance and recall when the current workspace or runtime provi
 
 ## Destinations
 
-- `.agents/` - authoritative Open Forge instructions, routes, memory, and indexes; read these files directly when deterministic routing or exact truth matters.
-- the workspace's installed Rune integration and its own documentation - authority for whether Rune is available and how its current interface behaves.
+- [authoritative Open Forge instructions, routes, memory, and indexes; read these files directly when deterministic routing or exact truth matters.](../) - #Core #Routing #SourceOfTruth
+
+The workspace's installed Rune integration and its own documentation remain the authority for whether Rune is available and how its current interface behaves.
 
 ## Use When
 

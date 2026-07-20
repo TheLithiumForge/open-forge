@@ -61,7 +61,7 @@ Memory records state; it is not a behavior primitive.
 
 Memory material moves between #Memory routes when its state or owner changes.
 
-Useful durable state must be written to the matching #Memory route when safe and allowed. Private or opaque agent memory is a hint, not the source of truth for workspace state.
+Useful durable state must be written to its matching routed owner when safe and allowed; reusable user direction must not remain only in chat. An explicit instruction or correction that clearly states standing intent is user accord for its stated scope. Otherwise the material remains candidate memory, or the agent proposes its destination and asks before closeout. Private or opaque agent memory is a hint, not the source of truth for workspace state.
 
 If memory creates behavior, reusable form, guidance, capability, workflow, workspace routing, or other #Core material, extract it into the matching #Core route, including user-created #Core categories and files.
 
@@ -116,6 +116,7 @@ The implementation is aligned when it:
 - marks `crystallized/` `entries` with #CurrentTruth
 - keeps Memory separate from primitive behavior routes
 - prefers written #Memory routes over private agent memory for workspace state
+- treats explicit instructions and corrections with clear standing intent as scoped user accord, while preserving ambiguous reusable direction as candidate memory or asking before closeout
 - moves material between #Memory routes when its state or owner changes
 - extracts operational memory material into matching #Core routes, including user-created #Core categories and files
 - requires user accord and a reviewable change before candidate material becomes #CurrentTruth or normative #Core

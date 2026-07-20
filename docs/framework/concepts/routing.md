@@ -93,11 +93,11 @@ The loaded target still gets its meaning from its category and authored content.
 
 ## Path Contract
 
-Generated paths must be concrete and relative to the active workspace root.
+Generated `Entries` and authored `Required Routes` use `- [Description](relative/path.md) - #Tags`. Each link destination is concrete and resolves relative to the Markdown file containing it. A loader link therefore starts from `.agents/loader.md`, while a category or workflow link starts from that category `entrypoint` or workflow file.
 
-The active workspace root is the directory whose `AGENTS.md` selected the loader. Agents and tooling resolve `.agents/...` from that directory and do not infer a different logical root from Git or submodule boundaries.
+The active workspace root is the directory whose `AGENTS.md` selected the loader. Resolving a Markdown link does not infer a different logical root from Git or submodule boundaries, and a relative destination that uses `..` must still resolve inside the active workspace.
 
-Generated path identity remains workspace-relative without runtime constants. Security-sensitive CLI lookup, validation, indexing, installation, and extension writes additionally require every consumed or mutated route to remain physically below that target, and reject an externally resolving symlink or junction. A plain Markdown agent may follow an explicitly trusted external mount, but that is outside the CLI trust boundary.
+CLI route arguments remain workspace-relative because they are command inputs rather than Markdown links. For example, `open-forge find --route .agents/workflows/dev/_dev.md` resolves from the selected target. CLI output may likewise use workspace-relative route identity. Security-sensitive CLI lookup, validation, indexing, installation, and extension writes require every consumed or mutated route to remain physically below that target and reject an externally resolving symlink or junction. A plain Markdown agent may follow an explicitly trusted external mount, but that is outside the CLI trust boundary.
 
 ## Scoped Routes
 
@@ -182,7 +182,9 @@ Routing is aligned when:
 - direct directive files carry #LoadNow; active directive routes settle scope before bodies are read, root direct files bind workspace-wide, and selected child direct files bind within their visible positive scope
 - directive bodies add no second applicability gate, child directive scopes do not silently override ancestors, and inactive archive, example, or source inspection does not activate a directive
 - workflow descriptions and tags support selection, phase tags remain non-waterfall wayfinding, and routed Goals own execution and completion
-- generated paths are concrete and workspace-root-relative
+- generated `Entries` and authored `Required Routes` use concrete containing-file-relative Markdown links
+- loader links resolve relative to `.agents/loader.md`
+- CLI `--route` arguments and reported route identities remain workspace-relative
 - repository and submodule boundaries do not change the logical active workspace root
 - deterministic CLI reads and writes reject routes that escape the target through a symbolic link or junction
 - `framework routes`, `scope routes`, `scoped framework routes`, and `slugs` have distinct meanings

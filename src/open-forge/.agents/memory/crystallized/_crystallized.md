@@ -17,6 +17,6 @@ Crystallized memory contains accepted, durable #CurrentTruth within its stated s
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `decisions/_decisions.md` - Accepted rationale that explains important choices and their consequences - #LoadNow #Memory #Decision #Rationale #CurrentTruth
-- `documents/_documents.md` - Durable accepted records, or routes to those records, for long-form project knowledge - #LoadNow #Memory #Document #Record #CurrentTruth
+- [Accepted rationale that explains important choices and their consequences](decisions/_decisions.md) - #LoadNow #Memory #Decision #Rationale #CurrentTruth
+- [Durable accepted records, or routes to those records, for long-form project knowledge](documents/_documents.md) - #LoadNow #Memory #Document #Record #CurrentTruth
 <!-- open-forge:generated-index:end -->

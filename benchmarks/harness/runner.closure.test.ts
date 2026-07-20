@@ -623,7 +623,9 @@ await fs.writeFile(path.join(workspace, ".git", "hooks", "pre-commit"), "malicio
       if (scenario.currentTruth) {
         const decisions = path.join(prepared.workspaceDir, ".agents", "memory", "crystallized", "decisions");
         expect(await exists(path.join(decisions, scenario.currentTruth))).toBe(true);
-        expect(await fs.readFile(path.join(decisions, "_decisions.md"), "utf8")).toContain(`- \`${scenario.currentTruth}\``);
+        expect(await fs.readFile(path.join(decisions, "_decisions.md"), "utf8")).toContain(
+          `](${scenario.currentTruth}) - #Memory #Decision #CurrentTruth`
+        );
       }
 
       for (const workflow of scenario.workflows) {

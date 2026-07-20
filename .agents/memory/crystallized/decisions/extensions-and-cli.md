@@ -6,7 +6,7 @@ open-forge:
 
 # Extensions And CLI
 
-Accepted decisions extracted from the design sessions and revised on 2026-07-19 after dogfood review.
+Accepted decisions extracted from the design sessions and revised on 2026-07-20 after dogfood review.
 
 - #Extension is optional installable material added on top of #Core and #Memory. Extension is the content-agnostic installation unit, not another runtime primitive: one extension may contain a skill, workflow, directives, other routed material, a deliberate mix, or only dependencies as a convenience pack.
 - Extensions add whole files inside the existing routed structure. They do not mutate shared Markdown files, install companion additions, or create another framework root.
@@ -25,5 +25,6 @@ Accepted decisions extracted from the design sessions and revised on 2026-07-19 
 - Idless direct local overlays and skills installed outside `extend` remain unmanaged and unclaimed. Reindexing or manually updating routing for an ordinary skill makes it visible without transferring ownership. A managed source may not silently replace an unowned path that could not be restored safely, and an unmanaged overlay may not replace a receipt-owned path.
 - Removal is explicit: it removes exactly the requested installed ids and blocks while retained extensions still depend on them. Updating or removing an owned entrypoint also blocks when the final route tree would strand retained descendants. It does not infer or prune installed orphan dependencies. An owned file is removed only when its recorded content still matches.
 - Shared first-party skills have one canonical skill-only extension owner; dependent workflows name both the extension dependency at install time and the concrete installed Required Route at runtime. Any complete ordinary `SKILL.md` package may coexist under `.agents/skills/`; routing it does not make Open Forge own or redefine its internals.
+- Extension Markdown links resolve relative to their containing file in the assembled workspace. Same-package links resolve in isolated extension source; framework and declared-dependency links may be unresolved there but must resolve after #Core and the complete dependency closure are installed. Cross-package source stubs and duplicated payload files are not required. `doctor` and `find --follow-required` remain manifest-agnostic complete-workspace validators, so they report those intentionally absent cross-package targets when aimed directly at an isolated source payload. (revised 2026-07-20)
 - External-skill interoperability is distinct-path additive, not automatic substitution for a bundled extension id. Substitution requires a future explicit satisfaction mapping or capability/ownership model.
 - Registry resolution, network fetching, compatibility solving, migration hooks, automatic orphan pruning, persistent crash-recovery journaling, and remote trust policy remain outside the current contract.

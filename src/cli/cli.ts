@@ -29,6 +29,7 @@ const windowsReservedPathBasenames = /^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])$/i;
 const retiredLoadPolicyTags = new Set(["openforge", "loadwithparententrypoint", "loadforpostworkreview"]);
 const workflowPhaseTags = ["PhaseDiscovery", "PhaseDefinition", "PhasePlanning", "PhaseDelivery", "PhaseVerification"] as const;
 const workflowPhaseTagSet = new Set(workflowPhaseTags.map((tag) => tag.toLowerCase()));
+const markdownEscapablePunctuation = new Set("!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~");
 const categoryTypeTags: Record<string, string> = {
   directives: "Directive",
   guidance: "Guidance",
@@ -2245,9 +2246,9 @@ async function collectLoadItems(targetRoot: string, scanRoot: string): Promise<L
     traversed.add(key);
     await emitWithCompanions(file);
     const text = await fs.readFile(file, "utf8");
-    for (const entry of readGeneratedEntries(text)) {
+    for (const entry of parseGeneratedEntries(text)) {
       if (!entry.tags.some((tag) => tag.toLowerCase() === "loadnow")) continue;
-      const child = await resolveGeneratedRouteFile(entry.path, file, targetRoot);
+      const child = await resolveGeneratedRouteFile(entry, file, targetRoot);
       await visitVisibleLoadNow(child);
     }
   };
@@ -2302,13 +2303,19 @@ async function find(findArgs: string[]): Promise<void> {
     const missing: string[] = [];
     const required: string[] = [];
     for (const file of selected) {
-      const parsed = readRequiredRoutes(await fs.readFile(file, "utf8"));
-      for (const requiredPath of parsed.paths) {
+      const parsed = parseRequiredRoutes(await fs.readFile(file, "utf8"));
+      for (const invalid of parsed.invalid) {
+        missing.push(`${workspaceRoute(targetRoot, file)} -> invalid Required Routes line: ${invalid}`);
+      }
+      if (parsed.present && !parsed.none && parsed.routes.length === 0 && parsed.invalid.length === 0) {
+        missing.push(`${workspaceRoute(targetRoot, file)} -> Required Routes section has no parseable routes and does not state none`);
+      }
+      for (const requiredRoute of parsed.routes) {
         try {
-          const resolved = await resolveWorkspaceRelativeFile(requiredPath, targetRoot);
+          const resolved = await resolveRequiredRouteFile(requiredRoute, file, targetRoot);
           required.push(resolved);
         } catch {
-          missing.push(`${workspaceRoute(targetRoot, file)} -> ${requiredPath}`);
+          missing.push(`${workspaceRoute(targetRoot, file)} -> ${requiredRoute.path}`);
         }
       }
     }
@@ -2651,8 +2658,8 @@ async function expandRouteByDepth(routeFile: string, depth: number, targetRoot: 
   for (let level = 0; level < depth; level += 1) {
     const next: string[] = [];
     for (const file of frontier) {
-      for (const entryPath of readGeneratedEntryPaths(await fs.readFile(file, "utf8"))) {
-        const resolved = await resolveGeneratedRouteFile(entryPath, file, targetRoot);
+      for (const entry of parseGeneratedEntries(await fs.readFile(file, "utf8"))) {
+        const resolved = await resolveGeneratedRouteFile(entry, file, targetRoot);
         const key = path.resolve(resolved);
         if (!visited.has(key)) {
           visited.add(key);
@@ -2694,7 +2701,7 @@ async function assertExistingPathInside(candidate: string, targetRoot: string, c
   }
 }
 
-async function resolveWorkspaceRelativeFile(route: string, targetRoot: string): Promise<string> {
+async function resolveLegacyWorkspaceRelativeFile(route: string, targetRoot: string): Promise<string> {
   const normalized = normalizeSafeRelativeRoute(route);
   const candidate = path.resolve(targetRoot, normalized);
   assertLexicallyInside(candidate, targetRoot, `Required route ${route}`);
@@ -2705,16 +2712,64 @@ async function resolveWorkspaceRelativeFile(route: string, targetRoot: string): 
   return candidate;
 }
 
-async function resolveGeneratedRouteFile(entryPath: string, sourceFile: string, targetRoot: string): Promise<string> {
-  const normalized = normalizeSafeRelativeRoute(entryPath);
-  const candidate = normalized.startsWith(`${agentsDirectoryName}/`)
+function normalizeDocumentRelativeRoute(routeArg: string, allowParentTraversal: boolean): string {
+  const value = routeArg.trim();
+  if (
+    !value
+    || value.includes("\0")
+    || value.includes("\\")
+    || path.isAbsolute(value)
+    || path.win32.isAbsolute(value)
+  ) {
+    throw new Error(`Route must be a document-relative Markdown path: ${routeArg}`);
+  }
+
+  const normalized = value.replace(/^(?:\.\/)+/, "");
+  const segments = normalized.split("/");
+  if (
+    segments.some((segment) => !segment || segment === "." || segment.includes(":"))
+    || (!allowParentTraversal && segments.includes(".."))
+  ) {
+    throw new Error(`Route must not escape or change its Markdown document path: ${routeArg}`);
+  }
+  return normalized;
+}
+
+async function resolveRequiredRouteFile(
+  route: ParsedRouteReference,
+  sourceFile: string,
+  targetRoot: string,
+): Promise<string> {
+  if (route.syntax === "legacy-backtick") {
+    return resolveLegacyWorkspaceRelativeFile(route.path, targetRoot);
+  }
+
+  const normalized = normalizeDocumentRelativeRoute(route.path, true);
+  const candidate = path.resolve(path.dirname(sourceFile), normalized);
+  assertLexicallyInside(candidate, targetRoot, `Required route ${route.path}`);
+  if (!(await isFile(candidate))) {
+    throw new Error(`required route does not resolve: ${route.path} (from ${workspaceRoute(targetRoot, sourceFile)})`);
+  }
+  await assertExistingPathInside(candidate, targetRoot, `Required route ${route.path}`);
+  return candidate;
+}
+
+async function resolveGeneratedRouteFile(
+  entry: ParsedRouteReference,
+  sourceFile: string,
+  targetRoot: string,
+): Promise<string> {
+  const normalized = entry.syntax === "legacy-backtick"
+    ? normalizeSafeRelativeRoute(entry.path)
+    : normalizeDocumentRelativeRoute(entry.path, false);
+  const candidate = entry.syntax === "legacy-backtick" && normalized.startsWith(`${agentsDirectoryName}/`)
     ? path.resolve(targetRoot, normalized)
     : path.resolve(path.dirname(sourceFile), normalized);
-  assertLexicallyInside(candidate, targetRoot, `Generated route ${entryPath}`);
+  assertLexicallyInside(candidate, targetRoot, `Generated route ${entry.path}`);
   if (!(await isFile(candidate))) {
-    throw new Error(`generated entry does not resolve: ${entryPath} (from ${workspaceRoute(targetRoot, sourceFile)})`);
+    throw new Error(`generated entry does not resolve: ${entry.path} (from ${workspaceRoute(targetRoot, sourceFile)})`);
   }
-  await assertExistingPathInside(candidate, targetRoot, `Generated route ${entryPath}`);
+  await assertExistingPathInside(candidate, targetRoot, `Generated route ${entry.path}`);
   return candidate;
 }
 
@@ -2748,30 +2803,145 @@ async function effectiveTags(file: string): Promise<string[]> {
   return metadata.tags.length > 0 ? metadata.tags : defaultTagsForIndexEntry(file);
 }
 
+type RouteReferenceSyntax = "markdown-link" | "legacy-backtick";
+type ParsedRouteReference = { path: string; tags: string[]; syntax: RouteReferenceSyntax };
 type GeneratedEntry = { path: string; tags: string[] };
 
 function readGeneratedEntries(text: string): GeneratedEntry[] {
+  return parseGeneratedEntries(text).map(({ path: entryPath, tags }) => ({ path: entryPath, tags }));
+}
+
+function parseGeneratedEntries(text: string): ParsedRouteReference[] {
   const region = readGeneratedRegion(text);
   if (region.status !== "ok") {
     return [];
   }
 
-  const entries: GeneratedEntry[] = [];
+  const entries: ParsedRouteReference[] = [];
   for (const line of region.body.split(/\r?\n/)) {
-    const match = line.match(/^- `([^`]+)`/);
-    if (match) {
-      entries.push({
-        path: match[1],
-        tags: [...line.matchAll(/#([A-Za-z][A-Za-z0-9-]*)/g)].map((tag) => tag[1])
-      });
-    }
+    const entry = parseRouteEntryLine(line);
+    if (entry) entries.push(entry);
   }
 
   return entries;
 }
 
-function readGeneratedEntryPaths(text: string): string[] {
-  return readGeneratedEntries(text).map((entry) => entry.path);
+function parseRouteEntryLine(line: string): ParsedRouteReference | null {
+  const markdownLink = parseMarkdownRouteEntryLine(line);
+  if (markdownLink) return markdownLink;
+
+  const legacy = line.match(/^- `([^`]+)`(.*)$/);
+  if (!legacy) return null;
+  return {
+    path: toPosix(legacy[1]),
+    tags: readTrailingTagSuffix(legacy[2]),
+    syntax: "legacy-backtick"
+  };
+}
+
+function parseMarkdownRouteEntryLine(line: string): ParsedRouteReference | null {
+  if (!line.startsWith("- [")) return null;
+
+  const labelEnd = findMatchingMarkdownDelimiter(line, 2, "[", "]");
+  if (labelEnd === -1 || line[labelEnd + 1] !== "(") return null;
+  if (!line.slice(3, labelEnd).replace(/\\./g, "x").trim()) return null;
+
+  const destinationStart = labelEnd + 2;
+  let destination = "";
+  let destinationEnd = -1;
+  if (line[destinationStart] === "<") {
+    const angleEnd = findUnescapedCharacter(line, ">", destinationStart + 1);
+    if (angleEnd === -1 || line[angleEnd + 1] !== ")") return null;
+    destination = line.slice(destinationStart + 1, angleEnd);
+    destinationEnd = angleEnd + 1;
+  } else {
+    destinationEnd = findMatchingMarkdownDelimiter(line, labelEnd + 1, "(", ")");
+    if (destinationEnd === -1) return null;
+    destination = line.slice(destinationStart, destinationEnd);
+    if (/\s/.test(destination)) return null;
+  }
+
+  const tags = readCanonicalTagSuffix(line.slice(destinationEnd + 1));
+  const entryPath = decodeMarkdownRouteHref(destination);
+  if (!entryPath || !tags) return null;
+  return { path: entryPath, tags, syntax: "markdown-link" };
+}
+
+function findMatchingMarkdownDelimiter(
+  value: string,
+  openIndex: number,
+  openCharacter: string,
+  closeCharacter: string,
+): number {
+  if (value[openIndex] !== openCharacter || isMarkdownEscaped(value, openIndex)) return -1;
+  let depth = 0;
+  for (let index = openIndex; index < value.length; index += 1) {
+    if (isMarkdownEscaped(value, index)) continue;
+    if (value[index] === openCharacter) {
+      depth += 1;
+    } else if (value[index] === closeCharacter) {
+      depth -= 1;
+      if (depth === 0) return index;
+    }
+  }
+  return -1;
+}
+
+function findUnescapedCharacter(value: string, character: string, start: number): number {
+  for (let index = start; index < value.length; index += 1) {
+    if (value[index] === character && !isMarkdownEscaped(value, index)) return index;
+  }
+  return -1;
+}
+
+function isMarkdownEscaped(value: string, index: number): boolean {
+  let backslashes = 0;
+  for (let cursor = index - 1; cursor >= 0 && value[cursor] === "\\"; cursor -= 1) {
+    backslashes += 1;
+  }
+  return backslashes % 2 !== 0;
+}
+
+function decodeMarkdownRouteHref(destination: string): string | null {
+  if (
+    !destination
+    || findUnescapedCharacter(destination, "#", 0) !== -1
+    || findUnescapedCharacter(destination, "?", 0) !== -1
+  ) {
+    return null;
+  }
+  const unescaped = unescapeMarkdownPunctuation(destination);
+  try {
+    return toPosix(decodeURIComponent(unescaped));
+  } catch {
+    return null;
+  }
+}
+
+function unescapeMarkdownPunctuation(value: string): string {
+  let result = "";
+  for (let index = 0; index < value.length; index += 1) {
+    if (value[index] === "\\" && index + 1 < value.length && markdownEscapablePunctuation.has(value[index + 1])) {
+      result += value[index + 1];
+      index += 1;
+    } else {
+      result += value[index];
+    }
+  }
+  return result;
+}
+
+function readCanonicalTagSuffix(suffix: string): string[] | null {
+  const match = suffix.match(/^\s+-\s+(#[A-Za-z][A-Za-z0-9-]*(?:\s+#[A-Za-z][A-Za-z0-9-]*)*)\s*$/);
+  if (!match) return null;
+  return [...match[1].matchAll(/#([A-Za-z][A-Za-z0-9-]*)/g)].map((tag) => tag[1]);
+}
+
+function readTrailingTagSuffix(suffix: string): string[] {
+  const match = suffix.match(/(?:^|\s+-\s+)(#[A-Za-z][A-Za-z0-9-]*(?:\s+#[A-Za-z][A-Za-z0-9-]*)*)\s*$/);
+  return match
+    ? [...match[1].matchAll(/#([A-Za-z][A-Za-z0-9-]*)/g)].map((tag) => tag[1])
+    : [];
 }
 
 type RequiredRoutes = {
@@ -2781,8 +2951,15 @@ type RequiredRoutes = {
   present: boolean;
 };
 
+type ParsedRequiredRoutes = RequiredRoutes & { routes: ParsedRouteReference[] };
+
 function readRequiredRoutes(rawText: string): RequiredRoutes {
-  const result: RequiredRoutes = { paths: [], none: false, invalid: [], present: false };
+  const { routes: _routes, ...result } = parseRequiredRoutes(rawText);
+  return result;
+}
+
+function parseRequiredRoutes(rawText: string): ParsedRequiredRoutes {
+  const result: ParsedRequiredRoutes = { paths: [], routes: [], none: false, invalid: [], present: false };
   const scanned = scanMarkdownHeadings(rawText);
   const headingIndex = scanned.headings.findIndex((heading) => heading.level === 2 && heading.title.toLowerCase() === "required routes");
   if (headingIndex === -1) {
@@ -2801,9 +2978,10 @@ function readRequiredRoutes(rawText: string): RequiredRoutes {
       continue;
     }
 
-    const entry = line.match(/^- `([^`]+)`/);
+    const entry = parseRouteEntryLine(line);
     if (entry) {
-      result.paths.push(toPosix(entry[1]));
+      result.paths.push(entry.path);
+      result.routes.push(entry);
       continue;
     }
 
@@ -2974,11 +3152,11 @@ async function doctor(doctorArgs: string[]): Promise<void> {
       report("warning", owner, "generated region is stale; run open-forge index");
     }
 
-    for (const entryPath of readGeneratedEntryPaths(text)) {
+    for (const entry of parseGeneratedEntries(text)) {
       try {
-        await resolveGeneratedRouteFile(entryPath, owner, targetRoot);
+        await resolveGeneratedRouteFile(entry, owner, targetRoot);
       } catch (error) {
-        report("error", owner, error instanceof Error ? error.message : `generated entry does not resolve: ${entryPath}`);
+        report("error", owner, error instanceof Error ? error.message : `generated entry does not resolve: ${entry.path}`);
       }
     }
   }
@@ -3001,16 +3179,16 @@ async function doctor(doctorArgs: string[]): Promise<void> {
       }
     }
 
-    const required = readRequiredRoutes(text);
+    const required = parseRequiredRoutes(text);
     if (required.present) {
       if (!required.none && required.paths.length === 0) {
         report("warning", file, "Required Routes section has no parseable routes and does not state none");
       }
-      for (const requiredPath of required.paths) {
+      for (const requiredRoute of required.routes) {
         try {
-          await resolveWorkspaceRelativeFile(requiredPath, targetRoot);
+          await resolveRequiredRouteFile(requiredRoute, file, targetRoot);
         } catch (error) {
-          report("error", file, error instanceof Error ? error.message : `required route does not resolve: ${requiredPath}`);
+          report("error", file, error instanceof Error ? error.message : `required route does not resolve: ${requiredRoute.path}`);
         }
       }
       for (const invalid of required.invalid) {
@@ -3520,8 +3698,7 @@ async function computeLoaderBody(agentsRoot: string): Promise<string> {
 }
 
 function loaderRoutePath(agentsRoot: string, file: string): string {
-  const relativeFile = toPosix(path.relative(agentsRoot, file));
-  return path.basename(agentsRoot) === ".agents" ? `.agents/${relativeFile}` : relativeFile;
+  return toPosix(path.relative(agentsRoot, file));
 }
 
 async function createGeneratedEntry(file: string, route: string): Promise<string> {
@@ -3529,7 +3706,21 @@ async function createGeneratedEntry(file: string, route: string): Promise<string
   const metadata = readMetadata(text);
   const description = metadata.description || readMarkdownDescription(text) || "No description";
   const tags = metadata.tags.length > 0 ? metadata.tags : defaultTagsForIndexEntry(file);
-  return `- \`${route}\` - ${description} - ${formatTags(tags)}`;
+  return `- [${escapeMarkdownLinkLabel(description)}](${encodeMarkdownRouteHref(route)}) - ${formatTags(tags)}`;
+}
+
+function escapeMarkdownLinkLabel(label: string): string {
+  return label
+    .replace(/\\/g, "\\\\")
+    .replace(/\[/g, "\\[")
+    .replace(/\]/g, "\\]");
+}
+
+function encodeMarkdownRouteHref(route: string): string {
+  return toPosix(route)
+    .split("/")
+    .map((segment) => encodeURIComponent(segment).replace(/[!'()*]/g, (character) => `%${character.charCodeAt(0).toString(16).toUpperCase()}`))
+    .join("/");
 }
 
 function updateGeneratedIndexRegion(text: string, body: string, indexFile: string): string {

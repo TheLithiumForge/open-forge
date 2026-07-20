@@ -21,7 +21,7 @@ Emerging memory preserves useful candidate material that is not yet accepted as 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `analysis/_analysis.md` - Structured reasoning, investigation, or comparison that is useful but not accepted truth - #LoadNow #Memory #Analysis #Reasoning #Contextual #Candidate
-- `ideas/_ideas.md` - Future possibilities, experiments, open questions, and options to explore later - #LoadNow #Memory #Idea #Exploration #OrganicGrowth #Contextual #Candidate
-- `observations/_observations.md` - Agent-noticed findings that may become learning, memory, or Core updates - #KeepInMind #Memory #Observation #AgentLearning #OrganicGrowth #Contextual #Candidate
+- [Structured reasoning, investigation, or comparison that is useful but not accepted truth](analysis/_analysis.md) - #LoadNow #Memory #Analysis #Reasoning #Contextual #Candidate
+- [Future possibilities, experiments, open questions, and options to explore later](ideas/_ideas.md) - #LoadNow #Memory #Idea #Exploration #OrganicGrowth #Contextual #Candidate
+- [Agent-noticed findings that may become learning, memory, or Core updates](observations/_observations.md) - #KeepInMind #Memory #Observation #AgentLearning #OrganicGrowth #Contextual #Candidate
 <!-- open-forge:generated-index:end -->

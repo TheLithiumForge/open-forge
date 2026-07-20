@@ -4,7 +4,7 @@
 
 This descriptor governs `src/open-forge/.agents/loader.md`.
 
-The loader is the first Open Forge `entrypoint` after `AGENTS.md`. It owns only the universal top-down authority, inheritance, routing, and load-tag contract plus the generated registry of direct root routes.
+The loader is the first Open Forge `entrypoint` after `AGENTS.md`. It owns only the universal top-down authority, inheritance, routing, load-tag, and CLI-assistance contract plus the generated registry of direct root routes.
 
 ## Represents
 
@@ -18,7 +18,8 @@ Its Axioms use these groups in order:
 
 1. `Authority And Inheritance`
 2. `Routing`
-3. `Tags And Loading`
+3. `Tags And Loading`, with a `Defined Tags` subgroup
+4. `CLI`, with an `Applicable Commands` subgroup
 
 Workflow execution, memory lifecycle, skill behavior, directive scope details, and other category behavior belong to their routed #LoadNow owners.
 
@@ -44,13 +45,17 @@ When a user-owned `{name}.overwrite.md` exists, agents read it immediately after
 
 #KeepInMind is the complete routed continuity set. Agents read it at task start or resume, after detected context restoration, and before a handoff or closeout. They recheck it during work only when its follow-ups may have changed. The owning content retains its normal authority.
 
-`open-forge load --bodies` may batch exactly this traversal. Plain Markdown traversal is complete and authoritative when the command is absent.
+## CLI Assistance Contract
+
+When the Open Forge CLI is available, agents use each command that applies to the current work. The loader gives exact triggers for loading baseline context, inspecting inherited Axioms, regenerating route metadata, and validating structural changes.
+
+Every command automates the same plain-file contract. CLI availability never becomes a prerequisite for reading or maintaining an Open Forge workspace manually.
 
 ## Category Registry
 
 The loader ends with one generated entry for each direct child folder under `.agents/` that contains exactly one recognized category `entrypoint`.
 
-Paths are concrete and workspace-relative. Descriptions and tags derive from each category `entrypoint`; the registry never flattens nested category contents.
+Link destinations are concrete and relative to `.agents/loader.md`, such as `workspace/_workspace.md`. Link labels and tags derive from each category `entrypoint`; the registry never flattens nested category contents. CLI route identities remain workspace-relative, such as `.agents/workspace/_workspace.md`.
 
 ## Tags Contract
 
@@ -73,7 +78,10 @@ The implementation is aligned when it:
 - defines #LoadNow relative to an already-loaded parent
 - uses the narrowed complete #KeepInMind refresh triggers
 - loads only user-owned `.overwrite.md` after its base
-- treats `load --bodies` as optional batched traversal
+- gives compact, conditional triggers for `load --bodies`, `chain`, `index`, and `doctor`
+- introduces tag definitions and CLI commands with prose plus explicit subheadings rather than ambiguous adjacent peer lists
+- keeps CLI assistance equivalent to the complete plain-file contract
 - generates direct root route entries only
+- generates loader links relative to `.agents/loader.md` while leaving CLI route identities workspace-relative
 - defines reserved tags without making them authority
 - keeps the authored portion within 35 to 70 non-empty lines

@@ -65,7 +65,7 @@ Authored contract v1.
 `;
     const generatedChange = cliTestInternals.updateGeneratedIndexRegion(
       original,
-      "- `local.md` - Local route - #Local",
+      "- [Local route](local.md) - #Local",
       "fixture entrypoint"
     );
     const authoredChange = original.replace("Authored contract v1.", "Authored contract v2.");
@@ -197,10 +197,68 @@ Stable contract.
 - old.md - Old route - #Old
 <!-- open-forge:generated-index:end -->
 `;
-    const updated = cliTestInternals.updateGeneratedIndexRegion(original, "- `new.md` - New route - #New", "fixture.md");
+    const updated = cliTestInternals.updateGeneratedIndexRegion(original, "- [New route](new.md) - #New", "fixture.md");
     expect(updated).toContain("Stable contract.");
-    expect(updated).toContain("- `new.md` - New route - #New");
+    expect(updated).toContain("- [New route](new.md) - #New");
     expect(updated).not.toContain("Old route");
+  });
+
+  test("parses canonical links and legacy entries while taking tags only from the suffix", () => {
+    const document = `# Routes
+
+## Entries
+
+<!-- open-forge:generated-index:start -->
+- [A \\[draft\\] route #NotATag](nested/a%20%28draft%29%20%231.md) - #Actual #Route
+- \`legacy.md\` - Legacy #NotATag description - #Legacy
+<!-- open-forge:generated-index:end -->
+`;
+
+    expect(cliTestInternals.readGeneratedEntries(document)).toEqual([
+      { path: "nested/a (draft) #1.md", tags: ["Actual", "Route"] },
+      { path: "legacy.md", tags: ["Legacy"] }
+    ]);
+  });
+
+  test("accepts tagged Required Route links and reports incomplete linked entries as invalid", () => {
+    const document = `# Workflow
+
+## Required Routes
+
+- [Helper #NotATag](../skills/helper%20kit/SKILL.md) - #Skill #Required
+- [Use [draft] helper](../skills/helper(v2)/SKILL.md) - #Skill
+- [Use escaped helper](../skills/helper\\(v3\\)/SKILL.md) - #Skill
+- [Escaped hash](../skills/helper\\#draft.md) - #Document
+- [Escaped query](../skills/helper\\?draft.md) - #Document
+- [Missing tags](../skills/missing/SKILL.md)
+- [Unencoded space](../skills/helper kit/SKILL.md) - #Skill
+- [Raw fragment](../skills/helper#draft.md) - #Document
+- [Raw query](../skills/helper?draft.md) - #Document
+- [Unbalanced destination](../skills/helper(v4/SKILL.md) - #Skill
+- [Unbalanced [label](../skills/helper/SKILL.md) - #Skill
+- \`skills/legacy/SKILL.md\` - Legacy helper #NotATag - #Skill
+`;
+
+    expect(cliTestInternals.readRequiredRoutes(document)).toEqual({
+      paths: [
+        "../skills/helper kit/SKILL.md",
+        "../skills/helper(v2)/SKILL.md",
+        "../skills/helper(v3)/SKILL.md",
+        "../skills/helper#draft.md",
+        "../skills/helper?draft.md",
+        "skills/legacy/SKILL.md"
+      ],
+      none: false,
+      invalid: [
+        "- [Missing tags](../skills/missing/SKILL.md)",
+        "- [Unencoded space](../skills/helper kit/SKILL.md) - #Skill",
+        "- [Raw fragment](../skills/helper#draft.md) - #Document",
+        "- [Raw query](../skills/helper?draft.md) - #Document",
+        "- [Unbalanced destination](../skills/helper(v4/SKILL.md) - #Skill",
+        "- [Unbalanced [label](../skills/helper/SKILL.md) - #Skill"
+      ],
+      present: true
+    });
   });
 });
 

@@ -15,5 +15,5 @@ Planning snapshots retained to explain prior priorities without competing with t
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `2026-07-18_pre-review-backlog.md` - Historical snapshot of the mixed Open Forge backlog before the 2026-07-18 clean-review pruning pass - #Memory #Archived #Planning #Backlog #Contextual #Historical
+- [Historical snapshot of the mixed Open Forge backlog before the 2026-07-18 clean-review pruning pass](2026-07-18_pre-review-backlog.md) - #Memory #Archived #Planning #Backlog #Contextual #Historical
 <!-- open-forge:generated-index:end -->
