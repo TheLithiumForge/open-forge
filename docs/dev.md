@@ -24,12 +24,12 @@ The framework is designed to be a bit more work from the start, because it does 
 src/open-forge/   # installable template payload
 src/extensions/   # optional first-party extension packages
 src/cli/cli.ts    # CLI source
-benchmarks/harness/runner.ts # developer-only benchmark evidence runner
+benchmarks/harness/runner.ts # developer-only benchmark composition and run capture
 build.ts          # one build script
 dist/             # generated release output
 ```
 
-The shipped CLI runs on Node.js. Bun is the repository-development runtime for builds, tests, source indexing, and the developer benchmark harness; it is not required by users of the distributed CLI.
+The shipped CLI runs on Node.js. Bun is the repository-development runtime for builds, tests, source indexing, and the developer benchmark helper; it is not required by users of the distributed CLI.
 
 Framework governance lives in `docs/framework/`: `concepts/` owns cross-cutting behavior (routing, formatting, layers, primitives, extensions, overwrites, payload boundary) and `payload/` mirrors the installable files with one descriptor per installed file. When a descriptor changes required behavior, the matching installed file changes in the same work.
 
@@ -75,14 +75,14 @@ bun run test:fast
 
 Files named `*.unit.test.ts` exercise pure algorithms and state transitions without OS temporary directories, Git repositories, builds, or child CLI processes. Run them freely while developing.
 
-Files named `*.closure.test.ts` cross a real process, filesystem, Git, packaging, or benchmark-lifecycle boundary. They are intentionally explicit because they are slower and write substantially more temporary data:
+Files named `*.closure.test.ts` cross a real process, filesystem, Git, packaging, or benchmark-run boundary. They are intentionally explicit because they are slower and write substantially more temporary data:
 
 ```sh
 bun run test:closure
 bun run test:ci
 ```
 
-CI runs both tiers. Run closure tests locally before closing work that changes the command boundary, installation effects, rollback, containment, Git behavior, packaged layouts, or benchmark evidence. Both tiers remain normal Bun test files, so an IDE test extension can run one file or case directly.
+CI runs both tiers. Run closure tests locally before closing work that changes the command boundary, installation effects, rollback, containment, Git behavior, packaged layouts, or benchmark preparation and capture. Both tiers remain normal Bun test files, so an IDE test extension can run one file or case directly.
 
 Use the package scripts for tier selection. A raw `bun test` intentionally follows Bun's normal discovery and runs both `*.unit.test.ts` and `*.closure.test.ts`; it is therefore a full run, not the routine fast command. In an IDE, select unit files for fast feedback and closure files deliberately.
 

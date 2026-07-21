@@ -21,7 +21,6 @@
   ],
   "scripts": {
     "bench": "bun run benchmarks/harness/runner.ts",
-    "bench:validate": "bun run benchmarks/harness/runner.ts validate",
     "build": "bun run build.ts",
     "index": "bun run src/cli/cli.ts index ./src/open-forge",
     "test": "bun run test:fast",

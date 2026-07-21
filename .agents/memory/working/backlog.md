@@ -15,8 +15,8 @@ Only open work belongs here. The mixed pre-review history is preserved in `.agen
 
 ## Prove The S++ Claims
 
-1. Run the current workflow-first scenarios on the P0 harness across multiple models or runtimes, with repeated trials and independent reproduction before promoting behavioral or portability claims.
-2. Close the evidence gaps in `.agents/memory/emerging/observations/2026-07-12_benchmark-validity-gaps.md`: provenance, isolation, collision, replication, and synthesis consistency.
+1. Run the exact dual-review meta-scenarios across multiple models or runtimes, and compare stable controls with declared trap or on-demand treatments. Compare what each worker believes it did with the orchestrator's trace-backed behavior and outcome review before promoting behavioral or portability claims.
+2. Add stronger provenance, isolation, replication, or corpus controls only around a concrete claim that needs them; do not restore the retired P0 evidence platform as the default dogfood path.
 3. Evaluate `reliability-defaults`, the mixed development workflow, and the route-only `rune-bridge` in real use; preserve Open Forge's independence and add no stronger integration contract without evidence.
 4. Add CI for payload/descriptor alignment and structural validation; decide whether a bounded benchmark gate is reliable and economical enough for payload-changing pull requests.
 

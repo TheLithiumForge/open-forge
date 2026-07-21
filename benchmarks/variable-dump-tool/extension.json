@@ -1,4 +1,0 @@
-{
-  "name": "variable-dump-tool",
-  "description": "Benchmark variable overlay: adds the forge-dump bulk-reading tool and announces it via a loader overwrite"
-}

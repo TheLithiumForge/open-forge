@@ -1,62 +1,84 @@
 # Open Forge Benchmarks
 
-Reproducible dogfood scenarios for observing agent behavior across framework versions, models, seeds, and declared overlays.
+Reusable building blocks for observing how agents follow Open Forge across tasks, compositions, treatments, and models.
 
-Benchmark packages are versioned with the repository but excluded from the npm package. A package's `payload/` is worker-visible input; its `orchestrator/` material is evaluation-only and must never enter the worker workspace.
+## Design
 
-## Default Path
+The corpus has three stable layers:
 
-Use the developer-only runner documented in [harness/README.md](harness/README.md):
-
-```powershell
-bun run build
-bun run bench -- prepare --spec <run-spec.json> --runs-root <absolute-external-directory>
-bun run bench -- finalize --run <run-directory> --owner-token <token> --prepared-root <sha256> --evaluation <external-evaluation.json>
-bun run bench:validate -- --run <run-directory> --owner-token <token> --prepared-root <sha256>
-bun run bench -- render --run <run-directory>
+```text
+benchmarks/
+  building-blocks/
+    scenarios/       framework-agnostic task archetypes
+    primitives/      small directives, patterns, memories, tools, and other inputs
+  meta-scenarios/    exact reusable recipes
+  harness/           preparation, recording, and orchestration support
 ```
 
-`prepare` resolves the complete composition before claiming a run, snapshots every worker-visible component and orchestration-only input, runs the snapshotted CLI, and creates a clean Git baseline in an external workspace. It returns an `ownerToken` and `preparedRootSha256`; retain both as external trust inputs for finalization and every authenticated validation. The worker gets only that workspace and the exact prompt. `finalize` captures the final Git/tree evidence and a byte-complete regular-file workspace snapshot, writes canonical `result.json`, generates `report.md`, and authenticates the evidence root with the owner token.
+A scenario owns the task. It does not select framework primitives or extensions.
 
-The runner is not an agent scheduler. A human or orchestrator still launches a genuinely fresh worker, observes it, executes independent non-mutating verification, records traces, and supplies the evaluation JSON.
+A primitive is one small worker-visible input with an explicit kind. Primitives may be useful alone, while deliberate combinations may introduce ambiguity, conflict, distraction, or another trap worth observing.
 
-## Design Rules
+A meta-scenario is an exact recipe naming one scenario, an ordered primitive set, and bundled extensions. A clean baseline and a trap are separate recipes so either can be repeated without reconstructing prior choices.
 
-- Fixed seeds, declared treatments. Do not edit a seed inside a run. Every arm difference must be frozen explicitly in the run spec: component/override composition, prompt, rubric, model, runtime, or settings.
-- Worker payload and orchestrator evidence stay physically separate. `.git`, `node_modules`, `orchestrator`, CLI, prompt, rubric, and canary material must not appear in the worker-visible manifest.
-- One post-composition baseline commit exists before the worker starts. Final evidence captures committed, staged, and unstaged Git deltas plus every singly linked regular workspace file outside `.git`, including untracked and ignored files; links and special entries invalidate capture.
-- Prompt, rubric, model revision, runtime, isolation claims, controls, and source dirty state are explicit and hashed.
-- A self-asserted clean context is not isolation evidence. P0 records a trace-linked `isolation-fresh-context` assertion and declared controls as audit inputs, but never converts one run's self-contained bundle into a causal verdict.
-- Canonical JSON is truth; Markdown is a deterministic rendered view.
+Browse the [building-block catalogue](building-blocks/README.md) and [runnable meta-scenarios](meta-scenarios/README.md) directly or through the CLI.
 
-## Seeds
+For a complete first run, follow the [ledger control-versus-trap tutorial](TUTORIAL.md).
 
-- `seed-0-greenfield` — no initial product truth. Tests discovery, option quality, scope defense, and confirmed memory growth in vision or vision-then-build mode.
-- `seed-1-rebuild-small` — compact bookmarks CLI truth. Tests basic routing, directives, and whether seeded semantics reach a working implementation.
-- `seed-2-rebuild-medium` — work-journal CLI with date, timezone, append-only storage, and immutable-correction constraints that resist common defaults.
-- `seed-3-rebuild-large` — multi-package ledger with scoped routes, API/CLI contracts, security constraints, and a planted specification contradiction that should be surfaced rather than silently resolved.
+## Discover And Prepare
 
-## Overlays
+```powershell
+bun run bench -- list
+bun run bench -- list meta-scenarios
+bun run bench -- list scenarios
+bun run bench -- list primitives
+bun run bench -- prepare <meta-scenario-id> --runs-root <external-directory>
+```
 
-- `variable-dump-tool` — historical context-dump variable, retained for comparisons with older runs.
-- `variable-closeout-command` — loader overwrite exposing the one-command #KeepInMind closeout recheck.
-- `variable-sessions-keepinmind` — session route and closeout axiom used with the closeout-command control in generation 11.
-- Bundled extension packs — declare the exact pack payloads and dependencies being tested as components. Select `payload/`, not a package root.
+`list` defaults to meta-scenarios because they are the runnable stable units. A pure scenario still runs through a meta-scenario whose primitive and extension lists are empty.
 
-## Evidence Tiers
+Treatments may be added without editing the stable recipe:
 
-`engineering-smoke` is appropriate for development and regression plumbing. `pilot` and `confirmatory` are declared corpus classifications for runs intended to carry stronger predeclared controls and independently evidenced isolation; P0 records their inputs but does not enforce class-specific minimums. P0 hard-disables both causal and public eligibility because one run cannot verify its own random assignment, treatment separation, replication, or external isolation boundary.
+```powershell
+bun run bench -- prepare <meta-scenario-id> `
+  --runs-root <external-directory> `
+  --variant <external-primitive-package> `
+  --variant <another-primitive-package> `
+  --extension <bundled-extension-id> `
+  --extension <another-extension-id> `
+  --orchestrator <review-only-addendum>
+```
 
-The 20 hand-authored generation reports currently in `benchmarks/results/`, plus the older `pre-harness/` reports, are legacy engineering evidence. They are useful raw observations and historical comparisons, not causal proof, because their provenance and isolation were not captured by this runner.
+Each repeatable `--variant` path supplies an additive primitive package. Each repeatable `--extension` id adds a bundled extension as a declared treatment. `--orchestrator` adds only observation, checking, or recordkeeping instructions and never changes the worker workspace.
 
-New durable runs live under the external runs root. A revalidatable run requires the entire run directory, including the live workspace and its `.git` repository, the evidence tree, both external trust inputs, and a compatible Git/runtime environment. A curated evidence-only excerpt may still be inspected or rendered from `result.json`, but it cannot pass the harness's full authenticated validation and must be labeled accordingly. Never copy only the Markdown view.
+`--runs-root` is required and must not contain or sit inside the source repository. This keeps prepared workers and traces outside the framework sources they evaluate.
 
-## Operator Material
+## Run
+
+An AI or human orchestrator prepares every comparison arm before any worker starts, then launches independent workers with the exact frozen prompt and composition. It preserves the full runtime-observable trace, reviews each arm independently, obtains the worker's response-only self-review, and finishes each run.
+
+```powershell
+bun run bench -- finish <run-directory>
+```
+
+Cross-arm comparison happens only after every arm has its own completed review. Model comparisons keep the composition frozen and vary only the declared model or runtime selector. Treatment comparisons keep the scenario and base recipe frozen and introduce only the declared primitive, extension, or runtime-tool delta.
+
+Prepared arms expose a worker-prompt SHA-256 and baseline Git tree id. Equal model or replicate cells compare both values directly; treatment cells use them alongside the declared resolved-composition delta.
+
+The orchestrator can retain messages, tool calls and results, interactions, status events, and reasoning summaries exposed by the runtime. It cannot claim access to invisible private chain-of-thought. The [trace contract](harness/orchestrator/trace.md) makes that boundary explicit.
+
+## Reuse
+
+The [launch templates](harness/orchestrator/templates/README.md) cover a single run, parallel model or replicate runs, a stable base-versus-trap pair, and an on-demand treatment pair. They are plain prompts with editable assignments, not a template language.
+
+The CLI is optional. The same protocol remains complete as plain files: resolve an exact recipe, compose disposable workspaces, freeze all inputs outside them, run independent workers, retain traces and checks, and save the two reviews.
+
+One run shows what happened in that run. Replication and comparisons reveal observed variance, but neither the runner nor an orchestrator assertion proves isolation or causality.
+
+## References
 
 - [Harness contract](harness/README.md)
-- [Runbook](harness/orchestrator/runbook.md)
-- [Worker prompt patterns](harness/orchestrator/worker-prompt-templates.md)
-- [Core rubric](harness/orchestrator/rubric-core.md)
-- [Evaluation/result guidance](harness/orchestrator/report-template.md)
-- [Schemas](harness/schemas)
-- [Engineering-smoke example](harness/examples/run-spec.engineering-smoke.example.json)
+- [Orchestrator runbook](harness/orchestrator/runbook.md)
+- [Invariant orchestrator prompt](harness/orchestrator/orchestrator-prompt.md)
+- [Worker self-review prompt](harness/orchestrator/worker-review-prompt.md)
+- [Historical results](results/README.md)

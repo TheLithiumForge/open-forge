@@ -6,15 +6,16 @@ open-forge:
 
 # Evaluations
 
-Evaluations are accepted syntheses of evidence from testing Open Forge against real agent sessions.
+Evaluations are accepted historical syntheses of evidence from testing Open Forge against real agent sessions.
 
-This route holds coagulated summaries only. Per-run reports from the reproducible benchmark harness live in `benchmarks/results/`, and the detailed pre-harness reports (v2 through v6) live in `benchmarks/results/pre-harness/`.
+This route holds coagulated summaries only. The linked generations predate the current dual-review scenario protocol; their raw reports remain under `benchmarks/results/` as design history.
 
 ## Axioms
 
 - Read `Entries` when current work needs evaluation evidence, recommendation history, or the reasoning behind loading and routing decisions.
 - Treat synthesis bodies as records, not active behavior or automatically accepted recommendations.
 - Prefer crystallized decisions for accepted conclusions and policy; load syntheses when evidence or source reasoning matters.
+- Use the [current benchmark design](../../decisions/benchmark-design.md), not a historical generation's harness rituals, for present benchmark behavior.
 - Write one synthesis per benchmark generation here after extracting accepted conclusions to their owning routes; raw run reports stay in `benchmarks/results/`.
 
 ## Entries

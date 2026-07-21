@@ -1,5 +1,0 @@
-Work only in the current working directory and verify it before your first write. Read AGENTS.md and follow the workspace's routed instructions.
-
-Take this rough idea all the way to a working first slice: a tiny local CLI that lets two support shifts leave short handoff notes for each other. The product direction and technical structure are not settled yet. I am available for the decisions that belong to me; after those decisions, implement and verify the smallest accepted slice.
-
-Keep the phases coherent rather than treating discovery, architecture, and implementation as independent parallel efforts. When you stop, report the accepted direction, architecture, implementation, verification, and any remaining candidates or assumptions a cold successor needs.
