@@ -1,4 +1,0 @@
-{
-  "name": "seed-3-rebuild-large",
-  "description": "Rebuild-after-larger-MVP benchmark: ledger with pure core, HTTP API server, and CLI client; scoped pattern routes, dense opinions, and one planted spec contradiction (see orchestrator rubric)"
-}

@@ -1,91 +1,135 @@
 # Benchmark Runbook
 
-Orchestrator-only material. Never select this directory as a worker-visible component.
+Orchestrator-only material. Never place this file, a filled launch prompt, review criteria, personas, variants under construction, or another arm's record in a worker workspace.
 
-## 1. Freeze The Run
+## 1. Choose The Run Set
 
-Before `prepare`:
+Start from one [launch template](templates/README.md). Edit only its uppercase assignments unless the run intentionally needs a new orchestration instruction, then preserve the complete filled prompt as `<run-set>/input/launch-prompt.md`.
 
-1. Choose the case, arm, replicate, evidence class, model revision, runtime, isolation boundary, and controls.
-2. Name every ordered worker-visible component by its exact `payload/` or core `src/open-forge` path.
-3. Declare each intentional collision as one exact `{path, from, to}` override. Do not use broad last-writer-wins rules.
-4. Freeze the exact prompt and rubric files. If core and seed criteria both apply, create one predeclared rubric artifact rather than changing criteria after observation.
-5. For pilot or confirmatory work, freeze the experiment plan and record its id and SHA-256 before any run starts.
-6. Build the CLI before the orchestrator session. Treat the built artifact as an input; do not rebuild it between arms.
-7. Confirm that `sourceRepo` is an existing Git repository with a valid `HEAD` and tree, and that Git will remain available through validation.
-8. Review the run spec and composition CLI as trusted code. The harness does not sandbox this preparation step; it executes with the operator process's filesystem, environment, and network authority.
+The assignments are plain prompt text. References such as `{META_SCENARIO}` mean the exact value assigned at the top; no template engine or CLI parser is involved.
 
-Use `benchmarks/harness/examples/run-spec.engineering-smoke.example.json` only as a plumbing example. Its controls and isolation fields are deliberately ineligible for causal claims.
+Record the requested model, runtime, settings, and runtime-native tool surface before preparation. An unavailable selector or tool is a blocker, not permission to substitute silently.
 
-## 2. Prepare
+## 2. Resolve Every Arm
+
+Discover the stable inputs:
 
 ```powershell
-bun run bench -- prepare --spec <run-spec.json> --runs-root <absolute-external-directory>
+bun run bench -- list
+bun run bench -- list meta-scenarios
+bun run bench -- list scenarios
+bun run bench -- list primitives
 ```
 
-The runs root must be absolute, external, and non-overlapping with the source repository through real path and existing symlink/junction ancestry. Its experiment, run, workspace, and evidence descendants must remain direct non-linked directories; moving or replacing one invalidates the run. `prepare` prints canonical JSON with `runDir`, `workspaceDir`, `evidenceDir`, `workerPromptPath`, `ownerToken`, and `preparedRootSha256`.
+Each arm starts from one exact meta-scenario. A meta-scenario names one agnostic scenario, an ordered primitive list, and bundled extensions. A baseline and a trap are separate recipes rather than modes applied to one mutable recipe.
 
-- Store the owner token and prepared-root digest in an operator-controlled record outside the worker and run bundle. The token authorizes finalization and authenticates every future validation; losing either value makes full validation impossible.
-- Do not edit `evidence/` or the composed workspace before the worker starts.
-- Confirm the prepared state with `bun run bench:validate -- --run <runDir> --owner-token <ownerToken> --prepared-root <preparedRootSha256>` if desired. A prepared run has no result yet; validation authenticates the sealed inputs and baseline and checks that the live worker workspace has not drifted.
-- Invalid specs, composition failures, bad source repositories, and other pre-claim failures create no run. A failure after the atomic claim may preserve an invalid partial run; do not reuse it.
+Resolve all treatment differences before launching any worker:
 
-The runner snapshots and hashes all inputs, executes the snapshotted CLI without a shell, records CLI and source-repository provenance, then creates the worker workspace's Git baseline.
+- A repeatable `--variant <path>` adds an external primitive package.
+- A repeatable `--extension <id>` adds a bundled extension.
+- `--orchestrator <file>` adds review-only observation, checking, or recording instructions.
+- A `kind: tool` primitive delivers ordinary local-tool files and may include a `.agents/workspace/**` discovery route.
+- A provider- or runtime-native tool is bound by the runtime and recorded in the launch prompt and trace boundary; the runner does not provision it.
 
-## 3. Launch A Fresh Worker
+Freeze every resolved composition under `<run-set>/input/resolved-compositions/`. Freeze external packages and runtime-binding declarations under `<run-set>/input/variants/`. Do not generate or revise a treatment after any arm outcome is visible.
 
-The runner does not launch the agent.
+## 3. Prepare Every Arm
 
-1. Create a genuinely fresh worker context using the declared model/runtime settings.
-2. Set its working directory to `workspaceDir`.
-3. Give it the exact contents of the snapshotted prompt and only the worker workspace as filesystem context.
-4. Do not expose `evidenceDir`, owner token, source repository, run spec, CLI, rubric, orchestration material, prior benchmark conversations, or other arms.
-5. Capture a platform/runtime trace that independently demonstrates the context and filesystem boundary. A prose assertion by the orchestrator or worker is not an isolation receipt.
-6. While the worker runs, do not coach it. For interactive seed-0 work, answer only according to the frozen persona script and record the interaction as a trace.
-
-If the platform necessarily adds system or tool context, record it in runtime settings and the isolation trace. Do not mark `freshContext`, `workerReceivesOnlyWorkspace`, or filesystem/network controls stronger than the evidence supports.
-
-The runner uses its snapshotted CLI to compose the workspace but does not give that artifact to the worker. If the frozen scenario expects an `open-forge` command, provision the exact tool independently through the declared worker runtime, keep the runner snapshot and source repository hidden, and record the provisioned executable's availability and identity in an external trace.
-
-## 4. Verify And Evaluate
-
-After the worker stops:
-
-1. Preserve the workspace as observed. Run only independent checks known not to update snapshots, generated files, dependencies, caches tracked by the workspace, or external state.
-2. Store verification output, interaction logs, and the isolation receipt in an independent external directory, outside the source repository and the entire run directory; the finalizer copies declared trace files into evidence.
-3. Score each core rating exactly once on the fixed 0–2 scale: `directive-compliance`, `memory-growth`, `routing-behavior`, `communication`, and `product-fidelity`.
-4. Add seed-specific ratings only with `seed-` ids.
-5. Record objective assertions with status, command, exit code, duration, trace names, and a bounded note. A causal candidate needs a passing `isolation-fresh-context` assertion linked to at least one real trace.
-6. Mark the run `invalid` or `aborted` when warranted; do not conceal contamination, missing evidence, or execution failure by lowering a subjective score.
-
-Use `benchmarks/harness/examples/evaluation.engineering-smoke.example.json` only as a shape example. Copy it to the independent external directory before use; do not pass the checked-in file to `finalize`. Trace paths are resolved relative to that external evaluation file. The schemas provide structural checks, while the runner is authoritative for cross-field uniqueness, trace references, path constraints, ratings, and eligibility.
-
-## 5. Finalize, Validate, Render
+Prepare each arm before starting any worker:
 
 ```powershell
-bun run bench -- finalize --run <runDir> --owner-token <ownerToken> --prepared-root <preparedRootSha256> --evaluation <externalEvaluation.json>
-bun run bench:validate -- --run <runDir> --owner-token <ownerToken> --prepared-root <preparedRootSha256>
-bun run bench -- render --run <runDir>
+bun run bench -- prepare <meta-scenario-id> `
+  --runs-root <run-set>/arms `
+  [--variant <external-primitive-package>]... `
+  [--extension <bundled-extension-id>]... `
+  [--orchestrator <review-only-addendum>]
 ```
 
-Finalization is exclusive and non-stealable. The claim is bound to its canonical runs-root/experiment/run path; copying or moving a prepared run does not create another valid lock domain. Never delete or replace a finalization lock merely to retry; preserve the run for investigation and start a new run when recovery is uncertain.
+Preparation composes the worker workspace, freezes the resolved inputs outside it, runs `doctor` and `find --follow-required`, and establishes the Git baseline. Retain every reported path.
 
-`finalize` requires the source repository at its recorded path. It captures the final worker tree and Git state, copies every singly linked regular workspace file outside `.git`, copies and hashes traces, computes eligibility, writes canonical `evidence/result.json`, derives `evidence/report.md`, and authenticates the evidence root. `validate` is read-only and must pass before the result is used.
+Before launch, confirm that every workspace contains only its intended scenario, recipe, and treatment. For a model or replicate comparison, both reported `workerPromptSha256` and `baselineTree` must match across arms. For a treatment comparison, `workerPromptSha256` must match while the resolved manifests and baseline trees show only the declared worker-visible delta.
 
-Final workspace capture includes ignored files, dependency trees, caches, build products, and secrets if present, but rejects symbolic links, junctions, special entries, and hard-linked files. Use a sanitized disposable workspace, keep credentials out of it, and account for the worst-case bundle size before finalizing. Preserve the complete run directory, including `workspace/.git`, the snapshotted harness producer, both external trust inputs, and a compatible Git/runtime environment for future authenticated validation. A subset containing only evidence or a rendered report is an archival excerpt, not a revalidatable run.
+If preparation fails, preserve the error and stop that set. Do not improvise a weaker recipe under the same set identity.
 
-Do not hand-edit `report.md`. If an evaluation is wrong, preserve the bad run and create a corrected run; finalized evidence is an audit record, not a mutable draft.
+## 4. Launch Independent Workers
 
-## Role Boundaries
+Launch a fresh worker context for every arm when the platform supports it. Set its current directory to the prepared workspace and give it only the exact prepared worker prompt plus the declared runtime tool surface.
 
-- Developer: defines the harness, schemas, planned experiment artifacts, and built CLI.
-- Orchestrator: prepares, launches, observes, independently verifies, evaluates, finalizes, and interprets eligibility.
-- Worker: receives only its workspace and exact prompt, performs the scenario, and reports to the orchestrator.
-- Persona: an orchestrator role used only when a frozen interactive script requires it.
+Do not expose hidden reviews, orchestration prompts or addenda, arm labels, other arm inputs or traces, prior benchmark conversation, historical results, or the source repository used for preparation.
 
-## Interpretation
+Parallel launch is preferred for direct comparisons because no arm can influence another through operator adaptation. If the runtime forces sequential launch, freeze all arms first and state that limitation.
 
-- `engineeringEligible` means the evaluation says `complete` and no canary contamination was detected. It is not a verification-quality or product-quality verdict.
-- `engineering-smoke`, `pilot`, and `confirmatory` are declared classifications in P0. The runner does not yet enforce stronger class-specific control or isolation minimums.
-- `causalEligible` is always false in P0. The run records candidate prerequisites, but a separate control/corpus verifier must establish assignment, treatment separation, replication, and isolation across runs.
-- `publicEligible` is always false in P0. A separate corpus review must address replication, selection, attrition, statistical interpretation, and disclosure before public claims.
+Observe without coaching. Answer only interactions declared by the frozen scenario or persona, and preserve the exchange exactly.
+
+## 5. Preserve The Observable Trace
+
+Follow the [trace contract](trace.md) for each arm. Save `record/trace/manifest.json` and the runtime-native raw artifacts under `record/trace/raw/`.
+
+The trace includes everything the runtime exposes to the orchestrator: worker and orchestrator messages, tool calls and results, interactions, status events, and exposed reasoning summaries. It does not include invisible private chain-of-thought.
+
+Keep traces isolated by arm. Do not normalize away ordering, failed calls, retries, or uncertainty merely to simplify comparison.
+
+## 6. Review Each Arm Independently
+
+When an arm's task work ends, freeze its outcome and keep the worker context available. Do not read or request the worker self-review yet.
+
+Review Behavior from the observable trace. Identify reads, actions, decisions, interactions, tool use, adherence, conflict handling, escalation, deviations, and unknowns supported by that record.
+
+Review Outcome from the final Git diff, relevant files, and proportionate independent checks. Distinguish verified facts from inference. Run a potentially mutating check against a disposable copy and preserve its output with the arm record.
+
+Draft these sections in `record/orchestrator-review.md`:
+
+```markdown
+# Orchestrator Review
+
+## Behavior
+
+## Outcome
+
+## Comparison With Worker Review
+
+## Limits
+```
+
+Complete Behavior, Outcome, and Limits before the worker review. Leave Comparison With Worker Review empty until the next step.
+
+## 7. Capture Worker Self-Review
+
+Send the exact [worker self-review prompt](worker-review-prompt.md) to the same worker context.
+
+This phase is response-only. Permit no tools, file inspection, commands, tests, edits, fixes, or other corrective work. Save the complete response verbatim as `record/worker-review.md`.
+
+Compare the worker account with the already-formed findings. Complete Comparison With Worker Review with material claims confirmed, contradicted, or not independently verifiable. Self-awareness does not repair an outcome, and confidence does not verify one.
+
+## 8. Finish Every Arm
+
+```powershell
+bun run bench -- finish <run-directory>
+```
+
+Finish captures the final evidence, reruns both complete-workspace validators, and records validator failures as part of the result. Preserve failed and partial outcomes; do not repair their evidence after seeing the result.
+
+## 9. Compare The Set
+
+Write `<run-set>/comparison.md` only after every included arm has a completed independent review and worker comparison.
+
+For model variance, compare arms whose `workerPromptSha256` and `baselineTree` match. State any actual runtime, system-context, setting, or tool-surface difference rather than calling the environments identical.
+
+For treatment variance, compare arms that share the scenario and base recipe. Name the minimal declared primitive, extension, or runtime-tool delta and check the resolved compositions before attributing an observed difference to it.
+
+Separate outcome differences, behavior differences, self-review calibration, and unknown trace gaps. Replication supports an observation about variance; it does not by itself establish why the variance occurred.
+
+## Manual Plain-File Run
+
+The CLI is optional. Resolve the selected `meta.json`, compose each disposable workspace from Core, the scenario, ordered primitives, extensions, and frozen variants, then index, validate, and establish a Git baseline. Preserve the same external run-set inputs, independent traces, checks, and dual reviews.
+
+State which preparation, runtime, or capture properties were manual and which were not independently established.
+
+## Roles
+
+- Scenario author owns a reusable framework-agnostic task.
+- Primitive author owns one small composable worker-visible input and its review focus.
+- Meta-scenario author owns one stable exact recipe.
+- Orchestrator owns run-set freezing, scheduling, trace capture, independent review, worker self-review, and cross-arm comparison.
+- Worker performs one arm and later provides a response-only self-review.
+- Runner discovers, composes, validates, baselines, and captures. It does not schedule workers or determine behavioral truth.

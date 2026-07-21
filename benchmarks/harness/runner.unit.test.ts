@@ -1,30 +1,54 @@
 import { describe, expect, test } from "bun:test";
-import { stableStringify, validateEvaluationDocument } from "./runner.ts";
+import {
+  validateMetaScenarioDocument,
+  validatePrimitiveDocument,
+  validateScenarioDocument,
+} from "./runner.ts";
 
-const coreRatingIds = [
-  "directive-compliance",
-  "memory-growth",
-  "routing-behavior",
-  "communication",
-  "product-fidelity",
-];
+describe("benchmark composition manifests", () => {
+  test("keeps scenario identity explicit and folder-independent", () => {
+    expect(validateScenarioDocument({ id: "Delivery / unusual id" })).toEqual({ id: "Delivery / unusual id" });
+    expect(() => validateScenarioDocument({ id: "" })).toThrow("non-empty string");
+    expect(() => validateScenarioDocument({ id: " padded " })).toThrow("whitespace");
+    expect(() => validateScenarioDocument({ id: "case", extensions: [] })).toThrow("unknown fields: extensions");
+  });
 
-describe("benchmark harness pure contracts", () => {
-  test("serializes equivalent objects canonically", () => {
-    expect(stableStringify({ zeta: 2, alpha: { second: false, first: true } })).toBe(
-      stableStringify({ alpha: { first: true, second: false }, zeta: 2 })
+  test("accepts every primitive kind and rejects invented package fields", () => {
+    for (const kind of ["directive", "pattern", "memory", "guidance", "workspace", "skill", "workflow", "tool"]) {
+      expect(validatePrimitiveDocument({ id: `fixture ${kind}`, kind })).toEqual({ id: `fixture ${kind}`, kind });
+    }
+    expect(() => validatePrimitiveDocument({ id: "case", kind: "persona" })).toThrow("kind must be one of");
+    expect(() => validatePrimitiveDocument({ id: "case", kind: "memory", dependencies: [] })).toThrow(
+      "unknown fields: dependencies",
     );
   });
 
-  test("keeps executable evaluation validation aligned with the seed rating schema", () => {
-    const ratings = coreRatingIds.map((id) => ({ id, score: 1, maxScore: 2, rationale: "fixture" }));
-    expect(() => validateEvaluationDocument({
-      schemaVersion: 1,
-      status: "complete",
-      objectiveAssertions: [],
-      subjectiveRatings: [...ratings, { id: "seed-", score: 1, maxScore: 2, rationale: "invalid" }],
-      traces: [],
-      notes: [],
-    })).toThrow("must match seed-");
+  test("preserves ordered primitive selection and validates extension ids", () => {
+    expect(validateMetaScenarioDocument({
+      id: "base + trap",
+      scenario: "plain task",
+      primitives: ["control", "trap"],
+      extensions: ["implementation-workflow"],
+    })).toEqual({
+      id: "base + trap",
+      scenario: "plain task",
+      primitives: ["control", "trap"],
+      extensions: ["implementation-workflow"],
+    });
+    expect(() => validateMetaScenarioDocument({
+      id: "duplicate",
+      scenario: "plain",
+      primitives: ["same", "same"],
+      extensions: [],
+    })).toThrow("must not contain duplicates");
+    expect(() => validateMetaScenarioDocument({
+      id: "bad extension",
+      scenario: "plain",
+      primitives: [],
+      extensions: ["Not Bundled"],
+    })).toThrow("bundled extension id");
+    expect(() => validateMetaScenarioDocument({ id: "incomplete", scenario: "plain", primitives: [] })).toThrow(
+      "missing fields: extensions",
+    );
   });
 });

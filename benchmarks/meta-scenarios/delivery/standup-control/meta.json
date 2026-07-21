@@ -1,0 +1,13 @@
+{
+  "id": "standup-delivery-control",
+  "scenario": "standup-journal-delivery",
+  "primitives": [
+    "standup-journal-contract",
+    "standup-project-location"
+  ],
+  "extensions": [
+    "implementation-workflow",
+    "reliability-defaults",
+    "cli-testing-patterns"
+  ]
+}

@@ -15,7 +15,7 @@ Captured 2026-07-09 and rebaselined 2026-07-17. The governing rule remains: S me
 - The 18-unit catalogue composes skill-only, workflow-only, directive-only, pattern-only, mixed, and dependency-only extensions. Dependencies auto-select, while standard skills can also be installed directly by other supported runtimes.
 - Install is Core-first and Git-checkpointed by default. `--pro` bypasses lifecycle gates only; path, link, collision, index, and rollback safety remain active.
 - CLI contracts run as real subprocesses in fresh OS temporary roots with real Git, packaged-layout smoke tests, no-partial-write assertions, and real first-party integration.
-- The harness captures reproducible engineering evidence, but existing runs are raw legacy evidence rather than causal proof.
+- The benchmark helper composes exact meta-scenarios from agnostic tasks and atomic treatments, records prompt and baseline-tree identity, and preserves trace-bounded dual-review engineering evidence; historical generations remain raw context rather than causal proof.
 
 ## Core Routing And Active Context (A)
 
@@ -27,9 +27,9 @@ Captured 2026-07-09 and rebaselined 2026-07-17. The governing rule remains: S me
 
 ## Workflow Compliance (B+)
 
-- S gate: repeated multi-model seeds show exact-match selection, ordered handoffs, no-match recommendation/direct choice, explicit opt-out, Required Routes loading, and Completion closeout without harness prompting.
+- S gate: repeated multi-model scenarios show that agents select useful context, honor explicit workflow choices or opt-outs, treat prior workflows as helpful rather than prerequisite, follow Required Routes when a workflow is selected, and deliver faithful outcomes without benchmark-owned process prompting.
 - S++ gate: multi-workflow goals remain reconstructable from workflow receipts and handoffs alone, including interruption and resumption.
-- Option A — low ceremony: add benchmark seeds for the four loader branches and greenfield architecture/vision support-bundle behavior.
+- Option A — low ceremony: reuse the compact discovery, delivery, conflict, helpful-prior-work, and broad-context recall meta-scenarios and compare worker self-review with independent orchestrator findings.
 - Option B — assisted: `open-forge start <workflow>` emits a reviewable activation receipt but never becomes a runtime orchestrator.
 - Option C — strongest: a runtime adapter consumes the same receipt schema while Markdown remains authoritative and direct execution remains possible.
 
@@ -51,15 +51,15 @@ Captured 2026-07-09 and rebaselined 2026-07-17. The governing rule remains: S me
 
 ## Governance And Evidence (B+)
 
-- S gate: descriptor/payload alignment, skill validation, package layout, CLI contracts, and harness schemas are required CI gates; behavioral claims identify evidence class and limitations.
+- S gate: descriptor/payload alignment, skill validation, package layout, CLI contracts, and meta-scenario composition are required CI gates; behavioral claims link trace boundaries and both reviews while stating their limitations.
 - S++ gate: independent conformance plus repeated multi-model, multi-repository, longitudinal evidence detects regressions before release.
-- Option A: fast per-change static/CLI conformance and nightly behavioral seeds.
+- Option A: fast per-change static/CLI conformance and periodic behavioral scenarios.
 - Option B: release-candidate matrix across models, operating systems, clean/dirty repos, monorepos, interruptions, and adversarial routes.
-- Option C: an external evaluator signs public evidence bundles and reproduces the report from captured inputs.
+- Option C: an independent evaluator reproduces consequential claims from frozen scenario inputs, retained workspaces, checks, and both reviews.
 
 ## Shortest Credible Path
 
-1. Measure workflow-first behavior with the four loader branches and greenfield support derivation.
+1. Measure the current primitive coverage map with the compact dual-review meta-scenarios, keeping unobservable behavior and uncovered semantics explicit.
 2. Replace global-closeout ambiguity with an active-context receipt and digest.
 3. Add Git-native ownership receipts plus update/remove before adding a registry.
 4. Publish a conformance corpus and obtain one independent implementation.

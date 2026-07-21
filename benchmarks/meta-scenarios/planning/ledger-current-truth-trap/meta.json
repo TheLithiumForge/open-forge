@@ -1,0 +1,9 @@
+{
+  "id": "ledger-current-truth-trap",
+  "scenario": "ledger-remove-planning",
+  "primitives": [
+    "immutable-ledger-removal",
+    "hard-delete-ledger-removal"
+  ],
+  "extensions": ["planning-workflows"]
+}

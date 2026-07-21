@@ -1,0 +1,1 @@
+Implement the smallest reliable standup-journal CLI described by the project information available in this workspace. Deliver working code and proportionate verification. Where that information is silent, make only bounded implementation choices and report them.

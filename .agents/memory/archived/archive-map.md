@@ -16,7 +16,7 @@ The old `.agents/sessions/` and `.agents/ideas/` design notes were archived duri
 - `observations/` - grounded findings after resolution, promotion, or supersession
 - `planning/` - dated backlog and planning snapshots replaced by current planning
 - `sessions/` - completed raw work sessions plus the original design-session and prompt material
-- `benchmarks/harness/orchestrator/archive/` - frozen pre-P0 generation 10 and 11 run plans outside the Memory tree; raw reports and accepted syntheses remain in their evidence routes
+- Pre-P0 benchmark packages and run plans were retired in the 2026-07-21 benchmark redesign. Their paths remain only in historical records; raw reports stay under `benchmarks/results/` and accepted syntheses stay in their Memory route.
 
 ## Extracted Current Material
 

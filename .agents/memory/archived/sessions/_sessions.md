@@ -23,5 +23,7 @@ Load a session only when reconstructing original intent or old rationale.
 - [Completed alignment of route-scoped directives, phase-aware workflows, extension lifecycle, binding continuity, archives, and tiered tests](2026-07-17_essence-and-routing-alignment.md) - #Memory #Session #Contextual #Historical #Archived #Framework #Directive #Workflow #Extension #Testing
 - [Historical record of applying the 2026-07-19 human review notes through a minimal route-native Open Forge dogfood pass](2026-07-19_review-note-framework-improvements.md) - #Memory #Archived #Session #Contextual #Historical #Framework #Dogfood #Review
 - [Historical record of the completed Markdown route-link migration and accepted complete-workspace validator contract](2026-07-20_link-contract-and-loader-review.md) - #Memory #Archived #Session #Contextual #Historical #Framework #Routing #CLI
+- [Completed benchmark composition redesign into agnostic scenarios, atomic primitives, exact meta-scenarios, and trace-reviewed run sets](2026-07-21_benchmark-composition-redesign.md) - #Memory #Session #Archived #Contextual #Historical #Benchmark #Dogfood
+- [Completed redesign of benchmark seeds and harness into compact reusable dual-review scenarios](2026-07-21_benchmark-redesign.md) - #Memory #Session #Archived #Contextual #Historical #Benchmark
 - [The raw original prompt and AI handover material that seeded Open Forge](original-prompt.md) - #Session #Origin #Contextual #Historical
 <!-- open-forge:generated-index:end -->

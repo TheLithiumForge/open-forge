@@ -1,5 +1,0 @@
-Work only in the current working directory and verify it before your first write. Read AGENTS.md and follow the workspace's routed instructions.
-
-Take the handoff-note CLI described by routed current truth to the smallest reliable, verified implementation. Treat accepted decisions as current, identify any material missing or contradictory input before mutation, and make bounded assumptions explicit. I am available for decisions that belong to me.
-
-When you stop, report the workflow used, decisions obtained, changed artifacts, verification evidence, assumptions, and unresolved risks.

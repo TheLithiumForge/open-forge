@@ -1,5 +1,0 @@
-Work only in the current working directory and verify it before your first write. Read AGENTS.md and follow the workspace's routed instructions.
-
-I keep losing important details between the end of one support shift and the start of the next. I have a vague idea for a small local tool, but I do not yet know what it should be. Help me determine the first useful version before anything is built. Ask concise questions; I am available for the conversation.
-
-When we finish, capture only what I have actually accepted, preserve useful unaccepted ideas as candidates, and leave enough routed context for a cold future session.

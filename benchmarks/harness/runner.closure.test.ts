@@ -2,829 +2,420 @@ import { describe, expect, test } from "bun:test";
 import fs from "node:fs/promises";
 import path from "node:path";
 import {
-  pathExists as exists,
+  pathExists,
   repoRoot,
   requireSuccess,
+  runGit,
   runProcess,
-  useTestSandbox
+  useTestSandbox,
+  writeText,
 } from "../../tests/support/index.ts";
 import {
-  buildTreeManifest,
-  finalizeRun,
-  prepareRun,
-  renderResult,
-  renderRun,
-  sha256,
-  stableStringify,
-  validateResultDocument,
-  validateRun,
-  validateRunSpecDocument,
+  discoverMetaScenarios,
+  discoverPrimitives,
+  discoverScenarios,
+  finishRun,
+  main,
+  prepareMetaScenario,
+  type PreparedRun,
+  type PrimitiveKind,
 } from "./runner.ts";
 
-const sandbox = useTestSandbox("open-forge-benchmark");
-const coreRatingIds = [
-  "directive-compliance",
-  "memory-growth",
-  "routing-behavior",
-  "communication",
-  "product-fidelity",
-];
+const sandbox = useTestSandbox("open-forge-benchmark-composition-closure");
 
-describe("benchmark harness P0", () => {
-  test("refuses an undeclared collision and permits the exact declared override", async () => {
-    const fixture = await createFixture();
-    const overlay = path.join(fixture.repo, "overlay");
-    await fs.mkdir(path.join(overlay, ".agents"), { recursive: true });
-    await fs.writeFile(path.join(overlay, ".agents", "loader.md"), "overlay loader\n");
-    fixture.spec.components.push({ name: "overlay", source: "overlay", destination: "" });
-    await writeJson(fixture.specPath, fixture.spec);
+describe("benchmark composition lifecycle", () => {
+  test("discovers all three recursive registries while folders remain organization only", async () => {
+    const root = await sandbox.createDirectory("discovery");
+    const fixture = roots(root);
+    await writeScenario(path.join(fixture.scenariosRoot, "teams", "alpha", "folder-is-not-id"), "z scenario");
+    await writeScenario(path.join(fixture.scenariosRoot, "misc", "anything"), "a scenario", {
+      "fixtures/scenario.json": "{\"ordinary\":true}\n",
+    });
+    await writePrimitive(path.join(fixture.primitivesRoot, "memory", "folder-is-not-id"), {
+      id: "remember this",
+      kind: "memory",
+      payload: { ".agents/memory/crystallized/documents/fact.md": "# Fact\n" },
+    });
+    await writeMeta(path.join(fixture.metaScenariosRoot, "nested", "folder-is-not-id"), {
+      id: "composed case",
+      scenario: "a scenario",
+      primitives: ["remember this"],
+      extensions: [],
+    });
 
-    await expect(prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot })).rejects.toThrow("Undeclared composition collision");
-    expect(await directoryEntriesOrEmpty(fixture.runsRoot)).toEqual([]);
+    expect((await discoverScenarios(fixture.scenariosRoot)).map((item) => item.id)).toEqual(["a scenario", "z scenario"]);
+    expect((await discoverPrimitives(fixture.primitivesRoot)).map((item) => item.id)).toEqual(["remember this"]);
+    expect((await discoverMetaScenarios(fixture.metaScenariosRoot)).map((item) => item.id)).toEqual(["composed case"]);
 
-    fixture.spec.overrides.push({ path: ".agents/loader.md", from: "base", to: "overlay" });
-    await writeJson(fixture.specPath, fixture.spec);
-    const prepared = await prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot });
-    expect(await fs.readFile(path.join(prepared.workspaceDir, ".agents", "loader.md"), "utf8")).toBe("overlay loader\n");
+    await writeScenario(path.join(fixture.scenariosRoot, "duplicate"), "a scenario");
+    await expect(discoverScenarios(fixture.scenariosRoot)).rejects.toThrow("Duplicate scenario id: a scenario");
   });
 
-  test("uses NFC and case-folded target identity for portable collision checks", async () => {
-    const fixture = await createFixture();
-    await fs.mkdir(path.join(fixture.repo, "unicode-a"));
-    await fs.mkdir(path.join(fixture.repo, "unicode-b"));
-    await fs.writeFile(path.join(fixture.repo, "unicode-a", "Café.txt"), "one\n");
-    await fs.writeFile(path.join(fixture.repo, "unicode-b", "cafe\u0301.TXT"), "two\n");
-    fixture.spec.components = [
-      { name: "unicode-a", source: "unicode-a", destination: "" },
-      { name: "unicode-b", source: "unicode-b", destination: "" },
-    ];
-    await writeJson(fixture.specPath, fixture.spec);
-    await expect(prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot })).rejects.toThrow("Undeclared composition collision");
-  });
+  test("enforces pure scenario, primitive route, local tool, and link boundaries", async () => {
+    const scenarioAgents = await sandbox.createDirectory("guard-scenario-agents");
+    await writeScenario(path.join(scenarioAgents, "scenario"), "bad", {
+      ".agents/memory/fact.md": "hidden framework context\n",
+    });
+    await expect(discoverScenarios(scenarioAgents)).rejects.toThrow("may not contain .agents content");
 
-  test("rejects Windows-unsafe component paths on every host", async () => {
-    const fixture = await createFixture();
-    const unsafe = path.join(fixture.repo, "unsafe");
-    await fs.mkdir(unsafe);
-    await fs.writeFile(path.join(unsafe, "CON.txt"), "not portable\n");
-    fixture.spec.components = [{ name: "unsafe", source: "unsafe", destination: "" }];
-    await writeJson(fixture.specPath, fixture.spec);
+    const scenarioInstructions = await sandbox.createDirectory("guard-scenario-instructions");
+    await writeScenario(path.join(scenarioInstructions, "scenario"), "bad", {
+      "project/AGENTS.md": "extra worker instruction\n",
+    });
+    await expect(discoverScenarios(scenarioInstructions)).rejects.toThrow("may not contain AGENTS.md");
 
-    await expect(prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot })).rejects.toThrow("not portable across Windows");
-  });
+    const wrongRoute = await sandbox.createDirectory("guard-wrong-route");
+    await writePrimitive(path.join(wrongRoute, "primitive"), {
+      id: "wrong route",
+      kind: "pattern",
+      payload: { ".agents/memory/crystallized/documents/not-a-pattern.md": "# Wrong\n" },
+    });
+    await expect(discoverPrimitives(wrongRoute)).rejects.toThrow("must be under .agents/patterns");
 
-  test("rejects a planned parent file even when another path sorts between parent and child", async () => {
-    const fixture = await createFixture();
-    await fs.writeFile(path.join(fixture.repo, "parent-source"), "parent file\n");
-    await fs.writeFile(path.join(fixture.repo, "spacer-source"), "sorting spacer\n");
-    await fs.writeFile(path.join(fixture.repo, "child-source"), "nested file\n");
-    fixture.spec.components = [
-      { name: "parent", source: "parent-source", destination: "a" },
-      { name: "spacer", source: "spacer-source", destination: "a-b" },
-      { name: "child", source: "child-source", destination: "a/x" },
-    ];
-    await writeJson(fixture.specPath, fixture.spec);
+    const toolAgents = await sandbox.createDirectory("guard-tool-agents");
+    await writePrimitive(path.join(toolAgents, "primitive"), {
+      id: "bad tool",
+      kind: "tool",
+      payload: { ".agents/tools/tool.txt": "not ordinary\n" },
+    });
+    await expect(discoverPrimitives(toolAgents)).rejects.toThrow(".agents files must be under .agents/workspace");
 
-    await expect(prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot })).rejects.toThrow("a is also a parent file of a/x");
-    expect(await directoryEntriesOrEmpty(fixture.runsRoot)).toEqual([]);
-  });
+    const emptyPrimitive = await sandbox.createDirectory("guard-empty-primitive");
+    await writePrimitive(path.join(emptyPrimitive, "primitive"), { id: "empty", kind: "memory" });
+    await expect(discoverPrimitives(emptyPrimitive)).rejects.toThrow("must contain worker-visible payload");
 
-  test("allocates unique atomic UUID claims for concurrent prepares", async () => {
-    const fixture = await createFixture();
-    const [left, right] = await Promise.all([
-      prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot }),
-      prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot }),
-    ]);
-    expect(left.runId).not.toBe(right.runId);
-    expect(left.runDir).not.toBe(right.runDir);
-    expect(left.ownerToken).not.toBe(right.ownerToken);
-    expect(await fs.stat(path.join(left.evidenceDir, "claim.json"))).toBeTruthy();
-    expect(await fs.stat(path.join(right.evidenceDir, "claim.json"))).toBeTruthy();
-  });
+    const routedOnlyTool = await sandbox.createDirectory("guard-routed-only-tool");
+    await writePrimitive(path.join(routedOnlyTool, "primitive"), {
+      id: "routed only",
+      kind: "tool",
+      payload: { ".agents/workspace/local-tool.md": "# Local Tool\n" },
+    });
+    await expect(discoverPrimitives(routedOnlyTool)).rejects.toThrow("at least one ordinary non-.agents file");
 
-  test("rejects an overlapping runs root before creating it", async () => {
-    const fixture = await createFixture();
-    const overlapping = path.join(fixture.repo, "must-not-be-created");
-    await expect(prepareRun({ specPath: fixture.specPath, runsRoot: overlapping })).rejects.toThrow("must not overlap sourceRepo");
-    expect(await exists(overlapping)).toBe(false);
-  });
+    const validTool = await sandbox.createDirectory("guard-valid-tool");
+    await writePrimitive(path.join(validTool, "primitive"), {
+      id: "local fixture tool",
+      kind: "tool",
+      payload: {
+        "tools/fixture/primitive.json": "{\"ordinary\":true}\n",
+        ".agents/workspace/local-tool.md": "# Local Tool\n",
+      },
+    });
+    expect((await discoverPrimitives(validTool)).map((item) => item.id)).toEqual(["local fixture tool"]);
 
-  test("rejects a non-existent runs root projected through a link into sourceRepo before creating it", async () => {
-    const fixture = await createFixture();
-    const runsAlias = path.join(fixture.root, "runs-alias");
-    await fs.symlink(fixture.repo, runsAlias, process.platform === "win32" ? "junction" : "dir");
-    const requested = path.join(runsAlias, "must-not-be-created", "nested");
-
-    await expect(prepareRun({ specPath: fixture.specPath, runsRoot: requested })).rejects.toThrow("must not overlap sourceRepo");
-    expect(await exists(path.join(fixture.repo, "must-not-be-created"))).toBe(false);
-  });
-
-  test("canonicalizes a linked sourceRepo before creating an overlapping runs root", async () => {
-    const fixture = await createFixture();
-    const sourceAlias = path.join(fixture.root, "source-alias");
-    await fs.symlink(fixture.repo, sourceAlias, process.platform === "win32" ? "junction" : "dir");
-    fixture.spec.sourceRepo = sourceAlias;
-    await writeJson(fixture.specPath, fixture.spec);
-    const requested = path.join(fixture.repo, "canonical-must-not-be-created");
-
-    await expect(prepareRun({ specPath: fixture.specPath, runsRoot: requested })).rejects.toThrow("must not overlap sourceRepo");
-    expect(await exists(requested)).toBe(false);
-  });
-
-  test("rejects an experiment run directory link before claiming outside runsRoot", async () => {
-    const fixture = await createFixture();
-    const outside = path.join(fixture.root, "outside-experiment");
-    await fs.mkdir(fixture.runsRoot);
-    await fs.mkdir(outside);
-    await fs.symlink(outside, path.join(fixture.runsRoot, fixture.spec.experimentId), process.platform === "win32" ? "junction" : "dir");
-
-    await expect(prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot })).rejects.toThrow("Experiment run directory must be an existing non-linked directory");
-    expect(await directoryEntriesOrEmpty(outside)).toEqual([]);
-  });
-
-  test("tree hashes are stable and change after a one-byte edit", async () => {
-    const root = await createTemporaryRoot();
-    await fs.mkdir(path.join(root, "tree"));
-    await fs.writeFile(path.join(root, "tree", "a.txt"), "abc");
-    await fs.writeFile(path.join(root, "tree", "b.txt"), "xyz");
-    const first = await buildTreeManifest(path.join(root, "tree"));
-    const second = await buildTreeManifest(path.join(root, "tree"));
-    expect(first).toEqual(second);
-    await fs.writeFile(path.join(root, "tree", "a.txt"), "abd");
-    const changed = await buildTreeManifest(path.join(root, "tree"));
-    expect(changed.digest).not.toBe(first.digest);
-  });
-
-  test("rejects hard-linked files in a worker tree", async () => {
-    const root = await createTemporaryRoot();
-    const tree = path.join(root, "hardlink-tree");
-    await fs.mkdir(tree);
-    await fs.writeFile(path.join(tree, "source.txt"), "shared bytes\n");
-    await fs.link(path.join(tree, "source.txt"), path.join(tree, "alias.txt"));
-
-    await expect(buildTreeManifest(tree)).rejects.toThrow("hard-linked file");
-  });
-
-  test("executes the snapshotted CLI, ignores a fake PATH command, and keeps the canary outside the worker tree", async () => {
-    const fixture = await createFixture();
-    const fakeBin = path.join(fixture.root, "fake-bin");
-    const sentinel = path.join(fixture.root, "fake-open-forge-ran");
-    await fs.mkdir(fakeBin);
-    await fs.writeFile(path.join(fakeBin, "open-forge.cmd"), `@echo off\r\necho fake>"${sentinel}"\r\nexit /b 99\r\n`);
-    await fs.writeFile(path.join(fakeBin, "open-forge"), `#!/bin/sh\necho fake > "${sentinel}"\nexit 99\n`);
-    await fs.chmod(path.join(fakeBin, "open-forge"), 0o755).catch(() => undefined);
-    const previousPath = process.env.PATH;
-    process.env.PATH = `${fakeBin}${path.delimiter}${previousPath ?? ""}`;
-    let prepared;
+    const linkedRoot = await sandbox.createDirectory("guard-linked");
+    const real = path.join(linkedRoot, "real");
+    const linked = path.join(linkedRoot, "linked");
+    await writeScenario(real, "linked scenario");
     try {
-      prepared = await prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot });
-    } finally {
-      process.env.PATH = previousPath;
+      await fs.symlink(real, linked, "junction");
+      await expect(discoverScenarios(linkedRoot)).rejects.toThrow("linked entry");
+    } catch (error) {
+      if (!["EPERM", "EACCES"].includes((error as NodeJS.ErrnoException).code ?? "")) throw error;
     }
-
-    expect(await fs.readFile(path.join(prepared.workspaceDir, ".agents", "generated-index.md"), "utf8")).toBe("generated by snapshotted cli\n");
-    expect(await exists(sentinel)).toBe(false);
-    const canary = (await fs.readFile(path.join(prepared.evidenceDir, "canary.txt"), "utf8")).trim();
-    const manifest = await buildTreeManifest(prepared.workspaceDir, { allowGitDirectory: true });
-    expect(manifest.entries.some((entry) => entry.path.startsWith(".git/"))).toBe(false);
-    for (const entry of manifest.entries.filter((item) => item.type === "file")) {
-      expect((await fs.readFile(path.join(prepared.workspaceDir, ...entry.path.split("/")), "utf8")).includes(canary)).toBe(false);
-    }
-    expect(path.relative(prepared.workspaceDir, prepared.evidenceDir).startsWith("..")) .toBe(true);
   });
 
-  test("refuses orchestration-only artifacts and reserved package directories in visible composition", async () => {
-    const fixture = await createFixture();
-    fixture.spec.components = [{ name: "leak", source: "inputs", destination: "leaked" }];
-    await writeJson(fixture.specPath, fixture.spec);
-    await expect(prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot })).rejects.toThrow("orchestration-only");
-
-    const packageRoot = path.join(fixture.repo, "whole-package");
-    await fs.mkdir(path.join(packageRoot, "orchestrator"), { recursive: true });
-    await fs.writeFile(path.join(packageRoot, "payload.txt"), "payload\n");
-    await fs.writeFile(path.join(packageRoot, "orchestrator", "rubric.md"), "secret rubric\n");
-    fixture.spec.components = [{ name: "package", source: "whole-package", destination: "" }];
-    await writeJson(fixture.specPath, fixture.spec);
-    await expect(prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot })).rejects.toThrow("reserved orchestrator");
-  });
-
-  test("resolves linked component ancestry before applying reserved-content checks", async () => {
-    const fixture = await createFixture();
-    const hidden = path.join(fixture.repo, ".git", "hidden-component");
-    const alias = path.join(fixture.repo, "component-alias");
-    await fs.mkdir(hidden, { recursive: true });
-    await fs.writeFile(path.join(hidden, "secret.txt"), "must not become worker input\n");
-    await fs.symlink(path.join(fixture.repo, ".git"), alias, process.platform === "win32" ? "junction" : "dir");
-    fixture.spec.components = [{ name: "linked", source: "component-alias/hidden-component", destination: "" }];
-    await writeJson(fixture.specPath, fixture.spec);
-
-    await expect(prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot })).rejects.toThrow("reserved .git");
-    expect(await directoryEntriesOrEmpty(fixture.runsRoot)).toEqual([]);
-  });
-
-  test("does not treat a reserved sourceRepo parent name as worker-visible content", async () => {
-    const parent = await createTemporaryRoot();
-    const reservedParent = path.join(parent, "orchestrator");
-    await fs.mkdir(reservedParent);
-    const fixture = await createFixture(reservedParent);
-
-    const prepared = await prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot });
-    expect(await fs.readFile(path.join(prepared.workspaceDir, ".agents", "loader.md"), "utf8")).toBe("base loader\n");
-  });
-
-  test("rejects a CLI-created worker junction or symlink before Git baseline creation", async () => {
-    const fixture = await createFixture();
-    await fs.writeFile(path.join(fixture.repo, "benchmark-cli.mjs"), `import fs from "node:fs/promises";
-import path from "node:path";
-const [, workspace] = process.argv.slice(2);
-const evidence = path.resolve(workspace, "..", "evidence");
-await fs.symlink(evidence, path.join(workspace, "evidence-link"), process.platform === "win32" ? "junction" : "dir");
-`);
-    await expect(prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot })).rejects.toThrow("symbolic link or junction");
-  });
-
-  test("rejects a CLI-created .git directory before runner baseline initialization", async () => {
-    const fixture = await createFixture();
-    await fs.writeFile(path.join(fixture.repo, "benchmark-cli.mjs"), `import fs from "node:fs/promises";
-import path from "node:path";
-const [, workspace] = process.argv.slice(2);
-await fs.mkdir(path.join(workspace, ".git", "hooks"), { recursive: true });
-await fs.writeFile(path.join(workspace, ".git", "hooks", "pre-commit"), "malicious hook");
-`);
-    await expect(prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot })).rejects.toThrow("pre-existing .git directory");
-  });
-
-  test("records a detected canary exposure as invalid evidence instead of overclaiming success", async () => {
-    const fixture = await createFixture();
-    const prepared = await prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot });
-    const canary = await fs.readFile(path.join(prepared.evidenceDir, "canary.txt"), "utf8");
-    await fs.writeFile(path.join(prepared.workspaceDir, "leaked-context.txt"), canary);
-    const result = await finalizeRun({
-      runDir: prepared.runDir,
-      ownerToken: prepared.ownerToken,
-      preparedRootSha256: prepared.preparedRootSha256,
-      evaluationPath: await createEvaluation(fixture.root),
+  test("resolves and freezes a meta-scenario, external variant, extra extension, addendum, and review order", async () => {
+    const fixture = await createCompositionFixture("prepare");
+    const variantDirectory = path.join(fixture.root, "external", "variant");
+    await writePrimitive(variantDirectory, {
+      id: "run-local memory",
+      kind: "memory",
+      payload: { ".agents/memory/crystallized/documents/run-local.md": "# Run Local\n\nFrozen treatment.\n" },
+      review: "Review the run-local treatment.\n",
     });
-    expect(result.status).toBe("invalid");
-    expect((result.eligibility as Record<string, unknown>).engineeringEligible).toBe(false);
-    expect((result.eligibility as Record<string, unknown>).causalReasonCodes).toContain("CANARY_EXPOSED");
-    expect((await validateRun(prepared.runDir, validationCredentials(prepared))).ok).toBe(true);
-  });
+    const addendumFile = path.join(fixture.root, "orchestrator-addendum.md");
+    const addendum = Buffer.from("# Extra Review\r\n\r\nRetain this exact input.\r\n", "utf8");
+    await fs.writeFile(addendumFile, addendum);
 
-  test("forces a canary-contaminated aborted evaluation to invalid consistently", async () => {
-    const fixture = await createFixture();
-    const prepared = await prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot });
-    const canary = await fs.readFile(path.join(prepared.evidenceDir, "canary.txt"), "utf8");
-    await fs.writeFile(path.join(prepared.workspaceDir, "aborted-leak.txt"), canary);
-    const result = await finalizeRun({
-      runDir: prepared.runDir,
-      ownerToken: prepared.ownerToken,
-      preparedRootSha256: prepared.preparedRootSha256,
-      evaluationPath: await createEvaluation(fixture.root, { status: "aborted" }),
+    const prepared: PreparedRun = await prepareMetaScenario({
+      metaScenarioId: fixture.metaScenarioId,
+      ...fixture.options,
+      variantDirectories: [variantDirectory],
+      extraExtensions: ["cli-testing-patterns"],
+      orchestratorFile: addendumFile,
     });
 
-    expect(result.status).toBe("invalid");
-    expect(await validateRun(prepared.runDir, validationCredentials(prepared))).toEqual({ ok: true, errors: [] });
-  });
-
-  test("rejects a workspace root replaced by a symlink or junction", async () => {
-    const fixture = await createFixture();
-    const prepared = await prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot });
-    const relocated = path.join(fixture.root, "relocated-workspace");
-    await fs.rename(prepared.workspaceDir, relocated);
-    await fs.symlink(relocated, prepared.workspaceDir, process.platform === "win32" ? "junction" : "dir");
-    const evaluationPath = await createEvaluation(fixture.root);
-
-    await expect(finalizeRun({
-      runDir: prepared.runDir,
-      ownerToken: prepared.ownerToken,
-      preparedRootSha256: prepared.preparedRootSha256,
-      evaluationPath,
-    })).rejects.toThrow("Workspace directory must be an existing non-linked directory");
-    expect(await exists(path.join(prepared.evidenceDir, "finalize.lock.json"))).toBe(false);
-    const validation = await validateRun(prepared.runDir, validationCredentials(prepared));
-    expect(validation.ok).toBe(false);
-    expect(validation.errors[0]).toContain("run layout");
-  });
-
-  test("binds a claim to one canonical run path so a copied run cannot finalize", async () => {
-    const fixture = await createFixture();
-    const prepared = await prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot });
-    const copiedRun = path.join(fixture.root, "copied-run");
-    await fs.cp(prepared.runDir, copiedRun, { recursive: true });
-    const evaluationPath = await createEvaluation(fixture.root);
-
-    await expect(finalizeRun({
-      runDir: copiedRun,
-      ownerToken: prepared.ownerToken,
-      preparedRootSha256: prepared.preparedRootSha256,
-      evaluationPath,
-    })).rejects.toThrow("does not match the canonical path bound into claim.json");
-    expect(await exists(path.join(copiedRun, "evidence", "finalize.lock.json"))).toBe(false);
-  });
-
-  test("refuses finalization by a non-owner without taking the finalize lock", async () => {
-    const fixture = await createFixture();
-    const prepared = await prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot });
-    const evaluationPath = await createEvaluation(fixture.root);
-    await expect(finalizeRun({ runDir: prepared.runDir, ownerToken: "not-the-owner", preparedRootSha256: prepared.preparedRootSha256, evaluationPath })).rejects.toThrow("Owner token");
-    expect(await exists(path.join(prepared.evidenceDir, "finalize.lock.json"))).toBe(false);
-  });
-
-  test("rejects evaluation documents and trace sources controlled by the worker workspace", async () => {
-    const fixture = await createFixture();
-    const prepared = await prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot });
-    const externalEvaluation = await createEvaluation(fixture.root);
-    const internalEvaluation = path.join(prepared.workspaceDir, "worker-evaluation.json");
-    await fs.copyFile(externalEvaluation, internalEvaluation);
-    await expect(finalizeRun({
-      runDir: prepared.runDir,
-      ownerToken: prepared.ownerToken,
-      preparedRootSha256: prepared.preparedRootSha256,
-      evaluationPath: internalEvaluation,
-    })).rejects.toThrow("Evaluation input must be external");
-
-    const internalTrace = path.join(prepared.workspaceDir, "worker-isolation-trace.log");
-    await fs.writeFile(internalTrace, "worker-authored isolation claim\n");
-    const evaluation = JSON.parse(await fs.readFile(externalEvaluation, "utf8"));
-    evaluation.traces[0].path = internalTrace;
-    await fs.writeFile(externalEvaluation, `${JSON.stringify(evaluation, null, 2)}\n`);
-    await expect(finalizeRun({
-      runDir: prepared.runDir,
-      ownerToken: prepared.ownerToken,
-      preparedRootSha256: prepared.preparedRootSha256,
-      evaluationPath: externalEvaluation,
-    })).rejects.toThrow("Evaluation trace worker-trace must be external");
-    expect(await exists(path.join(prepared.evidenceDir, "finalize.lock.json"))).toBe(false);
-  });
-
-  test("detects prepared evidence tampering before taking the finalize lock", async () => {
-    const fixture = await createFixture();
-    const prepared = await prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot });
-    const evaluationPath = await createEvaluation(fixture.root);
-    await expect(finalizeRun({
-      runDir: prepared.runDir,
-      ownerToken: prepared.ownerToken,
-      preparedRootSha256: "0".repeat(64),
-      evaluationPath,
-    })).rejects.toThrow("Prepared root does not match");
-    expect(await exists(path.join(prepared.evidenceDir, "finalize.lock.json"))).toBe(false);
-    const sealedSpecPath = path.join(prepared.evidenceDir, "spec.json");
-    const sealedSpec = JSON.parse(await fs.readFile(sealedSpecPath, "utf8"));
-    sealedSpec.model.id = "tampered-model";
-    await fs.writeFile(sealedSpecPath, stableStringify(sealedSpec));
-
-    const validation = await validateRun(prepared.runDir, validationCredentials(prepared));
-    expect(validation.ok).toBe(false);
-    expect(validation.errors.some((error) => error.includes("Prepared sealed file was changed"))).toBe(true);
-    await expect(finalizeRun({
-      runDir: prepared.runDir,
-      ownerToken: prepared.ownerToken,
-      preparedRootSha256: prepared.preparedRootSha256,
-      evaluationPath,
-    })).rejects.toThrow("Prepared sealed file was changed");
-    expect(await exists(path.join(prepared.evidenceDir, "finalize.lock.json"))).toBe(false);
-  });
-
-  test("detects live worker workspace drift while a run is still prepared", async () => {
-    const fixture = await createFixture();
-    const prepared = await prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot });
-    expect(await validateRun(prepared.runDir, validationCredentials(prepared))).toEqual({ ok: true, errors: [] });
-
-    await fs.appendFile(path.join(prepared.workspaceDir, ".agents", "loader.md"), "pre-worker drift\n");
-
-    const validation = await validateRun(prepared.runDir, validationCredentials(prepared));
-    expect(validation.ok).toBe(false);
-    expect(validation.errors).toContain(
-      "prepared worker workspace: worker workspace does not match the sealed prepared worker-visible manifest",
+    expect(prepared).toMatchObject({
+      metaScenarioId: fixture.metaScenarioId,
+      scenarioId: fixture.scenarioId,
+      primitiveIds: [fixture.primitiveId],
+      variantIds: ["run-local memory"],
+      extensions: ["cli-testing-patterns"],
+    });
+    expect(JSON.parse(await fs.readFile(prepared.compositionPath, "utf8"))).toEqual({
+      metaScenarioId: fixture.metaScenarioId,
+      scenarioId: fixture.scenarioId,
+      primitiveIds: [fixture.primitiveId],
+      variantIds: ["run-local memory"],
+      extensions: ["cli-testing-patterns"],
+      workerPromptSha256: prepared.workerPromptSha256,
+      baselineTree: prepared.baselineTree,
+    });
+    expect(prepared.workerPromptSha256).toMatch(/^[0-9a-f]{64}$/);
+    expect(prepared.baselineTree).toMatch(/^[0-9a-f]{40,64}$/);
+    expect(requireSuccessValue(await runGit(prepared.workspaceDir, "rev-parse", "HEAD^{tree}"), "git tree").trim()).toBe(
+      prepared.baselineTree,
     );
-  });
+    expect(await fs.readFile(path.join(prepared.workspaceDir, "project.txt"), "utf8")).toBe("scenario fixture\n");
+    expect(await fs.readFile(path.join(prepared.workspaceDir, ".agents", "memory", "crystallized", "documents", "stable.md"), "utf8")).toContain("Stable");
+    expect(await fs.readFile(path.join(prepared.workspaceDir, ".agents", "memory", "crystallized", "documents", "run-local.md"), "utf8")).toContain("Frozen treatment");
+    expect(await fs.readFile(path.join(prepared.workspaceDir, "open-forge.extensions.json"), "utf8")).toContain("cli-testing-patterns");
+    expect(await fs.readFile(prepared.orchestratorAddendumPath!)).toEqual(addendum);
 
-  test("allows only one same-owner finalizer to acquire the immutable lock", async () => {
-    const fixture = await createFixture();
-    const prepared = await prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot });
-    const evaluationPath = await createEvaluation(fixture.root);
-    const attempts = await Promise.allSettled([
-      finalizeRun({ runDir: prepared.runDir, ownerToken: prepared.ownerToken, preparedRootSha256: prepared.preparedRootSha256, evaluationPath }),
-      finalizeRun({ runDir: prepared.runDir, ownerToken: prepared.ownerToken, preparedRootSha256: prepared.preparedRootSha256, evaluationPath }),
-    ]);
-    expect(attempts.filter((attempt) => attempt.status === "fulfilled")).toHaveLength(1);
-    expect(attempts.filter((attempt) => attempt.status === "rejected")).toHaveLength(1);
-    expect(String((attempts.find((attempt) => attempt.status === "rejected") as PromiseRejectedResult).reason)).toContain("already claimed");
-    expect((await validateRun(prepared.runDir, validationCredentials(prepared))).ok).toBe(true);
-  });
-
-  test("records the worker delta, enforces schemas and checksums, and renders deterministically", async () => {
-    const fixture = await createFixture();
-    const prepared = await prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot });
-    await fs.appendFile(path.join(prepared.workspaceDir, ".agents", "loader.md"), "worker change\n");
-    await fs.writeFile(path.join(prepared.workspaceDir, "untracked-output.txt"), "untracked worker bytes\n");
-    const evaluationPath = await createEvaluation(fixture.root);
-    const result = await finalizeRun({ runDir: prepared.runDir, ownerToken: prepared.ownerToken, preparedRootSha256: prepared.preparedRootSha256, evaluationPath });
-
-    expect(result.status).toBe("complete");
-    const inputManifest = JSON.parse(await fs.readFile(path.join(prepared.evidenceDir, "input-manifest.json"), "utf8"));
-    expect(inputManifest.artifacts.harness.snapshotPath).toMatch(/^snapshot\/meta\/harness/);
-    expect(inputManifest.artifacts.harness.sha256).toBe((result.hashes as Record<string, unknown>).harnessSha256);
-    expect(await fs.readFile(path.join(prepared.evidenceDir, ...inputManifest.artifacts.harness.snapshotPath.split("/")))).toBeTruthy();
-    expect((result.eligibility as Record<string, unknown>).engineeringEligible).toBe(true);
-    expect((result.eligibility as Record<string, unknown>).causalEligible).toBe(false);
-    const finalProvenance = JSON.parse(await fs.readFile(path.join(prepared.evidenceDir, "workspace-final-provenance.json"), "utf8"));
-    expect(finalProvenance.baselineDiffSha256).not.toBe(sha256(""));
-    expect(await fs.readFile(path.join(prepared.evidenceDir, "workspace-final", "git-diff-baseline.patch"), "utf8")).toContain("worker change");
-    expect(await fs.readFile(path.join(prepared.evidenceDir, "final-workspace", "untracked-output.txt"), "utf8")).toBe("untracked worker bytes\n");
-    expect(finalProvenance.status).toContain("? untracked-output.txt");
-
-    expect(await validateRun(prepared.runDir, validationCredentials(prepared))).toEqual({ ok: true, errors: [] });
-    const firstRender = await renderRun(prepared.runDir);
-    const secondRender = await renderRun(prepared.runDir);
-    expect(firstRender).toBe(secondRender);
-    expect(await fs.readFile(path.join(prepared.evidenceDir, "report.md"), "utf8")).toBe(firstRender);
-
-    const malformed = structuredClone(result) as Record<string, any>;
-    malformed.eligibility.publicEligible = true;
-    expect(() => validateResultDocument(malformed)).toThrow("may not mark evidence publicEligible");
-
-    const resultPath = path.join(prepared.evidenceDir, "result.json");
-    const forged = JSON.parse(await fs.readFile(resultPath, "utf8"));
-    forged.status = "invalid";
-    forged.model.id = "forged-model";
-    forged.controls.planned = !forged.controls.planned;
-    forged.hashes.finalWorkerTreeDigest = "0".repeat(64);
-    await fs.writeFile(resultPath, stableStringify(forged));
-    await fs.writeFile(path.join(prepared.evidenceDir, "report.md"), renderResult(forged));
-    await regenerateTransparentChecksums(prepared.evidenceDir);
-    const tampered = await validateRun(prepared.runDir, validationCredentials(prepared));
-    expect(tampered.ok).toBe(false);
-    expect(tampered.errors.some((error) => error.includes("deterministic derivation"))).toBe(true);
-    expect(tampered.errors.some((error) => error.includes("Final seal"))).toBe(true);
-  });
-
-  test("requires one fixed 0-2 rating for every core dimension", async () => {
-    const fixture = await createFixture();
-    const prepared = await prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot });
-    const evaluationPath = await createEvaluation(fixture.root, { omitRating: "communication" });
-    await expect(finalizeRun({ runDir: prepared.runDir, ownerToken: prepared.ownerToken, preparedRootSha256: prepared.preparedRootSha256, evaluationPath })).rejects.toThrow("Missing required core subjective rating: communication");
-  });
-
-  test("validates and prepares the explicitly unrun workflow-first behavior scenarios", async () => {
-    const sourceScenarioDir = path.join(repoRoot, "benchmarks", "harness", "scenarios", "workflow-first");
-    const sourceRepo = repoRoot;
-    const cases: Array<{
-      spec: string;
-      caseId: string;
-      workflows: string[];
-      absent: string[];
-      currentTruth?: string;
-    }> = [
-      {
-        spec: "run-spec.exact-architecture-greenfield.json",
-        caseId: "exact-architecture-greenfield",
-        workflows: ["architecture/_architecture.md"],
-        absent: ["vision/_vision.md", "implementation/_implementation.md"],
-      },
-      {
-        spec: "run-spec.exact-vision-support.json",
-        caseId: "exact-vision-support",
-        workflows: ["vision/_vision.md"],
-        absent: ["architecture/_architecture.md", "implementation/_implementation.md"],
-      },
-      {
-        spec: "run-spec.no-match-direct-choice.json",
-        caseId: "no-match-direct-choice",
-        workflows: ["vision/_vision.md", "architecture/_architecture.md"],
-        absent: ["implementation/_implementation.md"],
-      },
-      {
-        spec: "run-spec.explicit-no-workflow.json",
-        caseId: "explicit-no-workflow",
-        workflows: ["vision/_vision.md", "architecture/_architecture.md"],
-        absent: ["implementation/_implementation.md"],
-      },
-      {
-        spec: "run-spec.ordered-handoffs.json",
-        caseId: "ordered-handoffs",
-        workflows: ["vision/_vision.md", "architecture/_architecture.md", "implementation/_implementation.md"],
-        absent: [],
-      },
-      {
-        spec: "run-spec.direct-delivery-sufficient-truth.json",
-        caseId: "direct-delivery-sufficient-truth",
-        workflows: [
-          "brainstorming/_brainstorming.md",
-          "vision/_vision.md",
-          "architecture/_architecture.md",
-          "planning/_planning.md",
-          "task-creation/_task-creation.md",
-          "implementation/_implementation.md",
-          "testing/_testing.md",
-        ],
-        absent: [],
-        currentTruth: "accepted-note-cli-slice.md",
-      },
-      {
-        spec: "run-spec.helpful-prior-architecture-work.json",
-        caseId: "helpful-prior-architecture-work",
-        workflows: [
-          "brainstorming/_brainstorming.md",
-          "vision/_vision.md",
-          "architecture/_architecture.md",
-          "planning/_planning.md",
-          "task-creation/_task-creation.md",
-          "implementation/_implementation.md",
-          "testing/_testing.md",
-        ],
-        absent: [],
-        currentTruth: "accepted-note-cli-vision.md",
-      },
-    ];
-    const temporary = await createTemporaryRoot();
-    const isolatedRepo = path.join(temporary, "source-repo");
-    const scenarioDir = path.join(isolatedRepo, "benchmarks", "harness", "scenarios", "workflow-first");
-    const runsRoot = path.join(temporary, "workflow-first-runs");
-    const seenCaseIds = new Set<string>();
-
-    await fs.mkdir(path.join(isolatedRepo, "src", "cli"), { recursive: true });
-    await fs.mkdir(path.dirname(scenarioDir), { recursive: true });
-    await fs.copyFile(path.join(sourceRepo, "src", "cli", "cli.ts"), path.join(isolatedRepo, "src", "cli", "cli.ts"));
-    await fs.cp(path.join(sourceRepo, "src", "open-forge"), path.join(isolatedRepo, "src", "open-forge"), { recursive: true });
-    for (const [group, extension] of [
-      ["skills", "architecture-capability"],
-      ["workflows", "architecture-workflow"],
-      ["skills", "vision-capability"],
-      ["workflows", "vision-workflow"],
-      ["skills", "planning-capability"],
-      ["workflows", "brainstorming-workflow"],
-      ["packs", "planning-workflows"],
-      ["skills", "implementation-capability"],
-      ["workflows", "implementation-workflow"],
-      ["skills", "quality-capability"],
-      ["workflows", "testing-workflow"],
-    ]) {
-      await fs.cp(
-        path.join(sourceRepo, "src", "extensions", group, extension),
-        path.join(isolatedRepo, "src", "extensions", group, extension),
-        { recursive: true },
-      );
+    for (const name of [
+      "composition.json",
+      "review-order.md",
+      "worker-review-prompt.md",
+      "orchestrator-prompt.md",
+      "orchestrator-addendum.md",
+    ]) expect(await pathExists(path.join(prepared.inputDir, name))).toBe(true);
+    for (const name of ["meta/meta.json", "meta/review.md", "scenario/scenario.json", "scenario/prompt.md", "scenario/review.md", "scenario/payload/project.txt", "primitives/00/primitive.json", "primitives/00/payload/.agents/memory/crystallized/documents/stable.md", "variants/00/primitive.json", "variants/00/review.md", "variants/00/payload/.agents/memory/crystallized/documents/run-local.md"]) {
+      expect(await pathExists(path.join(prepared.inputDir, ...name.split("/")))).toBe(true);
     }
-    await fs.cp(sourceScenarioDir, scenarioDir, { recursive: true });
-    await run(isolatedRepo, ["git", "init", "--quiet"]);
-    await run(isolatedRepo, ["git", "config", "user.name", "Benchmark Scenario Test"]);
-    await run(isolatedRepo, ["git", "config", "user.email", "benchmark-scenario-test@example.invalid"]);
-    await run(isolatedRepo, ["git", "add", "-A"]);
-    await run(isolatedRepo, ["git", "commit", "--quiet", "-m", "isolated scenario fixture"]);
+    const order = await fs.readFile(prepared.reviewIndexPath, "utf8");
+    expect(order.indexOf("Scenario review")).toBeLessThan(order.indexOf("Primitive review 1"));
+    expect(order.indexOf("Primitive review 1")).toBeLessThan(order.indexOf("Variant review 1"));
+    expect(order.indexOf("Variant review 1")).toBeLessThan(order.indexOf("Meta-scenario review"));
+    expect(await pathExists(path.join(prepared.recordDir, "trace", "raw"))).toBe(true);
+    expect(await fs.readFile(path.join(prepared.recordDir, "trace", "manifest.json"), "utf8")).toContain("Replace with");
+    expect(await pathExists(path.join(prepared.workspaceDir, "composition.json"))).toBe(false);
+    expect(await pathExists(path.join(prepared.workspaceDir, "review-order.md"))).toBe(false);
 
-    for (const scenario of cases) {
-      const specPath = path.join(scenarioDir, scenario.spec);
-      const sourceDocument = JSON.parse(await fs.readFile(specPath, "utf8"));
-      const spec = validateRunSpecDocument(sourceDocument, scenarioDir);
-
-      expect(spec.caseId).toBe(scenario.caseId);
-      expect(seenCaseIds.has(spec.caseId)).toBe(false);
-      seenCaseIds.add(spec.caseId);
-      expect(spec.evidenceClass).toBe("engineering-smoke");
-      expect(spec.model).toMatchObject({ provider: "unassigned", id: "replace-before-run", revision: "unrun" });
-      expect(spec.runtime).toMatchObject({
-        name: "unassigned-external-worker",
-        version: "unrun",
-        settings: { scenarioStatus: "unrun" },
-      });
-      expect(spec.isolation).toEqual({
-        freshContext: "unverified",
-        inheritedContext: "unknown",
-        workerReceivesOnlyWorkspace: false,
-        network: "unknown",
-        filesystem: "unknown",
-      });
-      expect(spec.controls).toEqual({
-        planned: false,
-        randomized: false,
-        declaredTreatmentOnly: false,
-        replicatePlanned: false,
-        planId: null,
-        planSha256: null,
-      });
-
-      for (const declaredPath of [
-        spec.sourceRepo,
-        spec.inputs.cli.path,
-        spec.inputs.prompt.path,
-        spec.inputs.rubric.path,
-        ...spec.components.map((component) => component.source),
-      ]) {
-        expect(await fs.stat(declaredPath)).toBeTruthy();
-      }
-
-      const prepared = await prepareRun({ specPath, runsRoot });
-      expect(await validateRun(prepared.runDir, validationCredentials(prepared))).toEqual({ ok: true, errors: [] });
-      expect(await fs.readFile(prepared.workerPromptPath, "utf8")).toBe(await fs.readFile(spec.inputs.prompt.path, "utf8"));
-      await run(isolatedRepo, [process.execPath, path.join(isolatedRepo, "src", "cli", "cli.ts"), "doctor", prepared.workspaceDir]);
-
-      if (scenario.currentTruth) {
-        const decisions = path.join(prepared.workspaceDir, ".agents", "memory", "crystallized", "decisions");
-        expect(await exists(path.join(decisions, scenario.currentTruth))).toBe(true);
-        expect(await fs.readFile(path.join(decisions, "_decisions.md"), "utf8")).toContain(
-          `](${scenario.currentTruth}) - #Memory #Decision #CurrentTruth`
-        );
-      }
-
-      for (const workflow of scenario.workflows) {
-        const workflowPath = path.join(prepared.workspaceDir, ".agents", "workflows", ...workflow.split("/"));
-        expect(await exists(workflowPath)).toBe(true);
-        const expectedPhase = workflow.startsWith("brainstorming/")
-          ? "PhaseDiscovery"
-          : workflow.startsWith("vision/") || workflow.startsWith("architecture/")
-            ? "PhaseDefinition"
-            : workflow.startsWith("planning/") || workflow.startsWith("task-creation/")
-              ? "PhasePlanning"
-              : workflow.startsWith("implementation/")
-                ? "PhaseDelivery"
-                : "PhaseVerification";
-        expect(await fs.readFile(workflowPath, "utf8")).toContain(`Workflow, ${expectedPhase}`);
-      }
-      for (const workflow of scenario.absent) {
-        expect(await exists(path.join(prepared.workspaceDir, ".agents", "workflows", ...workflow.split("/")))).toBe(false);
-      }
-    }
-
-    expect(seenCaseIds.size).toBe(cases.length);
+    await fs.writeFile(path.join(variantDirectory, "review.md"), "mutated after preparation\n");
+    expect(await fs.readFile(prepared.variantReviewPaths[0], "utf8")).toBe("Review the run-local treatment.\n");
+    expect(requireSuccessValue(await runGit(prepared.workspaceDir, "status", "--short"), "git status")).toBe("");
   }, 120_000);
 
-  test("never grants P0 causal eligibility from declared controls and a text isolation receipt", async () => {
-    const fixture = await createFixture();
-    fixture.spec.evidenceClass = "confirmatory";
-    fixture.spec.isolation = {
-      freshContext: "verified",
-      inheritedContext: "none",
-      workerReceivesOnlyWorkspace: true,
-      network: "disabled",
-      filesystem: "workspace-only",
-    };
-    fixture.spec.controls = {
-      planned: true,
-      randomized: true,
-      declaredTreatmentOnly: true,
-      replicatePlanned: true,
-      planId: "fixture-plan",
-      planSha256: "a".repeat(64),
-    };
-    await writeJson(fixture.specPath, fixture.spec);
-    const prepared = await prepareRun({ specPath: fixture.specPath, runsRoot: fixture.runsRoot });
-    const result = await finalizeRun({
-      runDir: prepared.runDir,
-      ownerToken: prepared.ownerToken,
-      preparedRootSha256: prepared.preparedRootSha256,
-      evaluationPath: await createEvaluation(fixture.root, { includeIsolationReceipt: true }),
+  test("rejects unresolved ids, external id ambiguity, and payload collisions before allocating a run", async () => {
+    const unknown = await createCompositionFixture("unknown", { primitiveReference: "missing primitive" });
+    await expect(prepareMetaScenario({ metaScenarioId: unknown.metaScenarioId, ...unknown.options })).rejects.toThrow(
+      "references unknown primitive",
+    );
+    expect(await pathExists(unknown.options.runsRoot)).toBe(false);
+
+    const duplicate = await createCompositionFixture("duplicate-variant");
+    const duplicateVariant = path.join(duplicate.root, "external", "duplicate");
+    await writePrimitive(duplicateVariant, {
+      id: duplicate.primitiveId,
+      kind: "memory",
+      payload: { ".agents/memory/crystallized/documents/other.md": "# Other\n" },
     });
-    const eligibility = result.eligibility as Record<string, unknown>;
-    expect(eligibility.causalEligible).toBe(false);
-    expect(eligibility.causalReasonCodes).toContain("P0_CAUSAL_CONTROL_VERIFIER_UNAVAILABLE");
+    await expect(prepareMetaScenario({
+      metaScenarioId: duplicate.metaScenarioId,
+      ...duplicate.options,
+      variantDirectories: [duplicateVariant],
+    })).rejects.toThrow("Stable primitive and variant ids must not contain duplicates");
+    expect(await pathExists(duplicate.options.runsRoot)).toBe(false);
+
+    const collision = await createCompositionFixture("collision");
+    const collisionVariant = path.join(collision.root, "external", "collision");
+    await writePrimitive(collisionVariant, {
+      id: "different id",
+      kind: "memory",
+      payload: { ".agents/memory/crystallized/documents/stable.md": "# Conflicting Bytes\n" },
+    });
+    await expect(prepareMetaScenario({
+      metaScenarioId: collision.metaScenarioId,
+      ...collision.options,
+      variantDirectories: [collisionVariant],
+    })).rejects.toThrow("Benchmark payload collision");
+    expect(await pathExists(collision.options.runsRoot)).toBe(false);
+  });
+
+  test("requires a non-overlapping external runs root", async () => {
+    const fixture = await createCompositionFixture("runs-root-boundary");
+    await expect(prepareMetaScenario({
+      metaScenarioId: fixture.metaScenarioId,
+      scenariosRoot: fixture.options.scenariosRoot,
+      primitivesRoot: fixture.options.primitivesRoot,
+      metaScenariosRoot: fixture.options.metaScenariosRoot,
+      repoRoot,
+    })).rejects.toThrow("--runs-root is required");
+    await expect(prepareMetaScenario({
+      metaScenarioId: fixture.metaScenarioId,
+      ...fixture.options,
+      runsRoot: path.join(repoRoot, "benchmarks", "runs"),
+    })).rejects.toThrow("Runs root must be outside");
+    await expect(prepareMetaScenario({
+      metaScenarioId: fixture.metaScenarioId,
+      ...fixture.options,
+      runsRoot: path.dirname(repoRoot),
+    })).rejects.toThrow("Runs root must be outside");
+  });
+
+  test("checked-in control and trap use one pure scenario and every meta-scenario prepares through the CLI", async () => {
+    const metaScenarios = await discoverMetaScenarios();
+    const control = metaScenarios.find((item) => item.id === "ledger-immutable-control");
+    const trap = metaScenarios.find((item) => item.id === "ledger-current-truth-trap");
+    expect(control?.scenario).toBe("ledger-remove-planning");
+    expect(trap?.scenario).toBe(control?.scenario);
+    expect(trap?.primitives).toEqual(expect.arrayContaining(control?.primitives ?? []));
+
+    const root = await sandbox.createDirectory("checked-in");
+    const runsRoot = path.join(root, "runs");
+    const runnerFile = path.join(repoRoot, "benchmarks", "harness", "runner.ts");
+    const listed = await runProcess([process.execPath, runnerFile, "list"], { cwd: repoRoot });
+    requireSuccess(listed, "benchmark list");
+    const ids = listed.stdout.trim().split(/\r?\n/).filter(Boolean);
+    expect(ids).toEqual(metaScenarios.map((item) => item.id));
+    expect(ids.length).toBeGreaterThan(0);
+    const preparedById = new Map<string, PreparedRun>();
+
+    for (const id of ids) {
+      const result = await runProcess([
+        process.execPath,
+        runnerFile,
+        "prepare",
+        id,
+        "--runs-root",
+        runsRoot,
+      ], { cwd: repoRoot });
+      requireSuccess(result, `benchmark prepare ${id}`);
+      const prepared = JSON.parse(result.stdout) as PreparedRun;
+      preparedById.set(id, prepared);
+      expect(prepared.metaScenarioId).toBe(id);
+      expect(await pathExists(prepared.compositionPath)).toBe(true);
+      expect(await pathExists(prepared.reviewIndexPath)).toBe(true);
+      const doctor = JSON.parse(await fs.readFile(path.join(prepared.recordDir, "prepare-doctor.json"), "utf8"));
+      expect(doctor).toMatchObject({ errors: 0, warnings: 0 });
+      expect(await pathExists(path.join(prepared.recordDir, "prepare-find-follow-required.json"))).toBe(true);
+      expect(requireSuccessValue(await runGit(prepared.workspaceDir, "status", "--short"), "git status")).toBe("");
+    }
+
+    const preparedControl = preparedById.get("ledger-immutable-control")!;
+    const preparedTrap = preparedById.get("ledger-current-truth-trap")!;
+    expect(preparedTrap.scenarioId).toBe(preparedControl.scenarioId);
+    expect(preparedTrap.workerPromptSha256).toBe(preparedControl.workerPromptSha256);
+    expect(preparedTrap.baselineTree).not.toBe(preparedControl.baselineTree);
+  }, 300_000);
+
+  test("finish requires honest trace metadata, preserves validator failures, and records composition identity", async () => {
+    const fixture = await createCompositionFixture("finish");
+    const prepared = await prepareMetaScenario({ metaScenarioId: fixture.metaScenarioId, ...fixture.options });
+    await fs.appendFile(path.join(prepared.workspaceDir, "project.txt"), "worker change\n");
+    await fs.writeFile(path.join(prepared.workspaceDir, ".agents", "directives", "index.md"), "# Conflicting entrypoint\n");
+    await fs.writeFile(path.join(prepared.recordDir, "worker-review.md"), "Worker account.\n");
+    await fs.writeFile(path.join(prepared.recordDir, "orchestrator-review.md"), completeReview());
+
+    await expect(finishRun(prepared.runDir, { repoRoot })).rejects.toThrow("trace/manifest.json is incomplete");
+    await fs.writeFile(path.join(prepared.recordDir, "trace", "manifest.json"), `${JSON.stringify({
+      captureMethod: "The orchestrator observed messages and tool calls through the test runtime.",
+      observableSurfaces: ["messages", "tool calls"],
+      knownGaps: ["No private latent reasoning was exposed."],
+      rawArtifacts: [],
+    }, null, 2)}\n`);
+
+    const result = await finishRun(prepared.runDir, { repoRoot });
+    expect(result).toMatchObject({
+      metaScenarioId: fixture.metaScenarioId,
+      scenarioId: fixture.scenarioId,
+      primitiveIds: [fixture.primitiveId],
+      variantIds: [],
+      extensions: [],
+      workerPromptSha256: prepared.workerPromptSha256,
+      baselineTree: prepared.baselineTree,
+      state: "finished",
+      doctor: { exitCode: 1 },
+    });
+    expect(await fs.readFile(path.join(prepared.recordDir, "changes.patch"), "utf8")).toContain("worker change");
+    expect(JSON.parse(await fs.readFile(path.join(prepared.recordDir, "result.json"), "utf8"))).toEqual(result);
+    await expect(finishRun(prepared.runDir, { repoRoot })).rejects.toThrow("already finished");
+  }, 120_000);
+
+  test("CLI parsing keeps orchestrator addenda separate and permits repeatable variants and extensions", async () => {
+    await expect(main(["list", "unknown"])).rejects.toThrow("list [meta-scenarios|scenarios|primitives]");
+    await expect(main(["prepare", "case", "--variant"])).rejects.toThrow("--variant <primitive-package-dir>");
+    await expect(main(["prepare", "case", "--extension"])).rejects.toThrow("--extension <bundled-id>");
+    await expect(main(["prepare", "case", "--orchestrator"])).rejects.toThrow("--orchestrator <file>");
   });
 });
 
-interface Fixture {
-  root: string;
-  repo: string;
-  runsRoot: string;
-  specPath: string;
-  spec: Record<string, any>;
-}
-
-async function createTemporaryRoot(): Promise<string> {
-  return sandbox.createDirectory("case");
-}
-
-async function createFixture(providedRoot?: string): Promise<Fixture> {
-  const root = providedRoot ?? await createTemporaryRoot();
-  const repo = path.join(root, "source-repo");
-  const runsRoot = path.join(root, "external-runs");
-  await fs.mkdir(path.join(repo, "payload", ".agents"), { recursive: true });
-  await fs.mkdir(path.join(repo, "inputs"), { recursive: true });
-  await fs.writeFile(path.join(repo, "payload", ".agents", "loader.md"), "base loader\n");
-  await fs.writeFile(path.join(repo, "inputs", "worker-prompt.md"), "worker prompt\n");
-  await fs.writeFile(path.join(repo, "inputs", "rubric.md"), "orchestrator rubric\n");
-  await fs.writeFile(path.join(repo, "benchmark-cli.mjs"), `import fs from "node:fs/promises";
-import path from "node:path";
-const [command, workspace] = process.argv.slice(2);
-if (command !== "index" || !workspace) throw new Error("expected index and workspace");
-await fs.mkdir(path.join(workspace, ".agents"), { recursive: true });
-await fs.writeFile(path.join(workspace, ".agents", "generated-index.md"), "generated by snapshotted cli\\n");
-process.stdout.write("indexed\\n");
-`);
-  const specPath = path.join(repo, "run-spec.json");
-  const spec: Record<string, any> = {
-    schemaVersion: 1,
-    experimentId: "p0-test",
-    caseId: "seed-1",
-    armId: "routed",
-    replicate: 0,
-    evidenceClass: "engineering-smoke",
-    sourceRepo: ".",
-    components: [{ name: "base", source: "payload", destination: "" }],
-    overrides: [],
-    inputs: {
-      cli: { path: "benchmark-cli.mjs", invocation: ["{runtime}", "{cli}", "index", "{workspace}"] },
-      prompt: { path: "inputs/worker-prompt.md" },
-      rubric: { path: "inputs/rubric.md" },
-    },
-    model: { provider: "test", id: "deterministic-fixture", revision: "1", settings: {} },
-    runtime: { name: "bun-test", version: Bun.version, adapter: "manual", settings: {} },
-    isolation: {
-      freshContext: "unverified",
-      inheritedContext: "unknown",
-      workerReceivesOnlyWorkspace: true,
-      network: "unknown",
-      filesystem: "workspace-only",
-    },
-    controls: {
-      planned: false,
-      randomized: false,
-      declaredTreatmentOnly: false,
-      replicatePlanned: false,
-      planId: null,
-      planSha256: null,
-    },
+function roots(root: string) {
+  return {
+    scenariosRoot: path.join(root, "benchmarks", "building-blocks", "scenarios"),
+    primitivesRoot: path.join(root, "benchmarks", "building-blocks", "primitives"),
+    metaScenariosRoot: path.join(root, "benchmarks", "meta-scenarios"),
+    runsRoot: path.join(root, "runs"),
   };
-  await writeJson(specPath, spec);
-  await run(repo, ["git", "init", "--quiet"]);
-  await run(repo, ["git", "config", "user.name", "Benchmark Test"]);
-  await run(repo, ["git", "config", "user.email", "benchmark-test@example.invalid"]);
-  await run(repo, ["git", "add", "-A"]);
-  await run(repo, ["git", "commit", "--quiet", "-m", "fixture"]);
-  return { root, repo, runsRoot, specPath, spec };
 }
 
-async function createEvaluation(root: string, options: { omitRating?: string; includeIsolationReceipt?: boolean; status?: "complete" | "invalid" | "aborted" } = {}): Promise<string> {
-  const tracePath = path.join(root, `worker-trace-${crypto.randomUUID()}.log`);
-  await fs.writeFile(tracePath, "worker runtime trace\n");
-  const evaluationPath = path.join(root, `evaluation-${crypto.randomUUID()}.json`);
-  await writeJson(evaluationPath, {
-    schemaVersion: 1,
-    status: options.status ?? "complete",
-    objectiveAssertions: [
-      {
-        id: "build",
-        status: "pass",
-        command: "bun test",
-        exitCode: 0,
-        durationMs: 12.5,
-        evidenceTraceNames: ["worker-trace"],
-        note: null,
-      },
-      ...(options.includeIsolationReceipt ? [{
-        id: "isolation-fresh-context",
-        status: "pass",
-        command: null,
-        exitCode: null,
-        durationMs: null,
-        evidenceTraceNames: ["worker-trace"],
-        note: "arbitrary text receipt",
-      }] : []),
-    ],
-    subjectiveRatings: coreRatingIds
-      .filter((id) => id !== options.omitRating)
-      .map((id) => ({ id, score: 2, maxScore: 2, rationale: `${id} fixture rating` })),
-    traces: [{ name: "worker-trace", path: tracePath }],
-    notes: ["fixture evaluation"],
+async function createCompositionFixture(
+  name: string,
+  changes: { primitiveReference?: string } = {},
+): Promise<{
+  root: string;
+  scenarioId: string;
+  primitiveId: string;
+  metaScenarioId: string;
+  options: ReturnType<typeof roots>;
+}> {
+  const root = await sandbox.createDirectory(name);
+  const options = roots(root);
+  const scenarioId = `${name} scenario`;
+  const primitiveId = `${name} stable memory`;
+  const metaScenarioId = `${name} composition`;
+  await writeScenario(path.join(options.scenariosRoot, "organization", "scenario"), scenarioId, {
+    "project.txt": "scenario fixture\n",
   });
-  return evaluationPath;
+  await writePrimitive(path.join(options.primitivesRoot, "memory", "stable"), {
+    id: primitiveId,
+    kind: "memory",
+    payload: { ".agents/memory/crystallized/documents/stable.md": "# Stable\n\nAccepted fixture.\n" },
+  });
+  await writeMeta(path.join(options.metaScenariosRoot, "organization", "composition"), {
+    id: metaScenarioId,
+    scenario: scenarioId,
+    primitives: [changes.primitiveReference ?? primitiveId],
+    extensions: [],
+  });
+  return { root, scenarioId, primitiveId, metaScenarioId, options };
 }
 
-async function run(cwd: string, command: string[]): Promise<void> {
-  requireSuccess(await runProcess(command, { cwd }), command.join(" "));
+async function writeScenario(directory: string, id: string, payload: Record<string, string> = {}): Promise<void> {
+  await writeText(path.join(directory, "scenario.json"), `${JSON.stringify({ id }, null, 2)}\n`);
+  await writeText(path.join(directory, "prompt.md"), "Complete the ordinary task.\n");
+  await writeText(path.join(directory, "review.md"), "Review the task outcome.\n");
+  for (const [relative, content] of Object.entries(payload)) await writeText(path.join(directory, "payload", relative), content);
 }
 
-async function writeJson(file: string, value: unknown): Promise<void> {
-  await fs.mkdir(path.dirname(file), { recursive: true });
-  await fs.writeFile(file, `${JSON.stringify(value, null, 2)}\n`);
-}
-
-function validationCredentials(prepared: { ownerToken: string; preparedRootSha256: string }): { ownerToken: string; preparedRootSha256: string } {
-  return { ownerToken: prepared.ownerToken, preparedRootSha256: prepared.preparedRootSha256 };
-}
-
-async function regenerateTransparentChecksums(evidenceDir: string): Promise<void> {
-  const relativeFiles: string[] = [];
-  async function walk(directory: string): Promise<void> {
-    const children = await fs.readdir(directory, { withFileTypes: true });
-    for (const child of children) {
-      const absolute = path.join(directory, child.name);
-      const relative = path.relative(evidenceDir, absolute).replaceAll("\\", "/").normalize("NFC");
-      if (relative === "checksums.json" || relative === "final-seal.json") continue;
-      if (child.isDirectory()) await walk(absolute);
-      else if (child.isFile()) relativeFiles.push(relative);
-    }
+async function writePrimitive(
+  directory: string,
+  options: { id: string; kind: PrimitiveKind; payload?: Record<string, string>; review?: string },
+): Promise<void> {
+  await writeText(path.join(directory, "primitive.json"), `${JSON.stringify({ id: options.id, kind: options.kind }, null, 2)}\n`);
+  await writeText(path.join(directory, "review.md"), options.review ?? "Review the primitive effect.\n");
+  for (const [relative, content] of Object.entries(options.payload ?? {})) {
+    await writeText(path.join(directory, "payload", relative), content);
   }
-  await walk(evidenceDir);
-  relativeFiles.sort((left, right) => left.localeCompare(right, "en"));
-  const files = [];
-  for (const relative of relativeFiles) {
-    const content = await fs.readFile(path.join(evidenceDir, ...relative.split("/")));
-    files.push({ path: relative, sha256: sha256(content), bytes: content.byteLength });
-  }
-  await fs.writeFile(path.join(evidenceDir, "checksums.json"), stableStringify({ schemaVersion: 1, files }));
 }
 
-async function directoryEntriesOrEmpty(directory: string): Promise<string[]> {
-  return fs.readdir(directory).catch(() => []);
+async function writeMeta(
+  directory: string,
+  value: { id: string; scenario: string; primitives: string[]; extensions: string[] },
+): Promise<void> {
+  await writeText(path.join(directory, "meta.json"), `${JSON.stringify(value, null, 2)}\n`);
+  await writeText(path.join(directory, "review.md"), "Review the composed relationship.\n");
+}
+
+function completeReview(): string {
+  return `# Orchestrator Review
+
+## Behavior
+Observed behavior.
+
+## Outcome
+Observed outcome.
+
+## Comparison With Worker Review
+Compared accounts.
+
+## Limits
+Bounded conclusion.
+`;
+}
+
+function requireSuccessValue(result: { exitCode: number; stdout: string; stderr: string }, label: string): string {
+  requireSuccess(result, label);
+  return result.stdout;
 }
