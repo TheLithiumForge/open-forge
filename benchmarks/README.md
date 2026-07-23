@@ -67,6 +67,19 @@ Prepared arms expose a worker-prompt SHA-256 and baseline Git tree id. Equal mod
 
 The orchestrator can retain messages, tool calls and results, interactions, status events, and reasoning summaries exposed by the runtime. It cannot claim access to invisible private chain-of-thought. The [trace contract](harness/orchestrator/trace.md) makes that boundary explicit.
 
+## Publish
+
+Execution and isolation remain under the external run set. After every worker context is done, publish the terminal successful, partial, or failed set with evidence once to:
+
+```text
+benchmarks/results/<UTC-filesystem-safe-date-time>/<RUN_SET>/
+```
+
+`RUN_SET` becomes the safe publication run name, and the UTC directory uses a Windows-safe form such as `YYYY-MM-DDTHH-mm-ss-SSSZ`. The [runbook](harness/orchestrator/runbook.md) owns verified same-filesystem staging and atomic publication; the [results contract](results/README.md) owns the evidence-linked `summary.md` and complete `raw/` contents.
+
+Successful, partial, and failed sets retain their actual evidence and limits. Never overwrite a publication, and never expose one to a later arm. Publication is a terminal plain-file action; there is no CLI publish command.
+Publications should not include the full raw data that might contain private information, the publication should be the conclusions of the agents and orchestrator and a summary of them and of the evidence.
+
 ## Reuse
 
 The [launch templates](harness/orchestrator/templates/README.md) cover a single run, parallel model or replicate runs, a stable base-versus-trap pair, and an on-demand treatment pair. They are plain prompts with editable assignments, not a template language.
@@ -81,4 +94,4 @@ One run shows what happened in that run. Replication and comparisons reveal obse
 - [Orchestrator runbook](harness/orchestrator/runbook.md)
 - [Invariant orchestrator prompt](harness/orchestrator/orchestrator-prompt.md)
 - [Worker self-review prompt](harness/orchestrator/worker-review-prompt.md)
-- [Historical results](results/README.md)
+- [Published and historical results](results/README.md)

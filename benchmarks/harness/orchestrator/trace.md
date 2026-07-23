@@ -67,3 +67,9 @@ Behavior findings cite observable trace artifacts. Outcome findings cite the fro
 `finish` requires a completed, parseable trace manifest. Raw artifacts may be absent when the runtime exposed none, but `knownGaps` must make that boundary explicit.
 
 Keep each arm's trace separate. A run-set comparison consumes completed per-arm reviews and may cite their traces, but it does not merge traces into a shared worker context or expose one arm to another.
+
+## Published Copy
+
+The external arm record remains the trace owner while a run is active. Post-run publication copies the completed record byte-for-byte under the result's `raw/arms/<arm-key>/record/` tree only after no worker can be influenced by it. The raw manifest maps that neutral publication key to the source run and treatment.
+
+Before calling that copy complete, confirm that every path named by `rawArtifacts` remains inside the copied trace directory and resolves to a copied file. If the trace contains a credential, secret, or unrelated private material, stop raw publication and report the blocker. A deliberately sanitized derivative must remain external, be labeled as such, and cannot satisfy or silently replace the current raw-publication contract.

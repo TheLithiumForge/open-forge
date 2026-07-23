@@ -36,6 +36,8 @@ Open Forge benchmarks are a composable engineering dogfood loop, not a self-auth
 - After task work stops, the same worker gives a response-only self-review of what it believes it accomplished, how it worked, what it verified, its assumptions or deviations, and what may remain wrong.
 - The orchestrator forms its Behavior, Outcome, and Limits findings from the trace, actual workspace, baseline delta, and proportionate checks before comparing them with the worker account.
 - The worker account is evidence of awareness, not proof of outcome. When a runtime does not expose some behavior, that behavior remains unknown; a comparison must state the actual trace boundary.
+- External run sets remain the isolated execution record. After a run set reaches a terminal state and no worker can be influenced by its outcome, the orchestrator appends one durable publication under `benchmarks/results/<UTC-date-time>/<run-name>/` without overwriting prior results.
+- A durable publication contains one human-readable `summary.md` and a `raw/` evidence tree preserving the frozen run-set inputs, set-level record, comparison when present, and each arm's complete record and canonical final or explicitly partial source snapshot. Material ignored runtime artifacts are retained separately from that source snapshot. Failed and partial runs remain publishable evidence when their state, blockers, missing material, and trace limits are explicit.
 
 ## Validation And Scope
 

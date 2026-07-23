@@ -12,11 +12,22 @@ Building blocks separate stable tasks from the worker-visible context used to te
 
 ## Primitives
 
+### Delivery
+
 - [Standup journal contract](primitives/memory/delivery/standup-journal-contract/primitive.json) - Accepted product, persistence, and calendar truth.
 - [Standup project location](primitives/workspace/delivery/standup-project-location/primitive.json) - Coarse destination for the implementation.
 - [Handoff note product direction](primitives/memory/delivery/handoff-note-product-direction/primitive.json) - Accepted product truth with a deliberate technical gap.
+
+### Ledger Removal
+
 - [Immutable ledger removal](primitives/memory/planning/immutable-ledger-removal/primitive.json) - Accepted append-only reversal semantics.
 - [Hard-delete ledger removal](primitives/memory/planning/hard-delete-ledger-removal/primitive.json) - Independently coherent hard-delete semantics that conflict only when combined with immutable removal.
+- [Hard-delete shortcut idea](primitives/memory/planning/hard-delete-emerging-note/primitive.json) - Explicitly unaccepted candidate semantics for testing contextual Memory handling.
+- [Simplicity over audit guidance](primitives/guidance/planning/simplicity-over-audit-guidance/primitive.json) - Conditional advice preferring irreversible deletion only when history has no accepted product value.
+- [REST full-CRUD symmetry](primitives/pattern/planning/rest-full-crud-pattern/primitive.json) - Default API shape with an explicit resource-specific exception boundary.
+
+### Recall
+
 - [Archive export contract](primitives/memory/recall/archive-export-contract/primitive.json) - Accepted compatibility and verification truth.
 - [Read-only recall](primitives/directive/recall/read-only-recall/primitive.json) - Binding non-mutation boundary for recall tasks.
 - [Source-backed summary](primitives/pattern/recall/source-backed-summary/primitive.json) - Inspectable answer shape tying claims to their owners.

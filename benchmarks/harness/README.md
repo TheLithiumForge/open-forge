@@ -1,6 +1,6 @@
 # Benchmark Harness
 
-The harness resolves reusable benchmark recipes into disposable worker workspaces and records dual-reviewed runs. It prepares and captures; it does not schedule agents, provision provider-native tools, or determine behavioral truth.
+The harness resolves reusable benchmark recipes into disposable worker workspaces and records dual-reviewed runs. It prepares and captures; it does not schedule agents, provision provider-native tools, publish results, or determine behavioral truth.
 
 ## Commands
 
@@ -80,14 +80,31 @@ Comparisons use an external run-set directory so shared inputs and independent a
     launch-prompt.md
     resolved-compositions/
     variants/                optional frozen external packages or runtime bindings
+  record/                    set-level orchestration and failure evidence
   arms/
-    <arm-id>/                one independent prepared run
+    <runner-run-uuid>/       one independent prepared run
   comparison.md
 ```
 
-The filled launch prompt and every resolved composition are frozen before any worker starts. Each arm retains its own workspace, trace, checks, and dual review. `comparison.md` is written only after the independent arm reviews are complete.
+The filled launch prompt and every resolved composition are frozen before any worker starts. The set record preserves preparation, launch, orchestration, and comparison output even when no arm directory survives; the terminal handoff reports the later publication transaction itself. Each arm retains its own workspace, trace, checks, and dual review. `comparison.md` is written only after the independent arm reviews are complete.
 
 The harness does not need to create or own this grouping. An orchestrator may place runner-created arm directories into the external set or preserve their exact paths in the set record.
+
+`RUN_SET` names this external set and its eventual publication. It is a portable slug containing lowercase ASCII letters, digits, and single hyphens, with no separators, traversal, or Windows reserved device basename.
+
+## Terminal Publication
+
+The source repository remains read-only throughout preparation, worker execution, review, finish, and comparison. Once every worker context is done and the set is terminal, the orchestrator publishes one new append-only result under:
+
+```text
+benchmarks/results/<UTC-filesystem-safe-date-time>/<RUN_SET>/
+```
+
+The [runbook](orchestrator/runbook.md) owns safe publication: assemble externally, verify content and privacy, copy the complete timestamp tree into unpublished same-filesystem staging outside the results root, verify it again, then atomically rename it into the new timestamp destination. Never merge, overwrite, or revise a publication.
+
+The [results contract](../results/README.md) owns the retained layout and contents: an evidence-linked `summary.md` plus complete `raw/` inputs, set record, comparison, arm records, and canonical source snapshots. Successful, partial, and failed terminal sets retain their actual evidence and limitations; a safety failure blocks repository publication but leaves the external evidence intact.
+
+There is no CLI publication command. Publishing occurs only after all worker contexts are closed, so published evidence cannot influence a later arm. A correction is a new timestamped publication.
 
 ## Worker And Orchestrator Boundary
 
@@ -107,7 +124,7 @@ Independent outcome checks must not change the frozen task outcome. Run a potent
 
 The CLI is optional. A plain-file operator can resolve `meta.json`, copy the selected scenario and ordered primitives, install the declared extensions, add any frozen variants, index and validate the workspace, and establish a Git baseline outside the source repository. Preserve the exact worker prompt, its hash, the baseline tree id, hidden reviews, filled launch prompt, resolved composition, trace boundary, checks, and dual reviews outside the worker workspace.
 
-The manual method must preserve the same worker/orchestrator separation and describe any preparation or capture property it did not establish.
+The manual method must preserve the same worker/orchestrator separation and describe any preparation or capture property it did not establish. Its terminal publication follows the same externally staged, append-only file contract.
 
 ## Orchestrator Material
 
