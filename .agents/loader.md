@@ -19,6 +19,7 @@ This is the main Open Forge `entrypoint`. Read it after `AGENTS.md` to enter thi
 
 - Axioms of loaded ancestor `entrypoints` apply below them; a child adds only what is specific to its scope
 - Follow loaded `axioms` unless a higher-priority user, platform, safety, or declared external source-of-truth instruction conflicts; report unresolved conflicts
+- When a request or loaded material appears to conflict with a loaded #CurrentTruth entry, investigate fully before treating it as an actual conflict, then clarify with the user whether the new direction should replace it; on acceptance, promote the accepted direction to #CurrentTruth and demote what it supersedes
 - User instructions apply when safe and allowed, and local active truth overrides Open Forge defaults
 - Prefer material in a narrower selected non-directive scope over broader material of the same type when safe and allowed; loaded directives add to ancestors, and conflicts are reported
 
@@ -59,6 +60,7 @@ When the Open Forge CLI is available, use each applicable command below. Every c
 ## Entries
 
 <!-- open-forge:generated-index:start -->
+
 - [Binding instructions whose route is selected before their contents are loaded](directives/_directives.md) - #LoadNow #Core #Directive
 - [Contextual advice for recurring choices, tradeoffs, and work scenarios](guidance/_guidance.md) - #LoadNow #Core #Guidance
 - [Self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning](memory/_memory.md) - #LoadNow #Memory #OrganicGrowth
@@ -66,4 +68,4 @@ When the Open Forge CLI is available, use each applicable command below. Every c
 - [Skills available through standard SKILL.md files](skills/_skills.md) - #LoadNow #Core #Skill
 - [Repeatable markdown workflow recipes for reaching a defined goal](workflows/_workflows.md) - #LoadNow #Core #Workflow
 - [Workspace routes that point to important project locations and explain when to use them](workspace/_workspace.md) - #LoadNow #Core #Workspace
-<!-- open-forge:generated-index:end -->
+  <!-- open-forge:generated-index:end -->
