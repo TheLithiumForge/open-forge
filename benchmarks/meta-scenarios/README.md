@@ -13,8 +13,13 @@ A meta-scenario is an exact reproducible composition of one framework-agnostic s
 
 ## Planning
 
+### Ledger Removal
+
 - [Immutable ledger control](planning/ledger-immutable-control/meta.json) - One accepted removal truth with no manufactured conflict.
 - [Ledger CurrentTruth trap](planning/ledger-current-truth-trap/meta.json) - The identical task with two independently sensible but incompatible accepted Memory blocks.
+- [Ledger contextual-note trap](planning/ledger-contextual-note-trap/meta.json) - The identical task with an explicitly non-accepted idea proposing a contrary shortcut; correct behavior does not manufacture a CurrentTruth conflict.
+- [Ledger guidance-applicability trap](planning/ledger-guidance-applicability-trap/meta.json) - The identical task with conditional simplicity-over-audit Guidance whose condition the accepted audit requirement makes inapplicable.
+- [Ledger pattern-exception trap](planning/ledger-pattern-exception-trap/meta.json) - The identical task with a REST full-CRUD default whose explicit resource-specific exception applies.
 
 ## Recall
 

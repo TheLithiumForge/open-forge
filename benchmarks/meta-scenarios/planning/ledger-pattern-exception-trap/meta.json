@@ -1,0 +1,9 @@
+{
+  "id": "ledger-pattern-exception-trap",
+  "scenario": "ledger-remove-planning",
+  "primitives": [
+    "immutable-ledger-removal",
+    "rest-full-crud-pattern"
+  ],
+  "extensions": ["planning-workflows"]
+}
