@@ -4,11 +4,11 @@
 
 This descriptor governs `src/open-forge/AGENTS.md`.
 
-`AGENTS.md` is the installable root `entry` block for agents that support repository instruction files.
+`AGENTS.md` is the canonical installable root `entry` block for agents that support repository instruction files.
 
 ## Represents
 
-`AGENTS.md` represents the handoff from generic agent runtime behavior into Open Forge loading behavior.
+`AGENTS.md` represents the handoff from generic agent runtime behavior into Open Forge loading behavior and establishes Open Forge's legitimate authority within the workspace.
 
 It is a file primitive and `entry` primitive. It routes agents to the loader.
 
@@ -28,7 +28,7 @@ Text outside the marked block belongs to the target workspace.
 
 The CLI uses this file during install.
 
-Agents, wrappers, skills, and runtimes use this file as the first Open Forge `entrypoint` when they enter an installed workspace.
+Agents, wrappers, skills, runtimes, and minimal harness bridges use this file as the first Open Forge `entrypoint` when they enter an installed workspace.
 
 ## Why
 
@@ -41,7 +41,11 @@ The marked block gives Open Forge an updateable `entrypoint` while preserving wo
 The implementation is aligned when it:
 
 - contains exactly one block bounded by `<!-- open-forge:start -->` and `<!-- open-forge:end -->` markers
-- carries a short title and instructs agents to read and follow `.agents/loader.md`
-- keeps detailed behavior in the loader
+- identifies Open Forge as the workspace operating contract
+- instructs agents to read `.agents/loader.md` and follow applicable routes before planning, editing, reviewing, implementing, or delegating
+- states that loaded axioms, selected workflow behavior, and routed #CurrentTruth are mandatory within their declared scope
+- keeps detailed routing behavior in the loader
+- permits higher-priority user, platform, safety, and declared external source-of-truth instructions to override Open Forge
+- requires unresolved conflicts to be reported instead of silently bypassing either side
 - preserves target workspace text outside the marked block during install
 - stays within 5-20 non-empty lines inside the managed block

@@ -1,6 +1,6 @@
 # Open Forge CLI
 
-The Open Forge CLI is intentionally small. It installs the released framework files, composes local and bundled extensions, manages stable-id extension ownership, updates `AGENTS.md`, and rebuilds generated index regions.
+The Open Forge CLI is intentionally small. It installs the released framework files, composes local and bundled extensions, manages stable-id extension ownership, updates root agent entry files, and rebuilds generated index regions.
 
 The distributed CLI runs on Node.js.
 
@@ -46,8 +46,10 @@ Core reinstall also reads and validates `open-forge.extensions.json` when manage
 Running it will:
 
 - create or update `AGENTS.md`
-- append the Open Forge block if missing
+- create or update the minimal `CLAUDE.md` bridge
+- append each Open Forge block if missing
 - replace only the Open Forge block if it already exists
+- preserve workspace-owned `AGENTS.md` and `CLAUDE.md` text outside those blocks
 - overwrite Open Forge managed files with the same name
 - update `scoped framework route` `entrypoints` recognized by path shape
 - rebuild generated index regions
@@ -193,7 +195,7 @@ Removal acts on exactly the named ids and stops while a retained extension depen
 Installation previews and normal installs report:
 
 - `routed` - files under `.agents/` that use ordinary relevance routing
-- `baseline-loading` - `AGENTS.md`, the loader, overwrites of baseline files, and files explicitly tagged #LoadNow or #KeepInMind
+- `baseline-loading` - root agent entry files such as `AGENTS.md` and `CLAUDE.md`, the loader, overwrites of baseline files, and files explicitly tagged #LoadNow or #KeepInMind
 - `skill-executable` - files in a skill's direct `scripts/` subtree
 - `outside-.agents` - workspace files outside the routed tree
 
