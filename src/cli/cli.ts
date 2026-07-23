@@ -19,6 +19,10 @@ const skillEntrypointNames = ["SKILL.md", "Skill.md"];
 const portablePathSeparator = "/";
 const agentsDirectoryName = ".agents";
 const skillsDirectoryName = "skills";
+const rootEntryPatchMarkers = new Map([
+  ["AGENTS.md", "open-forge"],
+  ["CLAUDE.md", "open-forge"]
+]);
 const scopedCoreEntrypointFolders = new Set(["directives", "guidance", "patterns", "skills"]);
 const entriesHeading = "## Entries";
 const generatedIndexStartMarker = "<!-- open-forge:generated-index:start -->";
@@ -620,11 +624,12 @@ async function createCoreInstallPlan(
     const sourceText = await fs.readFile(sourceFile, "utf8");
     const originalContent = await readBufferIfExists(targetFile);
     const targetText = originalContent?.toString("utf8") ?? null;
-    const nextText = relativePath === "AGENTS.md"
-      ? targetText == null ? sourceText : patchMarkedBlock(targetText, sourceText, "open-forge")
+    const patchMarker = rootEntryPatchMarkers.get(relativePath);
+    const nextText = patchMarker
+      ? targetText == null ? sourceText : patchMarkedBlock(targetText, sourceText, patchMarker)
       : targetText == null ? sourceText : preserveLocalBlocks(sourceText, targetText);
     await add(relativePath, targetFile, Buffer.from(nextText, "utf8"));
-    if (relativePath === "AGENTS.md") patched += 1;
+    if (patchMarker) patched += 1;
     else copied += 1;
   }
 
@@ -1354,9 +1359,10 @@ function countExtensionPlanScopes(plan: ExtensionInstallPlanEntry[]): Record<Ext
 function classifyExtensionPlanScope(relativePath: string): ExtensionPlanScope {
   const caseInsensitive = process.platform === "win32" || process.platform === "darwin";
   const comparable = caseInsensitive ? relativePath.toLowerCase() : relativePath;
-  const agentsFile = caseInsensitive ? "agents.md" : "AGENTS.md";
+  const rootEntryFiles = new Set([...rootEntryPatchMarkers.keys()]
+    .map((file) => caseInsensitive ? file.toLowerCase() : file));
   const isWorkspaceDirective = /^\.agents\/directives\/[^/]+\.md$/.test(comparable);
-  if (comparable === agentsFile || comparable === ".agents/loader.md" || comparable === ".agents/loader.overwrite.md" || isWorkspaceDirective) {
+  if (rootEntryFiles.has(comparable) || comparable === ".agents/loader.md" || comparable === ".agents/loader.overwrite.md" || isWorkspaceDirective) {
     return "baseline";
   }
   if (/^\.agents\/skills\/[^/]+\/scripts\//.test(comparable)) {
@@ -4153,8 +4159,10 @@ function patchMarkedBlock(targetText: string, sourceText: string, markerName: st
     return targetText.replace(targetPattern, sourceBlock);
   }
 
-  const trimmed = targetText.trimEnd();
-  return `${trimmed}\n\n${sourceBlock}\n`;
+  const separator = targetText.length === 0
+    ? ""
+    : targetText.endsWith("\n\n") ? "" : targetText.endsWith("\n") ? "\n" : "\n\n";
+  return `${targetText}${separator}${sourceBlock}\n`;
 }
 
 function preserveLocalBlocks(sourceText: string, targetText: string): string {

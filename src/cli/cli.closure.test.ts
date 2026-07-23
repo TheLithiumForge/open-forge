@@ -1278,7 +1278,7 @@ open-forge:
     expect(await fs.readFile(existingSkill, "utf8")).toBe("existing skill\n");
   });
 
-  test("classifies a Windows case-folded AGENTS.md plan as baseline-loading", async () => {
+  test("classifies Windows case-folded root entry files as baseline-loading", async () => {
     if (process.platform !== "win32") {
       return;
     }
@@ -1288,13 +1288,16 @@ open-forge:
     const payload = path.join(extension, "payload");
     await fs.mkdir(payload, { recursive: true });
     await fs.writeFile(path.join(payload, "agents.md"), "new entrypoint\n");
+    await fs.writeFile(path.join(payload, "claude.md"), "new bridge\n");
 
     const result = await runCli("extend", extension, root, "--dry-run");
 
     expect(result.exitCode).toBe(0);
-    expect(result.stdout).toContain("Scope review: 0 routed, 1 baseline-loading, 0 skill-executable, 0 outside-.agents files.");
+    expect(result.stdout).toContain("Scope review: 0 routed, 2 baseline-loading, 0 skill-executable, 0 outside-.agents files.");
     expect(result.stdout).toContain("- create agents.md");
+    expect(result.stdout).toContain("- create claude.md");
     expect(await exists(path.join(root, "agents.md"))).toBe(false);
+    expect(await exists(path.join(root, "claude.md"))).toBe(false);
   });
 
   test("classifies only a skill package's direct scripts child as executable", async () => {
@@ -1370,6 +1373,46 @@ describe("Git-checkpointed install commands", () => {
     expect(nextBlocked.stderr).toContain("requires a clean Git checkpoint");
   });
 
+  test("patches canonical and bridged root entries without replacing workspace instructions", async () => {
+    const root = await createRoot();
+    const originalAgents = `# Workspace Agents
+
+Keep this agent instruction.
+
+<!-- open-forge:start -->
+Old Open Forge entry.
+<!-- open-forge:end -->
+`;
+    const originalClaude = `# Claude Code
+
+Keep this Claude-specific instruction.
+`;
+    await fs.writeFile(path.join(root, "AGENTS.md"), originalAgents);
+    await fs.writeFile(path.join(root, "CLAUDE.md"), originalClaude);
+    await initializeGitRepository(root);
+    await commitAll(root, "Workspace instructions");
+
+    const installed = await runCliDefault("install", root);
+
+    expect(installed.exitCode).toBe(0);
+    const agents = await fs.readFile(path.join(root, "AGENTS.md"), "utf8");
+    const claude = await fs.readFile(path.join(root, "CLAUDE.md"), "utf8");
+    expect(agents).toContain("Keep this agent instruction.");
+    expect(agents).toContain("Open Forge is the operating contract for this workspace.");
+    expect(agents).not.toContain("Old Open Forge entry.");
+    expect(claude.startsWith(originalClaude)).toBe(true);
+    expect(claude).toContain("@AGENTS.md");
+    expect(agents.match(/<!-- open-forge:start -->/g) ?? []).toHaveLength(1);
+    expect(claude.match(/<!-- open-forge:start -->/g) ?? []).toHaveLength(1);
+
+    await commitAll(root, "Install Core");
+    const reinstalled = await runCliDefault("install", root);
+
+    expect(reinstalled.exitCode).toBe(0);
+    expect(reinstalled.stdout).toContain("Git reports no target changes; no new commit is needed");
+    expect(await fs.readFile(path.join(root, "CLAUDE.md"), "utf8")).toBe(claude);
+  });
+
   test("scopes cleanliness to a nested target instead of unrelated monorepo files", async () => {
     const root = await createRoot();
     const target = path.join(root, "apps", "demo");
@@ -1384,6 +1427,7 @@ describe("Git-checkpointed install commands", () => {
 
     expect(result.exitCode).toBe(0);
     expect(await exists(path.join(target, "AGENTS.md"))).toBe(true);
+    expect(await fs.readFile(path.join(target, "CLAUDE.md"), "utf8")).toContain("@AGENTS.md");
     expect((await gitCommand(root, "status", "--porcelain=v1", "--", "outside.txt")).stdout).toContain("outside.txt");
   });
 

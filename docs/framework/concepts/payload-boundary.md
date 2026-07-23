@@ -42,6 +42,14 @@ Implementation wording must use concrete installed routes and terms that are def
 
 Generated `entries` remain navigation metadata plus reserved load policy. They expose routes, but authored installed content must explain how those routes are used.
 
+## Harness Bridge Contract
+
+`AGENTS.md` is the canonical installed Open Forge entry contract.
+
+A harness that does not read `AGENTS.md` may receive a minimal root bridge that imports the canonical file. A bridge must not duplicate Open Forge policy, introduce provider-specific Core behavior, or become a second configuration system.
+
+The installer manages only the marked Open Forge block in a root entry or bridge file. Workspace-owned content outside that block remains unchanged.
+
 ## Scope Wording Contract
 
 Framework wording must define from the owning scope outward.
@@ -74,6 +82,8 @@ The payload boundary is aligned when:
 - agents can route correctly from installed files alone
 - governance descriptors never become hidden runtime context
 - required behavior appears in installed files
+- harness bridges import the canonical contract without duplicating policy
+- root entry and bridge updates preserve workspace-owned text outside their managed blocks
 - installed files avoid governance-only terms
 - lower-layer wording does not depend on higher-layer packaging or future modules
 - descriptor changes that affect behavior update the matching payload file
