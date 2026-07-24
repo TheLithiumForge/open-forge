@@ -78,6 +78,12 @@ Workflow pursues a larger goal
 
 This order describes composition, not one authority ladder. Directives constrain work. Patterns shape results. Guidance informs judgment. Skills and workflows perform work.
 
+## Boundary With Memory And Current Documents
+
+A directive owns mandatory behavior that needs an independently routed scope. A pattern owns a reusable inspectable shape. Memory may describe behavior without activating it and owns the lifecycle of its recorded state. A decision in crystallized Memory owns accepted rationale for a choice, not the behavior or record selected by that choice. A current document owns a coherent view of present state.
+
+One file must not substitute for these different owners. Universal authority and defined-tag behavior belong in the loader; state transitions belong to Memory; a directive earns a separate file only when its independently scoped behavior has no clearer existing owner.
+
 ## Core Payload Contract
 
 The core payload must install these root categories:
@@ -96,7 +102,7 @@ The core payload must install these root categories:
     _workflows.md
 ```
 
-Each category must begin with only the minimum category contract and generated index region required for routing. The core payload does not seed opinionated directive, pattern, guidance, skill, or workflow content.
+Each category begins with only the minimum category contract and generated index region required for routing. The core payload does not seed opinionated directive, pattern, guidance, skill, or workflow content.
 
 These categories are populated by routed files and child categories.
 
@@ -154,6 +160,8 @@ Agent primitives are aligned when:
 - direct directive files contain one substantive level-2 Axioms section
 - optional behavior uses guidance, skills, or workflows instead of directives
 - patterns define concrete inspectable shapes
+- decisions preserve accepted rationale while current documents present coherent state
+- #Evergreen remains a generic synchronization property rather than a document primitive
 - guidance provides adaptable contextual judgment
 - skills retain their standard runtime format and behavior
 - skills route through `SKILL.md` without an internal Open Forge schema

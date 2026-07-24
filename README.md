@@ -1,8 +1,14 @@
-# The Open Forge Methodology
+# Open Forge
 
-Open Forge is a tiny, agnostic AI agent workflow that embraces the idea of spec-driven development and extends it to real workflows.
+Open Forge is a small, agnostic, plain-file substrate for effective human-agent work.
 
 The aim is to give you an organically growing system, shaped by your actual needs, that helps turn ideas into docs, tasks, implementation, review, handoff, and learning inside plain repo files.
+
+Open Forge intentionally starts generic and usable. It provides context, authority, routing, persistence, and optional capabilities without pretending that every team should inherit the author's finished methodology. Native agent competence handles ordinary work.
+
+As you correct, refine, and teach the workspace, accepted preferences can become directives, patterns, guidance, skills, workflows, workspace routes, and memory. This takes some elbow grease early on by design: the goal is for the workspace to increasingly behave like you.
+
+**Open Forge provides the substrate. Your accumulated decisions provide the personality and methodology.**
 
 With the AI shift, code became more of a commodity and reviewing became the usual bottleneck. Open Forge puts the person at the forefront of the work. AI should be one of the tools in a developer's toolbox, not the main driver. From designing and brainstorming to implementing and reviewing, the AI should increase productivity without becoming a maintenance burden.
 
@@ -181,6 +187,8 @@ The important thing is not the number of files. The important thing is the routi
 `AGENTS.md` is the canonical Open Forge operating contract and points agents at the loader. `CLAUDE.md` imports that same contract for Claude Code without duplicating it; existing workspace instructions outside either managed Open Forge block are preserved. The CLI generates the loader's active root-route `entries` from `entrypoint` metadata, so agents immediately see where each root route lives and what it represents. Category `entrypoints` then expose their relevant routed files.
 
 Every direct directive file carries #LoadNow relative to its already-loaded parent. The root directive route is baseline-loaded, so its direct files bind workspace-wide. Put narrower directives below a positively described child directive `entrypoint`; selecting and loading that route establishes scope before ordinary #LoadNow traversal reads its direct files. A direct directive file contains one substantive level-2 `## Axioms` section and no `Applies To` gate. Use guidance, a skill, or a workflow when behavior is optional rather than mandatory.
+
+#CurrentTruth marks accepted current state. #Evergreen marks material that must stay aligned when accepted state affecting it changes; it creates no authority or load policy. Clear direction is accepted without redundant confirmation, while ambiguous direction remains contextual until work depends on it. Memory may preserve descriptions of behavior without activating them; accepted behavior that should guide future work belongs in the matching Core route.
 
 For non-trivial work, agents use the request, routed current truth, and visible workflow descriptions and tags to select a relevant workflow before opening it, then confirm its Goal. A Goal may include an optional `- helpful before: ...` item. When that work would help and a matching earlier workflow is available, the agent recommends it once without blocking progress; if it is skipped or unavailable, the selected workflow proceeds with explicit assumptions. Phases are wayfinding, not a waterfall. One workflow stays primary, additional workflows become ordered handoffs, and an explicit workflow choice or opt-out wins. Required Routes use `- [Reason](relative/path.md) - #Tags`, with useful tags that include at least the target primitive type.
 

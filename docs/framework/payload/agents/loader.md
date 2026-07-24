@@ -21,13 +21,17 @@ Its Axioms use these groups in order:
 3. `Tags And Loading`, with a `Defined Tags` subgroup
 4. `CLI`, with an `Applicable Commands` subgroup
 
-Workflow execution, memory lifecycle, skill behavior, directive scope details, and other category behavior belong to their routed #LoadNow owners.
+Workflow execution, Memory state lifecycle, skill behavior, directive scope details, and other category behavior belong to their routed #LoadNow owners. The loader keeps only universal authority and defined-tag behavior.
 
 ## Authority Contract
 
 Loaded ancestor Axioms remain active below them, and child `entrypoints` add only scope-specific behavior. Loaded Axioms remain mandatory unless higher-priority user instructions, platform constraints, runtime safety, or a declared external source of truth conflicts.
 
-Local active truth overrides Open Forge defaults. Narrower selected non-directive material is preferred over broader material of the same type when safe and allowed. Loaded directive scopes are additive and report conflicts rather than silently overriding ancestors.
+Local active truth overrides Open Forge defaults. A clear user instruction, correction, or confirmation is accepted within its stated scope without another confirmation. A request to act also accepts any decision required to perform that action. Ambiguous direction stays contextual until it is clarified before work depends on it.
+
+Agents investigate apparent conflicts with #CurrentTruth before changing either side and report conflicts that remain unresolved. When higher-authority accepted direction changes #CurrentTruth, they update its owning route or system and preserve useful superseded context.
+
+Narrower selected non-directive material is preferred over broader material of the same type when safe and allowed. Loaded directive scopes are additive and report conflicts rather than silently overriding ancestors.
 
 ## Routing Contract
 
@@ -59,7 +63,11 @@ Link destinations are concrete and relative to `.agents/loader.md`, such as `wor
 
 ## Tags Contract
 
-The loader defines #LoadNow, #KeepInMind, #Core, #Memory, #Extension, #Contextual, and #CurrentTruth positively. Undefined tags remain routing and search signals. Load-policy tags change loading only; they do not create authority, scope, or precedence.
+The loader defines #LoadNow, #KeepInMind, #Core, #Memory, #Extension, #Contextual, #CurrentTruth, and #Evergreen positively. Undefined tags remain routing and search signals. Load-policy tags change loading only; they do not create authority, scope, or precedence.
+
+#CurrentTruth marks accepted current state within its stated scope.
+
+#Evergreen marks material that must stay aligned with accepted current state. It creates no authority or load policy. When accepted state changes, agents update only affected #Evergreen material they may edit before work depends on it and no later than closeout, batching related updates when safe. They keep that material coherent with what it represents now, preserve useful superseded context in the matching decision or archive, and report affected material they cannot update.
 
 ## Why
 
@@ -75,6 +83,11 @@ The implementation is aligned when it:
 - defines routing terms consistently, including `scope route`
 - applies ancestor Axioms before child additions
 - leaves category behavior to routed #LoadNow owners
+- accepts clear user direction without redundant confirmation
+- treats an action request as acceptance of decisions required to perform it
+- keeps ambiguous direction contextual until work depends on it
+- investigates apparent #CurrentTruth conflicts before changing either side
+- updates an owned #CurrentTruth route when higher-authority accepted direction changes it
 - defines #LoadNow relative to an already-loaded parent
 - uses the narrowed complete #KeepInMind refresh triggers
 - loads only user-owned `.overwrite.md` after its base
@@ -84,4 +97,6 @@ The implementation is aligned when it:
 - generates direct root route entries only
 - generates loader links relative to `.agents/loader.md` while leaving CLI route identities workspace-relative
 - defines reserved tags without making them authority
+- defines #CurrentTruth authority and #Evergreen synchronization as orthogonal
+- synchronizes only affected editable #Evergreen material at a safe boundary
 - keeps the authored portion within 35 to 70 non-empty lines

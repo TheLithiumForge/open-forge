@@ -10,14 +10,14 @@ Memory is self-growing Markdown state for live work, AI communication, accepted 
 
 ## Axioms
 
-- Use loader-defined #Contextual and #CurrentTruth tags to distinguish context from accepted current truth
+- Use #Contextual and #CurrentTruth to distinguish context from accepted current truth
 - Keep memory below current user instructions, runtime safety, platform constraints, applicable #Core routes, and declared external sources of truth
-- Memory records state; it must not own operational behavior
-- Write useful durable state to its matching routed owner when safe and allowed; do not leave reusable user direction only in chat. Treat an explicit instruction or correction that clearly states standing intent as user accord for its stated scope; otherwise preserve it as candidate memory or propose its destination and ask before closeout.
+- Memory may record any subject, including how work is performed, without making that behavior active
+- Write useful durable state to its matching routed owner when safe and allowed; do not leave reusable user direction only in chat
 - Move material between #Memory routes when its state or owner changes
-- Extract behavior, reusable form, guidance, capability, workflow, or workspace routing to the matching #Core route, including user-created #Core categories and files
-- Label deduced material as user-stated, observed, or inferred. Promote candidate material into #CurrentTruth or normative #Core only with user accord, and keep the change reviewable
-- Keep useful unaccepted proposals in the matching `emerging route` when writing is safe and authorized; otherwise report the candidate and proposed destination. "No durable material warranted" is valid
+- When accepted behavior should guide future work, put it in the matching #Core route and preserve useful context or rationale in #Memory
+- Keep source and uncertainty visible when they affect how a memory entry should be trusted or promoted
+- Keep useful unsettled material in the matching emerging route and accepted durable memory in the matching crystallized route
 - Discuss new root memory states with the user before creating them
 - If memory does not fit the current routes, propose a clearer route before writing it
 

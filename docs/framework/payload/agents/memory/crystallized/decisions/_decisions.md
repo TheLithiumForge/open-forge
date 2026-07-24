@@ -18,7 +18,7 @@ The installed file follows the shared category `entrypoint` shape owned by the f
 
 ## Decision Contract
 
-Decision files hold or route accepted rationale for important choices.
+Decision files hold or route accepted rationale and useful historical context for important choices.
 
 A decision records why the choice was made. The current behavior, document, pattern, directive, workflow, workspace route, or external state belongs to the route or system that owns that material.
 
@@ -28,7 +28,7 @@ Decision records must keep only rationale that can help future work. They must n
 
 Decisions are current memory within their stated scope unless superseded.
 
-A decision does not create operational behavior by itself. If decision rationale creates behavior, reusable form, guidance, capability, workflow, workspace routing, or other #Core material, extract it into the matching #Core route, including user-created #Core categories and files.
+A decision may describe behavior without activating it. Accepted behavior, reusable form, guidance, capability, workflow, workspace routing, or other material that should guide future work belongs in the matching #Core route, including user-created #Core categories and files.
 
 ## Loading Contract
 
@@ -77,10 +77,10 @@ The implementation is aligned when it:
 - is named `_decisions.md`
 - lives in `.agents/memory/crystallized/decisions/`
 - includes `Rationale` and `CurrentTruth` in scoped `open-forge:` tags
-- defines decisions as accepted rationale
+- defines decisions as accepted rationale and useful historical context
 - keeps selected behavior in its owning route
 - avoids duplicate rationale
-- extracts operational decision material into matching #Core routes, including user-created #Core categories and files
+- puts accepted decision material that should guide future work in matching #Core routes
 - archives or links superseded decisions
 - supports recursive positive scope
 - routes only through its final generated region

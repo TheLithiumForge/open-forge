@@ -74,13 +74,15 @@ Useful tags identify the primitive type, domain, work type, topic, technology, a
 
 Paths and descriptions must keep critical scope readable. Tags reinforce route selection, but tags alone must not create directive authority. Direct root files are workspace-wide because the root directive route is baseline-loaded; child directive scope is selected before its body is opened.
 
-Use normal words when naming, defining, or explaining the local concept itself. Use tags when the text points to routed ownership, classification, promotion, load policy, truth status, or search/reference targets. For example, a memory `entrypoint` says "Memory records state"; a promotion rule can say "move to #Core".
+Use normal words when naming, defining, or explaining the local concept itself. Use tags when the text points to routed ownership, classification, promotion, load policy, truth status, or search/reference targets. For example, a memory `entrypoint` says "Memory may describe behavior without activating it"; a promotion rule can say "move to #Core".
 
 Open Forge-authored payload tags use singular PascalCase concept names by default. Built-in route type tags are #Directive, #Pattern, #Guidance, #Skill, #Workflow, and #Workspace.
 
 Layer classification tags are singular: #Core, #Memory, and #Extension. These tags classify where material belongs; they do not create authority by themselves.
 
 Reserved load-policy tags are different from normal classification tags. Open Forge currently reserves #LoadNow and #KeepInMind, which are governed by `docs/framework/concepts/routing.md` and defined in the installed loader.
+
+The loader also defines orthogonal truth tags. #Contextual marks supporting material that is not accepted current truth. #CurrentTruth marks accepted current state within scope. #Evergreen marks material that must stay synchronized when accepted state affecting it changes and defines its update boundary; it creates neither authority nor load policy.
 
 ## Links And Backticks
 
@@ -235,6 +237,7 @@ Formatting is aligned when:
 - Open Forge-authored payload tags use singular PascalCase concept names by default
 - layer tags classify material without creating authority
 - reserved load-policy tags are documented before use
+- #CurrentTruth authority and #Evergreen synchronization remain distinct
 - generated link targets are concrete and relative to the Markdown file containing them
 - loader link targets resolve from `.agents/loader.md` without repeating the `.agents/` prefix
 - `Required Routes` use the same link shape and carry useful tags, including at least the target primitive type

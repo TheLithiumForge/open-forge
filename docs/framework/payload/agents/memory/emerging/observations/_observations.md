@@ -10,9 +10,9 @@ The observations memory category `entrypoint` defines how agents discover agent-
 
 Observations represent agent-noticed grounded findings that help future agents learn from work before they become accepted current memory.
 
-They are stronger than ideas because they claim something was observed, but they remain contextual until validated or promoted.
+They are stronger than ideas because they claim something was observed, but they remain contextual until validated and accepted.
 
-Observations are the agent learning surface: they let future agents validate, promote, reject, or archive useful findings instead of relying on private agent memory.
+Observations are the agent learning surface: they let future agents validate useful findings instead of relying on private agent memory.
 
 ## Contains
 
@@ -24,11 +24,9 @@ Observation files record grounded facts, signals, constraints, recurring behavio
 
 They must keep source, scope, and uncertainty visible.
 
-When a grounded finding may matter after the current context, agents record it before a handoff or closeout, promote it when its owner is already clear, or report a blocked required write. "No observation warranted" remains valid.
+When a grounded finding may matter after the current context, agents record it before a handoff or closeout or report a blocked required write. "No observation warranted" remains valid.
 
-If an agent identifies a finding worth preserving, the observation must be written before final response or the blocker must be reported.
-
-An observation is not accepted current truth until validated, promoted, or explicitly accepted.
+An observation is not accepted current truth until it is validated and accepted.
 
 ## Loading Contract
 
@@ -42,7 +40,7 @@ Agents load observations selectively and verify them before treating them as cur
 
 ## Promotion Contract
 
-Repeated, validated, or important observations must trigger promotion to the route or system that owns the resulting material.
+Validated and accepted observations move to the route or system that owns the resulting material.
 
 The destination may be another #Memory route, matching #Core material, external state, or archived history.
 
@@ -50,7 +48,7 @@ The destination may be another #Memory route, matching #Core material, external 
 
 Nested observation categories may group findings by any useful positive scope.
 
-Subcategories are encouraged when they make validation or promotion easier.
+Subcategories are encouraged when they make validation or routing easier.
 
 ## Generated Region
 
@@ -80,11 +78,11 @@ The implementation is aligned when it:
 - defines observations as grounded noticed findings
 - describes observations as agent learning material
 - preserves grounded findings before handoff or closeout when they may outlive the current context
-- follows the loader-defined narrowed #KeepInMind refresh triggers
+- follows the #KeepInMind refresh triggers
 - requires preservation-worthy findings to be written or blocked before final response
 - keeps source, scope, and uncertainty visible
-- keeps observations contextual until validated or promoted
-- allows validated observations to become another #Memory route, matching #Core material, external state, or archived history
+- keeps observations contextual until validated and accepted
+- allows validated accepted observations to become another #Memory route, matching #Core material, external state, or archived history
 - supports recursive positive scope
 - routes only through its final generated region
 - keeps compact finding, loading, promotion, and scope axioms
