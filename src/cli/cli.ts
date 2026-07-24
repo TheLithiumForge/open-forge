@@ -626,7 +626,7 @@ async function createCoreInstallPlan(
     const targetText = originalContent?.toString("utf8") ?? null;
     const patchMarker = rootEntryPatchMarkers.get(relativePath);
     const nextText = patchMarker
-      ? targetText == null ? sourceText : patchMarkedBlock(targetText, sourceText, patchMarker)
+      ? patchMarkedBlock(targetText, sourceText, patchMarker, relativePath)
       : targetText == null ? sourceText : preserveLocalBlocks(sourceText, targetText);
     await add(relativePath, targetFile, Buffer.from(nextText, "utf8"));
     if (patchMarker) patched += 1;
@@ -2006,6 +2006,7 @@ export const cliTestInternals = Object.freeze({
   extensionCatalogueGroup,
   extensionOwnedFileSha256,
   normalizeExtensionReceipt,
+  patchMarkedBlock,
   readGeneratedEntries,
   readRequiredRoutes,
   sha256,
@@ -4148,21 +4149,82 @@ function formatTags(tags: string[]): string {
   return tags.map((tag) => `#${tag}`).join(" ");
 }
 
-function patchMarkedBlock(targetText: string, sourceText: string, markerName: string): string {
-  const sourceBlock = findMarkedBlock(sourceText, markerName);
-  if (!sourceBlock) {
-    return targetText;
+type ManagedBlockLocation = {
+  start: number;
+  end: number;
+  text: string;
+};
+
+function patchMarkedBlock(
+  targetText: string | null,
+  sourceText: string,
+  markerName: string,
+  relativePath: string,
+): string {
+  const sourceBlock = locateManagedBlock(sourceText, markerName, `Core source ${relativePath}`, true);
+  if (sourceText.slice(0, sourceBlock.start).trim() || sourceText.slice(sourceBlock.end).trim()) {
+    throw new Error(`Core source ${relativePath} must contain only its complete ${markerName} managed block`);
   }
 
-  const targetPattern = markedBlockRegex(markerName);
-  if (targetPattern.test(targetText)) {
-    return targetText.replace(targetPattern, sourceBlock);
+  if (targetText == null) {
+    return sourceText;
+  }
+
+  const targetBlock = locateManagedBlock(targetText, markerName, `Target ${relativePath}`, false);
+  if (targetBlock) {
+    return `${targetText.slice(0, targetBlock.start)}${sourceBlock.text}${targetText.slice(targetBlock.end)}`;
   }
 
   const separator = targetText.length === 0
     ? ""
     : targetText.endsWith("\n\n") ? "" : targetText.endsWith("\n") ? "\n" : "\n\n";
-  return `${targetText}${separator}${sourceBlock}\n`;
+  return `${targetText}${separator}${sourceBlock.text}\n`;
+}
+
+function locateManagedBlock(
+  text: string,
+  markerName: string,
+  context: string,
+  required: true,
+): ManagedBlockLocation;
+function locateManagedBlock(
+  text: string,
+  markerName: string,
+  context: string,
+  required: false,
+): ManagedBlockLocation | null;
+function locateManagedBlock(
+  text: string,
+  markerName: string,
+  context: string,
+  required: boolean,
+): ManagedBlockLocation | null {
+  const escaped = escapeRegex(markerName);
+  const starts = [...text.matchAll(new RegExp(`<!--\\s*${escaped}:start\\s*-->`, "gi"))];
+  const ends = [...text.matchAll(new RegExp(`<!--\\s*${escaped}:end\\s*-->`, "gi"))];
+
+  if (starts.length === 0 && ends.length === 0) {
+    if (required) {
+      throw new Error(`${context} must contain exactly one complete ordered ${markerName} marker pair`);
+    }
+    return null;
+  }
+
+  const start = starts[0]?.index;
+  const endStart = ends[0]?.index;
+  if (starts.length !== 1 || ends.length !== 1 || start == null || endStart == null || endStart <= start) {
+    const validShape = required
+      ? `exactly one complete ordered ${markerName} marker pair`
+      : `either no ${markerName} markers or exactly one complete ordered marker pair`;
+    throw new Error(`${context} must contain ${validShape}`);
+  }
+
+  const end = endStart + ends[0][0].length;
+  return {
+    start,
+    end,
+    text: text.slice(start, end),
+  };
 }
 
 function preserveLocalBlocks(sourceText: string, targetText: string): string {

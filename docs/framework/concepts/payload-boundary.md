@@ -44,11 +44,9 @@ Generated `entries` remain navigation metadata plus reserved load policy. They e
 
 ## Harness Bridge Contract
 
-`AGENTS.md` is the canonical installed Open Forge entry contract.
+The [managed root entry pattern](../../../.agents/patterns/open-forge/managed-root-entry.md) owns the shared canonical-entry, harness-bridge, marker, preservation, and installation shape.
 
-A harness that does not read `AGENTS.md` may receive a minimal root bridge that imports the canonical file. A bridge must not duplicate Open Forge policy, introduce provider-specific Core behavior, or become a second configuration system.
-
-The installer manages only the marked Open Forge block in a root entry or bridge file. Workspace-owned content outside that block remains unchanged.
+Reviewed file-specific requirements live in the [payload maintenance route](../../../.agents/memory/crystallized/documents/maintenance/payload/_payload.md).
 
 ## Scope Wording Contract
 
@@ -82,8 +80,7 @@ The payload boundary is aligned when:
 - agents can route correctly from installed files alone
 - governance descriptors never become hidden runtime context
 - required behavior appears in installed files
-- harness bridges import the canonical contract without duplicating policy
-- root entry and bridge updates preserve workspace-owned text outside their managed blocks
+- root entries and harness bridges follow the linked managed-root-entry pattern
 - installed files avoid governance-only terms
 - lower-layer wording does not depend on higher-layer packaging or future modules
 - descriptor changes that affect behavior update the matching payload file

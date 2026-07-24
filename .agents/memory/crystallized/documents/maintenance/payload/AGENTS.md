@@ -20,13 +20,13 @@ The [source and packaging decision](../../../decisions/source-and-packaging.md) 
 
 ### Installation
 
-- The [CLI implementation](../../../../../../src/cli/cli.ts) uses the canonical source block for installation and update, changes only the managed block, and preserves workspace-owned text outside it.
+- The source is the canonical entry in the [managed root entry pattern](../../../../../patterns/open-forge/managed-root-entry.md), implemented by the [CLI](../../../../../../src/cli/cli.ts).
 
 ### Harness Integration
 
-- The [Claude bridge](../../../../../../src/open-forge/CLAUDE.md) imports this canonical entry as its Open Forge contract.
+- The [Claude bridge contract](CLAUDE.md) imports this canonical entry as its Open Forge contract.
 
 ## Verification
 
 - The `patches canonical and bridged root entries without replacing workspace instructions` case in [`src/cli/cli.closure.test.ts`](../../../../../../src/cli/cli.closure.test.ts) verifies managed-block replacement, preservation of workspace text, bridge installation, and idempotence.
-- Compare the canonical and dogfood managed blocks directly until their equality has an automated check.
+- The same case compares the canonical and dogfood managed blocks directly.
