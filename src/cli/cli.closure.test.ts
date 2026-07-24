@@ -1414,6 +1414,9 @@ Keep this Claude-specific instruction.
     const claude = await fs.readFile(path.join(root, "CLAUDE.md"), "utf8");
     expect(agents).toContain("Keep this agent instruction.");
     expect(agents).toContain("Open Forge is the operating contract for this workspace.");
+    expect(agents).toContain(
+      "Before acting on any task, you must read `.agents/loader.md` and follow all applicable Open Forge rules and conventions throughout the task.",
+    );
     expect(agents).not.toContain("Old Open Forge entry.");
     expect(claude.startsWith(originalClaude)).toBe(true);
     expect(claude).toContain("@AGENTS.md");
