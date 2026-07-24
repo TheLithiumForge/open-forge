@@ -49,13 +49,15 @@ Clear user direction becomes accepted without redundant confirmation; ambiguous 
 
 - `src/open-forge/` is the installable Core and Memory payload.
 - Root `.agents/` dogfoods that payload and may add repository-specific material.
-- `docs/framework/` governs maintainers and mirrors every installed payload file with a descriptor.
+- [Crystallized maintenance documents](maintenance/_maintenance.md) govern reviewed source and repository surfaces through linked contracts.
+- Remaining `docs/framework/` descriptors govern only source files not yet migrated through the current file-by-file review.
 - `src/extensions/` contains optional first-party packages.
 - `src/cli/cli.ts` implements deterministic installation, routing, validation, extension lifecycle, and packaging assistance.
 - `dist/` is generated release output and is never edited by hand.
 
-Shared contract changes update dogfood, installable source, governance, and tests together. Generated route indexes are rebuilt after structural or metadata changes.
+Shared contract changes update dogfood, installable source, current maintenance documents, and tests together. Generated route indexes are rebuilt after structural or metadata changes.
 
 ## Related Current Views
 
 - [Current product vision](vision.md)
+- [Current maintenance contracts](maintenance/_maintenance.md)

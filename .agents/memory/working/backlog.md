@@ -43,6 +43,8 @@ The maintainer's completed cross-project trials are the behavioral baseline. Con
    - Gate: clear direction needs no redundant confirmation; an action request accepts decisions required to perform it; ambiguous direction remains contextual; only affected editable #Evergreen material changes; Memory may describe behavior without activating it; no generic directive or document-specific Evergreen rule is seeded; index, doctor, tests, and targeted behavioral scenarios pass.
 
 3. **Establish the current-document and knowledge-linking architecture.**
+   - Status: active file-by-file migration; the `src/open-forge/AGENTS.md` gate is implemented and awaiting maintainer review.
+   - Review installable source top-down, one file per gate. For each file, inspect its recent history, surrounding contracts, references, consumers, tests, and proposed extraction or destination before editing.
    - Decide the smallest useful crystallized-document taxonomy with the maintainer, including whether maintainer-facing current material belongs under a `maintenance/` child route or a clearer equivalent.
    - Move appropriate current maintainer documents into that routed Memory owner and mark each independently as #CurrentTruth and #Evergreen only when both semantics apply.
    - Define how ordinary relative Markdown links expose relationships with the same containing-file-relative semantics as generated `Entries`.

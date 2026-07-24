@@ -31,7 +31,7 @@ dist/             # generated release output
 
 The shipped CLI runs on Node.js. Bun is the repository-development runtime for builds, tests, source indexing, and the developer benchmark helper; it is not required by users of the distributed CLI.
 
-Framework governance lives in `docs/framework/`: `concepts/` owns cross-cutting behavior (routing, formatting, layers, primitives, truth lifecycle, extensions, overwrites, payload boundary) and `payload/` mirrors the installable files with one descriptor per installed file. When a descriptor changes required behavior, the matching installed file changes in the same work.
+Current maintainer contracts for reviewed source live in `.agents/memory/crystallized/documents/maintenance/` and link to their source, relationships, and verification. During the file-by-file migration, remaining `docs/framework/` descriptors continue to govern only the source files they describe. Contract changes update the source, dogfood counterpart, maintenance document, and behavior tests together when they share that contract.
 
 ## Commands
 

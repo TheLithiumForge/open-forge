@@ -27,7 +27,7 @@ Decisions are accepted rationale for important choices that may need to be under
 - [Routing goes through small markdown entrypoints; one recognized entrypoint per folder; the loader exposes only direct root routes](routing-model.md) - #Memory #Decision #CurrentTruth #Routing
 - [The entry description is the selection surface; the routed body is the execution recipe](routing-surfaces.md) - #Memory #Decision #CurrentTruth #Routing #Formatting
 - [Framework routes, scope routes, scoped framework routes, and slugs are distinct; placeholders are notation only and slug placement changes meaning](scope-and-slugs.md) - #Memory #Decision #CurrentTruth #Routing #Scope
-- [Users receive src/open-forge as the payload; docs/framework governs maintainers and is never hidden runtime context](source-and-packaging.md) - #Memory #Decision #CurrentTruth #Packaging #Governance
+- [Users receive src/open-forge as the payload; crystallized maintenance documents govern reviewed source without becoming hidden runtime context](source-and-packaging.md) - #Memory #Decision #CurrentTruth #Packaging #Governance
 - [Accepted tag semantics for loading, layers, truth status, Evergreen synchronization, and ordinary classification](tags.md) - #Memory #Decision #CurrentTruth #Tags #Routing
 - [User-facing Open Forge files use positive natural language and compact selection surfaces](user-facing-writing.md) - #Memory #Decision #CurrentTruth #Formatting #Documentation #Routing
 - [Accepted workflow shape - Mode, Goal, Required Routes, Constraints, Steps, Loop, Outputs, Completion; generated Entries are containment, Required Routes are cross-tree dependency](workflow-shape.md) - #Memory #Decision #CurrentTruth #Workflow #Routing #Orchestration
