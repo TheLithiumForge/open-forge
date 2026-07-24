@@ -19,8 +19,11 @@ This is the main Open Forge `entrypoint`. Read it after `AGENTS.md` to enter thi
 
 - Axioms of loaded ancestor `entrypoints` apply below them; a child adds only what is specific to its scope
 - Follow loaded `axioms` unless a higher-priority user, platform, safety, or declared external source-of-truth instruction conflicts; report unresolved conflicts
-- When a request or loaded material appears to conflict with a loaded #CurrentTruth entry, investigate fully before treating it as an actual conflict, then clarify with the user whether the new direction should replace it; on acceptance, promote the accepted direction to #CurrentTruth and demote what it supersedes
 - User instructions apply when safe and allowed, and local active truth overrides Open Forge defaults
+- A clear user instruction, correction, or confirmation is accepted within its stated scope; do not ask for the same confirmation again
+- A request to act also accepts any decision required to perform that action; if the direction is ambiguous, keep it #Contextual and clarify before work depends on it
+- Investigate an apparent conflict with #CurrentTruth before changing either side; report conflicts that remain unresolved
+- When higher-authority accepted direction changes #CurrentTruth, update its owning route or system and preserve useful superseded context
 - Prefer material in a narrower selected non-directive scope over broader material of the same type when safe and allowed; loaded directives add to ancestors, and conflicts are reported
 
 ### Routing
@@ -44,7 +47,10 @@ Defined tags have the meanings below when they appear in loaded content or gener
 - #Memory - Self-growing Markdown memory for workspace state, AI communication, current records, historical records, and learning
 - #Extension - Optional extension payload, template, integration, and support routes
 - #Contextual - Supporting context, not accepted current truth unless restored, validated, accepted, or promoted
-- #CurrentTruth - Accepted current memory within its stated scope, below user instructions, runtime safety, platform constraints, and declared external sources of truth
+- #CurrentTruth - Accepted current state within its stated scope, below user instructions, runtime safety, platform constraints, and declared external sources of truth
+- #Evergreen - Material that must stay aligned with accepted current state. It creates no authority or load policy.
+  - When accepted state changes, update only affected #Evergreen material you may edit before work depends on it, and no later than closeout; batch related updates when safe
+  - Keep #Evergreen material coherent with what it represents now; preserve useful superseded context in the matching decision or archive, and report affected material you cannot update
 
 ### CLI
 

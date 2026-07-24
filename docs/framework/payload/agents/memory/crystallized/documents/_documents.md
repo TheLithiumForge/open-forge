@@ -38,7 +38,7 @@ Documents must avoid duplicate current truth.
 
 When a document overlaps an existing current document, agents update, split, merge, or link the existing route instead of creating a competing record.
 
-Operational behavior, reusable form, or generation rules from a document belong in the matching #Core route, including user-created #Core categories and files.
+Describing behavior in a document does not activate it. Accepted behavior, reusable form, or generation rules that should guide future work belong in the matching #Core route, including user-created #Core categories and files.
 
 ## Scope Contract
 
@@ -74,7 +74,7 @@ The implementation is aligned when it:
 - defines documents as durable accepted records or routes to those records
 - keeps templates and generation behavior out of documents
 - avoids duplicate current truth
-- extracts operational document material into matching #Core routes, including user-created #Core categories and files
+- puts accepted document material that should guide future work in matching #Core routes
 - supports recursive positive scope
 - routes only through its final generated region
 - keeps compact document, loading, consolidation, and scope axioms

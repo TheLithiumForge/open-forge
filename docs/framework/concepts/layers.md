@@ -49,7 +49,7 @@ crystallized/ accepted durable current memory
 archived/     archived memory preserved for context
 ```
 
-#Memory records state. If memory becomes operational behavior, reusable form, guidance, capability, workflow, workspace routing, or other #Core material, it must be promoted into the matching #Core route, including user-created #Core categories and files.
+#Memory may record any subject, including how work is performed, without making that behavior active. Accepted behavior, reusable form, guidance, capability, workflow, workspace routing, or other material that should guide future work belongs in the matching #Core route, including user-created #Core categories and files.
 
 The base #Memory payload installs only universal child routes, including crystallized decisions for accepted rationale. More specialized containers, such as archive child routes, task routes, backlog routes, and workflow-specific outputs, are created under the route that owns their meaning. #Extension payloads may package those additions, but #Memory rules determine their state and scope.
 
@@ -103,8 +103,8 @@ Layers are aligned when:
 - #Core remains the minimum routing and primitive framework
 - #Core does not seed opinionated local behavior
 - #Memory owns persisted context and extracted learning
-- #Memory does not own operational behavior
-- #Memory promotes operational material into matching #Core routes, including user-created #Core categories and files
+- #Memory may describe behavior without activating it
+- accepted behavior that should guide future work belongs in matching #Core routes, including user-created #Core categories and files
 - #Memory installs universal child routes and leaves specialized containers to owning routes
 - #Memory loads for every request when installed
 - continuity-critical #Memory routes participate in the complete routed #KeepInMind catalogue without preloading unrelated descendant bodies

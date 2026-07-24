@@ -8,7 +8,10 @@ open-forge:
 
 Accepted decisions extracted from the design sessions and idea notes on 2026-07-06.
 
-- Open Forge is markdown-first, repo-native, vendor-agnostic, and reviewable through plain files.
-- The framework keeps the human in front and treats AI as a tool, not the owner of the work.
-- The default install stays small. Opinionated patterns, workflows, skills, and technology packs belong in local files or extensions.
-- The system optimizes for recursive customization and organic growth, not a complete predefined methodology.
+The [current product vision](../documents/vision.md) owns what Open Forge is now. This decision preserves why that direction was chosen.
+
+- Plain, repo-native Markdown keeps the framework vendor-agnostic, inspectable, and reviewable.
+- The human remains in front because AI is a tool for the work, not the owner of it.
+- The default install stays small because a complete predefined methodology would impose the author's preferences on workspaces with different needs.
+- Native agent competence provides the generic starting point; local routes and extensions add only behavior that earns its context and maintenance cost.
+- Recursive customization lets accepted user preferences become the personality and methodology of the workspace without making Core opinionated.

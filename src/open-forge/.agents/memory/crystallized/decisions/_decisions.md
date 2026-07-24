@@ -11,7 +11,7 @@ Decisions are accepted rationale for important choices that may need to be under
 ## Axioms
 
 - Read `Entries` when current work needs rationale for an important choice.
-- Decisions explain why a choice was made; the chosen behavior, record, route, or external state belongs to its owning route or system.
+- Decisions preserve why a choice was made and useful historical rationale; the chosen behavior, record, route, or external state belongs to its owning route or system.
 - Keep alternatives, tradeoffs, constraints, and consequences only when they help future work.
 
 ## Entries

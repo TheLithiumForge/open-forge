@@ -289,6 +289,21 @@ describe("install", () => {
     const installedLoader = await fs.readFile(path.join(root, ".agents", "loader.md"), "utf8");
     expect(installedLoader).toContain("](directives/_directives.md) - #LoadNow");
     expect(installedLoader).not.toContain("](.agents/");
+    expect(installedLoader).toContain("#Evergreen - Material that must stay aligned");
+    expect(installedLoader).toContain("A request to act also accepts any decision required to perform that action");
+    expect(installedLoader).toContain("update only affected #Evergreen material you may edit");
+
+    const installedMemory = await fs.readFile(path.join(root, ".agents", "memory", "_memory.md"), "utf8");
+    expect(installedMemory).toContain("Memory may record any subject, including how work is performed");
+
+    const installedDocuments = await fs.readFile(
+      path.join(root, ".agents", "memory", "crystallized", "documents", "_documents.md"),
+      "utf8"
+    );
+    expect(installedDocuments).not.toContain("#Evergreen documents");
+
+    const installedDirectives = await fs.readFile(path.join(root, ".agents", "directives", "_directives.md"), "utf8");
+    expect(installedDirectives).not.toContain("truth-maintenance.md");
 
     const doctorResult = await runCli("doctor", "--json", root);
     expect(doctorResult.stderr).toBe("");
@@ -1997,9 +2012,11 @@ ${entries.length > 0 ? entries.join("\n") : "- none - No entries - #Empty"}
     const loader = path.join(agents, "loader.md");
     const directivesIndex = path.join(directives, "_directives.md");
     await fs.writeFile(loader, routedDocument("Loader", ["Core"], [
-      "- [Directives fixture](directives/_directives.md) - #LoadNow #Directive"
+      "- [Directives fixture](directives/_directives.md) - #LoadNow #Directive",
+      "- [Evergreen current view](current-view.md) - #CurrentTruth #Evergreen"
     ]));
     await fs.writeFile(path.join(agents, "loader.overwrite.md"), "# Loader local overwrite\n");
+    await fs.writeFile(path.join(agents, "current-view.md"), routedDocument("Current View", ["CurrentTruth", "Evergreen"]));
     await fs.writeFile(directivesIndex, routedDocument("Directives", ["LoadNow", "Directive"], [
       "- [Root directive](root-rule.md) - #LoadNow #Directive",
       "- [Visible and remembered directive](duplicate.md) - #LoadNow #KeepInMind #Directive",
@@ -2030,6 +2047,7 @@ ${entries.length > 0 ? entries.join("\n") : "- none - No entries - #Empty"}
       ".agents/memory/detail.md"
     ]);
     expect(initial.stdout).not.toContain("nested/_nested.md");
+    expect(initial.stdout).not.toContain("current-view.md");
     expect(initial.stdout.match(/duplicate\.md/g)).toHaveLength(1);
 
     const exposedParent = (await fs.readFile(directivesIndex, "utf8"))

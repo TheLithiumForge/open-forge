@@ -26,17 +26,15 @@ Child `entrypoints` and local files define their own taxonomy below this route.
 
 Emerging memory is contextual and unapproved by default.
 
-It may guide investigation, suggest future work, or provide evidence. It becomes #CurrentTruth or normative #Core only with user accord, and the promotion remains reviewable.
+It may guide investigation, suggest future work, or provide evidence. It does not create #CurrentTruth, normative #Core, or external authority.
 
-If emerging memory becomes operational behavior, reusable form, guidance, capability, workflow, workspace routing, or other #Core material, the material must be extracted into the matching #Core route, including user-created #Core categories and files.
-
-If emerging memory changes external task state, the change must be promoted to the external system that owns that authority.
+Emerging memory may explore behavior without activating it. Once accepted behavior, reusable form, guidance, capability, workflow, workspace routing, or other material should guide future work, it belongs in the matching #Core route, including user-created #Core categories and files.
 
 ## Loading Contract
 
 The emerging memory category is relevant when current work needs useful material that is not accepted truth yet, or when current work produces candidate material.
 
-Because this route is #KeepInMind, agents read it at task start or resume, after detected context restoration, and before a handoff or closeout. They recheck it during work only when its follow-ups may have changed, inspecting `Entries` as needed to preserve or route candidate material.
+Because this route is #KeepInMind, agents read it at task start or resume, after detected context restoration, and before a handoff or closeout. They recheck it during work only when its follow-ups may have changed.
 
 The `entrypoint` must route agents to direct emerging memory files and child emerging memory categories whose path, description, or tags match the current request. Each selected child `entrypoint` applies the same contract recursively.
 
@@ -46,15 +44,15 @@ Agents load emerging memory selectively and keep unrelated candidate material ou
 
 Emerging memory must have an obvious next state.
 
-It may be refined, moved to another candidate #Memory route, promoted with user accord to the matching crystallized or #Core route, promoted to an external owner, or archived.
+Accepted material moves to the matching crystallized or #Core route, external owner, or another current destination. Rejected and superseded material is archived or pruned after useful outcome or rationale is preserved.
 
-Repeated emerging material must trigger a suggestion to crystallize, promote, or archive it.
+Repeated or stale emerging material must trigger consolidation, promotion, archival, or pruning.
 
 ## Scope Contract
 
 Nested emerging categories may group material by any useful positive scope.
 
-Subcategories are strongly encouraged when they make emerging material easier to validate, compare, or promote.
+Subcategories are strongly encouraged when they make emerging material easier to validate, compare, or route.
 
 Emerging material stays outside crystallized routes until it is accepted.
 
@@ -89,12 +87,12 @@ The implementation is aligned when it:
 - keeps emerging memory contextual until promoted or accepted
 - leaves child taxonomy to child `entrypoints` and local files
 - routes candidate material selectively
-- follows the loader-defined narrowed #KeepInMind refresh triggers
-- requires user accord and a reviewable change before promotion into #CurrentTruth or normative #Core
+- follows the #KeepInMind refresh triggers
+- requires acceptance before promotion into #CurrentTruth or normative #Core
 - promotes emerging memory to the route that owns its new state
-- extracts operational emerging memory material into matching #Core routes, including user-created #Core categories and files
+- puts accepted emerging material that should guide future work in matching #Core routes
 - supports recursive positive scope
-- encourages subcategories that improve validation and promotion
+- encourages subcategories that improve validation and routing
 - routes only through its final generated region
 - keeps compact candidate, loading, promotion, and scope axioms
 - keeps the authored portion between 10 and 40 non-empty lines

@@ -31,7 +31,7 @@ dist/             # generated release output
 
 The shipped CLI runs on Node.js. Bun is the repository-development runtime for builds, tests, source indexing, and the developer benchmark helper; it is not required by users of the distributed CLI.
 
-Framework governance lives in `docs/framework/`: `concepts/` owns cross-cutting behavior (routing, formatting, layers, primitives, extensions, overwrites, payload boundary) and `payload/` mirrors the installable files with one descriptor per installed file. When a descriptor changes required behavior, the matching installed file changes in the same work.
+Framework governance lives in `docs/framework/`: `concepts/` owns cross-cutting behavior (routing, formatting, layers, primitives, truth lifecycle, extensions, overwrites, payload boundary) and `payload/` mirrors the installable files with one descriptor per installed file. When a descriptor changes required behavior, the matching installed file changes in the same work.
 
 ## Commands
 

@@ -36,7 +36,7 @@ Everything below is grounded in six rounds of evidence: the initial static criti
 
 **Lighten:**
 - Observations, per the Structural section above — it's carrying more taxonomy weight than its actual reliability justifies right now.
-- Resist adding more reserved tags or more memory sub-states without a specific, demonstrated need — the current six-tag governance model (`#Core #Memory #Extension #Contextual #CurrentTruth` plus the three load-policy tags) is already at a reasonable ceiling; every additional defined tag is one more thing every agent has to correctly recall the meaning of.
+- Resist adding more defined tags or memory sub-states without a specific, demonstrated need. The current contract already defines two load-policy tags, three layer tags, and three truth-status or synchronization tags. #Evergreen earns its place by separating synchronization duty from authority; any further addition must earn its baseline recall cost.
 
 **Strengthen:**
 - Tooling (the bulk-dump CLI feature, and possibly an optional `doctor`/audit command correlating git history against memory-route activity — already in the backlog, now doubly justified since axiom wording has a demonstrated, measured ceiling that only tooling-based approaches have broken through so far).
