@@ -131,6 +131,30 @@ Authored contract v1.
   });
 });
 
+describe("managed root entry blocks", () => {
+  const source = `<!-- open-forge:start -->
+Canonical entry.
+<!-- open-forge:end -->
+`;
+
+  test("requires a canonical source to contain only one complete managed block", () => {
+    expect(() => cliTestInternals.patchMarkedBlock(
+      null,
+      "Missing markers.\n",
+      "open-forge",
+      "AGENTS.md",
+    )).toThrow("Core source AGENTS.md must contain exactly one complete ordered open-forge marker pair");
+
+    expect(() => cliTestInternals.patchMarkedBlock(
+      null,
+      `Unexpected source text.
+${source}`,
+      "open-forge",
+      "AGENTS.md",
+    )).toThrow("Core source AGENTS.md must contain only its complete open-forge managed block");
+  });
+});
+
 describe("Markdown contract mechanics", () => {
   const workflow = `# Delivery
 

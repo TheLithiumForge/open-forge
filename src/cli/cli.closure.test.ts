@@ -1412,16 +1412,29 @@ Keep this Claude-specific instruction.
     expect(installed.exitCode).toBe(0);
     const agents = await fs.readFile(path.join(root, "AGENTS.md"), "utf8");
     const claude = await fs.readFile(path.join(root, "CLAUDE.md"), "utf8");
+    const sourceAgents = await fs.readFile(repoPath("src", "open-forge", "AGENTS.md"), "utf8");
+    const dogfoodAgents = await fs.readFile(repoPath("AGENTS.md"), "utf8");
+    const sourceClaude = await fs.readFile(repoPath("src", "open-forge", "CLAUDE.md"), "utf8");
+    const dogfoodClaude = await fs.readFile(repoPath("CLAUDE.md"), "utf8");
+    const managedBlockPattern = /<!--\s*open-forge:start\s*-->[\s\S]*?<!--\s*open-forge:end\s*-->/;
+    const sourceAgentsBlock = sourceAgents.match(managedBlockPattern)?.[0];
+    const dogfoodAgentsBlock = dogfoodAgents.match(managedBlockPattern)?.[0];
+    const sourceClaudeBlock = sourceClaude.match(managedBlockPattern)?.[0];
+    const dogfoodClaudeBlock = dogfoodClaude.match(managedBlockPattern)?.[0];
     expect(agents).toContain("Keep this agent instruction.");
     expect(agents).toContain("Open Forge is the operating contract for this workspace.");
     expect(agents).toContain(
       "Before acting on any task, you must read `.agents/loader.md` and follow all applicable Open Forge rules and conventions throughout the task.",
     );
     expect(agents).not.toContain("Old Open Forge entry.");
+    expect(dogfoodAgentsBlock).toBe(sourceAgentsBlock);
+    expect(dogfoodClaudeBlock).toBe(sourceClaudeBlock);
     expect(claude.startsWith(originalClaude)).toBe(true);
-    expect(claude).toContain("@AGENTS.md");
+    expect(claude.match(managedBlockPattern)?.[0]).toBe(sourceClaudeBlock);
+    expect(claude.match(/@AGENTS\.md/g) ?? []).toHaveLength(1);
     expect(agents.match(/<!-- open-forge:start -->/g) ?? []).toHaveLength(1);
     expect(claude.match(/<!-- open-forge:start -->/g) ?? []).toHaveLength(1);
+    expect(claude.match(/<!-- open-forge:end -->/g) ?? []).toHaveLength(1);
 
     await commitAll(root, "Install Core");
     const reinstalled = await runCliDefault("install", root);
@@ -1429,6 +1442,32 @@ Keep this Claude-specific instruction.
     expect(reinstalled.exitCode).toBe(0);
     expect(reinstalled.stdout).toContain("Git reports no target changes; no new commit is needed");
     expect(await fs.readFile(path.join(root, "CLAUDE.md"), "utf8")).toBe(claude);
+  });
+
+  test("rejects malformed or duplicate managed root entry markers before mutation", async () => {
+    const invalidEntries = [
+      ["AGENTS.md", "<!-- open-forge:start -->\nIncomplete block.\n"],
+      ["CLAUDE.md", "<!-- open-forge:end -->\n@AGENTS.md\n<!-- open-forge:start -->\n"],
+      [
+        "CLAUDE.md",
+        "<!-- open-forge:start -->\n@AGENTS.md\n<!-- open-forge:end -->\n<!-- open-forge:start -->\n@AGENTS.md\n<!-- open-forge:end -->\n",
+      ],
+    ] as const;
+
+    for (const [fileName, original] of invalidEntries) {
+      const root = await createRoot();
+      await fs.writeFile(path.join(root, fileName), original);
+      await initializeGitRepository(root);
+      await commitAll(root, `Malformed ${fileName}`);
+
+      const result = await runCliDefault("install", root);
+
+      expect(result.exitCode).toBe(1);
+      expect(result.stderr).toContain(`Target ${fileName} must contain either no open-forge markers or exactly one complete ordered marker pair`);
+      expect(await fs.readFile(path.join(root, fileName), "utf8")).toBe(original);
+      expect(await exists(path.join(root, ".agents"))).toBe(false);
+      expect((await gitCommand(root, "status", "--porcelain=v1")).stdout).toBe("");
+    }
   });
 
   test("scopes cleanliness to a nested target instead of unrelated monorepo files", async () => {

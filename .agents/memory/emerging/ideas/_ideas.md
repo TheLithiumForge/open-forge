@@ -17,7 +17,7 @@ Ideas are future possibilities, experiments, open questions, and options to expl
 
 <!-- open-forge:generated-index:start -->
 - [Deferred product ideas for reliability evaluation, route presets, provider adapters, formatting, technology packs, orchestration, and memory placement](deferred-product-ideas.md) - #Memory #Idea #Contextual #Candidate #Product #Extension
-- [Questions for making ownership classification emerge naturally from the maintenance migration](maintenance-migration-considerations.md) - #Memory #Idea #Contextual #Candidate #Framework #Maintenance #Migration #Ownership
+- [Questions about ownership classification and the long-term role of decisions surfaced by the maintenance migration](maintenance-migration-considerations.md) - #Memory #Idea #Contextual #Candidate #Framework #Maintenance #Migration #Ownership
 - [Rework observations into a recurrence-driven self-growth mechanism instead of a per-session note obligation](observations-rework.md) - #Memory #Idea #Contextual #Candidate #Observation #AgentLearning
 - [Former post-Evergreen refactor tasks retained as candidates until the maintainer reviews the handover point by point](provisional-refactor-directions.md) - #Memory #Idea #Contextual #Candidate #Framework #Refactor
 - [What each framework area needs to reach S and S++ quality - measured claims first, automatic measurement second](rating-ladder.md) - #Memory #Idea #Contextual #Candidate #Quality #Benchmark #Roadmap
