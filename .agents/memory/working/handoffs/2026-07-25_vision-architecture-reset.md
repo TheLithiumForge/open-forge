@@ -12,7 +12,7 @@ open-forge:
 - The `AGENTS.md` gate was accepted in `0ff4725`; the `CLAUDE.md` gate was accepted in `d881453`.
 - No loader implementation from the paused review was kept.
 - Speculative edits to the current vision, architecture, directives, backlog, and migration considerations were removed before this handoff.
-- The clean [ACE product vision](../../crystallized/documents/vision.md) was drafted on 2026-07-26 and is awaiting maintainer review.
+- The clean [ACE product vision](../../crystallized/documents/vision.md) was drafted on 2026-07-26, revised from the maintainer's first diff review, and is awaiting approval.
 - The superseded pre-reset vision is preserved as [historical context](../../archived/vision_old.md).
 - The product vision is the only open document approval gate. Do not begin the top architecture until the maintainer accepts or revises it.
 
