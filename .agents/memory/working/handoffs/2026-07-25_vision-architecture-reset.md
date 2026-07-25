@@ -12,9 +12,11 @@ open-forge:
 - The `AGENTS.md` gate was accepted in `0ff4725`; the `CLAUDE.md` gate was accepted in `d881453`.
 - No loader implementation from the paused review was kept.
 - Speculative edits to the current vision, architecture, directives, backlog, and migration considerations were removed before this handoff.
-- The clean [ACE product vision](../../crystallized/documents/vision.md) was drafted on 2026-07-26, revised from the maintainer's first diff review, and is awaiting approval.
+- The clean [ACE product vision](../../crystallized/documents/vision.md) was accepted and committed by the maintainer as `cde98b5`.
 - The superseded pre-reset vision is preserved as [historical context](../../archived/vision_old.md).
-- The product vision is the only open document approval gate. Do not begin the top architecture until the maintainer accepts or revises it.
+- The clean [top Open Forge architecture](../../crystallized/documents/architecture.md) was drafted on 2026-07-26, tightened around dependency direction, then expanded with concrete context and ownership explanations after maintainer review. It is awaiting approval.
+- The superseded pre-reset architecture is preserved as [historical context](../../archived/architecture_old.md).
+- The top architecture is the only open document approval gate. Do not begin a scoped component architecture until the maintainer accepts or revises it.
 
 ## Next Task
 
@@ -22,7 +24,7 @@ Establish a shared Open Forge vision and architecture with a clean-context agent
 
 Inspect the existing [vision](../../crystallized/documents/vision.md), [architecture](../../crystallized/documents/architecture.md), framework, README, history, handover material, and usage observations as evidence. Do not treat any of them as gospel or assume the maintainer has approved their current contents.
 
-Review and accept or revise the drafted product vision. Then derive an architecture that directly serves the accepted vision. Do not resume source migration until both are approved and their owning current documents are updated.
+Review and accept or revise the drafted top architecture. Do not resume source migration until the top architecture is approved and its owning current document is updated.
 
 This handoff temporarily preserves accepted constraints that do not yet have trusted permanent owners. The vision and architecture pass must assign each accepted absolute to exactly one appropriate loader Axiom, scoped Axiom, directive, pattern, current document, or decision, then remove it from this temporary handoff when the transfer is complete.
 

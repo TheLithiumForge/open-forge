@@ -1,63 +1,134 @@
 ---
 open-forge:
-  description: Current Open Forge system boundary, execution path, layer ownership, truth model, and packaging
-  tags: [Memory, Document, CurrentTruth, Evergreen, Architecture, Framework]
+  description: Current Open Forge system model, component boundaries, context flow, authority, evolution, scaling, and tool boundary
+  tags: [Memory, Document, CurrentTruth, Evergreen, Architecture, Framework, ACE]
 ---
 
 # Open Forge Architecture
 
-## System Boundary
+## Scope
 
-Open Forge is a plain-file operating contract for agent work. `AGENTS.md` is the canonical workspace entry, minimal harness bridges such as `CLAUDE.md` import that contract, and `.agents/loader.md` defines the universal routing and authority model. The framework remains usable by reading and editing Markdown without the CLI.
+This document owns the system-level architecture that realizes the [Open Forge vision](vision.md). It defines component responsibilities, dependency direction, context flow, authority, state, and tool boundaries. Scoped architecture documents own component internals.
 
-## Execution Path
+## System Model
 
-```text
-workspace instruction entry
-  -> loader authority, tags, and direct root routes
-  -> baseline-loaded directives and route entrypoints
-  -> task-relevant routed bodies
-  -> native agent work, optionally shaped by installed primitives
-```
+An Open Forge environment combines four areas:
 
-Each routed folder has one small `entrypoint`. Generated `Entries` expose only direct children, so agents select context top-down from paths, descriptions, and tags. Load-policy tags change when material is read; they do not create authority.
+| Area | Responsibility | Depends on |
+|---|---|---|
+| Framework | Shared Core and Memory mechanics | No other Open Forge area |
+| Workspace context | Local goals, knowledge, constraints, decisions, methods, history, and scopes | The framework routes it uses |
+| Extensions | Optional reusable capabilities | The framework routes they extend |
+| Deterministic tools | Mechanical loading, navigation, validation, installation, packaging, and safety | The human-readable files they inspect and change |
 
-## Layers
+The operator establishes goals and accepted direction. An agent runtime consumes the environment, performs work with its native capabilities, and proposes changes. Agent providers and execution runtimes remain external to Open Forge. Minimal provider bridges may expose the canonical workspace entry without owning independent policy.
 
-- Core owns the loader, routing, workspace orientation, and the directive, pattern, guidance, skill, and workflow primitives.
-- Memory records working, emerging, crystallized, and archived state, including descriptions of behavior that are not active merely because Memory contains them.
-- Extensions add optional routed files and support material through the existing Core and Memory structures.
+## Where Meaning Lives
 
-Layer tags describe installable responsibility, not authority rank.
+Human-readable Markdown owns Open Forge rules, recorded state, relationships, and workspace-specific context. A declared external system may own information such as source code, issues, or product data when an Open Forge route points to it explicitly.
 
-## Truth Lifecycle
+Generated route entries, indexes, receipts, caches, and retrieval databases are derived from those owners. They may make discovery, validation, or change cheaper, but deleting and rebuilding them cannot change what the environment means.
 
-```text
-unsettled material
-  -> contextual candidate
-  -> accepted direction
-  -> promotion at the owning route or system
-  -> synchronization of affected Evergreen material
-  -> archival or pruning of superseded context
-```
+## Dependency Direction
 
-The [defined truth tags](../../../loader.md#defined-tags) keep authority and synchronization independent: #CurrentTruth does not imply #Evergreen, and #Evergreen does not create authority.
+Dependencies point toward human-readable owners:
 
-Clear user direction becomes accepted without redundant confirmation; ambiguous direction remains #Contextual until work depends on it. Memory entrypoints own capture, movement, consolidation, archival, and restoration of recorded state. Accepted behavior that should guide future work belongs in the matching Core primitive. Current views present coherent state, while decisions preserve useful rationale and consequences instead of duplicating the selected behavior.
+1. The framework is complete without workspace-specific content, extensions, deterministic tools, or a particular agent provider
+2. Workspace context and extensions build on framework routes without redefining their universal meaning
+3. Deterministic tools and agent runtimes consume the same inspectable contract
+4. Generated entries, indexes, receipts, caches, and retrieval databases remain replaceable
 
-## Sources And Packaging
+## Context Flow
 
-- `src/open-forge/` is the installable Core and Memory payload.
-- Root `.agents/` dogfoods that payload and may add repository-specific material.
-- [Crystallized maintenance documents](maintenance/_maintenance.md) govern reviewed source and repository surfaces through linked contracts.
-- Remaining `docs/framework/` descriptors govern only source files not yet migrated through the current file-by-file review.
-- `src/extensions/` contains optional first-party packages.
-- `src/cli/cli.ts` implements deterministic installation, routing, validation, extension lifecycle, and packaging assistance.
-- `dist/` is generated release output and is never edited by hand.
+Open Forge assembles three kinds of context:
 
-Shared contract changes update dogfood, installable source, current maintenance documents, and tests together. Generated route indexes are rebuilt after structural or metadata changes.
+| Context | Contains | Use |
+|---|---|---|
+| Baseline | The small set of framework rules and route maps that apply to nearly all work | Establishes how to enter, navigate, interpret authority, and find more context |
+| Continuity | Live commitments, open approval gates, handoffs, and other state needed to resume current work | Preserves ongoing work without loading its entire history |
+| Selected | Routed files and relationships relevant to the current goal | Supplies the detailed knowledge, constraints, and methods needed now |
+
+For example, resuming a CLI redesign may load the baseline rules and route map, one active handoff that names the current gate, and the selected CLI architecture and decisions. Unrelated extension history remains unloaded unless the redesign depends on it.
+
+The operating flow is:
+
+1. A goal or request establishes the work
+2. The canonical workspace entry, such as `AGENTS.md`, points to the framework loader
+3. The agent reads baseline and applicable continuity context
+4. Top-down routes expose the scopes and relationships relevant to the goal
+5. The agent reasons and acts with native capabilities, selected context, optional extensions, and deterministic tools
+6. Results, evidence, corrections, and accepted direction update their owning files or external systems
+
+This flow moves context into and out of work. It does not require a project to follow a predefined lifecycle.
+
+## Structural Model
+
+A `route` is a visible path through small Markdown `entrypoints`. Each `entrypoint` exposes its direct children with a relative path, a short description sufficient to decide whether to open them, and descriptive tags. A `scope` is a routed subtree that narrows ownership or meaning.
+
+Agents move top-down from known context into relevant detail. Loaded ancestor rules remain active below them, while a child adds only what is specific to its scope. Relative Markdown links and established tags connect material across branches without creating competing owners.
+
+This document is one example of a route: the loader exposes Memory, Memory exposes Crystallized, Crystallized exposes Documents, and Documents exposes this architecture through its path, description, and tags. An agent can decide whether the architecture is relevant before reading its body.
+
+Any routed owner may introduce narrower scopes and initialize only the framework areas it needs. Scopes inherit broader meaning and add local context through files, routes, links, and tags.
+
+Selection cost should grow primarily with route depth and the number of selected branches, not with the total number of stored scopes. Unselected sibling scopes should add almost no active-context cost. The detailed route contract remains owned by the [routing model](../decisions/routing-model.md).
+
+## Authority And Current Knowledge
+
+Loading changes visibility, not authority. Authority comes from the owning source, its scope, accepted operator direction, applicable framework rules, and any declared external source of truth.
+
+Each subject has one current owner. Different owners answer different questions:
+
+| Owner | Answers | Contains |
+|---|---|---|
+| Current document | What is true now, and how does it work? | A complete usable explanation of the accepted concept |
+| Decision | What was chosen, and why? | The accepted choice, relevant alternatives, tradeoffs, consequences, and rationale |
+| Directive | What behavior applies during work? | Binding instructions within its declared scope |
+| Archived memory | What happened before? | Useful historical material that no longer governs current work |
+
+An Evergreen current document must stay synchronized with the accepted state it explains. It states the current concept well enough to use without reading its supporting decisions. When a decision supplies useful rationale, the document links to it. The decision states the accepted choice and why it was made, then links forward to the current owner.
+
+For example, an architecture document should state that routing is top-down and explain how that design works. It can link to the [routing decision](../decisions/routing-model.md) for the reasoning and historical choice. The decision links back to the architecture that owns the current design.
+
+This creates limited intentional overlap: both files identify the accepted choice, the current document owns the complete current concept, and the decision owns the reason behind it.
+
+## Memory States
+
+Memory is part of the framework substrate and organizes recorded state by its current role:
+
+| State | Purpose |
+|---|---|
+| Working | Temporary context needed to continue or resume active work |
+| Emerging | Useful candidate material that is not accepted current truth |
+| Crystallized | Accepted durable state within its declared scope |
+| Archived | Historical context that no longer governs current work |
+
+The states are not a rigid pipeline. Material moves when meaning, scope, and authority justify the transition. Clear direction may update a Crystallized owner directly, while tentative ideas remain Working or Emerging. Superseded material is extracted, archived, consolidated, or pruned.
+
+Detailed authority resolution, state transitions, starter routes, and primitive behavior belong to the scoped framework architecture.
+
+## Tool Boundary
+
+The CLI and compatible future tools perform deterministic operations over human-readable Open Forge files and their declared external relationships. They may batch context, traverse routes, validate structure, maintain derived indexes, and apply reviewable file changes.
+
+Tools must expose their effects through files or output. They may reduce reasoning and interaction cost, but they cannot silently infer accepted truth, privately own meaning, or become required for ordinary inspection.
+
+## Architecture Views
+
+The architecture is intentionally split by ownership:
+
+- This top architecture owns the system map and cross-cutting invariants
+- A scoped framework architecture will own Core and Memory internals
+- A scoped extensions MVP architecture will own current optional capability composition and redesign boundaries
+- A scoped CLI MVP architecture will own current commands, lifecycle, safety, implementation, and redesign boundaries
+
+The extensions and CLI views document the current MVPs before their planned overhauls. Create each scoped architecture only when it provides a coherent valuable view. This document links to those architectures after they exist and does not duplicate their internal contracts.
 
 ## Related Current Views
 
-- [Current product vision](vision.md)
-- [Current maintenance contracts](maintenance/_maintenance.md)
+- [Open Forge vision](vision.md)
+- [Product-direction rationale](../decisions/product-direction.md)
+- [Routing rationale](../decisions/routing-model.md)
+- [Memory-model rationale](../decisions/memory-model.md)
+- [Extensions and CLI rationale](../decisions/extensions-and-cli.md)
+- [Scope and slug rationale](../decisions/scope-and-slugs.md)

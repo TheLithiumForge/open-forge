@@ -19,6 +19,7 @@ Archived memory preserves historical context after it stops being #CurrentTruth
 
 <!-- open-forge:generated-index:start -->
 - [Historical Open Forge analysis kept after its conclusions were accepted, superseded, or reassigned](analysis/_analysis.md) - #Memory #Archived #Analysis #Contextual #Historical
+- [Superseded pre-reset Open Forge architecture preserved for historical context](architecture_old.md) - #Memory #Archived #Contextual #Historical #Architecture #Framework
 - [Where Open Forge historical records are archived, what replaced them, and how to treat them](archive-map.md) - #Memory #Archived #Map #Contextual #Historical
 - [Historical Open Forge handoffs kept after their transfer work completed or was superseded](handoffs/_handoffs.md) - #Memory #Archived #Handoff #Contextual #Historical
 - [Historical Open Forge ideas and snapshots kept after application, supersession, or pruning](ideas/_ideas.md) - #Memory #Archived #Idea #Contextual #Historical
