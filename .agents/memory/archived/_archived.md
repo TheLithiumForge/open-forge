@@ -25,4 +25,5 @@ Archived memory preserves historical context after it stops being #CurrentTruth
 - [Historical Open Forge observations kept after resolution, promotion, or supersession](observations/_observations.md) - #Memory #Archived #Observation #Contextual #Historical
 - [Historical Open Forge planning snapshots kept after completion, pruning, or replacement](planning/_planning.md) - #Memory #Archived #Planning #Contextual #Historical
 - [Historical Open Forge sessions and original prompt material kept after work completed or was superseded](sessions/_sessions.md) - #Memory #Archived #Session #Contextual #Historical
+- [Superseded pre-reset Open Forge vision preserved for historical context](vision_old.md) - #Memory #Archived #Contextual #Historical #Vision #Product
 <!-- open-forge:generated-index:end -->

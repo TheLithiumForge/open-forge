@@ -23,6 +23,15 @@ The migration should test whether Open Forge uses decisions too broadly.
 
 The intended model may be a catalogue of discrete accepted choices and useful rationale whose combined current outcome is expressed coherently by #Evergreen documents. The current use of decisions as durable rationale for source and packaging choices is also useful.
 
+Candidate boundary from the vision and architecture discussion:
+
+- An emerging idea or analysis owns choices still under consideration; a decision is not a backlog of unresolved options.
+- A crystallized decision preserves a discrete accepted choice and the useful reason it was made.
+- The affected document, directive, pattern, route, code, or external system owns the coherent current outcome.
+- A decision links to those owners instead of restating their complete current contents.
+- When a decision no longer supports current truth, preserve it under the matching archived scope if its history remains useful; otherwise consolidate or prune it.
+- Decisions and archives may be initialized below a narrower scope when that ownership makes selection, history, and inheritance clearer. The state and scope axes remain distinct.
+
 Observe:
 
 - whether a decision records a real choice and rationale or merely repeats current behavior;
