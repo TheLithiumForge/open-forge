@@ -76,11 +76,12 @@ The older open-work sections below predate this refactor review. They remain con
 
 ## Extend Extension And CLI Lifecycle
 
-1. Extend the implemented local receipt-backed install/update/removal lifecycle only where evidence warrants: source trust and provenance, compatibility/version solving, migrations, crash recovery, aliases, an explicit previewable orphan-prune policy, remote provenance, and conflicts across multiple package managers. Treat optional build-time vendoring as a distribution choice, not runtime truth.
-2. Improve dry-run visibility with generated-index diffs and counts while preserving the existing portable-path, topology, indirection, and rollback guarantees.
-3. Consider a deterministic active-context receipt for auditability: selected route chains, overwrite companions, Required Routes, global binding #KeepInMind context, cost, and digest. It must not narrow the baseline #KeepInMind contract or create parallel runtime truth.
-4. Decide the remaining deterministic CLI options: `find --max-tokens`, approximate token counts, startup-budget warnings, intent-to-route previews, named route templates, extension authoring templates, and explicit forceful versus soft upgrade modes.
-5. Revisit a distinct primitive-kind field only if ownership ambiguity recurs beyond the current route-aware validator and tests.
+1. After the vision, architecture, and installable source contracts converge, redesign and recreate the current MVP CLI under the linked [CLI overhaul](../emerging/ideas/cli-overhaul.md), preserving proven behavioral and safety evidence without treating the current implementation shape as final.
+2. Extend the implemented local receipt-backed install/update/removal lifecycle only where evidence warrants: source trust and provenance, compatibility/version solving, migrations, crash recovery, aliases, an explicit previewable orphan-prune policy, remote provenance, and conflicts across multiple package managers. Treat optional build-time vendoring as a distribution choice, not runtime truth.
+3. Improve dry-run visibility with generated-index diffs and counts while preserving the existing portable-path, topology, indirection, and rollback guarantees.
+4. Consider a deterministic active-context receipt for auditability: selected route chains, overwrite companions, Required Routes, global binding #KeepInMind context, cost, and digest. It must not narrow the baseline #KeepInMind contract or create parallel runtime truth.
+5. Decide the remaining deterministic CLI options: `find --max-tokens`, approximate token counts, startup-budget warnings, intent-to-route previews, named route templates, extension authoring templates, and explicit forceful versus soft upgrade modes.
+6. Revisit a distinct primitive-kind field only if ownership ambiguity recurs beyond the current route-aware validator and tests.
 
 ## Self-Growth, Documentation, And Release
 
