@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Idea template is used when one Emerging owner must preserve what plausible possibility deserves exploration, what supports it, and what would justify promotion
+  description: Idea template is used when one Emerging record must preserve what plausible possibility deserves exploration, what supports it, and what would justify promotion
   tags: [Template, Memory, Idea, Emerging, Contextual]
 ---
 
@@ -8,7 +8,7 @@ open-forge:
 
 <!--
 Template selection:
-- Need: One candidate owner for a plausible possibility whose value or final form remains unsettled.
+- Need: One candidate record for a plausible possibility whose value or final form remains unsettled.
 - Primary question: What should be explored, what is currently known, and what evidence or direction would justify promotion?
 
 Instantiate under the appropriate Emerging ideas route.
@@ -30,7 +30,7 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 ## Evidence
 
-{Record supporting or challenging observations, links, and occurrences. Extend this owner when later evidence appears.}
+{Record supporting or challenging observations, links, and occurrences. Extend this record when later evidence appears.}
 
 ## Open Questions
 
@@ -40,6 +40,6 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 {Describe evidence, recurrence, operator direction, or resolved questions that would justify promotion or consolidation.}
 
-## Related Owners
+## Related Records And Sources
 
 {Link to current truth, other candidates, or work that gives the idea meaning.}

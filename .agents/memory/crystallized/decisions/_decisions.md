@@ -11,8 +11,8 @@ Decisions are accepted rationale for important choices that may need to be under
 ## Axioms
 
 - Read `Entries` when current work needs rationale for an important choice.
-- During the repository migration, use the [temporary knowledge-owner question helper](../../working/knowledge-owner-helper.md) when placement is unclear; remove this repository-only helper after normal route descriptions and current contracts make selection sufficiently cheap.
-- Decisions preserve why a choice was made and useful historical rationale; the chosen behavior, record, route, or external state belongs to its owning route or system.
+- During the repository migration, use the [temporary knowledge-role question helper](../../working/knowledge-role-helper.md) when placement is unclear; remove this repository-only helper after normal route descriptions and current contracts make selection sufficiently cheap.
+- Decisions preserve why a choice was made and useful historical rationale; the chosen behavior, record, route, or external state is expressed by its authoritative route or system.
 - Keep alternatives, tradeoffs, constraints, and consequences only when they help future work.
 
 ## Entries

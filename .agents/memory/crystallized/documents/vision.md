@@ -46,7 +46,7 @@ Open Forge succeeds when:
 - Work survives changes of session, agent, provider, project phase, and contributor without losing accepted direction
 - Unselected scopes add almost no active-context cost, while related scopes can be combined deliberately
 - Each workspace becomes more capable and personal through use without making the shared foundation more opinionated
-- Every part remains inspectable, reviewable, replaceable, and removable by its owner
+- Every part remains inspectable, reviewable, replaceable, and removable by the user
 
 ## Non-Goals
 

@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Observation template is used when one Emerging owner must preserve a grounded finding, its evidence, scope, uncertainty, recurrence, and possible future relevance
+  description: Observation template is used when one Emerging record must preserve a grounded finding, its evidence, scope, uncertainty, recurrence, and possible future relevance
   tags: [Template, Memory, Observation, Emerging, Contextual]
 ---
 
@@ -8,7 +8,7 @@ open-forge:
 
 <!--
 Template selection:
-- Need: One candidate owner for a grounded finding that may prevent rediscovery or become reusable learning.
+- Need: One candidate record for a grounded finding that may prevent rediscovery or become reusable learning.
 - Primary question: What was observed, where and with what evidence, and what may it imply if supported?
 
 Instantiate under the appropriate Emerging observations route.
@@ -39,13 +39,12 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 ## Occurrences
 
-{Record later independent occurrences here instead of creating parallel owners.}
+{Record later independent occurrences here instead of creating parallel records.}
 
 ## Follow-Up And Promotion Signals
 
 {State which verification, recurrence, impact, or operator direction would justify analysis, consolidation, promotion, or rejection.}
 
-## Related Owners
+## Related Records And Sources
 
 {Link to affected current truth, related observations, active work, or external evidence.}
-

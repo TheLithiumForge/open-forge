@@ -1,14 +1,14 @@
 ---
 open-forge:
-    description: Temporary repository-only helper mapping Open Forge files and concepts to the primary questions they answer during ownership migration
-    tags: [Memory, Working, Helper, Contextual, Temporary, Ownership, Decision, Migration]
+    description: Temporary repository-only helper mapping Open Forge knowledge roles to the primary questions they answer during migration
+    tags: [Memory, Working, Helper, Contextual, Temporary, Authority, Role, Decision, Migration]
 ---
 
-# Temporary Knowledge Owner Helper
+# Temporary Knowledge Role Helper
 
 ## Status
 
-This is a repository-only migration helper, not a permanent Framework role or accepted source of truth. Use it when information appears to fit several owners.
+This is a repository-only migration helper, not a permanent Framework role or accepted source of truth. Use it when information appears to fit several knowledge roles.
 
 Remove it when route descriptions, current documents, templates, and future CLI help make these selections cheap without a separate table.
 
@@ -33,13 +33,13 @@ Remove it when route descriptions, current documents, templates, and future CLI 
 | Emerging Observation                                                               | What grounded finding may matter later, with which evidence, scope, and uncertainty?                |
 | Archived Memory                                                                    | What useful history no longer governs current work?                                                 |
 
-`Foundation`, `identity`, and `essence` are not additional owner roles. A foundation is a load-bearing principle, identity is what the foundational set preserves, and essence is a concise summary that normally belongs in an owner's description or opening.
+`Foundation`, `identity`, and `essence` are not additional knowledge roles. A foundation is a load-bearing principle, identity is what the foundational set preserves, and essence is a concise summary that normally belongs in an authoritative source's description or opening.
 
 ## Core
 
 | File or concept                                                         | Primary question                                                                                    |
 | ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| Core primitive                                                          | Which distinct reusable Framework role owns this content and its authority semantics?               |
+| Core primitive                                                          | Which distinct reusable Framework role should contain this material and define how its authority works? |
 | Loader or entrypoint Axiom                                              | What inherited Framework behavior is mandatory throughout this loaded route?                        |
 | [Directive](../../directives/_directives.md)                            | What independently routed behavior is mandatory in this selected scope?                             |
 | [Guidance](../../guidance/_guidance.md)                                 | What approach is normally helpful in this recurring situation, and when might another approach fit? |
@@ -52,8 +52,8 @@ Remove it when route descriptions, current documents, templates, and future CLI 
 
 ## Selection Rule
 
-Choose the owner whose primary question matches the meaning being preserved.
+Choose the role whose primary question matches the meaning being preserved.
 
-If one statement answers several materially different questions, split it among owners and connect them with relative links. If no row fits, first test whether an existing role can express the meaning clearly before proposing a new one.
+If one statement answers several materially different questions, split it among the appropriate sources and connect them with relative links. If no row fits, first test whether an existing role can express the meaning clearly before proposing a new one.
 
 Primary questions are diagnostic prompts for authors and migration. Runtime entries use natural, descriptive, suggestive descriptions instead of repeating a fixed phrase or requiring a separate question field.

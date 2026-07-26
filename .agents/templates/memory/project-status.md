@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Project status template is used when one bounded Working owner must preserve where active work stands, what matters now, what blocks it, and how to resume
+  description: Project status template is used when one bounded Working record must preserve where active work stands, what matters now, what blocks it, and how to resume
   tags: [Template, Memory, Working, Status, Contextual]
 ---
 
@@ -8,7 +8,7 @@ open-forge:
 
 <!--
 Template selection:
-- Need: One expiring coordination owner for the current position of active work.
+- Need: One expiring coordination record for the current position of active work.
 - Primary question: Where does the work stand, what matters now, what blocks it, and what is needed to resume or coordinate it?
 
 Instantiate under the appropriate Working route.
@@ -26,11 +26,11 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 ## Completed
 
-{Record only completed outcomes needed to understand the current position. Link to durable owners and evidence.}
+{Record only completed outcomes needed to understand the current position. Link to durable authoritative sources and evidence.}
 
 ## In Progress
 
-{State active work and its owner without copying full task systems.}
+{State active work and its responsible person or role without copying full task systems.}
 
 ## Current Priorities
 

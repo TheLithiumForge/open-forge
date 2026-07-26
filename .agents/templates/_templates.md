@@ -14,8 +14,8 @@ Templates are reusable source artifacts intended to be instantiated into indepen
 - Select the most specific relevant template, then copy and adapt only the material the destination needs
 - Make the need each template satisfies and the primary question or result it answers visible in its route description and source instructions
 - Replace template metadata and placeholders with accurate destination ownership, scope, state, authority, and relationships
-- The destination owns the instantiated result; later template changes do not update it
-- Use a linked matching #Core owner when created artifacts need continuing guidance or requirements; the template itself owns only starting content
+- The destination becomes authoritative for the instantiated result; later template changes do not update it
+- Use a linked matching #Core route when created artifacts need continuing guidance or requirements; the template itself provides only starting content
 - Treat generic templates as fallbacks; add a specialization only when it provides materially different copy-ready content
 - Users may edit, replace, scope, or remove templates, and removed defaults stay removed unless restoration is explicitly requested
 

@@ -8,17 +8,17 @@ open-forge:
 
 ## Scope
 
-This document owns the system-level architecture that realizes the [Open Forge vision](vision.md). It defines component responsibilities, dependency direction, context flow, authority, state, and tool boundaries. Scoped architecture documents own component internals.
+This document is authoritative for the system-level architecture that realizes the [Open Forge vision](vision.md). It defines component responsibilities, dependency direction, context flow, authority, state, and tool boundaries. Scoped architecture documents are authoritative for component internals.
 
 ## Architecture Drivers
 
-The [Open Forge Principles](principles.md) own the product identity that this architecture must preserve. The system is structured around five accepted architectural needs:
+The [Open Forge Principles](principles.md) define the product identity that this architecture must preserve. The system is structured around five accepted architectural needs:
 
 - Workspace meaning remains inspectable and independently owned
 - Relevant context is selected without loading the whole environment
 - Accepted direction stays operator-led while normal execution remains autonomous
 - A small useful base can evolve recursively without becoming one universal methodology
-- Deterministic tools make correct behavior cheaper without privately owning meaning
+- Deterministic tools make correct behavior cheaper without becoming privately authoritative
 
 ## System Model
 
@@ -31,15 +31,15 @@ An Open Forge environment combines four areas:
 | Extensions | Optional reusable capabilities | The framework routes they extend |
 | Deterministic tools | Mechanical loading, navigation, validation, installation, packaging, and safety | The human-readable files they inspect and change |
 
-The operator establishes goals and accepted direction. An agent runtime consumes the environment, performs work with its native capabilities, and proposes changes. Agent providers and execution runtimes remain external to Open Forge. Minimal provider bridges may expose the canonical workspace entry without owning independent policy.
+The operator establishes goals and accepted direction. An agent runtime consumes the environment, performs work with its native capabilities, and proposes changes. Agent providers and execution runtimes remain external to Open Forge. Minimal provider bridges may expose the canonical workspace entry without defining independent policy.
 
-## Ownership And Dependency Direction
+## Authority And Dependency Direction
 
-Human-readable Markdown owns Open Forge rules, recorded state, relationships, and workspace-specific context. A declared external system may own information such as source code, issues, or product data when an Open Forge route points to it explicitly.
+Human-readable Markdown is authoritative for Open Forge rules, recorded state, relationships, and workspace-specific context. A declared external system may be authoritative for source code, issues, product data, or another live subject when an Open Forge route points to it explicitly.
 
-Generated route entries, indexes, receipts, caches, and retrieval databases are derived from those owners. They may make discovery, validation, or change cheaper, but deleting and rebuilding them cannot change what the environment means.
+Generated route entries, indexes, receipts, caches, and retrieval databases are derived from those authoritative sources. They may make discovery, validation, or change cheaper, but deleting and rebuilding them cannot change what the environment means.
 
-Dependencies point toward human-readable owners:
+Dependencies point toward human-readable authoritative sources:
 
 1. The framework is complete without workspace-specific content, extensions, deterministic tools, or a particular agent provider
 2. Workspace context and extensions build on framework routes without redefining their universal meaning
@@ -65,42 +65,44 @@ The operating flow is:
 3. The agent reads baseline and applicable continuity context
 4. Top-down routes expose the scopes and relationships relevant to the goal
 5. The agent reasons and acts with native capabilities, selected context, optional extensions, and deterministic tools
-6. Results, evidence, corrections, and accepted direction update their owning files or external systems
+6. Results, evidence, corrections, and accepted direction update their authoritative files or external systems
 
 This flow moves context into and out of work. It does not require a project to follow a predefined lifecycle.
 
 ## Structural Model
 
-A `route` is a visible path through small Markdown `entrypoints`. Each entrypoint exposes direct children with relative links, descriptions sufficient to select or skip them, and descriptive tags. A `scope` is a routed subtree that narrows ownership or meaning.
+A `route` is a visible path through small Markdown `entrypoints`. Each entrypoint exposes direct children with relative links, descriptions sufficient to select or skip them, and descriptive tags. A `scope` is a routed subtree that narrows authority or meaning.
 
-Agents move top-down from known context into relevant detail. Loaded ancestor rules remain active below them, while a child adds only what is specific to its scope. Relative Markdown links and established tags connect material across branches without creating competing owners.
+Agents move top-down from known context into relevant detail. Loaded ancestor rules remain active below them, while a child adds only what is specific to its scope. Relative Markdown links and established tags connect material across branches without creating competing authoritative sources.
 
 For example, the loader exposes Memory, Memory exposes Crystallized, Crystallized exposes Documents, and Documents exposes this architecture through its path, description, and tags. An agent can select this view without opening unrelated documents or their history.
 
-Any routed owner may introduce narrower scopes and initialize only the framework areas it needs. Scopes inherit broader meaning and add local context through files, routes, links, and tags.
+Any authoritative route may introduce narrower scopes and initialize only the framework areas it needs. Scopes inherit broader meaning and add local context through files, routes, links, and tags.
 
-Selection cost should grow primarily with route depth and the number of selected branches, not with the total number of stored scopes. Unselected sibling scopes should add almost no active-context cost. The [Framework Architecture](framework/architecture.md) owns the complete route contract.
+Selection cost should grow primarily with route depth and the number of selected branches, not with the total number of stored scopes. Unselected sibling scopes should add almost no active-context cost. The [Framework Architecture](framework/architecture.md) is authoritative for the complete route contract.
 
 ## Authority And Current Knowledge
 
-Loading changes visibility, not authority. Authority comes from the owning source, its scope, accepted operator direction, applicable framework rules, and any declared external source of truth.
+Loading changes visibility, not authority. Authority comes from the authoritative source, its scope, accepted operator direction, applicable framework rules, and any declared external source of truth.
 
-Each subject has one current owner. Different owners answer different questions:
+Each subject has one authoritative source for each distinct question:
 
-| Owner | Answers | Contains |
+| Source role | Answers | Contains |
 |---|---|---|
 | Current document | What is true now, and how does it work? | A complete usable explanation of the accepted concept |
 | Decision | What was chosen, and why? | The accepted choice, relevant alternatives, tradeoffs, consequences, and rationale |
 | Directive | What behavior applies during work? | Binding instructions within its declared scope |
 | Archived memory | What happened before? | Useful historical material that no longer governs current work |
 
-An Evergreen current document must stay synchronized with the accepted state it explains. It states the current concept well enough to use without reading its supporting decisions. When a decision supplies useful rationale, the document links to it. The decision states the accepted choice and why it was made, then links forward to the current owner.
+A current document is authoritative for what is true now and links backward to useful rationale. A decision is authoritative for why a choice was accepted and links forward to where its result now lives.
 
-For example, an architecture document should state that routing is top-down and explain how that design works. It can link to the [routing decision](../decisions/routing-model.md) for the reasoning and historical choice. The decision links back to the architecture that owns the current design.
+An Evergreen current document must stay synchronized with the accepted state it explains. It states the current concept well enough to use without reading its supporting decisions.
 
-This creates limited intentional overlap: both files identify the accepted choice, the current document owns the complete current concept, and the decision owns the reason behind it.
+For example, an architecture document should state that routing is top-down and explain how that design works. It can link to the [routing decision](../decisions/routing-model.md) for the reasoning and historical choice. The decision links back to the architecture that is authoritative for the current design.
 
-Bidirectional links do not create circular authority. A decision may cite the prior current state that framed the choice, then link to the updated owner that expresses its result. Chronology explains how the files evolved; the role of each owner determines what it governs now.
+This creates limited intentional overlap: both files identify the accepted choice, the current document is authoritative for the complete current concept, and the decision is authoritative for the reason behind it.
+
+Bidirectional links do not create circular authority. A decision may cite the prior current state that framed the choice, then link to the updated authoritative source that expresses its result. Chronology explains how the files evolved; each source role determines what the source governs now.
 
 ## State And Evolution
 
@@ -113,7 +115,7 @@ Memory is part of the framework substrate and organizes recorded state by its cu
 | Crystallized | Accepted durable state within its declared scope |
 | Archived | Historical context that no longer governs current work |
 
-The states are not a rigid pipeline. Material moves when meaning, scope, and authority justify the transition. Clear direction may update a Crystallized owner directly, while tentative ideas remain Working or Emerging. Superseded material is extracted, archived, consolidated, or pruned.
+The states are not a rigid pipeline. Material moves when meaning, scope, and authority justify the transition. Clear direction may update a Crystallized authoritative source directly, while tentative ideas remain Working or Emerging. Superseded material is extracted, archived, consolidated, or pruned.
 
 The environment also evolves through Core primitives. Templates provide copy-ready starting content whose ownership transfers to the destination. Patterns continue to guide reusable shapes, Directives and Axioms bind behavior, and Extensions add optional routed capabilities. Detailed state transitions and primitive relationships belong to the [Framework Architecture](framework/architecture.md).
 
@@ -121,14 +123,14 @@ The environment also evolves through Core primitives. Templates provide copy-rea
 
 The CLI and compatible future tools perform deterministic operations over human-readable Open Forge files and their declared external relationships. They may batch context, traverse routes, validate structure, maintain derived indexes, and apply reviewable file changes.
 
-Tools must expose their effects through files or output. They may reduce reasoning and interaction cost, but they cannot silently infer accepted truth, privately own meaning, or become required for ordinary inspection.
+Tools must expose their effects through files or output. They may reduce reasoning and interaction cost, but they cannot silently infer accepted truth, become privately authoritative, or become required for ordinary inspection.
 
 ## Cross-Cutting Invariants
 
 The following constraints apply across every Open Forge area:
 
-1. Every important subject has one current owner
-2. Workspace meaning remains reconstructable from human-readable owners and declared external sources
+1. Every important subject has one authoritative source for each distinct question
+2. Workspace meaning remains reconstructable from human-readable authoritative sources and declared external systems
 3. Loading changes visibility and timing, not authority
 4. Unselected scopes do not routinely enter active context
 5. Generated and machine-optimized state remains replaceable
@@ -138,21 +140,21 @@ The following constraints apply across every Open Forge area:
 ## Current Tradeoffs And Limits
 
 - Explicit files, routes, and relationships require deliberate maintenance in exchange for inspectability, portability, and correctability
-- Routing quality depends on clear descriptions, scopes, and ownership. Deterministic validation can prove structural integrity but not perfect semantic relevance
+- Routing quality depends on clear descriptions, scopes, and authority. Deterministic validation can prove structural integrity but not perfect semantic relevance
 - Open Forge has no fixed structural expansion ceiling, but this is not a promise of constant performance. Active context and navigation cost still grow with selected routes and relationships
 - Agent behavior remains nondeterministic. The environment can make correct behavior much easier without guaranteeing compliance
-- The current CLI and Extensions implementations are MVPs. Their scoped architectures document current behavior, stable boundaries, and liabilities, while Emerging owners keep candidate overhaul designs from masquerading as current truth
+- The current CLI and Extensions implementations are MVPs. Their scoped architectures document current behavior, stable boundaries, and liabilities, while Emerging records keep candidate overhaul designs from masquerading as current truth
 
 ## Architecture Views
 
-The architecture is intentionally split by ownership:
+The architecture is intentionally split by authoritative scope:
 
-- This top architecture owns the system map and cross-cutting invariants
-- The [Framework Architecture](framework/architecture.md) owns Core and Memory internals
-- The [Extensions MVP Architecture](extensions/architecture.md) owns current optional capability composition, lifecycle, safety boundaries, and liabilities
-- The [CLI MVP Architecture](cli/architecture.md) owns current commands, deterministic state, safety, verification, implementation, and liabilities
+- This top architecture is authoritative for the system map and cross-cutting invariants
+- The [Framework Architecture](framework/architecture.md) is authoritative for Core and Memory internals
+- The [Extensions MVP Architecture](extensions/architecture.md) is authoritative for current optional capability composition, lifecycle, safety boundaries, and liabilities
+- The [CLI MVP Architecture](cli/architecture.md) is authoritative for current commands, deterministic state, safety, verification, implementation, and liabilities
 
-The extensions and CLI views document the current MVPs without treating current implementation choices as permanent. Their linked Emerging owners preserve prospective overhaul design until it is accepted. This document links to the current architectures and does not duplicate their internal contracts.
+The extensions and CLI views document the current MVPs without treating current implementation choices as permanent. Their linked Emerging records preserve prospective overhaul design until it is accepted. This document links to the current architectures and does not duplicate their internal contracts.
 
 ## Related Current Views
 
@@ -161,7 +163,7 @@ The extensions and CLI views document the current MVPs without treating current 
 
 ## Decisions And Rationale
 
-These decisions preserve useful rationale behind the current architecture. Their chosen results remain owned by this document and its scoped views:
+These decisions preserve useful rationale behind the current architecture. Their architectural results remain expressed by this document and its scoped views:
 
 - [Product direction](../decisions/product-direction.md)
 - [Distinct Core primitive roles](../decisions/core-primitives.md)
@@ -170,3 +172,4 @@ These decisions preserve useful rationale behind the current architecture. Their
 - [Memory model](../decisions/memory-model.md)
 - [Extensions and CLI](../decisions/extensions-and-cli.md)
 - [Scope and slugs](../decisions/scope-and-slugs.md)
+- [Typed authoritative source terminology](../decisions/authoritative-source-terminology.md)

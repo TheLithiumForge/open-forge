@@ -8,7 +8,7 @@ open-forge:
 
 ## Context
 
-Open Forge needs several forms of reusable context with different selection and authority semantics. Treating all of them as generic knowledge would make ownership, applicability, and maintenance ambiguous. Treating every content variation as a primitive would make Core large and opinionated.
+Open Forge needs several forms of reusable context with different selection and authority semantics. Treating all of them as generic knowledge would make authority, applicability, and maintenance ambiguous. Treating every content variation as a primitive would make Core large and opinionated.
 
 ## Decision
 
@@ -16,11 +16,11 @@ Core uses a small set of semantically distinct reusable content roles instead of
 
 Each primitive must answer a different primary question, carry meaning that cannot be expressed clearly by an existing primitive, and justify its routing and maintenance cost. The current primitive set and complete definitions belong to the [Framework Architecture](../documents/framework/architecture.md#core-primitives) and installed entrypoints.
 
-Framework contracts refer to #Core collectively when any suitable Core owner may satisfy a requirement. They name a specific primitive when its distinct semantics matter and enumerate concrete routes when the exact shipped defaults are the subject.
+Framework contracts refer to #Core collectively when any suitable Core route may satisfy a requirement. They name a specific primitive when its distinct semantics matter and enumerate concrete routes when the exact shipped defaults are the subject.
 
 ## Rationale
 
-Distinct roles make the correct owner and authority cheaper to determine before content is loaded. They let a workspace add only the capabilities it needs while keeping Framework relationships inspectable.
+Distinct roles make the correct authoritative route and semantics cheaper to determine before content is loaded. They let a workspace add only the capabilities it needs while keeping Framework relationships inspectable.
 
 The admission threshold prevents Core from becoming a catalogue of the author's preferred artifact types or workflows.
 
@@ -38,9 +38,9 @@ The accepted model requires clearer primitive definitions and careful review whe
 - Local scopes and Extensions may introduce specialized content without expanding the shared primitive set
 - Users may remove unused standard routes without invalidating the remaining Framework
 
-## Current Owners
+## Authoritative Sources
 
-These owners express the accepted result. They are not the rationale backing this decision:
+These sources express the accepted result. They are not the rationale backing this decision:
 
 - [Framework Architecture](../documents/framework/architecture.md#core-primitives)
 - [Installed Framework loader](../../../loader.md)
@@ -51,3 +51,4 @@ These owners express the accepted result. They are not the rationale backing thi
 - [Product direction](product-direction.md)
 - [Routing model](routing-model.md)
 - [Workflow shape](workflow-shape.md)
+- [Typed authoritative source terminology](authoritative-source-terminology.md)

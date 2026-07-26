@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Analysis template is used when one Emerging owner must preserve a question, evidence, assumptions, alternatives, limits, and an unsettled current conclusion
+  description: Analysis template is used when one Emerging record must preserve a question, evidence, assumptions, alternatives, limits, and an unsettled current conclusion
   tags: [Template, Memory, Analysis, Emerging, Contextual]
 ---
 
@@ -8,11 +8,11 @@ open-forge:
 
 <!--
 Template selection:
-- Need: One candidate owner for structured reasoning that future work may need to inspect or continue.
+- Need: One candidate record for structured reasoning that future work may need to inspect or continue.
 - Primary question: What does the available evidence currently support, under which assumptions and limits?
 
 Instantiate under the appropriate Emerging analysis route.
-Analysis is contextual reasoning, not accepted direction. Promote accepted results into their correct current owners and preserve only useful rationale.
+Analysis is contextual reasoning, not accepted direction. Promote accepted results into their correct authoritative sources and preserve only useful rationale.
 Replace this template's frontmatter, title, placeholders, and comments.
 -->
 
@@ -26,7 +26,7 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 ## Evidence
 
-{Link to relevant observations, sources, measurements, current owners, and contradictory evidence.}
+{Link to relevant observations, measurements, authoritative sources, and contradictory evidence.}
 
 ## Assumptions
 
@@ -50,9 +50,8 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 ## Next Evidence Or Promotion
 
-{State what should be investigated next and what would justify consolidation, a decision, or a current-owner update.}
+{State what should be investigated next and what would justify consolidation, a decision, or an authoritative-source update.}
 
-## Related Owners
+## Related Sources
 
 {Link to current truth, candidates, work, and external sources that give this analysis meaning.}
-
