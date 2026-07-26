@@ -12,7 +12,7 @@ This document owns the system-level architecture that realizes the [Open Forge v
 
 ## Architecture Drivers
 
-The system is structured around five accepted needs:
+The [Open Forge Principles](principles.md) own the product identity that this architecture must preserve. The system is structured around five accepted architectural needs:
 
 - Workspace meaning remains inspectable and independently owned
 - Relevant context is selected without loading the whole environment
@@ -100,6 +100,8 @@ For example, an architecture document should state that routing is top-down and 
 
 This creates limited intentional overlap: both files identify the accepted choice, the current document owns the complete current concept, and the decision owns the reason behind it.
 
+Bidirectional links do not create circular authority. A decision may cite the prior current state that framed the choice, then link to the updated owner that expresses its result. Chronology explains how the files evolved; the role of each owner determines what it governs now.
+
 ## State And Evolution
 
 Memory is part of the framework substrate and organizes recorded state by its current role:
@@ -155,13 +157,15 @@ The extensions and CLI views document the current MVPs without treating current 
 ## Related Current Views
 
 - [Open Forge vision](vision.md)
+- [Open Forge principles](principles.md)
 
 ## Decisions And Rationale
 
 These decisions preserve useful rationale behind the current architecture. Their chosen results remain owned by this document and its scoped views:
 
 - [Product direction](../decisions/product-direction.md)
-- [Core primitives](../decisions/core-primitives.md)
+- [Distinct Core primitive roles](../decisions/core-primitives.md)
+- [Templates as a Core primitive](../decisions/template-primitive.md)
 - [Routing model](../decisions/routing-model.md)
 - [Memory model](../decisions/memory-model.md)
 - [Extensions and CLI](../decisions/extensions-and-cli.md)

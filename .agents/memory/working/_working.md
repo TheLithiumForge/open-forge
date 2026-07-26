@@ -20,5 +20,7 @@ Working memory is live context for active or recently interrupted work.
 <!-- open-forge:generated-index:start -->
 - [Current open priorities for completing, validating, dogfooding, and preparing Open Forge for review and release](backlog.md) - #Memory #Working #Backlog #Contextual
 - [Static, concise, accurate transfer notes that help agents or humans resume work after context breaks](handoffs/_handoffs.md) - #LoadNow #Memory #Handoff #AgentCommunication #Contextual
+- [Temporary repository-only helper mapping Open Forge files and concepts to the primary questions they answer during ownership migration](knowledge-owner-helper.md) - #Memory #Working #Helper #Contextual #Temporary #Ownership #Decision #Migration
 - [Raw chronological records of what happened during work sessions](sessions/_sessions.md) - #LoadNow #Memory #Session #WorkHistory #Contextual
+- [Temporary repository-only vocabulary map for keeping role-bearing Open Forge terms consistent during document and source migration](terminology-helper.md) - #Memory #Working #Helper #Contextual #Temporary #Terminology #Migration
 <!-- open-forge:generated-index:end -->

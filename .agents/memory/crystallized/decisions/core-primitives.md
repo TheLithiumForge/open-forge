@@ -1,26 +1,53 @@
 ---
 open-forge:
-  description: The Core layer installs directives, guidance, patterns, skills, templates, workflows, and workspace with their accepted meanings
+  description: Core uses distinct reusable content roles instead of one generic knowledge bucket, and every new primitive must earn nonduplicative semantics
   tags: [Memory, Decision, CurrentTruth, Core, Primitive]
 ---
 
-# Core Primitives
+# Distinct Core Primitive Roles
 
-Accepted choices about the distinct reusable roles shipped by Core.
+## Context
 
-- The #Core layer contains the required base routing and primitive routes.
-- Core installs `directives/`, `guidance/`, `patterns/`, `skills/`, `templates/`, `workflows/`, and `workspace/`.
-- Directives are mandatory instructions whose scope is selected before their bodies are opened. Every direct directive file carries #LoadNow. Loading the root route reads workspace-wide direct files; loading a selected child route first establishes its positive narrower scope, then reads its direct files through the same generic rule. A loaded directive has no second applicability gate.
-- Patterns are concrete reusable shapes for code, files, APIs, documents, and other inspectable work.
-- Guidance is contextual advice for recurring choices, tradeoffs, and scenarios.
-- Skills are ordinary `SKILL.md` capabilities that Open Forge makes routable without redefining their activation or internal navigation.
-- Skills use `.agents/skills/{skill-name}/SKILL.md` plus any resources the skill itself references, such as `references/`, `scripts/`, and `assets/`.
-- Templates are copy-ready source artifacts intended to be instantiated into independently owned workspace content. They provide useful starting content rather than continuing conformance.
-- An instantiated result belongs to its destination and does not inherit authority or updates from its template. Patterns own reusable shapes that should continue guiding related results, while Directives or Axioms own binding requirements.
-- Generic templates are fallbacks. Specialized templates exist only when their copy-ready contents differ materially, and users may edit, scope, replace, or remove them.
-- Workflows are repeatable markdown recipes for reaching defined goals, not runtime orchestration objects from an agent SDK. Visible descriptions and tags support selection, complete recipes declare one non-waterfall development phase for wayfinding, and the routed Goal owns execution and completion. Optional `- helpful before: ...` prior work is advisory and never blocks the selected workflow.
-- Workspace routes are coarse maps to important project locations and explain where, when, and why to use them without replacing the destinations or memory.
-- Workflows may own local `directives/`, `patterns/`, `guidance/`, `skills/`, and `templates/` categories when those routes are essential to that workflow. A selected workflow-local directive route adds binding scope and never creates a silent override over loaded ancestor directives.
-- Framework contracts refer to #Core collectively when any suitable Core owner may satisfy the requirement. They name a specific primitive when its distinct semantics matter and enumerate concrete routes when the exact shipped defaults are the subject.
+Open Forge needs several forms of reusable context with different selection and authority semantics. Treating all of them as generic knowledge would make ownership, applicability, and maintenance ambiguous. Treating every content variation as a primitive would make Core large and opinionated.
 
-The [Framework Architecture](../documents/framework/architecture.md#core-primitives) owns the complete current relationships among these primitives. Their installed entrypoints own exact runtime wording.
+## Decision
+
+Core uses a small set of semantically distinct reusable content roles instead of one generic knowledge bucket.
+
+Each primitive must answer a different primary question, carry meaning that cannot be expressed clearly by an existing primitive, and justify its routing and maintenance cost. The current primitive set and complete definitions belong to the [Framework Architecture](../documents/framework/architecture.md#core-primitives) and installed entrypoints.
+
+Framework contracts refer to #Core collectively when any suitable Core owner may satisfy a requirement. They name a specific primitive when its distinct semantics matter and enumerate concrete routes when the exact shipped defaults are the subject.
+
+## Rationale
+
+Distinct roles make the correct owner and authority cheaper to determine before content is loaded. They let a workspace add only the capabilities it needs while keeping Framework relationships inspectable.
+
+The admission threshold prevents Core from becoming a catalogue of the author's preferred artifact types or workflows.
+
+## Alternatives And Tradeoffs
+
+- One generic knowledge route would make Core smaller physically but move recurring semantic classification into every agent decision
+- A separate primitive for every document or workflow variation would improve naming specificity at the cost of overlap, baseline complexity, and universal methodology
+
+The accepted model requires clearer primitive definitions and careful review when a new role is proposed.
+
+## Consequences
+
+- Primitive entry descriptions and current architecture must make their distinct questions and authority visible
+- A proposed primitive must demonstrate reusable value and a nonduplicative semantic role
+- Local scopes and Extensions may introduce specialized content without expanding the shared primitive set
+- Users may remove unused standard routes without invalidating the remaining Framework
+
+## Current Owners
+
+These owners express the accepted result. They are not the rationale backing this decision:
+
+- [Framework Architecture](../documents/framework/architecture.md#core-primitives)
+- [Installed Framework loader](../../../loader.md)
+
+## Decision Relationships
+
+- [Templates as a Core primitive](template-primitive.md)
+- [Product direction](product-direction.md)
+- [Routing model](routing-model.md)
+- [Workflow shape](workflow-shape.md)

@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Current documents for Open Forge Extensions, including the MVP composition system and planned overhaul
+  description: Current documents for the Open Forge Extensions MVP package, composition, ownership, safety, and lifecycle
   tags: [Memory, Document, CurrentTruth, Architecture, Extension, MVP]
 ---
 

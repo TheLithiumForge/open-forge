@@ -22,5 +22,4 @@ Directives are binding instructions selected through the route tree
 
 <!-- open-forge:generated-index:start -->
 - [Keep Open Forge contract changes deliberate, current, dogfooded, reviewable, and evidence-backed](deliberate-framework-change.md) - #LoadNow #Directive #Framework #Change #Dogfood #Review #Evidence
-- [Preserve Open Forge's minimal, flexible, memory-backed, human-governed design while improving agent outcomes](framework-essence.md) - #LoadNow #Directive #Framework #Essence #Minimalism #HumanGoverned #Dogfood
 <!-- open-forge:generated-index:end -->

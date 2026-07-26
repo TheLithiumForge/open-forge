@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Approved design baseline distilled from the Open Forge vision and architecture discussion before the Framework Architecture
-  tags: [Memory, Session, WorkHistory, Contextual, Framework, Vision, Architecture, ACE, Migration]
+  description: Historical approved design baseline distilled from the Open Forge vision and architecture discussion before the Framework Architecture
+  tags: [Memory, Archived, Session, WorkHistory, Contextual, Historical, Framework, Vision, Architecture, ACE, Migration]
 ---
 
 # Open Forge Design Baseline

@@ -123,6 +123,22 @@ This boundary should apply most strongly where syntax has Framework meaning. Ord
 
 Scaffolding should use the same contract to create routed artifacts with canonical metadata and structure. Templates may supply starting content, while the CLI makes placement, frontmatter, placeholder replacement, and route maintenance cheap.
 
+## Knowledge Role Help
+
+The CLI should also make owner selection cheap through a command such as `open-forge help roles`. Users and agents should not need to memorize a governance table before ordinary placement feels natural.
+
+The help should expose:
+
+- The distinct current-document, Memory, and Core roles
+- The primary question, authority, and lifecycle of each role
+- The difference between current state and supporting rationale
+- Natural selection examples and links to applicable Templates
+- The route or source file that owns the human-readable definition
+
+The command must derive from or point to human-readable Framework owners rather than make CLI output a private ontology. It may offer interactive placement or scaffolding assistance, but suggestions remain transparent and correctable.
+
+The repository's temporary owner-selection helper can inform this design during migration. It should not become a permanent prerequisite for users.
+
 ## Structured Interface Direction
 
 Every read and write operation should return one versioned structured result suitable for scripts and future tools. It should distinguish:

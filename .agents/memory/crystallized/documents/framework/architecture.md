@@ -35,7 +35,7 @@ Human-readable Markdown contains the complete semantic answer. Deterministic too
 
 ## Architectural Invariants
 
-The following constraints apply throughout Core and Memory:
+The following structural constraints realize the [Open Forge Principles](../principles.md) throughout Core and Memory. They are architectural consequences rather than a second owner of product identity:
 
 1. Every important concept has one authoritative owner
 2. Routes expose enough information to select relevant context before loading its body
@@ -135,6 +135,8 @@ An `entry` is one generated line under an entrypoint's `Entries` heading. It ide
 - Tags that provide compact loading, type, scope, and search signals
 
 Each folder in a visible nested route has its own entrypoint. Parent entries expose only direct children. They do not flatten deeper files because flattening would duplicate route knowledge, erase intermediate scope, and make every higher index grow with the whole subtree.
+
+Descriptions are natural, descriptive selection surfaces rather than formulaic declarations. A primary question is a useful authoring and migration test for ownership, not a second required frontmatter field. The current Framework adds metadata only when it carries distinct meaning for an actual reader or tool.
 
 ### Route Types And Scope
 
@@ -267,6 +269,8 @@ Each template makes its selection contract explicit before instantiation. Its ro
 
 The installable Framework currently ships the [Templates category contract](../../../../templates/_templates.md) without concrete starter artifacts. This repository dogfoods candidate document and Memory templates locally before any of them are considered for the shared payload. The [maintenance contract](../maintenance/payload/agents/templates.md) owns that distribution boundary.
 
+The [Templates as a Core primitive decision](../../decisions/template-primitive.md) preserves why this role was added instead of assigning copy-ready source content to Patterns or another existing primitive.
+
 ### Workflows
 
 A workflow is a repeatable Markdown recipe for reaching a defined goal through multiple steps, capabilities, or handoffs.
@@ -395,6 +399,10 @@ A current document integrates accepted state. When a decision contains useful ra
 
 This is intentional limited overlap, not duplicated ownership. The current document remains usable by itself. The decision does not become a fragmented substitute for the document.
 
+Vision, Principles, and Architecture are specialized current documents with distinct questions. `Principles` is the formal role for stable filters used to judge unfamiliar choices. `Foundation` describes how load-bearing a principle is, and `identity` describes what the complete foundational set preserves. `Essence` may summarize a concept in its description or opening, but it is not a separate knowledge owner.
+
+A scope earns its own Principles document only when several recurring unfamiliar choices depend on stable filters that are specific to that scope and not already answered by broader principles. Otherwise, the scope follows the broader principles and keeps its distinct structural meaning in Architecture. Scoped principles supplement broader principles; they do not silently override them.
+
 `#CurrentTruth` and `#Evergreen` remain independent:
 
 - `#CurrentTruth` marks accepted current state within scope
@@ -509,11 +517,12 @@ For each older source, governance file, or decision:
 
 An existing file is not retained merely because another file links to it. Links are part of the migration surface and move with ownership.
 
-The [approved design baseline](../../../working/sessions/2026-07-26_open-forge-design-baseline.md) preserves the broader reasoning used to establish this architecture.
+The [approved design baseline](../../../archived/sessions/2026-07-26_open-forge-design-baseline.md) preserves the broader reasoning used to establish this architecture.
 
 ## Related Current Owners
 
 - [Open Forge vision](../vision.md)
+- [Open Forge principles](../principles.md)
 - [Top Open Forge architecture](../architecture.md)
 - [Extensions MVP Architecture](../extensions/architecture.md)
 - [CLI MVP Architecture](../cli/architecture.md)
@@ -529,7 +538,8 @@ The [approved design baseline](../../../working/sessions/2026-07-26_open-forge-d
 The following files contain earlier decisions or governance that may help migration. They are not architectural proof and may be rewritten, consolidated, moved, or archived as their subjects receive final owners:
 
 - [Product direction rationale](../../decisions/product-direction.md)
-- [Core primitive rationale](../../decisions/core-primitives.md)
+- [Distinct Core primitive role rationale](../../decisions/core-primitives.md)
+- [Templates as a Core primitive rationale](../../decisions/template-primitive.md)
 - [Routing model rationale](../../decisions/routing-model.md)
 - [Routing surface rationale](../../decisions/routing-surfaces.md)
 - [Scope and slug rationale](../../decisions/scope-and-slugs.md)

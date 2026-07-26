@@ -30,6 +30,10 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 {Explain how principles interact when they pull in different directions. Avoid pretending every principle can be maximized simultaneously.}
 
+## Change Boundary
+
+{Explain what changing, removing, or adding a principle would redefine and which current owners must be reconsidered with it.}
+
 ## Related Current Views
 
 {Link to the vision, architecture, strategy, directives, guidance, or other owners that apply these principles.}
