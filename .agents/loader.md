@@ -6,6 +6,8 @@ This is the main Open Forge `entrypoint`. Read it after `AGENTS.md` to enter thi
 
 - `entrypoint` - Markdown file that makes a folder routable; Open Forge uses `_{folder-name}.md`, while `index.md`, `_index.md`, `references.md`, and `_references.md` are compatibility names
 - `entry` - Generated route line under `Entries`
+- `description` - Natural-language pre-load selection surface that explains enough purpose, trigger, or outcome to select or skip a route
+- `responsibility` - Optional stable boundary stating what a file is responsible for defining; it guides edits without creating authority or loading behavior
 - `root route` - Route exposed directly by this loader
 - `framework route` - Standard Core or Memory route shipped by Open Forge
 - `scope route` - Local routed subtree that narrows authority or meaning
