@@ -21,5 +21,5 @@ Sessions are raw chronological memory records of work while it happens
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- none - No entries - #Empty
+- [Approved design baseline distilled from the Open Forge vision and architecture discussion before the Framework Architecture](2026-07-26_open-forge-design-baseline.md) - #Memory #Session #WorkHistory #Contextual #Framework #Vision #Architecture #ACE #Migration
 <!-- open-forge:generated-index:end -->
