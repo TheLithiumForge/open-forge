@@ -18,6 +18,8 @@ Organize each current maintenance document as:
 2. `Contract` - define the smallest complete set of maintainer-level invariants, boundaries, and change obligations.
 3. `Verification` - link to the tests or checks that prove the contract remains aligned; state necessary manual verification when no automated check exists.
 
+Add optional frontmatter `responsibility` when one stable sentence will help keep the document's maintenance concerns local. Treat it as a boundary for future edits, not as an authority grant or replacement for the `Source` section.
+
 Place relative links beside the contract or verification statement they support. Include a relationship when it creates a maintenance consequence.
 
 Use optional level-3 subsections inside `Contract` when the source has distinct concerns such as patching, generation, loading, scope, integration, or an external contract. Name each optional subsection after the actual concern and require it to clarify a distinct part of the contract.

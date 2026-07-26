@@ -14,7 +14,7 @@ It is a self-growing structure that starts from a small shared shape and becomes
 
 ## Contains
 
-The installed file follows the category `entrypoint` shape defined by the [Open Forge Markdown Contract](../../../../../.agents/memory/crystallized/documents/framework/markdown.md): scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
+The installed file follows the category `entrypoint` shape defined by the [routed Markdown contract](../../../../../.agents/memory/crystallized/documents/framework/markdown/routes.md): scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
 
 ## State Contract
 
@@ -81,9 +81,9 @@ When no existing route fits safely, agents must suggest a clearer child route an
 
 ## Generated Region
 
-The final generated region uses the category `entrypoint` shape defined by the [Open Forge Markdown Contract](../../../../../.agents/memory/crystallized/documents/framework/markdown.md).
+The final generated region uses the category `entrypoint` shape defined by the [routed Markdown contract](../../../../../.agents/memory/crystallized/documents/framework/markdown/routes.md).
 
-Generated `entries` list direct memory state categories and direct memory files if a workspace adds any. The [Open Forge Markdown Contract](../../../../../.agents/memory/crystallized/documents/framework/markdown.md) defines metadata, `entry` representation, entrypoint naming, and marker shape. The routing model governs recursive discovery and generation.
+Generated `entries` list direct memory state categories and direct memory files if a workspace adds any. The [routed Markdown contract](../../../../../.agents/memory/crystallized/documents/framework/markdown/routes.md) defines metadata, `entry` representation, entrypoint naming, and marker shape. The routing model governs recursive discovery and generation.
 
 ## Used By
 

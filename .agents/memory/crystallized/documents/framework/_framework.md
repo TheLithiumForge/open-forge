@@ -16,4 +16,5 @@ This scope contains current documents for the shared Open Forge Framework, inclu
 
 <!-- open-forge:generated-index:start -->
 - [Current architecture of the shipped Open Forge Framework, including Core, Memory, routing, authority, loading, relationships, customization, and distribution](architecture.md) - #Memory #Document #CurrentTruth #Evergreen #Architecture #Framework #Core #ACE
+- [Current canonical syntax, routed representation, and compatibility contracts for Markdown that carries Open Forge meaning](markdown/_markdown.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #Markdown #Authoring #Syntax #Routing
 <!-- open-forge:generated-index:end -->

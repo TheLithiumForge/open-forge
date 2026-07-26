@@ -14,7 +14,7 @@ A skill is a bounded ability, procedure, tool use, or resource set that helps an
 
 ## Contains
 
-The installed file follows the shared category `entrypoint` shape owned by the formatting concept: scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
+The installed file follows the category `entrypoint` shape defined by the [routed Markdown contract](../../../../../.agents/memory/crystallized/documents/framework/markdown/routes.md): scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
 
 ## Skill Contract
 
@@ -40,9 +40,9 @@ Skills in a narrower selected scope are preferred over broader skills when safe 
 
 ## Generated Region
 
-The final generated region uses the shared category `entrypoint` shape owned by the formatting concept.
+The final generated region uses the category `entrypoint` shape defined by the [routed Markdown contract](../../../../../.agents/memory/crystallized/documents/framework/markdown/routes.md).
 
-Generated `entries` list direct skills and direct child skill categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
+Generated `entries` list direct skills and direct child skill categories. The [routed Markdown contract](../../../../../.agents/memory/crystallized/documents/framework/markdown/routes.md) defines metadata, `entry` representation, entrypoint naming, and marker shape. The routing model governs recursive discovery and generation.
 
 ## Used By
 

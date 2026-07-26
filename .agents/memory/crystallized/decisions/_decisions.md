@@ -20,6 +20,7 @@ Decisions are accepted rationale for important choices that may need to be under
 <!-- open-forge:generated-index:start -->
 - [Open Forge names semantic authority by source type and reserves ownership language for possession or managed lifecycle](authoritative-source-terminology.md) - #Memory #Decision #CurrentTruth #Terminology #Authority #Documentation
 - [Benchmarks compose agnostic scenarios, reusable primitive blocks, and reproducible meta-scenarios under trace-reviewing orchestrators](benchmark-design.md) - #Memory #Decision #CurrentTruth #Benchmark #Dogfood #Evaluation
+- [Open Forge uses one canonical authoring form wherever Markdown carries Framework meaning while treating compatibility syntax as input-only](canonical-markdown.md) - #Memory #Decision #CurrentTruth #Framework #Markdown #Authoring #Syntax #Compatibility
 - [Core uses distinct reusable content roles instead of one generic knowledge bucket, and every new primitive must earn nonduplicative semantics](core-primitives.md) - #Memory #Decision #CurrentTruth #Core #Primitive
 - [Do-not-revive list for rejected files, hidden mechanics, directive gates, continuity gaps, and workflow ceremony](do-not-revive.md) - #Memory #Decision #CurrentTruth #Rejected
 - [Extensions add optional whole routed files while installed files remain complete runtime truth](extensions-and-cli.md) - #Memory #Decision #CurrentTruth #Extension #CLI

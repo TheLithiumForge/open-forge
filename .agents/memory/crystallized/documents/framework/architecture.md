@@ -17,6 +17,8 @@ The [top Open Forge architecture](../architecture.md) is authoritative for the c
 
 The Framework described here is the intended architecture to which the installable source, dogfood environment, governance, and tooling must migrate. Older files remain useful migration inputs, but they do not constrain this design merely because they exist.
 
+The [Open Forge Markdown scope](markdown/_markdown.md) contains the current canonical syntax, routed representation, and compatibility specifications used by this architecture.
+
 ## Framework Promise
 
 The Framework turns a workspace into a navigable, persistent, and adaptable context environment without replacing native agent reasoning or installing a universal methodology.
@@ -298,7 +300,7 @@ A third rules category would duplicate those roles and make placement less obvio
 
 ## Memory
 
-[Memory](../../../_memory.md) is the Framework's self-growing Markdown state. It preserves information across work without turning every recorded statement into current truth or active behavior.
+[Memory](../../../_memory.md) is the Framework's self-growing Markdown state for live work, agent communication and coordination, continuity, accepted records, historical context, and candidate learning. It preserves useful information across work without turning every conversation or recorded statement into current truth or active behavior.
 
 Memory has two independent dimensions:
 
@@ -524,6 +526,7 @@ The [approved design baseline](../../../archived/sessions/2026-07-26_open-forge-
 - [Open Forge vision](../vision.md)
 - [Open Forge principles](../principles.md)
 - [Top Open Forge architecture](../architecture.md)
+- [Open Forge Markdown scope](markdown/_markdown.md)
 - [Extensions MVP Architecture](../extensions/architecture.md)
 - [CLI MVP Architecture](../cli/architecture.md)
 - [Canonical Framework loader](../../../../loader.md)
@@ -549,6 +552,7 @@ The following files contain earlier decisions or governance that may help migrat
 - [Workflow shape rationale](../../decisions/workflow-shape.md)
 - [Source and packaging rationale](../../decisions/source-and-packaging.md)
 - [Typed authoritative source terminology](../../decisions/authoritative-source-terminology.md)
+- [Canonical Markdown authoring rationale](../../decisions/canonical-markdown.md)
 - [Agent primitives migration descriptor](../../../../../docs/framework/concepts/agent-primitives.md)
 - [Routing migration descriptor](../../../../../docs/framework/concepts/routing.md)
 - [Truth lifecycle migration descriptor](../../../../../docs/framework/concepts/truth-lifecycle.md)

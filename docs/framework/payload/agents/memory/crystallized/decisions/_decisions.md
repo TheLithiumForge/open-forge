@@ -14,7 +14,7 @@ They explain why an important choice was made, what alternatives or constraints 
 
 ## Contains
 
-The installed file follows the shared category `entrypoint` shape owned by the formatting concept: scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
+The installed file follows the category `entrypoint` shape defined by the [routed Markdown contract](../../../../../../../.agents/memory/crystallized/documents/framework/markdown/routes.md): scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
 
 ## Decision Contract
 
@@ -54,9 +54,9 @@ Decision child routes use the shared routing contract. Their `entrypoints` own s
 
 ## Generated Region
 
-The final generated region uses the shared category `entrypoint` shape owned by the formatting concept.
+The final generated region uses the category `entrypoint` shape defined by the [routed Markdown contract](../../../../../../../.agents/memory/crystallized/documents/framework/markdown/routes.md).
 
-Generated `entries` list direct decision files and direct child decision categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
+Generated `entries` list direct decision files and direct child decision categories. The [routed Markdown contract](../../../../../../../.agents/memory/crystallized/documents/framework/markdown/routes.md) defines metadata, `entry` representation, entrypoint naming, and marker shape. The routing model governs recursive discovery and generation.
 
 ## Used By
 
