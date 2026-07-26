@@ -25,5 +25,6 @@ Load a session only when reconstructing original intent or old rationale.
 - [Historical record of the completed Markdown route-link migration and accepted complete-workspace validator contract](2026-07-20_link-contract-and-loader-review.md) - #Memory #Archived #Session #Contextual #Historical #Framework #Routing #CLI
 - [Completed benchmark composition redesign into agnostic scenarios, atomic primitives, exact meta-scenarios, and trace-reviewed run sets](2026-07-21_benchmark-composition-redesign.md) - #Memory #Session #Archived #Contextual #Historical #Benchmark #Dogfood
 - [Completed redesign of benchmark seeds and harness into compact reusable dual-review scenarios](2026-07-21_benchmark-redesign.md) - #Memory #Session #Archived #Contextual #Historical #Benchmark
+- [Historical approved design baseline distilled from the Open Forge vision and architecture discussion before the Framework Architecture](2026-07-26_open-forge-design-baseline.md) - #Memory #Archived #Session #WorkHistory #Contextual #Historical #Framework #Vision #Architecture #ACE #Migration
 - [The raw original prompt and AI handover material that seeded Open Forge](original-prompt.md) - #Session #Origin #Contextual #Historical
 <!-- open-forge:generated-index:end -->

@@ -38,7 +38,7 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 ## Current Owners
 
-{Link forward to every current document, directive, implementation, or external system that owns the accepted result.}
+{Link forward to every current document, directive, implementation, or external system that owns the accepted result. These owners express what is current now; they are not evidence or authority backing the decision.}
 
 ## Decision Relationships
 

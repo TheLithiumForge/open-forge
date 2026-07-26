@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Current documents for the Open Forge CLI, including its MVP and planned overhaul
+  description: Current documents for the Open Forge CLI MVP role, behavior, architecture, safety, verification, and liabilities
   tags: [Memory, Document, CurrentTruth, Architecture, CLI, MVP]
 ---
 

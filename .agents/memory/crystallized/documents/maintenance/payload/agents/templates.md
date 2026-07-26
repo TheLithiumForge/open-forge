@@ -10,7 +10,7 @@ open-forge:
 
 [`src/open-forge/.agents/templates/_templates.md`](../../../../../../../src/open-forge/.agents/templates/_templates.md) is the canonical installed Templates category entrypoint. The repository [Templates entrypoint](../../../../../../templates/_templates.md) dogfoods the same authored contract and adds repository-local generated entries.
 
-The [Framework Architecture](../../../framework/architecture.md#templates) owns the primitive's current role and relationship with other Core primitives. The [Core Primitives decision](../../../../decisions/core-primitives.md) preserves why Templates have independent ownership.
+The [Framework Architecture](../../../framework/architecture.md#templates) owns the primitive's current role and relationship with other Core primitives. The [Templates as a Core Primitive decision](../../../../decisions/template-primitive.md) preserves why Templates have independent ownership.
 
 ## Contract
 

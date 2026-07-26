@@ -20,5 +20,5 @@ Handoffs are static, concise, accurate, rereadable transfer notes for resuming w
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Clean-context brief for establishing Open Forge vision and architecture before resuming source migration](2026-07-25_vision-architecture-reset.md) - #KeepInMind #Memory #Handoff #Contextual #Framework #Vision #Architecture #Migration
+- none - No entries - #Empty
 <!-- open-forge:generated-index:end -->

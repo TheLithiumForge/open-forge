@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Current Open Forge purpose, product promise, principles, success criteria, and non-goals
+  description: Current Open Forge purpose, product promise, scope, success criteria, and non-goals
   tags: [Memory, Document, CurrentTruth, Evergreen, Vision, Product, ACE]
 ---
 
@@ -34,38 +34,7 @@ Development is a proving ground, not a boundary. Open Forge can grow around any 
 
 ## Principles
 
-### User-Owned And Human-Readable
-
-The workspace's meaning lives in human-readable files that users can inspect, edit, move, replace, or remove. No hidden service or proprietary runtime is required to understand how it works.
-
-### Operator-Led, Agent-Enabled
-
-The operator owns goals, priorities, consequential tradeoffs, and accepted direction. Agents investigate, suggest, challenge, execute, and verify within that direction without turning ordinary work into approval ceremony.
-
-### Start Small, Evolve Deliberately
-
-Open Forge ships a small set of sensible removable defaults instead of a complete methodology. Useful working state, candidate learning, accepted knowledge, and history evolve through explicit ownership and deliberate transitions rather than uncontrolled accumulation.
-
-### Context That Scales By Relevance
-
-Open Forge has no fixed structural expansion ceiling. Active context grows primarily with selected route depth, scopes, and relationships, not with the total size of the workspace. For example, two projects can share one Open Forge environment while ordinary work in one does not load the other's routed context. Work that integrates them can deliberately select both.
-
-### One Owner, Visible Relationships
-
-Each detailed definition, decision, and contract has one authoritative owner. References, anchored relative links, descriptions, and established tags connect related material without maintaining competing copies.
-Each important subject has one file or routed system that owns its current meaning. For example, `vision.md` owns what Open Forge is now, so other files link to it instead of restating the vision. When an accepted decision explains the current state, the current owner states the result and links to that decision for rationale. The decision links forward to the current owner.
-
-### Harmonize With Native Capability
-
-Open Forge assumes contemporary agents can reason, inspect files, follow scoped authority, and use tools. It harmonizes with and reuses these native capabilities, adding workspace-specific context and settled conventions rather than redefining how an agent should reason.
-
-### Complete In Markdown, Exceptional With Tools
-
-Human-readable Markdown contains the complete semantic contract. Deterministic tools make correct loading, navigation, validation, and change safer and cheaper without privately owning meaning.
-
-### Honest Reliability
-
-Structure and deterministic tooling increase the probability of correct behavior from nondeterministic agents. Open Forge validates what can be made deterministic and does not claim mechanical control over reasoning or compliance.
+The [Open Forge Principles](principles.md) own the identity-level filters that guide the product as it evolves. Open Forge remains user-owned, relevance-routed, operator-led, agent-enabled, explicitly connected, small at its shared foundation, recursively adaptable, complete in human-readable files, and honest about nondeterministic reliability.
 
 ## Success
 
@@ -94,6 +63,7 @@ Open Forge is not:
 ## Related Current Views
 
 - [Open Forge architecture](architecture.md)
+- [Open Forge principles](principles.md)
 
 ## Decisions And Rationale
 

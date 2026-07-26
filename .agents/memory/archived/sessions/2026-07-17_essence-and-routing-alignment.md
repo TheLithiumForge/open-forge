@@ -24,7 +24,7 @@ Restore one top-to-bottom routed decision model while keeping Open Forge minimal
 
 ## Established Before Implementation
 
-- Binding directives: `.agents/directives/framework-essence.md` and `.agents/directives/deliberate-framework-change.md`.
+- Binding directives at the time included the former Framework Essence directive and the current [Deliberate Framework Change directive](../../../directives/deliberate-framework-change.md). Identity-level meaning from the former directive now belongs to [Open Forge Principles](../../crystallized/documents/principles.md).
 - Patterns: route-scoped directives, phase-aware workflow routing, and continuity checkpoints under `.agents/patterns/open-forge/`.
 
 ## Accepted Implementation Direction
