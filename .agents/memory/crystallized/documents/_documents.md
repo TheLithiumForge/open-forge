@@ -18,7 +18,10 @@ Documents are durable accepted records, or routes to those records, for long-for
 
 <!-- open-forge:generated-index:start -->
 - [Current Open Forge system model, component boundaries, context flow, authority, evolution, scaling, and tool boundary](architecture.md) - #Memory #Document #CurrentTruth #Evergreen #Architecture #Framework #ACE
+- [Current documents for the Open Forge CLI, including its MVP and planned overhaul](cli/_cli.md) - #Memory #Document #CurrentTruth #Architecture #CLI #MVP
 - [Accepted evaluation syntheses; load when a loading, routing, or design decision needs its source evidence](evaluations/_evaluations.md) - #Memory #Document #Record #CurrentTruth #Evaluation #Evidence
+- [Current documents for Open Forge Extensions, including the MVP composition system and planned overhaul](extensions/_extensions.md) - #Memory #Document #CurrentTruth #Architecture #Extension #MVP
+- [Current documents for Open Forge Framework internals, including Core and Memory](framework/_framework.md) - #Memory #Document #CurrentTruth #Framework #Core #Architecture
 - [Current maintainer contracts for reviewed Open Forge source and repository surfaces](maintenance/_maintenance.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance
 - [Current Open Forge purpose, product promise, principles, success criteria, and non-goals](vision.md) - #Memory #Document #CurrentTruth #Evergreen #Vision #Product #ACE
 <!-- open-forge:generated-index:end -->

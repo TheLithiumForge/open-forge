@@ -16,7 +16,7 @@ An Open Forge environment combines four areas:
 
 | Area | Responsibility | Depends on |
 |---|---|---|
-| Framework | Shared Core and Memory mechanics | No other Open Forge area |
+| Framework | Shared routing, primitives, and Memory mechanics | No other Open Forge area |
 | Workspace context | Local goals, knowledge, constraints, decisions, methods, history, and scopes | The framework routes it uses |
 | Extensions | Optional reusable capabilities | The framework routes they extend |
 | Deterministic tools | Mechanical loading, navigation, validation, installation, packaging, and safety | The human-readable files they inspect and change |
@@ -71,7 +71,7 @@ This document is one example of a route: the loader exposes Memory, Memory expos
 
 Any routed owner may introduce narrower scopes and initialize only the framework areas it needs. Scopes inherit broader meaning and add local context through files, routes, links, and tags.
 
-Selection cost should grow primarily with route depth and the number of selected branches, not with the total number of stored scopes. Unselected sibling scopes should add almost no active-context cost. The detailed route contract remains owned by the [routing model](../decisions/routing-model.md).
+Selection cost should grow primarily with route depth and the number of selected branches, not with the total number of stored scopes. Unselected sibling scopes should add almost no active-context cost. The [Framework Architecture](framework/architecture.md) owns the current route contract, while the [routing decision](../decisions/routing-model.md) preserves earlier rationale that remains useful during migration.
 
 ## Authority And Current Knowledge
 
@@ -105,7 +105,7 @@ Memory is part of the framework substrate and organizes recorded state by its cu
 
 The states are not a rigid pipeline. Material moves when meaning, scope, and authority justify the transition. Clear direction may update a Crystallized owner directly, while tentative ideas remain Working or Emerging. Superseded material is extracted, archived, consolidated, or pruned.
 
-Detailed authority resolution, state transitions, starter routes, and primitive behavior belong to the scoped framework architecture.
+Detailed authority resolution, state transitions, starter routes, and primitive behavior belong to the [Framework Architecture](framework/architecture.md).
 
 ## Tool Boundary
 
@@ -118,15 +118,23 @@ Tools must expose their effects through files or output. They may reduce reasoni
 The architecture is intentionally split by ownership:
 
 - This top architecture owns the system map and cross-cutting invariants
-- A scoped framework architecture will own Core and Memory internals
-- A scoped extensions MVP architecture will own current optional capability composition and redesign boundaries
-- A scoped CLI MVP architecture will own current commands, lifecycle, safety, implementation, and redesign boundaries
+- The [Framework Architecture](framework/architecture.md) owns Core and Memory internals
+- The [Extensions MVP Architecture](extensions/architecture.md) owns current optional capability composition and redesign boundaries
+- The [CLI MVP Architecture](cli/architecture.md) owns current commands, lifecycle, safety, implementation, and redesign boundaries
 
-The extensions and CLI views document the current MVPs before their planned overhauls. Create each scoped architecture only when it provides a coherent valuable view. This document links to those architectures after they exist and does not duplicate their internal contracts.
+The extensions and CLI views document the current MVPs before their planned overhauls. They preserve useful invariants without treating current implementation choices as permanent. This document links to those architectures and does not duplicate their internal contracts.
 
 ## Related Current Views
 
 - [Open Forge vision](vision.md)
+- [Framework Architecture](framework/architecture.md)
+- [Extensions MVP Architecture](extensions/architecture.md)
+- [CLI MVP Architecture](cli/architecture.md)
+
+## Migration Inputs
+
+These earlier decisions may preserve useful rationale, but they remain subject to reconciliation with the current architecture:
+
 - [Product-direction rationale](../decisions/product-direction.md)
 - [Routing rationale](../decisions/routing-model.md)
 - [Memory-model rationale](../decisions/memory-model.md)

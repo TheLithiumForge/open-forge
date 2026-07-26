@@ -38,7 +38,7 @@ The operator owns goals, priorities, consequential tradeoffs, and accepted direc
 
 ### Start Small, Evolve Deliberately
 
-Open Forge begins with sensible removable defaults instead of a complete methodology. Useful working state, candidate learning, accepted knowledge, and history evolve through explicit ownership and deliberate transitions rather than uncontrolled accumulation.
+Open Forge ships a small set of sensible removable defaults instead of a complete methodology. Useful working state, candidate learning, accepted knowledge, and history evolve through explicit ownership and deliberate transitions rather than uncontrolled accumulation.
 
 ### Context That Scales By Relevance
 
@@ -92,4 +92,7 @@ Open Forge is not:
 ## Related Current Views
 
 - [Current framework architecture](architecture.md)
-- [Accepted product-direction rationale](../decisions/product-direction.md)
+
+## Migration Input
+
+- [Earlier product-direction rationale to reconcile during migration](../decisions/product-direction.md)

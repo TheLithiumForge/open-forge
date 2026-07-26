@@ -14,17 +14,19 @@ open-forge:
 - Speculative edits to the current vision, architecture, directives, backlog, and migration considerations were removed before this handoff.
 - The clean [ACE product vision](../../crystallized/documents/vision.md) was accepted and committed by the maintainer as `cde98b5`.
 - The superseded pre-reset vision is preserved as [historical context](../../archived/vision_old.md).
-- The clean [top Open Forge architecture](../../crystallized/documents/architecture.md) was drafted on 2026-07-26, tightened around dependency direction, then expanded with concrete context and ownership explanations after maintainer review. It is awaiting approval.
+- The clean [top Open Forge architecture](../../crystallized/documents/architecture.md) was accepted by the maintainer for progression on 2026-07-26.
 - The superseded pre-reset architecture is preserved as [historical context](../../archived/architecture_old.md).
-- The top architecture is the only open document approval gate. Do not begin a scoped component architecture until the maintainer accepts or revises it.
+- The approved discussion baseline is preserved in the [Open Forge Design Baseline](../sessions/2026-07-26_open-forge-design-baseline.md).
+- The [Framework Architecture](../../crystallized/documents/framework/architecture.md), [CLI MVP Architecture](../../crystallized/documents/cli/architecture.md), and [Extensions MVP Architecture](../../crystallized/documents/extensions/architecture.md) were drafted from that baseline on 2026-07-26.
+- The complete vision and architecture set is now the open approval gate.
 
 ## Next Task
 
-Establish a shared Open Forge vision and architecture with a clean-context agent before reviewing more source files.
+Review the accepted [vision](../../crystallized/documents/vision.md), [top architecture](../../crystallized/documents/architecture.md), and drafted [Framework](../../crystallized/documents/framework/architecture.md), [CLI MVP](../../crystallized/documents/cli/architecture.md), and [Extensions MVP](../../crystallized/documents/extensions/architecture.md) architecture views together.
 
-Inspect the existing [vision](../../crystallized/documents/vision.md), [architecture](../../crystallized/documents/architecture.md), framework, README, history, handover material, and usage observations as evidence. Do not treat any of them as gospel or assume the maintainer has approved their current contents.
+Treat the [design baseline](../sessions/2026-07-26_open-forge-design-baseline.md), accepted [vision](../../crystallized/documents/vision.md), accepted [top architecture](../../crystallized/documents/architecture.md), and current maintainer direction as the architecture authority for this pass. Treat older decisions, governance, source, and implementation as migration inputs rather than proof or constraints.
 
-Review and accept or revise the drafted top architecture. Do not resume source migration until the top architecture is approved and its owning current document is updated.
+Do not resume source migration until the architecture set is approved. After approval, perform any requested ownership tightening, then resume the source migration at the paused loader gate.
 
 This handoff temporarily preserves accepted constraints that do not yet have trusted permanent owners. The vision and architecture pass must assign each accepted absolute to exactly one appropriate loader Axiom, scoped Axiom, directive, pattern, current document, or decision, then remove it from this temporary handoff when the transfer is complete.
 
@@ -96,9 +98,8 @@ This handoff temporarily preserves accepted constraints that do not yet have tru
 
 ### Current Questions
 
-- Define the precise relationship among context, goals, decisions, continuity, and learned ways of working so `context` does not become an unbounded synonym for everything.
 - Apply and validate the accepted boundary among scoped decisions, coherent evergreen documents, directives, and archived rationale during migration. The active analysis is owned by [Maintenance Migration Considerations](../../emerging/ideas/maintenance-migration-considerations.md).
-- Decide which behaviors are universal Core mechanics and which are useful starter configurations or extensions, especially workflow schemas.
+- Apply the Framework Architecture boundary between universal mechanics, shipped standard routes, local customization, and extensions during source migration.
 - Defer semantic CLI relevance inference; the present requirement is to provide the best practical helper for agents while explicit routes remain authoritative.
 
 ## Design Rules To Carry
@@ -132,7 +133,7 @@ This handoff temporarily preserves accepted constraints that do not yet have tru
 - #CurrentTruth identifies accepted current state. #Evergreen independently identifies material that must stay aligned with accepted state; it creates neither authority nor loading.
 - Generic #Evergreen behavior belongs with its loader tag definition, not in a seeded truth-maintenance directive and not only in document routes.
 - Memory may record any subject, including processes, without activating that behavior. Accepted behavior that should guide future work belongs in the matching #Core route.
-- Current documents should present coherent current state. Decisions should preserve real choices and useful rationale rather than duplicate current behavior; their long-term role remains under review.
+- Current documents present coherent current state. Decisions preserve discrete accepted choices and useful rationale without becoming duplicate owners of current behavior.
 - Before archiving material, move useful current content to its owning route or external system. Archive only the historical context that remains useful.
 - Memory states own their local capture, consolidation, movement, archival, and restoration invariants; generic truth behavior should not be repeated in every state.
 - Do not restore a redundant #SourceOfTruth tag.
@@ -185,28 +186,14 @@ This handoff temporarily preserves accepted constraints that do not yet have tru
 - The maintainer's completed cross-project trials are evidence; do not create a separate baseline exercise merely to repeat those checks.
 - Communicate directly and briefly; separate accepted direction from recommendations and unresolved questions.
 
-## Rules Directory Question
+## Rules Directory Decision
 
-The vision and architecture pass must decide whether a dedicated `rules/` route would clarify ownership or duplicate concepts that already exist.
+Do not add a dedicated `rules/` primitive. It would duplicate existing binding owners:
 
-Current candidates already cover different forms of normative material:
+- loader and entrypoint Axioms own universal or inherited Framework mechanics;
+- directives own independently routed binding behavior.
 
-- loader and entrypoint Axioms: universal or inherited scope rules;
-- directives: binding instructions for active work;
-- patterns: concrete inspectable default shapes;
-- guidance: contextual advice;
-- current documents: coherent accepted state;
-- decisions: choices and useful rationale.
-
-A new `rules/` route is valid only if its purpose can be stated in one or a few sentences and does not overlap those owners. Do not add `rules/` merely as another place to copy every absolute.
-
-Evaluate three options:
-
-1. Keep the current primitives and add a small linked rules map that helps humans and agents discover authoritative owners without reproducing them.
-2. Rename or replace an existing primitive if `rules` is the clearer name; do not keep two equivalent binding-rule primitives.
-3. Add a new route only if it owns a distinct kind of material with clear authority, loading, inheritance, and placement semantics.
-
-The chosen design must let an agent find every applicable absolute cheaply while leaving each rule with one authoritative owner.
+Patterns, guidance, current documents, and decisions retain their distinct roles. A linked rules map may be created for discovery if useful, but it points to authoritative owners rather than reproducing their contents.
 
 ## Existing Owners To Inspect
 
@@ -223,9 +210,7 @@ The chosen design must let an agent find every applicable absolute cheaply while
 
 ## Unresolved
 
-- The final vision, architecture, and smallest useful current-document set.
-- The exact boundary and relationship between current documents and decisions, including whether decisions should be a discrete choice catalog whose accepted outcomes are integrated into evergreen current documents.
-- Whether `rules/` should be a linked discovery map, replace an existing primitive, own a genuinely distinct primitive, or not exist.
+- Maintainer review and acceptance of the complete vision and architecture set.
 - The final loader structure, terminology, authority wording, and #KeepInMind wording.
 - How strongly recursive framework-route initialization should be supported by the CLI.
 - Doctor's Markdown scan boundary, suggestion ranking, and explicit fix interface.
