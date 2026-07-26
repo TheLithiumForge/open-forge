@@ -18,7 +18,7 @@ Decisions are accepted rationale for important choices that may need to be under
 
 <!-- open-forge:generated-index:start -->
 - [Benchmarks compose agnostic scenarios, reusable primitive blocks, and reproducible meta-scenarios under trace-reviewing orchestrators](benchmark-design.md) - #Memory #Decision #CurrentTruth #Benchmark #Dogfood #Evaluation
-- [The Core layer installs directives, patterns, guidance, skills, workflows, and workspace with their accepted meanings](core-primitives.md) - #Memory #Decision #CurrentTruth #Core #Primitive
+- [The Core layer installs directives, guidance, patterns, skills, templates, workflows, and workspace with their accepted meanings](core-primitives.md) - #Memory #Decision #CurrentTruth #Core #Primitive
 - [Do-not-revive list for rejected files, hidden mechanics, directive gates, continuity gaps, and workflow ceremony](do-not-revive.md) - #Memory #Decision #CurrentTruth #Rejected
 - [Extensions add optional whole routed files while installed files remain complete runtime truth](extensions-and-cli.md) - #Memory #Decision #CurrentTruth #Extension #CLI
 - [Reliability-critical context loads unconditionally and early; conditional context must be cheap to skip and cheap to recover from](loading-reliability.md) - #Memory #Decision #CurrentTruth #Loading #Routing #Reliability

@@ -305,6 +305,12 @@ describe("install", () => {
     const installedDirectives = await fs.readFile(path.join(root, ".agents", "directives", "_directives.md"), "utf8");
     expect(installedDirectives).not.toContain("truth-maintenance.md");
 
+    const installedTemplates = await fs.readFile(path.join(root, ".agents", "templates", "_templates.md"), "utf8");
+    expect(installedTemplates).toContain("Templates are reusable source artifacts intended to be instantiated");
+    expect(installedTemplates).toContain("tags: [Core, Template]");
+    expect(installedTemplates).toContain("Use a linked matching #Core owner");
+    expect(installedTemplates).toContain("Make the need each template satisfies and the primary question or result it answers visible");
+
     const doctorResult = await runCli("doctor", "--json", root);
     expect(doctorResult.stderr).toBe("");
     expect(doctorResult.exitCode).toBe(0);
@@ -322,6 +328,12 @@ describe("install", () => {
       ".agents/workflows/_workflows.md",
       ".agents/workspace/_workspace.md"
     ]));
+    expect(loadNowRoutes).not.toContain(".agents/templates/_templates.md");
+
+    const templateResult = await runCli("find", "--tag", "Template", "--json", root);
+    expect(templateResult.exitCode).toBe(0);
+    const templateRoutes = (JSON.parse(templateResult.stdout) as Array<{ route: string }>).map((entry) => entry.route);
+    expect(templateRoutes).toContain(".agents/templates/_templates.md");
 
     const keepInMindResult = await runCli("find", "--tag", "KeepInMind", "--json", root);
     expect(keepInMindResult.exitCode).toBe(0);
@@ -341,8 +353,10 @@ describe("install", () => {
     const root = await createRoot();
     const scopedDocuments = path.join(root, ".agents", "memory", "customer-facing", "mobile-app", "crystallized", "platform", "documents");
     const scopedDecisions = path.join(root, ".agents", "memory", "mobile-app", "crystallized", "decisions");
+    const scopedTemplates = path.join(root, ".agents", "workflows", "frontend", "templates");
     await fs.mkdir(scopedDocuments, { recursive: true });
     await fs.mkdir(scopedDecisions, { recursive: true });
+    await fs.mkdir(scopedTemplates, { recursive: true });
     await fs.writeFile(path.join(scopedDocuments, "_documents.md"), `# Old Scoped Documents
 
 Old scoped framework copy.
@@ -357,11 +371,16 @@ Old scoped framework copy.
 
 Old scoped decisions framework copy.
 `);
+    await fs.writeFile(path.join(scopedTemplates, "_templates.md"), `# Old Scoped Templates
+
+Old scoped templates framework copy.
+`);
     await writeRoute(scopedDocuments, "architecture.md", "Scoped architecture truth", ["Memory", "Document", "CurrentTruth"]);
 
     const result = await runCli("install", root);
     const scopedContent = await fs.readFile(path.join(scopedDocuments, "_documents.md"), "utf8");
     const scopedDecisionContent = await fs.readFile(path.join(scopedDecisions, "_decisions.md"), "utf8");
+    const scopedTemplateContent = await fs.readFile(path.join(scopedTemplates, "_templates.md"), "utf8");
 
     expect(result.exitCode).toBe(0);
     expect(scopedContent).toContain("Documents are durable accepted records, or routes to those records, for long-form project knowledge.");
@@ -369,6 +388,8 @@ Old scoped decisions framework copy.
     expect(scopedContent).toContain("- [Scoped architecture truth](architecture.md) - #Memory #Document #CurrentTruth");
     expect(scopedDecisionContent).toContain("Decisions are accepted rationale for important choices");
     expect(scopedDecisionContent).not.toContain("Old scoped decisions framework copy.");
+    expect(scopedTemplateContent).toContain("Templates are reusable source artifacts intended to be instantiated");
+    expect(scopedTemplateContent).not.toContain("Old scoped templates framework copy.");
   });
 
   test("does not treat local scope routes as scoped framework routes", async () => {
@@ -556,6 +577,7 @@ Review patterns bundled with Open Forge.
       path.join(agents, "workflows", "mixed", "_mixed.md"),
       path.join(agents, "directives", "mixed.md"),
       path.join(agents, "guidance", "mixed.md"),
+      path.join(agents, "templates", "mixed.md"),
       path.join(agents, "workspace", "mixed.md"),
       path.join(agents, "memory", "mixed.md"),
       path.join(payload, "templates", "mixed.md")
@@ -570,7 +592,7 @@ Review patterns bundled with Open Forge.
     });
 
     expect(result.exitCode).toBe(0);
-    expect(result.stdout).toContain("(contents: skill, workflow, directive, guidance, pattern, workspace, memory, other)");
+    expect(result.stdout).toContain("(contents: skill, workflow, directive, guidance, pattern, template, workspace, memory, other)");
   });
 
   test("installs multiple bundled extensions by id list", async () => {
@@ -2776,6 +2798,30 @@ No binding axioms were declared.
     expect(JSON.parse(result.stdout)).toMatchObject({ errors: 0, warnings: 0 });
   });
 
+  test("treats Workflow and Directive as topical tags inside Templates", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    const topical = path.join(root, ".agents", "templates", "workflow.md");
+    await fs.writeFile(topical, [
+      "---",
+      "open-forge:",
+      "  description: Copy-ready source for a workflow document",
+      "  tags: [Template, Workflow, Directive]",
+      "---",
+      "",
+      "# Workflow Template",
+      "",
+      "This is source content, not an active workflow or directive.",
+      ""
+    ].join("\n"));
+    expect((await runCli("index", root)).exitCode).toBe(0);
+
+    const result = await runCli("doctor", "--json", root);
+
+    expect(result.exitCode).toBe(0);
+    expect(JSON.parse(result.stdout)).toMatchObject({ errors: 0, warnings: 0 });
+  });
+
   test("allows organizational workflow categories and workflow-local primitive routes", async () => {
     const root = await createRoot();
     expect((await runCli("install", root)).exitCode).toBe(0);
@@ -2810,6 +2856,17 @@ describe("create command", () => {
 
     const doctorResult = await runCli("doctor", root);
     expect(doctorResult.exitCode).toBe(0);
+  });
+
+  test("classifies scoped Template categories", async () => {
+    const root = await createRoot();
+    await runCli("install", root);
+
+    const result = await runCli("create", "category", "templates/documents", root);
+    const documents = await fs.readFile(path.join(root, ".agents", "templates", "documents", "_documents.md"), "utf8");
+
+    expect(result.exitCode).toBe(0);
+    expect(documents).toContain("tags: [Template]");
   });
 
   test("refuses an already routable category", async () => {

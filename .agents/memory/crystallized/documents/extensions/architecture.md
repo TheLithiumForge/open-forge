@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Current Open Forge Extensions MVP architecture, package semantics, composition, ownership, liabilities, and overhaul requirements
+  description: Current Open Forge Extensions MVP package semantics, composition, runtime boundary, ownership lifecycle, safety properties, and liabilities
   tags: [Memory, Document, CurrentTruth, Evergreen, Architecture, Extension, MVP, Composition, ACE]
 ---
 
@@ -15,11 +15,11 @@ Open Forge Extensions are a dogfooded MVP whose long-term architecture remains i
 - Current source, identity, dependency, ownership, and lifecycle boundaries
 - Runtime behavior after installation
 - Proven invariants worth preserving
-- MVP liabilities and questions the overhaul must resolve
+- MVP liabilities
 
 The [top architecture](../architecture.md) owns Extensions as one area of the complete Open Forge system. The [Framework Architecture](../framework/architecture.md) owns every runtime route, primitive, authority, and Memory meaning used by installed extension files. The [CLI MVP Architecture](../cli/architecture.md) owns the deterministic implementation that currently discovers, plans, installs, validates, and removes packages.
 
-This document describes the present MVP without declaring that its manifest schema, catalogue, grouping, lifecycle, or CLI integration is the final Extensions design.
+This document describes the present MVP without declaring that its manifest schema, catalogue, grouping, lifecycle, or CLI integration is the final Extensions design. The [Extensions overhaul candidate](../../../emerging/ideas/extensions-overhaul.md) owns prospective replacement architecture.
 
 ## Core Proposition
 
@@ -32,6 +32,7 @@ It may contribute:
 - Directives
 - Guidance
 - Patterns
+- Templates
 - Workspace routes
 - Memory routes
 - Support files
@@ -323,24 +324,6 @@ The primary implementation test owners are linked from the [CLI MVP Architecture
 
 These tests validate deterministic packaging and lifecycle behavior. They do not prove that every catalogue package improves agent outcomes.
 
-## Strengths To Preserve
-
-The overhaul should preserve:
-
-- The content-agnostic package model
-- Clear separation between installation identity and runtime primitive identity
-- Complete installed files as runtime truth
-- Explicit user selection
-- Whole-file contributions through ordinary routes
-- One canonical owner for reusable payloads
-- Dependency composition instead of copied shared content
-- Manual installation without the CLI
-- Transparent managed ownership
-- Preview and review before mutation
-- Fail-closed containment and collision handling
-- Safe coexistence with unmanaged local files and native skills
-- Catalogue grouping that remains presentation rather than semantics
-
 ## MVP Liabilities
 
 ### Architecture Is Coupled To The CLI
@@ -383,91 +366,9 @@ Payload paths can target deep routes, but the package model does not yet provide
 
 Handled failures roll back, while abrupt process or machine failure relies on Git. There is no persistent recovery journal or workspace mutation lock.
 
-## Overhaul Requirements
+## Candidate Direction
 
-The Extensions overhaul should begin from user intent and package semantics rather than the current command implementation.
-
-It must define:
-
-### Package Boundary
-
-- What makes a set of files one extension
-- When a narrow package, mixed package, or convenience pack is appropriate
-- How one canonical payload owner is maintained
-- Which metadata is required for managed and unmanaged distribution
-
-### Source And Trust
-
-- Which source types are supported
-- Whether any remote source belongs in the product
-- How provenance, integrity, authorship, and review are presented
-- Which content can enter baseline-loading routes
-- How untrusted instructions are inspected before installation
-
-### Identity And Compatibility
-
-- Stable identity across source movement
-- Version meaning
-- Framework and CLI compatibility
-- Agent-runtime requirements for native capabilities
-- Deprecation and replacement
-
-### Composition
-
-- Required, optional, and conflicting relationships
-- Whether capability satisfaction is justified
-- How external skills or packages can satisfy a requirement safely
-- How dependency closure remains visible and reviewable
-
-### Ownership And Scope
-
-- Ownership state for one workspace, nested scopes, submodules, and multi-repository sources of truth
-- Interaction with other package managers
-- User modifications to managed files
-- Scoped installation, update, and removal
-- Generated and authored boundaries
-
-### Lifecycle
-
-- First installation
-- Update
-- Migration
-- Restoration
-- Removal
-- Orphan handling
-- Recovery after interrupted application
-
-### Catalogue Governance
-
-- Admission and review criteria
-- Evidence required for first-party inclusion
-- Stability labels
-- Maintenance ownership
-- Deprecation policy
-- Discoverability without mandatory context cost
-
-These questions should be resolved through a future accepted Extensions architecture before the MVP is generalized into a networked ecosystem.
-
-## Conceptual Component Boundary
-
-The future implementation should separate:
-
-```text
-Extension source providers
-  -> package and manifest model
-    -> dependency and compatibility resolver
-      -> assembled installation plan
-        -> CLI safety and transaction application
-          -> ordinary installed Framework files
-```
-
-The Extensions domain owns package identity, source metadata, dependencies, compatibility, and desired composition.
-
-The CLI owns filesystem inspection, target planning, safety checks, human and machine presentation, application, rollback, and Git integration.
-
-The Framework owns runtime meaning after installation.
-
-No layer should privately absorb another layer's authority.
+The [Extensions overhaul candidate](../../../emerging/ideas/extensions-overhaul.md) owns prospective source, trust, package, compatibility, composition, scope, lifecycle, catalogue, component, and migration design. Keeping that material in Emerging Memory prevents open design questions from appearing as accepted current Extensions architecture.
 
 ## Non-Goals
 
@@ -483,20 +384,6 @@ Extensions are not:
 - A remote registry by default
 - Permission to mutate shared Markdown invisibly
 - A substitute for ordinary relative links and routes
-
-## Migration Approach
-
-Before overhauling implementation:
-
-1. Review every first-party package for broad reusable value and correct granularity
-2. Classify current manifest and lifecycle behavior as invariant, MVP compatibility, or replacement candidate
-3. Extract the Extensions domain from the CLI implementation
-4. Define source, identity, scope, compatibility, ownership, and lifecycle contracts
-5. Establish a common installation plan shared with the CLI architecture
-6. Preserve current safety and integration tests around desired invariants
-7. Add migrations only where real versioned state requires them
-8. Avoid remote distribution until trust and provenance have an accepted design
-9. Keep installed files manually understandable throughout the transition
 
 ## Related Current Views
 

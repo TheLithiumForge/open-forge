@@ -10,26 +10,34 @@ open-forge:
 
 This document owns the system-level architecture that realizes the [Open Forge vision](vision.md). It defines component responsibilities, dependency direction, context flow, authority, state, and tool boundaries. Scoped architecture documents own component internals.
 
+## Architecture Drivers
+
+The system is structured around five accepted needs:
+
+- Workspace meaning remains inspectable and independently owned
+- Relevant context is selected without loading the whole environment
+- Accepted direction stays operator-led while normal execution remains autonomous
+- A small useful base can evolve recursively without becoming one universal methodology
+- Deterministic tools make correct behavior cheaper without privately owning meaning
+
 ## System Model
 
 An Open Forge environment combines four areas:
 
 | Area | Responsibility | Depends on |
 |---|---|---|
-| Framework | Shared routing, primitives, and Memory mechanics | No other Open Forge area |
+| Framework | Shared routing, Core primitives, reusable Templates, and Memory mechanics | No other Open Forge area |
 | Workspace context | Local goals, knowledge, constraints, decisions, methods, history, and scopes | The framework routes it uses |
 | Extensions | Optional reusable capabilities | The framework routes they extend |
 | Deterministic tools | Mechanical loading, navigation, validation, installation, packaging, and safety | The human-readable files they inspect and change |
 
 The operator establishes goals and accepted direction. An agent runtime consumes the environment, performs work with its native capabilities, and proposes changes. Agent providers and execution runtimes remain external to Open Forge. Minimal provider bridges may expose the canonical workspace entry without owning independent policy.
 
-## Where Meaning Lives
+## Ownership And Dependency Direction
 
 Human-readable Markdown owns Open Forge rules, recorded state, relationships, and workspace-specific context. A declared external system may own information such as source code, issues, or product data when an Open Forge route points to it explicitly.
 
 Generated route entries, indexes, receipts, caches, and retrieval databases are derived from those owners. They may make discovery, validation, or change cheaper, but deleting and rebuilding them cannot change what the environment means.
-
-## Dependency Direction
 
 Dependencies point toward human-readable owners:
 
@@ -63,15 +71,15 @@ This flow moves context into and out of work. It does not require a project to f
 
 ## Structural Model
 
-A `route` is a visible path through small Markdown `entrypoints`. Each `entrypoint` exposes its direct children with a relative path, a short description sufficient to decide whether to open them, and descriptive tags. A `scope` is a routed subtree that narrows ownership or meaning.
+A `route` is a visible path through small Markdown `entrypoints`. Each entrypoint exposes direct children with relative links, descriptions sufficient to select or skip them, and descriptive tags. A `scope` is a routed subtree that narrows ownership or meaning.
 
 Agents move top-down from known context into relevant detail. Loaded ancestor rules remain active below them, while a child adds only what is specific to its scope. Relative Markdown links and established tags connect material across branches without creating competing owners.
 
-This document is one example of a route: the loader exposes Memory, Memory exposes Crystallized, Crystallized exposes Documents, and Documents exposes this architecture through its path, description, and tags. An agent can decide whether the architecture is relevant before reading its body.
+For example, the loader exposes Memory, Memory exposes Crystallized, Crystallized exposes Documents, and Documents exposes this architecture through its path, description, and tags. An agent can select this view without opening unrelated documents or their history.
 
 Any routed owner may introduce narrower scopes and initialize only the framework areas it needs. Scopes inherit broader meaning and add local context through files, routes, links, and tags.
 
-Selection cost should grow primarily with route depth and the number of selected branches, not with the total number of stored scopes. Unselected sibling scopes should add almost no active-context cost. The [Framework Architecture](framework/architecture.md) owns the current route contract, while the [routing decision](../decisions/routing-model.md) preserves earlier rationale that remains useful during migration.
+Selection cost should grow primarily with route depth and the number of selected branches, not with the total number of stored scopes. Unselected sibling scopes should add almost no active-context cost. The [Framework Architecture](framework/architecture.md) owns the complete route contract.
 
 ## Authority And Current Knowledge
 
@@ -92,7 +100,7 @@ For example, an architecture document should state that routing is top-down and 
 
 This creates limited intentional overlap: both files identify the accepted choice, the current document owns the complete current concept, and the decision owns the reason behind it.
 
-## Memory States
+## State And Evolution
 
 Memory is part of the framework substrate and organizes recorded state by its current role:
 
@@ -105,7 +113,7 @@ Memory is part of the framework substrate and organizes recorded state by its cu
 
 The states are not a rigid pipeline. Material moves when meaning, scope, and authority justify the transition. Clear direction may update a Crystallized owner directly, while tentative ideas remain Working or Emerging. Superseded material is extracted, archived, consolidated, or pruned.
 
-Detailed authority resolution, state transitions, starter routes, and primitive behavior belong to the [Framework Architecture](framework/architecture.md).
+The environment also evolves through Core primitives. Templates provide copy-ready starting content whose ownership transfers to the destination. Patterns continue to guide reusable shapes, Directives and Axioms bind behavior, and Extensions add optional routed capabilities. Detailed state transitions and primitive relationships belong to the [Framework Architecture](framework/architecture.md).
 
 ## Tool Boundary
 
@@ -113,30 +121,48 @@ The CLI and compatible future tools perform deterministic operations over human-
 
 Tools must expose their effects through files or output. They may reduce reasoning and interaction cost, but they cannot silently infer accepted truth, privately own meaning, or become required for ordinary inspection.
 
+## Cross-Cutting Invariants
+
+The following constraints apply across every Open Forge area:
+
+1. Every important subject has one current owner
+2. Workspace meaning remains reconstructable from human-readable owners and declared external sources
+3. Loading changes visibility and timing, not authority
+4. Unselected scopes do not routinely enter active context
+5. Generated and machine-optimized state remains replaceable
+6. Core, local content, Extensions, and tools use the same visible routing and relationship model
+7. Structure and validation improve reliability without claiming mechanical control over agent reasoning
+
+## Current Tradeoffs And Limits
+
+- Explicit files, routes, and relationships require deliberate maintenance in exchange for inspectability, portability, and correctability
+- Routing quality depends on clear descriptions, scopes, and ownership. Deterministic validation can prove structural integrity but not perfect semantic relevance
+- Open Forge has no fixed structural expansion ceiling, but this is not a promise of constant performance. Active context and navigation cost still grow with selected routes and relationships
+- Agent behavior remains nondeterministic. The environment can make correct behavior much easier without guaranteeing compliance
+- The current CLI and Extensions implementations are MVPs. Their scoped architectures document current behavior, stable boundaries, and liabilities, while Emerging owners keep candidate overhaul designs from masquerading as current truth
+
 ## Architecture Views
 
 The architecture is intentionally split by ownership:
 
 - This top architecture owns the system map and cross-cutting invariants
 - The [Framework Architecture](framework/architecture.md) owns Core and Memory internals
-- The [Extensions MVP Architecture](extensions/architecture.md) owns current optional capability composition and redesign boundaries
-- The [CLI MVP Architecture](cli/architecture.md) owns current commands, lifecycle, safety, implementation, and redesign boundaries
+- The [Extensions MVP Architecture](extensions/architecture.md) owns current optional capability composition, lifecycle, safety boundaries, and liabilities
+- The [CLI MVP Architecture](cli/architecture.md) owns current commands, deterministic state, safety, verification, implementation, and liabilities
 
-The extensions and CLI views document the current MVPs before their planned overhauls. They preserve useful invariants without treating current implementation choices as permanent. This document links to those architectures and does not duplicate their internal contracts.
+The extensions and CLI views document the current MVPs without treating current implementation choices as permanent. Their linked Emerging owners preserve prospective overhaul design until it is accepted. This document links to the current architectures and does not duplicate their internal contracts.
 
 ## Related Current Views
 
 - [Open Forge vision](vision.md)
-- [Framework Architecture](framework/architecture.md)
-- [Extensions MVP Architecture](extensions/architecture.md)
-- [CLI MVP Architecture](cli/architecture.md)
 
-## Migration Inputs
+## Decisions And Rationale
 
-These earlier decisions may preserve useful rationale, but they remain subject to reconciliation with the current architecture:
+These decisions preserve useful rationale behind the current architecture. Their chosen results remain owned by this document and its scoped views:
 
-- [Product-direction rationale](../decisions/product-direction.md)
-- [Routing rationale](../decisions/routing-model.md)
-- [Memory-model rationale](../decisions/memory-model.md)
-- [Extensions and CLI rationale](../decisions/extensions-and-cli.md)
-- [Scope and slug rationale](../decisions/scope-and-slugs.md)
+- [Product direction](../decisions/product-direction.md)
+- [Core primitives](../decisions/core-primitives.md)
+- [Routing model](../decisions/routing-model.md)
+- [Memory model](../decisions/memory-model.md)
+- [Extensions and CLI](../decisions/extensions-and-cli.md)
+- [Scope and slugs](../decisions/scope-and-slugs.md)

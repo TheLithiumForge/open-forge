@@ -23,7 +23,7 @@ const rootEntryPatchMarkers = new Map([
   ["AGENTS.md", "open-forge"],
   ["CLAUDE.md", "open-forge"]
 ]);
-const scopedCoreEntrypointFolders = new Set(["directives", "guidance", "patterns", "skills"]);
+const scopedCoreEntrypointFolders = new Set(["directives", "guidance", "patterns", "skills", "templates"]);
 const entriesHeading = "## Entries";
 const generatedIndexStartMarker = "<!-- open-forge:generated-index:start -->";
 const generatedIndexEndMarker = "<!-- open-forge:generated-index:end -->";
@@ -39,11 +39,12 @@ const categoryTypeTags: Record<string, string> = {
   guidance: "Guidance",
   patterns: "Pattern",
   skills: "Skill",
+  templates: "Template",
   workflows: "Workflow",
   workspace: "Workspace",
   memory: "Memory"
 };
-const extensionContentKindOrder = ["skill", "workflow", "directive", "guidance", "pattern", "workspace", "memory", "pack", "other"] as const;
+const extensionContentKindOrder = ["skill", "workflow", "directive", "guidance", "pattern", "template", "workspace", "memory", "pack", "other"] as const;
 const extensionCatalogueGroupOrder = ["skills", "workflows", "packs-mixed", "support"] as const;
 if (isCliEntrypoint()) {
   await main();
@@ -1814,6 +1815,7 @@ async function classifyExtensionPayloadContents(payloadRoot: string): Promise<Ex
     directives: "directive",
     guidance: "guidance",
     patterns: "pattern",
+    templates: "template",
     workspace: "workspace",
     memory: "memory"
   };
@@ -3260,7 +3262,7 @@ async function inferPrimitiveTypeFromRoute(file: string, scanRoot: string, expli
     const entrypointTags = readMetadata(await fs.readFile(entrypoint, "utf8")).tags.map((tag) => tag.toLowerCase());
     const ownedBehaviorTypes = (["workflow", "directive"] as const).filter((tag) => entrypointTags.includes(tag));
     if (ownedBehaviorTypes.length === 1) return ownedBehaviorTypes[0];
-    if (["pattern", "guidance", "skill", "workspace", "memory"].some((tag) => entrypointTags.includes(tag))) return null;
+    if (["pattern", "guidance", "skill", "template", "workspace", "memory"].some((tag) => entrypointTags.includes(tag))) return null;
   }
 
   const relativeFolder = path.relative(scanRoot, folder);
@@ -3271,6 +3273,7 @@ async function inferPrimitiveTypeFromRoute(file: string, scanRoot: string, expli
     ["pattern", segments.lastIndexOf("patterns")],
     ["guidance", segments.lastIndexOf("guidance")],
     ["skill", segments.lastIndexOf("skills")],
+    ["template", segments.lastIndexOf("templates")],
     ["workspace", segments.lastIndexOf("workspace")],
     ["memory", segments.lastIndexOf("memory")]
   ]);
@@ -3279,7 +3282,7 @@ async function inferPrimitiveTypeFromRoute(file: string, scanRoot: string, expli
     return nearest[0] === "workflow" || nearest[0] === "directive" ? nearest[0] : null;
   }
 
-  if (["pattern", "guidance", "skill", "workspace", "memory"].some((tag) => fileTags.includes(tag))) return null;
+  if (["pattern", "guidance", "skill", "template", "workspace", "memory"].some((tag) => fileTags.includes(tag))) return null;
   const explicitBehaviorTypes = (["workflow", "directive"] as const).filter((tag) => fileTags.includes(tag));
   return explicitBehaviorTypes.length === 1 ? explicitBehaviorTypes[0] : null;
 }
