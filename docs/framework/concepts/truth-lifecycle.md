@@ -28,7 +28,7 @@ Each rule lives where the agent first has enough context to understand it.
 
 ## Memory Lifecycle
 
-Memory owns capture, movement, consolidation, and archival of recorded state:
+Memory is authoritative for the capture, movement, consolidation, and archival of recorded state:
 
 ```text
 working       active resumability context
@@ -37,15 +37,15 @@ crystallized  accepted durable current memory
 archived      non-current historical context
 ```
 
-The states are not a mandatory sequence. Their entrypoints own the invariants that make each state valid, including candidate preservation, current-truth consolidation, extraction before archival, and validation before restoration.
+The states are not a mandatory sequence. Their entrypoints define the invariants that make each state valid, including candidate preservation, current-truth consolidation, extraction before archival, and validation before restoration.
 
 Memory may record or explore behavior without activating it. Accepted behavior that should guide future work belongs in the matching #Core route.
 
 ## Current Views And History
 
-Current documents own coherent present state. Any routed material may carry #Evergreen when it must stay aligned with accepted state.
+Current documents are authoritative for coherent present state. Any routed material may carry #Evergreen when it must stay aligned with accepted state.
 
-Decisions preserve useful rationale and historical context without becoming a duplicate owner of current behavior. Archived Memory preserves non-current material after useful current state has been extracted.
+Decisions preserve useful rationale and historical context without becoming a competing source for current behavior. Archived Memory preserves non-current material after useful current state has been extracted.
 
 ## Why
 

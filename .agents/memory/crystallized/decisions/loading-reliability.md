@@ -17,6 +17,6 @@ Accepted 2026-07-08 from the dogfood evidence synthesis across rounds v2 through
 - Wording stays imperative to the agent without implying tool behavior: prefer "read X before Y" over "X must be loaded". The imperative remains mandatory for compliant agents.
 - Reuse the same structure, rules, and shapes everywhere so agents can trust the structure instead of carrying decision overload.
 - Treat the complete routed #KeepInMind catalogue as baseline-loaded binding context. Recheck it at loader entry or resume, actual context restoration, handoff, and closeout, plus transitions where its follow-ups may have changed; a broken route chain is a structural defect to repair, not a reason to weaken the contract.
-- `open-forge load --bodies` may batch the loader, transitive visible #LoadNow closure, and complete effective #KeepInMind content when the CLI is available. It is an optimization over the same complete plain-file traversal, not a separate source of loading truth.
+- `open-forge load --bodies` may batch the loader, transitive visible #LoadNow closure, and complete effective #KeepInMind content when the CLI is available. Use it at every required #KeepInMind boundary. It is an optimization over the same complete plain-file traversal, not a separate source of loading truth. (revised 2026-07-26)
 
 Evidence: the evaluation syntheses routed by `.agents/memory/crystallized/documents/evaluations/_evaluations.md`, with detailed pre-harness reports under `benchmarks/results/pre-harness/`.

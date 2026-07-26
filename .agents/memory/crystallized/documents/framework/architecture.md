@@ -198,11 +198,11 @@ The loader defines the exact reserved loading tags. Architecturally, they serve 
 
 `#LoadNow` follows visible parent-child routing. A hidden descendant does not load merely because it carries the tag.
 
-`#KeepInMind` deliberately crosses the current selected branch so standing commitments and candidate follow-ups are not lost when the active route changes. Each recovered file retains the authority of its source role.
+`#KeepInMind` deliberately crosses the current selected branch so standing commitments and candidate follow-ups are not lost when the active route changes. Each result remains subject to the authority and scope established by its route and content.
 
 Files without a reserved loading tag remain on demand. Ordinary descriptive tags help selection and search without changing loading or authority.
 
-The optional `open-forge load --bodies` command may batch the loader, visible immediate-loading closure, continuity set, and adjacent overwrites into one ordered stream. The same context remains obtainable through the plain-file contract.
+At every required `#KeepInMind` boundary, the optional `open-forge load --bodies` command may batch the loader, visible immediate-loading closure, continuity set, and adjacent overwrites into one ordered stream. The same context remains obtainable through the plain-file contract.
 
 ## Authority
 

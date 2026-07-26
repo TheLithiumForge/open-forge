@@ -20,5 +20,5 @@ Workspace routes form a concise map of important project locations and explain w
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Current map of the repository locations that own or represent important project state](sources-of-truth.md) - #Workspace #Repository #CurrentTruth #Evergreen
+- [Current map of the repository's important authoritative sources and representations](sources-of-truth.md) - #Workspace #Repository #CurrentTruth #Evergreen
 <!-- open-forge:generated-index:end -->

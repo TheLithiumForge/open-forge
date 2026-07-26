@@ -10,12 +10,12 @@ open-forge:
 
 [`src/open-forge/CLAUDE.md`](../../../../../../src/open-forge/CLAUDE.md) is the canonical installed bridge for Claude Code. The repository [`CLAUDE.md`](../../../../../../CLAUDE.md) dogfoods the same managed block.
 
-The [source and packaging decision](../../../decisions/source-and-packaging.md) owns the rationale for keeping [`AGENTS.md`](AGENTS.md) canonical across harnesses.
+The [source and packaging decision](../../../decisions/source-and-packaging.md) is authoritative for the rationale behind keeping [`AGENTS.md`](AGENTS.md) canonical across harnesses.
 
 ## Contract
 
 - The managed block contains only its boundary markers and the exact `@AGENTS.md` import.
-- The [AGENTS entry contract](AGENTS.md) remains the sole owner of Open Forge instructions exposed through this bridge.
+- The [AGENTS entry contract](AGENTS.md) remains the sole authoritative document for Open Forge instructions exposed through this bridge.
 - The canonical and dogfood managed blocks remain identical.
 
 ### Installation

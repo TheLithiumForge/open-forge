@@ -6,10 +6,10 @@ open-forge:
 
 # Scope And Slugs
 
-Accepted decisions extracted from the design sessions and idea notes on 2026-07-06.
+Accepted decisions extracted from the design sessions and idea notes on 2026-07-06 and aligned with the accepted Framework Architecture on 2026-07-26.
 
-- A `framework route` is an Open Forge core route with stable default meaning.
-- A `scope route` is a routed local folder used to narrow meaning or ownership below it.
+- A `framework route` is a standard Core or Memory route shipped by Open Forge.
+- A `scope route` is a local routed subtree used to narrow authority or meaning below it.
 - A `scoped framework route` is a framework route initialized inside a scope route.
 - A `slug` is the concrete folder name used in a route path.
 - Route-template placeholders such as `[scope]` are documentation, maintainer, CLI, and extension-author notation only. Installed workspaces receive concrete slug folders.

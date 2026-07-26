@@ -158,7 +158,7 @@ Candidate replacements to evaluate before a repository-wide scrub:
 | Current authority | Emphasizes governing meaning rather than possession | Can sound like a person or institution |
 | Semantic authority | Precise about meaning | More technical and less friendly |
 
-No replacement is accepted yet. Until selection, current files retain `owner` where its established semantic meaning is useful, and public explanations should prefer explicit wording such as "the file or system that authoritatively expresses this subject."
+Subsequent maintainer review accepted typed vocabulary rather than one mechanical replacement. Current documentation uses `authoritative source` when the type is unknown or irrelevant; `authoritative document`, `authoritative route`, or `authoritative system` when the type is known; and `responsible person` or `responsible role` for human accountability. Ownership language remains valid for possession and managed lifecycle. The [terminology decision](../../crystallized/decisions/authoritative-source-terminology.md) preserves the accepted rationale.
 
 ## Tooling Direction
 
@@ -199,5 +199,5 @@ The former README remains valuable implementation history but leads with the sup
 - [Framework Architecture](../../crystallized/documents/framework/architecture.md)
 - [Distinct Core Primitive Roles decision](../../crystallized/decisions/core-primitives.md)
 - [Templates As A Core Primitive decision](../../crystallized/decisions/template-primitive.md)
-- [Temporary Knowledge Owner Helper](../../working/knowledge-owner-helper.md)
+- [Temporary Knowledge Role Helper](../../working/knowledge-role-helper.md)
 - [Temporary Terminology Helper](../../working/terminology-helper.md)

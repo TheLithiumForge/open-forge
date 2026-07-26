@@ -1,12 +1,12 @@
 ---
 open-forge:
-    description: Self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning
+    description: Self-growing Markdown memory for live work, continuity, accepted records, historical context, and candidate learning
     tags: [LoadNow, Memory, OrganicGrowth]
 ---
 
 # Memory
 
-Memory is self-growing Markdown state for live work, AI communication, accepted records, historical records, and candidate learning
+Memory is self-growing Markdown state for live work, continuity, accepted records, historical context, and candidate learning
 
 ## Axioms
 

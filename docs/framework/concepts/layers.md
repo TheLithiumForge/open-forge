@@ -18,7 +18,7 @@ Layer 2: Memory
 Layer 3: Extensions
 ```
 
-Layer numbers describe dependency order and product shape. After this mapping is defined, prose should prefer #Core, #Memory, and #Extension when it refers to routed ownership, installable material, promotion, or classification. Authority still comes from current user instructions, runtime safety, platform constraints, and the routed primitive or memory state that owns the content.
+Layer numbers describe dependency order and product shape. After this mapping is defined, prose should prefer #Core, #Memory, and #Extension when it refers to routed authority, installable material, promotion, or classification. Authority still comes from current user instructions, runtime safety, platform constraints, and the authoritative routed primitive or memory state.
 
 Layer tags are classification tags. #Core marks Core material, #Memory marks Memory material, and #Extension marks Extensions material. These tags make routing, search, and reference graphs cheaper; they do not create authority by themselves.
 
@@ -51,7 +51,7 @@ archived/     archived memory preserved for context
 
 #Memory may record any subject, including how work is performed, without making that behavior active. Accepted behavior, reusable form, guidance, capability, workflow, workspace routing, or other material that should guide future work belongs in the matching #Core route, including user-created #Core categories and files.
 
-The base #Memory payload installs only universal child routes, including crystallized decisions for accepted rationale. More specialized containers, such as archive child routes, task routes, backlog routes, and workflow-specific outputs, are created under the route that owns their meaning. #Extension payloads may package those additions, but #Memory rules determine their state and scope.
+The base #Memory payload installs only universal child routes, including crystallized decisions for accepted rationale. More specialized containers, such as archive child routes, task routes, backlog routes, and workflow-specific outputs, are created under the route authoritative for their meaning. #Extension payloads may package those additions, but #Memory rules determine their state and scope.
 
 #Memory may be installed with or after #Core. The default #Memory `entrypoint` is tagged #LoadNow, so its generated loader `entry` loads with the loader when #Memory is installed.
 
@@ -102,10 +102,10 @@ Layers are aligned when:
 - layer number describes dependency order, not authority rank
 - #Core remains the minimum routing and primitive framework
 - #Core does not seed opinionated local behavior
-- #Memory owns persisted context and extracted learning
+- #Memory is authoritative for the lifecycle of persisted context and extracted learning
 - #Memory may describe behavior without activating it
 - accepted behavior that should guide future work belongs in matching #Core routes, including user-created #Core categories and files
-- #Memory installs universal child routes and leaves specialized containers to owning routes
+- #Memory installs universal child routes and leaves specialized containers to routes authoritative for their meaning
 - #Memory loads for every request when installed
 - continuity-critical #Memory routes participate in the complete routed #KeepInMind catalogue without preloading unrelated descendant bodies
 - #Extension payloads install optional content into existing routes
