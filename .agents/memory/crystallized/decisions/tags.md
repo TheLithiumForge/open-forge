@@ -20,3 +20,5 @@ Extracted 2026-07-06; load-policy semantics reworked 2026-07-09 from the dogfood
 - Tags stay bare in markdown so tools can parse and graph them.
 - Use normal words when defining the local concept itself; use tags when pointing to routed authority, classification, promotion, load policy, truth status, search, or references.
 - Extensions use load-policy tags only when they deliberately add baseline-loaded or continuity-critical material.
+
+The [loader](../../../loader.md#defined-tags) remains authoritative for exact installed meanings, while the [routing loading contract](../documents/framework/routing/loading.md) explains how load-policy tags participate in the complete context flow.

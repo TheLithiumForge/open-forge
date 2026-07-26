@@ -20,3 +20,5 @@ Accepted 2026-07-08 from the dogfood evidence synthesis across rounds v2 through
 - `open-forge load --bodies` may batch the loader, transitive visible #LoadNow closure, and complete effective #KeepInMind content when the CLI is available. Use it at every required #KeepInMind boundary. It is an optimization over the same complete plain-file traversal, not a separate source of loading truth. (revised 2026-07-26)
 
 Evidence: the evaluation syntheses routed by `.agents/memory/crystallized/documents/evaluations/_evaluations.md`, with detailed pre-harness reports under `benchmarks/results/pre-harness/`.
+
+The [current routing loading contract](../documents/framework/routing/loading.md) expresses the accepted result.

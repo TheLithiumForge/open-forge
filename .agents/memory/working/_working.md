@@ -22,6 +22,7 @@ Working memory is live context for active or recently interrupted work.
 - [Static, concise, accurate transfer notes that help agents or humans resume work after context breaks](handoffs/_handoffs.md) - #LoadNow #Memory #Handoff #AgentCommunication #Contextual
 - [Temporary repository-only helper mapping Open Forge knowledge roles to the primary questions they answer during migration](knowledge-role-helper.md) - #Memory #Working #Helper #Contextual #Temporary #Authority #Role #Decision #Migration
 - [Temporary extraction ledger for relocating component-specific and tooling-specific material from the former combined Markdown contract](markdown-migration.md) - #Memory #Working #Contextual #Temporary #Migration #Framework #Markdown
+- [Temporary extraction ledger for relocating component-specific and implementation-specific material from the former combined routing descriptor](routing-migration.md) - #Memory #Working #Contextual #Temporary #Migration #Framework #Routing
 - [Raw chronological records of what happened during work sessions](sessions/_sessions.md) - #LoadNow #Memory #Session #WorkHistory #Contextual
 - [Temporary repository-only vocabulary map for keeping role-bearing Open Forge terms consistent during document and source migration](terminology-helper.md) - #Memory #Working #Helper #Contextual #Temporary #Terminology #Migration
 <!-- open-forge:generated-index:end -->
