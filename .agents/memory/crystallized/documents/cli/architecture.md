@@ -131,13 +131,13 @@ The CLI interacts with three kinds of state:
 
 ### Authored State
 
-Authored Markdown, extension payloads, root harness content outside managed markers, and declared external sources own meaning.
+Authored Markdown, extension payloads, root harness content outside managed markers, and declared external sources are authoritative for their meaning.
 
 The CLI may preserve, copy, validate, or patch explicitly managed boundaries. It does not replace authored meaning with an internal representation.
 
 ### Derived State
 
-Generated `Entries`, packaged manifests, checksums, and caches are reconstructable from authored owners. Their loss may reduce convenience but does not change the semantic contract.
+Generated `Entries`, packaged manifests, checksums, and caches are reconstructable from authoritative authored sources. Their loss may reduce convenience but does not change the semantic contract.
 
 ### Managed Lifecycle State
 
@@ -203,7 +203,7 @@ The current test architecture has two tiers:
 
 Closure coverage includes indexing, installation, extension composition, dependency graphs, collisions, containment, ownership, rollback, packaged layouts, context loading, route queries, inheritance, validation, scaffolding, and first-party catalogue integration.
 
-The primary current test owners are:
+The primary current test sources are:
 
 - [`cli.unit.test.ts`](../../../../../src/cli/cli.unit.test.ts)
 - [`cli.closure.test.ts`](../../../../../src/cli/cli.closure.test.ts)
@@ -308,9 +308,9 @@ The CLI is not:
 - An automatic approver of candidate Memory
 - A workflow execution engine
 - A substitute for Git or ordinary file inspection
-- The owner of extension runtime meaning
+- The authoritative source of extension runtime meaning
 
-Semantic relevance, remote registries, provider orchestration, and Rune integration remain separate capabilities. If introduced, they consume the same explicit Framework owners.
+Semantic relevance, remote registries, provider orchestration, and Rune integration remain separate capabilities. If introduced, they consume the same explicit Framework sources.
 
 ## Related Current Views
 

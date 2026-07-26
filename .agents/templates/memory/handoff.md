@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Handoff template is used when one bounded Working owner must transfer enough current state, authority, evidence, blockers, and next action to resume work
+  description: Handoff template is used when one bounded Working record must transfer enough current state, authority, evidence, blockers, and next action to resume work
   tags: [Template, Memory, Handoff, Working, Contextual]
 ---
 
@@ -8,12 +8,12 @@ open-forge:
 
 <!--
 Template selection:
-- Need: One concise transfer owner for work crossing an agent, task, session, workflow, or person boundary.
+- Need: One concise transfer record for work crossing an agent, task, session, workflow, or person boundary.
 - Primary question: What must the recipient know and do to resume this work without private context?
 
 Instantiate under the appropriate Working handoffs route.
 This record is expected to expire. Extract durable results, archive useful transfer history, and prune redundant narration when the transfer completes.
-Link to detailed owners instead of copying complete history.
+Link to detailed authoritative sources instead of copying complete history.
 Replace this template's frontmatter, title, placeholders, and comments.
 -->
 
@@ -27,7 +27,7 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 ## Accepted Direction
 
-{Link to accepted decisions and current owners that govern continuation. Keep candidates visibly separate.}
+{Link to accepted decisions and authoritative sources that govern continuation. Keep candidates visibly separate.}
 
 ## Completed And Verified
 
@@ -43,9 +43,8 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 ## Required Context
 
-{Link to the minimum routes, files, commands, or external owners needed to continue.}
+{Link to the minimum routes, files, commands, or external authoritative systems needed to continue.}
 
 ## Exit
 
 {State when the handoff should be extracted, archived, consolidated, or pruned.}
-

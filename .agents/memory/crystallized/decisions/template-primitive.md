@@ -37,7 +37,7 @@ Separating starting content from continuing conformance also makes updates safe 
 
 - Treating Templates as Patterns would make copy-ready convenience imply continuing conformance
 - Treating Templates as Skills or Workflows would make static source content depend conceptually on execution
-- Shipping examples without a routed owner would make their lifecycle, authority, and selection ambiguous
+- Shipping examples without an authoritative route would make their lifecycle, authority, and selection ambiguous
 - Shipping many specialized templates by default would lower initial creation cost at the price of a larger and more opinionated Framework
 
 The distinct primitive adds another route and maintenance surface, so every generic or specialized template must still earn its value.
@@ -46,13 +46,13 @@ The distinct primitive adds another route and maintenance surface, so every gene
 
 - Template descriptions and removable source instructions expose the need and primary question or result they address
 - Instantiated results never inherit update authority from their source template
-- Continuing shape or behavior belongs to a linked Pattern, Directive, Axiom, or another matching owner
+- Continuing shape or behavior is expressed by a linked Pattern, Directive, Axiom, or another matching authoritative source
 - The installable Templates route may exist without shipping concrete starter artifacts
 - Promoting a dogfood template into the shared payload requires an independent review of generic value, baseline cost, and ownership
 
-## Current Owners
+## Authoritative Sources
 
-These owners express the accepted result:
+These sources express the accepted result:
 
 - [Framework Architecture](../documents/framework/architecture.md#templates)
 - [Current Templates route](../../../templates/_templates.md)
@@ -62,3 +62,4 @@ These owners express the accepted result:
 
 - [Distinct Core primitive roles](core-primitives.md)
 - [Source and packaging](source-and-packaging.md)
+- [Typed authoritative source terminology](authoritative-source-terminology.md)

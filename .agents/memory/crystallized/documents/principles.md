@@ -10,7 +10,7 @@ open-forge:
 
 These principles are Open Forge's foundations. They define how unfamiliar product, Framework, and tooling choices should be judged when no existing design answers them directly.
 
-Principles are accepted decision filters, not loaded behavioral rules. Directives and Axioms own mandatory work behavior, architecture owns structural invariants, and decisions preserve why important choices were accepted.
+Principles are accepted decision filters, not loaded behavioral rules. Directives and Axioms are authoritative for mandatory work behavior, architecture is authoritative for structural invariants, and decisions preserve why important choices were accepted.
 
 ## Principles
 
@@ -28,13 +28,13 @@ Open Forge may expand through any number of routed scopes while ordinary context
 
 ### Operator-Led Direction And Agent Autonomy
 
-The operator owns goals, priorities, consequential tradeoffs, and accepted direction. Agents investigate, suggest, challenge, execute, and verify within that direction.
+The operator directs goals, priorities, consequential tradeoffs, and accepted direction. Agents investigate, suggest, challenge, execute, and verify within that direction.
 
-Operator control must not become repetitive approval ceremony, and agent autonomy must not become silent ownership of contextual product choices.
+Operator control must not become repetitive approval ceremony, and agent autonomy must not become silent authority over contextual product choices.
 
-### One Owner And Visible Relationships
+### One Authoritative Source And Visible Relationships
 
-Each detailed definition, contract, decision, and current concept has one authoritative owner. Relative links, descriptions, anchors, and established tags make dependencies and associations visible without maintaining competing copies.
+Each detailed definition, contract, decision, and current concept has one authoritative source. Relative links, descriptions, anchors, and established tags make dependencies and associations visible without maintaining competing copies.
 
 Small synchronized summaries remain valid at independently useful entry boundaries, but convenience does not justify parallel detailed truth.
 
@@ -48,17 +48,17 @@ Defaults should provide more value than an empty substrate while remaining under
 
 Open Forge preserves active work, plausible candidates, accepted knowledge, and useful history without treating them as one authority state.
 
-Recording should prevent costly rediscovery and coordination loss, while deliberate ownership and transitions prevent raw accumulation from masquerading as current truth. The exact route taxonomy may evolve without removing this distinction.
+Recording should prevent costly rediscovery and coordination loss, while deliberate authority and transitions prevent raw accumulation from masquerading as current truth. The exact route taxonomy may evolve without removing this distinction.
 
 ### Native Capability And Deterministic Assistance
 
 Open Forge reuses contemporary agent reasoning, file inspection, scoped authority, and tool use instead of redefining general intelligence through exhaustive instructions.
 
-Deterministic tools should make context retrieval, validation, navigation, planning, and safe change cheaper. They validate what can be made mechanical without privately owning meaning or inferring accepted direction.
+Deterministic tools should make context retrieval, validation, navigation, planning, and safe change cheaper. They validate what can be made mechanical without becoming privately authoritative or inferring accepted direction.
 
 ### Broad And Recursively Adaptable
 
-Development is a proving ground, not a product boundary. The same ownership, routing, scope, relationship, and evolution model should remain useful across people, disciplines, projects, repositories, and shared sources of truth.
+Development is a proving ground, not a product boundary. The same authority, routing, scope, relationship, and evolution model should remain useful across people, disciplines, projects, repositories, and shared sources of truth.
 
 Broad applicability constrains the shared foundation. It does not prevent a local workspace or Extension from becoming highly specialized.
 
@@ -95,3 +95,4 @@ Changing a principle is possible, but it changes Open Forge's identity rather th
 - [Routing model](../decisions/routing-model.md)
 - [Memory model](../decisions/memory-model.md)
 - [Distinct Core primitive roles](../decisions/core-primitives.md)
+- [Typed authoritative source terminology](../decisions/authoritative-source-terminology.md)

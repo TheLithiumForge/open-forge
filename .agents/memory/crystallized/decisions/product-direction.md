@@ -8,7 +8,7 @@ open-forge:
 
 ## Context
 
-Agent work benefits from persistent workspace context, but a large predefined methodology imposes process, review, and context costs that often have little relevance to the work. An empty routing substrate avoids that weight but withholds useful starting structure and leaves every workspace to rediscover the same ownership and continuity problems.
+Agent work benefits from persistent workspace context, but a large predefined methodology imposes process, review, and context costs that often have little relevance to the work. An empty routing substrate avoids that weight but withholds useful starting structure and leaves every workspace to rediscover the same authority and continuity problems.
 
 ## Decision
 
@@ -19,7 +19,7 @@ It provides sensible removable defaults without installing a universal methodolo
 ## Rationale
 
 - Human-readable repository files keep meaning vendor-agnostic, inspectable, reviewable, and correctable
-- Operator ownership preserves responsibility for goals and consequential direction without requiring approval for ordinary execution
+- Operator direction preserves responsibility for goals and consequential choices without requiring approval for ordinary execution
 - A small shared foundation limits baseline context, onboarding, and maintenance cost
 - Removable defaults provide discoveries and structure that an empty substrate would withhold
 - Recursive customization lets accepted preferences become the workspace's personality and methodology without making the shared Framework equally opinionated
@@ -29,7 +29,7 @@ It provides sensible removable defaults without installing a universal methodolo
 - A complete predefined methodology would provide more immediate procedure but impose the author's assumptions and review surface
 - A hidden managed runtime could automate more behavior but weaken user ownership and plain-file completeness
 - An empty routing library would maximize formal neutrality but provide too little practical value and continuity
-- Agent-owned product direction could reduce operator involvement but would silently delegate contextual responsibility that Open Forge is meant to preserve
+- Agent-directed product direction could reduce operator involvement but would silently delegate contextual responsibility that Open Forge is meant to preserve
 
 The accepted direction requires discipline when adding shared defaults: each must provide broad expected value while remaining understandable and removable.
 
@@ -41,7 +41,7 @@ The accepted direction requires discipline when adding shared defaults: each mus
 - Public language emphasizes user ownership, relevant context, recursive growth, and operator-led autonomy
 - New shared behavior must justify its context and maintenance cost
 
-## Current Owners
+## Authoritative Sources
 
 - [Open Forge Vision](../documents/vision.md)
 - [Open Forge Principles](../documents/principles.md)

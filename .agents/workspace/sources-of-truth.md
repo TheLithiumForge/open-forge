@@ -1,12 +1,12 @@
 ---
 open-forge:
-  description: Current map of the repository locations that own or represent important project state
+  description: Current map of the repository's important authoritative sources and representations
   tags: [Workspace, Repository, CurrentTruth, Evergreen]
 ---
 
 # Sources Of Truth
 
-Route map for this repository's important owners and representations. Each destination retains its own authority.
+Route map for this repository's important authoritative sources and representations. Each destination retains its own authority.
 
 - [current product purpose, promise, scope, success criteria, and non-goals.](../memory/crystallized/documents/vision.md) - #CurrentTruth #Evergreen #Vision #Product #Document
 - [current foundational principles that define Open Forge's identity and guide unfamiliar product, Framework, and tooling choices.](../memory/crystallized/documents/principles.md) - #CurrentTruth #Evergreen #Principle #Foundation #Identity #Product #Document

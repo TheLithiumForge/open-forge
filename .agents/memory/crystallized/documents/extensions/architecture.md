@@ -320,7 +320,7 @@ The current extension system is verified at several levels:
 - Packaged-layout tests verify discovery from built and npm-style package layouts
 - Framework validation checks assembled routes and Required Routes after installation
 
-The primary implementation test owners are linked from the [CLI MVP Architecture](../cli/architecture.md).
+The primary implementation test sources are linked from the [CLI MVP Architecture](../cli/architecture.md).
 
 These tests validate deterministic packaging and lifecycle behavior. They do not prove that every catalogue package improves agent outcomes.
 

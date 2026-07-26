@@ -8,19 +8,19 @@ open-forge:
 
 <!--
 Template selection:
-- Need: One current maintainer-facing owner for a source or repository surface's contract and verification boundary.
+- Need: One current maintainer-facing document for a source or repository surface's contract and verification boundary.
 - Primary question: What must remain true when this surface changes, and how can maintainers verify that it still does?
 
-Use this template only when a source or repository surface has stable maintenance obligations that deserve an independent current owner.
+Use this template only when a source or repository surface has stable maintenance obligations that deserve an independent current document.
 The continuing document shape and review expectations belong to the [maintenance contract pattern](../../patterns/open-forge/maintenance-contract.md).
-Link to runtime owners and true counterparts instead of copying their complete contents.
+Link to authoritative runtime sources and true counterparts instead of copying their complete contents.
 Place relationships beside the contract or verification statement they affect.
 Replace this template's frontmatter, title, placeholders, and comments.
 -->
 
 ## Source
 
-{Link to the canonical source, state the responsibility it owns, and identify true counterparts whose alignment creates a maintenance obligation.}
+{Link to the canonical source, state the responsibility for which it is authoritative, and identify true counterparts whose alignment creates a maintenance obligation.}
 
 ## Contract
 

@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Strategy template is used when one current owner must define how accepted choices and focus are expected to move a subject toward its vision
+  description: Strategy template is used when one current document must define how accepted choices and focus are expected to move a subject toward its vision
   tags: [Template, Document, Strategy, CurrentView]
 ---
 
@@ -8,11 +8,11 @@ open-forge:
 
 <!--
 Template selection:
-- Need: One current owner for the accepted approach used to pursue a vision.
+- Need: One current document for the accepted approach used to pursue a vision.
 - Primary question: How should the subject move toward its vision, where should it focus, and why is that approach expected to work?
 
-Vision owns the desired future. Strategy owns the accepted approach for moving toward it.
-Keep task execution, transient priorities, and detailed roadmaps with their own owners.
+Vision is authoritative for the desired future. Strategy is authoritative for the accepted approach used to move toward it.
+Keep task execution, transient priorities, and detailed roadmaps in their own authoritative sources.
 Replace this template's frontmatter, title, placeholders, and comments.
 -->
 
@@ -38,11 +38,11 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 ## Success Measures
 
-{Describe evidence that would support, challenge, or invalidate the strategy. Link to metric owners when they exist.}
+{Describe evidence that would support, challenge, or invalidate the strategy. Link to authoritative metric sources when they exist.}
 
 ## Related Current Views
 
-{Link to the vision, operating context, architecture, roadmap, status, or other owners needed to apply the strategy.}
+{Link to the vision, operating context, architecture, roadmap, status, or other authoritative sources needed to apply the strategy.}
 
 ## Decisions And Rationale
 

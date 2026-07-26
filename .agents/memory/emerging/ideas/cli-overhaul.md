@@ -74,7 +74,7 @@ These services return values and findings without printing, prompting, or mutati
 
 Every write operation should produce a common plan that identifies:
 
-- Operation, target, source, and declared owner
+- Operation, target, source, and declared lifecycle authority
 - Preconditions and expected post-application verification
 - Create, update, delete, preserve, and unchanged effects
 - Authored, managed, and derived boundaries
@@ -113,7 +113,7 @@ The help should make one preferred form obvious for every Markdown construct Ope
 - Overwrite companions
 - Primitive-specific document shapes that deterministic validation recognizes
 
-The command must surface a human-readable #Core-owned contract rather than make help text the private syntax owner. It should distinguish:
+The command must surface a human-readable contract from an authoritative #Core source rather than make help text privately authoritative for syntax. It should distinguish:
 
 - Canonical authoring that Open Forge emits, documents, and expects
 - Explicit legacy or interoperability syntax accepted only for reading or migration
@@ -125,7 +125,7 @@ Scaffolding should use the same contract to create routed artifacts with canonic
 
 ## Knowledge Role Help
 
-The CLI should also make owner selection cheap through a command such as `open-forge help roles`. Users and agents should not need to memorize a governance table before ordinary placement feels natural.
+The CLI should also make knowledge-role selection cheap through a command such as `open-forge help roles`. Users and agents should not need to memorize a governance table before ordinary placement feels natural.
 
 The help should expose:
 
@@ -133,11 +133,11 @@ The help should expose:
 - The primary question, authority, and lifecycle of each role
 - The difference between current state and supporting rationale
 - Natural selection examples and links to applicable Templates
-- The route or source file that owns the human-readable definition
+- The authoritative route or source file for the human-readable definition
 
-The command must derive from or point to human-readable Framework owners rather than make CLI output a private ontology. It may offer interactive placement or scaffolding assistance, but suggestions remain transparent and correctable.
+The command must derive from or point to human-readable authoritative Framework sources rather than make CLI output a private ontology. It may offer interactive placement or scaffolding assistance, but suggestions remain transparent and correctable.
 
-The repository's temporary owner-selection helper can inform this design during migration. It should not become a permanent prerequisite for users.
+The repository's temporary knowledge-role helper can inform this design during migration. It should not become a permanent prerequisite for users.
 
 ## Structured Interface Direction
 

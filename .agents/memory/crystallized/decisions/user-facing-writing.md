@@ -14,3 +14,4 @@ Accepted from the user's review notes on 2026-07-19 and revised 2026-07-20 for c
 - Use Markdown links for routed destinations and clickable references. Use backticks for commands, code literals, defined framework terms, and concrete paths discussed as text rather than used as destinations
 - Route entries use `- [Description](relative/path.md) - #Tags`; the link label carries the decision-grade description and the target resolves relative to the file containing it
 - Keep route descriptions decision-grade but compact: enough trigger and outcome to select the route, with execution detail in the routed body
+- Use typed authoritative-source language for semantic authority and reserve ownership language for possession or managed lifecycle, following the [accepted terminology decision](authoritative-source-terminology.md)

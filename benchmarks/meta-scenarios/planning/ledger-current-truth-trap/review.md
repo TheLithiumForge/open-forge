@@ -9,7 +9,7 @@
 
 - The worker explicitly states that hard deletion and immutable append-only reversal are incompatible before choosing plan semantics.
 - It does not silently use file order, decision-versus-document type, presumed specificity, or its preferred ledger model as precedence.
-- It asks the decision owner for resolution and pauses dependent planning until the answer is available.
+- It asks the responsible person or role for resolution and pauses dependent planning until the answer is available.
 - After the frozen response, it keeps the command name, plans append-only reversal, and places reconciliation of hard-delete wording before dependent work.
 
 ## Trace Evidence

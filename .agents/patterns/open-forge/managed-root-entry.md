@@ -25,9 +25,9 @@ Text outside the managed block belongs to the workspace and remains byte-for-byt
 
 ### Entry Roles
 
-- A canonical entry contains the framework handoff owned by that file.
+- A canonical entry is authoritative for the Framework handoff carried by that file.
 - A harness bridge contains only the harness-native reference to the canonical entry.
-- Each harness-specific maintenance contract owns its external syntax and compatibility requirements.
+- Each harness-specific maintenance contract is authoritative for its external syntax and compatibility requirements.
 
 ### Installation
 
@@ -38,7 +38,7 @@ Text outside the managed block belongs to the workspace and remains byte-for-byt
 
 ## Review Checks
 
-- One canonical policy owner serves every bridge.
+- One canonical policy source serves every bridge.
 - Source templates contain one managed block and no surrounding authored content.
 - Valid workspace content outside the block survives creation, replacement, and reinstallation.
 - Invalid marker topology produces no partial output.

@@ -15,7 +15,7 @@ Status: candidate roadmap prepared from the maintainer's 2026-07-23 handoff, raw
 ### Review Contract
 
 - Keep one task active and one coherent diff under review at a time.
-- Before changing behavior, identify the owning current document or decision and update it with the implementation so written truth and runtime behavior do not diverge.
+- Before changing behavior, identify the authoritative current document or supporting decision and update it with the implementation so written truth and runtime behavior do not diverge.
 - Update dogfood, installable source, maintainer descriptors, user documentation, and tests together whenever they share the changed contract.
 - At each gate, present the behavior delta, important file changes, verification evidence, remaining uncertainty, and any destructive catalogue changes.
 - Stop after each gate. Do not start the next task until the maintainer accepts or revises the current result.
@@ -46,12 +46,12 @@ The maintainer's completed cross-project trials are the behavioral baseline. Con
    - Status: active file-by-file migration; the `src/open-forge/AGENTS.md` gate was accepted and committed as `0ff4725`, and the `src/open-forge/CLAUDE.md` gate is implemented and awaiting maintainer review.
    - Review installable source top-down, one file per gate. For each file, inspect its recent history, surrounding contracts, references, consumers, tests, and proposed extraction or destination before editing.
    - Decide the smallest useful crystallized-document taxonomy with the maintainer, including whether maintainer-facing current material belongs under a `maintenance/` child route or a clearer equivalent.
-   - Move appropriate current maintainer documents into that routed Memory owner and mark each independently as #CurrentTruth and #Evergreen only when both semantics apply.
+   - Move appropriate current maintainer documents into that routed Memory destination and mark each independently as #CurrentTruth and #Evergreen only when both semantics apply.
    - Define how ordinary relative Markdown links expose relationships with the same containing-file-relative semantics as generated `Entries`.
-   - Encourage links between owning files instead of restating their content, then refactor Open Forge's own current documents to demonstrate that graph and remove duplication.
+   - Encourage links between authoritative files instead of restating their content, then refactor Open Forge's own current documents to demonstrate that graph and remove duplication.
    - Decide which small set of high-quality current views is necessary beyond vision and architecture, without creating documents merely to fill a taxonomy.
    - Clarify the boundary between current documents, decisions, governance descriptors, README material, code-owned truth, and historical Memory.
-   - Gate: an agent can locate and understand the project's important current state top-down without this chat or handover; links resolve; current owners are unambiguous; duplicated truth is reduced; the chosen documents are coherent and worth their maintenance cost.
+   - Gate: an agent can locate and understand the project's important current state top-down without this chat or handover; links resolve; authoritative sources are unambiguous; duplicated truth is reduced; the chosen documents are coherent and worth their maintenance cost.
 
 4. **Reassess the full refactor handover with the maintainer and rebuild the roadmap.**
    - Review the handover point by point instead of treating its proposed implementation order as accepted.

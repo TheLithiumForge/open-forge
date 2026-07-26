@@ -6,7 +6,7 @@ open-forge:
 
 # Agents Runtime Maintenance
 
-This route owns maintainer contracts for reviewed files below `src/open-forge/.agents/`.
+This route contains maintainer contracts for reviewed files below `src/open-forge/.agents/`.
 
 ## Axioms
 

@@ -8,12 +8,12 @@ open-forge:
 
 ## Scope
 
-This document owns the current internal architecture of the Open Forge Framework. The Framework implements the common [Adaptive Context Engineering vision](../vision.md) through two areas:
+This document is authoritative for the current internal architecture of the Open Forge Framework. The Framework implements the common [Adaptive Context Engineering vision](../vision.md) through two areas:
 
 - Core provides the routing substrate and reusable agent-facing primitives
 - Memory provides continuity, candidate learning, accepted records, and useful history
 
-The [top Open Forge architecture](../architecture.md) owns the complete system map and the relationships among the Framework, workspace context, extensions, deterministic tools, operators, and agent runtimes. This document explains how Core and Memory work internally. It names extension and tool boundaries only where they constrain the Framework.
+The [top Open Forge architecture](../architecture.md) is authoritative for the complete system map and the relationships among the Framework, workspace context, extensions, deterministic tools, operators, and agent runtimes. This document explains how Core and Memory work internally. It names extension and tool boundaries only where they constrain the Framework.
 
 The Framework described here is the intended architecture to which the installable source, dogfood environment, governance, and tooling must migrate. Older files remain useful migration inputs, but they do not constrain this design merely because they exist.
 
@@ -26,7 +26,7 @@ It must make these questions cheap to answer:
 - Where do I enter the workspace?
 - Which context applies to this goal?
 - What is binding, accepted, tentative, or historical?
-- Which file or external system owns the meaning?
+- Which file or external system is authoritative for the meaning?
 - What broader context remains active in this scope?
 - Where should a new rule, result, idea, observation, or decision go?
 - How can the workspace evolve without accumulating competing truth?
@@ -35,9 +35,9 @@ Human-readable Markdown contains the complete semantic answer. Deterministic too
 
 ## Architectural Invariants
 
-The following structural constraints realize the [Open Forge Principles](../principles.md) throughout Core and Memory. They are architectural consequences rather than a second owner of product identity:
+The following structural constraints realize the [Open Forge Principles](../principles.md) throughout Core and Memory. They are architectural consequences rather than a second authoritative source for product identity:
 
-1. Every important concept has one authoritative owner
+1. Every important concept has one authoritative source for each distinct question
 2. Routes expose enough information to select relevant context before loading its body
 3. Loaded ancestor Axioms remain active below them without being copied into children
 4. Loading controls visibility and timing, not authority
@@ -50,7 +50,7 @@ The following structural constraints realize the [Open Forge Principles](../prin
 11. Generated metadata is derived and rebuildable
 12. Structure and tools improve the probability of correct agent behavior without claiming mechanical control over reasoning
 13. Instantiating a template transfers ownership to the destination; the template does not manage the result
-14. Framework contracts target the broadest stable semantic owner that preserves their required meaning
+14. Framework contracts target the broadest stable authoritative route that preserves their required meaning
 
 ## Shipped Framework
 
@@ -98,7 +98,7 @@ Core is the dependency floor because every other Open Forge area relies on its e
 2. Direct the agent to [the loader](../../../../loader.md) before work begins
 3. Require applicable Open Forge instructions throughout the task
 
-Provider-specific harness files are minimal bridges to that canonical entry. They may use the import syntax required by a provider, but they do not restate Open Forge policy or become separate authority owners.
+Provider-specific harness files are minimal bridges to that canonical entry. They may use the import syntax required by a provider, but they do not restate Open Forge policy or become separate authoritative sources.
 
 Managed entry blocks preserve workspace-owned content outside their markers. A provider bridge can therefore be installed or updated without claiming the entire file.
 
@@ -106,7 +106,7 @@ Managed entry blocks preserve workspace-owned content outside their markers. A p
 
 Core provides the smallest common language needed to route, interpret, and apply workspace context. It does not try to encode ordinary reasoning, a development lifecycle, or a complete methodology.
 
-Framework wording uses #Core collectively when any suitable Core owner may satisfy a requirement. It names a specific primitive when that primitive's distinct semantics matter, such as Directives for binding behavior, and enumerates concrete standard routes when the shipped default set itself is the subject. This keeps customizable Frameworks valid without weakening precise contracts.
+Framework wording uses #Core collectively when any suitable Core route may satisfy a requirement. It names a specific primitive when that primitive's distinct semantics matter, such as Directives for binding behavior, and enumerates concrete standard routes when the shipped default set itself is the subject. This keeps customizable Frameworks valid without weakening precise contracts.
 
 Core contains:
 
@@ -136,7 +136,7 @@ An `entry` is one generated line under an entrypoint's `Entries` heading. It ide
 
 Each folder in a visible nested route has its own entrypoint. Parent entries expose only direct children. They do not flatten deeper files because flattening would duplicate route knowledge, erase intermediate scope, and make every higher index grow with the whole subtree.
 
-Descriptions are natural, descriptive selection surfaces rather than formulaic declarations. A primary question is a useful authoring and migration test for ownership, not a second required frontmatter field. The current Framework adds metadata only when it carries distinct meaning for an actual reader or tool.
+Descriptions are natural, descriptive selection surfaces rather than formulaic declarations. A primary question is a useful authoring and migration test for authority and placement, not a second required frontmatter field. The current Framework adds metadata only when it carries distinct meaning for an actual reader or tool.
 
 ### Route Types And Scope
 
@@ -144,7 +144,7 @@ A `root route` is exposed directly by the loader.
 
 A `framework route` is a standard Core or Memory route shipped by Open Forge.
 
-A `scope route` is a local routed subtree whose concrete folder name narrows ownership or meaning.
+A `scope route` is a local routed subtree whose concrete folder name narrows authority or meaning.
 
 A `scoped framework route` initializes a standard Framework route inside a scope that needs it.
 
@@ -175,9 +175,9 @@ Routing proceeds from known general context to selected detail:
 3. Recover continuity routes that must survive a changed session or selected branch
 4. Use the current goal and visible entries to select relevant scopes
 5. Load each selected entrypoint before following its entries
-6. Follow explicit relationships to the files or external systems that own detailed truth
+6. Follow explicit relationships to the files or external systems authoritative for detailed truth
 
-An entry description is the selection surface. The routed body owns the complete concept, instruction, capability, recipe, state, or external relationship. Selection wording belongs in the entry description; body content should not require the agent to rediscover why the route was selected.
+An entry description is the selection surface. The routed body is authoritative for the complete concept, instruction, capability, recipe, state, or external relationship. Selection wording belongs in the entry description; body content should not require the agent to rediscover why the route was selected.
 
 This model keeps unselected siblings out of active context. Workspace size may increase indefinitely through additional branches, while the ordinary context cost grows mainly with the routes and relationships selected for the goal.
 
@@ -198,7 +198,7 @@ The loader defines the exact reserved loading tags. Architecturally, they serve 
 
 `#LoadNow` follows visible parent-child routing. A hidden descendant does not load merely because it carries the tag.
 
-`#KeepInMind` deliberately crosses the current selected branch so standing commitments and candidate follow-ups are not lost when the active route changes. Each recovered file retains the authority of its owner.
+`#KeepInMind` deliberately crosses the current selected branch so standing commitments and candidate follow-ups are not lost when the active route changes. Each recovered file retains the authority of its source role.
 
 Files without a reserved loading tag remain on demand. Ordinary descriptive tags help selection and search without changing loading or authority.
 
@@ -206,15 +206,15 @@ The optional `open-forge load --bodies` command may batch the loader, visible im
 
 ## Authority
 
-Open Forge does not reduce authority to one global ranking because different owners govern different questions. It resolves meaning through type, scope, current direction, and declared ownership.
+Open Forge does not reduce authority to one global ranking because different authoritative sources answer different questions. It resolves meaning through type, scope, current direction, and declared authority.
 
 The operating rules are:
 
 1. Platform constraints and runtime safety bound every action
 2. Clear current operator direction governs goals, priorities, consequential tradeoffs, and accepted changes within its scope
-3. A declared external source of truth owns the facts delegated to it
+3. A declared external source of truth is authoritative for the facts delegated to it
 4. Loaded Core Axioms and directives govern Framework interpretation and applicable behavior
-5. A selected current owner governs the accepted state of its subject
+5. A selected authoritative source governs the accepted state of its subject
 6. Narrower selected material of the same non-directive kind is preferred when it safely specializes broader material
 7. Loaded directives add constraints to ancestor directives rather than silently replacing them
 8. A user-owned overwrite has final precedence only within its base file's scope
@@ -223,7 +223,7 @@ Loading a file makes it visible. A tag can classify it or affect loading. Neithe
 
 A clear instruction, correction, confirmation, or request to apply a settled choice is accepted within its stated scope. The agent should not ask for the same approval again. Tentative language remains contextual, and unresolved ambiguity must be clarified before dependent work treats it as accepted.
 
-When accepted direction changes a current owner, the owner is updated and useful superseded context is moved to the appropriate decision or archive. Unresolved conflicts are reported with their owners and scopes rather than silently resolved through file order.
+When accepted direction changes an authoritative source, that source is updated and useful superseded context is moved to the appropriate decision or archive. Unresolved conflicts are reported with their authoritative sources and scopes rather than silently resolved through file order.
 
 ## Core Primitives
 
@@ -235,7 +235,7 @@ Direct files under the baseline root directive route apply workspace-wide. A chi
 
 Child directives add to broader directives. Narrower scope does not create a hidden authority override. A conflict must be surfaced.
 
-Use a directive when behavior is mandatory and needs an independently routed owner.
+Use a directive when behavior is mandatory and needs an independently authoritative route.
 
 ### Guidance
 
@@ -253,13 +253,13 @@ An applicable pattern is the established default shape in its scope. A deliberat
 
 A skill is a specialized capability expressed through the standard `SKILL.md` contract supported by the active agent runtime.
 
-Open Forge makes skills routable without redefining their activation, instructions, resources, or execution. A selected `SKILL.md` remains the owner of its own references, scripts, assets, and loading decisions.
+Open Forge makes skills routable without redefining their activation, instructions, resources, or execution. A selected `SKILL.md` remains authoritative for its references, scripts, assets, and loading decisions.
 
 ### Templates
 
 A template is a reusable source artifact intended to be instantiated into independently owned workspace content.
 
-An agent selects a relevant template, copies it, removes irrelevant material, replaces placeholders and source metadata, and assigns the result to its correct destination owner. From that point, the destination owns the result. Later template changes do not propagate to it.
+An agent selects a relevant template, copies it, removes irrelevant material, replaces placeholders and source metadata, and assigns the result to its correct destination. From that point, the destination is authoritative for the result. Later template changes do not propagate to it.
 
 This ownership transfer distinguishes Templates from Patterns. A Pattern remains the established reusable shape for later creation and review. A Template contributes starting contents. A template may implement or link to a Pattern, and a Directive or Axiom may require continuing behavior, but the template itself creates neither continuing conformance nor authority.
 
@@ -267,7 +267,7 @@ Generic templates are fallbacks rather than universal schemas. A specialization 
 
 Each template makes its selection contract explicit before instantiation. Its route description states the need it satisfies and the primary question or result it answers, while removable source instructions repeat that context for a reader inspecting the template directly.
 
-The installable Framework currently ships the [Templates category contract](../../../../templates/_templates.md) without concrete starter artifacts. This repository dogfoods candidate document and Memory templates locally before any of them are considered for the shared payload. The [maintenance contract](../maintenance/payload/agents/templates.md) owns that distribution boundary.
+The installable Framework currently ships the [Templates category contract](../../../../templates/_templates.md) without concrete starter artifacts. This repository dogfoods candidate document and Memory templates locally before any of them are considered for the shared payload. The [maintenance contract](../maintenance/payload/agents/templates.md) is authoritative for that distribution boundary.
 
 The [Templates as a Core primitive decision](../../decisions/template-primitive.md) preserves why this role was added instead of assigning copy-ready source content to Patterns or another existing primitive.
 
@@ -277,11 +277,11 @@ A workflow is a repeatable Markdown recipe for reaching a defined goal through m
 
 Workflows are optional recipes, not provider-specific orchestration objects and not a mandatory project lifecycle. Work may start at any appropriate point, skip unnecessary preparation, repeat steps, move backward when evidence changes, or proceed directly when no installed workflow adds value.
 
-The workflow route exposes enough description and tags to choose a useful recipe before opening it. The recipe then owns its goal, required context, constraints, steps, loops, outputs, and completion contract. The exact authoring schema belongs to the workflow owner and may evolve during migration without changing this architectural role.
+The workflow route exposes enough description and tags to choose a useful recipe before opening it. The recipe is then authoritative for its goal, required context, constraints, steps, loops, outputs, and completion contract. Its authoritative route may evolve the exact authoring schema during migration without changing this architectural role.
 
 ### Workspace
 
-A workspace route is a coarse map to an important project location or declared external owner. It explains what the destination contains and when it matters without copying the destination's details.
+A workspace route is a coarse map to an important project location or declared external authoritative system. It explains what the destination contains and when it matters without copying the destination's details.
 
 Workspace routes connect the Framework to source code, documentation, issue systems, repositories, datasets, products, or other sources of truth. The destination retains its own authority.
 
@@ -289,12 +289,12 @@ Workspace routes connect the Framework to source code, documentation, issue syst
 
 Core does not provide a separate `rules/` route.
 
-Binding rules already have two clear owners:
+Binding rules already have two clear authoritative sources:
 
-- Loader and entrypoint Axioms own universal or inherited Framework mechanics
-- Directives own independently routed mandatory behavior
+- Loader and entrypoint Axioms are authoritative for universal or inherited Framework mechanics
+- Directives are authoritative for independently routed mandatory behavior
 
-A third rules category would duplicate those roles and make placement less obvious. A workspace may create a linked rule map for discovery, but such a map points to authoritative owners and does not reproduce their contents.
+A third rules category would duplicate those roles and make placement less obvious. A workspace may create a linked rule map for discovery, but such a map points to authoritative routes and does not reproduce their contents.
 
 ## Memory
 
@@ -303,7 +303,7 @@ A third rules category would duplicate those roles and make placement less obvio
 Memory has two independent dimensions:
 
 - State describes how the material should currently be treated
-- Scope describes the person, project, component, discipline, repository, or other owner to which it belongs
+- Scope describes the person, project, component, discipline, repository, or other subject to which it applies
 
 The route path expresses both dimensions. Neither requires a centralized registry.
 
@@ -324,7 +324,7 @@ The states are not maturity scores and do not form a mandatory pipeline. Materia
 
 Agents may freely maintain Working Memory within the task's authority. Its defining property is expected expiration. When the active need ends, useful material is:
 
-- Extracted to an accepted owner
+- Extracted to an accepted authoritative source
 - Moved to Emerging for further development
 - Archived as useful history
 - Consolidated into another active checkpoint
@@ -334,7 +334,7 @@ The shipped `handoffs/` route provides concise static transfers across agents, s
 
 ### Emerging
 
-[Emerging Memory](../../../emerging/_emerging.md) preserves useful candidates whose validity, acceptance, or final owner remains unsettled.
+[Emerging Memory](../../../emerging/_emerging.md) preserves useful candidates whose validity, acceptance, or final destination remains unsettled.
 
 The shipped routes distinguish:
 
@@ -344,7 +344,7 @@ The shipped routes distinguish:
 
 An explicit request to preserve or explore an idea is enough to record it. An agent records an observation after one occurrence when the finding is plausibly reusable, surprising, or costly enough that losing it could cause meaningful rediscovery.
 
-Before creating a parallel observation, later agents search for an existing owner and add the new evidence there when scope and meaning match. Repeated independent occurrences are primarily a signal for consolidation and a promotion proposal, not a prerequisite for initial capture.
+Before creating a parallel observation, later agents search for an existing record and add the new evidence there when scope and meaning match. Repeated independent occurrences are primarily a signal for consolidation and a promotion proposal, not a prerequisite for initial capture.
 
 This capture policy favors distributed learning while still requiring plausible future usefulness. Git makes extra information recoverable, but it does not remove attention, search, and review costs.
 
@@ -352,7 +352,7 @@ This capture policy favors distributed learning while still requiring plausible 
 
 [Crystallized Memory](../../../crystallized/_crystallized.md) contains accepted durable state within its declared scope.
 
-Clear operator direction may authorize a Crystallized update directly. Acceptance does not require a ritual phrase or separate promotion command. An agent may update the appropriate owner when the request clearly establishes the result, should report the durable change, and should not request redundant confirmation.
+Clear operator direction may authorize a Crystallized update directly. Acceptance does not require a ritual phrase or separate promotion command. An agent may update the appropriate authoritative source when the request clearly establishes the result, should report the durable change, and should not request redundant confirmation.
 
 Tentative choices, alternatives under investigation, and ambiguous conclusions remain Working or Emerging until dependent work requires clarification or the direction becomes accepted.
 
@@ -362,11 +362,11 @@ The standard Crystallized routes are [decisions](../../decisions/_decisions.md) 
 
 [Archived Memory](../../../archived/_archived.md) preserves useful context after it stops governing current work.
 
-Before archival, current meaning is extracted to its new owner. Archived material records its origin, why it became historical, and what replaced it when a replacement exists.
+Before archival, current meaning is extracted to its new authoritative source. Archived material records its origin, why it became historical, and what replaced it when a replacement exists.
 
-Restoration is a new transition rather than an authority reversal. The material is validated against current conditions and moved into an explicit Working, Emerging, Crystallized, or external owner before it can govern work again.
+Restoration is a new transition rather than an authority reversal. The material is validated against current conditions and moved into an explicit Working, Emerging, Crystallized, or external destination before it can govern work again.
 
-Archive child routes may mirror the origin or ownership that makes history easier to find. They are organizational scopes, not additional Memory states.
+Archive child routes may mirror the origin or responsibility that makes history easier to find. They are organizational scopes, not additional Memory states.
 
 ### Transitions
 
@@ -382,24 +382,24 @@ Common examples include:
 - Archived to Emerging when an old idea becomes relevant but must be reconsidered
 - Direct creation in Crystallized when the operator clearly establishes accepted state
 
-Movement should update links and selected owners so the old location does not continue to imply current authority.
+Movement should update links and authoritative sources so the old location does not continue to imply current authority.
 
-## Current Knowledge Owners
+## Current Knowledge Roles
 
-Memory provides standard owners for different forms of durable knowledge:
+Memory provides standard roles for different forms of durable knowledge:
 
-| Owner | Primary question | Contract |
+| Role | Primary question | Contract |
 |---|---|---|
 | Current document | What is true now, and how does it work? | Explains a coherent accepted concept completely enough to use |
 | Decision | What was chosen, and why? | Preserves a discrete accepted choice and useful rationale |
 | Directive | What behavior is mandatory here? | Binds work in its loaded route-selected scope |
 | Archive | What happened before? | Preserves useful history without governing current work |
 
-A current document integrates accepted state. When a decision contains useful rationale, the current document states the accepted concept and links to the decision for why. The decision identifies the accepted choice, preserves relevant alternatives and tradeoffs, and links forward to the current owner.
+A current document integrates accepted state. When a decision contains useful rationale, the current document states the accepted concept and links to the decision for why. The decision identifies the accepted choice, preserves relevant alternatives and tradeoffs, and links forward to the authoritative source that expresses the result.
 
-This is intentional limited overlap, not duplicated ownership. The current document remains usable by itself. The decision does not become a fragmented substitute for the document.
+This is intentional limited overlap, not duplicated authority. The current document remains usable by itself. The decision does not become a fragmented substitute for the document.
 
-Vision, Principles, and Architecture are specialized current documents with distinct questions. `Principles` is the formal role for stable filters used to judge unfamiliar choices. `Foundation` describes how load-bearing a principle is, and `identity` describes what the complete foundational set preserves. `Essence` may summarize a concept in its description or opening, but it is not a separate knowledge owner.
+Vision, Principles, and Architecture are specialized current documents with distinct questions. `Principles` is the formal role for stable filters used to judge unfamiliar choices. `Foundation` describes how load-bearing a principle is, and `identity` describes what the complete foundational set preserves. `Essence` may summarize a concept in its description or opening, but it is not a separate knowledge role.
 
 A scope earns its own Principles document only when several recurring unfamiliar choices depend on stable filters that are specific to that scope and not already answered by broader principles. Otherwise, the scope follows the broader principles and keeps its distinct structural meaning in Architecture. Scoped principles supplement broader principles; they do not silently override them.
 
@@ -408,7 +408,7 @@ A scope earns its own Principles document only when several recurring unfamiliar
 - `#CurrentTruth` marks accepted current state within scope
 - `#Evergreen` marks material that must remain synchronized when the accepted state it represents changes
 
-Evergreen creates no authority or loading behavior. A current owner may be CurrentTruth without requiring active synchronization, and a derived explanation may be Evergreen without owning the underlying truth.
+Evergreen creates no authority or loading behavior. An authoritative source may be CurrentTruth without requiring active synchronization, and a derived explanation may be Evergreen without being authoritative for the underlying truth.
 
 ## Relationships
 
@@ -417,14 +417,14 @@ Open Forge uses ordinary Markdown relationships before adding specialized retrie
 The primary relationship surface is:
 
 - Frontmatter descriptions that become entry labels
-- Containing-file-relative links that identify owners and related context
+- Containing-file-relative links that identify authoritative sources and related context
 - Heading anchors that target the relevant concept
 - Established descriptive tags that support classification, association, and search
 - Short prose that explains why a relationship matters
 
 Tags are signals rather than a second authority or inference system. They stay readable in Markdown and cheap for agents and tools to search.
 
-When another owner already contains the detailed meaning, a file links to it instead of restating it. Controlled mirrors are allowed only where an independently complete entry boundary needs a small synchronized contract.
+When another authoritative source already contains the detailed meaning, a file links to it instead of restating it. Controlled mirrors are allowed only where an independently complete entry boundary needs a small synchronized contract.
 
 This relationship model is intentionally sufficient for future graph, semantic, or vector retrieval. A derived system may traverse or rank these relationships, but its index remains rebuildable and advisory.
 
@@ -435,7 +435,7 @@ Every standard route may contain local files, child scopes, or scoped Framework 
 The preferred customization choices are:
 
 1. Add a local routed file when the new meaning stands independently
-2. Add a scope when ownership or meaning needs a narrower route
+2. Add a scope when authority or meaning needs a narrower route
 3. Use a user-owned `{name}.overwrite.md` companion for a small local adjustment to a mostly suitable base
 4. Edit or replace the base when the desired model is fundamentally different
 5. Remove routes that provide no local value
@@ -466,7 +466,7 @@ Deterministic tools may:
 - Preview and apply bounded file changes
 - Preserve user content
 - Detect collisions and unsafe paths
-- Report provenance and affected owners
+- Report provenance and affected authoritative sources
 
 They may not silently promote a candidate, infer accepted direction, or make a private database the only place where a rule or relationship exists.
 
@@ -476,7 +476,7 @@ Extensions add optional reusable content through the same Framework routes and p
 
 After installation, an extension's files behave like ordinary directives, patterns, guidance, skills, templates, workflows, workspace routes, or Memory. Its packaging metadata does not become necessary to understand its runtime meaning.
 
-The current extensions implementation is an MVP under planned architectural review. The [Extensions MVP Architecture](../extensions/architecture.md) owns its present manifests, dependency system, ownership lifecycle, and liabilities. The [Extensions overhaul candidate](../../../emerging/ideas/extensions-overhaul.md) owns prospective replacement design. The [CLI MVP Architecture](../cli/architecture.md) owns the current deterministic implementation, while the [CLI overhaul candidate](../../../emerging/ideas/cli-overhaul.md) owns its prospective replacement.
+The current extensions implementation is an MVP under planned architectural review. The [Extensions MVP Architecture](../extensions/architecture.md) is authoritative for its present manifests, dependency system, ownership lifecycle, and liabilities. The [Extensions overhaul candidate](../../../emerging/ideas/extensions-overhaul.md) preserves prospective replacement design. The [CLI MVP Architecture](../cli/architecture.md) is authoritative for the current deterministic implementation, while the [CLI overhaul candidate](../../../emerging/ideas/cli-overhaul.md) preserves its prospective replacement.
 
 ## Distribution And Dogfood
 
@@ -484,11 +484,11 @@ Users receive the installable Framework from [`src/open-forge/`](../../../../../
 
 This repository's root `.agents/` tree dogfoods the Framework and adds local routes for Open Forge development. Shared behavior should match the installable source. Deliberate repository-only differences remain visibly local. The current repository-local template set is one such evaluation boundary: the shared source ships its route contract, while concrete templates remain local until reviewed.
 
-Current documents and maintenance contracts govern the design and review of source files. Source files own their exact installed wording. Build output and generated indexes are derived from those owners.
+Current documents and maintenance contracts govern the design and review of source files. Source files are authoritative for their exact installed wording. Build output and generated indexes are derived from those authoritative sources.
 
 ## Reliability
 
-The Framework improves reliability through early context, explicit ownership, consistent routing, visible scope, inherited rules, continuity checkpoints, and deterministic validation.
+The Framework improves reliability through early context, explicit authority, consistent routing, visible scope, inherited rules, continuity checkpoints, and deterministic validation.
 
 It cannot guarantee that a nondeterministic agent reads, understands, or follows every instruction. Therefore:
 
@@ -497,7 +497,7 @@ It cannot guarantee that a nondeterministic agent reads, understands, or follows
 - Missing continuity must be recoverable
 - Deterministic defects must be detected mechanically when possible
 - Claims about agent behavior require evidence rather than inference from document quality
-- Conflicts, unavailable owners, and unverifiable assumptions remain visible
+- Conflicts, unavailable authoritative sources, and unverifiable assumptions remain visible
 
 Correct behavior should be the cheapest path, but review remains part of any consequential workflow.
 
@@ -508,18 +508,18 @@ This architecture is the target current view for the Framework migration.
 For each older source, governance file, or decision:
 
 1. Compare its meaning with this architecture and current maintainer direction
-2. Keep useful current behavior at its correct owner
+2. Keep useful current behavior at its correct authoritative source
 3. Improve unclear or unnecessarily expensive contracts
 4. Extract distinct rationale, patterns, directives, or maintenance requirements
 5. Remove duplication and obsolete mechanisms
 6. Update every affected link and route
 7. Preserve only historical material that retains future value
 
-An existing file is not retained merely because another file links to it. Links are part of the migration surface and move with ownership.
+An existing file is not retained merely because another file links to it. Links are part of the migration surface and move with authority.
 
 The [approved design baseline](../../../archived/sessions/2026-07-26_open-forge-design-baseline.md) preserves the broader reasoning used to establish this architecture.
 
-## Related Current Owners
+## Related Authoritative Sources
 
 - [Open Forge vision](../vision.md)
 - [Open Forge principles](../principles.md)
@@ -531,11 +531,11 @@ The [approved design baseline](../../../archived/sessions/2026-07-26_open-forge-
 - [Current Templates route](../../../../templates/_templates.md)
 - [Templates source maintenance contract](../maintenance/payload/agents/templates.md)
 - [Current Memory contract](../../../_memory.md)
-- [Current route to important repository owners](../../../../workspace/sources-of-truth.md)
+- [Current route to important repository authoritative sources](../../../../workspace/sources-of-truth.md)
 
 ## Migration Inputs
 
-The following files contain earlier decisions or governance that may help migration. They are not architectural proof and may be rewritten, consolidated, moved, or archived as their subjects receive final owners:
+The following files contain earlier decisions or governance that may help migration. They are not architectural proof and may be rewritten, consolidated, moved, or archived as their subjects receive final authoritative sources:
 
 - [Product direction rationale](../../decisions/product-direction.md)
 - [Distinct Core primitive role rationale](../../decisions/core-primitives.md)
@@ -548,6 +548,7 @@ The following files contain earlier decisions or governance that may help migrat
 - [Memory model rationale](../../decisions/memory-model.md)
 - [Workflow shape rationale](../../decisions/workflow-shape.md)
 - [Source and packaging rationale](../../decisions/source-and-packaging.md)
+- [Typed authoritative source terminology](../../decisions/authoritative-source-terminology.md)
 - [Agent primitives migration descriptor](../../../../../docs/framework/concepts/agent-primitives.md)
 - [Routing migration descriptor](../../../../../docs/framework/concepts/routing.md)
 - [Truth lifecycle migration descriptor](../../../../../docs/framework/concepts/truth-lifecycle.md)

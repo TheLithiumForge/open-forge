@@ -8,7 +8,7 @@ open-forge:
 
 ## Shape
 
-The [governance separation directive](../../directives/deliberate-framework-change.md#axioms) owns the source-wording boundary.
+The [governance separation directive](../../directives/deliberate-framework-change.md#axioms) is authoritative for the source-wording boundary.
 
 The [maintenance contract template](../../templates/documents/maintenance-contract.md) provides copy-ready starting content. This pattern remains the continuing shape used when creating or reviewing an instantiated maintenance document.
 
@@ -26,7 +26,7 @@ State the valid shape as positively and completely as practical. Prefer a closed
 
 ## Review Checks
 
-- The `Source` section identifies the runtime owner through a link and a concise responsibility.
+- The `Source` section identifies the authoritative runtime source through a link and a concise responsibility.
 - Every `Contract` statement narrows the valid design space or identifies a real change obligation.
 - Relevant counterparts, dependencies, decisions, consumers, and external contracts are linked where they affect maintenance.
 - Optional subsections clarify genuinely distinct concerns.

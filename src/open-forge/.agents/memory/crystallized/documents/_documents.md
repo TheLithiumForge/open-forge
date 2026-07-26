@@ -12,7 +12,7 @@ Documents are durable accepted records, or routes to those records, for long-for
 
 - Read `Entries` when current work needs durable accepted records.
 - A document that declares another source of truth defers to that source.
-- The routed destination owns detailed truth when a document `entry` points outside itself.
+- The routed destination remains authoritative for detailed truth when a document `entry` points outside itself.
 
 ## Entries
 

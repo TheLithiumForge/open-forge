@@ -8,11 +8,11 @@ open-forge:
 
 <!--
 Template selection:
-- Need: One durable rationale owner for a discrete accepted choice.
-- Primary question: What was chosen, why was it accepted, what follows from it, and which current owners express the result?
+- Need: One durable rationale record for a discrete accepted choice.
+- Primary question: What was chosen, why was it accepted, what follows from it, and which authoritative sources express the result?
 
 Instantiate under the appropriate Crystallized decisions route.
-The decision owns why. Current documents, directives, source code, or external systems own the resulting current state.
+The decision is authoritative for why. Current documents, directives, source code, or external systems are authoritative for the resulting current state.
 Replace this template's frontmatter, title, placeholders, and comments.
 -->
 
@@ -36,9 +36,9 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 {State important benefits, costs, risks, follow-up obligations, and conditions that could justify reconsideration.}
 
-## Current Owners
+## Authoritative Sources
 
-{Link forward to every current document, directive, implementation, or external system that owns the accepted result. These owners express what is current now; they are not evidence or authority backing the decision.}
+{Link forward to every current document, directive, implementation, or external system that expresses the accepted result authoritatively. These sources express what is current now; they are not evidence or authority backing the decision.}
 
 ## Decision Relationships
 

@@ -10,8 +10,8 @@ The framework should make it natural to recognize whether a change creates or up
 
 During the file-by-file migration, observe:
 
-- where the owning primitive is immediately clear from the route and existing definitions;
-- where more than one owner appears plausible;
+- where the authoritative primitive is immediately clear from the route and existing definitions;
+- where more than one authoritative source appears plausible;
 - whether ambiguity comes from primitive definitions, route structure, document shape, or missing links;
 - which repeated ambiguities justify a framework design change after the migration provides evidence.
 
@@ -28,7 +28,7 @@ Candidate boundary from the vision and architecture discussion:
 - An emerging idea or analysis owns choices still under consideration; a decision is not a backlog of unresolved options.
 - A crystallized decision preserves a discrete accepted choice and the useful reason it was made.
 - The affected document, directive, pattern, route, code, or external system owns the coherent current outcome.
-- A decision links to those owners instead of restating their complete current contents.
+- A decision links to those authoritative sources instead of restating their complete current contents.
 - When a decision no longer supports current truth, preserve it under the matching archived scope if its history remains useful; otherwise consolidate or prune it.
 - Decisions and archives may be initialized below a narrower scope when that ownership makes selection, history, and inheritance clearer. The state and scope axes remain distinct.
 

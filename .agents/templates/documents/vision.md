@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Vision template is used when one current owner must define what future should become true, why it matters, its boundaries, identity, and success
+  description: Vision template is used when one current document must define what future should become true, why it matters, its boundaries, identity, and success
   tags: [Template, Document, Vision, CurrentView]
 ---
 
@@ -8,19 +8,19 @@ open-forge:
 
 <!--
 Template selection:
-- Need: One stable owner for a subject's desired future and identity.
+- Need: One stable current document for a subject's desired future and identity.
 - Primary question: What should become true, why does it matter, what bounds it, and what would success mean?
 
 Instantiation notes:
 - Replace this template's frontmatter, title, placeholders, and comments.
 - Keep only sections that make the vision clearer.
 - Add a short domain or category definition before Vision only when readers need it to understand the promise.
-- Keep implementation, current status, sequencing, and detailed rationale with their own owners.
+- Keep implementation, current status, sequencing, and detailed rationale in their own authoritative sources.
 -->
 
 ## Vision
 
-{State the exact future or product promise this document owns. Make this the canonical summary used at important entry boundaries.}
+{State the exact future or product promise for which this document is authoritative. Make this the canonical summary used at important entry boundaries.}
 
 ## Why
 
@@ -44,8 +44,8 @@ Instantiation notes:
 
 ## Related Current Views
 
-{Link to current architecture, strategy, context, principles, or other owners only when the relationship helps the reader continue.}
+{Link to current architecture, strategy, context, principles, or other authoritative sources only when the relationship helps the reader continue.}
 
 ## Decisions And Rationale
 
-{Link to accepted decisions that preserve useful reasons behind this current vision. Omit when no separate rationale owner exists.}
+{Link to accepted decisions that preserve useful reasons behind this current vision. Omit when no separate rationale source exists.}
