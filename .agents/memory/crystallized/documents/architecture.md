@@ -79,7 +79,7 @@ For example, the loader exposes Memory, Memory exposes Crystallized, Crystallize
 
 Any authoritative route may introduce narrower scopes and initialize only the framework areas it needs. Scopes inherit broader meaning and add local context through files, routes, links, and tags.
 
-Selection cost should grow primarily with route depth and the number of selected branches, not with the total number of stored scopes. Unselected sibling scopes should add almost no active-context cost. The [Framework Architecture](framework/architecture.md) is authoritative for the complete route contract.
+Selection cost should grow primarily with route depth and the number of selected branches, not with the total number of stored scopes. Unselected sibling scopes should add almost no active-context cost. The [Open Forge Routing scope](framework/routing/_routing.md) is authoritative for the complete route contract.
 
 ## Authority And Current Knowledge
 
@@ -151,6 +151,7 @@ The architecture is intentionally split by authoritative scope:
 
 - This top architecture is authoritative for the system map and cross-cutting invariants
 - The [Framework Architecture](framework/architecture.md) is authoritative for Core and Memory internals
+- The [Open Forge Routing scope](framework/routing/_routing.md) is authoritative for navigation, recursive scope, inheritance, loading, continuity, and path identity
 - The [Extensions MVP Architecture](extensions/architecture.md) is authoritative for current optional capability composition, lifecycle, safety boundaries, and liabilities
 - The [CLI MVP Architecture](cli/architecture.md) is authoritative for current commands, deterministic state, safety, verification, implementation, and liabilities
 

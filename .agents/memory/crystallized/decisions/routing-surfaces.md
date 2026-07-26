@@ -15,3 +15,5 @@ Accepted 2026-07-08 during the workflow redesign analysis, revised 2026-07-20 fo
 - Directives are the binding exception to body-level back-out: selecting an active directive route settles scope, and every direct directive file loaded from that scope must be obeyed. Its Axioms state the rule; they do not ask the agent to decide applicability again.
 - #KeepInMind is the loading exception to ordinary parent-chain visibility: continuity checkpoints recover the complete routed catalogue, while each result retains the authority and scope established by its route and content.
 - A workflow's primary phase tag is cheap wayfinding, not its execution contract or a mandatory sequence. Generated descriptions and tags support selection without opening candidate bodies; after selection, the routed Goal may name advisory `- helpful before: ...` work without turning it into a blocking route dependency.
+
+The [current routing model](../documents/framework/routing/model.md) expresses the accepted general selection surface. Component sources express their narrower selection and execution contracts.

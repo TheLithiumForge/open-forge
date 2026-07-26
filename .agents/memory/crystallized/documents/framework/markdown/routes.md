@@ -11,7 +11,7 @@ open-forge:
 
 This document is authoritative for the Markdown and filename forms shared by routed Open Forge files.
 
-It defines how routing constructs are represented. The [Framework Architecture](../architecture.md) and installed route sources define what routes, scopes, loading, authority, and component-specific sections mean. Component maintenance documents preserve the corresponding source and verification obligations.
+It defines how routing constructs are represented. The [routing model](../routing/model.md), [scope contract](../routing/scope.md), [loading contract](../routing/loading.md), and installed component sources define what routes, scopes, loading, authority, and component-specific sections mean. Component maintenance documents preserve the corresponding source and verification obligations.
 
 ## Category Entrypoints
 
@@ -114,6 +114,7 @@ Generated entries never privately define behavior, authority, or current truth. 
 
 - [Canonical Markdown syntax](syntax.md)
 - [Markdown compatibility boundary](compatibility.md)
+- [Open Forge Routing scope](../routing/_routing.md)
 - [Framework Architecture](../architecture.md)
 - [Canonical loader](../../../../../loader.md)
 

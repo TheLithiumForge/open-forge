@@ -19,6 +19,8 @@ The Framework described here is the intended architecture to which the installab
 
 The [Open Forge Markdown scope](markdown/_markdown.md) contains the current canonical syntax, routed representation, and compatibility specifications used by this architecture.
 
+The [Open Forge Routing scope](routing/_routing.md) owns the detailed current contracts for navigation, selection, recursive scope, inheritance, loading, continuity, and path identity. This document retains the routing summary needed to understand the complete Framework.
+
 ## Framework Promise
 
 The Framework turns a workspace into a navigable, persistent, and adaptable context environment without replacing native agent reasoning or installing a universal methodology.
@@ -126,6 +128,8 @@ These categories are distinct because they answer different questions. Their def
 
 ### Loader And Entrypoints
 
+The [routing model](routing/model.md) is authoritative for the complete entrypoint, entry, direct-child navigation, and selection contract.
+
 The loader is the canonical Framework entry after the workspace harness. It defines the universal terms and rules required to navigate the installed environment. It exposes direct root routes rather than flattening their descendants into a central catalogue.
 
 An `entrypoint` is a Markdown file that makes its folder routable. Open Forge-authored entrypoints use `_{folder-name}.md`. Compatibility names may be recognized during migration or interoperability, but each routable folder has only one active entrypoint.
@@ -138,9 +142,11 @@ An `entry` is one generated line under an entrypoint's `Entries` heading. It ide
 
 Each folder in a visible nested route has its own entrypoint. Parent entries expose only direct children. They do not flatten deeper files because flattening would duplicate route knowledge, erase intermediate scope, and make every higher index grow with the whole subtree.
 
-Descriptions are natural, descriptive selection surfaces rather than formulaic declarations. A primary question is a useful authoring and migration test for authority and placement, not a second required frontmatter field. The current Framework adds metadata only when it carries distinct meaning for an actual reader or tool.
+Descriptions are natural, descriptive selection surfaces rather than formulaic declarations. Optional `responsibility` may bound what an opened file is responsible for defining when that adds distinct value. A primary question remains an authoring and migration test for authority and placement rather than another required frontmatter field.
 
 ### Route Types And Scope
+
+The [route scope and inheritance contract](routing/scope.md) is authoritative for the complete meanings and recursive composition of these route types.
 
 A `root route` is exposed directly by the loader.
 
@@ -170,6 +176,8 @@ Both are valid when their entrypoints make the meaning clear.
 
 ### Top-Down Selection
 
+The [routing model](routing/model.md) and [loading contract](routing/loading.md) own the complete selection and context-entry sequence.
+
 Routing proceeds from known general context to selected detail:
 
 1. Load the canonical entry and loader
@@ -185,6 +193,8 @@ This model keeps unselected siblings out of active context. Workspace size may i
 
 ### Inheritance
 
+The [route scope and inheritance contract](routing/scope.md) owns the complete loaded-inheritance model.
+
 An Axiom is a binding instruction under an `Axioms` heading in a loaded Framework file.
 
 Loaded ancestor entrypoint Axioms apply throughout their selected descendants. A child adds only rules that are specific to its narrower route. It does not copy its ancestors or use an empty declaration to cancel them.
@@ -192,6 +202,8 @@ Loaded ancestor entrypoint Axioms apply throughout their selected descendants. A
 Inheritance follows the loaded route chain. Merely finding or inspecting a file as inactive source, history, or an example does not activate the route that file would govern.
 
 ### Loading
+
+The [routing loading and continuity contract](routing/loading.md) is authoritative for the complete visibility, timing, refresh, and deterministic-assistance model.
 
 The loader defines the exact reserved loading tags. Architecturally, they serve two different needs:
 
@@ -527,6 +539,7 @@ The [approved design baseline](../../../archived/sessions/2026-07-26_open-forge-
 - [Open Forge principles](../principles.md)
 - [Top Open Forge architecture](../architecture.md)
 - [Open Forge Markdown scope](markdown/_markdown.md)
+- [Open Forge Routing scope](routing/_routing.md)
 - [Extensions MVP Architecture](../extensions/architecture.md)
 - [CLI MVP Architecture](../cli/architecture.md)
 - [Canonical Framework loader](../../../../loader.md)
@@ -554,7 +567,6 @@ The following files contain earlier decisions or governance that may help migrat
 - [Typed authoritative source terminology](../../decisions/authoritative-source-terminology.md)
 - [Canonical Markdown authoring rationale](../../decisions/canonical-markdown.md)
 - [Agent primitives migration descriptor](../../../../../docs/framework/concepts/agent-primitives.md)
-- [Routing migration descriptor](../../../../../docs/framework/concepts/routing.md)
 - [Truth lifecycle migration descriptor](../../../../../docs/framework/concepts/truth-lifecycle.md)
 - [Layer migration descriptor](../../../../../docs/framework/concepts/layers.md)
 - [Overwrite migration descriptor](../../../../../docs/framework/concepts/overwrites.md)

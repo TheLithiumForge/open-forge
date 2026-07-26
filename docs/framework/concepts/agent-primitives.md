@@ -114,7 +114,7 @@ Scope must be visible before a routed body is opened through category placement,
 
 Tags must compress useful routing information such as primitive type, domain, work type, topic, technology, or artifact. Primitive type tags use singular PascalCase. For example, #Directive #Database #Migration lets an agent identify likely scope without opening the routed file.
 
-Tags reinforce route selection but never establish authority by themselves. A direct file under the baseline-loaded root directive route is workspace-wide; a child directive route establishes narrower scope through its visible selection surface. Reserved load-policy tags affect loading only and are governed by the routing concept.
+Tags reinforce route selection but never establish authority by themselves. A direct file under the baseline-loaded root directive route is workspace-wide; a child directive route establishes narrower scope through its visible selection surface. Reserved load-policy tags affect loading only and are governed by the [current routing loading contract](../../../.agents/memory/crystallized/documents/framework/routing/loading.md).
 
 Every routed primitive file inherits the positive scope of its containing category. A child category must state whether it narrows that scope or preserves it for organization.
 

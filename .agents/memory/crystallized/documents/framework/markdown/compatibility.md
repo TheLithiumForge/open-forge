@@ -20,6 +20,7 @@ The current CLI may read selected noncanonical input for migration or interopera
 - `index.md`, `_index.md`, `references.md`, and `_references.md` as category-entrypoint aliases
 - `Skill.md` as a skill-entrypoint alias
 - `rune:` scoped metadata or unscoped `description` and `tags` in external files
+- A first suitable body sentence as a generated description fallback when an external or local file has no supported metadata description
 - Legacy backtick route entries
 - Angle-bracket route destinations accepted by the current parser
 - Legacy generated `Entries` sections without bounded markers when they can be migrated safely
