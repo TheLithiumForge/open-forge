@@ -1,18 +1,19 @@
 ---
 open-forge:
-    description: Self-growing Markdown memory for live work, continuity, accepted records, historical context, and candidate learning
+    description: Self-growing Markdown memory for live work, agent communication and coordination, continuity, accepted records, historical context, and candidate learning
     tags: [LoadNow, Memory, OrganicGrowth]
 ---
 
 # Memory
 
-Memory is self-growing Markdown state for live work, continuity, accepted records, historical context, and candidate learning
+Memory is self-growing Markdown state for live work, agent communication and coordination, continuity, accepted records, historical context, and candidate learning
 
 ## Axioms
 
 - Use #Contextual and #CurrentTruth to distinguish context from accepted current truth
 - Keep memory below current user instructions, runtime safety, platform constraints, applicable #Core routes, and declared external sources of truth
 - Memory may record any subject, including how work is performed, without making that behavior active
+- Preserve agent communication and coordination in Memory when it must survive the current context; do not treat every conversation as durable memory
 - Write useful durable state to its appropriate routed destination when safe and allowed; do not leave reusable user direction only in chat
 - Move material between #Memory routes when its state or knowledge role changes
 - When accepted behavior should guide future work, put it in the matching #Core route and preserve useful context or rationale in #Memory

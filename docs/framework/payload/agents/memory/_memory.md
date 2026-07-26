@@ -8,13 +8,13 @@ The memory category `entrypoint` defines installed Memory, its state containers,
 
 ## Represents
 
-The memory category represents self-growing Markdown memory for live work, continuity, accepted records, historical context, and candidate learning.
+The memory category represents self-growing Markdown memory for live work, agent communication and coordination, continuity, accepted records, historical context, and candidate learning.
 
 It is a self-growing structure that starts from a small shared shape and becomes personal to each workspace over time.
 
 ## Contains
 
-The installed file follows the shared category `entrypoint` shape defined by the formatting concept: scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
+The installed file follows the category `entrypoint` shape defined by the [Open Forge Markdown Contract](../../../../../.agents/memory/crystallized/documents/framework/markdown.md): scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
 
 ## State Contract
 
@@ -33,7 +33,7 @@ One common transition path is:
 working -> emerging -> crystallized -> archived
 ```
 
-The lifecycle describes state and allowed movement, not a required sequence. Any transition is valid when meaning and authority justify it. Memory is authoritative for the capture, movement, consolidation, and archival of recorded state. Workspace authority determines when direction is accepted.
+The lifecycle describes state and allowed movement, not a required sequence. Any transition is valid when meaning and authority justify it. Memory is authoritative for the capture, movement, consolidation, and archival of recorded state. Agent communication and coordination belong in Memory when they must survive the current context, but ordinary conversation does not become durable memory automatically. Workspace authority determines when direction is accepted.
 
 The base memory payload installs only universal child routes: sessions and handoffs under `working/`, observations, ideas, and analysis under `emerging/`, and documents and decisions under `crystallized/`.
 
@@ -81,9 +81,9 @@ When no existing route fits safely, agents must suggest a clearer child route an
 
 ## Generated Region
 
-The final generated region uses the shared category `entrypoint` shape defined by the formatting concept.
+The final generated region uses the category `entrypoint` shape defined by the [Open Forge Markdown Contract](../../../../../.agents/memory/crystallized/documents/framework/markdown.md).
 
-Generated `entries` list direct memory state categories and direct memory files if a workspace adds any. The shared formatting and routing concepts govern metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
+Generated `entries` list direct memory state categories and direct memory files if a workspace adds any. The [Open Forge Markdown Contract](../../../../../.agents/memory/crystallized/documents/framework/markdown.md) defines metadata, `entry` representation, entrypoint naming, and marker shape. The routing model governs recursive discovery and generation.
 
 ## Used By
 
@@ -105,7 +105,7 @@ The implementation is aligned when it:
 - lives in `.agents/memory/`
 - includes `OrganicGrowth` and `LoadNow` in scoped `open-forge:` tags
 - defines `working/`, `emerging/`, `crystallized/`, and `archived/`
-- describes Memory as self-growing Markdown memory for live work, continuity, accepted records, historical context, and candidate learning
+- describes Memory as self-growing Markdown memory for live work, agent communication and coordination, continuity, accepted records, historical context, and candidate learning
 - installs only universal child routes under the relevant memory state
 - marks `working/`, `crystallized/`, and `archived/` `entries` with #LoadNow
 - marks `working/handoffs/` and `working/sessions/` `entries` with #LoadNow
