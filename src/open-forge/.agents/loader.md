@@ -6,6 +6,8 @@ This is the main Open Forge `entrypoint`. Read it after `AGENTS.md` to enter thi
 
 - `entrypoint` - Markdown file that makes a folder routable; Open Forge uses `_{folder-name}.md`, while `index.md`, `_index.md`, `references.md`, and `_references.md` are compatibility names
 - `entry` - Generated route line under `Entries`
+- `description` - Natural-language pre-load selection surface that explains enough purpose, trigger, or outcome to select or skip a route
+- `responsibility` - Optional stable boundary stating what a file is responsible for defining; it guides edits without creating authority or loading behavior
 - `root route` - Route exposed directly by this loader
 - `framework route` - Standard Core or Memory route shipped by Open Forge
 - `scope route` - Local routed subtree that narrows authority or meaning
@@ -50,8 +52,8 @@ Defined tags have the meanings below when they appear in loaded content or gener
 - #Contextual - Supporting context, not accepted current truth unless restored, validated, accepted, or promoted
 - #CurrentTruth - Accepted current state within its stated scope, below user instructions, runtime safety, platform constraints, and declared external sources of truth
 - #Evergreen - Material that must stay aligned with accepted current state. It creates no authority or load policy.
-    - When accepted state changes, update only affected #Evergreen material you may edit before work depends on it, and no later than closeout; batch related updates when safe
-    - Keep #Evergreen material coherent with what it represents now; preserve useful superseded context in the matching decision or archive, and report affected material you cannot update
+  - When accepted state changes, update only affected #Evergreen material you may edit before work depends on it, and no later than closeout; batch related updates when safe
+  - Keep #Evergreen material coherent with what it represents now; preserve useful superseded context in the matching decision or archive, and report affected material you cannot update
 
 ### CLI
 
@@ -67,7 +69,6 @@ When the Open Forge CLI is available, use each applicable command below. Every c
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
 - [Binding instructions whose route is selected before their contents are loaded](directives/_directives.md) - #LoadNow #Core #Directive
 - [Contextual advice for recurring choices, tradeoffs, and work scenarios](guidance/_guidance.md) - #LoadNow #Core #Guidance
 - [Self-growing Markdown memory for live work, agent communication and coordination, continuity, accepted records, historical context, and candidate learning](memory/_memory.md) - #LoadNow #Memory #OrganicGrowth
@@ -76,4 +77,4 @@ When the Open Forge CLI is available, use each applicable command below. Every c
 - [Copy-ready source artifacts for creating independently owned workspace content](templates/_templates.md) - #Core #Template
 - [Repeatable markdown workflow recipes for reaching a defined goal](workflows/_workflows.md) - #LoadNow #Core #Workflow
 - [Workspace routes that point to important project locations and explain when to use them](workspace/_workspace.md) - #LoadNow #Core #Workspace
-  <!-- open-forge:generated-index:end -->
+<!-- open-forge:generated-index:end -->
