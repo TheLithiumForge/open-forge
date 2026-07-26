@@ -8,6 +8,8 @@ open-forge:
 
 This session checkpoint preserves the design baseline approved by the maintainer on 2026-07-26 before the detailed Framework Architecture was written. It is a dated synthesis, not a competing Evergreen owner. The [vision](../../crystallized/documents/vision.md), [top architecture](../../crystallized/documents/architecture.md), and later scoped current documents own the state that continues to evolve.
 
+The [Design Baseline, Part 2](2026-07-26_open-forge-design-baseline-part-2.md) preserves the knowledge-role, Principles, Template, Decision, terminology, tooling-help, and README conclusions accepted during the subsequent review.
+
 ## Authority For This Pass
 
 The repository before this pass is the implementation and conceptual starting point being migrated. It is not evidence that the new design is correct.

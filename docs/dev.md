@@ -15,7 +15,7 @@ The README should sound like Open Forge itself:
 The core tone to preserve:
 
 ```text
-The framework is designed to be a bit more work from the start, because it does not ship complete defaults. It wants maximum flexibility and organic growth. It is meant to be used for one project, many projects together, a monorepo, a private vault, or whatever shape the user's work has. It acknowledges that one person's use cases can differ wildly from another's, so it does not optimize for a middle ground that quietly harms everyone. It optimizes for customizability, providing only a handful of rules and a scalable architecture that the user can artisanally craft to their own needs and wishes.
+Define Adaptive Context Engineering, then state the accepted Open Forge vision without replacing it with a weaker simplified tagline. Explain the real context and continuity problem, provide the fastest safe useful start, and reveal advanced routing, Memory, customization, Extensions, and tooling progressively. Open Forge starts with a small useful foundation and sensible removable defaults, then grows through real decisions and recurring needs. Keep the exact structural scaling claim near any playful language about infinite scaling or growing your own framework. Present Markdown as the complete semantic contract and the CLI as a deterministic reasoning accelerator. State current maturity and usage honestly.
 ```
 
 ## Layout

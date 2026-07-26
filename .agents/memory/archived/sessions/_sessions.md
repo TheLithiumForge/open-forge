@@ -26,5 +26,6 @@ Load a session only when reconstructing original intent or old rationale.
 - [Completed benchmark composition redesign into agnostic scenarios, atomic primitives, exact meta-scenarios, and trace-reviewed run sets](2026-07-21_benchmark-composition-redesign.md) - #Memory #Session #Archived #Contextual #Historical #Benchmark #Dogfood
 - [Completed redesign of benchmark seeds and harness into compact reusable dual-review scenarios](2026-07-21_benchmark-redesign.md) - #Memory #Session #Archived #Contextual #Historical #Benchmark
 - [Historical approved design baseline distilled from the Open Forge vision and architecture discussion before the Framework Architecture](2026-07-26_open-forge-design-baseline.md) - #Memory #Archived #Session #WorkHistory #Contextual #Historical #Framework #Vision #Architecture #ACE #Migration
+- [Historical continuation of the approved Open Forge design baseline covering knowledge roles, principles, templates, decisions, terminology, and README direction](2026-07-26_open-forge-design-baseline-part-2.md) - #Memory #Archived #Session #WorkHistory #Contextual #Historical #Framework #Documentation #Principle #Template #Decision #Terminology #Migration
 - [The raw original prompt and AI handover material that seeded Open Forge](original-prompt.md) - #Session #Origin #Contextual #Historical
 <!-- open-forge:generated-index:end -->
