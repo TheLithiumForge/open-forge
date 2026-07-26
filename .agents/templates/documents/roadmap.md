@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Start a current roadmap when one owner must answer which accepted outcomes come next, in what order, and under which dependencies and change conditions
+  description: Roadmap template is used when one current owner must define which accepted outcomes come next, in what order, and under which dependencies and change conditions
   tags: [Template, Document, Roadmap, CurrentView]
 ---
 

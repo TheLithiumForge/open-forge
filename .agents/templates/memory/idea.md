@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Start an Emerging idea when one owner must answer what plausible possibility deserves exploration, what supports it, and what would justify promotion
+  description: Idea template is used when one Emerging owner must preserve what plausible possibility deserves exploration, what supports it, and what would justify promotion
   tags: [Template, Memory, Idea, Emerging, Contextual]
 ---
 
@@ -38,7 +38,7 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 ## Promotion Signals
 
-{Describe evidence, recurrence, user direction, or resolved questions that would justify promotion or consolidation.}
+{Describe evidence, recurrence, operator direction, or resolved questions that would justify promotion or consolidation.}
 
 ## Related Owners
 

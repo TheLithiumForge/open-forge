@@ -10,6 +10,8 @@ open-forge:
 
 The [governance separation directive](../../directives/deliberate-framework-change.md#axioms) owns the source-wording boundary.
 
+The [maintenance contract template](../../templates/documents/maintenance-contract.md) provides copy-ready starting content. This pattern remains the continuing shape used when creating or reviewing an instantiated maintenance document.
+
 Organize each current maintenance document as:
 
 1. `Source` - link to the canonical source, state its responsibility, and identify true counterparts.

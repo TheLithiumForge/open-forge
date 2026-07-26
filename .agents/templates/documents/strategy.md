@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Start a current strategy when one owner must answer how accepted choices and focus are expected to move a subject toward its vision
+  description: Strategy template is used when one current owner must define how accepted choices and focus are expected to move a subject toward its vision
   tags: [Template, Document, Strategy, CurrentView]
 ---
 

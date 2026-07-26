@@ -23,7 +23,7 @@ Decisions are accepted rationale for important choices that may need to be under
 - [Extensions add optional whole routed files while installed files remain complete runtime truth](extensions-and-cli.md) - #Memory #Decision #CurrentTruth #Extension #CLI
 - [Reliability-critical context loads unconditionally and early; conditional context must be cheap to skip and cheap to recover from](loading-reliability.md) - #Memory #Decision #CurrentTruth #Loading #Routing #Reliability
 - [Memory preserves working, emerging, crystallized, and archived state without activating behavior it describes](memory-model.md) - #Memory #Decision #CurrentTruth #MemoryModel
-- [Open Forge stays markdown-first, human-led, small by default, and optimized for recursive customization](product-direction.md) - #Memory #Decision #CurrentTruth #Product
+- [Open Forge stays markdown-first, operator-led, small by default, and optimized for recursive customization](product-direction.md) - #Memory #Decision #CurrentTruth #Product
 - [Routing goes through small markdown entrypoints; one recognized entrypoint per folder; the loader exposes only direct root routes](routing-model.md) - #Memory #Decision #CurrentTruth #Routing
 - [The entry description is the selection surface; the routed body is the execution recipe](routing-surfaces.md) - #Memory #Decision #CurrentTruth #Routing #Formatting
 - [Framework routes, scope routes, scoped framework routes, and slugs are distinct; placeholders are notation only and slug placement changes meaning](scope-and-slugs.md) - #Memory #Decision #CurrentTruth #Routing #Scope

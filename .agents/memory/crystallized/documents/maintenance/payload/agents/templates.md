@@ -1,10 +1,10 @@
 ---
 open-forge:
-  description: Current maintainer contract for the installable Templates Core category entrypoint
+  description: Current maintenance contract for the installable Templates Core category entrypoint
   tags: [Memory, Document, CurrentTruth, Evergreen, Maintenance, Governance, Payload, Core, Template]
 ---
 
-# Templates Category Contract
+# Templates Category Maintenance Contract
 
 ## Source
 

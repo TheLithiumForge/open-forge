@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Start a current operating-context view when one owner must answer which external reality, stakeholders, constraints, assumptions, and dependencies shape a subject
+  description: Operating context template is used when one current owner must define which external reality, stakeholders, constraints, assumptions, and dependencies shape a subject
   tags: [Template, Document, Context, CurrentView]
 ---
 
