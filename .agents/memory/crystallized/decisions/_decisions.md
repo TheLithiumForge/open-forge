@@ -18,6 +18,7 @@ Decisions are accepted rationale for important choices that may need to be under
 ## Entries
 
 <!-- open-forge:generated-index:start -->
+- [Open Forge names semantic authority by source type and reserves ownership language for possession or managed lifecycle](authoritative-source-terminology.md) - #Memory #Decision #CurrentTruth #Terminology #Authority #Documentation
 - [Benchmarks compose agnostic scenarios, reusable primitive blocks, and reproducible meta-scenarios under trace-reviewing orchestrators](benchmark-design.md) - #Memory #Decision #CurrentTruth #Benchmark #Dogfood #Evaluation
 - [Core uses distinct reusable content roles instead of one generic knowledge bucket, and every new primitive must earn nonduplicative semantics](core-primitives.md) - #Memory #Decision #CurrentTruth #Core #Primitive
 - [Do-not-revive list for rejected files, hidden mechanics, directive gates, continuity gaps, and workflow ceremony](do-not-revive.md) - #Memory #Decision #CurrentTruth #Rejected

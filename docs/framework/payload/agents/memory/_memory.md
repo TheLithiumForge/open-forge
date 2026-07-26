@@ -8,15 +8,13 @@ The memory category `entrypoint` defines installed Memory, its state containers,
 
 ## Represents
 
-The memory category represents self-growing markdown memory for human-AI work.
-
-Memory records current truth, live work, AI communication, current records, historical records, and candidate learning.
+The memory category represents self-growing Markdown memory for live work, continuity, accepted records, historical context, and candidate learning.
 
 It is a self-growing structure that starts from a small shared shape and becomes personal to each workspace over time.
 
 ## Contains
 
-The installed file follows the shared category `entrypoint` shape owned by the formatting concept: scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
+The installed file follows the shared category `entrypoint` shape defined by the formatting concept: scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
 
 ## State Contract
 
@@ -29,17 +27,17 @@ crystallized/ accepted durable current memory
 archived/     archived memory preserved for context
 ```
 
-The normal lifecycle is:
+One common transition path is:
 
 ```text
 working -> emerging -> crystallized -> archived
 ```
 
-The lifecycle describes state and allowed movement, not a required sequence. Memory owns capture, movement, consolidation, and archival of recorded state. Workspace authority determines when direction is accepted.
+The lifecycle describes state and allowed movement, not a required sequence. Any transition is valid when meaning and authority justify it. Memory is authoritative for the capture, movement, consolidation, and archival of recorded state. Workspace authority determines when direction is accepted.
 
 The base memory payload installs only universal child routes: sessions and handoffs under `working/`, observations, ideas, and analysis under `emerging/`, and documents and decisions under `crystallized/`.
 
-Archive child routes, task routes, backlog routes, and other specialized containers are created only when an owning route needs them and their `entrypoint` defines their scope.
+Archive child routes, task routes, backlog routes, and other specialized containers are created only when an authoritative route needs them and their `entrypoint` defines their scope.
 
 ## Loading Contract
 
@@ -59,9 +57,9 @@ Generated `entries` are navigation metadata plus reserved load policy. They neve
 
 Memory may record any subject, including how work is performed, without making that behavior active.
 
-Useful durable state is written to its matching routed owner when safe and allowed so reusable user direction does not remain only in chat.
+Useful durable state is written to its matching authoritative route or system when safe and allowed so reusable user direction does not remain only in chat.
 
-Memory material moves between #Memory routes when its state or owner changes.
+Memory material moves between #Memory routes when its state or knowledge role changes.
 
 When accepted behavior should guide future work, put it in the matching #Core route, including user-created #Core categories and files, and preserve useful context or rationale in Memory.
 
@@ -75,7 +73,7 @@ Memory uses #CurrentTruth for accepted current state within stated scope. Curren
 
 Memory must remain recursively customizable.
 
-Subcategories are encouraged when they improve routing, ownership, or clarity. Child `entrypoints` and local files own the concrete taxonomy below each memory state.
+Subcategories are encouraged when they improve routing, authority, or clarity. Child `entrypoints` and local files define the concrete taxonomy below each memory state.
 
 Agents create child categories first when the installed states are sufficient. A new root memory state requires user agreement because it changes the state model.
 
@@ -83,9 +81,9 @@ When no existing route fits safely, agents must suggest a clearer child route an
 
 ## Generated Region
 
-The final generated region uses the shared category `entrypoint` shape owned by the formatting concept.
+The final generated region uses the shared category `entrypoint` shape defined by the formatting concept.
 
-Generated `entries` list direct memory state categories and direct memory files if a workspace adds any. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
+Generated `entries` list direct memory state categories and direct memory files if a workspace adds any. The shared formatting and routing concepts govern metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
 
 ## Used By
 
@@ -107,7 +105,7 @@ The implementation is aligned when it:
 - lives in `.agents/memory/`
 - includes `OrganicGrowth` and `LoadNow` in scoped `open-forge:` tags
 - defines `working/`, `emerging/`, `crystallized/`, and `archived/`
-- describes Memory as self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning
+- describes Memory as self-growing Markdown memory for live work, continuity, accepted records, historical context, and candidate learning
 - installs only universal child routes under the relevant memory state
 - marks `working/`, `crystallized/`, and `archived/` `entries` with #LoadNow
 - marks `working/handoffs/` and `working/sessions/` `entries` with #LoadNow
@@ -117,15 +115,15 @@ The implementation is aligned when it:
 - keeps Memory separate from primitive behavior routes
 - permits Memory to describe behavior without activating it
 - prefers written #Memory routes over private agent memory for workspace state
-- preserves useful durable state in its matching routed owner when safe and allowed
-- moves material between #Memory routes when its state or owner changes
+- preserves useful durable state in its matching authoritative route or system when safe and allowed
+- moves material between #Memory routes when its state or knowledge role changes
 - puts accepted behavior that should guide future work in matching #Core routes
 - keeps source and uncertainty visible when they affect trust or promotion
 - uses workspace authority when candidate state becomes accepted
 - uses #Contextual `entries` as contextual
 - uses #CurrentTruth `entries` as accepted current state within stated scope
 - encourages recursive child categories before new root memory states
-- allows specialized child routes only under the route that owns their meaning
+- allows specialized child routes only under the route authoritative for their meaning
 - keeps generated `entries` from defining instructions or authority
 - routes only through its final generated region
 - keeps compact state, lifecycle, authority, provenance, baseline loading, growth, and child-route axioms

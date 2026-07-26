@@ -212,6 +212,20 @@ description: Implementation capability for fitting, testing, coding, and verifyi
 });
 
 describe("loader category registry", () => {
+  test("keeps source and dogfood authored loader contracts aligned", async () => {
+    const [sourceLoader, dogfoodLoader] = await Promise.all([
+      fs.readFile(repoPath("src", "open-forge", ".agents", "loader.md"), "utf8"),
+      fs.readFile(repoPath(".agents", "loader.md"), "utf8")
+    ]);
+    const generatedRegion = /<!-- open-forge:generated-index:start -->[\s\S]*?<!-- open-forge:generated-index:end -->/;
+
+    expect(sourceLoader).toMatch(generatedRegion);
+    expect(dogfoodLoader).toMatch(generatedRegion);
+    expect(sourceLoader.replace(generatedRegion, "<generated Entries>")).toBe(
+      dogfoodLoader.replace(generatedRegion, "<generated Entries>")
+    );
+  });
+
   test("generates direct active categories from their entrypoint metadata", async () => {
     const root = await createRoot();
     await fs.writeFile(path.join(root, "loader.md"), `# Loader
@@ -290,7 +304,10 @@ describe("install", () => {
     expect(installedLoader).toContain("](directives/_directives.md) - #LoadNow");
     expect(installedLoader).not.toContain("](.agents/");
     expect(installedLoader).toContain("#Evergreen - Material that must stay aligned");
+    expect(installedLoader).toContain("`framework route` - Standard Core or Memory route shipped by Open Forge");
+    expect(installedLoader).toContain("Loading and tags change visibility, timing, or classification; they do not create authority by themselves.");
     expect(installedLoader).toContain("A request to act also accepts any decision required to perform that action");
+    expect(installedLoader).toContain("at every required #KeepInMind boundary");
     expect(installedLoader).toContain("update only affected #Evergreen material you may edit");
 
     const installedMemory = await fs.readFile(path.join(root, ".agents", "memory", "_memory.md"), "utf8");

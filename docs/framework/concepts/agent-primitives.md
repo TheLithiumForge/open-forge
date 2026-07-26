@@ -48,7 +48,7 @@ Guidance may nest recursively by domain, scenario, decision area, or any other u
 
 A skill follows the standard `SKILL.md` format supported by the active agent runtime.
 
-Open Forge routes `.agents/skills/{skill-name}/SKILL.md` without rewriting it or imposing Open Forge `References` or `Entries` inside the skill. The selected `SKILL.md` owns its metadata, instructions, resources, and on-demand loading. Skills may be invoked directly or by workflows, while the runtime owns activation and execution.
+Open Forge routes `.agents/skills/{skill-name}/SKILL.md` without rewriting it or imposing Open Forge `References` or `Entries` inside the skill. The selected `SKILL.md` is authoritative for its metadata, instructions, resources, and on-demand loading. Skills may be invoked directly or by workflows, while the runtime controls activation and execution.
 
 ## Workflows
 
@@ -80,9 +80,9 @@ This order describes composition, not one authority ladder. Directives constrain
 
 ## Boundary With Memory And Current Documents
 
-A directive owns mandatory behavior that needs an independently routed scope. A pattern owns a reusable inspectable shape. Memory may describe behavior without activating it and owns the lifecycle of its recorded state. A decision in crystallized Memory owns accepted rationale for a choice, not the behavior or record selected by that choice. A current document owns a coherent view of present state.
+A directive is authoritative for mandatory behavior in its independently routed scope. A pattern is authoritative for a reusable inspectable shape. Memory may describe behavior without activating it and is authoritative for the lifecycle of its recorded state. A decision in crystallized Memory is authoritative for accepted rationale behind a choice, not the behavior or record selected by that choice. A current document is authoritative for a coherent view of present state.
 
-One file must not substitute for these different owners. Universal authority and defined-tag behavior belong in the loader; state transitions belong to Memory; a directive earns a separate file only when its independently scoped behavior has no clearer existing owner.
+One file must not substitute for these different knowledge roles. Universal authority and defined-tag behavior belong in the loader; state transitions belong to Memory; a directive earns a separate file only when its independently scoped behavior has no clearer authoritative source.
 
 ## Core Payload Contract
 

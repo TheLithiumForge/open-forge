@@ -11,7 +11,7 @@ open-forge:
 When work is likely to cross a context-restoration or handoff boundary, maintain one bounded active session or handoff record with:
 
 - current Goal and development phase
-- accepted decisions and their owner routes
+- accepted decisions and the authoritative sources where their results now live
 - unresolved ideas, risks, and questions without premature promotion
 - completed evidence and known failures
 - exact next action and relevant paths
@@ -24,7 +24,7 @@ Refresh it at meaningful continuity boundaries:
 4. immediately after actual context restoration is detected
 5. closeout, transfer, or explicit pause
 
-At every refresh, recover and recheck the complete effective #KeepInMind set, then treat every result as binding follow-up context within its owner's authority. `open-forge load --bodies` may batch the same traversal when available, placing each user-owned `.overwrite.md` after its base; ordinary generated-route traversal remains complete.
+At every refresh, recover and recheck the complete effective #KeepInMind set, then follow every result within the authority and scope established by its route and content. `open-forge load --bodies` may batch the same traversal when available, placing each user-owned `.overwrite.md` after its base; ordinary generated-route traversal remains complete.
 
 ## Review Checks
 

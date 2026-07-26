@@ -10,12 +10,12 @@ open-forge:
 
 [`src/open-forge/AGENTS.md`](../../../../../../src/open-forge/AGENTS.md) is the canonical installed entry from an agent runtime into Open Forge. The repository [`AGENTS.md`](../../../../../../AGENTS.md) dogfoods the same managed block.
 
-The [source and packaging decision](../../../decisions/source-and-packaging.md) owns the rationale for this canonical entry and its harness bridges.
+The [source and packaging decision](../../../decisions/source-and-packaging.md) is authoritative for the rationale behind this canonical entry and its harness bridges.
 
 ## Contract
 
 - The managed block contains only its boundary markers, title, identification of Open Forge as the workspace operating contract, and a mandatory instruction to read the loader before any task and follow applicable Open Forge rules and conventions throughout that task.
-- The [installed loader](../../../../../../src/open-forge/.agents/loader.md) is the sole owner of detailed authority, routing, tag, loading, and conflict behavior.
+- The [loader maintenance contract](agents/loader.md) governs the installed loader, which remains authoritative for detailed authority, routing, tag, loading, and conflict behavior.
 - The canonical and dogfood managed blocks remain identical.
 
 ### Installation

@@ -8,8 +8,8 @@ open-forge:
 
 Accepted decisions extracted from the design sessions and idea notes on 2026-07-06.
 
-- The #Memory layer is self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning.
-- Memory owns capture, movement, consolidation, and archival of recorded state.
+- The #Memory layer is self-growing Markdown memory for live work, continuity, accepted records, historical context, and candidate learning.
+- Memory is authoritative for the capture, movement, consolidation, and archival of recorded state.
 - Memory may record any subject, including how work is performed, without making that behavior active.
 - Accepted behavior that should guide future work belongs in the matching #Core route; Memory may retain useful context or rationale.
 - Memory states are `working/`, `emerging/`, `crystallized/`, and `archived/`.
@@ -21,4 +21,4 @@ Accepted decisions extracted from the design sessions and idea notes on 2026-07-
 - `decisions/` is installed under `crystallized/` because decisions are accepted rationale, not a lifecycle state.
 - `documents/` is installed under `crystallized/` for durable accepted records or routes to those records.
 - `references/` is not installed for now.
-- `archived/` remains a root memory state. Archive child routes can be created when they preserve origin, ownership, or clarity better than a flat archive.
+- `archived/` remains a root memory state. Archive child routes can be created when they preserve source, authority, or clarity better than a flat archive.

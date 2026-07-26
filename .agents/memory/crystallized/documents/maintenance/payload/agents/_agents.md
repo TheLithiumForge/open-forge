@@ -15,5 +15,6 @@ This route contains maintainer contracts for reviewed files below `src/open-forg
 ## Entries
 
 <!-- open-forge:generated-index:start -->
+- [Current maintenance contract for the installable Open Forge loader and its dogfood counterpart](loader.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Framework #Loader #Routing
 - [Current maintenance contract for the installable Templates Core category entrypoint](templates.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Core #Template
 <!-- open-forge:generated-index:end -->

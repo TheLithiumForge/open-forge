@@ -14,15 +14,15 @@ A category groups related routes under one category `entrypoint`. Open Forge-aut
 
 A category `entrypoint` combines stable category meaning with generated navigation.
 
-## Ownership
+## Authority And Sources
 
 The loader contains the generated registry of active root routes and their one-line purposes.
 
-Each category `entrypoint` owns its installed meaning, boundaries, authority, and generated `entries`.
+Each category `entrypoint` is authoritative for its installed meaning, boundaries, authority, and generated `entries`.
 
 Each framework descriptor governs its corresponding installed category file.
 
-A routed destination owns its detailed truth.
+Detailed truth comes from the routed destination or the authoritative source it identifies.
 
 The installed payload boundary is governed by `docs/framework/concepts/payload-boundary.md`.
 
@@ -53,9 +53,9 @@ Tags must not be the only indication of workspace-wide or mandatory behavior. Ta
 
 Reserved load-policy tags are #LoadNow and #KeepInMind. Layer tags such as #Core, #Memory, and #Extension are classification signals only. Built-in route type tags use singular PascalCase, such as #Directive, #Pattern, #Guidance, #Skill, #Workflow, and #Workspace.
 
-A primitive category may extend its own type recursively at any depth. Workflows may also own mixed local bundles of directives, patterns, guidance, and skills. Other category types reference root primitives instead of embedding mixed local scopes.
+A primitive category may extend its own type recursively at any depth. Workflows may also contain mixed local bundles of directives, patterns, guidance, and skills. Other category types reference root primitives instead of embedding mixed local scopes.
 
-Within a recursively selected non-directive category, material in a narrower positive scope is preferred over broader material of the same primitive when safe and allowed. The category `entrypoint` owns any additional precedence rules for its contents.
+Within a recursively selected non-directive category, material in a narrower positive scope is preferred over broader material of the same primitive when safe and allowed. The category `entrypoint` is authoritative for any additional precedence rules for its contents.
 
 Directive routes use scope without hidden precedence. Every direct directive file carries #LoadNow, so loading a directive `entrypoint` reads its direct files through the ordinary loaded-parent rule. Direct files under the baseline-loaded root directive route bind workspace-wide. Selecting and loading a positively described child directive route establishes the narrower scope before its direct #LoadNow entries are read. Child directives add to loaded ancestors; conflicts are reported rather than resolved through silent override. Directive bodies contain Axioms and no second applicability gate. Reading an inactive archive, example, or source payload for inspection does not activate that directive route.
 
@@ -85,7 +85,7 @@ When an `entrypoint` is loaded, agents read each generated `entry` tagged #LoadN
 
 #KeepInMind loads standing follow-up context as a complete routed catalogue.
 
-At task start or resume, after actual context restoration, before handoff, and before closeout, agents read or recheck every routed #KeepInMind result and treat its follow-up instructions as binding within the authority of the owning content. They also refresh it at a transition when its follow-ups may have changed. When the CLI is available, `open-forge load --bodies` provides the complete effective baseline; plain traversal of generated route trees remains the fallback. A broken chain is a routing defect to repair, not permission to silently omit the result.
+At task start or resume, after actual context restoration, before handoff, and before closeout, agents read or recheck every routed #KeepInMind result and follow it within the authority and scope established by its route and content. They also refresh it at a transition when its follow-ups may have changed. When the CLI is available, `open-forge load --bodies` provides the complete effective baseline; plain traversal of generated route trees remains the fallback. A broken chain is a routing defect to repair, not permission to silently omit the result.
 
 Load-policy tags do not create authority, scope, precedence, or a write requirement. #LoadNow autoload follows visible loaded-parent chains. #KeepInMind is the deliberate catalogue-wide continuity exception because lost follow-up context is most costly across long sessions and context restoration.
 
@@ -101,9 +101,9 @@ CLI route arguments remain workspace-relative because they are command inputs ra
 
 ## Scoped Routes
 
-A `framework route` is an Open Forge core route with stable default meaning.
+A `framework route` is a standard Core or Memory route shipped by Open Forge.
 
-A `scope route` is a local route used to narrow meaning or ownership for routes below it. A `scope route` is created with a concrete `slug` folder and its own `entrypoint`.
+A `scope route` is a local routed subtree used to narrow authority or meaning for routes below it. A `scope route` is created with a concrete `slug` folder and its own `entrypoint`.
 
 A `scoped framework route` is a `framework route` initialized inside a `scope route`. It keeps the framework contract inside that scope unless a local edit or overwrite changes it.
 
@@ -134,7 +134,7 @@ memory/mobile-app/crystallized/documents/_documents.md
 
 Open Forge does not pin typed grouping folders such as `projects/`, `domains/`, `teams/`, or `platforms/`. They are user-created `scope routes` when useful.
 
-`Slug` placement changes meaning. A `slug` below a state route scopes material inside that state. A `slug` above a state route owns its own state routes. Both are valid when `entrypoints` make the scope clear.
+`Slug` placement changes meaning. A `slug` below a state route scopes material inside that state. A `slug` above a state route may contain its own state routes. Both are valid when `entrypoints` make the scope clear.
 
 Agents route through concrete paths and `entrypoint` content, not template syntax.
 
@@ -146,9 +146,9 @@ Agents load routing layers in this order:
 
 1. Load the loader; its authored axioms bind immediately.
 2. Read generated `entries` tagged #LoadNow in listed order. Bind each loaded `entrypoint` before traversing its own `Entries`.
-3. Read the complete routed #KeepInMind catalogue; each result binds within its owner's authority and remains active as follow-up context.
+3. Read the complete routed #KeepInMind catalogue; each result remains active as follow-up context within the authority and scope established by its route and content.
 4. Let the current request select other relevant `entries` by path, description, and tags, binding each selected route as it is loaded.
-5. Follow selected routes to the destinations that own detailed truth.
+5. Follow selected routes to their detailed destinations or identified authoritative sources.
 6. At context restoration, handoff, closeout, or a transition that may have changed follow-ups, recheck the complete routed #KeepInMind catalogue and perform its required actions.
 
 Whenever a Markdown file has a user-owned `.overwrite.md` companion, read it immediately after the base. The overwrite inherits the base route, is never an independent generated entry, and has final precedence within that file's scope.
@@ -169,7 +169,7 @@ Routing is aligned when:
 - loader `entries` provide enough meaning to route by relevance
 - every loader category has an installed `entrypoint`
 - every Open Forge-authored category has a matching framework descriptor
-- every category owns its detailed meaning in its `entrypoint`
+- every category `entrypoint` is authoritative for its installed meaning
 - installed files provide enough meaning without governance descriptors
 - generated `entries` remain navigation metadata plus reserved load policy
 - reserved load-policy tags affect loading only
@@ -181,7 +181,7 @@ Routing is aligned when:
 - paths or descriptions expose mandatory and workspace-wide scope without relying on tags alone
 - direct directive files carry #LoadNow; active directive routes settle scope before bodies are read, root direct files bind workspace-wide, and selected child direct files bind within their visible positive scope
 - directive bodies add no second applicability gate, child directive scopes do not silently override ancestors, and inactive archive, example, or source inspection does not activate a directive
-- workflow descriptions and tags support selection, phase tags remain non-waterfall wayfinding, and routed Goals own execution and completion
+- workflow descriptions and tags support selection, phase tags remain non-waterfall wayfinding, and routed Goals govern execution and completion
 - generated `Entries` and authored `Required Routes` use concrete containing-file-relative Markdown links
 - loader links resolve relative to `.agents/loader.md`
 - CLI `--route` arguments and reported route identities remain workspace-relative
@@ -193,7 +193,7 @@ Routing is aligned when:
 - `scope routes` can appear before, after, or between pinned route segments
 - installed workspaces do not contain route-template placeholders
 - `scoped framework route` `entrypoints` can be identified by path shape and canonical `entrypoint` filename
-- routed destinations own detailed truth
+- detailed truth comes from routed destinations or the authoritative sources they identify
 - skills route through their standard `SKILL.md` and keep their resources skill-owned
 - nested categories use the same contract at every depth
 - ancestor axioms apply within loaded route chains without restatement

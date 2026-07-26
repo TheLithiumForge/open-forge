@@ -74,7 +74,7 @@ Useful tags identify the primitive type, domain, work type, topic, technology, a
 
 Paths and descriptions must keep critical scope readable. Tags reinforce route selection, but tags alone must not create directive authority. Direct root files are workspace-wide because the root directive route is baseline-loaded; child directive scope is selected before its body is opened.
 
-Use normal words when naming, defining, or explaining the local concept itself. Use tags when the text points to routed ownership, classification, promotion, load policy, truth status, or search/reference targets. For example, a memory `entrypoint` says "Memory may describe behavior without activating it"; a promotion rule can say "move to #Core".
+Use normal words when naming, defining, or explaining the local concept itself. Use tags when the text points to routed authority, classification, promotion, load policy, truth status, or search/reference targets. For example, a memory `entrypoint` says "Memory may describe behavior without activating it"; a promotion rule can say "move to #Core".
 
 Open Forge-authored payload tags use singular PascalCase concept names by default. Built-in route type tags are #Directive, #Pattern, #Guidance, #Skill, #Workflow, and #Workspace.
 
@@ -166,7 +166,7 @@ A workflow starts with `## Mode`, followed in order by `## Goal`, `## Required R
 
 ## Scope Route Slugs
 
-A `scope route` is a routed folder used to narrow meaning or ownership for routes below it.
+A `scope route` is a routed folder used to narrow authority or meaning for routes below it.
 
 A `slug` is the stable folder segment used to create that route.
 

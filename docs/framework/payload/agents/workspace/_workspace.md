@@ -8,13 +8,13 @@ The workspace category `entrypoint` defines how agents discover important projec
 
 ## Represents
 
-The workspace category represents the navigation layer between the loader and the destinations that own workspace truth.
+The workspace category represents the navigation layer between the loader and the authoritative workspace destinations.
 
 It supports a single project, a monorepo, multiple repositories, a document workspace, or a larger collection without imposing one route-file organization.
 
 ## Contains
 
-The installed file follows the shared category `entrypoint` shape owned by the formatting concept: scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
+The installed file follows the shared category `entrypoint` shape defined by the formatting concept: scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
 
 ## Workspace Contract
 
@@ -24,7 +24,7 @@ Routes cover the smallest set of destinations needed for reliable discovery. Pre
 
 Workspace route filenames, grouping, and nesting depth are owned by the workspace. A route file can represent one destination or a related group. Nested workspace categories extend routing to any useful depth.
 
-A destination can be a file, folder, project, repository, system, or document set. The routed destination owns detailed truth, and workspace maps do not duplicate #Memory or destination content.
+A destination can be a file, folder, project, repository, system, or document set. Detailed truth comes from the routed destination or the authoritative source it identifies, and workspace maps do not duplicate #Memory or destination content.
 
 The current request determines which routed files are loaded. Generated `entries` provide navigation metadata and reserved load policy only. They never define instructions or authority.
 
@@ -44,15 +44,15 @@ Route files can use any clear filename. A workspace can keep several related rou
 
 ## Generated Region
 
-The final generated region uses the shared category `entrypoint` shape owned by the formatting concept.
+The final generated region uses the shared category `entrypoint` shape defined by the formatting concept.
 
-Generated `entries` list direct workspace route files and direct child workspace category `entrypoints`. Child `entrypoints` may use CLI compatibility aliases. The shared formatting governor owns naming, ambiguity handling, marker validation, legacy migration, and regeneration behavior.
+Generated `entries` list direct workspace route files and direct child workspace category `entrypoints`. Child `entrypoints` may use CLI compatibility aliases. The shared formatting concept governs naming, ambiguity handling, marker validation, legacy migration, and regeneration behavior.
 
 ## Used By
 
 The loader registry exposes this category's path and meaning. Agents load it when the current request needs workspace routes.
 
-Agents use its generated `entries` to choose relevant workspace route files, then follow those routes to the destinations that own detailed truth.
+Agents use its generated `entries` to choose relevant workspace route files, then follow those routes to detailed destinations or identified authoritative sources.
 
 ## Why
 
