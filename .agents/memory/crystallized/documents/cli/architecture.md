@@ -285,9 +285,9 @@ Names such as `find`, `extend`, and `--pro` emerged incrementally. The overhaul 
 
 Rollback is in-process and no persistent journal coordinates abrupt recovery. The MVP also has no explicit workspace mutation lock or concurrent-plan conflict model.
 
-### Fragmented Authoring Contract
+### Authoring Help Is Not Exposed
 
-The CLI help explains commands but does not expose one coherent canonical Markdown authoring reference. Formatting, route syntax, generated regions, frontmatter, and primitive-specific shapes are distributed across current files and migration descriptors. The MVP also accepts selected legacy equivalents without clearly separating canonical authoring, compatibility input, and unsupported syntax.
+The [Open Forge Markdown scope](../framework/markdown/_markdown.md) now separates canonical syntax, shared routed representation, and compatibility input. The MVP CLI does not yet expose those contracts through dedicated syntax help or derive every parser constant from a versioned schema. It accepts selected legacy equivalents internally, while the current public help does not explain the boundary between canonical, compatibility, and unsupported syntax.
 
 ### Limited Artifact Scaffolding
 

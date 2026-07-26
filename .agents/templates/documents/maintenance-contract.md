@@ -16,6 +16,7 @@ The continuing document shape and review expectations belong to the [maintenance
 Link to authoritative runtime sources and true counterparts instead of copying their complete contents.
 Place relationships beside the contract or verification statement they affect.
 Replace this template's frontmatter, title, placeholders, and comments.
+Add an optional frontmatter `responsibility` when one stable sentence will help keep future maintenance concerns local to this document.
 -->
 
 ## Source

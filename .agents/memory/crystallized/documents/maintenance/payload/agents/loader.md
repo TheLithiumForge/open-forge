@@ -1,6 +1,7 @@
 ---
 open-forge:
   description: Current maintenance contract for the installable Open Forge loader and its dogfood counterpart
+  responsibility: Preserve the loader's authored contract, source and dogfood alignment, generated boundary, and verification
   tags: [Memory, Document, CurrentTruth, Evergreen, Maintenance, Governance, Payload, Framework, Loader, Routing]
 ---
 
@@ -10,7 +11,7 @@ open-forge:
 
 [`src/open-forge/.agents/loader.md`](../../../../../../../src/open-forge/.agents/loader.md) is the canonical installed Framework loader. The repository [loader](../../../../../../loader.md) dogfoods the same authored contract with its locally generated root entries.
 
-The [Framework Architecture](../../../framework/architecture.md#loader-and-entrypoints) is authoritative for the loader's structural role. The [routing model](../../../../decisions/routing-model.md), [routing surfaces](../../../../decisions/routing-surfaces.md), [scope and slugs](../../../../decisions/scope-and-slugs.md), [tags](../../../../decisions/tags.md), [loading reliability](../../../../decisions/loading-reliability.md), [typed authority terminology](../../../../decisions/authoritative-source-terminology.md), and [source and packaging](../../../../decisions/source-and-packaging.md) decisions preserve accepted rationale.
+The [Framework Architecture](../../../framework/architecture.md#loader-and-entrypoints) is authoritative for the loader's structural role. The [routed Markdown contract](../../../framework/markdown/routes.md) is authoritative for its canonical authored and generated representation. The [routing model](../../../../decisions/routing-model.md), [routing surfaces](../../../../decisions/routing-surfaces.md), [scope and slugs](../../../../decisions/scope-and-slugs.md), [tags](../../../../decisions/tags.md), [loading reliability](../../../../decisions/loading-reliability.md), [typed authority terminology](../../../../decisions/authoritative-source-terminology.md), and [source and packaging](../../../../decisions/source-and-packaging.md) decisions preserve accepted rationale.
 
 ## Contract
 
@@ -34,7 +35,8 @@ The [Framework Architecture](../../../framework/architecture.md#loader-and-entry
 
 ### Routing And Loading
 
-- The loader defines only the route terms required before navigation: `entrypoint`, `entry`, `root route`, `framework route`, `scope route`, `scoped framework route`, `slug`, and `axiom`.
+- The loader defines only the terms required before navigation: `entrypoint`, `entry`, `description`, `responsibility`, `root route`, `framework route`, `scope route`, `scoped framework route`, `slug`, and `axiom`.
+- `description` remains the pre-load route-selection surface. Optional `responsibility` bounds what an opened file is responsible for defining without creating authority or loading behavior.
 - A Framework route may belong to Core or Memory. A scope route narrows authority or meaning through the ordinary routed-folder mechanism.
 - Generated `Entries` remain navigation metadata. Detailed meaning comes from the routed destination or the authoritative source it identifies.
 - Loading and tags change visibility, timing, or classification without creating authority.

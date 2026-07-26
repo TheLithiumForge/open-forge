@@ -18,7 +18,8 @@ Document templates help create coherent current views without requiring a fixed 
 - Keep candidate direction, active work, and superseded history in their appropriate lifecycle records instead of mixing several authority states into one current document
 - State accepted current meaning in the document and link to decisions that preserve useful rationale instead of copying their complete history
 - Link to existing authoritative sources rather than turning a document into a duplicate or dumping ground
-- Replace the template's source metadata with frontmatter that accurately describes the instantiated document
+- Replace the template's source metadata with a destination `description`, useful tags, and an optional `responsibility` when one stable boundary should constrain future edits
+- Treat `description` as the pre-load selection surface and `responsibility` as the stable boundary of what the opened document is responsible for defining
 
 ## Entries
 

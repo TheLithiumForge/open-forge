@@ -100,7 +100,7 @@ The CLI should provide `open-forge help syntax` as the easy entry to Open Forge'
 
 The help should make one preferred form obvious for every Markdown construct Open Forge generates, parses semantically, or asks users and agents to author. At minimum, it should cover:
 
-- Scoped YAML frontmatter
+- Scoped YAML frontmatter with `description`, optional `responsibility`, and tags
 - ATX headings
 - Paragraph and blank-line separation
 - Hyphen unordered lists and the canonical ordered-list form
@@ -113,7 +113,7 @@ The help should make one preferred form obvious for every Markdown construct Ope
 - Overwrite companions
 - Primitive-specific document shapes that deterministic validation recognizes
 
-The command must surface a human-readable contract from an authoritative #Core source rather than make help text privately authoritative for syntax. It should distinguish:
+The command must surface the accepted [Open Forge Markdown scope](../../crystallized/documents/framework/markdown/_markdown.md) and the installed runtime sources it represents rather than make help text privately authoritative for syntax. It should distinguish:
 
 - Canonical authoring that Open Forge emits, documents, and expects
 - Explicit legacy or interoperability syntax accepted only for reading or migration

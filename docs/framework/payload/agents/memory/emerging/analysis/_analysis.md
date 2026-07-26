@@ -14,7 +14,7 @@ It is emerging memory, not a decision and not a final document.
 
 ## Contains
 
-The installed file follows the shared category `entrypoint` shape owned by the formatting concept: scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
+The installed file follows the category `entrypoint` shape defined by the [routed Markdown contract](../../../../../../../.agents/memory/crystallized/documents/framework/markdown/routes.md): scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
 
 ## Analysis Contract
 
@@ -48,9 +48,9 @@ Subcategories are encouraged when they separate unrelated questions or evidence 
 
 ## Generated Region
 
-The final generated region uses the shared category `entrypoint` shape owned by the formatting concept.
+The final generated region uses the category `entrypoint` shape defined by the [routed Markdown contract](../../../../../../../.agents/memory/crystallized/documents/framework/markdown/routes.md).
 
-Generated `entries` list direct analysis files and direct child analysis categories. The shared formatting and routing governors own metadata extraction, `entry` formatting, naming, recursive discovery, marker validation, and regeneration.
+Generated `entries` list direct analysis files and direct child analysis categories. The [routed Markdown contract](../../../../../../../.agents/memory/crystallized/documents/framework/markdown/routes.md) defines metadata, `entry` representation, entrypoint naming, and marker shape. The routing model governs recursive discovery and generation.
 
 ## Used By
 

@@ -1,6 +1,7 @@
 ---
 open-forge:
   description: Current maintenance contract for the installable Templates Core category entrypoint
+  responsibility: Preserve the Templates category contract, source and dogfood boundary, distribution policy, and verification
   tags: [Memory, Document, CurrentTruth, Evergreen, Maintenance, Governance, Payload, Core, Template]
 ---
 
@@ -10,7 +11,7 @@ open-forge:
 
 [`src/open-forge/.agents/templates/_templates.md`](../../../../../../../src/open-forge/.agents/templates/_templates.md) is the canonical installed Templates category entrypoint. The repository [Templates entrypoint](../../../../../../templates/_templates.md) dogfoods the same authored contract and adds repository-local generated entries.
 
-The [Framework Architecture](../../../framework/architecture.md#templates) is authoritative for the primitive's current role and relationship with other Core primitives. The [Templates as a Core Primitive decision](../../../../decisions/template-primitive.md) preserves why Templates are an independent Core primitive.
+The [Framework Architecture](../../../framework/architecture.md#templates) is authoritative for the primitive's current role and relationship with other Core primitives. The [routed Markdown contract](../../../framework/markdown/routes.md) defines the canonical representation shared by the entrypoint and routed Template files. The [Templates as a Core Primitive decision](../../../../decisions/template-primitive.md) preserves why Templates are an independent Core primitive.
 
 ## Contract
 

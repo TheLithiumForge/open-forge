@@ -14,7 +14,7 @@ It supports a single project, a monorepo, multiple repositories, a document work
 
 ## Contains
 
-The installed file follows the shared category `entrypoint` shape defined by the formatting concept: scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
+The installed file follows the category `entrypoint` shape defined by the [routed Markdown contract](../../../../../.agents/memory/crystallized/documents/framework/markdown/routes.md): scoped `open-forge:` frontmatter, a title, one short definition, compact scope-specific axioms, and a final marker-bounded generated index region.
 
 ## Workspace Contract
 
@@ -44,9 +44,9 @@ Route files can use any clear filename. A workspace can keep several related rou
 
 ## Generated Region
 
-The final generated region uses the shared category `entrypoint` shape defined by the formatting concept.
+The final generated region uses the category `entrypoint` shape defined by the [routed Markdown contract](../../../../../.agents/memory/crystallized/documents/framework/markdown/routes.md).
 
-Generated `entries` list direct workspace route files and direct child workspace category `entrypoints`. Child `entrypoints` may use CLI compatibility aliases. The shared formatting concept governs naming, ambiguity handling, marker validation, legacy migration, and regeneration behavior.
+Generated `entries` list direct workspace route files and direct child workspace category `entrypoints`. Child `entrypoints` may use CLI compatibility aliases. The [routed Markdown contract](../../../../../.agents/memory/crystallized/documents/framework/markdown/routes.md) defines entrypoint naming and marker shape. The routing model and current CLI architecture govern discovery, ambiguity handling, migration, and regeneration.
 
 ## Used By
 
