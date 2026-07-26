@@ -1,7 +1,7 @@
 ---
 open-forge:
-    description: Current Open Forge CLI MVP architecture, retained invariants, liabilities, overhaul requirements, and verification boundary
-    tags: [Memory, Document, CurrentTruth, Evergreen, Architecture, CLI, MVP, Tooling, ACE]
+  description: Current Open Forge CLI MVP role, command surface, deterministic state, safety model, verification boundary, proven properties, and liabilities
+  tags: [Memory, Document, CurrentTruth, Evergreen, Architecture, CLI, MVP, Tooling, ACE]
 ---
 
 # Open Forge CLI MVP Architecture
@@ -15,11 +15,10 @@ The Open Forge CLI is a dogfooded MVP scheduled for an architectural overhaul. T
 - Deterministic state and safety boundaries
 - Proven behavior worth preserving
 - MVP liabilities that should not become permanent design
-- Requirements and conceptual boundaries for the overhaul
 
 The [top architecture](../architecture.md) owns the CLI's relationship to the complete Open Forge system. The [Framework Architecture](../framework/architecture.md) owns the human-readable route, authority, Memory, and primitive contracts that the CLI consumes. The [Extensions MVP Architecture](../extensions/architecture.md) owns extension package semantics and composition. This document owns how the current CLI reads, validates, plans, and changes those surfaces.
 
-The current command names, flags, file layout, and internal modules are descriptive MVP state rather than automatically accepted final design.
+The current command names, flags, file layout, and internal modules are descriptive MVP state rather than automatically accepted final design. The [CLI overhaul candidate](../../../emerging/ideas/cli-overhaul.md) owns prospective replacement architecture and interface direction.
 
 ## Role
 
@@ -63,16 +62,16 @@ The implementation exposes selected pure internals only for fast regression test
 
 The MVP has eight command families:
 
-| Command   | Current responsibility                                                                                                                                                                                                              |
-| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `install` | Install or reapply the shipped Framework and patch managed root entry blocks                                                                                                                                                        |
-| `extend`  | List, select, install, reconcile, preview, or remove extension packages                                                                                                                                                             |
-| `index`   | Rebuild the loader registry and generated `Entries` regions                                                                                                                                                                         |
-| `load`    | Emit baseline and continuity context in plain, path, or JSON form                                                                                                                                                                   |
-| `find`    | Query routed files by explicit tags or routes and optionally follow required routes                                                                                                                                                 |
-| `chain`   | Explain loader-to-target inheritance and optionally extract one heading                                                                                                                                                             |
-| `doctor`  | Validate deterministic route, document-shape, and dependency contracts                                                                                                                                                              |
-| `create`  | Scaffold route categories or local extension packages - this should be extended to normal files as well like scaffold --crystalized/decision name.md aka, easy way to add the frontmatter, or maybe just create path.md we will see |
+| Command | Current responsibility |
+|---|---|
+| `install` | Install or reapply the shipped Framework and patch managed root entry blocks |
+| `extend` | List, select, install, reconcile, preview, or remove extension packages |
+| `index` | Rebuild the loader registry and generated `Entries` regions |
+| `load` | Emit baseline and continuity context in plain, path, or JSON form |
+| `find` | Query routed files by explicit tags or routes and optionally follow required routes |
+| `chain` | Explain loader-to-target inheritance and optionally extract one heading |
+| `doctor` | Validate deterministic route, document-shape, and dependency contracts |
+| `create` | Scaffold route categories or local extension packages |
 
 The full current user contract is documented in [`docs/cli.md`](../../../../../docs/cli.md). Exact behavior remains grounded in the implementation and its tests.
 
@@ -214,9 +213,9 @@ The primary current test owners are:
 
 Tests demonstrate mechanical behavior. They do not prove that agents will interpret or follow the context emitted by the CLI.
 
-## Strengths To Preserve
+## Proven Properties
 
-The overhaul should preserve these proven properties unless stronger evidence supports a replacement:
+The current MVP demonstrates these properties:
 
 - Human-readable files remain semantically complete
 - Route lookup and context assembly remain deterministic and provenance-visible
@@ -237,7 +236,7 @@ The current implementation should not be extended indefinitely in its present fo
 
 ### Monolithic Implementation
 
-One 4,464-line module owns every command, parser, policy, adapter, transaction, and extension concern. This makes the blast radius of a small change difficult to predict and encourages tests to reach through a frozen internal export rather than a designed application boundary.
+One roughly 4,500-line module owns every command, parser, policy, adapter, transaction, and extension concern. This makes the blast radius of a small change difficult to predict and encourages tests to reach through a frozen internal export rather than a designed application boundary.
 
 ### Conflated Lifecycle Intent
 
@@ -286,119 +285,17 @@ Names such as `find`, `extend`, and `--pro` emerged incrementally. The overhaul 
 
 Rollback is in-process and no persistent journal coordinates abrupt recovery. The MVP also has no explicit workspace mutation lock or concurrent-plan conflict model.
 
-## Overhaul Architecture
+### Fragmented Authoring Contract
 
-The overhaul should be organized around one deterministic planning core used by thin command and presentation surfaces.
+The CLI help explains commands but does not expose one coherent canonical Markdown authoring reference. Formatting, route syntax, generated regions, frontmatter, and primitive-specific shapes are distributed across current files and migration descriptors. The MVP also accepts selected legacy equivalents without clearly separating canonical authoring, compatibility input, and unsupported syntax.
 
-Conceptually:
+### Limited Artifact Scaffolding
 
-```text
-Command and machine interfaces
-  -> application operations
-    -> plans and reviewed effects
-      -> Framework and extension domain services
-        -> filesystem, Git, package, and terminal adapters
-```
+`create` scaffolds categories and local extension packages but not ordinary routed documents, decisions, ideas, status records, or other template-based artifacts. Agents and users must currently assemble metadata, placement, and route maintenance themselves.
 
-### Interface Layer
+## Candidate Direction
 
-The interface layer parses user intent, chooses human or structured presentation, and maps stable operation results to exit status. It contains no route, ownership, or transaction policy.
-
-Interactive flows compose the same application operations exposed non-interactively. A wizard cannot become a separate behavior path.
-
-### Application Operations
-
-Each operation represents one clear intent, such as:
-
-- Inspect effective context
-- Query explicit routes and relationships
-- Validate a workspace
-- Rebuild derived navigation
-- Initialize the Framework
-- Complete missing selected defaults
-- Preview and apply an upgrade
-- Restore selected distribution files
-- Create a scope or routed artifact
-- Install, update, or remove extensions
-
-Final command names remain a later interface decision. The semantic distinction among these operations is architectural.
-
-### Domain Services
-
-Pure or mostly pure services should own:
-
-- Markdown metadata and structural parsing
-- Route graph construction and resolution
-- Context loading and inheritance
-- Framework contract validation
-- Portable path and ownership identity
-- Distribution comparison
-- Extension dependency resolution
-- Change planning
-
-These services return values and findings without printing, prompting, or mutating the filesystem.
-
-### Plans
-
-Every write operation should produce one inspectable plan before application.
-
-A common plan identifies:
-
-- Operation and target
-- Source and declared owner
-- Preconditions
-- Create, update, delete, preserve, and unchanged effects
-- Authored, managed, and derived boundaries
-- Reasons for each effect
-- Conflicts and required decisions
-- Safety and review requirements
-- Expected post-application verification
-
-The same plan drives preview, human presentation, JSON output, application, and tests.
-
-### Application And Transactions
-
-The application layer revalidates plan assumptions immediately before mutation, applies effects in a recoverable order, and verifies the resulting state.
-
-Git remains the preferred durable checkpoint. A future persistent journal or lock is justified only if it closes a demonstrated recovery or concurrency gap without becoming hidden semantic state.
-
-### Adapters
-
-Filesystem, Git, distribution discovery, terminal interaction, clocks, hashing, and packaging belong behind narrow adapters. This keeps platform and process behavior testable without contaminating domain rules.
-
-## Preservation-First Lifecycle
-
-The overhaul must assume that existing files may be intentionally customized.
-
-Default behavior should:
-
-- Preserve existing authored files
-- Report divergence from distribution
-- Add missing material only under an explicit completion intent
-- Preview upgrades before replacement
-- Require explicit scope for restoration
-- Preserve user-owned overwrites and local routes
-- Keep generated regions separate from authored content
-
-Forceful behavior must describe exactly which preservation boundary it crosses. A generic expert flag must not stand in for several materially different actions.
-
-## Structured Interface Contract
-
-Every read and write operation should have a stable structured result suitable for scripts and future tools.
-
-A versioned structured response should separate:
-
-- Data
-- Findings
-- Warnings
-- Conflicts
-- Planned or applied effects
-- Provenance
-- Suggested next actions
-
-Human output should be rendered from the same result rather than maintained as an independent implementation.
-
-This does not require a long-lived daemon or public network API. A deterministic command process remains sufficient.
+The [CLI overhaul candidate](../../../emerging/ideas/cli-overhaul.md) owns prospective component boundaries, lifecycle operations, planning, structured results, canonical Markdown syntax help, artifact scaffolding, and migration direction. Keeping that material in Emerging Memory prevents a candidate design from appearing as accepted current CLI architecture.
 
 ## Boundaries And Non-Goals
 
@@ -415,24 +312,6 @@ The CLI is not:
 
 Semantic relevance, remote registries, provider orchestration, and Rune integration remain separate capabilities. If introduced, they consume the same explicit Framework owners.
 
-## Migration Approach
-
-The overhaul should begin only after the Framework and extension contracts are accepted.
-
-Migration should:
-
-1. Classify current tests as invariant protection, MVP compatibility, or obsolete-schema coverage
-2. Extract pure domain behavior from the monolith without changing public behavior unnecessarily
-3. Establish the common plan and structured result contracts
-4. Separate read-only context operations from mutation operations
-5. Split installation intents before changing overwrite behavior
-6. Move extension-specific semantics behind the Extensions boundary
-7. Replace scattered Framework constants with explicit owned contracts
-8. Preserve closure tests around real filesystem, Git, package, and process boundaries
-9. Remove MVP commands or flags only through an intentional migration surface
-
-Compatibility is valuable only when it preserves a desired user contract. An unpublished MVP shape should not constrain the final architecture.
-
 ## Related Current Views
 
 - [Open Forge architecture](../architecture.md)
@@ -445,7 +324,6 @@ Compatibility is valuable only when it preserves a desired user contract. An unp
 
 These files preserve earlier direction or implementation rationale and remain subject to reconciliation:
 
-- [CLI overhaul candidate](../../../emerging/ideas/cli-overhaul.md)
 - [Earlier extensions and CLI decision](../../decisions/extensions-and-cli.md)
 - [Earlier scalability and CLI experience exploration](../../../archived/ideas/2026-06-22_scalability-and-cli-experience.md)
 - [Earlier CLI design exploration](../../../archived/ideas/cli-design.md)

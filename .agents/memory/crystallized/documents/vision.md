@@ -26,6 +26,12 @@ Large predefined methodologies answer this problem with more process, instructio
 
 Open Forge instead makes accepted context explicit, connected, scoped, and cheap to retrieve. The workspace starts with a small useful foundation, then develops its own methods from real decisions, corrections, evidence, and recurring needs.
 
+## Scope
+
+Open Forge shapes the working environment around a subject. It provides human-readable context, explicit relationships and authority, routed retrieval, continuity, reusable starting points, and deterministic assistance. It does not own the subject's goals, domain knowledge, source code, product data, or external systems unless the workspace deliberately records or routes to them.
+
+Development is a proving ground, not a boundary. Open Forge can grow around any person, project, team, discipline, collection of projects, or shared source of truth that benefits from explicit, evolving context.
+
 ## Principles
 
 ### User-Owned And Human-Readable
@@ -57,10 +63,6 @@ Open Forge assumes contemporary agents can reason, inspect files, follow scoped 
 
 Human-readable Markdown contains the complete semantic contract. Deterministic tools make correct loading, navigation, validation, and change safer and cheaper without privately owning meaning.
 
-### Broad By Design
-
-Development is a proving ground, not a boundary. Open Forge can grow around any person, project, team, discipline, collection of projects, or shared source of truth that benefits from explicit, evolving context.
-
 ### Honest Reliability
 
 Structure and deterministic tooling increase the probability of correct behavior from nondeterministic agents. Open Forge validates what can be made deterministic and does not claim mechanical control over reasoning or compliance.
@@ -91,8 +93,8 @@ Open Forge is not:
 
 ## Related Current Views
 
-- [Current framework architecture](architecture.md)
+- [Open Forge architecture](architecture.md)
 
-## Migration Input
+## Decisions And Rationale
 
-- [Earlier product-direction rationale to reconcile during migration](../decisions/product-direction.md)
+- [Product direction](../decisions/product-direction.md)

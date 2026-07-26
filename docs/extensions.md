@@ -2,7 +2,7 @@
 
 Extensions add optional whole files to the existing Open Forge route tree.
 
-One extension may contain a skill, workflow, directives, patterns, guidance, workspace or memory routes, support files, a deliberate mix, or only dependencies as a convenience pack. “Extension” describes installation and ownership, never the runtime meaning of installed content.
+One extension may contain a skill, workflow, directives, patterns, guidance, templates, workspace or memory routes, support files, a deliberate mix, or only dependencies as a convenience pack. “Extension” describes installation and ownership, never the runtime meaning of installed content.
 
 Installed files are complete runtime truth. Agents do not need the source manifest, catalogue grouping, ownership receipt, or CLI to understand or use them.
 
@@ -29,7 +29,7 @@ src/extensions/{group}/{package-folder}/
       ... whole routed files ...
 ```
 
-The group and package folder help maintainers browse the source and help the catalogue present related choices. They do not define identity or runtime meaning. The manifest id is the stable install key; installed payload files own their ordinary directive, skill, workflow, pattern, guidance, workspace, memory, or support semantics.
+The group and package folder help maintainers browse the source and help the catalogue present related choices. They do not define identity or runtime meaning. The manifest id is the stable install key; installed payload files own their ordinary directive, skill, workflow, pattern, guidance, template, workspace, memory, or support semantics.
 
 A dependency-only pack may omit `payload/`:
 

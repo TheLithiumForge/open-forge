@@ -16,7 +16,7 @@ Route map for this repository's important owners and representations. Each desti
 - [current Extensions MVP architecture, package semantics, composition, ownership, liabilities, and overhaul requirements.](../memory/crystallized/documents/extensions/architecture.md) - #CurrentTruth #Evergreen #Architecture #Extension #MVP #Document
 - [current CLI behavior truth; prefer it over inferring intent from the implementation.](../../docs/cli.md) - #CurrentTruth #Evergreen #Documentation #CLI
 - [current maintainer contracts for reviewed source and repository surfaces.](../memory/crystallized/documents/maintenance/_maintenance.md) - #CurrentTruth #Evergreen #Maintenance #Governance #Document
-- [unmigrated maintainer descriptors; each remains current for its source until replaced through the file-by-file review.](../../docs/framework/) - #CurrentTruth #Governance #Migration
+- [unmigrated maintainer descriptors retained as migration inputs; reconcile them with accepted current documents and migrated maintenance contracts before relying on them.](../../docs/framework/) - #Contextual #Governance #Migration
 - [the installable payload users receive; runtime truth for installed workspaces, including this one.](../../src/open-forge/) - #CurrentTruth #Payload
 - [the MVP CLI implementation; `src/cli/cli.unit.test.ts`, `src/cli/cli.closure.test.ts`, and `src/cli/extensions.integration.closure.test.ts` cover its pure and command-boundary behavior, with shared infrastructure in `tests/support/` and `tests/run-tests.ts`.](../../src/cli/cli.ts) - #CLI #Implementation
 - [bundled first-party extensions, each with `extension.json` plus `payload/`; `workflow-essentials` is the first one.](../../src/extensions/) - #Extension

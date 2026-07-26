@@ -49,6 +49,8 @@ The following constraints apply throughout Core and Memory:
 10. Accepted behavior that should govern work belongs in Core
 11. Generated metadata is derived and rebuildable
 12. Structure and tools improve the probability of correct agent behavior without claiming mechanical control over reasoning
+13. Instantiating a template transfers ownership to the destination; the template does not manage the result
+14. Framework contracts target the broadest stable semantic owner that preserves their required meaning
 
 ## Shipped Framework
 
@@ -65,6 +67,7 @@ provider bridge files when supported
   guidance/
   patterns/
   skills/
+  templates/
   workflows/
   workspace/
   memory/
@@ -103,6 +106,8 @@ Managed entry blocks preserve workspace-owned content outside their markers. A p
 
 Core provides the smallest common language needed to route, interpret, and apply workspace context. It does not try to encode ordinary reasoning, a development lifecycle, or a complete methodology.
 
+Framework wording uses #Core collectively when any suitable Core owner may satisfy a requirement. It names a specific primitive when that primitive's distinct semantics matter, such as Directives for binding behavior, and enumerates concrete standard routes when the shipped default set itself is the subject. This keeps customizable Frameworks valid without weakening precise contracts.
+
 Core contains:
 
 - The loader and entrypoint contract
@@ -111,10 +116,11 @@ Core contains:
 - Guidance
 - Patterns
 - Skills
+- Templates
 - Workflows
 - Workspace routes
 
-These categories are distinct because they answer different questions. Their default entrypoints and current local contents are exposed by the [directives](../../../../directives/_directives.md), [guidance](../../../../guidance/_guidance.md), [patterns](../../../../patterns/_patterns.md), [skills](../../../../skills/_skills.md), [workflows](../../../../workflows/_workflows.md), and [workspace](../../../../workspace/_workspace.md) routes.
+These categories are distinct because they answer different questions. Their default entrypoints and current local contents are exposed by the [directives](../../../../directives/_directives.md), [guidance](../../../../guidance/_guidance.md), [patterns](../../../../patterns/_patterns.md), [skills](../../../../skills/_skills.md), [templates](../../../../templates/_templates.md), [workflows](../../../../workflows/_workflows.md), and [workspace](../../../../workspace/_workspace.md) routes.
 
 ### Loader And Entrypoints
 
@@ -246,6 +252,20 @@ An applicable pattern is the established default shape in its scope. A deliberat
 A skill is a specialized capability expressed through the standard `SKILL.md` contract supported by the active agent runtime.
 
 Open Forge makes skills routable without redefining their activation, instructions, resources, or execution. A selected `SKILL.md` remains the owner of its own references, scripts, assets, and loading decisions.
+
+### Templates
+
+A template is a reusable source artifact intended to be instantiated into independently owned workspace content.
+
+An agent selects a relevant template, copies it, removes irrelevant material, replaces placeholders and source metadata, and assigns the result to its correct destination owner. From that point, the destination owns the result. Later template changes do not propagate to it.
+
+This ownership transfer distinguishes Templates from Patterns. A Pattern remains the established reusable shape for later creation and review. A Template contributes starting contents. A template may implement or link to a Pattern, and a Directive or Axiom may require continuing behavior, but the template itself creates neither continuing conformance nor authority.
+
+Generic templates are fallbacks rather than universal schemas. A specialization earns a separate file only when it offers materially different copy-ready content. Templates may be scoped, edited, replaced, or removed through the same file-native customization model as other routes.
+
+Each template makes its selection contract explicit before instantiation. Its route description states the need it satisfies and the primary question or result it answers, while removable source instructions repeat that context for a reader inspecting the template directly.
+
+The installable Framework currently ships the [Templates category contract](../../../../templates/_templates.md) without concrete starter artifacts. This repository dogfoods candidate document and Memory templates locally before any of them are considered for the shared payload. The [maintenance contract](../maintenance/payload/agents/templates.md) owns that distribution boundary.
 
 ### Workflows
 
@@ -446,15 +466,15 @@ They may not silently promote a candidate, infer accepted direction, or make a p
 
 Extensions add optional reusable content through the same Framework routes and primitive meanings. They do not create a second loader, root authority model, or runtime interpretation system.
 
-After installation, an extension's files behave like ordinary directives, patterns, guidance, skills, workflows, workspace routes, or Memory. Its packaging metadata does not become necessary to understand its runtime meaning.
+After installation, an extension's files behave like ordinary directives, patterns, guidance, skills, templates, workflows, workspace routes, or Memory. Its packaging metadata does not become necessary to understand its runtime meaning.
 
-The current extensions implementation is an MVP under planned architectural review. The [Extensions MVP Architecture](../extensions/architecture.md) owns its manifests, dependency system, ownership lifecycle, and redesign boundary. The [CLI MVP Architecture](../cli/architecture.md) owns its current deterministic implementation.
+The current extensions implementation is an MVP under planned architectural review. The [Extensions MVP Architecture](../extensions/architecture.md) owns its present manifests, dependency system, ownership lifecycle, and liabilities. The [Extensions overhaul candidate](../../../emerging/ideas/extensions-overhaul.md) owns prospective replacement design. The [CLI MVP Architecture](../cli/architecture.md) owns the current deterministic implementation, while the [CLI overhaul candidate](../../../emerging/ideas/cli-overhaul.md) owns its prospective replacement.
 
 ## Distribution And Dogfood
 
 Users receive the installable Framework from [`src/open-forge/`](../../../../../src/open-forge/). Installed files must contain every contract required to navigate and use the Framework. Governance, repository history, and unpublished design context cannot be hidden runtime dependencies.
 
-This repository's root `.agents/` tree dogfoods the Framework and adds local routes for Open Forge development. Shared behavior should match the installable source. Deliberate repository-only differences remain visibly local.
+This repository's root `.agents/` tree dogfoods the Framework and adds local routes for Open Forge development. Shared behavior should match the installable source. Deliberate repository-only differences remain visibly local. The current repository-local template set is one such evaluation boundary: the shared source ships its route contract, while concrete templates remain local until reviewed.
 
 Current documents and maintenance contracts govern the design and review of source files. Source files own their exact installed wording. Build output and generated indexes are derived from those owners.
 
@@ -499,6 +519,8 @@ The [approved design baseline](../../../working/sessions/2026-07-26_open-forge-d
 - [CLI MVP Architecture](../cli/architecture.md)
 - [Canonical Framework loader](../../../../loader.md)
 - [Current Core directives](../../../../directives/_directives.md)
+- [Current Templates route](../../../../templates/_templates.md)
+- [Templates source maintenance contract](../maintenance/payload/agents/templates.md)
 - [Current Memory contract](../../../_memory.md)
 - [Current route to important repository owners](../../../../workspace/sources-of-truth.md)
 

@@ -71,6 +71,7 @@ When the Open Forge CLI is available, use each applicable command below. Every c
 - [Self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning](memory/_memory.md) - #LoadNow #Memory #OrganicGrowth
 - [Concrete reusable shapes for code, files, APIs, documents, and other inspectable work](patterns/_patterns.md) - #LoadNow #Core #Pattern
 - [Skills available through standard SKILL.md files](skills/_skills.md) - #LoadNow #Core #Skill
+- [Copy-ready source artifacts for creating independently owned workspace content](templates/_templates.md) - #Core #Template
 - [Repeatable markdown workflow recipes for reaching a defined goal](workflows/_workflows.md) - #LoadNow #Core #Workflow
 - [Workspace routes that point to important project locations and explain when to use them](workspace/_workspace.md) - #LoadNow #Core #Workspace
 <!-- open-forge:generated-index:end -->

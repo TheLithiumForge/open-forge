@@ -6,7 +6,7 @@ The aim is to give you an organically growing system, shaped by your actual need
 
 Open Forge intentionally starts generic and usable. It provides context, authority, routing, persistence, and optional capabilities without pretending that every team should inherit the author's finished methodology. Native agent competence handles ordinary work.
 
-As you correct, refine, and teach the workspace, accepted preferences can become directives, patterns, guidance, skills, workflows, workspace routes, and memory. This takes some elbow grease early on by design: the goal is for the workspace to increasingly behave like you.
+As you correct, refine, and teach the workspace, accepted preferences can become directives, patterns, guidance, skills, templates, workflows, workspace routes, and memory. This takes some elbow grease early on by design: the goal is for the workspace to increasingly behave like you.
 
 **Open Forge provides the substrate. Your accumulated decisions provide the personality and methodology.**
 
@@ -74,7 +74,7 @@ npx open-forge extend {extension-id} --dry-run
 npx open-forge extend --remove {installed-extension-id} --dry-run
 ```
 
-An extension may contain one skill, one workflow, directives, patterns, guidance, workspace or memory routes, support-only material, any deliberate mix, or only dependencies as a convenience pack. The catalogue derives and shows those contents; interactive selection marks transitive dependencies as required and locks them while needed. Bundled dependencies resolve offline and install automatically. `--dry-run` shows dependency order, every planned file, change status, and baseline/executable scope without writing.
+An extension may contain one skill, one workflow, directives, patterns, guidance, templates, workspace or memory routes, support-only material, any deliberate mix, or only dependencies as a convenience pack. The catalogue derives and shows those contents; interactive selection marks transitive dependencies as required and locks them while needed. Bundled dependencies resolve offline and install automatically. `--dry-run` shows dependency order, every planned file, change status, and baseline/executable scope without writing.
 
 Stable-id extensions are safely updateable and removable. Every bundled package declares an id independent of its source-folder grouping, and the catalogue presents Skills, Workflows, Packs, and Support without changing those keys. Open Forge stores ownership and hashes in transparent, Git-visible `open-forge.extensions.json`, while agents route from installed files. A local source opts into this managed lifecycle by declaring a stable manifest `id`; idless plain overlays and directly installed skills remain unmanaged.
 

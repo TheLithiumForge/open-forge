@@ -15,5 +15,5 @@ This scope contains current documents for Open Forge Extensions and their evolut
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Current Open Forge Extensions MVP architecture, package semantics, composition, ownership, liabilities, and overhaul requirements](architecture.md) - #Memory #Document #CurrentTruth #Evergreen #Architecture #Extension #MVP #Composition #ACE
+- [Current Open Forge Extensions MVP package semantics, composition, runtime boundary, ownership lifecycle, safety properties, and liabilities](architecture.md) - #Memory #Document #CurrentTruth #Evergreen #Architecture #Extension #MVP #Composition #ACE
 <!-- open-forge:generated-index:end -->
