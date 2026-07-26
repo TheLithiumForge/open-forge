@@ -15,5 +15,5 @@ This route owns maintainer contracts for reviewed files below `src/open-forge/.a
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Current maintainer contract for the installable Templates Core category entrypoint](templates.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Core #Template
+- [Current maintenance contract for the installable Templates Core category entrypoint](templates.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Core #Template
 <!-- open-forge:generated-index:end -->

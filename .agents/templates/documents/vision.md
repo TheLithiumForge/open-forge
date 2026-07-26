@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Start a current vision when one owner must answer what future should become true, why it matters, its boundaries, identity, and success
+  description: Vision template is used when one current owner must define what future should become true, why it matters, its boundaries, identity, and success
   tags: [Template, Document, Vision, CurrentView]
 ---
 

@@ -1,10 +1,10 @@
 ---
 open-forge:
-  description: Current maintainer contract for the canonical installed AGENTS.md entry block
+  description: Current maintenance contract for the canonical installed AGENTS.md entry block
   tags: [Memory, Document, CurrentTruth, Evergreen, Maintenance, Governance, Payload, Entry]
 ---
 
-# AGENTS Entry Contract
+# AGENTS Entry Maintenance Contract
 
 ## Source
 

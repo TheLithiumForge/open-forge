@@ -23,10 +23,11 @@ Document templates help create coherent current views without requiring a fixed 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Start a current architecture when one owner must answer how a subject is structured, how its parts relate, and which boundaries and constraints govern it](architecture.md) - #Template #Document #Architecture #CurrentView
-- [Start a current operating-context view when one owner must answer which external reality, stakeholders, constraints, assumptions, and dependencies shape a subject](operating-context.md) - #Template #Document #Context #CurrentView
-- [Start a current principles view when recurring unfamiliar choices need one owner for the identity-level filters used to judge them](principles.md) - #Template #Document #Principle #CurrentView
-- [Start a current roadmap when one owner must answer which accepted outcomes come next, in what order, and under which dependencies and change conditions](roadmap.md) - #Template #Document #Roadmap #CurrentView
-- [Start a current strategy when one owner must answer how accepted choices and focus are expected to move a subject toward its vision](strategy.md) - #Template #Document #Strategy #CurrentView
-- [Start a current vision when one owner must answer what future should become true, why it matters, its boundaries, identity, and success](vision.md) - #Template #Document #Vision #CurrentView
+- [Architecture template is used when one current owner must define how a subject is structured, how its parts relate, and which boundaries and constraints govern it](architecture.md) - #Template #Document #Architecture #CurrentView
+- [Maintenance contract template is used when one current document must define what a source or repository surface must preserve and how maintainers verify it](maintenance-contract.md) - #Template #Document #Maintenance #Governance #CurrentView
+- [Operating context template is used when one current owner must define which external reality, stakeholders, constraints, assumptions, and dependencies shape a subject](operating-context.md) - #Template #Document #Context #CurrentView
+- [Principles template is used when recurring unfamiliar choices need one current owner for the identity-level filters used to judge them](principles.md) - #Template #Document #Principle #CurrentView
+- [Roadmap template is used when one current owner must define which accepted outcomes come next, in what order, and under which dependencies and change conditions](roadmap.md) - #Template #Document #Roadmap #CurrentView
+- [Strategy template is used when one current owner must define how accepted choices and focus are expected to move a subject toward its vision](strategy.md) - #Template #Document #Strategy #CurrentView
+- [Vision template is used when one current owner must define what future should become true, why it matters, its boundaries, identity, and success](vision.md) - #Template #Document #Vision #CurrentView
 <!-- open-forge:generated-index:end -->

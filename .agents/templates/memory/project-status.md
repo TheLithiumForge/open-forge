@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Start a bounded Working status when one owner must answer where active work stands, what matters now, what blocks it, and how to resume
+  description: Project status template is used when one bounded Working owner must preserve where active work stands, what matters now, what blocks it, and how to resume
   tags: [Template, Memory, Working, Status, Contextual]
 ---
 

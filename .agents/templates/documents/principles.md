@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Start a current principles view when recurring unfamiliar choices need one owner for the identity-level filters used to judge them
+  description: Principles template is used when recurring unfamiliar choices need one current owner for the identity-level filters used to judge them
   tags: [Template, Document, Principle, CurrentView]
 ---
 

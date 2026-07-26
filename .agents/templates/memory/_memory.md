@@ -20,7 +20,7 @@ Memory templates help preserve state and reasoning in the route that matches its
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Start an accepted decision when one owner must answer what was chosen, why, with which consequences, and where the result now lives](decision.md) - #Template #Memory #Decision #Crystallized
-- [Start an Emerging idea when one owner must answer what plausible possibility deserves exploration, what supports it, and what would justify promotion](idea.md) - #Template #Memory #Idea #Emerging #Contextual
-- [Start a bounded Working status when one owner must answer where active work stands, what matters now, what blocks it, and how to resume](project-status.md) - #Template #Memory #Working #Status #Contextual
+- [Decision template is used when one accepted record must preserve what was chosen, why, with which consequences, and where the result now lives](decision.md) - #Template #Memory #Decision #Crystallized
+- [Idea template is used when one Emerging owner must preserve what plausible possibility deserves exploration, what supports it, and what would justify promotion](idea.md) - #Template #Memory #Idea #Emerging #Contextual
+- [Project status template is used when one bounded Working owner must preserve where active work stands, what matters now, what blocks it, and how to resume](project-status.md) - #Template #Memory #Working #Status #Contextual
 <!-- open-forge:generated-index:end -->

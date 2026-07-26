@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Start a current architecture when one owner must answer how a subject is structured, how its parts relate, and which boundaries and constraints govern it
+  description: Architecture template is used when one current owner must define how a subject is structured, how its parts relate, and which boundaries and constraints govern it
   tags: [Template, Document, Architecture, CurrentView]
 ---
 

@@ -1,10 +1,10 @@
 ---
 open-forge:
-  description: Current maintainer contract for the Claude Code bridge to the canonical AGENTS.md entry
+  description: Current maintenance contract for the Claude Code bridge to the canonical AGENTS.md entry
   tags: [Memory, Document, CurrentTruth, Evergreen, Maintenance, Governance, Payload, Bridge, ClaudeCode]
 ---
 
-# Claude Code Bridge Contract
+# Claude Code Bridge Maintenance Contract
 
 ## Source
 
