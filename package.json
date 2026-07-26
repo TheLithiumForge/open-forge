@@ -1,7 +1,7 @@
 {
     "name": "open-forge",
     "version": "0.0.0",
-    "description": "A tiny, agnostic AI agent workflow for plain repo files.",
+    "description": "A user-owned, human-readable, file-native operating layer for Adaptive Context Engineering.",
     "type": "module",
     "packageManager": "bun@1.3.11",
     "bin": {
