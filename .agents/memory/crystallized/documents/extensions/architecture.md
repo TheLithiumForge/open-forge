@@ -342,7 +342,7 @@ Versions are descriptive. There is no compatibility negotiation among packages, 
 
 ### Update Has No Migration Semantics
 
-Reinstallation reconciles whole files, but packages cannot declare migrations, compatibility transitions, or required operator decisions. This is insufficient for long-lived third-party packages.
+Reinstallation reconciles whole files, but packages cannot declare migrations, compatibility transitions, or required user decisions. This is insufficient for long-lived third-party packages.
 
 ### One Root Receipt
 

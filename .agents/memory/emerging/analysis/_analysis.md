@@ -17,5 +17,5 @@ Analysis is structured reasoning, investigation, or comparison that is useful bu
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- none - No entries - #Empty
+- [Initial blind-reader probe found no factual failures across ten known-answer Framework questions and identified five discovery-cost gaps](2026-07-27_documentation-comprehension-probe.md) - #Memory #Analysis #Contextual #Candidate #Documentation #Evaluation #Comprehension #Agent #Evidence
 <!-- open-forge:generated-index:end -->

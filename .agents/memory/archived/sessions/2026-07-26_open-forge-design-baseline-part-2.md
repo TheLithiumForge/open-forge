@@ -199,5 +199,5 @@ The former README remains valuable implementation history but leads with the sup
 - [Framework Architecture](../../crystallized/documents/framework/architecture.md)
 - [Distinct Core Primitive Roles decision](../../crystallized/decisions/core-primitives.md)
 - [Templates As A Core Primitive decision](../../crystallized/decisions/template-primitive.md)
-- [Temporary Knowledge Role Helper](../../working/knowledge-role-helper.md)
-- [Temporary Terminology Helper](../../working/terminology-helper.md)
+- [Knowledge Role Helper](../../crystallized/documents/maintenance/helpers/knowledge-roles.md)
+- [Terminology Helper](../../crystallized/documents/maintenance/helpers/terminology.md)

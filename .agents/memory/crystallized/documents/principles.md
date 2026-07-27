@@ -26,11 +26,11 @@ The active context for a goal should contain the authority, knowledge, constrain
 
 Open Forge may expand through any number of routed scopes while ordinary context cost grows primarily with the scopes and relationships deliberately selected. Completeness never means indiscriminate loading.
 
-### Operator-Led Direction And Agent Autonomy
+### User Direction And Agent Autonomy
 
-The operator directs goals, priorities, consequential tradeoffs, and accepted direction. Agents investigate, suggest, challenge, execute, and verify within that direction.
+User direction establishes goals, priorities, consequential tradeoffs, and accepted direction. Agents investigate, suggest, challenge, execute, and verify within that direction.
 
-Operator control must not become repetitive approval ceremony, and agent autonomy must not become silent authority over contextual product choices.
+Keeping consequential choices under user control must not create repetitive approval ceremony, and agent autonomy must not become silent authority over contextual product choices.
 
 ### One Authoritative Source And Visible Relationships
 
@@ -71,7 +71,7 @@ Open Forge must not claim mechanical control over reasoning or compliance. Relia
 ## Tensions And Ordering
 
 - User ownership and semantic completeness outrank tool convenience
-- Accepted operator direction outranks agent preference, while clear direction should not trigger redundant approval
+- Accepted user direction outranks agent preference, while clear direction should not trigger redundant approval
 - Relevance and minimalism do not justify omitting context necessary for correct work
 - Sensible defaults may be opinionated enough to help, but never become an untouchable methodology
 - Continuity capture should favor plausible future value without encouraging indiscriminate accumulation
@@ -95,4 +95,4 @@ Changing a principle is possible, but it changes Open Forge's identity rather th
 - [Routing model](../decisions/routing-model.md)
 - [Memory model](../decisions/memory-model.md)
 - [Distinct Core primitive roles](../decisions/core-primitives.md)
-- [Typed authoritative source terminology](../decisions/authoritative-source-terminology.md)
+- [Typed authority and role terminology](../decisions/authoritative-source-terminology.md)

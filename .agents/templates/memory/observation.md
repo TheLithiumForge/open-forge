@@ -43,7 +43,7 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 ## Follow-Up And Promotion Signals
 
-{State which verification, recurrence, impact, or operator direction would justify analysis, consolidation, promotion, or rejection.}
+{State which verification, recurrence, impact, or user direction would justify analysis, consolidation, promotion, or rejection.}
 
 ## Related Records And Sources
 
