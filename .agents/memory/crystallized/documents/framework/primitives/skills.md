@@ -15,7 +15,7 @@ Open Forge makes Skills discoverable through ordinary routing. It does not redef
 
 ## Native Runtime Boundary
 
-The selected `SKILL.md` owns the Skill's instructions, applicability, resource organization, and internal loading behavior. The active runtime owns the mechanics required to use that format.
+The selected `SKILL.md` owns the Skill's metadata, instructions, applicability, resource organization, and internal loading behavior. The active runtime owns the mechanics required to use that format.
 
 Open Forge treats the complete Skill package as an interoperable capability. It may expose the Skill through workspace routes and deterministic discovery, but it does not translate the package into a competing Open Forge-specific skill model.
 

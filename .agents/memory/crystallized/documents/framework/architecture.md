@@ -13,7 +13,7 @@ This document is authoritative for the current internal architecture of the Open
 - Core provides the routing substrate and reusable agent-facing primitives
 - Memory provides continuity, candidate learning, accepted records, and useful history
 
-The [top Open Forge architecture](../architecture.md) is authoritative for the complete system map and the relationships among the Framework, workspace context, extensions, deterministic tools, operators, and agent runtimes. This document explains how Core and Memory work internally. It names extension and tool boundaries only where they constrain the Framework.
+The [top Open Forge architecture](../architecture.md) is authoritative for the complete system map and the relationships among the Framework, workspace context, extensions, deterministic tools, users, and agent runtimes. This document explains how Core and Memory work internally. It names extension and tool boundaries only where they constrain the Framework.
 
 The Framework described here is the intended architecture to which the installable source, dogfood environment, governance, and tooling must migrate. Older files remain useful migration inputs, but they do not constrain this design merely because they exist.
 
@@ -149,7 +149,7 @@ Open Forge does not reduce authority to one global ranking because different aut
 The operating rules are:
 
 1. Platform constraints and runtime safety bound every action
-2. Clear current operator direction governs goals, priorities, consequential tradeoffs, and accepted changes within its scope
+2. Clear current user direction governs goals, priorities, consequential tradeoffs, and accepted changes within its scope
 3. A declared external source of truth is authoritative for the facts delegated to it
 4. Loaded Core Axioms and directives govern Framework interpretation and applicable behavior
 5. A selected authoritative source governs the accepted state of its subject
@@ -167,13 +167,9 @@ Core primitives give reusable content distinct application semantics instead of 
 
 The [Core primitive model](primitives/model.md) defines the complete role vocabulary, selection questions, authority boundaries, relationships, recursive scope, admission threshold, and why Core has no separate Rules primitive.
 
-Three roles require additional current contracts:
+Every shipped primitive has a focused conceptual contract under [Core Primitives](primitives/_primitives.md): Directives, Guidance, Patterns, Skills, Templates, Workflows, and Workspace. These documents deepen each role's meaning, boundaries, lifecycle, and relationships without becoming parallel runtime instructions.
 
-- [Directives](primitives/directives.md) define route-selected binding behavior, activation, additive scope, file structure, and conflict handling
-- [Templates](primitives/templates.md) define copy-ready starting content, instantiation, ownership transfer, specialization, and update boundaries
-- [Workflows](primitives/workflows.md) define goal-oriented recipes, selection, authoring structure, dependencies, iteration, phase wayfinding, composition, and workflow-local Core
-
-Installed category entrypoints retain the complete compact operational contract that users and agents receive. Scoped current documents explain the coherent design and relationships without becoming a hidden runtime dependency.
+Installed category entrypoints own the complete compact operational and file requirements that users and agents receive. Maintenance contracts own canonical sources, alignment obligations, distribution details, and verification.
 
 ## Memory
 
@@ -184,7 +180,7 @@ Memory state and scope are independent. State describes how recorded material sh
 The detailed current contracts are separated by responsibility:
 
 - The [Memory model](memory/model.md) defines purpose, authority boundaries, state and scope composition, recursive growth, capture thresholds, and shipped defaults
-- The [state contracts](memory/states.md) define what makes Working, Emerging, Crystallized, and Archived material valid
+- The [Working](memory/working.md), [Emerging](memory/emerging.md), [Crystallized](memory/crystallized.md), and [Archived](memory/archived.md) contracts define what makes each standard state valid
 - The [transition contract](memory/transitions.md) defines capture, direct movement, consolidation, promotion, supersession, archival, restoration, and relationship updates
 - The [accepted-state contract](truth.md) defines framework-wide acceptance, #Contextual and #CurrentTruth treatment, and #Evergreen synchronization
 
@@ -192,7 +188,7 @@ The states are not maturity scores or a mandatory pipeline. Installed Memory ent
 
 ## Current Knowledge Roles
 
-Memory provides standard roles for different forms of durable knowledge:
+Open Forge distinguishes standard roles for current meaning, accepted rationale, binding behavior, and useful history:
 
 | Role | Primary question | Contract |
 |---|---|---|
@@ -349,7 +345,7 @@ The following files contain earlier decisions or governance that may help migrat
 - [Memory model rationale](../../decisions/memory-model.md)
 - [Workflow shape rationale](../../decisions/workflow-shape.md)
 - [Source and packaging rationale](../../decisions/source-and-packaging.md)
-- [Typed authoritative source terminology](../../decisions/authoritative-source-terminology.md)
+- [Typed authority and role terminology](../../decisions/authoritative-source-terminology.md)
 - [Canonical Markdown authoring rationale](../../decisions/canonical-markdown.md)
 - [Layer migration descriptor](../../../../../docs/framework/concepts/layers.md)
 - [Overwrite migration descriptor](../../../../../docs/framework/concepts/overwrites.md)

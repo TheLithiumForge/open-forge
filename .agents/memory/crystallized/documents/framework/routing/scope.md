@@ -89,4 +89,4 @@ Component sources remain authoritative for any additional local composition rule
 
 - [Scope and slugs](../../../decisions/scope-and-slugs.md)
 - [Routing model](../../../decisions/routing-model.md)
-- [Typed authoritative source terminology](../../../decisions/authoritative-source-terminology.md)
+- [Typed authority and role terminology](../../../decisions/authoritative-source-terminology.md)

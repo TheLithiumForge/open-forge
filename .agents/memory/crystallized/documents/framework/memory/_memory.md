@@ -19,7 +19,10 @@ Memory Architecture defines the recorded-state model that preserves continuity, 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
+- [Current Archived Memory purpose, historical authority boundary, extraction, provenance, organization, and restoration](archived.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #MemoryModel #Archived #Contextual #Historical
+- [Current Crystallized Memory purpose, accepted authority, consolidation, supersession, and shipped Decisions and Documents roles](crystallized.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #MemoryModel #Crystallized #Authority #Consolidation
+- [Current Emerging Memory purpose, candidate authority, capture threshold, evidence, consolidation, promotion, and shipped candidate roles](emerging.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #MemoryModel #Emerging #Contextual #Candidate
 - [Current Memory purpose, authority boundary, independent state and scope dimensions, recursive growth, capture threshold, and shipped defaults](model.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #MemoryModel #Scope #OrganicGrowth
-- [Current validity, expected lifetime, authority, capture, consolidation, and historical boundaries of the four standard Memory states](states.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #MemoryModel #Working #Emerging #Crystallized #Archived
 - [Current Memory capture, direct movement, consolidation, promotion, supersession, archival, restoration, and relationship-update contract](transitions.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #MemoryModel #Transition #Promotion #Archival #Restoration
+- [Current Working Memory purpose, expected expiration, authority, extraction, resumability, and shipped Handoffs and Sessions roles](working.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #MemoryModel #Working #Contextual #Resumability
 <!-- open-forge:generated-index:end -->

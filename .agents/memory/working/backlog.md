@@ -8,6 +8,19 @@ open-forge:
 
 Only open work belongs here. The mixed pre-review history is preserved in `.agents/memory/archived/planning/2026-07-18_pre-review-backlog.md`; product possibilities that are not actionable commitments stay in `.agents/memory/emerging/ideas/deferred-product-ideas.md`.
 
+## Current Migration Sequence
+
+Complete the current source migration in this order:
+
+1. Migrate every remaining Framework concept, with a consolidation and duplication pass after each concept
+2. Migrate every remaining maintenance file, with a consolidation and duplication pass after each coherent step
+3. Review all decisions together and trim, consolidate, split, or remove duplicated and obsolete rationale
+4. Review every remaining file through the same authority, locality, relevance, and duplication tests
+5. Optimize the complete Core primitive system across conceptual documents, installed runtime entrypoints, Maintenance contracts, decisions, links, terminology, and validation
+6. Optimize the complete Memory system across its model, states, routes, installed runtime entrypoints, Maintenance contracts, decisions, links, terminology, and validation
+
+Do not let a later phase pull detailed work forward merely because one concept links to it. Temporary migration references may remain until their scheduled phase as long as current authoritative sources do not depend on them.
+
 ## Framework Simplification Refactor
 
 Status: candidate roadmap prepared from the maintainer's 2026-07-23 handoff, raw design discussion, and cross-project usage observations. It is contextual working state, not accepted #CurrentTruth. Do not begin a later task until the maintainer accepts or revises the preceding task's review gate.

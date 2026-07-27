@@ -81,6 +81,9 @@ Every durable transition reports the destination and any affected current or Eve
 ## Related Current Sources
 
 - [Memory model](model.md)
-- [Memory states](states.md)
+- [Working state](working.md)
+- [Emerging state](emerging.md)
+- [Crystallized state](crystallized.md)
+- [Archived state](archived.md)
 - [Accepted state and synchronization](../truth.md)
 - [Core primitive model](../primitives/model.md)
