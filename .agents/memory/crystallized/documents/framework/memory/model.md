@@ -1,0 +1,86 @@
+---
+open-forge:
+  description: Current Memory purpose, authority boundary, independent state and scope dimensions, recursive growth, capture threshold, and shipped defaults
+  responsibility: Define what Memory records, how its state and scope compose, and where its authority ends
+  tags: [Memory, Document, CurrentTruth, Evergreen, Framework, MemoryModel, Scope, OrganicGrowth]
+---
+
+# Memory Model
+
+## Purpose
+
+Memory preserves useful recorded state across work without turning every conversation, stored statement, or historical record into accepted truth or active behavior.
+
+It exists because working context decays, agents and people change, and useful learning should remain available without requiring private memory or full transcript reconstruction.
+
+## Authority Boundary
+
+Memory is authoritative for the lifecycle of its recorded material: capture, classification, movement, consolidation, archival, and restoration.
+
+It is not automatically authoritative for the external fact, implementation, behavior, or product direction that a record describes. Those meanings remain at their matching authoritative source.
+
+Memory may record any subject, including how work is performed, without activating it. Accepted behavior that should guide future work belongs in the matching #Core route. Memory may retain useful evidence, context, or rationale.
+
+## State And Scope
+
+Memory has two independent dimensions:
+
+| Dimension | Question | Representation |
+|---|---|---|
+| State | How should this material currently be treated? | Working, Emerging, Crystallized, or Archived route |
+| Scope | Which subject does the material apply to? | Person, project, component, discipline, repository, collection, or another concrete routed scope |
+
+The route path expresses both dimensions. For example, a project may exist inside one broader Memory state, or a project scope may contain its own complete Memory lifecycle. Placement changes meaning intentionally, and ordinary entrypoints keep either structure navigable without a centralized registry.
+
+The same mechanism can serve one person, one repository, many interacting projects, a shared multi-repository source of truth, or recursively nested scopes. Additional branches do not need to enter active context until their route or relationship is selected.
+
+## Recorded-State Threshold
+
+Durable Memory should preserve likely future value rather than raw activity.
+
+Capture is warranted when:
+
+- The user explicitly asks to preserve an idea, conclusion, plan, or observation
+- Current work needs resumability across a likely pause, context boundary, or handoff
+- A grounded finding is plausibly reusable, surprising, or costly enough to rediscover
+- Accepted rationale or current state would otherwise exist only in chat
+- Historical context will materially help reconstruction, comparison, audit, or future decisions
+
+Working Memory can capture liberally because it is temporary. Emerging Memory should still pass a minimal usefulness test, but the threshold favors preservation when distributed agents could otherwise rediscover the same finding independently.
+
+Ordinary conversation, duplicated facts, and raw activity without plausible future value do not become Memory automatically.
+
+## Recursive Growth
+
+The installed root states are stable semantic defaults. Below them, workspaces may add direct files, positive child scopes, or scoped Framework routes at any useful depth.
+
+The Framework ships starter routes because most workspaces benefit from them:
+
+- Working includes Handoffs and Sessions
+- Emerging includes Analysis, Ideas, and Observations
+- Crystallized includes Decisions and Documents
+- Archived begins without requiring a mirror of every active route
+
+These are the standard routes Open Forge ships, not an untouchable taxonomy. A workspace may remove, replace, reorganize, or supplement them. Decisions, Documents, and archive scopes may appear beneath any route where their local context makes selection and maintenance clearer.
+
+A new root Memory state changes the shared state model and therefore requires clear user agreement. A new child scope uses ordinary recursive customization and needs only the authority required for that local change.
+
+## Truth Status
+
+Working, Emerging, and Archived material is normally #Contextual. Crystallized material is normally #CurrentTruth within its declared scope.
+
+Those defaults describe state, not an authority shortcut. The [accepted-state contract](../truth.md) defines acceptance and synchronization across the complete Framework. The [state contracts](states.md) define what makes each Memory state valid.
+
+## Installed Sources
+
+- [Memory entrypoint](../../../../_memory.md)
+- [Working Memory](../../../../working/_working.md)
+- [Emerging Memory](../../../../emerging/_emerging.md)
+- [Crystallized Memory](../../../../crystallized/_crystallized.md)
+- [Archived Memory](../../../../archived/_archived.md)
+
+## Decisions And Rationale
+
+- [Memory model](../../../decisions/memory-model.md)
+- [Product direction](../../../decisions/product-direction.md)
+- [Tag semantics](../../../decisions/tags.md)

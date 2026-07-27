@@ -64,13 +64,14 @@ The review found no migrated loader contract. The accepted migration added [load
 ### Migration References
 
 - The superseded loader descriptor was removed after its useful contract was migrated. Git history preserves it as historical input.
-- [Routing descriptor](../../../../docs/framework/concepts/routing.md)
-- [Formatting descriptor](../../../../docs/framework/concepts/formatting.md)
-- [Truth lifecycle descriptor](../../../../docs/framework/concepts/truth-lifecycle.md)
+- [Current Open Forge Routing scope](../../crystallized/documents/framework/routing/_routing.md)
+- [Current Open Forge Markdown scope](../../crystallized/documents/framework/markdown/_markdown.md)
+- [Accepted state and synchronization](../../crystallized/documents/framework/truth.md)
+- [Current Memory Architecture](../../crystallized/documents/framework/memory/_memory.md)
 - [Overwrite descriptor](../../../../docs/framework/concepts/overwrites.md)
 - [Payload boundary descriptor](../../../../docs/framework/concepts/payload-boundary.md)
 - [Layer descriptor](../../../../docs/framework/concepts/layers.md)
-- [Agent primitive descriptor](../../../../docs/framework/concepts/agent-primitives.md)
+- [Current Core Primitives scope](../../crystallized/documents/framework/primitives/_primitives.md)
 
 These references preserve useful constraints and historical wording, but they are not evidence that can override the accepted current architectures.
 

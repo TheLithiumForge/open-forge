@@ -27,12 +27,12 @@ Decisions are accepted rationale for important choices that may need to be under
 - [Reliability-critical context loads unconditionally and early; conditional context must be cheap to skip and cheap to recover from](loading-reliability.md) - #Memory #Decision #CurrentTruth #Loading #Routing #Reliability
 - [Memory preserves working, emerging, crystallized, and archived state without activating behavior it describes](memory-model.md) - #Memory #Decision #CurrentTruth #MemoryModel
 - [Open Forge stays markdown-first, operator-led, small by default, and optimized for recursive customization](product-direction.md) - #Memory #Decision #CurrentTruth #Product
-- [Routing goes through small markdown entrypoints; one recognized entrypoint per folder; the loader exposes only direct root routes](routing-model.md) - #Memory #Decision #CurrentTruth #Routing
+- [Small recursive entrypoints preserve local scope while one recognized entrypoint and explicit root routes remove routing ambiguity](routing-model.md) - #Memory #Decision #CurrentTruth #Routing
 - [The entry description is the selection surface; the routed body is the execution recipe](routing-surfaces.md) - #Memory #Decision #CurrentTruth #Routing #Formatting
-- [Framework routes, scope routes, scoped framework routes, and slugs are distinct; placeholders are notation only and slug placement changes meaning](scope-and-slugs.md) - #Memory #Decision #CurrentTruth #Routing #Scope
+- [Distinct route and slug terms preserve recursive scope meaning without runtime placeholders or a fixed organizational taxonomy](scope-and-slugs.md) - #Memory #Decision #CurrentTruth #Routing #Scope
 - [Users receive src/open-forge as the payload; crystallized maintenance documents govern reviewed source without becoming hidden runtime context](source-and-packaging.md) - #Memory #Decision #CurrentTruth #Packaging #Governance
 - [Accepted tag semantics for loading, layers, truth status, Evergreen synchronization, and ordinary classification](tags.md) - #Memory #Decision #CurrentTruth #Tags #Routing
 - [Templates are a distinct Core primitive for copy-ready source artifacts whose ownership transfers to independently maintained results](template-primitive.md) - #Memory #Decision #CurrentTruth #Core #Template #Primitive
 - [User-facing Open Forge files use positive natural language and compact selection surfaces](user-facing-writing.md) - #Memory #Decision #CurrentTruth #Formatting #Documentation #Routing
-- [Accepted workflow shape - Mode, Goal, Required Routes, Constraints, Steps, Loop, Outputs, Completion; generated Entries are containment, Required Routes are cross-tree dependency](workflow-shape.md) - #Memory #Decision #CurrentTruth #Workflow #Routing #Orchestration
+- [Workflows use one predictable goal-oriented recipe shape while phases remain non-waterfall wayfinding and dependencies stay distinct from containment](workflow-shape.md) - #Memory #Decision #CurrentTruth #Workflow #Routing #Orchestration
 <!-- open-forge:generated-index:end -->

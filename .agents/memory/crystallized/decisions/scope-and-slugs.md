@@ -1,18 +1,15 @@
 ---
 open-forge:
-  description: Framework routes, scope routes, scoped framework routes, and slugs are distinct; placeholders are notation only and slug placement changes meaning
+  description: Distinct route and slug terms preserve recursive scope meaning without runtime placeholders or a fixed organizational taxonomy
   tags: [Memory, Decision, CurrentTruth, Routing, Scope]
 ---
 
 # Scope And Slugs
 
-Accepted decisions extracted from the design sessions and idea notes on 2026-07-06 and aligned with the accepted Framework Architecture on 2026-07-26.
+Open Forge distinguishes a shipped Framework route, a local scope route, a Framework route reused inside a scope, and the concrete slug that realizes a path. Collapsing those ideas made it unclear whether a name described standard behavior, local narrowing, recursive composition, or only one installed folder.
 
-- A `framework route` is a standard Core or Memory route shipped by Open Forge.
-- A `scope route` is a local routed subtree used to narrow authority or meaning below it.
-- A `scoped framework route` is a framework route initialized inside a scope route.
-- A `slug` is the concrete folder name used in a route path.
-- Route-template placeholders such as `[scope]` are documentation, maintainer, CLI, and extension-author notation only. Installed workspaces receive concrete slug folders.
-- Slug placement changes meaning. For example, `memory/crystallized/mobile-app/documents/` scopes documents inside crystallized memory, while `memory/mobile-app/crystallized/documents/` gives `mobile-app` its own memory states.
+Installed paths therefore use concrete slugs rather than runtime placeholders. This keeps every route self-describing and navigable without a registry or proprietary resolver. Placeholders remain useful only when documents, Templates, maintenance, or tools describe a shape before it is instantiated.
+
+Placement carries scope intentionally. A Framework route inside a state scopes content within that state; a state lifecycle inside a local route gives that local subject its own lifecycle. Open Forge does not impose a fixed projects, domains, or teams taxonomy because the same recursive mechanism must support whichever structure the workspace needs.
 
 The [current scope and inheritance contract](../documents/framework/routing/scope.md) expresses the accepted result.

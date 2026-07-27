@@ -11,7 +11,7 @@ open-forge:
 
 [`src/open-forge/.agents/loader.md`](../../../../../../../src/open-forge/.agents/loader.md) is the canonical installed Framework loader. The repository [loader](../../../../../../loader.md) dogfoods the same authored contract with its locally generated root entries.
 
-The [Framework Architecture](../../../framework/architecture.md#loader-and-entrypoints) is authoritative for the loader's structural role. The [Open Forge Routing scope](../../../framework/routing/_routing.md) owns the detailed route, scope, loading, and path contracts. The [routed Markdown contract](../../../framework/markdown/routes.md) is authoritative for its canonical authored and generated representation. The [routing model](../../../../decisions/routing-model.md), [routing surfaces](../../../../decisions/routing-surfaces.md), [scope and slugs](../../../../decisions/scope-and-slugs.md), [tags](../../../../decisions/tags.md), [loading reliability](../../../../decisions/loading-reliability.md), [typed authority terminology](../../../../decisions/authoritative-source-terminology.md), and [source and packaging](../../../../decisions/source-and-packaging.md) decisions preserve accepted rationale.
+The [Framework Architecture](../../../framework/architecture.md#canonical-entry) is authoritative for the loader's structural role. The [Open Forge Routing scope](../../../framework/routing/_routing.md) defines the detailed route, scope, loading, and path contracts. The [routed Markdown contract](../../../framework/markdown/routes.md) is authoritative for its canonical authored and generated representation. The [routing model](../../../../decisions/routing-model.md), [routing surfaces](../../../../decisions/routing-surfaces.md), [scope and slugs](../../../../decisions/scope-and-slugs.md), [tags](../../../../decisions/tags.md), [loading reliability](../../../../decisions/loading-reliability.md), [typed authority terminology](../../../../decisions/authoritative-source-terminology.md), and [source and packaging](../../../../decisions/source-and-packaging.md) decisions preserve accepted rationale.
 
 ## Contract
 
@@ -67,5 +67,4 @@ The [Framework Architecture](../../../framework/architecture.md#loader-and-entry
 - Load and chain tests verify loader-first order, visible transitive #LoadNow traversal, complete #KeepInMind discovery, inherited route order, and overwrite adjacency.
 - Doctor tests verify generated-region integrity, route resolution, containment, retired tags, and structural Framework requirements.
 - Core installation tests verify selected authority, truth, Template, and deterministic-assistance wording in the installed payload.
-- `open-forge index` and `open-forge doctor` must pass for both the repository and `src/open-forge/`.
 - Review the source and dogfood authored line count and exact alignment whenever the loader contract changes.
