@@ -83,13 +83,15 @@ The full current user contract is documented in [`docs/cli.md`](../../../../../d
 
 `chain` emits the loader, visible ancestor entrypoints, relevant `SKILL.md` boundary, target, and overwrite companions in inheritance order. Heading extraction makes inherited Axioms or another declared contract cheap to inspect.
 
+The [overwrite contract](../framework/routing/overwrites.md) owns companion meaning and precedence. Context commands reproduce its base-then-overwrite order without making the companion independently selectable.
+
 These operations accelerate explicit Framework routing. They do not infer accepted relevance or make the CLI's output more authoritative than its source files.
 
 ### Maintenance Operations
 
 `index` derives route entries from the filesystem, entrypoint metadata, skill packages, and direct child relationships. It owns only bounded generated regions.
 
-`doctor` detects deterministic defects without writing. The current implementation checks entrypoint ambiguity, generated-region integrity, broken entries and Required Routes, stale indexes, route containment, workflow shape, directive shape, inherited sentinels, retired tags, orphan overwrites, and unreachable Markdown.
+`doctor` detects deterministic defects without writing. The current implementation checks entrypoint ambiguity, generated-region integrity, broken entries and Required Routes, stale indexes, route containment, workflow shape, directive shape, inherited sentinels, retired tags, orphan overwrites, and unreachable Markdown. An orphan overwrite is warned because it has no base from which to inherit a route.
 
 `create category` scaffolds concrete route chains and rebuilds indexes. `create extension` scaffolds a local managed package.
 

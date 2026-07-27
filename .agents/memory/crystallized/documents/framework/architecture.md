@@ -237,7 +237,7 @@ The preferred customization choices are:
 4. Edit or replace the base when the desired model is fundamentally different
 5. Remove routes that provide no local value
 
-An overwrite loads immediately after its base, inherits the base route and loading behavior, and has final precedence only within that file's scope. It is not independently indexed.
+The [overwrite contract](routing/overwrites.md) defines companion identity, inherited routing and loading, file-local precedence, generated boundaries, ownership, and lifecycle.
 
 These are clarity preferences rather than limits on ownership. Users own the installed files and may choose the representation that remains easiest for their workspace to understand.
 
@@ -350,5 +350,4 @@ The following files contain earlier decisions or governance that may help migrat
 - [Typed authority and role terminology](../../decisions/authoritative-source-terminology.md)
 - [Canonical Markdown authoring rationale](../../decisions/canonical-markdown.md)
 - [Layer migration descriptor](../../../../../docs/framework/concepts/layers.md)
-- [Overwrite migration descriptor](../../../../../docs/framework/concepts/overwrites.md)
 - [Payload boundary migration descriptor](../../../../../docs/framework/concepts/payload-boundary.md)

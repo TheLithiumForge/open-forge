@@ -6,7 +6,7 @@ open-forge:
 
 # Open Forge — Improvement Recommendations (Native Lens)
 
-Same ten findings as `recommendations-general.md`, re-derived under the constraints Open Forge already declares for itself: Core stays small and unopinionated (`docs/framework/concepts/layers.md`), no hidden runtime or vendor-shaped ritual (README), routing metadata never becomes authority on its own (`docs/framework/concepts/routing.md`), and customization proceeds local file → overwrite → base edit, in that order (README, `docs/framework/concepts/overwrites.md`).
+Same ten findings as `recommendations-general.md`, re-derived under the constraints Open Forge already declares for itself: Core stays small and unopinionated ([Framework Architecture](../../../.agents/memory/crystallized/documents/framework/architecture.md)), no hidden runtime or vendor-shaped ritual ([README](../../../README.md)), routing metadata never becomes authority on its own ([Routing Model](../../../.agents/memory/crystallized/documents/framework/routing/model.md)), and customization proceeds local file → overwrite → base edit, in that order ([README](../../../README.md), [Overwrite Customization](../../../.agents/memory/crystallized/documents/framework/routing/overwrites.md)).
 
 A few of the general recommendations survive almost unchanged — they were never actually in tension with the philosophy, just under-executed. Others get reframed into a shape the framework's own rules would accept. Numbering matches the general file for direct comparison.
 

@@ -68,7 +68,7 @@ The review found no migrated loader contract. The accepted migration added [load
 - [Current Open Forge Markdown scope](../../crystallized/documents/framework/markdown/_markdown.md)
 - [Accepted state and synchronization](../../crystallized/documents/framework/truth.md)
 - [Current Memory Architecture](../../crystallized/documents/framework/memory/_memory.md)
-- [Overwrite descriptor](../../../../docs/framework/concepts/overwrites.md)
+- [Current overwrite contract](../../crystallized/documents/framework/routing/overwrites.md)
 - [Payload boundary descriptor](../../../../docs/framework/concepts/payload-boundary.md)
 - [Layer descriptor](../../../../docs/framework/concepts/layers.md)
 - [Current Core Primitives scope](../../crystallized/documents/framework/primitives/_primitives.md)

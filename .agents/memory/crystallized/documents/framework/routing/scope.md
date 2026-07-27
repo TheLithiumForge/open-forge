@@ -96,6 +96,7 @@ Component sources remain authoritative for any additional local composition rule
 
 - [Routing model](model.md)
 - [Loading and continuity](loading.md)
+- [Overwrite customization](overwrites.md)
 - [Path identity and containment](paths.md)
 - [Framework Architecture](../architecture.md)
 - [Canonical loader](../../../../../loader.md)

@@ -74,7 +74,7 @@ The effective order is:
 5. Follow explicit relationships and dependencies
 6. Recheck #KeepInMind at every required continuity boundary
 
-When a base file has a user-owned `{name}.overwrite.md` companion, read it immediately after the base. The overwrite inherits the base route and loading behavior. The [Framework Architecture](../architecture.md#recursive-customization) owns the current general overwrite boundary until the overwrite concept receives its scoped migration.
+When a base file has a user-owned `{name}.overwrite.md` companion, read it immediately after the base. The [overwrite contract](overwrites.md) owns its inherited route, scope, loading behavior, precedence, and independent-selection boundary.
 
 ## Deterministic Assistance
 
@@ -94,6 +94,7 @@ Reliability-critical context therefore loads early, uses imperative wording, sta
 
 - [Routing model](model.md)
 - [Route scope and inheritance](scope.md)
+- [Overwrite customization](overwrites.md)
 - [Path identity and containment](paths.md)
 - [Canonical loader](../../../../../loader.md)
 - [Framework Architecture](../architecture.md)

@@ -59,7 +59,7 @@ Reinstalling the same id reconciles owned whole files. Removal acts only on requ
 
 Idless overlays and externally installed skills remain unmanaged. Regenerating or manually editing `Entries` makes them routable without transferring ownership. Two managers must not own the same installed path.
 
-Workspace-owned `.overwrite.md` files are outside extension ownership. Extensions add whole routed files rather than using overwrites to change shared targets.
+Workspace-owned `.overwrite.md` files are outside extension ownership. Extensions add whole routed files rather than using overwrites to change shared targets. The [current overwrite contract](../../../.agents/memory/crystallized/documents/framework/routing/overwrites.md) owns the companion's meaning and lifecycle.
 
 ## Sharing Contract
 
