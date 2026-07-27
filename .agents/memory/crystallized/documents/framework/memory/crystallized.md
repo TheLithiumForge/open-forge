@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Current Crystallized Memory purpose, accepted authority, consolidation, supersession, and shipped Decisions and Documents roles
+  description: Current Crystallized Memory purpose, accepted authority, consolidation, replacement history, and shipped Decisions and Documents roles
   responsibility: Define what makes accepted durable Memory valid without claiming that every authoritative result belongs in Memory
   tags: [Memory, Document, CurrentTruth, Evergreen, Framework, MemoryModel, Crystallized, Authority, Consolidation]
 ---
@@ -17,32 +17,14 @@ Other accepted results may live in matching #Core routes, source code, declared 
 
 ## Rationale And Current Records
 
-The shipped routes provide two distinct accepted roles:
+The standard routes provide two distinct accepted roles:
 
 - [Decisions](../../../../crystallized/decisions/_decisions.md) preserve accepted rationale for important choices
 - [Documents](../../../../crystallized/documents/_documents.md) integrate coherent current records or route to systems that hold them
 
-## Scoped Decisions And Documents
+Decisions and Documents follow the universal [route-scope contract](../routing/scope.md). Their selected route chain determines their subject without changing either role.
 
-Decisions and Documents may be initialized inside any Crystallized scope that needs them, not only directly under the root Crystallized route.
-
-For example, a `mobile-app` scope inside Crystallized may use:
-
-```text
-memory/crystallized/mobile-app/decisions/
-memory/crystallized/mobile-app/documents/
-```
-
-A broader `mobile-app` scope may instead contain its own complete Memory lifecycle:
-
-```text
-memory/mobile-app/crystallized/decisions/
-memory/mobile-app/crystallized/documents/
-```
-
-Both shapes use ordinary recursive routing. Every folder in the selected path has an entrypoint, and each scope initializes only the roles it needs. Placement narrows the subject to which a Decision or Document applies without changing what that role means.
-
-Overlapping Decisions are consolidated, reshaped, or linked when their accepted rationale is compatible. Material divergence or competing accepted rationale is discussed instead of being merged silently. Superseded rationale is archived or linked when it remains useful.
+Overlapping Decisions are consolidated, reshaped, or linked when their accepted rationale is compatible. Material divergence or competing accepted rationale is discussed instead of being merged silently. Rationale behind a replaced choice is archived or linked when it remains useful.
 
 Documents own accepted current content. Copy-ready creation sources belong in [Templates](../primitives/templates.md), not in the Documents route.
 

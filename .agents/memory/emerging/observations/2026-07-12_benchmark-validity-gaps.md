@@ -54,7 +54,7 @@ Suggested promotion destination after a clean validating generation: benchmark g
 - Engineering-smoke evidence is structurally separated from stronger evidence classes. A fresh-context claim also requires a passing `isolation-fresh-context` assertion linked to a copied trace, but P0 hard-disables causal and public eligibility because a single run cannot verify its own control assignment, treatment delta, replication, or external isolation boundary.
 - This mitigates provenance and integrity gaps but does not validate the historical corpus retroactively, launch or isolate workers itself, provide independent raters, randomize a real experiment, supply replications, or perform corpus-level statistical review. The next validating generation still needs genuine platform isolation receipts and predeclared multi-run controls.
 
-## Superseded Default: 2026-07-21
+## Replaced Default: 2026-07-21
 
 The P0 mitigation above is historical. It correctly exposed the limits of the old corpus, but its authentication, eligibility, and experiment machinery became the dominant benchmark experience without making an ordinary dogfood run easier to understand or perform.
 

@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Current Memory capture, direct movement, consolidation, promotion, supersession, archival, restoration, and relationship-update contract
+  description: Current Memory capture, direct movement, consolidation, promotion, replacement, archival, restoration, and relationship-update contract
   responsibility: Define how recorded material changes state when its meaning, scope, authority, or future value changes
   tags: [Memory, Document, CurrentTruth, Evergreen, Framework, MemoryModel, Transition, Promotion, Archival, Restoration]
 ---
@@ -37,9 +37,9 @@ Repeated observations, parallel ideas, or overlapping current records trigger co
 | Working to Archived | Work ends and its history remains useful after extraction |
 | Emerging to Working | A candidate becomes active work without becoming accepted truth |
 | Emerging to Crystallized or another authoritative source | Evidence and direction establish accepted state |
-| Emerging to Archived | A rejected or superseded candidate retains useful reasoning |
+| Emerging to Archived | A rejected or replaced candidate retains useful reasoning |
 | Crystallized to Emerging | Accepted state is reopened for reconsideration without a replacement yet |
-| Crystallized to Archived | Accepted state is superseded after its replacement is established |
+| Crystallized to Archived | A replacement is established and the previous accepted state becomes history |
 | Archived to Working | Historical context becomes active resumability material |
 | Archived to Emerging | An old possibility becomes relevant but needs reconsideration |
 | Archived to Crystallized or another authoritative source | Current validation and clear acceptance restore it directly |
@@ -54,7 +54,7 @@ Promotion does not mean copying a candidate into Crystallized while leaving the 
 
 Use the [Memory authority boundary](model.md#authority-boundary) to choose between Crystallized Memory, a matching #Core route, code, or an external system. A linked decision or archived candidate may preserve why and how the accepted result emerged.
 
-## Supersession And Archival
+## Replacement And Archival
 
 Before archival:
 

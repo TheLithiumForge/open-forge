@@ -16,7 +16,7 @@ Core uses a small set of semantically distinct reusable content roles instead of
 
 Each primitive must answer a different primary question, carry meaning that cannot be expressed clearly by an existing primitive, and justify its routing and maintenance cost. The current primitive set and complete relationships belong to the [Core primitive model](../documents/framework/primitives/model.md) and installed entrypoints.
 
-Framework contracts refer to #Core collectively when any suitable Core route may satisfy a requirement. They name a specific primitive when its distinct semantics matter and enumerate concrete routes when the exact shipped defaults are the subject.
+Framework contracts refer to #Core collectively when any suitable Core route may satisfy a requirement. They name a specific primitive when its distinct semantics matter and enumerate concrete routes when the exact standard routes are the subject.
 
 ## Rationale
 

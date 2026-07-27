@@ -304,7 +304,9 @@ describe("install", () => {
     expect(installedLoader).toContain("](directives/_directives.md) - #LoadNow");
     expect(installedLoader).not.toContain("](.agents/");
     expect(installedLoader).toContain("#Evergreen - Material that must stay aligned");
-    expect(installedLoader).toContain("`framework route` - Standard Core or Memory route shipped by Open Forge");
+    expect(installedLoader).toContain("`framework route` - Standard Core or Memory route");
+    expect(installedLoader).toContain("Scope routes use concrete `slugs` and may appear before, after, or between framework route segments");
+    expect(installedLoader).toContain("placement narrows their subject without changing their roles");
     expect(installedLoader).toContain("Loading and tags change visibility, timing, or classification; they do not create authority by themselves.");
     expect(installedLoader).toContain("A request to act also accepts any decision required to perform that action");
     expect(installedLoader).toContain("at every required #KeepInMind boundary");
@@ -312,6 +314,8 @@ describe("install", () => {
 
     const installedMemory = await fs.readFile(path.join(root, ".agents", "memory", "_memory.md"), "utf8");
     expect(installedMemory).toContain("Memory may record any subject, including how work is performed");
+    expect(installedMemory).toContain("Place a scope after a Memory state when it applies only to that state");
+    expect(installedMemory).toContain("initialize only the states it uses");
 
     const installedDocuments = await fs.readFile(
       path.join(root, ".agents", "memory", "crystallized", "documents", "_documents.md"),

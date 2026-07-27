@@ -30,18 +30,19 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 - Platform constraints and runtime safety bound every action; clear user direction governs goals, priorities, consequential tradeoffs, and accepted changes within scope; declared external sources remain authoritative for delegated facts.
 - Loaded ancestor Axioms remain active below them, while a child adds only scope-specific Axioms.
 - Clear direction is not reconfirmed, an action request accepts decisions required to perform it, and unresolved ambiguity remains #Contextual until dependent work requires clarification.
-- Apparent #CurrentTruth conflicts are investigated before either side changes. Accepted changes update their authoritative route or system and preserve useful superseded context.
+- Apparent #CurrentTruth conflicts are investigated before either side changes. Accepted changes update their authoritative route or system and preserve useful context from the previous state.
 - Narrower selected non-directive material may specialize broader material of the same type. Loaded directives add to ancestors and report conflicts instead of silently overriding them.
 
 ### Routing And Loading
 
 - The loader defines only the terms required before navigation: `entrypoint`, `entry`, `description`, `responsibility`, `root route`, `framework route`, `scope route`, `scoped framework route`, `slug`, and `axiom`.
 - `description` remains the pre-load route-selection surface. Optional `responsibility` bounds what an opened file is responsible for defining without creating authority or loading behavior.
-- A Framework route may belong to Core or Memory. A scope route narrows authority or meaning through the ordinary routed-folder mechanism.
+- A Framework route is a standard Core or Memory route whose role and default contract are defined by Open Forge.
+- Scope routes use concrete slugs and may appear before, after, or between Framework route segments. Only needed scoped Framework routes are initialized, and placement narrows their subject without changing their roles.
 - Generated `Entries` remain navigation metadata. Detailed meaning comes from the routed destination or the authoritative source it identifies.
 - Loading and tags change visibility, timing, or classification without creating authority.
 - The loader remains authoritative for the meanings of #LoadNow, #KeepInMind, #Core, #Memory, #Extension, #Contextual, #CurrentTruth, and #Evergreen. Undefined tags remain routing and search signals.
-- #LoadNow traverses only visible children of an already-loaded parent. #KeepInMind recovers the complete routed continuity set at its stated boundaries.
+- #LoadNow traverses only visible children of an already-loaded parent. #KeepInMind discovers every routed #KeepInMind result across the workspace and follows each result's visible #LoadNow closure without loading unrelated descendants.
 - Every recovered result retains the authority and scope established by its route and content.
 - A user-owned `{name}.overwrite.md` loads immediately after its base and has final precedence only within that file's scope.
 

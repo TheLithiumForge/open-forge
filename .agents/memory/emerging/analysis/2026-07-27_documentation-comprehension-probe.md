@@ -22,7 +22,7 @@ One isolated agent received no conversation history and was restricted to files 
 6. The four Memory states and transition model
 7. Scoped Decisions and Documents
 8. Tentative versus accepted direction
-9. Current documents, Decisions, Archives, and supersession
+9. Current documents, Decisions, Archives, and replacement
 10. Multi-project and multi-repository scaling and integration
 
 For every question, the reader reported its answer, confidence, sources used, ambiguity, and discovery difficulty. It was explicitly told that finding a statement somewhere did not by itself prove good communication.
@@ -41,7 +41,7 @@ The reader produced no factual failure.
 | Memory states | Correct | High | Per-state capture thresholds require several focused documents |
 | Scoped Decisions and Documents | Correct | High | Exact paths required the deepest targeted traversal |
 | Acceptance examples | Correct | High | Exceptionally clear once the accepted-state document is found |
-| Current truth, rationale, and history | Correct | High | Safe supersession spans several related contracts |
+| Current truth, rationale, and history | Correct | High | Safely replacing current state spans several related contracts |
 | Multiple scopes and repositories | Correct | Medium | Integration behavior is distributed and partly inferential |
 
 ## Strong Communication
@@ -57,9 +57,9 @@ The reader produced no factual failure.
 
 ### Scoped Decisions And Documents
 
-The reader answered correctly because [Crystallized Memory](../../crystallized/documents/framework/memory/crystallized.md#scoped-decisions-and-documents) now contains explicit paths. It still ranked this as the hardest exact answer because neither the root Crystallized runtime entrypoint nor the Decisions and Documents entrypoints expose the recursive placement capability.
+The reader answered correctly only after reaching deeper scope and Crystallized documentation. It still ranked this as the hardest exact answer because the installed loader did not yet state that the same recursive placement applies to every Framework route.
 
-This is a locality question rather than missing architecture. The general scope model is correct, but a reader should not need to infer every important permitted shape from it.
+This was a locality question rather than missing architecture. The follow-up below centralizes the generic rule in the loader and keeps concrete shapes in the [route-scope contract](../../crystallized/documents/framework/routing/scope.md#concrete-scope).
 
 ### Multi-Scope Integration
 
@@ -77,11 +77,11 @@ The intended meaning is the complete effective catalogue of routed #KeepInMind r
 
 The exact `Consider architecture B` examples are clear but live in a deep conceptual document. This may be appropriate because the loader already carries the compact acceptance rule, but later probes should test whether an installed-source-only reader can apply the distinction without repository conceptual documents.
 
-### Supersession Distribution
+### Replacement Distribution
 
-The source-role distinction is easy to state. Applying supersession safely requires the current-view, accepted-state, transition, and Archive contracts together.
+The source-role distinction is easy to state. Safely replacing current state requires the current-view, accepted-state, transition, and Archive contracts together.
 
-This may be appropriate separation rather than a defect. A future probe should test a concrete supersession scenario instead of asking only for the conceptual distinction.
+This may be appropriate separation rather than a defect. A future probe should test a concrete replacement scenario instead of asking only for the conceptual distinction.
 
 ## Mechanical Finding
 
@@ -94,6 +94,16 @@ The missing route was detected by the reader and repaired after the isolated pas
 The initial result supports the current architecture. Ten correct answers, nine at high confidence, indicate that the intended model is recoverable from `.agents` without private context.
 
 The result does not prove that the documentation is cheap enough to use. The strongest next improvements concern locality and explicit composition, especially scoped Memory roles, multi-scope integration, and the exact breadth of continuity loading.
+
+## Follow-Up
+
+The first three gaps were addressed after this probe:
+
+- The installed loader now states that scope routes may appear before, after, or between any Framework route segments without changing the reused roles
+- The route-scope contract now shows the full path matrix, applies it to every Framework route, and defines how several selected scopes compose without merging
+- The loader and loading contract now define #KeepInMind as every routed result plus each result's visible #LoadNow closure, excluding unrelated descendants
+
+The next probe should verify these changes against the installable payload rather than treating this initial result as proof that they are understood.
 
 ## Limits
 

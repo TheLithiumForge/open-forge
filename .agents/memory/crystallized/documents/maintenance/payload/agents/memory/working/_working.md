@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Current maintenance contracts for the installable Working Memory entrypoint and its Handoffs and Sessions routes
-  responsibility: Preserve bounded resumability, expected expiration, extraction, shipped child routes, recursive scope, and source alignment
+  responsibility: Preserve bounded resumability, expected expiration, extraction, standard child routes, recursive scope, and source alignment
   tags: [Memory, Document, CurrentTruth, Evergreen, Maintenance, Governance, Payload, Working, Contextual]
 ---
 
@@ -19,7 +19,7 @@ The [Working state contract](../../../../../framework/memory/working.md) defines
 - Working Memory remains live resumability context rather than accepted current truth
 - Active material stays small, current, and cheap to replace or reread
 - Useful state is extracted before stale Working Memory is archived or cleared
-- Handoffs and Sessions remain the two shipped #LoadNow child routes with distinct transfer and history roles
+- Handoffs and Sessions remain the two standard #LoadNow child routes with distinct transfer and history roles
 - Recursive scopes may add plans, checkpoints, backlogs, or other temporary roles without changing Working state semantics
 - The installed parent contains no workspace-specific active state
 

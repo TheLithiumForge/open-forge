@@ -42,4 +42,4 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 ## Decision Relationships
 
-{Link decisions this one supersedes, narrows, depends on, or materially affects. Omit when none exist.}
+{Link decisions this one replaces, narrows, depends on, or materially affects. Omit when none exist.}

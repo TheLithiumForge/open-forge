@@ -54,7 +54,7 @@ When accepted direction changes current state:
 1. Update the authoritative document, route, code, external system, or other source that expresses the result
 2. Update only affected editable #Evergreen material before work depends on it and no later than closeout
 3. Preserve useful rationale in a decision when the reason may matter later
-4. Preserve useful superseded context in the appropriate archive
+4. Preserve useful context from the previous state in the appropriate archive
 5. Update relationships so old locations no longer imply current authority
 6. Report affected material that could not be updated
 

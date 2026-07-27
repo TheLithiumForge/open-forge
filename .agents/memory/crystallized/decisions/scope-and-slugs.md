@@ -6,7 +6,7 @@ open-forge:
 
 # Scope And Slugs
 
-Open Forge distinguishes a shipped Framework route, a local scope route, a Framework route reused inside a scope, and the concrete slug that realizes a path. Collapsing those ideas made it unclear whether a name described standard behavior, local narrowing, recursive composition, or only one installed folder.
+Open Forge distinguishes a standard Framework route, a local scope route, a Framework route reused inside a scope, and the concrete slug that realizes a path. Collapsing those ideas made it unclear whether a name described standard behavior, local narrowing, recursive composition, or only one installed folder.
 
 Installed paths therefore use concrete slugs rather than runtime placeholders. This keeps every route self-describing and navigable without a registry or proprietary resolver. Placeholders remain useful only when documents, Templates, maintenance, or tools describe a shape before it is instantiated.
 

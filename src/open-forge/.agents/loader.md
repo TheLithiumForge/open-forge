@@ -9,7 +9,7 @@ This is the main Open Forge `entrypoint`. Read it after `AGENTS.md` to enter thi
 - `description` - Natural-language pre-load selection surface that explains enough purpose, trigger, or outcome to select or skip a route
 - `responsibility` - Optional stable boundary stating what a file is responsible for defining; it guides edits without creating authority or loading behavior
 - `root route` - Route exposed directly by this loader
-- `framework route` - Standard Core or Memory route shipped by Open Forge
+- `framework route` - Standard Core or Memory route whose role and default contract are defined by Open Forge
 - `scope route` - Local routed subtree that narrows authority or meaning
 - `scoped framework route` - Framework route initialized inside a `scope route`
 - `slug` - Concrete folder name used in a route path
@@ -26,7 +26,7 @@ This is the main Open Forge `entrypoint`. Read it after `AGENTS.md` to enter thi
 - Follow loaded `axioms` within their scope while respecting these authority boundaries; accepted workspace-specific state overrides Open Forge defaults, and unresolved conflicts must be reported
 - A request to act also accepts any decision required to perform that action; if the direction is ambiguous, keep it #Contextual and clarify before work depends on it
 - Investigate an apparent conflict with #CurrentTruth before changing either side; report conflicts that remain unresolved
-- When accepted direction changes #CurrentTruth, update its authoritative route or system and preserve useful superseded context
+- When accepted direction changes #CurrentTruth, update its authoritative route or system and preserve useful context from the previous state
 - Prefer material in a narrower selected non-directive scope over broader material of the same type when safe and allowed; loaded directives add to ancestors, and conflicts are reported
 
 ### Routing
@@ -34,7 +34,7 @@ This is the main Open Forge `entrypoint`. Read it after `AGENTS.md` to enter thi
 - Open Forge routes through small Markdown `entrypoints` whose generated `Entries` expose direct routes
 - Load an `entrypoint` before opening its routed files, then use its `Entries` to select what the request needs
 - A folder is routable only when it contains one recognized `entrypoint`; every folder in a nested route path needs its own `entrypoint`
-- A `scope route` uses the same mechanism with a concrete `slug`; initialize a framework `entrypoint` inside it only when that scoped framework route is needed
+- Scope routes use concrete `slugs` and may appear before, after, or between framework route segments; initialize only the scoped framework routes needed there, while placement narrows their subject without changing their roles
 - Generated `Entries` are navigation metadata; entries without a load-policy tag are on demand, and detailed meaning comes from the routed destination or the authoritative source it identifies
 - When `{name}.overwrite.md` exists, read it immediately after `{name}.md`; it inherits the base route and has final precedence within that file's scope
 
@@ -45,7 +45,7 @@ Defined tags have the meanings below when they appear in loaded content or gener
 #### Defined Tags
 
 - #LoadNow - When this `entry` appears in an already-loaded parent's `Entries`, read it immediately in listed order. When it points to an `entrypoint`, apply the same rule to that file's `Entries`.
-- #KeepInMind - Read the complete routed set at task start or resume, after detected context restoration, and before a handoff or closeout. Recheck it during work only when its follow-ups may have changed, and follow each result within the authority and scope established by its route and content.
+- #KeepInMind - At task start or resume, after detected context restoration, and before a handoff or closeout, read every routed #KeepInMind result across the workspace and recursively follow its visible #LoadNow entries. This continuity set does not include unrelated descendants. Recheck it during work only when its follow-ups may have changed, and follow each result within the authority and scope established by its route and content.
 - #Core - Base routing, workspace orientation, and agent primitive routes
 - #Memory - Self-growing Markdown memory for live work, agent communication and coordination, continuity, accepted records, historical context, and candidate learning
 - #Extension - Optional packaged routes, capabilities, integrations, and support material
@@ -53,7 +53,7 @@ Defined tags have the meanings below when they appear in loaded content or gener
 - #CurrentTruth - Accepted current state within its stated scope, below user instructions, runtime safety, platform constraints, and declared external sources of truth
 - #Evergreen - Material that must stay aligned with accepted current state. It creates no authority or load policy.
   - When accepted state changes, update only affected #Evergreen material you may edit before work depends on it, and no later than closeout; batch related updates when safe
-  - Keep #Evergreen material coherent with what it represents now; preserve useful superseded context in the matching decision or archive, and report affected material you cannot update
+  - Keep #Evergreen material coherent with what it represents now; preserve useful context from the previous state in the matching decision or archive, and report affected material you cannot update
 
 ### CLI
 

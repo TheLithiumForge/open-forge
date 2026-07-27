@@ -23,7 +23,7 @@ Emerging material is refined, combined, promoted, archived, rejected, or pruned 
 
 ## Shipped Roles
 
-The shipped routes provide distinct starting roles:
+The standard routes provide distinct starting roles:
 
 - [Analysis](../../../../emerging/analysis/_analysis.md) preserves structured reasoning, investigation, and comparison
 - [Ideas](../../../../emerging/ideas/_ideas.md) preserves possibilities, experiments, and open questions

@@ -13,9 +13,9 @@ open-forge:
 - Keep baseline context and mandatory rules as small as possible; every always-loaded addition must earn its ongoing attention cost.
 - Use existing routing, scope, relationship, and #Core semantics instead of adding special-case machinery when they can express the requirement clearly.
 - Governance documents describe what source files must contain, their relationships, and their verification. Source files remain solely authoritative for runtime wording; governance documents express maintainer constraints and link to those sources.
-- State Framework requirements against the broadest stable authoritative source that preserves their meaning. Refer to a matching #Core route or entry instead of enumerating standard primitive routes unless a primitive's distinct semantics or the exact shipped defaults are the subject.
+- State Framework requirements against the broadest stable authoritative source that preserves their meaning. Refer to a matching #Core route or entry instead of enumerating standard primitive routes unless a primitive's distinct semantics or the exact standard routes are the subject.
 - Preserve unrelated work and the user's Git boundary; keep each change reviewable and make generated changes explicit.
 - Treat maintainer edits as deliberate design input about clarity, readiness, logical consistency, or tone. Preserve their intent, use implementation discretion within it, and do not revert or neutralize them unless the maintainer asks for another change or an explicit conflict must be reported.
 - Update dogfood, installable source, governing documentation, and behavior tests together when they share a contract; document intentional differences.
-- Extract current truth before moving superseded analysis, ideas, sessions, handoffs, or reports into their scoped archive.
+- Extract current truth before moving analysis, ideas, sessions, handoffs, or reports that are no longer current into their scoped archive.
 - Verify claims proportionately with real public interfaces and record failures, gaps, and remaining uncertainty instead of converting intent into claimed behavior.

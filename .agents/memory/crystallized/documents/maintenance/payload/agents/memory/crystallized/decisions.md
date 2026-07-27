@@ -19,9 +19,9 @@ The [Crystallized state contract](../../../../../framework/memory/crystallized.m
 - Decisions preserve accepted rationale for important choices that future work may need to understand
 - The chosen behavior, current record, route, code, or external state remains expressed by its authoritative source and may link back to the Decision for why
 - Alternatives, tradeoffs, constraints, and consequences remain only when they provide future explanatory value
-- Overlapping Decisions are consolidated, reshaped, or linked when their accepted rationale is compatible, and superseded rationale is archived or linked
+- Overlapping Decisions are consolidated, reshaped, or linked when their accepted rationale is compatible, and rationale behind a replaced choice is archived or linked
 - Material divergence or competing accepted rationale is surfaced for discussion instead of being merged silently
-- Accepted changes update the current result and preserve useful superseded rationale without leaving two competing current outcomes
+- Accepted changes update the current result and preserve useful rationale from the previous choice without leaving two competing current outcomes
 - The repository-only knowledge-role helper never enters the canonical source, and installed wording remains understandable without it
 - The installed route begins empty and supports ordinary recursive scope
 
