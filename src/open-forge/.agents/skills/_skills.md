@@ -1,7 +1,7 @@
 ---
 open-forge:
-    description: Skills available through standard SKILL.md files
-    tags: [LoadNow, Core, Skill]
+  description: Skills available through standard SKILL.md files
+  tags: [LoadNow, Core, Skill]
 ---
 
 # Skills

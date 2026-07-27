@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Current canonical Markdown representation shared by Open Forge entrypoints, route entries, routed paths, and generated indexes
+  description: Current canonical Markdown and filename representation for Open Forge entrypoints, route entries, and generated index regions
   responsibility: Define the shared authored representation of routed Open Forge Markdown
   tags: [Memory, Document, CurrentTruth, Evergreen, Framework, Markdown, Authoring, Syntax, Routing]
 ---
@@ -15,8 +15,6 @@ It defines how routing constructs are represented. The [routing model](../routin
 
 ## Category Entrypoints
 
-A routed folder has exactly one recognized category `entrypoint`.
-
 The canonical Open Forge filename is:
 
 ```text
@@ -25,18 +23,16 @@ _{folder-name}.md
 
 For example, `.agents/patterns/` uses `_patterns.md`.
 
-An Open Forge-authored category entrypoint contains:
+An Open Forge-authored category entrypoint is represented by:
 
 1. Scoped frontmatter
 2. One level-1 title
 3. A compact definition of the category
-4. Stable category-level `Axioms` or boundaries when needed
+4. Any category-level `Axioms` or boundaries
 5. A final level-2 `Entries` section
 6. One bounded generated region
 
-Category meaning and `Axioms` appear before `Entries`. Detailed routed content belongs in direct files or child entrypoints.
-
-A missing `Axioms` section adds no local Axioms. When an entrypoint declares the absence explicitly, use one `inherited` or `none` sentinel without substantive local Axioms. Neither form cancels loaded ancestor Axioms.
+Category meaning and `Axioms` appear before `Entries`. The [routing model](../routing/model.md) defines when a folder is routable and what an entrypoint exposes. The [scope and inheritance contract](../routing/scope.md) defines the meaning of local, missing, and sentinel Axioms.
 
 ## Route Entries
 
@@ -55,9 +51,7 @@ Each line contains:
 - One ` - ` separator
 - One or more useful bare tags
 
-The label explains why the route matters. The destination identifies it. The tags make loading, type, scope, and search signals cheap to inspect.
-
-Route-entry destinations identify files. They do not contain query strings or fragment anchors. Percent-encode unsafe path characters so the destination remains one whitespace-free path. Canonical output does not use angle-bracket destinations.
+The label explains why the route matters. The destination identifies it. The tags provide compact loading, type, scope, and search signals. The [path contract](../routing/paths.md) defines destination resolution, normalization, encoding, and containment.
 
 Each route entry stays on one physical line. Normal links elsewhere may target headings or external URLs.
 
@@ -68,21 +62,6 @@ The generated empty state is:
 ```
 
 It is the only `Entries` line without a link.
-
-## Routed Paths
-
-Canonical Open Forge-authored slugs use stable lowercase kebab-case unless an external stable name requires another spelling.
-
-A concrete slug and its entrypoint appear together:
-
-```text
-mobile-app/
-  _mobile-app.md
-```
-
-Installed paths and generated entries contain concrete slugs. Placeholders such as `[scope]`, `[route]`, or `[state]` are documentation, Template, and tooling notation only.
-
-User-authored routed files may use any clear portable filename that does not collide with a reserved entrypoint or companion form.
 
 ## Generated Regions
 
@@ -104,11 +83,8 @@ The `Entries` heading and generated region:
 - Form the final section
 - Keep the markers complete and ordered
 - Contain no authored prose
-- List direct routed files and direct child entrypoints only
 
-The loader lists direct active root entrypoints. A category entrypoint lists direct routed files and child entrypoints. Each component source defines any narrower rule for what its generated entries represent.
-
-Generated entries never privately define behavior, authority, or current truth. Those meanings come from authored routed sources.
+The [routing model](../routing/model.md) defines which direct destinations the region represents. Generated entries are derived navigation, not an independent definition of behavior, authority, or current truth.
 
 ## Related Current Sources
 

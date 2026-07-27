@@ -11,7 +11,7 @@ open-forge:
 
 [`src/open-forge/.agents/templates/_templates.md`](../../../../../../../src/open-forge/.agents/templates/_templates.md) is the canonical installed Templates category entrypoint. The repository [Templates entrypoint](../../../../../../templates/_templates.md) dogfoods the same authored contract and adds repository-local generated entries.
 
-The [Framework Architecture](../../../framework/architecture.md#templates) is authoritative for the primitive's current role and relationship with other Core primitives. The [routed Markdown contract](../../../framework/markdown/routes.md) defines the canonical representation shared by the entrypoint and routed Template files. The [Templates as a Core Primitive decision](../../../../decisions/template-primitive.md) preserves why Templates are an independent Core primitive.
+The [current Templates contract](../../../framework/primitives/templates.md) defines the primitive's role and relationship with other Core primitives. The [routed Markdown contract](../../../framework/markdown/routes.md) defines the canonical representation shared by the entrypoint and routed Template files. The [Templates as a Core Primitive decision](../../../../decisions/template-primitive.md) preserves why Templates are an independent Core primitive.
 
 ## Contract
 
@@ -39,8 +39,6 @@ The [Framework Architecture](../../../framework/architecture.md#templates) is au
 
 ## Verification
 
-- `open-forge doctor` must report no route errors for both the repository and `src/open-forge/`.
 - The Core installation closure test verifies that the category installs, remains on-demand, is discoverable through #Template, and produces a valid route tree.
 - The category-creation closure test verifies that scoped descendants inherit #Template classification.
 - The primitive-validation closure test verifies that topical #Workflow or #Directive tags inside a template do not activate those primitive schemas.
-- Review source and dogfood entrypoints with generated `Entries` excluded; their authored contracts must remain identical.

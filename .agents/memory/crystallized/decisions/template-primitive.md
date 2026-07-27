@@ -54,7 +54,8 @@ The distinct primitive adds another route and maintenance surface, so every gene
 
 These sources express the accepted result:
 
-- [Framework Architecture](../documents/framework/architecture.md#templates)
+- [Current Templates contract](../documents/framework/primitives/templates.md)
+- [Framework Architecture](../documents/framework/architecture.md#core-primitives)
 - [Current Templates route](../../../templates/_templates.md)
 - [Templates category maintenance contract](../documents/maintenance/payload/agents/templates.md)
 

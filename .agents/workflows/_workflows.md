@@ -1,7 +1,7 @@
 ---
 open-forge:
-    description: Repeatable markdown workflow recipes for reaching a defined goal
-    tags: [LoadNow, Core, Workflow]
+  description: Repeatable markdown workflow recipes for reaching a defined goal
+  tags: [LoadNow, Core, Workflow]
 ---
 
 # Workflows

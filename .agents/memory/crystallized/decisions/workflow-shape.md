@@ -1,24 +1,48 @@
 ---
 open-forge:
-  description: Accepted workflow shape - Mode, Goal, Required Routes, Constraints, Steps, Loop, Outputs, Completion; generated Entries are containment, Required Routes are cross-tree dependency
+  description: Workflows use one predictable goal-oriented recipe shape while phases remain non-waterfall wayfinding and dependencies stay distinct from containment
   tags: [Memory, Decision, CurrentTruth, Workflow, Routing, Orchestration]
 ---
 
 # Workflow Shape
 
-Accepted 2026-07-10 and revised 2026-07-20 after dogfood clarified selection, execution mode, helpful prior work, and Required Route links.
+## Context
 
-- Every workflow defines `Mode`, `Goal` (outcome, optional `- helpful before: ...` prior work, acceptance, stop), `Required Routes`, `Constraints`, `Steps`, `Loop`, `Outputs`, and `Completion`, in that order.
-- Every complete workflow declares exactly one primary phase tag: `PhaseDiscovery`, `PhaseDefinition`, `PhasePlanning`, `PhaseDelivery`, or `PhaseVerification`. The tag is visible in generated Entries and lets agents orient before opening recipes without adding physical routing layers.
-- The phases describe increasing commitment, not a waterfall. Work can begin in any phase with sufficient current truth, skip, repeat, or move backward; verification evidence can reopen any earlier phase.
-- `Mode` appears before `Goal` and is exactly `linear` or `iterative`. Every workflow is goal-oriented; the former goal-seeking mode is simply iterative work whose Loop runs until Goal acceptance.
-- `Constraints` is always present. It contains cross-step invariants or exactly `- none` when no workflow-specific invariant exists.
-- Generated `Entries` express containment; `Required Routes` express cross-tree dependency. The name won over "Required Skill Entries" (too narrow) and "Required Route Entries" (collides with the defined term `entry`).
-- Required Routes are flat and unconditional, read before Step 1; an unreadable route is a blocker, not a step to skip; "none" is valid; entrypoint-level targets are preferred with stable routed files allowed; every line uses `- [Reason](relative/path.md) - #Tags`, resolves from its workflow file, and carries useful tags including the target primitive type; directives never appear; keep the list short and split when it grows.
-- `Loop` remains explicit: linear work executes Steps once, while iterative work states the repeated range, trigger, evidence gained, and Goal stop condition.
-- The baseline-loaded workflows route uses the request and routed current truth to select from visible descriptions and tags before opening a relevant workflow, then confirms its Goal. After selection, an optional `- helpful before: ...` Goal item may name prior work that would improve the result. Recommend one available earlier workflow once when that work would help, never block the selected workflow, and proceed with explicit assumptions when the prior work is unavailable or skipped. Honor explicit choice or opt-out.
-- Runtime `_workflows.md` axioms own selection and execution only. Exact authoring shape, heading validation, and scaffolding detail belong to maintainer descriptors, `doctor`, and authoring documentation rather than repeated baseline instructions.
-- Orchestration: a step may invoke a skill, consult guidance, delegate to a subagent, or hand off to another workflow by route; a sub-workflow's Required Routes are read at that activation; delegation handoffs name the workflow route and active step.
-- Workflow-local #Core routes remain a narrow capability, typically local directives, as the natural consequence of the loader's narrower-scope preference. Reusable skills remain ordinary skills shared through Required Routes.
+Earlier Workflow experiments mixed selection, execution, dependencies, phase order, and iteration in ways that made recipes difficult to compose and validate. A goal-oriented recipe needed enough stable structure for agents and deterministic tools without turning Open Forge into one prescribed development lifecycle.
 
-Rationale detail and the historical TDD dev-workflow example: `.agents/memory/archived/ideas/workflow-redesign.md`. The shipped `dev-workflow` later generalized to an adaptive implement-test-improve-retest-diagnose-fix cycle without changing this workflow shape.
+## Decision
+
+Open Forge uses one complete ordered recipe shape for every Workflow, with explicit execution mode, goal, dependencies, constraints, steps, loop, outputs, and completion evidence.
+
+The accepted design separates several concerns:
+
+- Generated `Entries` express containment, while `Required Routes` express unconditional cross-tree dependencies
+- Helpful prior work remains advisory inside the Goal instead of becoming a hidden blocker
+- Linear and iterative modes share one explicit Loop section rather than hiding repetition in prose
+- Primary phases are visible metadata for increasing commitment, not physical route layers or mandatory chronology
+- Organizational entrypoints can route Workflows without pretending to be complete recipes
+- The installed entrypoint contains runtime selection behavior while current documents and deterministic validation preserve authoring detail
+- Workflow-local #Core remains narrowly available when locality adds real meaning, while reusable Skills stay in their native shared route
+
+## Rationale
+
+One predictable shape lowers navigation and validation cost. Explicit dependencies fail visibly before execution, explicit loops make stopping conditions reviewable, and one primary phase helps pre-load selection without adding a waterfall.
+
+Keeping optional preparation separate from required context lets an agent recommend valuable earlier work without turning every Workflow into ceremony. Keeping containment separate from dependency prevents generated tree structure from becoming an implicit execution graph.
+
+## Alternatives And Tradeoffs
+
+- Free-form recipes reduce schema cost but move recurring interpretation into every agent and prevent reliable validation
+- Physical phase folders improve visual grouping but impose extra routing depth and suggest chronology that the model rejects
+- A goal-seeking third mode duplicates iterative execution with a Goal stop condition
+- Workflow-local copies of reusable Skills improve locality but fragment native runtime discovery and updates
+
+The stable schema adds authoring discipline and must evolve deliberately when dogfood reveals a real limitation.
+
+## Current Result
+
+- [Current Workflow contract](../documents/framework/primitives/workflows.md)
+- [Installed Workflows entrypoint](../../../workflows/_workflows.md)
+- [Workflows maintenance contract](../documents/maintenance/payload/agents/workflows.md)
+
+Historical redesign detail and the former TDD example remain in [Workflow redesign](../../archived/ideas/workflow-redesign.md).
