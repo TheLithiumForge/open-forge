@@ -64,7 +64,7 @@ Any process that writes memory must choose the route whose state and scope match
 
 Do not use higher-layer actor wording inside a lower-layer contract. A lower-layer file must not say that an optional higher-layer workflow, package, module, or tool is the actor that writes or owns its material.
 
-Cross-layer dependency wording belongs in the concept that owns the dependency relationship, such as `docs/framework/concepts/layers.md`.
+Cross-layer dependency wording belongs in the authoritative current source for that relationship, such as the [top architecture's Framework composition](../../../.agents/memory/crystallized/documents/architecture.md#framework-composition).
 
 ## Why
 

@@ -33,6 +33,16 @@ An Open Forge environment combines four areas:
 
 User direction establishes goals and accepted direction. An agent runtime consumes the environment, performs work with its native capabilities, and proposes changes. Agent providers and execution runtimes remain external to Open Forge. Minimal provider bridges may expose the canonical workspace entry without defining independent policy.
 
+## Framework Composition
+
+Core and Memory are the two cooperating areas of the standard Framework. Core provides the entry, routing, authority, loading, relationship, and primitive semantics on which Memory and installed Extensions depend. Memory uses those semantics to preserve continuity, candidate learning, accepted records, and useful history.
+
+The standard base installation ships Core and Memory together because durable continuity and deliberate evolution are part of the product. A workspace may still reshape or remove standard routes through ordinary Framework customization.
+
+Extensions are optional packages outside the base Framework. They add whole files through existing Core or Memory routes instead of creating another root or interpretation model. Once installed, each file receives its runtime meaning and authority from its route, role, scope, content, and accepted direction rather than from package order or metadata.
+
+`#Core`, `#Memory`, and `#Extension` are routing and classification signals, not authority levels or numbered runtime stages. `#Extension` also identifies optional package provenance. The [loader](../../../loader.md#defined-tags) defines their exact installed meanings.
+
 ## Authority And Dependency Direction
 
 Human-readable Markdown is authoritative for Open Forge rules, recorded state, relationships, and workspace-specific context. A declared external system may be authoritative for source code, issues, product data, or another live subject when an Open Forge route points to it explicitly.
@@ -173,4 +183,5 @@ These decisions preserve useful rationale behind the current architecture. Their
 - [Memory model](../decisions/memory-model.md)
 - [Extensions and CLI](../decisions/extensions-and-cli.md)
 - [Scope and slugs](../decisions/scope-and-slugs.md)
+- [Tag semantics](../decisions/tags.md)
 - [Typed authority and role terminology](../decisions/authoritative-source-terminology.md)

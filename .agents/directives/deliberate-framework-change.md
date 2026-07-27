@@ -16,6 +16,7 @@ open-forge:
 - State Framework requirements against the broadest stable authoritative source that preserves their meaning. Refer to a matching #Core route or entry instead of enumerating standard primitive routes unless a primitive's distinct semantics or the exact standard routes are the subject.
 - Preserve unrelated work and the user's Git boundary; keep each change reviewable and make generated changes explicit.
 - Treat maintainer edits as deliberate design input about clarity, readiness, logical consistency, or tone. Preserve their intent, use implementation discretion within it, and do not revert or neutralize them unless the maintainer asks for another change or an explicit conflict must be reported.
+- Write and review Open Forge prose against the [Open Forge Writing Standard](../memory/crystallized/documents/maintenance/writing.md)
 - Update dogfood, installable source, governing documentation, and behavior tests together when they share a contract; document intentional differences.
 - Extract current truth before moving analysis, ideas, sessions, handoffs, or reports that are no longer current into their scoped archive.
 - Verify claims proportionately with real public interfaces and record failures, gaps, and remaining uncertainty instead of converting intent into claimed behavior.

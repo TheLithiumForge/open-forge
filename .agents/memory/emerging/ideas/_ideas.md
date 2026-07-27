@@ -25,5 +25,6 @@ Ideas are future possibilities, experiments, open questions, and options to expl
 - [Rework observations into a recurrence-driven self-growth mechanism instead of a per-session note obligation](observations-rework.md) - #Memory #Idea #Contextual #Candidate #Observation #AgentLearning
 - [Former post-Evergreen refactor tasks retained as candidates until the maintainer reviews the handover point by point](provisional-refactor-directions.md) - #Memory #Idea #Contextual #Candidate #Framework #Refactor
 - [What each framework area needs to reach S and S++ quality - measured claims first, automatic measurement second](rating-ladder.md) - #Memory #Idea #Contextual #Candidate #Quality #Benchmark #Roadmap
+- [Explore whether binding behavior needs explicit temporary or conditional activation beyond ordinary routed scope](temporary-conditional-directives.md) - #Memory #Idea #Contextual #Candidate #Directive #Scope #Lifecycle #Temporary
 - [Preserve requirements and unresolved boundaries that should inform the planned Workflow architecture redesign](workflow-overhaul.md) - #Memory #Idea #Contextual #Candidate #Workflow #Architecture #Product #Refactor
 <!-- open-forge:generated-index:end -->
