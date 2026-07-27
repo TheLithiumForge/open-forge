@@ -36,15 +36,15 @@ Observe:
 
 - whether a decision records a real choice and rationale or merely repeats current behavior;
 - whether #Evergreen documents integrate the current outcome without requiring readers to assemble it from many decisions;
-- when a revised, superseded, or low-value decision should be consolidated or archived;
+- when a revised, replaced, or low-value decision should be consolidated or archived;
 - whether the decisions catalogue remains navigable and proportionate to the choices it preserves.
 
-Candidate lifecycle metadata for decisions includes an approval date and time, plus a superseded date, time, and replacement link when applicable. Before adding it to the decision template, determine:
+Candidate lifecycle metadata for decisions includes an approval date and time, plus a replacement date, time, and link when applicable. Before adding it to the decision template, determine:
 
 - whether lifecycle metadata belongs in frontmatter or the document body;
 - which timestamp precision and timezone contract remains useful and deterministic;
-- whether supersession always moves a decision to Archived or may leave it current within a narrower surviving scope;
+- whether replacement always moves a decision to Archived or may leave it current within a narrower surviving scope;
 - whether archival should be automatic, proposed, or explicitly selected;
-- how partial supersession, consolidation, and several replacement decisions are represented.
+- how partial replacement, consolidation, and several replacement decisions are represented.
 
 Keep the model open during this migration and refine it from repeated evidence rather than reorganizing decisions immediately.

@@ -353,7 +353,7 @@ The `Adaptive Repository Engineering` word family - `BARE`, `CARE`, `DARE`, and 
 | Establish a technical discipline | **GRACE** or **TRACE**, under **ACE** | The most coherent frontier-sounding family, with a clear goal-versus-task distinction |
 | Lead with the benefit | **Development That Remembers** | The fastest explanation of continuity and compounding value |
 
-No round-four candidate supersedes the existing emerging recommendation. `GRAD`, `READ`, `RAD`, `RECAP`, and the `ACE` family now deserve comprehension testing beside `Context-Routed Development`; none is current truth.
+No round-four candidate replaces the existing emerging recommendation. `GRAD`, `READ`, `RAD`, `RECAP`, and the `ACE` family now deserve comprehension testing beside `Context-Routed Development`; none is current truth.
 
 ## Candidate Action
 

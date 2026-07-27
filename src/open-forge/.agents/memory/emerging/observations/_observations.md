@@ -15,7 +15,7 @@ Observations capture grounded facts, signals, constraints, recurring behavior, r
 - One occurrence is enough when the finding is plausibly reusable, surprising, or costly to rediscover; recurrence primarily raises the case for consolidation and promotion
 - Keep source, scope, uncertainty, and supporting evidence visible
 - Verify observations before treating them as current
-- Use observations as contextual learning material until an appropriate authoritative source accepts, rejects, or supersedes them
+- Use observations as contextual learning material until an appropriate authoritative source accepts their outcome, rejects it, or replaces it with accepted state
 
 ## Entries
 

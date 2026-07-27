@@ -29,9 +29,9 @@ Expected expiration does not require premature deletion. It requires the route t
 
 ## Shipped Roles
 
-The shipped [Handoffs](../../../../working/handoffs/_handoffs.md) route provides concise static transfer notes. A new Handoff is unnecessary when a more specific route already contains complete resume context.
+The standard [Handoffs](../../../../working/handoffs/_handoffs.md) route provides concise static transfer notes. A new Handoff is unnecessary when a more specific route already contains complete resume context.
 
-The shipped [Sessions](../../../../working/sessions/_sessions.md) route preserves fuller chronological context, reconstruction material, and bounded active checkpoints when work may cross a context boundary.
+The standard [Sessions](../../../../working/sessions/_sessions.md) route preserves fuller chronological context, reconstruction material, and bounded active checkpoints when work may cross a context boundary.
 
 Projects may add plans, backlogs, checkpoints, or other Working scopes when those routes earn their cost. These are customizable working roles, not additional Memory states.
 

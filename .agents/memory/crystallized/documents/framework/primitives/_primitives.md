@@ -13,7 +13,7 @@ Core primitives are distinct reusable content roles. A primitive's kind determin
 - Every primitive answers a distinct primary question and has explicit authority and application semantics
 - A proposed primitive must provide reusable value that existing Core routes cannot express clearly enough
 - Refer to #Core collectively when any suitable primitive may satisfy a requirement, and name a primitive when its distinct semantics matter
-- The standard primitive routes are useful shipped defaults that users may edit, scope, replace, remove, or extend through ordinary routing
+- The standard primitive routes are useful defaults that users may edit, scope, replace, remove, or extend through ordinary routing
 
 ## Entries
 

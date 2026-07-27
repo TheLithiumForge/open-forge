@@ -115,7 +115,7 @@ Memory is part of the framework substrate and organizes recorded state by its cu
 | Crystallized | Accepted durable state within its declared scope |
 | Archived | Historical context that no longer governs current work |
 
-The states are not a rigid pipeline. Material moves when meaning, scope, and authority justify the transition. Clear direction may update a Crystallized authoritative source directly, while tentative ideas remain Working or Emerging. Superseded material is extracted, archived, consolidated, or pruned.
+The states are not a rigid pipeline. Material moves when meaning, scope, and authority justify the transition. Clear direction may update a Crystallized authoritative source directly, while tentative ideas remain Working or Emerging. Material that is no longer current is extracted, archived, consolidated, or pruned.
 
 The environment also evolves through Core primitives. Templates provide copy-ready starting content whose ownership transfers to the destination. Patterns continue to guide reusable shapes, Directives and Axioms bind behavior, and Extensions add optional routed capabilities. Detailed state transitions and primitive relationships belong to the [Framework Architecture](framework/architecture.md).
 

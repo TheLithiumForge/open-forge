@@ -15,7 +15,7 @@ Emerging memory preserves useful candidate material that is not yet accepted as 
 - Treat emerging memory as contextual until it is validated, promoted, or explicitly accepted
 - Keep uncertainty, source, and scope visible
 - Refine material here while its validity, knowledge role, or final destination is unsettled
-- When material becomes accepted, move its durable outcome to the appropriate authoritative source; archive or prune rejected and superseded material after preserving any useful outcome or rationale
+- When material becomes accepted, move its durable outcome to the appropriate authoritative source; archive or prune rejected material and material replaced by the accepted result after preserving any useful outcome or rationale
 - Revisit repeated or stale material for consolidation, promotion, archival, or pruning
 
 ## Entries

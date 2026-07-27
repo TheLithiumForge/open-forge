@@ -39,9 +39,9 @@ Use #LoadNow only for context whose omission is more costly than its baseline at
 
 ## #KeepInMind
 
-#KeepInMind identifies the complete routed continuity catalogue.
+#KeepInMind identifies continuity roots that must remain discoverable across the workspace. It does not mean every descendant below those routes.
 
-Read or recheck every effective #KeepInMind result:
+For every routed #KeepInMind result, read the result, its adjacent overwrite when present, and the visible #LoadNow entries reachable from that result. Read or recheck this complete continuity set:
 
 - At task start or resume
 - After detected context restoration
@@ -49,7 +49,7 @@ Read or recheck every effective #KeepInMind result:
 - Before closeout
 - At another transition when its standing follow-ups may have changed
 
-#KeepInMind deliberately crosses the currently selected branch because continuity failures are most costly when a task, route, session, or context changes.
+#KeepInMind discovery deliberately crosses the currently selected branch because continuity failures are most costly when a task, route, session, or context changes. Its #LoadNow traversal still follows ordinary direct-child visibility, so unrelated descendants remain unloaded.
 
 Each result remains contextual or authoritative according to its routed source. #KeepInMind does not promote candidate material or make every follow-up binding.
 
@@ -69,7 +69,7 @@ The effective order is:
 
 1. Read the canonical workspace entry and loader
 2. Traverse the visible #LoadNow closure in generated order
-3. Recover the complete effective #KeepInMind catalogue
+3. Recover every routed #KeepInMind result and its visible #LoadNow closure
 4. Select other relevant routes from visible entries
 5. Follow explicit relationships and dependencies
 6. Recheck #KeepInMind at every required continuity boundary
@@ -78,7 +78,7 @@ When a base file has a user-owned `{name}.overwrite.md` companion, read it immed
 
 ## Deterministic Assistance
 
-`open-forge load --bodies` may batch the loader, visible transitive #LoadNow closure, complete effective #KeepInMind catalogue, and adjacent overwrites into one ordered stream.
+`open-forge load --bodies` may batch the loader, visible transitive #LoadNow closure, every routed #KeepInMind result with its own visible #LoadNow closure, and adjacent overwrites into one ordered stream.
 
 `open-forge chain <route>` may expose the loader, visible ancestors, applicable skill boundary, target, and adjacent overwrites in inheritance order.
 

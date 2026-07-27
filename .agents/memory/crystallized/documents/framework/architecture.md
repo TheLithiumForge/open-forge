@@ -47,7 +47,7 @@ The following structural constraints realize the [Open Forge Principles](../prin
 4. Loading controls visibility and timing, not authority
 5. Scope is explicit in the route path, entrypoint meaning, description, and relationships
 6. Workspace meaning remains human-readable and reconstructable without the CLI, caches, receipts, or retrieval databases
-7. Standard routes ship as useful defaults while remaining removable, replaceable, and recursively customizable
+7. Standard routes are useful defaults while remaining removable, replaceable, and recursively customizable
 8. Removed defaults stay removed unless restoration is explicitly requested
 9. Memory may describe any subject without activating behavior it records
 10. Accepted behavior that should govern work belongs in Core
@@ -110,7 +110,7 @@ Managed entry blocks preserve workspace-owned content outside their markers. A p
 
 Core provides the smallest common language needed to route, interpret, and apply workspace context. It does not try to encode ordinary reasoning, a development lifecycle, or a complete methodology.
 
-Framework wording uses #Core collectively when any suitable Core route may satisfy a requirement. It names a specific primitive when that primitive's distinct semantics matter, such as Directives for binding behavior, and enumerates concrete standard routes when the shipped default set itself is the subject. This keeps customizable Frameworks valid without weakening precise contracts.
+Framework wording uses #Core collectively when any suitable Core route may satisfy a requirement. It names a specific primitive when that primitive's distinct semantics matter, such as Directives for binding behavior, and enumerates concrete standard routes when the default set itself is the subject. This keeps customizable Frameworks valid without weakening precise contracts.
 
 Core contains:
 
@@ -129,6 +129,8 @@ These categories are distinct because they answer different questions. Their def
 ### Routing
 
 Routing moves from the canonical loader through small entrypoints that expose direct children. Descriptions support pre-load selection, relative links identify destinations, and tags add compact loading, type, scope, and search signals. Selected descendants inherit loaded ancestor Axioms, while unselected siblings remain outside active context.
+
+Work may select several scopes without merging them. Each keeps its own route chain and authority, explicit relationships connect them, and conflicts about a shared result are resolved by clear direction or the authoritative source for that result rather than by path depth or load order.
 
 Loading determines when routed context becomes visible, not what authority it has. Baseline context follows visible immediate-loading routes, continuity context is recovered across route and session changes, and other context remains selected on demand.
 
@@ -159,7 +161,7 @@ The operating rules are:
 
 Loading a file makes it visible. A tag can classify it or affect loading. Neither operation creates authority by itself.
 
-The [accepted-state contract](truth.md) defines how clear and tentative direction are treated, how affected current and #Evergreen sources change, and how rationale or superseded context is preserved. Unresolved conflicts are reported with their authoritative sources and scopes rather than silently resolved through file order.
+The [accepted-state contract](truth.md) defines how clear and tentative direction are treated, how affected current and #Evergreen sources change, and how rationale or useful context from the previous state is preserved. Unresolved conflicts are reported with their authoritative sources and scopes rather than silently resolved through file order.
 
 ## Core Primitives
 
@@ -225,7 +227,7 @@ This relationship model is intentionally sufficient for future graph, semantic, 
 
 ## Recursive Customization
 
-Every standard route may contain local files, child scopes, or scoped Framework routes. The same entrypoint, inheritance, description, link, and tag contract works at every depth.
+Every standard Framework route may contain local files, child scopes, or scoped Framework routes. The same entrypoint, inheritance, description, link, and tag contract works at every depth.
 
 The preferred customization choices are:
 

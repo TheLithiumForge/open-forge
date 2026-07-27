@@ -18,7 +18,9 @@ The [Memory architecture](../../../../framework/memory/_memory.md), [Memory mode
 - Frontmatter keeps #LoadNow, #Memory, and #OrganicGrowth so the root Memory contract enters baseline context with its layer and growth role visible
 - The root entrypoint keeps Memory below applicable authority while allowing it to record any subject without activating behavior it describes
 - Durable communication, coordination, direction, uncertainty, and learning are preserved when they must survive current context, while ordinary conversation does not become Memory automatically
-- Working, Emerging, Crystallized, and Archived remain the four shipped state routes, each with its own entrypoint and positive state semantics
+- Clear user direction is accepted within its stated scope and updates its appropriate current destination; tentative, exploratory, inferred, or materially ambiguous conclusions remain Working or Emerging until accepted
+- A scope follows a Memory state when it applies only to that state, or precedes state routes when its subject needs its own Memory states; only the states that subject uses are initialized
+- Working, Emerging, Crystallized, and Archived remain the four standard state routes, each with its own entrypoint and positive state semantics
 - Movement follows changes in recorded-state meaning and links to the appropriate #Core route or external authoritative system when Memory should not own the accepted result
 - A new root state requires explicit user direction because it changes the shared state model; ordinary child scopes remain recursively customizable
 - The authored source stays compact and complete for runtime use without requiring repository Maintenance or conceptual documents

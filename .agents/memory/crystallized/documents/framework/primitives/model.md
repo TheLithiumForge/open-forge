@@ -84,7 +84,7 @@ Specialized local content, scoped routes, and Extensions do not require expandin
 
 Core does not ship a separate Rules primitive. Loader and entrypoint Axioms express universal or inherited Framework mechanics, while Directives express independently routed mandatory behavior. A third binding category would duplicate those roles.
 
-The standard routes are the Framework Open Forge ships, not an untouchable taxonomy. Users may remove unused categories, replace their contents, or grow recursively specialized structures without invalidating the remaining Framework.
+The standard routes are useful defaults, not an untouchable taxonomy. Users may remove unused categories, replace their contents, or grow recursively specialized structures without invalidating the remaining Framework.
 
 ## Installed Sources
 

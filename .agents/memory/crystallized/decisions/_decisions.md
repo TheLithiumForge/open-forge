@@ -13,7 +13,7 @@ Decisions are accepted rationale for important choices that may need to be under
 - Read `Entries` when current work needs rationale for an important choice.
 - Use the repository-only [knowledge-role helper](../documents/maintenance/helpers/knowledge-roles.md) when placement is unclear; user-facing descriptions and contents must remain understandable without it.
 - Decisions preserve why a choice was made and useful historical rationale; the chosen behavior, record, route, or external state is expressed by its authoritative route or system.
-- Consolidate, reshape, or link overlapping Decisions when their accepted rationale is compatible, and archive or link superseded rationale; surface material divergence or competing accepted rationale for discussion instead of merging it silently.
+- Consolidate, reshape, or link overlapping Decisions when their accepted rationale is compatible, and archive or link rationale behind a replaced choice; surface material divergence or competing accepted rationale for discussion instead of merging it silently.
 - Keep alternatives, tradeoffs, constraints, and consequences only when they help future work.
 
 ## Entries

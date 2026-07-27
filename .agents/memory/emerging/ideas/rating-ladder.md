@@ -35,7 +35,7 @@ Captured 2026-07-09 and rebaselined 2026-07-17. The governing rule remains: S me
 
 ## Memory And Organic Growth (A-)
 
-- S gate: longitudinal evidence shows observations being proposed, accepted, promoted, superseded, or rejected with correct provenance and user accord.
+- S gate: longitudinal evidence shows observations being proposed, accepted, promoted, replaced, or rejected with correct provenance and user accord.
 - S++ gate: dozens of sessions show fewer rediscoveries and better decision citation than a memoryless control without uncontrolled context growth.
 - Option A: periodic human review queues over emerging memory.
 - Option B: advisory staleness/recurrence signals with no automatic promotion.

@@ -24,7 +24,7 @@ Refresh it at meaningful continuity boundaries:
 4. immediately after actual context restoration is detected
 5. closeout, transfer, or explicit pause
 
-At every refresh, recover and recheck the complete effective #KeepInMind set, then follow every result within the authority and scope established by its route and content. `open-forge load --bodies` may batch the same traversal when available, placing each user-owned `.overwrite.md` after its base; ordinary generated-route traversal remains complete.
+At every refresh, recover every routed #KeepInMind result across the workspace and follow each result's visible #LoadNow closure. Do not load unrelated descendants merely because they share a parent route. Follow every result within the authority and scope established by its route and content. `open-forge load --bodies` may batch the same traversal when available, placing each user-owned `.overwrite.md` after its base.
 
 ## Review Checks
 

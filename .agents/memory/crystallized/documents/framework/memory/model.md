@@ -30,7 +30,7 @@ Memory has two independent dimensions:
 | State | How should this material currently be treated? | Working, Emerging, Crystallized, or Archived route |
 | Scope | Which subject does the material apply to? | Person, project, component, discipline, repository, collection, or another concrete routed scope |
 
-The route path expresses both dimensions. For example, a project may exist inside one broader Memory state, or a project scope may contain its own complete Memory lifecycle. Placement changes meaning intentionally, and ordinary entrypoints keep either structure navigable without a centralized registry.
+The route path expresses both dimensions. `memory/crystallized/mobile-app/` narrows only Crystallized Memory to `mobile-app`. `memory/mobile-app/crystallized/` places Crystallized Memory inside a broader `mobile-app` scope, which may initialize whichever other Memory states it needs. Placement changes meaning intentionally, neither shape requires all four states, and ordinary entrypoints keep both structures navigable without a centralized registry.
 
 The same mechanism can serve one person, one repository, many interacting projects, a shared multi-repository source of truth, or recursively nested scopes. Additional branches do not need to enter active context until their route or relationship is selected.
 
@@ -72,7 +72,7 @@ The Framework ships starter routes because most workspaces benefit from them:
 - Crystallized includes Decisions and Documents
 - Archived begins without requiring a mirror of every active route
 
-These are the standard routes Open Forge ships, not an untouchable taxonomy. A workspace may remove, replace, reorganize, or supplement them. Decisions, Documents, and archive scopes may appear beneath any route where their local context makes selection and maintenance clearer.
+These standard routes are useful defaults, not an untouchable taxonomy. A workspace may remove, replace, reorganize, or supplement them. Decisions, Documents, and archive scopes may appear beneath any route where their local context makes selection and maintenance clearer.
 
 A new root Memory state changes the shared state model and therefore requires clear user agreement. A new child scope uses ordinary recursive customization and needs only the authority required for that local change.
 

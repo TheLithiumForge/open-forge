@@ -15,7 +15,7 @@ Document templates help create coherent current views without requiring a fixed 
 - Treat each template as a responsibility checklist and starting structure, not a mandatory set of headings
 - Remove irrelevant prompts and sections, rename headings for the subject, and split a document when part of it develops independent authority
 - Keep each result complete enough to use without its template or supporting decisions
-- Keep candidate direction, active work, and superseded history in their appropriate lifecycle records instead of mixing several authority states into one current document
+- Keep candidate direction, active work, and history that is no longer current in their appropriate lifecycle records instead of mixing several authority states into one current document
 - State accepted current meaning in the document and link to decisions that preserve useful rationale instead of copying their complete history
 - Link to existing authoritative sources rather than turning a document into a duplicate or dumping ground
 - Replace the template's source metadata with a destination `description`, useful tags, and an optional `responsibility` when one stable boundary should constrain future edits
