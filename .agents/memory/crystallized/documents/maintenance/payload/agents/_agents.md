@@ -22,6 +22,7 @@ This route contains maintainer contracts for reviewed files below `src/open-forg
 - [Current maintenance contract for the installable Directives Core category entrypoint](directives.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Core #Directive
 - [Current maintenance contract for the installable Guidance Core category entrypoint](guidance.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Core #Guidance
 - [Current maintenance contract for the installable Open Forge loader and its dogfood counterpart](loader.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Framework #Loader #Routing
+- [Current maintenance contracts for the installable Memory root and its Working, Emerging, Crystallized, and Archived routes](memory/_memory.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #MemoryModel
 - [Current maintenance contract for the installable Patterns Core category entrypoint](patterns.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Core #Pattern
 - [Current maintenance contract for the installable Skills Core category entrypoint](skills.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Core #Skill
 - [Current maintenance contract for the installable Templates Core category entrypoint](templates.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Core #Template

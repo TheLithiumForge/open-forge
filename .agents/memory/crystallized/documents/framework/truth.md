@@ -85,4 +85,4 @@ The [Memory model](memory/model.md#recorded-state-threshold) defines the capture
 
 - [Memory model](../../decisions/memory-model.md)
 - [Tag semantics](../../decisions/tags.md)
-- [Typed authoritative-source terminology](../../decisions/authoritative-source-terminology.md)
+- [Typed authority and role terminology](../../decisions/authoritative-source-terminology.md)

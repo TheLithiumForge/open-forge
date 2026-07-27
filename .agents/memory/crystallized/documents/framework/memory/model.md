@@ -34,6 +34,17 @@ The route path expresses both dimensions. For example, a project may exist insid
 
 The same mechanism can serve one person, one repository, many interacting projects, a shared multi-repository source of truth, or recursively nested scopes. Additional branches do not need to enter active context until their route or relationship is selected.
 
+## State Summary
+
+| State | Purpose | Normal status | Defining property |
+|---|---|---|---|
+| [Working](working.md) | Continue or resume active work | #Contextual | Expected expiration |
+| [Emerging](emerging.md) | Preserve potentially reusable but unsettled material | #Contextual | Candidate value without acceptance |
+| [Crystallized](crystallized.md) | Preserve accepted durable state | #CurrentTruth | Consolidated present meaning |
+| [Archived](archived.md) | Preserve useful non-current history | #Contextual and historical | No current authority |
+
+The states are semantic contracts, not quality scores or required maturity stages.
+
 ## Recorded-State Threshold
 
 Durable Memory should preserve likely future value rather than raw activity.
@@ -69,7 +80,7 @@ A new root Memory state changes the shared state model and therefore requires cl
 
 Working, Emerging, and Archived material is normally #Contextual. Crystallized material is normally #CurrentTruth within its declared scope.
 
-Those defaults describe state, not an authority shortcut. The [accepted-state contract](../truth.md) defines acceptance and synchronization across the complete Framework. The [state contracts](states.md) define what makes each Memory state valid.
+Those defaults describe state, not an authority shortcut. The [accepted-state contract](../truth.md) defines acceptance and synchronization across the complete Framework. The linked state documents define what makes each Memory state valid.
 
 ## Installed Sources
 
@@ -78,6 +89,7 @@ Those defaults describe state, not an authority shortcut. The [accepted-state co
 - [Emerging Memory](../../../../emerging/_emerging.md)
 - [Crystallized Memory](../../../../crystallized/_crystallized.md)
 - [Archived Memory](../../../../archived/_archived.md)
+- [Memory runtime maintenance](../../maintenance/payload/agents/memory/_memory.md)
 
 ## Decisions And Rationale
 
