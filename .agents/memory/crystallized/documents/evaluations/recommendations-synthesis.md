@@ -36,7 +36,7 @@ Everything below is grounded in six rounds of evidence: the initial static criti
 
 **Lighten:**
 - Observations, per the Structural section above — it's carrying more taxonomy weight than its actual reliability justifies right now.
-- Resist adding more defined tags or memory sub-states without a specific, demonstrated need. The current contract already defines two load-policy tags, three layer tags, and three truth-status or synchronization tags. #Evergreen earns its place by separating synchronization duty from authority; any further addition must earn its baseline recall cost.
+- Resist adding more defined tags or memory sub-states without a specific, demonstrated need. The current contract already defines two load-policy tags, three Framework-composition tags, and three truth-status or synchronization tags. #Evergreen earns its place by separating synchronization duty from authority; any further addition must earn its baseline recall cost.
 
 **Strengthen:**
 - Tooling (the bulk-dump CLI feature, and possibly an optional `doctor`/audit command correlating git history against memory-route activity — already in the backlog, now doubly justified since axiom wording has a demonstrated, measured ceiling that only tooling-based approaches have broken through so far).
@@ -48,7 +48,7 @@ Everything below is grounded in six rounds of evidence: the initial static criti
 **Good — keep, low-risk, validated:**
 - The core routing model itself: entrypoints, recursive categories, single marker-bounded generated regions, and concrete non-machine-local paths. Never caused a problem in four rounds of real use; patterns and crystallized decisions were both discovered reliably through pure on-demand relevance routing with zero autoload, purely from clear naming and one-line descriptions.
 - Handoffs, as currently specified (post-v2 mandatory axiom). The single most reliable mechanism tested — written correctly and used correctly for cold continuation, every session, every round, once the axiom stopped being advisory.
-- The Core/Memory/Extension layer discipline. The maintainers' own response to the "nothing is mandatory" finding was to strengthen a general loader axiom rather than ship opinionated Core content — the right call, and it stuck through two more rounds of testing without regressing Core's minimalism.
+- The Core, Memory, and Extension composition discipline remains sound. The maintainers' own response to the "nothing is mandatory" finding was to strengthen a general loader axiom rather than ship opinionated Core content. That was the right call, and it stuck through two more rounds of testing without regressing Core's minimalism.
 - `#OpenForge` scoped to Core only (post-v3). Cleanly measured fix (1,116 → 467 baseline lines), no observed downside.
 - The overwrite (`.overwrite.md`) mechanism and the plain-file, git-diffable model generally — this entire multi-round investigation was only possible because every change at every layer was inspectable and diffable. That's real, demonstrated value, not just a stated principle.
 

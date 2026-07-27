@@ -122,6 +122,7 @@ Prefer anchored relative links to repeated explanations when another authoritati
 - [Routed Markdown representation](routes.md)
 - [Markdown compatibility boundary](compatibility.md)
 - [Framework Architecture](../architecture.md)
+- [Open Forge Writing Standard](../../maintenance/writing.md)
 - [Canonical loader](../../../../../loader.md)
 
 ## Decisions And Rationale

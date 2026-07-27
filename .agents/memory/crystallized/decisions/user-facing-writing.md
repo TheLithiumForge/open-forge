@@ -17,3 +17,5 @@ Accepted from the user's review notes on 2026-07-19 and revised 2026-07-20 for c
 - Keep route descriptions decision-grade but compact: enough trigger and outcome to select the route, with execution detail in the routed body
 - Use typed authoritative-source language for semantic authority and reserve ownership language for possession or managed lifecycle, following the [accepted terminology decision](authoritative-source-terminology.md)
 - Use the [Open Forge Markdown scope](../documents/framework/markdown/_markdown.md) whenever Markdown structure carries Framework meaning; compatibility input is not another canonical authoring form
+
+The [Open Forge Writing Standard](../documents/maintenance/writing.md) defines how Open Forge prose remains clear, direct, consistent, and reviewable.

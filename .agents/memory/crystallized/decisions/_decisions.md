@@ -32,7 +32,7 @@ Decisions are accepted rationale for important choices that may need to be under
 - [The entry description is the selection surface; the routed body is the execution recipe](routing-surfaces.md) - #Memory #Decision #CurrentTruth #Routing #Formatting
 - [Distinct route and slug terms preserve recursive scope meaning without runtime placeholders or a fixed organizational taxonomy](scope-and-slugs.md) - #Memory #Decision #CurrentTruth #Routing #Scope
 - [Users receive src/open-forge as the payload; crystallized maintenance documents govern reviewed source without becoming hidden runtime context](source-and-packaging.md) - #Memory #Decision #CurrentTruth #Packaging #Governance
-- [Accepted tag semantics for loading, layers, truth status, Evergreen synchronization, and ordinary classification](tags.md) - #Memory #Decision #CurrentTruth #Tags #Routing
+- [Accepted tag semantics for loading, Framework composition, truth status, Evergreen synchronization, and ordinary classification](tags.md) - #Memory #Decision #CurrentTruth #Tags #Routing
 - [Templates are a distinct Core primitive for copy-ready source artifacts whose ownership transfers to independently maintained results](template-primitive.md) - #Memory #Decision #CurrentTruth #Core #Template #Primitive
 - [User-facing Open Forge files use positive natural language and compact selection surfaces](user-facing-writing.md) - #Memory #Decision #CurrentTruth #Formatting #Documentation #Routing
 - [Workflows use one predictable goal-oriented recipe shape while phases remain non-waterfall wayfinding and dependencies stay distinct from containment](workflow-shape.md) - #Memory #Decision #CurrentTruth #Workflow #Routing #Orchestration

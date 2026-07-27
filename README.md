@@ -66,6 +66,8 @@ The base installation provides two cooperating areas:
 | Core | Entry, routing, authority, loading, and reusable agent-facing content roles |
 | Memory | Continuity, candidate learning, accepted records, and useful history |
 
+Core and Memory ship together as the standard Framework. Extensions remain optional packages that add whole files through those same routes.
+
 The installed shape is intentionally small:
 
 ```text

@@ -17,7 +17,7 @@ Open Forge Extensions are a dogfooded MVP whose long-term architecture remains i
 - Proven invariants worth preserving
 - MVP liabilities
 
-The [top architecture](../architecture.md) owns Extensions as one area of the complete Open Forge system. The [Framework Architecture](../framework/architecture.md) owns every runtime route, primitive, authority, and Memory meaning used by installed extension files. The [CLI MVP Architecture](../cli/architecture.md) owns the deterministic implementation that currently discovers, plans, installs, validates, and removes packages.
+The [top architecture](../architecture.md#framework-composition) is authoritative for the composition relationship among Core, Memory, and Extensions. The [Framework Architecture](../framework/architecture.md) is authoritative for every runtime route, primitive, authority, and Memory meaning used by installed extension files. The [CLI MVP Architecture](../cli/architecture.md) is authoritative for the deterministic implementation that currently discovers, plans, installs, validates, and removes packages.
 
 This document describes the present MVP without declaring that its manifest schema, catalogue, grouping, lifecycle, or CLI integration is the final Extensions design. The [Extensions overhaul candidate](../../../emerging/ideas/extensions-overhaul.md) owns prospective replacement architecture.
 
@@ -131,7 +131,7 @@ Open Forge-authored routed files normally carry:
 
 Standard runtime formats such as `SKILL.md` retain their native metadata and resource conventions.
 
-`#Extension` identifies provenance and installable layering. It creates no authority, loading, or runtime behavior. Reserved loading tags are used only when the installed file deliberately belongs in baseline or continuity context.
+`#Extension` identifies optional package provenance and composition. It creates no authority, loading, or runtime behavior. Reserved loading tags are used only when the installed file deliberately belongs in baseline or continuity context.
 
 Markdown links resolve relative to the file in the assembled workspace. A same-package link should resolve in the isolated payload. A link to Core or a declared dependency may resolve only after complete assembly.
 

@@ -15,7 +15,7 @@ The [Memory architecture](../../../../framework/memory/_memory.md), [Memory mode
 
 ## Contract
 
-- Frontmatter keeps #LoadNow, #Memory, and #OrganicGrowth so the root Memory contract enters baseline context with its layer and growth role visible
+- Frontmatter keeps #LoadNow, #Memory, and #OrganicGrowth so the root Memory contract enters baseline context with its Framework classification and growth role visible
 - The root entrypoint keeps Memory below applicable authority while allowing it to record any subject without activating behavior it describes
 - Durable communication, coordination, direction, uncertainty, and learning are preserved when they must survive current context, while ordinary conversation does not become Memory automatically
 - Clear user direction is accepted within its stated scope and updates its appropriate current destination; tentative, exploratory, inferred, or materially ambiguous conclusions remain Working or Emerging until accepted

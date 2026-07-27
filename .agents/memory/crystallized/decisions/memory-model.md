@@ -8,7 +8,7 @@ open-forge:
 
 Accepted decisions extracted from the design sessions and idea notes on 2026-07-06.
 
-- The #Memory layer is self-growing Markdown memory for live work, agent communication and coordination, continuity, accepted records, historical context, and candidate learning.
+- #Memory identifies the Framework area for self-growing Markdown memory used for live work, agent communication and coordination, continuity, accepted records, historical context, and candidate learning
 - Agent communication and coordination belong in Memory when they must survive the current context; ordinary conversation does not become durable memory automatically.
 - Memory is authoritative for the capture, movement, consolidation, and archival of recorded state.
 - Memory may record any subject, including how work is performed, without making that behavior active.
@@ -23,3 +23,5 @@ Accepted decisions extracted from the design sessions and idea notes on 2026-07-
 - `documents/` is installed under `crystallized/` for durable accepted records or routes to those records.
 - `references/` is not installed for now.
 - `archived/` remains a root memory state. Archive child routes can be created when they preserve source, authority, or clarity better than a flat archive.
+
+The [top architecture](../documents/architecture.md#framework-composition) expresses Memory's place in the standard Framework. The [Memory Model](../documents/framework/memory/model.md) defines the complete current Memory model.

@@ -13,7 +13,7 @@ This document is authoritative for the current internal architecture of the Open
 - Core provides the routing substrate and reusable agent-facing primitives
 - Memory provides continuity, candidate learning, accepted records, and useful history
 
-The [top Open Forge architecture](../architecture.md) is authoritative for the complete system map and the relationships among the Framework, workspace context, extensions, deterministic tools, users, and agent runtimes. This document explains how Core and Memory work internally. It names extension and tool boundaries only where they constrain the Framework.
+The [top Open Forge architecture](../architecture.md) is authoritative for the complete system map and the [composition relationship](../architecture.md#framework-composition) among Core, Memory, and Extensions. This document explains how Core and Memory work internally. It names extension and tool boundaries only where they constrain the Framework.
 
 The Framework described here is the intended architecture to which the installable source, dogfood environment, governance, and tooling must migrate. Older files remain useful migration inputs, but they do not constrain this design merely because they exist.
 
@@ -349,5 +349,4 @@ The following files contain earlier decisions or governance that may help migrat
 - [Source and packaging rationale](../../decisions/source-and-packaging.md)
 - [Typed authority and role terminology](../../decisions/authoritative-source-terminology.md)
 - [Canonical Markdown authoring rationale](../../decisions/canonical-markdown.md)
-- [Layer migration descriptor](../../../../../docs/framework/concepts/layers.md)
 - [Payload boundary migration descriptor](../../../../../docs/framework/concepts/payload-boundary.md)

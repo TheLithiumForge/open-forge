@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Accepted tag semantics for loading, layers, truth status, Evergreen synchronization, and ordinary classification
+  description: Accepted tag semantics for loading, Framework composition, truth status, Evergreen synchronization, and ordinary classification
   tags: [Memory, Decision, CurrentTruth, Tags, Routing]
 ---
 
@@ -15,10 +15,10 @@ Extracted 2026-07-06; load-policy semantics reworked 2026-07-09 from the dogfood
 - #Evergreen remains independent of #CurrentTruth: synchronization creates neither authority nor load policy.
 - #OpenForge, #LoadWithParentEntrypoint, and #LoadForPostWorkReview are retired: #OpenForge fused core identity with load policy (identity is carried by #Core, #Memory, and framework paths); #LoadWithParentEntrypoint duplicated the same visibility rule; #LoadForPostWorkReview asked for a load at the moment agents demonstrably forget.
 - No load-policy tag creates authority, scope, precedence, or mechanical enforcement; compliance is agent self-enforcement, so tag definitions use agent-imperative wording ("read X") rather than tool-implying wording ("X is loaded").
-- #Core, #Memory, and #Extension are layer/routing tags.
+- #Core, #Memory, and #Extension are routing and Framework-composition tags, not authority levels. #Extension also identifies optional package provenance.
 - Route type tags such as #Directive, #Pattern, #Guidance, #Skill, #Workflow, and #Workspace are routing/search signals unless a loaded entrypoint defines more.
 - Tags stay bare in markdown so tools can parse and graph them.
 - Use normal words when defining the local concept itself; use tags when pointing to routed authority, classification, promotion, load policy, truth status, search, or references.
 - Extensions use load-policy tags only when they deliberately add baseline-loaded or continuity-critical material.
 
-The [loader](../../../loader.md#defined-tags) remains authoritative for exact installed meanings, while the [routing loading contract](../documents/framework/routing/loading.md) explains how load-policy tags participate in the complete context flow.
+The [loader](../../../loader.md#defined-tags) remains authoritative for exact installed meanings. The [Framework composition model](../documents/architecture.md#framework-composition) explains the relationship among Core, Memory, and Extensions, while the [routing loading contract](../documents/framework/routing/loading.md) explains how load-policy tags participate in the complete context flow.
