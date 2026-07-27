@@ -17,3 +17,5 @@ Accepted decisions extracted from the design sessions and idea notes on 2026-07-
 - The repository's root `.agents/` tree dogfoods the installable payload and may add repository-specific routes. Any deliberate dogfood-only difference must remain visibly local; shared directive, routing, continuity, and workflow semantics stay aligned with `src/open-forge/`.
 - Framework files should be concise, explicit, and easy to diff.
 - Users may edit framework files, but durable customization should prefer local sibling files, child routes, or `.overwrite.md` companions.
+
+The [current overwrite contract](../documents/framework/routing/overwrites.md) expresses the accepted companion behavior. User-owned overwrites preserve a small local delta beside a readable base without requiring hidden source or version metadata.

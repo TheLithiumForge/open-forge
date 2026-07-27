@@ -36,7 +36,7 @@ This is the main Open Forge `entrypoint`. Read it after `AGENTS.md` to enter thi
 - A folder is routable only when it contains one recognized `entrypoint`; every folder in a nested route path needs its own `entrypoint`
 - Scope routes use concrete `slugs` and may appear before, after, or between framework route segments; initialize only the scoped framework routes needed there, while placement narrows their subject without changing their roles
 - Generated `Entries` are navigation metadata; entries without a load-policy tag are on demand, and detailed meaning comes from the routed destination or the authoritative source it identifies
-- When `{name}.overwrite.md` exists, read it immediately after `{name}.md`; it inherits the base route and has final precedence within that file's scope
+- A user-owned `{name}.overwrite.md` is not an independent route; when its `{name}.md` base loads, read the companion immediately afterward. The overwrite inherits the base route, scope, and loading behavior, is not independently indexed or selected, and has final precedence within that file's scope
 
 ### Tags And Loading
 

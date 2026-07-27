@@ -307,6 +307,9 @@ describe("install", () => {
     expect(installedLoader).toContain("`framework route` - Standard Core or Memory route");
     expect(installedLoader).toContain("Scope routes use concrete `slugs` and may appear before, after, or between framework route segments");
     expect(installedLoader).toContain("placement narrows their subject without changing their roles");
+    expect(installedLoader).toContain("A user-owned `{name}.overwrite.md` is not an independent route");
+    expect(installedLoader).toContain("is not independently indexed or selected");
+    expect(installedLoader).toContain("has final precedence within that file's scope");
     expect(installedLoader).toContain("Loading and tags change visibility, timing, or classification; they do not create authority by themselves.");
     expect(installedLoader).toContain("A request to act also accepts any decision required to perform that action");
     expect(installedLoader).toContain("at every required #KeepInMind boundary");
@@ -1678,11 +1681,16 @@ Keep this Claude-specific instruction.
     await initializeGitRepository(root);
     expect((await runCliDefault("install", root)).exitCode).toBe(0);
     await commitAll(root, "Install Core");
+    const overwrite = path.join(root, ".agents", "loader.overwrite.md");
+    const overwriteContent = "# Loader Overwrite\n\nKeep this user-owned adjustment.\n";
+    await fs.writeFile(overwrite, overwriteContent);
+    await commitAll(root, "Add user-owned overwrite");
 
     const result = await runCliDefault("install", root);
 
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain("Git reports no target changes; no new commit is needed");
+    expect(await fs.readFile(overwrite, "utf8")).toBe(overwriteContent);
     expect((await gitCommand(root, "status", "--porcelain=v1")).stdout).toBe("");
   });
 

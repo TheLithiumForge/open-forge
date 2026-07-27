@@ -11,7 +11,7 @@ open-forge:
 
 [`src/open-forge/.agents/loader.md`](../../../../../../../src/open-forge/.agents/loader.md) is the canonical installed Framework loader. The repository [loader](../../../../../../loader.md) dogfoods the same authored contract with its locally generated root entries.
 
-The [Framework Architecture](../../../framework/architecture.md#canonical-entry) is authoritative for the loader's structural role. The [Open Forge Routing scope](../../../framework/routing/_routing.md) defines the detailed route, scope, loading, and path contracts. The [routed Markdown contract](../../../framework/markdown/routes.md) is authoritative for its canonical authored and generated representation. The [routing model](../../../../decisions/routing-model.md), [routing surfaces](../../../../decisions/routing-surfaces.md), [scope and slugs](../../../../decisions/scope-and-slugs.md), [tags](../../../../decisions/tags.md), [loading reliability](../../../../decisions/loading-reliability.md), [typed authority terminology](../../../../decisions/authoritative-source-terminology.md), and [source and packaging](../../../../decisions/source-and-packaging.md) decisions preserve accepted rationale.
+The [Framework Architecture](../../../framework/architecture.md#canonical-entry) is authoritative for the loader's structural role. The [Open Forge Routing scope](../../../framework/routing/_routing.md) defines the detailed route, scope, loading, path, and [overwrite](../../../framework/routing/overwrites.md) contracts. The [routed Markdown contract](../../../framework/markdown/routes.md) is authoritative for its canonical authored and generated representation. The [routing model](../../../../decisions/routing-model.md), [routing surfaces](../../../../decisions/routing-surfaces.md), [scope and slugs](../../../../decisions/scope-and-slugs.md), [tags](../../../../decisions/tags.md), [loading reliability](../../../../decisions/loading-reliability.md), [typed authority terminology](../../../../decisions/authoritative-source-terminology.md), and [source and packaging](../../../../decisions/source-and-packaging.md) decisions preserve accepted rationale.
 
 ## Contract
 
@@ -44,7 +44,8 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 - The loader remains authoritative for the meanings of #LoadNow, #KeepInMind, #Core, #Memory, #Extension, #Contextual, #CurrentTruth, and #Evergreen. Undefined tags remain routing and search signals.
 - #LoadNow traverses only visible children of an already-loaded parent. #KeepInMind discovers every routed #KeepInMind result across the workspace and follows each result's visible #LoadNow closure without loading unrelated descendants.
 - Every recovered result retains the authority and scope established by its route and content.
-- A user-owned `{name}.overwrite.md` loads immediately after its base and has final precedence only within that file's scope.
+- A user-owned `{name}.overwrite.md` is not an independent route and loads immediately after its base.
+- It inherits the base route, scope, and loading behavior, is not independently indexed or selected, and has final precedence only within that file's scope.
 
 ### Deterministic Assistance
 

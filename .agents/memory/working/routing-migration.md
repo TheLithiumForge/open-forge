@@ -19,13 +19,14 @@ The former combined routing descriptor has been split into:
 
 Agent primitive routing concerns and the non-loader category maintenance contracts have now been extracted into the [Core Primitives scope](../crystallized/documents/framework/primitives/_primitives.md) and [Agents Runtime Maintenance](../crystallized/documents/maintenance/payload/agents/_agents.md).
 
+Overwrite naming, inherited routing and loading, precedence, generated boundaries, ownership, and lifecycle have now been extracted into the [overwrite contract](../crystallized/documents/framework/routing/overwrites.md).
+
 ## Deferred Extractions
 
 Move each remaining concern to the matching component maintenance document or scoped concept when that source receives its file-by-file migration.
 
 | Concern | Current authoritative source or migration input | Intended destination |
 |---|---|---|
-| Overwrite naming, adjacency, precedence, indexing, and customization | [Loader](../../loader.md), [Framework Architecture](../crystallized/documents/framework/architecture.md#recursive-customization), and [Overwrite descriptor](../../../docs/framework/concepts/overwrites.md) | Scoped overwrite contract and affected source maintenance |
 | Scoped Framework route recognition currently hardcoded by the CLI | [CLI MVP Architecture](../crystallized/documents/cli/architecture.md#partial-recursive-support) and [CLI overhaul candidate](../emerging/ideas/cli-overhaul.md) | Future CLI architecture and maintenance |
 
 ## Removal Condition

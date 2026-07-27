@@ -83,7 +83,7 @@ The CLI may expose commands using product-friendly names, but installed material
 
 Workspaces grow by adding routed files and child categories first.
 
-Overwrites are the local adjustment mechanism for small changes to managed files. Direct edits to managed framework files are reserved for complete replacement or cases where base plus overwrite would confuse an agent.
+The [current overwrite contract](../../../.agents/memory/crystallized/documents/framework/routing/overwrites.md) defines the local adjustment mechanism between adding routed files and directly changing a base.
 
 Workspaces expand #Memory through child categories. #Extension payloads expand existing routes by adding routed material. New root categories or new #Memory root states require stronger justification because they change the top-level routing model.
 

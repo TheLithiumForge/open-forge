@@ -280,7 +280,7 @@ The current plan accounts for:
 - Generated-index side effects
 - Route reachability after removal
 
-Payloads cannot claim `.git/`, `.gitignore`, the ownership receipt, or workspace-owned `.overwrite.md` files.
+Payloads cannot claim `.git/`, `.gitignore`, the ownership receipt, or workspace-owned `.overwrite.md` files. The [overwrite contract](../framework/routing/overwrites.md) owns why these companions remain outside Extension ownership.
 
 Different bytes targeting one portable path are a conflict. Identical managed bytes may share owners only through explicit compatible plans. Byte equality alone is not permission to adopt an existing file.
 

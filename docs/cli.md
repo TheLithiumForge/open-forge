@@ -366,7 +366,7 @@ open-forge load --paths
 open-forge load --json
 ```
 
-`load` optionally batches the same plain traversal: the loader, each transitive #LoadNow entry reachable through already-loaded parents in generated order, and the complete routed #KeepInMind catalogue. Each base is immediately followed by its user-owned `.overwrite.md` when present. Installed files and ordinary traversal remain complete without this command.
+`load` optionally batches the same plain traversal: the loader, each transitive #LoadNow entry reachable through already-loaded parents in generated order, and every routed #KeepInMind result with its visible #LoadNow closure. Each base is immediately followed by its user-owned `.overwrite.md` when present. Installed files and ordinary traversal remain complete without this command.
 
 The traversal does not enter an on-demand parent merely because a hidden descendant has #LoadNow. #KeepInMind is the deliberate catalogue-wide exception. Use `--bodies` when an agent needs the actual context, `--paths` for a compact audit, or `--json` for tooling.
 
