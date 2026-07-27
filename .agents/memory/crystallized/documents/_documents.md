@@ -22,7 +22,7 @@ Documents are durable accepted records, or routes to those records, for long-for
 - [Accepted evaluation syntheses; load when a loading, routing, or design decision needs its source evidence](evaluations/_evaluations.md) - #Memory #Document #Record #CurrentTruth #Evaluation #Evidence
 - [Current documents for the Open Forge Extensions MVP package, composition, ownership, safety, and lifecycle](extensions/_extensions.md) - #Memory #Document #CurrentTruth #Architecture #Extension #MVP
 - [Current documents for Open Forge Framework internals, including Core and Memory](framework/_framework.md) - #Memory #Document #CurrentTruth #Framework #Core #Architecture
-- [Current maintainer contracts for reviewed Open Forge source and repository surfaces](maintenance/_maintenance.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance
+- [Current maintainer contracts and repository-only authoring helpers for Open Forge source and documentation](maintenance/_maintenance.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance
 - [Current foundational principles that define Open Forge's identity and guide unfamiliar product, Framework, and tooling choices](principles.md) - #Memory #Document #CurrentTruth #Evergreen #Principle #Foundation #Identity #Product #ACE
 - [Current Open Forge purpose, product promise, scope, success criteria, and non-goals](vision.md) - #Memory #Document #CurrentTruth #Evergreen #Vision #Product #ACE
 <!-- open-forge:generated-index:end -->

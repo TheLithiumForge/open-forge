@@ -20,7 +20,7 @@ Open Forge is a user-owned, human-readable, file-native operating layer for Adap
 
 ## Why Open Forge
 
-Capable agents still produce inconsistent results when relevant context is missing, stale, duplicated, too broad, or expensive to retrieve. Operators then spend limited attention repeating settled direction, reviewing avoidable mistakes, and teaching every new session how the workspace works.
+Capable agents still produce inconsistent results when relevant context is missing, stale, duplicated, too broad, or expensive to retrieve. Users then spend limited attention repeating settled direction, reviewing avoidable mistakes, and teaching every new session how the workspace works.
 
 Large predefined methodologies answer this problem with more process, instructions, and required workflows. Their onboarding, context, and review costs grow even when most of that machinery is irrelevant to the work.
 
@@ -34,7 +34,7 @@ Development is a proving ground, not a boundary. Open Forge can grow around any 
 
 ## Principles
 
-The [Open Forge Principles](principles.md) own the identity-level filters that guide the product as it evolves. Open Forge remains user-owned, relevance-routed, operator-led, agent-enabled, explicitly connected, small at its shared foundation, recursively adaptable, complete in human-readable files, and honest about nondeterministic reliability.
+The [Open Forge Principles](principles.md) own the identity-level filters that guide the product as it evolves. Open Forge remains user-owned, relevance-routed, user-directed, agent-enabled, explicitly connected, small at its shared foundation, recursively adaptable, complete in human-readable files, and honest about nondeterministic reliability.
 
 ## Success
 
@@ -42,7 +42,7 @@ Open Forge succeeds when:
 
 - A new agent can enter a workspace and cheaply determine what matters, where it lives, what is authoritative, and what remains uncertain
 - Settled workspace knowledge is understood instead of repeatedly inferred
-- Operators spend attention on meaningful decisions and outcomes rather than preventable process failures
+- Users spend attention on meaningful decisions and outcomes rather than preventable process failures
 - Work survives changes of session, agent, provider, project phase, and contributor without losing accepted direction
 - Unselected scopes add almost no active-context cost, while related scopes can be combined deliberately
 - Each workspace becomes more capable and personal through use without making the shared foundation more opinionated
@@ -54,7 +54,7 @@ Open Forge is not:
 
 - A universal development, product, design, or organizational methodology
 - A large catalogue of mandatory prompts, workflows, roles, or ceremonies
-- A substitute for operator judgment or responsibility
+- A substitute for user judgment or responsibility
 - A hidden knowledge database, agent runtime, or provider-specific orchestrator
 - An automatic recorder of every conversation or activity
 - A mechanical guarantee that a nondeterministic agent will behave correctly

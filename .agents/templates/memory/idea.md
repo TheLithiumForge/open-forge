@@ -38,7 +38,7 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 ## Promotion Signals
 
-{Describe evidence, recurrence, operator direction, or resolved questions that would justify promotion or consolidation.}
+{Describe evidence, recurrence, user direction, or resolved questions that would justify promotion or consolidation.}
 
 ## Related Records And Sources
 

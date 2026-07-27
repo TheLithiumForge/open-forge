@@ -63,4 +63,4 @@ These sources express the accepted result:
 
 - [Distinct Core primitive roles](core-primitives.md)
 - [Source and packaging](source-and-packaging.md)
-- [Typed authoritative source terminology](authoritative-source-terminology.md)
+- [Typed authority and role terminology](authoritative-source-terminology.md)

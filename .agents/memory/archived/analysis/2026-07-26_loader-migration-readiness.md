@@ -418,7 +418,7 @@ After maintainer review:
 
 ## Related Sources
 
-- [Temporary terminology helper](../../working/terminology-helper.md)
-- [Temporary knowledge-role helper](../../working/knowledge-role-helper.md)
+- [Terminology helper](../../crystallized/documents/maintenance/helpers/terminology.md)
+- [Knowledge-role helper](../../crystallized/documents/maintenance/helpers/knowledge-roles.md)
 - [Open Forge design baseline](../../archived/sessions/2026-07-26_open-forge-design-baseline.md)
 - [Open Forge design baseline part 2](../../archived/sessions/2026-07-26_open-forge-design-baseline-part-2.md)

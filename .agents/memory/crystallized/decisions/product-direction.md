@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Open Forge stays markdown-first, operator-led, small by default, and optimized for recursive customization
+  description: Open Forge stays markdown-first, user-directed, small by default, and optimized for recursive customization
   tags: [Memory, Decision, CurrentTruth, Product]
 ---
 
@@ -12,14 +12,14 @@ Agent work benefits from persistent workspace context, but a large predefined me
 
 ## Decision
 
-Open Forge remains file-native, user-owned, operator-led, small at its shared foundation, and recursively customizable.
+Open Forge remains file-native, user-owned, user-directed, small at its shared foundation, and recursively customizable.
 
 It provides sensible removable defaults without installing a universal methodology. Native agent capability performs ordinary reasoning, while local routes, Memory, Templates, and optional Extensions let a workspace develop methods from actual decisions and use.
 
 ## Rationale
 
 - Human-readable repository files keep meaning vendor-agnostic, inspectable, reviewable, and correctable
-- Operator direction preserves responsibility for goals and consequential choices without requiring approval for ordinary execution
+- Goals and consequential choices remain under user control without requiring approval for ordinary execution
 - A small shared foundation limits baseline context, onboarding, and maintenance cost
 - Removable defaults provide discoveries and structure that an empty substrate would withhold
 - Recursive customization lets accepted preferences become the workspace's personality and methodology without making the shared Framework equally opinionated
@@ -29,7 +29,7 @@ It provides sensible removable defaults without installing a universal methodolo
 - A complete predefined methodology would provide more immediate procedure but impose the author's assumptions and review surface
 - A hidden managed runtime could automate more behavior but weaken user ownership and plain-file completeness
 - An empty routing library would maximize formal neutrality but provide too little practical value and continuity
-- Agent-directed product direction could reduce operator involvement but would silently delegate contextual responsibility that Open Forge is meant to preserve
+- Agent-directed product direction could reduce user involvement but would silently delegate contextual responsibility that Open Forge is meant to preserve
 
 The accepted direction requires discipline when adding shared defaults: each must provide broad expected value while remaining understandable and removable.
 
@@ -38,7 +38,7 @@ The accepted direction requires discipline when adding shared defaults: each mus
 - Core and the shipped Framework remain compact and generic
 - Specialized methodology belongs in local scopes or optional Extensions
 - Normal installation and upgrade preserve deliberate removal and customization
-- Public language emphasizes user ownership, relevant context, recursive growth, and operator-led autonomy
+- Public language emphasizes user ownership, relevant context, recursive growth, user direction, and agent autonomy
 - New shared behavior must justify its context and maintenance cost
 
 ## Authoritative Sources

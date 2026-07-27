@@ -52,4 +52,4 @@ These sources express the accepted result. They are not the rationale backing th
 - [Product direction](product-direction.md)
 - [Routing model](routing-model.md)
 - [Workflow shape](workflow-shape.md)
-- [Typed authoritative source terminology](authoritative-source-terminology.md)
+- [Typed authority and role terminology](authoritative-source-terminology.md)

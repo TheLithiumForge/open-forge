@@ -137,7 +137,7 @@ The help should expose:
 
 The command must derive from or point to human-readable authoritative Framework sources rather than make CLI output a private ontology. It may offer interactive placement or scaffolding assistance, but suggestions remain transparent and correctable.
 
-The repository's temporary knowledge-role helper can inform this design during migration. It should not become a permanent prerequisite for users.
+The repository-only [knowledge-role helper](../../crystallized/documents/maintenance/helpers/knowledge-roles.md) can inform this design. CLI help should expose useful selection guidance without making the internal helper a prerequisite for users.
 
 ## Structured Interface Direction
 

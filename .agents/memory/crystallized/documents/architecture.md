@@ -16,7 +16,7 @@ The [Open Forge Principles](principles.md) define the product identity that this
 
 - Workspace meaning remains inspectable and independently owned
 - Relevant context is selected without loading the whole environment
-- Accepted direction stays operator-led while normal execution remains autonomous
+- Accepted direction remains under user control while normal execution remains autonomous
 - A small useful base can evolve recursively without becoming one universal methodology
 - Deterministic tools make correct behavior cheaper without becoming privately authoritative
 
@@ -31,7 +31,7 @@ An Open Forge environment combines four areas:
 | Extensions | Optional reusable capabilities | The framework routes they extend |
 | Deterministic tools | Mechanical loading, navigation, validation, installation, packaging, and safety | The human-readable files they inspect and change |
 
-The operator establishes goals and accepted direction. An agent runtime consumes the environment, performs work with its native capabilities, and proposes changes. Agent providers and execution runtimes remain external to Open Forge. Minimal provider bridges may expose the canonical workspace entry without defining independent policy.
+User direction establishes goals and accepted direction. An agent runtime consumes the environment, performs work with its native capabilities, and proposes changes. Agent providers and execution runtimes remain external to Open Forge. Minimal provider bridges may expose the canonical workspace entry without defining independent policy.
 
 ## Authority And Dependency Direction
 
@@ -83,7 +83,7 @@ Selection cost should grow primarily with route depth and the number of selected
 
 ## Authority And Current Knowledge
 
-Loading changes visibility, not authority. Authority comes from the authoritative source, its scope, accepted operator direction, applicable framework rules, and any declared external source of truth.
+Loading changes visibility, not authority. Authority comes from the authoritative source, its scope, accepted user direction, applicable framework rules, and any declared external source of truth.
 
 Each subject has one authoritative source for each distinct question:
 
@@ -173,4 +173,4 @@ These decisions preserve useful rationale behind the current architecture. Their
 - [Memory model](../decisions/memory-model.md)
 - [Extensions and CLI](../decisions/extensions-and-cli.md)
 - [Scope and slugs](../decisions/scope-and-slugs.md)
-- [Typed authoritative source terminology](../decisions/authoritative-source-terminology.md)
+- [Typed authority and role terminology](../decisions/authoritative-source-terminology.md)

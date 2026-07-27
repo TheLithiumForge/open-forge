@@ -63,7 +63,7 @@ The overhaul begins from the stable boundaries already owned by the current arch
 ### Lifecycle
 
 - How do first installation, update, migration, restoration, removal, and orphan handling differ?
-- Which changes require an explicit operator decision?
+- Which changes require explicit user direction?
 - How is interrupted application recovered?
 
 ### Catalogue Governance
@@ -112,7 +112,6 @@ A replacement current Extensions architecture is justified when:
 - Package and source boundaries are accepted
 - Trust and compatibility semantics are explicit
 - Scope and ownership work across the intended workspace shapes
-- Lifecycle intents and operator decision points are distinct
+- Lifecycle intents and required user decisions are distinct
 - The Extensions and CLI responsibilities compose through one plan contract
 - Catalogue governance is credible enough for the distribution being proposed
-

@@ -11,14 +11,15 @@ Decisions are accepted rationale for important choices that may need to be under
 ## Axioms
 
 - Read `Entries` when current work needs rationale for an important choice.
-- During the repository migration, use the [temporary knowledge-role question helper](../../working/knowledge-role-helper.md) when placement is unclear; remove this repository-only helper after normal route descriptions and current contracts make selection sufficiently cheap.
+- Use the repository-only [knowledge-role helper](../documents/maintenance/helpers/knowledge-roles.md) when placement is unclear; user-facing descriptions and contents must remain understandable without it.
 - Decisions preserve why a choice was made and useful historical rationale; the chosen behavior, record, route, or external state is expressed by its authoritative route or system.
+- Consolidate, reshape, or link overlapping Decisions when their accepted rationale is compatible, and archive or link superseded rationale; surface material divergence or competing accepted rationale for discussion instead of merging it silently.
 - Keep alternatives, tradeoffs, constraints, and consequences only when they help future work.
 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Open Forge names semantic authority by source type and reserves ownership language for possession or managed lifecycle](authoritative-source-terminology.md) - #Memory #Decision #CurrentTruth #Terminology #Authority #Documentation
+- [Open Forge states role and authority relationships directly, names semantic authority by source type, and reserves ownership for possession or managed lifecycle](authoritative-source-terminology.md) - #Memory #Decision #CurrentTruth #Terminology #Authority #Documentation
 - [Benchmarks compose agnostic scenarios, reusable primitive blocks, and reproducible meta-scenarios under trace-reviewing orchestrators](benchmark-design.md) - #Memory #Decision #CurrentTruth #Benchmark #Dogfood #Evaluation
 - [Open Forge uses one canonical authoring form wherever Markdown carries Framework meaning while treating compatibility syntax as input-only](canonical-markdown.md) - #Memory #Decision #CurrentTruth #Framework #Markdown #Authoring #Syntax #Compatibility
 - [Core uses distinct reusable content roles instead of one generic knowledge bucket, and every new primitive must earn nonduplicative semantics](core-primitives.md) - #Memory #Decision #CurrentTruth #Core #Primitive
@@ -26,7 +27,7 @@ Decisions are accepted rationale for important choices that may need to be under
 - [Extensions add optional whole routed files while installed files remain complete runtime truth](extensions-and-cli.md) - #Memory #Decision #CurrentTruth #Extension #CLI
 - [Reliability-critical context loads unconditionally and early; conditional context must be cheap to skip and cheap to recover from](loading-reliability.md) - #Memory #Decision #CurrentTruth #Loading #Routing #Reliability
 - [Memory preserves working, emerging, crystallized, and archived state without activating behavior it describes](memory-model.md) - #Memory #Decision #CurrentTruth #MemoryModel
-- [Open Forge stays markdown-first, operator-led, small by default, and optimized for recursive customization](product-direction.md) - #Memory #Decision #CurrentTruth #Product
+- [Open Forge stays markdown-first, user-directed, small by default, and optimized for recursive customization](product-direction.md) - #Memory #Decision #CurrentTruth #Product
 - [Small recursive entrypoints preserve local scope while one recognized entrypoint and explicit root routes remove routing ambiguity](routing-model.md) - #Memory #Decision #CurrentTruth #Routing
 - [The entry description is the selection surface; the routed body is the execution recipe](routing-surfaces.md) - #Memory #Decision #CurrentTruth #Routing #Formatting
 - [Distinct route and slug terms preserve recursive scope meaning without runtime placeholders or a fixed organizational taxonomy](scope-and-slugs.md) - #Memory #Decision #CurrentTruth #Routing #Scope

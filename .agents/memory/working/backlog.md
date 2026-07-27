@@ -19,6 +19,8 @@ Complete the current source migration in this order:
 5. Optimize the complete Core primitive system across conceptual documents, installed runtime entrypoints, Maintenance contracts, decisions, links, terminology, and validation
 6. Optimize the complete Memory system across its model, states, routes, installed runtime entrypoints, Maintenance contracts, decisions, links, terminology, and validation
 
+During both optimization passes, apply the repository-only [terminology helper](../crystallized/documents/maintenance/helpers/terminology.md) consistently. Prefer direct statements of relationships and use `user` only when naming that role improves clarity.
+
 Do not let a later phase pull detailed work forward merely because one concept links to it. Temporary migration references may remain until their scheduled phase as long as current authoritative sources do not depend on them.
 
 ## Framework Simplification Refactor
@@ -95,6 +97,12 @@ The older open-work sections below predate this refactor review. They remain con
 4. Consider a deterministic active-context receipt for auditability: selected route chains, overwrite companions, Required Routes, global binding #KeepInMind context, cost, and digest. It must not narrow the baseline #KeepInMind contract or create parallel runtime truth.
 5. Decide the remaining deterministic CLI options: `find --max-tokens`, approximate token counts, startup-budget warnings, intent-to-route previews, named route templates, extension authoring templates, and explicit forceful versus soft upgrade modes.
 6. Revisit a distinct primitive-kind field only if ownership ambiguity recurs beyond the current route-aware validator and tests.
+
+## Revisit Workflow Architecture
+
+1. After source migration and the complete Core primitive optimization pass, redesign the current Workflow model using the preserved [Workflow overhaul inputs](../emerging/ideas/workflow-overhaul.md).
+2. Provide an installed, on-demand, human-readable authoring surface for creating validator-compliant Workflows without requiring repository-only architecture or Maintenance documents.
+3. Reconsider recipe shape, modes, phases, dependencies, delegation handoffs, scoped Framework composition, runtime wording, Templates, CLI assistance, and validation as one coherent design.
 
 ## Self-Growth, Documentation, And Release
 
