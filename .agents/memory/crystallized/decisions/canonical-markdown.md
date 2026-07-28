@@ -6,17 +6,55 @@ open-forge:
 
 # Canonical Markdown Authoring
 
-Accepted 2026-07-26 during migration of the former formatting descriptor and extended 2026-07-27 with optional responsibility metadata.
+## Context
 
-- Open Forge defines one canonical authoring form wherever Markdown structure carries Framework meaning.
-- Ordinary prose remains ordinary Markdown unless a Framework contract assigns semantic meaning to a structure.
-- Generated output, examples, Templates, scaffolding, and public authoring help use only canonical forms.
-- A parser may accept selected legacy or interoperability forms for reading and migration without presenting them as equivalent ways to author new content.
-- Unsupported Markdown equivalents may still render for people, but Open Forge does not promise to interpret them as Framework structures.
-- Human-readable files remain the semantic contract. CLI help, validation, generation, and scaffolding derive from accepted files instead of privately defining syntax.
-- One canonical form reduces ambiguity, implementation surface, review cost, and agent decision overhead without restricting ordinary prose unnecessarily.
-- `description` remains the natural-language pre-load selection surface.
-- Optional `responsibility` states the stable boundary of what an opened file is responsible for defining. It guides future edits without creating authority or loading behavior.
-- A responsibility changes through deliberate redefinition, splitting, or merging rather than being widened opportunistically to fit unrelated contents.
+Markdown offers several visually similar ways to express headings, lists, metadata, links, and other structures. Treating every equivalent rendering as equivalent Framework syntax would make authoring, parsing, generation, review, and agent behavior needlessly ambiguous.
 
-The [Open Forge Markdown scope](../documents/framework/markdown/_markdown.md) contains the complete accepted authoring form and compatibility boundary.
+Open Forge also needed a stable way to state what an opened file defines without turning that metadata into another authority or loading mechanism.
+
+## Decision
+
+Open Forge uses one canonical authoring form whenever Markdown structure carries Framework meaning. Ordinary prose remains ordinary Markdown until a Framework contract assigns semantic meaning to a structure.
+
+Generated output, examples, Templates, scaffolding, validation help, and public authoring guidance use the canonical form. Tools may accept selected legacy or interoperability forms as input without presenting them as equivalent authoring choices.
+
+Frontmatter uses `description` as the natural-language pre-load selection surface. An optional `responsibility` field states the stable boundary of what the opened file defines. Responsibility guides edits but creates no authority, scope, or loading behavior.
+
+## Rationale
+
+One authored form reduces agent decision cost, parser surface, inconsistent examples, and maintenance ambiguity while leaving ordinary Markdown expressive.
+
+Separating canonical output from compatible input allows migration and interoperability without teaching several competing contracts. Keeping the semantic contract in human-readable files also prevents CLI behavior from privately defining the Framework.
+
+Responsibility metadata deters opportunistic scope growth. A changed responsibility therefore calls for deliberate redefinition, splitting, or merging rather than wording that merely absorbs unrelated content.
+
+## Alternatives And Tradeoffs
+
+- Supporting every Markdown equivalent as canonical would reduce immediate authoring constraints but multiply interpretation and validation paths
+- Rejecting every legacy form would simplify tools but make migration and interoperability unnecessarily brittle
+- Making `responsibility` mandatory would add metadata to entrypoints and small files whose route and content already make their boundary clear
+- Letting a tool define syntax privately would make file-native behavior incomplete without that tool
+
+Canonical forms require explicit documentation and careful migrations when an accepted form changes.
+
+## Consequences
+
+- Unsupported equivalents may render correctly for people without carrying Open Forge semantics
+- Parsers distinguish accepted input from canonical generated output
+- Canonical examples show each Framework symbol directly
+- Responsibility remains optional and stable when it adds a useful editing boundary
+- Authoring assistance may be generated from the same current Markdown contracts
+
+## Authoritative Sources
+
+- [Open Forge Markdown scope](../documents/framework/markdown/_markdown.md)
+- [Canonical Markdown syntax](../documents/framework/markdown/syntax.md)
+- [Routed Markdown representation](../documents/framework/markdown/routes.md)
+- [Markdown compatibility boundary](../documents/framework/markdown/compatibility.md)
+
+## Decision Relationships
+
+- [Routing model](routing-model.md)
+- [Routing surfaces](routing-surfaces.md)
+- [Tag semantics](tags.md)
+- [User-facing writing](user-facing-writing.md)

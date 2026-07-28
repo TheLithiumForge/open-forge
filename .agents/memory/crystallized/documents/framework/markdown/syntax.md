@@ -40,7 +40,7 @@ Open Forge-authored files use:
 - YAML frontmatter using `---` before and after the metadata block when indexed metadata is required
 - Bare tags using `#Tag` where tags appear in prose or route metadata
 
-Use short headings, compact paragraphs, line-based lists, and examples only when they clarify the contract. Use a table when comparison or exact mapping is clearer than prose or a list. Machine-readable sections use only their declared line shape.
+Machine-readable sections use only their declared line shape. The [Open Forge Writing Standard](../../maintenance/writing.md) defines prose structure, examples, and when a table communicates more clearly than prose or a list.
 
 ## Frontmatter
 
@@ -65,7 +65,7 @@ The canonical block:
 
 The `description` is the pre-load selection surface. It explains enough purpose, trigger, or outcome for a reader to select or skip the route without opening its body. It is natural and suggestive rather than a repeated formula.
 
-The optional `responsibility` is the stable boundary of what the file is responsible for defining. It guides edits after the file is opened, does not create authority or loading behavior, and changes only through a deliberate redefinition, split, or merge of that boundary. Content that develops an independent responsibility moves to another authoritative source and is linked instead of widening the field casually.
+The optional `responsibility` states the stable boundary of what the file defines. It guides edits after the file is opened but creates no authority or loading behavior. Change it only through a deliberate redefinition, split, or merge. Move content with an independent responsibility to another authoritative source and link to it.
 
 Use `responsibility` only when it adds a useful boundary beyond the route and description. Category entrypoints normally do not need it because their route, definition, and generated entries already express their responsibility.
 

@@ -78,4 +78,4 @@ After a base changes, review its overwrite when the adjustment may no longer mat
 ## Decisions And Rationale
 
 - [Source and packaging](../../../decisions/source-and-packaging.md)
-- [Do not revive rejected mutation mechanisms](../../../decisions/do-not-revive.md)
+- [Extension package boundary](../../../decisions/extension-package-boundary.md)

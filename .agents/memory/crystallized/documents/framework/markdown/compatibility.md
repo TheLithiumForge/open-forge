@@ -21,10 +21,18 @@ The current CLI may read selected noncanonical input for migration or interopera
 - `Skill.md` as a skill-entrypoint alias
 - `rune:` scoped metadata or unscoped `description` and `tags` in external files
 - A first suitable body sentence as a generated description fallback when an external or local file has no supported metadata description
-- Legacy backtick route entries
+
+Legacy backtick routes remain input-compatible:
+
+| Surface | Example | Path resolution |
+|---|---|---|
+| Generated `Entries` | ``- `.agents/skills/example/SKILL.md` - Example skill - #Skill`` | `.agents/` paths resolve from the workspace root; other paths resolve from the containing entrypoint |
+| `Required Routes` | ``- `.agents/skills/example/SKILL.md` - Implementation capability - #Skill`` | Paths resolve from the workspace root |
+
+The current CLI may also read:
+
 - Angle-bracket route destinations accepted by the current parser
 - Legacy generated `Entries` sections without bounded markers when they can be migrated safely
-- Selected legacy workspace-relative route paths
 
 Compatibility behavior is input-only unless a current authoritative source explicitly says otherwise. Open Forge-generated files, Templates, examples, documentation, and new authored content use canonical forms.
 

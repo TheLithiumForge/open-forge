@@ -14,7 +14,7 @@ Open Forge needs several forms of reusable context with different selection and 
 
 Core uses a small set of semantically distinct reusable content roles instead of one generic knowledge bucket.
 
-Each primitive must answer a different primary question, carry meaning that cannot be expressed clearly by an existing primitive, and justify its routing and maintenance cost. The current primitive set and complete relationships belong to the [Core primitive model](../documents/framework/primitives/model.md) and installed entrypoints.
+Each primitive must answer a different primary question, carry meaning that cannot be expressed clearly by an existing primitive, and justify its routing and maintenance cost. The [Core primitive model](../documents/framework/primitives/model.md) and installed entrypoints define the current set and relationships.
 
 Framework contracts refer to #Core collectively when any suitable Core route may satisfy a requirement. They name a specific primitive when its distinct semantics matter and enumerate concrete routes when the exact standard routes are the subject.
 
@@ -28,6 +28,7 @@ The admission threshold prevents Core from becoming a catalogue of the author's 
 
 - One generic knowledge route would make Core smaller physically but move recurring semantic classification into every agent decision
 - A separate primitive for every document or workflow variation would improve naming specificity at the cost of overlap, baseline complexity, and universal methodology
+- A default `constants/` primitive would add a routing surface without distinct semantics
 
 The accepted model requires clearer primitive definitions and careful review when a new role is proposed.
 

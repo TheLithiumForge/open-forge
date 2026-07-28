@@ -38,6 +38,8 @@ Prefer the fewest words that make the meaning aggressively clear, not the fewest
 - Describe the positive current contract first. Use negative constraints when they close a concrete ambiguity, safety risk, or rejected alternative
 - State material tradeoffs directly instead of hiding them behind generic words such as flexible, robust, or scalable
 - Use short headings and compact paragraphs, but do not turn brevity into fragments or remove the explanation required to act correctly
+- Introduce a list with prose or a subheading. When one list item introduces child items, indent those children as a nested sublist.
+- Use a table when repeated fields, mappings, or comparisons are clearer side by side; otherwise prefer prose or a list
 
 ## Actors And Relationships
 
@@ -58,7 +60,6 @@ The [typed authority terminology decision](../../decisions/authoritative-source-
 - Use `standard` for the default routes or configuration Open Forge provides
 - Use ordinary lowercase words when no defined Open Forge concept is intended
 - Keep route descriptions natural, descriptive, and suggestive rather than starting every entry with the same formula
-- Use optional frontmatter `responsibility` only when a stable edit boundary adds information beyond the route and description
 - Prefer established terms and links over introducing a synonym for variety
 
 ## Sentences And Punctuation
@@ -88,6 +89,26 @@ Open Forge starts with a small file-native Framework that a workspace can adapt 
 ```
 
 The complete sentence identifies the subject, action, and practical meaning.
+
+### List Relationships
+
+Less clear:
+
+```text
+- Supported formats:
+- Markdown
+- YAML
+```
+
+Clearer:
+
+```text
+- Supported formats:
+  - Markdown
+  - YAML
+```
+
+The nested form makes the relationship explicit instead of presenting the introducer and its children as peers.
 
 ### Direct Relationship
 

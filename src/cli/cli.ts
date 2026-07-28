@@ -2394,7 +2394,7 @@ async function chain(chainArgs: string[]): Promise<void> {
       const matches = readMarkdownHeadingSections(await fs.readFile(source.file, "utf8"), options.heading);
       item.heading = {
         title: options.heading,
-        status: headingStatus(matches),
+        status: headingStatus(matches, options.heading),
         matches
       };
     }
@@ -2581,12 +2581,12 @@ function readMarkdownHeadingSections(text: string, title: string): HeadingMatch[
   return matches;
 }
 
-function headingStatus(matches: HeadingMatch[]): HeadingStatus {
+function headingStatus(matches: HeadingMatch[], title?: string): HeadingStatus {
   if (matches.length === 0) return "absent";
   const combined = matches.map((match) => match.body).join("\n").trim();
   if (!combined) return "empty";
   if (/^-?\s*inherited(?:\s+-[^\n]*)?\.?$/i.test(combined)) return "declared-inherited";
-  if (/^-?\s*none(?:\s+-[^\n]*)?\.?$/i.test(combined)) return "declared-none";
+  if (title?.trim().toLowerCase() !== "axioms" && /^-?\s*none(?:\s+-[^\n]*)?\.?$/i.test(combined)) return "declared-none";
   return "content";
 }
 
@@ -3232,8 +3232,10 @@ async function doctor(doctorArgs: string[]): Promise<void> {
 
     if (isIndexFile(file)) {
       const axioms = readMarkdownHeadingSections(text, "Axioms");
-      if (axioms.length === 1 && hasMixedInheritanceSentinel(axioms[0].body)) {
-        report("warning", file, "Axioms mixes inherited/none with local axioms; omit the sentinel when adding local axioms");
+      if (axioms.length === 1 && hasDeclaredSentinel(axioms[0].body, "none")) {
+        report("error", file, "`none` is not a valid Axioms sentinel; use `inherited` when the child adds no local Axioms");
+      } else if (axioms.length === 1 && hasMixedDeclaredSentinel(axioms[0].body, ["inherited"])) {
+        report("warning", file, "Axioms mixes `inherited` with local Axioms; omit the sentinel when adding local Axioms");
       }
     }
   }
@@ -3320,7 +3322,7 @@ function validateWorkflowDocument(text: string): string[] {
     findings.push("workflow Mode must be linear or iterative; goal-seeking is expressed through the Goal of an iterative workflow");
   }
   const constraints = readMarkdownHeadingSections(text, "Constraints")[0]?.body ?? "";
-  if (hasMixedInheritanceSentinel(constraints)) {
+  if (hasMixedDeclaredSentinel(constraints, ["none", "inherited"])) {
     findings.push("workflow Constraints cannot mix none/inherited with substantive constraints");
   } else if (headingStatus(readMarkdownHeadingSections(text, "Constraints")) === "declared-inherited") {
     findings.push("workflow Constraints must state substantive invariants or - none; inherited is not a workflow constraint sentinel");
@@ -3345,8 +3347,10 @@ function validateDirectiveDocument(text: string, entrypoint: boolean): string[] 
   if (axioms[0].level !== 2) {
     findings.push("directive Axioms section must use a level-2 Markdown heading");
   }
-  if (/^-?\s*(?:inherited|none)\b/i.test(axioms[0].body.trim())) {
-    findings.push("direct directive Axioms must be substantive; inherited/none is reserved for category entrypoints");
+  if (hasDeclaredSentinel(axioms[0].body, "none")) {
+    findings.push("`none` is not a valid Axioms sentinel");
+  } else if (hasDeclaredSentinel(axioms[0].body, "inherited")) {
+    findings.push("direct directive Axioms must be substantive; `inherited` is reserved for category entrypoints");
   }
   return findings;
 }
@@ -3356,10 +3360,15 @@ function headingPosition(text: string, title: string): number {
   return scanMarkdownHeadings(text).headings.find((heading) => heading.title.toLowerCase() === wanted)?.line ?? -1;
 }
 
-function hasMixedInheritanceSentinel(body: string): boolean {
+function hasDeclaredSentinel(body: string, sentinel: "inherited" | "none"): boolean {
+  const pattern = new RegExp(`^-?\\s*${sentinel}(?:\\s+-[^\\n]*)?\\.?$`, "i");
+  return body.split(/\r?\n/).map((line) => line.trim()).filter(Boolean).some((line) => pattern.test(line));
+}
+
+function hasMixedDeclaredSentinel(body: string, sentinels: ReadonlyArray<"inherited" | "none">): boolean {
   const lines = body.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
-  const sentinels = lines.filter((line) => /^-?\s*(?:none|inherited)\b/i.test(line));
-  return sentinels.length > 0 && lines.length > sentinels.length;
+  const declared = lines.filter((line) => sentinels.some((sentinel) => hasDeclaredSentinel(line, sentinel)));
+  return declared.length > 0 && lines.length > declared.length;
 }
 
 async function groupEntrypointCandidates(markdownFiles: string[]): Promise<Map<string, string[]>> {

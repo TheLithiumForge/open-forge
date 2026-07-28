@@ -36,4 +36,4 @@ Formalize additional semantics only after repeated cases show that explicit Axio
 - [Directive role](../../crystallized/documents/framework/primitives/directives.md)
 - [Directive runtime maintenance](../../crystallized/documents/maintenance/payload/agents/directives.md)
 - [Loading and continuity](../../crystallized/documents/framework/routing/loading.md)
-- [Rejected mechanisms](../../crystallized/decisions/do-not-revive.md)
+- [Rejected applicability gates and loading tradeoffs](../../crystallized/decisions/loading-reliability.md)

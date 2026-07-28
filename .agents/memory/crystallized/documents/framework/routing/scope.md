@@ -80,7 +80,9 @@ A loaded ancestor entrypoint establishes meaning and Axioms for its selected des
 
 A child entrypoint adds only what is specific to its route. It does not restate ancestor Axioms.
 
-A missing or empty local `Axioms` section adds no local Axioms. An explicit `inherited` or `none` sentinel also adds nothing and cannot cancel loaded ancestor Axioms.
+A missing or empty local `Axioms` section adds no local Axioms. An explicit `inherited` sentinel states the same result: the child adds no local rules, while every loaded ancestor Axiom remains active.
+
+`inherited` is the only Axioms sentinel. Do not combine it with substantive local Axioms; omit the sentinel when the child adds local rules. `none` is invalid because it can be read as cancelling inherited Axioms.
 
 Inheritance follows the loaded route chain. Merely inspecting an inactive source payload, archived file, example, or unselected branch does not activate the scope that file would govern.
 

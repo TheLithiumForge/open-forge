@@ -15,7 +15,7 @@ This route holds coagulated summaries only. The linked generations predate the c
 - Read `Entries` when current work needs evaluation evidence, recommendation history, or the reasoning behind loading and routing decisions.
 - Treat synthesis bodies as records, not active behavior or automatically accepted recommendations.
 - Prefer crystallized decisions for accepted conclusions and policy; load syntheses when evidence or source reasoning matters.
-- Use the [current benchmark design](../../decisions/benchmark-design.md), not a historical generation's harness rituals, for present benchmark behavior.
+- Use the [current benchmark system](../../../../../benchmarks/README.md), not a historical generation's harness rituals, for present benchmark behavior.
 - Write one synthesis per benchmark generation here after extracting accepted conclusions to their authoritative routes; raw run reports stay in `benchmarks/results/`.
 
 ## Entries

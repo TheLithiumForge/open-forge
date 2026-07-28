@@ -1,48 +1,72 @@
 ---
 open-forge:
-  description: Benchmarks compose agnostic scenarios, reusable primitive blocks, and reproducible meta-scenarios under trace-reviewing orchestrators
+  description: Benchmark design separates stable tasks, reusable inputs, exact recipes, and durable evidence while limiting review claims to observable traces
   tags: [Memory, Decision, CurrentTruth, Benchmark, Dogfood, Evaluation]
 ---
 
 # Benchmark Design
 
-Open Forge benchmarks are a composable engineering dogfood loop, not a self-authenticating causal-study platform.
+## Context
 
-## Stable Building Blocks
+Early Open Forge evaluations mixed tasks, Framework treatments, orchestration, review, and claims inside generation-specific fixtures. That made useful experiments difficult to reuse, exact comparisons difficult to reconstruct, and strong causal language easier to imply than the observable evidence justified.
 
-- A `scenario` is a small framework-agnostic task fixture: explicit string id, exact worker prompt, hidden task review, optional persona, and optional ordinary project files. It selects no Open Forge primitive or extension.
-- A `primitive block` is one explicit reusable worker-visible input such as a directive, pattern, Memory record, guidance file, Workspace route, skill, workflow, or workspace-delivered local tool. A block has its own id, kind, non-empty payload, and hidden review focus. A local tool block may include its ordinary tool files and a `.agents/workspace/**` discovery route.
-- Primitive blocks may be individually ordinary and become a probe or trap only in a particular combination. Logical conflict is intentional evidence; undeclared file collision remains an error.
-- Folder hierarchy groups blocks for people. Manifests own identity and composition, so moving a folder does not change an id.
-- Stable blocks should remain small enough to reuse across tasks and models without rewriting them for each run.
+The benchmark system needed to support practical dogfood across tasks, compositions, treatments, models, and runtimes without becoming a self-authenticating research platform.
 
-## Meta-Scenarios And Variants
+## Decision
 
-- A `meta-scenario` is the normal runnable unit. Its plain manifest selects exactly one scenario, an ordered set of primitive blocks, and bundled extension ids. Its hidden review states why that combination is meaningful, including any intended trap.
-- Every stable base or trap is its own exact meta-scenario. Base and trap meta-scenarios may share the same scenario and most inputs so their declared composition difference is inspectable without a second stable variant language.
-- A run-local variant may add one or more external primitive packages or bundled extensions to an unchanged meta-scenario. Variants are fixed before workers launch, frozen outside the worker workspace, and recorded in resolved composition.
-- On-demand variants do not mutate stable scenarios, blocks, meta-scenarios, or source framework files. Promote a useful repeated variant into a stable block or meta-scenario only after review.
-- Plain files are the complete manual interface. CLI support may discover, compose, baseline, validate, and capture runs, but is not required to understand or reproduce the contract.
+Open Forge benchmarks separate three stable concepts:
 
-## Runs And Comparison
+- A scenario is a framework-agnostic task
+- A primitive block is one reusable worker-visible input
+- A meta-scenario is an exact runnable recipe that selects one scenario, an ordered primitive set, and any bundled Extensions
 
-- A run composes current Core, declared extensions, the pure scenario payload, ordered primitive payloads, and run-local variants in a fresh Git workspace. Orchestrator-only prompts, reviews, personas, and traces remain outside it.
-- The runner prepares a meta-scenario id. Pure scenarios and primitive blocks remain independently discoverable building blocks rather than separately executable runner modes.
-- The resolved composition and every selected scenario, primitive, meta-scenario, and variant input are frozen with the run before worker work begins.
-- Prepared runs live under an explicitly selected root that does not overlap the source repository. Equal worker cells compare both the frozen worker-prompt SHA-256 and baseline Git tree id rather than trusting ids alone.
-- For model variance, use the same frozen instructions and composition across fresh workers and change only the declared model/runtime cell. For treatment variance, prepare control and treatment before either outcome is seen and keep the declared composition delta minimal.
-- Provider-native tools are runtime inputs, not files the runner can honestly install. A run set freezes the requested tool surface and the orchestrator records the actual binding; a local tool shipped into the workspace remains an ordinary `tool` primitive block.
-- The orchestrator owns scheduling, interaction, and trace review. It uses the complete observable subagent trace available from the runtime—messages, tool calls and results, and exposed reasoning summaries—without claiming access to invisible private chain-of-thought.
-- After task work stops, the same worker gives a response-only self-review of what it believes it accomplished, how it worked, what it verified, its assumptions or deviations, and what may remain wrong.
-- The orchestrator forms its Behavior, Outcome, and Limits findings from the trace, actual workspace, baseline delta, and proportionate checks before comparing them with the worker account.
-- The worker account is evidence of awareness, not proof of outcome. When a runtime does not expose some behavior, that behavior remains unknown; a comparison must state the actual trace boundary.
-- External run sets remain the isolated execution record. After a run set reaches a terminal state and no worker can be influenced by its outcome, the orchestrator appends one durable publication under `benchmarks/results/<UTC-date-time>/<run-name>/` without overwriting prior results.
-- A durable publication contains one human-readable `summary.md` and a `raw/` evidence tree preserving the frozen run-set inputs, set-level record, comparison when present, and each arm's complete record and canonical final or explicitly partial source snapshot. Material ignored runtime artifacts are retained separately from that source snapshot. Failed and partial runs remain publishable evidence when their state, blockers, missing material, and trace limits are explicit.
+Stable controls and traps are explicit meta-scenarios. Run-local variants add declared external primitives, bundled Extensions, or runtime surfaces without mutating the stable corpus. Every selected input is frozen before workers launch in fresh external workspaces.
 
-## Validation And Scope
+An orchestrator is responsible for scheduling, runtime interaction, trace capture, independent review, and comparison. Worker self-review is preserved as evidence of awareness rather than proof of outcome. Claims remain bounded by the actual observable trace, workspace, delta, checks, and known runtime limits.
 
-- `doctor` and `find --follow-required` remain the paired complete-workspace validators at preparation and finish. Preparation requires both to pass; finish records their failures as part of the observed outcome rather than preventing capture of a failed run.
-- Default runs preserve frozen inputs, the live workspace and Git baseline, the final delta, validation output, observable trace, limitations, and both reviews. They do not require owner tokens, seals, eligibility classes, fixed rating ids, or causal claims.
-- Coverage claims are semantic and bounded. A coverage map names what a meta-scenario is designed to observe; it does not infer adherence merely because a primitive was installed.
-- Scenario reviews own task behavior and outcome independent of selected framework inputs. Primitive reviews own each block's observable semantic effect. Meta-scenario reviews own routing, relationships, traps, and interactions among the selected inputs; they do not duplicate the individual oracles.
-- Historical reports remain raw engineering context. They do not define the current benchmark interface or prove framework causality.
+Completed run sets may produce append-only durable publications after no worker can be influenced by the result. The plain-file protocol remains understandable and reproducible without the benchmark CLI.
+
+## Rationale
+
+Separating tasks from treatments allows the same scenario and primitive to be reused without rewriting either. Exact meta-scenarios make composition differences inspectable, while on-demand variants preserve experimentation without silently changing stable fixtures.
+
+Freezing prompts, composition, baselines, and review material before execution makes comparison inputs reviewable. Independent outcome review prevents worker confidence from substituting for evidence.
+
+Keeping orchestration outside the worker workspace reduces leakage and preserves a clear trace boundary. Honest unknowns are more useful than reconstructed behavior the runtime did not expose.
+
+## Alternatives And Tradeoffs
+
+- Generation-specific monolithic scenarios make one run easy to describe but make components difficult to reuse or compare
+- A second stable variant language would duplicate exact base and trap recipes
+- Letting the runner schedule agents or provision provider-native tools would claim control over runtime surfaces it does not control
+- Fixed rating ladders, eligibility seals, and causal-study language would add ceremony without proving isolation or causality
+- Treating successful validation as behavioral proof would confuse structural checks with agent adherence
+
+The composable design requires more explicit manifests, frozen inputs, and orchestration records. One run remains one observation rather than a general performance claim.
+
+## Consequences
+
+- Scenario, primitive, and meta-scenario reviews answer distinct questions
+- Folder hierarchy organizes the corpus while manifest ids preserve identity
+- File collisions fail visibly, while deliberate logical conflicts remain valid treatments
+- Model comparisons freeze composition; treatment comparisons minimize and declare the composition delta
+- Failed or partial runs may remain useful evidence when their state and limits are explicit
+- Historical reports remain context rather than the current benchmark contract
+
+## Authoritative Sources
+
+- [Current benchmark system](../../../../benchmarks/)
+- [Benchmark overview and operating contract](../../../../benchmarks/README.md)
+- [Building-block contract](../../../../benchmarks/building-blocks/README.md)
+- [Meta-scenario contract](../../../../benchmarks/meta-scenarios/README.md)
+- [Harness contract](../../../../benchmarks/harness/README.md)
+- [Current harness implementation](../../../../benchmarks/harness/runner.ts)
+
+## Evidence
+
+- [Accepted evaluation syntheses](../documents/evaluations/_evaluations.md)
+
+## Decision Relationships
+
+- [Product direction](product-direction.md)
+- [Source and packaging](source-and-packaging.md)

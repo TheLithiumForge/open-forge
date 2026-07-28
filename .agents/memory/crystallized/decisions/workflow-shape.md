@@ -39,10 +39,22 @@ Keeping optional preparation separate from required context lets an agent recomm
 
 The stable schema adds authoring discipline and must evolve deliberately when dogfood reveals a real limitation.
 
-## Current Result
+## Consequences
+
+- A stable recipe shape makes execution and deterministic validation more predictable while adding authoring cost
+- A future redesign must preserve or explicitly replace the distinctions this choice established
+
+## Authoritative Sources
 
 - [Current Workflow contract](../documents/framework/primitives/workflows.md)
 - [Installed Workflows entrypoint](../../../workflows/_workflows.md)
 - [Workflows maintenance contract](../documents/maintenance/payload/agents/workflows.md)
 
+## Historical Context
+
 Historical redesign detail and the former TDD example remain in [Workflow redesign](../../archived/ideas/workflow-redesign.md).
+
+## Decision Relationships
+
+- [Distinct Core primitive roles](core-primitives.md)
+- [Routing surfaces](routing-surfaces.md)
