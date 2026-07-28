@@ -8,7 +8,7 @@ It selects:
 - `architecture-workflow`
 - `implementation-workflow`
 
-Each workflow then selects its required skill-only capability extension. This pack adds no parallel runtime route of its own; it is an ordinary dependency-only extension.
+Each workflow then selects its required skill-only capability extension. This pack adds no parallel runtime route of its own. It is an ordinary dependency-only extension.
 
 ```sh
 open-forge extend workflow-essentials

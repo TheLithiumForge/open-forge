@@ -8,4 +8,4 @@ It installs automatically when required and may be selected directly:
 open-forge extend planning-capability
 ```
 
-The installed `SKILL.md` package remains runtime truth; the manifest only composes installation.
+The installed `SKILL.md` package remains runtime truth. The manifest only composes installation.

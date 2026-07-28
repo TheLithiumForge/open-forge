@@ -16,4 +16,4 @@ Install it with:
 open-forge extend quality-workflows
 ```
 
-Install only `testing-workflow` when test work is all that is needed. Installed payload files remain runtime truth; the manifest only composes installation.
+Install only `testing-workflow` when test work is all that is needed. Installed payload files remain runtime truth. The manifest only composes installation.

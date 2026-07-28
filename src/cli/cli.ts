@@ -18,12 +18,10 @@ const compatibilityEntrypointNames = ["_index.md", "index.md", "_references.md",
 const skillEntrypointNames = ["SKILL.md", "Skill.md"];
 const portablePathSeparator = "/";
 const agentsDirectoryName = ".agents";
-const skillsDirectoryName = "skills";
 const rootEntryPatchMarkers = new Map([
   ["AGENTS.md", "open-forge"],
   ["CLAUDE.md", "open-forge"]
 ]);
-const scopedCoreEntrypointFolders = new Set(["directives", "guidance", "patterns", "skills", "templates"]);
 const entriesHeading = "## Entries";
 const generatedIndexStartMarker = "<!-- open-forge:generated-index:start -->";
 const generatedIndexEndMarker = "<!-- open-forge:generated-index:end -->";
@@ -34,16 +32,10 @@ const retiredLoadPolicyTags = new Set(["openforge", "loadwithparententrypoint", 
 const workflowPhaseTags = ["PhaseDiscovery", "PhaseDefinition", "PhasePlanning", "PhaseDelivery", "PhaseVerification"] as const;
 const workflowPhaseTagSet = new Set(workflowPhaseTags.map((tag) => tag.toLowerCase()));
 const markdownEscapablePunctuation = new Set("!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~");
-const categoryTypeTags: Record<string, string> = {
-  directives: "Directive",
-  guidance: "Guidance",
-  patterns: "Pattern",
-  skills: "Skill",
-  templates: "Template",
-  workflows: "Workflow",
-  workspace: "Workspace",
-  memory: "Memory"
-};
+const routeTypeTags = ["Directive", "Guidance", "Pattern", "Skill", "Template", "Workflow", "Workspace", "Memory"] as const;
+const routeTypeTagsByLower = new Map(
+  routeTypeTags.map((tag) => [tag.toLowerCase(), tag])
+);
 const extensionContentKindOrder = ["skill", "workflow", "directive", "guidance", "pattern", "template", "workspace", "memory", "pack", "other"] as const;
 const extensionCatalogueGroupOrder = ["skills", "workflows", "packs-mixed", "support"] as const;
 if (isCliEntrypoint()) {
@@ -102,12 +94,13 @@ async function install(installArgs: string[]): Promise<void> {
   const currentReceipt = await readExtensionReceipt(targetRoot);
   await validateExtensionReceiptFiles(currentReceipt, targetRoot);
   await enforceGitCheckpoint(targetRoot, "Core installation", proMode);
+  const preserveMissingDefaults = await hasRecognizableCoreFootprint(targetRoot);
   const files = await listFiles(sourceRoot);
   for (const file of files) {
     await assertExtensionTargetPath(targetRoot, path.join(targetRoot, path.relative(sourceRoot, file)), "Core");
   }
-  const frameworkTemplates = files.flatMap((file) => createFrameworkEntrypointTemplate(sourceRoot, file));
-  const corePlan = await createCoreInstallPlan(files, targetRoot, frameworkTemplates);
+  const shippedCatalogue = createShippedEntrypointCatalogue(sourceRoot, files);
+  const corePlan = await createCoreInstallPlan(files, targetRoot, shippedCatalogue, preserveMissingDefaults);
   await validateReceiptAgainstPlannedState(currentReceipt, corePlan.entries, targetRoot, "Core installation", true);
   const potentialIndexFiles = await collectPotentialIndexWriteFiles(corePlan.entries, targetRoot);
   for (const file of potentialIndexFiles) {
@@ -137,7 +130,7 @@ async function install(installArgs: string[]): Promise<void> {
     throw error;
   }
   console.log(`Installed Open Forge into ${targetRoot}`);
-  console.log(`Updated ${corePlan.copied} managed files, updated ${corePlan.scoped} scoped framework route files, patched ${corePlan.patched} entry files, rebuilt ${generatedRegions} generated regions.`);
+  console.log(`Updated ${corePlan.copied} managed files, reconciled ${corePlan.reconciled} managed route entrypoints through scopes, patched ${corePlan.patched} entry files, rebuilt ${generatedRegions} generated regions.`);
   await printPostInstallCheckpoint(targetRoot, "Core", proMode);
   console.log(`After reviewing and checkpointing Core, inspect optional extensions with open-forge extend --list or open-forge extend --select ${JSON.stringify(targetRoot)}.`);
 }
@@ -414,6 +407,44 @@ async function hasCoreInstallation(targetRoot: string): Promise<boolean> {
     && readGeneratedRegion(loaderText).status === "ok";
 }
 
+async function hasRecognizableCoreFootprint(targetRoot: string): Promise<boolean> {
+  const anchorFiles = [
+    path.join(targetRoot, "AGENTS.md"),
+    path.join(targetRoot, "CLAUDE.md"),
+    path.join(targetRoot, agentsDirectoryName, "loader.md")
+  ];
+
+  for (const anchorFile of anchorFiles) {
+    const anchorStat = await lstatIfExists(anchorFile);
+    if (!anchorStat) {
+      continue;
+    }
+
+    if (!anchorStat.isFile() || anchorStat.isSymbolicLink()) {
+      return true;
+    }
+
+    try {
+      await assertExistingPathInside(anchorFile, targetRoot, "Core anchor");
+    } catch {
+      return true;
+    }
+
+    const text = await fs.readFile(anchorFile, "utf8");
+    if (
+      text.includes("<!-- open-forge:start -->")
+      || text.includes("<!-- open-forge:end -->")
+      || /^# Open Forge Loader\s*$/m.test(text)
+      || text.includes(generatedIndexStartMarker)
+      || text.includes(generatedIndexEndMarker)
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 async function enforceGitCheckpoint(targetRoot: string, action: string, proMode: boolean): Promise<void> {
   if (proMode) {
     console.log(`${action}: --pro bypassed Git and Core checkpoint policy; installation safety preflight remains active.`);
@@ -597,13 +628,14 @@ type CoreInstallPlan = {
   entries: ExtensionInstallPlanEntry[];
   copied: number;
   patched: number;
-  scoped: number;
+  reconciled: number;
 };
 
 async function createCoreInstallPlan(
   sourceFiles: string[],
   targetRoot: string,
-  templates: FrameworkEntrypointTemplate[],
+  catalogue: ShippedEntrypointCatalogue,
+  preserveMissingDefaults: boolean,
 ): Promise<CoreInstallPlan> {
   const entries = new Map<string, ExtensionInstallPlanEntry>();
   let copied = 0;
@@ -624,6 +656,9 @@ async function createCoreInstallPlan(
     const targetFile = path.join(targetRoot, relativePath);
     const sourceText = await fs.readFile(sourceFile, "utf8");
     const originalContent = await readBufferIfExists(targetFile);
+    if (preserveMissingDefaults && originalContent == null) {
+      continue;
+    }
     const targetText = originalContent?.toString("utf8") ?? null;
     const patchMarker = rootEntryPatchMarkers.get(relativePath);
     const nextText = patchMarker
@@ -634,7 +669,7 @@ async function createCoreInstallPlan(
     else copied += 1;
   }
 
-  let scoped = 0;
+  let reconciled = 0;
   const agentsRoot = path.join(targetRoot, agentsDirectoryName);
   await assertExtensionIndexRootSafe(targetRoot, agentsRoot, "Core index root");
   if (await isDirectory(agentsRoot)) {
@@ -645,14 +680,15 @@ async function createCoreInstallPlan(
     for (const targetFile of markdownFiles) {
       const relativePath = toPosix(path.relative(targetRoot, targetFile));
       if (entries.has(portableExtensionPathKey(relativePath))) continue;
-      const template = findFrameworkEntrypointTemplate(relativePath, templates);
+      const template = findManagedShippedEntrypointTemplate(relativePath, catalogue);
       if (!template) continue;
+      if (!(await hasCompleteRoutedCategoryChain(targetFile, agentsRoot))) continue;
       await add(relativePath, targetFile, await fs.readFile(template.sourceFile));
-      scoped += 1;
+      reconciled += 1;
     }
   }
 
-  return { entries: [...entries.values()], copied, patched, scoped };
+  return { entries: [...entries.values()], copied, patched, reconciled };
 }
 
 type ExtensionFileCandidate = {
@@ -1222,6 +1258,7 @@ async function assertNoRoutedDescendantsDependOnDeletedEntrypoints(
     }
 
     const dependents: string[] = [];
+    const skillsRoute = await isSkillsRouteFolder(directory);
     for (const candidate of candidates.values()) {
       if (samePath(candidate, host.targetFile)) continue;
       const planned = plannedEntryFor(candidate);
@@ -1234,7 +1271,7 @@ async function assertNoRoutedDescendantsDependOnDeletedEntrypoints(
        );
       const childDependency = samePath(path.dirname(parent), directory) && (
         categoryEntrypointNames(path.basename(parent)).includes(path.basename(candidate))
-        || (isSkillsRouteFolder(directory) && skillEntrypointNames.includes(path.basename(candidate)))
+        || (skillsRoute && skillEntrypointNames.includes(path.basename(candidate)))
       );
       if (directDependency || childDependency) {
         dependents.push(workspaceRoute(targetRoot, candidate));
@@ -1307,21 +1344,20 @@ async function assertExtensionTargetPath(targetRoot: string, targetFile: string,
     throw new Error(`${context} file resolves outside the target: ${targetFile}`);
   }
 
-  if (await isDirectory(targetFile)) {
-    throw new Error(`${context} file target is an existing directory: ${targetFile}`);
-  }
-
   let current = targetFile;
   while (!samePath(current, targetRoot)) {
     const stat = await lstatIfExists(current);
     if (stat?.isSymbolicLink()) {
       throw new Error(`${context} target path contains a symbolic link or junction: ${current}`);
     }
-    if (stat?.isFile() && !samePath(current, targetFile)) {
-      throw new Error(`${context} target parent is an existing file: ${current}`);
-    }
-    if (stat?.isFile() && samePath(current, targetFile)) {
+    if (stat && samePath(current, targetFile)) {
+      if (!stat.isFile()) {
+        throw new Error(`${context} file target is not a regular file: ${current}`);
+      }
       await assertFileIsNotHardLinked(current, `${context} target file`);
+    }
+    if (stat && !samePath(current, targetFile) && !stat.isDirectory()) {
+      throw new Error(`${context} target parent is not a directory: ${current}`);
     }
 
     const parent = path.dirname(current);
@@ -3259,34 +3295,45 @@ async function inferPrimitiveTypeFromRoute(file: string, scanRoot: string, expli
     return null;
   }
   const fileTags = explicitFileTags ?? readMetadata(await fs.readFile(file, "utf8")).tags.map((tag) => tag.toLowerCase());
-  const entrypoint = await findCategoryEntrypoint(folder);
-  if (entrypoint) {
-    const entrypointTags = readMetadata(await fs.readFile(entrypoint, "utf8")).tags.map((tag) => tag.toLowerCase());
-    const ownedBehaviorTypes = (["workflow", "directive"] as const).filter((tag) => entrypointTags.includes(tag));
-    if (ownedBehaviorTypes.length === 1) return ownedBehaviorTypes[0];
-    if (["pattern", "guidance", "skill", "template", "workspace", "memory"].some((tag) => entrypointTags.includes(tag))) return null;
+  const routeType = (await declaredRootRouteType(folder, scanRoot))?.toLowerCase();
+  if (routeType) {
+    return routeType === "workflow" || routeType === "directive" ? routeType : null;
   }
 
-  const relativeFolder = path.relative(scanRoot, folder);
-  const segments = relativeFolder.split(path.sep).filter(Boolean).map((segment) => segment.toLowerCase());
-  const primitiveIndexes = new Map([
-    ["workflow", segments.lastIndexOf("workflows")],
-    ["directive", segments.lastIndexOf("directives")],
-    ["pattern", segments.lastIndexOf("patterns")],
-    ["guidance", segments.lastIndexOf("guidance")],
-    ["skill", segments.lastIndexOf("skills")],
-    ["template", segments.lastIndexOf("templates")],
-    ["workspace", segments.lastIndexOf("workspace")],
-    ["memory", segments.lastIndexOf("memory")]
-  ]);
-  const nearest = [...primitiveIndexes.entries()].sort((left, right) => right[1] - left[1])[0];
-  if (nearest && nearest[1] !== -1) {
-    return nearest[0] === "workflow" || nearest[0] === "directive" ? nearest[0] : null;
-  }
-
-  if (["pattern", "guidance", "skill", "template", "workspace", "memory"].some((tag) => fileTags.includes(tag))) return null;
-  const explicitBehaviorTypes = (["workflow", "directive"] as const).filter((tag) => fileTags.includes(tag));
+  const declaredFileTypes = declaredRouteTypeTags(fileTags).map((tag) => tag.toLowerCase());
+  if (["pattern", "guidance", "skill", "template", "workspace", "memory"].some((tag) => declaredFileTypes.includes(tag))) return null;
+  const explicitBehaviorTypes = (["workflow", "directive"] as const).filter((tag) => declaredFileTypes.includes(tag));
   return explicitBehaviorTypes.length === 1 ? explicitBehaviorTypes[0] : null;
+}
+
+function declaredRouteTypeTags(tags: string[]): string[] {
+  const declared = new Set<string>();
+  for (const tag of tags) {
+    const canonical = routeTypeTagsByLower.get(tag.toLowerCase());
+    if (canonical) {
+      declared.add(canonical);
+    }
+  }
+  return [...declared];
+}
+
+async function declaredRouteType(directory: string): Promise<string | null> {
+  const entrypoint = await findCategoryEntrypoint(directory);
+  if (!entrypoint) {
+    return null;
+  }
+
+  const types = declaredRouteTypeTags(readMetadata(await fs.readFile(entrypoint, "utf8")).tags);
+  return types.length === 1 ? types[0] : null;
+}
+
+async function declaredRootRouteType(directory: string, scanRoot: string): Promise<string | null> {
+  if (!samePath(directory, scanRoot) && !isPathInside(directory, scanRoot)) {
+    return null;
+  }
+
+  const [rootSlug] = path.relative(scanRoot, directory).split(path.sep).filter(Boolean);
+  return rootSlug ? declaredRouteType(path.join(scanRoot, rootSlug)) : null;
 }
 
 function declaresWorkflowContract(text: string): boolean {
@@ -3388,7 +3435,7 @@ async function insideSkillPackage(file: string, scanRoot: string): Promise<boole
   while (!samePath(current, scanRoot) && current !== path.dirname(current)) {
     for (const name of skillEntrypointNames) {
       if (await isFile(path.join(current, name))) {
-        return true;
+        return isSkillsRouteFolder(path.dirname(current));
       }
     }
     current = path.dirname(current);
@@ -3424,7 +3471,8 @@ async function createCategoryRoute(routeArg: string | undefined, targetArg: stri
   }
 
   const created: string[] = [];
-  let currentFolder = path.join(targetRoot, agentsDirectoryName);
+  const agentsRoot = path.join(targetRoot, agentsDirectoryName);
+  let currentFolder = agentsRoot;
   for (let index = 0; index < segments.length; index += 1) {
     const segment = segments[index];
     currentFolder = path.join(currentFolder, segment);
@@ -3435,7 +3483,8 @@ async function createCategoryRoute(routeArg: string | undefined, targetArg: stri
     }
 
     const entrypointFile = path.join(currentFolder, `_${segment}.md`);
-    await fs.writeFile(entrypointFile, categoryEntrypointTemplate(segment, segments.slice(0, index + 1)));
+    const inheritedTypeTag = await declaredRootRouteType(path.dirname(currentFolder), agentsRoot);
+    await fs.writeFile(entrypointFile, categoryEntrypointTemplate(segment, inheritedTypeTag));
     created.push(workspaceRoute(targetRoot, entrypointFile));
   }
 
@@ -3451,11 +3500,7 @@ async function createCategoryRoute(routeArg: string | undefined, targetArg: stri
   console.log(`Rebuilt ${generatedRegions} generated regions. Fill in the TODO descriptions, then run open-forge index again.`);
 }
 
-function categoryEntrypointTemplate(segment: string, ancestorSegments: string[]): string {
-  const nearestPrimitiveSegment = [...ancestorSegments]
-    .reverse()
-    .find((candidate) => categoryTypeTags[candidate.toLowerCase()]);
-  const typeTag = nearestPrimitiveSegment ? categoryTypeTags[nearestPrimitiveSegment.toLowerCase()] : undefined;
+function categoryEntrypointTemplate(segment: string, typeTag: string | null): string {
   const tagsLine = typeTag ? `\n  tags: [${typeTag}]` : "";
   const title = segment
     .split(/[-_.]/)
@@ -3525,31 +3570,53 @@ open-forge extend ${idArg} <target>
   console.log("Add routed files under payload/.agents/, then install with open-forge extend.");
 }
 
-type FrameworkEntrypointTemplate = {
+type ShippedEntrypointTemplate = {
   relativePath: string;
   sourceFile: string;
-  folderSegments: string[];
-  anchor: "start" | "any";
+  rootFolder: string;
+  managedSegments: string[];
 };
 
-function createFrameworkEntrypointTemplate(root: string, sourceFile: string): FrameworkEntrypointTemplate[] {
-  const relativePath = toPosix(path.relative(root, sourceFile));
+type ShippedEntrypointCatalogue = {
+  templates: ShippedEntrypointTemplate[];
+  managedFoldersByRoot: Map<string, Set<string>>;
+};
 
-  if (!relativePath.startsWith(`${agentsDirectoryName}/`)) {
-    return [];
+function createShippedEntrypointCatalogue(root: string, sourceFiles: string[]): ShippedEntrypointCatalogue {
+  const templates: ShippedEntrypointTemplate[] = [];
+  const managedFoldersByRoot = new Map<string, Set<string>>();
+
+  for (const sourceFile of sourceFiles) {
+    const relativePath = toPosix(path.relative(root, sourceFile));
+    if (!relativePath.startsWith(`${agentsDirectoryName}/`)) {
+      continue;
+    }
+
+    const segments = relativePath.slice(`${agentsDirectoryName}/`.length).split(portablePathSeparator);
+    if (!isCanonicalCategoryEntrypointSegments(segments)) {
+      continue;
+    }
+
+    const folderSegments = segments.slice(0, -1);
+    const template = {
+      relativePath,
+      sourceFile,
+      rootFolder: folderSegments[0],
+      managedSegments: folderSegments.slice(1)
+    };
+    templates.push(template);
+
+    const managedFolders = managedFoldersByRoot.get(template.rootFolder) ?? new Set<string>();
+    for (const segment of template.managedSegments) {
+      managedFolders.add(segment);
+    }
+    managedFoldersByRoot.set(template.rootFolder, managedFolders);
   }
 
-  const segments = relativePath.slice(`${agentsDirectoryName}/`.length).split(portablePathSeparator);
-  if (!isCanonicalCategoryEntrypointSegments(segments)) {
-    return [];
-  }
-
-  const folderSegments = segments.slice(0, -1);
-  const anchor = folderSegments[0] === "memory" || !scopedCoreEntrypointFolders.has(folderSegments[0]) ? "start" : "any";
-  return [{ relativePath, sourceFile, folderSegments, anchor }];
+  return { templates, managedFoldersByRoot };
 }
 
-function findFrameworkEntrypointTemplate(relativePath: string, templates: FrameworkEntrypointTemplate[]): FrameworkEntrypointTemplate | null {
+function findManagedShippedEntrypointTemplate(relativePath: string, catalogue: ShippedEntrypointCatalogue): ShippedEntrypointTemplate | null {
   if (!relativePath.startsWith(`${agentsDirectoryName}/`)) {
     return null;
   }
@@ -3560,46 +3627,49 @@ function findFrameworkEntrypointTemplate(relativePath: string, templates: Framew
     return null;
   }
 
-  const matches = templates
-    .filter((template) => template.relativePath !== relativePath && matchesFrameworkEntrypointShape(targetSegments, template))
-    .sort((left, right) => right.folderSegments.length - left.folderSegments.length);
-
-  return matches[0] ?? null;
+  return catalogue.templates
+    .find((template) => template.relativePath !== relativePath && matchesManagedShippedEntrypointShape(
+      targetSegments,
+      template,
+      catalogue.managedFoldersByRoot.get(template.rootFolder) ?? new Set<string>()
+    )) ?? null;
 }
 
-function matchesFrameworkEntrypointShape(targetSegments: string[], template: FrameworkEntrypointTemplate): boolean {
+function matchesManagedShippedEntrypointShape(
+  targetSegments: string[],
+  template: ShippedEntrypointTemplate,
+  managedFolderNames: Set<string>
+): boolean {
   const targetFolders = targetSegments.slice(0, -1);
   const targetFile = targetSegments[targetSegments.length - 1];
-  const templateFolders = template.folderSegments;
-  const terminalFolder = templateFolders[templateFolders.length - 1];
+  const terminalFolder = template.managedSegments[template.managedSegments.length - 1];
+
+  if (!terminalFolder || targetFolders[0] !== template.rootFolder) {
+    return false;
+  }
 
   if (targetFile !== `_${terminalFolder}.md` || targetFolders[targetFolders.length - 1] !== terminalFolder) {
     return false;
   }
 
-  const searchableFolders = targetFolders.slice(0, -1);
-  const fixedPrefix = templateFolders.slice(0, -1);
-  if (template.anchor === "start") {
-    if (searchableFolders[0] !== fixedPrefix[0]) {
-      return false;
-    }
-
-    return containsOrderedSegments(searchableFolders.slice(1), fixedPrefix.slice(1));
-  }
-
-  return containsOrderedSegments(searchableFolders, fixedPrefix);
+  const targetManagedSegments = targetFolders
+    .slice(1)
+    .filter((segment) => managedFolderNames.has(segment));
+  return targetManagedSegments.length === template.managedSegments.length
+    && targetManagedSegments.every((segment, index) => segment === template.managedSegments[index]);
 }
 
-function containsOrderedSegments(haystack: string[], needles: string[]): boolean {
-  let offset = 0;
+async function hasCompleteRoutedCategoryChain(targetFile: string, agentsRoot: string): Promise<boolean> {
+  let current = path.dirname(targetFile);
+  if (!isPathInside(current, agentsRoot)) {
+    return false;
+  }
 
-  for (const needle of needles) {
-    const index = haystack.indexOf(needle, offset);
-    if (index === -1) {
+  while (!samePath(current, agentsRoot)) {
+    if (!(await findCategoryEntrypoint(current))) {
       return false;
     }
-
-    offset = index + 1;
+    current = path.dirname(current);
   }
 
   return true;
@@ -3875,6 +3945,7 @@ function categoryEntrypointNames(folderName: string): string[] {
 async function listIndexEntryFiles(current: string): Promise<string[]> {
   const entries = await fs.readdir(current, { withFileTypes: true });
   const files: string[] = [];
+  const skillsRoute = await isSkillsRouteFolder(current);
 
   for (const entry of entries.sort(compareIndexEntries)) {
     const fullPath = path.join(current, entry.name);
@@ -3885,7 +3956,7 @@ async function listIndexEntryFiles(current: string): Promise<string[]> {
       }
 
       const childIndex = await findCategoryEntrypoint(fullPath);
-      const skillEntrypoint = isSkillsRouteFolder(current) ? await findSkillEntrypoint(fullPath) : null;
+      const skillEntrypoint = skillsRoute ? await findSkillEntrypoint(fullPath) : null;
       if (childIndex && skillEntrypoint) {
         throw new Error(`Both category and skill entrypoints found in ${fullPath}. Keep either a category entrypoint or a skill ${path.basename(skillEntrypoint)}.`);
       }
@@ -3898,7 +3969,7 @@ async function listIndexEntryFiles(current: string): Promise<string[]> {
       continue;
     }
 
-    if (!isSkillsRouteFolder(current) && entry.isFile() && isIndexEntryFile(entry.name, path.basename(current))) {
+    if (!skillsRoute && entry.isFile() && isIndexEntryFile(entry.name, path.basename(current))) {
       files.push(fullPath);
     }
   }
@@ -3937,10 +4008,30 @@ async function findSkillEntrypoint(directory: string): Promise<string | null> {
   return matches[0] ?? null;
 }
 
-function isSkillsRouteFolder(directory: string): boolean {
-  const segments = toPosix(path.resolve(directory)).split(portablePathSeparator);
-  const agentsIndex = segments.lastIndexOf(agentsDirectoryName);
-  return agentsIndex !== -1 && segments[agentsIndex + 1] === skillsDirectoryName;
+async function isSkillsRouteFolder(directory: string): Promise<boolean> {
+  const resolved = path.resolve(directory);
+  let agentsRoot: string | null = null;
+  let cursor = resolved;
+
+  while (cursor !== path.dirname(cursor)) {
+    if (path.basename(cursor) === agentsDirectoryName) {
+      agentsRoot = cursor;
+      break;
+    }
+    cursor = path.dirname(cursor);
+  }
+
+  if (!agentsRoot) {
+    return false;
+  }
+
+  const relativeSegments = path.relative(agentsRoot, resolved).split(path.sep).filter(Boolean);
+  if (relativeSegments[0]?.toLowerCase() !== "skills") {
+    return false;
+  }
+
+  const rootType = await declaredRouteType(path.join(agentsRoot, relativeSegments[0]));
+  return rootType?.toLowerCase() === "skill";
 }
 
 function compareIndexEntries(left: Dirent, right: Dirent): number {
