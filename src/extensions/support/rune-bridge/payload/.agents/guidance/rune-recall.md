@@ -16,7 +16,7 @@ Relevant context may be distributed across a large workspace, and an installed R
 2. Use Rune-assisted recall for broad relevance discovery when that capability is documented and useful.
 3. Open the returned workspace files and follow Open Forge Required Routes, directives, tags, paths, and entrypoints directly.
 4. Use deterministic Open Forge routing or ordinary workspace search when exact coverage, mandatory instruction loading, or verification matters.
-5. Treat Rune-derived data as disposable and rebuildable; keep authoritative content in its existing Open Forge or project owner.
+5. Treat Rune-derived data as disposable and rebuildable. Keep authoritative content in its existing Open Forge or project authoritative source.
 
 ## Reasoning
 

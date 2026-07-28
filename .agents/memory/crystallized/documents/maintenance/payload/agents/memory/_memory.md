@@ -19,8 +19,7 @@ The [Memory architecture](../../../../framework/memory/_memory.md), [Memory mode
 - The root `entrypoint` keeps Memory below applicable authority while allowing it to record any subject without activating behavior it describes
 - Durable communication, coordination, direction, uncertainty, and learning are preserved when they must survive current context, while ordinary conversation does not become Memory automatically
 - Clear user direction is accepted within its stated scope and updates its appropriate current destination; tentative, exploratory, inferred, or materially ambiguous conclusions remain Working or Emerging until accepted
-- The loader's universal scoping rules apply everywhere below Memory; each scope narrows the Memory `routes` and content that follow it
-- Memory states and roles managed by Open Forge retain their source-defined `route` sequence through any inserted scopes
+- The Memory `entrypoint` relies on the loader's universal scoping and management contract instead of restating it
 - Working, Emerging, Crystallized, and Archived remain the four standard state `routes`, each with its own `entrypoint` and positive state semantics
 - Movement follows changes in recorded-state meaning and links to the appropriate #Core `route` or external authoritative system when Memory should not own the accepted result
 - A new top-level Memory state requires explicit user direction because it changes the shared state model; ordinary routed scopes remain recursively customizable

@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Turn an accepted direction into an executable, verifiable plan; use when scope, ordering, dependencies, and completion evidence must be made explicit before implementation
+  description: Turn an accepted direction into an executable, verifiable plan. Use when scope, ordering, dependencies, and completion evidence must be made explicit before implementation
   tags: [Extension, Workflow, PhasePlanning, Planning]
 ---
 
@@ -27,10 +27,10 @@ Read every route below before Step 1. A route that cannot be read is a blocker t
 ## Constraints
 
 - Use exactly one authoritative task source, declared by the user or workspace, for task status, ownership, acceptance, and completion.
-- If none is declared, default to the current user task; never nominate a workspace artifact merely because it exists.
+- If none is declared, default to the current user task. Never nominate a workspace artifact merely because it exists.
 - Never create or mirror a task in an external tracker without authority.
 - Do not convert unresolved product or architecture choices into hidden implementation assumptions.
-- Keep accepted rationale, decisions, and durable project truth with their established owners; the task source may link to them but must not replace them.
+- Keep accepted rationale, decisions, and durable project truth with their established owners. The task source may link to them but must not replace them.
 
 ## Steps
 

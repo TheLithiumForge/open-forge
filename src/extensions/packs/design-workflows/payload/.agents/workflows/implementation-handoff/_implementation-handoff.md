@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Translate an accepted experience design into implementation-ready behavior, states, assets, and acceptance evidence; use when engineers need a precise handoff without design intent being lost
+  description: Translate an accepted experience design into implementation-ready behavior, states, assets, and acceptance evidence. Use when engineers need a precise handoff without design intent being lost
   tags: [Extension, Workflow, PhasePlanning, Design, Handoff, Implementation]
 ---
 
@@ -27,7 +27,7 @@ Read every route below before Step 1. A route that cannot be read is a blocker t
 ## Constraints
 
 - Do not implement the design in this workflow.
-- Include only accepted design decisions; label unresolved questions and candidate ideas explicitly.
+- Include only accepted design decisions. Label unresolved questions and candidate ideas explicitly.
 - Describe behavior and acceptance without prescribing unnecessary internal implementation details.
 - Do not invent missing content, assets, tokens, or platform capabilities as accepted truth.
 
@@ -37,7 +37,7 @@ Read every route below before Step 1. A route that cannot be read is a blocker t
 2. Inventory the primary journey and applicable entry, empty, loading, success, error, permission, interruption, responsive, and recovery states.
 3. Specify triggers, transitions, feedback, validation, persistence, cancellation, destructive actions, and recovery behavior.
 4. Capture exact content or content ownership, accessibility requirements, responsive behavior, localization considerations, and platform constraints.
-5. Inventory assets, components, tokens, data, analytics, dependencies, and ownership; identify anything missing.
+5. Inventory assets, components, tokens, data, analytics, dependencies, and ownership. Identify anything missing.
 6. Define observable acceptance evidence for the journey, critical states, accessibility, and significant edge cases.
 7. Separate accepted decisions, implementation discretion, unresolved questions, and follow-up validation.
 8. Review the handoff with the implementation perspective and route it to the declared owner without writing implementation code.

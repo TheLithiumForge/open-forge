@@ -293,7 +293,7 @@ linear
 
 ## Loop
 
-Execute the Steps once; no loop.
+Execute the Steps once. This Workflow does not loop.
 
 ## Outputs
 

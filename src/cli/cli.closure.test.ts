@@ -313,25 +313,28 @@ describe("install", () => {
     expect(installedLoader).not.toContain("](.agents/");
     expect(installedLoader).toContain("#Evergreen - Material that must stay aligned");
     expect(installedLoader).toContain("`route` - Navigable path exposed through `entrypoints` and `entries`");
-    expect(installedLoader).toContain("Root routes exist only where this loader exposes them");
-    expect(installedLoader).toContain("Every route below a root is scopable");
-    expect(installedLoader).toContain("Scoping preserves the order and meaning of deeper routes");
-    expect(installedLoader).toContain("A familiar slug or tag alone creates neither root behavior nor managed status");
-    expect(installedLoader).toContain("Each manager declares which route shapes it recognizes");
-    expect(installedLoader).toContain("Users may add, move, replace, or remove routes");
+    expect(installedLoader).toContain("A `root route` exists only where this loader exposes it");
+    expect(installedLoader).toContain("Every `route` below a `root route` is scopable");
+    expect(installedLoader).toContain("Scoping preserves the order and meaning of deeper `routes`");
+    expect(installedLoader).toContain("A familiar `slug` or tag alone creates neither root behavior nor managed status");
+    expect(installedLoader).toContain("Each manager declares which `route` shapes it recognizes");
+    expect(installedLoader).toContain("Users may add, move, replace, or remove `routes`");
     expect(installedLoader).toContain(".agents/{root-route}/{scope-1}/.../{scope-n}/{route}/");
-    expect(installedLoader).toContain("A user-owned `{name}.overwrite.md` is not an independent route");
+    expect(installedLoader).toContain("A user-owned `{name}.overwrite.md` is not an independent `route`");
     expect(installedLoader).toContain("is not independently indexed or selected");
     expect(installedLoader).toContain("has final precedence within that file's scope");
-    expect(installedLoader).toContain("Loading and tags change visibility, timing, or classification; they do not create authority by themselves.");
+    expect(installedLoader).toContain("Loading and tags change visibility, timing, or classification. They do not create authority by themselves.");
     expect(installedLoader).toContain("A request to act also accepts any decision required to perform that action");
     expect(installedLoader).toContain("at every required #KeepInMind boundary");
     expect(installedLoader).toContain("update only affected #Evergreen material you may edit");
 
     const installedMemory = await fs.readFile(path.join(root, ".agents", "memory", "_memory.md"), "utf8");
+    const sourceMemory = await fs.readFile(repoPath("src", "open-forge", ".agents", "memory", "_memory.md"), "utf8");
+    const generatedRegion = /<!-- open-forge:generated-index:start -->[\s\S]*?<!-- open-forge:generated-index:end -->/;
     expect(installedMemory).toContain("Memory may record any subject, including how work is performed");
-    expect(installedMemory).toContain("Apply the loader's generic scoping rules throughout Memory");
-    expect(installedMemory).toContain("preserve their source-defined route sequence through any inserted scopes");
+    expect(installedMemory.replace(generatedRegion, "<generated Entries>")).toBe(
+      sourceMemory.replace(generatedRegion, "<generated Entries>")
+    );
 
     const installedDocuments = await fs.readFile(
       path.join(root, ".agents", "memory", "crystallized", "documents", "_documents.md"),
@@ -1588,7 +1591,7 @@ Keep this Claude-specific instruction.
     const reinstalled = await runCliDefault("install", root);
 
     expect(reinstalled.exitCode).toBe(0);
-    expect(reinstalled.stdout).toContain("Git reports no target changes; no new commit is needed");
+    expect(reinstalled.stdout).toContain("Git reports no target changes. No new commit is needed");
     expect(await fs.readFile(path.join(root, "CLAUDE.md"), "utf8")).toBe(claude);
   });
 
@@ -1791,7 +1794,7 @@ Keep this Claude-specific instruction.
     const result = await runCliDefault("install", root);
 
     expect(result.exitCode).toBe(0);
-    expect(result.stdout).toContain("Git reports no target changes; no new commit is needed");
+    expect(result.stdout).toContain("Git reports no target changes. No new commit is needed");
     expect(await fs.readFile(overwrite, "utf8")).toBe(overwriteContent);
     expect((await gitCommand(root, "status", "--porcelain=v1")).stdout).toBe("");
   });
@@ -2274,7 +2277,7 @@ describe("chain command", () => {
     await fs.writeFile(productEntrypoint, productText);
     await fs.writeFile(path.join(path.dirname(productEntrypoint), "_product.overwrite.md"), "# Product Override\n\n## Axioms\n\n- Keep product vocabulary stable.\n");
     const componentText = (await fs.readFile(componentEntrypoint, "utf8")).replace(
-      "- inherited - No local axioms; loaded ancestor axioms remain active.",
+      "- inherited - No local axioms. Loaded ancestor axioms remain active.",
       "- none"
     );
     await fs.writeFile(componentEntrypoint, componentText);
@@ -2368,7 +2371,7 @@ describe("doctor command", () => {
     expect((await runCli("create", "category", "patterns/product", root)).exitCode).toBe(0);
     const entrypoint = path.join(root, ".agents", "patterns", "product", "_product.md");
     const text = (await fs.readFile(entrypoint, "utf8")).replace(
-      "- inherited - No local axioms; loaded ancestor axioms remain active.",
+      "- inherited - No local axioms. Loaded ancestor axioms remain active.",
       "- none"
     );
     await fs.writeFile(entrypoint, text);
@@ -2378,7 +2381,7 @@ describe("doctor command", () => {
 
     expect(result.exitCode).toBe(1);
     expect(report.errors).toBeGreaterThan(0);
-    expect(report.findings.some((finding) => finding.message.includes("`none` is not a valid Axioms sentinel"))).toBe(true);
+    expect(report.findings.some((finding) => finding.message.includes("`none` is not a valid `Axioms` sentinel"))).toBe(true);
   });
 
   test("stops before reading a symlinked loader after route-tree safety fails", async () => {
@@ -2553,7 +2556,7 @@ Linear.
     expect(result.stderr).toBe("");
     expect(result.exitCode).toBe(1);
     expect(result.stdout).toContain("workflow must define exactly one Constraints section");
-    expect(result.stdout).toContain("workflow Mode must be linear or iterative");
+    expect(result.stdout).toContain("Workflow `Mode` must be linear or iterative");
   });
 
   test("accepts a linear workflow with explicit none constraints", async () => {
@@ -2595,7 +2598,7 @@ none
 
 ## Loop
 
-Execute the Steps once; no loop.
+Execute the Steps once. This Workflow does not loop.
 
 ## Outputs
 
@@ -2773,7 +2776,7 @@ Repeat until accepted.
 
     expect(result.exitCode).toBe(1);
     expect(result.stdout).toContain("workflow section Goal is out of order");
-    expect(result.stdout).toContain("inherited is not a workflow constraint sentinel");
+    expect(result.stdout).toContain("`inherited` is not a Workflow `Constraints` sentinel");
   });
 
   test("rejects legacy directive applicability gates", async () => {
@@ -2801,7 +2804,7 @@ open-forge:
     const result = await runCli("doctor", root);
 
     expect(result.exitCode).toBe(1);
-    expect(result.stdout).toContain("directive scope belongs to routing; remove the legacy Applies To section");
+    expect(result.stdout).toContain("Directive scope belongs to routing. Remove the legacy `Applies To` section");
   });
 
   test("requires direct directive files to declare LoadNow for parent-relative activation", async () => {
@@ -3212,7 +3215,7 @@ open-forge:
 
 ## Axioms
 
-- inherited - No local axioms; loaded ancestor axioms remain active.
+- inherited - No local axioms. Loaded ancestor axioms remain active.
 
 ## Entries
 
@@ -3265,7 +3268,7 @@ open-forge:
 
 ## Axioms
 
-- inherited - No local axioms; loaded ancestor axioms remain active.
+- inherited - No local axioms. Loaded ancestor axioms remain active.
 
 ## Entries
 

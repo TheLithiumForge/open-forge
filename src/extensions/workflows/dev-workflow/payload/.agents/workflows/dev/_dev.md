@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Deliver a concrete change through an adaptive implement, test, improve, retest, diagnose, and fix cycle; use when one task warrants full iterative delivery rather than a focused implementation pass or testing-only work
+  description: Deliver a concrete change through an adaptive implement, test, improve, retest, diagnose, and fix cycle. Use when one task warrants full iterative delivery rather than a focused implementation pass or testing-only work
   tags: [Extension, Workflow, PhaseDelivery, Development, Delivery, Implementation, Testing, Refactoring, Debugging]
 ---
 
@@ -28,23 +28,23 @@ Read every route below before Step 1. A route that cannot be read is a blocker t
 ## Constraints
 
 - State the intended behavior or outcome, preservation boundary, and verification path before mutating the work product.
-- Use test-first when a regression, stable contract, high-risk behavior, or repository convention benefits from a failing baseline; use implement-first only when that is the clearer or more practical path.
+- Use test-first when a regression, stable contract, high-risk behavior, or repository convention benefits from a failing baseline. Use implement-first only when that is the clearer or more practical path.
 - Never weaken a valid expectation merely to obtain a passing result.
-- Refactor or improve only when evidence shows a worthwhile structural gain; preserve intended behavior and exclude unrelated cleanup.
+- Refactor or improve only when evidence shows a worthwhile structural gain. Preserve intended behavior and exclude unrelated cleanup.
 - Diagnose an unexpected failure before changing behavior, tests, or checks.
 
 ## Steps
 
-1. Confirm the accepted outcome, scope, non-goals, mutation authority, acceptance evidence, and authoritative task source when one is declared; otherwise use the current user task without inventing another tracker.
+1. Confirm the accepted outcome, scope, non-goals, mutation authority, acceptance evidence, and authoritative task source when one is declared. Otherwise, use the current user task without inventing another tracker.
 2. Inspect the current implementation or work product, applicable routes, existing verification, and pre-existing failures. Choose the smallest coherent slice.
 3. Define the slice's behavior delta or output contract, preservation boundary, and focused plus broader verification. Select test-first or implement-first and state why.
 4. For test-first work, author or select evidence that fails for the intended reason before implementation. For implement-first work, record the baseline and the check that will decide whether the slice succeeds.
 5. Implement the slice with the smallest system-fitting change.
 6. Run the focused tests or checks. Classify any failure as implementation, expectation, setup, environment, or unrelated state before deciding what to change.
-7. After focused evidence passes, review fit, clarity, boundaries, duplication, error handling, and maintainability. Refactor or improve only where the benefit is material and within scope; "no warranted refactor" is valid.
+7. After focused evidence passes, review fit, clarity, boundaries, duplication, error handling, and maintainability. Refactor or improve only where the benefit is material and within scope. "No warranted refactor" is valid.
 8. Rerun the focused evidence and proportionate neighboring or end-to-end checks after the final improvement.
 9. If verification regresses, preserve the failure evidence, reproduce it, test competing hypotheses, fix the cause, and return to the applicable verification step.
-10. Close out against acceptance evidence and account for pre-existing and residual failures. Route warranted rationale and project knowledge to their established owners only when that mutation is safe and authorized; otherwise report a proposed destination or that no durable routing is warranted. Write a handoff when continuation benefits from one.
+10. Close out against acceptance evidence and account for pre-existing and residual failures. Route warranted rationale and project knowledge to their established owners only when that mutation is safe and authorized. Otherwise, report a proposed destination or that no durable routing is warranted. Write a handoff when continuation benefits from one.
 
 ## Loop
 

@@ -192,7 +192,7 @@ describe("extension lifecycle safety closure", () => {
     const rejected = await runCli(["extend", "--remove", "retained-route", target]);
 
     expect(rejected.exitCode).toBe(1);
-    expect(rejected.stderr).toContain("retained routed descendant");
+    expect(rejected.stderr).toContain("Retained routed content");
     expect(rejected.stderr).toContain(entrypointRelative);
     expect(rejected.stderr).toContain(localChildRelative);
     expect(await snapshotTreeState(target)).toEqual(before);
@@ -266,7 +266,7 @@ open-forge:
 
 ## Axioms
 
-- inherited - No local axioms; loaded ancestor axioms remain active.
+- inherited - No local axioms. Loaded ancestor axioms remain active.
 
 ## Entries
 
@@ -289,7 +289,7 @@ ${contract}
 
 ## Axioms
 
-- inherited - No local axioms; loaded ancestor axioms remain active.
+- inherited - No local axioms. Loaded ancestor axioms remain active.
 
 ## Entries
 

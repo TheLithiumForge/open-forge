@@ -10,7 +10,7 @@ Rune may assist relevance and recall when the current workspace or runtime provi
 
 ## Destinations
 
-- [authoritative Open Forge instructions, routes, memory, and indexes; read these files directly when deterministic routing or exact truth matters.](../) - #Core #Routing
+- [authoritative Open Forge instructions, routes, memory, and indexes. Read these files directly when deterministic routing or exact truth matters.](../) - #Core #Routing
 
 The workspace's installed Rune integration and its own documentation remain the authority for whether Rune is available and how its current interface behaves.
 

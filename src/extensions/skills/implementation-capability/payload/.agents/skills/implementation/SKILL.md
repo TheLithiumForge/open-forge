@@ -11,7 +11,7 @@ Turn an accepted goal into a verified change.
 
 - Inspect the existing implementation before deciding the change shape.
 - Design how the change fits current architecture, source boundaries, patterns, and directives before editing.
-- Prefer tests as verification when practical; state the substitute when tests are not practical.
+- Prefer tests as verification when practical. State the substitute when tests are not practical.
 - Use verification results to review and improve the final implementation.
 
 ## References

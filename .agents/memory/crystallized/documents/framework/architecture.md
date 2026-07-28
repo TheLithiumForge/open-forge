@@ -230,9 +230,7 @@ This relationship model is intentionally sufficient for future graph, semantic, 
 
 ## Recursive Customization
 
-Each `root route` exists only where the loader exposes it and is not scopable. Every `route` below a `root route` may contain local files and any number of routed scope `slugs` before, between, or after deeper `route` segments.
-
-Each scope narrows everything that follows without reordering `route` segments recognized by a declared manager. A familiar nested `slug` does not recreate a `root route` or grant its behavior.
+The [scope and inheritance contract](routing/scope.md) defines the complete recursive customization model. In summary, each `root route` exists only where the loader exposes it, while ordinary routed `slugs` may narrow any meaning that follows below that root. Scoping does not reorder `route` segments recognized by a declared manager or recreate a `root route`.
 
 The `root routes` compose through explicit links by default. A Workflow may use a Skill or Pattern without physically containing a second Core tree.
 

@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Reproduce and isolate a defect, identify its root cause, and verify an authorized minimal fix; use for failures, regressions, flaky behavior, or unexplained state
+  description: Reproduce and isolate a defect, identify its root cause, and verify an authorized minimal fix. Use for failures, regressions, flaky behavior, or unexplained state
   tags: [Extension, Workflow, PhaseDelivery, Quality, Debugging]
 ---
 
@@ -26,7 +26,7 @@ Read every route below before Step 1. A route that cannot be read is a blocker t
 
 ## Constraints
 
-- Diagnose before changing behavior; do not use speculative edits as the primary investigation method.
+- Diagnose before changing behavior. Do not use speculative edits as the primary investigation method.
 - Preserve original failure evidence and distinguish symptom, trigger, contributing condition, and root cause.
 - Make a fix only when the task authorizes mutation.
 - Keep the fix minimal and add or identify regression evidence tied to the root cause.

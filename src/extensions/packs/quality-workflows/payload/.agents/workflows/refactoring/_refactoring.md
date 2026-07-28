@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Improve internal structure while preserving observable behavior; use when duplication, boundaries, naming, complexity, or maintainability need correction without a feature change
+  description: Improve internal structure while preserving observable behavior. Use when duplication, boundaries, naming, complexity, or maintainability need correction without a feature change
   tags: [Extension, Workflow, PhaseDelivery, Quality, Refactoring]
 ---
 
@@ -40,7 +40,7 @@ Read every route below before Step 1. A route that cannot be read is a blocker t
 5. Apply that slice without changing public behavior or unrelated code.
 6. Run narrow verification, then proportionate broader checks for affected callers and integration seams.
 7. Review the result for reduced complexity, clearer ownership, naming, duplication, and alignment with local patterns.
-8. Repeat only for the next justified slice; separate any discovered behavior change into a distinct task or decision.
+8. Repeat only for the next justified slice. Separate any discovered behavior change into a distinct task or decision.
 
 ## Loop
 

@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Explore user journeys, interaction states, and experience directions before implementation; use when a product flow or interface problem needs evidence, alternatives, and an explicit design decision
+  description: Explore user journeys, interaction states, and experience directions before implementation. Use when a product flow or interface problem needs evidence, alternatives, and an explicit design decision
   tags: [Extension, Workflow, PhaseDiscovery, Design, UX, Exploration]
 ---
 
@@ -39,7 +39,7 @@ Read every route below before Step 1. A route that cannot be read is a blocker t
 4. Identify the highest-friction moments, accessibility risks, unclear decisions, and evidence gaps.
 5. Develop a small set of materially different experience directions at the fidelity needed for the decision.
 6. Compare discoverability, comprehension, effort, feedback, control, accessibility, consistency, feasibility, and risk.
-7. Recommend a direction when evidence supports one; otherwise define the smallest prototype, research question, or decision that resolves uncertainty.
+7. Recommend a direction when evidence supports one. Otherwise, define the smallest prototype, research question, or decision that resolves uncertainty.
 8. Record accepted decisions and prepare a design-review or implementation-handoff input only when requested.
 
 ## Loop
