@@ -17,6 +17,55 @@ const cliFile = repoPath("src", "cli", "cli.ts");
 const generatedIndexEndMarker = "<!-- open-forge:generated-index:end -->";
 const sandbox = useTestSandbox("open-forge-cli");
 
+describe("command dispatch", () => {
+  test("prints help explicitly and rejects unknown commands", async () => {
+    const defaultHelp = await executeCli(cliFile, []);
+    const explicitHelp = await executeCli(cliFile, ["help"]);
+    const longHelp = await executeCli(cliFile, ["--help"]);
+    const shortHelp = await executeCli(cliFile, ["-h"]);
+    const unknown = await executeCli(cliFile, ["frobnicate"]);
+
+    expect(defaultHelp.exitCode).toBe(0);
+    expect(explicitHelp.exitCode).toBe(0);
+    expect(longHelp.exitCode).toBe(0);
+    expect(shortHelp.exitCode).toBe(0);
+    expect(explicitHelp.stdout).toBe(defaultHelp.stdout);
+    expect(longHelp.stdout).toBe(defaultHelp.stdout);
+    expect(shortHelp.stdout).toBe(defaultHelp.stdout);
+    expect(defaultHelp.stdout).toContain("Usage:");
+    expect(defaultHelp.stdout).toContain("open-forge help");
+    expect(defaultHelp.stdout).toContain("open-forge --help");
+    expect(defaultHelp.stdout).toContain("open-forge -h");
+    expect(defaultHelp.stdout).toMatch(/^\s*help\s+Print this command reference\.$/m);
+    expect(unknown.exitCode).toBe(1);
+    expect(unknown.stdout).toBe("");
+    expect(unknown.stderr).toContain("Unknown command: frobnicate");
+  });
+
+  test("rejects invalid mutation arguments before changing the target", async () => {
+    const root = await createRoot();
+    const before = await snapshotTreeState(root);
+
+    const indexResult = await runCli("index", root, "extra");
+    const createResult = await runCli("create", "category", "patterns/demo", root, "extra");
+    const createOptionResult = await runCli("create", "category", "patterns/demo", "--unknown");
+    const extendOptionResult = await runCli("extend", "vision-workflow", "--unknown");
+    const installResult = await runCliDefault("install", "--unknown", root);
+
+    expect(indexResult.exitCode).toBe(1);
+    expect(indexResult.stderr).toContain("Usage: open-forge index [target]");
+    expect(createResult.exitCode).toBe(1);
+    expect(createResult.stderr).toContain("Usage: open-forge create category <route-path> [target]");
+    expect(createOptionResult.exitCode).toBe(1);
+    expect(createOptionResult.stderr).toContain("Usage: open-forge create category <route-path> [target]");
+    expect(extendOptionResult.exitCode).toBe(1);
+    expect(extendOptionResult.stderr).toContain("Usage: open-forge extend <extension-source-or-id> [target]");
+    expect(installResult.exitCode).toBe(1);
+    expect(installResult.stderr).toContain("Usage: open-forge install [target] [--pro]");
+    expect(await snapshotTreeState(root)).toEqual(before);
+  });
+});
+
 describe("category index generation", () => {
   test("replaces only the bounded generated region", async () => {
     const root = await createRoot();
@@ -219,21 +268,23 @@ description: Implementation capability for fitting, testing, coding, and verifyi
   });
 });
 
-describe("loader category registry", () => {
-  test("keeps source and dogfood authored loader contracts aligned", async () => {
-    const [sourceLoader, dogfoodLoader] = await Promise.all([
-      fs.readFile(repoPath("src", "open-forge", ".agents", "loader.md"), "utf8"),
-      fs.readFile(repoPath(".agents", "loader.md"), "utf8")
-    ]);
+describe("Framework source registry", () => {
+  test("keeps every shipped .agents contract aligned with dogfood authored content", async () => {
+    const source = await snapshotTree(repoPath("src", "open-forge", ".agents"));
+    const dogfoodRoot = repoPath(".agents");
     const generatedRegion = /<!-- open-forge:generated-index:start -->[\s\S]*?<!-- open-forge:generated-index:end -->/;
 
-    expect(sourceLoader).toMatch(generatedRegion);
-    expect(dogfoodLoader).toMatch(generatedRegion);
-    expect(sourceLoader.replace(generatedRegion, "<generated Entries>")).toBe(
-      dogfoodLoader.replace(generatedRegion, "<generated Entries>")
-    );
+    for (const [relativePath, encodedSource] of Object.entries(source)) {
+      const sourceContent = Buffer.from(encodedSource, "base64").toString("utf8");
+      const dogfoodContent = await fs.readFile(path.join(dogfoodRoot, relativePath), "utf8");
+      expect(sourceContent.replace(generatedRegion, "<generated Entries>")).toBe(
+        dogfoodContent.replace(generatedRegion, "<generated Entries>")
+      );
+    }
   });
+});
 
+describe("loader category registry", () => {
   test("generates direct active categories from their entrypoint metadata", async () => {
     const root = await createRoot();
     await fs.writeFile(path.join(root, "loader.md"), `# Loader
@@ -298,22 +349,6 @@ tags: [External, Tool]
     expect(result.stderr).toContain("Multiple category entrypoints found");
     expect(await fs.readFile(path.join(root, "loader.md"), "utf8")).toBe(loaderOriginal);
     expect(await fs.readFile(path.join(category, "index.md"), "utf8")).toBe(aliasOriginal);
-  });
-});
-
-describe("Memory source registry", () => {
-  test("keeps every canonical Memory entrypoint aligned with dogfood authored content", async () => {
-    const source = await snapshotTree(repoPath("src", "open-forge", ".agents", "memory"));
-    const dogfoodRoot = repoPath(".agents", "memory");
-    const generatedRegion = /<!-- open-forge:generated-index:start -->[\s\S]*?<!-- open-forge:generated-index:end -->/;
-
-    for (const [relativePath, encodedSource] of Object.entries(source)) {
-      const sourceContent = Buffer.from(encodedSource, "base64").toString("utf8");
-      const dogfoodContent = await fs.readFile(path.join(dogfoodRoot, relativePath), "utf8");
-      expect(sourceContent.replace(generatedRegion, "<generated Entries>")).toBe(
-        dogfoodContent.replace(generatedRegion, "<generated Entries>")
-      );
-    }
   });
 });
 

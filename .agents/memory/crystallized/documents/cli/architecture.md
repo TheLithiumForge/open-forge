@@ -327,9 +327,9 @@ Semantic relevance, remote registries, provider orchestration, and Rune integrat
 
 - [Extension package boundary](../../decisions/extension-package-boundary.md)
 
-## Migration Inputs
+## Historical Context
 
-These historical records preserve earlier direction or implementation rationale and remain subject to reconciliation:
+These archived records preserve earlier direction and implementation rationale. They may inform future redesign, but they do not govern the current CLI architecture:
 
 - [Earlier scalability and CLI experience exploration](../../../archived/ideas/2026-06-22_scalability-and-cli-experience.md)
 - [Earlier CLI design exploration](../../../archived/ideas/cli-design.md)

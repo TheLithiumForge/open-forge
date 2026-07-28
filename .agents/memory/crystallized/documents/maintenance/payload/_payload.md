@@ -7,7 +7,7 @@ open-forge:
 
 # Payload Maintenance
 
-This route contains repository Maintenance contracts for reviewed files under [`src/open-forge/`](../../../../../../src/open-forge/) and follows the installable source structure as those files are reviewed and migrated.
+This route contains repository Maintenance contracts for reviewed files under [`src/open-forge/`](../../../../../../src/open-forge/) and follows the installable source structure as those files are reviewed and maintained.
 
 Users do not receive this Maintenance route. The [Framework distribution contract](../../framework/architecture.md#distribution-and-dogfood) defines what must remain complete in installed files, while the [routed Markdown contract](../../framework/markdown/routes.md) defines generated Entries and their authored sources.
 

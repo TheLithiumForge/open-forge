@@ -15,7 +15,7 @@ This document is authoritative for the current internal architecture of the Open
 
 The [top Open Forge architecture](../architecture.md) is authoritative for the complete system map and the [composition relationship](../architecture.md#framework-composition) among Core, Memory, and Extensions. This document explains how Core and Memory work internally. It names extension and tool boundaries only where they constrain the Framework.
 
-The Framework described here is the intended architecture to which the installable source, dogfood environment, governance, and tooling must migrate. Older files remain useful migration inputs, but they do not constrain this design merely because they exist.
+The installable source, dogfood environment, Maintenance, and tooling must remain aligned with this architecture. Historical files may explain earlier choices, but they do not constrain current design merely because they exist.
 
 The [Open Forge Markdown scope](markdown/_markdown.md) contains the current canonical syntax, routed representation, and compatibility specifications used by this architecture.
 
@@ -313,25 +313,7 @@ It cannot guarantee that a nondeterministic agent reads, understands, or follows
 
 Correct behavior should be the cheapest path, but review remains part of any consequential workflow.
 
-## Migration Contract
-
-This architecture is the target current view for the Framework migration.
-
-For each older source, governance file, or decision:
-
-1. Compare its meaning with this architecture and current maintainer direction
-2. Keep useful current behavior at its correct authoritative source
-3. Improve unclear or unnecessarily expensive contracts
-4. Extract distinct rationale, patterns, directives, or maintenance requirements
-5. Remove duplication and obsolete mechanisms
-6. Update every affected link and route
-7. Preserve only historical material that retains future value
-
-An existing file is not retained merely because another file links to it. Links are part of the migration surface and move with authority.
-
-The [approved design baseline](../../../archived/sessions/2026-07-26_open-forge-design-baseline.md) preserves the broader reasoning used to establish this architecture.
-
-## Related Authoritative Sources
+## Related Current Sources
 
 - [Open Forge vision](../vision.md)
 - [Open Forge principles](../principles.md)
@@ -348,9 +330,9 @@ The [approved design baseline](../../../archived/sessions/2026-07-26_open-forge-
 - [Current Memory contract](../../../_memory.md)
 - [Current route to important repository authoritative sources](../../../../workspace/sources-of-truth.md)
 
-## Migration Inputs
+## Decisions And Rationale
 
-The following files contain earlier decisions or governance that may help migration. They are not architectural proof and may be rewritten, consolidated, moved, or archived as their subjects receive final authoritative sources:
+These decisions preserve useful rationale behind the current Framework architecture. Their accepted results remain expressed by this document and its scoped current views:
 
 - [Product direction rationale](../../decisions/product-direction.md)
 - [Distinct Core primitive role rationale](../../decisions/core-primitives.md)
@@ -365,3 +347,7 @@ The following files contain earlier decisions or governance that may help migrat
 - [Source and packaging rationale](../../decisions/source-and-packaging.md)
 - [Typed authority and role terminology](../../decisions/authoritative-source-terminology.md)
 - [Canonical Markdown authoring rationale](../../decisions/canonical-markdown.md)
+
+## Historical Context
+
+The [approved design baseline](../../../archived/sessions/2026-07-26_open-forge-design-baseline.md) preserves the broader reasoning used to establish this architecture without governing its current meaning.

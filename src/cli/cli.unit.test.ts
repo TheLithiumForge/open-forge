@@ -197,7 +197,7 @@ Repeat until verified.
       .replace("iterative", "goal-seeking")
       .replace("## Constraints\n\n- none", "## Constraints\n\n- none\n- Preserve bytes.");
     expect(cliTestInternals.validateWorkflowDocument(invalid)).toEqual(expect.arrayContaining([
-      expect.stringContaining("Mode must be linear or iterative"),
+      expect.stringContaining("linear or iterative"),
       expect.stringContaining("cannot mix none/inherited")
     ]));
   });

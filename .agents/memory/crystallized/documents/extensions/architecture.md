@@ -389,9 +389,9 @@ Extensions are not:
 
 - [Extension package boundary](../../decisions/extension-package-boundary.md)
 
-## Migration Inputs
+## Historical Context
 
-These historical records preserve earlier observations or exploration and remain subject to reconciliation:
+These archived records preserve earlier observations and exploration. They may inform future redesign, but they do not govern the current Extensions architecture:
 
 - [Historical package and skill interoperability observation](../../../archived/observations/2026-07-15_extension-units-and-skill-interop.md)
 - [Historical extension preflight observation](../../../archived/observations/2026-07-15_extension-preflight-boundaries.md)
