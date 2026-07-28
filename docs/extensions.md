@@ -1,14 +1,180 @@
 # Open Forge Extensions
 
-Extensions add optional whole files to the existing Open Forge route tree.
+Extensions add optional whole files through existing Open Forge routes.
 
-One extension may contain a skill, workflow, directives, patterns, guidance, templates, workspace or memory routes, support files, a deliberate mix, or only dependencies as a convenience pack. “Extension” describes installation and ownership, never the runtime meaning of installed content.
+An Extension may provide any combination of Skills, Workflows, Directives, Patterns, Guidance, Templates, Workspace routes, Memory routes, and support files. A dependency-only pack may provide only dependency edges.
 
-Installed files are complete runtime truth. Agents do not need the source manifest, catalogue grouping, ownership receipt, or CLI to understand or use them.
+The term Extension describes optional packaging and managed ownership, not runtime meaning. Installed files retain the meaning of their destination routes and remain understandable and usable without the package manifest, catalogue, ownership receipt, or CLI.
 
-## Source Shapes
+## Quick Start
 
-Bundled extensions use organizational groups:
+Install and commit the standard Framework before installing an Extension. Follow the [README Quick Start](../README.md#quick-start) or the CLI [`install` guide](cli.md#install) first. Catalogue listing and previews are read-only, but a normal Extension installation expects recognizable tracked Core anchors.
+
+List the bundled catalogue:
+
+```sh
+npx open-forge extend --list
+```
+
+Preview one Extension and its dependencies:
+
+```sh
+npx open-forge extend architecture-workflow --dry-run
+```
+
+Install the reviewed plan:
+
+```sh
+npx open-forge extend architecture-workflow
+```
+
+Review and commit the resulting files:
+
+```sh
+git status
+git diff
+git add .agents open-forge.extensions.json
+git commit -m "Add architecture workflow"
+```
+
+The receipt is created only for managed packages. Review the actual changed paths reported by Git rather than assuming every installation changes both paths above.
+
+## How Extensions Fit Open Forge
+
+An Extension is a content-agnostic package, not another Framework primitive or root.
+
+For example, a workflow Extension may install:
+
+```text
+.agents/
+  workflows/
+    architecture/
+      _architecture.md
+      define-architecture.md
+  skills/
+    architecture/
+      SKILL.md
+```
+
+After installation:
+
+- The Workflow is selected and used as a Workflow
+- The Skill follows its native `SKILL.md` contract
+- Generated `Entries` expose both routes
+- #Extension records optional package provenance without creating authority or loading behavior
+
+Package dependencies ensure files arrive together. Installed files still express their runtime relationships through ordinary links and Required Routes.
+
+## Choose And Install
+
+Use interactive selection:
+
+```sh
+npx open-forge extend
+npx open-forge extend --select
+```
+
+Install several bundled roots as one review unit:
+
+```sh
+npx open-forge extend --ids planning-workflows,quality-workflows
+```
+
+Install a local package or direct overlay:
+
+```sh
+npx open-forge extend ./my-extension
+```
+
+One invocation and its complete dependency closure form one review unit. Install roots in separate commands when separate diffs matter.
+
+Normal writes require recognizable tracked Open Forge Core anchors, a clean target scope, and Git-visible planned output. Outside Git, interactive use asks for approval after recommending initialization; non-interactive writes stop.
+
+`--pro` bypasses only the Git and Core lifecycle guards. It never bypasses manifest, dependency, containment, collision, ownership, route-integrity, or rollback safety.
+
+## Preview, Update, And Remove
+
+Preview an installation:
+
+```sh
+npx open-forge extend architecture-workflow --dry-run
+```
+
+An installation preview performs package discovery, dependency resolution, and complete preflight, then summarizes planned file and receipt effects without writing.
+
+Preview a removal:
+
+```sh
+npx open-forge extend --remove architecture-workflow --dry-run
+```
+
+A removal preview reads installed receipt state, validates owned files and retained dependents, and summarizes the removal plan without writing.
+
+The CLI [Preview reference](cli.md#preview) defines the exact installation and removal output fields and their differences.
+
+Reinstall a managed id to reconcile its owned files:
+
+```sh
+npx open-forge extend architecture-workflow
+```
+
+Remove explicitly selected ids:
+
+```sh
+npx open-forge extend --remove architecture-workflow
+```
+
+Removal stops when a retained Extension still depends on the selected id, an owned file has changed, or deleting an entrypoint would strand retained routes. When another installed Extension shares an identical owned file, removal drops only the selected owner and retains the file. Dependencies that become orphans are not pruned automatically. Preview and remove them explicitly when desired.
+
+## Manual Installation
+
+The CLI is optional.
+
+To install manually:
+
+1. Copy the package's `payload/` contents into the target workspace
+2. Rebuild or manually update each affected generated `Entries` region
+3. Review the assembled files and their links
+
+The installed files then work like any other Open Forge files. Manual installation does not create managed update or removal state.
+
+## Create A Local Extension
+
+Create a managed package scaffold:
+
+```sh
+npx open-forge create extension my-extension {package-parent}
+```
+
+This creates `{package-parent}/my-extension/` with:
+
+```text
+my-extension/
+  extension.json
+  README.md
+  payload/
+    .agents/
+```
+
+Then:
+
+1. Replace the manifest and README placeholders
+2. Add complete routed files and any required entrypoints beneath `payload/.agents/`
+3. Author ordinary links for their final containing-file-relative locations, and add Required Routes only where installed content depends on them
+4. Preview installation into a separate Open Forge workspace
+5. Install, run `open-forge doctor` against the assembled workspace, and review the Git diff
+
+```sh
+npx open-forge extend {package-parent}/my-extension {target-workspace} --dry-run
+npx open-forge extend {package-parent}/my-extension {target-workspace}
+npx open-forge doctor {target-workspace}
+```
+
+Using a separate target workspace keeps package sources distinct from installed output. The target must not be the package source or a directory inside it.
+
+## Package Shapes
+
+First-party source packages live in presentation groups:
 
 ```text
 src/extensions/
@@ -18,7 +184,7 @@ src/extensions/
   support/
 ```
 
-Each package normally has this shape:
+A normal managed package contains:
 
 ```text
 src/extensions/{group}/{package-folder}/
@@ -26,10 +192,8 @@ src/extensions/{group}/{package-folder}/
   README.md
   payload/
     .agents/
-      ... whole routed files ...
+      ... complete target-relative files ...
 ```
-
-The group and package folder help maintainers browse the source and help the catalogue present related choices. They do not define identity or runtime meaning. The manifest id is the stable install key; installed payload files own their ordinary directive, skill, workflow, pattern, guidance, template, workspace, memory, or support semantics.
 
 A dependency-only pack may omit `payload/`:
 
@@ -39,37 +203,17 @@ src/extensions/packs/{package-folder}/
   README.md
 ```
 
-It installs a declared dependency closure and writes no dummy runtime file.
+It selects a dependency closure without installing a placeholder runtime file.
 
-A local source may use the package shape above, a plain `payload/` directory, or a direct overlay whose contents map directly into the target. A local source with a manifest id opts into managed ownership. An idless local payload or overlay remains unmanaged.
+A local source may use:
 
-Extensions contribute whole files. They do not inject blocks into shared Markdown or create a companion addition layer. If local behavior needs a small workspace-owned adjustment, use `{name}.overwrite.md`; an extension must not own that file.
+- The complete package shape
+- A directory containing `payload/`
+- A direct overlay shaped like the target workspace
 
-## Install
+A local source with a manifest id opts into managed lifecycle. An idless payload or direct overlay remains unmanaged.
 
-Install a bundled extension by stable id:
-
-```sh
-open-forge extend {extension-id}
-open-forge extend --ids {extension-id},{extension-id}
-```
-
-Install a local source:
-
-```sh
-open-forge extend {extension-folder}
-```
-
-Inspect or preview without writing:
-
-```sh
-open-forge extend --list
-open-forge extend {extension-id} --dry-run
-```
-
-Normal writes use a clean target-scoped Git checkpoint and ask for review and commit afterward. One command plus its automatically selected dependency closure is one review unit. Install separate roots in separate commands when separate diffs matter.
-
-The CLI is optional. A manual install can copy the source's `payload/` contents into the workspace and update each affected generated `Entries` region by hand. Once copied and routed, the files work exactly like any other Open Forge files. The CLI only automates copying, dependency selection, indexing, lifecycle checks, and receipts.
+Source groups and folder names help catalogue presentation and maintenance. The manifest id defines managed package identity. Installed files receive runtime meaning from their destination routes and contents.
 
 ## Manifest
 
@@ -85,86 +229,94 @@ Managed packages use `extension.json`:
 }
 ```
 
-- `id` is the stable lowercase install and ownership key, independent of source grouping
-- `name`, `description`, and `version` are optional display metadata; version is descriptive, not a compatibility solver
-- `dependencies` is an optional duplicate-free list of bundled extension ids
+- `id` is the stable lowercase install and ownership key, independent of source location
+- `name`, `description`, and `version` are optional display metadata and must be non-empty strings when present
+- `version` is descriptive and has no compatibility semantics in the MVP
+- `dependencies` is an optional duplicate-free list of bundled Extension ids
 
-Every bundled package declares an id. A local source may declare one to opt into managed install, update, and removal. A dependency-only package must declare at least one dependency.
+Every bundled package declares an id. A local source may declare one to opt into managed installation, reconciliation, and removal. A dependency-only package must declare at least one dependency.
 
-The manifest is install metadata only. It is not copied as runtime context and agents never need it to interpret installed content.
+Unknown fields, invalid ids, duplicate dependencies, missing bundled dependencies, and dependency cycles stop installation before any write.
+
+The manifest is install metadata. It is not copied into agent context.
 
 ## Payload And Routing
 
-Payload paths are target-relative and portable. Markdown route links inside payload files use the normal containing-file-relative contract and resolve against the assembled workspace after installation. Open Forge-authored route files normally use #Extension plus their primitive and useful scope tags. Standard files such as `SKILL.md` keep their runtime-required metadata.
+Payload paths are portable and relative to the target.
 
-Use #LoadNow or #KeepInMind only when the installed file deliberately belongs in baseline or continuity loading. Otherwise its path, description, and tags keep it on demand.
+Open Forge-authored routed files normally carry:
 
-Generated `Entries` make installed files visible. They can be regenerated by the CLI or updated manually; the generated routes do not change the payload files' meaning.
+- #Extension
+- Their Core primitive or Memory classification
+- Useful scope and topic tags
 
-## Preflight And Collisions
+Standard formats such as `SKILL.md` retain their native metadata. Use #LoadNow or #KeepInMind only when the installed file deliberately belongs in baseline or continuity loading.
 
-Before a managed write, Open Forge resolves the complete dependency closure and validates the final payload plan.
+Markdown links resolve relative to their containing file in the assembled workspace. Links within one package should resolve in the isolated payload. Links to Core or declared dependencies may resolve only after the complete package closure is assembled.
 
-- paths must remain inside the target and use portable slash-separated spelling
-- package roots and payloads may not escape through links
-- payloads may not write `.git/`, `.gitignore`, `open-forge.extensions.json`, or workspace-owned `.overwrite.md` files
-- different bytes targeting one portable path are a blocker
-- identical managed bytes may share recorded owners
-- an unowned existing path is not silently adopted merely because its bytes match
-- removing or replacing an entrypoint may not strand retained routed descendants
+Do not duplicate dependency files or add source-only stubs merely to make a cross-package link resolve in isolation.
 
-`--pro` may bypass Git/Core lifecycle prompts, but never these containment, collision, dependency, ownership, or rollback checks.
+`doctor` and `find --follow-required` validate a complete workspace without consulting manifests. When aimed at an isolated payload, they therefore report intentionally absent Core or dependency routes. Validate those links after assembly.
 
-## Managed Lifecycle And Receipt
+## Dependencies, Packs, And Skills
 
-Managed installation state is stored transparently at the workspace root in `open-forge.extensions.json`.
+Dependencies:
+
+- Use stable bundled ids
+- Resolve transitively and offline
+- Install before their dependents
+- Are deduplicated across the selected closure
+
+Put reusable content in one canonical package. A Workflow that depends on a Skill package still links to the concrete installed `SKILL.md` through Required Routes because manifest dependencies are not runtime context.
+
+Convenience packs should contain dependency edges instead of duplicated payloads. Keep dependency graphs small and acyclic.
+
+Open Forge does not need to manage every Skill. An ordinary Skill may be copied or installed directly under `.agents/skills/{skill-name}/`. Run `open-forge index` afterward or update the Skills `Entries` manually.
+
+Do not assign the same installed Skill path to two package managers. Routing an external Skill does not transfer ownership or rewrite its internals.
+
+## Managed Ownership And Safety
+
+Managed state is stored transparently at the workspace root in `open-forge.extensions.json`.
 
 The receipt records:
 
-- explicitly requested roots
-- dependency edges and descriptive versions
-- owned payload paths and content digests
-- complete owner sets for shared identical files
+- Explicitly requested roots
+- Dependency edges and descriptive versions
+- Owned payload paths and content digests
+- Complete owner sets for shared identical files
 
-The receipt is CLI state, not agent context. Installed routed files remain sufficient runtime truth.
+The receipt enables safe reconciliation and removal. It is not agent context and does not affect runtime meaning.
 
-Reinstalling the same id updates its owned whole files. Dropped files are released and removed only when their recorded bytes still match and no owner remains. Generated `Entries` regions may be rebuilt without invalidating ownership of the surrounding entrypoint.
+Before writing, the CLI validates the complete resolved plan:
 
-Removal is explicit:
+- Paths must remain inside the target and use portable slash-separated spelling
+- Source and target paths may not escape through symlinks, junctions, hard links, or special files
+- Payloads may not write `.git/`, `.gitignore`, `open-forge.extensions.json`, or workspace-owned `.overwrite.md` files
+- Different bytes may not target the same portable path
+- Identical managed bytes may share explicit owners
+- A managed package may not silently adopt an unowned path
+- An unmanaged overlay may not replace a receipt-owned path
+- A route host may not be removed while retained descendants depend on it
 
-```sh
-open-forge extend --remove {installed-extension-id} --dry-run
-open-forge extend --remove {installed-extension-id}
-```
+Payload, generated-index, and receipt changes form one rollback-capable in-process transaction. Git remains the durable review and recovery boundary.
 
-Removal stops when a retained extension depends on the requested id or when deleting an owned route host would strand retained descendants. Dependencies that become orphans are not pruned automatically; preview and remove those ids explicitly when desired.
+## Current MVP Boundaries
 
-Payload, generated-index, and receipt changes are one rollback-capable in-process transaction. Git remains the durable recovery boundary for abrupt process or machine failure.
+The current Extension system is local and offline. It has no:
 
-## Sharing And Packs
+- Remote registry or network resolution
+- Compatibility solver or version ranges
+- Migration hooks
+- Automatic orphan pruning
+- Persistent crash-recovery journal
+- Remote trust policy
+- Automatic substitution between external capabilities and bundled ids
 
-Put a reusable skill in one skill extension and declare that id from dependent workflows or packs. A workflow still links the concrete installed `SKILL.md` under Required Routes because manifest dependencies install files but do not create runtime meaning. Required Route links use the canonical `- [Description](relative/path.md) - #Tags` shape, resolve from the workflow file, and include at least #Skill for a skill target.
+These are explicit MVP boundaries, not hidden behavior.
 
-Links to files in the same extension package must resolve in the isolated source payload. A link to #Core or a declared extension dependency may be unresolved when that extension source is inspected alone, because its containing-file-relative destination is defined against the final assembled workspace. It must resolve after the base and complete dependency closure are installed. Do not duplicate dependency files or add source-only stubs merely to make a cross-package link resolve in isolation.
+## Related Documentation
 
-`doctor` and `find --follow-required` remain manifest-agnostic complete-workspace validators. If either command is aimed directly at an isolated source payload, an intentionally absent #Core or declared-dependency route is reported; validate that route after assembly rather than weakening the link or duplicating its target.
-
-Convenience packs contain dependency edges rather than duplicate payload files. Keep dependency graphs small and acyclic.
-
-Stable ids survive movement between `skills/`, `workflows/`, `packs/`, and `support/`; those folders are presentation and maintenance groupings only.
-
-## Skill Interoperability
-
-Open Forge does not need to own every skill. A standard skill may be copied or installed directly under `.agents/skills/{skill-name}/`; update the shared skills `Entries` manually or run `open-forge index` afterward.
-
-Do not assign the same installed skill path to two managers. Direct or externally managed skills remain outside the Open Forge receipt, and routing them does not adopt or rewrite their package internals.
-
-## Lifecycle Boundary
-
-The current command is local and offline. It has no remote registry, network resolution, compatibility solver, migration hooks, automatic orphan pruning, persistent crash-recovery journal, or remote trust policy.
-
-Plain payload copying and plain Markdown routing remain the foundational contract. Managed lifecycle features are optional safety and convenience around that contract.
-
-## Tests
-
-Fast tests cover dependency selection, portable paths, receipts, workflow/directive structure, and generated-index invariants. Closure tests cover real subprocesses, Git checkpoints, install/update/remove effects, rollback, catalogue integration, packaged layouts, and Required Route validation.
+- [CLI command reference](cli.md)
+- [Open Forge README](../README.md)
+- [First-party Extension catalogue](../src/extensions/README.md)

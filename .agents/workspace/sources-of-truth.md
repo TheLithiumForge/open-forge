@@ -15,17 +15,17 @@ Route map for this repository's important authoritative sources and representati
 - [current internal architecture of the shipped Open Forge Framework, including Core and Memory.](../memory/crystallized/documents/framework/architecture.md) - #CurrentTruth #Evergreen #Architecture #Framework #Core #Memory #Document
 - [current CLI MVP role, command surface, deterministic state, safety model, verification boundary, proven properties, and liabilities.](../memory/crystallized/documents/cli/architecture.md) - #CurrentTruth #Evergreen #Architecture #CLI #MVP #Document
 - [current Extensions MVP package semantics, composition, runtime boundary, ownership lifecycle, safety properties, and liabilities.](../memory/crystallized/documents/extensions/architecture.md) - #CurrentTruth #Evergreen #Architecture #Extension #MVP #Document
-- [current CLI behavior truth; prefer it over inferring intent from the implementation.](../../docs/cli.md) - #CurrentTruth #Evergreen #Documentation #CLI
+- [current user contract for CLI commands, options, safety behavior, outputs, and limitations.](../../docs/cli.md) - #CurrentTruth #Evergreen #Documentation #CLI
 - [current maintainer contracts for reviewed source and repository surfaces.](../memory/crystallized/documents/maintenance/_maintenance.md) - #CurrentTruth #Evergreen #Maintenance #Governance #Document
 - [the installable payload users receive; runtime truth for installed workspaces, including this one.](../../src/open-forge/) - #CurrentTruth #Payload
-- [the MVP CLI implementation.](../../src/cli/cli.ts) - #CLI #Implementation
+- [exact current deterministic CLI behavior.](../../src/cli/cli.ts) - #CLI #Implementation
 - [current first-party extension catalogue.](../../src/extensions/README.md) - #CurrentTruth #Extension #Catalogue
 - [bundled first-party extension source packages and manifests.](../../src/extensions/) - #Extension #Implementation
 - [the reproducible evaluation instrument: agnostic scenarios, reusable primitives, exact meta-scenarios, external isolated runs, orchestration support, and durable result publications.](../../benchmarks/) - #Benchmark #Evaluation
 - [build script](../../build.ts) - #Build
 - [build output; never edit it by hand.](../../dist/) - #Build #Generated
-- [development documentation](../../docs/dev.md) - #Documentation #Development
-- [extension authoring documentation](../../docs/extensions.md) - #Documentation #Extension
+- [current repository workflow for changing, verifying, building, packaging, and releasing Open Forge.](../../docs/development.md) - #Documentation #Development
+- [current user and author contract for choosing, installing, creating, updating, and removing Extensions.](../../docs/extensions.md) - #CurrentTruth #Evergreen #Documentation #Extension
 - [durable benchmark publications; conforming current runs use `<date-time>/<run-name>/` with `summary.md` plus `raw/`, while explicitly incomplete, flat, and `pre-harness/` reports remain historical context.](../../benchmarks/results/) - #Benchmark #Result #Evidence
 - [accepted evaluation syntheses derived from benchmark evidence.](../memory/crystallized/documents/evaluations/) - #Memory #Evaluation
 

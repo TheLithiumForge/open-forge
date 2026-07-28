@@ -169,7 +169,7 @@ The positive form defines the valid model. A separate negative sentence is still
 - [Canonical Markdown Syntax](../framework/markdown/syntax.md)
 - [Routed Markdown Representation](../framework/markdown/routes.md)
 - [Open Forge Principles](../principles.md)
-- [README-specific documentation voice](../../../../../docs/dev.md#documentation-voice)
+- [README-specific documentation voice](../../../../../docs/development.md#documentation-voice)
 
 ## Decisions And Rationale
 
