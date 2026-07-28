@@ -87,7 +87,7 @@ Agents move top-down from known context into relevant detail. Loaded ancestor ru
 
 For example, the loader exposes Memory, Memory exposes Crystallized, Crystallized exposes Documents, and Documents exposes this architecture through its path, description, and tags. An agent can select this view without opening unrelated documents or their history.
 
-Any authoritative route may introduce narrower scopes and initialize only the framework areas it needs. Scopes inherit broader meaning and add local context through files, routes, links, and tags.
+Any entrypoint may expose narrower scopes and initialize only the Framework areas needed there. Scopes inherit broader meaning and add local context through files, routes, links, and tags.
 
 Selection cost should grow primarily with route depth and the number of selected branches, not with the total number of stored scopes. Unselected sibling scopes should add almost no active-context cost. The [Open Forge Routing scope](framework/routing/_routing.md) is authoritative for the complete route contract.
 

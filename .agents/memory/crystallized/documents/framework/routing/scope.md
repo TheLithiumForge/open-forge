@@ -62,6 +62,8 @@ Scope routes may appear before, after, or between Framework route segments.
 
 Each visible folder in the chain has one entrypoint. A scoped Framework route reuses the normal Framework contract inside its local scope unless an accepted local edit or overwrite changes it.
 
+A scoped Framework route is established by an entrypoint that clearly states the reused Framework role. Ancestor scope entrypoints and their route descriptions establish the narrowed subject. Familiar paths, filenames, descriptions, and tags may help people and tools recognize the composition, but the human-readable route chain remains sufficient to understand it.
+
 Users may add, reorganize, replace, or remove routes. The standard installed routes are the product defaults Open Forge ships, not an untouchable taxonomy.
 
 ## Combining Selected Scopes

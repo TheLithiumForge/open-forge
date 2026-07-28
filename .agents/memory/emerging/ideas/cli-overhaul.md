@@ -61,6 +61,7 @@ Pure or mostly pure services should own:
 
 - Markdown metadata and structural parsing
 - Route graph construction and resolution
+- Recursive standard-route recognition from explicit Framework contracts rather than selected hardcoded path shapes
 - Context loading and inheritance
 - Framework contract validation
 - Portable path and ownership identity

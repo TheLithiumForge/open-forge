@@ -22,6 +22,8 @@ Open Forge does not impose a fixed projects, domains, teams, or repositories tax
 
 Distinct terms let one recursive mechanism express a project inside Memory, Memory inside a project, or deeper combinations without inventing special route types for each organization.
 
+Separating subject-bearing scope chains from reusable Framework role entrypoints keeps standard role wording stable at any depth and avoids hidden semantic metadata.
+
 Concrete installed paths remain self-describing and navigable without a registry. Avoiding a fixed taxonomy preserves the grow-your-own Framework promise.
 
 ## Alternatives And Tradeoffs
