@@ -25,5 +25,5 @@ The [Crystallized state contract](../../../../../framework/memory/crystallized.m
 
 ## Verification
 
-- Installation and route tests verify Documents loading, indexing, classification, and scoped route updates
+- Installation and `route` tests verify Documents loading, indexing, classification, and managed reconciliation through scopes
 - Compare canonical source and dogfood authored content outside generated `Entries`

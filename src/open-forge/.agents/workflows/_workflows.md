@@ -1,12 +1,12 @@
 ---
 open-forge:
-  description: Repeatable markdown workflow recipes for reaching a defined goal
+  description: Repeatable Markdown recipes for reaching a defined goal
   tags: [LoadNow, Core, Workflow]
 ---
 
 # Workflows
 
-Workflows are routed Markdown recipes for reaching a defined goal through multiple steps or skills
+Workflows coordinate steps, capabilities, or handoffs through a routed Markdown recipe with a defined goal
 
 ## Axioms
 

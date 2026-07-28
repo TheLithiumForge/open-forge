@@ -18,7 +18,7 @@ The existing model proved useful distinctions between goals, dependencies, phase
 
 - Manual installations need an on-demand, human-readable way to author validator-compliant Workflows. A shipped Template or authoring reference should make the Markdown contract complete without repository-only architecture or CLI help.
 - Earlier Workflow handoffs named the active Workflow route and active step so delegated or resumed work retained precise execution position. The redesign should decide whether this remains required, recommended, or replaced by a more general handoff contract.
-- Earlier designs allowed explicitly typed Workflow-local Core, Workspace, and Memory routes. Workspace is now a Core primitive. The redesign must decide whether Workflow-local Memory is useful through ordinary scoped Framework routing or whether shared and goal-scoped Memory should remain outside Workflow ownership.
+- Earlier designs allowed explicitly typed Workflow-local Core, Workspace, and Memory `routes`. The current Framework keeps `root routes` separate and composes them through links. A redesign may reconsider tightly coupled packaging or locality only if its value justifies special loading, validation, update, and runtime discovery semantics.
 - Containment and unconditional dependencies should remain visibly distinct unless a better model replaces them.
 - Optional prior work must not become hidden ceremony or block an explicitly selected Workflow.
 - Workflow composition should remain explicit enough that agents and people can inspect which goal is primary, which capabilities are invoked, and how handoffs occur.
@@ -34,7 +34,7 @@ Review the complete system together:
 - phase wayfinding
 - Required Routes and dependency semantics
 - delegation and handoffs
-- Workflow-local or goal-scoped Framework routes
+- Workflow-local packaging, goal-scoped context, and the current cross-root link boundary
 - installed runtime wording
 - CLI discovery, creation, help, and validation
 

@@ -19,7 +19,7 @@ Memory is authoritative for the lifecycle of its recorded material: capture, cla
 
 It is not automatically authoritative for the external fact, implementation, behavior, or product direction that a record describes. Those meanings remain at their matching authoritative source.
 
-Memory may record any subject, including how work is performed, without activating it. Accepted behavior that should guide future work belongs in the matching #Core route. Memory may retain useful evidence, context, or rationale.
+Memory may record any subject, including how work is performed, without activating it. Accepted behavior that should guide future work belongs in the matching #Core `route`. Memory may retain useful evidence, context, or rationale.
 
 ## State And Scope
 
@@ -27,12 +27,22 @@ Memory has two independent dimensions:
 
 | Dimension | Question | Representation |
 |---|---|---|
-| State | How should this material currently be treated? | Working, Emerging, Crystallized, or Archived route |
+| State | How should this material currently be treated? | Working, Emerging, Crystallized, or Archived `route` |
 | Scope | Which subject does the material apply to? | Person, project, component, discipline, repository, collection, or another concrete routed scope |
 
-The route path expresses both dimensions. `memory/crystallized/mobile-app/` narrows only Crystallized Memory to `mobile-app`. `memory/mobile-app/crystallized/` places Crystallized Memory inside a broader `mobile-app` scope, which may initialize whichever other Memory states it needs. Placement changes meaning intentionally, neither shape requires all four states, and ordinary entrypoints keep both structures navigable without a centralized registry.
+The `route` path expresses both dimensions. `memory/crystallized/mobile-app/` narrows only Crystallized Memory to `mobile-app`. `memory/mobile-app/crystallized/` places Crystallized Memory inside a broader `mobile-app` scope, which may also contain whichever other Memory states it needs. Placement changes meaning intentionally, neither shape requires all four states, and ordinary `entrypoints` keep both structures navigable without a centralized registry.
 
-The same mechanism can serve one person, one repository, many interacting projects, a shared multi-repository source of truth, or recursively nested scopes. Additional branches do not need to enter active context until their route or relationship is selected.
+Place a scope immediately before the first Memory `route` it should narrow:
+
+- `memory/mobile-app/crystallized/` when the `mobile-app` scope may contain several Memory states
+- `memory/crystallized/mobile-app/documents/` when the `mobile-app` scope may contain several Crystallized roles
+- `memory/crystallized/documents/mobile-app/` when `mobile-app` narrows Documents only
+
+The same placement rule applies around Working roles such as Handoffs and Sessions, Emerging roles such as Analysis, Ideas, and Observations, and local scopes within Archived.
+
+The loader's universal scoping rules apply everywhere below the Memory `root route`. When a path retains Memory `routes` managed by Open Forge, their state and role segments keep the order declared by the installed source. Scoping therefore does not turn one state into a child of another or move Documents before Crystallized.
+
+The same mechanism can serve one person, one repository, many interacting projects, a shared multi-repository source of truth, or recursively nested scopes. Additional branches do not need to enter active context until their `route` or relationship is selected.
 
 ## State Summary
 
@@ -63,18 +73,18 @@ Ordinary conversation, duplicated facts, and raw activity without plausible futu
 
 ## Recursive Growth
 
-The installed root states are stable semantic defaults. Below them, workspaces may add direct files, positive child scopes, or scoped Framework routes at any useful depth.
+The installed states are stable semantic defaults beneath the Memory `root route`. Workspaces may add direct files or any number of routed scopes anywhere below that root. Place a subject scope before a state when it needs an independently useful lifecycle, after a state when it applies only within that state, or after a role when it narrows only that role.
 
-The Framework ships starter routes because most workspaces benefit from them:
+The Framework ships starter `routes` because most workspaces benefit from them:
 
 - Working includes Handoffs and Sessions
 - Emerging includes Analysis, Ideas, and Observations
 - Crystallized includes Decisions and Documents
-- Archived begins without requiring a mirror of every active route
+- Archived begins without requiring a mirror of every active `route`
 
-These standard routes are useful defaults, not an untouchable taxonomy. A workspace may remove, replace, reorganize, or supplement them. Decisions, Documents, and archive scopes may appear beneath any route where their local context makes selection and maintenance clearer.
+These standard `routes` are useful defaults, not an untouchable taxonomy. A workspace may remove, replace, reorganize, or supplement them. Any Memory `routes` still managed by Open Forge retain their declared order.
 
-A new root Memory state changes the shared state model and therefore requires clear user agreement. A new child scope uses ordinary recursive customization and needs only the authority required for that local change.
+A new top-level state beneath Memory changes the shared state model and therefore requires clear user agreement. A routed scope uses ordinary recursive customization and needs only the authority required for that local change.
 
 ## Truth Status
 

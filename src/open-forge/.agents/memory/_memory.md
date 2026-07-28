@@ -16,12 +16,13 @@ Memory is self-growing Markdown state for live work, agent communication and coo
 - Preserve agent communication and coordination in Memory when it must survive the current context; do not treat every conversation as durable memory
 - Write useful durable state to its appropriate routed destination when safe and allowed; do not leave reusable user direction only in chat
 - Treat clear user direction as accepted within its stated scope and update its appropriate current destination; keep tentative, exploratory, inferred, or materially ambiguous conclusions in Working or Emerging until accepted
-- Place a scope after a Memory state when it applies only to that state; place it before the state routes when its subject needs its own Memory states, and initialize only the states it uses
+- Apply the loader's generic scoping rules throughout Memory; each scope narrows the Memory `routes` and content that follow it
+- When retaining Memory `routes` managed by Open Forge, preserve their source-defined `route` sequence through any inserted scopes
 - Move material between #Memory routes when its state or knowledge role changes
 - When accepted behavior should guide future work, put it in the matching #Core route and preserve useful context or rationale in #Memory
 - Keep source and uncertainty visible when they affect how a memory entry should be trusted or promoted
 - Keep useful unsettled material in the matching emerging route and accepted durable memory in the matching crystallized route
-- Obtain explicit user direction before creating a new root Memory state
+- Obtain explicit user direction before creating a new top-level Memory state
 - If memory does not fit the current routes, propose a clearer route before writing it
 
 ## Entries

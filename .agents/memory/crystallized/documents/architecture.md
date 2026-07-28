@@ -26,9 +26,9 @@ An Open Forge environment combines four areas:
 
 | Area | Responsibility | Depends on |
 |---|---|---|
-| Framework | Shared routing, Core primitives, reusable Templates, and Memory mechanics | No other Open Forge area |
-| Workspace context | Local goals, knowledge, constraints, decisions, methods, history, and scopes | The framework routes it uses |
-| Extensions | Optional reusable capabilities | The framework routes they extend |
+| Framework | Shared routing, Core primitives, and Memory mechanics | No other Open Forge area |
+| Workspace context | Local goals, knowledge, constraints, decisions, methods, history, and scopes | The `routes` it uses |
+| Extensions | Optional reusable capabilities | The `routes` they extend |
 | Deterministic tools | Mechanical loading, navigation, validation, installation, packaging, and safety | The human-readable files they inspect and change |
 
 User direction establishes goals and accepted direction. An agent runtime consumes the environment, performs work with its native capabilities, and proposes changes. Agent providers and execution runtimes remain external to Open Forge. Minimal provider bridges may expose the canonical workspace entry without defining independent policy.
@@ -37,9 +37,9 @@ User direction establishes goals and accepted direction. An agent runtime consum
 
 Core and Memory are the two cooperating areas of the standard Framework. Core provides the entry, routing, authority, loading, relationship, and primitive semantics on which Memory and installed Extensions depend. Memory uses those semantics to preserve continuity, candidate learning, accepted records, and useful history.
 
-The standard base installation ships Core and Memory together because durable continuity and deliberate evolution are part of the product. A workspace may still reshape or remove standard routes through ordinary Framework customization.
+The standard base installation ships Core and Memory together because durable continuity and deliberate evolution are part of the product. A workspace may still reshape or remove standard `routes` through ordinary Framework customization.
 
-Extensions are optional packages outside the base Framework. They add whole files through existing Core or Memory routes instead of creating another root or interpretation model. Once installed, each file receives its runtime meaning and authority from its route, role, scope, content, and accepted direction rather than from package order or metadata.
+Extensions are optional packages outside the base Framework. They add whole files through existing Core or Memory `routes` instead of creating another root or interpretation model. Once installed, each file receives its runtime meaning and authority from its `route`, role, scope, content, and accepted direction rather than from package order or metadata.
 
 `#Core`, `#Memory`, and `#Extension` are routing and classification signals, not authority levels or numbered runtime stages. `#Extension` also identifies optional package provenance. The [loader](../../../loader.md#defined-tags) defines their exact installed meanings.
 
@@ -47,12 +47,12 @@ Extensions are optional packages outside the base Framework. They add whole file
 
 Human-readable Markdown is authoritative for Open Forge rules, recorded state, relationships, and workspace-specific context. A declared external system may be authoritative for source code, issues, product data, or another live subject when an Open Forge route points to it explicitly.
 
-Generated route entries, indexes, receipts, caches, and retrieval databases are derived from those authoritative sources. They may make discovery, validation, or change cheaper, but deleting and rebuilding them cannot change what the environment means.
+Generated `entries`, indexes, receipts, caches, and retrieval databases are derived from those authoritative sources. They may make discovery, validation, or change cheaper, but deleting and rebuilding them cannot change what the environment means.
 
 Dependencies point toward human-readable authoritative sources:
 
 1. The framework is complete without workspace-specific content, extensions, deterministic tools, or a particular agent provider
-2. Workspace context and extensions build on framework routes without redefining their universal meaning
+2. Workspace context and extensions build on installed `routes` without redefining their accepted meaning
 3. Deterministic tools and agent runtimes consume the same inspectable contract
 4. Generated entries, indexes, receipts, caches, and retrieval databases remain replaceable
 
@@ -62,7 +62,7 @@ Open Forge assembles three kinds of context:
 
 | Context | Contains | Use |
 |---|---|---|
-| Baseline | The small set of framework rules and route maps that apply to nearly all work | Establishes how to enter, navigate, interpret authority, and find more context |
+| Baseline | The small set of framework rules and `route` maps that apply to nearly all work | Establishes how to enter, navigate, interpret authority, and find more context |
 | Continuity | Live commitments, open approval gates, handoffs, and other state needed to resume current work | Preserves ongoing work without loading its entire history |
 | Selected | Routed files and relationships relevant to the current goal | Supplies the detailed knowledge, constraints, and methods needed now |
 
@@ -73,7 +73,7 @@ The operating flow is:
 1. A goal or request establishes the work
 2. The canonical workspace entry, such as `AGENTS.md`, points to the framework loader
 3. The agent reads baseline and applicable continuity context
-4. Top-down routes expose the scopes and relationships relevant to the goal
+4. Top-down `routes` expose the scopes and relationships relevant to the goal
 5. The agent reasons and acts with native capabilities, selected context, optional extensions, and deterministic tools
 6. Results, evidence, corrections, and accepted direction update their authoritative files or external systems
 
@@ -81,15 +81,17 @@ This flow moves context into and out of work. It does not require a project to f
 
 ## Structural Model
 
-A `route` is a visible path through small Markdown `entrypoints`. Each entrypoint exposes direct children with relative links, descriptions sufficient to select or skip them, and descriptive tags. A `scope` is a routed subtree that narrows authority or meaning.
+A `route` is a visible path through small Markdown `entrypoints`. Each `entrypoint` exposes direct children with relative links, `descriptions` sufficient to select or skip them, and descriptive tags. A routed `slug` acts as a scope when it narrows the authority or meaning of everything that follows it.
 
 Agents move top-down from known context into relevant detail. Loaded ancestor rules remain active below them, while a child adds only what is specific to its scope. Relative Markdown links and established tags connect material across branches without creating competing authoritative sources.
 
-For example, the loader exposes Memory, Memory exposes Crystallized, Crystallized exposes Documents, and Documents exposes this architecture through its path, description, and tags. An agent can select this view without opening unrelated documents or their history.
+For example, the loader exposes Memory, Memory exposes Crystallized, Crystallized exposes Documents, and Documents exposes this architecture through its path, `description`, and tags. An agent can select this view without opening unrelated documents or their history.
 
-Any entrypoint may expose narrower scopes and initialize only the Framework areas needed there. Scopes inherit broader meaning and add local context through files, routes, links, and tags.
+`Root routes` exist only where the loader exposes them and are not scopable. Every `route` below a `root route` is scopable at any depth; each routed scope `slug` narrows everything that follows it. Different `root routes` compose through explicit links instead of implicit physical nesting.
 
-Selection cost should grow primarily with route depth and the number of selected branches, not with the total number of stored scopes. Unselected sibling scopes should add almost no active-context cost. The [Open Forge Routing scope](framework/routing/_routing.md) is authoritative for the complete route contract.
+Management is separate from runtime meaning. Open Forge, Extensions, and future managers declare which `route` shapes they recognize and which identified files they may safely reconcile.
+
+Selection cost should grow primarily with `route` depth and the number of selected branches, not with the total number of stored scopes. Unselected sibling scopes should add almost no active-context cost. The [Open Forge Routing scope](framework/routing/_routing.md) is authoritative for the complete `route` contract.
 
 ## Authority And Current Knowledge
 
@@ -127,11 +129,11 @@ Memory is part of the framework substrate and organizes recorded state by its cu
 
 The states are not a rigid pipeline. Material moves when meaning, scope, and authority justify the transition. Clear direction may update a Crystallized authoritative source directly, while tentative ideas remain Working or Emerging. Material that is no longer current is extracted, archived, consolidated, or pruned.
 
-The environment also evolves through Core primitives. Templates provide copy-ready starting content whose ownership transfers to the destination. Patterns continue to guide reusable shapes, Directives and Axioms bind behavior, and Extensions add optional routed capabilities. Detailed state transitions and primitive relationships belong to the [Framework Architecture](framework/architecture.md).
+The environment also evolves through Core primitives. Templates provide copy-ready starting content whose ownership transfers to the created result. Patterns continue to guide reusable shapes, Directives and `Axioms` bind behavior, and Extensions add optional routed capabilities. Detailed state transitions and primitive relationships belong to the [Framework Architecture](framework/architecture.md).
 
 ## Tool Boundary
 
-The CLI and compatible future tools perform deterministic operations over human-readable Open Forge files and their declared external relationships. They may batch context, traverse routes, validate structure, maintain derived indexes, and apply reviewable file changes.
+The CLI and compatible future tools perform deterministic operations over human-readable Open Forge files and their declared external relationships. They may batch context, traverse `routes`, validate structure, maintain derived indexes, and apply reviewable file changes.
 
 Tools must expose their effects through files or output. They may reduce reasoning and interaction cost, but they cannot silently infer accepted truth, become privately authoritative, or become required for ordinary inspection.
 
@@ -149,9 +151,9 @@ The following constraints apply across every Open Forge area:
 
 ## Current Tradeoffs And Limits
 
-- Explicit files, routes, and relationships require deliberate maintenance in exchange for inspectability, portability, and correctability
-- Routing quality depends on clear descriptions, scopes, and authority. Deterministic validation can prove structural integrity but not perfect semantic relevance
-- Open Forge has no fixed structural expansion ceiling, but this is not a promise of constant performance. Active context and navigation cost still grow with selected routes and relationships
+- Explicit files, `routes`, and relationships require deliberate maintenance in exchange for inspectability, portability, and correctability
+- Routing quality depends on clear `descriptions`, scopes, and authority. Deterministic validation can prove structural integrity but not perfect semantic relevance
+- Open Forge has no fixed structural expansion ceiling, but this is not a promise of constant performance. Active context and navigation cost still grow with selected `routes` and relationships
 - Agent behavior remains nondeterministic. The environment can make correct behavior much easier without guaranteeing compliance
 - The current CLI and Extensions implementations are MVPs. Their scoped architectures document current behavior, stable boundaries, and liabilities, while Emerging records keep candidate overhaul designs from masquerading as current truth
 

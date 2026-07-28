@@ -81,7 +81,7 @@ The full current user contract is documented in [`docs/cli.md`](../../../../../d
 
 `find` performs deterministic route lookup rather than semantic search. It can filter effective tags, select a route, expand generated entries to a bounded depth, and follow explicit Required Routes.
 
-`chain` emits the loader, visible ancestor entrypoints, relevant `SKILL.md` boundary, target, and overwrite companions in inheritance order. Heading extraction makes inherited Axioms or another declared contract cheap to inspect.
+`chain` emits the loader, visible ancestor `entrypoints`, relevant `SKILL.md` boundary, target, and overwrite companions in inheritance order. Heading extraction makes inherited `Axioms` or another declared contract cheap to inspect.
 
 The [overwrite contract](../framework/routing/overwrites.md) owns companion meaning and precedence. Context commands reproduce its base-then-overwrite order without making the companion independently selectable.
 
@@ -89,9 +89,9 @@ These operations accelerate explicit Framework routing. They do not infer accept
 
 ### Maintenance Operations
 
-`index` derives route entries from the filesystem, entrypoint metadata, skill packages, and direct child relationships. It owns only bounded generated regions.
+`index` derives `entries` for `routes` from the filesystem, `entrypoint` metadata, Skill packages, and direct-child relationships. It owns only bounded generated regions.
 
-`doctor` detects deterministic defects without writing. The current implementation checks entrypoint ambiguity, generated-region integrity, broken entries and Required Routes, stale indexes, route containment, workflow shape, directive shape, inherited sentinels, retired tags, orphan overwrites, and unreachable Markdown. An orphan overwrite is warned because it has no base from which to inherit a route.
+`doctor` detects deterministic defects without writing. The current implementation checks `entrypoint` ambiguity, generated-region integrity, broken `entries` and `Required Routes`, stale indexes, `route` containment, Workflow shape, Directive shape, inherited sentinels, retired tags, orphan overwrites, and unreachable Markdown. An orphan overwrite is warned because it has no base from which to inherit a `route`.
 
 `create category` scaffolds concrete route chains and rebuilds indexes. `create extension` scaffolds a local managed package.
 
@@ -99,7 +99,7 @@ Some validations encode schemas currently under migration, particularly the exac
 
 ### Change Operations
 
-`install` currently copies the shipped Framework, patches bounded `AGENTS.md` and provider-bridge blocks, updates recognized scoped Framework entrypoints, and rebuilds indexes.
+`install` currently copies the shipped Framework on first installation, patches bounded `AGENTS.md` and provider-bridge blocks, reconciles `entrypoint` files whose `managed route` shapes are recognized through scopes, and rebuilds indexes.
 
 `extend` currently combines catalogue presentation, interactive selection, dependency resolution, payload installation, reconciliation, dry-run, ownership tracking, and removal.
 
@@ -242,7 +242,7 @@ One roughly 4,500-line module owns every command, parser, policy, adapter, trans
 
 ### Conflated Lifecycle Intent
 
-`install` currently covers first installation, idempotent reapplication, Framework replacement, managed root patching, and scoped Framework updates.
+`install` currently covers first installation, idempotent updates to managed files that remain present, bounded `AGENTS.md` and provider-bridge patching, and managed `entrypoint` reconciliation through scopes. It preserves deliberately absent shipped files during an ordinary reinstall.
 
 Those intents have different preservation and authority semantics:
 
@@ -252,7 +252,7 @@ Those intents have different preservation and authority semantics:
 - Restoration intentionally returns selected files to distribution defaults
 - Replacement discards local divergence
 
-The future interface must distinguish them before mutation. Git recoverability is not permission to overwrite customized files.
+The current MVP has no explicit completion, restoration, or replacement operation. The future interface must distinguish those intents before mutation. Git recoverability is not permission to overwrite customized files.
 
 ### Overloaded Extension Command
 
@@ -269,15 +269,16 @@ The CLI embeds:
 - Exact workflow headings and phase tags
 - Directive-shape rules
 - Root harness filenames and managed markers
-- Known Framework route templates
-- Selected scoped-Framework path shapes
+- A source-derived `managed route` catalogue plus path-based recognition through scopes
 - Retired tag knowledge
 
 Some deterministic schema is necessary. It must derive from accepted versioned Framework contracts or a small explicit compatibility layer, not from scattered constants that accidentally freeze old governance.
 
 ### Partial Recursive Support
 
-The router and indexer support arbitrary nested entrypoints, but scoped Framework updating recognizes a limited set of hardcoded shapes. The current shapes and update behavior are documented under [Scoped Framework Updates](../../../../../docs/cli.md#scoped-framework-updates). This does not yet fulfill the Framework's recursive composition promise.
+The router and indexer support arbitrary nested `entrypoints`. Managed reconciliation derives its `route` catalogue from the shipped source tree, requires an `entrypoint` in every folder of the candidate chain, keeps matches beneath the same `root route`, and accepts consecutive scope `slugs` between source-defined `route` segments. Descendants after the final managed segment remain user-owned `routes`.
+
+Recognition of a `managed route` is still path-based and requires the canonical `_{folder-name}.md` `entrypoint`. It cannot distinguish a neutral scope whose `slug` matches a shipped `route`, a deliberately renamed `route`, or another `route` that intentionally adopts the same contract. Generic validation, scaffolding, and native Skill indexing use explicit `entrypoint` metadata instead of granting behavior from a familiar root `slug` alone. The current behavior is documented under [Managed Reconciliation](../../../../../docs/cli.md#managed-reconciliation). The CLI overhaul needs an explicit human-readable way to distinguish manager-recognized `route` segments from ordinary scope `slugs` instead of adding more path-shape exceptions.
 
 ### Command Vocabulary
 

@@ -38,17 +38,19 @@ Users should not need this table. Route descriptions, document contents, Templat
 
 ## Core
 
+The primitive questions below mirror the [Core primitive model](../../framework/primitives/model.md#roles).
+
 | File or concept | Primary question |
 |---|---|
-| Core primitive | Which distinct reusable Framework role should contain this material and define how its authority works? |
+| Core primitive | Which distinct reusable Core role should contain this material and define how its authority works? |
 | Loader or entrypoint Axiom | What inherited Framework behavior is mandatory throughout this loaded route? |
-| [Directive](../../../../../directives/_directives.md) | What independently routed behavior is mandatory in this selected scope? |
-| [Guidance](../../../../../guidance/_guidance.md) | What approach is normally helpful in this recurring situation, and when might another approach fit? |
-| [Pattern](../../../../../patterns/_patterns.md) | What inspectable shape should related results continue to follow? |
-| [Skill](../../../../../skills/_skills.md) | What specialized capability can the active agent runtime perform? |
-| [Template](../../../../../templates/_templates.md) | What copy-ready starting content should be transferred into a new independently owned artifact? |
-| [Workflow](../../../../../workflows/_workflows.md) | What repeatable recipe coordinates several steps or capabilities toward a defined goal? |
-| [Workspace route](../../../../../workspace/_workspace.md) | Where does important local or external truth live, and when should it be selected? |
+| [Directive](../../../../../directives/_directives.md) | What behavior is mandatory in this scope? |
+| [Guidance](../../../../../guidance/_guidance.md) | How should this recurring choice or scenario be approached? |
+| [Pattern](../../../../../patterns/_patterns.md) | What reusable inspectable shape is the established default? |
+| [Skill](../../../../../skills/_skills.md) | What specialized capability can perform this work? |
+| [Template](../../../../../templates/_templates.md) | What copy-ready source can start this artifact? |
+| [Workflow](../../../../../workflows/_workflows.md) | How should this defined goal be pursued and completed? |
+| [Workspace `route`](../../../../../workspace/_workspace.md) | Where does relevant local or external truth live? |
 | [Core primitive decision](../../../decisions/core-primitives.md) | Why does Core use distinct reusable roles instead of one generic content bucket? |
 
 ## Selection Rule

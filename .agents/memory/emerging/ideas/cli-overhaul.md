@@ -61,7 +61,9 @@ Pure or mostly pure services should own:
 
 - Markdown metadata and structural parsing
 - Route graph construction and resolution
-- Recursive standard-route recognition from explicit Framework contracts rather than selected hardcoded path shapes
+- A complete versioned catalogue of the `routes` shipped to users, their manager-recognized shapes through scopes, and the files each lifecycle operation may change
+- Recursive recognition of shipped `routes` through an explicit human-readable distinction between manager-recognized `route` segments and ordinary scope `slugs` rather than familiar names or selected hardcoded path shapes
+- Generic indexing, navigation, inheritance, and structural validation for roots and scopes without granting behavior from familiar names
 - Context loading and inheritance
 - Framework contract validation
 - Portable path and ownership identity
@@ -90,7 +92,7 @@ Filesystem, Git, distribution discovery, terminal interaction, clocks, hashing, 
 
 - Separate first installation, non-destructive completion of missing framework material, intentional upgrade, and forceful restoration instead of treating every reinstall as the same operation.
 - Preserve user-customized existing files by default. Require an explicit, previewable operation before replacing them with distribution defaults.
-- Keep generated regions, explicitly managed blocks, user-owned files, scoped framework routes, extension ownership, and overwrite companions distinct during planning.
+- Keep generated regions, explicitly managed blocks, user-owned files, `entrypoints` for `managed routes` through scopes, extension ownership, and overwrite companions distinct during planning.
 - Define how users receive framework fixes without silently destroying customization; Git recoverability is a safeguard, not permission to overwrite.
 - Explore an update wizard that presents what changed and the exact diff before mutation, then offers at least apply all changes, review and select individual changes, keep local content, or cancel. The same interaction may cover managed Framework files, installed Templates, and other managed content while preserving their different ownership rules.
 - Do not treat a Template update as an automatic update to artifacts previously instantiated from it. Instance propagation would require separate provenance, ownership, conflict, and opt-in semantics.
@@ -110,7 +112,7 @@ The help should make one preferred form obvious for every Markdown construct Ope
 - Bare established tags
 - Route `Entries` and workflow `Required Routes`
 - Generated-region markers
-- Category entrypoints and concrete scope slugs
+- Category `entrypoints` and concrete scope `slugs`
 - Overwrite companions
 - Primitive-specific document shapes that deterministic validation recognizes
 

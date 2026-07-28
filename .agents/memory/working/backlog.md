@@ -8,14 +8,16 @@ open-forge:
 
 Only open work belongs here. The mixed pre-review history is preserved in `.agents/memory/archived/planning/2026-07-18_pre-review-backlog.md`; product possibilities that are not actionable commitments stay in `.agents/memory/emerging/ideas/deferred-product-ideas.md`.
 
-## Current Migration Sequence
+## Complete The Current Migration
 
-Complete the current source migration in this order:
+The file-by-file source migration, Decision consolidation, and remaining-document review are complete. Finish the migration in this order:
 
-1. Review all decisions together and trim, consolidate, split, or remove duplicated and obsolete rationale
-2. Review every remaining file through the same authority, locality, relevance, and duplication tests
-3. Optimize the complete Core primitive system across conceptual documents, installed runtime entrypoints, Maintenance contracts, decisions, links, terminology, and validation
-4. Optimize the complete Memory system across its model, states, routes, installed runtime entrypoints, Maintenance contracts, decisions, links, terminology, and validation
+1. Have the maintainer review the complete Core primitive optimization and alignment of the current `route` structure now in the working tree
+2. Optimize the complete Memory system across its model, states, scopes, installed runtime `entrypoints`, Maintenance contracts, decisions, links, terminology, and validation
+3. Run one final system-wide alignment across routing, authority, locality, duplication, writing, public documentation, CLI behavior, source and dogfood synchronization, and misplaced files
+4. Resolve or deliberately retain every temporary migration helper, report, and Directive, then declare the migration complete
+
+Migration is complete only when the final alignment has no unresolved current-source gap, every deterministic check passes, and the maintainer has accepted the final gate.
 
 Complete the [temporary independent review](../../directives/temporary-independent-review.md) gate before presenting each migration result for maintainer review.
 
@@ -23,57 +25,13 @@ During both optimization passes, apply the repository-only [terminology helper](
 
 Do not let a later phase pull detailed work forward merely because one concept links to it. Temporary migration references may remain until their scheduled phase as long as current authoritative sources do not depend on them.
 
-## Framework Simplification Refactor
-
-Status: candidate roadmap prepared from the maintainer's 2026-07-23 handoff, raw design discussion, and cross-project usage observations. It is contextual working state, not accepted #CurrentTruth. Do not begin a later task until the maintainer accepts or revises the preceding task's review gate.
-
-### Review Contract
+## Review Contract
 
 - Keep one task active and one coherent diff under review at a time.
 - Before changing behavior, identify the authoritative current document or supporting decision and update it with the implementation so written truth and runtime behavior do not diverge.
 - Update dogfood, installable source, applicable current documents, Maintenance contracts, user documentation, and tests together whenever they share the changed contract.
 - At each gate, present the behavior delta, important file changes, verification evidence, remaining uncertainty, and any destructive catalogue changes.
 - Stop after each gate. Do not start the next task until the maintainer accepts or revises the current result.
-- Preserve the maintainer's unrelated `.gitmodules` change.
-
-### P0 - Establish The Core Contract
-
-The maintainer's completed cross-project trials are the behavioral baseline. Convert each reported failure into a focused regression criterion in the task that changes the relevant behavior rather than creating a separate baseline project.
-
-1. **Add the generic truth lifecycle and dogfood it.**
-   - Status: revised again on 2026-07-24 after maintainer review and awaiting rereview.
-   - Define #Evergreen separately from #CurrentTruth.
-   - Keep acceptance and #Evergreen synchronization behavior exclusively in the loader's defined-tag and authority axioms instead of adding a seeded directive or document-specific rule.
-   - Let Memory record any subject without activating described behavior; put accepted behavior that should guide future work in its matching #Core route.
-   - Keep state-specific preservation, promotion, consolidation, archival, and restoration invariants beside the Memory states they govern.
-   - Use plain acceptance language, preserve ambiguous candidates as #Contextual, and remove redundant references to where defined tags were defined.
-   - Dogfood the model with routed #CurrentTruth #Evergreen product and architecture views in crystallized documents, a synchronized project-ownership map, and no redundant #SourceOfTruth tag.
-   - Gate: clear direction needs no redundant confirmation; an action request accepts decisions required to perform it; ambiguous direction remains contextual; only affected editable #Evergreen material changes; Memory may describe behavior without activating it; no generic directive or document-specific Evergreen rule is seeded; index, doctor, tests, and targeted behavioral scenarios pass.
-
-2. **Establish the current-document and knowledge-linking architecture.**
-   - Status: active file-by-file migration; the `src/open-forge/AGENTS.md` gate was accepted and committed as `0ff4725`, and the `src/open-forge/CLAUDE.md` gate is implemented and awaiting maintainer review.
-   - Review installable source top-down, one file per gate. For each file, inspect its recent history, surrounding contracts, references, consumers, tests, and proposed extraction or destination before editing.
-   - Decide the smallest useful crystallized-document taxonomy with the maintainer, including whether maintainer-facing current material belongs under a `maintenance/` child route or a clearer equivalent.
-   - Move appropriate current maintainer documents into that routed Memory destination and mark each independently as #CurrentTruth and #Evergreen only when both semantics apply.
-   - Define how ordinary relative Markdown links expose relationships with the same containing-file-relative semantics as generated `Entries`.
-   - Encourage links between authoritative files instead of restating their content, then refactor Open Forge's own current documents to demonstrate that graph and remove duplication.
-   - Decide which small set of high-quality current views is necessary beyond vision and architecture, without creating documents merely to fill a taxonomy.
-   - Clarify the boundary between current documents, decisions, Maintenance contracts, README material, code-owned truth, and historical Memory.
-   - Gate: an agent can locate and understand the project's important current state top-down without this chat or handover; links resolve; authoritative sources are unambiguous; duplicated truth is reduced; the chosen documents are coherent and worth their maintenance cost.
-
-3. **Reassess the full refactor handover with the maintainer and rebuild the roadmap.**
-   - Review the handover point by point instead of treating its proposed implementation order as accepted.
-   - For each proposal, record whether it is essential, useful but needs redesign, deferred, or rejected, with the maintainer deciding what actually matters.
-   - Reconcile the handover with cross-project observations and the framework direction captured in current documents.
-   - Replace the remaining roadmap only after that review; the former workflow, extension-consolidation, deliberation, and final-hardening tasks remain contextual candidates rather than current priorities.
-   - Gate: the reviewed handover map and updated backlog contain only priorities the maintainer recognizes as important, in an order supported by the new current-document architecture.
-
-The older open-work sections below predate this refactor review. They remain contextual inventory and do not outrank Tasks 1-3; Task 3 will reconcile, retain, move, or remove them.
-
-## Complete The Current Alpha Pass
-
-1. Have the maintainer review and accept or revise the completed review-note alignment diff before committing it.
-2. After maintainer feedback, extract only recurring project-specific patterns, guidance, workflows, or extensions that earn their context cost.
 
 ## Prove The S++ Claims
 
@@ -88,14 +46,14 @@ The older open-work sections below predate this refactor review. They remain con
 2. Extend the implemented local receipt-backed install/update/removal lifecycle only where evidence warrants: source trust and provenance, compatibility/version solving, migrations, crash recovery, aliases, an explicit previewable orphan-prune policy, remote provenance, and conflicts across multiple package managers. Treat optional build-time vendoring as a distribution choice, not runtime truth.
 3. Improve dry-run visibility with generated-index diffs and counts while preserving the existing portable-path, topology, indirection, and rollback guarantees.
 4. Consider a deterministic active-context receipt for auditability: selected route chains, overwrite companions, Required Routes, global binding #KeepInMind context, cost, and digest. It must not narrow the baseline #KeepInMind contract or create parallel runtime truth.
-5. Decide the remaining deterministic CLI options: `find --max-tokens`, approximate token counts, startup-budget warnings, intent-to-route previews, named route templates, extension authoring templates, and explicit forceful versus soft upgrade modes.
+5. Decide the remaining deterministic CLI options: `find --max-tokens`, approximate token counts, startup-budget warnings, `intent-to-route` previews, `route` templates, extension authoring templates, and explicit forceful versus soft upgrade modes.
 6. Revisit a distinct primitive-kind field only if ownership ambiguity recurs beyond the current route-aware validator and tests.
 
 ## Revisit Workflow Architecture
 
 1. After source migration and the complete Core primitive optimization pass, redesign the current Workflow model using the preserved [Workflow overhaul inputs](../emerging/ideas/workflow-overhaul.md).
 2. Provide an installed, on-demand, human-readable authoring surface for creating validator-compliant Workflows without requiring repository-only architecture or Maintenance documents.
-3. Reconsider recipe shape, modes, phases, dependencies, delegation handoffs, scoped Framework composition, runtime wording, Templates, CLI assistance, and validation as one coherent design.
+3. Reconsider recipe shape, modes, phases, dependencies, delegation handoffs, `route` composition through scopes, runtime wording, Templates, CLI assistance, and validation as one coherent design.
 
 ## Self-Growth, Documentation, And Release
 

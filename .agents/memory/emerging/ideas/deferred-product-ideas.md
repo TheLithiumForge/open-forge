@@ -13,6 +13,9 @@ Open product candidates after the 2026-07-18 pruning pass. These are options, no
 - Provider-specific planning adapters that can map the authority-preserving planning workflows to GitHub, Jira, GitLab, Linear, or another declared task source without mirroring truth.
 - Technology pattern packs.
 - Additional workflow packs only where real use shows a missing outcome; the initial brainstorming, task creation, implementation, testing, review, architecture, UI/UX, refactoring, and debugging set now exists.
+- Optional communication, surgical-change, implementation, design, brainstorming, testing, and review content should ship only through the Core role that matches its semantics and only after real use shows that it earns another default or Extension.
+- Explore a Skill that preserves the current chat as a local Session record.
+- Keep work packages and tasks within Workflows and scoped local records unless repeated use proves that a separate `.agents/tasks/` or `.agents/work/` root provides a distinct role.
 - Orchestration route or extension for workflows that can declare preferred tools, subagents, isolation rules, and CLI usage when multiple agent runtimes are available.
 - Optional interactive wizard as a convenience over deterministic commands.
 - Optional CLI post-write formatting: discover an explicit workspace formatter configuration or format-fix script, limit it to files Open Forge changed where possible, then re-index and validate generated regions. Do not format user files automatically until command scope and generated-marker safety are defined.

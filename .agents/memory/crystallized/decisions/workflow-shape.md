@@ -22,7 +22,8 @@ The accepted design separates several concerns:
 - Primary phases are visible metadata for increasing commitment, not physical route layers or mandatory chronology
 - Organizational entrypoints can route Workflows without pretending to be complete recipes
 - The installed entrypoint contains runtime selection behavior while current documents and deterministic validation preserve authoring detail
-- Workflow-local #Core remains narrowly available when locality adds real meaning, while reusable Skills stay in their native shared route
+- The Workflows `root route` may contain recursively nested Workflow scopes
+- Other Core `root routes` remain separate and enter a Workflow through explicit `Required Routes`, Steps, handoffs, or ordinary links
 
 ## Rationale
 
@@ -36,6 +37,7 @@ Keeping optional preparation separate from required context lets an agent recomm
 - Physical phase folders improve visual grouping but impose extra routing depth and suggest chronology that the model rejects
 - A goal-seeking third mode duplicates iterative execution with a Goal stop condition
 - Workflow-local copies of reusable Skills improve locality but fragment native runtime discovery and updates
+- Workflow-local primitive trees improve package locality but turn recipes into mixed Core containers and require special loading, validation, update, and runtime discovery rules
 
 The stable schema adds authoring discipline and must evolve deliberately when dogfood reveals a real limitation.
 

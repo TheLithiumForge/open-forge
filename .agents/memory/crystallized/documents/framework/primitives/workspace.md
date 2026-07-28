@@ -9,31 +9,31 @@ open-forge:
 
 ## Role
 
-Workspace routes provide a concise durable map of important project and external locations.
+Workspace `routes` provide a concise durable map of important local and external destinations.
 
-They help determine where relevant material lives and when to use it without requiring every destination to become Framework content. A Workspace route is navigation to a destination, not a copy of the destination's meaning.
+They help determine where relevant material lives and when to use it without requiring every destination to become Framework content. A Workspace `route` is navigation to a destination, not a copy of the destination's meaning.
 
 ## Destination Authority
 
-The routed destination or the authoritative source identified there retains its own truth. Workspace routes describe contents and relevance only far enough to support reliable selection.
+The routed destination or the authoritative source identified there retains its own truth. Workspace `routes` describe contents and relevance only far enough to support reliable selection.
 
-When a destination changes, its Workspace route is updated only if the map has become inaccurate. Detailed project knowledge, accepted state, and working history remain in their appropriate systems or Memory routes.
+When a destination changes, its Workspace `route` is updated only if the map has become inaccurate. Detailed project knowledge, accepted state, and working history remain in their appropriate systems or Memory `routes`.
 
 ## Granularity And Scale
 
-A useful map is intentionally coarse. Projects, repositories, modules, systems, document collections, and external services usually earn routes before individual members or functions.
+A useful map is intentionally coarse. Projects, repositories, modules, systems, document collections, and external services usually earn `routes` before individual members or functions.
 
-Finer routes are valid when they materially reduce discovery cost enough to justify their selection and maintenance surface. Route organization remains workspace-defined so a single project, monorepo, multi-repository system, or non-development workspace can grow its own useful shape.
+Finer `routes` are valid when they materially reduce discovery cost enough to justify their selection and maintenance surface. The organization of `routes` remains workspace-defined, so each environment can grow a useful shape, whether it serves one person, a project, a monorepo, a multi-repository system, or a discipline.
 
 ## Scope And Composition
 
-Recursive Workspace routes may organize destinations by any positive scope. The route tree narrows discovery without claiming that physically nested destinations have greater authority.
+Recursive Workspace `routes` may organize destinations by any positive scope. The `route` tree narrows discovery without claiming that physically nested destinations have greater authority.
 
-Other primitives may link to Workspace routes when they need project locations. Workspace may point to #Memory, source code, external systems, or other authoritative destinations without absorbing their semantics.
+Other primitives may link to Workspace `routes` when they need local or external destinations. Workspace may point to #Memory, source code, external systems, or other authoritative destinations without absorbing their semantics.
 
 ## Examples And Boundaries
 
-Useful Workspace routes include:
+Useful Workspace `routes` include:
 
 - the source tree for a product component
 - repositories participating in one integration

@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Distinct route and slug terms preserve recursive scope meaning without runtime placeholders or a fixed organizational taxonomy
+  description: Accepted universal scoping rules, root boundary, `managed route` relationship, and concrete `slug` behavior
   tags: [Memory, Decision, CurrentTruth, Routing, Scope]
 ---
 
@@ -8,45 +8,63 @@ open-forge:
 
 ## Context
 
-Earlier wording collapsed standard Framework roles, local subject scopes, reused Framework routes, and concrete folder names into the same idea. Readers could not tell whether a term described semantic behavior, local narrowing, recursive composition, or one example path.
+Earlier wording treated `framework routes`, `scope routes`, and `scoped routes` as separate structural types. That made one recursive mechanism harder to understand and tied ordinary `route` meaning too closely to who originally installed it.
 
 ## Decision
 
-Open Forge distinguishes framework routes, scope routes, scoped framework routes, and concrete slugs.
+Open Forge uses `routes`, `root routes`, concrete `slugs`, and an optional management relationship.
 
-Placement narrows meaning without changing the underlying route role. Scope routes and Framework routes may compose recursively in whichever order expresses the workspace. Installed paths use concrete slugs; placeholders remain authoring notation for documents, Templates, Maintenance contracts, or tools before a route exists.
+A `root route` exists only where the loader exposes it. The `root routes` are not scopable and do not reappear beneath another `route`.
 
-Open Forge does not impose a fixed projects, domains, teams, or repositories taxonomy.
+Every `route` below a `root route` is scopable. Any number of routed `slugs` may appear after the root, before, between, or after deeper `route` segments. Each scope narrows everything that follows it.
+
+Scope is not a separate `route` type. It is the narrowing role performed by a routed `slug` and its `entrypoint`.
+
+A scope contains only the `routes` useful there. It does not need to mirror another scope or the installed defaults.
+
+Scoping preserves the order and meaning of deeper `routes`. For a `managed route`, the manager-declared `route` segments retain their order through every scope. A familiar `slug`, filename, or tag alone creates neither root behavior nor managed status.
+
+A `managed route` is an ordinary `route` whose identified files Open Forge, an Extension, or another declared manager may install, update, restore, or remove. Each manager declares the `route` shapes it recognizes and acts only on files it explicitly owns or safely identifies. Management affects lifecycle, not runtime meaning or authority.
+
+Installed paths use concrete `slugs`. Placeholders remain authoring notation before a `route` exists. Open Forge imposes no fixed projects, domains, teams, or repositories taxonomy.
+
+Users may edit, replace, move, or remove installed `routes` and expose additional roots through the loader. Missing defaults remain absent unless a requested lifecycle operation explicitly restores or replaces them.
 
 ## Rationale
 
-Distinct terms let one recursive mechanism express a project inside Memory, Memory inside a project, or deeper combinations without inventing special route types for each organization.
+One recursive rule can express a project inside a Memory state, a Memory lifecycle inside a project scope, or deeper combinations without inventing a `route` type for each arrangement.
 
-Separating subject-bearing scope chains from reusable Framework role entrypoints keeps standard role wording stable at any depth and avoids hidden semantic metadata.
+Keeping root identity structural prevents miniature copies of root trees from appearing implicitly below other `routes`. Treating scope as a use of ordinary routed `slugs` keeps customization unconstrained below that boundary.
 
-Concrete installed paths remain self-describing and navigable without a registry. Avoiding a fixed taxonomy preserves the grow-your-own Framework promise.
+Separating management from runtime meaning lets Open Forge and Extensions reconcile explicit files without making provenance part of agent interpretation. Concrete paths remain self-describing and navigable without a registry.
 
 ## Alternatives And Tradeoffs
 
-- Calling every nested folder a scope would hide whether a standard Framework role is being reused
+- Treating scope as a dedicated `route` type would add vocabulary without changing the routing mechanism
 - Runtime placeholders would make installed paths depend on interpretation rather than visible folders
 - A fixed organizational taxonomy would improve uniformity but exclude equally valid personal, disciplinary, multi-project, and multi-repository structures
+- Treating Open Forge provenance as a runtime type would help lifecycle vocabulary but burden every reader with information that does not change `route` selection or meaning
+- Allowing a nested familiar `slug` to recreate a `root route` would maximize physical nesting but make loading, native discovery, updates, and validation ambiguous
 
-Recursive freedom requires descriptions and ancestor entrypoints to make local meaning clear.
+Recursive freedom requires every scope `slug` to have an `entrypoint` that makes its local meaning clear. Managed lifecycle support also requires each manager to declare what it can safely recognize.
 
 ## Consequences
 
-- The same standard route may be initialized at any useful scope
-- A scope may contain only the Framework routes it needs
-- Tools operate on concrete route identities even when help and Templates explain parameterized shapes
-- Route placement, description, tags, and inherited content jointly communicate scope
+- Any number of nested scopes may appear anywhere below a root
+- A scope is placed immediately before the first `route` segment it should narrow
+- The segments of a `managed route` retain the order declared by their manager
+- The `root routes` compose through links instead of implicit physical nesting
+- Tools operate on concrete `route` identities even when help and Templates explain parameterized shapes
+- Open Forge, Extensions, and future managers may support the same generic scoping rule through their own explicit lifecycle contracts
+- Moving or renaming a `managed route` may end automatic reconciliation without changing its readable runtime meaning
+- A `route`'s placement, `description`, tags, and inherited content jointly communicate scope
 
 ## Authoritative Sources
 
 - [Scope and inheritance contract](../documents/framework/routing/scope.md)
 - [Current routing model](../documents/framework/routing/model.md)
 - [Path contract](../documents/framework/routing/paths.md)
-- [Open Forge loader terms](../../../loader.md#terms)
+- [Open Forge loader routing contract](../../../loader.md#routing)
 
 ## Decision Relationships
 

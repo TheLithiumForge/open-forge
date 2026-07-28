@@ -1,17 +1,18 @@
 ---
 open-forge:
-  description: Skills available through standard SKILL.md files
+  description: Specialized capabilities exposed through native SKILL.md packages
   tags: [LoadNow, Core, Skill]
 ---
 
 # Skills
 
-Skills follow the instructions and resource loading defined by their own `SKILL.md`
+Each Skill follows the native contract defined by its own `SKILL.md`
 
 ## Axioms
 
 - Use `Entries` when current work may benefit from a skill
-- Follow the selected `SKILL.md`, loading its resources only when it says they are relevant
+- Follow the selected `SKILL.md` for its metadata, applicability, instructions, and resource loading
+- Let the active agent runtime govern Skill activation, invocation, installation, and execution
 
 ## Entries
 

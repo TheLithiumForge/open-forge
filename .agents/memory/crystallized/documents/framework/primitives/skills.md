@@ -11,19 +11,21 @@ open-forge:
 
 A Skill is a bounded specialized capability that helps perform a particular kind of work through instructions, tools, procedures, or supporting resources.
 
-Open Forge makes Skills discoverable through ordinary routing. It does not redefine how the active agent runtime activates, invokes, installs, or executes them.
+Open Forge makes Skills discoverable through ordinary routing while preserving their runtime-native contract.
 
 ## Native Runtime Boundary
 
-The selected `SKILL.md` owns the Skill's metadata, instructions, applicability, resource organization, and internal loading behavior. The active runtime owns the mechanics required to use that format.
+The selected `SKILL.md` is authoritative for the Skill's metadata, applicability, instructions, resource organization, and internal loading behavior. The active runtime governs activation, invocation, installation, and execution.
 
 Open Forge treats the complete Skill package as an interoperable capability. It may expose the Skill through workspace routes and deterministic discovery, but it does not translate the package into a competing Open Forge-specific skill model.
 
 ## Scope And Ownership
 
-A Skill describes the positive work for which its capability is useful. Routing may organize Skills by discipline, tool, artifact, project, or another useful scope without changing their native semantics.
+A Skill describes the positive work for which its capability is useful. Routed scopes beneath the Skills `root route` may group Skills by discipline, tool, artifact, project, or another useful subject without changing their native semantics.
 
 Resources referenced by a Skill belong to that Skill unless they identify another authoritative source explicitly. Opening the routed Skill does not make every resource relevant; its own contract determines what should be loaded.
+
+Place native packages at `.agents/skills/{skill-name}/SKILL.md` or beneath any number of optional Skills scopes, such as `.agents/skills/{scope}/{scope}/{skill-name}/SKILL.md`. Open Forge can then index the package without rewriting its native contract. A `route` elsewhere remains generically routable, but a familiar name or #Skill tag does not grant native Skill-package indexing or runtime discovery outside the Skills `root route`.
 
 ## Composition
 

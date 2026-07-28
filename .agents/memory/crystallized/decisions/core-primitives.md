@@ -36,6 +36,7 @@ The accepted model requires clearer primitive definitions and careful review whe
 
 - Primitive entry descriptions and current architecture must make their distinct questions and authority visible
 - A proposed primitive must demonstrate reusable value and a nonduplicative semantic role
+- A primitive's structure warrants a Pattern only when the inspectable shape remains useful independently of the primitive contract
 - Local scopes and Extensions may introduce specialized content without expanding the shared primitive set
 - Users may remove unused standard routes without invalidating the remaining Framework
 

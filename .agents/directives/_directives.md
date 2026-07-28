@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Binding instructions whose route is selected before their contents are loaded
+  description: Binding instructions whose `route` is selected before their contents are loaded
   tags: [LoadNow, Core, Directive]
 ---
 

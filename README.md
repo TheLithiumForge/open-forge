@@ -16,7 +16,7 @@ Open Forge takes a smaller and more adaptable approach:
 
 - Keep important meaning in human-readable files you control
 - Give each detailed concept one authoritative source
-- Connect related material with ordinary Markdown links, descriptions, anchors, and tags
+- Connect related material with ordinary Markdown links, `descriptions`, anchors, and tags
 - Load context by relevance instead of loading the whole workspace
 - Preserve active work, candidate learning, accepted knowledge, and history without mixing their authority
 - Let real decisions and recurring needs shape the local way of working
@@ -47,7 +47,7 @@ git add AGENTS.md CLAUDE.md .agents
 git commit -m "Install Open Forge"
 ```
 
-That is enough to use Open Forge. `AGENTS.md` directs compatible agents to the workspace loader, and the loader exposes the available context routes.
+That is enough to use Open Forge. `AGENTS.md` directs compatible agents to the workspace loader, and the loader exposes the available context `routes`.
 
 When the CLI is available, an agent can obtain the complete effective startup context with one command:
 
@@ -66,7 +66,7 @@ The base installation provides two cooperating areas:
 | Core | Entry, routing, authority, loading, and reusable agent-facing content roles |
 | Memory | Continuity, candidate learning, accepted records, and useful history |
 
-Core and Memory ship together as the standard Framework. Extensions remain optional packages that add whole files through those same routes.
+Core and Memory ship together as the standard Framework. Extensions remain optional packages that add whole files through those same `routes`.
 
 The installed shape is intentionally small:
 
@@ -97,19 +97,19 @@ These are useful defaults, not an untouchable taxonomy. Every file can be inspec
 
 `AGENTS.md` is the canonical workspace entry. Provider-specific files such as `CLAUDE.md` remain small bridges to that entry instead of becoming competing policy documents.
 
-The loader exposes direct routes. Each route provides:
+The loader exposes direct `routes`. Each `route` provides:
 
-- A natural description that helps an agent select or skip it
-- A relative Markdown link to the next file or route
+- A natural `description` that helps an agent select or skip it
+- A relative Markdown link to the next file or `route`
 - Tags for compact loading, type, scope, and search signals
 
-Selection proceeds from general context to relevant detail. Unselected sibling routes stay outside active context.
+Selection proceeds from general context to relevant detail. Unselected sibling `routes` stay outside active context.
 
 ### Keep Authority Explicit
 
 Loading makes information visible. It does not make that information authoritative by itself.
 
-Current documents explain accepted concepts as they work now. Decisions preserve why consequential choices were accepted. Directives and Axioms state binding behavior. External systems remain authoritative when the workspace explicitly points to them.
+Current documents explain accepted concepts as they work now. Decisions preserve why consequential choices were accepted. Directives and `Axioms` state binding behavior. External systems remain authoritative when the workspace explicitly points to them.
 
 The relationships stay visible and correctable because they are ordinary files and links.
 
@@ -137,9 +137,9 @@ Additional procedure earns its place when it makes work more reliable, safer, ch
 The CLI is a deterministic reasoning accelerator. It can:
 
 - Load routed context in the correct order
-- Find files by route or tag
-- Show inherited Axioms
-- Rebuild generated route entries
+- Find files by `route` or tag
+- Show inherited `Axioms`
+- Rebuild generated `entries` for `routes`
 - Validate Framework structure
 - Scaffold categories
 - Install and remove optional Extensions through reviewable plans
@@ -150,7 +150,7 @@ Deterministic tools reduce the cost of obtaining and applying context. They do n
 
 Open Forge is designed to evolve through use.
 
-A recurring correction may become Guidance or a Directive. A stable shape may become a Pattern. A reusable capability may become a Skill. A repeated multi-step goal may become a Workflow. Important project locations can be exposed through Workspace routes. Useful starting content can become a Template.
+A recurring correction may become Guidance or a Directive. A stable shape may become a Pattern. A reusable capability may become a Skill. A repeated multi-step goal may become a Workflow. Important local or external destinations can be exposed through Workspace `routes`. Useful starting content can become a Template.
 
 The shared Framework stays small while local scopes can become highly specialized.
 
@@ -163,15 +163,15 @@ Open Forge can organize:
 - Product, engineering, design, research, planning, or operational knowledge
 - Personal, team, or organization-specific ways of working
 
-Scopes may recursively contain narrower scopes and whichever Framework routes they need.
+Each `route` exposed directly by the loader is a `root route` and is not scopable. Every `route` below a `root route` is scopable at any depth: routed `slugs` narrow everything that follows them. Relationships across `root routes` stay explicit through ordinary links.
 
 The precise scaling claim is:
 
-> Open Forge has no fixed structural expansion ceiling. Active context grows primarily with selected route depth, scopes, and relationships, not with the total size of the workspace.
+> Open Forge has no fixed structural expansion ceiling. Active context grows primarily with selected `route` depth, scopes, and relationships, not with the total size of the workspace.
 
 Two projects may coexist in the same routed environment without ordinary work in one loading the other. Work integrating both projects can deliberately select both.
 
-In less restrained language: grow your own framework and scale it toward infinity. The route still determines what enters the context window.
+In less restrained language: grow your own framework and scale it toward infinity. The `route` still determines what enters the context window.
 
 ## Examples
 
@@ -191,7 +191,7 @@ Unrelated deployment history and another feature's analysis remain unselected.
 
 A shared Open Forge environment may route separately to a backend, web application, mobile application, and infrastructure repository.
 
-Ordinary mobile work selects only the mobile scope and shared contracts. An integration task selects the mobile and backend scopes together. Keeping the other projects available adds negligible active-context cost until their routes are selected.
+Ordinary mobile work selects only the mobile scope and shared contracts. An integration task selects the mobile and backend scopes together. Keeping the other projects available adds negligible active-context cost until their `routes` are selected.
 
 ### Learning From Repeated Work
 
@@ -207,11 +207,11 @@ The new agent resumes from explicit workspace state instead of reconstructing th
 
 ## Core Content Roles
 
-Open Forge ships distinct roles because different content carries different authority and lifecycle:
+Open Forge uses inherited `Axioms` for mandatory Framework behavior and seven routed primitives for reusable content. The roles stay distinct because they have different authority and lifecycle semantics:
 
 | Role | What it contributes |
 |---|---|
-| Axiom | Mandatory Framework behavior inherited through a loaded route |
+| `Axiom` | Mandatory Framework behavior inherited through a loaded `route` |
 | Directive | Independently routed binding behavior |
 | Guidance | Adaptable judgment for recurring situations and tradeoffs |
 | Pattern | A reusable shape that continues to guide related results |
@@ -282,7 +282,7 @@ See the complete [CLI documentation](docs/cli.md) for current arguments and life
 
 Open Forge remains complete as human-readable Markdown.
 
-A manual installation can copy the contents of `src/open-forge/` into a workspace. Routes can be followed through ordinary Markdown links, and generated `Entries` can be maintained manually when needed.
+A manual installation can copy the contents of `src/open-forge/` into a workspace. The `routes` can be followed through ordinary Markdown links, and generated `Entries` can be maintained manually when needed.
 
 The CLI is the safer and cheaper path for repeated mechanical work because it validates routes, limits generated edits, previews lifecycle changes, and preserves review boundaries.
 
@@ -293,13 +293,19 @@ The installed Framework belongs to the workspace.
 You can:
 
 - Add ordinary files beneath an existing route
-- Create scope routes for projects, products, disciplines, or repositories
-- Initialize selected Framework routes inside a scope
+- Create routed scopes for projects, products, disciplines, or repositories
+- Nest any number of scopes anywhere below a `root route`
+- Add `root routes` through the loader
+- Remove or replace installed `root routes` that do not fit the workspace
 - Add local Templates, Patterns, Guidance, Directives, Skills, and Workflows
 - Use `{name}.overwrite.md` for a small local adjustment to a mostly suitable base
 - Edit or replace a base file when the combined base and overwrite would become confusing
 
-A scoped Framework route remains ordinary Markdown. Every intermediate scope entrypoint states its local subject, while the scoped Framework entrypoint states the role it reuses. `open-forge create category` can scaffold the generic route chain, but its placeholder wording must still be completed and it does not populate the standard role contract.
+Scoping uses ordinary Markdown `routes`. Every scope `slug` has an `entrypoint` that states its local subject. Place it immediately before the first `route` segment it should narrow.
+
+A folder named `skills` beneath Workflows does not recreate the Skills `root route` merely because the `slug` is familiar. Workflows use Skills and other Core primitives through explicit links.
+
+`open-forge create category` can scaffold a generic `route` chain, but its placeholder wording must still be completed.
 
 After changing routed files, rebuild and validate navigation:
 

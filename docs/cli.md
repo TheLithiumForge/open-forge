@@ -47,7 +47,7 @@ npx open-forge extend --list
 |---|---|---|
 | `install` | Install or reconcile the standard Framework | Yes |
 | `extend` | List, preview, install, reconcile, or remove Extensions | Only installation, reconciliation, and removal |
-| `index` | Rebuild generated route `Entries` | Yes |
+| `index` | Rebuild generated `Entries` for `routes` | Yes |
 | `load` | Emit effective baseline and continuity context | No |
 | `find` | Select routed files by tag or explicit route | No |
 | `chain` | Inspect inherited context for one routed file | No |
@@ -103,7 +103,7 @@ By default, `install` is the first review checkpoint. It detects the Git reposit
 
 The command installs only the Open Forge base Framework: Core plus the standard Memory routes, with no optional Extensions. After it succeeds, review `git diff` and `git status`, then commit that baseline before installing optional Extensions. The CLI prints the catalogue and selector commands for the next step. A no-op reinstall reports that no commit is needed.
 
-`--pro` is an explicit expert bypass for the Git-repository, clean-checkpoint, Git-visible-output, and Core-first lifecycle guards. It does not bypass manifest validation, dependency resolution, source or target containment, collision checks, link and hardlink protection, index validation, local-block preservation, or rollback. Core managed, scoped-framework, and generated-index writes are preflighted and rolled back together on failure. Use `--pro` when combining diffs is an intentional expert decision, not as a generic force flag.
+`--pro` is an explicit expert bypass for the Git-repository, clean-checkpoint, Git-visible-output, and Core-first lifecycle guards. It does not bypass manifest validation, dependency resolution, source or target containment, collision checks, link and hardlink protection, index validation, local-block preservation, or rollback. Files managed by Open Forge, recognized `entrypoints` for `managed routes`, and generated index regions are preflighted and rolled back together on failure. Use `--pro` when combining diffs is an intentional expert decision, not as a generic force flag.
 
 Core reinstall also reads and validates `open-forge.extensions.json` when managed extensions are present. It refuses a Core plan that would modify or remove a receipt-owned file. Update or remove the owning extension explicitly; `--pro` does not cross this ownership boundary.
 
@@ -116,43 +116,47 @@ Running it will:
 - append each Open Forge block if missing
 - replace only the Open Forge block if it already exists
 - preserve workspace-owned `AGENTS.md` and `CLAUDE.md` text outside those blocks
-- overwrite Open Forge managed files with the same name
-- update `scoped framework route` `entrypoints` recognized by path shape
+- overwrite existing Open Forge-managed files with the same name
+- reconcile `entrypoint` files managed by Open Forge whose `route` shapes are recognized by the source catalogue
 - rebuild generated index regions
 - leave user-added files outside managed paths alone
 
-There is no wizard. The command installs the current release payload. If you want a different local shape, install first, then edit or add files. The Framework is plain Markdown for exactly this reason.
+There is no wizard. A first installation writes the current release payload. On an existing Core installation, an absent shipped file is treated as a deliberate removal: ordinary `install` updates the managed files that remain, but does not restore deleted defaults or add newly shipped defaults. The MVP does not yet provide an explicit completion or restoration operation. If you want a different local shape, install first, then edit, add, move, or remove files. The Framework is plain Markdown for exactly this reason.
 
-### Scoped Framework Updates
+### Managed Reconciliation
 
-The current CLI indexes any explicit route chain whose folders have `entrypoints`. `open-forge create category <route-path>` can scaffold missing generic entrypoints and rebuild their indexes. It does not decide which Framework routes a scope needs or populate a new scoped Framework route with the standard role's entrypoint contract. You may also author the entrypoints directly, then run `open-forge index`.
+The current CLI indexes any explicit `route` chain whose folders have `entrypoints`. `open-forge create category <route-path>` can scaffold missing `entrypoints` and rebuild their indexes, but scaffolding does not declare them managed. You may also author the `entrypoints` directly, then run `open-forge index`.
 
-When `scoped framework routes` already exist, `install` updates their framework `entrypoints` from the current framework wording. It identifies them by concrete path shape and canonical `entrypoint` filename, not by hidden version metadata. It does not create missing scope `entrypoints` yet.
+`install` reconciles `entrypoint` files managed by Open Forge when their complete routed chains match `route` shapes derived from `src/open-forge/.agents/`. Every folder in the chain must already have an `entrypoint`. A recognized match stays beneath the same `root route` and may contain any number of consecutive scope `slugs` between source-defined non-root `route` segments. Scopes after the last managed segment remain user-owned descendants. The CLI does not create missing scope `entrypoints` during installation.
 
-Examples of `scoped framework routes` recognized by the current implementation:
+Managed reconciliation requires the canonical `_{folder-name}.md` `entrypoint`. Compatibility names such as `index.md` remain valid for generic routing and indexing, but the current Open Forge manager does not reconcile them.
+
+Examples of `managed routes` recognized through scopes:
 
 ```text
-.agents/memory/[scope]/crystallized/_crystallized.md
-.agents/memory/[scope]/crystallized/decisions/_decisions.md
-.agents/memory/[scope]/crystallized/documents/_documents.md
-.agents/memory/[scope]/crystallized/[scope]/documents/_documents.md
-.agents/workflows/implementation/directives/_directives.md
+.agents/memory/{scope-1}/{scope-2}/working/_working.md
+.agents/memory/{scope}/working/{scope}/sessions/_sessions.md
+.agents/memory/emerging/{scope}/observations/_observations.md
+.agents/memory/{scope}/crystallized/{scope}/decisions/_decisions.md
+.agents/memory/{scope}/crystallized/{scope-1}/{scope-2}/documents/_documents.md
+.agents/memory/{scope}/archived/_archived.md
 ```
 
-`[scope]` means a concrete `slug` folder with its own `entrypoint`, not a literal folder name. These examples assume each intermediate scope folder is already visible through its own `entrypoint`.
+`{scope}` means a concrete `slug` folder with its own `entrypoint`, not a literal folder name. These examples assume each intermediate scope folder is already visible through its own `entrypoint`.
 
-These match `framework route` shapes such as:
+The source-defined `managed route` order remains fixed. Each scope narrows the `route` segments and content that follow it. For example, Documents keeps this sequence:
 
 ```text
-memory/.../crystallized/_crystallized.md
-memory/.../crystallized/.../decisions/_decisions.md
 memory/.../crystallized/.../documents/_documents.md
-.../directives/_directives.md
 ```
 
-A local `scope route` such as `.agents/patterns/[scope]/react/_react.md` is not updated as a `scoped framework route` unless it matches a known `framework route` shape.
+It does not match `memory/.../documents/.../crystallized/_crystallized.md`, combine two Memory states, or treat a familiar `slug` beneath one `root route` as another managed `root route`. `.agents/workflows/frontend/directives/_directives.md` therefore remains below Workflows rather than becoming the managed Directives `root route`.
 
-Manual edits to framework files are visible in git diffs after install. Prefer sibling files, child routes, or `.overwrite.md` companions for durable local customization.
+Scopes beneath a Core `root route` inherit that `root route`'s meaning and do not repeat its managed `entrypoint`. A scope such as `.agents/patterns/mobile-app/react/_react.md` remains user-owned and is not replaced with `_patterns.md`.
+
+The MVP uses source-defined folder names to recognize Memory roles. A neutral Memory scope whose `slug` equals one of those role names is ambiguous to this updater and should be renamed. The CLI overhaul must introduce a human-readable distinction between manager-recognized `route` segments and ordinary scope `slugs`.
+
+Manual edits to files managed by Open Forge are visible in Git diffs after install. Prefer sibling files, deeper `routes`, or `.overwrite.md` companions for durable local customization.
 
 ## extend
 
@@ -215,7 +219,7 @@ Removal does not discover source packages or report installation dependency orde
 
 ### Managed Receipt, Update, And Removal
 
-A bundled id or local manifest id is the managed ownership key. The CLI stores transparent Git-visible state at `open-forge.extensions.json`: requested roots, dependency edges, descriptive versions, owned payload paths and SHA-256 digests, and complete owner sets. Generated `Entries` bodies may be rebuilt without invalidating ownership of the surrounding entrypoint.
+A bundled id or local manifest id is the managed ownership key. The CLI stores transparent Git-visible state at `open-forge.extensions.json`: requested roots, dependency edges, descriptive versions, owned payload paths and SHA-256 digests, and complete owner sets. Generated `Entries` bodies may be rebuilt without invalidating ownership of the surrounding `entrypoint`.
 
 This receipt is CLI state, not agent context. Installed routed files remain complete runtime truth.
 
@@ -255,11 +259,11 @@ When `.agents/` exists, the CLI scans `.agents/`. Otherwise it scans the target 
 
 ### Route Discovery
 
-When `loader.md` exists at the scan root, the CLI generates one loader `entry` for every direct child folder that contains one recognized category `entrypoint`. Loader descriptions and tags come from the category `entrypoint`, preferring supported metadata and falling back to its first body description and #Index.
+When `loader.md` exists at the scan root, the CLI generates one loader `entry` for every direct child folder that contains one recognized category `entrypoint`. Loader `descriptions` and tags come from the category `entrypoint`, preferring supported metadata and falling back to its first body `description` and #Index.
 
-Generated `Entries` use standard Markdown links whose destinations resolve relative to the file containing them. A loader at `.agents/loader.md` therefore links to `workspace/_workspace.md`; a category `entrypoint` links from its own folder. CLI arguments and output route identities remain relative to the selected target, such as `.agents/workspace/_workspace.md`. Git and submodule boundaries do not redefine that logical root. For deterministic CLI reads and writes, the route tree must also be physically contained below the target: a symlinked or junction-mounted `.agents/` tree that resolves outside it is rejected. Plain Markdown agents may still follow an explicitly trusted external mount, but the CLI will not read or mutate through that trust boundary.
+Generated `Entries` use standard Markdown links whose destinations resolve relative to the file containing them. A loader at `.agents/loader.md` therefore links to `workspace/_workspace.md`; a category `entrypoint` links from its own folder. CLI arguments and output `route` identities remain relative to the selected target, such as `.agents/workspace/_workspace.md`. Git and submodule boundaries do not redefine that logical root. For deterministic CLI reads and writes, the `route` tree must also be physically contained below the target: a symlinked or junction-mounted `.agents/` tree that resolves outside it is rejected. Plain Markdown agents may still follow an explicitly trusted external mount, but the CLI will not read or mutate through that trust boundary.
 
-Nested categories stay behind their parent category `entrypoint`. Folders without a matching `entrypoint` do not become loader routes.
+Nested categories stay behind their parent category `entrypoint`. Folders without a matching `entrypoint` do not become loader `routes`.
 
 Open Forge-authored category `entrypoints` are named `_{folder-name}.md`:
 
@@ -269,7 +273,7 @@ Open Forge-authored category `entrypoints` are named `_{folder-name}.md`:
   local-docs.md
 ```
 
-The category `entrypoint` contains stable category meaning followed by a generated region. The generated region reads direct markdown route files and direct child category `entrypoints`:
+The category `entrypoint` contains stable category meaning followed by a generated region. The generated region reads direct Markdown `route` files and direct child category `entrypoints`:
 
 ```md
 - [Local documentation patterns](local-docs.md) - #Pattern #Documentation
@@ -280,9 +284,9 @@ Child folders are routed through their own `_{folder-name}.md` category `entrypo
 
 ### Skills And Scopes
 
-The link label carries the generated description, and the link destination carries the containing-file-relative route. The same canonical shape applies to authored `Required Routes`; each line keeps a tag suffix with useful tags, including at least the target primitive type.
+The link label carries the generated `description`, and the link destination carries the containing-file-relative `route`. The same canonical shape applies to authored `Required Routes`; each line keeps a tag suffix with useful tags, including at least the target primitive type.
 
-The skills route also recognizes ordinary skills:
+The standard Skills `route` recognizes ordinary native packages:
 
 ```text
 .agents/skills/
@@ -293,17 +297,19 @@ The skills route also recognizes ordinary skills:
       fit-change-to-system.md
 ```
 
-The generated skill `entry` points to `implementation/SKILL.md`. The skill's own `SKILL.md` owns any `references/`, `scripts/`, `assets/`, or other runtime resources inside that folder.
+The generated Skill `entry` points to `implementation/SKILL.md`. The Skill's `SKILL.md` is authoritative for its metadata, applicability, instructions, resource organization, and loading behavior.
 
-The same rule applies to a skill copied directly or deployed by an external manager: place its complete folder at `.agents/skills/{skill-name}/`, then run `open-forge index` and `open-forge doctor`. Indexing updates only generated route regions; it does not rewrite the skill or generate `Entries` inside `SKILL.md`.
+The same rule applies to a skill copied directly or deployed by an external manager: place its complete folder at `.agents/skills/{skill-name}/`, then run `open-forge index` and `open-forge doctor`. Indexing updates only generated `route` regions; it does not rewrite the skill or generate `Entries` inside `SKILL.md`.
 
-`scope routes` use the same rule. A `scope route` is a concrete `slug` folder with its own `entrypoint`. Every folder in the visible route chain needs its own `entrypoint`:
+Routed scopes beneath the Skills `root route` can also expose direct native Skill packages. Open Forge indexes those packages and exposes them through `routes` under the same contract. A `route` elsewhere remains generically routable, but a familiar name or #Skill tag does not grant native Skill-package indexing outside the Skills `root route`.
+
+The loader's universal scoping rules apply below every `root route`. A scope is expressed by an ordinary concrete `slug` folder with its own `entrypoint`. Every folder in the visible `route` chain needs its own `entrypoint`:
 
 ```text
 .agents/memory/
   _memory.md
-  [scope]/
-    _[scope].md
+  {scope}/
+    _{scope}.md
     crystallized/
       _crystallized.md
       decisions/
@@ -313,8 +319,8 @@ The same rule applies to a skill copied directly or deployed by an external mana
 
 .agents/guidance/
   _guidance.md
-  [scope]/
-    _[scope].md
+  {scope}/
+    _{scope}.md
     cross-platform-apps.md
 ```
 
@@ -323,11 +329,11 @@ Open Forge does not require a folder named `projects`, `scope`, `domain`, or `te
 Scope placement changes meaning:
 
 ```text
-.agents/memory/crystallized/[scope]/decisions/
-.agents/memory/[scope]/crystallized/decisions/
+.agents/memory/crystallized/{scope}/decisions/
+.agents/memory/{scope}/crystallized/decisions/
 ```
 
-The first means `[scope]` is inside Crystallized Memory. The second gives `[scope]` its own Memory state routes. Both are valid when every folder has an `entrypoint` and the entrypoint descriptions make the scope clear.
+The first means `{scope}` is inside Crystallized Memory. The second gives `{scope}` its own Memory state `routes`. Both are valid when every folder has an `entrypoint` and the `descriptions` of those `entrypoints` make the scope clear.
 
 ### Entrypoints And Generated Regions
 
@@ -362,9 +368,9 @@ The index generator reads:
 
 - direct `*.md` route files, including underscore-prefixed routed files
 - direct child category `entrypoints` named `_{folder-name}.md`
-- direct child skills under `.agents/skills/` that contain `SKILL.md`
+- direct native Skill packages under the Skills `root route` or within routed scopes beneath it
 
-Inside `.agents/skills/`, loose markdown files are not indexed as skill routes. Use skill folders with `SKILL.md`.
+Inside the standard Skills tree, loose Markdown files are not indexed as native Skills. Use Skill folders with `SKILL.md`.
 
 Reserved filenames in an indexed folder are:
 
@@ -427,7 +433,7 @@ open-forge find --route .agents/memory/crystallized/_crystallized.md --depth 1
 open-forge find --tag Workflow --json
 ```
 
-`find` is deterministic routing-contract lookup, not search. It walks routed files only: the loader, category `entrypoints`, their direct route files, and skill entrypoints. It never guesses relevance or expands user-owned overwrites.
+`find` is deterministic routing-contract lookup, not search. It walks routed files only: the loader, category `entrypoints`, their direct `route` files, and Skill `entrypoints`. It never guesses relevance or expands user-owned overwrites.
 
 Combine `Workflow` with one of `PhaseDiscovery`, `PhaseDefinition`, `PhasePlanning`, `PhaseDelivery`, or `PhaseVerification` to inspect phase candidates. Those tags provide non-waterfall wayfinding; the workflow Goal and routed current truth still decide fit.
 
@@ -450,9 +456,9 @@ open-forge chain .agents/workflows/dev/_dev.md --heading Constraints --json
 
 `chain` explains inherited Markdown context for one routed file. It emits the loader, each visible ancestor category `entrypoint`, a skill's `SKILL.md` when the target is inside its folder, the target, and each user-owned overwrite immediately after its base. With no `--heading`, it lists the route chain. With `--heading`, it reports every matching section from every chain member as `content`, `absent`, `empty`, `declared-inherited`, or `declared-none`.
 
-The heading is arbitrary, so the same command can inspect Axioms, Mode, Goal, Constraints, or a local category heading. `declared-none` applies only where the selected heading's contract defines `none`, such as Workflow Constraints. A local category Axioms section may be missing, empty, or state `inherited`; all three forms add no local Axioms while loaded ancestor Axioms remain active. `none` is not a valid Axioms sentinel. `--json` provides stable structured output for tools.
+The heading is arbitrary, so the same command can inspect `Axioms`, Mode, Goal, Constraints, or a local category heading. `declared-none` applies only where the selected heading's contract defines `none`, such as Workflow Constraints. A local category `Axioms` section may be missing, empty, or state `inherited`; all three forms add no local `Axioms` while loaded ancestor `Axioms` remain active. `none` is not a valid `Axioms` sentinel. `--json` provides stable structured output for tools.
 
-Routes are resolved inside the selected logical target. Absolute paths, parent traversal, drive changes, and real-path or symlink escapes are rejected without mutation. `chain` reports the currently visible file chain; run `doctor` when route-index continuity itself must be validated.
+Each `route` is resolved inside the selected logical target. Absolute paths, parent traversal, drive changes, and real-path or symlink escapes are rejected without mutation. `chain` reports the currently visible file chain; run `doctor` when indexed `route` continuity itself must be validated.
 
 ## doctor
 
@@ -471,7 +477,7 @@ open-forge doctor --json
 - direct directive files without #LoadNow metadata or exactly one substantive level-2 `Axioms` section (error)
 - directive files that retain the legacy `Applies To` second applicability gate (error)
 - complete workflow recipes without exactly one recognized primary phase tag (error)
-- category Axioms sections that use `none` as a sentinel (error), or mix `inherited` with substantive local Axioms (warning)
+- category `Axioms` sections that use `none` as a sentinel (error), or mix `inherited` with substantive local `Axioms` (warning)
 - stale generated regions that no longer match what `index` would produce (warning; run `open-forge index`)
 - retired load-policy tags in metadata (warning)
 - `.overwrite.md` companions without a base file (warning)
@@ -491,7 +497,11 @@ open-forge create category .agents/memory/crystallized/mobile-app
 open-forge create extension my-patterns
 ```
 
-`create category` scaffolds a route chain: every missing folder in the path gets a canonical `_{folder}.md` `entrypoint` with placeholder metadata, a type tag inherited from the nearest recognized primitive segment, an explicit inherited Axioms sentinel, and an empty generated region, then all indexes are rebuilt. This lets `workflows/frontend/patterns/` remain a Pattern route inside a workflow scope. It refuses paths that are already routable. Fill in the TODO descriptions, then run `open-forge index` again. A local category may instead omit Axioms or leave the section empty; all three shapes mean no local additions while loaded ancestor Axioms remain active.
+`create category` scaffolds a `route` chain. Every missing folder gets a canonical `_{folder}.md` `entrypoint` with placeholder metadata, the containing `root route`'s single primitive tag such as #Workflow or #Skill when one exists, an `inherited` `Axioms` sentinel, and an empty generated region. The command then rebuilds all indexes.
+
+The command does not turn a child into another `root route` because its `slug` is familiar. `workflows/frontend/patterns/` therefore remains a Workflow scope, while `patterns/frontend/` remains a Pattern scope.
+
+The command refuses paths that are already routable. Fill in the generated TODO `descriptions`, then run `open-forge index` again. A local category may instead omit `Axioms` or leave the section empty; all three forms add no local `Axioms` while loaded ancestor `Axioms` remain active.
 
 `create extension` scaffolds a managed extension package: `extension.json` with the requested stable `id` plus starter `name`, `description`, `version`, and `dependencies` fields; a README with authoring rules; and an empty `payload/.agents/` tree ready for whole routed files. Install it with `open-forge extend <directory-or-id>` or copy the payload and update generated `Entries` manually.
 

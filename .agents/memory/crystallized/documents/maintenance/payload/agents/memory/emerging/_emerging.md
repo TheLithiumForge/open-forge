@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Current maintenance contracts for the installable Emerging Memory entrypoint and its Analysis, Ideas, and Observations routes
-  responsibility: Preserve candidate authority, capture threshold, uncertainty, consolidation, standard child routes, continuity loading, and source alignment
+  responsibility: Preserve candidate authority, capture threshold, uncertainty, consolidation, standard nested roles, continuity loading, and source alignment
   tags: [Memory, Document, CurrentTruth, Evergreen, Maintenance, Governance, Payload, Emerging, Candidate]
 ---
 
@@ -20,7 +20,7 @@ The [Emerging state contract](../../../../../framework/memory/emerging.md) defin
 - Candidate source, scope, uncertainty, evidence, knowledge role, and intended destination remain visible when they affect later use
 - Repeated or stale material is revisited for consolidation, promotion, archival, or pruning
 - Accepted outcomes move to the appropriate authoritative route or system while useful rejected rationale or rationale from a replaced candidate is archived or pruned deliberately
-- Analysis, Ideas, and Observations remain the three standard child routes with distinct candidate roles
+- Analysis, Ideas, and Observations remain the three standard nested roles with distinct candidate meanings
 - The authored source stays compact enough for #KeepInMind use and contains no workspace-specific candidate records
 
 ## Verification
