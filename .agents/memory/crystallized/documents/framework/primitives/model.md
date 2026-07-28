@@ -61,7 +61,7 @@ If one artifact needs several roles, each independently meaningful role uses its
 
 ## Recursive Scope
 
-The loader's universal scoping rules apply below every Core `root route`. Routed scopes inherit the active primitive role from their loaded ancestor; they do not need to reinitialize it.
+Core primitives use the [universal scope contract](../routing/scope.md). Routed scopes inherit the active primitive role from their loaded ancestor, so they do not reinitialize it.
 
 For non-directive primitives, a narrower selected `route` is preferred when it safely specializes broader material. Directives are additive: a narrower selected Directive adds binding constraints without silently overriding active ancestor Directives.
 

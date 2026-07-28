@@ -15,4 +15,4 @@ Close work with evidence that matches the claims being made.
 - Do not describe intended behavior as implemented behavior or partial verification as comprehensive proof.
 - Inspect the final change scope and state residual risk, blockers, side effects, and unrelated pre-existing failures when relevant.
 - Before closeout, recheck the complete routed #KeepInMind catalogue and satisfy or report every binding follow-up.
-- Route only warranted durable discoveries, decisions, and continuation context to their declared owners; do not promote raw activity by default.
+- Route only warranted durable discoveries, decisions, and continuation context to their declared owners. Do not promote raw activity by default.

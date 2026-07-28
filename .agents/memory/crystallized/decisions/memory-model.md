@@ -16,7 +16,7 @@ Memory is a self-growing Markdown lifecycle with four states: Working, Emerging,
 
 Recorded material follows explicit state-specific rules for capture, classification, movement, consolidation, archival, and restoration. Memory may record any subject without activating behavior it describes. Accepted behavior that should guide future work moves to the matching #Core route, while Memory may preserve its rationale or history.
 
-Decisions and Documents are standard roles within Crystallized Memory rather than additional lifecycle states. The loader's universal scoping rules apply everywhere below Memory. Each scope narrows the `routes` and content that follow it, while Memory states and roles managed by Open Forge retain their declared order.
+Decisions and Documents are standard roles within Crystallized Memory rather than additional lifecycle states. Memory uses the [accepted universal scoping model](scope-and-slugs.md) rather than a separate Memory-specific mechanism.
 
 ## Rationale
 
@@ -41,8 +41,8 @@ The lifecycle adds classification work, so transitions remain meaning-based and 
 - Crystallized records express accepted durable state or rationale
 - Archived records remain historical and do not compete with current truth
 - Agent communication belongs in Memory when it must survive the current context; ordinary conversation is not recorded automatically
-- Workspaces may remove, replace, supplement, or scope the standard state and role `routes`
-- A scope is placed immediately before the first Memory role it should narrow
+- State and scope remain independent dimensions
+- Workspaces may remove, replace, or supplement the standard state and role `routes`
 
 ## Authoritative Sources
 

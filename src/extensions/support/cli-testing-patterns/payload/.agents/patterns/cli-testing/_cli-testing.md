@@ -10,7 +10,7 @@ CLI testing patterns define inspectable test arrangements for pure mechanisms an
 
 ## Axioms
 
-- inherited - No local axioms; loaded ancestor axioms remain active.
+- inherited - No local axioms. Loaded ancestor axioms remain active.
 
 ## Entries
 

@@ -11,7 +11,7 @@ Reason about structure before committing to a direction or transition.
 
 - Ground architecture work in inspectable evidence, accepted memory, and current workspace constraints.
 - Separate current state, proposed direction, rejected options, and transition slices.
-- Keep rationale in the route that owns accepted memory; keep behavior in the route that owns behavior.
+- Keep rationale in the route that owns accepted memory. Keep behavior in the route that owns behavior.
 
 ## References
 

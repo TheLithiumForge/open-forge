@@ -11,15 +11,15 @@ Use this pattern when a CLI needs fast development feedback without giving up co
 ## Shape
 
 1. Name pure, in-memory cases `*.unit.test.*` and run them as the default development tier.
-2. Name tests that use OS temporary directories, subprocesses, Git, builds, packaging, links, or benchmark lifecycles `*.closure.test.*`; run them explicitly in CI and relevant closeout.
+2. Name tests that use OS temporary directories, subprocesses, Git, builds, packaging, links, or benchmark lifecycles `*.closure.test.*`. Run them explicitly in CI and relevant closeout.
 3. Keep both tiers discoverable by the runtime's normal test convention so an IDE can run a file or case directly. Use a repository-root runner with absolute paths when terminal cwd must not affect discovery.
 4. Give every suite one shared utility boundary for repository paths, subprocess capture, Git fixtures, temporary workspaces, tree snapshots, and cleanup.
 5. Prefer one suite-scoped temporary root with isolated case directories and one closeout cleanup over a new OS root and recursive deletion for every case.
 6. Invoke the public CLI as a real child process only when the process boundary is part of the claim. Pass an argument array, explicit cwd and target, controlled environment, and drain stdout and stderr concurrently.
 7. Assert behavior and invariants: parsed output, exact important bytes, ownership and hashes, generated-route validity, Git state, or rollback. Do not retain a success test whose only claim is that a file exists.
-8. For every rejected mutation, prove the target stayed unchanged and no partial output appeared; absence is valuable when it establishes containment or atomicity.
+8. For every rejected mutation, prove the target stayed unchanged and no partial output appeared. Absence is valuable when it establishes containment or atomicity.
 9. Cover success, invalid input, containment, dependency, checkpoint, ignored-file, and rollback boundaries proportionately without repeating the same full composition for every catalogue item.
-10. Exercise the packaged executable when module layout, bundled assets, shebangs, or runtime resolution matter; build it once per suite and reuse it across isolated cases.
+10. Exercise the packaged executable when module layout, bundled assets, shebangs, or runtime resolution matter. Build it once per suite and reuse it across isolated cases.
 
 Document whether the runtime's raw test command discovers both tiers. Make the intended fast and full commands explicit instead of relying on an ignore configuration that also hides intentional IDE runs.
 

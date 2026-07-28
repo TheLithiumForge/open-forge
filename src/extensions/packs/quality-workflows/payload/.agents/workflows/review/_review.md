@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Review a code change, technical design, or repository state and report prioritized evidence-backed findings; use when correctness, regressions, safety, or maintainability need independent scrutiny
+  description: Review a code change, technical design, or repository state and report prioritized evidence-backed findings. Use when correctness, regressions, safety, or maintainability need independent scrutiny
   tags: [Extension, Workflow, PhaseVerification, Quality, Review]
 ---
 
@@ -37,7 +37,7 @@ Read every route below before Step 1. A route that cannot be read is a blocker t
 1. Establish the review target, intended behavior, scope, applicable project rules, and a relevant starting-state baseline.
 2. Inspect the changed state and enough surrounding code or content to understand ownership and interactions.
 3. Trace high-risk paths, boundaries, failure modes, state transitions, and compatibility concerns.
-4. Run or inspect proportionate verification when it can confirm or reject a suspected issue; in read-only mode, use only checks known to preserve the captured state.
+4. Run or inspect proportionate verification when it can confirm or reject a suspected issue. In read-only mode, use only checks known to preserve the captured state.
 5. For each real issue, record location, severity, evidence, consequence, and the smallest credible correction.
 6. Challenge each candidate finding for false positives, out-of-scope assumptions, and existing safeguards.
 7. Compare final state with the baseline and account for every change before claiming the review remained read-only.

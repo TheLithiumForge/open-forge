@@ -259,7 +259,7 @@ async function installExtensions(extensionArgs: string[], targetArg: string, dry
   await validateExtensionIndexPreflight(plan, targetRoot);
   if (!dryRun) {
     if (!proMode && !(await hasCoreInstallation(targetRoot))) {
-      throw new Error(`Core is not installed at ${targetRoot}. Run open-forge install ${JSON.stringify(targetRoot)}, review and commit Core, then install extensions; use --pro only to intentionally bypass this checkpoint.`);
+      throw new Error(`Core is not installed at ${targetRoot}. Run open-forge install ${JSON.stringify(targetRoot)}, review and commit Core, then install extensions. Use --pro only to intentionally bypass this checkpoint.`);
     }
     await enforceGitCheckpoint(targetRoot, "Extension installation", proMode);
     if (!proMode) {
@@ -310,7 +310,7 @@ async function removeExtensions(ids: string[], targetArg: string, dryRun = false
     if (removing.has(id)) continue;
     const blocked = installed.dependencies.filter((dependency) => removing.has(dependency));
     if (blocked.length > 0) {
-      throw new Error(`Cannot remove ${blocked.join(", ")}; installed extension ${id} still depends on ${blocked.join(", ")}`);
+      throw new Error(`Cannot remove ${blocked.join(", ")}. Installed extension ${id} still depends on ${blocked.join(", ")}`);
     }
   }
 
@@ -346,7 +346,7 @@ async function removeExtensions(ids: string[], targetArg: string, dryRun = false
   await validateExtensionIndexPreflight(entries, targetRoot);
   if (!dryRun) {
     if (!proMode && !(await hasCoreInstallation(targetRoot))) {
-      throw new Error(`Core is not installed at ${targetRoot}; use --pro only to intentionally bypass this checkpoint.`);
+      throw new Error(`Core is not installed at ${targetRoot}. Use --pro only to intentionally bypass this checkpoint.`);
     }
     await enforceGitCheckpoint(targetRoot, "Extension removal", proMode);
     if (!proMode) {
@@ -447,7 +447,7 @@ async function hasRecognizableCoreFootprint(targetRoot: string): Promise<boolean
 
 async function enforceGitCheckpoint(targetRoot: string, action: string, proMode: boolean): Promise<void> {
   if (proMode) {
-    console.log(`${action}: --pro bypassed Git and Core checkpoint policy; installation safety preflight remains active.`);
+    console.log(`${action}: --pro bypassed Git and Core checkpoint policy. Installation safety preflight remains active.`);
     return;
   }
 
@@ -462,8 +462,8 @@ async function enforceGitCheckpoint(targetRoot: string, action: string, proMode:
     throw new Error(`${action} requires a Git repository for reviewable diffs. Run git init in ${JSON.stringify(targetRoot)} and establish a clean baseline, or rerun intentionally with --pro.`);
   }
   if (state.changes) {
-    const preview = state.changes.split(/\r?\n/).filter(Boolean).slice(0, 8).join("; ");
-    throw new Error(`${action} requires a clean Git checkpoint for ${JSON.stringify(targetRoot)}. Review and commit or stash the current target changes first${preview ? `: ${preview}` : ""}; use --pro only to intentionally combine diffs.`);
+    const preview = state.changes.split(/\r?\n/).filter(Boolean).slice(0, 8).join(", ");
+    throw new Error(`${action} requires a clean Git checkpoint for ${JSON.stringify(targetRoot)}. Review and commit or stash the current target changes first${preview ? `: ${preview}` : ""}. Use --pro only to intentionally combine diffs.`);
   }
 }
 
@@ -538,7 +538,7 @@ async function assertPlannedFilesAreGitVisible(targetRoot: string, files: string
   }
   const ignoredFiles = ignored.stdout.split("\0").filter(Boolean);
   if (ignoredFiles.length > 0) {
-    throw new Error(`Git ignores planned install file${ignoredFiles.length === 1 ? "" : "s"}: ${ignoredFiles.join(", ")}. Reviewable checkpoints require Git-visible output; change the ignore rules or rerun intentionally with --pro.`);
+    throw new Error(`Git ignores planned install file${ignoredFiles.length === 1 ? "" : "s"}: ${ignoredFiles.join(", ")}. Reviewable checkpoints require Git-visible output. Change the ignore rules or rerun intentionally with --pro.`);
   }
 }
 
@@ -551,14 +551,14 @@ async function assertCoreCheckpointTracked(targetRoot: string): Promise<void> {
   ].map((file) => toPosix(path.relative(state.root, file)));
   const tracked = await runGit(["--literal-pathspecs", "ls-files", "--error-unmatch", "--", ...anchors], state.root);
   if (tracked.error || tracked.exitCode !== 0) {
-    throw new Error("Extension installation requires committed Core anchors. Review and commit AGENTS.md and .agents/loader.md before installing extensions; use --pro only to intentionally bypass this checkpoint.");
+    throw new Error("Extension installation requires committed Core anchors. Review and commit AGENTS.md and .agents/loader.md before installing extensions. Use --pro only to intentionally bypass this checkpoint.");
   }
 }
 
 async function printPostInstallCheckpoint(targetRoot: string, label: string, proMode: boolean): Promise<void> {
   const state = await inspectGitCheckpoint(targetRoot);
   if (state.kind === "repo" && !state.changes) {
-    console.log(`${label} checkpoint: Git reports no target changes; no new commit is needed.`);
+    console.log(`${label} checkpoint: Git reports no target changes. No new commit is needed.`);
     return;
   }
   const suffix = proMode ? " --pro bypassed the pre-install checkpoint guard." : "";
@@ -759,7 +759,7 @@ async function readExtensionReceipt(targetRoot: string): Promise<ExtensionOwners
         throw new Error(`Invalid extension ownership receipt ${receiptFile}: malformed legacy extension ${id}`);
       }
       if (value.augmentations.length > 0) {
-        throw new Error(`Legacy extension receipt contains augmentation state for ${id}; remove or migrate it with an older Open Forge CLI before using this version`);
+        throw new Error(`Legacy extension receipt contains augmentation state for ${id}. Remove or migrate it with an older Open Forge CLI before using this version`);
       }
     } else if (Object.prototype.hasOwnProperty.call(value, "augmentations")) {
       throw new Error(`Invalid extension ownership receipt ${receiptFile}: schema ${extensionReceiptSchema} extension ${id} contains unsupported augmentations`);
@@ -873,7 +873,7 @@ async function validateExtensionReceiptFiles(receipt: ExtensionOwnershipReceipt,
     await assertExtensionTargetPath(targetRoot, targetFile, "Owned extension");
     const content = await readBufferIfExists(targetFile);
     if (content == null || extensionOwnedFileSha256(relativePath, content) !== owned.sha256) {
-      throw new Error(`Owned extension file ${relativePath} was modified or removed outside Open Forge; restore it before changing managed extensions`);
+      throw new Error(`Owned extension file ${relativePath} was modified or removed outside Open Forge. Restore it before changing managed extensions`);
     }
   }
 
@@ -896,7 +896,7 @@ async function validateReceiptAgainstPlannedState(
     for (const [relativePath, owned] of Object.entries(receipt.files)) {
       const content = await effectiveContent(relativePath);
       if (content == null || extensionOwnedFileSha256(relativePath, content) !== owned.sha256) {
-        throw new Error(`${context} would modify or remove receipt-owned extension file ${relativePath}; update or remove its owning extension explicitly first`);
+        throw new Error(`${context} would modify or remove receipt-owned extension file ${relativePath}. Update or remove its owning extension explicitly first`);
       }
     }
   }
@@ -978,7 +978,7 @@ function assertNoGitControlFiles(plan: ExtensionInstallPlanEntry[]): void {
     const segments = comparable.split("/").filter(Boolean);
     const basename = path.posix.basename(comparable);
     if (segments.includes(".git") || basename === ".gitignore") {
-      throw new Error(`Extension payload may not write Git control path ${entry.relativePath}; apply reviewed Git ignore or repository-control changes separately.`);
+      throw new Error(`Extension payload may not write Git control path ${entry.relativePath}. Apply reviewed Git ignore or repository-control changes separately.`);
     }
   }
 }
@@ -1057,7 +1057,7 @@ async function createExtensionInstallPlan(
         throw new Error(`Extension payload may not write reserved ownership receipt ${extensionReceiptFileName}`);
       }
       if (extension.id != null && relativePath.toLowerCase().endsWith(".overwrite.md")) {
-        throw new Error(`Managed extension ${extension.id} may not own local overwrite ${relativePath}; add a routed file or use a workspace-owned overwrite`);
+        throw new Error(`Managed extension ${extension.id} may not own local overwrite ${relativePath}. Add a routed file or use a workspace-owned overwrite`);
       }
       const sourceContent = await fs.readFile(sourceFile);
       const collisionKey = portableExtensionPathKey(relativePath);
@@ -1116,18 +1116,18 @@ async function createExtensionInstallPlan(
       : currentContent.equals(nextContent) ? "unchanged" : "update";
     const managedOwners = [...new Set(candidate.extensions.map((extension) => extension.id).filter((id): id is string => id != null))].sort();
     if (managedOwners.length > 0 && candidate.extensions.some((extension) => extension.id == null)) {
-      throw new Error(`Extension file ${candidate.relativePath} is provided by both managed and unmanaged packages; give every provider a stable manifest id or keep their payload paths distinct`);
+      throw new Error(`Extension file ${candidate.relativePath} is provided by both managed and unmanaged packages. Give every provider a stable manifest id or keep their payload paths distinct`);
     }
     const existingOwnership = currentReceipt.files[candidate.relativePath];
     if (existingOwnership && managedOwners.length === 0) {
-      throw new Error(`Unmanaged extension may not replace receipt-owned file ${candidate.relativePath}; update or remove its owning managed extension instead`);
+      throw new Error(`Unmanaged extension may not replace receipt-owned file ${candidate.relativePath}. Update or remove its owning managed extension instead`);
     }
     if (currentContent != null && managedOwners.length > 0 && !existingOwnership) {
-      throw new Error(`Managed extension may not claim or replace unowned existing file ${candidate.relativePath}; remove the unowned path after review or use an unmanaged direct overlay`);
+      throw new Error(`Managed extension may not claim or replace unowned existing file ${candidate.relativePath}. Remove the unowned path after review or use an unmanaged direct overlay`);
     }
     const remainingOwners = nextReceipt.files[candidate.relativePath]?.owners ?? [];
     if (existingOwnership && status === "update" && existingOwnership.owners.some((owner) => !managedOwners.includes(owner))) {
-      throw new Error(`Extension file ${candidate.relativePath} cannot be updated unless every existing owner participates and supplies the same bytes; missing owners: ${existingOwnership.owners.filter((owner) => !managedOwners.includes(owner)).join(", ")}`);
+      throw new Error(`Extension file ${candidate.relativePath} cannot be updated unless every existing owner participates and supplies the same bytes. Missing owners: ${existingOwnership.owners.filter((owner) => !managedOwners.includes(owner)).join(", ")}`);
     }
     if (managedOwners.length > 0 && (status === "create" || existingOwnership)) {
       const owners = [...new Set([...remainingOwners, ...managedOwners])].sort();
@@ -1281,7 +1281,7 @@ async function assertNoRoutedDescendantsDependOnDeletedEntrypoints(
     if (dependents.length > 0) {
       const routes = dependents.sort().slice(0, 4).join(", ");
       throw new Error(
-        `Cannot remove managed route entrypoint ${host.relativePath}; retained routed descendant ${routes} still depends on it. Move or remove the descendant, or provide another reviewed route host first.`
+        `Cannot remove ${host.relativePath}, which is the \`entrypoint\` for a \`managed route\`. Retained routed content still depends on it: ${routes}. Move or remove those descendants, or provide another reviewed \`route\` host first.`
       );
     }
   }
@@ -2540,7 +2540,7 @@ async function buildRouteChain(
       await add(entrypoint, "entrypoint");
       continue;
     }
-    throw new Error(`Route chain is discontinuous at ${workspaceRoute(targetRoot, current)}; add a category entrypoint or run open-forge create category.`);
+    throw new Error(`The \`route\` chain is discontinuous at ${workspaceRoute(targetRoot, current)}. Add a category \`entrypoint\` or run open-forge create category.`);
   }
 
   await add(targetFile, "target");
@@ -3161,7 +3161,7 @@ async function doctor(doctorArgs: string[]): Promise<void> {
 
   for (const [directory, names] of await groupEntrypointCandidates(markdownFiles)) {
     if (names.length > 1) {
-      report("error", directory, `multiple recognized entrypoints: ${names.sort().join(", ")}; keep exactly one`);
+      report("error", directory, `multiple recognized \`entrypoints\`: ${names.sort().join(", ")}. Keep exactly one`);
     }
   }
 
@@ -3186,7 +3186,7 @@ async function doctor(doctorArgs: string[]): Promise<void> {
       continue;
     }
     if (region.status === "none") {
-      report("warning", owner, "no generated index region; run open-forge index");
+      report("warning", owner, "no generated index region. Run open-forge index");
       continue;
     }
 
@@ -3194,7 +3194,7 @@ async function doctor(doctorArgs: string[]): Promise<void> {
       ? await computeLoaderBody(scanRoot)
       : await computeIndexBody(owner, path.dirname(owner));
     if (region.body !== expected.trim()) {
-      report("warning", owner, "generated region is stale; run open-forge index");
+      report("warning", owner, "generated region is stale. Run open-forge index");
     }
 
     for (const entry of parseGeneratedEntries(text)) {
@@ -3269,9 +3269,9 @@ async function doctor(doctorArgs: string[]): Promise<void> {
     if (isIndexFile(file)) {
       const axioms = readMarkdownHeadingSections(text, "Axioms");
       if (axioms.length === 1 && hasDeclaredSentinel(axioms[0].body, "none")) {
-        report("error", file, "`none` is not a valid Axioms sentinel; use `inherited` when the child adds no local Axioms");
+        report("error", file, "`none` is not a valid `Axioms` sentinel. Use `inherited` when the child adds no local `Axioms`");
       } else if (axioms.length === 1 && hasMixedDeclaredSentinel(axioms[0].body, ["inherited"])) {
-        report("warning", file, "Axioms mixes `inherited` with local Axioms; omit the sentinel when adding local Axioms");
+        report("warning", file, "`Axioms` mixes `inherited` with local `Axioms`. Omit the sentinel when adding local `Axioms`");
       }
     }
   }
@@ -3360,19 +3360,19 @@ function validateWorkflowDocument(text: string): string[] {
     }
     previous = position;
     if (!sections[0].body.trim()) {
-      findings.push(`workflow ${heading} section must not be empty${heading === "Constraints" ? "; use - none when no local constraints apply" : ""}`);
+      findings.push(`workflow ${heading} section must not be empty${heading === "Constraints" ? ". Use - none when no local constraints apply" : ""}`);
     }
   }
 
   const mode = readMarkdownHeadingSections(text, "Mode")[0]?.body.trim().toLowerCase() ?? "";
   if (mode && mode !== "linear" && mode !== "iterative") {
-    findings.push("workflow Mode must be linear or iterative; goal-seeking is expressed through the Goal of an iterative workflow");
+    findings.push("Workflow `Mode` must be linear or iterative. Goal-seeking is expressed through the `Goal` of an iterative Workflow");
   }
   const constraints = readMarkdownHeadingSections(text, "Constraints")[0]?.body ?? "";
   if (hasMixedDeclaredSentinel(constraints, ["none", "inherited"])) {
     findings.push("workflow Constraints cannot mix none/inherited with substantive constraints");
   } else if (headingStatus(readMarkdownHeadingSections(text, "Constraints")) === "declared-inherited") {
-    findings.push("workflow Constraints must state substantive invariants or - none; inherited is not a workflow constraint sentinel");
+    findings.push("Workflow `Constraints` must state substantive invariants or `- none`. `inherited` is not a Workflow `Constraints` sentinel");
   }
   return findings;
 }
@@ -3380,7 +3380,7 @@ function validateWorkflowDocument(text: string): string[] {
 function validateDirectiveDocument(text: string, entrypoint: boolean): string[] {
   const findings: string[] = [];
   if (readMarkdownHeadingSections(text, "Applies To").length > 0) {
-    findings.push("directive scope belongs to routing; remove the legacy Applies To section");
+    findings.push("Directive scope belongs to routing. Remove the legacy `Applies To` section");
   }
   if (entrypoint) {
     return findings;
@@ -3397,7 +3397,7 @@ function validateDirectiveDocument(text: string, entrypoint: boolean): string[] 
   if (hasDeclaredSentinel(axioms[0].body, "none")) {
     findings.push("`none` is not a valid Axioms sentinel");
   } else if (hasDeclaredSentinel(axioms[0].body, "inherited")) {
-    findings.push("direct directive Axioms must be substantive; `inherited` is reserved for category entrypoints");
+    findings.push("Direct Directive `Axioms` must be substantive. `inherited` is reserved for category `entrypoints`");
   }
   return findings;
 }
@@ -3519,7 +3519,7 @@ TODO - one short definition of this category.
 
 ## Axioms
 
-- inherited - No local axioms; loaded ancestor axioms remain active.
+- inherited - No local axioms. Loaded ancestor axioms remain active.
 
 ## Entries
 
@@ -3531,7 +3531,7 @@ ${generatedIndexEndMarker}
 
 async function createExtensionScaffold(idArg: string | undefined, directoryArg: string): Promise<void> {
   if (!idArg || !isBundledExtensionId(idArg)) {
-    throw new Error("Usage: open-forge create extension <id> [directory]; ids are lowercase kebab-case such as my-patterns");
+    throw new Error("Usage: open-forge create extension <id> [directory]. `id` values are lowercase kebab-case such as my-patterns");
   }
 
   const baseDirectory = path.join(path.resolve(directoryArg), idArg);
@@ -3556,7 +3556,7 @@ async function createExtensionScaffold(idArg: string | undefined, directoryArg: 
 
 TODO - what this extension installs and when to use it.
 
-Installable runtime content lives under \`payload/.agents/\`. Only \`payload/\` is copied on install. Use #Extension plus route type and scope tags in Open Forge-authored payload files; use a load-policy tag only when baseline loading is deliberate.
+Installable runtime content lives under \`payload/.agents/\`. Only \`payload/\` is copied on install. Use #Extension plus route type and scope tags in Open Forge-authored payload files. Use a load-policy tag only when baseline loading is deliberate.
 
 Install with:
 
@@ -4365,7 +4365,7 @@ async function listFiles(
     const fullPath = path.join(root, entry.name);
 
     if (options.rejectGitControlEntries && entry.name.toLowerCase() === ".git") {
-      throw new Error(`Extension payload may not include Git control path ${fullPath}; apply reviewed repository-control changes separately.`);
+      throw new Error(`Extension payload may not include Git control path ${fullPath}. Apply reviewed repository-control changes separately.`);
     }
 
     if (options.rejectLinksAndSpecialEntries) {
@@ -4555,11 +4555,11 @@ Usage:
   open-forge create extension <id> [directory]
 
 Commands:
-  install  Install Core behind a clean Git review checkpoint; --pro intentionally bypasses lifecycle guards.
-  extend   Install one dependency closure behind Core/Git checkpoints; --dry-run previews and --pro bypasses lifecycle guards.
+  install  Install Core behind a clean Git review checkpoint. --pro intentionally bypasses lifecycle guards.
+  extend   Install one dependency closure behind Core/Git checkpoints. --dry-run previews and --pro bypasses lifecycle guards.
   index    Rebuild the loader registry and category generated regions.
   load     Emit loader, visible transitive #LoadNow context, and complete #KeepInMind context with local overwrites.
-  find     List routed files by tag or route; --bodies prints contents, --follow-required includes Required Routes.
+  find     List routed files by tag or route. --bodies prints contents, and --follow-required includes Required Routes.
   chain    Show loader-to-target route inheritance, optionally extracting any Markdown heading.
   doctor   Validate route integrity, workflow shape, directive binding, generated regions, and dependencies.
   create   Scaffold a category route chain with entrypoints, or a new extension package.

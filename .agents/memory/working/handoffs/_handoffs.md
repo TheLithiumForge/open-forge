@@ -14,7 +14,7 @@ Handoffs are static, concise, accurate, rereadable transfer notes for resuming w
 - Treat handoffs as contextual memory resume notes, not complete history or accepted truth
 - Create or update a handoff when work is transferred, delegated, interrupted, or handed to another agent or human, unless a more specific route already contains complete resume context
 - Make the intended receiver or resumed work clear from the route, description, or content
-- Keep handoffs short; point to sessions, documents, code, or other routes when detail matters
+- Keep handoffs short. Point to sessions, documents, code, or other routes when detail matters
 - State the current status, next action, blockers, relevant loaded context, and verification needs when useful
 - After a handoff no longer supports an active transfer, extract useful material and archive it
 

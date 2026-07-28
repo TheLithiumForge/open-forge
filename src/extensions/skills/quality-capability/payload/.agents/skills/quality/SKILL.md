@@ -11,7 +11,7 @@ Produce trustworthy evidence before changing confidence or behavior.
 
 - Establish intended behavior or outcome, scope, mutation authority, and the evidence needed for a conclusion.
 - Prefer reproducible observations and stable contracts over intuition or implementation-shaped tests.
-- Preserve valid assertions and baseline behavior; investigate failures instead of forcing green results.
+- Preserve valid assertions and baseline behavior. Investigate failures instead of forcing green results.
 - Separate diagnosis and findings from fixes unless mutation is explicitly in scope.
 
 ## References

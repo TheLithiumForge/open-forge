@@ -13,11 +13,9 @@ Memory is self-growing Markdown state for live work, agent communication and coo
 - Use #Contextual and #CurrentTruth to distinguish context from accepted current truth
 - Keep memory below current user instructions, runtime safety, platform constraints, applicable #Core routes, and declared external sources of truth
 - Memory may record any subject, including how work is performed, without making that behavior active
-- Preserve agent communication and coordination in Memory when it must survive the current context; do not treat every conversation as durable memory
-- Write useful durable state to its appropriate routed destination when safe and allowed; do not leave reusable user direction only in chat
-- Treat clear user direction as accepted within its stated scope and update its appropriate current destination; keep tentative, exploratory, inferred, or materially ambiguous conclusions in Working or Emerging until accepted
-- Apply the loader's generic scoping rules throughout Memory; each scope narrows the Memory `routes` and content that follow it
-- When retaining Memory `routes` managed by Open Forge, preserve their source-defined `route` sequence through any inserted scopes
+- Preserve agent communication and coordination in Memory when it must survive the current context. Do not treat every conversation as durable memory
+- Write useful durable state to its appropriate routed destination when safe and allowed. Do not leave reusable user direction only in chat
+- Treat clear user direction as accepted within its stated scope and update its appropriate current destination. Keep tentative, exploratory, inferred, or materially ambiguous conclusions in Working or Emerging until accepted
 - Move material between #Memory routes when its state or knowledge role changes
 - When accepted behavior should guide future work, put it in the matching #Core route and preserve useful context or rationale in #Memory
 - Keep source and uncertainty visible when they affect how a memory entry should be trusted or promoted

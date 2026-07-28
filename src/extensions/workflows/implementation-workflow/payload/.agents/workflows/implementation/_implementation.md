@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Implement one accepted concrete change with proportionate verification; use for a focused code, configuration, documentation, design-asset, or other deliverable change that does not need the full iterative development cycle
+  description: Implement one accepted concrete change with proportionate verification. Use it for a focused code, configuration, documentation, design-asset, or other deliverable change that does not need the full iterative development cycle
   tags: [Extension, Workflow, PhaseDelivery, Implementation, Testing]
 ---
 
@@ -29,7 +29,7 @@ Read every route below before Step 1. A route that cannot be read is a blocker t
 
 - Do not edit before loading the routes that constrain the change.
 - Design the fit before writing the implementation.
-- Use tests as the preferred verification when practical; state the substitute when they are not.
+- Use tests as the preferred verification when practical. State the substitute when they are not.
 
 ## Steps
 
@@ -39,9 +39,9 @@ Read every route below before Step 1. A route that cannot be read is a blocker t
 4. Decide the verification path: tests or checks first, during implementation, after implementation, or an explicit substitute.
 5. Define contracts, APIs, file shapes, skeletons, or expected behavior before implementation details when useful.
 6. Derive test cases from the goal, contracts, edge cases, risks, and existing regressions.
-7. Implement the smallest coherent slice and verify it; continue until the accepted outcome is complete.
+7. Implement the smallest coherent slice and verify it. Continue until the accepted outcome is complete.
 8. Review the passing implementation for clarity, boundaries, duplication, error handling, and pattern alignment.
-9. Route useful discoveries, accepted changes, and continuation context to the right #Memory or #Core routes when warranted, safe, and authorized; otherwise report a proposed destination or that no durable routing is warranted.
+9. Route useful discoveries, accepted changes, and continuation context to the right #Memory or #Core routes when warranted, safe, and authorized. Otherwise, report a proposed destination or that no durable routing is warranted.
 
 ## Loop
 
@@ -56,7 +56,7 @@ Repeat steps 5 through 8 until the chosen tests, checks, or substitute verificat
 
 ## Completion
 
-- [ ] tests or checks passed, or the declared substitute produced acceptance evidence; blockers and gaps are explicit
+- [ ] tests or checks passed, or the declared substitute produced acceptance evidence. Blockers and gaps are explicit
 - [ ] result aligned with loaded patterns and directives, or conflicts reported
 - [ ] warranted discoveries and continuation context were routed safely and with authority, a proposed destination was reported, or no routing was warranted
 - [ ] handoff written when continuation would benefit from a static resume note

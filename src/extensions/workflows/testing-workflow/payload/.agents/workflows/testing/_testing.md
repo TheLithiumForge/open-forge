@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Produce evidence for a behavior or deliverable without implementing the product change; use to design, run, interpret, or improve tests and checks when confidence, regression coverage, edge cases, or verification gaps are the task
+  description: Produce evidence for a behavior or deliverable without implementing the product change. Use it to design, run, interpret, or improve tests and checks when confidence, regression coverage, edge cases, or verification gaps are the task
   tags: [Extension, Workflow, PhaseVerification, Quality, Testing]
 ---
 
@@ -36,10 +36,10 @@ Read every route below before Step 1. A route that cannot be read is a blocker t
 1. Establish expected behavior or outcome, risk, scope, and whether authoring tests or checks is authorized.
 2. Inspect existing verification conventions, tests or checks, tools, fixtures or evidence sources, coverage, and relevant system boundaries.
 3. Select cases for normal outcomes, edge conditions, invalid inputs, state transitions, regressions, and integration seams as applicable.
-4. If authoring is in scope, add the smallest clear tests or checks that discriminate the intended result. Prefer a failing pre-change baseline when practical; otherwise state the expected observation before running the check.
+4. If authoring is in scope, add the smallest clear tests or checks that discriminate the intended result. Prefer a failing pre-change baseline when practical. Otherwise, state the expected observation before running the check.
 5. Run the narrowest relevant checks, then broader checks when the risk or project rules justify them.
 6. Investigate unexpected failures to distinguish product defect, test defect, environment issue, and unrelated failure.
-7. Correct authored tests or checks only when their expectation, method, or setup is wrong; never weaken a valid contract to pass.
+7. Correct authored tests or checks only when their expectation, method, or setup is wrong. Never weaken a valid contract to pass.
 8. Report what the evidence proves, what it does not prove, and any residual coverage gap.
 
 ## Loop

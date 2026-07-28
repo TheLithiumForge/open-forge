@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Deliberately diverge among distinct mechanisms, scopes, priorities, or value tradeoffs for a consequential ambiguous idea; use before planning when the desired direction is not yet settled
+  description: Deliberately diverge among distinct mechanisms, scopes, priorities, or value tradeoffs for a consequential ambiguous idea. Use it before planning when the desired direction is not yet settled
   tags: [Extension, Workflow, PhaseDiscovery, Brainstorming]
 ---
 
@@ -28,18 +28,18 @@ Read every route below before Step 1. A route that cannot be read is a blocker t
 
 - Treat ideas as candidates until the user or declared authority accepts them.
 - Distinguish observed evidence, inference, candidate ideas, recommendations, and accepted decisions.
-- Expand the option space before converging; do not pad it with cosmetic variants.
+- Expand the option space before converging. Do not pad it with cosmetic variants.
 - Do not turn exploration into a plan, task, implementation, or external mutation unless the user asks for that handoff.
 
 ## Steps
 
 1. Restate the problem, desired outcome, affected people or systems, boundaries, known constraints, and important unknowns.
-2. Inspect relevant workspace or user-provided evidence before inventing options; label gaps instead of filling them with assumptions.
+2. Inspect relevant workspace or user-provided evidence before inventing options. Label gaps instead of filling them with assumptions.
 3. Generate divergent possibilities from meaningfully different mechanisms, scopes, priorities, or operating models.
 4. Cluster overlaps, discard cosmetic variants, and retain a small set of materially different options, including a conservative path when useful.
 5. Compare benefits, costs, risks, reversibility, dependencies, fit, and evidence gaps.
 6. Stress-test the strongest options against failure modes, disconfirming evidence, and the stated non-goals.
-7. Recommend a direction when evidence supports one; otherwise frame the smallest decision or experiment that resolves the uncertainty.
+7. Recommend a direction when evidence supports one. Otherwise, frame the smallest decision or experiment that resolves the uncertainty.
 8. If a direction is accepted, record it with its established owner and hand it to planning or execution only when requested.
 
 ## Loop

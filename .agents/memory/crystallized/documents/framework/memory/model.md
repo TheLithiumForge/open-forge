@@ -40,7 +40,7 @@ Place a scope immediately before the first Memory `route` it should narrow:
 
 The same placement rule applies around Working roles such as Handoffs and Sessions, Emerging roles such as Analysis, Ideas, and Observations, and local scopes within Archived.
 
-The loader's universal scoping rules apply everywhere below the Memory `root route`. When a path retains Memory `routes` managed by Open Forge, their state and role segments keep the order declared by the installed source. Scoping therefore does not turn one state into a child of another or move Documents before Crystallized.
+Memory uses the [universal scope contract](../routing/scope.md) rather than defining another scoping mechanism. When a path retains Memory `routes` managed by Open Forge, their state and role segments keep the order declared by the installed source. Scoping therefore does not turn one state into a child of another or move Documents before Crystallized.
 
 The same mechanism can serve one person, one repository, many interacting projects, a shared multi-repository source of truth, or recursively nested scopes. Additional branches do not need to enter active context until their `route` or relationship is selected.
 
@@ -73,7 +73,7 @@ Ordinary conversation, duplicated facts, and raw activity without plausible futu
 
 ## Recursive Growth
 
-The installed states are stable semantic defaults beneath the Memory `root route`. Workspaces may add direct files or any number of routed scopes anywhere below that root. Place a subject scope before a state when it needs an independently useful lifecycle, after a state when it applies only within that state, or after a role when it narrows only that role.
+The installed states are stable semantic defaults beneath the Memory `root route`. Workspaces may add direct files or any number of routed scopes anywhere below that root. The [placement examples](#state-and-scope) show whether a subject narrows several states, one state, or one role.
 
 The Framework ships starter `routes` because most workspaces benefit from them:
 

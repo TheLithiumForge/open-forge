@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Create one actionable task in its declared authority; use when accepted work needs a durable owner, scope, acceptance criteria, and execution context
+  description: Create one actionable task in its declared authority. Use when accepted work needs a durable owner, scope, acceptance criteria, and execution context
   tags: [Extension, Workflow, PhasePlanning, Planning, Task]
 ---
 
@@ -27,19 +27,19 @@ Read every route below before Step 1. A route that cannot be read is a blocker t
 ## Constraints
 
 - Use exactly one authoritative task source, declared by the user or workspace, for task status, ownership, acceptance, and completion.
-- If none is declared, default to the current user task; never nominate a workspace artifact merely because it exists.
+- If none is declared, default to the current user task. Never nominate a workspace artifact merely because it exists.
 - Never create or mirror a task in an external tracker without authority.
 - Do not duplicate status, acceptance, or ownership across multiple authorities.
-- Keep accepted rationale, decisions, and durable project truth with their established owners; the task source may link to them but must not replace them.
+- Keep accepted rationale, decisions, and durable project truth with their established owners. The task source may link to them but must not replace them.
 
 ## Steps
 
 1. Name the one user- or workspace-declared authoritative task source, or explicitly default to the current user task, and confirm whether mutation of that source is authorized.
 2. Search that authority, when accessible, for an existing task that already owns the outcome.
 3. If an authoritative task exists, propose or make an authorized update there instead of creating a duplicate.
-4. Define the task outcome, scope, non-goals, task owner, dependencies, and acceptance evidence; link accepted rationale and decisions from their established owners rather than duplicating them.
+4. Define the task outcome, scope, non-goals, task owner, dependencies, and acceptance evidence. Link accepted rationale and decisions from their established owners rather than duplicating them.
 5. Add the minimum context, links, constraints, and verification notes needed to start safely.
-6. Create or update the task only when authorized; otherwise return a ready-to-record proposal naming the intended authority.
+6. Create or update the task only when authorized. Otherwise, return a ready-to-record proposal naming the intended authority.
 7. Confirm that no second tracker or workspace artifact now claims task truth.
 
 ## Loop
