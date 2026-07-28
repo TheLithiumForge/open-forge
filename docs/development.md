@@ -188,6 +188,7 @@ The npm package includes:
 ```text
 dist/cli.mjs
 docs/cli.md
+docs/development.md
 docs/extensions.md
 src/open-forge/
 src/extensions/

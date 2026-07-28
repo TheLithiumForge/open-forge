@@ -265,6 +265,7 @@ open-forge find
 open-forge chain
 open-forge doctor
 open-forge create
+open-forge help
 ```
 
 Common context commands:

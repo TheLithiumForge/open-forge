@@ -52,7 +52,7 @@ async function main(): Promise<void> {
     } else if (command === "extend") {
       await extend(args.slice(1));
     } else if (command === "index") {
-      await generateIndexes(path.resolve(args[1] ?? process.cwd()));
+      await indexRoutes(args.slice(1));
     } else if (command === "find") {
       await find(args.slice(1));
     } else if (command === "load") {
@@ -63,8 +63,11 @@ async function main(): Promise<void> {
       await doctor(args.slice(1));
     } else if (command === "create") {
       await create(args.slice(1));
-    } else {
+    } else if (command === "help" || command === "--help" || command === "-h") {
+      assertNoExtraArgs(args, 1, "Usage: open-forge help");
       printHelp();
+    } else {
+      throw new Error(`Unknown command: ${command}. Run open-forge help to list supported commands.`);
     }
   } catch (error) {
     console.error(`open-forge: ${error instanceof Error ? error.message : String(error)}`);
@@ -87,7 +90,9 @@ function isCliEntrypoint(): boolean {
 
 async function install(installArgs: string[]): Promise<void> {
   const { args, present: proMode } = extractBooleanFlag(installArgs, "--pro");
-  assertNoExtraArgs(args, 1, "Usage: open-forge install [target] [--pro]");
+  const usage = "Usage: open-forge install [target] [--pro]";
+  assertNoExtraArgs(args, 1, usage);
+  assertPositionalValue(args[0], usage);
   const targetArg = args[0] ?? process.cwd();
   const targetRoot = path.resolve(targetArg);
   await assertExtensionTargetRootNotLinked(targetRoot, "Core");
@@ -150,18 +155,22 @@ async function extend(extendArgs: string[]): Promise<void> {
   }
 
   if (normalizedArgs[0] === "--remove") {
+    const usage = "Usage: open-forge extend --remove <id[,id...]> [target] [--dry-run] [--pro]";
     const value = normalizedArgs[1];
-    if (!value) throw new Error("Usage: open-forge extend --remove <id[,id...]> [target] [--dry-run] [--pro]");
+    if (!value) throw new Error(usage);
     const ids = splitExtensionIds(value);
     const target = normalizedArgs[2] ?? process.cwd();
-    assertNoExtraArgs(normalizedArgs, normalizedArgs[2] ? 3 : 2, "Usage: open-forge extend --remove <id[,id...]> [target] [--dry-run] [--pro]");
+    assertNoExtraArgs(normalizedArgs, normalizedArgs[2] ? 3 : 2, usage);
+    assertPositionalValue(normalizedArgs[2], usage);
     await removeExtensions(ids, target, dryRun, proMode);
     return;
   }
 
   if (normalizedArgs[0] === "--select" || normalizedArgs.length === 0) {
+    const usage = "Usage: open-forge extend --select [target] [--dry-run] [--pro]";
     const target = normalizedArgs[0] === "--select" ? normalizedArgs[1] ?? process.cwd() : process.cwd();
-    assertNoExtraArgs(normalizedArgs, normalizedArgs[0] === "--select" ? 2 : 0, "Usage: open-forge extend --select [target] [--dry-run] [--pro]");
+    assertNoExtraArgs(normalizedArgs, normalizedArgs[0] === "--select" ? 2 : 0, usage);
+    assertPositionalValue(normalizedArgs[0] === "--select" ? normalizedArgs[1] : undefined, usage);
     const ids = await selectBundledExtensionIds();
     if (ids.length === 0) {
       console.log("No extensions selected.");
@@ -174,16 +183,21 @@ async function extend(extendArgs: string[]): Promise<void> {
 
   const idsValue = readIdsValue(normalizedArgs);
   if (idsValue) {
+    const usage = "Usage: open-forge extend --ids <id[,id...]> [target] [--dry-run] [--pro]";
     const { ids, consumed } = idsValue;
     const target = normalizedArgs[consumed] ?? process.cwd();
-    assertNoExtraArgs(normalizedArgs, consumed + (normalizedArgs[consumed] ? 1 : 0), "Usage: open-forge extend --ids <id[,id...]> [target] [--dry-run] [--pro]");
+    assertNoExtraArgs(normalizedArgs, consumed + (normalizedArgs[consumed] ? 1 : 0), usage);
+    assertPositionalValue(normalizedArgs[consumed], usage);
     await installExtensions(ids, target, dryRun, proMode);
     return;
   }
 
+  const usage = "Usage: open-forge extend <extension-source-or-id> [target] [--dry-run] [--pro]";
   const extensionArg = normalizedArgs[0];
   const targetArg = normalizedArgs[1] ?? process.cwd();
-  assertNoExtraArgs(normalizedArgs, 2, "Usage: open-forge extend <extension-source-or-id> [target] [--dry-run] [--pro]");
+  assertNoExtraArgs(normalizedArgs, 2, usage);
+  assertPositionalValue(extensionArg, usage);
+  assertPositionalValue(normalizedArgs[1], usage);
   await installExtensions([extensionArg], targetArg, dryRun, proMode);
 }
 
@@ -200,6 +214,19 @@ function assertNoExtraArgs(args: string[], allowedCount: number, usage: string):
   if (args.length > allowedCount) {
     throw new Error(usage);
   }
+}
+
+function assertPositionalValue(value: string | undefined, usage: string): void {
+  if (value?.startsWith("--")) {
+    throw new Error(usage);
+  }
+}
+
+async function indexRoutes(indexArgs: string[]): Promise<void> {
+  const usage = "Usage: open-forge index [target]";
+  assertNoExtraArgs(indexArgs, 1, usage);
+  assertPositionalValue(indexArgs[0], usage);
+  await generateIndexes(path.resolve(indexArgs[0] ?? process.cwd()));
 }
 
 function readIdsValue(args: string[]): { ids: string[]; consumed: number } | null {
@@ -3446,10 +3473,16 @@ async function insideSkillPackage(file: string, scanRoot: string): Promise<boole
 async function create(createArgs: string[]): Promise<void> {
   const kind = createArgs[0];
   if (kind === "category") {
+    const usage = "Usage: open-forge create category <route-path> [target]";
+    assertNoExtraArgs(createArgs, 3, usage);
+    assertPositionalValue(createArgs[2], usage);
     await createCategoryRoute(createArgs[1], createArgs[2] ?? process.cwd());
     return;
   }
   if (kind === "extension") {
+    const usage = "Usage: open-forge create extension <id> [directory]";
+    assertNoExtraArgs(createArgs, 3, usage);
+    assertPositionalValue(createArgs[2], usage);
     await createExtensionScaffold(createArgs[1], createArgs[2] ?? process.cwd());
     return;
   }
@@ -4553,6 +4586,9 @@ Usage:
   open-forge doctor [--json] [target]
   open-forge create category <route-path> [target]
   open-forge create extension <id> [directory]
+  open-forge help
+  open-forge --help
+  open-forge -h
 
 Commands:
   install  Install Core behind a clean Git review checkpoint. --pro intentionally bypasses lifecycle guards.
@@ -4563,5 +4599,6 @@ Commands:
   chain    Show loader-to-target route inheritance, optionally extracting any Markdown heading.
   doctor   Validate route integrity, workflow shape, directive binding, generated regions, and dependencies.
   create   Scaffold a category route chain with entrypoints, or a new extension package.
+  help     Print this command reference.
 `);
 }

@@ -53,6 +53,7 @@ npx open-forge extend --list
 | `chain` | Inspect inherited context for one routed file | No |
 | `doctor` | Validate deterministic Framework structure | No |
 | `create` | Scaffold a route chain or local Extension package | Yes |
+| `help`, `--help`, or `-h` | Print the top-level command reference | No |
 
 ## Shared Conventions
 
@@ -83,9 +84,22 @@ open-forge chain <route> [--heading <title>] [--json] [target]
 open-forge doctor [--json] [target]
 open-forge create category <route-path> [target]
 open-forge create extension <id> [directory]
+open-forge help
+open-forge --help
+open-forge -h
 ```
 
 If `target` is omitted, the current directory is used.
+
+## help
+
+```sh
+open-forge help
+open-forge --help
+open-forge -h
+```
+
+All three forms print the same top-level command reference and exit without changing files.
 
 ## install
 
