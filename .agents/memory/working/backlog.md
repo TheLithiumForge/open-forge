@@ -19,6 +19,8 @@ Complete the current source migration in this order:
 5. Optimize the complete Core primitive system across conceptual documents, installed runtime entrypoints, Maintenance contracts, decisions, links, terminology, and validation
 6. Optimize the complete Memory system across its model, states, routes, installed runtime entrypoints, Maintenance contracts, decisions, links, terminology, and validation
 
+Complete the [temporary independent review](../../directives/temporary-independent-review.md) gate before presenting each migration result for maintainer review.
+
 During both optimization passes, apply the repository-only [terminology helper](../crystallized/documents/maintenance/helpers/terminology.md) consistently. Prefer direct statements of relationships and use `user` only when naming that role improves clarity.
 
 Do not let a later phase pull detailed work forward merely because one concept links to it. Temporary migration references may remain until their scheduled phase as long as current authoritative sources do not depend on them.
