@@ -9,7 +9,7 @@ open-forge:
 
 ## Source
 
-[`src/open-forge/.agents/memory/emerging/analysis/_analysis.md`](../../../../../../../../../src/open-forge/.agents/memory/emerging/analysis/_analysis.md) is the canonical installed Analysis entrypoint. The repository [Analysis entrypoint](../../../../../../../emerging/analysis/_analysis.md) dogfoods the same authored contract and may add local generated entries.
+[`src/open-forge/.agents/memory/emerging/analysis/_analysis.md`](../../../../../../../../../src/open-forge/.agents/memory/emerging/analysis/_analysis.md) is the canonical installed Analysis `entrypoint`. The repository [Analysis `entrypoint`](../../../../../../../emerging/analysis/_analysis.md) dogfoods the same authored contract and may add local generated `Entries`.
 
 The [Emerging state contract](../../../../../framework/memory/emerging.md) defines Analysis as structured reasoning whose acceptance or final destination remains unsettled.
 
@@ -19,9 +19,7 @@ The [Emerging state contract](../../../../../framework/memory/emerging.md) defin
 - Analysis keeps its question, evidence, assumptions, limits, and current conclusion visible
 - Assumptions are rechecked before later work relies on the analysis
 - Analysis remains contextual until a separate acceptance source establishes a durable result
-- The installed route begins empty and supports ordinary recursive scope
 
 ## Verification
 
-- Installation and route tests verify Analysis loading, indexing, classification, and recursive child routing
-- Compare canonical source and dogfood authored content outside generated `Entries`
+- Installation and `route` tests verify Analysis loading, indexing, classification, and recursive child routing

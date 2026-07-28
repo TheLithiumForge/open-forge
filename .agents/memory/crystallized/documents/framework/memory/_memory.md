@@ -10,10 +10,10 @@ Memory Architecture defines the recorded-state model that preserves continuity, 
 
 ## Axioms
 
-- Memory state describes how recorded material should currently be treated; Memory scope describes the subject to which it applies
+- Memory state describes how recorded material should currently be treated. Memory scope describes the subject to which it applies.
 - Working, Emerging, Crystallized, and Archived are the standard state contracts and do not form a mandatory pipeline
 - Any transition is valid when the destination accurately expresses current meaning, scope, and authority
-- Memory may record behavior without activating it; accepted behavior that should guide work belongs in the matching #Core route
+- Memory may record behavior without activating it. Accepted behavior that should guide work belongs in the matching #Core `route`.
 - Standard nested role `routes` are useful defaults that may be scoped, extended, replaced, or removed without changing the four state meanings
 
 ## Entries

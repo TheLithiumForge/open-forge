@@ -55,6 +55,17 @@ The same mechanism can serve one person, one repository, many interacting projec
 
 The states are semantic contracts, not quality scores or required maturity stages.
 
+## Loading Strategy
+
+Memory loading follows the role each state plays:
+
+- The Memory `root route` enters baseline context so every task can preserve durable state correctly
+- Working and Crystallized `entrypoints` enter baseline context so active resumability and accepted current records are discoverable
+- Emerging and Observations use #KeepInMind so candidate learning is revisited at continuity boundaries
+- Archived remains on demand because historical context should enter active work only when its `route` is relevant
+
+The eagerly visible files are compact `entrypoints` and their generated navigation. Individual records remain selected by relevance unless their own tags explicitly give them a baseline or continuity role.
+
 ## Recorded-State Threshold
 
 Durable Memory should preserve likely future value rather than raw activity.
@@ -83,6 +94,8 @@ The Framework ships starter `routes` because most workspaces benefit from them:
 - Archived begins without requiring a mirror of every active `route`
 
 These standard `routes` are useful defaults, not an untouchable taxonomy. A workspace may remove, replace, reorganize, or supplement them. Any Memory `routes` still managed by Open Forge retain their declared order.
+
+Backlogs, tasks, project status, and similar planning roles may be added where they have clear local meaning. They are not standard Memory `routes` because many workspaces already delegate live planning to another authoritative system.
 
 A new top-level state beneath Memory changes the shared state model and therefore requires clear user agreement. A routed scope uses ordinary recursive customization and needs only the authority required for that local change.
 

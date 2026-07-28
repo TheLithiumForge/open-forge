@@ -1,18 +1,19 @@
 ---
 open-forge:
-  description: Durable accepted records, or routes to those records, for long-form project knowledge
+  description: Durable accepted records, or `routes` to those records, for long-form project knowledge
   tags: [LoadNow, Memory, Document, Record, CurrentTruth]
 ---
 
 # Documents
 
-Documents are durable accepted records, or routes to those records, for long-form project knowledge.
+Documents contain durable accepted records, or `routes` to those records, for coherent long-form knowledge
 
 ## Axioms
 
-- Read `Entries` when current work needs durable accepted records.
-- A document that declares another source of truth defers to that source.
-- The routed destination remains authoritative for detailed truth when a document `entry` points outside itself.
+- Read `Entries` when current work needs durable accepted records
+- Explain accepted current meaning well enough to use without reconstructing it from Decisions. Link to a supporting Decision when its rationale helps.
+- A document that declares another authoritative source defers to that source
+- When a document `entry` links to a destination outside the document, that destination remains authoritative for its detailed truth
 
 ## Entries
 
