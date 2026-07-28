@@ -153,7 +153,7 @@ The operating rules are:
 1. Platform constraints and runtime safety bound every action
 2. Clear current user direction governs goals, priorities, consequential tradeoffs, and accepted changes within its scope
 3. A declared external source of truth is authoritative for the facts delegated to it
-4. Loaded Core Axioms and directives govern Framework interpretation and applicable behavior
+4. Loaded Axioms, including those supplied by Directives, govern Framework interpretation and applicable behavior
 5. A selected authoritative source governs the accepted state of its subject
 6. Narrower selected material of the same non-directive kind is preferred when it safely specializes broader material
 7. Loaded directives add constraints to ancestor directives rather than silently replacing them

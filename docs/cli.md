@@ -125,7 +125,7 @@ There is no wizard. The command installs the current release payload. If you wan
 
 ### Scoped Framework Updates
 
-The current CLI indexes any explicit route chain whose folders have `entrypoints`. It does not scaffold `scope routes` from templates yet. Create the scope folders and `entrypoints` yourself for now, then run `open-forge index`.
+The current CLI indexes any explicit route chain whose folders have `entrypoints`. `open-forge create category <route-path>` can scaffold missing generic entrypoints and rebuild their indexes. It does not decide which Framework routes a scope needs or populate a new scoped Framework route with the standard role's entrypoint contract. You may also author the entrypoints directly, then run `open-forge index`.
 
 When `scoped framework routes` already exist, `install` updates their framework `entrypoints` from the current framework wording. It identifies them by concrete path shape and canonical `entrypoint` filename, not by hidden version metadata. It does not create missing scope `entrypoints` yet.
 
@@ -327,7 +327,7 @@ Scope placement changes meaning:
 .agents/memory/[scope]/crystallized/decisions/
 ```
 
-The first means `[scope]` is inside crystallized memory. The second means `[scope]` owns its own memory states. Both are valid when every folder has an `entrypoint` and the `entrypoint` descriptions make the scope clear.
+The first means `[scope]` is inside Crystallized Memory. The second gives `[scope]` its own Memory state routes. Both are valid when every folder has an `entrypoint` and the entrypoint descriptions make the scope clear.
 
 ### Entrypoints And Generated Regions
 

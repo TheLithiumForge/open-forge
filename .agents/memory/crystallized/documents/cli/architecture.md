@@ -277,7 +277,7 @@ Some deterministic schema is necessary. It must derive from accepted versioned F
 
 ### Partial Recursive Support
 
-The router and indexer support arbitrary nested entrypoints, but scoped Framework updating recognizes a limited set of hardcoded shapes. This does not yet fulfill the Framework's recursive composition promise.
+The router and indexer support arbitrary nested entrypoints, but scoped Framework updating recognizes a limited set of hardcoded shapes. The current shapes and update behavior are documented under [Scoped Framework Updates](../../../../../docs/cli.md#scoped-framework-updates). This does not yet fulfill the Framework's recursive composition promise.
 
 ### Command Vocabulary
 

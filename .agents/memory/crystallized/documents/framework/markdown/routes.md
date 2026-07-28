@@ -34,6 +34,16 @@ An Open Forge-authored category entrypoint is represented by:
 
 Category meaning and `Axioms` appear before `Entries`. The [routing model](../routing/model.md) defines when a folder is routable and what an entrypoint exposes. The [scope and inheritance contract](../routing/scope.md) defines the meaning of local, missing, and sentinel Axioms.
 
+When an entrypoint explicitly declares that it adds no local Axioms, the canonical form is:
+
+```md
+## Axioms
+
+- inherited - No local axioms; loaded ancestor axioms remain active.
+```
+
+An entrypoint may instead omit `Axioms` or leave the section empty. `none` is not a valid Axioms sentinel because loaded ancestor Axioms always remain active.
+
 ## Route Entries
 
 Generated `Entries` use one canonical line shape:

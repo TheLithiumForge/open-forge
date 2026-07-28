@@ -299,6 +299,8 @@ You can:
 - Use `{name}.overwrite.md` for a small local adjustment to a mostly suitable base
 - Edit or replace a base file when the combined base and overwrite would become confusing
 
+A scoped Framework route remains ordinary Markdown. Every intermediate scope entrypoint states its local subject, while the scoped Framework entrypoint states the role it reuses. `open-forge create category` can scaffold the generic route chain, but its placeholder wording must still be completed and it does not populate the standard role contract.
+
 After changing routed files, rebuild and validate navigation:
 
 ```sh
