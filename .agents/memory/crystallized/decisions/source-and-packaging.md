@@ -18,4 +18,6 @@ Accepted decisions extracted from the design sessions and idea notes on 2026-07-
 - Framework files should be concise, explicit, and easy to diff.
 - Users may edit framework files, but durable customization should prefer local sibling files, child routes, or `.overwrite.md` companions.
 
+The [Framework distribution contract](../documents/framework/architecture.md#distribution-and-dogfood) expresses the current installed-completeness, documentation, dependency, and dogfood boundaries. [Payload Maintenance](../documents/maintenance/payload/_payload.md) connects each reviewed installed source to its repository counterpart, related current contracts, and verification matched to change risk and reach.
+
 The [current overwrite contract](../documents/framework/routing/overwrites.md) expresses the accepted companion behavior. User-owned overwrites preserve a small local delta beside a readable base without requiring hidden source or version metadata.

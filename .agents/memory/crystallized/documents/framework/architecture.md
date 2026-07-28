@@ -277,7 +277,13 @@ The current extensions implementation is an MVP under planned architectural revi
 
 ## Distribution And Dogfood
 
-Users receive the installable Framework from [`src/open-forge/`](../../../../../src/open-forge/). Installed files must contain every contract required to navigate and use the Framework. Governance, repository history, and unpublished design context cannot be hidden runtime dependencies.
+Users receive the installable Framework from [`src/open-forge/`](../../../../../src/open-forge/). The installed Framework is its complete operational contract. Every definition, authority boundary, loading rule, and routing instruction required to navigate or use it must appear in an installed file. When required meaning is intentionally separated, the installed file that depends on it directs the reader to the installed route containing that meaning.
+
+Repository Maintenance, source history, public documentation, and unpublished design context cannot be hidden runtime dependencies. Public documentation may explain the Framework and provide examples, but it cannot replace instructions needed during normal agent work. Installed wording uses ordinary language and terms defined by the installed Framework rather than relying on repository-only vocabulary.
+
+The [system dependency direction](../architecture.md#authority-and-dependency-direction) applies within the Framework: Core contracts stand alone, Memory may depend on Core, and Extensions or tools may depend on Core or Memory. A Core or Memory contract cannot require optional Extensions, CLI behavior, packaging, or future modules to explain its meaning.
+
+When a lower-level contract accepts input from several sources, it states the requirement for any writer instead of naming a particular workflow, Extension, package, module, or tool as the actor. Each higher-level authoritative source explains its own participation.
 
 This repository's root `.agents/` tree dogfoods the Framework and adds local routes for Open Forge development. Shared behavior should match the installable source. Deliberate repository-only differences remain visibly local. The current repository-local template set is one such evaluation boundary: the shared source ships its route contract, while concrete templates remain local until reviewed.
 
@@ -326,6 +332,7 @@ The [approved design baseline](../../../archived/sessions/2026-07-26_open-forge-
 - [Core Primitives scope](primitives/_primitives.md)
 - [Memory Architecture](memory/_memory.md)
 - [Accepted State and Synchronization](truth.md)
+- [Payload Maintenance](../maintenance/payload/_payload.md)
 - [Extensions MVP Architecture](../extensions/architecture.md)
 - [CLI MVP Architecture](../cli/architecture.md)
 - [Canonical Framework loader](../../../../loader.md)
@@ -349,4 +356,3 @@ The following files contain earlier decisions or governance that may help migrat
 - [Source and packaging rationale](../../decisions/source-and-packaging.md)
 - [Typed authority and role terminology](../../decisions/authoritative-source-terminology.md)
 - [Canonical Markdown authoring rationale](../../decisions/canonical-markdown.md)
-- [Payload boundary migration descriptor](../../../../../docs/framework/concepts/payload-boundary.md)
