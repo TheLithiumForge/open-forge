@@ -10,11 +10,8 @@ This route contains maintainer contracts for reviewed files below `src/open-forg
 
 ## Axioms
 
-- Every maintenance contract identifies its canonical installable source and any repository dogfood counterpart
-- Installed files contain the complete operational meaning users need; repository maintenance context is never a hidden runtime dependency
-- Shared authored content stays aligned between source and dogfood while generated regions and explicitly local content may differ
 - The canonical routed Markdown and generated-region contracts apply unless a component links a more specific representation
-- Rebuild indexes and run `open-forge doctor` for both the repository and `src/open-forge/` after changing a routed source
+- After changing route structure or generated route metadata, rebuild indexes and run `open-forge doctor` in each affected tree, including both the repository and `src/open-forge/` when shared routing changed
 
 ## Entries
 

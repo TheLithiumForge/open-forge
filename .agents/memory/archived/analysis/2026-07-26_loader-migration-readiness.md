@@ -69,8 +69,8 @@ The review found no migrated loader contract. The accepted migration added [load
 - [Accepted state and synchronization](../../crystallized/documents/framework/truth.md)
 - [Current Memory Architecture](../../crystallized/documents/framework/memory/_memory.md)
 - [Current overwrite contract](../../crystallized/documents/framework/routing/overwrites.md)
-- [Payload boundary descriptor](../../../../docs/framework/concepts/payload-boundary.md)
-- [Layer descriptor](../../../../docs/framework/concepts/layers.md)
+- [Current Framework distribution boundary](../../crystallized/documents/framework/architecture.md#distribution-and-dogfood)
+- [Current Framework composition](../../crystallized/documents/architecture.md#framework-composition)
 - [Current Core Primitives scope](../../crystallized/documents/framework/primitives/_primitives.md)
 
 These references preserve useful constraints and historical wording, but they are not evidence that can override the accepted current architectures.
