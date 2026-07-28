@@ -21,7 +21,7 @@ Copy-ready content should make creation cheaper without making the source an ong
 
 Templates are a distinct Core primitive for reusable source artifacts intended to be instantiated into independently owned workspace content.
 
-Instantiation transfers ownership to the destination. The result receives its own accurate metadata, scope, state, authority, and relationships. Later template changes do not update it and the template creates no continuing conformance.
+Instantiation transfers ownership to the created result. The result receives its own accurate metadata, scope, state, authority, and relationships. Later template changes do not update it and the template creates no continuing conformance.
 
 Generic templates are fallbacks. A specialization earns a separate template only when its copy-ready contents differ materially. Users may edit, scope, replace, or remove templates through the ordinary file-native customization model.
 

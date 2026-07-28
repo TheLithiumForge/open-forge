@@ -57,9 +57,9 @@ The reader produced no factual failure.
 
 ### Scoped Decisions And Documents
 
-The reader answered correctly only after reaching deeper scope and Crystallized documentation. It still ranked this as the hardest exact answer because the installed loader did not yet state that the same recursive placement applies to every Framework route.
+The reader answered correctly only after reaching deeper scope and Crystallized documentation. It still ranked this as the hardest exact answer because the installed loader did not yet explain how recursively inserted scopes interact with each root's named child order.
 
-This was a locality question rather than missing architecture. The follow-up below centralizes the generic rule in the loader and keeps concrete shapes in the [route-scope contract](../../crystallized/documents/framework/routing/scope.md#concrete-scope).
+This was a locality question rather than missing architecture. The follow-up below centralizes universal scoping in the [`route`-scope contract](../../crystallized/documents/framework/routing/scope.md#concrete-paths).
 
 ### Multi-Scope Integration
 
@@ -97,10 +97,10 @@ The result does not prove that the documentation is cheap enough to use. The str
 
 ## Follow-Up
 
-The first three gaps were addressed after this probe:
+The first three gaps were addressed after this probe. The routing wording was later refined again when broad cross-root composition proved ambiguous:
 
-- The installed loader now states that scope routes may appear before, after, or between any Framework route segments without changing the reused roles
-- The route-scope contract now shows the full path matrix, applies it to every Framework route, and defines how several selected scopes compose without merging
+- The installed loader now states one universal rule: roots cannot be scoped, while every `route` below a root can be scoped at any depth
+- The scope contract now shows which following `routes` each scope narrows, prevents implicit cross-root nesting, and defines how several selected scopes compose without merging
 - The loader and loading contract now define #KeepInMind as every routed result plus each result's visible #LoadNow closure, excluding unrelated descendants
 
 The next probe should verify these changes against the installable payload rather than treating this initial result as proof that they are understood.

@@ -22,6 +22,7 @@ The [current Patterns document](../../../framework/primitives/patterns.md) defin
 - Binding shape requirements use a Directive or another active Axiom rather than silently changing Pattern authority
 - Child routes may narrow or preserve positive scope through the ordinary routing contract
 - The installable source begins with no opinionated Pattern files
+
 ## Verification
 
 - Core installation tests verify that the category installs, indexes, and remains baseline-loaded

@@ -14,7 +14,7 @@ Memory Architecture defines the recorded-state model that preserves continuity, 
 - Working, Emerging, Crystallized, and Archived are the standard state contracts and do not form a mandatory pipeline
 - Any transition is valid when the destination accurately expresses current meaning, scope, and authority
 - Memory may record behavior without activating it; accepted behavior that should guide work belongs in the matching #Core route
-- Standard child routes are useful defaults that may be scoped, extended, replaced, or removed without changing the four state meanings
+- Standard nested role `routes` are useful defaults that may be scoped, extended, replaced, or removed without changing the four state meanings
 
 ## Entries
 

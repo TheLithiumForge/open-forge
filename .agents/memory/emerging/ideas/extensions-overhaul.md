@@ -14,7 +14,7 @@ The overhaul begins from the stable boundaries already owned by the current arch
 
 - Extensions remain optional and explicitly selected
 - Installed human-readable files retain complete runtime meaning
-- Packages contribute whole files through ordinary Framework routes
+- Packages contribute whole files through ordinary `routes`
 - Package metadata and ownership state do not become agent authority
 - Manual plain-file installation remains possible
 - Composition, mutation, update, and removal remain previewable and reviewable
@@ -59,6 +59,8 @@ The overhaul begins from the stable boundaries already owned by the current arch
 - What happens when a user modifies a managed file?
 - How do scoped installation, update, and removal work?
 - How do authored, managed, and generated boundaries compose?
+
+One candidate is for an Extension to declare manager-recognized `route` shapes and accept user-selected scope `slugs` at the positions allowed by the loader's universal scoping rules. Planning would resolve that notation to concrete paths before mutation, initialize only the missing scope `entrypoints` the user accepted, and record ownership against the resolved files. Runtime `routes` would remain ordinary Markdown and would not depend on placeholders or package provenance.
 
 ### Lifecycle
 

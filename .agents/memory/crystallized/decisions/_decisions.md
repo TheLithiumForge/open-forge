@@ -28,9 +28,9 @@ Decisions are accepted rationale for important choices that may need to be under
 - [Reliability-critical context loads unconditionally and early; conditional context must be cheap to skip and cheap to recover from](loading-reliability.md) - #Memory #Decision #CurrentTruth #Loading #Routing #Reliability
 - [Memory preserves working, emerging, crystallized, and archived state without activating behavior it describes](memory-model.md) - #Memory #Decision #CurrentTruth #MemoryModel
 - [Open Forge stays markdown-first, user-directed, small by default, and optimized for recursive customization](product-direction.md) - #Memory #Decision #CurrentTruth #Product
-- [Small recursive entrypoints preserve local scope while one recognized entrypoint and explicit root routes remove routing ambiguity](routing-model.md) - #Memory #Decision #CurrentTruth #Routing
+- [Small recursive `entrypoints` preserve local scope while one recognized `entrypoint` and explicit `root routes` remove routing ambiguity](routing-model.md) - #Memory #Decision #CurrentTruth #Routing
 - [Entry descriptions support pre-load selection while routed bodies provide complete role-specific meaning](routing-surfaces.md) - #Memory #Decision #CurrentTruth #Routing #Formatting
-- [Distinct route and slug terms preserve recursive scope meaning without runtime placeholders or a fixed organizational taxonomy](scope-and-slugs.md) - #Memory #Decision #CurrentTruth #Routing #Scope
+- [Accepted universal scoping rules, root boundary, `managed route` relationship, and concrete `slug` behavior](scope-and-slugs.md) - #Memory #Decision #CurrentTruth #Routing #Scope
 - [Users receive `src/open-forge/` as the payload while repository-only Maintenance contracts govern reviewed source without becoming hidden runtime context](source-and-packaging.md) - #Memory #Decision #CurrentTruth #Packaging #Governance
 - [Open Forge separates tags for loading, Framework composition, truth status, synchronization, and ordinary classification](tags.md) - #Memory #Decision #CurrentTruth #Tags #Routing
 - [Templates are a distinct Core primitive for copy-ready source artifacts whose ownership transfers to independently maintained results](template-primitive.md) - #Memory #Decision #CurrentTruth #Core #Template #Primitive

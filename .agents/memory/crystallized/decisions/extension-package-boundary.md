@@ -12,9 +12,9 @@ Open Forge needed one way to distribute optional capabilities without enlarging 
 
 ## Decision
 
-An Extension is an optional, content-agnostic installation and ownership unit for complete files placed through existing Framework routes.
+An Extension is an optional, content-agnostic installation and ownership unit for complete files placed through existing `routes`.
 
-An extension is not a runtime primitive or another Framework root. Installed files retain the meaning, loading behavior, scope, and authority of their destination routes. The #Extension tag records optional package provenance and composition without creating authority.
+An extension is not a runtime primitive or another `root route`. Installed files retain the meaning, loading behavior, scope, and authority of their destination `routes`. The #Extension tag records optional package provenance and composition without creating authority.
 
 Package manifests, dependency edges, catalogue organization, and ownership receipts exist for installation and managed lifecycle operations. Installed content remains complete runtime truth and must remain understandable and usable without that metadata or the CLI.
 

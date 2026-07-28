@@ -59,13 +59,15 @@ The [typed authority terminology decision](../../decisions/authoritative-source-
 - Use `Core`, `Memory`, `Framework`, and `Extensions` for their defined Open Forge meanings
 - Use `standard` for the default routes or configuration Open Forge provides
 - Use ordinary lowercase words when no defined Open Forge concept is intended
+- Put backticks around an exact defined term when prose refers to that vocabulary item, such as `root route`, `responsibility`, or `entrypoint`; leave the same words unformatted when they are ordinary language rather than term references
 - Keep route descriptions natural, descriptive, and suggestive rather than starting every entry with the same formula
 - Prefer established terms and links over introducing a synonym for variety
 
 ## Sentences And Punctuation
 
 - Prefer active voice and concrete verbs
-- Use commas, parentheses, colons, semicolons, or separate sentences instead of em dashes
+- Use commas, parentheses, colons, or separate sentences instead of em dashes
+- Prefer a period (`.`) to a semicolon (`;`). Use `;` only when splitting the sentence would make the relationship materially less clear
 - Omit terminal periods from isolated one-sentence definitions and one-sentence list items
 - Keep normal punctuation when a paragraph or list item contains several sentences
 - Avoid stacked parenthetical qualifications when separate sentences would expose the relationship more clearly
@@ -169,7 +171,7 @@ Extensions must not inject blocks, create hidden state, redefine routes, or add 
 Clearer:
 
 ```text
-Extensions add complete files through ordinary Framework routes. Installed files retain the meaning of their destination routes.
+Extensions add complete files through ordinary `routes`. Installed files retain the meaning of their destination `routes`.
 ```
 
 The positive form defines the valid model. A separate negative sentence is still appropriate when it closes a specific risk not excluded by that model.

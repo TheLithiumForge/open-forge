@@ -40,7 +40,7 @@ It may contribute:
 - A deliberate combination
 - Only dependencies as a convenience pack
 
-Extension is not a runtime primitive. After installation, every file retains the ordinary meaning of the Framework route where it lives. A skill remains a skill, a directive remains binding in its loaded scope, a workflow remains a routed recipe, and Memory retains its state and authority.
+Extension is not a runtime primitive. After installation, every file retains the ordinary meaning of its destination `route`. A Skill remains a Skill, a Directive remains binding in its loaded scope, a Workflow remains a routed recipe, and Memory retains its state and authority.
 
 The package delivers and optionally manages files. It does not create another agent interpretation layer.
 
@@ -52,7 +52,7 @@ The following constraints define the intended Extensions boundary beyond the cur
 2. Explicit user selection precedes installation
 3. Installed files remain complete runtime truth
 4. Extension metadata never becomes necessary for agent interpretation
-5. Extension content uses ordinary Framework routes and relationships
+5. Extension content uses ordinary `routes` and relationships
 6. Packages add whole files rather than injecting private mutations into shared Markdown
 7. Every installed managed path has explicit ownership
 8. Dependency edges compose installable units without redefining runtime relationships
@@ -136,7 +136,7 @@ Standard runtime formats such as `SKILL.md` retain their native metadata and res
 
 Markdown links resolve relative to the file in the assembled workspace. A same-package link should resolve in the isolated payload. A link to Core or a declared dependency may resolve only after complete assembly.
 
-Generated route entries expose installed files but do not own their meaning.
+Generated `entries` expose installed files but do not own their meaning.
 
 ## Runtime Boundary
 
@@ -145,7 +145,7 @@ An installed extension disappears as a runtime abstraction.
 Agents use:
 
 - Installed Markdown
-- Framework entrypoints
+- Framework `entrypoints`
 - Native `SKILL.md` packages
 - Relative links
 - Tags
@@ -234,7 +234,7 @@ The receipt allows the CLI to distinguish:
 - An existing unowned file
 - A package dependency that remains required
 
-Generated `Entries` bodies are excluded from authored ownership identity because the CLI may legitimately rebuild them around an extension-owned entrypoint.
+Generated `Entries` bodies are excluded from authored ownership identity because the CLI may legitimately rebuild them around an extension-owned `entrypoint`.
 
 An unmanaged overlay or externally installed skill remains outside the receipt. Routing it does not transfer ownership.
 
@@ -250,7 +250,7 @@ Removal:
 - Refuses to break retained dependents
 - Preserves modified owned files by blocking
 - Preserves shared files while another owner remains
-- Refuses to remove an entrypoint that would strand retained routed descendants
+- Refuses to remove an `entrypoint` that would strand retained routed descendants
 - Does not automatically prune orphaned dependencies
 
 This behavior is safety-oriented but still lacks an explicit versioned update or migration model.
@@ -352,7 +352,7 @@ The first-party catalogue grew through dogfooding. It has no accepted admission,
 
 ### Scope-Aware Installation Is Incomplete
 
-Payload paths can target deep routes, but the package model does not yet provide a complete user-facing design for selecting a scope, initializing missing scoped Framework routes, or explaining how ownership composes across many repositories and submodules.
+Payload paths can target deep `routes`, but the package model does not yet provide a complete user-facing design for selecting a scope, initializing missing scope `entrypoints`, or explaining how ownership composes across many repositories and submodules.
 
 ### Recovery Is Process-Local
 
@@ -366,7 +366,7 @@ The [Extensions overhaul candidate](../../../emerging/ideas/extensions-overhaul.
 
 Extensions are not:
 
-- Another Framework root
+- Another `root route` or interpretation model
 - A new runtime primitive
 - A provider-specific plugin runtime
 - A hidden instruction database

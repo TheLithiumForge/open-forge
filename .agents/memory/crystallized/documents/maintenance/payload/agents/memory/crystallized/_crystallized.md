@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Current maintenance contracts for the installable Crystallized Memory entrypoint and its Decisions and Documents routes
-  responsibility: Preserve accepted durable state, consolidation, replacement history, standard child routes, recursive scope, and source alignment
+  responsibility: Preserve accepted durable state, consolidation, replacement history, standard nested roles, recursive scope, and source alignment
   tags: [Memory, Document, CurrentTruth, Evergreen, Maintenance, Governance, Payload, Crystallized]
 ---
 
@@ -19,7 +19,7 @@ The [Crystallized state contract](../../../../../framework/memory/crystallized.m
 - Clear user direction, delegated authority, a requested action that clearly requires the choice, or a declared external authority establishes acceptance within scope; tags, repetition, and agent confidence do not
 - The entrypoint keeps one coherent current representation for each distinct question and scope by updating, splitting, merging, or reshaping existing material
 - Material that is no longer current is archived or linked with enough context to understand the change
-- Decisions and Documents remain the two standard child routes and enter through ordinary generated navigation
+- Decisions and Documents remain the two standard nested roles and enter through ordinary generated navigation
 - Recursive scope follows the universal loader contract and does not force all authoritative state into Memory
 - The installed parent contains no project-specific accepted records
 

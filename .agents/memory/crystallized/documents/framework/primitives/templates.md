@@ -19,11 +19,11 @@ Templates expose the need or result they address so the most specific useful sta
 
 Generic Templates are fallbacks. A specialization earns its own source only when the content to be instantiated differs materially, not merely because a subject has a different name. This keeps useful starting points discoverable without turning Templates into a catalogue of every possible artifact.
 
-## Instantiation And Authority
+## Instantiation And Ownership
 
-Instantiation transfers authority to the destination.
+Instantiation transfers ownership to the created artifact.
 
-The created artifact receives its own accurate ownership, scope, state, authoritative relationships, and content. Later Template changes do not update the result, and the Template does not create continuing conformance.
+The created artifact receives its own accurate scope, state, authoritative relationships, and content. The instantiated artifact becomes the authoritative source for its content within that scope. Later Template changes do not update it, and the Template does not create continuing conformance.
 
 This distinguishes Templates from Patterns. A Pattern continues to guide related results. A Template contributes starting content once. A Template may implement or link to a Pattern, while a Directive or Axiom may require continuing behavior, but those relationships retain their separate authoritative sources.
 

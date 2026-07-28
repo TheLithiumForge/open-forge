@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Current maintenance contracts for the installable Working Memory entrypoint and its Handoffs and Sessions routes
-  responsibility: Preserve bounded resumability, expected expiration, extraction, standard child routes, recursive scope, and source alignment
+  responsibility: Preserve bounded resumability, expected expiration, extraction, standard nested roles, recursive scope, and source alignment
   tags: [Memory, Document, CurrentTruth, Evergreen, Maintenance, Governance, Payload, Working, Contextual]
 ---
 

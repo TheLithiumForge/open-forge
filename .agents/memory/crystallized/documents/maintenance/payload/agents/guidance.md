@@ -21,6 +21,7 @@ The [current Guidance document](../../../framework/primitives/guidance.md) defin
 - Guidance remains advisory and requires the reason for a context-driven adaptation to stay visible
 - Child routes may narrow or preserve positive scope through the ordinary routing contract
 - The installable source begins with no opinionated Guidance files
+
 ## Verification
 
 - Core installation tests verify that the category installs, indexes, and remains baseline-loaded

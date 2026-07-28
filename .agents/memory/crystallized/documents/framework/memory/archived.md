@@ -28,6 +28,12 @@ Material without plausible historical value may be pruned rather than archived.
 
 Archive children may mirror former routes, group material by origin, or use another useful taxonomy. They are organizational scopes, not additional Memory states.
 
+Archived is a Memory state, not a repository-wide trash folder. It stores historical Memory records and may preserve linked context about retired Core, code, external systems, or other artifacts. An arbitrary workspace artifact does not move into Memory merely because it became obsolete.
+
+Scope placement follows the Memory model. `memory/archived/mobile-app/` groups mobile-app history inside the shared Archived state. `memory/mobile-app/archived/` gives a broader mobile-app scope its own Archived state beside any other Memory states it uses.
+
+Choose an archive destination for useful future discovery rather than mechanically mirroring every former path. Preserve the exact origin and replacement through explicit links or provenance.
+
 Restoration validates historical material against current conditions and creates an explicit Working, Emerging, Crystallized, #Core, or external destination. Reading or moving an archived file does not restore its former authority automatically.
 
 ## Related Current Sources

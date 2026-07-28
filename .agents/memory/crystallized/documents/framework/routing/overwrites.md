@@ -21,9 +21,9 @@ Use one when the base remains useful and correct except for a small local additi
 
 Typical adjustments include a local rule, example, exception, or interpretation that belongs specifically to the base file's existing subject and scope.
 
-Prefer a local routed file when the meaning stands independently, a scope route when the subject needs narrower placement, and a direct edit, replacement, or removal when the base is fundamentally unsuitable. An overwrite should not make a reader reconstruct the intended model from extensive contradictions.
+Prefer a local routed file when the meaning stands independently, a routed scope when the subject needs narrower placement, and a direct edit, replacement, or removal when the base is fundamentally unsuitable. An overwrite should not make a reader reconstruct the intended model from extensive contradictions.
 
-An overwrite is a customization of one base file. It is not a separate route, primitive, Memory state, Extension mechanism, or generated entry.
+An overwrite is a customization of one base file. It is not a separate `route`, primitive, Memory state, Extension mechanism, or generated `entry`.
 
 ## Identity And Loading
 
@@ -34,11 +34,11 @@ The shared filename stem and containing folder identify the pair:
 {name}.overwrite.md
 ```
 
-Whenever the base is loaded, the overwrite is read immediately afterward. It inherits the base route, scope, and loading behavior.
+Whenever the base is loaded, the overwrite is read immediately afterward. It inherits the base `route`, scope, and loading behavior.
 
-An overwrite is never selected, indexed, or loaded independently. Frontmatter, descriptions, or tags inside it do not create a second routing surface or change the base file's generated entry or load policy.
+An overwrite is never selected, indexed, or loaded independently. Frontmatter, `descriptions`, or tags inside it do not create a second routing surface or change the base file's generated `entry` or load policy.
 
-An overwrite without its base is an orphan. It has no inherited route, scope, or loading behavior and must be repaired, moved to an appropriate independent route, or removed.
+An overwrite without its base is an orphan. It has no inherited `route`, scope, or loading behavior and must be repaired, moved to an appropriate independent `route`, or removed.
 
 ## Composition And Precedence
 
@@ -46,15 +46,15 @@ The base remains effective except where the overwrite explicitly changes it.
 
 When both files address the same question incompatibly, the overwrite has final precedence within the base file's scope. State the affected base behavior and its local result clearly enough that no reader must guess which statement applies.
 
-File-local precedence does not grant authority outside the base route. It does not silently override loaded ancestor Directives, another authoritative source, clear user direction, runtime safety, or platform constraints. Conflicts across those boundaries follow the normal authority and conflict contract.
+File-local precedence does not grant authority outside the base `route`. It does not silently override loaded ancestor Directives, another authoritative source, clear user direction, runtime safety, or platform constraints. Conflicts across those boundaries follow the normal authority and conflict contract.
 
-An overwrite may explicitly replace or disable one bounded behavior. It cannot remove the base route or its loading behavior because the base remains the selected file. Replace or remove the base when the complete contract should no longer apply.
+An overwrite may explicitly replace or disable one bounded behavior. It cannot remove the base `route` or its loading behavior because the base remains the selected file. Replace or remove the base when the complete contract should no longer apply.
 
 ## Generated Boundary
 
 Generated `Entries` describe routed sources and never list overwrite companions.
 
-An entrypoint overwrite adjusts only the authored contract associated with its base. It does not own a second generated region. Change navigation by adding, moving, editing, or removing routed sources, then rebuild the base entrypoint's generated `Entries`.
+An `entrypoint` overwrite adjusts only the authored contract associated with its base. It does not own a second generated region. Change navigation by adding, moving, editing, or removing routed sources, then rebuild the base `entrypoint`'s generated `Entries`.
 
 ## Ownership And Lifecycle
 

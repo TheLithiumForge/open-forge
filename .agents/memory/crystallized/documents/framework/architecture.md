@@ -42,23 +42,23 @@ Human-readable Markdown contains the complete semantic answer. Deterministic too
 The following structural constraints realize the [Open Forge Principles](../principles.md) throughout Core and Memory. They are architectural consequences rather than a second authoritative source for product identity:
 
 1. Every important concept has one authoritative source for each distinct question
-2. Routes expose enough information to select relevant context before loading its body
-3. Loaded ancestor Axioms remain active below them without being copied into children
+2. A `route` exposes enough information to select relevant context before loading its body
+3. Loaded ancestor `Axioms` remain active below them without being copied into children
 4. Loading controls visibility and timing, not authority
-5. Scope is explicit in the route path, entrypoint meaning, description, and relationships
+5. Scope is explicit in the `route` path, `entrypoint` meaning, `description`, and relationships
 6. Workspace meaning remains human-readable and reconstructable without the CLI, caches, receipts, or retrieval databases
-7. Standard routes are useful defaults while remaining removable, replaceable, and recursively customizable
+7. Standard `routes` are useful defaults while remaining removable, replaceable, and recursively customizable
 8. Removed defaults stay removed unless restoration is explicitly requested
 9. Memory may describe any subject without activating behavior it records
 10. Accepted behavior that should govern work belongs in Core
 11. Generated metadata is derived and rebuildable
 12. Structure and tools improve the probability of correct agent behavior without claiming mechanical control over reasoning
-13. Instantiating a template transfers ownership to the destination; the template does not manage the result
-14. Framework contracts target the broadest stable authoritative route that preserves their required meaning
+13. Instantiating a template transfers ownership to the created result; the template does not manage it
+14. Framework contracts target the broadest stable authoritative `route` that preserves their required meaning
 
 ## Shipped Framework
 
-Open Forge ships a standard Framework rather than an empty routing library. Its routes embody the useful starting environment developed through dogfooding while remaining ordinary files that users may reshape.
+Open Forge ships a standard Framework rather than an empty routing library. Its `routes` embody the useful starting environment developed through dogfooding while remaining ordinary files that users may reshape.
 
 The standard structure is conceptually:
 
@@ -88,11 +88,11 @@ provider bridge files when supported
     archived/
 ```
 
-The canonical workspace entry and loader form the entry boundary. Core route categories provide the shared primitive vocabulary. Memory supplies the standard state model and starter routes used to preserve continuity and evolution.
+The canonical workspace `entry` and loader form the entry boundary. Core `route` categories provide the shared primitive vocabulary. Memory supplies the standard state model and starter `routes` used to preserve continuity and evolution.
 
-This tree is the distributed product shape, not an untouchable taxonomy. A user may add scopes, add or remove routes, replace framework files, use only a subset of the primitives, or reorganize local material through valid route chains. Removing a standard route removes that capability from the local profile; it does not make the remaining Framework invalid. Validation checks the structure that exists rather than demanding that deleted defaults reappear.
+This tree is the distributed product shape, not an untouchable taxonomy. A user may add scopes, add or remove `routes`, replace framework files, use only a subset of the primitives, or reorganize local material through valid `route` chains. Removing a standard `route` removes that capability from the local profile; it does not make the remaining Framework invalid. Validation checks the structure that exists rather than demanding that deleted defaults reappear.
 
-Core is the dependency floor because every other Open Forge area relies on its entry, routing, authority, and relationship semantics. The shipped Framework includes both Core and Memory because persistence and deliberate evolution are central to the product rather than optional afterthoughts.
+Core is the dependency floor because every other Open Forge area relies on its `entry`, routing, authority, and relationship semantics. The shipped Framework includes both Core and Memory because persistence and deliberate evolution are central to the product rather than optional afterthoughts.
 
 ## Canonical Entry
 
@@ -110,12 +110,15 @@ Managed entry blocks preserve workspace-owned content outside their markers. A p
 
 Core provides the smallest common language needed to route, interpret, and apply workspace context. It does not try to encode ordinary reasoning, a development lifecycle, or a complete methodology.
 
-Framework wording uses #Core collectively when any suitable Core route may satisfy a requirement. It names a specific primitive when that primitive's distinct semantics matter, such as Directives for binding behavior, and enumerates concrete standard routes when the default set itself is the subject. This keeps customizable Frameworks valid without weakening precise contracts.
+Framework wording uses #Core collectively when any suitable Core `route` may satisfy a requirement. It names a specific primitive when that primitive's distinct semantics matter, such as Directives for binding behavior, and enumerates concrete standard `routes` when the default set itself is the subject. This keeps customizable Frameworks valid without weakening precise contracts.
 
-Core contains:
+Core mechanics are:
 
-- The loader and entrypoint contract
+- The loader and `entrypoint` contract
 - Authority, inheritance, loading, tag, and overwrite semantics
+
+The seven Core primitives are:
+
 - Directives
 - Guidance
 - Patterns
@@ -124,25 +127,25 @@ Core contains:
 - Workflows
 - Workspace routes
 
-These categories are distinct because they answer different questions. Their default entrypoints and current local contents are exposed by the [directives](../../../../directives/_directives.md), [guidance](../../../../guidance/_guidance.md), [patterns](../../../../patterns/_patterns.md), [skills](../../../../skills/_skills.md), [templates](../../../../templates/_templates.md), [workflows](../../../../workflows/_workflows.md), and [workspace](../../../../workspace/_workspace.md) routes.
+These primitives are distinct because they answer different questions. Their default `entrypoints` and current local contents are exposed by the [directives](../../../../directives/_directives.md), [guidance](../../../../guidance/_guidance.md), [patterns](../../../../patterns/_patterns.md), [skills](../../../../skills/_skills.md), [templates](../../../../templates/_templates.md), [workflows](../../../../workflows/_workflows.md), and [workspace](../../../../workspace/_workspace.md) `routes`.
 
 ### Routing
 
-Routing moves from the canonical loader through small entrypoints that expose direct children. Descriptions support pre-load selection, relative links identify destinations, and tags add compact loading, type, scope, and search signals. Selected descendants inherit loaded ancestor Axioms, while unselected siblings remain outside active context.
+Routing moves from the canonical loader through small `entrypoints` that expose direct children. Each `description` supports pre-load selection, relative links identify destinations, and tags add compact loading, type, scope, and search signals. Selected descendants inherit loaded ancestor `Axioms`, while unselected siblings remain outside active context.
 
-Work may select several scopes without merging them. Each keeps its own route chain and authority, explicit relationships connect them, and conflicts about a shared result are resolved by clear direction or the authoritative source for that result rather than by path depth or load order.
+Work may select several scopes without merging them. Each keeps its own `route` chain and authority, explicit relationships connect them, and conflicts about a shared result are resolved by clear direction or the authoritative source for that result rather than by path depth or load order.
 
-Loading determines when routed context becomes visible, not what authority it has. Baseline context follows visible immediate-loading routes, continuity context is recovered across route and session changes, and other context remains selected on demand.
+Loading determines when routed context becomes visible, not what authority it has. Baseline context follows visible immediate-loading `routes`, continuity context is recovered across `route` and session changes, and other context remains selected on demand.
 
 The detailed current contracts are separated by responsibility:
 
-- The [routing model](routing/model.md) defines entrypoints, entries, direct-child navigation, selection, and relevance-scaled growth
-- The [scope and inheritance contract](routing/scope.md) defines route types, concrete slugs, recursive placement, and loaded inheritance
+- The [routing model](routing/model.md) defines `entrypoints`, `entries`, direct-child navigation, selection, and relevance-scaled growth
+- The [scope and inheritance contract](routing/scope.md) defines the root boundary, concrete `slugs`, universal scoping, `managed route` relationships, and loaded inheritance
 - The [loading and continuity contract](routing/loading.md) defines baseline, continuity, selected context, refresh boundaries, and deterministic assistance
-- The [path contract](routing/paths.md) defines containing-file-relative Markdown links, workspace-relative tool routes, normalization, and containment
+- The [path contract](routing/paths.md) defines containing-file-relative Markdown links, workspace-relative tool `routes`, normalization, and containment
 - The [routed Markdown representation](markdown/routes.md) defines their canonical authored syntax and filename forms
 
-The [loader](../../../../loader.md) remains authoritative for the exact installed terms and reserved-tag wording. Component entrypoints define the distinct meaning of the categories they expose.
+The [loader](../../../../loader.md) remains authoritative for the exact installed terms and reserved-tag wording. Component `entrypoints` define the distinct meaning of the categories they expose.
 
 ## Authority
 
@@ -153,7 +156,7 @@ The operating rules are:
 1. Platform constraints and runtime safety bound every action
 2. Clear current user direction governs goals, priorities, consequential tradeoffs, and accepted changes within its scope
 3. A declared external source of truth is authoritative for the facts delegated to it
-4. Loaded Axioms, including those supplied by Directives, govern Framework interpretation and applicable behavior
+4. Loaded `Axioms`, including those supplied by Directives, govern Framework interpretation and applicable behavior
 5. A selected authoritative source governs the accepted state of its subject
 6. Narrower selected material of the same non-directive kind is preferred when it safely specializes broader material
 7. Loaded directives add constraints to ancestor directives rather than silently replacing them
@@ -171,7 +174,7 @@ The [Core primitive model](primitives/model.md) defines the complete role vocabu
 
 Every shipped primitive has a focused conceptual contract under [Core Primitives](primitives/_primitives.md): Directives, Guidance, Patterns, Skills, Templates, Workflows, and Workspace. These documents deepen each role's meaning, boundaries, lifecycle, and relationships without becoming parallel runtime instructions.
 
-Installed category entrypoints own the complete compact operational and file requirements that users and agents receive. Maintenance contracts own canonical sources, alignment obligations, distribution details, and verification.
+Installed category `entrypoints` own the complete compact operational and file requirements that users and agents receive. Maintenance contracts own canonical sources, alignment obligations, distribution details, and verification.
 
 ## Memory
 
@@ -186,7 +189,7 @@ The detailed current contracts are separated by responsibility:
 - The [transition contract](memory/transitions.md) defines capture, direct movement, consolidation, promotion, supersession, archival, restoration, and relationship updates
 - The [accepted-state contract](truth.md) defines framework-wide acceptance, #Contextual and #CurrentTruth treatment, and #Evergreen synchronization
 
-The states are not maturity scores or a mandatory pipeline. Installed Memory entrypoints retain the complete compact operational contract users receive, while these current documents explain the coherent design without becoming hidden runtime dependencies.
+The states are not maturity scores or a mandatory pipeline. Installed Memory `entrypoints` retain the complete compact operational contract users receive, while these current documents explain the coherent design without becoming hidden runtime dependencies.
 
 ## Current Knowledge Roles
 
@@ -213,7 +216,7 @@ Open Forge uses ordinary Markdown relationships before adding specialized retrie
 
 The primary relationship surface is:
 
-- Frontmatter descriptions that become entry labels
+- Frontmatter `descriptions` that become `entry` labels
 - Containing-file-relative links that identify authoritative sources and related context
 - Heading anchors that target the relevant concept
 - Established descriptive tags that support classification, association, and search
@@ -227,15 +230,21 @@ This relationship model is intentionally sufficient for future graph, semantic, 
 
 ## Recursive Customization
 
-Every standard Framework route may contain local files, child scopes, or scoped Framework routes. The same entrypoint, inheritance, description, link, and tag contract works at every depth.
+Each `root route` exists only where the loader exposes it and is not scopable. Every `route` below a `root route` may contain local files and any number of routed scope `slugs` before, between, or after deeper `route` segments.
+
+Each scope narrows everything that follows without reordering `route` segments recognized by a declared manager. A familiar nested `slug` does not recreate a `root route` or grant its behavior.
+
+The `root routes` compose through explicit links by default. A Workflow may use a Skill or Pattern without physically containing a second Core tree.
+
+Users may add roots or deeper `routes`, replace standard `routes`, and remove defaults that provide no local value. Generic routing remains available to every valid `entrypoint` tree. A `route` receives its behavior from explicit `entrypoints`, loaded ancestors, and accepted local contracts.
 
 The preferred customization choices are:
 
 1. Add a local routed file when the new meaning stands independently
-2. Add a scope when authority or meaning needs a narrower route
+2. Add a scope when authority or meaning needs a narrower `route`
 3. Use a user-owned `{name}.overwrite.md` companion for a small local adjustment to a mostly suitable base
 4. Edit or replace the base when the desired model is fundamentally different
-5. Remove routes that provide no local value
+5. Remove `routes` that provide no local value
 
 The [overwrite contract](routing/overwrites.md) defines companion identity, inherited routing and loading, file-local precedence, generated boundaries, ownership, and lifecycle.
 
@@ -245,7 +254,7 @@ An installer or updater preserves existing user content by default. Missing stan
 
 ## Generated And Deterministic State
 
-Generated `Entries` regions are derived navigation metadata. Their authored sources are route files, entrypoint frontmatter, and the filesystem structure. Rebuilding a generated region cannot change the intended meaning of the routed content.
+Generated `Entries` regions are derived navigation metadata. Their authored sources are `route` files, `entrypoint` frontmatter, and the filesystem structure. Rebuilding a generated region cannot change the intended meaning of the routed content.
 
 Receipts, caches, indexes, vector databases, and other machine state may support installation, validation, retrieval, or safe removal. They remain:
 
@@ -257,9 +266,9 @@ Receipts, caches, indexes, vector databases, and other machine state may support
 Deterministic tools may:
 
 - Assemble ordered context
-- Follow explicit route chains
-- Validate links, entrypoints, metadata, and inheritance
-- Rebuild generated entries
+- Follow explicit `route` chains
+- Validate links, `entrypoints`, metadata, and inheritance
+- Rebuild generated `entries`
 - Preview and apply bounded file changes
 - Preserve user content
 - Detect collisions and unsafe paths
@@ -269,7 +278,7 @@ They may not silently promote a candidate, infer accepted direction, or make a p
 
 ## Extensions Boundary
 
-Extensions add optional reusable content through the same Framework routes and primitive meanings. They do not create a second loader, root authority model, or runtime interpretation system.
+Extensions add optional reusable content through the same `routes` and primitive meanings. They do not create a second loader, root authority model, or runtime interpretation system.
 
 After installation, an extension's files behave like ordinary directives, patterns, guidance, skills, templates, workflows, workspace routes, or Memory. Its packaging metadata does not become necessary to understand its runtime meaning.
 

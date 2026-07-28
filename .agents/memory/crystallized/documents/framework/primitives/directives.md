@@ -15,7 +15,7 @@ Directives let a workspace grow explicit mandatory behavior without placing ever
 
 ## Relationship With Framework Axioms
 
-Framework Axioms define the mechanics and invariants of an already loaded Framework route. A Directive uses those mechanics to provide independently selectable binding behavior.
+Framework `Axioms` define the mechanics and invariants of an already loaded `route`. A Directive uses those mechanics to provide independently selectable binding behavior.
 
 A category Axiom belongs with the route whose meaning it defines. A Directive belongs in its own route when the mandatory behavior is independently meaningful, reusable, and selectable. Adding every workspace rule to category entrypoints would make unrelated concerns inseparable and expand baseline context.
 

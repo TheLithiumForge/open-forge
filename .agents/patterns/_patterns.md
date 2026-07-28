@@ -6,7 +6,7 @@ open-forge:
 
 # Patterns
 
-Patterns define recognizable arrangements that make related work consistent across modules, projects, and repositories and easier to review
+Patterns define reusable inspectable shapes that keep related results consistent and recognizable
 
 ## Axioms
 
