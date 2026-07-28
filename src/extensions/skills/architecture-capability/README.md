@@ -8,4 +8,4 @@ It is installed automatically by `architecture-workflow` and may be selected dir
 open-forge extend architecture-capability
 ```
 
-The installed `SKILL.md` package remains runtime truth; the manifest only composes installation.
+The installed `SKILL.md` package remains runtime truth. The manifest only composes installation.

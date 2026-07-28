@@ -14,6 +14,7 @@ import {
 } from "../../tests/support/index.ts";
 
 const cliFile = repoPath("src", "cli", "cli.ts");
+const generatedIndexEndMarker = "<!-- open-forge:generated-index:end -->";
 const sandbox = useTestSandbox("open-forge-cli");
 
 describe("category index generation", () => {
@@ -171,7 +172,14 @@ This paragraph is authored content.
   test("indexes native skill packages under skills routes", async () => {
     const root = await createRoot();
     const agents = path.join(root, ".agents");
-    const skills = await createCategory(agents, "skills", "# Skills\n");
+    const skills = await createCategory(agents, "skills", `---
+open-forge:
+  description: Native Skill packages
+  tags: [Skill]
+---
+
+# Skills
+`);
     const implementation = path.join(skills, "implementation");
     await fs.mkdir(path.join(implementation, "references"), { recursive: true });
     await fs.writeFile(path.join(implementation, "SKILL.md"), `---
@@ -304,9 +312,14 @@ describe("install", () => {
     expect(installedLoader).toContain("](directives/_directives.md) - #LoadNow");
     expect(installedLoader).not.toContain("](.agents/");
     expect(installedLoader).toContain("#Evergreen - Material that must stay aligned");
-    expect(installedLoader).toContain("`framework route` - Standard Core or Memory route");
-    expect(installedLoader).toContain("Scope routes use concrete `slugs` and may appear before, after, or between framework route segments");
-    expect(installedLoader).toContain("placement narrows their subject without changing their roles");
+    expect(installedLoader).toContain("`route` - Navigable path exposed through `entrypoints` and `entries`");
+    expect(installedLoader).toContain("Root routes exist only where this loader exposes them");
+    expect(installedLoader).toContain("Every route below a root is scopable");
+    expect(installedLoader).toContain("Scoping preserves the order and meaning of deeper routes");
+    expect(installedLoader).toContain("A familiar slug or tag alone creates neither root behavior nor managed status");
+    expect(installedLoader).toContain("Each manager declares which route shapes it recognizes");
+    expect(installedLoader).toContain("Users may add, move, replace, or remove routes");
+    expect(installedLoader).toContain(".agents/{root-route}/{scope-1}/.../{scope-n}/{route}/");
     expect(installedLoader).toContain("A user-owned `{name}.overwrite.md` is not an independent route");
     expect(installedLoader).toContain("is not independently indexed or selected");
     expect(installedLoader).toContain("has final precedence within that file's scope");
@@ -317,8 +330,8 @@ describe("install", () => {
 
     const installedMemory = await fs.readFile(path.join(root, ".agents", "memory", "_memory.md"), "utf8");
     expect(installedMemory).toContain("Memory may record any subject, including how work is performed");
-    expect(installedMemory).toContain("Place a scope after a Memory state when it applies only to that state");
-    expect(installedMemory).toContain("initialize only the states it uses");
+    expect(installedMemory).toContain("Apply the loader's generic scoping rules throughout Memory");
+    expect(installedMemory).toContain("preserve their source-defined route sequence through any inserted scopes");
 
     const installedDocuments = await fs.readFile(
       path.join(root, ".agents", "memory", "crystallized", "documents", "_documents.md"),
@@ -373,17 +386,22 @@ describe("install", () => {
     expect(await snapshotTree(root)).toEqual(before);
   });
 
-  test("updates scoped framework route entrypoints by path shape", async () => {
+  test("reconciles Open Forge-managed route entrypoints through scopes", async () => {
     const root = await createRoot();
     const scopedDocuments = path.join(root, ".agents", "memory", "customer-facing", "mobile-app", "crystallized", "platform", "documents");
-    const scopedDecisions = path.join(root, ".agents", "memory", "mobile-app", "crystallized", "decisions");
+    const trailingDocumentsScope = path.join(scopedDocuments, "public-api");
+    const unroutedDocuments = path.join(root, ".agents", "memory", "hidden", "crystallized", "documents");
+    const invalidMemoryOrder = path.join(root, ".agents", "memory", "crystallized", "working", "documents");
     const scopedTemplates = path.join(root, ".agents", "workflows", "frontend", "templates");
-    await fs.mkdir(scopedDocuments, { recursive: true });
-    await fs.mkdir(scopedDecisions, { recursive: true });
-    await fs.mkdir(scopedTemplates, { recursive: true });
+
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    expect((await runCli("create", "category", "memory/customer-facing/mobile-app/crystallized/platform/documents/public-api", root)).exitCode).toBe(0);
+    expect((await runCli("create", "category", "memory/crystallized/working/documents", root)).exitCode).toBe(0);
+    expect((await runCli("create", "category", "workflows/frontend/templates", root)).exitCode).toBe(0);
+    await fs.mkdir(unroutedDocuments, { recursive: true });
     await fs.writeFile(path.join(scopedDocuments, "_documents.md"), `# Old Scoped Documents
 
-Old scoped framework copy.
+Old scoped shipped-route copy.
 
 ## Entries
 
@@ -391,35 +409,119 @@ Old scoped framework copy.
 - old.md - Old route - #Old
 <!-- open-forge:generated-index:end -->
 `);
-    await fs.writeFile(path.join(scopedDecisions, "_decisions.md"), `# Old Scoped Decisions
-
-Old scoped decisions framework copy.
-`);
+    await fs.writeFile(path.join(trailingDocumentsScope, "_public-api.md"), "# User-Owned Documents Scope\n");
+    await fs.writeFile(path.join(unroutedDocuments, "_documents.md"), "# Unrouted Managed-Looking File\n");
+    await fs.writeFile(path.join(invalidMemoryOrder, "_documents.md"), "# Custom Invalid Memory Order\n");
     await fs.writeFile(path.join(scopedTemplates, "_templates.md"), `# Old Scoped Templates
 
-Old scoped templates framework copy.
+Custom route within Workflows.
 `);
     await writeRoute(scopedDocuments, "architecture.md", "Scoped architecture truth", ["Memory", "Document", "CurrentTruth"]);
 
     const result = await runCli("install", root);
     const scopedContent = await fs.readFile(path.join(scopedDocuments, "_documents.md"), "utf8");
-    const scopedDecisionContent = await fs.readFile(path.join(scopedDecisions, "_decisions.md"), "utf8");
+    const trailingScopeContent = await fs.readFile(path.join(trailingDocumentsScope, "_public-api.md"), "utf8");
+    const unroutedContent = await fs.readFile(path.join(unroutedDocuments, "_documents.md"), "utf8");
+    const invalidMemoryContent = await fs.readFile(path.join(invalidMemoryOrder, "_documents.md"), "utf8");
     const scopedTemplateContent = await fs.readFile(path.join(scopedTemplates, "_templates.md"), "utf8");
 
     expect(result.exitCode).toBe(0);
     expect(scopedContent).toContain("Documents are durable accepted records, or routes to those records, for long-form project knowledge.");
-    expect(scopedContent).not.toContain("Old scoped framework copy.");
+    expect(scopedContent).not.toContain("Old scoped shipped-route copy.");
     expect(scopedContent).toContain("- [Scoped architecture truth](architecture.md) - #Memory #Document #CurrentTruth");
-    expect(scopedDecisionContent).toContain("Decisions are accepted rationale for important choices");
-    expect(scopedDecisionContent).not.toContain("Old scoped decisions framework copy.");
-    expect(scopedTemplateContent).toContain("Templates are reusable source artifacts intended to be instantiated");
-    expect(scopedTemplateContent).not.toContain("Old scoped templates framework copy.");
+    expect(trailingScopeContent).toContain("User-Owned Documents Scope");
+    expect(trailingScopeContent).not.toContain("Documents are durable accepted records");
+    expect(unroutedContent).toContain("Unrouted Managed-Looking File");
+    expect(unroutedContent).not.toContain("Documents are durable accepted records");
+    expect(invalidMemoryContent).toContain("Custom Invalid Memory Order");
+    expect(invalidMemoryContent).not.toContain("Documents are durable accepted records");
+    expect(scopedTemplateContent).toContain("Custom route within Workflows.");
+    expect(scopedTemplateContent).not.toContain("Templates are reusable source artifacts intended to be instantiated");
   });
 
-  test("does not treat local scope routes as scoped framework routes", async () => {
+  test("does not restore deliberately removed defaults during ordinary reinstall", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+
+    const removedDefault = path.join(root, ".agents", "patterns", "_patterns.md");
+    const loader = path.join(root, ".agents", "loader.md");
+    await fs.rm(removedDefault);
+    await fs.rm(path.join(root, "AGENTS.md"));
+    await fs.writeFile(
+      loader,
+      (await fs.readFile(loader, "utf8")).replace(generatedIndexEndMarker, "<!-- damaged-generated-index:end -->")
+    );
+
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    expect(await exists(removedDefault)).toBe(false);
+    expect(await exists(path.join(root, "AGENTS.md"))).toBe(false);
+    expect(await fs.readFile(loader, "utf8")).not.toContain("](patterns/_patterns.md)");
+    expect(await fs.readFile(loader, "utf8")).toContain(generatedIndexEndMarker);
+  });
+
+  test("reconciles every shipped nested Memory route through consecutive scopes", async () => {
+    const root = await createRoot();
+    const roleSequences = [
+      ["working"],
+      ["working", "handoffs"],
+      ["working", "sessions"],
+      ["emerging"],
+      ["emerging", "analysis"],
+      ["emerging", "ideas"],
+      ["emerging", "observations"],
+      ["crystallized"],
+      ["crystallized", "decisions"],
+      ["crystallized", "documents"],
+      ["archived"]
+    ];
+    const fixtures: Array<{ targetFile: string; sourceFile: string }> = [];
+    expect((await runCli("install", root)).exitCode).toBe(0);
+
+    for (const [caseIndex, roleSegments] of roleSequences.entries()) {
+      const targetSegments = ["memory", `case-${caseIndex}-outer-a`, `case-${caseIndex}-outer-b`];
+      for (const [roleIndex, role] of roleSegments.entries()) {
+        targetSegments.push(role);
+        if (roleIndex < roleSegments.length - 1) {
+          targetSegments.push(`case-${caseIndex}-inner-a`, `case-${caseIndex}-inner-b`);
+        }
+      }
+
+      const terminal = roleSegments[roleSegments.length - 1];
+      const targetFile = path.join(root, ".agents", ...targetSegments, `_${terminal}.md`);
+      const sourceFile = repoPath("src", "open-forge", ".agents", "memory", ...roleSegments, `_${terminal}.md`);
+      await writeRoutedCategoryChain(root, targetSegments);
+      await fs.writeFile(targetFile, `# Old ${terminal}\n`);
+      fixtures.push({ targetFile, sourceFile });
+    }
+
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    for (const fixture of fixtures) {
+      const source = await fs.readFile(fixture.sourceFile, "utf8");
+      const target = await fs.readFile(fixture.targetFile, "utf8");
+      const description = source.match(/^\s+description:.*$/m)?.[0].trim();
+      expect(description).toBeTruthy();
+      expect(target).toContain(description!);
+    }
+  });
+
+  test("does not reconcile compatibility entrypoints as managed routes", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    expect((await runCli("create", "category", "memory/mobile-app/crystallized/documents", root)).exitCode).toBe(0);
+
+    const folder = path.join(root, ".agents", "memory", "mobile-app", "crystallized", "documents");
+    await fs.rm(path.join(folder, "_documents.md"));
+    await fs.writeFile(path.join(folder, "index.md"), "# Custom Compatibility Entrypoint\n");
+
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    expect(await fs.readFile(path.join(folder, "index.md"), "utf8")).toContain("Custom Compatibility Entrypoint");
+  });
+
+  test("does not treat arbitrary routed scopes as Open Forge-managed routes", async () => {
     const root = await createRoot();
     const reactPatterns = path.join(root, ".agents", "patterns", "mobile-app", "react");
-    await fs.mkdir(reactPatterns, { recursive: true });
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    expect((await runCli("create", "category", "patterns/mobile-app/react", root)).exitCode).toBe(0);
     await fs.writeFile(path.join(reactPatterns, "_react.md"), `# React
 
 Custom React route.
@@ -2782,7 +2884,7 @@ No binding axioms were declared.
     expect(result.stdout).toContain("directive must declare exactly one non-empty Axioms section");
   });
 
-  test("validates explicitly tagged primitives under a neutral custom route", async () => {
+  test("validates explicitly tagged primitives under a neutral route", async () => {
     const root = await createRoot();
     expect((await runCli("install", root)).exitCode).toBe(0);
     expect((await runCli("create", "category", "custom", root)).exitCode).toBe(0);
@@ -2870,20 +2972,174 @@ No binding axioms were declared.
     expect(JSON.parse(result.stdout)).toMatchObject({ errors: 0, warnings: 0 });
   });
 
-  test("allows organizational workflow categories and workflow-local primitive routes", async () => {
+  test("keeps nested slugs and conflicting tags inside the containing root route contract", async () => {
     const root = await createRoot();
     expect((await runCli("install", root)).exitCode).toBe(0);
     expect((await runCli("create", "category", "workflows/frontend/patterns", root)).exitCode).toBe(0);
     const localPatterns = path.join(root, ".agents", "workflows", "frontend", "patterns");
     const localEntrypoint = await fs.readFile(path.join(localPatterns, "_patterns.md"), "utf8");
-    expect(localEntrypoint).toContain("tags: [Pattern]");
-    await writeRoute(localPatterns, "shape.md", "Frontend shape", ["Pattern"]);
+    expect(localEntrypoint).toContain("tags: [Workflow]");
+    expect(localEntrypoint).not.toContain("tags: [Pattern]");
+
+    await fs.writeFile(
+      path.join(localPatterns, "_patterns.md"),
+      localEntrypoint.replace("tags: [Workflow]", "tags: [Pattern]")
+    );
+    expect((await runCli("create", "category", "workflows/frontend/patterns/nested", root)).exitCode).toBe(0);
+    expect(await fs.readFile(path.join(localPatterns, "nested", "_nested.md"), "utf8")).toContain("tags: [Workflow]");
+    await fs.writeFile(path.join(localPatterns, "broken.md"), "# Broken Workflow\n\n## Steps\n\n1. Run.\n");
+
+    expect((await runCli("create", "category", "directives/local", root)).exitCode).toBe(0);
+    const localDirectives = path.join(root, ".agents", "directives", "local");
+    const directiveEntrypoint = await fs.readFile(path.join(localDirectives, "_local.md"), "utf8");
+    await fs.writeFile(
+      path.join(localDirectives, "_local.md"),
+      directiveEntrypoint.replace("tags: [Directive]", "tags: [Pattern]")
+    );
+    await fs.writeFile(path.join(localDirectives, "broken.md"), "# Broken Directive\n\nNo Axioms.\n");
     expect((await runCli("index", root)).exitCode).toBe(0);
 
-    const result = await runCli("doctor", "--json", root);
+    const result = await runCli("doctor", root);
 
+    expect(result.exitCode).toBe(1);
+    expect(result.stdout).toContain("workflow must define exactly one Mode section");
+    expect(result.stdout).toContain("directive must declare exactly one non-empty Axioms section");
+  });
+
+  test("indexes native Skill packages within recursively routed scopes beneath Skills", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    expect((await runCli("create", "category", "skills/product/frontend", root)).exitCode).toBe(0);
+
+    const scopedSkills = path.join(root, ".agents", "skills", "product", "frontend");
+    const review = path.join(scopedSkills, "review");
+    await fs.mkdir(path.join(review, "references"), { recursive: true });
+    await fs.writeFile(path.join(review, "SKILL.md"), `---
+name: frontend-review
+description: Review frontend work inside the selected Skills scope
+---
+
+# Frontend Review
+`);
+    await fs.writeFile(path.join(review, "references", "checklist.md"), "# Checklist\n");
+    await writeRoute(scopedSkills, "legacy.md", "Loose Skill-tagged Markdown", ["Skill"]);
+
+    expect((await runCli("index", root)).exitCode).toBe(0);
+    const content = await fs.readFile(path.join(scopedSkills, "_frontend.md"), "utf8");
+
+    expect(content).toContain("- [Review frontend work inside the selected Skills scope](review/SKILL.md) - #Skill");
+    expect(content).not.toContain("references/checklist.md");
+    expect(content).not.toContain("legacy.md");
+
+    const result = await runCli("doctor", "--json", root);
+    expect(result.exitCode).toBe(0);
+    expect(JSON.parse(result.stdout)).toMatchObject({
+      errors: 0,
+      warnings: 1,
+      findings: [expect.objectContaining({
+        level: "warning",
+        route: ".agents/skills/product/frontend/legacy.md",
+        message: "not reachable through generated routing"
+      })]
+    });
+  });
+
+  test("does not index native Skill packages beneath another root route", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    expect((await runCli("create", "category", "workflows/frontend/skills", root)).exitCode).toBe(0);
+
+    const workflowScope = path.join(root, ".agents", "workflows", "frontend", "skills");
+    const helper = path.join(workflowScope, "helper");
+    await fs.mkdir(helper, { recursive: true });
+    await fs.writeFile(path.join(helper, "SKILL.md"), `---
+name: workflow-local-helper
+description: A custom helper that is not in the Skills root route
+---
+
+# Workflow Local Helper
+`);
+
+    expect((await runCli("index", root)).exitCode).toBe(0);
+    const content = await fs.readFile(path.join(workflowScope, "_skills.md"), "utf8");
+
+    expect(content).toContain("tags: [Workflow]");
+    expect(content).not.toContain("workflow-local-helper");
+    expect(content).not.toContain("helper/SKILL.md");
+  });
+
+  test("does not infer route behavior from a familiar root entrypoint without a primitive tag", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+
+    const workflows = path.join(root, ".agents", "workflows");
+    await fs.writeFile(path.join(workflows, "_workflows.md"), `---
+open-forge:
+  description: Custom workflows route without a primitive tag
+---
+
+# Custom Workflows
+
+## Entries
+
+<!-- open-forge:generated-index:start -->
+- none - No entries - #Empty
+<!-- open-forge:generated-index:end -->
+`);
+    expect((await runCli("create", "category", "workflows/frontend", root)).exitCode).toBe(0);
+    await fs.writeFile(path.join(workflows, "broken.md"), "# Not A Workflow Contract\n");
+    expect((await runCli("index", root)).exitCode).toBe(0);
+
+    const frontend = await fs.readFile(path.join(workflows, "frontend", "_frontend.md"), "utf8");
+    expect(frontend).not.toContain("tags: [Workflow]");
+    const result = await runCli("doctor", "--json", root);
     expect(result.exitCode).toBe(0);
     expect(JSON.parse(result.stdout)).toMatchObject({ errors: 0, warnings: 0 });
+  });
+
+  test("does not index native Skill packages through a familiar root entrypoint without a primitive tag", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+
+    const skills = path.join(root, ".agents", "skills");
+    await fs.writeFile(path.join(skills, "_skills.md"), `---
+open-forge:
+  description: Custom skills route without a primitive tag
+---
+
+# Custom Skills
+
+## Entries
+
+<!-- open-forge:generated-index:start -->
+- none - No entries - #Empty
+<!-- open-forge:generated-index:end -->
+`);
+    const helper = path.join(skills, "helper");
+    await fs.mkdir(helper, { recursive: true });
+    await fs.writeFile(path.join(helper, "SKILL.md"), `---
+name: custom-helper
+description: A package beneath a familiar root entrypoint without a primitive tag
+---
+
+# Custom Helper
+`);
+
+    expect((await runCli("index", root)).exitCode).toBe(0);
+    const content = await fs.readFile(path.join(skills, "_skills.md"), "utf8");
+    expect(content).not.toContain("helper/SKILL.md");
+
+    const result = await runCli("doctor", "--json", root);
+    expect(result.exitCode).toBe(0);
+    expect(JSON.parse(result.stdout)).toMatchObject({
+      errors: 0,
+      warnings: 1,
+      findings: [expect.objectContaining({
+        level: "warning",
+        route: ".agents/skills/helper/SKILL.md",
+        message: "not reachable through generated routing"
+      })]
+    });
   });
 });
 
@@ -2986,6 +3242,38 @@ async function createCategory(parent: string, name: string, content: string, ent
   await fs.mkdir(category, { recursive: true });
   await fs.writeFile(path.join(category, entrypointName), content);
   return category;
+}
+
+async function writeRoutedCategoryChain(root: string, segments: string[]): Promise<void> {
+  let current = path.join(root, ".agents");
+
+  for (const segment of segments) {
+    current = path.join(current, segment);
+    await fs.mkdir(current, { recursive: true });
+    const entrypoint = path.join(current, `_${segment}.md`);
+    if (await exists(entrypoint)) {
+      continue;
+    }
+
+    await fs.writeFile(entrypoint, `---
+open-forge:
+  description: Routed ${segment} test fixture
+  tags: [Memory]
+---
+
+# ${segment}
+
+## Axioms
+
+- inherited - No local axioms; loaded ancestor axioms remain active.
+
+## Entries
+
+<!-- open-forge:generated-index:start -->
+- none - No entries - #Empty
+<!-- open-forge:generated-index:end -->
+`);
+  }
 }
 
 async function writeRoute(folder: string, name: string, description: string, tags: string[]): Promise<void> {

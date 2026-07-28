@@ -8,4 +8,4 @@ It is installed automatically by `vision-workflow` and may be selected directly 
 open-forge extend vision-capability
 ```
 
-The installed `SKILL.md` package remains runtime truth; the manifest only composes installation.
+The installed `SKILL.md` package remains runtime truth. The manifest only composes installation.
