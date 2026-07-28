@@ -334,7 +334,7 @@ Review installation and update diffs. Keep Git as the recovery and inspection bo
 
 - [CLI](docs/cli.md)
 - [Extensions](docs/extensions.md)
-- [Development and release](docs/dev.md)
+- [Developing Open Forge](docs/development.md)
 - [Vision](.agents/memory/crystallized/documents/vision.md)
 - [Principles](.agents/memory/crystallized/documents/principles.md)
 - [Architecture](.agents/memory/crystallized/documents/architecture.md)

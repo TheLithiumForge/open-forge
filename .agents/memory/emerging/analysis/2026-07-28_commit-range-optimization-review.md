@@ -36,9 +36,9 @@ Disposition: preserve this as a test-optimization input for the post-migration c
 
 ### Shared Writing Rules
 
-The [Open Forge Writing Standard](../../crystallized/documents/maintenance/writing.md) now defines shared prose quality, while `docs/dev.md` repeats general voice rules and the [user-facing writing Decision](../../crystallized/decisions/user-facing-writing.md) still reads partly as a parallel current-rule catalogue.
+The [Open Forge Writing Standard](../../crystallized/documents/maintenance/writing.md) now defines shared prose quality, while `docs/development.md` repeats general voice rules and the [user-facing writing Decision](../../crystallized/decisions/user-facing-writing.md) still reads partly as a parallel current-rule catalogue.
 
-`docs/dev.md` should retain README-specific sequencing and product-presentation constraints while linking to the shared standard. The Decision should preserve the accepted choice and rationale, then link forward to current writing and Markdown sources. Examples in the Writing Standard should remain stable enough that ordinary component changes do not require synchronized example edits.
+`docs/development.md` should retain README-specific sequencing and product-presentation constraints while linking to the shared standard. The Decision should preserve the accepted choice and rationale, then link forward to current writing and Markdown sources. Examples in the Writing Standard should remain stable enough that ordinary component changes do not require synchronized example edits.
 
 Disposition: use this finding during the scheduled Decision consolidation and remaining-file optimization passes.
 
