@@ -9,7 +9,7 @@ open-forge:
 Status: archived 2026-07-18.  
 Original route: `.agents/memory/emerging/observations/2026-07-15_extension-units-and-skill-interop.md`.  
 Archived because: the content-agnostic dependency model and native-skill interoperability rules were accepted; unresolved ownership lifecycle work moved to planning.  
-Current owner or replacement: `.agents/memory/crystallized/decisions/extensions-and-cli.md`, extension documentation and tests, and `.agents/memory/working/backlog.md`.
+Current replacement: `.agents/memory/crystallized/decisions/extension-package-boundary.md`, `.agents/memory/crystallized/documents/extensions/architecture.md`, extension documentation and tests, and `.agents/memory/working/backlog.md`.
 
 Date: 2026-07-15. Scope: the first-party catalogue decomposition, dependency selector, native skill validation, and Microsoft APM compatibility review.
 

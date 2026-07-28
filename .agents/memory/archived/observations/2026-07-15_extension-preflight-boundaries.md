@@ -9,7 +9,7 @@ open-forge:
 Status: archived 2026-07-18.  
 Original route: `.agents/memory/emerging/observations/2026-07-15_extension-preflight-boundaries.md`.  
 Archived because: the verified preflight invariants shipped and remaining lifecycle boundaries were extracted to current planning.  
-Current owner or replacement: `.agents/memory/crystallized/decisions/extensions-and-cli.md`, `docs/extensions.md`, installer tests, and `.agents/memory/working/backlog.md`.
+Current replacement: `.agents/memory/crystallized/decisions/extension-package-boundary.md`, `.agents/memory/crystallized/documents/extensions/architecture.md`, `docs/extensions.md`, installer tests, and `.agents/memory/working/backlog.md`.
 
 Date: 2026-07-15, updated 2026-07-17. Scope: the dependency-aware extension installer, the 18-unit first-party catalogue, targeted integration tests, and independent read-only reviews.
 

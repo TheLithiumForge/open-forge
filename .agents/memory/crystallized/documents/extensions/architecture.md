@@ -1,6 +1,7 @@
 ---
 open-forge:
   description: Current Open Forge Extensions MVP package semantics, composition, runtime boundary, ownership lifecycle, safety properties, and liabilities
+  responsibility: Define the accepted current Extensions MVP architecture and distinguish it from candidate replacement direction
   tags: [Memory, Document, CurrentTruth, Evergreen, Architecture, Extension, MVP, Composition, ACE]
 ---
 
@@ -8,7 +9,7 @@ open-forge:
 
 ## Status And Scope
 
-Open Forge Extensions are a dogfooded MVP whose long-term architecture remains intentionally open. This document owns the coherent current view of:
+Open Forge Extensions are a dogfooded MVP whose long-term architecture remains intentionally open. This document is authoritative for the coherent current view of:
 
 - What an extension means
 - How extension packages compose Framework content
@@ -19,7 +20,7 @@ Open Forge Extensions are a dogfooded MVP whose long-term architecture remains i
 
 The [top architecture](../architecture.md#framework-composition) is authoritative for the composition relationship among Core, Memory, and Extensions. The [Framework Architecture](../framework/architecture.md) is authoritative for every runtime route, primitive, authority, and Memory meaning used by installed extension files. The [CLI MVP Architecture](../cli/architecture.md) is authoritative for the deterministic implementation that currently discovers, plans, installs, validates, and removes packages.
 
-This document describes the present MVP without declaring that its manifest schema, catalogue, grouping, lifecycle, or CLI integration is the final Extensions design. The [Extensions overhaul candidate](../../../emerging/ideas/extensions-overhaul.md) owns prospective replacement architecture.
+This document describes the present MVP without declaring that its manifest schema, catalogue, grouping, lifecycle, or CLI integration is the final Extensions design. Open design questions remain contextual in the [Extensions overhaul candidate](../../../emerging/ideas/extensions-overhaul.md) until a replacement architecture is accepted.
 
 ## Core Proposition
 
@@ -73,7 +74,7 @@ Bundled or local source package
           -> optional ownership receipt
 ```
 
-The first three elements define extension content and composition. The CLI owns current planning and application. Installed workspace files own runtime meaning. The receipt owns only managed lifecycle state.
+The first three elements define extension content and composition. The CLI MVP Architecture is authoritative for current planning and application. Installed workspace files are authoritative for runtime meaning. The receipt records only managed lifecycle state.
 
 ## Source Packages
 
@@ -182,16 +183,7 @@ The current MVP permits local packages to depend on bundled ids. It does not res
 
 ## Current Catalogue
 
-The first-party catalogue currently contains 18 packages:
-
-| Group | Count | Current role |
-|---|---:|---|
-| Skills | 5 | Vision, architecture, planning, implementation, and quality capabilities |
-| Workflows | 6 | Vision, architecture, brainstorming, implementation, testing, and mixed development recipes |
-| Packs | 4 | Design, planning, quality, and workflow convenience compositions |
-| Support | 3 | Reliability directives, CLI testing patterns, and optional Rune routes |
-
-The live package list and descriptions are owned by the [extension catalogue README](../../../../../src/extensions/README.md) and manifests.
+The [extension catalogue README](../../../../../src/extensions/README.md) and manifests are authoritative for the live package list and descriptions.
 
 The catalogue proves that one package model can represent skill-only, workflow-only, directive-only, pattern-only, mixed, and dependency-only units. It does not prove that the present packages, groupings, granularity, or content should remain after the Extensions overhaul.
 
@@ -284,7 +276,7 @@ Payloads cannot claim `.git/`, `.gitignore`, the ownership receipt, or workspace
 
 Different bytes targeting one portable path are a conflict. Identical managed bytes may share owners only through explicit compatible plans. Byte equality alone is not permission to adopt an existing file.
 
-The [CLI MVP Architecture](../cli/architecture.md) owns how these checks are implemented and transacted.
+The [CLI MVP Architecture](../cli/architecture.md) is authoritative for how these checks are implemented and transacted.
 
 ## Skills And External Managers
 
@@ -368,7 +360,7 @@ Handled failures roll back, while abrupt process or machine failure relies on Gi
 
 ## Candidate Direction
 
-The [Extensions overhaul candidate](../../../emerging/ideas/extensions-overhaul.md) owns prospective source, trust, package, compatibility, composition, scope, lifecycle, catalogue, component, and migration design. Keeping that material in Emerging Memory prevents open design questions from appearing as accepted current Extensions architecture.
+The [Extensions overhaul candidate](../../../emerging/ideas/extensions-overhaul.md) collects open design questions and candidate direction for source, trust, packages, compatibility, composition, scope, lifecycle, catalogue, components, and migration. Keeping that material in Emerging Memory prevents it from appearing as accepted current Extensions architecture.
 
 ## Non-Goals
 
@@ -393,11 +385,14 @@ Extensions are not:
 - [Current extension user contract](../../../../../docs/extensions.md)
 - [Current first-party catalogue](../../../../../src/extensions/README.md)
 
+## Decisions And Rationale
+
+- [Extension package boundary](../../decisions/extension-package-boundary.md)
+
 ## Migration Inputs
 
-These files preserve earlier direction, observations, or rationale and remain subject to reconciliation:
+These historical records preserve earlier observations or exploration and remain subject to reconciliation:
 
-- [Earlier extensions and CLI decision](../../decisions/extensions-and-cli.md)
 - [Historical package and skill interoperability observation](../../../archived/observations/2026-07-15_extension-units-and-skill-interop.md)
 - [Historical extension preflight observation](../../../archived/observations/2026-07-15_extension-preflight-boundaries.md)
 - [Historical extension skill-sharing exploration](../../../archived/ideas/extension-skill-sharing.md)

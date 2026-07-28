@@ -31,7 +31,7 @@ dist/             # generated release output
 
 The shipped CLI runs on Node.js. Bun is the repository-development runtime for builds, tests, source indexing, and the developer benchmark helper; it is not required by users of the distributed CLI.
 
-Current maintainer contracts for reviewed source live in `.agents/memory/crystallized/documents/maintenance/` and link to their source, relationships, and verification. During the file-by-file migration, remaining `docs/framework/` descriptors continue to govern only the source files they describe. Contract changes update the source, dogfood counterpart, maintenance document, and behavior tests together when they share that contract.
+Current documents define accepted design, implementation sources define exact behavior, and Decisions preserve rationale. Source-specific Maintenance contracts for reviewed files live in `.agents/memory/crystallized/documents/maintenance/` and link to their source, relationships, and verification. Contract changes update the source, dogfood counterpart, current documents, Maintenance contract, and behavior tests together when they share that contract.
 
 ## Commands
 

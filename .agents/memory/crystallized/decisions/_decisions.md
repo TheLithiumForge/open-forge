@@ -24,7 +24,7 @@ Decisions are accepted rationale for important choices that may need to be under
 - [Open Forge uses one canonical authoring form wherever Markdown carries Framework meaning while treating compatibility syntax as input-only](canonical-markdown.md) - #Memory #Decision #CurrentTruth #Framework #Markdown #Authoring #Syntax #Compatibility
 - [Core uses distinct reusable content roles instead of one generic knowledge bucket, and every new primitive must earn nonduplicative semantics](core-primitives.md) - #Memory #Decision #CurrentTruth #Core #Primitive
 - [Do-not-revive list for rejected files, hidden mechanics, directive gates, continuity gaps, and workflow ceremony](do-not-revive.md) - #Memory #Decision #CurrentTruth #Rejected
-- [Extensions add optional whole routed files while installed files remain complete runtime truth](extensions-and-cli.md) - #Memory #Decision #CurrentTruth #Extension #CLI
+- [Extensions deliver optional whole files through existing routes, and installed files carry complete runtime meaning without package metadata or the CLI](extension-package-boundary.md) - #Memory #Decision #CurrentTruth #Extension #Package #RuntimeBoundary
 - [Reliability-critical context loads unconditionally and early; conditional context must be cheap to skip and cheap to recover from](loading-reliability.md) - #Memory #Decision #CurrentTruth #Loading #Routing #Reliability
 - [Memory preserves working, emerging, crystallized, and archived state without activating behavior it describes](memory-model.md) - #Memory #Decision #CurrentTruth #MemoryModel
 - [Open Forge stays markdown-first, user-directed, small by default, and optimized for recursive customization](product-direction.md) - #Memory #Decision #CurrentTruth #Product

@@ -181,7 +181,7 @@ These decisions preserve useful rationale behind the current architecture. Their
 - [Templates as a Core primitive](../decisions/template-primitive.md)
 - [Routing model](../decisions/routing-model.md)
 - [Memory model](../decisions/memory-model.md)
-- [Extensions and CLI](../decisions/extensions-and-cli.md)
+- [Extension package boundary](../decisions/extension-package-boundary.md)
 - [Scope and slugs](../decisions/scope-and-slugs.md)
 - [Tag semantics](../decisions/tags.md)
 - [Typed authority and role terminology](../decisions/authoritative-source-terminology.md)
