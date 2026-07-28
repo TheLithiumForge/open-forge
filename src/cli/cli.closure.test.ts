@@ -364,7 +364,7 @@ describe("install", () => {
     const installedTemplates = await fs.readFile(path.join(root, ".agents", "templates", "_templates.md"), "utf8");
     expect(installedTemplates).toContain("Templates are reusable source artifacts intended to be instantiated");
     expect(installedTemplates).toContain("tags: [Core, Template]");
-    expect(installedTemplates).toContain("Use a linked matching #Core route");
+    expect(installedTemplates).toContain("Use a linked matching #Core `route`");
     expect(installedTemplates).toContain("Make the need each template satisfies and the primary question or result it answers visible");
 
     const doctorResult = await runCli("doctor", "--json", root);

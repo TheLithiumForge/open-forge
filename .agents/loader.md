@@ -4,25 +4,25 @@ This is the main Open Forge `entrypoint`. Read it after `AGENTS.md` to enter thi
 
 ## Terms
 
-- `entrypoint` - Markdown file that makes a folder routable. Open Forge uses `_{folder-name}.md`, while `index.md`, `_index.md`, `references.md`, and `_references.md` are compatibility names
+- `entrypoint` - Markdown file that makes a folder routable. Open Forge uses `_{folder-name}.md`, while `index.md`, `_index.md`, `references.md`, and `_references.md` are compatibility names.
 - `entry` - Generated `route` line under `Entries`
 - `description` - Natural-language pre-load selection surface that explains enough purpose, trigger, or outcome to select or skip a `route`
-- `responsibility` - Optional stable boundary stating what a file is responsible for defining. It guides edits without creating authority or loading behavior
+- `responsibility` - Optional stable boundary stating what a file is responsible for defining. It guides edits without creating authority or loading behavior.
 - `axiom` - Mandatory instruction under an `Axioms` heading in a loaded file
 
 ## Axioms
 
 ### Authority And Inheritance
 
-- Platform constraints and runtime safety bound every action
-- Clear user direction governs goals, priorities, consequential tradeoffs, and accepted changes within its stated scope. Follow it when safe and allowed, and do not ask for the same confirmation again
-- A declared external source of truth is authoritative for the facts delegated to it
-- `Axioms` of loaded ancestor `entrypoints` apply below them. A child adds only what is specific to its scope
-- Follow loaded `axioms` within their scope while respecting these authority boundaries. Accepted workspace-specific state overrides Open Forge defaults, and unresolved conflicts must be reported
-- A request to act also accepts any decision required to perform that action. If the direction is ambiguous, keep it #Contextual and clarify before work depends on it
-- Investigate an apparent conflict with #CurrentTruth before changing either side. Report conflicts that remain unresolved
-- When accepted direction changes #CurrentTruth, update its authoritative `route` or system and preserve useful context from the previous state
-- Prefer material in a narrower selected non-directive scope over broader material of the same type when safe and allowed. Loaded directives add to ancestors, and conflicts are reported
+- Platform constraints and runtime safety bound every action.
+- Clear user direction governs goals, priorities, consequential tradeoffs, and accepted changes within its stated scope. Follow it when safe and allowed, and do not ask for the same confirmation again.
+- A declared external source of truth is authoritative for the facts delegated to it.
+- `Axioms` of loaded ancestor `entrypoints` apply below them. A child adds only what is specific to its scope.
+- Follow loaded `axioms` within their scope while respecting these authority boundaries. Accepted workspace-specific state overrides Open Forge defaults, and unresolved conflicts must be reported.
+- A request to act also accepts any decision required to perform that action. If the direction is ambiguous, keep it #Contextual and clarify before work depends on it.
+- Investigate an apparent conflict with #CurrentTruth before changing either side. Report conflicts that remain unresolved.
+- When accepted direction changes #CurrentTruth, update its authoritative `route` or system and preserve useful context from the previous state.
+- Prefer material in a narrower selected non-directive scope over broader material of the same type when safe and allowed. Loaded directives add to ancestors, and conflicts are reported.
 
 ### Routing
 
@@ -31,21 +31,21 @@ This is the main Open Forge `entrypoint`. Read it after `AGENTS.md` to enter thi
 - `route` - Navigable path exposed through `entrypoints` and `entries`
 - `root route` - A `route` exposed directly by this loader
 - `slug` - Concrete folder name used in a `route` path
-- `managed route` - A `route` where a declared manager, such as Open Forge or an Extension, may install, update, restore, or remove specific files. This affects only their lifecycle, not the `route`'s runtime meaning or authority
+- `managed route` - A `route` where a declared manager, such as Open Forge or an Extension, may install, update, restore, or remove specific files. This affects only their lifecycle, not the `route`'s runtime meaning or authority.
 
 #### Rules
 
-- Open Forge implements routing through small Markdown `entrypoints` whose generated `Entries` expose direct `routes`
-- Load an `entrypoint` before opening its routed files, then use its `Entries` to select what the request needs
-- A folder is routable only when it contains one recognized `entrypoint`. Every folder in a nested `route` path needs its own `entrypoint`
-- A `root route` exists only where this loader exposes it. It cannot be scoped or recreated inside another `route`
-- Every `route` below a `root route` is scopable. Any number of routed `slugs` may appear after the root, before, between, or after deeper `route` segments. Each scope narrows everything that follows it
-- A scope contains only the `routes` useful there. It does not need to mirror another scope or the installed defaults
-- Scoping preserves the order and meaning of deeper `routes`. For a `managed route`, the manager-declared `route` segments retain their order through every scope
-- A familiar `slug` or tag alone creates neither root behavior nor managed status
-- Each manager declares which `route` shapes it recognizes and may change only the files it explicitly owns or safely identifies
-- Users may add, move, replace, or remove `routes`. Any `route` outside a manager's declared shapes remains generically routable, and removed defaults stay absent unless restoration is explicitly requested
-- Generated `Entries` are navigation metadata. Individual `entries` without a load-policy tag are on demand, and detailed meaning comes from the routed destination or the authoritative source it identifies
+- Open Forge implements routing through small Markdown `entrypoints` whose generated `Entries` expose direct `routes`.
+- Load an `entrypoint` before opening its routed files, then use its `Entries` to select what the request needs.
+- A folder is routable only when it contains one recognized `entrypoint`. Every folder in a nested `route` path needs its own `entrypoint`.
+- A `root route` exists only where this loader exposes it. It cannot be scoped or recreated inside another `route`.
+- Every `route` below a `root route` is scopable. Any number of routed `slugs` may appear after the root, before, between, or after deeper `route` segments. Each scope narrows everything that follows it.
+- A scope contains only the `routes` useful there. It does not need to mirror another scope or the installed defaults.
+- Scoping preserves the order and meaning of deeper `routes`. For a `managed route`, the manager-declared `route` segments retain their order through every scope.
+- A familiar `slug` or tag alone creates neither root behavior nor managed status.
+- Each manager declares which `route` shapes it recognizes and may change only the files it explicitly owns or safely identifies.
+- Users may add, move, replace, or remove `routes`. Any `route` outside a manager's declared shapes remains generically routable, and removed defaults stay absent unless restoration is explicitly requested.
+- Generated `Entries` are navigation metadata. Individual `entries` without a load-policy tag are on demand, and detailed meaning comes from the routed destination or the authoritative source it identifies.
 - A user-owned `{name}.overwrite.md` is not an independent `route`. When its `{name}.md` base loads, read the companion immediately afterward. The overwrite inherits the base `route`, scope, and loading behavior, is not independently indexed or selected, and has final precedence within that file's scope.
 
 #### Examples
@@ -71,8 +71,8 @@ Defined tags have the meanings below when they appear in loaded content or gener
 - #Contextual - Supporting context, not accepted current truth unless restored, validated, accepted, or promoted
 - #CurrentTruth - Accepted current state within its stated scope, below user instructions, runtime safety, platform constraints, and declared external sources of truth
 - #Evergreen - Material that must stay aligned with accepted current state. It creates no authority or load policy.
-  - When accepted state changes, update only affected #Evergreen material you may edit before work depends on it, and no later than closeout. Batch related updates when safe
-  - Keep #Evergreen material coherent with what it represents now. Preserve useful context from the previous state in the matching decision or archive, and report affected material you cannot update
+  - When accepted state changes, update only affected #Evergreen material you may edit before work depends on it, and no later than closeout. Batch related updates when safe.
+  - Keep #Evergreen material coherent with what it represents now. Preserve useful context from the previous state in the matching decision or archive, and report affected material you cannot update.
 
 ### CLI
 

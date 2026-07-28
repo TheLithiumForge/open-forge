@@ -6,13 +6,13 @@ open-forge:
 
 # Skills
 
-Each Skill follows the native contract defined by its own `SKILL.md`
+Each Skill follows the native contract defined by its own `SKILL.md`.
 
 ## Axioms
 
-- Use `Entries` when current work may benefit from a skill
-- Follow the selected `SKILL.md` for its metadata, applicability, instructions, and resource loading
-- Let the active agent runtime govern Skill activation, invocation, installation, and execution
+- Use `Entries` when current work may benefit from a skill.
+- Follow the selected `SKILL.md` for its metadata, applicability, instructions, and resource loading.
+- Let the active agent runtime govern Skill activation, invocation, installation, and execution.
 
 ## Entries
 

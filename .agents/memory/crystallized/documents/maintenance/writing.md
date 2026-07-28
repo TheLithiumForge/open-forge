@@ -29,50 +29,52 @@ Prefer the fewest words that make the meaning aggressively clear, not the fewest
 
 ## Clarity And Structure
 
-- Lead with the rule, result, or relationship the reader needs
-- Use complete natural sentences rather than compressed newspaper-style fragments
-- Explain an unfamiliar Open Forge term at first meaningful use or link directly to its definition
-- Add a concrete example when an abstract mechanism remains difficult to understand without prior context
-- Keep one responsibility per authoritative source and link to related responsibilities instead of blending them together
-- Repeat meaning only at a genuine independent entry boundary, such as the exact product summary in Vision and README
-- Describe the positive current contract first. Use negative constraints when they close a concrete ambiguity, safety risk, or rejected alternative
-- State material tradeoffs directly instead of hiding them behind generic words such as flexible, robust, or scalable
-- Use short headings and compact paragraphs, but do not turn brevity into fragments or remove the explanation required to act correctly
+- Lead with the rule, result, or relationship the reader needs.
+- Use complete natural sentences rather than compressed newspaper-style fragments.
+- Explain an unfamiliar Open Forge term at first meaningful use or link directly to its definition.
+- Add a concrete example when an abstract mechanism remains difficult to understand without prior context.
+- Keep one responsibility per authoritative source and link to related responsibilities instead of blending them together.
+- Repeat meaning only at a genuine independent entry boundary, such as the exact product summary in Vision and README.
+- Describe the positive current contract first. Use negative constraints when they close a concrete ambiguity, safety risk, or rejected alternative.
+- State material tradeoffs directly instead of hiding them behind generic words such as flexible, robust, or scalable.
+- Use short headings and compact paragraphs, but do not turn brevity into fragments or remove the explanation required to act correctly.
 - Introduce a list with prose or a subheading. When one list item introduces child items, indent those children as a nested sublist.
-- Use a table when repeated fields, mappings, or comparisons are clearer side by side; otherwise prefer prose or a list
+- Use a table when repeated fields, mappings, or comparisons are clearer side by side. Otherwise, prefer prose or a list.
 
 ## Actors And Relationships
 
 State relationships directly.
 
-- Use `user` when the person directing or accepting work must be named
-- Omit the actor when the instruction or relationship is already clear, such as `Update the affected current document`
-- Use `agent` only when the agent is the meaningful actor
-- Avoid `operator` unless a technical interface defines that exact role
-- Name the authoritative document, route, system, person, or role instead of using an unexplained `owner`
-- Reserve ownership language for possession or managed lifecycle
+- Use `user` when the person directing or accepting work must be named.
+- Omit the actor when the instruction or relationship is already clear, such as `Update the affected current document`.
+- Use `agent` only when the agent is the meaningful actor.
+- Avoid `operator` unless a technical interface defines that exact role.
+- Name the authoritative document, `route`, system, person, or role instead of using an unexplained `owner`.
+- Reserve ownership language for possession or managed lifecycle.
 
 The [typed authority terminology decision](../../decisions/authoritative-source-terminology.md) preserves the rationale for distinguishing semantic authority from ownership.
 
 ## Open Forge Terms
 
-- Use `Core`, `Memory`, `Framework`, and `Extensions` for their defined Open Forge meanings
-- Use `standard` for the default routes or configuration Open Forge provides
-- Use ordinary lowercase words when no defined Open Forge concept is intended
-- Put backticks around an exact defined term when prose refers to that vocabulary item, such as `root route`, `responsibility`, or `entrypoint`; leave the same words unformatted when they are ordinary language rather than term references
-- Keep route descriptions natural, descriptive, and suggestive rather than starting every entry with the same formula
-- Prefer established terms and links over introducing a synonym for variety
+- Use `Core`, `Memory`, `Framework`, and `Extensions` for their defined Open Forge meanings.
+- Use `standard` for the default `routes` or configuration Open Forge provides.
+- Use ordinary lowercase words when no defined Open Forge concept is intended.
+- Put backticks around an exact defined term when prose refers to that vocabulary item, such as `root route`, `responsibility`, or `entrypoint`. Leave the same words unformatted when they are ordinary language rather than term references.
+- Keep `description` values natural, descriptive, and suggestive rather than starting every `entry` with the same formula.
+- Prefer established terms and links over introducing a synonym for variety.
 
 ## Sentences And Punctuation
 
-- Prefer active voice and concrete verbs
-- Use commas, parentheses, colons, or separate sentences instead of em dashes
-- Prefer a period (`.`) to a semicolon (`;`). Use `;` only when splitting the sentence would make the relationship materially less clear
-- Omit terminal periods from isolated one-sentence definitions and one-sentence list items
-- Keep normal punctuation when a paragraph or list item contains several sentences
-- Avoid stacked parenthetical qualifications when separate sentences would expose the relationship more clearly
-- Do not hedge accepted current state with `maybe`, `probably`, or `generally`; preserve those words only when uncertainty is real and useful
-- Use backticks and links according to the canonical Markdown contract rather than as visual decoration
+- Prefer active voice and concrete verbs.
+- Use commas, parentheses, colons, or separate sentences instead of em dashes.
+- Prefer a period (`.`) to a semicolon (`;`). Use `;` only when splitting the sentence would make the relationship materially less clear.
+- Complete sentences take terminal punctuation.
+- True fragments do not, including headings, labels, table cells, frontmatter `description` values, generated `entry` labels, fragment-only list items, and similar selection metadata.
+- Keep list forms parallel, and do not mix fragments with complete sentences in one list.
+- Prefer periods. Use question marks only for actual questions.
+- Avoid stacked parenthetical qualifications when separate sentences would expose the relationship more clearly.
+- Do not hedge accepted current state with `maybe`, `probably`, or `generally`. Preserve those words only when uncertainty is real and useful.
+- Use backticks and links according to the canonical Markdown contract rather than as visual decoration.
 
 ## Examples
 
