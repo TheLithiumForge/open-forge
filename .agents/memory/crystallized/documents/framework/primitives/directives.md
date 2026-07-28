@@ -53,4 +53,3 @@ Examples of suitable Directives include a mandatory security check, a prohibited
 
 - [Loading reliability](../../../decisions/loading-reliability.md)
 - [Routing surfaces](../../../decisions/routing-surfaces.md)
-- [Do not revive retired directive gates](../../../decisions/do-not-revive.md)

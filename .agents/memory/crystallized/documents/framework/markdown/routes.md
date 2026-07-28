@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Current canonical Markdown and filename representation for Open Forge entrypoints, route entries, and generated index regions
-  responsibility: Define the shared authored representation of routed Open Forge Markdown
+  responsibility: Define the canonical file and Markdown representation shared by routed entrypoints and generated navigation
   tags: [Memory, Document, CurrentTruth, Evergreen, Framework, Markdown, Authoring, Syntax, Routing]
 ---
 
@@ -39,7 +39,7 @@ Category meaning and `Axioms` appear before `Entries`. The [routing model](../ro
 Generated `Entries` use one canonical line shape:
 
 ```md
-- [Decision-grade description](relative/path.md) - #Type #Scope
+- [Description](relative/path.md) - #Type #Scope
 ```
 
 Each line contains:
@@ -51,7 +51,7 @@ Each line contains:
 - One ` - ` separator
 - One or more useful bare tags
 
-The label explains why the route matters. The destination identifies it. The tags provide compact loading, type, scope, and search signals. The [path contract](../routing/paths.md) defines destination resolution, normalization, encoding, and containment.
+The label provides enough trigger, purpose, or outcome for pre-load selection. The destination identifies the route. The tags provide compact loading, type, scope, and search signals. The [path contract](../routing/paths.md) defines destination resolution, normalization, encoding, and containment.
 
 Each route entry stays on one physical line. Normal links elsewhere may target headings or external URLs.
 

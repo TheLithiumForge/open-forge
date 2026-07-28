@@ -6,22 +6,56 @@ open-forge:
 
 # Routing Model
 
-Open Forge chose small, recursively linked Markdown entrypoints instead of a flat central registry.
+## Context
 
-- Direct-child entries keep indexes local, preserve intermediate scope, and prevent every higher route from growing with the full subtree.
-- Requiring one recognized entrypoint at each routable folder removes ambiguity about whether a folder is part of the Framework and where its local meaning begins.
-- A stable Open Forge-authored filename makes entrypoints predictable. Compatibility aliases remain input-only accommodations so interoperability does not create several competing canonical forms.
-- Exposing only explicit root entrypoints keeps root activation deliberate. Loose files beside the loader do not silently become Framework routes.
-- Universal navigation and loading rules live once in the loader so category entrypoints can remain small and category-specific.
-- Loaded ancestor Axioms remain active for selected descendants so narrower routes add local meaning without copying or silently cancelling broader rules.
-- Authored Markdown paths resolve from the containing document because that keeps relationships clickable and portable. Tool route arguments use workspace-relative identity because they have no containing document.
+Open Forge needed navigation that could expand across many projects and disciplines without loading a flat global catalogue or requiring a proprietary registry. Scope had to remain visible and local as routes became deeper.
 
-The accepted current result is expressed by the [routing model](../documents/framework/routing/model.md), [scope and inheritance contract](../documents/framework/routing/scope.md), [loading contract](../documents/framework/routing/loading.md), [path contract](../documents/framework/routing/paths.md), and [routed Markdown representation](../documents/framework/markdown/routes.md).
+## Decision
 
-Specialized rationale remains in:
+Open Forge uses small recursively linked Markdown entrypoints with direct-child entries.
+
+Every routable folder has one recognized entrypoint. Explicit loader entries select root routes, and each selected entrypoint exposes only its direct children. Loaded ancestor Axioms remain active for descendants so narrower routes add local meaning without copying or silently cancelling broader rules. `inherited` is the only explicit no-local-Axioms sentinel; `none` is not accepted because it can imply that ancestor Axioms no longer apply.
+
+Open Forge authors one predictable entrypoint filename. Compatibility aliases are input-only. Authored Markdown links resolve from the containing file, while CLI route arguments use workspace-relative identities because they have no containing document.
+
+## Rationale
+
+Direct-child navigation keeps indexes proportional to local branching, preserves intermediate scope, and makes unrelated subtrees nearly free until selected.
+
+One entrypoint per folder removes ambiguity about whether a folder participates in routing and where its local contract begins. Explicit roots prevent loose files from silently becoming Framework routes. Relative Markdown links remain clickable, portable, and inspectable without a tool.
+
+## Alternatives And Tradeoffs
+
+- A flat central registry would simplify global enumeration but grow with the whole workspace and erase intermediate scope
+- Flattening nested entries into higher routes would create the same scaling and locality problem
+- Treating loose files as implicit routes would make activation difficult to inspect
+- Several canonical entrypoint names would make authored structure nondeterministic
+- A required `local.md` route would hard-code one organization model
+- Per-file companion metadata would multiply hidden routing surfaces; user-owned overwrites instead remain visible companions to an existing base
+
+Recursive routing adds entrypoint files and requires each route chain to remain structurally valid.
+
+## Consequences
+
+- Context cost grows primarily with selected route depth, branching, and relationships rather than total workspace size
+- Universal navigation and loading semantics stay in the loader
+- Scope can appear recursively before, after, or between Framework route segments
+- Tools may index and validate the plain-file graph but do not privately define it
+- Runtime-owned `SKILL.md` files keep native resource navigation rather than receiving generated Open Forge Entries
+
+## Authoritative Sources
+
+- [Current routing model](../documents/framework/routing/model.md)
+- [Scope and inheritance contract](../documents/framework/routing/scope.md)
+- [Loading contract](../documents/framework/routing/loading.md)
+- [Path contract](../documents/framework/routing/paths.md)
+- [Routed Markdown representation](../documents/framework/markdown/routes.md)
+- [Open Forge loader](../../../loader.md)
+
+## Decision Relationships
 
 - [Loading reliability](loading-reliability.md)
 - [Routing surfaces](routing-surfaces.md)
 - [Scope and slugs](scope-and-slugs.md)
-- [Workflow shape](workflow-shape.md)
 - [Canonical Markdown authoring](canonical-markdown.md)
+- [Tag semantics](tags.md)

@@ -2199,7 +2199,7 @@ describe("chain command", () => {
       "content",
       "declared-inherited",
       "content",
-      "declared-none",
+      "content",
       "content",
       "content"
     ]);
@@ -2258,6 +2258,25 @@ describe("doctor command", () => {
 
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain("no problems found");
+  });
+
+  test("rejects none as a category Axioms sentinel", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    expect((await runCli("create", "category", "patterns/product", root)).exitCode).toBe(0);
+    const entrypoint = path.join(root, ".agents", "patterns", "product", "_product.md");
+    const text = (await fs.readFile(entrypoint, "utf8")).replace(
+      "- inherited - No local axioms; loaded ancestor axioms remain active.",
+      "- none"
+    );
+    await fs.writeFile(entrypoint, text);
+
+    const result = await runCli("doctor", "--json", root);
+    const report = JSON.parse(result.stdout) as { errors: number; findings: Array<{ message: string }> };
+
+    expect(result.exitCode).toBe(1);
+    expect(report.errors).toBeGreaterThan(0);
+    expect(report.findings.some((finding) => finding.message.includes("`none` is not a valid Axioms sentinel"))).toBe(true);
   });
 
   test("stops before reading a symlinked loader after route-tree safety fails", async () => {

@@ -450,7 +450,7 @@ open-forge chain .agents/workflows/dev/_dev.md --heading Constraints --json
 
 `chain` explains inherited Markdown context for one routed file. It emits the loader, each visible ancestor category `entrypoint`, a skill's `SKILL.md` when the target is inside its folder, the target, and each user-owned overwrite immediately after its base. With no `--heading`, it lists the route chain. With `--heading`, it reports every matching section from every chain member as `content`, `absent`, `empty`, `declared-inherited`, or `declared-none`.
 
-The heading is arbitrary, so the same command can inspect Axioms, Mode, Goal, Constraints, or a local category heading. A missing, empty, `inherited`, or `none` local category Axioms section contributes no local axioms; it never disables loaded ancestor axioms. `--json` provides stable structured output for tools.
+The heading is arbitrary, so the same command can inspect Axioms, Mode, Goal, Constraints, or a local category heading. `declared-none` applies only where the selected heading's contract defines `none`, such as Workflow Constraints. A local category Axioms section may be missing, empty, or state `inherited`; all three forms add no local Axioms while loaded ancestor Axioms remain active. `none` is not a valid Axioms sentinel. `--json` provides stable structured output for tools.
 
 Routes are resolved inside the selected logical target. Absolute paths, parent traversal, drive changes, and real-path or symlink escapes are rejected without mutation. `chain` reports the currently visible file chain; run `doctor` when route-index continuity itself must be validated.
 
@@ -471,7 +471,7 @@ open-forge doctor --json
 - direct directive files without #LoadNow metadata or exactly one substantive level-2 `Axioms` section (error)
 - directive files that retain the legacy `Applies To` second applicability gate (error)
 - complete workflow recipes without exactly one recognized primary phase tag (error)
-- category Axioms sections that mix an inherited/none sentinel with substantive local axioms (warning)
+- category Axioms sections that use `none` as a sentinel (error), or mix `inherited` with substantive local Axioms (warning)
 - stale generated regions that no longer match what `index` would produce (warning; run `open-forge index`)
 - retired load-policy tags in metadata (warning)
 - `.overwrite.md` companions without a base file (warning)
@@ -491,7 +491,7 @@ open-forge create category .agents/memory/crystallized/mobile-app
 open-forge create extension my-patterns
 ```
 
-`create category` scaffolds a route chain: every missing folder in the path gets a canonical `_{folder}.md` `entrypoint` with placeholder metadata, a type tag inherited from the nearest recognized primitive segment, an explicit inherited Axioms sentinel, and an empty generated region, then all indexes are rebuilt. This lets `workflows/frontend/patterns/` remain a Pattern route inside a workflow scope. It refuses paths that are already routable. Fill in the TODO descriptions, then run `open-forge index` again. A local category may instead omit Axioms, leave it empty, or state `none`; all four shapes mean no local additions while loaded ancestor axioms remain active.
+`create category` scaffolds a route chain: every missing folder in the path gets a canonical `_{folder}.md` `entrypoint` with placeholder metadata, a type tag inherited from the nearest recognized primitive segment, an explicit inherited Axioms sentinel, and an empty generated region, then all indexes are rebuilt. This lets `workflows/frontend/patterns/` remain a Pattern route inside a workflow scope. It refuses paths that are already routable. Fill in the TODO descriptions, then run `open-forge index` again. A local category may instead omit Axioms or leave the section empty; all three shapes mean no local additions while loaded ancestor Axioms remain active.
 
 `create extension` scaffolds a managed extension package: `extension.json` with the requested stable `id` plus starter `name`, `description`, `version`, and `dependencies` fields; a README with authoring rules; and an empty `payload/.agents/` tree ready for whole routed files. Install it with `open-forge extend <directory-or-id>` or copy the payload and update generated `Entries` manually.
 
