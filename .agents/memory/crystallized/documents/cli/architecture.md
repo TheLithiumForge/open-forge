@@ -322,10 +322,13 @@ Semantic relevance, remote registries, provider orchestration, and Rune integrat
 - [Current CLI user contract](../../../../../docs/cli.md)
 - [Current CLI implementation](../../../../../src/cli/cli.ts)
 
+## Decisions And Rationale
+
+- [Extension package boundary](../../decisions/extension-package-boundary.md)
+
 ## Migration Inputs
 
-These files preserve earlier direction or implementation rationale and remain subject to reconciliation:
+These historical records preserve earlier direction or implementation rationale and remain subject to reconciliation:
 
-- [Earlier extensions and CLI decision](../../decisions/extensions-and-cli.md)
 - [Earlier scalability and CLI experience exploration](../../../archived/ideas/2026-06-22_scalability-and-cli-experience.md)
 - [Earlier CLI design exploration](../../../archived/ideas/cli-design.md)
