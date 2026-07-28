@@ -11,11 +11,11 @@ Emerging memory preserves useful candidate material that is not yet accepted as 
 ## Axioms
 
 - At each #KeepInMind refresh, read `Entries` and preserve useful candidate material before it can be lost
-- "No durable candidate material warranted" is a valid result. Do not convert raw activity into memory
+- "No durable candidate material warranted" is a valid result. Do not convert raw activity into memory.
 - Treat emerging memory as contextual until it is validated, promoted, or explicitly accepted
 - Keep uncertainty, source, and scope visible
-- Refine material here while its validity, knowledge role, or final destination is unsettled
-- When material becomes accepted, move its durable outcome to the appropriate authoritative source. Archive or prune rejected material and material replaced by the accepted result after preserving any useful outcome or rationale
+- Refine material here while its validity, intended use, or final destination is unsettled
+- When material becomes accepted, move its durable outcome to the appropriate authoritative source. Archive or prune rejected material and material replaced by the accepted result after preserving any useful outcome or rationale.
 - Revisit repeated or stale material for consolidation, promotion, archival, or pruning
 
 ## Entries

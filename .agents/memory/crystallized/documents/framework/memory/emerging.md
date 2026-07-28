@@ -17,19 +17,19 @@ Emerging material is contextual. It keeps source, scope, evidence, and uncertain
 
 An explicit request to preserve or explore an idea is enough to record it. An agent records a concrete observation after one occurrence when it is plausibly reusable, surprising, or costly enough to preserve.
 
-Before creating a parallel record, later agents search for matching scope and meaning and extend the existing record with new evidence when one exists. Repeated independent occurrences primarily trigger consolidation and a promotion proposal; recurrence is not required for initial capture.
+Before creating a parallel record, later agents search for matching scope and meaning and extend the existing record with new evidence when one exists. Repeated independent occurrences primarily trigger consolidation and a promotion proposal. Recurrence is not required for initial capture.
 
 Emerging material is refined, combined, promoted, archived, rejected, or pruned as its meaning becomes clearer.
 
 ## Shipped Roles
 
-The standard routes provide distinct starting roles:
+The standard `routes` provide distinct starting roles:
 
 - [Analysis](../../../../emerging/analysis/_analysis.md) preserves structured reasoning, investigation, and comparison
 - [Ideas](../../../../emerging/ideas/_ideas.md) preserves possibilities, experiments, and open questions
 - [Observations](../../../../emerging/observations/_observations.md) preserves grounded findings that may become reusable learning
 
-These roles improve initial placement and discovery. They are customizable child routes within Emerging, not additional Memory states.
+These roles improve initial placement and discovery. They are customizable child `routes` within Emerging, not additional Memory states.
 
 ## Related Current Sources
 

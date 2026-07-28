@@ -13,20 +13,22 @@ open-forge:
 
 It keeps one coherent current representation for each distinct question and scope. When accepted state changes, agents update, split, merge, or reshape the existing authoritative source rather than creating a competing current copy.
 
-Other accepted results may live in matching #Core routes, source code, declared external systems, or scoped Crystallized routes. The [Memory authority boundary](model.md#authority-boundary) determines the appropriate destination.
+Other accepted results may live in matching #Core `routes`, source code, declared external systems, or scoped Crystallized `routes`. The [Memory authority boundary](model.md#authority-boundary) determines the appropriate destination.
 
 ## Rationale And Current Records
 
-The standard routes provide two distinct accepted roles:
+The standard `routes` provide two distinct accepted roles:
 
 - [Decisions](../../../../crystallized/decisions/_decisions.md) preserve accepted rationale for important choices
 - [Documents](../../../../crystallized/documents/_documents.md) integrate coherent current records or route to systems that hold them
 
-Decisions and Documents follow the universal [route-scope contract](../routing/scope.md). Their selected route chain determines their subject without changing either role.
+Decisions and Documents follow the universal [route-scope contract](../routing/scope.md). Their selected `route` chain determines their subject without changing either role.
 
 Overlapping Decisions are consolidated, reshaped, or linked when their accepted rationale is compatible. Material divergence or competing accepted rationale is discussed instead of being merged silently. Rationale behind a replaced choice is archived or linked when it remains useful.
 
-Documents own accepted current content. Copy-ready creation sources belong in [Templates](../primitives/templates.md), not in the Documents route.
+Documents explain accepted current meaning well enough to use without reconstructing it from Decisions. A Decision links forward to the authoritative source that expresses its result, and that source links back when the rationale helps future work.
+
+Copy-ready creation sources belong in [Templates](../primitives/templates.md), not in the Documents `route`.
 
 Decisions and Documents are useful customizable child roles, not additional Memory states.
 

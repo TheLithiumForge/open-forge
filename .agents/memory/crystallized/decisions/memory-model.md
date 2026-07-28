@@ -14,7 +14,7 @@ Work needs temporary coordination, candidate learning, accepted durable state, a
 
 Memory is a self-growing Markdown lifecycle with four states: Working, Emerging, Crystallized, and Archived.
 
-Recorded material follows explicit state-specific rules for capture, classification, movement, consolidation, archival, and restoration. Memory may record any subject without activating behavior it describes. Accepted behavior that should guide future work moves to the matching #Core route, while Memory may preserve its rationale or history.
+Recorded material follows explicit state-specific rules for capture, classification, movement, consolidation, archival, and restoration. Memory may record any subject without activating behavior it describes. Accepted behavior that should guide future work moves to the matching #Core `route`, while Memory may preserve its rationale or history.
 
 Decisions and Documents are standard roles within Crystallized Memory rather than additional lifecycle states. Memory uses the [accepted universal scoping model](scope-and-slugs.md) rather than a separate Memory-specific mechanism.
 
@@ -29,7 +29,7 @@ Keeping Memory non-activating separates preservation from behavior. This lets ob
 - One knowledge pool would minimize folders but make authority, uncertainty, and expiration implicit
 - Three states without Emerging would force candidates into temporary work or accepted truth
 - Treating recorded behavior as active would turn Memory into a hidden directive system
-- Installing `references/`, tasks, or backlog as universal base routes would commit to knowledge and planning roles whose general boundaries are not yet established
+- Installing `references/`, tasks, or backlog as universal base `routes` would commit to knowledge and planning roles whose general boundaries are not yet established
 - Moving default Memory outside `.agents/` would weaken the current unified Framework entry and has not earned a replacement contract
 
 The lifecycle adds classification work, so transitions remain meaning-based and any justified direct movement is allowed.
@@ -40,9 +40,10 @@ The lifecycle adds classification work, so transitions remain meaning-based and 
 - Emerging records meet a minimal usefulness threshold without requiring recurrence before capture
 - Crystallized records express accepted durable state or rationale
 - Archived records remain historical and do not compete with current truth
-- Agent communication belongs in Memory when it must survive the current context; ordinary conversation is not recorded automatically
+- Agent communication belongs in Memory when it must survive the current context. Ordinary conversation is not recorded automatically.
 - State and scope remain independent dimensions
 - Workspaces may remove, replace, or supplement the standard state and role `routes`
+- Baseline loading exposes active and accepted Memory navigation, continuity loading revisits candidate learning, and Archived remains selected on demand
 
 ## Authoritative Sources
 

@@ -13,6 +13,8 @@ open-forge:
 
 Archived material supports history, reconstruction, rationale, comparison, and audit. It does not regain current authority merely because it is read.
 
+Archived remains an on-demand `route`. Its parent `description` is visible for selection, but its generated `Entries` enter active context only when historical material may help the current work.
+
 ## Extraction And Provenance
 
 Before archival, useful present meaning is extracted to its current authoritative source. Archived material retains:
@@ -26,9 +28,9 @@ Material without plausible historical value may be pruned rather than archived.
 
 ## Organization And Restoration
 
-Archive children may mirror former routes, group material by origin, or use another useful taxonomy. They are organizational scopes, not additional Memory states.
+Archive children may mirror former `routes`, group material by origin, or use another useful taxonomy. They are organizational scopes, not additional Memory states.
 
-Archived is a Memory state, not a repository-wide trash folder. It stores historical Memory records and may preserve linked context about retired Core, code, external systems, or other artifacts. An arbitrary workspace artifact does not move into Memory merely because it became obsolete.
+Archived stores historical records that belong in Memory. Retired Core files, code, external records, and other artifacts normally remain in their appropriate retained location while Archived Memory links to the history that still matters.
 
 Scope placement follows the Memory model. `memory/archived/mobile-app/` groups mobile-app history inside the shared Archived state. `memory/mobile-app/archived/` gives a broader mobile-app scope its own Archived state beside any other Memory states it uses.
 

@@ -9,7 +9,7 @@ open-forge:
 
 ## Source
 
-[`src/open-forge/.agents/memory/working/_working.md`](../../../../../../../../../src/open-forge/.agents/memory/working/_working.md) is the canonical installed Working Memory entrypoint. The repository [Working entrypoint](../../../../../../../working/_working.md) dogfoods the same authored contract and adds repository working state through generated entries.
+[`src/open-forge/.agents/memory/working/_working.md`](../../../../../../../../../src/open-forge/.agents/memory/working/_working.md) is the canonical installed Working Memory `entrypoint`. The repository [Working `entrypoint`](../../../../../../../working/_working.md) dogfoods the same authored contract and adds repository working state through generated `Entries`.
 
 The [Working state contract](../../../../../framework/memory/working.md) defines Working Memory through expected expiration. The [transition contract](../../../../../framework/memory/transitions.md) owns extraction and movement when active need ends.
 
@@ -19,14 +19,13 @@ The [Working state contract](../../../../../framework/memory/working.md) defines
 - Working Memory remains live resumability context rather than accepted current truth
 - Active material stays small, current, and cheap to replace or reread
 - Useful state is extracted before stale Working Memory is archived or cleared
-- Handoffs and Sessions remain the two standard #LoadNow child routes with distinct transfer and history roles
+- Handoffs and Sessions remain the two standard #LoadNow child `routes` with distinct transfer and history roles
 - Recursive scopes may add plans, checkpoints, backlogs, or other temporary roles without changing Working state semantics
 - The installed parent contains no workspace-specific active state
 
 ## Verification
 
-- Installation and route tests verify Working, Handoffs, and Sessions loading, indexing, classification, and recursive scope
-- Compare canonical source and dogfood authored content outside generated `Entries`
+- Installation and `route` tests verify Working, Handoffs, and Sessions loading, indexing, classification, and recursive scope
 
 ## Entries
 

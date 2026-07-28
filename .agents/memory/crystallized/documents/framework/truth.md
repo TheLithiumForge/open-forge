@@ -38,9 +38,9 @@ Tentative, comparative, exploratory, or ambiguous language remains contextual un
 | Direction | Normal treatment |
 |---|---|
 | “Consider architecture B” | Emerging candidate or active analysis |
-| “Both are possible; investigate B” | Emerging candidate or active analysis |
+| “Both are possible. Investigate B.” | Emerging candidate or active analysis |
 | “I definitely prefer architecture B” | Accepted within the stated decision scope |
-| “Use architecture B; that is our direction” | Update the affected authoritative current source and preserve useful rationale |
+| “Use architecture B. That is our direction.” | Update the affected authoritative current source and preserve useful rationale |
 | “Use B only for this experiment” | Scoped Working or experimental state, not universal current truth |
 
 Acceptance never extends beyond the expressed scope. A clear local preference does not silently become a workspace-wide rule, and a current experiment does not become durable canon.

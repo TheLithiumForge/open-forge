@@ -17,14 +17,14 @@ Material may be created directly in the correct state. Clear accepted direction 
 
 ## Capture And Consolidation
 
-Capture the smallest useful record at the route matching its current role:
+Capture the smallest useful record at the `route` matching its current role:
 
 - Active resumability context enters Working
 - Unsettled but plausibly reusable material enters Emerging
 - Clearly accepted durable state enters its authoritative current destination
 - Non-current material with useful historical value enters Archived after extraction
 
-Before creating a new record, search the relevant route for one with matching scope and meaning. Extend or reshape the existing record when that preserves one coherent source.
+Before creating a new record, search the relevant `route` for one with matching scope and meaning. Extend or reshape the existing record when that preserves one coherent source.
 
 Repeated observations, parallel ideas, or overlapping current records trigger consolidation. Recurrence raises the case for promotion but does not substitute for validation or acceptance.
 
@@ -52,7 +52,7 @@ Workspace authority determines when material becomes accepted. The [accepted-sta
 
 Promotion does not mean copying a candidate into Crystallized while leaving the original to imply a second active outcome. Move or reshape the durable result, update links, and archive or prune the candidate once any useful rationale is preserved.
 
-Use the [Memory authority boundary](model.md#authority-boundary) to choose between Crystallized Memory, a matching #Core route, code, or an external system. A linked decision or archived candidate may preserve why and how the accepted result emerged.
+Use the [Memory authority boundary](model.md#authority-boundary) to choose between Crystallized Memory, a matching #Core `route`, code, or an external system. A linked decision or archived candidate may preserve why and how the accepted result emerged.
 
 ## Replacement And Archival
 

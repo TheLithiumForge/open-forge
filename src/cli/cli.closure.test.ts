@@ -301,6 +301,22 @@ tags: [External, Tool]
   });
 });
 
+describe("Memory source registry", () => {
+  test("keeps every canonical Memory entrypoint aligned with dogfood authored content", async () => {
+    const source = await snapshotTree(repoPath("src", "open-forge", ".agents", "memory"));
+    const dogfoodRoot = repoPath(".agents", "memory");
+    const generatedRegion = /<!-- open-forge:generated-index:start -->[\s\S]*?<!-- open-forge:generated-index:end -->/;
+
+    for (const [relativePath, encodedSource] of Object.entries(source)) {
+      const sourceContent = Buffer.from(encodedSource, "base64").toString("utf8");
+      const dogfoodContent = await fs.readFile(path.join(dogfoodRoot, relativePath), "utf8");
+      expect(sourceContent.replace(generatedRegion, "<generated Entries>")).toBe(
+        dogfoodContent.replace(generatedRegion, "<generated Entries>")
+      );
+    }
+  });
+});
+
 describe("install", () => {
   test("installs a structurally valid and idempotent Core route tree", async () => {
     const root = await createRoot();
@@ -368,6 +384,7 @@ describe("install", () => {
       ".agents/workflows/_workflows.md",
       ".agents/workspace/_workspace.md"
     ]));
+    expect(loadNowRoutes).not.toContain(".agents/memory/archived/_archived.md");
     expect(loadNowRoutes).not.toContain(".agents/templates/_templates.md");
 
     const templateResult = await runCli("find", "--tag", "Template", "--json", root);
@@ -382,6 +399,13 @@ describe("install", () => {
       ".agents/memory/emerging/_emerging.md",
       ".agents/memory/emerging/observations/_observations.md"
     ]));
+
+    const loadedContext = await runCli("load", "--paths", root);
+    expect(loadedContext.exitCode).toBe(0);
+    expect(loadedContext.stdout).toContain(".agents/memory/working/_working.md");
+    expect(loadedContext.stdout).toContain(".agents/memory/crystallized/_crystallized.md");
+    expect(loadedContext.stdout).toContain(".agents/memory/emerging/_emerging.md");
+    expect(loadedContext.stdout).not.toContain(".agents/memory/archived/_archived.md");
 
     const before = await snapshotTree(root);
     const indexResult = await runCli("index", root);
@@ -429,7 +453,7 @@ Custom route within Workflows.
     const scopedTemplateContent = await fs.readFile(path.join(scopedTemplates, "_templates.md"), "utf8");
 
     expect(result.exitCode).toBe(0);
-    expect(scopedContent).toContain("Documents are durable accepted records, or routes to those records, for long-form project knowledge.");
+    expect(scopedContent).toContain("Documents contain durable accepted records, or `routes` to those records, for coherent long-form knowledge");
     expect(scopedContent).not.toContain("Old scoped shipped-route copy.");
     expect(scopedContent).toContain("- [Scoped architecture truth](architecture.md) - #Memory #Document #CurrentTruth");
     expect(trailingScopeContent).toContain("User-Owned Documents Scope");

@@ -180,7 +180,9 @@ Installed category `entrypoints` own the complete compact operational and file r
 
 [Memory](../../../_memory.md) is the Framework's self-growing Markdown state for live work, agent communication and coordination, continuity, accepted records, historical context, and candidate learning. It preserves useful information across work without turning every conversation or recorded statement into current truth or active behavior.
 
-Memory state and scope are independent. State describes how recorded material should currently be treated; scope describes the person, project, component, discipline, repository, collection, or other subject to which it applies. The route path expresses both dimensions without a centralized registry.
+Memory state and scope are independent. State describes how recorded material should currently be treated. Scope describes the person, project, component, discipline, repository, collection, or other subject to which it applies. The `route` path expresses both dimensions without a centralized registry.
+
+Memory loading follows state purpose. Working and Crystallized navigation enter baseline context, Emerging learning is revisited at continuity boundaries, and Archived history remains on demand. Individual records still load by relevance unless their own tags give them a baseline or continuity role.
 
 The detailed current contracts are separated by responsibility:
 

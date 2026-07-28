@@ -9,15 +9,15 @@ open-forge:
 
 ## Source
 
-[`src/open-forge/.agents/memory/crystallized/_crystallized.md`](../../../../../../../../../src/open-forge/.agents/memory/crystallized/_crystallized.md) is the canonical installed Crystallized Memory entrypoint. The repository [Crystallized entrypoint](../../../../../../../crystallized/_crystallized.md) dogfoods the same authored contract and adds repository-local generated entries.
+[`src/open-forge/.agents/memory/crystallized/_crystallized.md`](../../../../../../../../../src/open-forge/.agents/memory/crystallized/_crystallized.md) is the canonical installed Crystallized Memory `entrypoint`. The repository [Crystallized `entrypoint`](../../../../../../../crystallized/_crystallized.md) dogfoods the same authored contract and adds repository-local generated `Entries`.
 
 The [Crystallized state contract](../../../../../framework/memory/crystallized.md) defines accepted durable Memory. The [accepted-state contract](../../../../../framework/truth.md) owns Framework-wide acceptance and synchronization.
 
 ## Contract
 
 - Frontmatter preserves #LoadNow, #Memory, #Crystallized, and #CurrentTruth classification
-- Clear user direction, delegated authority, a requested action that clearly requires the choice, or a declared external authority establishes acceptance within scope; tags, repetition, and agent confidence do not
-- The entrypoint keeps one coherent current representation for each distinct question and scope by updating, splitting, merging, or reshaping existing material
+- Clear user direction, delegated authority, a requested action that clearly requires the choice, or a declared external authority establishes acceptance within scope. Tags, repetition, and agent confidence do not establish it.
+- The `entrypoint` keeps one coherent current representation for each distinct question and scope by updating, splitting, merging, or reshaping existing material
 - Material that is no longer current is archived or linked with enough context to understand the change
 - Decisions and Documents remain the two standard nested roles and enter through ordinary generated navigation
 - Recursive scope follows the universal loader contract and does not force all authoritative state into Memory
@@ -26,7 +26,6 @@ The [Crystallized state contract](../../../../../framework/memory/crystallized.m
 ## Verification
 
 - Installation and scoped-route closure tests verify Crystallized, Decisions, and Documents creation, updating, indexing, and classification
-- Compare canonical source and dogfood authored content outside generated `Entries`
 
 ## Entries
 
