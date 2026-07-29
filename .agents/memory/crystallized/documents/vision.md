@@ -26,6 +26,8 @@ Large predefined methodologies answer this problem with more process, instructio
 
 Open Forge instead makes accepted context explicit, connected, scoped, and cheap to retrieve. The workspace starts with a small useful foundation, then develops its own methods from real decisions, corrections, evidence, and recurring needs.
 
+A user can begin with incomplete natural direction. The agent builds the best current model from available context, matches explanation and planning depth to the request, recommends a coherent direction, surfaces only consequential unsettled choices, and asks for judgment in understandable outcome terms.
+
 ## Scope
 
 Open Forge shapes the working environment around a subject. It provides human-readable context, explicit relationships and authority, routed retrieval, continuity, reusable starting points, and deterministic assistance. It does not own the subject's goals, domain knowledge, source code, product data, or external systems unless the workspace deliberately records or routes to them.
@@ -41,8 +43,10 @@ The [Open Forge Principles](principles.md) own the identity-level filters that g
 Open Forge succeeds when:
 
 - A new agent can enter a workspace and cheaply determine what matters, where it lives, what is authoritative, and what remains uncertain
+- Users can begin with natural incomplete intent and are asked only for consequential decisions in language they can understand
 - Settled workspace knowledge is understood instead of repeatedly inferred
 - Users spend attention on meaningful decisions and outcomes rather than preventable process failures
+- Accepted conversations become useful current documents and supporting context without requiring users to operate the Framework taxonomy
 - Work survives changes of session, agent, provider, project phase, and contributor without losing accepted direction
 - Unselected scopes add almost no active-context cost, while related scopes can be combined deliberately
 - Each workspace becomes more capable and personal through use without making the shared foundation more opinionated
@@ -68,3 +72,4 @@ Open Forge is not:
 ## Decisions And Rationale
 
 - [Product direction](../decisions/product-direction.md)
+- [Adaptive decision elicitation](../decisions/adaptive-decision-elicitation.md)

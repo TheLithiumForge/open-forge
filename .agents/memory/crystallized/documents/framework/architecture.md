@@ -32,6 +32,7 @@ It must make these questions cheap to answer:
 - What is binding, accepted, tentative, or historical?
 - Which file or external system is authoritative for the meaning?
 - What broader context remains active in this scope?
+- Which missing decisions could materially change this work, and which can proceed under visible assumptions?
 - Where should a new rule, result, idea, observation, or decision go?
 - How can the workspace evolve without accumulating competing truth?
 
@@ -55,6 +56,7 @@ The following structural constraints realize the [Open Forge Principles](../prin
 12. Structure and tools improve the probability of correct agent behavior without claiming mechanical control over reasoning
 13. Instantiating a template transfers ownership to the created result; the template does not manage it
 14. Framework contracts target the broadest stable authoritative `route` that preserves their required meaning
+15. Agents surface consequential unsettled choices before dependent work, recommend coherent defaults, and avoid questions that do not materially change the result
 
 ## Shipped Framework
 
@@ -347,6 +349,7 @@ These decisions preserve useful rationale behind the current Framework architect
 - [Source and packaging rationale](../../decisions/source-and-packaging.md)
 - [Typed authority and role terminology](../../decisions/authoritative-source-terminology.md)
 - [Canonical Markdown authoring rationale](../../decisions/canonical-markdown.md)
+- [Adaptive decision elicitation](../../decisions/adaptive-decision-elicitation.md)
 
 ## Historical Context
 

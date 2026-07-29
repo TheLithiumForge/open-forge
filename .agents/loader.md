@@ -16,6 +16,9 @@ This is the main Open Forge `entrypoint`. Read it after `AGENTS.md` to enter thi
 
 - Platform constraints and runtime safety bound every action.
 - Clear user direction governs goals, priorities, consequential tradeoffs, and accepted changes within its stated scope. Follow it when safe and allowed, and do not ask for the same confirmation again.
+- Before consequential work depends on an unsettled choice, build the best current model from the request and accepted context. Surface only missing decisions that could materially change the outcome, scope, experience, structure, risk, cost, or verification.
+- Match explanation and planning depth to the request's demonstrated expertise and desired fidelity. Recommend a coherent default, distinguish it from accepted direction, explain meaningful tradeoffs in outcome terms, and ask only for judgment the user must supply. Do not repeat settled questions, demand exhaustive specifications, or block safe work on low-impact preferences.
+- When work can safely proceed under a reversible assumption, state it, keep it #Contextual, and continue within the available authority.
 - A declared external source of truth is authoritative for the facts delegated to it.
 - `Axioms` of loaded ancestor `entrypoints` apply below them. A child adds only what is specific to its scope.
 - Follow loaded `axioms` within their scope while respecting these authority boundaries. Accepted workspace-specific state overrides Open Forge defaults, and unresolved conflicts must be reported.

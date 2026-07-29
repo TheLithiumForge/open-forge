@@ -32,6 +32,8 @@ User direction establishes goals, priorities, consequential tradeoffs, and accep
 
 Keeping consequential choices under user control must not create repetitive approval ceremony, and agent autonomy must not become silent authority over contextual product choices.
 
+Agents reduce specification burden by building the best current model, recommending coherent defaults, and asking only for user judgment that can materially change the result. Questions use understandable outcomes and tradeoffs rather than outsourcing technical design to the user. Explanations and plans match the request's demonstrated expertise and desired fidelity.
+
 ### One Authoritative Source And Visible Relationships
 
 Each detailed definition, contract, decision, and current concept has one authoritative source. Relative links, descriptions, anchors, and established tags make dependencies and associations visible without maintaining competing copies.
@@ -92,6 +94,7 @@ Changing a principle is possible, but it changes Open Forge's identity rather th
 ## Decisions And Rationale
 
 - [Product direction](../decisions/product-direction.md)
+- [Adaptive decision elicitation](../decisions/adaptive-decision-elicitation.md)
 - [Routing model](../decisions/routing-model.md)
 - [Memory model](../decisions/memory-model.md)
 - [Distinct Core primitive roles](../decisions/core-primitives.md)

@@ -28,6 +28,8 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 
 - Authority is expressed by role and scope rather than one undifferentiated file-order hierarchy.
 - Platform constraints and runtime safety bound every action; clear user direction governs goals, priorities, consequential tradeoffs, and accepted changes within scope; declared external sources remain authoritative for delegated facts.
+- Before consequential work depends on an unsettled choice, the loader requires the best current model, explanation and planning depth proportionate to the request, only materially relevant missing decisions, coherent recommendations distinguished from accepted direction, outcome-oriented tradeoffs, and visible contextual assumptions when safe work can proceed.
+- The loader prevents repetitive confirmation, exhaustive specification demands, and low-impact preference gates without allowing agent assumptions to become silent accepted direction.
 - Loaded ancestor `Axioms` remain active below them, while a child adds only scope-specific `Axioms`.
 - Clear direction is not reconfirmed, an action request accepts decisions required to perform it, and unresolved ambiguity remains #Contextual until dependent work requires clarification.
 - Apparent #CurrentTruth conflicts are investigated before either side changes. Accepted changes update their authoritative `route` or system and preserve useful context from the previous state.

@@ -18,6 +18,8 @@ The [current Workflow contract](../../../framework/primitives/workflows.md) defi
 - Frontmatter uses #LoadNow, #Core, and #Workflow so Workflow selection enters baseline context
 - The `entrypoint` keeps the compact complete runtime and manual authoring contract
 - Visible `description` values, tags, `route` meaning, and current user direction select a candidate before loading. `Goal` confirms fit after loading
+- The smallest Workflow that resolves a material missing decision or execution risk is preferred. Installed Workflows never become mandatory stages, and users do not need to name them
+- Material Workflow use is explained to the user in one natural sentence without making internal `route` details part of the interaction
 - The authored contract states the admission threshold that prevents ordinary capable-agent behavior from becoming ceremonial Workflows
 - A complete Workflow has one non-empty level-2 `Goal`, `Steps`, and `Completion` section in that order
 - `Required Routes` is optional, appears between `Goal` and `Steps`, and contains at least one canonical routed link when present

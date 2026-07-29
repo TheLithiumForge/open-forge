@@ -19,6 +19,7 @@ Decisions preserve accepted rationale for important choices that may need to be 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
+- [Open Forge turns incomplete natural intent into decision-ready context through recommendations, consequential questions, visible assumptions, and proportionate durable extraction](adaptive-decision-elicitation.md) - #Memory #Decision #CurrentTruth #Product #Framework #Conversation #Decision #Elicitation #UserExperience
 - [Open Forge states role and authority relationships directly, names semantic authority by source type, and reserves ownership for possession or managed lifecycle](authoritative-source-terminology.md) - #Memory #Decision #CurrentTruth #Terminology #Authority #Documentation
 - [Benchmark design separates stable tasks, reusable inputs, exact recipes, and durable evidence while limiting review claims to observable traces](benchmark-design.md) - #Memory #Decision #CurrentTruth #Benchmark #Dogfood #Evaluation
 - [Open Forge uses one canonical authoring form wherever Markdown carries Framework meaning while treating compatibility syntax as input-only](canonical-markdown.md) - #Memory #Decision #CurrentTruth #Framework #Markdown #Authoring #Syntax #Compatibility

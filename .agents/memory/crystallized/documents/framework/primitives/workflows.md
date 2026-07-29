@@ -17,6 +17,10 @@ Workflows are optional routed recipes. They are not provider-specific orchestrat
 
 A visible `description`, tags, `route` meaning, and current user direction select a candidate Workflow before its body is loaded. After loading, `Goal` confirms whether the recipe materially helps. If it does not, return to the visible `Entries` instead of executing it by inertia.
 
+Select the smallest Workflow that resolves a material missing decision or execution risk. Installed Workflows are not mandatory stages, and users do not need to know or name them.
+
+When a Workflow materially changes the interaction, explain the useful approach and why it applies in one natural sentence. Internal `route` details remain optional.
+
 Direct execution remains valid when no installed recipe adds value. An explicit choice or opt-out governs optional use.
 
 A Workflow earns its own `route` only when repeating the recipe materially changes execution, preserves a deliberate user methodology, or improves reliability beyond ordinary capable-agent behavior. Generic planning, implementation, testing, review, or brainstorming advice does not earn a Workflow merely by being written as steps.

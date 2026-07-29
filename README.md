@@ -24,6 +24,14 @@ Open Forge takes a smaller and more adaptable approach:
 
 You begin with a useful foundation. What grows from it is yours.
 
+## Start With A Conversation
+
+Users do not need to learn Open Forge roles before benefiting from them. Describe the goal naturally, with as much or as little technical detail as you have.
+
+The agent builds the best current model from the request and accepted workspace context, matches its explanation and planning depth to the request, explains important assumptions, recommends a coherent direction, and asks only for judgment that could materially change the result. Technical users can provide detailed constraints without being forced through discovery again. Less technical users can decide through understandable outcomes and tradeoffs without being asked to design the implementation.
+
+When direction becomes clear, useful results can become current documents, Decisions, Patterns, Guidance, Directives, Observations, or another appropriate source. Those files are outcomes of the conversation, not forms the user must learn to complete.
+
 ## Quick Start
 
 Start from a Git repository and install Open Forge into the current directory:

@@ -136,7 +136,7 @@
       ]
     },
     ".agents/workflows/development.md": {
-      "sha256": "31f18b4cc9bd517a2058d676d3f366d5fdfadf186a5948c41404aee02a913ef6",
+      "sha256": "eaff93201eab7fb4a17ee60e3cb26195db98a2d7bbc600e2dd0088647d6b8f02",
       "owners": [
         "development-toolkit"
       ]
@@ -154,7 +154,7 @@
       ]
     },
     ".agents/workflows/vision.md": {
-      "sha256": "b3884db4f9cab3db3c9a75e8e236bd6d80020fcb47f2d7ac3c38f01bade444e0",
+      "sha256": "5fc62698fdf8fd48133ffc0a61160f2962168103ae79bf4b73bb4d58d6adbf8f",
       "owners": [
         "development-toolkit"
       ]

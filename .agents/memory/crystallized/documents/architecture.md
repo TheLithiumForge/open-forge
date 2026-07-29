@@ -31,7 +31,7 @@ An Open Forge environment combines four areas:
 | Extensions | Optional reusable capabilities | The `routes` they extend |
 | Deterministic tools | Mechanical loading, navigation, validation, installation, packaging, and safety | The human-readable files they inspect and change |
 
-User direction establishes goals and accepted direction. An agent runtime consumes the environment, performs work with its native capabilities, and proposes changes. Agent providers and execution runtimes remain external to Open Forge. Minimal provider bridges may expose the canonical workspace entry without defining independent policy.
+User direction establishes goals and accepted direction. An agent runtime builds the best current model from that direction and accepted context, surfaces consequential unsettled choices, recommends coherent defaults, performs work with its native capabilities, and proposes changes. Agent providers and execution runtimes remain external to Open Forge. Minimal provider bridges may expose the canonical workspace entry without defining independent policy.
 
 ## Framework Composition
 
@@ -74,8 +74,10 @@ The operating flow is:
 2. The canonical workspace entry, such as `AGENTS.md`, points to the framework loader
 3. The agent reads baseline and applicable continuity context
 4. Top-down `routes` expose the scopes and relationships relevant to the goal
-5. The agent reasons and acts with native capabilities, selected context, optional extensions, and deterministic tools
-6. Results, evidence, corrections, and accepted direction update their authoritative files or external systems
+5. The agent builds the best current model, surfaces only consequential unsettled choices, and selects the smallest relevant capability when one materially helps
+6. User direction and visible contextual assumptions establish a decision-ready scope without requiring exhaustive specification
+7. The agent reasons and acts with native capabilities, selected context, optional extensions, and deterministic tools
+8. Results, evidence, corrections, and accepted direction update their authoritative files or external systems
 
 This flow moves context into and out of work. It does not require a project to follow a predefined lifecycle.
 
@@ -179,6 +181,7 @@ The extensions and CLI views document the current MVPs without treating current 
 These decisions preserve useful rationale behind the current architecture. Their architectural results remain expressed by this document and its scoped views:
 
 - [Product direction](../decisions/product-direction.md)
+- [Adaptive decision elicitation](../decisions/adaptive-decision-elicitation.md)
 - [Distinct Core primitive roles](../decisions/core-primitives.md)
 - [Templates as a Core primitive](../decisions/template-primitive.md)
 - [Routing model](../decisions/routing-model.md)

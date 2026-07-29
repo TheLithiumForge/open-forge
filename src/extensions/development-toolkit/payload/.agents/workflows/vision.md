@@ -12,12 +12,14 @@ Produce a candidate or accepted vision that makes the subject's purpose, core va
 
 ## Steps
 
-1. Inspect accepted current sources, then clarify the problem, audience, desired outcome, constraints, non-goals, and decision authority. Ask only questions whose answers could materially change the direction.
-2. Separate user-stated needs, observed signals, inferred consequences, assumptions, and candidate ideas. Keep unaccepted direction visibly #Contextual.
-3. Identify the core value that must exist for the direction to matter. Define the first useful version, explicit non-goals, and later growth without allowing future possibilities to expand the initial boundary.
-4. Test the direction against audience fit, important risks, constraints, and the cheapest credible validation signals.
-5. Present the vision at the fidelity the request needs. Make its status explicit as candidate, accepted, revised, deferred, or rejected.
-6. When the direction is accepted, update the appropriate current document and route only warranted reusable behavior or rationale to matching #Core or #Memory `routes`. Keep useful unaccepted material in Emerging Memory or report its proposed destination.
+1. Inspect accepted current sources and build the best candidate model from the request. Briefly distinguish accepted direction, important assumptions, and a coherent initial recommendation.
+2. Identify only unanswered choices that could materially change the problem, audience, outcome, constraints, non-goals, first useful version, success, or decision authority. Ask in small coherent groups and in outcome terms. Match explanation and planning depth to the request's demonstrated expertise and desired fidelity.
+3. Separate user-stated needs, observed signals, inferred consequences, assumptions, and candidate ideas. Keep unaccepted direction visibly #Contextual.
+4. Refine the model from the answers and repeat only while material uncertainty remains. Do not require exhaustive specification when reversible implementation discretion is sufficient.
+5. Identify the core value that must exist for the direction to matter. Define the first useful version, explicit non-goals, and later growth without allowing future possibilities to expand the initial boundary.
+6. Test the direction against audience fit, important risks, constraints, and the cheapest credible validation signals.
+7. Present the vision at the fidelity the request needs. Make its status explicit as candidate, accepted, revised, deferred, or rejected.
+8. When the direction is accepted, update the appropriate current document and route only warranted reusable behavior or rationale to matching #Core or #Memory `routes`. Keep useful unaccepted material in Emerging Memory or report its proposed destination.
 
 ## Completion
 
