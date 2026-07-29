@@ -1,7 +1,0 @@
-{
-  "id": "testing-workflow",
-  "name": "Testing Workflow",
-  "description": "Produce evidence for a behavior or deliverable through proportionate tests or checks without implementing the product change",
-  "version": "0.1.0",
-  "dependencies": ["quality-capability"]
-}

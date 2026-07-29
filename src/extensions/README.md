@@ -1,79 +1,73 @@
 # Open Forge Extensions
 
-First-party Open Forge extensions live here.
+First-party Open Forge Extension sources live here.
 
-An extension is the one installable unit, not a content type. Its payload may contain one skill, one workflow, directives, any other routed material, or a deliberate mix. An extension may also be a dependency-only convenience pack.
+An Extension is one optional installation and ownership unit. Its payload may contain any deliberate combination of routed files. Installed files retain the meaning of their destination routes and remain usable without the manifest, source package, receipt, or CLI.
 
 ## Current Catalogue
 
-Skills:
+The pre-release catalogue currently advertises one deliberately small package:
 
-- `architecture-capability`
-- `vision-capability`
-- `planning-capability`
-- `implementation-capability`
-- `quality-capability`
+- `development-toolkit` adds six lean Workflows, one native Experience Design Skill, and nine copy-ready Templates
 
-Workflows:
+Install only when that complete unit earns its context and maintenance cost:
 
-- `architecture-workflow`
-- `vision-workflow`
-- `brainstorming-workflow`
-- `implementation-workflow`
-- `testing-workflow`
-- `dev-workflow` - adaptive implement, test, improve, retest, diagnose, and fix loop
+```sh
+open-forge extend --list
+open-forge extend development-toolkit --dry-run
+open-forge extend development-toolkit
+open-forge extend --remove development-toolkit --dry-run
+```
 
-Packs:
+The current CLI does not select individual features inside a package. Users own installed files and may remove routes that provide no local value after reviewing the resulting route tree.
 
-- `workflow-essentials` - dependency-only architecture, vision, and implementation convenience pack
-- `planning-workflows` - planning and task creation plus brainstorming
-- `quality-workflows` - review, refactoring, and debugging plus testing
-- `design-workflows` - UX exploration, experience-design review, and implementation handoff
+## Source Shape
 
-Support:
-
-- `reliability-defaults` - directive-only workspace safeguards
-- `cli-testing-patterns` - pattern-only tiered CLI testing with fast pure feedback and explicit OS/process closure coverage
-- `rune-bridge` - guidance and workspace routes for optional Rune-assisted relevance
-
-Install only the capabilities that earn their context and maintenance cost. `open-forge extend --list` reads the shipped catalog, and dependency packs install automatically.
-
-Most bundled extensions use this shape. Catalogue grouping and source placement are organization only. Neither defines package identity or runtime meaning:
+The current package uses:
 
 ```text
-{optional-group}/{package-folder}/
+development-toolkit/
   extension.json
   README.md
   payload/
     .agents/
-      ...
+      skills/
+      templates/
+      workflows/
 ```
 
-A dependency-only package may omit `payload/` when it declares at least one dependency. It installs only that dependency closure. This shape works by bundled id or from a copied local directory containing `extension.json`, optional `README.md`, and an optional payload.
+A normal managed package contains an `extension.json`, an optional `README.md`, and complete target-relative files beneath `payload/`. A dependency-only package may omit `payload/` when it declares at least one dependency. A local source may also be a plain payload directory or direct overlay.
 
-The MVP CLI installs bundled extensions with:
+Every bundled package declares a stable lowercase id independently of its folder. A local source with a manifest id opts into receipt-managed lifecycle. An idless local payload remains unmanaged.
 
-```sh
-open-forge extend [--dry-run] [--pro]
-open-forge extend --list
-open-forge extend --ids {extension-id},{extension-id}
-open-forge extend {extension-id}
-open-forge extend {extension-id} --dry-run
-open-forge extend --remove {installed-extension-id} --dry-run
-```
+The current manifest accepts:
 
-`extension.json` is optional only for an idless plain local payload or overlay with no dependencies. It may contain a lowercase stable `id`, non-empty `name`, `description`, and `version` values, and a duplicate-free `dependencies` array of bundled extension ids. Unknown fields are rejected so misspelled ownership or dependency declarations cannot silently change installation. Every bundled package declares an explicit id that remains stable independently of its source location. Missing and duplicate bundled ids are errors. A local source that declares an id opts into receipt-managed lifecycle even without `payload/`. Every local source that declares dependencies requires `extension.json`. Idless plain overlays remain unmanaged.
+- `id`
+- `name`
+- `description`
+- `version`
+- A duplicate-free `dependencies` array of bundled ids
 
-Dependencies may point to any bundled extension regardless of whether it contains skills, workflows, directives, mixed routes, or only more dependencies. They resolve transitively, offline, and before their dependents. The manifest is CLI installation metadata. Installed payload files remain runtime truth and stay usable through ordinary file copying and reading without the CLI, manifest, or ownership receipt.
+Unknown fields are rejected. Dependencies resolve transitively and offline before their dependents. Installed files still express every runtime relationship through ordinary links and route meaning because package metadata is not agent context.
 
-Payload files should use #Extension plus their route type and useful scope tags when the file format is Open Forge-authored. Standard files such as `SKILL.md` should keep their runtime-required metadata. Do not use load-policy tags in extension payloads unless baseline loading is deliberately intended.
+## Payload Contract
 
-Shared behavior should have one canonical package owner. Put a shared skill in a skill-only extension, declare that extension from every dependent workflow, keep the graph acyclic, and ensure installed workflows name the concrete Required Routes they need. Identical-file deduplication is a safety boundary, not a reason to duplicate first-party payloads.
+Payload files are authored for their final workspace-relative locations. Open Forge-authored files normally use #Extension with their useful type and topic tags. Runtime-native files such as `SKILL.md` keep their native metadata. Loading tags appear only when baseline or continuity loading is deliberate.
 
-The CLI validates every manifest and existing receipt, then builds a complete source plan before writing. Manifest and payload paths are portable slash-separated relative paths. Literal backslashes are rejected. Portable paths are Unicode-normalized and case-folded, and path segments also reject Windows-invalid characters, trailing dots or spaces, and reserved device basenames. Different bytes targeting the same portable path are a collision error, identical planned files are deduplicated, file-parent conflicts and existing portable aliases are rejected, and linked local or direct bundled package roots, target links, or multiply linked files cannot redirect writes. A managed package cannot adopt an existing unowned file, even when bytes match. An unmanaged overlay cannot replace a receipt-owned path. Shared managed files can update only when every existing owner participates and supplies the same bytes. The selected index tree is validated independently even for an empty or outside-`.agents` payload. Source roots and entries must be regular directories or files. Links and special entries are rejected. Use `--dry-run` to inspect dependency order, scope counts, receipt changes, and every planned relative path with its create/update/delete/unchanged status without writes. Dry runs validate existing index shape but do not preview generated-index body changes. Normal installs also report counts for routed, baseline-loading, direct skill-script, and outside-`.agents` files.
+Shared behavior has one canonical package source. Identical-file deduplication is a safety boundary, not permission to maintain competing first-party copies.
 
-Normal writes require recognizable tracked Core anchors and a clean target-scoped Git checkpoint, then ask for review and commit of the complete selected dependency closure. Planned paths, derived indexes, and `open-forge.extensions.json` must remain Git-visible. Payloads may not write `.git/` or `.gitignore` and must leave repository-control changes to a separate review. Install roots separately when separate diffs matter. `--list` and `--dry-run` stay ungated. `--pro` bypasses only the Git/Core checkpoint lifecycle and never manifest, receipt, ownership, or installation-safety preflight.
+The `development-toolkit` package is canonical for its nine shipped Template leaves. The repository dogfood copies remain aligned through an automated parity check after removing only the package-specific #Extension tag.
 
-Stable-id packages are recorded in transparent root `open-forge.extensions.json`, which owns payload digests, owner sets, dependency edges, and requested roots. Receipt `sha256` protects extension-authored bytes. CLI-owned generated `Entries` bodies may change through `index` or Core without invalidating entrypoint ownership. Reinstalling the same id reconciles changed or dropped owned content after verifying the existing hashes. `extend --remove` changes exactly the requested ids and blocks when a retained extension still depends on one. Updating or removing an owned entrypoint also blocks when it would strand retained routed descendants. Move or remove them in the same plan, or keep another owner for the route host. Orphan dependencies are not pruned automatically. Idless overlays and directly installed skills remain unmanaged and are never adopted by `index`.
+## Planning, Ownership, And Removal
 
-Payload writes, index regeneration, and receipt updates roll back together on handled in-process failures. There is no registry, network resolution, compatibility solver, migration lifecycle, automatic prune policy, persistent recovery journal, or crash recovery. Fast development tests own pure dependency-selection, portable-path, receipt, workflow/directive, and generated-index invariants. Slower closure/CI command-contract tests use fresh OS temporary roots, real CLI subprocesses and Git, then prove lifecycle, rollback, catalogue, packaged-layout, `doctor`, and Required Route behavior.
+The CLI validates every selected manifest, source path, target path, existing receipt, dependency, collision, and route-integrity boundary before writing. `--dry-run` reports the complete plan without mutation.
+
+Normal writes require recognizable tracked Core anchors and a clean target-scoped Git checkpoint. `--pro` bypasses only the Git and Core checkpoint lifecycle. It never bypasses manifest, containment, collision, ownership, or route-integrity checks.
+
+Managed packages are recorded in the transparent root `open-forge.extensions.json` receipt. It records dependency edges, requested roots, owned paths, owner sets, and payload digests. Reinstalling an id reconciles its owned files. Removal protects user changes, retained dependents, shared ownership, and reachable routed descendants.
+
+Payload writes, generated `Entries`, and receipt changes roll back together on handled in-process failures. The MVP has no registry, network resolution, compatibility solver, automatic orphan pruning, migration hooks, persistent recovery journal, or crash recovery.
+
+## Catalogue Reset
+
+Earlier first-party package ids were removed before a stable release and are not aliases. Existing installed files remain ordinary workspace content. Their receipts remain sufficient for explicit preview and removal without retaining the old source catalogue.

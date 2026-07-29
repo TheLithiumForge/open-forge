@@ -1,7 +1,0 @@
-{
-  "id": "planning-capability",
-  "name": "Planning Skill",
-  "description": "Planning skill for option framing, executable plans, and authoritative task creation",
-  "version": "0.1.0",
-  "dependencies": []
-}

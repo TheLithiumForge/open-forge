@@ -1,7 +1,0 @@
-{
-  "id": "workflow-essentials",
-  "name": "Workflow Essentials",
-  "description": "Convenience pack for the vision, architecture, and implementation workflows",
-  "version": "0.1.0",
-  "dependencies": ["vision-workflow", "architecture-workflow", "implementation-workflow"]
-}

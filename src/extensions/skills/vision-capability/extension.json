@@ -1,7 +1,0 @@
-{
-  "id": "vision-capability",
-  "name": "Vision Skill",
-  "description": "Vision skill for intent clarification, first-useful-version shaping, risk analysis, and provenance-aware support-route derivation",
-  "version": "0.1.0",
-  "dependencies": []
-}

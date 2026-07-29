@@ -1,7 +1,0 @@
-{
-  "id": "architecture-workflow",
-  "name": "Architecture Workflow",
-  "description": "Bootstrap greenfield or rescue architecture, compare options, and derive accorded directives, patterns, guidance, and transition slices",
-  "version": "0.1.0",
-  "dependencies": ["architecture-capability"]
-}

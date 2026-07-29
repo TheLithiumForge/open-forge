@@ -1,7 +1,0 @@
-{
-  "id": "architecture-capability",
-  "name": "Architecture Skill",
-  "description": "Architecture skill for greenfield/rescue system mapping, option framing, support-route derivation, and adoptable transition slicing",
-  "version": "0.1.0",
-  "dependencies": []
-}

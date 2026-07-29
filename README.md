@@ -241,16 +241,16 @@ npx open-forge extend
 Preview an installation:
 
 ```sh
-npx open-forge extend architecture-workflow --dry-run
+npx open-forge extend development-toolkit --dry-run
 ```
 
 Install it:
 
 ```sh
-npx open-forge extend architecture-workflow
+npx open-forge extend development-toolkit
 ```
 
-The current catalogue includes focused capabilities and workflows for vision, architecture, planning, implementation, quality, testing, debugging, refactoring, design, and optional reliability support.
+The deliberately small current catalogue contains one `development-toolkit` package. It adds six lean Workflows, one native Experience Design Skill, and nine copy-ready Templates without changing the Framework's runtime model.
 
 See [Extension documentation](docs/extensions.md) for package shapes, dependencies, receipts, update and removal behavior, safety boundaries, and sharing.
 

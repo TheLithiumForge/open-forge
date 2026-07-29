@@ -1,7 +1,0 @@
-{
-  "id": "brainstorming-workflow",
-  "name": "Brainstorming Workflow",
-  "description": "Explore an ambiguous idea and produce distinct evidence-grounded options with tradeoffs",
-  "version": "0.1.0",
-  "dependencies": ["planning-capability"]
-}
