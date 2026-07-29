@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Blind terminology probe found complete propagation of current references while exposing the cost of semantic duplication and the value of independent writing review
-  tags: [Memory, Analysis, Contextual, Candidate, Framework, Routing, Documentation, Maintenance, Evaluation, Agent, Evidence]
+  description: Historical blind terminology probe that found complete propagation of current references while exposing duplication cost and the value of independent writing review
+  tags: [Memory, Archived, Analysis, Contextual, Historical, Framework, Routing, Documentation, Maintenance, Evaluation, Agent, Evidence]
 ---
 
 # Reference Propagation Probe
@@ -53,9 +53,9 @@ This was one agent, one terminology change, one repository state, and one tool e
 
 The terminology change was an isolated probe and was not applied to the primary worktree.
 
-## Related Current Sources
+## Related Records And Current Sources
 
-- [Temporary independent review Directive](../../../directives/temporary-independent-review.md)
+- [Framework migration closeout](../sessions/2026-07-29_open-forge-framework-migration-closeout.md)
 - [Open Forge Writing Standard](../../crystallized/documents/maintenance/writing.md)
 - [Routed Markdown representation](../../crystallized/documents/framework/markdown/routes.md)
 - [Deliberate Framework change Directive](../../../directives/deliberate-framework-change.md)

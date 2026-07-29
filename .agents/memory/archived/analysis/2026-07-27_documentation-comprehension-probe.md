@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Initial blind-reader probe found no factual failures across ten known-answer Framework questions and identified five discovery-cost gaps
-  tags: [Memory, Analysis, Contextual, Candidate, Documentation, Evaluation, Comprehension, Agent, Evidence]
+  description: Historical initial blind-reader probe that found no factual failures across ten known-answer Framework questions and identified five discovery-cost gaps
+  tags: [Memory, Archived, Analysis, Contextual, Historical, Documentation, Evaluation, Comprehension, Agent, Evidence]
 ---
 
 # Initial Documentation Comprehension Probe
@@ -85,7 +85,7 @@ This may be appropriate separation rather than a defect. A future probe should t
 
 ## Mechanical Finding
 
-The new [documentation comprehension probe idea](../ideas/documentation-comprehension-probes.md) was initially absent from generated Ideas entries because an index rebuild encountered a transient file-open failure while the blind reader was traversing `.agents`.
+The new [documentation comprehension probe idea](../../emerging/ideas/documentation-comprehension-probes.md) was initially absent from generated Ideas entries because an index rebuild encountered a transient file-open failure while the blind reader was traversing `.agents`.
 
 The missing route was detected by the reader and repaired after the isolated pass. This demonstrates that comprehension probes can also reveal practical navigation failures, although structural validation remains the authoritative mechanism for detecting them deterministically.
 
@@ -123,7 +123,7 @@ The next probe should verify these changes against the installable payload rathe
 
 ## Related Sources
 
-- [Documentation comprehension probe idea](../ideas/documentation-comprehension-probes.md)
+- [Documentation comprehension probe idea](../../emerging/ideas/documentation-comprehension-probes.md)
 - [Open Forge Vision](../../crystallized/documents/vision.md)
 - [Framework Architecture](../../crystallized/documents/framework/architecture.md)
 - [Routing loading and continuity](../../crystallized/documents/framework/routing/loading.md)

@@ -22,5 +22,4 @@ Directives are binding instructions selected through the `route` tree.
 
 <!-- open-forge:generated-index:start -->
 - [Keep Open Forge contract changes deliberate, current, dogfooded, reviewable, and evidence-backed](deliberate-framework-change.md) - #LoadNow #Directive #Framework #Change #Dogfood #Review #Evidence
-- [Require independent semantic-loss, writing-quality, and optimization reviews during the current Open Forge migration](temporary-independent-review.md) - #LoadNow #Directive #Framework #Change #Migration #Review #Temporary
 <!-- open-forge:generated-index:end -->

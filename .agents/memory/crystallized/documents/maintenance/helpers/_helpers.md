@@ -6,7 +6,7 @@ open-forge:
 
 # Maintenance Helpers
 
-These helpers make repository authoring, review, and migration more consistent. They are not shipped Framework concepts or vocabulary that users must learn.
+These helpers make repository authoring, review, and ongoing maintenance more consistent. They are not shipped Framework concepts or vocabulary that users must learn.
 
 ## Axioms
 

@@ -54,6 +54,7 @@ If the method remains useful, maintain an internal question bank and answer rubr
 
 ## Evidence
 
+- The [initial documentation comprehension probe](../../archived/analysis/2026-07-27_documentation-comprehension-probe.md) recovered all ten intended answers and exposed several discovery-cost gaps that later routing changes addressed
 - The scoped Decisions and Documents rule was technically present in the routing architecture but needed concrete paths in the Crystallized state document before its intended use became obvious
 - Current review already validates structure, links, source alignment, and implementation behavior, but none of those checks proves that an unfamiliar reader forms the intended mental model
 - Open Forge explicitly depends on capable agents understanding routed human-readable files, so comprehension is part of the product behavior rather than only documentation polish
