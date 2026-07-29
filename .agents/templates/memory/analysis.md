@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Analysis template is used when one Emerging record must preserve a question, evidence, assumptions, alternatives, limits, and an unsettled current conclusion
-  tags: [Template, Memory, Analysis, Emerging, Contextual]
+  tags: [Extension, Template, Memory, Analysis, Emerging, Contextual]
 ---
 
 # {Analysis Subject}

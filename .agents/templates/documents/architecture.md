@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Architecture template is used when one current document must define how a subject is structured, how its parts relate, and which boundaries and constraints govern it
-  tags: [Template, Document, Architecture, CurrentView]
+  tags: [Extension, Template, Document, Architecture, CurrentView]
 ---
 
 # {Subject} Architecture

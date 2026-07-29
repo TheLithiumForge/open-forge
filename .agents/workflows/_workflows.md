@@ -21,5 +21,10 @@ Workflows are optional routed Markdown recipes for reaching defined goals.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- none - No entries - #Empty
+- [Define or review a system's structure, tradeoffs, boundaries, and adoptable transition](architecture.md) - #Extension #Workflow #Architecture #Design
+- [Reproduce and isolate a defect, identify its root cause, and verify an authorized minimal fix](debugging.md) - #Extension #Workflow #Quality #Debugging
+- [Deliver an accepted change through implementation, proportionate verification, focused improvement, and cause-level failure handling](development.md) - #Extension #Workflow #Development #Implementation #Testing #Refactoring
+- [Turn an accepted direction into an executable plan with explicit dependencies, decisions, and verification](planning.md) - #Extension #Workflow #Planning
+- [Review a change, design, or repository state and report prioritized evidence-backed findings without modifying it by default](review.md) - #Extension #Workflow #Quality #Review
+- [Define or challenge a subject's purpose, core value, first useful version, boundaries, and success before execution](vision.md) - #Extension #Workflow #Vision #Product
 <!-- open-forge:generated-index:end -->

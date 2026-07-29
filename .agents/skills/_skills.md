@@ -17,5 +17,5 @@ Each Skill follows the native contract defined by its own `SKILL.md`.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- none - No entries - #Empty
+- [User-centered experience analysis for journeys, interaction states, accessibility, design review, and implementation handoff. Use when interface or service behavior needs domain-specific experience criteria rather than general product or code reasoning.](experience-design/SKILL.md) - #Skill
 <!-- open-forge:generated-index:end -->

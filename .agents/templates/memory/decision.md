@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Decision template is used when one accepted record must preserve what was chosen, why, with which consequences, and where the result now lives
-  tags: [Template, Memory, Decision, Crystallized]
+  tags: [Extension, Template, Memory, Decision, Crystallized]
 ---
 
 # {Decision}

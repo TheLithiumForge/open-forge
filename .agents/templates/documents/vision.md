@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Vision template is used when one current document must define what future should become true, why it matters, its boundaries, identity, and success
-  tags: [Template, Document, Vision, CurrentView]
+  tags: [Extension, Template, Document, Vision, CurrentView]
 ---
 
 # {Subject} Vision

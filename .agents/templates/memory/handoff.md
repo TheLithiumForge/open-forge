@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Handoff template is used when one bounded Working record must transfer enough current state, authority, evidence, blockers, and next action to resume work
-  tags: [Template, Memory, Handoff, Working, Contextual]
+  tags: [Extension, Template, Memory, Handoff, Working, Contextual]
 ---
 
 # {Work} Handoff

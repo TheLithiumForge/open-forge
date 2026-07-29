@@ -22,4 +22,5 @@ Observations capture grounded facts, signals, constraints, recurring behavior, r
 <!-- open-forge:generated-index:start -->
 - [Raw-report reconciliation found provenance, isolation, collision, replication, and synthesis-consistency gaps in the benchmark corpus](2026-07-12_benchmark-validity-gaps.md) - #Memory #Observation #AgentLearning #Contextual #Candidate #Benchmark #Evaluation #Evidence #Reproducibility
 - [Active maintainer shortlist compares CRD and GRAD with the ACE, TRACE, and GRACE context-engineering family](2026-07-13_product-name-collision.md) - #Memory #Observation #AgentLearning #Contextual #Candidate #Product #Naming #Brand #Risk
+- [Installing the development toolkit over equivalent unowned dogfood Templates exposed a missing explicit transition into managed Extension ownership](2026-07-29_managed-extension-adoption-boundary.md) - #Memory #Observation #AgentLearning #Contextual #Candidate #CLI #Extension #Ownership #Lifecycle #Dogfood
 <!-- open-forge:generated-index:end -->

@@ -56,7 +56,7 @@ Payload files are authored for their final workspace-relative locations. Open Fo
 
 Shared behavior has one canonical package source. Identical-file deduplication is a safety boundary, not permission to maintain competing first-party copies.
 
-The `development-toolkit` package is canonical for its nine shipped Template leaves. The repository dogfood copies remain aligned through an automated parity check after removing only the package-specific #Extension tag.
+The `development-toolkit` package is canonical for its nine shipped Template leaves. Because this repository installs the Extension for dogfooding, its corresponding Template leaves remain exactly aligned through an automated parity check.
 
 ## Planning, Ownership, And Removal
 

@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Observation template is used when one Emerging record must preserve a grounded finding, its evidence, scope, uncertainty, recurrence, and possible future relevance
-  tags: [Template, Memory, Observation, Emerging, Contextual]
+  tags: [Extension, Template, Memory, Observation, Emerging, Contextual]
 ---
 
 # {Observation}

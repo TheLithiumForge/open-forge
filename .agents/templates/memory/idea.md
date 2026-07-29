@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Idea template is used when one Emerging record must preserve what plausible possibility deserves exploration, what supports it, and what would justify promotion
-  tags: [Template, Memory, Idea, Emerging, Contextual]
+  tags: [Extension, Template, Memory, Idea, Emerging, Contextual]
 ---
 
 # {Idea}

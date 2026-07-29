@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Maintenance contract template is used when one current document must define what a source or repository surface must preserve and how maintainers verify it
-  tags: [Template, Document, Maintenance, Governance, CurrentView]
+  tags: [Extension, Template, Document, Maintenance, Governance, CurrentView]
 ---
 
 # {Surface} Maintenance Contract

@@ -22,6 +22,6 @@ Templates are reusable source artifacts intended to be instantiated into indepen
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Generic copy-ready starting points for coherent current knowledge documents](documents/_documents.md) - #Template #Document #CurrentView
-- [Copy-ready starting points for useful Working, Emerging, and Crystallized memory records](memory/_memory.md) - #Template #Memory
+- [Generic copy-ready starting points for coherent current knowledge documents](documents/_documents.md) - #Extension #Template #Document #CurrentView
+- [Copy-ready starting points for useful Working, Emerging, and Crystallized Memory records](memory/_memory.md) - #Extension #Template #Memory
 <!-- open-forge:generated-index:end -->

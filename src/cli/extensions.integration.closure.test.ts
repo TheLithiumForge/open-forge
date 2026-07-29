@@ -188,16 +188,14 @@ describe("first-party extension integration", () => {
     expect(JSON.parse(doctorResult.stdout)).toMatchObject({ errors: 0, warnings: 0 });
   });
 
-  test("keeps packaged Templates aligned with selected dogfood Templates", async () => {
+  test("keeps installed dogfood Template leaves exactly aligned with their package source", async () => {
     const packageTemplates = path.join(await extensionPackagePath("development-toolkit"), "payload", ".agents", "templates");
     const dogfoodTemplates = repoPath(".agents", "templates");
 
     for (const relativeTemplate of toolkitTemplateFiles) {
       const packaged = await fs.readFile(path.join(packageTemplates, ...relativeTemplate.split("/")), "utf8");
       const dogfood = await fs.readFile(path.join(dogfoodTemplates, ...relativeTemplate.split("/")), "utf8");
-      expect(packaged.replace(/\r\n/g, "\n").replace("tags: [Extension, ", "tags: [")).toBe(
-        dogfood.replace(/\r\n/g, "\n")
-      );
+      expect(packaged.replace(/\r\n/g, "\n")).toBe(dogfood.replace(/\r\n/g, "\n"));
     }
   });
 

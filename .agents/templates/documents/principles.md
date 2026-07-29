@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Principles template is used when recurring unfamiliar choices need one current document for the identity-level filters used to judge them
-  tags: [Template, Document, Principle, CurrentView]
+  tags: [Extension, Template, Document, Principle, CurrentView]
 ---
 
 # {Subject} Principles
