@@ -5,5 +5,5 @@
     "immutable-ledger-removal",
     "hard-delete-emerging-note"
   ],
-  "extensions": ["planning-workflows"]
+  "extensions": ["development-toolkit"]
 }

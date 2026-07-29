@@ -1,14 +1,16 @@
 ---
 open-forge:
-  description: Preserve requirements and unresolved boundaries that should inform the planned Workflow architecture redesign
-  tags: [Memory, Idea, Contextual, Candidate, Workflow, Architecture, Product, Refactor]
+  description: Historical inputs used to replace the eight-section Workflow schema with the minimal goal, steps, completion, and optional dependency contract
+  tags: [Memory, Archived, Idea, Contextual, Historical, Workflow, Architecture, Product, Refactor]
 ---
 
 # Workflow Overhaul Inputs
 
 ## Status
 
-The current Workflow contract remains #CurrentTruth until a replacement is accepted. This file preserves redesign inputs, not active runtime requirements.
+Archived on 2026-07-29 after the accepted Workflow contract, first-party recipes, validation, and documentation were migrated together.
+
+The current result lives in the [Workflow contract](../../crystallized/documents/framework/primitives/workflows.md) and [Workflow shape decision](../../crystallized/decisions/workflow-shape.md). This file preserves the redesign inputs and does not define active runtime requirements.
 
 ## Why Revisit Workflows
 

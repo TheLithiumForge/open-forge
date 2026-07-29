@@ -6,5 +6,5 @@
     "read-only-recall",
     "source-backed-summary"
   ],
-  "extensions": ["rune-bridge"]
+  "extensions": []
 }

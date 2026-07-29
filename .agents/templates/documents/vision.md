@@ -12,7 +12,7 @@ Template selection:
 - Primary question: What should become true, why does it matter, what bounds it, and what would success mean?
 
 Instantiation notes:
-- Replace this template's frontmatter, title, placeholders, and comments.
+- Replace this Template's frontmatter, title, placeholders, and comments.
 - Keep only sections that make the vision clearer.
 - Add a short domain or category definition before Vision only when readers need it to understand the promise.
 - Keep implementation, current status, sequencing, and detailed rationale in their own authoritative sources.
@@ -48,4 +48,4 @@ Instantiation notes:
 
 ## Decisions And Rationale
 
-{Link to accepted decisions that preserve useful reasons behind this current vision. Omit when no separate rationale source exists.}
+{Link to accepted Decisions that preserve useful reasons behind this current vision. Omit when no separate rationale source exists.}

@@ -19,13 +19,13 @@ npx open-forge extend --list
 Preview one Extension and its dependencies:
 
 ```sh
-npx open-forge extend architecture-workflow --dry-run
+npx open-forge extend development-toolkit --dry-run
 ```
 
 Install the reviewed plan:
 
 ```sh
-npx open-forge extend architecture-workflow
+npx open-forge extend development-toolkit
 ```
 
 Review and commit the resulting files:
@@ -34,7 +34,7 @@ Review and commit the resulting files:
 git status
 git diff
 git add .agents open-forge.extensions.json
-git commit -m "Add architecture workflow"
+git commit -m "Add development toolkit"
 ```
 
 The receipt is created only for managed packages. Review the actual changed paths reported by Git rather than assuming every installation changes both paths above.
@@ -43,27 +43,38 @@ The receipt is created only for managed packages. Review the actual changed path
 
 An Extension is a content-agnostic package, not another Framework primitive or root.
 
-For example, a workflow Extension may install:
+For example, the current first-party Extension installs:
 
 ```text
 .agents/
   workflows/
-    architecture/
-      _architecture.md
-      define-architecture.md
+    architecture.md
+    debugging.md
+    development.md
+    planning.md
+    review.md
+    vision.md
   skills/
-    architecture/
+    experience-design/
       SKILL.md
+      references/
+        ...
+  templates/
+    documents/
+      ...
+    memory/
+      ...
 ```
 
 After installation:
 
-- The Workflow is selected and used as a Workflow
+- Each Workflow is selected and used as a Workflow
 - The Skill follows its native `SKILL.md` contract
-- Generated `Entries` expose both routes
+- The Templates provide copy-ready starting content
+- Generated `Entries` expose the installed routes
 - #Extension records optional package provenance without creating authority or loading behavior
 
-Package dependencies ensure files arrive together. Installed files still express their runtime relationships through ordinary links and Required Routes.
+Package metadata ensures the complete selected unit arrives together. Installed files still express runtime relationships through ordinary links and route meaning.
 
 ## Choose And Install
 
@@ -74,10 +85,10 @@ npx open-forge extend
 npx open-forge extend --select
 ```
 
-Install several bundled roots as one review unit:
+Install the bundled toolkit as one review unit:
 
 ```sh
-npx open-forge extend --ids planning-workflows,quality-workflows
+npx open-forge extend development-toolkit
 ```
 
 Install a local package or direct overlay:
@@ -97,7 +108,7 @@ Normal writes require recognizable tracked Open Forge Core anchors, a clean targ
 Preview an installation:
 
 ```sh
-npx open-forge extend architecture-workflow --dry-run
+npx open-forge extend development-toolkit --dry-run
 ```
 
 An installation preview performs package discovery, dependency resolution, and complete preflight, then summarizes planned file and receipt effects without writing.
@@ -105,7 +116,7 @@ An installation preview performs package discovery, dependency resolution, and c
 Preview a removal:
 
 ```sh
-npx open-forge extend --remove architecture-workflow --dry-run
+npx open-forge extend --remove development-toolkit --dry-run
 ```
 
 A removal preview reads installed receipt state, validates owned files and retained dependents, and summarizes the removal plan without writing.
@@ -115,16 +126,24 @@ The CLI [Preview reference](cli.md#preview) defines the exact installation and r
 Reinstall a managed id to reconcile its owned files:
 
 ```sh
-npx open-forge extend architecture-workflow
+npx open-forge extend development-toolkit
 ```
 
 Remove explicitly selected ids:
 
 ```sh
-npx open-forge extend --remove architecture-workflow
+npx open-forge extend --remove development-toolkit
 ```
 
 Removal stops when a retained Extension still depends on the selected id, an owned file has changed, or deleting an entrypoint would strand retained routes. When another installed Extension shares an identical owned file, removal drops only the selected owner and retains the file. Dependencies that become orphans are not pruned automatically. Preview and remove them explicitly when desired.
+
+## Pre-Release Catalogue Reset
+
+The first-party catalogue was consolidated before a stable release into the single `development-toolkit` package. Earlier package identities are not aliases and are not current installation or update sources.
+
+Files already installed from an earlier package remain ordinary usable workspace files. Their existing ownership receipt is sufficient for previewing and removing that installed identity without its original source package. Review or remove those files explicitly, then install `development-toolkit` when the new package is wanted.
+
+The toolkit is intentionally installed as one small unit. The current CLI does not select individual package features. Users own the installed files and may remove routes that provide no local value after reviewing the resulting route tree.
 
 ## Manual Installation
 
@@ -174,20 +193,20 @@ Using a separate target workspace keeps package sources distinct from installed 
 
 ## Package Shapes
 
-First-party source packages live in presentation groups:
+The current first-party package lives directly beneath the source catalogue:
 
 ```text
 src/extensions/
-  skills/
-  workflows/
-  packs/
-  support/
+  development-toolkit/
+    extension.json
+    README.md
+    payload/
 ```
 
 A normal managed package contains:
 
 ```text
-src/extensions/{group}/{package-folder}/
+{package-folder}/
   extension.json
   README.md
   payload/
@@ -198,7 +217,7 @@ src/extensions/{group}/{package-folder}/
 A dependency-only pack may omit `payload/`:
 
 ```text
-src/extensions/packs/{package-folder}/
+{package-folder}/
   extension.json
   README.md
 ```
@@ -213,7 +232,7 @@ A local source may use:
 
 A local source with a manifest id opts into managed lifecycle. An idless payload or direct overlay remains unmanaged.
 
-Source groups and folder names help catalogue presentation and maintenance. The manifest id defines managed package identity. Installed files receive runtime meaning from their destination routes and contents.
+Source folders help catalogue presentation and maintenance. The manifest id defines managed package identity. Installed files receive runtime meaning from their destination routes and contents.
 
 ## Manifest
 
@@ -250,6 +269,8 @@ Open Forge-authored routed files normally carry:
 - Their Core primitive or Memory classification
 - Useful scope and topic tags
 
+A complete Workflow payload uses level-2 `Goal`, `Steps`, and `Completion` sections in that order. Add `Required Routes` between `Goal` and `Steps` only for unconditional routed dependencies, and omit it when none apply. Recipe-specific headings may organize details without expanding the Framework schema.
+
 Standard formats such as `SKILL.md` retain their native metadata. Use #LoadNow or #KeepInMind only when the installed file deliberately belongs in baseline or continuity loading.
 
 Markdown links resolve relative to their containing file in the assembled workspace. Links within one package should resolve in the isolated payload. Links to Core or declared dependencies may resolve only after the complete package closure is assembled.
@@ -267,7 +288,7 @@ Dependencies:
 - Install before their dependents
 - Are deduplicated across the selected closure
 
-Put reusable content in one canonical package. A Workflow that depends on a Skill package still links to the concrete installed `SKILL.md` through Required Routes because manifest dependencies are not runtime context.
+Put reusable content in one canonical package. A Workflow that depends on a Skill package still links to the concrete installed `SKILL.md` through `Required Routes` because manifest dependencies are not runtime context.
 
 Convenience packs should contain dependency edges instead of duplicated payloads. Keep dependency graphs small and acyclic.
 

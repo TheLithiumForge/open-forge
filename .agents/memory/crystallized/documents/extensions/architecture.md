@@ -78,20 +78,20 @@ The first three elements define extension content and composition. The CLI MVP A
 
 ## Source Packages
 
-First-party packages currently live under [`src/extensions/`](../../../../../src/extensions/) in four presentation groups:
+The current first-party package lives directly beneath [`src/extensions/`](../../../../../src/extensions/):
 
 ```text
 src/extensions/
-  skills/
-  workflows/
-  packs/
-  support/
+  development-toolkit/
+    extension.json
+    README.md
+    payload/
 ```
 
 A normal managed package has:
 
 ```text
-{group}/{package-folder}/
+{package-folder}/
   extension.json
   README.md
   payload/
@@ -100,7 +100,7 @@ A normal managed package has:
 
 A dependency-only pack may omit `payload/`. A local source may use the complete package shape, a plain `payload/` directory, or a direct overlay whose contents map directly into the target.
 
-The source group and folder help maintainers browse packages and help the catalogue present related choices. They do not determine install identity, dependency semantics, or runtime meaning.
+The source folder helps maintainers browse packages. It does not determine install identity, dependency semantics, or runtime meaning.
 
 ## Identity And Manifest
 
@@ -185,9 +185,11 @@ The current MVP permits local packages to depend on bundled ids. It does not res
 
 The [extension catalogue README](../../../../../src/extensions/README.md) and manifests are authoritative for the live package list and descriptions.
 
-The catalogue proves that one package model can represent skill-only, workflow-only, directive-only, pattern-only, mixed, and dependency-only units. It does not prove that the present packages, groupings, granularity, or content should remain after the Extensions overhaul.
+The pre-release catalogue contains one deliberately small mixed package. It proves that one package model can assemble ordinary Workflows, a native Skill, and Templates without introducing a runtime Extension abstraction. It does not prove that the current package boundary or content should remain after the Extensions overhaul.
 
 Optional catalogues must not turn Open Forge Core into the author's universal methodology. A package earns continued distribution through reusable value, clarity, maintenance cost, and evidence of use.
+
+Earlier first-party package identities were removed before a stable release and are not aliases. Files already installed from them remain ordinary workspace content. Existing receipts remain sufficient for explicit preview and removal without retaining the old source packages.
 
 ## Manual And Managed Installation
 
@@ -300,7 +302,7 @@ It may:
 
 A pack should not duplicate payloads already owned by narrower packages. Dependency edges are the preferred composition mechanism when the desired files already have canonical owners.
 
-The current `packs/` source group is catalogue presentation, not a special dependency engine or runtime primitive.
+Source placement is catalogue presentation, not a special dependency engine or runtime primitive.
 
 ## Current Verification
 
@@ -308,9 +310,9 @@ The current extension system is verified at several levels:
 
 - Pure tests cover dependency selection, manifest validation, path identity, ownership receipts, and collision rules
 - Closure tests use real subprocesses, filesystems, and Git repositories for installation, update, removal, rollback, and review checkpoints
-- Catalogue integration tests compose every first-party package and dependency closure
+- Catalogue integration tests verify the single advertised package, its isolated complete installation, owned lifecycle, direct Workflows, native Skill, Template routes, and dogfood parity
 - Packaged-layout tests verify discovery from built and npm-style package layouts
-- Framework validation checks assembled routes and Required Routes after installation
+- Framework validation checks assembled routes and links after installation
 
 The primary implementation test sources are linked from the [CLI MVP Architecture](../cli/architecture.md).
 
@@ -348,7 +350,7 @@ Adding those concepts without a demonstrated need would recreate package-manager
 
 ### Catalogue Governance Is Immature
 
-The first-party catalogue grew through dogfooding. It has no accepted admission, stability, deprecation, support, or quality policy. Some package boundaries may reflect the current author's workflow rather than broad reusable value.
+The consolidated first-party catalogue is intentionally small but still has no accepted stability, deprecation, support, or quality policy. Continued distribution must be justified by actual reusable value rather than the existence of the package.
 
 ### Scope-Aware Installation Is Incomplete
 

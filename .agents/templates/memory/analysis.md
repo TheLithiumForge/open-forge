@@ -11,22 +11,22 @@ Template selection:
 - Need: One candidate record for structured reasoning that future work may need to inspect or continue.
 - Primary question: What does the available evidence currently support, under which assumptions and limits?
 
-Instantiate under the appropriate Emerging analysis route.
+Instantiate under the appropriate Emerging Analysis `route`.
 Analysis is contextual reasoning, not accepted direction. Promote accepted results into their correct authoritative sources and preserve only useful rationale.
-Replace this template's frontmatter, title, placeholders, and comments.
+Replace this Template's frontmatter, title, placeholders, and comments.
 -->
 
 ## Question
 
-{State the exact question, decision, discrepancy, or uncertainty this analysis investigates.}
+{State the exact question, decision, discrepancy, or uncertainty this Analysis investigates.}
 
 ## Scope
 
-{State what is included, excluded, and which dependent decision or work gives the analysis value.}
+{State what is included, excluded, and which dependent decision or work gives the Analysis value.}
 
 ## Evidence
 
-{Link to relevant observations, measurements, authoritative sources, and contradictory evidence.}
+{Link to relevant Observations, measurements, authoritative sources, and contradictory evidence.}
 
 ## Assumptions
 
@@ -42,7 +42,7 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 ## Current Conclusion
 
-{State what the analysis presently supports and how strongly. Keep unresolved conclusions contextual.}
+{State what the Analysis presently supports and how strongly. Keep unresolved conclusions contextual.}
 
 ## Limits And Open Questions
 
@@ -50,8 +50,8 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 ## Next Evidence Or Promotion
 
-{State what should be investigated next and what would justify consolidation, a decision, or an authoritative-source update.}
+{State what should be investigated next and what would justify consolidation, a Decision, or an authoritative-source update.}
 
 ## Related Sources
 
-{Link to current truth, candidates, work, and external sources that give this analysis meaning.}
+{Link to current truth, candidates, work, and external sources that give this Analysis meaning.}

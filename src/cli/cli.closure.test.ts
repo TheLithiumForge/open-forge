@@ -49,7 +49,7 @@ describe("command dispatch", () => {
     const indexResult = await runCli("index", root, "extra");
     const createResult = await runCli("create", "category", "patterns/demo", root, "extra");
     const createOptionResult = await runCli("create", "category", "patterns/demo", "--unknown");
-    const extendOptionResult = await runCli("extend", "vision-workflow", "--unknown");
+    const extendOptionResult = await runCli("extend", "development-toolkit", "--unknown");
     const installResult = await runCliDefault("install", "--unknown", root);
 
     expect(indexResult.exitCode).toBe(1);
@@ -1796,10 +1796,10 @@ Keep this Claude-specific instruction.
     const target = path.join(parent, "preview-target");
 
     const listed = await runCliDefault("extend", "--list");
-    const preview = await runCliDefault("extend", "dev-workflow", target, "--dry-run");
+    const preview = await runCliDefault("extend", "development-toolkit", target, "--dry-run");
 
     expect(listed.exitCode).toBe(0);
-    expect(listed.stdout).toContain("dev-workflow");
+    expect(listed.stdout).toContain("development-toolkit");
     expect(preview.exitCode).toBe(0);
     expect(preview.stdout).toContain("No files were written");
     expect(await exists(target)).toBe(false);
@@ -2374,7 +2374,7 @@ describe("chain command", () => {
     const arbitrary = await runCli("chain", ".agents/patterns/product/components/rules.md", "--heading", "Evidence", root);
     expect(arbitrary.exitCode).toBe(0);
     expect(arbitrary.stdout).toContain("Target evidence.");
-    expect(arbitrary.stdout).toContain("[absent]");
+    expect(arbitrary.stdout).toContain("[heading absent]");
   });
 
   test("includes a native skill entrypoint before an internal skill resource", async () => {
@@ -2568,45 +2568,81 @@ describe("doctor command", () => {
     expect(result.stdout).toContain("Required Routes line is not in entry format: - [Incomplete](other.md)");
   });
 
-  test("enforces ordered workflow Mode and always-present Constraints", async () => {
+  test("rejects malformed, unrouted, and incorrectly typed Workflow dependencies", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    const agents = path.join(root, ".agents");
+    const workflows = path.join(agents, "workflows");
+    const patterns = path.join(agents, "patterns");
+    const privateFolder = path.join(agents, "private");
+    await fs.mkdir(privateFolder, { recursive: true });
+    await writeRoute(patterns, "delivery.md", "Delivery pattern", ["Pattern"]);
+    await fs.writeFile(path.join(privateFolder, "helper.md"), "# Private Helper\n");
+    await fs.writeFile(path.join(workflows, "invalid-dependencies.md"), `---
+open-forge:
+  description: Invalid Workflow dependency fixtures
+  tags: [Workflow]
+---
+
+# Invalid Dependencies
+
+## Goal
+
+- Exercise dependency validation.
+
+## Required Routes
+
+- [Delivery pattern](../patterns/delivery.md) - #Skill
+- [Private helper](../private/helper.md) - #Document
+- [Missing canonical tags](../patterns/delivery.md)
+
+## Steps
+
+1. Run.
+
+## Completion
+
+- [ ] Validation reports every invalid dependency.
+`);
+    expect((await runCli("index", root)).exitCode).toBe(0);
+
+    const result = await runCli("doctor", "--json", root);
+    const report = JSON.parse(result.stdout) as {
+      findings: Array<{ level: string; message: string }>;
+    };
+    const findingLevel = (message: string) => report.findings.find((finding) => finding.message === message)?.level;
+
+    expect(result.exitCode).toBe(1);
+    expect(findingLevel(
+      "Required Routes line is not in entry format: - [Missing canonical tags](../patterns/delivery.md)",
+    )).toBe("error");
+    expect(findingLevel(
+      "workflow Required Route is not reachable through generated routing: ../private/helper.md",
+    )).toBe("error");
+    expect(findingLevel(
+      "workflow Required Route ../patterns/delivery.md must include its target primitive tag #Pattern",
+    )).toBe("error");
+  });
+
+  test("requires every Workflow recipe to define Goal, Steps, and Completion", async () => {
     const root = await createRoot();
     expect((await runCli("install", root)).exitCode).toBe(0);
     const workflow = path.join(root, ".agents", "workflows", "invalid.md");
     await fs.writeFile(workflow, `---
 open-forge:
   description: Invalid workflow fixture
-  tags: [Workflow, PhaseDelivery]
+  tags: [Workflow]
 ---
 
 # Invalid
 
-## Mode
-
-goal-seeking
-
 ## Goal
 
-- outcome: demonstrate validation
-
-## Required Routes
-
-none
+- Demonstrate validation.
 
 ## Steps
 
 1. Run.
-
-## Loop
-
-Linear.
-
-## Outputs
-
-- result
-
-## Completion
-
-- [ ] done
 `);
     expect((await runCli("index", root)).exitCode).toBe(0);
 
@@ -2614,54 +2650,57 @@ Linear.
 
     expect(result.stderr).toBe("");
     expect(result.exitCode).toBe(1);
-    expect(result.stdout).toContain("workflow must define exactly one Constraints section");
-    expect(result.stdout).toContain("Workflow `Mode` must be linear or iterative");
+    expect(result.stdout).toContain("workflow must define exactly one Completion section");
   });
 
-  test("accepts a linear workflow with explicit none constraints", async () => {
+  test("validates a root Workflow entrypoint when it declares recipe sections", async () => {
     const root = await createRoot();
     expect((await runCli("install", root)).exitCode).toBe(0);
-    const workflow = path.join(root, ".agents", "workflows", "linear.md");
+    const entrypoint = path.join(root, ".agents", "workflows", "_workflows.md");
+    const content = await fs.readFile(entrypoint, "utf8");
+    await fs.writeFile(entrypoint, content.replace(
+      "## Axioms",
+      "## Goal\n\n- Declare a partial recipe.\n\n## Axioms",
+    ));
+    expect((await runCli("index", root)).exitCode).toBe(0);
+
+    const result = await runCli("doctor", root);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stdout).toContain("workflow must define exactly one Steps section");
+    expect(result.stdout).toContain("workflow must define exactly one Completion section");
+  });
+
+  test("accepts the minimal contract with recipe-specific headings and no Required Routes sentinel", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    const workflow = path.join(root, ".agents", "workflows", "minimal.md");
     await fs.writeFile(workflow, `---
 open-forge:
-  description: Valid linear workflow fixture
-  tags: [Workflow, PhaseDelivery]
+  description: Valid minimal workflow fixture
+  tags: [Workflow, Delivery, Verification]
 ---
 
-# Linear
+# Minimal
 
 ~~~text
 ## Goal
 \`\`\`
 ~~~
 
-## Mode
-
-linear
-
 ## Goal
 
-- outcome: one result
-
-## Required Routes
-
-none
-
-## Constraints
-
-- none
+- Produce one result.
 
 ## Steps
 
+### Boundaries
+
+- Preserve accepted behavior.
+
+### Procedure
+
 1. Produce the result.
-
-## Loop
-
-Execute the Steps once. This Workflow does not loop.
-
-## Outputs
-
-- result
 
 ## Completion
 
@@ -2676,31 +2715,23 @@ Execute the Steps once. This Workflow does not loop.
     expect(JSON.parse(result.stdout)).toMatchObject({ errors: 0, warnings: 0 });
   });
 
-  test("requires exactly one known primary phase on every workflow recipe", async () => {
+  test("rejects a Required Routes none sentinel instead of requiring the optional section", async () => {
     const root = await createRoot();
     expect((await runCli("install", root)).exitCode).toBe(0);
-    const workflows = path.join(root, ".agents", "workflows");
-    const recipe = (tags: string) => `---
+    const workflow = path.join(root, ".agents", "workflows", "sentinel.md");
+    await fs.writeFile(workflow, `---
 open-forge:
-  description: Workflow phase fixture
-  tags: [${tags}]
+  description: Invalid dependency sentinel fixture
+  tags: [Workflow]
 ---
 
-# Phase Fixture
-
-## Mode
-
-linear
+# Sentinel
 
 ## Goal
 
-- outcome: one result
+- Produce one result.
 
 ## Required Routes
-
-none
-
-## Constraints
 
 - none
 
@@ -2708,27 +2739,16 @@ none
 
 1. Produce the result.
 
-## Loop
-
-Execute once.
-
-## Outputs
-
-- result
-
 ## Completion
 
 - [ ] result exists
-`;
-    await fs.writeFile(path.join(workflows, "missing-phase.md"), recipe("Workflow"));
-    await fs.writeFile(path.join(workflows, "multiple-phase.md"), recipe("Workflow, PhasePlanning, PhaseDelivery, PhaseUnknown"));
+`);
     expect((await runCli("index", root)).exitCode).toBe(0);
 
     const result = await runCli("doctor", root);
 
     expect(result.exitCode).toBe(1);
-    expect(result.stdout.match(/workflow recipe must declare exactly one phase tag/g)).toHaveLength(2);
-    expect(result.stdout).toContain("workflow recipe has unknown phase tag(s): PhaseUnknown");
+    expect(result.stdout).toContain("workflow Required Routes must be omitted when no unconditional routed dependency applies");
   });
 
   test("rejects workflow contract sections that are not level-2 headings", async () => {
@@ -2739,38 +2759,22 @@ Execute once.
       "---",
       "open-forge:",
       "  description: Wrong heading level workflow fixture",
-      "  tags: [Workflow, PhaseDelivery]",
+      "  tags: [Workflow]",
       "---",
       "",
       "# Wrong Level",
       "",
-      "## Mode",
-      "",
-      "linear",
-      "",
       "## Goal",
       "",
-      "- outcome: one result",
+      "- Produce one result.",
       "",
       "### Required Routes",
       "",
-      "- none",
-      "",
-      "## Constraints",
-      "",
-      "- none",
+      "- [Delivery capability](../skills/delivery/SKILL.md) - #Skill #Delivery",
       "",
       "## Steps",
       "",
       "1. Produce the result.",
-      "",
-      "## Loop",
-      "",
-      "Execute once.",
-      "",
-      "## Outputs",
-      "",
-      "- result",
       "",
       "## Completion",
       "",
@@ -2785,57 +2789,41 @@ Execute once.
     expect(result.stdout).toContain("workflow Required Routes section must use a level-2 Markdown heading");
   });
 
-  test("rejects misordered workflow sections and invalid Constraints sentinels", async () => {
+  test("rejects misordered Workflow sections and misplaced Required Routes", async () => {
     const root = await createRoot();
     expect((await runCli("install", root)).exitCode).toBe(0);
     const workflow = path.join(root, ".agents", "workflows", "misordered.md");
     await fs.writeFile(workflow, `---
 open-forge:
   description: Misordered workflow fixture
-  tags: [Workflow, PhaseDelivery]
+  tags: [Workflow]
 ---
 
 # Misordered
-
-## Goal
-
-- outcome: demonstrate validation
-
-## Mode
-
-iterative
-
-## Required Routes
-
-none
-
-## Constraints
-
-- inherited
 
 ## Steps
 
 1. Run.
 
-## Loop
+## Goal
 
-Repeat until accepted.
+- Demonstrate validation.
 
-## Outputs
+## Required Routes
 
-- result
+- [Installed Skills route](../skills/_skills.md) - #Skill #Core
 
 ## Completion
 
-- [ ] done
+- [ ] Done.
 `);
     expect((await runCli("index", root)).exitCode).toBe(0);
 
     const result = await runCli("doctor", root);
 
     expect(result.exitCode).toBe(1);
-    expect(result.stdout).toContain("workflow section Goal is out of order");
-    expect(result.stdout).toContain("`inherited` is not a Workflow `Constraints` sentinel");
+    expect(result.stdout).toContain("workflow section Steps is out of order");
+    expect(result.stdout).toContain("workflow section Required Routes must appear between Goal and Steps");
   });
 
   test("rejects legacy directive applicability gates", async () => {
@@ -2942,7 +2930,7 @@ No binding axioms were declared.
     const result = await runCli("doctor", root);
 
     expect(result.exitCode).toBe(1);
-    expect(result.stdout).toContain("workflow must define exactly one Mode section");
+    expect(result.stdout).toContain("workflow must define exactly one Goal section");
     expect(result.stdout).toContain("directive must declare exactly one non-empty Axioms section");
   });
 
@@ -2955,7 +2943,7 @@ No binding axioms were declared.
       "---",
       "open-forge:",
       "  description: Explicit workflow in a neutral route",
-      "  tags: [Workflow, PhaseDelivery]",
+      "  tags: [Workflow]",
       "---",
       "",
       "# Flow",
@@ -2982,7 +2970,7 @@ No binding axioms were declared.
     const result = await runCli("doctor", root);
 
     expect(result.exitCode).toBe(1);
-    expect(result.stdout).toContain("workflow must define exactly one Mode section");
+    expect(result.stdout).toContain("workflow must define exactly one Goal section");
     expect(result.stdout).toContain("directive must declare exactly one non-empty Axioms section");
   });
 
@@ -3064,7 +3052,7 @@ No binding axioms were declared.
     const result = await runCli("doctor", root);
 
     expect(result.exitCode).toBe(1);
-    expect(result.stdout).toContain("workflow must define exactly one Mode section");
+    expect(result.stdout).toContain("workflow must define exactly one Goal section");
     expect(result.stdout).toContain("directive must declare exactly one non-empty Axioms section");
   });
 

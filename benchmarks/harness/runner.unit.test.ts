@@ -28,12 +28,12 @@ describe("benchmark composition manifests", () => {
       id: "base + trap",
       scenario: "plain task",
       primitives: ["control", "trap"],
-      extensions: ["implementation-workflow"],
+      extensions: ["development-toolkit"],
     })).toEqual({
       id: "base + trap",
       scenario: "plain task",
       primitives: ["control", "trap"],
-      extensions: ["implementation-workflow"],
+      extensions: ["development-toolkit"],
     });
     expect(() => validateMetaScenarioDocument({
       id: "duplicate",

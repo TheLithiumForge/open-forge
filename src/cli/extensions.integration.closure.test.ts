@@ -5,7 +5,6 @@ import {
   commitAll,
   copyTreeContents,
   initializeGitRepository,
-  isDirectory,
   isFile,
   listFiles,
   pathExists,
@@ -13,94 +12,51 @@ import {
   runCli as executeCli,
   runGit as gitCommand,
   snapshotTree,
-  toPosix,
   useTestSandbox
 } from "../../tests/support/index.ts";
 import { cliTestInternals } from "./cli.ts";
 
 const cliFile = repoPath("src", "cli", "cli.ts");
 const extensionsRoot = repoPath("src", "extensions");
-const advertisedExtensionIds = [
-  "architecture-capability",
-  "architecture-workflow",
-  "brainstorming-workflow",
-  "cli-testing-patterns",
-  "design-workflows",
-  "dev-workflow",
-  "implementation-capability",
-  "implementation-workflow",
-  "planning-capability",
-  "planning-workflows",
-  "quality-capability",
-  "quality-workflows",
-  "reliability-defaults",
-  "rune-bridge",
-  "testing-workflow",
-  "vision-capability",
-  "vision-workflow",
-  "workflow-essentials"
+const advertisedExtensionIds = ["development-toolkit"] as const;
+const toolkitWorkflowFiles = [
+  "architecture.md",
+  "debugging.md",
+  "development.md",
+  "planning.md",
+  "review.md",
+  "vision.md"
 ] as const;
-const catalogueExtensionIds = [
-  "architecture-capability",
-  "implementation-capability",
-  "planning-capability",
-  "quality-capability",
-  "vision-capability",
-  "architecture-workflow",
-  "brainstorming-workflow",
-  "dev-workflow",
-  "implementation-workflow",
-  "testing-workflow",
-  "vision-workflow",
-  "design-workflows",
-  "planning-workflows",
-  "quality-workflows",
-  "workflow-essentials",
-  "cli-testing-patterns",
-  "reliability-defaults",
-  "rune-bridge"
+const toolkitTemplateFiles = [
+  "documents/architecture.md",
+  "documents/maintenance-contract.md",
+  "documents/principles.md",
+  "documents/vision.md",
+  "memory/analysis.md",
+  "memory/decision.md",
+  "memory/handoff.md",
+  "memory/idea.md",
+  "memory/observation.md"
 ] as const;
 const sandbox = useTestSandbox("open-forge-extensions-integration");
 
 describe("first-party extension integration", () => {
-  test("advertises the complete first-party catalog from src/extensions", async () => {
+  test("advertises exactly one complete first-party package", async () => {
     const result = await runCli("extend", "--list");
 
     expect(result.stderr).toBe("");
     expect(result.exitCode).toBe(0);
     const listedIds = [...result.stdout.matchAll(/^- ([a-z0-9][a-z0-9-]*)/gm)].map((match) => match[1]);
-    expect(listedIds).toEqual([...catalogueExtensionIds]);
-    expect(result.stdout.indexOf("Skills:")).toBeLessThan(result.stdout.indexOf("Workflows:"));
-    expect(result.stdout.indexOf("Workflows:")).toBeLessThan(result.stdout.indexOf("Packs:"));
-    expect(result.stdout.indexOf("Packs:")).toBeLessThan(result.stdout.indexOf("Support:"));
-    for (const id of advertisedExtensionIds) {
-      expect(await isFile(path.join(await extensionPackagePath(id), "extension.json"))).toBe(true);
-    }
-  });
-
-  test("derives representative real catalogue content labels from payloads", async () => {
-    const result = await runCli("extend", "--list");
-
-    expect(result.stderr).toBe("");
-    expect(result.exitCode).toBe(0);
-    expect(catalogueLine(result.stdout, "architecture-capability")).toEndWith("(contents: skill)");
-    expect(catalogueLine(result.stdout, "architecture-workflow")).toEndWith("(contents: workflow)");
-    expect(catalogueLine(result.stdout, "cli-testing-patterns")).toEndWith("(contents: pattern)");
-    expect(catalogueLine(result.stdout, "reliability-defaults")).toEndWith("(contents: directive)");
-    expect(catalogueLine(result.stdout, "rune-bridge")).toEndWith("(contents: guidance, workspace)");
-    expect(catalogueLine(result.stdout, "vision-workflow")).toEndWith("(contents: workflow)");
-    expect(catalogueLine(result.stdout, "workflow-essentials")).toEndWith("(contents: pack)");
+    expect(listedIds).toEqual([...advertisedExtensionIds]);
+    expect(result.stdout).toContain("Packs:");
+    expect(catalogueLine(result.stdout, "development-toolkit")).toEndWith("(contents: skill, workflow, template)");
+    expect(await isFile(path.join(await extensionPackagePath("development-toolkit"), "extension.json"))).toBe(true);
   });
 
   test("keeps canonical source payload indexes idempotent before installation", async () => {
     const root = await createRoot();
-
-    for (const id of advertisedExtensionIds) {
-      const payload = path.join(await extensionPackagePath(id), "payload");
-      if (await isDirectory(payload)) {
-        await copyTreeContents(payload, root);
-      }
-    }
+    const payload = path.join(await extensionPackagePath("development-toolkit"), "payload");
+    await copyTreeContents(payload, root);
 
     const before = await snapshotTree(root);
     const result = await runCli("index", root);
@@ -113,35 +69,14 @@ describe("first-party extension integration", () => {
     expect(changedPaths).toEqual([]);
   });
 
-  test("gives every first-party installed path one canonical package owner", async () => {
-    const owners = new Map<string, string>();
-
-    for (const id of advertisedExtensionIds) {
-      const payload = path.join(await extensionPackagePath(id), "payload");
-      if (!(await isDirectory(payload))) {
-        continue;
-      }
-      for (const sourceFile of await listFiles(payload)) {
-        const relativePath = toPosix(path.relative(payload, sourceFile));
-        const previousOwner = owners.get(relativePath);
-        if (previousOwner) {
-          throw new Error(`First-party path ${relativePath} is owned by both ${previousOwner} and ${id}`);
-        }
-        owners.set(relativePath, id);
-      }
-    }
-
-    expect(owners.size).toBeGreaterThan(0);
-  });
-
-  test("composes every advertised first-party pack without collisions", async () => {
+  test("installs the complete toolkit with one owner and valid routed contents", async () => {
     const root = await createRoot();
 
     const installResult = await runCli("install", root);
     expect(installResult.stderr).toBe("");
     expect(installResult.exitCode).toBe(0);
 
-    const extensionResult = await runCli("extend", "--ids", advertisedExtensionIds.join(","), root);
+    const extensionResult = await runCli("extend", "development-toolkit", root);
     expect(extensionResult.stderr).toBe("");
     expect(extensionResult.exitCode).toBe(0);
     expect(extensionResult.stdout).toContain("Scope review:");
@@ -154,53 +89,56 @@ describe("first-party extension integration", () => {
     const receipt = JSON.parse(await fs.readFile(path.join(root, "open-forge.extensions.json"), "utf8")) as {
       roots: string[];
       extensions: Record<string, {
+        dependencies: string[];
         files: string[];
       }>;
       files: Record<string, { sha256: string; owners: string[] }>;
     };
-    expect(receipt.roots).toEqual([...advertisedExtensionIds].sort());
-    expect(Object.keys(receipt.extensions)).toEqual([...advertisedExtensionIds].sort());
+    expect(receipt.roots).toEqual(["development-toolkit"]);
+    expect(Object.keys(receipt.extensions)).toEqual(["development-toolkit"]);
+    expect(receipt.extensions["development-toolkit"].dependencies).toEqual([]);
+    expect(new Set(Object.values(receipt.files).flatMap((file) => file.owners))).toEqual(new Set(["development-toolkit"]));
     await assertReceiptMatchesInstalledState(root, receipt);
-  });
 
-  test("auto-installs both skill capabilities before dev-workflow", async () => {
-    const root = await createRoot();
-
-    const installResult = await runCli("install", root);
-    expect(installResult.stderr).toBe("");
-    expect(installResult.exitCode).toBe(0);
-    const result = await runCli("extend", "dev-workflow", root);
-
-    expect(result.stderr).toBe("");
-    expect(result.exitCode).toBe(0);
-    expect(result.stdout).toContain("Installed Open Forge extensions");
-    expect(result.stdout.indexOf("bundled:implementation-capability")).toBeLessThan(result.stdout.indexOf("bundled:dev-workflow"));
-    expect(result.stdout.indexOf("bundled:quality-capability")).toBeLessThan(result.stdout.indexOf("bundled:dev-workflow"));
-
-    const receipt = JSON.parse(await fs.readFile(path.join(root, "open-forge.extensions.json"), "utf8")) as {
-      roots: string[];
-      extensions: Record<string, { dependencies: string[]; files: string[] }>;
-      files: Record<string, { owners: string[] }>;
-    };
-    expect(receipt.roots).toEqual(["dev-workflow"]);
-    expect(receipt.extensions["dev-workflow"].dependencies).toEqual(["implementation-capability", "quality-capability"]);
-    for (const file of receipt.extensions["implementation-capability"].files) {
-      expect(receipt.files[file].owners).toContain("implementation-capability");
+    const workflowDirectory = path.join(root, ".agents", "workflows");
+    const installedWorkflowFiles = (await fs.readdir(workflowDirectory))
+      .filter((name) => name !== "_workflows.md")
+      .sort();
+    expect(installedWorkflowFiles).toEqual([...toolkitWorkflowFiles]);
+    for (const workflowFile of installedWorkflowFiles) {
+      const body = await fs.readFile(path.join(workflowDirectory, workflowFile), "utf8");
+      expect(body).toMatch(/^## Goal$/m);
+      expect(body).toMatch(/^## Steps$/m);
+      expect(body).toMatch(/^## Completion$/m);
+      expect(body).not.toMatch(/^## Required Routes$/m);
+      expect(body).not.toMatch(/^## Entries$/m);
     }
-    const doctorResult = await runCli("doctor", "--json", root);
-    expect(doctorResult.exitCode).toBe(0);
-    expect(JSON.parse(doctorResult.stdout)).toMatchObject({ errors: 0, warnings: 0 });
+
+    const skillRoot = path.join(root, ".agents", "skills", "experience-design");
+    expect(await isFile(path.join(skillRoot, "SKILL.md"))).toBe(true);
+    expect((await fs.readdir(path.join(skillRoot, "references"))).sort()).toEqual([
+      "map-user-experience.md",
+      "prepare-implementation-handoff.md",
+      "review-experience-design.md"
+    ]);
+
+    for (const relativeTemplate of toolkitTemplateFiles) {
+      expect(await isFile(path.join(root, ".agents", "templates", ...relativeTemplate.split("/")))).toBe(true);
+    }
+    expect(await fs.readFile(path.join(root, ".agents", "templates", "_templates.md"), "utf8")).toContain(
+      "documents/_documents.md"
+    );
   });
 
-  test("dry-runs the real dev-workflow dependency closure without creating the target", async () => {
+  test("dry-runs the complete toolkit without creating the target", async () => {
     const parent = await createRoot();
     const target = path.join(parent, "dry-run-target");
 
-    const result = await runCli("extend", "--dry-run", "dev-workflow", target);
+    const result = await runCli("extend", "--dry-run", "development-toolkit", target);
 
     expect(result.stderr).toBe("");
     expect(result.exitCode).toBe(0);
-    expect(result.stdout).toContain("bundled:implementation-capability, bundled:quality-capability, bundled:dev-workflow");
+    expect(result.stdout).toContain("bundled:development-toolkit");
     expect(result.stdout).toContain("No files were written.");
     expect(result.stdout).toContain("Scope review:");
     expect(result.stdout).toContain("Planned files:");
@@ -208,7 +146,7 @@ describe("first-party extension integration", () => {
     expect(await pathExists(target)).toBe(false);
   });
 
-  test("uses a real bundled dependency closure through the default Git checkpoint lifecycle", async () => {
+  test("uses the toolkit through the default Git checkpoint lifecycle", async () => {
     const root = await createRoot();
     await initializeGitRepository(root);
 
@@ -218,10 +156,10 @@ describe("first-party extension integration", () => {
     expect(installResult.stdout).toContain("review the resulting diff and commit it before the next install");
     await commitAll(root, "Install Open Forge Core");
 
-    const extensionResult = await runCliDefault("extend", "dev-workflow", root);
+    const extensionResult = await runCliDefault("extend", "development-toolkit", root);
     expect(extensionResult.stderr).toBe("");
     expect(extensionResult.exitCode).toBe(0);
-    expect(extensionResult.stdout).toContain("bundled:implementation-capability, bundled:quality-capability, bundled:dev-workflow");
+    expect(extensionResult.stdout).toContain("bundled:development-toolkit");
     expect(extensionResult.stdout).toContain("review the resulting diff and commit it before the next install");
 
     const doctorResult = await runCliDefault("doctor", "--json", root);
@@ -229,6 +167,38 @@ describe("first-party extension integration", () => {
     expect(doctorResult.exitCode).toBe(0);
     expect(JSON.parse(doctorResult.stdout)).toMatchObject({ errors: 0, warnings: 0 });
     expect((await gitCommand(root, "status", "--porcelain=v1")).stdout).not.toBe("");
+  });
+
+  test("removes the complete toolkit while preserving Core route hosts", async () => {
+    const root = await createRoot();
+    expect((await runCli("install", root)).exitCode).toBe(0);
+    expect((await runCli("extend", "development-toolkit", root)).exitCode).toBe(0);
+
+    const removeResult = await runCli("extend", "--remove", "development-toolkit", root);
+    expect(removeResult.stderr).toBe("");
+    expect(removeResult.exitCode).toBe(0);
+    expect(await isFile(path.join(root, ".agents", "workflows", "_workflows.md"))).toBe(true);
+    expect(await isFile(path.join(root, ".agents", "skills", "_skills.md"))).toBe(true);
+    expect(await isFile(path.join(root, ".agents", "templates", "_templates.md"))).toBe(true);
+    expect(await isFile(path.join(root, ".agents", "workflows", "development.md"))).toBe(false);
+    expect(await isFile(path.join(root, ".agents", "skills", "experience-design", "SKILL.md"))).toBe(false);
+
+    const doctorResult = await runCli("doctor", "--json", root);
+    expect(doctorResult.exitCode).toBe(0);
+    expect(JSON.parse(doctorResult.stdout)).toMatchObject({ errors: 0, warnings: 0 });
+  });
+
+  test("keeps packaged Templates aligned with selected dogfood Templates", async () => {
+    const packageTemplates = path.join(await extensionPackagePath("development-toolkit"), "payload", ".agents", "templates");
+    const dogfoodTemplates = repoPath(".agents", "templates");
+
+    for (const relativeTemplate of toolkitTemplateFiles) {
+      const packaged = await fs.readFile(path.join(packageTemplates, ...relativeTemplate.split("/")), "utf8");
+      const dogfood = await fs.readFile(path.join(dogfoodTemplates, ...relativeTemplate.split("/")), "utf8");
+      expect(packaged.replace(/\r\n/g, "\n").replace("tags: [Extension, ", "tags: [")).toBe(
+        dogfood.replace(/\r\n/g, "\n")
+      );
+    }
   });
 
   test("lets an additive external skill satisfy a local workflow without changing its bytes", async () => {
@@ -263,14 +233,10 @@ Review the requested work product without changing this package.
     await fs.writeFile(path.join(workflowRoot, "_external-review.md"), `---
 open-forge:
   description: Use an externally managed review skill in a focused workflow
-  tags: [Extension, Workflow, Review, PhaseVerification]
+  tags: [Extension, Workflow, Review]
 ---
 
 # External Review
-
-## Mode
-
-linear
 
 ## Goal
 
@@ -282,24 +248,20 @@ linear
 
 - [Externally managed review capability](../../skills/external-review/SKILL.md) - #Skill #Required
 
-## Constraints
+## Steps
+
+### Boundaries
 
 - Do not modify the externally managed skill package.
 
-## Steps
+### Procedure
 
 1. Use the external review skill to inspect the requested work product.
 2. Record the evidence and conclusion.
 
-## Loop
-
-Execute the Steps once. This Workflow does not loop.
-
-## Outputs
+## Completion
 
 - review evidence and conclusion
-
-## Completion
 
 - [ ] evidence and conclusion recorded
 
@@ -315,7 +277,7 @@ Execute the Steps once. This Workflow does not loop.
     expect(workflowResult.stderr).toBe("");
     expect(workflowResult.exitCode).toBe(0);
 
-    const unrelatedResult = await runCli("extend", "cli-testing-patterns", root);
+    const unrelatedResult = await runCli("extend", "development-toolkit", root);
     expect(unrelatedResult.stderr).toBe("");
     expect(unrelatedResult.exitCode).toBe(0);
     const indexResult = await runCli("index", root);
@@ -339,9 +301,21 @@ Execute the Steps once. This Workflow does not loop.
     await fs.writeFile(skill, "# Helper\n");
     await fs.writeFile(workflow, `# Use Helper
 
+## Goal
+
+- Use one same-package capability.
+
 ## Required Routes
 
 - [Same-pack helper](../../skills/helper/SKILL.md) - #Skill #Required
+
+## Steps
+
+1. Use the helper.
+
+## Completion
+
+- [ ] Helper result produced.
 `);
 
     const result = await runCli(

@@ -95,7 +95,7 @@ describe("extension lifecycle safety closure", () => {
     const dependencyPack = await sandbox.createDirectory("stable-id-dependency-pack");
     await writeExtensionPackage(dependencyPack, {
       name: "Idless Dependencies",
-      dependencies: ["reliability-defaults"]
+      dependencies: ["development-toolkit"]
     });
     const dependencyResult = await runCli(["extend", dependencyPack, target]);
     expect(dependencyResult.exitCode).toBe(1);

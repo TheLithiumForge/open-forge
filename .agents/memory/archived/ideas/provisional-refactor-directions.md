@@ -10,7 +10,7 @@ These directions came from the first roadmap synthesis. They are preserved as hi
 
 ## Resolution
 
-- Workflow simplification, selection, phases, dependencies, and native-capability boundaries moved to [Workflow Overhaul Inputs](../../emerging/ideas/workflow-overhaul.md).
+- Workflow simplification, selection, dependencies, and native-capability boundaries moved through the archived [Workflow Overhaul Inputs](2026-07-29_workflow-overhaul-inputs.md) into the current [Workflow contract](../../crystallized/documents/framework/primitives/workflows.md).
 - Extension packaging, catalogue governance, and lifecycle reconsideration moved to [Extensions Overhaul](../../emerging/ideas/extensions-overhaul.md).
 - Optional structured deliberation moved to [Deferred Product Ideas](../../emerging/ideas/deferred-product-ideas.md).
 - Remaining documentation, hardening, and release work remain in the [working backlog](../../working/backlog.md).

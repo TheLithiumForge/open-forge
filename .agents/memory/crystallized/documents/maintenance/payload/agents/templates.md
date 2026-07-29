@@ -27,9 +27,10 @@ The [current Templates contract](../../../framework/primitives/templates.md) def
 
 ### Distribution And Dogfood
 
-- The installable source currently ships only the Templates category contract.
-- Repository-local templates under [`.agents/templates/`](../../../../../../templates/) are dogfood candidates, not installable defaults.
-- Promoting a dogfood template into the source payload requires its own review of generic value, baseline cost, authority boundary, and source verification.
+- The standard Framework ships only the Templates category contract.
+- The optional [`development-toolkit` payload](../../../../../../../src/extensions/development-toolkit/payload/.agents/templates/) is canonical for its packaged document and Memory Templates.
+- Repository-local copies of packaged leaf Templates remain aligned through automated parity verification. Repository-only Templates remain dogfood candidates rather than installable defaults.
+- Promoting another dogfood Template into the package requires its own review of generic value, authority boundary, portability, and source verification.
 
 ### Routing And Installation
 
@@ -42,3 +43,4 @@ The [current Templates contract](../../../framework/primitives/templates.md) def
 - The Core installation closure test verifies that the category installs, remains on-demand, is discoverable through #Template, and produces a valid route tree.
 - The category-creation closure test verifies that scoped descendants inherit #Template classification.
 - The primitive-validation closure test verifies that topical #Workflow or #Directive tags inside a template do not activate those primitive schemas.
+- First-party Extension integration verifies isolated package links, indexing, installation, removal, and normalized package-to-dogfood leaf parity.

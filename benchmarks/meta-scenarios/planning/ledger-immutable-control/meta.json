@@ -2,5 +2,5 @@
   "id": "ledger-immutable-control",
   "scenario": "ledger-remove-planning",
   "primitives": ["immutable-ledger-removal"],
-  "extensions": ["planning-workflows"]
+  "extensions": ["development-toolkit"]
 }

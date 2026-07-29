@@ -2,5 +2,5 @@
   "id": "local-tool-vision",
   "scenario": "local-tool-discovery",
   "primitives": [],
-  "extensions": ["vision-workflow"]
+  "extensions": ["development-toolkit"]
 }

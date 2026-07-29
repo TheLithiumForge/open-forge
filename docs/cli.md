@@ -219,14 +219,14 @@ Payload, generated-index, and receipt changes form one rollback-capable in-proce
 An installation dry-run discovers selected packages, resolves dependencies, validates the complete plan, and prints dependency order, receipt effects, scope counts, and create, update, delete, and unchanged file effects:
 
 ```sh
-open-forge extend --dry-run workflow-essentials ./my-project
-open-forge extend --ids planning-workflows,quality-workflows --dry-run ./my-project
+open-forge extend --dry-run development-toolkit ./my-project
+open-forge extend --ids development-toolkit --dry-run ./my-project
 ```
 
 A removal dry-run reads installed receipt state, validates owned files and retained dependents, and prints delete, update, and unchanged file effects plus the planned receipt change:
 
 ```sh
-open-forge extend --remove vision-workflow ./my-project --dry-run
+open-forge extend --remove development-toolkit ./my-project --dry-run
 ```
 
 Removal does not discover source packages or report installation dependency order and scope counts.
@@ -244,7 +244,7 @@ Reinstalling the same id reconciles owned whole files. Dropped paths are removed
 Remove installed ids with:
 
 ```sh
-open-forge extend --remove vision-workflow
+open-forge extend --remove development-toolkit
 ```
 
 Removal acts on exactly the named ids and stops while a retained extension depends on one of them. Dependencies that become orphans are not pruned automatically.
@@ -441,18 +441,18 @@ The traversal does not enter an on-demand parent merely because a hidden descend
 
 ```sh
 open-forge find --tag Decision --tag Routing
-open-forge find --tag Workflow --tag PhaseDelivery
-open-forge find --route .agents/workflows/dev/_dev.md --follow-required --bodies
+open-forge find --tag Workflow --tag Testing
+open-forge find --route .agents/workflows/development.md --bodies
 open-forge find --route .agents/memory/crystallized/_crystallized.md --depth 1
 open-forge find --tag Workflow --json
 ```
 
 `find` is deterministic routing-contract lookup, not search. It walks routed files only: the loader, category `entrypoints`, their direct `route` files, and Skill `entrypoints`. It never guesses relevance or expands user-owned overwrites.
 
-Combine `Workflow` with one of `PhaseDiscovery`, `PhaseDefinition`, `PhasePlanning`, `PhaseDelivery`, or `PhaseVerification` to inspect phase candidates. Those tags provide non-waterfall wayfinding; the workflow Goal and routed current truth still decide fit.
+Combine `Workflow` with useful topic tags such as `Testing`, `Architecture`, or `Planning` to inspect focused candidates. Visible `description`, tags, `route` meaning, current user direction, and routed current truth select a candidate. After loading it, `Goal` confirms fit.
 
 - `--tag <Tag>` filters by effective tags (metadata tags, or the generated defaults); repeat the flag to require every tag. Matching is case-insensitive; canonical spelling still comes from the loader.
-- `--route <path>` selects one file or routable folder using a workspace-relative CLI path such as `.agents/workflows/dev/_dev.md`; `--depth <n>` also follows its generated `entries` n levels.
+- `--route <path>` selects one file or routable folder using a workspace-relative CLI path such as `.agents/workflows/development.md`; `--depth <n>` also follows its generated `entries` n levels.
 - `--follow-required` adds every target of the selected files' `## Required Routes` sections. Markdown link destinations resolve relative to the workflow file containing them. A required route that cannot be read fails the command - it is a blocker, not a skip.
 - Output is entry lines by default; `--paths` prints paths only, `--bodies` prints file contents with `----- {route} -----` separators, `--json` prints structured output.
 
@@ -465,12 +465,12 @@ Explicit CLI routes, generated-entry expansion, and Required Routes are lexical 
 ```sh
 open-forge chain .agents/patterns/react/components.md
 open-forge chain .agents/patterns/react/components.md --heading Axioms
-open-forge chain .agents/workflows/dev/_dev.md --heading Constraints --json
+open-forge chain .agents/workflows/development.md --heading Completion --json
 ```
 
 `chain` explains inherited Markdown context for one routed file. It emits the loader, each visible ancestor category `entrypoint`, a skill's `SKILL.md` when the target is inside its folder, the target, and each user-owned overwrite immediately after its base. With no `--heading`, it lists the route chain. With `--heading`, it reports every matching section from every chain member as `content`, `absent`, `empty`, `declared-inherited`, or `declared-none`.
 
-The heading is arbitrary, so the same command can inspect `Axioms`, Mode, Goal, Constraints, or a local category heading. `declared-none` applies only where the selected heading's contract defines `none`, such as Workflow Constraints. A local category `Axioms` section may be missing, empty, or state `inherited`; all three forms add no local `Axioms` while loaded ancestor `Axioms` remain active. `none` is not a valid `Axioms` sentinel. `--json` provides stable structured output for tools.
+The heading is arbitrary, so the same command can inspect `Axioms`, `Goal`, `Completion`, or a local category heading. `declared-none` remains available for contracts that explicitly define `none`. A local category `Axioms` section may be missing, empty, or state `inherited`. All three forms add no local `Axioms` while loaded ancestor `Axioms` remain active. `none` is not a valid `Axioms` sentinel. `--json` provides stable structured output for tools.
 
 Each `route` is resolved inside the selected logical target. Absolute paths, parent traversal, drive changes, and real-path or symlink escapes are rejected without mutation. `chain` reports the currently visible file chain; run `doctor` when indexed `route` continuity itself must be validated.
 
@@ -487,10 +487,9 @@ open-forge doctor --json
 - malformed generated-region markers (error)
 - generated `entries` that do not resolve to files (error)
 - `Required Routes` that do not resolve (error), or sections that state neither routes nor `none` (warning)
-- workflow recipes whose level-2, ordered Mode, Goal, Required Routes, Constraints, Steps, Loop, Outputs, and Completion contract is missing or invalid (error); Goal may contain the optional advisory `- helpful before: ...` item, and category-only workflow `entrypoints` may omit the recipe contract until they declare any recipe heading
+- Workflow recipes without one non-empty level-2 `Goal`, `Steps`, and `Completion` section in that order (error). An optional `Required Routes` section must appear between `Goal` and `Steps`, contain at least one valid routed link, and omit the former `none` sentinel. Category-only Workflow `entrypoints` may omit recipe sections
 - direct directive files without #LoadNow metadata or exactly one substantive level-2 `Axioms` section (error)
 - directive files that retain the legacy `Applies To` second applicability gate (error)
-- complete workflow recipes without exactly one recognized primary phase tag (error)
 - category `Axioms` sections that use `none` as a sentinel (error), or mix `inherited` with substantive local `Axioms` (warning)
 - stale generated regions that no longer match what `index` would produce (warning; run `open-forge index`)
 - retired load-policy tags in metadata (warning)

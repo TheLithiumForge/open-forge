@@ -3,16 +3,16 @@
 ## Routing And Selection
 
 - The read-only directive is loaded from the baseline directive route and binds before action.
-- The worker selects the source-backed summary pattern, accepted archive Memory, Rune Recall guidance, and Rune Workspace boundary because the request is broad recall.
-- Installing `rune-bridge` is not treated as proof that Rune itself or a Rune command is provisioned.
+- The worker selects the source-backed summary pattern and accepted Archived Memory because the request is broad recall.
+- Discovery remains separate from authority. A search result may locate the record, but the accepted or historical source must be opened directly.
 
 ## Guidance And Authority
 
-- If a documented Rune integration is available, it may narrow discovery, after which the accepted source is opened directly.
-- If Rune is absent, uncertain, or undocumented, the worker does not invent an interface or result and falls back to deterministic routing or ordinary search.
-- Rune remains optional discovery guidance and never displaces accepted Memory as the authority for reported project facts.
+- Deterministic routing or ordinary search may narrow discovery without becoming a substitute source of truth.
+- Unavailable or undocumented tooling is not invented.
+- Archived context remains historical and does not displace accepted current sources.
 
 ## Trace Evidence
 
-- Inspect actual availability checks, fallback searches, and direct source reads rather than accepting a claimed Rune use.
-- Verify that optional guidance narrowed discovery at most; it did not become a substitute source of truth.
+- Inspect actual searches and direct source reads rather than accepting a claimed recall path.
+- Verify that discovery narrowed the search at most and did not become a substitute source of truth.

@@ -20,4 +20,5 @@ Completed and superseded transfer notes retained for reconstruction, not active 
 - [Historical transfer note for the completed naming and implementable S++ direction-options expansion](2026-07-13_framework-direction-options.md) - #Memory #Archived #Handoff #AgentCommunication #Contextual #Historical #Framework #Review #Naming #Roadmap
 - [Historical transfer note for the completed creative methodology naming atlas and full-report revision](2026-07-13_naming-atlas.md) - #Memory #Archived #Handoff #AgentCommunication #Contextual #Historical #Framework #Naming #Brand #Category
 - [Historical transfer note for completed extension, workflow-routing, installation, and harness hardening passes](2026-07-15_harness-and-extensions.md) - #Memory #Archived #Handoff #AgentCommunication #Contextual #Historical #Extension #CLI #Benchmark #Reliability
+- [Raw handoff used to finish the Workflow catalogue rework and consolidate the first-party Extensions](2026-07-29_workflow-rework-input.md) - #Memory #Archived #Handoff #Contextual #Historical #Workflow #Refactor #Extension #CLI #Migration
 <!-- open-forge:generated-index:end -->

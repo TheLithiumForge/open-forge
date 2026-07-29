@@ -65,7 +65,7 @@ Core primitives use the [universal scope contract](../routing/scope.md). Routed 
 
 For non-directive primitives, a narrower selected `route` is preferred when it safely specializes broader material. Directives are additive: a narrower selected Directive adds binding constraints without silently overriding active ancestor Directives.
 
-Core `root routes` compose through explicit relationships. A Workflow invokes Skills, consults Guidance, applies Patterns, instantiates Templates, and follows Workspace `routes` through `Required Routes`, Steps, or ordinary links instead of physically containing those `root routes`.
+Core `root routes` compose through explicit relationships. A Workflow invokes Skills, consults Guidance, applies Patterns, instantiates Templates, and follows Workspace `routes` through optional `Required Routes`, Steps, or ordinary links instead of physically containing those `root routes`.
 
 A routed folder may use any name, but a familiar primitive `slug` beneath another root does not acquire that primitive's contract automatically. The [scope contract](../routing/scope.md#universal-scope) defines the boundary.
 

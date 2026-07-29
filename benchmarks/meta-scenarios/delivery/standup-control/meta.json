@@ -6,8 +6,6 @@
     "standup-project-location"
   ],
   "extensions": [
-    "implementation-workflow",
-    "reliability-defaults",
-    "cli-testing-patterns"
+    "development-toolkit"
   ]
 }

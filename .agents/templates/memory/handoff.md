@@ -8,13 +8,13 @@ open-forge:
 
 <!--
 Template selection:
-- Need: One concise transfer record for work crossing an agent, task, session, workflow, or person boundary.
+- Need: One concise transfer record for work crossing an agent, task, session, Workflow, or person boundary.
 - Primary question: What must the recipient know and do to resume this work without private context?
 
-Instantiate under the appropriate Working handoffs route.
+Instantiate under the appropriate Working Handoffs `route`.
 This record is expected to expire. Extract durable results, archive useful transfer history, and prune redundant narration when the transfer completes.
 Link to detailed authoritative sources instead of copying complete history.
-Replace this template's frontmatter, title, placeholders, and comments.
+Replace this Template's frontmatter, title, placeholders, and comments.
 -->
 
 ## Goal And Scope
@@ -27,7 +27,7 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 ## Accepted Direction
 
-{Link to accepted decisions and authoritative sources that govern continuation. Keep candidates visibly separate.}
+{Link to accepted Decisions and authoritative sources that govern continuation. Keep candidates visibly separate.}
 
 ## Completed And Verified
 
@@ -43,8 +43,8 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 ## Required Context
 
-{Link to the minimum routes, files, commands, or external authoritative systems needed to continue.}
+{Link to the minimum `routes`, files, commands, or external authoritative systems needed to continue.}
 
 ## Exit
 
-{State when the handoff should be extracted, archived, consolidated, or pruned.}
+{State when the Handoff should be extracted, archived, consolidated, or pruned.}

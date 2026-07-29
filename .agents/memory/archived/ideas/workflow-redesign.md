@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Historical pre-Mode and optional-Constraints workflow rationale superseded by the current phase-aware contract
+  description: Historical rationale behind the former eight-section, mode-aware, and phase-aware Workflow contract
   tags: [Memory, Archived, Idea, Contextual, Historical, Workflow, Routing, Loading, Orchestration]
 ---
 
@@ -9,9 +9,9 @@ open-forge:
 Status: archived 2026-07-18.  
 Original route: `.agents/memory/emerging/ideas/workflow-redesign.md`.  
 Archived because: the workflow contract was accepted, implemented, and subsequently refined with Mode, mandatory Constraints, and phase-aware routing.  
-Current owner or replacement: `.agents/memory/crystallized/decisions/workflow-shape.md` and current workflow Core routes.
+Current authoritative source: `.agents/memory/crystallized/decisions/workflow-shape.md` and the current Workflow Core route.
 
-Status: historical rationale accepted 2026-07-10 and superseded in part by the 2026-07-17 revision in `.agents/memory/crystallized/decisions/workflow-shape.md`. The current contract adds an early `Mode`, makes `Constraints` mandatory with `- none`, reduces modes to linear/iterative, and adds workflow-first loader behavior. The body below preserves the earlier design context and worked example; do not treat its optional-Constraints or three-mode wording as current truth.
+Status: historical rationale accepted 2026-07-10, revised into the later eight-section phase-aware contract, and superseded by the minimal Workflow contract accepted on 2026-07-29. The body below preserves the earlier design context and worked example. Do not treat its modes, sections, phase assumptions, selection ceremony, or local-Core behavior as current truth.
 
 ## What A Workflow Is
 

@@ -11,10 +11,10 @@ Template selection:
 - Need: One candidate record for a grounded finding that may prevent rediscovery or become reusable learning.
 - Primary question: What was observed, where and with what evidence, and what may it imply if supported?
 
-Instantiate under the appropriate Emerging observations route.
+Instantiate under the appropriate Emerging Observations `route`.
 One sufficiently reusable, surprising, or costly occurrence may justify capture. Recurrence is mainly a consolidation and promotion signal.
-Search for an existing observation first and extend it when scope and meaning match.
-Replace this template's frontmatter, title, placeholders, and comments.
+Search for an existing Observation first and extend it when scope and meaning match.
+Replace this Template's frontmatter, title, placeholders, and comments.
 -->
 
 ## Observation
@@ -23,7 +23,7 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 ## Evidence And Source
 
-{Link to or describe the concrete occurrence, output, artifact, measurement, or report that supports the observation.}
+{Link to or describe the concrete occurrence, output, artifact, measurement, or report that supports the Observation.}
 
 ## Scope
 
@@ -43,8 +43,8 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 ## Follow-Up And Promotion Signals
 
-{State which verification, recurrence, impact, or user direction would justify analysis, consolidation, promotion, or rejection.}
+{State which verification, recurrence, impact, or user direction would justify Analysis, consolidation, promotion, or rejection.}
 
 ## Related Records And Sources
 
-{Link to affected current truth, related observations, active work, or external evidence.}
+{Link to affected current truth, related Observations, active work, or external evidence.}

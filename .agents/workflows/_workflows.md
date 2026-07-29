@@ -6,19 +6,17 @@ open-forge:
 
 # Workflows
 
-Workflows coordinate steps, capabilities, or handoffs through a routed Markdown recipe with a defined goal.
+Workflows are optional routed Markdown recipes for reaching defined goals.
 
 ## Axioms
 
-- Before non-trivial work, use the request and routed #CurrentTruth to select a relevant workflow from visible `Entries` descriptions and tags before opening its body.
-- After selection, confirm its `Goal` and read any optional `- helpful before: ...` item naming useful prior work.
-- When that prior work is useful and a matching earlier workflow is available, recommend it once without blocking the selected workflow. Otherwise, proceed with explicit assumptions.
-- Honor an explicit workflow choice or opt-out.
-- Treat phase tags as wayfinding, not a waterfall. Work may start anywhere, skip, repeat, or move backward.
-- Read every `route` listed under `Required Routes` before Step 1 and report an unreadable `route` as a blocker.
-- Keep one workflow primary and express additional workflows as ordered handoffs.
-- When no workflow matches exactly, offer the closest installed `route` or direct execution once.
-- Name the active workflow in commentary, a handoff, or closeout.
+- Use `Entries` when the user selects a Workflow or a visible `description` shows that an installed recipe would materially help the current goal. Direct execution remains valid when no Workflow adds value.
+- Select a candidate Workflow from its visible `description`, tags, `route` meaning, and current user direction. After loading it, use `Goal` to confirm the fit. Honor an explicit choice or opt-out.
+- Create a Workflow only when repeating its recipe materially changes execution, preserves a deliberate user methodology, or improves reliability beyond ordinary capable-agent behavior.
+- Every non-`entrypoint` Workflow file is a complete recipe with one non-empty `## Goal`, `## Steps`, and `## Completion` section in that order. An `entrypoint` may omit recipe sections only when it organizes descendants. Declaring any standard recipe section requires the complete applicable contract.
+- A Workflow with unconditional routed dependencies puts one `## Required Routes` section between `Goal` and `Steps`. Each dependency uses `- [description](relative/path.md) - #Tags` and resolves relative to the Workflow file. Read every linked `route` before Step 1 and report an unreadable dependency as a blocker. Omit the section when no unconditional routed dependency applies.
+- Recipe-specific headings may add useful context without becoming part of the Framework schema.
+- Steps may invoke capabilities, delegate bounded work, repeat based on evidence, or hand off to another Workflow. Keep composition explicit in the recipe.
 
 ## Entries
 

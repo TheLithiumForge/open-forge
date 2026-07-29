@@ -11,7 +11,7 @@ Captured 2026-07-09 and rebaselined 2026-07-17. The governing rule remains: S me
 ## Shipped Baseline
 
 - Routing has `find`, `chain`, `doctor`, generated-index validation, containment checks, overwrite order, and explicit ancestor-Axioms inspection.
-- Workflows use early Mode (`linear` or `iterative`), Goal, Required Routes, mandatory Constraints, Steps, Loop, Outputs, and Completion. The loader is workflow-first and preserves explicit direct-execution opt-out.
+- Workflows use the minimum `Goal`, `Steps`, and `Completion` recipe. `Required Routes` appears only for unconditional routed dependencies. Descriptions and topical tags support selection, and direct execution remains valid when no recipe adds value.
 - The 18-unit catalogue composes skill-only, workflow-only, directive-only, pattern-only, mixed, and dependency-only extensions. Dependencies auto-select, while standard skills can also be installed directly by other supported runtimes.
 - Install is Core-first and Git-checkpointed by default. `--pro` bypasses lifecycle gates only; path, link, collision, index, and rollback safety remain active.
 - CLI contracts run as real subprocesses in fresh OS temporary roots with real Git, packaged-layout smoke tests, no-partial-write assertions, and real first-party integration.
@@ -27,9 +27,9 @@ Captured 2026-07-09 and rebaselined 2026-07-17. The governing rule remains: S me
 
 ## Workflow Compliance (B+)
 
-- S gate: repeated multi-model scenarios show that agents select useful context, honor explicit workflow choices or opt-outs, treat prior workflows as helpful rather than prerequisite, follow Required Routes when a workflow is selected, and deliver faithful outcomes without benchmark-owned process prompting.
-- S++ gate: multi-workflow goals remain reconstructable from workflow receipts and handoffs alone, including interruption and resumption.
-- Option A — low ceremony: reuse the compact discovery, delivery, conflict, helpful-prior-work, and broad-context recall meta-scenarios and compare worker self-review with independent orchestrator findings.
+- S gate: repeated multi-model scenarios show that selected Workflows add useful structure, agents follow their required dependencies, Steps, and Completion criteria, and the resulting outcomes remain faithful without benchmark-owned process prompting.
+- S++ gate: composed Workflow goals remain reconstructable across ordinary handoffs and context boundaries without requiring a private execution runtime.
+- Option A — low ceremony: reuse compact discovery, delivery, conflict, dependency, and broad-context recall meta-scenarios and compare worker self-review with independent orchestrator findings.
 - Option B — assisted: `open-forge start <workflow>` emits a reviewable activation receipt but never becomes a runtime orchestrator.
 - Option C — strongest: a runtime adapter consumes the same receipt schema while Markdown remains authoritative and direct execution remains possible.
 

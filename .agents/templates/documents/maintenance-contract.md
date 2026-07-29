@@ -11,11 +11,11 @@ Template selection:
 - Need: One current maintainer-facing document for a source or repository surface's contract and verification boundary.
 - Primary question: What must remain true when this surface changes, and how can maintainers verify that it still does?
 
-Use this template only when a source or repository surface has stable maintenance obligations that deserve an independent current document.
-The continuing document shape and review expectations belong to the [maintenance contract pattern](../../patterns/open-forge/maintenance-contract.md).
+Use this Template only when a source or repository surface has stable maintenance obligations that deserve an independent current document.
+Continuing document shape and review requirements belong to applicable Patterns, Directives, `Axioms`, or other authoritative sources. This Template provides only starting content.
 Link to authoritative runtime sources and true counterparts instead of copying their complete contents.
 Place relationships beside the contract or verification statement they affect.
-Replace this template's frontmatter, title, placeholders, and comments.
+Replace this Template's frontmatter, title, placeholders, and comments.
 Add an optional frontmatter `responsibility` when one stable sentence will help keep future maintenance concerns local to this document.
 -->
 

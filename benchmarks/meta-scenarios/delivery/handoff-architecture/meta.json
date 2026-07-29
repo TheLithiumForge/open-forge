@@ -3,7 +3,6 @@
   "scenario": "handoff-note-implementation",
   "primitives": ["handoff-note-product-direction"],
   "extensions": [
-    "architecture-workflow",
-    "implementation-workflow"
+    "development-toolkit"
   ]
 }

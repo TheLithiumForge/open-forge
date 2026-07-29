@@ -132,7 +132,7 @@ describe("benchmark composition lifecycle", () => {
       metaScenarioId: fixture.metaScenarioId,
       ...fixture.options,
       variantDirectories: [variantDirectory],
-      extraExtensions: ["cli-testing-patterns"],
+      extraExtensions: ["development-toolkit"],
       orchestratorFile: addendumFile,
     });
 
@@ -141,14 +141,14 @@ describe("benchmark composition lifecycle", () => {
       scenarioId: fixture.scenarioId,
       primitiveIds: [fixture.primitiveId],
       variantIds: ["run-local memory"],
-      extensions: ["cli-testing-patterns"],
+      extensions: ["development-toolkit"],
     });
     expect(JSON.parse(await fs.readFile(prepared.compositionPath, "utf8"))).toEqual({
       metaScenarioId: fixture.metaScenarioId,
       scenarioId: fixture.scenarioId,
       primitiveIds: [fixture.primitiveId],
       variantIds: ["run-local memory"],
-      extensions: ["cli-testing-patterns"],
+      extensions: ["development-toolkit"],
       workerPromptSha256: prepared.workerPromptSha256,
       baselineTree: prepared.baselineTree,
     });
@@ -160,7 +160,7 @@ describe("benchmark composition lifecycle", () => {
     expect(await fs.readFile(path.join(prepared.workspaceDir, "project.txt"), "utf8")).toBe("scenario fixture\n");
     expect(await fs.readFile(path.join(prepared.workspaceDir, ".agents", "memory", "crystallized", "documents", "stable.md"), "utf8")).toContain("Stable");
     expect(await fs.readFile(path.join(prepared.workspaceDir, ".agents", "memory", "crystallized", "documents", "run-local.md"), "utf8")).toContain("Frozen treatment");
-    expect(await fs.readFile(path.join(prepared.workspaceDir, "open-forge.extensions.json"), "utf8")).toContain("cli-testing-patterns");
+    expect(await fs.readFile(path.join(prepared.workspaceDir, "open-forge.extensions.json"), "utf8")).toContain("development-toolkit");
     expect(await fs.readFile(prepared.orchestratorAddendumPath!)).toEqual(addendum);
 
     for (const name of [

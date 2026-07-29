@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Current maintenance contract for the installable Workflows Core category `entrypoint` and validated Markdown recipe schema
+  description: Current maintenance contract for the installable Workflows `entrypoint` and minimal validated Markdown recipe schema
   responsibility: Preserve Workflow selection, recipe validation, dependency, cross-primitive composition, source alignment, and `route` boundaries
   tags: [Memory, Document, CurrentTruth, Evergreen, Maintenance, Governance, Payload, Core, Workflow]
 ---
@@ -16,10 +16,13 @@ The [current Workflow contract](../../../framework/primitives/workflows.md) defi
 ## Contract
 
 - Frontmatter uses #LoadNow, #Core, and #Workflow so Workflow selection enters baseline context
-- The `entrypoint` keeps only runtime-facing selection behavior; authoring detail remains in the current contract, Templates, scaffolding, and deterministic validation
-- A complete Workflow keeps the ordered `Mode`, `Goal`, `Required Routes`, `Constraints`, `Steps`, `Loop`, `Outputs`, and `Completion` contract
-- `Mode`, empty Constraints, optional helpful prior work, primary phase, and Required Routes retain the meanings defined by the current contract
-- Organizational `entrypoints` remain valid without recipe sections; declaring any recipe section requires the complete schema
+- The `entrypoint` keeps the compact complete runtime and manual authoring contract
+- Visible `description` values, tags, `route` meaning, and current user direction select a candidate before loading. `Goal` confirms fit after loading
+- The authored contract states the admission threshold that prevents ordinary capable-agent behavior from becoming ceremonial Workflows
+- A complete Workflow has one non-empty level-2 `Goal`, `Steps`, and `Completion` section in that order
+- `Required Routes` is optional, appears between `Goal` and `Steps`, and contains at least one canonical routed link when present
+- Recipe-specific headings remain valid without becoming Framework schema
+- Organizational `entrypoints` remain valid without recipe sections. Declaring any standard recipe section requires the complete applicable schema
 - Generated `Entries` express containment and `Required Routes` express unconditional cross-tree dependencies
 - Workflow scopes inherit the Workflow role and may nest recursively
 - Other Core `root routes` remain separate and enter recipes through `Required Routes`, Steps, handoffs, or ordinary links
@@ -28,6 +31,6 @@ The [current Workflow contract](../../../framework/primitives/workflows.md) defi
 
 ## Verification
 
-- Workflow validation tests cover section level and order, Mode, Constraints, phase classification, `Required Routes`, organizational `entrypoints`, and `root route` boundaries
+- Workflow validation tests cover required section level and order, optional `Required Routes`, recipe-specific headings, organizational `entrypoints`, direct Workflow files, and `root route` boundaries
 - Required Route tests cover relative resolution, tags, missing dependencies, containment, and canonical syntax
 - Core installation and route tests verify baseline loading, indexing, and recursive Workflow categories

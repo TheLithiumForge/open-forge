@@ -5,5 +5,5 @@
     "immutable-ledger-removal",
     "simplicity-over-audit-guidance"
   ],
-  "extensions": ["planning-workflows"]
+  "extensions": ["development-toolkit"]
 }

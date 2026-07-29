@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Workflows use one predictable goal-oriented recipe shape while phases remain non-waterfall wayfinding and dependencies stay distinct from containment
+  description: Workflows use a minimal goal, steps, and completion recipe while optional routed dependencies remain distinct from containment
   tags: [Memory, Decision, CurrentTruth, Workflow, Routing, Orchestration]
 ---
 
@@ -8,43 +8,48 @@ open-forge:
 
 ## Context
 
-Earlier Workflow experiments mixed selection, execution, dependencies, phase order, and iteration in ways that made recipes difficult to compose and validate. A goal-oriented recipe needed enough stable structure for agents and deterministic tools without turning Open Forge into one prescribed development lifecycle.
+Earlier Workflow experiments proved useful distinctions between goals, dependencies, iteration, containment, and completion. They also accumulated eight mandatory sections, fixed modes, phase tags, selection ceremony, and reporting requirements that capable agents largely ignored or repeated mechanically.
 
 ## Decision
 
-Open Forge uses one complete ordered recipe shape for every Workflow, with explicit execution mode, goal, dependencies, constraints, steps, loop, outputs, and completion evidence.
+Open Forge uses a minimum complete recipe of `Goal`, `Steps`, and `Completion` in that order.
 
 The accepted design separates several concerns:
 
-- Generated `Entries` express containment, while `Required Routes` express unconditional cross-tree dependencies
-- Helpful prior work remains advisory inside the Goal instead of becoming a hidden blocker
-- Linear and iterative modes share one explicit Loop section rather than hiding repetition in prose
-- Primary phases are visible metadata for increasing commitment, not physical route layers or mandatory chronology
-- Organizational entrypoints can route Workflows without pretending to be complete recipes
-- The installed entrypoint contains runtime selection behavior while current documents and deterministic validation preserve authoring detail
-- The Workflows `root route` may contain recursively nested Workflow scopes
-- Other Core `root routes` remain separate and enter a Workflow through explicit `Required Routes`, Steps, handoffs, or ordinary links
+- `Goal` identifies the intended result
+- `Steps` contain the procedure and any boundaries, branching, iteration, delegation, capabilities, verification, or stopping behavior it needs
+- `Completion` identifies the result or evidence that ends the recipe
+- `Required Routes` is optional and appears between `Goal` and `Steps` only for unconditional routed dependencies
+- Generated `Entries` express containment while `Required Routes` express dependency
+- Recipe-specific headings may improve one Workflow without expanding the universal schema
+- Organizational `entrypoints` can route Workflows without pretending to be recipes
+- Other Core `root routes` remain separate and enter through explicit links, Steps, or handoffs
 
 ## Rationale
 
-One predictable shape lowers navigation and validation cost. Explicit dependencies fail visibly before execution, explicit loops make stopping conditions reviewable, and one primary phase helps pre-load selection without adding a waterfall.
+Three required sections preserve the distinctions needed to confirm fit after loading, execute, and finish a recipe. Visible `description` values, tags, `route` meaning, and current user direction remain the pre-load selection surface. The sections are small enough to author manually, understand without repository-only documentation, and follow without turning useful work into form completion.
 
-Keeping optional preparation separate from required context lets an agent recommend valuable earlier work without turning every Workflow into ceremony. Keeping containment separate from dependency prevents generated tree structure from becoming an implicit execution graph.
+Optional `Required Routes` preserve deterministic dependency loading and visible failure without requiring `none` in every independent recipe. Keeping containment separate from dependency prevents generated tree structure from becoming an implicit execution graph.
+
+Descriptions and topical tags already provide pre-load selection. Fixed modes and phases did not add enough selection value to justify another vocabulary. Iteration, outputs, constraints, and prior-work suggestions remain expressible where the individual recipe needs them.
 
 ## Alternatives And Tradeoffs
 
-- Free-form recipes reduce schema cost but move recurring interpretation into every agent and prevent reliable validation
-- Physical phase folders improve visual grouping but impose extra routing depth and suggest chronology that the model rejects
-- A goal-seeking third mode duplicates iterative execution with a Goal stop condition
-- Workflow-local copies of reusable Skills improve locality but fragment native runtime discovery and updates
-- Workflow-local primitive trees improve package locality but turn recipes into mixed Core containers and require special loading, validation, update, and runtime discovery rules
-
-The stable schema adds authoring discipline and must evolve deliberately when dogfood reveals a real limitation.
+- Free-form recipes remove all schema cost but make selection, execution, completion, and validation inconsistent
+- The previous eight-section schema made every distinction explicit but duplicated information and encouraged mechanical compliance
+- Fixed phases improved catalogue grouping but overlapped descriptions and topical tags while implying a lifecycle the Framework does not impose
+- A mandatory Loop exposed repetition but forced linear recipes to describe its absence
+- Mandatory Constraints and Outputs made those concepts visible but often repeated Steps, Goal, Skills, Directives, or Completion
+- Workflow-local primitive trees improve package locality but turn recipes into mixed Core containers and require special loading, validation, update, and discovery rules
 
 ## Consequences
 
-- A stable recipe shape makes execution and deterministic validation more predictable while adding authoring cost
-- A future redesign must preserve or explicitly replace the distinctions this choice established
+- Existing first-party Workflows move useful mode, constraint, loop, and output meaning into the three retained sections
+- Phase tags and phase-aware validation are removed from current source and tooling
+- CLI validation checks the minimum shape and optional dependency section without rejecting useful recipe-specific headings
+- Direct execution remains valid, and no Workflow must be named in commentary or closeout merely for audit ceremony
+- Handoffs identify a Workflow or active step when that information materially helps resumption rather than as a Workflow-specific requirement
+- A Workflow earns a `route` through distinctive reusable execution value rather than by restating ordinary capable-agent behavior
 
 ## Authoritative Sources
 
@@ -54,7 +59,7 @@ The stable schema adds authoring discipline and must evolve deliberately when do
 
 ## Historical Context
 
-Historical redesign detail and the former TDD example remain in [Workflow redesign](../../archived/ideas/workflow-redesign.md).
+Historical redesign detail and the former TDD example remain in [Workflow redesign](../../archived/ideas/workflow-redesign.md). The requirements that triggered this simplification remain in the archived [Workflow overhaul inputs](../../archived/ideas/2026-07-29_workflow-overhaul-inputs.md).
 
 ## Decision Relationships
 

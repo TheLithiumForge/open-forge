@@ -12,7 +12,7 @@ Only open work belongs here. The mixed pre-review history is preserved in `.agen
 
 1. Run the exact dual-review meta-scenarios across multiple models or runtimes, and compare stable controls with declared trap or on-demand treatments. Compare what each worker believes it did with the orchestrator's trace-backed behavior and outcome review before promoting behavioral or portability claims.
 2. Add stronger provenance, isolation, replication, or corpus controls only around a concrete claim that needs them; do not restore the retired P0 evidence platform as the default dogfood path.
-3. Evaluate `reliability-defaults`, the mixed development workflow, and the route-only `rune-bridge` in real use; preserve Open Forge's independence and add no stronger integration contract without evidence.
+3. Evaluate the six Workflows, Experience Design Skill, and nine Templates in `development-toolkit` through real use. Keep only content that materially improves outcomes beyond native agent capability.
 4. Add CI for payload structure, source and dogfood synchronization, and machine-checkable Maintenance relationships; decide whether a bounded benchmark gate is reliable and economical enough for payload-changing pull requests.
 5. Replace redundant exact-phrase installation assertions with whole-authored-contract parity where the phrases prove no independent behavior. Retain focused assertions for generated navigation, preservation, overwrite adjacency, rejection, and other observable behavior.
 
@@ -24,12 +24,6 @@ Only open work belongs here. The mixed pre-review history is preserved in `.agen
 4. Consider a deterministic active-context receipt for auditability: selected route chains, overwrite companions, Required Routes, global binding #KeepInMind context, cost, and digest. It must not narrow the baseline #KeepInMind contract or create parallel runtime truth.
 5. Decide the remaining deterministic CLI options: `find --max-tokens`, approximate token counts, startup-budget warnings, `intent-to-route` previews, `route` templates, extension authoring templates, and explicit forceful versus soft upgrade modes.
 6. Revisit a distinct primitive-kind field only if ownership ambiguity recurs beyond the current route-aware validator and tests.
-
-## Revisit Workflow Architecture
-
-1. Redesign the current Workflow model using the current Framework and the preserved [Workflow overhaul inputs](../emerging/ideas/workflow-overhaul.md).
-2. Provide an installed, on-demand, human-readable authoring surface for creating validator-compliant Workflows without requiring repository-only architecture or Maintenance documents.
-3. Reconsider recipe shape, modes, phases, dependencies, delegation handoffs, `route` composition through scopes, runtime wording, Templates, CLI assistance, and validation as one coherent design.
 
 ## Self-Growth, Documentation, And Release
 

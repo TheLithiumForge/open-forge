@@ -11,9 +11,9 @@ Template selection:
 - Need: One durable rationale record for a discrete accepted choice.
 - Primary question: What was chosen, why was it accepted, what follows from it, and which authoritative sources express the result?
 
-Instantiate under the appropriate Crystallized decisions route.
-The decision is authoritative for why. Current documents, directives, source code, or external systems are authoritative for the resulting current state.
-Replace this template's frontmatter, title, placeholders, and comments.
+Instantiate under the appropriate Crystallized Decisions `route`.
+The Decision is authoritative for why. Current documents, Directives, source code, or external systems are authoritative for the resulting current state.
+Replace this Template's frontmatter, title, placeholders, and comments.
 -->
 
 ## Context
@@ -38,8 +38,8 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 ## Authoritative Sources
 
-{Link forward to every current document, directive, implementation, or external system that expresses the accepted result authoritatively. These sources express what is current now; they are not evidence or authority backing the decision.}
+{Link forward to every current document, Directive, implementation, or external system that expresses the accepted result authoritatively. These sources express what is current now. They are not evidence or authority backing the Decision.}
 
 ## Decision Relationships
 
-{Link decisions this one replaces, narrows, depends on, or materially affects. Omit when none exist.}
+{Link Decisions this one replaces, narrows, depends on, or materially affects. Omit when none exist.}

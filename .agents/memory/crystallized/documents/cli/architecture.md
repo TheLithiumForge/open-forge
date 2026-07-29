@@ -91,11 +91,11 @@ These operations accelerate explicit Framework routing. They do not infer accept
 
 `index` derives `entries` for `routes` from the filesystem, `entrypoint` metadata, Skill packages, and direct-child relationships. It owns only bounded generated regions.
 
-`doctor` detects deterministic defects without writing. The current implementation checks `entrypoint` ambiguity, generated-region integrity, broken `entries` and `Required Routes`, stale indexes, `route` containment, Workflow shape, Directive shape, inherited sentinels, retired tags, orphan overwrites, and unreachable Markdown. An orphan overwrite is warned because it has no base from which to inherit a `route`.
+`doctor` detects deterministic defects without writing. The current implementation checks `entrypoint` ambiguity, generated-region integrity, broken `entries` and `Required Routes`, stale indexes, `route` containment, the minimal Workflow shape, Directive shape, inherited sentinels, retired tags, orphan overwrites, and unreachable Markdown. An orphan overwrite is warned because it has no base from which to inherit a `route`.
 
 `create category` scaffolds concrete route chains and rebuilds indexes. `create extension` scaffolds a local managed package.
 
-Some validations encode schemas currently under migration, particularly the exact workflow section order and fixed phase vocabulary. Those checks describe the MVP contract and must follow the accepted Framework source during the overhaul rather than preserving old schemas by inertia.
+Workflow validation follows the accepted minimum `Goal`, `Steps`, and `Completion` contract plus optional `Required Routes`. Recipe-specific headings remain outside CLI schema.
 
 ### Change Operations
 
@@ -266,7 +266,7 @@ Extension dry-run does not currently include generated-index body diffs in its r
 
 The CLI embeds:
 
-- Exact workflow headings and phase tags
+- The minimum Workflow headings and optional `Required Routes` position
 - Directive-shape rules
 - Root harness filenames and managed markers
 - A source-derived `managed route` catalogue plus path-based recognition through scopes

@@ -158,47 +158,31 @@ ${source}`,
 describe("Markdown contract mechanics", () => {
   const workflow = `# Delivery
 
-## Mode
-
-iterative
-
 ## Goal
 
-- outcome: deliver one change
+- Deliver one change.
 
 ## Required Routes
 
-- none
-
-## Constraints
-
-- none
+- [Delivery capability](../skills/delivery/SKILL.md) - #Skill #Delivery
 
 ## Steps
 
 1. Implement the change.
-
-## Loop
-
-Repeat until verified.
-
-## Outputs
-
-- verified change
 
 ## Completion
 
 - [ ] verification passes
 `;
 
-  test("accepts the complete ordered workflow contract and catches invalid mode/constraints", () => {
+  test("accepts the minimal workflow contract and catches invalid optional dependencies", () => {
     expect(cliTestInternals.validateWorkflowDocument(workflow)).toEqual([]);
-    const invalid = workflow
-      .replace("iterative", "goal-seeking")
-      .replace("## Constraints\n\n- none", "## Constraints\n\n- none\n- Preserve bytes.");
+    const invalid = workflow.replace(
+      "- [Delivery capability](../skills/delivery/SKILL.md) - #Skill #Delivery",
+      "- none"
+    );
     expect(cliTestInternals.validateWorkflowDocument(invalid)).toEqual(expect.arrayContaining([
-      expect.stringContaining("linear or iterative"),
-      expect.stringContaining("cannot mix none/inherited")
+      expect.stringContaining("must be omitted")
     ]));
   });
 

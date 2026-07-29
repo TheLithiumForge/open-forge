@@ -11,9 +11,9 @@ Template selection:
 - Need: One candidate record for a plausible possibility whose value or final form remains unsettled.
 - Primary question: What should be explored, what is currently known, and what evidence or direction would justify promotion?
 
-Instantiate under the appropriate Emerging ideas route.
-An idea is useful candidate context, not accepted direction.
-Replace this template's frontmatter, title, placeholders, and comments.
+Instantiate under the appropriate Emerging Ideas `route`.
+An Idea is useful candidate context, not accepted direction.
+Replace this Template's frontmatter, title, placeholders, and comments.
 -->
 
 ## Opportunity
@@ -26,7 +26,7 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 ## Possibilities
 
-{Describe materially different forms the idea could take without prematurely selecting one.}
+{Describe materially different forms the Idea could take without prematurely selecting one.}
 
 ## Evidence
 
@@ -34,7 +34,7 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 ## Open Questions
 
-{State what must be learned or decided before the idea can become accepted direction.}
+{State what must be learned or decided before the Idea can become accepted direction.}
 
 ## Promotion Signals
 
@@ -42,4 +42,4 @@ Replace this template's frontmatter, title, placeholders, and comments.
 
 ## Related Records And Sources
 
-{Link to current truth, other candidates, or work that gives the idea meaning.}
+{Link to current truth, other candidates, or work that gives the Idea meaning.}

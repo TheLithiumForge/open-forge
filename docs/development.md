@@ -142,8 +142,6 @@ bun run test:ci
 
 Closure tests invoke the public CLI as a child process with argument arrays and an explicit working directory. Use real Git repositories when checkpoint behavior is part of the contract. Assert resulting bytes, ownership, route validity, Git state, and failure atomicity where applicable. File existence alone is not sufficient evidence.
 
-The optional `cli-testing-patterns` Extension provides the installable version of this testing approach.
-
 ## Documentation Voice
 
 The [Open Forge Writing Standard](../.agents/memory/crystallized/documents/maintenance/writing.md) defines shared voice, clarity, terminology, and punctuation rules for this repository.

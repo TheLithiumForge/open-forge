@@ -8,11 +8,10 @@ open-forge:
 
 Open product candidates after the 2026-07-18 pruning pass. These are options, not commitments. The complete pre-pruning record is `.agents/memory/archived/ideas/2026-07-18_deferred-product-ideas-snapshot.md`.
 
-- Evaluate the optional `reliability-defaults` pack in future runs. It contains only cross-language containment, mutation-safety, and evidence-closeout directives; language/runtime defaults remain separate candidates.
 - Optional typed grouping routes such as `projects/`, `packages/`, `domains/`, or `teams/` as CLI presets, not base defaults.
 - Provider-specific planning adapters that can map the authority-preserving planning workflows to GitHub, Jira, GitLab, Linear, or another declared task source without mirroring truth.
 - Technology pattern packs.
-- Additional workflow packs only where real use shows a missing outcome; the initial brainstorming, task creation, implementation, testing, review, architecture, UI/UX, refactoring, and debugging set now exists.
+- Add another Workflow only where real use shows that a distinct repeatable recipe materially improves an outcome beyond native agent capability and the six `development-toolkit` Workflows.
 - Optional communication, surgical-change, implementation, design, brainstorming, testing, and review content should ship only through the Core role that matches its semantics and only after real use shows that it earns another default or Extension.
 - Explore a Skill that preserves the current chat as a local Session record.
 - Keep work packages and tasks within Workflows and scoped local records unless repeated use proves that a separate `.agents/tasks/` or `.agents/work/` root provides a distinct role.

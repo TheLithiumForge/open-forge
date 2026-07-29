@@ -29,8 +29,6 @@ const extensionReceiptFileName = "open-forge.extensions.json";
 const extensionReceiptSchema = 2;
 const windowsReservedPathBasenames = /^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])$/i;
 const retiredLoadPolicyTags = new Set(["openforge", "loadwithparententrypoint", "loadforpostworkreview"]);
-const workflowPhaseTags = ["PhaseDiscovery", "PhaseDefinition", "PhasePlanning", "PhaseDelivery", "PhaseVerification"] as const;
-const workflowPhaseTagSet = new Set(workflowPhaseTags.map((tag) => tag.toLowerCase()));
 const markdownEscapablePunctuation = new Set("!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~");
 const routeTypeTags = ["Directive", "Guidance", "Pattern", "Skill", "Template", "Workflow", "Workspace", "Memory"] as const;
 const routeTypeTagsByLower = new Map(
@@ -250,7 +248,7 @@ function readIdsValue(args: string[]): { ids: string[]; consumed: number } | nul
 function splitExtensionIds(value: string): string[] {
   const ids = [...new Set(value.split(",").map((id) => id.trim()).filter(Boolean))];
   if (ids.length === 0 || ids.some((id) => !isBundledExtensionId(id))) {
-    throw new Error("Extension ids must be comma-separated lowercase ids such as vision-workflow,implementation-workflow");
+    throw new Error("Extension ids must be comma-separated lowercase ids such as development-toolkit,example-extension");
   }
 
   return ids;
@@ -2477,7 +2475,8 @@ async function chain(chainArgs: string[]): Promise<void> {
   }
 
   for (const item of items) {
-    console.log(`----- ${item.route} [${item.heading?.status}] -----`);
+    const status = item.heading?.status === "absent" ? "heading absent" : item.heading?.status;
+    console.log(`----- ${item.route} [${status}] -----`);
     for (const match of item.heading?.matches ?? []) {
       if (match.body) {
         console.log(match.body);
@@ -3204,6 +3203,7 @@ async function doctor(doctorArgs: string[]): Promise<void> {
 
   const loaderFile = path.join(scanRoot, "loader.md");
   const regionOwners = routedFiles.filter((file) => isIndexFile(file));
+  const routedSet = new Set(routedFiles.map((file) => path.resolve(file)));
 
   for (const owner of [...(await isFile(loaderFile) ? [loaderFile] : []), ...regionOwners]) {
     const text = await fs.readFile(owner, "utf8");
@@ -3251,36 +3251,42 @@ async function doctor(doctorArgs: string[]): Promise<void> {
       }
     }
 
+    const workflowContract = !isIndexFile(file) || declaresWorkflowContract(text);
+    const validatesAsWorkflow = inferredPrimitive === "workflow" && workflowContract;
     const required = parseRequiredRoutes(text);
     if (required.present) {
-      if (!required.none && required.paths.length === 0) {
+      if (!validatesAsWorkflow && !required.none && required.paths.length === 0) {
         report("warning", file, "Required Routes section has no parseable routes and does not state none");
       }
       for (const requiredRoute of required.routes) {
         try {
-          await resolveRequiredRouteFile(requiredRoute, file, targetRoot);
+          const resolved = await resolveRequiredRouteFile(requiredRoute, file, targetRoot);
+          if (validatesAsWorkflow) {
+            for (const finding of await validateWorkflowRequiredRoute(
+              requiredRoute,
+              resolved,
+              scanRoot,
+              routedSet,
+            )) {
+              report("error", file, finding);
+            }
+          }
         } catch (error) {
           report("error", file, error instanceof Error ? error.message : `required route does not resolve: ${requiredRoute.path}`);
         }
       }
       for (const invalid of required.invalid) {
-        report("warning", file, `Required Routes line is not in entry format: ${invalid}`);
+        report(
+          validatesAsWorkflow ? "error" : "warning",
+          file,
+          `Required Routes line is not in entry format: ${invalid}`,
+        );
       }
     }
 
-    const rootWorkflowEntrypoint = samePath(path.dirname(file), path.join(scanRoot, "workflows")) && isIndexFile(file);
-    const workflowContract = !isIndexFile(file) || declaresWorkflowContract(text);
-    if (inferredPrimitive === "workflow" && !rootWorkflowEntrypoint && workflowContract) {
+    if (validatesAsWorkflow) {
       for (const finding of validateWorkflowDocument(text)) {
         report("error", file, finding);
-      }
-      const phases = metadata.tags.filter((tag) => workflowPhaseTagSet.has(tag.toLowerCase()));
-      if (phases.length !== 1) {
-        report("error", file, `workflow recipe must declare exactly one phase tag: ${workflowPhaseTags.join(", ")}`);
-      }
-      const unknownPhases = metadata.tags.filter((tag) => tag.toLowerCase().startsWith("phase") && !workflowPhaseTagSet.has(tag.toLowerCase()));
-      if (unknownPhases.length > 0) {
-        report("error", file, `workflow recipe has unknown phase tag(s): ${unknownPhases.join(", ")}`);
       }
     }
 
@@ -3303,7 +3309,6 @@ async function doctor(doctorArgs: string[]): Promise<void> {
     }
   }
 
-  const routedSet = new Set(routedFiles.map((file) => path.resolve(file)));
   for (const file of markdownFiles) {
     if (routedSet.has(path.resolve(file))) continue;
     if (samePath(file, loaderFile)) continue;
@@ -3363,13 +3368,39 @@ async function declaredRootRouteType(directory: string, scanRoot: string): Promi
   return rootSlug ? declaredRouteType(path.join(scanRoot, rootSlug)) : null;
 }
 
+async function validateWorkflowRequiredRoute(
+  route: ParsedRouteReference,
+  resolved: string,
+  scanRoot: string,
+  routedSet: Set<string>,
+): Promise<string[]> {
+  const findings: string[] = [];
+  if (!routedSet.has(path.resolve(resolved))) {
+    findings.push(`workflow Required Route is not reachable through generated routing: ${route.path}`);
+    return findings;
+  }
+
+  const inheritedType = await declaredRootRouteType(path.dirname(resolved), scanRoot);
+  const declaredTypes = inheritedType
+    ? [inheritedType]
+    : declaredRouteTypeTags(readMetadata(await fs.readFile(resolved, "utf8")).tags);
+  if (declaredTypes.length === 1) {
+    const requiredType = declaredTypes[0];
+    const linkTypes = new Set(route.tags.map((tag) => tag.toLowerCase()));
+    if (!linkTypes.has(requiredType.toLowerCase())) {
+      findings.push(`workflow Required Route ${route.path} must include its target primitive tag #${requiredType}`);
+    }
+  }
+  return findings;
+}
+
 function declaresWorkflowContract(text: string): boolean {
-  return ["Mode", "Goal", "Required Routes", "Constraints", "Steps", "Loop", "Outputs", "Completion"]
+  return ["Goal", "Required Routes", "Steps", "Completion"]
     .some((heading) => readMarkdownHeadingSections(text, heading).length > 0);
 }
 
 function validateWorkflowDocument(text: string): string[] {
-  const workflowHeadingOrder = ["Mode", "Goal", "Required Routes", "Constraints", "Steps", "Loop", "Outputs", "Completion"] as const;
+  const workflowHeadingOrder = ["Goal", "Steps", "Completion"] as const;
   const findings: string[] = [];
   let previous = -1;
   for (const heading of workflowHeadingOrder) {
@@ -3387,19 +3418,30 @@ function validateWorkflowDocument(text: string): string[] {
     }
     previous = position;
     if (!sections[0].body.trim()) {
-      findings.push(`workflow ${heading} section must not be empty${heading === "Constraints" ? ". Use - none when no local constraints apply" : ""}`);
+      findings.push(`workflow ${heading} section must not be empty`);
     }
   }
 
-  const mode = readMarkdownHeadingSections(text, "Mode")[0]?.body.trim().toLowerCase() ?? "";
-  if (mode && mode !== "linear" && mode !== "iterative") {
-    findings.push("Workflow `Mode` must be linear or iterative. Goal-seeking is expressed through the `Goal` of an iterative Workflow");
-  }
-  const constraints = readMarkdownHeadingSections(text, "Constraints")[0]?.body ?? "";
-  if (hasMixedDeclaredSentinel(constraints, ["none", "inherited"])) {
-    findings.push("workflow Constraints cannot mix none/inherited with substantive constraints");
-  } else if (headingStatus(readMarkdownHeadingSections(text, "Constraints")) === "declared-inherited") {
-    findings.push("Workflow `Constraints` must state substantive invariants or `- none`. `inherited` is not a Workflow `Constraints` sentinel");
+  const requiredRoutes = readMarkdownHeadingSections(text, "Required Routes");
+  if (requiredRoutes.length > 1) {
+    findings.push("workflow must define at most one Required Routes section");
+  } else if (requiredRoutes.length === 1) {
+    const required = requiredRoutes[0];
+    if (required.level !== 2) {
+      findings.push("workflow Required Routes section must use a level-2 Markdown heading");
+    }
+    const requiredPosition = headingPosition(text, "Required Routes");
+    const goalPosition = headingPosition(text, "Goal");
+    const stepsPosition = headingPosition(text, "Steps");
+    if (requiredPosition < goalPosition || requiredPosition > stepsPosition) {
+      findings.push("workflow section Required Routes must appear between Goal and Steps");
+    }
+    const parsed = parseRequiredRoutes(text);
+    if (parsed.none) {
+      findings.push("workflow Required Routes must be omitted when no unconditional routed dependency applies");
+    } else if (parsed.routes.length === 0) {
+      findings.push("workflow Required Routes must contain at least one valid routed link");
+    }
   }
   return findings;
 }

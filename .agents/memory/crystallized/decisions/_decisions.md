@@ -23,6 +23,7 @@ Decisions preserve accepted rationale for important choices that may need to be 
 - [Benchmark design separates stable tasks, reusable inputs, exact recipes, and durable evidence while limiting review claims to observable traces](benchmark-design.md) - #Memory #Decision #CurrentTruth #Benchmark #Dogfood #Evaluation
 - [Open Forge uses one canonical authoring form wherever Markdown carries Framework meaning while treating compatibility syntax as input-only](canonical-markdown.md) - #Memory #Decision #CurrentTruth #Framework #Markdown #Authoring #Syntax #Compatibility
 - [Core uses distinct reusable content roles instead of one generic knowledge bucket, and every new primitive must earn nonduplicative semantics](core-primitives.md) - #Memory #Decision #CurrentTruth #Core #Primitive
+- [The pre-release first-party catalogue is one deliberately small development toolkit containing six lean Workflows, one Experience Design Skill, and nine Templates](development-toolkit.md) - #Memory #Decision #CurrentTruth #Extension #Workflow #Skill #Template #Catalogue #DevelopmentToolkit
 - [Extensions deliver optional whole files through existing routes, and installed files carry complete runtime meaning without package metadata or the CLI](extension-package-boundary.md) - #Memory #Decision #CurrentTruth #Extension #Package #RuntimeBoundary
 - [Reliability-critical context loads unconditionally and early; conditional context must be cheap to skip and cheap to recover from](loading-reliability.md) - #Memory #Decision #CurrentTruth #Loading #Routing #Reliability
 - [Memory preserves working, emerging, crystallized, and archived state without activating behavior it describes](memory-model.md) - #Memory #Decision #CurrentTruth #MemoryModel
@@ -34,5 +35,5 @@ Decisions preserve accepted rationale for important choices that may need to be 
 - [Open Forge separates tags for loading, Framework composition, truth status, synchronization, and ordinary classification](tags.md) - #Memory #Decision #CurrentTruth #Tags #Routing
 - [Templates are a distinct Core primitive for copy-ready source artifacts whose ownership transfers to independently maintained results](template-primitive.md) - #Memory #Decision #CurrentTruth #Core #Template #Primitive
 - [User-facing Open Forge files use positive natural language and compact selection surfaces](user-facing-writing.md) - #Memory #Decision #CurrentTruth #Formatting #Documentation #Routing
-- [Workflows use one predictable goal-oriented recipe shape while phases remain non-waterfall wayfinding and dependencies stay distinct from containment](workflow-shape.md) - #Memory #Decision #CurrentTruth #Workflow #Routing #Orchestration
+- [Workflows use a minimal goal, steps, and completion recipe while optional routed dependencies remain distinct from containment](workflow-shape.md) - #Memory #Decision #CurrentTruth #Workflow #Routing #Orchestration
 <!-- open-forge:generated-index:end -->

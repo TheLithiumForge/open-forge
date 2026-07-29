@@ -12,11 +12,11 @@ Template selection:
 - Primary question: How is this subject structured, how do its parts relate, and which boundaries and constraints govern it?
 
 Instantiation notes:
-- Replace this template's frontmatter, title, placeholders, and comments.
+- Replace this Template's frontmatter, title, placeholders, and comments.
 - Architecture is a responsibility, not a fixed schema. Merge, rename, reorder, or remove sections to fit the subject.
-- Describe the accepted structure completely enough to use. Link to decisions for why it was chosen.
+- Describe the accepted structure completely enough to use. Link to Decisions for why it was chosen.
 - Keep current structure, known liabilities, and honest limits here. Put unresolved replacement architecture in Emerging Memory until it is accepted.
-- Move component internals into scoped architecture views once they require independent authority.
+- Move component internals into scoped Architecture views once they require independent authority.
 -->
 
 ## Scope
@@ -45,24 +45,24 @@ Instantiation notes:
 
 ## Flows
 
-{Describe only the information, control, value, or work flows needed to understand the architecture.}
+{Describe only the information, control, value, or work flows needed to understand the Architecture.}
 
 ## Cross-Cutting Invariants
 
-{State structural constraints that must remain true across multiple elements. Put binding work behavior in directives instead.}
+{State structural constraints that must remain true across multiple elements. Put binding work behavior in Directives instead.}
 
 ## Current Tradeoffs And Limits
 
-{Describe material consequences, liabilities, and honest limits of the accepted design. Link to decisions for detailed rationale and alternatives.}
+{Describe material consequences, liabilities, and honest limits of the accepted design. Link to Decisions for detailed rationale and alternatives.}
 
 ## Architecture Views
 
-{Link to narrower authoritative architecture documents and state what each one explains.}
+{Link to narrower authoritative Architecture documents and state what each one explains.}
 
 ## Related Current Views
 
-{Link to the vision, context, principles, strategy, status, external authoritative sources, or other current views that constrain or complete this architecture.}
+{Link to the Vision, context, Principles, Strategy, status, external authoritative sources, or other current views that constrain or complete this Architecture.}
 
 ## Decisions And Rationale
 
-{Link to accepted decisions that explain why important current structures were chosen.}
+{Link to accepted Decisions that explain why important current structures were chosen.}
