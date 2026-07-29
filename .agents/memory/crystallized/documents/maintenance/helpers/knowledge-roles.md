@@ -9,7 +9,7 @@ open-forge:
 
 ## Purpose
 
-This internal helper supports authoring, review, and migration when information appears to fit several knowledge roles. It does not add a required frontmatter question field or another Framework primitive.
+This internal helper supports authoring, review, and ongoing maintenance when information appears to fit several knowledge roles. It does not add a required frontmatter question field or another Framework primitive.
 
 Users should not need this table. Route descriptions, document contents, Templates, and future CLI help should make each selection understandable where it is encountered.
 
@@ -59,4 +59,4 @@ Choose the role whose primary question matches the meaning being preserved.
 
 If one statement answers several materially different questions, split it among the appropriate sources and connect them with relative links. If no row fits, first test whether an existing role can express the meaning clearly before proposing a new one.
 
-Primary questions are diagnostic prompts for authors and migration. Runtime entries use natural, descriptive, suggestive descriptions instead of repeating a fixed phrase or requiring a separate question field.
+Primary questions are diagnostic prompts for authors and reviewers. Runtime entries use natural, descriptive, suggestive descriptions instead of repeating a fixed phrase or requiring a separate question field.

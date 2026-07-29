@@ -10,9 +10,9 @@ open-forge:
 
 Some binding behavior applies only during a migration, release freeze, incident, experiment, or another bounded condition. Route scope answers where a Directive applies, but it does not by itself express when the behavior should begin, suspend, expire, or be removed.
 
-The current [temporary independent review Directive](../../../directives/temporary-independent-review.md) tests the simplest available representation: an ordinary binding Directive with an explicit trigger, lifecycle statement, and removal condition.
+The Framework migration tested the simplest available representation through an ordinary binding Directive with an explicit trigger, lifecycle statement, and removal condition. The [migration closeout](../../archived/sessions/2026-07-29_open-forge-framework-migration-closeout.md) records the experiment and the proposed retirement of its Directive.
 
-This experiment does not establish a new Directive type, activation field, or routing semantic.
+That single experiment does not establish a new Directive type, activation field, or routing semantic.
 
 ## Questions
 
@@ -25,15 +25,16 @@ This experiment does not establish a new Directive type, activation field, or ro
 - Should `doctor` warn about expired or unresolved temporary conditions?
 - Can the Framework support this without reviving applicability gates that make loaded Directives silently optional?
 
-## Evaluation
+## Evidence And Next Test
 
-Use the independent-review Directive as a dogfood case. Record whether its trigger is clear, whether agents follow it, whether removal is forgotten, and whether ordinary routing plus explicit wording remains sufficient.
+The migration Directive remained visible, governed its bounded change cycle, and required deliberate manual retirement. Ordinary routing plus explicit wording was sufficient for this case, but one case does not establish whether repeated or mechanically detectable conditions need stronger support.
 
-Formalize additional semantics only after repeated cases show that explicit Axioms and normal lifecycle maintenance are inadequate.
+For future cases, record whether the trigger is clear, whether agents follow it, whether removal is forgotten, and whether normal lifecycle maintenance remains sufficient. Formalize additional semantics only after repeated evidence shows that explicit Axioms are inadequate.
 
-## Related Current Sources
+## Related Records And Current Sources
 
 - [Directive role](../../crystallized/documents/framework/primitives/directives.md)
 - [Directive runtime maintenance](../../crystallized/documents/maintenance/payload/agents/directives.md)
 - [Loading and continuity](../../crystallized/documents/framework/routing/loading.md)
 - [Rejected applicability gates and loading tradeoffs](../../crystallized/decisions/loading-reliability.md)
+- [Framework migration closeout](../../archived/sessions/2026-07-29_open-forge-framework-migration-closeout.md)

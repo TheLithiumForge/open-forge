@@ -12,10 +12,14 @@ The current Workflow contract remains #CurrentTruth until a replacement is accep
 
 ## Why Revisit Workflows
 
-The existing model proved useful distinctions between goals, dependencies, phases, iteration, and routed composition, but it was designed during an earlier Framework stage. The completed migration and Core optimization should provide a cleaner basis for deciding what Workflows must own and what belongs in Skills, Templates, routing, or deterministic tooling.
+The existing model proved useful distinctions between goals, dependencies, phases, iteration, and routed composition, but it was designed during an earlier Framework stage. The current Framework provides a cleaner basis for deciding what Workflows must own and what belongs in Skills, Templates, routing, or deterministic tooling.
 
 ## Preserved Inputs
 
+- Test whether Workflows should remain a standard shipped `route` and what value earns that baseline surface.
+- Prefer a materially smaller authoring and runtime contract than the legacy schema unless each retained section proves necessary.
+- Reassess whether top-down selection and the current phase vocabulary still improve wayfinding enough to justify their cost.
+- Consolidate generic development recipes and remove Skill dependencies that merely restate native agent capability.
 - Manual installations need an on-demand, human-readable way to author validator-compliant Workflows. A shipped Template or authoring reference should make the Markdown contract complete without repository-only architecture or CLI help.
 - Earlier Workflow handoffs named the active Workflow route and active step so delegated or resumed work retained precise execution position. The redesign should decide whether this remains required, recommended, or replaced by a more general handoff contract.
 - Earlier designs allowed explicitly typed Workflow-local Core, Workspace, and Memory `routes`. The current Framework keeps `root routes` separate and composes them through links. A redesign may reconsider tightly coupled packaging or locality only if its value justifies special loading, validation, update, and runtime discovery semantics.

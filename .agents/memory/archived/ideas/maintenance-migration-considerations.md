@@ -1,10 +1,18 @@
 ---
 open-forge:
-  description: Questions about ownership classification and the long-term role of decisions surfaced by the maintenance migration
-  tags: [Memory, Idea, Contextual, Candidate, Framework, Maintenance, Migration, Ownership]
+  description: Historical maintenance-migration questions that clarified knowledge roles, Decision boundaries, and a remaining lifecycle-metadata idea
+  tags: [Memory, Archived, Idea, Contextual, Historical, Framework, Maintenance, Migration, Decision, KnowledgeRole]
 ---
 
 # Maintenance Migration Considerations
+
+## Resolution
+
+The migration confirmed that `route` semantics, current documents, and repository-only helpers can make knowledge placement understandable without another binding classification system.
+
+The accepted relationship among current documents, Decisions, and Archives now lives in [Accepted State and Synchronization](../../crystallized/documents/framework/truth.md#current-views-decisions-and-history). The [Knowledge Role Helper](../../crystallized/documents/maintenance/helpers/knowledge-roles.md) supports repository maintenance without becoming user-facing vocabulary.
+
+The remaining open question about approval and replacement metadata moved to [Decision Lifecycle Metadata](../../emerging/ideas/decision-lifecycle-metadata.md). The exploration below is retained as historical migration context.
 
 The framework should make it natural to recognize whether a change creates or updates a directive, pattern, decision, or current document without needing another directive that tells agents to classify it.
 
@@ -47,4 +55,4 @@ Candidate lifecycle metadata for decisions includes an approval date and time, p
 - whether archival should be automatic, proposed, or explicitly selected;
 - how partial replacement, consolidation, and several replacement decisions are represented.
 
-Keep the model open during this migration and refine it from repeated evidence rather than reorganizing decisions immediately.
+This model remained open during migration and was refined through the accepted current sources linked above.

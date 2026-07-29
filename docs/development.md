@@ -73,6 +73,8 @@ bun run src/cli/cli.ts doctor src/open-forge
 git diff --check
 ```
 
+Use review effort proportionate to the change. Broad or high-risk Framework changes may benefit from separate semantic-loss, writing-quality, and optimization reviews. Routine changes do not require a fixed review panel.
+
 The CLI's write commands normally require a clean Git checkpoint. Add `--pro` during development only when intentionally testing the expert bypass. Lifecycle tests should use fresh real repositories instead.
 
 ## Commands

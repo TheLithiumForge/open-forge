@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Optimization review of three committed migrations found distinct consolidation opportunities in recursive-scope wording, installation tests, and writing rules
-  tags: [Memory, Analysis, Contextual, Candidate, Framework, Migration, Optimization, Maintenance, Review, Evidence]
+  description: Historical optimization review of three committed migrations that found consolidation opportunities in recursive-scope wording, installation tests, and writing rules
+  tags: [Memory, Archived, Analysis, Contextual, Historical, Framework, Migration, Optimization, Maintenance, Review, Evidence]
 ---
 
 # Commit Range Optimization Review
@@ -54,8 +54,8 @@ The optimization reviewer found structural synchronization and responsibility co
 
 Optimization findings remain proposals. A finding may be applied directly when it is a small in-scope consolidation with no new product choice. A proposal that changes architecture, public behavior, or the accepted migration boundary requires discussion before implementation.
 
-## Related Current Sources
+## Related Records And Current Sources
 
-- [Temporary independent review Directive](../../../directives/temporary-independent-review.md)
+- [Framework migration closeout](../sessions/2026-07-29_open-forge-framework-migration-closeout.md)
 - [Open Forge Writing Standard](../../crystallized/documents/maintenance/writing.md)
 - [Route scope and inheritance](../../crystallized/documents/framework/routing/scope.md)
