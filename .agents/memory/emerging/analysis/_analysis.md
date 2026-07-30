@@ -1,12 +1,12 @@
 ---
 open-forge:
   description: Structured reasoning, investigation, or comparison that is useful but not accepted truth
-  tags: [LoadNow, Memory, Analysis, Reasoning, Index, Contextual, Candidate]
+  tags: [LoadNow, Memory, Analysis, Reasoning, Contextual, Candidate]
 ---
 
 # Analysis
 
-Analysis is structured reasoning, investigation, or comparison that is useful but not accepted truth.
+Analysis preserves structured reasoning, investigation, or comparison that is useful but not accepted truth.
 
 ## Axioms
 
@@ -17,5 +17,5 @@ Analysis is structured reasoning, investigation, or comparison that is useful bu
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `2026-07-09_post-rework-review.md` - Post-rework review of the whole framework - ratings, measured effects of the dedup and tag rework, and remaining improvement candidates - #Memory #Analysis #Reasoning #Contextual #Candidate #Framework #Review
+- none - No entries - #Empty
 <!-- open-forge:generated-index:end -->

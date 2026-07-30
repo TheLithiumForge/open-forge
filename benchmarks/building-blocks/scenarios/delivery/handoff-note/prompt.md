@@ -1,0 +1,1 @@
+Implement the smallest reliable first slice of the local handoff-note CLI described by the project information in this workspace. I am available for decisions that belong to me. Preserve settled product direction and verify the delivered commands.

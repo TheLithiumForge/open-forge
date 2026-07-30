@@ -1,20 +1,59 @@
 ---
 open-forge:
-  description: Accepted tag semantics - two load-policy tags (LoadNow, KeepInMind), layer and route type tags classify, tags stay bare and parseable
+  description: Open Forge separates tags for loading, Framework composition, truth status, synchronization, and ordinary classification
   tags: [Memory, Decision, CurrentTruth, Tags, Routing]
 ---
 
 # Tags
 
-Extracted 2026-07-06; load-policy semantics reworked 2026-07-09 from the dogfood evidence.
+## Context
 
-- Defined loader tags with behavior or truth-status semantics are #LoadNow, #KeepInMind, #Contextual, and #CurrentTruth.
-- #LoadNow: read the entry when it appears in loaded `Entries`, in listed order. It creates visibility, not authority, scope, or precedence.
-- #KeepInMind: read the entry like #LoadNow, keep its instructions active while working, and recheck it before ending meaningful work. It replaces end-of-work loading, which agents demonstrably forgot.
-- #OpenForge, #LoadWithParentEntrypoint, and #LoadForPostWorkReview are retired: #OpenForge fused core identity with load policy (identity is carried by #Core, #Memory, and framework paths); #LoadWithParentEntrypoint duplicated the same visibility rule; #LoadForPostWorkReview asked for a load at the moment agents demonstrably forget.
-- No load-policy tag is mechanically enforced; compliance is agent self-enforcement, so tag definitions use agent-imperative wording ("read X") rather than tool-implying wording ("X is loaded").
-- #Core, #Memory, and #Extension are layer/routing tags.
-- Route type tags such as #Directive, #Pattern, #Guidance, #Skill, #Workflow, and #Workspace are routing/search signals unless a loaded entrypoint defines more.
-- Tags stay bare in markdown so tools can parse and graph them.
-- Use normal words when defining the local concept itself; use tags when pointing to routed ownership, classification, promotion, load policy, truth status, search, or references.
-- Extensions use load-policy tags only when they deliberately add baseline-loaded material.
+Earlier tags mixed identity, loading, truth, synchronization, and ordinary classification. Some names duplicated the same behavior, while tool-like wording implied enforcement that tags and Markdown cannot provide.
+
+## Decision
+
+Open Forge uses a small defined tag vocabulary for loading, Framework composition, truth status, and synchronization. Other tags remain ordinary routing and search signals unless a loaded contract defines them.
+
+Defined loading tags use direct agent-imperative semantics. No tag creates authority, scope, precedence, or mechanical enforcement by itself.
+
+#Contextual and #CurrentTruth distinguish supporting from accepted state. #Evergreen independently marks synchronization responsibility. #Core, #Memory, and #Extension describe Framework composition rather than authority levels.
+
+Tags remain bare in Markdown so people, agents, and deterministic tools can recognize them without private syntax.
+
+## Rationale
+
+Separating visibility, authority, truth, and synchronization prevents one tag from silently carrying several contracts.
+
+Imperative wording accurately describes agent responsibility. Bare tags provide cheap anchors and future graph signals while readable prose and routes retain the full meaning.
+
+## Alternatives And Tradeoffs
+
+- #OpenForge fused Framework identity with loading and became redundant with composition tags and route placement
+- #LoadWithParentEntrypoint duplicated #LoadNow traversal
+- #LoadForPostWorkReview deferred loading to the point where evaluations showed agents forget it
+- Treating #Evergreen as authority would conflate synchronization with accepted truth
+- Hash-free metadata could be easier to style but would lose the current cheap visible anchor
+
+Defined tags need stable meanings because changing them affects routing, authoring, tooling, and current records together.
+
+## Consequences
+
+- The loader is authoritative for exact installed definitions
+- Load-policy tags appear only when their baseline or continuity cost is justified
+- Route type tags support selection and search while their entrypoints define role semantics
+- Normal words define the local concept; tags classify or point to established concepts
+- Retired tags remain historical rationale rather than installed warnings
+
+## Authoritative Sources
+
+- [Loader defined tags](../../../loader.md#defined-tags)
+- [Routing loading contract](../documents/framework/routing/loading.md)
+- [Framework composition model](../documents/architecture.md#framework-composition)
+- [Canonical Markdown syntax](../documents/framework/markdown/syntax.md)
+
+## Decision Relationships
+
+- [Loading reliability](loading-reliability.md)
+- [Memory model](memory-model.md)
+- [Routing model](routing-model.md)
+- [Canonical Markdown authoring](canonical-markdown.md)

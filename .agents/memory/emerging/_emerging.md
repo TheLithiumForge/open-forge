@@ -1,27 +1,27 @@
 ---
 open-forge:
   description: Candidate memory that may be useful but is not accepted truth yet
-  tags: [KeepInMind, Memory, Emerging, OrganicGrowth, Index, Contextual, Candidate]
+  tags: [KeepInMind, Memory, Emerging, OrganicGrowth, Contextual, Candidate]
 ---
 
 # Emerging Memory
 
-Emerging memory is candidate material that may be useful but is not accepted truth yet.
+Emerging memory preserves useful candidate material that is not yet accepted as #CurrentTruth.
 
 ## Axioms
 
-- Read `Entries` when current work needs useful material that is not accepted truth or produces candidate material.
-- Before ending meaningful work, read `Entries` to route candidate material produced during the work.
+- At each #KeepInMind refresh, read `Entries` and preserve useful candidate material before it can be lost.
+- "No durable candidate material warranted" is a valid result. Do not convert raw activity into memory.
 - Treat emerging memory as contextual until it is validated, promoted, or explicitly accepted.
 - Keep uncertainty, source, and scope visible.
-- Refine material here while its validity, owner, or final route is unsettled.
-- Promote accepted memory to a crystallized #Memory route; archive stale, rejected, or superseded material.
-- Suggest promotion or archival when emerging material repeats or stops changing.
+- Refine material here while its validity, intended use, or final destination is unsettled.
+- When material becomes accepted, move its durable outcome to the appropriate authoritative source. Archive or prune rejected material and material replaced by the accepted result after preserving any useful outcome or rationale.
+- Revisit repeated or stale material for consolidation, promotion, archival, or pruning.
 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- `analysis/_analysis.md` - Structured reasoning, investigation, or comparison that is useful but not accepted truth - #LoadNow #Memory #Analysis #Reasoning #Index #Contextual #Candidate
-- `ideas/_ideas.md` - Future possibilities, experiments, open questions, and options to explore later - #LoadNow #Memory #Idea #Exploration #OrganicGrowth #Index #Contextual #Candidate
-- `observations/_observations.md` - Agent-noticed findings that may become learning, memory, or Core updates - #KeepInMind #Memory #Observation #AgentLearning #OrganicGrowth #Index #Contextual #Candidate
+- [Structured reasoning, investigation, or comparison that is useful but not accepted truth](analysis/_analysis.md) - #LoadNow #Memory #Analysis #Reasoning #Contextual #Candidate
+- [Future possibilities, experiments, open questions, and options to explore later](ideas/_ideas.md) - #LoadNow #Memory #Idea #Exploration #OrganicGrowth #Contextual #Candidate
+- [Agent-noticed findings that may become learning, memory, or Core updates](observations/_observations.md) - #KeepInMind #Memory #Observation #AgentLearning #OrganicGrowth #Contextual #Candidate
 <!-- open-forge:generated-index:end -->

@@ -1,20 +1,21 @@
 ---
 open-forge:
-  description: Workspace routes that point to important project locations and explain when to use them
-  tags: [LoadNow, Core, Workspace, Index]
+  description: Concise `routes` to important local and external destinations and when to use them
+  tags: [LoadNow, Core, Workspace]
 ---
 
 # Workspace
 
-Workspace routes point to important project locations and explain when to use them.
+Workspace `routes` map important local and external destinations without replacing their detailed truth.
 
 ## Axioms
 
-- Use `Entries` when current work needs an important project location.
-- Each route file points to one or more related destinations and states what they contain and when they matter.
-- Keep the route set limited to destinations needed for reliable discovery.
-- The workspace chooses route filenames, grouping, and nesting depth.
-- Destination files retain detailed truth.
+- Use `Entries` when current work needs an important local or external destination.
+- Each Workspace `route` uses descriptive Markdown links with useful tags to one or more related destinations and states what they contain and when they matter.
+- Local links resolve relative to their containing Workspace `route` file. External destinations use their normal URL.
+- Keep the map intentionally coarse. Prefer modules, projects, repositories, systems, or scopes over members and functions unless finer routing earns its cost.
+- The workspace chooses `route` filenames, grouping, and nesting depth.
+- Workspace `routes` do not replace #Memory or destination truth. The routed destination retains the details.
 
 ## Entries
 

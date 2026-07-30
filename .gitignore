@@ -1,2 +1,4 @@
 **/.obsidian
 dist/
+.temp/
+benchmarks/runs/

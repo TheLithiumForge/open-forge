@@ -1,23 +1,23 @@
 ---
 open-forge:
-  description: Deferred product ideas - reliability defaults pack, planning extension, technology and workflow packs, orchestration, memory placement options
+  description: Deferred product ideas for reliability evaluation, route presets, provider adapters, formatting, technology packs, orchestration, and memory placement
   tags: [Memory, Idea, Contextual, Candidate, Product, Extension]
 ---
 
 # Deferred Product Ideas
 
-Deferred ideas carried from the cleanup backlog. Candidate directions, not commitments.
+Open product candidates after the 2026-07-18 pruning pass. These are options, not commitments. The complete pre-pruning record is `.agents/memory/archived/ideas/2026-07-18_deferred-product-ideas-snapshot.md`.
 
-- Investigate a small optional reliability/defaults extension for process directives such as memory closeout, language/runtime defaults, and safe technical practices without putting opinionated defaults in #Core. Every dogfood round needed roughly the same three directives, which strengthens this candidate.
-- Document directive scope boundaries: directives govern work product, process, and technical/project behavior; agent persona or chat-register instructions should not rely on directives for deterministic behavior.
-- Investigate whether route `description` metadata and the first heading/definition text should be identical, intentionally different, or partially deduplicated. Partially answered by the routing-surfaces decision: descriptions select, bodies open with a goal statement.
-- Investigate whether the loader needs explicit Memory axioms beyond the generated Memory `entry`. The loader already sees the Memory path, description, tags, and load policy through `Entries`, so some Memory wording may belong only in `.agents/memory/_memory.md`.
-- Archive metadata blocks with origin path, archived date, replacement, and reason.
 - Optional typed grouping routes such as `projects/`, `packages/`, `domains/`, or `teams/` as CLI presets, not base defaults.
-- Planning/task/backlog extension that can map to GitHub, Jira, GitLab, Linear, or local markdown.
+- Provider-specific planning adapters that can map the authority-preserving planning workflows to GitHub, Jira, GitLab, Linear, or another declared task source without mirroring truth.
 - Technology pattern packs.
-- Workflow packs for brainstorming, task creation, implementation, testing, review, architecture, UI/UX, and refactoring.
+- Add another Workflow only where real use shows that a distinct repeatable recipe materially improves an outcome beyond native agent capability and the six `development-toolkit` Workflows.
+- Optional communication, surgical-change, implementation, design, brainstorming, testing, and review content should ship only through the Core role that matches its semantics and only after real use shows that it earns another default or Extension.
+- Explore a Skill that preserves the current chat as a local Session record.
+- Keep work packages and tasks within Workflows and scoped local records unless repeated use proves that a separate `.agents/tasks/` or `.agents/work/` root provides a distinct role.
+- Reconsider whether a Backlog should ship as an optional Template, planning Extension, or standard Memory `route`. It should become a base default only if it has a distinct role across workspaces and earns its ongoing routing and maintenance cost.
 - Orchestration route or extension for workflows that can declare preferred tools, subagents, isolation rules, and CLI usage when multiple agent runtimes are available.
-- Skill packs that remain compatible with native agent/runtime skill concepts.
+- Optional structured deliberation capability for consequential choices, potentially using several independent perspectives and an explicit synthesis without replacing user authority.
 - Optional interactive wizard as a convenience over deterministic commands.
+- Optional CLI post-write formatting: discover an explicit workspace formatter configuration or format-fix script, limit it to files Open Forge changed where possible, then re-index and validate generated regions. Do not format user files automatically until command scope and generated-marker safety are defined.
 - External `.memory/` or distributed package-local memory as a documented user pattern, not default behavior.

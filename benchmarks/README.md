@@ -1,64 +1,97 @@
 # Open Forge Benchmarks
 
-Reproducible dogfood scenarios for testing how agents behave under Open Forge, across framework versions, models, and variables.
+Reusable building blocks for observing how agents follow Open Forge across tasks, compositions, treatments, and models.
 
-These are local extension packages. They are versioned with the framework but deliberately excluded from the npm package — they exist for testing, not distribution.
+## Design
 
-## Design Rules
+The corpus has three stable layers:
 
-- **Fixed seeds, variable overlays.** A seed's content never changes between comparison runs. Anything you want to vary (tooling, loader hints, extra routes) is a separate overlay package applied on top. This keeps A/B runs honest.
-- **Worker payload vs orchestrator materials.** Each package's `payload/` is the only content installed into the test workspace — it is everything the worker is allowed to see. Files under `orchestrator/` (personas, scripts, rubrics, prompt templates) are read by the person or agent running the benchmark and must never be copied into the workspace. This is contamination control: a worker that can read its own evaluation rubric is not being tested.
-- **One baseline commit before the worker starts.** Everything the worker changes must be visible in `git status` afterward.
-- **The worker prompt stays minimal.** Point at `AGENTS.md`, state the run mode, nothing else. The whole point is testing whether the routes carry the context.
-
-## Composition Recipe
-
-```powershell
-mkdir <target>
-open-forge install <target>
-open-forge extend <extension-pack-if-testing-one> <target>   # e.g. workflow-essentials
-open-forge extend D:\Repositories\open-forge\benchmarks\harness <target>
-open-forge extend D:\Repositories\open-forge\benchmarks\seed-<N>-... <target>
-open-forge extend D:\Repositories\open-forge\benchmarks\variable-... <target>   # optional overlays
-open-forge index <target>
-cd <target> ; git init ; git add -A ; git commit -m "Benchmark baseline: <seed> + <variables>"
+```text
+benchmarks/
+  building-blocks/
+    scenarios/       framework-agnostic task archetypes
+    primitives/      small directives, patterns, memories, tools, and other inputs
+  meta-scenarios/    exact reusable recipes
+  harness/           preparation, recording, and orchestration support
 ```
 
-Then follow `harness/orchestrator/runbook.md`.
+A scenario owns the task. It does not select framework primitives or extensions.
 
-## Levels
+A primitive is one small worker-visible input with an explicit kind. Primitives may be useful alone, while deliberate combinations may introduce ambiguity, conflict, distraction, or another trap worth observing.
 
-- `seed-0-greenfield` — no product truth at all. The orchestrator role-plays a user with a fuzzy idea, following a staged conversation script; the worker must drive vision, tradeoffs, and MVP boundary, and grow memory from nothing. Tests: vision/architecture workflows, clarify-intent quality, asking-vs-assuming, memory creation from scratch, promotion-with-confirmation. Two run modes: vision-only, or vision-then-build.
-- `seed-1-rebuild-small` — rebuild after a small MVP (bookmarks CLI). Compact seeded truth: vision with behavior contract, rebuild brief, 5 decisions, analyses, observations, patterns. Tests: basic routing fidelity, directive compliance, whether seeded semantics reach the implementation.
-- `seed-2-rebuild-medium` — rebuild after a medium MVP (standup work-journal CLI). Same domain family that seed-0's conversation converges toward, so greenfield-conceived and seeded-rebuild outcomes can be compared. Richer decision surface: dates/timezones, append-only storage, immutable corrections, id schemes. Tests: selective loading among more routes than any one step needs, following non-obvious seeded opinions over instinct.
-- `seed-3-rebuild-large` — rebuild after a larger MVP (ledger: pure core + HTTP API server + CLI client, three packages). Opinions about everything: money handling, API error contracts, import rules, security posture, per-package scoped pattern routes, and **one deliberately planted spec contradiction** (documented only in the orchestrator rubric) that a diligent worker should surface rather than silently resolve. Tests: routing at scale, scope routes (first coverage), narrower-scope precedence, conflict reporting, token discipline. Still an afternoon for a strong agent.
+A meta-scenario is an exact recipe naming one scenario, an ordered primitive set, and bundled extensions. A clean baseline and a trap are separate recipes so either can be repeated without reconstructing prior choices.
 
-## Variables
+Browse the [building-block catalogue](building-blocks/README.md) and [runnable meta-scenarios](meta-scenarios/README.md) directly or through the CLI.
 
-- `variable-dump-tool` — adds `tools/forge-dump.mjs` plus a `loader.overwrite.md` announcing it (also the first real test of the overwrite mechanism). Compare context-loading behavior with vs without.
-- Model — same seed, different worker model (Fable vs Sonnet vs codex/GPT). The seed makes this a controlled comparison.
-- Framework version — same seed, different `open-forge` commit. This is the main regression harness for future framework changes.
-- Extension packs — with vs without `workflow-essentials`, etc.
+For a complete first run, follow the [ledger control-versus-trap tutorial](TUTORIAL.md).
 
-## Recording Results
+## Discover And Prepare
 
-One markdown file per run under `benchmarks/results/`, named `<date>-<seed>-<model>-<variables>.md`, containing: framework commit, seed folder + repo commit, model, variables applied, rubric scores from the harness rubric plus the seed's own rubric, and a short narrative. Keep results committed — they are the longitudinal value of this folder.
+```powershell
+bun run bench -- list
+bun run bench -- list meta-scenarios
+bun run bench -- list scenarios
+bun run bench -- list primitives
+bun run bench -- prepare <meta-scenario-id> --runs-root <external-directory>
+```
 
-### Summary
+`list` defaults to meta-scenarios because they are the runnable stable units. A pure scenario still runs through a meta-scenario whose primitive and extension lists are empty.
 
-What now exists under benchmarks/ in the open-forge repo
-benchmarks/README.md — the runbook: composition recipe (install → extend harness → extend seed-N → optional variable overlays → index → baseline commit), the variables matrix, and a results-log convention (benchmarks/results/<date>-<seed>-<model>-<variables>.md, committed — that's the longitudinal value).
+Treatments may be added without editing the stable recipe:
 
-harness/ — the shared, product-agnostic machinery, split along the v6 lesson: payload/ (worker-visible: scope-control, code-safety, evidence-first-closeout directives + a generic worker workflow with report-ownership rules) vs orchestrator/ (never installed: runbook, minimal worker-prompt templates, debrief question set, core rubric, report template). The worker physically cannot read its own evaluation criteria anymore — that's the structural fix for both v6 role-boundary failures.
+```powershell
+bun run bench -- prepare <meta-scenario-id> `
+  --runs-root <external-directory> `
+  --variant <external-primitive-package> `
+  --variant <another-primitive-package> `
+  --extension <bundled-extension-id> `
+  --extension <another-extension-id> `
+  --orchestrator <review-only-addendum>
+```
 
-Four seeds, one ladder:
+Each repeatable `--variant` path supplies an additive primitive package. Each repeatable `--extension` id adds a bundled extension as a declared treatment. `--orchestrator` adds only observation, checking, or recordkeeping instructions and never changes the worker workspace.
 
-seed-0-greenfield — your best idea, built out fully: no product truth at all; the orchestrator plays "Alex" from a persona fact-sheet (reveal only what's asked), through a staged script with a planted curveball (time-tracking Alex doesn't really want) and a boundary push (git integration). Rubric scores question coverage, scope defense, tradeoff quality, and — the core — whether accepted vision/decisions/non-goals get written to memory with user confirmation before promotion, well enough that a cold build session needs zero re-asks. Deliberately in the same domain as seed-2, so greenfield-conceived vs seeded-rebuild outcomes are directly comparable.
-seed-1-rebuild-small — the existing validated seed, migrated with my review fixes applied (fictional MVP handoff added, runtime off-PATH premise corrected, orchestrator-facing content stripped from worker payload, meta-README replaced).
-seed-2-rebuild-medium — new: standup, a work-journal CLI whose entire difficulty is dates (Monday-covers-Friday-plus-weekend, UTC-storage/local-resolution, DST edges) plus non-obvious seeded opinions that fight agent instinct: append-only NDJSON, immutable corrections (amend appends, never edits), no delete command, hand-rolled sortable ids, no date libraries.
-seed-3-rebuild-large — new: ledger (pure core + node:http API server + thin CLI client, three packages). ~25 routes of opinions about everything: integer-cents money, uniform error contract, idempotent client-id POSTs, all-or-nothing CSV import, localhost-only security. First-ever coverage of scope routes (per-package pattern folders — validated indexing correctly). And one deliberately planted contradiction — the vision requires ledger remove <id>, the immutable-ledger decision forbids hard deletes — both tagged CurrentTruth, documented only in the orchestrator rubric. Whether a worker surfaces that conflict unprompted is the single most important score in the seed, and it's exactly your "AI should ask when things are not OK" requirement made measurable.
-variable-dump-tool/ — the forge-dump tool as a clean overlay, announced via loader.overwrite.md — which doubles as the first real test of the overwrite mechanism.
+`--runs-root` is required and must not contain or sit inside the source repository. This keeps prepared workers and traces outside the framework sources they evaluate.
 
-All compositions verified end-to-end: every seed installs via the real open-forge extend, indexes cleanly, scope routes appear, the fictional handoff routes, and the dump tool runs against the composed tree. Everything lives in benchmarks/ (versioned with the framework, outside the npm files allow-list, so nothing ships to users).
+## Run
 
-Improvements on the original ask worth flagging: the harness/orchestrator split (contamination control — workers can't read rubrics or personas); fixed-seeds-vs-variable-overlays as a hard rule so A/B runs stay honest; planted traps with pre-committed scoring (seed-0's curveball, seed-3's contradiction) so "docility vs judgment" is scored, not vibes; the seed-0↔seed-2 same-domain pairing; and per-seed "agent temptations" tuned to each project's specific instinct-vs-recorded-truth tensions. When you next change the framework, the regression test is now one recipe: same seed, same model, new framework commit, diff the rubric scores.
+An AI or human orchestrator prepares every comparison arm before any worker starts, then launches independent workers with the exact frozen prompt and composition. It preserves the full runtime-observable trace, reviews each arm independently, obtains the worker's response-only self-review, and finishes each run.
+
+```powershell
+bun run bench -- finish <run-directory>
+```
+
+Cross-arm comparison happens only after every arm has its own completed review. Model comparisons keep the composition frozen and vary only the declared model or runtime selector. Treatment comparisons keep the scenario and base recipe frozen and introduce only the declared primitive, extension, or runtime-tool delta.
+
+Prepared arms expose a worker-prompt SHA-256 and baseline Git tree id. Equal model or replicate cells compare both values directly; treatment cells use them alongside the declared resolved-composition delta.
+
+The orchestrator can retain messages, tool calls and results, interactions, status events, and reasoning summaries exposed by the runtime. It cannot claim access to invisible private chain-of-thought. The [trace contract](harness/orchestrator/trace.md) makes that boundary explicit.
+
+## Publish
+
+Execution and isolation remain under the external run set. After every worker context is done, publish the terminal successful, partial, or failed set with evidence once to:
+
+```text
+benchmarks/results/<UTC-filesystem-safe-date-time>/<RUN_SET>/
+```
+
+`RUN_SET` becomes the safe publication run name, and the UTC directory uses a Windows-safe form such as `YYYY-MM-DDTHH-mm-ss-SSSZ`. The [runbook](harness/orchestrator/runbook.md) owns verified same-filesystem staging and atomic publication; the [results contract](results/README.md) owns the evidence-linked `summary.md` and complete `raw/` contents.
+
+Successful, partial, and failed sets retain their actual evidence and limits. Never overwrite a publication, and never expose one to a later arm. Publication is a terminal plain-file action; there is no CLI publish command.
+Publications should not include the full raw data that might contain private information, the publication should be the conclusions of the agents and orchestrator and a summary of them and of the evidence.
+
+## Reuse
+
+The [launch templates](harness/orchestrator/templates/README.md) cover a single run, parallel model or replicate runs, a stable base-versus-trap pair, and an on-demand treatment pair. They are plain prompts with editable assignments, not a template language.
+
+The CLI is optional. The same protocol remains complete as plain files: resolve an exact recipe, compose disposable workspaces, freeze all inputs outside them, run independent workers, retain traces and checks, and save the two reviews.
+
+One run shows what happened in that run. Replication and comparisons reveal observed variance, but neither the runner nor an orchestrator assertion proves isolation or causality.
+
+## References
+
+- [Harness contract](harness/README.md)
+- [Orchestrator runbook](harness/orchestrator/runbook.md)
+- [Invariant orchestrator prompt](harness/orchestrator/orchestrator-prompt.md)
+- [Worker self-review prompt](harness/orchestrator/worker-review-prompt.md)
+- [Published and historical results](results/README.md)

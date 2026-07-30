@@ -1,60 +1,33 @@
 ---
 open-forge:
-  description: Pending priorities and planned passes for Open Forge before and during formal dogfooding
+  description: Current open priorities for validating, evolving, dogfooding, and preparing Open Forge for release
   tags: [Memory, Working, Backlog, Contextual]
 ---
 
 # Backlog
 
-Actionable priorities carried forward from the pre-dogfood cleanup. Deferred designs and product ideas live in `.agents/memory/emerging/ideas/`.
+Only open work belongs here. The mixed pre-review history is preserved in `.agents/memory/archived/planning/2026-07-18_pre-review-backlog.md`; product possibilities that are not actionable commitments stay in `.agents/memory/emerging/ideas/deferred-product-ideas.md`.
 
-## Alpha Sequence
+## Prove The S++ Claims
 
-1. Finish the alpha version.
-2. Dogfood Open Forge by migrating this project's notes into its own workflow and memory. Done 2026-07-09; see `.agents/memory/working/sessions/2026-07-09_dogfood-migration.md`.
-3. Extract meaningful project-specific patterns, guidance, workflows, and extensions from dogfooding.
-4. Restructure and re-review every maintained file.
+1. Run the exact dual-review meta-scenarios across multiple models or runtimes, and compare stable controls with declared trap or on-demand treatments. Compare what each worker believes it did with the orchestrator's trace-backed behavior and outcome review before promoting behavioral or portability claims.
+2. Add stronger provenance, isolation, replication, or corpus controls only around a concrete claim that needs them; do not restore the retired P0 evidence platform as the default dogfood path.
+3. Evaluate the six Workflows, Experience Design Skill, and nine Templates in `development-toolkit` through real use. Keep only content that materially improves outcomes beyond native agent capability.
+4. Add CI for payload structure, source and dogfood synchronization, and machine-checkable Maintenance relationships; decide whether a bounded benchmark gate is reliable and economical enough for payload-changing pull requests.
+5. Replace redundant exact-phrase installation assertions with whole-authored-contract parity where the phrases prove no independent behavior. Retain focused assertions for generated navigation, preservation, overwrite adjacency, rejection, and other observable behavior.
 
-## Near-Term Priorities
+## Extend Extension And CLI Lifecycle
 
-1. Review `.agents/memory/emerging/analysis/2026-07-09_post-rework-review.md` and accept or reject its improvement candidates (descriptor dedup, #Index tag, loader Route Patterns placement, dogfood v5).
-2. Reread every installable payload file and matching governance descriptor for wording, scope separation, tag usage, and route accuracy. The 2026-07-08 wording and CLI pass is committed; verify nothing from it is left dangling.
-3. Replace tool-implying load wording such as "must be loaded" with agent-imperative wording such as "read X before Y" across payload and docs; keep the imperative mandatory.
-4. Deduplicate framework descriptors against concept docs without losing information; concepts and file descriptors stay conceptually separate.
-5. Recheck skills and workflows after route-template and extension terminology settle; apply the workflow redesign idea once accepted.
-6. Define the user-documentation architecture: README responsibilities, short guide files, primitive glossary, layer glossary, route/scoping examples, and voice.
-7. Rewrite human onboarding after dogfooding, not before it.
-8. Run consistency and security review across routing, generated regions, prompt-injection boundaries, update behavior, and tests.
-9. Document a human-run behavioral dogfood smoke checklist: install into a temp workspace, install selected extensions, run a representative agent task, and inspect whether routing, memory closeout, and workflow behavior happened.
+1. Redesign and recreate the current MVP CLI under the linked [CLI overhaul](../emerging/ideas/cli-overhaul.md), preserving proven behavioral and safety evidence without treating the current implementation shape as final.
+2. Extend the implemented local receipt-backed install/update/removal lifecycle only where evidence warrants: source trust and provenance, compatibility/version solving, migrations, crash recovery, aliases, an explicit previewable orphan-prune policy, remote provenance, and conflicts across multiple package managers. Treat optional build-time vendoring as a distribution choice, not runtime truth.
+3. Improve dry-run visibility with generated-index diffs and counts while preserving the existing portable-path, topology, indirection, and rollback guarantees.
+4. Consider a deterministic active-context receipt for auditability: selected route chains, overwrite companions, Required Routes, global binding #KeepInMind context, cost, and digest. It must not narrow the baseline #KeepInMind contract or create parallel runtime truth.
+5. Decide the remaining deterministic CLI options: `find --max-tokens`, approximate token counts, startup-budget warnings, `intent-to-route` previews, `route` templates, extension authoring templates, and explicit forceful versus soft upgrade modes.
+6. Revisit a distinct primitive-kind field only if ownership ambiguity recurs beyond the current route-aware validator and tests.
 
-## User Documentation To Write Later
+## Self-Growth, Documentation, And Release
 
-- Explain recursive routing as the main scalability model.
-- Explain `entrypoint`, `entry`, `framework route`, `scope route`, `scoped framework route`, `slug`, and child route.
-- Explain #Core, #Memory, and #Extension.
-- Explain directives, patterns, guidance, skills, workflows, and workspace routes in a short glossary.
-- Show one-project, multi-project, monorepo, and shared-knowledge examples.
-- Show the difference between `memory/crystallized/[scope]/documents/` and `memory/[scope]/crystallized/documents/`.
-- Explain that folder slugs are concrete runtime paths while `[scope]` notation is only template/documentation notation.
-- Explain that users can create external or distributed memory folders only when explicitly routed; no implicit filesystem search.
-
-## Terminology Pass
-
-After alpha dogfooding, define stable terms for:
-
-- current truth
-- accepted memory
-- durable memory
-- historical memory
-- contextual memory
-- transfer notes
-- candidate learning
-- organic growth
-
-Use the vocabulary to clean route descriptions, loader tag meanings, user docs, and maintainer governors.
-
-## Low-Priority Review
-
-- Check whether repeated Memory axioms should remain local for clarity or be moved to shared Memory-level wording.
-- Reorder axioms across installed files only if it improves readability without creating a large noisy diff.
-- Review old archived ideas only when reconstructing why a decision was made.
+1. Ship the recurrence-driven observations rework in `.agents/memory/emerging/ideas/observations-rework.md` and validate it with a seeded promotion round.
+2. Audit on-demand descriptions and complete the human documentation architecture: README responsibilities, concise guides, primitive and layer glossaries, routing/scoping examples, one-project and multi-project examples, distributed-memory boundaries, and stable terminology.
+3. Rewrite onboarding after the next focused dogfood evaluation, then run a final consistency and security review across routing, generated regions, prompt-injection boundaries, extension lifecycle behavior, packaging, and tests.
+4. Before public release, decide the product-name collision response and whether Git author metadata needs rewriting; file contents are already scrubbed of personal identifiers.

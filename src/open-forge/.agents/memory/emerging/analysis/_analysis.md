@@ -1,12 +1,12 @@
 ---
 open-forge:
   description: Structured reasoning, investigation, or comparison that is useful but not accepted truth
-  tags: [LoadNow, Memory, Analysis, Reasoning, Index, Contextual, Candidate]
+  tags: [LoadNow, Memory, Analysis, Reasoning, Contextual, Candidate]
 ---
 
 # Analysis
 
-Analysis is structured reasoning, investigation, or comparison that is useful but not accepted truth.
+Analysis preserves structured reasoning, investigation, or comparison that is useful but not accepted truth.
 
 ## Axioms
 

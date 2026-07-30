@@ -1,0 +1,1 @@
+I keep forgetting important details between the end of one workday and the next. I have a vague idea for a tiny local tool, but I do not yet know what its first useful version should be. Help me work that out before anything is built. I am available for concise questions.

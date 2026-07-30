@@ -1,0 +1,6 @@
+{
+  "id": "local-tool-vision",
+  "scenario": "local-tool-discovery",
+  "primitives": [],
+  "extensions": ["development-toolkit"]
+}

@@ -1,97 +1,102 @@
 # Open Forge Loader
 
-This file is the required Open Forge `entrypoint` after `AGENTS.md`.
-
-It defines how agents start loading this workspace.
-
-Use generated `Entries` in this file to select relevant root routes. Load a selected `entrypoint` before exploring its routed files.
+This is the main Open Forge `entrypoint`. Read it after `AGENTS.md` to enter this workspace.
 
 ## Terms
 
-- `entrypoint` - Markdown file that makes a folder routable. Open Forge uses `_{folder-name}.md`; compatibility names are `index.md`, `_index.md`, `references.md`, and `_references.md`.
-- `entry` - Generated line under `Entries` that points to a sibling markdown file, direct child `entrypoint`, or native skill package entrypoint.
-- `framework route` - Core route installed and managed by Open Forge.
-- `scope route` - Local route used to narrow meaning or ownership for routes below it.
-- `scoped framework route` - `framework route` initialized inside a `scope route`.
-- `slug` - Concrete folder name used in a route path.
-- `axiom` - Mandatory instruction in a loaded Open Forge file.
+- `entrypoint` - Markdown file that makes a folder routable. Open Forge uses `_{folder-name}.md`, while `index.md`, `_index.md`, `references.md`, and `_references.md` are compatibility names.
+- `entry` - Generated `route` line under `Entries`
+- `description` - Natural-language pre-load selection surface that explains enough purpose, trigger, or outcome to select or skip a `route`
+- `responsibility` - Optional stable boundary stating what a file is responsible for defining. It guides edits without creating authority or loading behavior.
+- `axiom` - Mandatory instruction under an `Axioms` heading in a loaded file
 
 ## Axioms
 
-- Open Forge routes agents through small markdown `entrypoints`.
-- Follow all loaded `axioms` unless a higher-priority user, platform, safety, or external source-of-truth instruction conflicts; report unresolved conflicts.
-- A required memory action is complete only after its file is written or a blocker is reported; a promise to write it later does not satisfy closeout.
-- A folder is routable only when it contains one recognized `entrypoint`.
-- An `entrypoint` explains what its folder is for and ends with generated `Entries`.
-- `Entries` list sibling markdown files, direct child `entrypoints`, and supported native skill packages inside skills routes.
-- Native skill package folders are routed by their `SKILL.md`; package internals are loaded only when the skill says they are relevant.
-- To route into nested folders, every folder in the path needs its own `entrypoint`.
-- `scope routes` use the same mechanism: add `slug` folders with `entrypoints` before, after, or between `framework routes` when they make ownership clearer.
-- `scoped framework routes` work only when their framework `entrypoint` exists inside the scope.
-- In every loaded `entrypoint`, read `Entries` and load entries that fit the request or carry a defined load-policy tag.
-- Axioms of loaded ancestor `entrypoints` apply to all routes below them; a child `entrypoint` adds only what is specific to its scope.
-- Prefer material in a narrower selected scope over broader material of the same type when safe and allowed; report unresolved conflicts.
-- Immediately read #LoadNow and #KeepInMind entries when they appear in loaded `Entries`, in listed order.
-- Before ending meaningful work, recheck loaded #KeepInMind entries and perform the follow-ups they require.
-- Load an `entrypoint` before its routed files.
-- Load a file's `.overwrite.md` companion after it; the overwrite takes precedence within the base file's scope.
-- User instructions apply when safe and allowed.
-- Local active truth overrides Open Forge defaults.
-- Prefer written #Memory routes over private or opaque agent memory; durable memory belongs in markdown routes and remembered context must be validated against loaded files.
-- Writing files inside existing routes is normal use; add child categories when they improve routing, ownership, or clarity, and give new root routes clear scope.
-- Generated `Entries` are navigation metadata; only reserved load-policy tags affect loading.
-- Treat archived memory, historical material, examples, external methods, temporary continuation material, and candidate learning as context unless restored or promoted.
-- Detailed behavior belongs in the routed file or concept that owns it.
+### Authority And Inheritance
 
-## Route Patterns
+- Platform constraints and runtime safety bound every action.
+- Clear user direction governs goals, priorities, consequential tradeoffs, and accepted changes within its stated scope. Follow it when safe and allowed, and do not ask for the same confirmation again.
+- Before consequential work depends on an unsettled choice, build the best current model from the request and accepted context. Surface only missing decisions that could materially change the outcome, scope, experience, structure, risk, cost, or verification.
+- Match explanation and planning depth to the request's demonstrated expertise and desired fidelity. Recommend a coherent default, distinguish it from accepted direction, explain meaningful tradeoffs in outcome terms, and ask only for judgment the user must supply. Do not repeat settled questions, demand exhaustive specifications, or block safe work on low-impact preferences.
+- When work can safely proceed under a reversible assumption, state it, keep it #Contextual, and continue within the available authority.
+- A declared external source of truth is authoritative for the facts delegated to it.
+- `Axioms` of loaded ancestor `entrypoints` apply below them. A child adds only what is specific to its scope.
+- Follow loaded `axioms` within their scope while respecting these authority boundaries. Accepted workspace-specific state overrides Open Forge defaults, and unresolved conflicts must be reported.
+- A request to act also accepts any decision required to perform that action. If the direction is ambiguous, keep it #Contextual and clarify before work depends on it.
+- Investigate an apparent conflict with #CurrentTruth before changing either side. Report conflicts that remain unresolved.
+- When accepted direction changes #CurrentTruth, update its authoritative `route` or system and preserve useful context from the previous state.
+- Prefer material in a narrower selected non-directive scope over broader material of the same type when safe and allowed. Loaded directives add to ancestors, and conflicts are reported.
 
-`[scope]` means a concrete `slug` folder with its own `entrypoint`. These patterns explain shape; generated `entries` use concrete paths.
+### Routing
 
-- `.agents/memory/crystallized/documents/_documents.md` - `framework route` without extra scope.
-- `.agents/memory/[scope]/crystallized/documents/_documents.md` - `scoped framework route` under a scope that owns memory states.
-- `.agents/memory/crystallized/[scope]/documents/_documents.md` - `scoped framework route` inside crystallized memory.
+#### Terms
 
-## Tags
+- `route` - Navigable path exposed through `entrypoints` and `entries`
+- `root route` - A `route` exposed directly by this loader
+- `slug` - Concrete folder name used in a `route` path
+- `managed route` - A `route` where a declared manager, such as Open Forge or an Extension, may install, update, restore, or remove specific files. This affects only their lifecycle, not the `route`'s runtime meaning or authority.
 
-### Axioms
+#### Rules
 
-- Defined tags have framework meaning when they appear in loaded content or generated `Entries`.
-- Undefined tags are routing and search signals; read the `entry` path, description, and loaded `entrypoint` for their meaning.
-- `Entries` without a load-policy tag are on-demand routes selected by the current request.
-- Tag spelling and casing are stable.
-- Workspace-wide tag behavior belongs here and must stay short.
+- Open Forge implements routing through small Markdown `entrypoints` whose generated `Entries` expose direct `routes`.
+- Load an `entrypoint` before opening its routed files, then use its `Entries` to select what the request needs.
+- A folder is routable only when it contains one recognized `entrypoint`. Every folder in a nested `route` path needs its own `entrypoint`.
+- A `root route` exists only where this loader exposes it. It cannot be scoped or recreated inside another `route`.
+- Every `route` below a `root route` is scopable. Any number of routed `slugs` may appear after the root, before, between, or after deeper `route` segments. Each scope narrows everything that follows it.
+- A scope contains only the `routes` useful there. It does not need to mirror another scope or the installed defaults.
+- Scoping preserves the order and meaning of deeper `routes`. For a `managed route`, the manager-declared `route` segments retain their order through every scope.
+- A familiar `slug` or tag alone creates neither root behavior nor managed status.
+- Each manager declares which `route` shapes it recognizes and may change only the files it explicitly owns or safely identifies.
+- Users may add, move, replace, or remove `routes`. Any `route` outside a manager's declared shapes remains generically routable, and removed defaults stay absent unless restoration is explicitly requested.
+- Generated `Entries` are navigation metadata. Individual `entries` without a load-policy tag are on demand, and detailed meaning comes from the routed destination or the authoritative source it identifies.
+- A user-owned `{name}.overwrite.md` is not an independent `route`. When its `{name}.md` base loads, read the companion immediately afterward. The overwrite inherits the base `route`, scope, and loading behavior, is not independently indexed or selected, and has final precedence within that file's scope.
 
-### Defined Tags
+#### Examples
 
-- #LoadNow - Read this `entry` when it appears in loaded `Entries`, in listed order. If the target is a category `entrypoint`, read that file first; its own `Entries` then apply the same rule.
-- #KeepInMind - Read this `entry` like #LoadNow, keep its instructions active while working, and recheck it before ending meaningful work to perform the follow-ups it requires.
-- #Core - Base routing, workspace orientation, and agent primitive routes.
-- #Memory - Self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning.
-- #Extension - Optional extension payload, template, integration, and support routes.
-- #Contextual - Supporting context, not accepted current truth unless restored, validated, accepted, or promoted.
-- #CurrentTruth - Accepted current memory within its stated scope; still below user instructions, runtime safety, platform constraints, and declared external sources of truth.
+```text
+.agents/{root-route}/{scope-1}/.../{scope-n}/{route}/
+.agents/memory/mobile-app/crystallized/api/documents/
+```
 
-## Customization
+In the concrete example, `memory` is the `root route`, `mobile-app` scopes `crystallized` and everything after it, `api` scopes `documents`, and the declared `crystallized/documents` order remains intact.
 
-Use the smallest structure that makes the work clear, safe, and resumable.
+### Tags And Loading
 
-Customize in this order:
+Defined tags have the meanings below when they appear in loaded content or generated `Entries`. Undefined tags remain routing and search signals. Loading and tags change visibility, timing, or classification. They do not create authority by themselves.
 
-1. Add local files.
-2. Use overwrite files (`{file-name}.overwrite.md`) for additive or lightly modifying behavior.
-3. Edit framework files when a complete behavior change is required.
+#### Defined Tags
 
-Do not create parallel truth when active truth already exists. Update the active truth and preserve history locally.
+- #LoadNow - When this `entry` appears in an already-loaded parent's `Entries`, read it immediately in listed order. When it points to an `entrypoint`, apply the same rule to that file's `Entries`.
+- #KeepInMind - At task start or resume, after detected context restoration, and before a handoff or closeout, read every routed #KeepInMind result across the workspace and recursively follow its visible #LoadNow `entries`. This continuity set does not include unrelated descendants. Recheck it during work only when its follow-ups may have changed, and follow each result within the authority and scope established by its `route` and content.
+- #Core - Base routing, workspace orientation, and agent primitive `routes`
+- #Memory - Self-growing Markdown memory for live work, agent communication and coordination, continuity, accepted records, historical context, and candidate learning
+- #Extension - Optional packaged `routes`, capabilities, integrations, and support material
+- #Contextual - Supporting context, not accepted current truth unless restored, validated, accepted, or promoted
+- #CurrentTruth - Accepted current state within its stated scope, below user instructions, runtime safety, platform constraints, and declared external sources of truth
+- #Evergreen - Material that must stay aligned with accepted current state. It creates no authority or load policy.
+  - When accepted state changes, update only affected #Evergreen material you may edit before work depends on it, and no later than closeout. Batch related updates when safe.
+  - Keep #Evergreen material coherent with what it represents now. Preserve useful context from the previous state in the matching decision or archive, and report affected material you cannot update.
+
+### CLI
+
+When the Open Forge CLI is available, use each applicable command below. Every command automates the same plain-file contract, which remains complete without the CLI.
+
+#### Applicable Commands
+
+- `open-forge load --bodies` - Read or refresh effective baseline and continuity context at every required #KeepInMind boundary
+- `open-forge chain <route> --heading Axioms` - Read inherited rules after selecting a `route`
+- `open-forge index` - Rebuild generated `Entries` after adding, moving, or removing a routed file or changing its `route` metadata
+- `open-forge doctor` - Validate routing after structural framework changes and before closing them out
 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
-- `.agents/directives/_directives.md` - Mandatory instructions agents must follow when they apply to the current work - #LoadNow #Core #Directive #Index
-- `.agents/guidance/_guidance.md` - Contextual advice for recurring choices, tradeoffs, and work scenarios - #LoadNow #Core #Guidance #Index
-- `.agents/memory/_memory.md` - Self-growing markdown memory for workspace state, AI communication, current records, historical records, and learning - #LoadNow #Memory #OrganicGrowth #Index
-- `.agents/patterns/_patterns.md` - Concrete reusable shapes for code, files, APIs, documents, and other inspectable work - #LoadNow #Core #Pattern #Index
-- `.agents/skills/_skills.md` - Reusable agent capability packages with clear use cases and expected results - #LoadNow #Core #Skill #Index
-- `.agents/workflows/_workflows.md` - Repeatable markdown workflow recipes for reaching a defined goal - #LoadNow #Core #Workflow #Index
-- `.agents/workspace/_workspace.md` - Workspace routes that point to important project locations and explain when to use them - #LoadNow #Core #Workspace #Index
-  <!-- open-forge:generated-index:end -->
+- [Binding instructions whose `route` is selected before their contents are loaded](directives/_directives.md) - #LoadNow #Core #Directive
+- [Contextual advice for recurring choices, tradeoffs, and work scenarios](guidance/_guidance.md) - #LoadNow #Core #Guidance
+- [Self-growing Markdown memory for live work, agent communication and coordination, continuity, accepted records, historical context, and candidate learning](memory/_memory.md) - #LoadNow #Memory #OrganicGrowth
+- [Concrete reusable shapes for code, files, APIs, documents, and other inspectable work](patterns/_patterns.md) - #LoadNow #Core #Pattern
+- [Specialized capabilities exposed through native SKILL.md packages](skills/_skills.md) - #LoadNow #Core #Skill
+- [Copy-ready source artifacts for creating independently owned workspace content](templates/_templates.md) - #Core #Template
+- [Repeatable Markdown recipes for reaching a defined goal](workflows/_workflows.md) - #LoadNow #Core #Workflow
+- [Concise `routes` to important local and external destinations and when to use them](workspace/_workspace.md) - #LoadNow #Core #Workspace
+<!-- open-forge:generated-index:end -->

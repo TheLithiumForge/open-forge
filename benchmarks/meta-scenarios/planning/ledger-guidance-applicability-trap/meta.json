@@ -1,0 +1,9 @@
+{
+  "id": "ledger-guidance-applicability-trap",
+  "scenario": "ledger-remove-planning",
+  "primitives": [
+    "immutable-ledger-removal",
+    "simplicity-over-audit-guidance"
+  ],
+  "extensions": ["development-toolkit"]
+}

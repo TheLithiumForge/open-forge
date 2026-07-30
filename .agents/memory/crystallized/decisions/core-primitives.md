@@ -1,20 +1,57 @@
 ---
 open-forge:
-  description: The Core layer installs directives, patterns, guidance, skills, workflows, and workspace with their accepted meanings
+  description: Core uses distinct reusable content roles instead of one generic knowledge bucket, and every new primitive must earn nonduplicative semantics
   tags: [Memory, Decision, CurrentTruth, Core, Primitive]
 ---
 
-# Core Primitives
+# Distinct Core Primitive Roles
 
-Accepted decisions extracted from the design sessions and idea notes on 2026-07-06.
+## Context
 
-- The #Core layer contains the required base routing and primitive routes.
-- Core installs `directives/`, `guidance/`, `patterns/`, `skills/`, `workflows/`, and `workspace/`.
-- Directives are mandatory instructions agents must follow when they apply.
-- Patterns are concrete reusable shapes for code, files, APIs, documents, and other inspectable work.
-- Guidance is contextual advice for recurring choices, tradeoffs, and scenarios.
-- Skills are bounded reusable agent capability packages with clear use cases and expected results.
-- Skills should align with native AI-tool skill shape: `.agents/skills/{skill-name}/SKILL.md` plus optional package resources such as `references/`, `scripts/`, and `assets/`.
-- Workflows are repeatable markdown recipes for reaching defined goals, not runtime orchestration objects from an agent SDK.
-- Workspace routes point to important project locations and explain when to use them.
-- Workflows may own local `directives/`, `patterns/`, `guidance/`, and `skills/` categories when those routes are essential to that workflow.
+Open Forge needs several forms of reusable context with different selection and authority semantics. Treating all of them as generic knowledge would make authority, applicability, and maintenance ambiguous. Treating every content variation as a primitive would make Core large and opinionated.
+
+## Decision
+
+Core uses a small set of semantically distinct reusable content roles instead of one generic knowledge bucket.
+
+Each primitive must answer a different primary question, carry meaning that cannot be expressed clearly by an existing primitive, and justify its routing and maintenance cost. The [Core primitive model](../documents/framework/primitives/model.md) and installed entrypoints define the current set and relationships.
+
+Framework contracts refer to #Core collectively when any suitable Core route may satisfy a requirement. They name a specific primitive when its distinct semantics matter and enumerate concrete routes when the exact standard routes are the subject.
+
+## Rationale
+
+Distinct roles make the correct authoritative route and semantics cheaper to determine before content is loaded. They let a workspace add only the capabilities it needs while keeping Framework relationships inspectable.
+
+The admission threshold prevents Core from becoming a catalogue of the author's preferred artifact types or workflows.
+
+## Alternatives And Tradeoffs
+
+- One generic knowledge route would make Core smaller physically but move recurring semantic classification into every agent decision
+- A separate primitive for every document or workflow variation would improve naming specificity at the cost of overlap, baseline complexity, and universal methodology
+- A default `constants/` primitive would add a routing surface without distinct semantics
+
+The accepted model requires clearer primitive definitions and careful review when a new role is proposed.
+
+## Consequences
+
+- Primitive entry descriptions and current architecture must make their distinct questions and authority visible
+- A proposed primitive must demonstrate reusable value and a nonduplicative semantic role
+- A primitive's structure warrants a Pattern only when the inspectable shape remains useful independently of the primitive contract
+- Local scopes and Extensions may introduce specialized content without expanding the shared primitive set
+- Users may remove unused standard routes without invalidating the remaining Framework
+
+## Authoritative Sources
+
+These sources express the accepted result. They are not the rationale backing this decision:
+
+- [Core primitive model](../documents/framework/primitives/model.md)
+- [Framework Architecture](../documents/framework/architecture.md#core-primitives)
+- [Installed Framework loader](../../../loader.md)
+
+## Decision Relationships
+
+- [Templates as a Core primitive](template-primitive.md)
+- [Product direction](product-direction.md)
+- [Routing model](routing-model.md)
+- [Workflow shape](workflow-shape.md)
+- [Typed authority and role terminology](authoritative-source-terminology.md)

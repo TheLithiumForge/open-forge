@@ -1,16 +1,17 @@
 ---
 open-forge:
   description: Future possibilities, experiments, open questions, and options to explore later
-  tags: [LoadNow, Memory, Idea, Exploration, OrganicGrowth, Index, Contextual, Candidate]
+  tags: [LoadNow, Memory, Idea, Exploration, OrganicGrowth, Contextual, Candidate]
 ---
 
 # Ideas
 
-Ideas are future possibilities, experiments, open questions, and options to explore later.
+Ideas preserve future possibilities, experiments, open questions, and options to explore later.
 
 ## Axioms
 
 - Read `Entries` when current work explores possibilities, plans future work, revisits postponed options, or needs prior exploration output.
+- Record an explicitly requested idea or exploration here without treating it as acceptance.
 - Keep the problem, opportunity, or motivation visible enough to revisit later.
 
 ## Entries

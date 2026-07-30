@@ -1,20 +1,22 @@
 ---
 open-forge:
-  description: Mandatory instructions agents must follow when they apply to the current work
-  tags: [LoadNow, Core, Directive, Index]
+  description: Binding instructions whose `route` is selected before their contents are loaded
+  tags: [LoadNow, Core, Directive]
 ---
 
 # Directives
 
-Directives are mandatory modifiers within their declared scope.
+Directives are binding instructions selected through the `route` tree.
 
 ## Axioms
 
-- Every directive file beside this `entrypoint` is workspace-wide; read all of them.
-- Child directive `entrypoints` define positive scope through path, description, and tags.
-- Load child directive routes when their path, description, tags, or defined tag behavior match the current work.
-- Every loaded directive is mandatory within its scope.
-- Report when a directive cannot be followed, and explain why.
+- Every direct directive file carries #LoadNow, so an already-loaded directive `entrypoint` reads all of its direct files.
+- Direct files loaded from this root are binding throughout the workspace.
+- Select a child directive `route` only when its path, `description`, tags, and ancestor meaning match the work. Loading that `route` establishes its narrower scope before its direct files are read.
+- Direct files loaded from a selected child `route` are binding within that `route`'s scope.
+- Loaded child directives add to loaded ancestor directives. Narrower routing changes scope, not authority.
+- Every direct directive file contains exactly one non-empty `## Axioms` section. Put optional behavior in guidance, a skill, or a workflow.
+- Report any directive conflict or directive that cannot be followed, and explain why.
 
 ## Entries
 

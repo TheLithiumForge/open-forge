@@ -1,10 +1,7 @@
 <!-- open-forge:start -->
 # Open Forge
 
-Before planning, editing, reviewing, or implementing:
+Open Forge is the operating contract for this workspace.
 
-1. Read `.agents/loader.md`.
-2. Follow the loader.
-
-The loader defines how this workspace is read, changed, reviewed, and handed off.
+Before acting on any task, you must read `.agents/loader.md` and follow all applicable Open Forge rules and conventions throughout the task.
 <!-- open-forge:end -->
