@@ -1,0 +1,10 @@
+# Dogfood implementation outputs
+bookmarks/node_modules/
+bookmarks/dist/
+bookmarks/.tmp-tests/
+bookmarks/bookmarks.json
+bookmarks/*.log
+
+# Local editor/system noise
+.DS_Store
+Thumbs.db

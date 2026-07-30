@@ -1,0 +1,4 @@
+{
+  "name": "seed-2-rebuild-medium",
+  "description": "Rebuild-after-medium-MVP benchmark: standup work-journal CLI with a richer decision surface around dates, append-only storage, and immutable corrections"
+}

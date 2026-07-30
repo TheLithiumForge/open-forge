@@ -1,0 +1,30 @@
+{
+  "name": "open-forge",
+  "version": "0.0.0",
+  "description": "A tiny, agnostic AI agent workflow for plain repo files.",
+  "type": "module",
+  "packageManager": "bun@1.3.11",
+  "bin": {
+    "open-forge": "./dist/cli.mjs"
+  },
+  "files": [
+    "dist/cli.mjs",
+    "docs/cli.md",
+    "docs/dev.md",
+    "docs/extensions.md",
+    "src/open-forge",
+    "src/extensions",
+    "!src/open-forge/**/.obsidian",
+    "!src/open-forge/**/.obsidian/**",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "bun run build.ts",
+    "index": "bun run src/cli/cli.ts index ./src/open-forge",
+    "test": "bun test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
