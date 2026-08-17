@@ -1,31 +1,33 @@
 ---
 open-forge:
-  description: Architecture template is used when one current document must define how a subject is structured, how its parts relate, and which boundaries and constraints govern it
+  description: Starting structure for a current document that explains a subject's parts, relationships, boundaries, and constraints
   tags: [Extension, Template, Document, Architecture, CurrentView]
 ---
 
 # {Subject} Architecture
 
-<!--
+{
 Template selection:
-- Need: One coherent current document for a subject's important structure and interactions.
+
+- Need: One current document that explains a subject's important structure and interactions.
 - Primary question: How is this subject structured, how do its parts relate, and which boundaries and constraints govern it?
 
-Instantiation notes:
-- Replace this Template's frontmatter, title, placeholders, and comments.
-- Architecture is a responsibility, not a fixed schema. Merge, rename, reorder, or remove sections to fit the subject.
-- Describe the accepted structure completely enough to use. Link to Decisions for why it was chosen.
+How to use:
+
+- Replace the frontmatter, title, and placeholders, then remove this braced guidance.
+- This is a starting structure, not a fixed schema. Merge, rename, reorder, or remove sections to fit the subject.
+- Explain the accepted structure completely enough to use. Link to Decisions for why it was chosen.
 - Keep current structure, known liabilities, and honest limits here. Put unresolved replacement architecture in Emerging Memory until it is accepted.
-- Move component internals into scoped Architecture views once they require independent authority.
--->
+- Move component internals into scoped Architecture documents when they need their own complete current explanation.
+  }
 
 ## Scope
 
-{Name the subject, the architectural view for which this document is authoritative, its readers, and the internals expressed by narrower authoritative documents.}
+{Name the subject, the architectural view this document defines, its readers, and the internals defined by narrower Architecture documents.}
 
 ## Architecture Drivers
 
-{Identify the qualities, constraints, and accepted direction that most strongly shape the structure. Link to their authoritative sources.}
+{Identify the qualities, constraints, and accepted direction that most strongly shape the structure. Link to the sources that define them.}
 
 ## System Model
 
@@ -53,15 +55,15 @@ Instantiation notes:
 
 ## Current Tradeoffs And Limits
 
-{Describe material consequences, liabilities, and honest limits of the accepted design. Link to Decisions for detailed rationale and alternatives.}
+{Describe important consequences, liabilities, and honest limits of the accepted design. Link to Decisions for detailed reasoning and alternatives.}
 
 ## Architecture Views
 
-{Link to narrower authoritative Architecture documents and state what each one explains.}
+{Link to narrower Architecture documents and state what each one defines.}
 
 ## Related Current Views
 
-{Link to the Vision, context, Principles, Strategy, status, external authoritative sources, or other current views that constrain or complete this Architecture.}
+{Link to the Vision, context, Principles, Strategy, status, external sources, or other current views that constrain or complete this Architecture.}
 
 ## Decisions And Rationale
 

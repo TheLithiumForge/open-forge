@@ -13,7 +13,7 @@ Load an idea note only when a deferred design needs its detailed original reason
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Phase 1 primitives, phase 2 workflow goodies, and edit/overwrite direction](2026-05-27_framework-primitives-and-customization.md) - #FrameworkDesign #Customization
+- [Historical 2026-05-27 exploration of primitive categories, customization, namespacing, and the earlier maintainer-descriptor model](2026-05-27_framework-primitives-and-customization.md) - #Memory #Idea #Archived #Contextual #Historical #FrameworkDesign #Customization
 - [Optional CLI extensions for skills, technology patterns, and other reusable additions](2026-06-20_optional-cli-extensions.md) - #CLI #Extension #Skill #Pattern
 - [Directive scope through category placement and workflow-local bundles](2026-06-22_directive-scopes-and-workflow-bundles.md) - #Directive #Scope #Routing #Workflow
 - [User-facing scalability, configurability, and a low-friction CLI experience](2026-06-22_scalability-and-cli-experience.md) - #Documentation #Scalability #Customization #CLI #UX
@@ -27,10 +27,12 @@ Load an idea note only when a deferred design needs its detailed original reason
 - [Boundary between Memory state containers and future child taxonomies](2026-06-26_memory-child-taxonomy-boundary.md) - #Memory #Taxonomy #Core #Extension #Documentation
 - [Accepted Memory state containers and next implementation priorities](2026-06-26_memory-state-containers.md) - #Memory #State #Architecture #Governance #Loader #Implementation
 - [Guidance rename completion and flexible placement for memory extras](2026-06-30_guidance-rename-and-flexible-memory-extras.md) - #Guidance #Memory #Extension #CLI #Taxonomy
+- [Historical July 2026 rating ladder superseded by accepted CLI contracts and the current evidence backlog](2026-07-17_rating-ladder.md) - #Memory #Archived #Idea #Contextual #Historical #Quality #Benchmark #Roadmap
 - [Historical snapshot of deferred product ideas before the 2026-07-18 current-review pruning pass](2026-07-18_deferred-product-ideas-snapshot.md) - #Memory #Archived #Idea #Contextual #Historical #Product #Extension
 - [Historical proposal to package the proven repository Templates separately before they were accepted inside the consolidated development toolkit](2026-07-29_starter-templates-extension.md) - #Memory #Archived #Idea #Contextual #Historical #Template #Extension #Product #Dogfood
 - [Historical inputs used to replace the eight-section Workflow schema with the minimal goal, steps, completion, and optional dependency contract](2026-07-29_workflow-overhaul-inputs.md) - #Memory #Archived #Idea #Contextual #Historical #Workflow #Architecture #Product #Refactor
-- [Historical CLI design rationale for shipped commands, remaining flags, the Rune boundary, and deferred lifecycle options](cli-design.md) - #Memory #Archived #Idea #Contextual #Historical #CLI #Extension #Tooling
+- [Historical rejected public graph capability with preserved reasoning and dissent](2026-08-15_cli-graph-views.md) - #Memory #Archived #Contextual #Historical #CLI #PreliminaryDesign #Graph #Route #Reference
+- [Historical rejected route-neighborhood capability whose structural result moved to route list](2026-08-15_cli-route-neighborhood.md) - #Memory #Archived #Contextual #Historical #CLI #PreliminaryDesign #Route #Neighborhood #Path
 - [Historical design for native skill sharing through content-agnostic dependency extensions and one installed-path owner](extension-skill-sharing.md) - #Memory #Archived #Idea #Contextual #Historical #Extension #Skill #CLI
 - [Historical maintenance-migration questions that clarified knowledge roles, Decision boundaries, and a remaining lifecycle-metadata idea](maintenance-migration-considerations.md) - #Memory #Archived #Idea #Contextual #Historical #Framework #Maintenance #Migration #Decision #KnowledgeRole
 - [Historical post-Evergreen refactor directions reassigned to focused Workflow, Extensions, product, documentation, and release work](provisional-refactor-directions.md) - #Memory #Archived #Idea #Contextual #Historical #Framework #Refactor

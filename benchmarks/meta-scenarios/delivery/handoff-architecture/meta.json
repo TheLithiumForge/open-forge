@@ -1,8 +1,0 @@
-{
-  "id": "handoff-architecture-handoff",
-  "scenario": "handoff-note-implementation",
-  "primitives": ["handoff-note-product-direction"],
-  "extensions": [
-    "development-toolkit"
-  ]
-}

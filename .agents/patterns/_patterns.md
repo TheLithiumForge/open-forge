@@ -1,22 +1,33 @@
 ---
 open-forge:
-  description: Concrete reusable shapes for code, files, APIs, documents, and other inspectable work
+  description: Reusable default shapes for code, files, APIs, documents, and other work
   tags: [LoadNow, Core, Pattern]
 ---
 
 # Patterns
 
-Patterns define reusable, inspectable arrangements that keep related work consistent and recognizable across modules, projects, and repositories, making it easier to review.
+Patterns define reusable default shapes that keep related work consistent and easy to review.
 
 ## Axioms
 
-- Use `Entries` when current work creates, changes, or reviews an inspectable result.
+### Selection And Creation
+
+- Check `Entries` when the work creates, changes, or reviews something with a visible structure.
 - Every pattern defines a concrete shape for code, files, naming, placement, boundaries, APIs, documents, or another inspectable result.
-- Treat an applicable pattern as the established default shape for its scope. Use a different shape only for a deliberate reason.
-- Report when an applicable pattern does not fit the case, and explain why.
+- Create or update a Pattern only when an accepted shape should guide future related work.
+- Do not turn one-off work, a temporary transition, or an unsettled candidate into a Pattern only because it has structure.
+
+### Shape And Application
+
+- Keep a Pattern focused on one reusable shape.
+- Keep examples valid against the APIs, formats, and tools they use. Label intentionally incomplete examples as schematic.
+- Treat a Pattern that applies as the default shape for its scope. Use another shape only for a deliberate reason.
+- When a Pattern does not fit, report that and explain why.
 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
 - [Reusable structural patterns for changing and operating Open Forge without losing its minimal routed design](open-forge/_open-forge.md) - #Pattern #Framework #Dogfood
+- [Reusable software-structure shapes that apply across programming languages and build systems](software/_software.md) - #Pattern #Software #Contract #Source #Locality #Testing
+- [Reusable test-evidence shapes that apply across languages, runtimes, and test runners](testing/_testing.md) - #Pattern #Testing #Evidence #Integration #EndToEnd #Snapshot
 <!-- open-forge:generated-index:end -->

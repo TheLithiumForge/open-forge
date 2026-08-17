@@ -36,5 +36,5 @@ For future cases, record whether the trigger is clear, whether agents follow it,
 - [Directive role](../../crystallized/documents/framework/primitives/directives.md)
 - [Directive runtime maintenance](../../crystallized/documents/maintenance/payload/agents/directives.md)
 - [Loading and continuity](../../crystallized/documents/framework/routing/loading.md)
-- [Rejected applicability gates and loading tradeoffs](../../crystallized/decisions/loading-reliability.md)
+- [Rejected applicability gates and loading tradeoffs](../../crystallized/decisions/framework/loading-reliability.md)
 - [Framework migration closeout](../../archived/sessions/2026-07-29_open-forge-framework-migration-closeout.md)

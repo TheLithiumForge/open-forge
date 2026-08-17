@@ -19,11 +19,11 @@ The [loader](../../../../loader.md#defined-tags) remains authoritative for the e
 
 Acceptance and synchronization answer different questions:
 
-| Property | Question | Meaning |
-|---|---|---|
-| #Contextual | May this inform work without being treated as accepted state? | Supporting, uncertain, exploratory, or historical context |
-| #CurrentTruth | Is this accepted current state within its stated scope? | Present state that may govern dependent understanding |
-| #Evergreen | Must this material stay aligned when accepted state affecting it changes? | Synchronization obligation only |
+| Property      | Question                                                                  | Meaning                                                   |
+| ------------- | ------------------------------------------------------------------------- | --------------------------------------------------------- |
+| #Contextual   | May this inform work without being treated as accepted state?             | Supporting, uncertain, exploratory, or historical context |
+| #CurrentTruth | Is this accepted current state within its stated scope?                   | Present state that may govern dependent understanding     |
+| #Evergreen    | Must this material stay aligned when accepted state affecting it changes? | Synchronization obligation only                           |
 
 #Evergreen does not create authority, acceptance, loading, or precedence. Material may be #CurrentTruth without needing synchronization, and a derived explanation may be #Evergreen without becoming authoritative for the underlying fact it represents.
 
@@ -31,34 +31,40 @@ Loading and tags make material visible or classifiable. Authority still comes fr
 
 ## Acceptance
 
-Clear direction is accepted within its stated scope without requiring a ritual phrase or redundant confirmation. A request to perform an action also accepts decisions required to carry out that action when the request determines them clearly.
+Clear direction is accepted within its stated scope without requiring a ritual phrase or redundant confirmation. A request to perform an action delegates the routine, reversible, in-scope choices required to carry it out when the request determines them clearly. It does not silently accept an unsettled consequential scope, risk, cost, external effect, irreversibility, or accepted direction.
 
 Tentative, comparative, exploratory, or ambiguous language remains contextual until dependent work requires clarification or the direction becomes clear.
 
-| Direction | Normal treatment |
-|---|---|
-| “Consider architecture B” | Emerging candidate or active analysis |
-| “Both are possible. Investigate B.” | Emerging candidate or active analysis |
-| “I definitely prefer architecture B” | Accepted within the stated decision scope |
+| Direction                                    | Normal treatment                                                               |
+| -------------------------------------------- | ------------------------------------------------------------------------------ |
+| “Consider architecture B”                    | Emerging candidate or active analysis                                          |
+| “Both are possible. Investigate B.”          | Emerging candidate or active analysis                                          |
+| “I definitely prefer architecture B”         | Accepted within the stated decision scope                                      |
 | “Use architecture B. That is our direction.” | Update the affected authoritative current source and preserve useful rationale |
-| “Use B only for this experiment” | Scoped Working or experimental state, not universal current truth |
+| “Use B only for this experiment”             | Scoped Working or experimental state, not universal current truth              |
 
 Acceptance never extends beyond the expressed scope. A clear local preference does not silently become a workspace-wide rule, and a current experiment does not become durable canon.
 
-Agents may suggest any durable change. They may apply it directly when clear direction or the requested action provides sufficient authority, then report what changed. When ambiguity would materially affect the result, they preserve contextual state or ask before dependent work treats one interpretation as accepted.
+Agents may suggest any durable change. They may apply it directly when clear direction or necessary routine, reversible, in-scope delegated authority provides sufficient authority, then report what changed. When ambiguity would materially affect the result, they preserve contextual state or ask before dependent work treats one interpretation as accepted.
 
 ## Applying Accepted Change
 
+Acceptance does not determine durability, reusable shape, or binding behavior. Before creating durable knowledge from accepted direction, determine what must survive the task, what changes accepted current meaning, whether rationale will matter later, whether behavior is mandatory, and whether an inspectable shape should guide future related results. If none apply, create no new durable knowledge artifact.
+
 When accepted direction changes current state:
 
-1. Update the authoritative document, route, code, external system, or other source that expresses the result
+1. Update every authoritative document, `route`, implementation, external system, or other source whose distinct current meaning changes
 2. Update only affected editable #Evergreen material before work depends on it and no later than closeout
-3. Preserve useful rationale in a decision when the reason may matter later
-4. Preserve useful context from the previous state in the appropriate archive
-5. Update relationships so old locations no longer imply current authority
-6. Report affected material that could not be updated
+3. Preserve useful rationale in a Decision when the reason may matter later
+4. Put mandatory future behavior in the matching Directive or another applicable Axiom
+5. Create or update a Pattern only when an accepted inspectable shape should guide future related results or repeated changes
+6. Keep an explicitly accepted temporary choice in Working when its source, scope, and expected expiration are clear
+7. Preserve useful context from the previous state in the appropriate archive
+8. Update relationships so old locations no longer imply current authority, and report affected material that could not be updated
 
 The current authoritative source states the accepted concept well enough to use on its own. A linked decision explains why when useful rationale exists. This is limited overlap at distinct entry boundaries, not competing authority.
+
+The [Memory transition contract](memory/transitions.md#integration-and-closeout) defines reconciliation across durable outcomes, temporary continuation state, and unsettled reusable findings. The [Core primitive model](primitives/model.md) defines the distinct questions answered by Directives, Patterns, Guidance, Skills, Templates, Workflows, and Map `routes`.
 
 ## Current Views, Decisions, And History
 
@@ -78,11 +84,13 @@ The [Memory model](memory/model.md#recorded-state-threshold) defines the capture
 
 - [Framework Architecture](architecture.md)
 - [Memory Architecture](memory/_memory.md)
+- [Memory transitions](memory/transitions.md)
 - [Core primitive model](primitives/model.md)
+- [Patterns](primitives/patterns.md)
 - [Loading and continuity](routing/loading.md)
 
 ## Decisions And Rationale
 
-- [Memory model](../../decisions/memory-model.md)
-- [Tag semantics](../../decisions/tags.md)
-- [Typed authority and role terminology](../../decisions/authoritative-source-terminology.md)
+- [Memory model](../../decisions/framework/memory-model.md)
+- [Tag semantics](../../decisions/framework/tags.md)
+- [Typed authority and role terminology](../../decisions/framework/authoritative-source-terminology.md)

@@ -1,6 +1,7 @@
 ---
-description: Phase 1 primitives, phase 2 workflow goodies, and edit/overwrite direction
-tags: [FrameworkDesign, Customization]
+open-forge:
+  description: Historical 2026-05-27 exploration of primitive categories, customization, namespacing, and the earlier maintainer-descriptor model
+  tags: [Memory, Idea, Archived, Contextual, Historical, FrameworkDesign, Customization]
 ---
 
 # Framework Primitives And Customization
@@ -9,7 +10,11 @@ Date: 2026-05-27
 
 ## Status
 
-This is a working design note. The public `README.md` remains the current source of truth until these ideas are promoted into framework docs or installable files.
+This is a historical design snapshot. Its promoted or superseded results now
+live in the [Framework Architecture](../../crystallized/documents/framework/architecture.md),
+[Core primitive model](../../crystallized/documents/framework/primitives/model.md),
+and their linked current sources. Nothing in this record governs current
+behavior merely because it preserves an earlier direction.
 
 ## Direction
 

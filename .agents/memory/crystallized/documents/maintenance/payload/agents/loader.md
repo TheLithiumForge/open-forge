@@ -11,54 +11,60 @@ open-forge:
 
 [`src/open-forge/.agents/loader.md`](../../../../../../../src/open-forge/.agents/loader.md) is the canonical installed Framework loader. The repository [loader](../../../../../../loader.md) dogfoods the same authored contract with its locally generated root `entries`.
 
-The [Framework Architecture](../../../framework/architecture.md#canonical-entry) is authoritative for the loader's structural role. The [top architecture](../../../architecture.md#framework-composition) is authoritative for the relationship among Core, Memory, and Extensions. The [Open Forge Routing scope](../../../framework/routing/_routing.md) defines the detailed `route`, scope, loading, path, and [overwrite](../../../framework/routing/overwrites.md) contracts. The [routed Markdown contract](../../../framework/markdown/routes.md) is authoritative for its canonical authored and generated representation. The [routing model](../../../../decisions/routing-model.md), [routing surfaces](../../../../decisions/routing-surfaces.md), [scope and slugs](../../../../decisions/scope-and-slugs.md), [tags](../../../../decisions/tags.md), [loading reliability](../../../../decisions/loading-reliability.md), [typed authority terminology](../../../../decisions/authoritative-source-terminology.md), and [source and packaging](../../../../decisions/source-and-packaging.md) decisions preserve accepted rationale.
+The [Framework Architecture](../../../framework/architecture.md#canonical-entry) is authoritative for the loader's structural role. The [top architecture](../../../architecture.md#framework-composition) is authoritative for the relationship among Core, Memory, and Extensions. The [Open Forge Routing scope](../../../framework/routing/_routing.md) defines the detailed `route`, scope, loading, path, and [overwrite](../../../framework/routing/overwrites.md) contracts. The [routed Markdown contract](../../../framework/markdown/routes.md) is authoritative for its canonical authored and generated representation. The [routing model](../../../../decisions/framework/routing-model.md), [routing surfaces](../../../../decisions/framework/routing-surfaces.md), [scope and slugs](../../../../decisions/framework/scope-and-slugs.md), [tags](../../../../decisions/framework/tags.md), [loading reliability](../../../../decisions/framework/loading-reliability.md), [typed authority terminology](../../../../decisions/framework/authoritative-source-terminology.md), and [source and packaging](../../../../decisions/framework/source-and-packaging.md) decisions preserve accepted rationale.
 
 ## Contract
 
 ### Responsibility And Shape
 
 - The loader is the first Open Forge `entrypoint` after the canonical workspace entry.
-- It contains only the universal terms and `Axioms` required to enter, route, and interpret an installed Framework plus compact deterministic assistance and a generated registry of direct `root routes`.
+- It contains only the terms and `Axioms` needed to enter, route, and understand an installed Framework. It also contains compact CLI help and a generated list of direct `root routes`.
 - Its authored sections remain, in order, the introduction, `Terms`, one grouped `Axioms` section, and `Entries`.
 - The `Axioms` groups remain, in order, `Authority And Inheritance`, `Routing`, `Tags And Loading` with `Defined Tags`, and `CLI` with `Applicable Commands`.
+- It lets each source answer one clear question and links to related sources instead of repeating their detail. A link does not change authority, scope, loading, or lifecycle.
+- Its short grouped lists keep related operational rules adjacent.
 - Category-specific behavior stays in routed sources. Workflow execution, Memory transitions, primitive details, Extension mechanics, and complete CLI behavior do not move into the loader.
 - The installed loader remains understandable without repository governance, source history, or the CLI.
 
 ### Authority And Inheritance
 
-- Authority is expressed by role and scope rather than one undifferentiated file-order hierarchy.
-- Platform constraints and runtime safety bound every action; clear user direction governs goals, priorities, consequential tradeoffs, and accepted changes within scope; declared external sources remain authoritative for delegated facts.
-- Before consequential work depends on an unsettled choice, the loader requires the best current model, explanation and planning depth proportionate to the request, only materially relevant missing decisions, coherent recommendations distinguished from accepted direction, outcome-oriented tradeoffs, and visible contextual assumptions when safe work can proceed.
-- The loader prevents repetitive confirmation, exhaustive specification demands, and low-impact preference gates without allowing agent assumptions to become silent accepted direction.
-- Loaded ancestor `Axioms` remain active below them, while a child adds only scope-specific `Axioms`.
-- Clear direction is not reconfirmed, an action request accepts decisions required to perform it, and unresolved ambiguity remains #Contextual until dependent work requires clarification.
-- Apparent #CurrentTruth conflicts are investigated before either side changes. Accepted changes update their authoritative `route` or system and preserve useful context from the previous state.
-- Narrower selected non-directive material may specialize broader material of the same type. Loaded directives add to ancestors and report conflicts instead of silently overriding them.
+- Role and scope determine authority. File order alone does not.
+- Platform constraints and runtime safety bound every action. Clear user direction sets task goals, priorities, important choices, and accepted changes. A declared external source remains authoritative for the facts assigned to it.
+- Explanation and planning match the request. Unless the user asks for deeper analysis, the first response gives the current understanding, one recommendation, and no more than one unresolved important choice.
+- The agent continues when accepted direction or a stated reversible assumption makes progress safe. It states assumptions and stops when uncertainty, conflict, or an authority boundary could significantly change the work.
+- Only the loader and recognized loaded `entrypoints` define active `Axioms`. Child routes inherit ancestor Axioms. A child entrypoint adds only rules for its narrower scope.
+- Clear direction is not reconfirmed. A request to act allows routine, reversible, in-scope choices needed to complete the task. The user decides unresolved choices that could significantly change the result, scope, risk, cost, external effects, or ability to undo the work.
+- Apparent #CurrentTruth conflicts are investigated before either source changes. Accepted changes update the source that defines current state and keep useful prior context.
+- Loaded Axioms and Directives apply within their scope. Accepted workspace-specific state replaces Open Forge defaults in that scope, and unresolved conflicts are reported.
+- Narrower selected non-binding material may specialize broader material of the same kind. Loaded binding instructions add to one another and report conflicts instead of silently overriding one another.
 
 ### Routing And Loading
 
-- The loader keeps general file terms in `Terms` and defines only four routing terms locally: `route`, `root route`, `slug`, and `managed route`.
+- The loader defines an `axiom` only as a mandatory instruction under an `Axioms` heading in the loader or a recognized loaded `entrypoint`, keeps general file terms in `Terms`, and defines only four routing terms locally: `route`, `root route`, `slug`, and `managed route`.
 - `description` remains the pre-load route-selection surface. Optional `responsibility` bounds what an opened file is responsible for defining without creating authority or loading behavior.
-- The routing section separates short `Terms`, universal `Rules`, and no more than two compact `Examples`.
+- The routing section separates short `Terms` and universal `Rules`.
 - A `root route` exists only where the loader exposes it; it cannot be scoped or recreated inside another `route`.
-- Every `route` below a `root route` is scopable through any number of routed `slugs` before, between, or after deeper `route` segments; each scope narrows everything that follows it.
-- A scope contains only the `routes` useful there and never needs to mirror another scope or the installed defaults.
+- Any number of routed `slugs` may narrow a route below its root. A slug may appear before, between, or after deeper route segments and narrows everything that follows it.
+- A scope contains only the routes useful there. It does not need to copy another scope or the installed defaults.
+- Specialized material uses the narrowest useful scope. Workspace-wide placement is reserved for material that applies across the workspace
+- Each scoped entrypoint chooses on-demand, #LoadNow, or #KeepInMind behavior according to omission cost and continuity need. Scope alone implies no loading tag
+- Selection uses visible paths, descriptions, tags, ancestor routes, and explicit links. It follows relevant branches recursively, keeps separately selected scopes as separate chains, and rechecks them after an important task change. It does not load file bodies only to discover routes.
 - Scoping preserves deeper `route` order and meaning. Manager-declared `route` segments retain their order through every scope.
 - A familiar `slug` or tag alone creates neither root behavior nor managed status.
 - Each declared manager identifies the `route` shapes it recognizes and changes only files it owns or safely identifies.
 - Users may add, move, replace, or remove `routes`. Any `route` outside a manager's declared shapes remains generically routable, and removed defaults stay absent unless restoration is explicitly requested.
 - Generated `Entries` remain navigation metadata. Detailed meaning comes from the routed destination or the authoritative source it identifies.
 - Loading and tags change visibility, timing, or classification without creating authority.
-- The loader remains authoritative for the meanings of #LoadNow, #KeepInMind, #Core, #Memory, #Extension, #Contextual, #CurrentTruth, and #Evergreen. Undefined tags remain routing and search signals.
-- #LoadNow traverses only visible children of an already-loaded parent. #KeepInMind discovers every routed #KeepInMind result across the workspace and follows each result's visible #LoadNow closure without loading unrelated descendants.
+- The loader remains authoritative for the meanings of #LoadNow, #KeepInMind, #Core, #Memory, #Extension, #Contextual, #CurrentTruth, and #Evergreen. Its #Memory definition identifies self-growing Markdown state without moving Memory mechanics into the loader. Undefined tags remain routing and search signals.
+- #LoadNow follows only entries exposed by an already-loaded parent. A #KeepInMind entrypoint loads proactively only during initial loader and #LoadNow traversal, in a selected route or scope, or when a file used by the task needs it as an ancestor. Every other routed #KeepInMind file loads across the workspace, so that form is reserved for continuity that must survive unrelated route changes. Missing ancestor entrypoints load first, then the tagged file and adjacent overwrite. #LoadNow continues through any `Entries` the tagged file exposes. Unrelated descendants stay excluded.
 - Every recovered result retains the authority and scope established by its `route` and content.
 - A user-owned `{name}.overwrite.md` is not an independent `route` and loads immediately after its base.
-- It inherits the base `route`, scope, and loading behavior, is not independently indexed or selected, and has final precedence only within that file's scope.
+- It inherits the base `route`, scope, and loading behavior. It is neither indexed nor selected independently. It wins only when the base and overwrite answer the same question differently, and only within the base scope. It does not override unrelated authority.
 
 ### Deterministic Assistance
 
 - CLI commands automate the complete plain-file contract and never become prerequisites for ordinary inspection.
-- `load --bodies` applies at every required #KeepInMind boundary, including handoff and closeout, rather than only task entry.
+- `load --bodies` remains a broad MVP audit command used at every #KeepInMind boundary, including handoff and closeout. It does not implement target-sensitive loading.
 - The loader names only commands with compact universal triggers: `load --bodies`, `chain`, `index`, and `doctor`.
 - Unimplemented commands, complete CLI help, installation lifecycles, and component internals stay outside the loader.
 
@@ -73,7 +79,7 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 
 ## Verification
 
-- [`src/cli/cli.closure.test.ts`](../../../../../../../src/cli/cli.closure.test.ts) compares source and dogfood authored loader content while excluding generated entries.
+- [`src/cli-mvp/cli.closure.test.ts`](../../../../../../../src/cli-mvp/cli.closure.test.ts) compares source and dogfood authored loader content while excluding generated entries.
 - Loader registry tests verify direct root generation, compatibility entrypoint names, and failure before mutation when one folder has multiple recognized entrypoints.
 - Load and chain tests verify loader-first order, visible transitive #LoadNow traversal, complete #KeepInMind discovery, inherited route order, and overwrite adjacency.
 - Doctor tests verify generated-region integrity, route resolution, containment, retired tags, and structural Framework requirements.

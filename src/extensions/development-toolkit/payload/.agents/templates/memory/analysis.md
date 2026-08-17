@@ -1,20 +1,21 @@
 ---
 open-forge:
-  description: Analysis template is used when one Emerging record must preserve a question, evidence, assumptions, alternatives, limits, and an unsettled current conclusion
+  description: Starting structure for an unsettled question, evidence, assumptions, alternatives, limits, and current conclusion
   tags: [Extension, Template, Memory, Analysis, Emerging, Contextual]
 ---
 
 # {Analysis Subject}
 
-<!--
+{
 Template selection:
-- Need: One candidate record for structured reasoning that future work may need to inspect or continue.
+
+- Need: One candidate record for reasoning that future work may need to inspect or continue.
 - Primary question: What does the available evidence currently support, under which assumptions and limits?
 
-Instantiate under the appropriate Emerging Analysis `route`.
-Analysis is contextual reasoning, not accepted direction. Promote accepted results into their correct authoritative sources and preserve only useful rationale.
-Replace this Template's frontmatter, title, placeholders, and comments.
--->
+Copy this Template into the appropriate Emerging Analysis route.
+Analysis is contextual reasoning, not accepted direction. Move accepted results into the sources that should define them and keep only useful reasoning.
+Replace the frontmatter, title, and placeholders, then remove this braced guidance.
+}
 
 ## Question
 
@@ -26,7 +27,7 @@ Replace this Template's frontmatter, title, placeholders, and comments.
 
 ## Evidence
 
-{Link to relevant Observations, measurements, authoritative sources, and contradictory evidence.}
+{Link to relevant Observations, measurements, current sources, and contradictory evidence.}
 
 ## Assumptions
 
@@ -34,7 +35,7 @@ Replace this Template's frontmatter, title, placeholders, and comments.
 
 ## Alternatives Or Interpretations
 
-{Describe materially different explanations, options, or frames without forcing premature convergence.}
+{Describe meaningfully different explanations, options, or frames without choosing too early.}
 
 ## Analysis
 
@@ -50,7 +51,7 @@ Replace this Template's frontmatter, title, placeholders, and comments.
 
 ## Next Evidence Or Promotion
 
-{State what should be investigated next and what would justify consolidation, a Decision, or an authoritative-source update.}
+{State what should be investigated next and what would justify consolidation, a Decision, or an update to a current source.}
 
 ## Related Sources
 

@@ -12,6 +12,7 @@ A canonical source template contains exactly one complete ordered managed block 
 
 ```md
 <!-- {marker}:start -->
+
 managed content
 <!-- {marker}:end -->
 ```
@@ -26,7 +27,7 @@ Text outside the managed block belongs to the workspace and remains byte-for-byt
 ### Entry Roles
 
 - A canonical entry is authoritative for the Framework handoff carried by that file.
-- A harness bridge contains only the harness-native reference to the canonical entry.
+- A harness bridge contains only harness-native references to the canonical Framework entries it exposes. It does not restate their policy.
 - Each harness-specific maintenance contract is authoritative for its external syntax and compatibility requirements.
 
 ### Installation

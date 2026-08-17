@@ -1,21 +1,21 @@
 ---
 open-forge:
-  description: Specialized capabilities exposed through native SKILL.md packages
+  description: Specialized capabilities provided through native SKILL.md packages
   tags: [LoadNow, Core, Skill]
 ---
 
 # Skills
 
-Each Skill follows the native contract defined by its own `SKILL.md`.
+Each Skill follows the rules in its own `SKILL.md`.
 
 ## Axioms
 
-- Use `Entries` when current work may benefit from a skill.
-- Follow the selected `SKILL.md` for its metadata, applicability, instructions, and resource loading.
-- Let the active agent runtime govern Skill activation, invocation, installation, and execution.
+- Check `Entries` when the work may benefit from a Skill.
+- Follow the selected `SKILL.md` for metadata, use, instructions, and resource loading.
+- The active agent runtime controls Skill activation, invocation, installation, and execution.
 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [User-centered experience analysis for journeys, interaction states, accessibility, design review, and implementation handoff. Use when interface or service behavior needs domain-specific experience criteria rather than general product or code reasoning.](experience-design/SKILL.md) - #Skill
+- [Analyze user journeys, interaction states, accessibility, design quality, and implementation handoff. Use when an interface or service needs experience-specific criteria.](experience-design/SKILL.md) - #Skill
 <!-- open-forge:generated-index:end -->

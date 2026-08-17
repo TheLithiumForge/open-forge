@@ -27,18 +27,20 @@ An overwrite is a customization of one base file. It is not a separate `route`, 
 
 ## Identity And Loading
 
-The shared filename stem and containing folder identify the pair:
+The shared filename stem and containing folder visibly identify the pair:
 
 ```text
 {name}.md
 {name}.overwrite.md
 ```
 
-Whenever the base is loaded, the overwrite is read immediately afterward. It inherits the base `route`, scope, and loading behavior.
+Whenever the base is loaded, the overwrite is read immediately afterward. It inherits the base `route`, scope, and loading behavior. A valid pair stays adjacent in the same folder, so the final visible local adjustment can be inspected with its base.
 
 An overwrite is never selected, indexed, or loaded independently. Frontmatter, `descriptions`, or tags inside it do not create a second routing surface or change the base file's generated `entry` or load policy.
 
-An overwrite without its base is an orphan. It has no inherited `route`, scope, or loading behavior and must be repaired, moved to an appropriate independent `route`, or removed.
+An overwrite without its base is an orphan. It has no inherited `route`, scope, or loading behavior and must be repaired, moved to an appropriate independent `route`, or removed. Tools and review fail closed when the pair or its identity cannot be established.
+
+The frozen MVP currently reports an orphan overwrite as a warning rather than enforcing this failure boundary. The [MVP Architecture](../../cli/mvp-architecture.md#metadata-and-overwrite-integrity) records that temporary liability without changing the required pair semantics.
 
 ## Composition And Precedence
 
@@ -72,10 +74,10 @@ After a base changes, review its overwrite when the adjustment may no longer mat
 - [Routing paths and identity](paths.md)
 - [Canonical loader](../../../../../loader.md)
 - [Loader maintenance contract](../../maintenance/payload/agents/loader.md)
-- [CLI MVP Architecture](../../cli/architecture.md)
+- [CLI MVP Architecture](../../cli/mvp-architecture.md)
 - [Extensions MVP Architecture](../../extensions/architecture.md)
 
 ## Decisions And Rationale
 
-- [Source and packaging](../../../decisions/source-and-packaging.md)
-- [Extension package boundary](../../../decisions/extension-package-boundary.md)
+- [Source and packaging](../../../decisions/framework/source-and-packaging.md)
+- [Extension package boundary](../../../decisions/extensions/extension-package-boundary.md)

@@ -6,23 +6,27 @@ open-forge:
 
 # Ideas
 
-Ideas preserve future possibilities, experiments, open questions, and options to explore later.
+Ideas keep possibilities, experiments, open questions, and options worth exploring later.
 
 ## Axioms
 
-- Read `Entries` when current work explores possibilities, plans future work, revisits postponed options, or needs prior exploration output.
-- Record an explicitly requested idea or exploration here without treating it as acceptance.
+- Read `Entries` when the work explores possibilities, plans future work, revisits postponed options, or needs earlier exploration.
+- Record a requested idea or exploration here without treating it as accepted.
 - Keep the problem, opportunity, or motivation visible enough to revisit later.
 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Rebuild the MVP CLI around the accepted ACE architecture, preservation-first lifecycle semantics, canonical Markdown help, and deterministic reasoning acceleration](cli-overhaul.md) - #Memory #Idea #Contextual #Candidate #CLI #Architecture #Product #Refactor #Markdown
+- [Define the accepted `--verbose` diagnostic content after ordinary human-readable failures and dogfood evidence exist](cli-debug-diagnostics.md) - #Memory #Idea #Contextual #Candidate #CLI #Debug #Diagnostics #Dogfood #Brownfield
+- [Explore additional thin package-manager wrappers after canonical native artifacts and the first npm wrapper ship](cli-distribution-channels.md) - #Memory #Idea #Contextual #Candidate #CLI #Distribution #Package #Bundle #Executable #Dogfood
+- [Evaluate whether the locally dogfooded recipe-bearing Development subtree should become a shipped specialization example or Extension](composable-workflow-entrypoints.md) - #Memory #Idea #Contextual #Candidate #Workflow #Routing #Orchestration #Agent
 - [Explore whether Decisions need explicit approval and replacement metadata without turning rationale records into a second lifecycle system](decision-lifecycle-metadata.md) - #Memory #Idea #Contextual #Candidate #Decision #Lifecycle #Metadata #History
 - [Deferred product ideas for reliability evaluation, route presets, provider adapters, formatting, technology packs, orchestration, and memory placement](deferred-product-ideas.md) - #Memory #Idea #Contextual #Candidate #Product #Extension
 - [Test Open Forge documentation with isolated known-answer questions that reveal whether unfamiliar agents can discover and understand intended behavior](documentation-comprehension-probes.md) - #Memory #Idea #Contextual #Candidate #Documentation #Evaluation #Comprehension #Agent
-- [Define the future Extensions package, source, trust, compatibility, composition, ownership, lifecycle, catalogue, and CLI boundaries](extensions-overhaul.md) - #Memory #Idea #Contextual #Candidate #Extension #Architecture #Product #Refactor
-- [Rework observations into a recurrence-driven self-growth mechanism instead of a per-session note obligation](observations-rework.md) - #Memory #Idea #Contextual #Candidate #Observation #AgentLearning
-- [What each framework area needs to reach S and S++ quality - measured claims first, automatic measurement second](rating-ladder.md) - #Memory #Idea #Contextual #Candidate #Quality #Benchmark #Roadmap
+- [Explore an optional reusable record set for consequential multi-gate programs without adding another Core primitive or mandatory methodology](durable-program-records.md) - #Memory #Idea #Contextual #Candidate #Program #Plan #Audit #Decision #Checkpoint #Template #Pattern #Workflow #Extension
+- [Explore post-initial Extension distribution, compatibility, migration, multi-root ownership, dependency expressiveness, and catalogue governance](extensions-overhaul.md) - #Memory #Idea #Contextual #Candidate #Extension #Architecture #Product #Distribution
+- [Review Open Forge prose for inflated formality, avoidable jargon, and wording that makes simple ideas harder to understand](framework-plain-language-audit.md) - #Memory #Idea #Contextual #Candidate #Framework #Documentation #Writing #PlainLanguage #Review
+- [Explore residual distributed deduplication and promotion support for the accepted occurrence-based Observation contract](observations-rework.md) - #Memory #Idea #Contextual #Candidate #Observation #AgentLearning
+- [Explore optional simple and sprint task Extensions that preserve one task authority while interoperating openly with external trackers](task-work-modes.md) - #Memory #Idea #Contextual #Candidate #Task #Backlog #Sprint #Extension #Integration
 - [Explore whether binding behavior needs explicit temporary or conditional activation beyond ordinary routed scope](temporary-conditional-directives.md) - #Memory #Idea #Contextual #Candidate #Directive #Scope #Lifecycle #Temporary
 <!-- open-forge:generated-index:end -->

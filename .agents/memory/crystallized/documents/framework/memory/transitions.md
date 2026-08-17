@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Current Memory capture, direct movement, consolidation, promotion, replacement, archival, restoration, and relationship-update contract
-  responsibility: Define how recorded material changes state when its meaning, scope, authority, or future value changes
+  description: Current Memory capture, integration, closeout reconciliation, movement, consolidation, promotion, archival, restoration, and relationship-update contract
+  responsibility: Define how recorded material is integrated and changes state when its meaning, scope, authority, expected lifetime, or future value changes
   tags: [Memory, Document, CurrentTruth, Evergreen, Framework, MemoryModel, Transition, Promotion, Archival, Restoration]
 ---
 
@@ -19,7 +19,7 @@ Material may be created directly in the correct state. Clear accepted direction 
 
 Capture the smallest useful record at the `route` matching its current role:
 
-- Active resumability context enters Working
+- Active resumability context enters a Working Checkpoint
 - Unsettled but plausibly reusable material enters Emerging
 - Clearly accepted durable state enters its authoritative current destination
 - Non-current material with useful historical value enters Archived after extraction
@@ -30,19 +30,19 @@ Repeated observations, parallel ideas, or overlapping current records trigger co
 
 ## Common Movements
 
-| Movement | Trigger |
-|---|---|
-| Working to Emerging | An active discovery may benefit future work but remains unsettled |
-| Working to Crystallized or another authoritative source | Active work produces clearly accepted durable state |
-| Working to Archived | Work ends and its history remains useful after extraction |
-| Emerging to Working | A candidate becomes active work without becoming accepted truth |
-| Emerging to Crystallized or another authoritative source | Evidence and direction establish accepted state |
-| Emerging to Archived | A rejected or replaced candidate retains useful reasoning |
-| Crystallized to Emerging | Accepted state is reopened for reconsideration without a replacement yet |
-| Crystallized to Archived | A replacement is established and the previous accepted state becomes history |
-| Archived to Working | Historical context becomes active resumability material |
-| Archived to Emerging | An old possibility becomes relevant but needs reconsideration |
-| Archived to Crystallized or another authoritative source | Current validation and clear acceptance restore it directly |
+| Movement                                                 | Trigger                                                                      |
+| -------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Working to Emerging                                      | An active discovery may benefit future work but remains unsettled            |
+| Working to Crystallized or another authoritative source  | Active work produces clearly accepted durable state                          |
+| Working to Archived                                      | Work ends and its history remains useful after extraction                    |
+| Emerging to Working                                      | A candidate becomes active work without becoming accepted truth              |
+| Emerging to Crystallized or another authoritative source | Evidence and direction establish accepted state                              |
+| Emerging to Archived                                     | A rejected or replaced candidate retains useful reasoning                    |
+| Crystallized to Emerging                                 | Accepted state is reopened for reconsideration without a replacement yet     |
+| Crystallized to Archived                                 | A replacement is established and the previous accepted state becomes history |
+| Archived to Working                                      | Historical context becomes active resumability material                      |
+| Archived to Emerging                                     | An old possibility becomes relevant but needs reconsideration                |
+| Archived to Crystallized or another authoritative source | Current validation and clear acceptance restore it directly                  |
 
 These examples describe common reasons, not an exhaustive transition graph.
 
@@ -53,6 +53,16 @@ Workspace authority determines when material becomes accepted. The [accepted-sta
 Promotion does not mean copying a candidate into Crystallized while leaving the original to imply a second active outcome. Move or reshape the durable result, update links, and archive or prune the candidate once any useful rationale is preserved.
 
 Use the [Memory authority boundary](model.md#authority-boundary) to choose between Crystallized Memory, a matching #Core `route`, code, or an external system. A linked decision or archived candidate may preserve why and how the accepted result emerged.
+
+## Integration And Closeout
+
+When material becomes accepted, identify the question each part answers, where it applies, and its expected lifetime before dependent work relies on it. Update every authoritative source that expresses distinct current meaning, rationale, mandatory behavior, or reusable shape, and link related sources instead of copying their complete contents. If no meaning should survive the task, create no durable artifact.
+
+Acceptance, durability, and reuse remain separate judgments. A temporary choice may be accepted current state within its scope without becoming a reusable Pattern or permanent direction.
+
+Before closeout, reconcile accepted durable outcomes, unsettled reusable findings, and state needed for continuation. Accepted durable meaning moves out of Working or Emerging independently of Checkpoint closeout. Working may retain an accepted temporary choice when its expected expiration is clear. Remove #Active and #KeepInMind from a Checkpoint when its active need ends, then archive or prune it. Move, archive, or prune candidate material after its outcome is accepted or rejected, or when the material becomes obsolete, preserving useful context first.
+
+This classification is ordinary agent work. The user is asked to choose a destination only when a material ambiguity cannot be resolved from accepted context.
 
 ## Replacement And Archival
 

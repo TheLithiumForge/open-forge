@@ -16,9 +16,13 @@ The [current Patterns document](../../../framework/primitives/patterns.md) defin
 ## Contract
 
 - Frontmatter uses #LoadNow, #Core, and #Pattern so the category and its selection rule enter baseline context
-- The entrypoint directs agents to inspect Patterns when creating, changing, or reviewing an inspectable result
-- Every routed Pattern defines a recognizable reusable shape and enough positive scope to judge relevance
-- An applicable Pattern remains the established default shape while a deliberate alternative stays possible
+- The entrypoint directs agents to check Patterns when creating, changing, or reviewing something with visible structure
+- Every routed Pattern defines one recognizable reusable shape and enough scope to judge relevance
+- A new Pattern requires an accepted shape that remains useful for future related work
+- One-off work, temporary transitions, and unsettled candidates do not become Patterns only because they have structure
+- A Pattern stays focused on one reusable shape
+- Concrete examples remain valid against their APIs, formats, and tools. Intentionally incomplete examples identify themselves as schematic
+- An applicable Pattern remains the default shape while a deliberate alternative stays possible
 - Binding shape requirements use a Directive or another active Axiom rather than silently changing Pattern authority
 - Child routes may narrow or preserve positive scope through the ordinary routing contract
 - The installable source begins with no opinionated Pattern files

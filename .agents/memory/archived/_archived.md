@@ -1,32 +1,26 @@
 ---
 open-forge:
-  description: Historical memory kept for context after it is no longer current truth
+  description: Useful history that no longer controls current work
   tags: [Memory, Archived, Contextual, Historical]
 ---
 
 # Archived Memory
 
-Archived memory preserves historical context after it stops being #CurrentTruth.
+Archived Memory keeps useful history after it stops being #CurrentTruth.
 
 ## Axioms
 
 - Read `Entries` when current work may need archived context.
-- Preserve origin, the reason material was archived, and what replaced it when a replacement exists.
-- Keep historical records that belong in Memory here. Preserve relevant history about other artifacts through links to their retained locations.
-- Extract useful current material to its authoritative source before archiving. That source may be another #Memory `route`, a matching #Core `route`, or an external system.
-- Restore archived material only into an explicit current destination and validate it before treating it as current.
+- Keep historical Memory records here. Link to retained sources when the history belongs elsewhere.
+- Record where the material came from, why it was archived, and what replaced it when a replacement exists.
+- Move useful current meaning to the source that defines it before archiving. That source may be another Memory route, a matching #Core route, or an external system.
+- Validate archived material before restoring it to an explicit current destination.
 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Historical Open Forge analysis kept after its conclusions were accepted, superseded, or reassigned](analysis/_analysis.md) - #Memory #Archived #Analysis #Contextual #Historical
 - [Superseded pre-reset Open Forge architecture preserved for historical context](architecture_old.md) - #Memory #Archived #Contextual #Historical #Architecture #Framework
-- [Where Open Forge historical records are archived, what replaced them, and how to treat them](archive-map.md) - #Memory #Archived #Map #Contextual #Historical
-- [Historical Open Forge handoffs kept after their transfer work completed or was superseded](handoffs/_handoffs.md) - #Memory #Archived #Handoff #Contextual #Historical
+- [Historical CLI release audits, migration, and review material kept outside current program authority](cli-release/_cli-release.md) - #Memory #Archived #Contextual #Historical #CLI #Release #Review
+- [Historical CLI-v2 designs, decisions, governance, plans, and implementation records kept only as raw input for the new CLI](cli-v2/_cli-v2.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData
 - [Historical Open Forge ideas and snapshots kept after application, supersession, or pruning](ideas/_ideas.md) - #Memory #Archived #Idea #Contextual #Historical
-- [Historical Open Forge observations kept after resolution, promotion, or supersession](observations/_observations.md) - #Memory #Archived #Observation #Contextual #Historical
-- [Historical Open Forge planning snapshots kept after completion, pruning, or replacement](planning/_planning.md) - #Memory #Archived #Planning #Contextual #Historical
-- [Superseded pre-ACE Open Forge README preserved after the public product entry was rebuilt](readme_old.md) - #Memory #Archived #Contextual #Historical #README #Product #Documentation
-- [Historical Open Forge sessions and original prompt material kept after work completed or was superseded](sessions/_sessions.md) - #Memory #Archived #Session #Contextual #Historical
-- [Superseded pre-reset Open Forge vision preserved for historical context](vision_old.md) - #Memory #Archived #Contextual #Historical #Vision #Product
 <!-- open-forge:generated-index:end -->

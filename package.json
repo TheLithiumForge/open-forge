@@ -1,39 +1,56 @@
 {
-    "name": "open-forge",
-    "version": "0.0.0",
-    "description": "A user-owned, human-readable, file-native operating layer for Adaptive Context Engineering.",
-    "type": "module",
-    "packageManager": "bun@1.3.11",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/TheLithiumForge/open-forge.git"
-    },
-    "bin": {
-        "open-forge": "./dist/cli.mjs"
-    },
-    "files": [
-        "dist/cli.mjs",
-        "docs/cli.md",
-        "docs/development.md",
-        "docs/extensions.md",
-        "src/open-forge",
-        "src/extensions",
-        "!src/open-forge/**/.obsidian",
-        "!src/open-forge/**/.obsidian/**",
-        "README.md",
-        "LICENSE"
-    ],
-    "scripts": {
-        "bench": "bun run benchmarks/harness/runner.ts",
-        "build": "bun run build.ts",
-        "index": "bun run src/cli/cli.ts index ./src/open-forge",
-        "test": "bun run test:fast",
-        "test:fast": "bun run tests/run-tests.ts unit",
-        "test:closure": "bun run tests/run-tests.ts closure",
-        "test:ci": "bun run tests/run-tests.ts all",
-        "pack:local": "npm link"
-    },
-    "engines": {
-        "node": ">=18"
-    }
+  "name": "open-forge",
+  "version": "0.0.0",
+  "description": "A user-owned, human-readable, file-native operating layer for Adaptive Context Engineering.",
+  "type": "module",
+  "packageManager": "bun@1.3.14",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheLithiumForge/open-forge.git"
+  },
+  "bin": {
+    "open-forge": "./dist/cli.mjs",
+    "open-forge-old": "./dist/cli.mjs"
+  },
+  "files": [
+    "dist/cli.mjs",
+    "dist/open-forge-src",
+    "docs/cli.md",
+    "docs/development.md",
+    "docs/extensions.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "bun run build.ts",
+    "build:assets": "bun run src/cli-mvp/build/generate-build-module.ts",
+    "cli:old": "bun run src/cli-mvp/cli.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "apm:install": "apm install --frozen --target opencode,codex",
+    "check:fast": "bun run typecheck && bun run lint",
+    "check": "bun run format:check && bun run typecheck && bun run lint ",
+    "pack:local": "npm link"
+  },
+  "engines": {
+    "node": ">=22.12.0",
+    "bun": ">=1.3.0"
+  },
+  "dependencies": {
+    "@bomb.sh/tab": "^0.0.21",
+    "@commander-js/extra-typings": "~15.0.0",
+    "commander": "~15.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/bun": "^1.3.14",
+    "@types/node": "^26.1.2",
+    "@typescript/native": "npm:typescript@^7.0.2",
+    "eslint": "^10.8.0",
+    "eslint-config-prettier": "10.1.8",
+    "prettier": "3.9.6",
+    "typescript": "6.0.2",
+    "typescript-eslint": "^8.65.0"
+  }
 }

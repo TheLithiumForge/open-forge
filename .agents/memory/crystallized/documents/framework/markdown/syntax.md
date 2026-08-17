@@ -35,12 +35,36 @@ Open Forge-authored files use:
 - Blank-line separation using `\n\n` between paragraphs, headings, lists, and fenced blocks
 - Hyphens using `- item` for unordered lists
 - Sequential decimal markers using `1. item`, `2. item`, and `3. item` for ordered lists
-- Triple-backtick fences using ```` ``` ```` before and after code blocks
+- Triple-backtick fences using ` ``` ` before and after code blocks
 - Inline Markdown links using `[label](destination)` for routes and clickable references
 - YAML frontmatter using `---` before and after the metadata block when indexed metadata is required
 - Bare tags using `#Tag` where tags appear in prose or route metadata
 
-Machine-readable sections use only their declared line shape. The [Open Forge Writing Standard](../../maintenance/writing.md) defines prose structure, examples, and when a table communicates more clearly than prose or a list.
+Machine-readable sections use only their declared line shape. For this repository's maintained prose, the [Open Forge Writing Standard](../../maintenance/writing.md) defines detailed prose guidance; it does not add an installed Markdown contract.
+
+## Visible Source And Control Markers
+
+Open Forge keeps agent-facing meaning visible in raw and rendered Markdown.
+HTML comments do not carry instructions, selection guidance, behavioral
+requirements, or other authored meaning.
+
+The only canonical HTML comments are these exact machine-owned boundary
+tokens:
+
+```text
+<!-- open-forge:start -->
+<!-- open-forge:end -->
+<!-- open-forge:generated-index:start -->
+<!-- open-forge:generated-index:end -->
+```
+
+They must be paired and position-valid under the owning workspace-block or
+generated-index contract. The markers contain no instruction body; Markdown
+between them remains visible.
+
+Templates keep removable source guidance in visible multiline `{...}`
+placeholders. Ordinary prose uses visible Markdown rather than another comment
+or renderer-specific concealment mechanism.
 
 ## Frontmatter
 
@@ -62,6 +86,20 @@ The canonical block:
 - Provides one natural-language `description`
 - May provide one natural-language `responsibility`
 - Provides a YAML list of tags without `#` prefixes
+
+Deterministic tools interpret this exact Open Forge metadata shape rather than
+promising arbitrary YAML support. Canonical output uses the `open-forge:`
+scope, single-line or indented multiline text values, and an inline tag list.
+The [compatibility boundary](compatibility.md) separates current canonical
+syntax, frozen-MVP compatibility, and historical CLI-v2 proposals.
+
+Canonical output and compatible input are distinct. The new CLI must accept or
+reject noncanonical value forms through an explicit compatibility decision. A
+YAML implementation does not make arbitrary YAML part of the Framework.
+
+Authored frontmatter must be semantically complete: a non-empty natural-language `description` must describe the routed file accurately enough to select or skip it, and tags must accurately classify its loading, role, state, scope, or useful topic. Tools and review fail closed when required authored metadata is missing, malformed, ambiguous, or semantically inconsistent with the routed source rather than inventing meaning from filenames or bodies.
+
+The frozen MVP has not implemented this enforcement yet. It may fabricate a fallback description and tags; the [MVP Architecture](../../cli/mvp-architecture.md#metadata-and-overwrite-integrity) records that temporary liability without changing the canonical contract.
 
 The `description` is the pre-load selection surface. It explains enough purpose, trigger, or outcome for a reader to select or skip the route without opening its body. It is natural and suggestive rather than a repeated formula.
 
@@ -98,9 +136,13 @@ For example:
 - Keep the routed contract explicit.
 ```
 
-Setext headings and alternate heading names may render as Markdown, but Open Forge does not promise to interpret them as equivalent semantic sections.
+CommonMark Setext headings may be discovered and selected structurally by the
+new CLI. They do not become canonical Open Forge authoring or equivalent
+semantic sections merely because the parser represents them as headings. Parser
+extensions do not add other public heading forms without a later compatibility
+decision.
 
-The component source that requires a named section defines its meaning. Markdown syntax alone does not make `Axioms` binding, `Required Routes` unconditional, or another heading semantically active.
+The component source that requires a named section defines its meaning. Markdown syntax alone does not make `Axioms` binding or another heading semantically active.
 
 ## Links And Code Literals
 
@@ -121,12 +163,13 @@ Prefer anchored relative links to repeated explanations when another authoritati
 
 - [Routed Markdown representation](routes.md)
 - [Markdown compatibility boundary](compatibility.md)
+- [Historical CLI-v2 evidence](../../../archived/cli-v2/_cli-v2.md)
 - [Framework Architecture](../architecture.md)
 - [Open Forge Writing Standard](../../maintenance/writing.md)
 - [Canonical loader](../../../../../loader.md)
 
 ## Decisions And Rationale
 
-- [Canonical Markdown authoring](../../../decisions/canonical-markdown.md)
-- [User-facing writing](../../../decisions/user-facing-writing.md)
-- [Tag semantics](../../../decisions/tags.md)
+- [Canonical Markdown authoring](../../../decisions/framework/canonical-markdown.md)
+- [User-facing writing](../../../decisions/framework/user-facing-writing.md)
+- [Tag semantics](../../../decisions/framework/tags.md)

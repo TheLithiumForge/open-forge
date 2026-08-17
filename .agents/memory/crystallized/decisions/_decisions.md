@@ -1,40 +1,25 @@
 ---
 open-forge:
-  description: Accepted rationale that explains important choices and their consequences
+  description: What was chosen, why, and what follows from the choice
   tags: [LoadNow, Memory, Decision, Rationale, CurrentTruth]
 ---
 
 # Decisions
 
-Decisions preserve accepted rationale for important choices that may need to be understood later.
+Decisions record important accepted choices and why they were made.
 
 ## Axioms
 
-- Read `Entries` when current work needs rationale for an important choice.
-- Preserve what was chosen and why. Link to the authoritative source that expresses the current result when one exists.
-- Keep one coherent choice or tightly coupled decision cluster in each record. Split unrelated choices, consolidate compatible overlap, and keep exact current specifications in their authoritative sources.
-- Consolidate, reshape, or link overlapping Decisions when their accepted rationale is compatible. Archive or link rationale behind a replaced choice, and surface material divergence for discussion instead of merging it silently.
+- Read `Entries` when the work needs the reason behind an important choice.
+- Record what was chosen and why. Link to the source that defines the current result when one exists.
 - Keep alternatives, tradeoffs, constraints, and consequences only when they help future work.
+- Keep each Decision focused on one choice or a tightly related group of choices. Split unrelated choices and consolidate compatible overlap. Keep exact current specifications in the sources that define them.
+- Consolidate, reshape, or link overlapping Decisions when their reasoning agrees. Archive or link the reason behind a replaced choice. Surface important disagreement instead of merging it silently.
 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Open Forge turns incomplete natural intent into decision-ready context through recommendations, consequential questions, visible assumptions, and proportionate durable extraction](adaptive-decision-elicitation.md) - #Memory #Decision #CurrentTruth #Product #Framework #Conversation #Decision #Elicitation #UserExperience
-- [Open Forge states role and authority relationships directly, names semantic authority by source type, and reserves ownership for possession or managed lifecycle](authoritative-source-terminology.md) - #Memory #Decision #CurrentTruth #Terminology #Authority #Documentation
-- [Benchmark design separates stable tasks, reusable inputs, exact recipes, and durable evidence while limiting review claims to observable traces](benchmark-design.md) - #Memory #Decision #CurrentTruth #Benchmark #Dogfood #Evaluation
-- [Open Forge uses one canonical authoring form wherever Markdown carries Framework meaning while treating compatibility syntax as input-only](canonical-markdown.md) - #Memory #Decision #CurrentTruth #Framework #Markdown #Authoring #Syntax #Compatibility
-- [Core uses distinct reusable content roles instead of one generic knowledge bucket, and every new primitive must earn nonduplicative semantics](core-primitives.md) - #Memory #Decision #CurrentTruth #Core #Primitive
-- [The pre-release first-party catalogue is one deliberately small development toolkit containing six lean Workflows, one Experience Design Skill, and nine Templates](development-toolkit.md) - #Memory #Decision #CurrentTruth #Extension #Workflow #Skill #Template #Catalogue #DevelopmentToolkit
-- [Extensions deliver optional whole files through existing routes, and installed files carry complete runtime meaning without package metadata or the CLI](extension-package-boundary.md) - #Memory #Decision #CurrentTruth #Extension #Package #RuntimeBoundary
-- [Reliability-critical context loads unconditionally and early; conditional context must be cheap to skip and cheap to recover from](loading-reliability.md) - #Memory #Decision #CurrentTruth #Loading #Routing #Reliability
-- [Memory preserves working, emerging, crystallized, and archived state without activating behavior it describes](memory-model.md) - #Memory #Decision #CurrentTruth #MemoryModel
-- [Open Forge stays markdown-first, user-directed, small by default, and optimized for recursive customization](product-direction.md) - #Memory #Decision #CurrentTruth #Product
-- [Small recursive `entrypoints` preserve local scope while one recognized `entrypoint` and explicit `root routes` remove routing ambiguity](routing-model.md) - #Memory #Decision #CurrentTruth #Routing
-- [Entry descriptions support pre-load selection while routed bodies provide complete role-specific meaning](routing-surfaces.md) - #Memory #Decision #CurrentTruth #Routing #Formatting
-- [Accepted universal scoping rules, root boundary, `managed route` relationship, and concrete `slug` behavior](scope-and-slugs.md) - #Memory #Decision #CurrentTruth #Routing #Scope
-- [Users receive `src/open-forge/` as the payload while repository-only Maintenance contracts govern reviewed source without becoming hidden runtime context](source-and-packaging.md) - #Memory #Decision #CurrentTruth #Packaging #Governance
-- [Open Forge separates tags for loading, Framework composition, truth status, synchronization, and ordinary classification](tags.md) - #Memory #Decision #CurrentTruth #Tags #Routing
-- [Templates are a distinct Core primitive for copy-ready source artifacts whose ownership transfers to independently maintained results](template-primitive.md) - #Memory #Decision #CurrentTruth #Core #Template #Primitive
-- [User-facing Open Forge files use positive natural language and compact selection surfaces](user-facing-writing.md) - #Memory #Decision #CurrentTruth #Formatting #Documentation #Routing
-- [Workflows use a minimal goal, steps, and completion recipe while optional routed dependencies remain distinct from containment](workflow-shape.md) - #Memory #Decision #CurrentTruth #Workflow #Routing #Orchestration
+- [Accepted rationale for optional Extension packaging, ownership, and catalogue choices](extensions/_extensions.md) - #Memory #Decision #CurrentTruth #Extension #Rationale
+- [Accepted Framework rationale for routing, authority, Core roles, Memory, Markdown, packaging, and user-facing writing](framework/_framework.md) - #Memory #Decision #CurrentTruth #Framework #Rationale
+- [Accepted product-direction rationale, distinct from Framework and implementation decisions](product/_product.md) - #Memory #Decision #CurrentTruth #Product #Rationale
 <!-- open-forge:generated-index:end -->

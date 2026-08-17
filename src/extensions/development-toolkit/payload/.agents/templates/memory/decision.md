@@ -1,20 +1,21 @@
 ---
 open-forge:
-  description: Decision template is used when one accepted record must preserve what was chosen, why, with which consequences, and where the result now lives
+  description: Starting structure for what was chosen, why, what follows, and where the current result lives
   tags: [Extension, Template, Memory, Decision, Crystallized]
 ---
 
 # {Decision}
 
-<!--
+{
 Template selection:
-- Need: One durable rationale record for a discrete accepted choice.
-- Primary question: What was chosen, why was it accepted, what follows from it, and which authoritative sources express the result?
 
-Instantiate under the appropriate Crystallized Decisions `route`.
-The Decision is authoritative for why. Current documents, Directives, source code, or external systems are authoritative for the resulting current state.
-Replace this Template's frontmatter, title, placeholders, and comments.
--->
+- Need: One durable rationale record for a discrete accepted choice.
+- Primary question: What was chosen, why was it accepted, what follows from it, and which sources define the current result?
+
+Copy this Template into the appropriate Crystallized Decisions route.
+The Decision records why the choice was made. Current documents, Directives, source code, or external systems define the resulting current state.
+Replace the frontmatter, title, and placeholders, then remove this braced guidance.
+}
 
 ## Context
 
@@ -36,10 +37,10 @@ Replace this Template's frontmatter, title, placeholders, and comments.
 
 {State important benefits, costs, risks, follow-up obligations, and conditions that could justify reconsideration.}
 
-## Authoritative Sources
+## Current Sources
 
-{Link forward to every current document, Directive, implementation, or external system that expresses the accepted result authoritatively. These sources express what is current now. They are not evidence or authority backing the Decision.}
+{Link to every current document, Directive, implementation, or external system that defines the accepted result. These sources state what is current now. The Decision records why.}
 
 ## Decision Relationships
 
-{Link Decisions this one replaces, narrows, depends on, or materially affects. Omit when none exist.}
+{Link Decisions this one replaces, narrows, depends on, or significantly affects. Omit when none exist.}

@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Current Working Memory purpose, expected expiration, authority, extraction, resumability, and shipped Handoffs and Sessions roles
+  description: Current Working Memory purpose, expected expiration, authority, extraction, resumability, and shipped Checkpoints and Handoffs roles
   responsibility: Define what makes temporary resumability state valid and what happens when its active need ends
   tags: [Memory, Document, CurrentTruth, Evergreen, Framework, MemoryModel, Working, Contextual, Resumability]
 ---
@@ -9,11 +9,11 @@ open-forge:
 
 ## State Contract
 
-[Working Memory](../../../../working/_working.md) contains plans, current priorities, intermediate state, active sessions, handoffs, and coordination needed to continue or resume work.
+[Working Memory](../../../../working/_working.md) contains plans, current priorities, intermediate state, checkpoints, handoffs, and coordination needed to continue or resume work.
 
 Agents may freely maintain Working Memory within the task's authority. It stays current, bounded, and cheap to reread. Its defining property is that the active need is expected to end.
 
-Working Memory is resumability context, not accepted truth. A record may be partial or change rapidly while the work it supports remains active.
+Working Memory does not establish acceptance by itself. Most records are contextual, partial, or changing. It may preserve an explicitly accepted temporary choice when the source, scope, and expected expiration are clear. That scoped acceptance does not make the choice durable or suitable for Crystallized Memory.
 
 ## Expiration And Extraction
 
@@ -29,11 +29,11 @@ Expected expiration does not require premature deletion. It requires the `route`
 
 ## Shipped Roles
 
-The standard [Handoffs](../../../../working/handoffs/_handoffs.md) `route` provides concise static transfer notes. A new Handoff is unnecessary when a more specific `route` already contains complete resume context.
+The standard [Checkpoints](../../../../working/checkpoints/_checkpoints.md) `route` keeps the current state, current step, and next steps of one active workstream in a form any future reader can use. An active Checkpoint carries #Active and #KeepInMind only while active, and is refreshed after material state changes and restoration.
 
-The standard [Sessions](../../../../working/sessions/_sessions.md) `route` preserves fuller chronological context, reconstruction material, and one bounded active checkpoint when work may cross a context boundary.
+The standard [Handoffs](../../../../working/handoffs/_handoffs.md) `route` provides sealed snapshots for actual transfers and explicitly planned resumptions after context boundaries. Create one only when the boundary state must remain stable while the active Checkpoint may continue to change. The Handoff records its boundary status directly and remains unchanged; later state belongs in the Checkpoint or a new Handoff. Routine pauses and ordinary closeout do not require one.
 
-Projects may add plans, backlogs, checkpoints, or other Working scopes when those `routes` earn their cost. These are customizable working roles, not additional Memory states.
+Projects may add plans, backlogs, history, or other Working scopes when those `routes` earn their cost. These are customizable working roles, not additional Memory states.
 
 ## Related Current Sources
 

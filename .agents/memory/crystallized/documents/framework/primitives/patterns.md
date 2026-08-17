@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Current Pattern role, continuing structural reference, deliberate variation, scope, and relationships with Templates and binding requirements
-  responsibility: Define how reusable inspectable shapes remain established defaults without becoming copy-once sources or mandatory behavior
+  description: Current Pattern role, admission and lifetime test, continuing structural reference, example validity, scope, and related Core roles
+  responsibility: Define when accepted inspectable shapes qualify as continuing reusable defaults without promoting temporary structure or becoming mandatory behavior
   tags: [Memory, Document, CurrentTruth, Evergreen, Framework, Core, Pattern, Structure, Scope]
 ---
 
@@ -16,6 +16,8 @@ Patterns make related code, files, APIs, documents, naming, placement, and bound
 ## Continuing Reference
 
 An applicable Pattern remains relevant after a result is created. It is the established default shape for its selected scope, not merely an example used once.
+
+A shape qualifies as a Pattern only when accepted direction establishes it as useful for future related results or repeated changes. A one-off implementation, temporary transition, or unsettled candidate does not qualify merely because it has visible structure. Temporary work may apply an existing reusable Pattern, but that does not make the temporary result itself a Pattern.
 
 A different shape may be chosen deliberately when the case warrants it. The reason should remain visible so the variation is distinguishable from accidental drift. When conformance must be binding, a Directive or another applicable Axiom owns that requirement.
 
@@ -34,6 +36,8 @@ Patterns and Templates may describe the same family of artifacts while serving o
 
 A Pattern may be explained by Guidance, applied through a Workflow, or implemented with a Skill. Each relationship retains its own semantic role and authoritative source.
 
+One accepted design may need several linked sources. A Pattern preserves only the reusable inspectable shape. Current documents preserve integrated current meaning, Decisions preserve rationale, and Directives preserve mandatory behavior.
+
 ## Examples And Boundaries
 
 Useful Patterns include:
@@ -46,6 +50,8 @@ Useful Patterns include:
 
 A finished file copied to start another artifact is a Template. A mandatory prohibition is a Directive. A sequence of actions for reaching a goal is a Workflow.
 
+When a Pattern is created or changed, its concrete examples remain valid against the APIs, formats, and tools they use. Label intentionally incomplete examples as schematic so readers do not mistake them for verified implementations.
+
 ## Related Current Sources
 
 - [Core primitive model](model.md)
@@ -55,5 +61,5 @@ A finished file copied to start another artifact is a Template. A mandatory proh
 
 ## Decisions And Rationale
 
-- [Distinct Core primitive roles](../../../decisions/core-primitives.md)
-- [Templates as a Core primitive](../../../decisions/template-primitive.md)
+- [Distinct Core primitive roles](../../../decisions/framework/core-primitives.md)
+- [Templates as a Core primitive](../../../decisions/framework/template-primitive.md)

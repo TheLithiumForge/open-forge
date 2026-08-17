@@ -9,7 +9,7 @@ open-forge:
 Status: archived 2026-07-18.  
 Original route: `.agents/memory/emerging/ideas/extension-skill-sharing.md`.  
 Archived because: install-time dependency sharing shipped and remaining lifecycle and multi-manager questions were extracted to current planning.  
-Current replacement: `.agents/memory/crystallized/decisions/extension-package-boundary.md`, `.agents/memory/crystallized/documents/extensions/architecture.md`, `docs/extensions.md`, and `.agents/memory/working/backlog.md`.
+Current replacement: `.agents/memory/crystallized/decisions/extensions/extension-package-boundary.md`, `.agents/memory/crystallized/documents/extensions/architecture.md`, `docs/extensions.md`, and `.agents/memory/working/backlog.md`.
 
 Direction sketched 2026-07-08. Install-time sharing through content-agnostic dependency extensions was implemented 2026-07-15 and expanded to the first-party architecture, vision, planning, implementation, and quality capabilities. Build-time vendoring, version compatibility, and update/remove ownership remain open.
 

@@ -42,7 +42,7 @@ Date: 2026-07-12. Scope: the 20 structured v7-v11 run reports, accepted v7-v10 s
 - Assertions inside one run are correlated and do not increase the independent sample size. Confirmatory counts must be powered from pilot rates, task clustering, non-inferiority margins, and preregistered stopping rules.
 - This does not mean every experiment needs 36 runs per cell. It means strong reliability claims must name their population and interval, while smaller matrices remain explicitly engineering smoke or pilot evidence.
 
-Suggested promotion destination after a clean validating generation: benchmark governance and CI #Core routes; until then keep this finding contextual.
+Suggested promotion destination after a clean validating generation: benchmark governance and CI #Core `routes`; until then keep this Observation contextual.
 
 ## P0 Harness Mitigation: 2026-07-15
 
@@ -58,4 +58,4 @@ Suggested promotion destination after a clean validating generation: benchmark g
 
 The P0 mitigation above is historical. It correctly exposed the limits of the old corpus, but its authentication, eligibility, and experiment machinery became the dominant benchmark experience without making an ordinary dogfood run easier to understand or perform.
 
-The [accepted benchmark design](../../crystallized/decisions/benchmark-design.md) replaces it with framework-agnostic scenarios, reusable primitive treatments, exact meta-scenarios, prompt and baseline-tree identity, a complete runtime-observable trace boundary, worker self-review, and independent orchestrator review. Stronger experimental controls may be added around a run set when a concrete claim requires them; they are not the default composition contract.
+The [accepted benchmark design](../../crystallized/decisions/benchmarks/benchmark-design.md) replaces it with framework-agnostic scenarios, reusable primitive treatments, exact meta-scenarios, prompt and baseline-tree identity, a complete runtime-observable trace boundary, worker self-review, and independent orchestrator review. Stronger experimental controls may be added around a run set when a concrete claim requires them; they are not the default composition contract.

@@ -40,7 +40,7 @@ The package was consolidated with the lean Workflows and Experience Design Skill
 
 ## Current Sources
 
-- [Development toolkit decision](../../crystallized/decisions/development-toolkit.md)
+- [Development toolkit decision](../../crystallized/decisions/extensions/development-toolkit.md)
 - [Template role](../../crystallized/documents/framework/primitives/templates.md)
 - [Template Maintenance contract](../../crystallized/documents/maintenance/payload/agents/templates.md)
 - [Extensions MVP Architecture](../../crystallized/documents/extensions/architecture.md)

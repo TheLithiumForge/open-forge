@@ -27,7 +27,7 @@ More specific selected Guidance normally provides the better fit, but specializa
 
 ## Relationships
 
-Guidance can explain how to choose among Patterns, when to use a Skill or Workflow, or what tradeoffs surround a Workspace destination. Those links preserve separate roles:
+Guidance can explain how to choose among Patterns, when to use a Skill or Workflow, or what tradeoffs surround a Map destination. Those links preserve separate roles:
 
 - A Directive states required behavior
 - A Pattern provides an established inspectable shape
@@ -37,6 +37,16 @@ Guidance can explain how to choose among Patterns, when to use a Skill or Workfl
 
 A decision preserves why an important choice was accepted. Guidance generalizes reusable judgment from one or more choices without replacing their historical rationale.
 
+## Standard Adaptive Collaboration
+
+Open Forge ships one standard Guidance for adapting exploration, questions, detail, convergence, and review to the current user and decision.
+
+At convergence, Adaptive Collaboration separates settled and unsettled material, then identifies the question each accepted part answers, where it applies, and its expected lifetime. Related outcomes may require several linked sources, but acceptance alone does not make them durable or reusable. Classification remains agent work unless material ambiguity requires user judgment.
+
+After broad, consequential, difficult-to-reverse work or changes spanning several durable knowledge roles, it may offer an independent review when a fresh perspective could materially reduce omissions, excessive promotion, duplication, contradiction, or risk. The offer states its focus and additional model tokens. Unless standing direction already authorizes the expense, the user decides whether it runs.
+
+When context isolation is available, the reviewer starts without the implementing context. It receives the accepted goal, applicable rules, workspace, and resulting changes, then discovers relevant sources independently. Without context isolation, the check is an adversarial second pass rather than an independent review. Either form remains read-only unless changes receive separate authority.
+
 ## Examples And Boundaries
 
 Useful Guidance includes:
@@ -44,6 +54,7 @@ Useful Guidance includes:
 - criteria for choosing between two valid architectural approaches
 - tradeoffs for introducing a dependency
 - advice for adapting review depth to risk
+- advice for exploring ideas and matching collaboration depth to the current user and decision
 - signals that a familiar Pattern does not fit
 
 A mandatory naming rule is a Directive, not Guidance. A copy-ready document is a Template. A description of one accepted system state belongs in its current document rather than in Guidance.
@@ -52,9 +63,10 @@ A mandatory naming rule is a Directive, not Guidance. A copy-ready document is a
 
 - [Core primitive model](model.md)
 - [Guidance entrypoint](../../../../../guidance/_guidance.md)
+- [Adaptive Collaboration](../../../../../guidance/adaptive-collaboration.md)
 - [Guidance maintenance contract](../../maintenance/payload/agents/guidance.md)
 - [Authority model](../architecture.md#authority)
 
 ## Decisions And Rationale
 
-- [Distinct Core primitive roles](../../../decisions/core-primitives.md)
+- [Distinct Core primitive roles](../../../decisions/framework/core-primitives.md)

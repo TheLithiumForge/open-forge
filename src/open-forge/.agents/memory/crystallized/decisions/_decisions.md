@@ -1,20 +1,20 @@
 ---
 open-forge:
-  description: Accepted rationale that explains important choices and their consequences
+  description: What was chosen, why, and what follows from the choice
   tags: [LoadNow, Memory, Decision, Rationale, CurrentTruth]
 ---
 
 # Decisions
 
-Decisions preserve accepted rationale for important choices that may need to be understood later.
+Decisions record important accepted choices and why they were made.
 
 ## Axioms
 
-- Read `Entries` when current work needs rationale for an important choice.
-- Preserve what was chosen and why. Link to the authoritative source that expresses the current result when one exists.
-- Keep one coherent choice or tightly coupled decision cluster in each record. Split unrelated choices, consolidate compatible overlap, and keep exact current specifications in their authoritative sources.
-- Consolidate, reshape, or link overlapping Decisions when their accepted rationale is compatible. Archive or link rationale behind a replaced choice, and surface material divergence for discussion instead of merging it silently.
+- Read `Entries` when the work needs the reason behind an important choice.
+- Record what was chosen and why. Link to the source that defines the current result when one exists.
 - Keep alternatives, tradeoffs, constraints, and consequences only when they help future work.
+- Keep each Decision focused on one choice or a tightly related group of choices. Split unrelated choices and consolidate compatible overlap. Keep exact current specifications in the sources that define them.
+- Consolidate, reshape, or link overlapping Decisions when their reasoning agrees. Archive or link the reason behind a replaced choice. Surface important disagreement instead of merging it silently.
 
 ## Entries
 

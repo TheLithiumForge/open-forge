@@ -79,4 +79,4 @@ A stronger evaluation contract becomes justified when the same method works acro
 - [Current evaluation syntheses](../../crystallized/documents/evaluations/_evaluations.md)
 - [Knowledge role helper](../../crystallized/documents/maintenance/helpers/knowledge-roles.md)
 - [Framework routing model](../../crystallized/documents/framework/routing/model.md)
-- [Documentation quality roadmap](rating-ladder.md)
+- [Historical documentation quality roadmap](../../archived/ideas/2026-07-17_rating-ladder.md)

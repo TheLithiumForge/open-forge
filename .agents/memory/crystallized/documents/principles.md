@@ -26,13 +26,15 @@ The active context for a goal should contain the authority, knowledge, constrain
 
 Open Forge may expand through any number of routed scopes while ordinary context cost grows primarily with the scopes and relationships deliberately selected. Completeness never means indiscriminate loading.
 
+The shared baseline may expose compact route maps so agents know which Framework roles exist. Specialized material belongs in the narrowest useful scope, and workspace-wide placement is reserved for meaning that genuinely applies across the workspace. Each scope earns its own loading policy rather than inheriting baseline loading merely because a standard root uses it.
+
 ### User Direction And Agent Autonomy
 
 User direction establishes goals, priorities, consequential tradeoffs, and accepted direction. Agents investigate, suggest, challenge, execute, and verify within that direction.
 
 Keeping consequential choices under user control must not create repetitive approval ceremony, and agent autonomy must not become silent authority over contextual product choices.
 
-Agents reduce specification burden by building the best current model, recommending coherent defaults, and asking only for user judgment that can materially change the result. Questions use understandable outcomes and tradeoffs rather than outsourcing technical design to the user. Explanations and plans match the request's demonstrated expertise and desired fidelity.
+Agents reduce specification burden by building the best current model, recommending coherent defaults, and asking only for user judgment that can materially change the result. Questions use understandable outcomes and tradeoffs rather than outsourcing technical design to the user. Unless deep analysis is requested, the first response remains conversational and deeper detail is offered progressively.
 
 ### One Authoritative Source And Visible Relationships
 
@@ -89,13 +91,13 @@ Changing a principle is possible, but it changes Open Forge's identity rather th
 - [Open Forge Vision](vision.md)
 - [Open Forge Architecture](architecture.md)
 - [Open Forge Framework Architecture](framework/architecture.md)
-- [Deliberate Framework Change directive](../../../directives/deliberate-framework-change.md)
+- [Deliberate Framework Change directive](../../../directives/open-forge/framework/deliberate-framework-change.md)
 
 ## Decisions And Rationale
 
-- [Product direction](../decisions/product-direction.md)
-- [Adaptive decision elicitation](../decisions/adaptive-decision-elicitation.md)
-- [Routing model](../decisions/routing-model.md)
-- [Memory model](../decisions/memory-model.md)
-- [Distinct Core primitive roles](../decisions/core-primitives.md)
-- [Typed authority and role terminology](../decisions/authoritative-source-terminology.md)
+- [Product direction](../decisions/product/product-direction.md)
+- [Adaptive decision elicitation](../decisions/framework/adaptive-decision-elicitation.md)
+- [Routing model](../decisions/framework/routing-model.md)
+- [Memory model](../decisions/framework/memory-model.md)
+- [Distinct Core primitive roles](../decisions/framework/core-primitives.md)
+- [Typed authority and role terminology](../decisions/framework/authoritative-source-terminology.md)

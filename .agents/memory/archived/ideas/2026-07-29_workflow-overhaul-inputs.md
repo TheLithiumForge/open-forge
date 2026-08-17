@@ -10,7 +10,7 @@ open-forge:
 
 Archived on 2026-07-29 after the accepted Workflow contract, first-party recipes, validation, and documentation were migrated together.
 
-The current result lives in the [Workflow contract](../../crystallized/documents/framework/primitives/workflows.md) and [Workflow shape decision](../../crystallized/decisions/workflow-shape.md). This file preserves the redesign inputs and does not define active runtime requirements.
+The current result lives in the [Workflow contract](../../crystallized/documents/framework/primitives/workflows.md) and [Workflow shape decision](../../crystallized/decisions/framework/workflow-shape.md). This file preserves the redesign inputs and does not define active runtime requirements.
 
 ## Why Revisit Workflows
 
@@ -46,6 +46,6 @@ Review the complete system together:
 
 ## Historical Context
 
-- [Archived Workflow redesign](../../archived/ideas/workflow-redesign.md)
+- [Archived Workflow redesign](workflow-redesign.md)
 - [Current Workflow contract](../../crystallized/documents/framework/primitives/workflows.md)
-- [Workflow shape decision](../../crystallized/decisions/workflow-shape.md)
+- [Workflow shape decision](../../crystallized/decisions/framework/workflow-shape.md)

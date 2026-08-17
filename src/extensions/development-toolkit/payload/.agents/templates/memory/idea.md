@@ -1,20 +1,21 @@
 ---
 open-forge:
-  description: Idea template is used when one Emerging record must preserve what plausible possibility deserves exploration, what supports it, and what would justify promotion
+  description: Starting structure for a possibility worth exploring, what supports it, and what could justify promotion
   tags: [Extension, Template, Memory, Idea, Emerging, Contextual]
 ---
 
 # {Idea}
 
-<!--
+{
 Template selection:
-- Need: One candidate record for a plausible possibility whose value or final form remains unsettled.
+
+- Need: One candidate record for a possibility whose value or final form remains unsettled.
 - Primary question: What should be explored, what is currently known, and what evidence or direction would justify promotion?
 
-Instantiate under the appropriate Emerging Ideas `route`.
+Copy this Template into the appropriate Emerging Ideas route.
 An Idea is useful candidate context, not accepted direction.
-Replace this Template's frontmatter, title, placeholders, and comments.
--->
+Replace the frontmatter, title, and placeholders, then remove this braced guidance.
+}
 
 ## Opportunity
 
@@ -26,7 +27,7 @@ Replace this Template's frontmatter, title, placeholders, and comments.
 
 ## Possibilities
 
-{Describe materially different forms the Idea could take without prematurely selecting one.}
+{Describe meaningfully different forms the Idea could take without choosing too early.}
 
 ## Evidence
 

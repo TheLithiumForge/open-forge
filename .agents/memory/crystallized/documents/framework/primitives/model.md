@@ -11,21 +11,21 @@ open-forge:
 
 Core primitives are the reusable roles within the Framework that shape or perform work. They separate materially different questions so a `route` communicates how its contents should be selected, interpreted, applied, and maintained.
 
-Core currently defines seven primitives: Directives, Guidance, Patterns, Skills, Templates, Workflows, and Workspace. The loader, routing, loading, and inherited `Axioms` are Core mechanics that make these roles work, not additional primitives.
+Core currently defines seven primitives: Directives, Guidance, Patterns, Skills, Templates, Workflows, and Map. The loader, routing, loading, and inherited `Axioms` are Core mechanics that make these roles work, not additional primitives. Direct Directive leaves use `Instructions`; `Axioms` remain the inherited mechanics of the loader and entrypoints.
 
 The primitive type does not decide whether a file is currently relevant. The [routing model](../routing/model.md) selects visible context, and the [authority model](../architecture.md#authority) resolves its force within the current scope.
 
 ## Roles
 
-| Primitive | Primary question | Meaning when selected |
-|---|---|---|
-| Directive | What behavior is mandatory in this scope? | Binding instruction |
-| Guidance | How should this recurring choice or scenario be approached? | Adaptable contextual judgment |
-| Pattern | What reusable inspectable shape is the established default? | Continuing structural reference |
-| Skill | What specialized capability can perform this work? | Runtime-native capability and its resources |
-| Template | What copy-ready source can start this artifact? | Starting content whose authority ends at instantiation |
-| Workflow | How should this defined goal be pursued and completed? | Selected goal-oriented recipe |
-| Workspace | Where does relevant local or external truth live? | Coarse navigation whose destination retains authority |
+| Primitive | Primary question                                            | Meaning when selected                                  |
+| --------- | ----------------------------------------------------------- | ------------------------------------------------------ |
+| Directive | What behavior is mandatory in this scope?                   | Binding instruction                                    |
+| Guidance  | How should this recurring choice or scenario be approached? | Adaptable contextual judgment                          |
+| Pattern   | What reusable inspectable shape is the established default? | Continuing structural reference                        |
+| Skill     | What specialized capability can perform this work?          | Runtime-native capability and its resources            |
+| Template  | What copy-ready source can start this artifact?             | Starting content whose authority ends at instantiation |
+| Workflow  | How should this defined goal be pursued and completed?      | Selected goal-oriented recipe                          |
+| Map       | Where does relevant local or external truth live?           | Coarse navigation whose destination retains authority  |
 
 Each primitive has a focused current document for its deeper meaning and boundaries:
 
@@ -35,7 +35,7 @@ Each primitive has a focused current document for its deeper meaning and boundar
 - [Skills](skills.md)
 - [Templates](templates.md)
 - [Workflows](workflows.md)
-- [Workspace](workspace.md)
+- [Map](map.md)
 
 Installed `entrypoints` contain the compact complete runtime contracts users receive. Primitive documents explain the design beyond immediate execution, while Maintenance documents own canonical sources, synchronization obligations, and verification.
 
@@ -49,13 +49,13 @@ Routing, loading, type, and authority are separate:
 - Scope and declared authority determine where its meaning applies
 - Tags compress selection and classification signals without creating authority
 
-Guidance remains advisory. A Pattern is the established reusable shape in its selected scope, but a different shape may be chosen deliberately; a mandatory shape also needs a Directive or another binding `axiom`. A Skill follows its native `SKILL.md` contract and active runtime. A Workspace `route` points to detailed truth without replacing it.
+Guidance remains advisory. A Pattern is the established reusable shape in its selected scope, but a different shape may be chosen deliberately; a mandatory shape also needs a Directive or another binding `axiom`. A Skill follows its native `SKILL.md` contract and active runtime. A Map `route` points to detailed truth without replacing it.
 
 ## Composition
 
 Primitive relationships are compositional rather than one authority ladder.
 
-A Workflow may invoke Skills, consult Guidance, apply Patterns, instantiate Templates, and follow Workspace `routes` while obeying every Directive active in its scope. Any primitive may link to another when the relationship helps selection or execution, but the link does not merge their semantics.
+A Workflow may invoke Skills, consult Guidance, apply Patterns, instantiate Templates, and follow Map `routes` while obeying every Directive active in its scope. Any primitive may link to another when the relationship helps selection or execution, but the link does not merge their semantics.
 
 If one artifact needs several roles, each independently meaningful role uses its matching authoritative source. For example, a Pattern can explain a reusable document shape, a Template can provide copy-ready starting content for it, and a Directive can require the shape in a particular scope.
 
@@ -65,7 +65,7 @@ Core primitives use the [universal scope contract](../routing/scope.md). Routed 
 
 For non-directive primitives, a narrower selected `route` is preferred when it safely specializes broader material. Directives are additive: a narrower selected Directive adds binding constraints without silently overriding active ancestor Directives.
 
-Core `root routes` compose through explicit relationships. A Workflow invokes Skills, consults Guidance, applies Patterns, instantiates Templates, and follows Workspace `routes` through optional `Required Routes`, Steps, or ordinary links instead of physically containing those `root routes`.
+Core `root routes` compose through explicit relationships. A Workflow invokes Skills, consults Guidance, applies Patterns, instantiates Templates, and follows Map `routes` through Steps or ordinary links instead of physically containing those `root routes`.
 
 A routed folder may use any name, but a familiar primitive `slug` beneath another root does not acquire that primitive's contract automatically. The [scope contract](../routing/scope.md#universal-scope) defines the boundary.
 
@@ -100,12 +100,13 @@ The standard `routes` are useful defaults, not an untouchable taxonomy. Users ma
 - [Skills](../../../../../skills/_skills.md)
 - [Templates](../../../../../templates/_templates.md)
 - [Workflows](../../../../../workflows/_workflows.md)
-- [Workspace](../../../../../workspace/_workspace.md)
+- [Maps](../../../../../maps/_maps.md)
 
 ## Decisions And Rationale
 
-- [Distinct Core primitive roles](../../../decisions/core-primitives.md)
-- [Templates as a Core primitive](../../../decisions/template-primitive.md)
-- [Workflow shape](../../../decisions/workflow-shape.md)
-- [Routing surfaces](../../../decisions/routing-surfaces.md)
-- [Loading reliability](../../../decisions/loading-reliability.md)
+- [Distinct Core primitive roles](../../../decisions/framework/core-primitives.md)
+- [Map primitive naming](../../../decisions/framework/map-primitive.md)
+- [Templates as a Core primitive](../../../decisions/framework/template-primitive.md)
+- [Workflow shape](../../../decisions/framework/workflow-shape.md)
+- [Routing surfaces](../../../decisions/framework/routing-surfaces.md)
+- [Loading reliability](../../../decisions/framework/loading-reliability.md)

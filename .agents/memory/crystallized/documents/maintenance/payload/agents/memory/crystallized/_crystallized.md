@@ -9,7 +9,7 @@ open-forge:
 
 ## Source
 
-[`src/open-forge/.agents/memory/crystallized/_crystallized.md`](../../../../../../../../../src/open-forge/.agents/memory/crystallized/_crystallized.md) is the canonical installed Crystallized Memory `entrypoint`. The repository [Crystallized `entrypoint`](../../../../../../../crystallized/_crystallized.md) dogfoods the same authored contract and adds repository-local generated `Entries`.
+[`src/open-forge/.agents/memory/crystallized/_crystallized.md`](../../../../../../../../../src/open-forge/.agents/memory/crystallized/_crystallized.md) is the canonical installed Crystallized Memory `entrypoint`. The repository [Crystallized `entrypoint`](../../../../../../_crystallized.md) dogfoods the same authored contract and adds repository-local generated `Entries`.
 
 The [Crystallized state contract](../../../../../framework/memory/crystallized.md) defines accepted durable Memory. The [accepted-state contract](../../../../../framework/truth.md) owns Framework-wide acceptance and synchronization.
 
@@ -17,10 +17,10 @@ The [Crystallized state contract](../../../../../framework/memory/crystallized.m
 
 - Frontmatter preserves #LoadNow, #Memory, #Crystallized, and #CurrentTruth classification
 - Clear user direction, delegated authority, a requested action that clearly requires the choice, or a declared external authority establishes acceptance within scope. Tags, repetition, and agent confidence do not establish it.
-- The `entrypoint` keeps one coherent current representation for each distinct question and scope by updating, splitting, merging, or reshaping existing material
+- The entrypoint keeps one current answer for each distinct question and scope by updating, splitting, merging, or reshaping existing material
 - Material that is no longer current is archived or linked with enough context to understand the change
 - Decisions and Documents remain the two standard nested roles and enter through ordinary generated navigation
-- Recursive scope follows the universal loader contract and does not force all authoritative state into Memory
+- Recursive scope follows the Loader rules and does not force all accepted state into Memory
 - The installed parent contains no project-specific accepted records
 
 ## Verification

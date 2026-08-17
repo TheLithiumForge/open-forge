@@ -1,26 +1,28 @@
 ---
 open-forge:
-  description: Vision template is used when one current document must define what future should become true, why it matters, its boundaries, identity, and success
+  description: Starting structure for a desired future, why it matters, its boundaries, and success
   tags: [Extension, Template, Document, Vision, CurrentView]
 ---
 
 # {Subject} Vision
 
-<!--
+{
 Template selection:
+
 - Need: One stable current document for a subject's desired future and identity.
 - Primary question: What should become true, why does it matter, what bounds it, and what would success mean?
 
-Instantiation notes:
-- Replace this Template's frontmatter, title, placeholders, and comments.
+How to use:
+
+- Replace the frontmatter, title, and placeholders, then remove this braced guidance.
 - Keep only sections that make the vision clearer.
 - Add a short domain or category definition before Vision only when readers need it to understand the promise.
-- Keep implementation, current status, sequencing, and detailed rationale in their own authoritative sources.
--->
+- Keep implementation, current status, sequencing, and detailed reasoning in the sources that define them.
+  }
 
 ## Vision
 
-{State the exact future or product promise for which this document is authoritative. Make this the canonical summary used at important entry boundaries.}
+{State the exact future or product promise this document defines. Make this the shared essence summary used at important entry boundaries.}
 
 ## Why
 
@@ -44,7 +46,7 @@ Instantiation notes:
 
 ## Related Current Views
 
-{Link to current architecture, strategy, context, principles, or other authoritative sources only when the relationship helps the reader continue.}
+{Link to current architecture, strategy, context, principles, or other sources only when the relationship helps the reader continue.}
 
 ## Decisions And Rationale
 

@@ -1,524 +1,1480 @@
 # Open Forge CLI
 
-The Open Forge CLI is an optional deterministic helper for the human-readable Open Forge contract.
+The accepted replacement Open Forge CLI design specifies one future production
+executable for an optional, stateless, deterministic, and idempotent native tool
+for the human-readable Framework. No native executable exists yet, and the
+replacement is not released. This document summarizes its accepted command
+interface. The accepted shared
+implementation choices are defined in the [CLI Architecture](../.agents/memory/crystallized/documents/cli/architecture.md);
+the linked command contracts define exact public behavior.
 
-It makes installation, route loading, navigation, validation, scaffolding, and Extension lifecycle work cheaper and safer. It does not replace the Markdown contract or privately determine what workspace content means.
+The frozen TypeScript MVP is available as `open-forge-old`. Its interface is
+separate from the replacement CLI.
 
-The distributed CLI requires Node.js 18 or later. Bun is used only for development in the Open Forge repository.
+An `entrypoint` is a Markdown file that makes its folder routable.
+A `route` is a navigable path exposed through entrypoints. Generated `Entries`
+are navigation lines for direct routed files and child entrypoints. A `Template`
+is reusable source content used to start an independently maintained artifact.
+`Axioms` are required rules from the Loader or a recognized entrypoint. Loaded
+descendants inherit them from their ancestors.
 
-## Quick Start
+## Framework Lifecycle
 
-Install the standard Framework into the current Git repository:
-
-```sh
-npx open-forge install
-```
-
-Review and commit the installed foundation:
-
-```sh
-git status
-git diff
-git add AGENTS.md CLAUDE.md .agents
-git commit -m "Install Open Forge"
-```
-
-Load effective startup and continuity context:
-
-```sh
-npx open-forge load --bodies
-```
-
-Validate the route tree:
-
-```sh
-npx open-forge doctor
-```
-
-List optional Extensions:
-
-```sh
-npx open-forge extend --list
-```
-
-## Command Guide
-
-| Command | Use it to | Writes |
-|---|---|---|
-| `install` | Install or reconcile the standard Framework | Yes |
-| `extend` | List, preview, install, reconcile, or remove Extensions | Only installation, reconciliation, and removal |
-| `index` | Rebuild generated `Entries` for `routes` | Yes |
-| `load` | Emit effective baseline and continuity context | No |
-| `find` | Select routed files by tag or explicit route | No |
-| `chain` | Inspect inherited context for one routed file | No |
-| `doctor` | Validate deterministic Framework structure | No |
-| `create` | Scaffold a route chain or local Extension package | Yes |
-| `help`, `--help`, or `-h` | Print the top-level command reference | No |
-
-## Shared Conventions
-
-- A missing `target` means the current directory
-- CLI route arguments are relative to the selected target
-- Read-only commands never require a Git checkpoint
-- `install` and managed `extend` operations compute and validate their mechanical plans before mutation
-- Normal installation and Extension writes use Git-visible review checkpoints
-- `--pro` bypasses only the lifecycle guards documented for `install` and `extend`; it is not a general safety bypass
-- `load`, `find`, `chain`, and `doctor` provide JSON output for deterministic consumers
-
-The CLI is currently an MVP. This guide documents behavior that exists now, and the interface may change before a stable release.
-
-## Complete Syntax
-
-```sh
-open-forge install [target] [--pro]
-open-forge extend [--dry-run] [--pro]
-open-forge extend --list
-open-forge extend --select [target] [--dry-run] [--pro]
-open-forge extend --ids <id[,id...]> [target] [--dry-run] [--pro]
-open-forge extend --remove <id[,id...]> [target] [--dry-run] [--pro]
-open-forge extend <extension-source-or-id> [target] [--dry-run] [--pro]
-open-forge index [target]
-open-forge load [--bodies|--paths|--json] [target]
-open-forge find [--tag <Tag>]... [--route <path>] [--depth <n>] [--follow-required] [--bodies|--paths|--json] [target]
-open-forge chain <route> [--heading <title>] [--json] [target]
-open-forge doctor [--json] [target]
-open-forge create category <route-path> [target]
-open-forge create extension <id> [directory]
-open-forge help
-open-forge --help
-open-forge -h
-```
-
-If `target` is omitted, the current directory is used.
-
-## help
-
-```sh
-open-forge help
-open-forge --help
-open-forge -h
-```
-
-All three forms print the same top-level command reference and exit without changing files.
-
-## install
-
-```sh
-open-forge install
-open-forge install {target-folder}
-open-forge install {target-folder} --pro
-```
-
-`install` is idempotent.
-
-### Review And Safety
-
-By default, `install` is the first review checkpoint. It detects the Git repository that contains the target and requires the target scope to be clean before writing. If the target is outside Git, an interactive terminal asks for explicit confirmation after recommending `git init`; a non-interactive invocation stops without mutation. Planned and derived index files ignored by Git are also rejected because they cannot produce a reviewable checkpoint.
-
-The command installs only the Open Forge base Framework: Core plus the standard Memory routes, with no optional Extensions. After it succeeds, review `git diff` and `git status`, then commit that baseline before installing optional Extensions. The CLI prints the catalogue and selector commands for the next step. A no-op reinstall reports that no commit is needed.
-
-`--pro` is an explicit expert bypass for the Git-repository, clean-checkpoint, Git-visible-output, and Core-first lifecycle guards. It does not bypass manifest validation, dependency resolution, source or target containment, collision checks, link and hardlink protection, index validation, local-block preservation, or rollback. Files managed by Open Forge, recognized `entrypoints` for `managed routes`, and generated index regions are preflighted and rolled back together on failure. Use `--pro` when combining diffs is an intentional expert decision, not as a generic force flag.
-
-Core reinstall also reads and validates `open-forge.extensions.json` when managed extensions are present. It refuses a Core plan that would modify or remove a receipt-owned file. Update or remove the owning extension explicitly; `--pro` does not cross this ownership boundary.
-
-### Effects
-
-Running it will:
-
-- create or update `AGENTS.md`
-- create or update the minimal `CLAUDE.md` bridge
-- append each Open Forge block if missing
-- replace only the Open Forge block if it already exists
-- preserve workspace-owned `AGENTS.md` and `CLAUDE.md` text outside those blocks
-- overwrite existing Open Forge-managed files with the same name
-- reconcile `entrypoint` files managed by Open Forge whose `route` shapes are recognized by the source catalogue
-- rebuild generated index regions
-- leave user-added files outside managed paths alone
-
-There is no wizard. A first installation writes the current release payload. On an existing Core installation, an absent shipped file is treated as a deliberate removal: ordinary `install` updates the managed files that remain, but does not restore deleted defaults or add newly shipped defaults. The MVP does not yet provide an explicit completion or restoration operation. If you want a different local shape, install first, then edit, add, move, or remove files. The Framework is plain Markdown for exactly this reason.
-
-### Managed Reconciliation
-
-The current CLI indexes any explicit `route` chain whose folders have `entrypoints`. `open-forge create category <route-path>` can scaffold missing `entrypoints` and rebuild their indexes, but scaffolding does not declare them managed. You may also author the `entrypoints` directly, then run `open-forge index`.
-
-`install` reconciles `entrypoint` files managed by Open Forge when their complete routed chains match `route` shapes derived from `src/open-forge/.agents/`. Every folder in the chain must already have an `entrypoint`. A recognized match stays beneath the same `root route` and may contain any number of consecutive scope `slugs` between source-defined non-root `route` segments. Scopes after the last managed segment remain user-owned descendants. The CLI does not create missing scope `entrypoints` during installation.
-
-Managed reconciliation requires the canonical `_{folder-name}.md` `entrypoint`. Compatibility names such as `index.md` remain valid for generic routing and indexing, but the current Open Forge manager does not reconcile them.
-
-Examples of `managed routes` recognized through scopes:
+The accepted Framework lifecycle has two direct root operations:
 
 ```text
-.agents/memory/{scope-1}/{scope-2}/working/_working.md
-.agents/memory/{scope}/working/{scope}/sessions/_sessions.md
-.agents/memory/emerging/{scope}/observations/_observations.md
-.agents/memory/{scope}/crystallized/{scope}/decisions/_decisions.md
-.agents/memory/{scope}/crystallized/{scope-1}/{scope-2}/documents/_documents.md
-.agents/memory/{scope}/archived/_archived.md
+open-forge install [--force] [--automatic] [--dry-run] [--skip-git-check] [global flags]
+open-forge update [--force] [--prune] [--automatic] [--dry-run] [--skip-git-check] [global flags]
 ```
 
-`{scope}` means a concrete `slug` folder with its own `entrypoint`, not a literal folder name. These examples assume each intermediate scope folder is already visible through its own `entrypoint`.
+`install` establishes management in one exact workspace or verifies an exact
+trusted managed no-op. It does not reconcile managed divergence. A changed,
+missing, retired, or source-divergent managed state is `blocked` and directs the
+caller to `open-forge update`. Initial `--force` may replace only an eligible
+exact current occupant before management is established. It does not adopt the
+occupant's old bytes, bypass ownership, or become update authority.
 
-The source-defined `managed route` order remains fixed. Each scope narrows the `route` segments and content that follow it. For example, Documents keeps this sequence:
+`update` requires trusted existing Framework lifecycle state. Normal mode applies
+baseline-unchanged and genuinely new safe content and preserves changed, missing,
+and retired divergence as `attention`. `--force` replaces or restores only
+changed or missing current expected content. `--prune` deletes only eligible
+retired managed content. `--force --prune` composes those two named boundaries.
+Automatic mode suppresses interaction but adds no package, replacement, deletion,
+adoption, ownership, or safety authority.
+
+Both operations use one complete baseline/current/intended plan, current Index
+projection, affected-path Git policy, adjacent-backup recovery, expected-state
+revalidation, verification, seven statuses, and one typed result. There is no
+Framework group, root `init`, reinstall/replace/restore/recover alias, Framework
+uninstall/remove leaf, generic apply, saved plan, or semver source update.
+
+The replacement's only lifecycle document is:
 
 ```text
-memory/.../crystallized/.../documents/_documents.md
+.agents/open-forge.lifecycle.json
 ```
 
-It does not match `memory/.../documents/.../crystallized/_crystallized.md`, combine two Memory states, or treat a familiar `slug` beneath one `root route` as another managed `root route`. `.agents/workflows/frontend/directives/_directives.md` therefore remains below Workflows rather than becoming the managed Directives `root route`.
+It uses schema version 1 with one common envelope and isolated `framework` and
+`extensions` sections. Each lifecycle operation reads and writes only its own
+section while preserving the common envelope and unrelated section. Supported
+parseable kinds use the accepted syntax-aware semantic fingerprint; exact bytes
+remain fresh operation-time facts. The replacement does not execute a formatter
+or persist formatter state.
 
-Scopes beneath a Core `root route` inherit that `root route`'s meaning and do not repeat its managed `entrypoint`. A scope such as `.agents/patterns/mobile-app/react/_react.md` remains user-owned and is not replaced with `_patterns.md`.
+The replacement does not read, recognize, migrate, alias, or fall back to an old
+lifecycle or Extension file, including `open-forge.extensions.json`. Old-format
+files remain untouched ordinary workspace content outside replacement authority.
+The [CLI Architecture](../.agents/memory/crystallized/documents/cli/architecture.md)
+defines the exact lifecycle, parser, serialization, filesystem, recovery, and
+Native AOT choices. Gate 5 must provide their executable proof.
 
-The MVP uses source-defined folder names to recognize Memory roles. A neutral Memory scope whose `slug` equals one of those role names is ambiguous to this updater and should be renamed. The CLI overhaul must introduce a human-readable distinction between manager-recognized `route` segments and ordinary scope `slugs`.
+See the [Install contract set](../.agents/memory/crystallized/documents/cli/contracts/install/_install.md),
+[Install Interface](../.agents/memory/crystallized/documents/cli/contracts/install/interface.md),
+[Update contract set](../.agents/memory/crystallized/documents/cli/contracts/update/_update.md),
+[Update Interface](../.agents/memory/crystallized/documents/cli/contracts/update/interface.md),
+and [Update Behavior](../.agents/memory/crystallized/documents/cli/contracts/update/behavior.md)
+for the complete contracts.
 
-Manual edits to files managed by Open Forge are visible in Git diffs after install. Prefer sibling files, deeper `routes`, or `.overwrite.md` companions for durable local customization.
+## Cleanup
 
-## extend
-
-```sh
-open-forge extend [--dry-run] [--pro]
-open-forge extend {extension-source}
-open-forge extend {bundled-extension-id}
-open-forge extend {extension-source} {target-folder}
-open-forge extend {bundled-extension-id} {target-folder}
-open-forge extend --list
-open-forge extend --select {target-folder}
-open-forge extend --ids {bundled-extension-id},{bundled-extension-id}
-open-forge extend --remove {installed-extension-id}
-```
-
-### Sources And Dependencies
-
-`extend` resolves an extension and its bundled dependencies, plans the complete payload, copies whole files into the target, and rebuilds affected generated index regions. Extension is a content-agnostic installation unit: installed payload files retain their ordinary runtime meaning.
-
-Sources may be:
-
-- A bundled first-party package selected by stable id
-- A local package containing `payload/`
-- A local direct overlay shaped like the target workspace
-
-The manifest, catalogue, source grouping, and ownership receipt are install metadata only. Agents route from installed files and never need those install surfaces.
-
-A local manifest id opts into managed lifecycle. Idless local sources remain unmanaged. Local package dependencies may select bundled ids, while arbitrary local-to-local dependency graphs are outside the MVP.
-
-The [Extensions guide](extensions.md#package-shapes) defines package shapes, manifest fields, payload authoring, dependency semantics, and manual installation. The CLI automates those plain-file operations without creating another runtime contract.
-
-Use `open-forge extend --list` for the grouped bundled catalogue, `open-forge extend` or `--select` for interactive selection, and `--ids` for unattended selection. Dependency resolution is offline, transitive, dependency-first, and deduplicated.
-
-### Review And Safety
-
-Normal installation requires recognizable tracked Open Forge Core anchors, a clean target scope, and Git-visible planned output. Outside Git, interactive use asks for approval after recommending initialization; non-interactive writes stop. One invocation and its dependency closure form one review unit. `--pro` bypasses only these Git/Core lifecycle guards.
-
-Before writing, the CLI validates the complete resolved payload plan. Paths must be portable and target-relative. Linked roots, physical escapes, Git control paths, reserved receipt and overwrite paths, portable aliases, file/parent collisions, and conflicting bytes stop the operation. Identical managed bytes may share owners. A managed package never silently adopts an unowned path, and an unmanaged overlay cannot replace a receipt-owned path.
-
-Extensions add whole files through ordinary routes. They do not inject blocks into shared Markdown, and managed payloads cannot claim workspace-owned `.overwrite.md` files.
-
-Payload, generated-index, and receipt changes form one rollback-capable in-process transaction. Git remains the durable recovery boundary.
-
-### Preview
-
-An installation dry-run discovers selected packages, resolves dependencies, validates the complete plan, and prints dependency order, receipt effects, scope counts, and create, update, delete, and unchanged file effects:
-
-```sh
-open-forge extend --dry-run development-toolkit ./my-project
-open-forge extend --ids development-toolkit --dry-run ./my-project
-```
-
-A removal dry-run reads installed receipt state, validates owned files and retained dependents, and prints delete, update, and unchanged file effects plus the planned receipt change:
-
-```sh
-open-forge extend --remove development-toolkit ./my-project --dry-run
-```
-
-Removal does not discover source packages or report installation dependency order and scope counts.
-
-### Managed Receipt, Update, And Removal
-
-A bundled id or local manifest id is the managed ownership key. The CLI stores transparent Git-visible state at `open-forge.extensions.json`: requested roots, dependency edges, descriptive versions, owned payload paths and SHA-256 digests, and complete owner sets. Generated `Entries` bodies may be rebuilt without invalidating ownership of the surrounding `entrypoint`.
-
-This receipt is CLI state, not agent context. Installed routed files remain complete runtime truth.
-
-Before a managed write, the CLI validates receipt reciprocity and every recorded file digest. Missing or modified owned content, destructive route changes, or inconsistent owner sets stop the command. `--pro` never bypasses ownership checks.
-
-Reinstalling the same id reconciles owned whole files. Dropped paths are removed only when their recorded bytes still match and no owner remains. Removing an entrypoint is blocked when retained descendants would become unreachable.
-
-Remove installed ids with:
-
-```sh
-open-forge extend --remove development-toolkit
-```
-
-Removal acts on exactly the named ids and stops while a retained extension depends on one of them. Dependencies that become orphans are not pruned automatically.
-
-Installation previews and normal installs report:
-
-- `routed` - files under `.agents/` that use ordinary relevance routing
-- `baseline-loading` - root agent entry files such as `AGENTS.md` and `CLAUDE.md`, the loader, overwrites of baseline files, and files explicitly tagged #LoadNow or #KeepInMind
-- `skill-executable` - files in a skill's direct `scripts/` subtree
-- `outside-.agents` - workspace files outside the routed tree
-
-Extension-authored Open Forge files normally use #Extension plus their primitive and useful scope tags. Runtime-native files keep native metadata. Use a load-policy tag only when the installed content deliberately belongs in baseline or continuity loading.
-
-This remains a local, offline command. It has no external registry, network resolution, compatibility solver, migration hooks, automatic orphan pruning, persistent crash-recovery journal, or remote trust policy.
-
-## index
-
-```sh
-open-forge index
-open-forge index {target-folder}
-```
-
-`index` rebuilds the loader category registry and the generated regions inside category `entrypoints`.
-
-When `.agents/` exists, the CLI scans `.agents/`. Otherwise it scans the target folder.
-
-### Route Discovery
-
-When `loader.md` exists at the scan root, the CLI generates one loader `entry` for every direct child folder that contains one recognized category `entrypoint`. Loader `descriptions` and tags come from the category `entrypoint`, preferring supported metadata and falling back to its first body `description` and #Index.
-
-Generated `Entries` use standard Markdown links whose destinations resolve relative to the file containing them. A loader at `.agents/loader.md` therefore links to `workspace/_workspace.md`; a category `entrypoint` links from its own folder. CLI arguments and output `route` identities remain relative to the selected target, such as `.agents/workspace/_workspace.md`. Git and submodule boundaries do not redefine that logical root. For deterministic CLI reads and writes, the `route` tree must also be physically contained below the target: a symlinked or junction-mounted `.agents/` tree that resolves outside it is rejected. Plain Markdown agents may still follow an explicitly trusted external mount, but the CLI will not read or mutate through that trust boundary.
-
-Nested categories stay behind their parent category `entrypoint`. Folders without a matching `entrypoint` do not become loader `routes`.
-
-Open Forge-authored category `entrypoints` are named `_{folder-name}.md`:
+The non-shipping root `cleanup` operation removes every currently eligible
+recognized Open Forge transient or recovery artifact in the selected workspace:
 
 ```text
-.agents/patterns/
-  _patterns.md
-  local-docs.md
+open-forge cleanup [--dry-run] [--skip-git-check] [global flags]
 ```
 
-The category `entrypoint` contains stable category meaning followed by a generated region. The generated region reads direct Markdown `route` files and direct child category `entrypoints`:
+Bare `cleanup` has no operands, IDs, paths, selectors, wizard, prompt, or
+confirmation flow. It forms one current recognized-only catalogue and removes
+all eligible target-associated backups, known `.bak` compatibility forms with
+positive identity, operation temporary or staging artifacts, and residual
+recovery artifacts from incomplete or completed operations. A suffix, age,
+extension, location, proximity, or temporary-looking name is not proof of
+provenance. Eligibility instead requires positive Open Forge provenance, bounded
+workspace association, physical containment, an inactive state, and the expected
+current bytes or physical identity.
+Unknown, user-created, ambiguous, aliased, externally resolving,
+active, in-use, and concurrently changing items remain untouched. Repository
+`.temp/`, raw evidence and snapshots, source and managed content, lifecycle
+documents and receipts, generated navigation, build output, package caches, logs
+that are not positively identified as one of the listed cleanup artifact kinds,
+and arbitrary backups are also excluded.
 
-```md
-- [Local documentation patterns](local-docs.md) - #Pattern #Documentation
-- [React patterns](react/_react.md) - #Pattern #React
-```
+`--dry-run` uses the same catalogue, ordering, plan, expected-state facts, and
+preflight as application and writes nothing. Gitless workspaces are valid;
+affected-path Git cleanliness is checked by default when Git can classify an
+eligible path, and `--skip-git-check` bypasses only that check. The explicit
+command consents to discard every currently eligible artifact, including a
+backup the user no longer wants after manually preserving or migrating desired
+content. Cleanup does not interpret that content or migration intent and does
+not need to prove a backup unnecessary for recovery.
 
-Child folders are routed through their own `_{folder-name}.md` category `entrypoint`. Parent `entrypoints` stay at one folder boundary.
+With no eligible artifact, cleanup returns a verified complete no-op without
+prompting. Each repeat forms a fresh catalogue and never deletes a later
+user-created or unknown replacement at a former artifact path. Once deletion
+begins, verified deletions remain valid effects: cleanup creates no replacement
+backup, staging copy, receipt, journal, or tombstone merely for this disposable
+deletion and does not reverse a verified deletion. Partial failure or
+interruption reports every deleted and remaining artifact so a later invocation
+can converge. Human and structured results use the shared seven statuses and
+streams; planned deletions do not create `attention`.
 
-### Skills And Scopes
+See the [cleanup Interface](../.agents/memory/crystallized/documents/cli/contracts/cleanup/interface.md)
+and [cleanup Behavior](../.agents/memory/crystallized/documents/cli/contracts/cleanup/behavior.md)
+for the complete current contracts.
 
-The link label carries the generated `description`, and the link destination carries the containing-file-relative `route`. The same canonical shape applies to authored `Required Routes`; each line keeps a tag suffix with useful tags, including at least the target primitive type.
+## Extension Operations
 
-The standard Skills `route` recognizes ordinary native packages:
+The accepted Extension family is grouped under one subject with six actual
+operations:
 
 ```text
-.agents/skills/
-  _skills.md
-  implementation/
-    SKILL.md
-    references/
-      fit-change-to-system.md
+open-forge extension list [--installed] [--available] [--source <package-or-catalogue-path>] [global flags]
+open-forge extension inspect <stable-id> [--source <package-or-catalogue-path>] [global flags]
+open-forge extension create [<stable-id>] [--path <catalogue-path>] [--automatic] [--dry-run] [--skip-git-check] [global flags]
+open-forge extension install [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--automatic] [--dry-run] [--skip-git-check] [global flags]
+open-forge extension update [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--prune] [--automatic] [--dry-run] [--skip-git-check] [global flags]
+open-forge extension remove [<stable-id>...] [--prune] [--automatic] [--dry-run] [--skip-git-check] [global flags]
 ```
 
-The generated Skill `entry` points to `implementation/SKILL.md`. The Skill's `SKILL.md` is authoritative for its metadata, applicability, instructions, resource organization, and loading behavior.
+The bare group shows help and performs no operation or wizard. `list` and
+`inspect` are read-only. `create` writes only
+`<catalogue>/<id>/extension.json` and `payload/.agents/` under its distinct
+`--path` destination; `--workspace` is a no-op for create.
 
-The same rule applies to a skill copied directly or deployed by an external manager: place its complete folder at `.agents/skills/{skill-name}/`, then run `open-forge index` and `open-forge doctor`. Indexing updates only generated `route` regions; it does not rewrite the skill or generate `Entries` inside `SKILL.md`.
+Install and update use the embedded catalogue or one exact external package or
+catalogue source. The source is read-only and must be lexically and physically
+disjoint from the target workspace. Dependencies resolve offline and
+transitively within one source universe. `--automatic` never means `--all` and
+never selects force or prune.
 
-Routed scopes beneath the Skills `root route` can also expose direct native Skill packages. Open Forge indexes those packages and exposes them through `routes` under the same contract. A `route` elsewhere remains generically routable, but a familiar name or #Skill tag does not grant native Skill-package indexing outside the Skills `root route`.
+Installed and available facts remain separate. New-CLI installed facts are
+classified as `absent`, `trusted`, `untrusted`, or `incomplete`; unsafe ambiguity
+is `blocked` under the contracts. Source unavailability preserves safely readable
+installed facts but cannot form an update plan or promote lifecycle trust.
+Managed ownership requires trusted lifecycle evidence; matching paths, bytes,
+fingerprints, or route placement never adopt content. Remove releases trusted
+selected ownership, retains shared files, deletes safe unchanged final-owner
+files, preserves changed final-owner files by default, and permits their deletion
+only with same-request `--prune`. It never removes the package source or
+Framework-owned content.
 
-The loader's universal scoping rules apply below every `root route`. A scope is expressed by an ordinary concrete `slug` folder with its own `entrypoint`. Every folder in the visible `route` chain needs its own `entrypoint`:
+All mutating Extension operations use one complete plan, dry-run parity,
+affected-path Git checks, adjacent-backup recovery, expected-state revalidation,
+verification, and reverse guarded recovery. The seven statuses and human/JSON
+stream rules are shared. No command is implemented or shipped yet.
+
+See the [Extension documentation](extensions.md) and the
+[Extension contract group](../.agents/memory/crystallized/documents/cli/contracts/extension/_extension.md)
+for complete details.
+
+## Status
+
+`status` gives a quick, read-only summary of the selected workspace:
+
+```sh
+open-forge status [global flags]
+```
+
+The applicable global flags are `--workspace <path>`, `--json`,
+`--view=compact|expanded`, `--verbose`, `--help`, and `--version`. The command
+uses the exact current directory unless `--workspace` selects another exact
+directory. It does not search parent directories or infer a workspace from
+nearby files. Primary human `complete`, `attention`, and `incomplete` results use
+stdout. Primary human `invalid`, `blocked`, `failed`, and `interrupted` results
+use stderr. `--json` writes one complete result to stdout for every status;
+separate bounded diagnostics use stderr.
+
+It compares startup context from the Framework shipped in the running CLI with
+startup context from the current workspace. It also reports total available
+context, context that may load again at continuity boundaries, root-category
+customization, managed Extensions, and recognized recovery files.
+
+### Context Measurements
+
+The startup table uses the following rows:
+
+- `Initial (shipped)` is startup context resolved from the Framework embedded in
+  the running CLI. It is not a saved installation snapshot.
+- `Current workspace` is startup context resolved from the selected workspace
+  now.
+- `Difference` is current minus initial for every metric.
+
+Startup context contains the workspace entry, Loader, visible `#LoadNow`
+closure, and applicable `#KeepInMind` continuity context. Total available
+context contains every current context file, including startup and on-demand
+files.
+
+For this inventory, a context file is the ordinary UTF-8 `AGENTS.md` entry or an
+ordinary UTF-8 Markdown file below `.agents`. Overwrite companions count when
+their base exists. Provider bridges, files reached only through ordinary links,
+non-Markdown support files, receipts, and recovery files do not count as
+context.
+
+Continuity context is the part that may load again after a handoff, context
+restoration, before closeout, or at another defined continuity boundary. It does
+not mean that the content loads on every model request.
+
+Measurements use:
+
+- Exact physical file count
+- Exact Unicode character count
+- Exact UTF-8 size
+- A deterministic token estimate of approximately one token per four characters
+
+Estimated tokens are marked with `~`. They are not model-specific tokenizer,
+billing, latency, or context-window values.
+
+Numeric-numeric differences are signed, including zero. Unavailable and
+not-applicable values are not rendered as zero. Startup percentage is numeric
+only with numeric byte operands and a positive total; both zero bytes are
+not-applicable, while a positive current value with zero total is incomplete.
+
+### Workspace Structure
+
+Root categories are the direct root routes exposed by the Loader. `Added
+categories` exist in the current workspace but not the Framework shipped in the
+running CLI. `Removed categories` exist in that shipped Framework but not the
+current workspace. These are neutral customization facts, not health conditions.
+
+Status reads `.agents/open-forge.lifecycle.json`, schema v1, as isolated
+Framework and Extension sections. Each section reports `absent`, `trusted`,
+`untrusted`, or `incomplete` facts without merging authority; unsafe ambiguity is
+`blocked`. The replacement does not read old-format lifecycle or Extension files.
+
+`Extensions` counts distinct installed IDs from safely readable lifecycle facts.
+An absent section shows `0 recorded` Extensions, while a trusted empty section
+shows `0`; both show `none recorded` managed files without changing status.
+Untrusted, incomplete, or unavailable facts are not converted to trusted empty
+counts.
+Installed IDs, ownership, and recorded paths remain reportable when package
+source bytes are unavailable, while source-dependent comparison is incomplete.
+Matching paths, bytes, or fingerprints never establish ownership. Managed files
+are counted once as current, changed, or missing relative to readable lifecycle
+facts. Recovery files include only artifacts recognized by the CLI around known
+Open Forge targets.
+
+The expanded result shows at most three of the largest continuity sources, and
+compact omits that section. JSON carries every contribution in deterministic
+order. The list ranks sources by exact UTF-8 contribution, then by source ID when
+sizes match. It reports size, not importance or a recommendation.
+
+### Example
 
 ```text
-.agents/memory/
-  _memory.md
-  {scope}/
-    _{scope}.md
-    crystallized/
-      _crystallized.md
-      decisions/
-        _decisions.md
-      documents/
-        _documents.md
+Open Forge status
+Workspace: <workspace-path>
+Selected by: current directory
+Result: requires attention
 
-.agents/guidance/
-  _guidance.md
-  {scope}/
-    _{scope}.md
-    cross-platform-apps.md
+Startup context
+                         Files   Characters      Size   Est. tokens
+Initial (shipped)           14       18,420  18.0 KiB        ~4,600
+Current workspace           21       33,960  33.2 KiB        ~8,500
+Difference                  +7      +15,540 +15.2 KiB       ~+3,900
+
+Total available context
+  205 files · 1,516,560 characters · 1.45 MiB · ~379,100 tokens
+  Startup context: 2.2% of total available context
+
+Continuity context (may load again)
+  4 files · 6,120 characters · 6.0 KiB · ~1,500 tokens
+
+Largest continuity sources
+  2.4 KiB   memory/working/cli-release
+  1.9 KiB   directives/writing
+  1.1 KiB   memory/crystallized/documents
+
+Workspace structure
+  Root categories:    8
+  Added categories:   workspace
+  Removed categories: templates
+  Extensions:         1
+  Managed files:      9 current, 11 changed, 1 missing
+  Recovery files:     0
 ```
 
-Open Forge does not require a folder named `projects`, `scope`, `domain`, or `team`. Use those only when they improve your local routing.
+The values are illustrative. A larger context or added or removed category does
+not produce `attention` by itself. Changed or missing managed files and
+recognized recovery files do. Human output renders this semantic status as
+`requires attention`; JSON keeps the value `attention`. Complete structural
+diagnosis and recommendations belong to `doctor` rather than `status`. Status
+does not list repair or lifecycle proposals.
 
-Scope placement changes meaning:
+Compact output uses one operation-level `Next:` only when useful: no line for
+`complete`; `open-forge doctor` for `attention`; Doctor for `incomplete` unless a
+more direct safe correction is known; `Next: correct the named input` for
+`invalid`; `Next: correct the named workspace or safety boundary and rerun` for
+`blocked`; `Next: report the failure and retry with bounded diagnostics` for
+`failed`; and `Next: rerun the same request` for `interrupted`.
+
+For a safely established uninstalled workspace, the result can be `complete`.
+The initial shipped measurement remains measured when the embedded payload is
+available. Current startup, Difference, startup percentage, continuity, and
+root-category facts are not-applicable, while total available physical context
+remains numeric when safely measurable. An applicable fact that cannot be
+measured is unavailable and makes the result incomplete.
+
+`status` does not build the complete content graph of route, link, and section
+relationships, validate every route or link, count scopes by guessing their
+meaning, or modify anything. JSON output contains the same structured facts as
+the human result. See the
+[status contract set](../.agents/memory/crystallized/documents/cli/contracts/status/_status.md)
+for the complete interface.
+
+## Context
+
+`context` retrieves selected ordered content without inference, sessions, or
+mutation:
 
 ```text
-.agents/memory/crystallized/{scope}/decisions/
-.agents/memory/{scope}/crystallized/decisions/
+open-forge context [source-reference...] [--additions-only]
+  [--content=<part>[,<part>...]] [--follow-links=<positive-depth|all>]
+  [global flags]
 ```
 
-The first means `{scope}` is inside Crystallized Memory. The second gives `{scope}` its own Memory state `routes`. Both are valid when every folder has an `entrypoint` and the `descriptions` of those `entrypoints` make the scope clear.
+With no source reference it returns the startup-required closure. Explicit
+references add their current route or exact-path closures, and
+`--additions-only` returns only sources added beyond startup. Repeating
+`--additions-only` is idempotent. Repeating `--follow-links` or `--content` is
+invalid; repeated parts in one `--content` value are idempotent. The default
+content is authored `frontmatter` and `body`. Projection order is stable
+regardless of flag order: operation-level `paths` first when selected, then
+resolved sources and physical layers, then metadata, frontmatter, headings,
+body, and requested sections in document order. Authored bytes remain exact.
 
-### Entrypoints And Generated Regions
+`--follow-links` expands contained local Markdown links to the requested depth.
+External HTTP/HTTPS URLs are reported as unchecked, never fetched or selected,
+and do not make an otherwise complete result incomplete. A fully resolved empty
+additions result and an empty heading outline are complete. Unsafe or ambiguous
+source or local-target identity, containment, and overwrite boundaries are
+blocked; missing or unreadable required content is incomplete; safe observations
+such as a proven absent section require attention. Human
+complete/attention/incomplete results use stdout, other primary human statuses
+use stderr, and JSON writes one structured result to stdout for every status
+with bounded diagnostics on stderr.
 
-For cross-tool compatibility, the CLI also recognizes these `entrypoint` names:
+`status` measures the no-source closure but does not render it. `find` discovers
+inventory and predicates, `references` reports direct edges without content,
+`route inspect` profiles one route without authored content, and `doctor`
+diagnoses. `context` retrieves the selected ordered content. See the
+[Context contract set](../.agents/memory/crystallized/documents/cli/contracts/context/_context.md)
+for the complete contract.
 
-- `_index.md`
-- `index.md`
-- `_references.md`
-- `references.md`
+## Find
 
-Open Forge itself uses only `_{folder-name}.md`. A folder must contain exactly one recognized `entrypoint` name. If multiple candidates exist, the CLI stops before changing any generated region.
+`find` returns a flat inventory of Markdown sources below `.agents`. Tag and
+heading predicates filter that same inventory:
 
-The generated region is bounded explicitly:
-
-```md
-## Entries
-
-<!-- open-forge:generated-index:start -->
-- none - No entries - #Empty
-<!-- open-forge:generated-index:end -->
+```text
+open-forge find
+  [--include=<source-reference>]...
+  [--exclude=<source-reference>]...
+  [--tag=<tag>]...
+  [--heading=<heading>]...
+  [--require=all|any]
+  [--within=<part>[,<part>...]]
+  [--view=compact|expanded]
+  [--content=<part>[,<part>...]]
+  [global flags]
 ```
 
-The CLI replaces only the content between the markers. It preserves frontmatter and category content above the region.
+Bare `find` lists every eligible logical source in the normal complete `.agents`
+Markdown universe. Omitted `--include` starts from that universe, and omitted
+`--exclude` subtracts nothing, so an invocation with neither flag behaves as
+before. Source filtering is valid without predicates and happens before tag or
+heading matching.
 
-When a legacy category `entrypoint` or loader has a final `## Entries` section containing only generated list `entries`, the CLI adds the markers automatically. The parser continues to accept the former backtick-path entry shape during migration, but `index` emits only canonical relative Markdown links. Authored legacy `Required Routes` remain readable with their former workspace-root-relative resolution and should be converted to containing-file-relative canonical links when touched. If the heading is absent, the CLI appends the complete section. Malformed or non-final markers stop generation without changing the file.
+### Source-Universe Filters
 
-Change index output by adding, editing, moving, or removing route files and child category `entrypoints` in the indexed folder.
-
-### Indexed Content And Metadata
-
-The index generator reads:
-
-- direct `*.md` route files, including underscore-prefixed routed files
-- direct child category `entrypoints` named `_{folder-name}.md`
-- direct native Skill packages under the Skills `root route` or within routed scopes beneath it
-
-Inside the standard Skills tree, loose Markdown files are not indexed as native Skills. Use Skill folders with `SKILL.md`.
-
-Reserved filenames in an indexed folder are:
-
-- `_{folder-name}.md`
-- `_index.md`
-- `index.md`
-- `_references.md`
-- `references.md`
-
-The index generator ignores tool paths:
-
-- `.git/`
-- `.obsidian/`
-- `node_modules/`
-
-Metadata comes from frontmatter:
-
-```md
----
-description: Local documentation patterns
-tags: [Doc, Pattern]
----
-```
-
-Nested metadata works too:
-
-```md
----
-open-forge:
-  description: Local documentation patterns
-  tags: [Doc, Pattern]
----
-```
-
-The CLI also accepts `rune:` scoped metadata in user-added route files for cross-tool compatibility. Open Forge-authored files use `open-forge:` metadata.
-
-`SKILL.md` files should keep runtime-required metadata such as `name` and `description`. The CLI reads the root `description` for generated skill entries and defaults their tag to #Skill when no Open Forge tags are present.
-
-The indexer ignores `.overwrite.md` companions because they inherit the base route and load immediately after it rather than through generated navigation.
-
-## load
+`--include` and `--exclude` are repeatable Find-specific source-universe filters:
 
 ```sh
-open-forge load --bodies
-open-forge load --paths
-open-forge load --json
+open-forge find --include=memory/crystallized/documents
+open-forge find \
+  --include=memory/crystallized/documents \
+  --include=skills/experience-design \
+  --exclude=memory/crystallized/documents/architecture
 ```
 
-`load` optionally batches the same plain traversal: the loader, each transitive #LoadNow entry reachable through already-loaded parents in generated order, and every routed #KeepInMind result with its visible #LoadNow closure. Each base is immediately followed by its user-owned `.overwrite.md` when present. Installed files and ordinary traversal remain complete without this command.
+Each occurrence accepts exactly one shared source reference. Repeated includes
+and excludes form unions, and exclusion wins overlap regardless of argument
+order. A Loader, recognized entrypoint, or `SKILL.md` reference expands to all
+eligible Markdown physically below its folder, including unrouted sources. An
+ordinary source selects one logical source; a valid base/overwrite pair is
+selected or excluded together. Expansion does not follow routes or links and
+does not infer authority or lifecycle.
 
-The traversal does not enter an on-demand parent merely because a hidden descendant has #LoadNow. #KeepInMind is the deliberate catalogue-wide exception. Use `--bodies` when an agent needs the actual context, `--paths` for a compact audit, or `--json` for tooling.
+The shared source-reference ID and exact `.agents/...` path grammar applies.
+Comma lists, globs, arbitrary directories, positional operands, and new
+qualifier syntax are not accepted. `--require` and `--within` do not control
+source filtering.
 
-## find
+`--exclude` removes sources from the effective universe before inspection, so
+excluded areas need not be parsed. A valid filtered universe with zero
+candidates or zero matches is still complete. Expanded and JSON results report
+the supplied and resolved selectors, the default or filtered universe, and
+effective candidate, inspected, and matched counts. Compact output marks the
+filtered state without repeating the full selector detail.
+
+The command does not follow links, build the complete context graph, or use a
+persistent search index.
+
+### Tags And Headings
+
+`--tag` matches a complete authored frontmatter tag value or visible body tag
+token while ignoring case. A query may include one optional leading `#`:
 
 ```sh
-open-forge find --tag Decision --tag Routing
-open-forge find --tag Workflow --tag Testing
-open-forge find --route .agents/workflows/development.md --bodies
-open-forge find --route .agents/memory/crystallized/_crystallized.md --depth 1
-open-forge find --tag Workflow --json
+open-forge find --tag=Architecture
+open-forge find --tag="#architecture"
 ```
 
-`find` is deterministic routing-contract lookup, not search. It walks routed files only: the loader, category `entrypoints`, their direct `route` files, and Skill `entrypoints`. It never guesses relevance or expands user-owned overwrites.
+Both match authored `Architecture`, `architecture`, or another case variant.
+The result preserves authored spelling. Longer tags such as
+`ArchitectureNotes` do not match. Tag matching does not normalize Unicode,
+correct spelling, remove accents, or perform fuzzy or semantic matching.
 
-Combine `Workflow` with useful topic tags such as `Testing`, `Architecture`, or `Planning` to inspect focused candidates. Visible `description`, tags, `route` meaning, current user direction, and routed current truth select a candidate. After loading it, `Goal` confirms fit.
-
-- `--tag <Tag>` filters by effective tags (metadata tags, or the generated defaults); repeat the flag to require every tag. Matching is case-insensitive; canonical spelling still comes from the loader.
-- `--route <path>` selects one file or routable folder using a workspace-relative CLI path such as `.agents/workflows/development.md`; `--depth <n>` also follows its generated `entries` n levels.
-- `--follow-required` adds every target of the selected files' `## Required Routes` sections. Markdown link destinations resolve relative to the workflow file containing them. A required route that cannot be read fails the command - it is a blocker, not a skip.
-- Output is entry lines by default; `--paths` prints paths only, `--bodies` prints file contents with `----- {route} -----` separators, `--json` prints structured output.
-
-Use `open-forge load --bodies` when batched effective baseline context is convenient. `find` remains useful for catalogue queries; neither command replaces the complete parent-aware plain traversal defined by the loader.
-
-Explicit CLI routes, generated-entry expansion, and Required Routes are lexical and physical containment boundaries. `find --route` rejects absolute paths, parent traversal, drive changes, and real-path link escapes from the selected target. A containing-file-relative Markdown link may use `..` only when its resolved target remains inside the selected workspace. Global routed discovery likewise rejects linked or special entries before reading them.
-
-## chain
+`--heading` matches the complete visible text of a structural Markdown heading
+while ignoring case:
 
 ```sh
-open-forge chain .agents/patterns/react/components.md
-open-forge chain .agents/patterns/react/components.md --heading Axioms
-open-forge chain .agents/workflows/development.md --heading Completion --json
+open-forge find --heading=Axioms
+open-forge find --heading="current state"
 ```
 
-`chain` explains inherited Markdown context for one routed file. It emits the loader, each visible ancestor category `entrypoint`, a skill's `SKILL.md` when the target is inside its folder, the target, and each user-owned overwrite immediately after its base. With no `--heading`, it lists the route chain. With `--heading`, it reports every matching section from every chain member as `content`, `absent`, `empty`, `declared-inherited`, or `declared-none`.
+The accepted Markdown parser supplies CommonMark ATX and Setext heading nodes.
+Parser extensions do not add other public heading forms unless a later
+compatibility decision names them. Open Forge still authors canonical semantic
+sections with ATX headings. Parser recognition alone does not make a heading
+canonical or semantically active.
 
-The heading is arbitrary, so the same command can inspect `Axioms`, `Goal`, `Completion`, or a local category heading. `declared-none` remains available for contracts that explicitly define `none`. A local category `Axioms` section may be missing, empty, or state `inherited`. All three forms add no local `Axioms` while loaded ancestor `Axioms` remain active. `none` is not a valid `Axioms` sentinel. `--json` provides stable structured output for tools.
-
-Each `route` is resolved inside the selected logical target. Absolute paths, parent traversal, drive changes, and real-path or symlink escapes are rejected without mutation. `chain` reports the currently visible file chain; run `doctor` when indexed `route` continuity itself must be validated.
-
-## doctor
+Repeat one scalar flag for each predicate. Commas in headings remain literal,
+and comma-separated tag lists are invalid:
 
 ```sh
-open-forge doctor
-open-forge doctor --json
+open-forge find --tag=Memory --tag=CurrentTruth
+open-forge find --heading="Current State" --heading="Next Steps"
 ```
 
-`doctor` validates route integrity without writing anything. It reports:
+### Predicate Logic
 
-- folders with multiple recognized `entrypoints` (error)
-- malformed generated-region markers (error)
-- generated `entries` that do not resolve to files (error)
-- `Required Routes` that do not resolve (error), or sections that state neither routes nor `none` (warning)
-- Workflow recipes without one non-empty level-2 `Goal`, `Steps`, and `Completion` section in that order (error). An optional `Required Routes` section must appear between `Goal` and `Steps`, contain at least one valid routed link, and omit the former `none` sentinel. Category-only Workflow `entrypoints` may omit recipe sections
-- direct directive files without #LoadNow metadata or exactly one substantive level-2 `Axioms` section (error)
-- directive files that retain the legacy `Applies To` second applicability gate (error)
-- category `Axioms` sections that use `none` as a sentinel (error), or mix `inherited` with substantive local `Axioms` (warning)
-- stale generated regions that no longer match what `index` would produce (warning; run `open-forge index`)
-- retired load-policy tags in metadata (warning)
-- `.overwrite.md` companions without a base file (warning)
-- markdown files not reachable through generated routing (warning)
-
-Exit code is non-zero when errors exist, so `doctor` is safe for CI. `index` remains the repair tool for generated regions; `doctor` only reports.
-
-`doctor` uses the same target-containment boundary as `find`: an external symlink/junction route tree or linked routed entry is an error and is not consumed as workspace context.
-
-`doctor` and `find --follow-required` treat the selected target as a complete workspace and do not consult extension manifests or dependency metadata. Running either command against an isolated extension source payload therefore reports intentionally absent #Core or declared-dependency routes; validate those cross-package routes after assembly instead of adding source-only stubs.
-
-## create
+The default is `--require=all`. Every tag and heading predicate must match the
+same logical source:
 
 ```sh
-open-forge create category patterns/react/components
-open-forge create category .agents/memory/crystallized/mobile-app
-open-forge create extension my-patterns
+open-forge find \
+  --tag=Directive \
+  --heading=Instructions
 ```
 
-`create category` scaffolds a `route` chain. Every missing folder gets a canonical `_{folder}.md` `entrypoint` with placeholder metadata, the containing `root route`'s single primitive tag such as #Workflow or #Skill when one exists, an `inherited` `Axioms` sentinel, and an empty generated region. The command then rebuilds all indexes.
+Use `any` for a flat union:
 
-The command does not turn a child into another `root route` because its `slug` is familiar. `workflows/frontend/patterns/` therefore remains a Workflow scope, while `patterns/frontend/` remains a Pattern scope.
+```sh
+open-forge find \
+  --tag=Architecture \
+  --tag=Principles \
+  --heading=Axioms \
+  --require=any
+```
 
-The command refuses paths that are already routable. Fill in the generated TODO `descriptions`, then run `open-forge index` again. A local category may instead omit `Axioms` or leave the section empty; all three forms add no local `Axioms` while loaded ancestor `Axioms` remain active.
+The predicate logic has no grouping, predicate negation, precedence, regular
+expressions, or query language. Source-universe exclusion remains a separate
+explicit filter.
 
-`create extension` scaffolds a managed extension package: `extension.json` with the requested stable `id` plus starter `name`, `description`, `version`, and `dependencies` fields; a README with authoring rules; and an empty `payload/.agents/` tree ready for whole routed files. Install it with `open-forge extend <directory-or-id>` or copy the payload and update generated `Entries` manually.
+### Search Regions
 
-## Related Documentation
+`--within` controls where predicates are evaluated:
 
-- [Open Forge README](../README.md)
-- [Extensions](extensions.md)
+| Part             | Search region                                                                               |
+| ---------------- | ------------------------------------------------------------------------------------------- |
+| `document`       | Complete authored document: frontmatter plus body                                           |
+| `frontmatter`    | Parsed Open Forge frontmatter                                                               |
+| `body`           | Parsed Markdown after frontmatter                                                           |
+| `section:<name>` | Parsed body section under a structural heading whose complete visible text matches `<name>` |
+
+Without `--within`, tags search frontmatter and headings search the body. Use an
+explicit region to search body tags or one exact section:
+
+```sh
+open-forge find --tag=Architecture --within=body
+open-forge find --tag=Architecture --within=document
+open-forge find --tag=Architecture --within="section:Current State"
+open-forge find --heading=Decision --within=section:History
+```
+
+Several regions form a union and use the same comma and escape grammar as
+`--content`:
+
+```sh
+open-forge find \
+  --tag=Architecture \
+  --within="frontmatter,section:Current State"
+```
+
+### Output
+
+The expanded human view is the default. Compact view emits one tab-separated ID
+and canonical path per result, preceded by a summary line:
+
+```text
+result=complete	coverage=complete	universe=default	matches=2
+directives/security	.agents/directives/security.md
+directives/writing	.agents/directives/writing.md
+```
+
+A filtered compact result uses `universe=filtered` in that summary line without
+repeating the full selector detail.
+
+Use `--view=expanded` for the workspace, query, coverage, descriptions, and
+match evidence:
+
+```text
+Workspace: <workspace-path>
+Selected by: current directory
+
+Filters:
+  Tag:     Directive
+  Heading: Instructions
+Require: all
+Within:
+  Tag:     frontmatter
+  Heading: body
+Source universe:
+  Mode:       default
+  Include:    omitted
+  Exclude:    omitted
+  Candidates: <effective-candidate-count>
+  Inspected:  <effective-inspected-count>
+Coverage: complete
+Matches: 2
+
+directives/security
+  Path: .agents/directives/security.md
+  Description: Apply required workspace security boundaries
+  Matched:
+    Directive — frontmatter, base
+    Instructions — heading, base, line 11
+
+directives/writing
+  Path: .agents/directives/writing.md
+  Description: Write clear, consistent user communication and source prose
+  Matched:
+    Directive — frontmatter, base
+    Instructions — heading, base, line 9
+```
+
+`--content` independently selects result content through the values
+`metadata`, `frontmatter`, `headings`, `body`, and `section:<name>`.
+
+```sh
+open-forge find \
+  --tag=Directive \
+  --heading=Instructions \
+  --content=section:Instructions
+
+open-forge find \
+  --heading=Axioms \
+  --heading=Instructions \
+  --require=any \
+  --content=section:Axioms,section:Instructions
+```
+
+`--within` controls matching, `--view` controls human match details,
+`--content` controls result content, and `--verbose` adds diagnostics. JSON
+returns the complete structured result. A well-formed `--view` with `--json` is
+accepted as a no-op because it applies only to human output. `paths` is invalid
+for Find.
+
+A complete search with no matches succeeds and prints `No matches.` in compact
+human output. Incomplete coverage may return independently verified safe
+matches, but it reports that additional matches may exist and returns a
+non-success semantic result.
+
+See the
+[find contract set](../.agents/memory/crystallized/documents/cli/contracts/find/_find.md)
+for the complete interface and additional examples.
+
+## Routes
+
+The `route` group contains separate operations for inspection, route chains,
+ordinary routed Markdown files, and bounded updates. Running `open-forge route`
+shows help and performs no mutation.
+
+The `route init`, `route create`, and `route update` write operations support
+`--dry-run` and `--skip-git-check`. They use the exact current directory or
+`--workspace`, plan automatic generated `Entries` changes in the same mutation,
+and never run a hidden `index` subprocess.
+
+Those three metadata/scaffolding write commands use the same interface shape.
+Singleton one-value flags reject repetition, including equal values. Explicitly
+multi-value `--tag` flags keep each command's local order, replacement, and
+duplicate rules.
+Applicable `--dry-run` and `--skip-git-check` flags repeat idempotently and do not
+add authority. Each command uses `complete`, `attention`, `incomplete`,
+`invalid`, `blocked`, `failed`, and `interrupted`; ordinary conditions use
+`blocked` > `incomplete` > `attention` > `complete`, invalid input stops before
+operation resolution, and failed or interrupted results retain their event
+meaning. These are seven semantic statuses. Human complete/attention/incomplete results use stdout. Human
+invalid/blocked/failed/interrupted results use stderr. JSON writes one complete
+typed result to stdout for every status, with bounded diagnostics on stderr.
+Compact and structured results retain at most one required `Next:` action.
+
+### Inspect A Route
+
+`route inspect` explains one known source's route behavior without returning its
+authored content:
+
+```text
+open-forge route inspect <source-reference>
+  [global flags]
+```
+
+The exact public shape is `open-forge route inspect <source-reference> [global flags]`.
+
+The command reports:
+
+- Whether the source is read at task start or resume.
+- The parent or event that can cause it to be read automatically.
+- Whether it may be read again after context restoration, before handoff or
+  closeout, or after a change that may affect its follow-up work.
+- Its own physical size and estimated tokens.
+- Context added when the route is selected beyond task-start context.
+- Descendant context below an entrypoint that is read automatically through
+  `#LoadNow`.
+- Root route, route chain, depth, parent, direct children, and descendants.
+- Sources that contribute inherited `Axioms` (required rules from the Loader and
+  ancestor entrypoints), whether the source defines local `Axioms`, and the
+  overwrite relationship.
+
+Routed entrypoints, routed leaves and native sources, accepted compatibility
+entrypoints, valid overwrite pairs, detached entrypoints, and known supported
+unrouted sources can be `complete`. A safely resolved non-unique automatic ID is
+`attention` only when exact-path or interactive selection made the physical
+source safe and the route meaning complete. Unreadable required sources,
+incomplete route chains, and unmeasurable applicable facts are `incomplete`.
+Orphan or ambiguous overwrites, ambiguous routes, unsafe identity, and
+containment failures are `blocked`; zero or several operands, the Loader, and
+unknown, missing, or unsupported sources are `invalid`. Failed and interrupted
+events retain their own statuses.
+
+Primary human `complete`, `attention`, and `incomplete` results use stdout.
+Primary human `invalid`, `blocked`, `failed`, and `interrupted` results use
+stderr. `--json` writes one complete structured result to stdout for every
+status, with bounded diagnostics on stderr and no human text mixed into JSON.
+Both human views retain workspace, selection method, source ID, and canonical
+path.
+
+Compact output keeps ID and path, source and route state, route chain, reading
+behavior, own/addition/`#LoadNow`-descendant measurements, applicable topology,
+overwrite state, status, completeness, safety, and at most one required
+`Next:` line. Measured zero, unavailable, and not-applicable remain distinct. A
+zero-source selection addition and an entrypoint with no automatic descendants
+are measured zero; an ordinary routed leaf's descendant measure and detached or
+unrouted route-dependent facts are not-applicable. An applicable unmeasurable
+fact is unavailable and incomplete.
+
+`Next:` appears only when required: an interactive ID collision names the exact
+path for non-interactive use; incomplete or structural blocked results name a
+known direct safe correction or `open-forge doctor`; invalid input names the
+source or input to correct; complete results have none. Failed and interrupted
+results keep ordinary retry guidance. Exact-path collision results preserve the
+non-unique-ID observation without inventing an action. `route inspect` emits no
+route mutation, health, content-placement, or diagnostic recommendations.
+An unresolved non-interactive ID collision is blocked, retains every candidate
+path, and tells the caller to rerun with one listed exact path.
+
+Human output explains reading events in ordinary language. It does not replace
+them with labels such as `target-sensitive` or `continuity boundary`:
+
+```text
+Route: memory/working/cli-release
+Path: .agents/memory/working/cli-release/_cli-release.md
+Entrypoint: canonical
+
+Reading behavior
+  Read at task start or resume: yes
+  Why: memory/working exposes it as context that should be revisited during the task
+  May be read again: yes
+  When: after context restoration, before handoff or closeout, or after a change that may affect its follow-up work
+
+Context cost
+  This source: 3.7 KiB · ~955 tokens
+  Selecting this route adds: none; its required context is already read at task start
+  Automatically read below it through #LoadNow: 1 file · 2.1 KiB · ~525 tokens
+
+Route structure
+  Parent: memory/working
+  Route chain: memory → working → cli-release
+  Depth: 3
+  Direct children: 7 files, 1 child entrypoint
+  All descendants: 12 files, 2 descendant entrypoints
+
+Rules and customization
+  Axioms inherited from: loader → memory → working
+  Local Axioms: none
+  Overwrite: none
+```
+
+The values are illustrative. Context size never produces a health grade,
+heaviness score, or recommendation. Human output omits character counts;
+structured output retains the shared exact measurement record.
+
+The command does not report a generic scope count. Scope is a narrowing role,
+not a separate file type that can be counted safely from folders or tags. The
+exact route chain, depth, children, and descendants provide the mechanically
+reliable structure instead.
+
+`route inspect` does not search, list workspace routes, return bodies or
+sections, follow links, compare generated `Entries`, diagnose health, emit route
+or content-placement recommendations, or modify anything. Use `find` to
+discover sources, `context` to return content, `status` for the workspace
+overview, and `doctor` for diagnosis. See the
+[route inspect contract set](../.agents/memory/crystallized/documents/cli/contracts/route/inspect/_inspect.md)
+for the complete interface.
+
+### List Route Topology
+
+`route list` enumerates the current authored routed topology without changing
+files or rebuilding generated `Entries`:
+
+```text
+open-forge route list [source-reference]
+  [--depth=<non-negative-integer|all>]
+  [global flags]
+```
+
+With no operand, it selects every current root route mechanically exposed by the
+exact Loader, including workspace-defined roots; the Loader itself is never a
+row. Omitted depth is `1`, so each selected root and its direct routed children
+are returned. `--depth=0` returns roots only, and `--depth=all` returns the
+complete routed descendant closure. A selected entrypoint enumerates its
+subtree, a routed leaf returns itself, and a detached tree requires explicit
+entrypoint selection.
+
+Rows come from current authored filesystem topology and source contracts, not
+generated `Entries`. They include routed entrypoints, routed leaves, and routed
+native sources such as `SKILL.md`; unrouted sources and overwrite companions as
+independent rows are excluded. Compact output is an indented ID/path and exact
+authored description/tag list. Expanded output adds parent, depths, kind, child
+counts, and provenance; JSON retains all typed facts.
+
+`route list` is structural topology, not flat search, route inspection, context
+content, reference lookup, graph traversal, diagnosis, or repair. See the
+[route list contract set](../.agents/memory/crystallized/documents/cli/contracts/route/list/_list.md)
+for the complete interface and behavior.
+
+### Initialize A Route Chain
+
+`route init` creates every missing entrypoint in one route chain:
+
+```text
+open-forge route init <route-target>
+  [--description <text>]
+  [--responsibility <text>]
+  [--tag=<tag>]...
+  [--dry-run]
+  [--skip-git-check]
+  [global flags]
+```
+
+A target may be an ID for the intended folder under `.agents` or an exact
+canonical entrypoint path:
+
+```sh
+open-forge route init memory/project-alpha/documents
+open-forge route init \
+  .agents/memory/project-alpha/documents/_documents.md
+```
+
+The first form maps to the second path. Every missing folder receives one
+canonical `_{folder-name}.md` entrypoint. The command does not create the Loader
+and does not use a Template.
+
+If the final target already exists as a recognized compatibility entrypoint and
+only ancestors are missing, its exact path is also accepted and preserved.
+
+The fixed scaffold contains canonical frontmatter, a literal slug title, a
+compact route description, the inherited `Axioms` sentinel, and a final valid
+generated `Entries` region. Missing folders receive an honest draft description
+and `NeedsAuthoring`. For the missing final target, supplying both an explicit
+description and one or more tags suppresses automatic addition of
+`NeedsAuthoring`; an explicitly supplied `NeedsAuthoring` tag remains present.
+Optional metadata flags affect only that final target.
+
+Existing canonical and accepted compatibility entrypoints remain in place.
+`index.md`, `_index.md`, `references.md`, and `_references.md` count as existing
+entrypoints when exactly one recognized entrypoint exists in the folder. New
+entrypoints always use the canonical filename.
+
+If the complete chain already exists, the command succeeds without writing.
+Supplying metadata for an existing final target is invalid; use `route update`.
+See the
+[route init contract set](../.agents/memory/crystallized/documents/cli/contracts/route/init/_init.md)
+for the complete target, scaffold, collision, and recovery behavior.
+
+### Create A Routed File
+
+`route create` creates one ordinary Markdown file below an existing routable
+folder:
+
+```text
+open-forge route create <file-target>
+  --description <text>
+  --tag=<tag>...
+  [--responsibility <text>]
+  [--template <template-reference>]
+  [--dry-run]
+  [--skip-git-check]
+  [global flags]
+```
+
+The target may be an intended source ID or exact ordinary Markdown path:
+
+```sh
+open-forge route create \
+  memory/crystallized/decisions/cache-policy \
+  --description "Why the cache policy was chosen" \
+  --tag=Memory \
+  --tag=Decision
+```
+
+The parent folder must already have exactly one recognized entrypoint. The
+command does not initialize missing folders or entrypoints.
+
+Destination description and tags are required. Responsibility is optional;
+`--responsibility ""` omits it. With no Template, the new source contains only
+canonical destination frontmatter. `--template` accepts one routed Template ID
+or exact path and copies its body as starting content:
+
+```sh
+open-forge route create \
+  memory/crystallized/decisions/cache-policy \
+  --template templates/memory/decision \
+  --description "Why the cache policy was chosen" \
+  --tag=Memory \
+  --tag=Decision
+```
+
+The selected source must be ordinary routed Markdown with the exact canonical
+`Template` tag. A Template with an overwrite companion blocks because this
+operation has no accepted rule for collapsing two authored layers into one
+destination body.
+
+Template frontmatter describes the Template and never transfers to the
+destination. The command does not substitute placeholders, store Template
+provenance, or create a continuing update relationship. The created file is
+independently maintained.
+
+An identical existing target is a verified no-op. A different existing target
+blocks instead of being overwritten. See the
+[route create contract set](../.agents/memory/crystallized/documents/cli/contracts/route/create/_create.md)
+for the complete Template, metadata, target, and recovery behavior.
+
+### Update A Routed Source
+
+`route update` patches selected metadata fields on one existing routed Markdown
+file or entrypoint:
+
+```text
+open-forge route update <source-reference>
+  [--description <text>]
+  [--responsibility <text>]
+  [--tag=<tag>]...
+  [--template <template-reference>]
+  [--dry-run]
+  [--skip-git-check]
+  [global flags]
+```
+
+At least one metadata flag or `--template` is required. Supplied fields replace
+their current values; omitted fields remain unchanged. Repeated `--tag` values
+replace the complete tag list. `--responsibility ""` removes that key. There is
+no `--no-responsibility` flag.
+
+```sh
+open-forge route update \
+  memory/crystallized/decisions/cache-policy \
+  --description "Accepted cache policy and the reasoning behind it" \
+  --responsibility ""
+```
+
+When `--template` is supplied, the command copies the Template body only if the
+target contains valid frontmatter followed by an empty or whitespace-only body.
+Any authored non-whitespace body byte causes the complete target body to remain
+byte-for-byte unchanged. Explicit metadata patches still apply:
+
+```sh
+open-forge route update \
+  memory/crystallized/decisions/cache-policy \
+  --template templates/memory/decision \
+  --description "Why the cache policy was chosen"
+```
+
+Template frontmatter never changes destination metadata. Existing
+compatibility entrypoint filenames and overwrite companions remain in place.
+Description and tag changes update the exposing parent's generated entry in the
+same operation. See the
+[route update contract set](../.agents/memory/crystallized/documents/cli/contracts/route/update/_update.md)
+for the complete field-patch, body-preservation, Template, and recovery
+behavior.
+
+### Move or remove a routed subject
+
+The accepted structural mutation commands are shallow grouped command leaves.
+They are part of the non-shipping replacement CLI and are not implemented or
+released yet:
+
+```text
+open-forge route move <source-reference> <destination-target>
+  [--dry-run] [--skip-git-check] [global flags]
+open-forge route remove <source-reference>
+  [--dry-run] [--skip-git-check] [global flags]
+```
+
+Each command accepts exactly one eligible ordinary unmanaged logical leaf or one
+eligible ordinary unmanaged category. A leaf is one ordinary routed Markdown
+source with its valid overwrite companion, when present. A category is selected
+through one recognized entrypoint source reference and is the complete
+physically contained folder tree: its root entrypoint, overwrite companion,
+descendant entrypoints and leaves, routed or unrouted Markdown, native or binary
+resources, ordinary support files, and every other regular contained file and
+directory. Every item must pass containment,
+identity, ownership, lifecycle, collision, and recovery checks. A category is
+one complete operation, not a batch of independently committed leaf commands.
+
+Move uses an exact ordinary routed file target under an existing valid route for
+a leaf. For a category, its exact destination entrypoint is inside a new category
+folder whose parent is an existing valid route; it defines the new category root,
+and descendant relative layout is preserved. The commands reject self-moves,
+destinations inside the source, aliases, collisions, overwrite conflicts, unsafe
+containment, and implicit parent initialization. Lifecycle-managed content is
+not adopted or released. Unmanaged status requires complete trusted ownership
+evidence from the Framework baseline and every applicable Extension receipt or
+manager claim; a missing receipt, path, tag, generated entry, or matching bytes
+is not proof.
+
+Move scans all supported workspace Markdown, both inside and outside `.agents`.
+It rewrites each exact supported local authored reference whose existing
+destination would no longer resolve to the same intended target after the move,
+including references into the moved subject and references from moved content to
+targets outside it. It preserves labels, fragments, valid encoding, and unrelated
+bytes. Internal links that remain valid are not rewritten, and external URLs are
+unchanged. Generated `Entries` are projected from the post-move topology rather
+than edited as authored references.
+
+Remove performs the same complete reference pass. Each incoming exact supported
+Markdown link from outside the removed subject is detached by replacing it with
+its visible label as plain authored text. Surrounding prose is preserved, and
+every detachment appears in dry-run and final human and JSON results. References
+originating inside the removed subject disappear with it. Unsupported or
+ambiguous references, prose-losing detachments, and incomplete coverage prevent
+the operation; a supported broken link is never silently left behind.
+
+Both commands form one complete plan, include the affected parent projections
+(old and new for move, old for remove) and the Loader when applicable, revalidate
+expected state, verify every effect, and use identity-guarded recovery. `--dry-run` is the only
+preview and shows every planned path, reference effect, and generated effect
+without writing. `--skip-git-check` bypasses only affected-path Git cleanliness.
+There is no `--force`, `--automatic`, `--yes`, `--apply`, root move/remove, or
+batch operand. Human results keep complete, attention, and incomplete results on
+stdout and invalid, blocked, failed, and interrupted results on stderr. JSON
+emits one complete structured result to stdout for every status.
+
+Repeating a move with its consumed old source is a non-mutating exact
+`source-not-found`/`invalid` result, not a claimed no-op. Repeating a remove is a
+verified no-op only when complete trusted ownership, topology, recovery, and
+reference evidence proves the exact intended absence.
+
+See the [route move contract set](../.agents/memory/crystallized/documents/cli/contracts/route/move/_move.md)
+and [route remove contract set](../.agents/memory/crystallized/documents/cli/contracts/route/remove/_remove.md)
+for the complete current interfaces and behavior.
+
+### Route Write Safety
+
+Across `route init`, `route create`, and `route update`, singleton value flags
+reject repetition even when values match, explicitly multi-value `--tag` inputs
+retain their command-local ordering and duplicate rules, and repeated `--dry-run`
+or `--skip-git-check` flags are idempotent. These three commands use `complete`,
+`attention`, `incomplete`,
+`invalid`, `blocked`, `failed`, and `interrupted`, although a command emits
+`attention` only for its finite local condition.
+
+Primary human `complete`, `attention`, and `incomplete` results use stdout;
+primary human `invalid`, `blocked`, `failed`, and `interrupted` results use
+stderr. JSON emits one complete result to stdout for every status, while bounded
+diagnostics use stderr.
+
+Dry-run and application use the same intended state, generated projection,
+safety checks, and expected-state facts. Dry-run shows every complete new file
+and exact bounded existing-file diff, then writes nothing.
+
+Application checks Git cleanliness only for existing paths it plans to change.
+`--skip-git-check` bypasses only that check and activates adjacent backup
+recovery for replacements. It does not permit overwrite, ambiguous route
+selection, unsafe paths, invalid metadata, malformed generated boundaries, or
+authored-body replacement.
+
+The commands recheck facts immediately before writing, verify each effect and
+the complete route result, and reverse handled partial writes. They preserve
+unknown, user-owned, concurrently changed, and recovery-needed content.
+
+Dry-run and application use the same request, current facts, intended state,
+generated projection, plan, preflight, and status conditions. Dry-run writes
+nothing, and planned changes alone do not create `attention`.
+
+The command-local `attention` boundaries are:
+
+- `route init`: a newly planned entrypoint whose intended tags contain exact
+  `NeedsAuthoring`. An unchanged existing marker does not change a complete
+  no-op.
+- `route create`: no current finite attention condition. The status remains in
+  the uniform vocabulary but is unreachable until a condition is accepted.
+- `route update`: an explicit Template is safely not applied because authored
+  non-whitespace body content is protected. This includes a Template-only
+  byte-level no-op and dry-run. The command never suggests overwriting the body.
+
+## Index
+
+In this section, an `entrypoint` is a Markdown file that makes its folder
+routable.
+
+`index` regenerates generated `Entries` from authoritative filesystem topology
+and authored routing metadata:
+
+```text
+open-forge index [source-reference...]
+  [--dry-run]
+  [--skip-git-check]
+  [global flags]
+```
+
+The applicable global flags are `--workspace <path>`, `--json`,
+`--view=compact|expanded`, `--verbose`, `--help`, and `--version`.
+
+`--dry-run` and `--skip-git-check` are Boolean flags. Repeating either is
+accepted and idempotent: a second or later occurrence has no additional effect
+and does not multiply authority or bypasses. Value-bearing repetition follows
+the defining flag contract.
+
+With no source operand, the command starts from the selected workspace's exact
+`.agents/loader.md` and regenerates every reachable entrypoint region. It does
+not use current generated lines to discover or order routed sources.
+
+An entrypoint operand selects that entrypoint, every reachable descendant
+entrypoint, and its direct exposing parent when present. A routed leaf selects
+the direct entrypoint that exposes it:
+
+```sh
+open-forge index memory
+open-forge index .agents/memory/_memory.md
+open-forge index skills/experience-design
+```
+
+Operands use the shared automatic source-ID or exact `.agents/...` path grammar.
+Directories are not operands. Repeated and overlapping scopes are deduplicated.
+An explicitly selected detached entrypoint may maintain its unambiguous local
+subtree without inventing a Loader or parent.
+
+### Generated Boundary
+
+The command changes only the body between one valid generated marker pair in
+the final `Entries` section. It preserves the markers and every byte outside
+that body.
+
+Stale or malformed generated lines inside a valid pair may be replaced because
+the bounded body is derived. Missing, duplicate, misplaced, reversed, nested,
+or otherwise ambiguous markers block before any write. Missing or malformed
+required descriptions, tags, destinations, or route relationships also block.
+The command never invents metadata, indexes an overwrite companion, or formats
+the complete file.
+
+### Dry Run And Apply
+
+`--dry-run` uses the same complete plan and safety checks as application. It
+shows the exact bounded diff for every region that would change and writes
+nothing:
+
+```text
+Generated Entries would be updated.
+Checked 12 regions: 2 need updates, 10 are up to date.
+
+<exact bounded diffs>
+
+No files changed (--dry-run).
+```
+
+When a dry run safely establishes planned changes but also has a non-blocking
+finding, its semantic result is `attention`. It still shows the complete plan
+and exact bounded diffs, says no files changed, and human output says
+`requires attention`.
+
+Omitting `--dry-run` selects application of the planned replacement inside the
+selected generated boundaries. The command does not prompt. It checks Git
+cleanliness only for files the plan would change. `--skip-git-check` bypasses
+only that check and activates adjacent backup recovery.
+
+Application rechecks source and destination state, writes complete planned
+bytes, verifies every changed file and the complete generated projection, and
+reverses handled partial writes after failure. Backups are removed only after
+complete verification. No persistent transaction journal or saved plan is
+created.
+
+### Results
+
+A verified no-op is a successful result:
+
+```text
+Generated Entries are up to date.
+Checked 12 regions. No files changed.
+```
+
+A successful update says what changed without exposing internal stage terms:
+
+```text
+Generated Entries were updated.
+Checked 12 regions: 2 updated, 10 already up to date.
+All 12 regions match the routed sources.
+```
+
+Normal output states what happened without naming internal planning stages.
+Verbose diagnostics and structured results retain those facts. Human output
+renders the semantic status `attention` as `requires attention`; JSON keeps
+`attention`.
+
+Primary human rendering for `complete`, `attention`, and `incomplete` results
+goes to stdout. Primary human error rendering for `invalid`, `blocked`, `failed`,
+and `interrupted` results goes to stderr. Each primary human typed result stays
+together on its assigned stream. `--json` writes one complete structured result
+to stdout for every semantic status; separate bounded diagnostics use stderr,
+and ordinary human text is not mixed into JSON stdout.
+
+Every CLI write that can change routing or indexed metadata plans the same
+generated-navigation changes against its intended post-write state. The parent
+dry run, recovery, verification, and result include those changes instead of
+running a hidden follow-up command.
+
+See the
+[index contract set](../.agents/memory/crystallized/documents/cli/contracts/index/_index.md)
+for the complete interface.
+
+## References
+
+`references` reports direct one-hop authored references for one selected source.
+It keeps incoming and outgoing sections separate and does not modify files,
+load target bodies into context, or fetch external URLs:
+
+```text
+open-forge references <source-reference>
+  [--direction=in|out|both]
+  [--include=<source-reference>]...
+  [--exclude=<source-reference>]...
+  [global flags]
+```
+
+Direction omission requests both. `in` scans the default eligible `.agents`
+Markdown universe; `--include` and `--exclude` use the shared source-universe
+filter contract and apply to incoming work only. With `both`, outgoing inspection
+is unchanged. Filters are invalid with `--direction=out`. Outgoing results include
+contained local references and raw external HTTP/HTTPS facts, which are marked
+unchecked and never fetched. A complete empty incoming result is possible only
+after the effective scan completes.
+
+This is different from `context --follow-links`: Context expands selected content
+with reachable link targets, while `references` reports edge facts only. It is
+different from `route list`, which reports authored route topology, and from
+`find`, which returns a flat Markdown inventory and predicate matches. It does not
+diagnose or repair broken references; diagnosis belongs to `doctor`, and repair
+requires its separate mutation authority. See the
+[references contract set](../.agents/memory/crystallized/documents/cli/contracts/references/_references.md)
+for the complete interface and behavior.
+
+## Doctor
+
+`doctor` performs complete known-workspace diagnosis without changing anything:
+
+```text
+open-forge doctor [global flags]
+```
+
+It accepts no operands or doctor-specific flags. The six shared global flags
+apply: `--workspace <path>`, `--json`, `--view=compact|expanded`, `--verbose`,
+`--help`, and `--version`. Doctor never prompts, writes a plan, creates a
+backup, changes Git or lifecycle state, or invokes Repair.
+
+Doctor checks these domains in order:
+
+1. Workspace and entry.
+2. Recovery and residual state.
+3. Routes, metadata, overwrites, and generated navigation.
+4. Local references.
+5. Framework lifecycle.
+6. Extension lifecycle.
+
+Each domain reports its coverage, limitations, counts, findings, and typed next
+actions. Complete coverage means that the checks ran, not that the workspace is
+healthy. Findings keep severity separate from their resolution, which may be
+safe-exact, guided-choice, targeted-operation, manual-decision,
+blocked-repair, or informational. External links are not fetched. JSON is
+complete and non-interactive.
+
+```text
+Open Forge doctor
+Workspace: <workspace-path>
+Mode: read-only; no files changed
+Status: requires attention
+Coverage: complete; 6 domains complete
+
+Immediate actions
+  Preview safe exact repairs: open-forge repair --automatic --dry-run
+  Review 1 guided local-reference candidate
+```
+
+The values are illustrative. `doctor` reports `complete` only when all six
+domains have complete coverage and no actionable warning or error remains. It
+reports `attention` for complete coverage with actionable findings,
+`incomplete` for trustworthy partial coverage, and `blocked` for an unsafe
+required boundary. Informational facts alone do not produce `attention`.
+See the [Doctor contract set](../.agents/memory/crystallized/documents/cli/contracts/doctor/_doctor.md)
+for the complete finite finding catalogue and output rules.
+
+## Repair
+
+`repair` is the separate, constrained mutation operation for current exact local
+reference repairs:
+
+```text
+open-forge repair [--automatic] [--relink <source-location> <expected-destination> <target-path>]... [--dry-run] [--skip-git-check] [global flags]
+```
+
+It has no positional operands, generic proposal references, `--yes`, `--preview`,
+`--suggestions`, `--all`, `--force`, or `--apply`. The six global flags are the
+same six listed above. `--automatic`, `--dry-run`, and `--skip-git-check` are
+repeatable and idempotent. `--relink` repeats as exact triples; identical tuples
+deduplicate and contradictory tuples are invalid.
+
+The simplest human invocation opens a wizard. It reruns all six Doctor domains,
+shows safe-exact proposals, presents bounded guided candidates without selecting
+an uncertain candidate, builds one plan, shows exact effects, and asks for final
+confirmation with No as the default. `--automatic` suppresses the wizard and
+selects only current safe-exact proposals. The preferred structured preview is:
+
+```sh
+open-forge repair --automatic --dry-run --json
+```
+
+An explicit relink supplies a source occurrence, its exact current authored
+destination, and an exact contained target path. The CLI computes the correct
+authored relative destination and leaves the label and unrelated bytes alone.
+The explicit values bypass the wizard and run directly unless `--dry-run`
+selects preview:
+
+```sh
+open-forge repair \
+  --relink ".agents/docs/guide.md@12:8" \
+  "../old.md#Old" \
+  ".agents/docs/new.md#New" \
+  --dry-run
+```
+
+The result identifies the selected mode, diagnosis coverage, selected and
+remaining findings, affected paths, exact bounded effects, and whether files
+changed:
+
+```text
+Open Forge repair
+Selection: automatic
+Application: preview
+Diagnosis coverage: complete; 6 domains complete
+Selected: 2 safe-exact effects
+Remaining: 1 guided candidate set
+No files changed (--dry-run).
+Status: requires attention
+```
+
+`--dry-run` is the only preview spelling and writes nothing. Every request uses
+fresh facts, one conflict-free plan, preflight, expected-state revalidation,
+verification, recovery, and fresh post-diagnosis. Any incomplete or blocked
+Doctor domain blocks general Repair writes: all six domains must have complete
+coverage, including for explicit relinks.
+Repair never chooses external, fuzzy, semantic, authored, generated-navigation,
+route, recovery, Framework, or Extension changes. Generated drift belongs to
+`index`; known route intent belongs to route operations; recognized transient and
+recovery-artifact deletion belongs to the separate `cleanup` operation. See the
+[Repair contract set](../.agents/memory/crystallized/documents/cli/contracts/repair/_repair.md)
+for the complete catalogue, wizard, direct modes, and result meanings.
+
+## Source References
+
+Commands that identify existing Open Forge content accept either an automatic
+source ID or the exact workspace-relative `.agents` path.
+
+```text
+ID:   memory/crystallized/documents/architecture
+Path: .agents/memory/crystallized/documents/architecture.md
+```
+
+The CLI calculates IDs from current workspace paths. IDs are not stored in
+frontmatter or another registry.
+
+### Automatic IDs
+
+| Path                                                    | ID                                           |
+| ------------------------------------------------------- | -------------------------------------------- |
+| `.agents/loader.md`                                     | `loader`                                     |
+| `.agents/memory/_memory.md`                             | `memory`                                     |
+| `.agents/memory/crystallized/_crystallized.md`          | `memory/crystallized`                        |
+| `.agents/memory/crystallized/documents/architecture.md` | `memory/crystallized/documents/architecture` |
+| `.agents/skills/experience-design/SKILL.md`             | `skills/experience-design`                   |
+
+ID rules:
+
+- Remove the leading `.agents/`.
+- Use `/` between segments on every operating system.
+- Remove `.md` from Markdown files.
+- Use the containing folder ID for recognized entrypoints, accepted
+  compatibility entrypoint filenames, and `SKILL.md`.
+- Preserve exact case, spaces, and Unicode.
+- Keep a meaningful extension for supported non-Markdown resources.
+- Reject `.` and `..` ID segments.
+
+An ID identifies a source. It does not make that source routed, indexed,
+authoritative, or managed.
+
+### IDs And Paths
+
+The operand form is explicit:
+
+- `.agents/...` or `./.agents/...` is an exact workspace path.
+- Every other value is an ID.
+
+```sh
+open-forge context memory/crystallized/documents
+open-forge context .agents/memory/crystallized/documents/_documents.md
+```
+
+The CLI does not guess between an ID and path. A value such as `src/file.md` is
+an ID, not a path. Source-reference paths stay below `.agents` unless a command
+defines a separate external-source operand.
+
+The CLI matches the complete ID exactly. It does not correct case, use fuzzy or
+synonym matching, decode percent-encoded text, or use semantic search.
+
+Exact paths resolve from the selected workspace. They must stay lexically and
+physically inside that workspace and identify a source kind supported by the
+command. A path that escapes the workspace is blocked. A missing path or an
+unsupported source kind is invalid. Results use the canonical `.agents/...`
+path with `/` separators.
+
+### Spaces And Quotes
+
+Quote the complete ID or path when it contains spaces:
+
+```sh
+open-forge context "memory/project alpha/documents"
+open-forge context ".agents/memory/project alpha/documents/_documents.md"
+```
+
+Single quotes also work in shells that support them:
+
+```sh
+open-forge context 'memory/project alpha/documents'
+```
+
+Quotes belong to the shell and are not part of the source ID. Documentation
+uses double quotes because they work across more common shells. Windows
+`cmd.exe` users must use double quotes.
+
+### Collisions
+
+Unusual structures may produce the same ID:
+
+```text
+.agents/guidance/style.md
+.agents/guidance/style/_style.md
+```
+
+Both produce `guidance/style`. Interactive use may ask which source the user
+means. JSON and non-interactive use block and list every candidate. An exact path
+resolves the collision:
+
+```sh
+open-forge context .agents/guidance/style.md
+```
+
+The CLI does not choose by file kind, generated order, modification time,
+directory depth, or likely intent.
+
+If one folder contains several recognized entrypoints, an exact path can select
+one file for inspection. A command that needs valid route meaning remains
+blocked until that structural ambiguity is fixed.
+
+### Overwrites
+
+A base and adjacent overwrite share one source ID. Selecting the ID, base path,
+or overwrite path selects the complete logical source. The base is read first
+and the overwrite second. An overwrite is never returned as an independent
+source. An orphan overwrite may be reported as broken evidence through its exact
+path, but it is not a valid standalone source.
+
+### Results
+
+Every result that emits or identifies a resolved `.agents` source shows both its
+automatic ID and canonical workspace-relative path. A local link target outside
+`.agents` has no automatic ID, so its result uses `ID: none` and keeps the
+canonical path.
+
+## Legacy CLI
+
+The frozen TypeScript MVP is available as `open-forge-old`. It is an optional
+deterministic helper for the human-readable Open Forge Framework.
+
+The legacy CLI exists so agents and maintainers can still use established
+routing assistance. Its commands and flags do not define the new CLI.
+
+### Commands
+
+| Command   | Legacy responsibility                         | Writes    |
+| --------- | --------------------------------------------- | --------- |
+| `install` | Install or reconcile the Framework            | Yes       |
+| `extend`  | Inspect or manage Extension packages          | Sometimes |
+| `index`   | Rebuild generated `Entries`                   | Yes       |
+| `load`    | Emit broad baseline and continuity context    | No        |
+| `find`    | Select routed files by tag or route           | No        |
+| `chain`   | Inspect inherited context for one routed file | No        |
+| `doctor`  | Validate deterministic Framework structure    | No        |
+| `create`  | Scaffold a route chain or Extension package   | Yes       |
+
+Use the executable's help for exact frozen syntax:
+
+```sh
+open-forge-old --help
+```
+
+Common repository assistance:
+
+```sh
+open-forge-old load --bodies
+open-forge-old find --tag Architecture --paths
+open-forge-old chain .agents/memory/crystallized/documents/_documents.md
+open-forge-old index
+open-forge-old doctor
+```
+
+`load` performs the MVP's broad `#KeepInMind` audit. It does not implement the
+current Framework's target-sensitive entrypoint contract.
+
+### Legacy Implementation
+
+`src/cli-mvp/` contains the frozen source for `open-forge-old`. Neither
+`src/cli-mvp/` nor `open-forge-old` is replacement implementation or contract
+authority. Keep this source frozen during new-CLI development. Do not modify,
+build, test, repair, or extend it.
+
+The implementation and its legacy architecture document define its exact
+behavior:
+
+- [`src/cli-mvp/cli.ts`](../src/cli-mvp/cli.ts)
+- [CLI MVP Architecture](../.agents/memory/crystallized/documents/cli/mvp-architecture.md)
+
+Plain Markdown remains complete without either CLI.

@@ -1,22 +1,23 @@
 ---
 open-forge:
-  description: Contextual advice for recurring choices, tradeoffs, and work scenarios
+  description: Advice for recurring choices, tradeoffs, and work situations
   tags: [LoadNow, Core, Guidance]
 ---
 
 # Guidance
 
-Guidance provides adaptable judgment for recurring scenarios.
+Guidance is advice that can be adapted to the current situation.
 
 ## Axioms
 
-- Use `Entries` when current work encounters a recurring scenario or decision that may have established guidance.
-- Every guidance file identifies its scenario, preferred approach, reasoning, and relevant tradeoffs.
-- Guidance is advisory. Apply it when it fits the current context.
-- State the reason for a context-driven adaptation or alternative.
+- Check `Entries` when the work involves a recurring situation or choice that may have Guidance.
+- Each Guidance file explains the situation, recommended approach, reasons, and tradeoffs.
+- Apply Guidance when it fits the current work.
+- When another approach fits better, explain why.
 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- none - No entries - #Empty
+- [Explore ideas, match the depth to the decision, integrate accepted outcomes, and offer useful independent review](adaptive-collaboration.md) - #Core #Guidance #Collaboration #Ideation #Decision #Convergence #Review #Experience
+- [Calibrate delegated agent reasoning to bounded work, concrete risk, complexity, and review independence](calibrated-agent-reasoning.md) - #Core #Guidance #Collaboration #Orchestration #Delegation #Reasoning #Review #Risk
 <!-- open-forge:generated-index:end -->

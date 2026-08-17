@@ -17,9 +17,9 @@ The [Archived state contract](../../../../framework/memory/archived.md) defines 
 
 - Frontmatter preserves #Memory, #Archived, #Contextual, and #Historical classification without #LoadNow or #KeepInMind
 - Archived material remains historical context without current authority
-- Archived preserves historical Memory records and uses linked records for relevant history about artifacts that remain elsewhere
-- The `entrypoint` preserves origin, archival reason, and replacement relationships when a replacement exists
-- Useful current meaning is extracted before archival to the `route` or system that contains it authoritatively
+- Archived keeps historical Memory records and links to retained sources when the history belongs elsewhere
+- The entrypoint records origin, archival reason, and replacement when one exists
+- Useful current meaning moves before archival to the route or system that should define it
 - Restoration targets an explicit current destination and validates historical material against current conditions
 - The installed `route` begins empty and supports Memory scopes before or after the Archived state without requiring a mirrored archive taxonomy
 

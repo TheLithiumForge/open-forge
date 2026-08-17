@@ -18,8 +18,8 @@ The [current Skills document](../../../framework/primitives/skills.md) defines t
 - Frontmatter uses #LoadNow, #Core, and #Skill so the category and its selection rule enter baseline context
 - The standard `route` exposes ordinary `.agents/skills/{skill-name}/SKILL.md` packages without rewriting their files
 - Routed scopes beneath the Skills `root route` may expose direct native Skill packages through the same contract for generated `entries`
-- The selected `SKILL.md` defines its metadata, applicability, instructions, resource organization, and on-demand loading
-- The active agent runtime retains activation, invocation, installation, and execution semantics
+- The selected `SKILL.md` defines its metadata, use, instructions, resource organization, and on-demand loading
+- The active agent runtime controls activation, invocation, installation, and execution
 - A `route` elsewhere remains generically routable, but a familiar name or #Skill tag does not grant native Skill-package indexing outside the Skills `root route`
 - Open Forge does not impose an internal `Entries`, `References`, scripts, or assets schema on a Skill package
 - Loose Markdown files directly under the Skills `root route` or one of its scopes do not become native Skills

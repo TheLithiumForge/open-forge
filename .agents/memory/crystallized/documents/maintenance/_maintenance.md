@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Current maintainer contracts and repository-only authoring helpers for Open Forge source and documentation
+  description: Current maintainer contracts, writing standard, and repository-only authoring helpers for Open Forge source and documentation
   tags: [Memory, Document, CurrentTruth, Evergreen, Maintenance, Governance]
 ---
 
@@ -8,7 +8,7 @@ open-forge:
 
 Maintenance documents describe the current contracts of the source and repository surfaces they link to. They follow the [maintenance contract pattern](../../../../patterns/open-forge/maintenance-contract.md).
 
-Internal helpers support consistent authoring and review without becoming shipped Framework concepts or vocabulary users must learn.
+The Writing Standard and internal helpers support consistent authoring and review without becoming shipped Framework behavior or vocabulary users must learn.
 
 ## Axioms
 
@@ -19,5 +19,5 @@ Internal helpers support consistent authoring and review without becoming shippe
 <!-- open-forge:generated-index:start -->
 - [Repository-only helpers for consistent Open Forge terminology and knowledge placement during maintenance](helpers/_helpers.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Helper #Internal
 - [Current maintenance boundary and contracts for reviewed Open Forge installation files](payload/_payload.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload
-- [Current standard for clear, direct, consistent, and reviewable Open Forge-authored prose](writing.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Writing #Documentation #Voice #Clarity
+- [How Open Forge maintainers write clear, consistent, and easy-to-read prose](writing.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Writing #Documentation #Voice #Clarity #Internal
 <!-- open-forge:generated-index:end -->

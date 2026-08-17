@@ -8,7 +8,7 @@ open-forge:
 
 ## Shape
 
-The [governance separation directive](../../directives/deliberate-framework-change.md#axioms) is authoritative for the source-wording boundary.
+The [Payload Maintenance contract](../../memory/crystallized/documents/maintenance/payload/_payload.md#axioms) is authoritative for the source-wording boundary.
 
 The [maintenance contract template](../../templates/documents/maintenance-contract.md) provides copy-ready starting content. This pattern remains the continuing shape used when creating or reviewing an instantiated maintenance document.
 

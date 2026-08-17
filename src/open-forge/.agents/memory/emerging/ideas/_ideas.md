@@ -6,12 +6,12 @@ open-forge:
 
 # Ideas
 
-Ideas preserve future possibilities, experiments, open questions, and options to explore later.
+Ideas keep possibilities, experiments, open questions, and options worth exploring later.
 
 ## Axioms
 
-- Read `Entries` when current work explores possibilities, plans future work, revisits postponed options, or needs prior exploration output.
-- Record an explicitly requested idea or exploration here without treating it as acceptance.
+- Read `Entries` when the work explores possibilities, plans future work, revisits postponed options, or needs earlier exploration.
+- Record a requested idea or exploration here without treating it as accepted.
 - Keep the problem, opportunity, or motivation visible enough to revisit later.
 
 ## Entries

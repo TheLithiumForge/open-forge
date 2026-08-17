@@ -62,7 +62,7 @@ A body may confirm its goal or purpose for a reader who arrives directly, but it
 
 A `route` may connect Framework content, workspace knowledge, source code, repositories, datasets, issue systems, or other declared external sources.
 
-The routed destination remains authoritative for the detailed question delegated to it. A Workspace `route` that points to an external system explains why and when that system matters without copying its contents.
+The routed destination remains authoritative for the detailed question delegated to it. A Map `route` that points to an external system explains why and when that system matters without copying its contents.
 
 Relative links, heading anchors, `descriptions`, and established tags provide explicit graph-like relationships. Derived semantic, vector, or graph tools may improve discovery, but their indexes remain advisory and rebuildable.
 
@@ -95,6 +95,6 @@ This is a structural property, not a promise of constant lookup or reasoning per
 
 ## Decisions And Rationale
 
-- [Routing model](../../../decisions/routing-model.md)
-- [Routing surfaces](../../../decisions/routing-surfaces.md)
-- [Loading reliability](../../../decisions/loading-reliability.md)
+- [Routing model](../../../decisions/framework/routing-model.md)
+- [Routing surfaces](../../../decisions/framework/routing-surfaces.md)
+- [Loading reliability](../../../decisions/framework/loading-reliability.md)

@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Current loading contract for baseline context, selected `routes`, #LoadNow traversal, #KeepInMind continuity, refresh boundaries, and deterministic assistance
+  description: "Current loading contract for baseline context, selected `routes`, #LoadNow traversal, #KeepInMind continuity, refresh boundaries, and deterministic assistance"
   responsibility: Define when routed Open Forge context is read, retained, and refreshed without confusing visibility with authority
   tags: [Memory, Document, CurrentTruth, Evergreen, Framework, Routing, Loading, LoadNow, KeepInMind, Continuity]
 ---
@@ -21,11 +21,13 @@ Each loaded file retains the meaning and authority established by its `route`, c
 
 Open Forge uses three context classes:
 
-| Context | Purpose |
-|---|---|
-| Baseline | Small universal and immediate context needed to enter and navigate the environment |
-| Continuity | Standing follow-ups and resumability context that must survive `route`, session, or context changes |
-| Selected | On-demand context chosen for the current goal |
+| Context    | Purpose                                                                                                |
+| ---------- | ------------------------------------------------------------------------------------------------------ |
+| Baseline   | Small universal and immediate context needed to enter and navigate the environment                     |
+| Continuity | Standing follow-ups and resumability context that must survive `route`, workstream, or context changes |
+| Selected   | On-demand context chosen for the current goal                                                          |
+
+The shipped root `entrypoints` and compact route maps deliberately pay a small baseline cost so agents can discover the Framework and its standard roles. That cost should not grow with local specialization. Put specialized content in narrow scopes and let each scope choose on-demand, #LoadNow, or #KeepInMind loading according to the thresholds below.
 
 ## #LoadNow
 
@@ -39,9 +41,9 @@ Use #LoadNow only for context whose omission is more costly than its baseline at
 
 ## #KeepInMind
 
-#KeepInMind identifies continuity roots that must remain discoverable across the workspace. It does not mean every descendant below those routes.
+#KeepInMind identifies continuity roots. A tagged `entrypoint` is proactive only when it appears during the initial loader and #LoadNow traversal, belongs to a selected route or scope, or is an ancestor of a direct sibling file or descendant currently active for work. Every routed #KeepInMind file that is not an `entrypoint` is read across the workspace regardless of ancestor activity. This exceptional reach is justified only when continuity must survive unrelated route changes. It does not mean every descendant below those routes.
 
-For every routed #KeepInMind result, read the result, its adjacent overwrite when present, and the visible #LoadNow `entries` reachable from that result. Read or recheck this complete continuity set:
+For each applicable #KeepInMind `entrypoint` or other tagged file, read any missing parent `entrypoints` needed to establish its scope and inherited Axioms. Then read the tagged file and its adjacent overwrite when present. Follow #LoadNow in listed order through the `Entries` it exposes. Read or recheck this complete continuity set:
 
 - At task start or resume
 - After detected context restoration
@@ -49,7 +51,7 @@ For every routed #KeepInMind result, read the result, its adjacent overwrite whe
 - Before closeout
 - At another transition when its standing follow-ups may have changed
 
-#KeepInMind discovery deliberately crosses the currently selected branch because continuity failures are most costly when a task, route, session, or context changes. Its #LoadNow traversal still follows ordinary direct-child visibility, so unrelated descendants remain unloaded.
+#KeepInMind file discovery can cross the selected branch because continuity failures are most costly when a task, route, workstream, or context changes. Entrypoint proactivity remains target-sensitive. Its #LoadNow traversal still follows ordinary direct-child visibility, so unrelated descendants remain unloaded.
 
 Each result remains contextual or authoritative according to its routed source. #KeepInMind does not promote candidate material or make every follow-up binding.
 
@@ -59,7 +61,12 @@ A broken #KeepInMind `route` is a structural defect to repair or report, not per
 
 Files without a reserved loading tag remain on demand.
 
-The current goal, visible path, `description`, tags, ancestor meaning, and existing current truth guide selection. Read every selected `entrypoint` before considering its `entries`, and follow explicit dependencies before work relies on them.
+Scan visible paths, `descriptions`, tags, ancestor meaning, explicit relationships, and existing current truth. Recursively select every materially relevant scope, compose their separate route chains, and reevaluate after a material task change. Read every selected `entrypoint` before considering its `entries`; do not load route bodies merely to expose their selection surface.
+
+When deterministic assistance selects a route, include the parent entrypoint
+chain that establishes its scope and inherited Axioms. Loading a selected
+entrypoint makes its generated Entries visible, so its #LoadNow descendants
+apply normally.
 
 Conditional context must be cheap to select, cheap to skip, and recoverable when initially missed.
 
@@ -69,7 +76,7 @@ The effective order is:
 
 1. Read the canonical workspace entry and loader
 2. Traverse the visible #LoadNow closure in generated order
-3. Recover every routed #KeepInMind result and its visible #LoadNow closure
+3. Recover applicable #KeepInMind entrypoints and every routed #KeepInMind file that is not an entrypoint, with their visible #LoadNow closure
 4. Select other relevant `routes` from visible `entries`
 5. Follow explicit relationships and dependencies
 6. Recheck #KeepInMind at every required continuity boundary
@@ -78,11 +85,15 @@ When a base file has a user-owned `{name}.overwrite.md` companion, read it immed
 
 ## Deterministic Assistance
 
-`open-forge load --bodies` may batch the loader, visible transitive #LoadNow closure, every routed #KeepInMind result with its own visible #LoadNow closure, and adjacent overwrites into one ordered stream.
+A future CLI may batch this plain-file traversal, but its command and output
+contract are not accepted yet. Deterministic assistance must implement this
+loading model without defining loading meaning, inferring relevance, or becoming
+required for ordinary inspection.
 
-`open-forge chain <route>` may expose the loader, visible ancestors, applicable skill boundary, target, and adjacent overwrites in inheritance order.
-
-These commands accelerate the same plain-file traversal. They do not define loading meaning, infer relevance, activate hidden parent `routes`, or become required for ordinary inspection.
+During the transition, `open-forge-old load --bodies` remains available as a
+frozen broad audit traversal. It is not target-sensitive and does not define
+this contract. The workspace loader records the currently applicable dogfood
+command.
 
 ## Reliability Boundary
 
@@ -98,11 +109,11 @@ Reliability-critical context therefore loads early, uses imperative wording, sta
 - [Path identity and containment](paths.md)
 - [Canonical loader](../../../../../loader.md)
 - [Framework Architecture](../architecture.md)
-- [CLI MVP Architecture](../../cli/architecture.md)
+- [CLI MVP Architecture](../../cli/mvp-architecture.md)
 
 ## Decisions And Evidence
 
-- [Loading reliability](../../../decisions/loading-reliability.md)
-- [Routing model](../../../decisions/routing-model.md)
-- [Tag semantics](../../../decisions/tags.md)
+- [Loading reliability](../../../decisions/framework/loading-reliability.md)
+- [Routing model](../../../decisions/framework/routing-model.md)
+- [Tag semantics](../../../decisions/framework/tags.md)
 - [Current evaluation syntheses](../../evaluations/_evaluations.md)

@@ -24,14 +24,14 @@ The [Open Forge Principles](principles.md) define the product identity that this
 
 An Open Forge environment combines four areas:
 
-| Area | Responsibility | Depends on |
-|---|---|---|
-| Framework | Shared routing, Core primitives, and Memory mechanics | No other Open Forge area |
-| Workspace context | Local goals, knowledge, constraints, decisions, methods, history, and scopes | The `routes` it uses |
-| Extensions | Optional reusable capabilities | The `routes` they extend |
+| Area                | Responsibility                                                                  | Depends on                                       |
+| ------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------ |
+| Framework           | Shared routing, Core primitives, and Memory mechanics                           | No other Open Forge area                         |
+| Workspace context   | Local goals, knowledge, constraints, decisions, methods, history, and scopes    | The `routes` it uses                             |
+| Extensions          | Optional reusable capabilities                                                  | The `routes` they extend                         |
 | Deterministic tools | Mechanical loading, navigation, validation, installation, packaging, and safety | The human-readable files they inspect and change |
 
-User direction establishes goals and accepted direction. An agent runtime builds the best current model from that direction and accepted context, surfaces consequential unsettled choices, recommends coherent defaults, performs work with its native capabilities, and proposes changes. Agent providers and execution runtimes remain external to Open Forge. Minimal provider bridges may expose the canonical workspace entry without defining independent policy.
+User direction establishes goals and accepted direction. An agent runtime builds the best current model from that direction and accepted context, surfaces consequential unsettled choices, recommends coherent defaults, performs work with its native capabilities, and proposes changes. Agent providers and execution runtimes remain external to Open Forge. Minimal provider bridges may expose canonical Framework entries without defining independent policy.
 
 ## Framework Composition
 
@@ -60,11 +60,11 @@ Dependencies point toward human-readable authoritative sources:
 
 Open Forge assembles three kinds of context:
 
-| Context | Contains | Use |
-|---|---|---|
-| Baseline | The small set of framework rules and `route` maps that apply to nearly all work | Establishes how to enter, navigate, interpret authority, and find more context |
-| Continuity | Live commitments, open approval gates, handoffs, and other state needed to resume current work | Preserves ongoing work without loading its entire history |
-| Selected | Routed files and relationships relevant to the current goal | Supplies the detailed knowledge, constraints, and methods needed now |
+| Context    | Contains                                                                                       | Use                                                                            |
+| ---------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Baseline   | The small set of framework rules and `route` maps that apply to nearly all work                | Establishes how to enter, navigate, interpret authority, and find more context |
+| Continuity | Live commitments, open approval gates, handoffs, and other state needed to resume current work | Preserves ongoing work without loading its entire history                      |
+| Selected   | Routed files and relationships relevant to the current goal                                    | Supplies the detailed knowledge, constraints, and methods needed now           |
 
 For example, resuming a CLI redesign may load the baseline rules and route map, one active handoff that names the current gate, and the selected CLI architecture and decisions. Unrelated extension history remains unloaded unless the redesign depends on it.
 
@@ -101,18 +101,18 @@ Loading changes visibility, not authority. Authority comes from the authoritativ
 
 Each subject has one authoritative source for each distinct question:
 
-| Source role | Answers | Contains |
-|---|---|---|
-| Current document | What is true now, and how does it work? | A complete usable explanation of the accepted concept |
-| Decision | What was chosen, and why? | The accepted choice, relevant alternatives, tradeoffs, consequences, and rationale |
-| Directive | What behavior applies during work? | Binding instructions within its declared scope |
-| Archived memory | What happened before? | Useful historical material that no longer governs current work |
+| Source role      | Answers                                 | Contains                                                                           |
+| ---------------- | --------------------------------------- | ---------------------------------------------------------------------------------- |
+| Current document | What is true now, and how does it work? | A complete usable explanation of the accepted concept                              |
+| Decision         | What was chosen, and why?               | The accepted choice, relevant alternatives, tradeoffs, consequences, and rationale |
+| Directive        | What behavior applies during work?      | Binding instructions within its declared scope                                     |
+| Archived memory  | What happened before?                   | Useful historical material that no longer governs current work                     |
 
 A current document is authoritative for what is true now and links backward to useful rationale. A decision is authoritative for why a choice was accepted and links forward to where its result now lives.
 
 An Evergreen current document must stay synchronized with the accepted state it explains. It states the current concept well enough to use without reading its supporting decisions.
 
-For example, an architecture document should state that routing is top-down and explain how that design works. It can link to the [routing decision](../decisions/routing-model.md) for the reasoning and historical choice. The decision links back to the architecture that is authoritative for the current design.
+For example, an architecture document should state that routing is top-down and explain how that design works. It can link to the [routing decision](../decisions/framework/routing-model.md) for the reasoning and historical choice. The decision links back to the architecture that is authoritative for the current design.
 
 This creates limited intentional overlap: both files identify the accepted choice, the current document is authoritative for the complete current concept, and the decision is authoritative for the reason behind it.
 
@@ -120,14 +120,14 @@ Bidirectional links do not create circular authority. A decision may cite the pr
 
 ## State And Evolution
 
-Memory is part of the framework substrate and organizes recorded state by its current role:
+Memory is the Framework's self-growing Markdown state. It can expand through useful records and routed scopes without a fixed structural ceiling, while routing keeps unrelated branches outside active context. Its four standard states organize each record by its current role:
 
-| State | Purpose |
-|---|---|
-| Working | Temporary context needed to continue or resume active work |
-| Emerging | Useful candidate material that is not accepted current truth |
-| Crystallized | Accepted durable state within its declared scope |
-| Archived | Historical context that no longer governs current work |
+| State        | Purpose                                                      |
+| ------------ | ------------------------------------------------------------ |
+| Working      | Temporary context needed to continue or resume active work   |
+| Emerging     | Useful candidate material that is not accepted current truth |
+| Crystallized | Accepted durable state within its declared scope             |
+| Archived     | Historical context that no longer governs current work       |
 
 The states are not a rigid pipeline. Material moves when meaning, scope, and authority justify the transition. Clear direction may update a Crystallized authoritative source directly, while tentative ideas remain Working or Emerging. Material that is no longer current is extracted, archived, consolidated, or pruned.
 
@@ -157,7 +157,7 @@ The following constraints apply across every Open Forge area:
 - Routing quality depends on clear `descriptions`, scopes, and authority. Deterministic validation can prove structural integrity but not perfect semantic relevance
 - Open Forge has no fixed structural expansion ceiling, but this is not a promise of constant performance. Active context and navigation cost still grow with selected `routes` and relationships
 - Agent behavior remains nondeterministic. The environment can make correct behavior much easier without guaranteeing compliance
-- The current CLI and Extensions implementations are MVPs. Their scoped architectures document current behavior, stable boundaries, and liabilities, while Emerging records keep candidate overhaul designs from masquerading as current truth
+- The current CLI implementation is the frozen legacy MVP. The new CLI is being designed from the Framework's current needs, while deleted CLI-v2 material remains historical raw input
 
 ## Architecture Views
 
@@ -167,9 +167,9 @@ The architecture is intentionally split by authoritative scope:
 - The [Framework Architecture](framework/architecture.md) is authoritative for Core and Memory internals
 - The [Open Forge Routing scope](framework/routing/_routing.md) is authoritative for navigation, recursive scope, inheritance, loading, continuity, and path identity
 - The [Extensions MVP Architecture](extensions/architecture.md) is authoritative for current optional capability composition, lifecycle, safety boundaries, and liabilities
-- The [CLI MVP Architecture](cli/architecture.md) is authoritative for current commands, deterministic state, safety, verification, implementation, and liabilities
+- The [CLI MVP Architecture](cli/mvp-architecture.md) is authoritative for shipped commands, deterministic state, safety, verification, implementation, and liabilities
 
-The extensions and CLI views document the current MVPs without treating current implementation choices as permanent. Their linked Emerging records preserve prospective overhaul design until it is accepted. This document links to the current architectures and does not duplicate their internal contracts.
+The Extensions view documents its current MVP without treating implementation choices as permanent. The [active CLI release program](../../working/cli-release/_cli-release.md) keeps unsettled new-CLI work, while the [CLI-v2 archive](../../archived/cli-v2/_cli-v2.md) preserves deleted designs without making them current.
 
 ## Related Current Views
 
@@ -180,13 +180,13 @@ The extensions and CLI views document the current MVPs without treating current 
 
 These decisions preserve useful rationale behind the current architecture. Their architectural results remain expressed by this document and its scoped views:
 
-- [Product direction](../decisions/product-direction.md)
-- [Adaptive decision elicitation](../decisions/adaptive-decision-elicitation.md)
-- [Distinct Core primitive roles](../decisions/core-primitives.md)
-- [Templates as a Core primitive](../decisions/template-primitive.md)
-- [Routing model](../decisions/routing-model.md)
-- [Memory model](../decisions/memory-model.md)
-- [Extension package boundary](../decisions/extension-package-boundary.md)
-- [Scope and slugs](../decisions/scope-and-slugs.md)
-- [Tag semantics](../decisions/tags.md)
-- [Typed authority and role terminology](../decisions/authoritative-source-terminology.md)
+- [Product direction](../decisions/product/product-direction.md)
+- [Adaptive decision elicitation](../decisions/framework/adaptive-decision-elicitation.md)
+- [Distinct Core primitive roles](../decisions/framework/core-primitives.md)
+- [Templates as a Core primitive](../decisions/framework/template-primitive.md)
+- [Routing model](../decisions/framework/routing-model.md)
+- [Memory model](../decisions/framework/memory-model.md)
+- [Extension package boundary](../decisions/extensions/extension-package-boundary.md)
+- [Scope and slugs](../decisions/framework/scope-and-slugs.md)
+- [Tag semantics](../decisions/framework/tags.md)
+- [Typed authority and role terminology](../decisions/framework/authoritative-source-terminology.md)

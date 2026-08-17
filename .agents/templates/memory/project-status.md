@@ -6,15 +6,16 @@ open-forge:
 
 # {Subject} Status
 
-<!--
+{
 Template selection:
+
 - Need: One expiring coordination record for the current position of active work.
 - Primary question: Where does the work stand, what matters now, what blocks it, and what is needed to resume or coordinate it?
 
 Instantiate under the appropriate Working route.
 This record is expected to expire. Extract durable results, archive useful history, and prune obsolete operational detail when the active need ends.
-Replace this template's frontmatter, title, placeholders, and comments.
--->
+Replace this template's frontmatter, title, and placeholders, then remove this braced source guidance.
+}
 
 ## Scope And Freshness
 

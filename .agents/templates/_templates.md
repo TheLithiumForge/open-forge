@@ -1,27 +1,33 @@
 ---
 open-forge:
-  description: Copy-ready source artifacts for creating independently owned workspace content
+  description: Copy-ready files for starting independently maintained workspace content
   tags: [Core, Template]
 ---
 
 # Templates
 
-Templates are reusable source artifacts intended to be instantiated into independently owned workspace content.
+Templates are reusable starting files. Copy and adapt them, then maintain the result independently.
 
 ## Axioms
 
-- Use `Entries` when creating an artifact that would benefit from copy-ready starting content.
-- Select the most specific relevant template, then copy and adapt only the material the destination needs.
-- Make the need each template satisfies and the primary question or result it answers visible in its `description` and source instructions.
-- Replace template metadata and placeholders with accurate destination ownership, scope, state, authority, and relationships.
-- The destination becomes authoritative for the instantiated result. Later template changes do not update it.
-- Use a linked matching #Core `route` when created artifacts need continuing guidance or requirements. The template itself provides only starting content.
-- Treat generic templates as fallbacks. Add a specialization only when it provides materially different copy-ready content.
-- Users may edit, replace, scope, or remove templates, and removed defaults stay removed unless restoration is explicitly requested.
+### Selection And Use
+
+- Check `Entries` when a new artifact would benefit from copy-ready starting content.
+- Choose the most relevant Template, then copy and adapt only what the destination needs.
+- Replace metadata and placeholders so they describe the destination's ownership, scope, state, authority, and relationships.
+- The new artifact becomes independent. Later Template changes do not update it.
+- Link a matching #Core route when the new artifact needs continuing guidance or requirements. The Template provides only starting content.
+
+### Catalog Maintenance
+
+- State the need and primary question each Template answers in its description and source instructions.
+- Treat generic Templates as fallbacks. Add a specialized Template only when it provides meaningfully different starting content.
+- Users may edit, replace, scope, or remove Templates. Removed defaults stay removed unless the user asks to restore them.
 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Generic copy-ready starting points for coherent current knowledge documents](documents/_documents.md) - #Extension #Template #Document #CurrentView
-- [Copy-ready starting points for useful Working, Emerging, and Crystallized Memory records](memory/_memory.md) - #Extension #Template #Memory
+- [Copy-ready starting files for CLI documents, including command-local contract sets](cli/_cli.md) - #Template #CLI #Command #Contract #Interface #Behavior #TechnicalDesign
+- [Copy-ready starting structures for clear current documents](documents/_documents.md) - #Extension #Template #Document #CurrentView
+- [Copy-ready starting structures for useful Memory records](memory/_memory.md) - #Extension #Template #Memory
 <!-- open-forge:generated-index:end -->

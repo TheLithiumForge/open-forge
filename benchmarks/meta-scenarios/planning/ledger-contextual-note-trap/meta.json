@@ -1,9 +1,0 @@
-{
-  "id": "ledger-contextual-note-trap",
-  "scenario": "ledger-remove-planning",
-  "primitives": [
-    "immutable-ledger-removal",
-    "hard-delete-emerging-note"
-  ],
-  "extensions": ["development-toolkit"]
-}

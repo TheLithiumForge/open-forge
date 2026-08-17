@@ -2,15 +2,15 @@
 
 First-party Open Forge Extension sources live here.
 
-An Extension is one optional installation and ownership unit. Its payload may contain any deliberate combination of routed files. Installed files retain the meaning of their destination routes and remain usable without the manifest, source package, receipt, or CLI.
+An Extension is one optional package that is installed and managed as a unit. Its payload may contain any deliberate combination of routed files. Installed files keep the meaning of their destination routes and remain usable without the manifest, source package, receipt, or CLI.
 
 ## Current Catalogue
 
-The pre-release catalogue currently advertises one deliberately small package:
+The pre-release catalogue contains one small package:
 
 - `development-toolkit` adds six lean Workflows, one native Experience Design Skill, and nine copy-ready Templates
 
-Install only when that complete unit earns its context and maintenance cost:
+Install it only when the complete package is worth its context and maintenance cost:
 
 ```sh
 open-forge extend --list
@@ -19,7 +19,7 @@ open-forge extend development-toolkit
 open-forge extend --remove development-toolkit --dry-run
 ```
 
-The current CLI does not select individual features inside a package. Users own installed files and may remove routes that provide no local value after reviewing the resulting route tree.
+The current CLI does not install individual features from a package. Users own installed files and may remove routes that provide no local value after reviewing the result.
 
 ## Source Shape
 
@@ -36,9 +36,9 @@ development-toolkit/
       workflows/
 ```
 
-A normal managed package contains an `extension.json`, an optional `README.md`, and complete target-relative files beneath `payload/`. A dependency-only package may omit `payload/` when it declares at least one dependency. A local source may also be a plain payload directory or direct overlay.
+A normal managed package contains `extension.json`, an optional `README.md`, and complete target-relative files under `payload/`. A package that provides only dependencies may omit `payload/`. A local source may also be a plain payload directory or direct overlay.
 
-Every bundled package declares a stable lowercase id independently of its folder. A local source with a manifest id opts into receipt-managed lifecycle. An idless local payload remains unmanaged.
+Every bundled package declares a stable lowercase id that does not depend on its folder name. A local source with a manifest id uses receipt-managed updates and removal. A local payload without an id remains unmanaged.
 
 The current manifest accepts:
 
@@ -48,26 +48,26 @@ The current manifest accepts:
 - `version`
 - A duplicate-free `dependencies` array of bundled ids
 
-Unknown fields are rejected. Dependencies resolve transitively and offline before their dependents. Installed files still express every runtime relationship through ordinary links and route meaning because package metadata is not agent context.
+Unknown fields are rejected. Dependencies resolve transitively and offline before their dependents. Installed files still express runtime relationships through ordinary links and route meaning because package metadata is not agent context.
 
 ## Payload Contract
 
-Payload files are authored for their final workspace-relative locations. Open Forge-authored files normally use #Extension with their useful type and topic tags. Runtime-native files such as `SKILL.md` keep their native metadata. Loading tags appear only when baseline or continuity loading is deliberate.
+Write payload files for their final workspace-relative locations. Open Forge files normally use #Extension with useful type and topic tags. Runtime-native files such as `SKILL.md` keep their native metadata. Add loading tags only when baseline or continuity loading is deliberate.
 
-Shared behavior has one canonical package source. Identical-file deduplication is a safety boundary, not permission to maintain competing first-party copies.
+Shared behavior has one exact package source. Identical-file deduplication prevents collisions; it does not justify competing first-party copies.
 
-The `development-toolkit` package is canonical for its nine shipped Template leaves. Because this repository installs the Extension for dogfooding, its corresponding Template leaves remain exactly aligned through an automated parity check.
+The `development-toolkit` package defines its nine shipped Template files. This repository also keeps dogfood copies, which an automated parity check keeps identical.
 
 ## Planning, Ownership, And Removal
 
-The CLI validates every selected manifest, source path, target path, existing receipt, dependency, collision, and route-integrity boundary before writing. `--dry-run` reports the complete plan without mutation.
+Before writing, the CLI validates selected manifests, source and target paths, receipts, dependencies, collisions, and route integrity. `--dry-run` prints the complete plan without changing files.
 
-Normal writes require recognizable tracked Core anchors and a clean target-scoped Git checkpoint. `--pro` bypasses only the Git and Core checkpoint lifecycle. It never bypasses manifest, containment, collision, ownership, or route-integrity checks.
+Normal writes require recognizable tracked Core files and a clean Git checkpoint for the target. `--pro` bypasses only the Git and Core checkpoint. It never bypasses manifest, containment, collision, ownership, or route-integrity checks.
 
-Managed packages are recorded in the transparent root `open-forge.extensions.json` receipt. It records dependency edges, requested roots, owned paths, owner sets, and payload digests. Reinstalling an id reconciles its owned files. Removal protects user changes, retained dependents, shared ownership, and reachable routed descendants.
+The root `open-forge.extensions.json` receipt records managed packages, dependencies, requested packages, owned paths, shared owners, and payload digests. Reinstalling an id reconciles its files. Removal protects user changes, packages that are still needed, shared files, and reachable routed descendants.
 
-Payload writes, generated `Entries`, and receipt changes roll back together on handled in-process failures. The MVP has no registry, network resolution, compatibility solver, automatic orphan pruning, migration hooks, persistent recovery journal, or crash recovery.
+Payload writes, generated `Entries`, and receipt changes roll back together after handled failures. The MVP has no registry, network resolution, compatibility solver, automatic orphan pruning, migration hooks, persistent recovery journal, or crash recovery.
 
 ## Catalogue Reset
 
-Earlier first-party package ids were removed before a stable release and are not aliases. Existing installed files remain ordinary workspace content. Their receipts remain sufficient for explicit preview and removal without retaining the old source catalogue.
+Earlier first-party package ids were removed before the stable release and are not aliases. Existing installed files remain ordinary workspace content. Their receipts are enough to preview and remove them without keeping the old source catalogue.

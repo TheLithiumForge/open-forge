@@ -1,0 +1,661 @@
+---
+open-forge:
+  description: Accepted current public interface for patching one existing routed Markdown source and completing a protected Template body when eligible
+  responsibility: Define what a caller may enter and observe from `route update` without selecting implementation technology
+  tags: [Memory, Crystallized, CLI, Release, Command, Contract, Route, Update, Interface, Metadata, Template, Mutation, CurrentTruth]
+---
+
+# route update Interface Contract
+
+## Status And Authority
+
+This is the accepted current Crystallized authority for the caller-visible
+Interface Contract for `route update`. The command does not ship yet;
+implementation and executable proof remain pending Gate 5.
+
+The [CLI Architecture](../../../architecture.md) defines the accepted shared
+result schema, process-status mapping, System.CommandLine binding, fixed Markdig
+pipeline, source-generated YamlDotNet and JSON paths, BCL-first filesystem
+boundary, workspace lock, recovery boundary, test evidence, runtime, Native AOT,
+and source layout. The observable byte-preservation and compatibility
+requirements below remain the command's contract; their realization must satisfy
+that Architecture and Gate 5 proof.
+
+The [canonical Markdown syntax](../../../../framework/markdown/syntax.md)
+defines destination metadata. The [Template contract](../../../../framework/primitives/templates.md)
+defines why copied starting content creates no continuing Template ownership.
+The [Markdown compatibility boundary](../../../../framework/markdown/compatibility.md)
+defines existing entrypoint filenames the command recognizes and preserves.
+
+The [Behavior Contract](behavior.md) defines the deterministic operation behind
+this public surface. Shared flag and source-reference meaning remains in the
+[Global CLI Flags](../../shared/global-flags/interface.md) and [CLI Source References](../../shared/source-references/interface.md)
+contracts. Generated navigation uses the complete [Index Interface Contract](../../index/interface.md)
+projection.
+
+## Purpose
+
+`route update` changes explicitly selected Open Forge metadata on one existing
+routed Markdown source. It may also copy one Template body when the destination
+contains valid frontmatter and no authored body.
+
+The operation is a field patch, not whole-file replacement. Omitted metadata
+fields remain unchanged. An existing authored body remains byte-for-byte
+unchanged even when `--template` is supplied.
+
+Given the same workspace bytes and explicit input, the command produces the same
+intended source and generated navigation. Repeating a successful update against
+that state returns verified byte-level no-op facts. A protected Template request
+retains `attention` when its explicit body intent remains unapplied; all other
+successful repeated updates are `complete` verified no-ops.
+
+## Syntax
+
+```text
+open-forge route update <source-reference>
+  [--description <text>]
+  [--responsibility <text>]
+  [--tag=<tag>]...
+  [--template <template-reference>]
+  [--dry-run]
+  [--skip-git-check]
+  [global flags]
+```
+
+The shared [Global CLI Flags](../../shared/global-flags/interface.md) contract defines
+`--workspace`, `--json`, `--view`, `--verbose`, `--help`, and `--version`. All
+six apply to `route update` under that contract.
+
+The shared [CLI Source References](../../shared/source-references/interface.md) contract defines
+the existing source and Template reference grammar, exact paths, quoting,
+collisions, and overwrite identity.
+
+`--description`, `--responsibility`, and `--tag` patch destination metadata.
+`--template` selects optional starting body content. `--dry-run` and
+`--skip-git-check` are write-policy flags.
+
+At least one metadata flag or `--template` is required. The command has no
+whole-body value, implicit Template, Template machine-name registry, wizard,
+automatic mode, `--no-responsibility`, `--yes`, `--force`, replacement mode,
+alias, or other command-specific flag.
+
+## Operands
+
+`<source-reference>` is one required source operand. It uses one of the shared
+reference forms:
+
+```text
+<source-id>
+.agents/<path>
+./.agents/<path>
+```
+
+The prefix determines whether the value is an automatic source ID or an exact
+workspace-relative `.agents` path. The complete grammar, quoting, exact-match,
+collision, containment, and overwrite rules remain in [CLI Source References](../../shared/source-references/interface.md).
+
+## Flags
+
+| Flag                              | Role                               | Value                                                                                          | Omission                                                      | Repetition and composition                                                                                                                   |
+| --------------------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--description <text>`            | Selection of destination metadata  | One description value; empty or whitespace-only is invalid                                     | The destination `description` remains unchanged               | Singleton. Any repetition is invalid, even when the repeated value is equal. No last-wins behavior.                                          |
+| `--responsibility <text>`         | Selection of destination metadata  | One responsibility value; whitespace-only is invalid; exact `""` removes the key               | The destination `responsibility` remains unchanged            | Singleton. Any repetition is invalid, even when the repeated value is equal. No last-wins behavior.                                          |
+| `--tag=<tag>`                     | Selection of destination metadata  | One canonical tag without the `#` prefix                                                       | The destination tag list remains unchanged                    | Repeatable. Supplied values replace the complete tag list in command-line order; duplicate exact tags and an empty supplied set are invalid. |
+| `--template <template-reference>` | Selection of starting body content | One automatic Template ID or exact `.agents/...` path for an existing routed Markdown Template | No Template body is selected                                  | Singleton. Any repetition is invalid, even when the repeated reference is equal. No last-wins behavior.                                      |
+| `--dry-run`                       | Write policy                       | Boolean flag with no value                                                                     | Application is selected                                       | Repetition is accepted and idempotent. Compatible with `--skip-git-check`; repetition does not add authority or precedence.                  |
+| `--skip-git-check`                | Write policy                       | Boolean flag with no value                                                                     | Relevant-path Git cleanliness is checked for an actual update | Repetition is accepted and idempotent. Compatible with `--dry-run`; it bypasses only relevant-path cleanliness and adds no precedence.       |
+
+All six [Global CLI Flags](../../shared/global-flags/interface.md) apply. Their complete spelling,
+values, defaults, repetition, composition, terminal behavior, errors, and
+presentation meaning remain defined only by that shared contract.
+
+The command-specific repetition rules above are complete. `--description`,
+`--responsibility`, and `--template` are singleton inputs, and any second
+occurrence is invalid even when it repeats the same value. Repeated `--tag`
+values form one complete replacement list in argument order. Repeated
+`--dry-run` and `--skip-git-check` occurrences collapse to their one idempotent
+Boolean choice. No command-specific flag uses last-wins or precedence behavior.
+The shared global flags keep their shared spelling, values, defaults, repetition,
+composition, terminal behavior, and errors; this command does not change those
+rules or add another global-flag precedence rule.
+
+### Metadata flag effects
+
+Each supplied metadata flag changes only its named destination field. The exact
+patch rules are defined in [Metadata Patch](#metadata-patch).
+
+### Template and write-policy effects
+
+`--template` makes the body-completion decision in [Template Body Completion](#template-body-completion).
+`--dry-run` and `--skip-git-check` use the application boundaries in [Dry Run And Apply](#dry-run-and-apply).
+
+## Target Source
+
+The source reference must resolve to one existing routed Markdown base source.
+It may identify an ordinary routed Markdown file or a recognized entrypoint.
+The Loader, `SKILL.md`, a non-Markdown resource, a detached unsupported file,
+and an orphan overwrite are invalid targets.
+
+Selecting a valid base ID, base path, or overwrite path resolves the complete
+logical source under the shared source-reference contract. `route update`
+changes the base file only. It never changes the overwrite companion.
+
+An existing canonical or compatibility entrypoint is updated in place. The
+command does not rename it, create a canonical sibling, or treat compatibility
+spelling as permission to migrate the route.
+
+Canonical entrypoint authoring uses `_{folder-name}.md`. The new CLI recognizes
+these existing compatibility entrypoint filenames in their containing-folder
+context: `index.md`, `_index.md`, `references.md`, and `_references.md`. When
+exactly one recognized entrypoint exists, its automatic ID is the containing
+folder ID, its actual filename is preserved, and generated navigation uses its
+actual relative path. More than one recognized entrypoint makes the route
+structurally ambiguous for this mutation.
+
+The target must have one safely parseable scoped Open Forge frontmatter block.
+The command may add one missing supported field, but it does not invent a
+missing frontmatter ownership boundary or guess through malformed or duplicate
+metadata. A malformed boundary blocks before writes.
+
+The complete intended source must remain valid under the contract for its source
+type. Updating an entrypoint therefore preserves or establishes the required
+title, Axioms meaning, final `Entries` section, and generated region under the
+current [Routed Markdown Representation](../../../../framework/markdown/routes.md)
+contract.
+
+## Metadata Patch
+
+Each supplied field replaces only that field in the destination's `open-forge`
+metadata:
+
+- `--description <text>` replaces `description`.
+- Repeated `--tag=<tag>` values replace the complete tag list in argument order.
+- `--responsibility <text>` adds or replaces `responsibility`.
+- `--responsibility ""` removes the `responsibility` key.
+
+Omitted supported fields remain unchanged. There is no default description,
+responsibility, or tag list.
+
+An empty or whitespace-only description is invalid. A whitespace-only
+responsibility is invalid. Each tag must follow canonical tag syntax and omit
+the `#` prefix. Empty tags, duplicate exact tags, and a supplied empty tag set
+are invalid. `description` and tags cannot be removed because the source must
+retain the metadata required for indexing.
+
+The command preserves unrelated top-level frontmatter and unsupported scoped
+metadata when it can do so safely. It never deletes or reinterprets an unknown
+field merely because the current canonical writer would not create it. If safe
+preservation cannot be established, the update blocks. YAML parsing and
+canonical serialization use the Architecture's accepted source-generated path;
+their command-local mechanics must be proven at Gate 5.
+
+The command validates field syntax and presence. It does not derive, summarize,
+correct, or judge semantic values from filenames, bodies, Templates, generated
+entries, or overwrite companions. A later `doctor` operation may report
+meaning-quality diagnostics separately.
+
+## Template Body Completion
+
+`--template` accepts the automatic ID or exact `.agents/...` path of one existing
+routed Markdown Template. Selection, collision, and overwrite behavior match
+the [route create Interface Contract](../create/interface.md).
+
+The selected source must be ordinary routed Markdown whose base frontmatter
+contains the exact canonical `Template` tag. The tag provides a deterministic
+source classification for this operation. It does not create a Templates root
+route, activate another primitive contract, or grant the source authority over
+the destination. The selected source's loaded route and content still define
+how the Template should be used.
+
+A Template with an overwrite companion blocks because one-file instantiation has
+no accepted rule for collapsing two authored layers into one body. Create or
+select a standalone Template with the intended body instead. The command strips
+the selected Template's own frontmatter and considers only its body as
+destination starting content. It does not substitute placeholders or store
+Template provenance.
+
+Template frontmatter never changes destination metadata. Only explicit metadata
+flags patch the destination.
+
+The target body is the bytes after its frontmatter closing delimiter:
+
+- When it contains only whitespace, the command replaces that whitespace with
+  the Template body using canonical frontmatter-to-body separation.
+- When it contains any authored non-whitespace byte, the command preserves the
+  complete body byte-for-byte and does not apply the Template body.
+
+This rule does not compare headings or attempt to decide whether existing prose
+is finished. Any authored body is enough to protect it.
+
+Metadata patches still apply when an authored body prevents Template copying. If
+`--template` is supplied, the target has authored non-whitespace body content, and
+all required facts and safety conditions are complete, the result is the one
+finite `attention` condition. Metadata and generated-navigation effects still
+apply when requested, and the command safely previews or applies and verifies
+those effects. The authored body remains byte-for-byte unchanged.
+
+When `--template` is the only requested input and the target body already has
+authored content, the result retains verified byte-level no-op and effect facts
+and explains why the Template body was not applied, but its semantic status is
+`attention` because the explicit Template intent remains unapplied. Dry-run has
+the same status and observation. It is not a failure and does not claim that the
+existing body matches the Template. Invalid Template input, a Template overwrite
+companion, a malformed or unsafe target, a dirty affected path, or an invalid
+generated boundary keeps its existing `invalid`, `blocked`, or `failed` result;
+none becomes `attention`. Other successful changes and no-ops are `complete`.
+
+For an entrypoint target with a frontmatter-only body, the selected Template
+body must produce a complete valid entrypoint representation after insertion.
+For an ordinary routed file, it must produce valid Markdown under the selected
+route's applicable contracts. A Template that cannot produce a valid intended
+target blocks before writes.
+
+The copied body becomes independently maintained destination content. Later
+Template changes never update it. The destination stores no continuing Template
+receipt, origin field, update relationship, or hidden ownership marker.
+
+## Body And Generated Preservation
+
+When the target already has an authored body, every body byte remains unchanged.
+This includes titles, prose, links, whitespace, line endings, generated markers,
+and generated interiors in the target itself.
+
+Generated navigation may still change in a different bounded region:
+
+- Changing a source description or tags updates its exposing parent's generated
+  entry.
+- Completing a frontmatter-only entrypoint from a valid Template may establish
+  its own generated region and update its exposing parent.
+- Responsibility-only and ordinary-body-only changes do not affect generated
+  entry text.
+
+Automatic generated effects use the complete [Index Interface Contract](../../index/interface.md)
+projection, ordering, generated-boundary, verification, and recovery behavior.
+They are planned against the hypothetical post-update workspace and belong to
+the same parent plan, dry run, application, and result. The command never starts
+a hidden `index` subprocess.
+
+If a required generated ownership boundary, sibling projection, or route
+relationship is ambiguous, the complete update blocks before writes. The command
+does not apply metadata first and leave navigation stale.
+
+## Existing State And No-Ops
+
+The planner compares the complete intended target and automatic generated effects
+with current bytes.
+
+- A supplied field already holding the exact intended value is unchanged.
+- Removing an already absent responsibility is unchanged.
+- A supplied Template body is protected rather than compared or recopied when
+  authored target content is present.
+- An unchanged generated projection creates no effect.
+
+A request whose complete intended state already exists returns a verified no-op,
+and the command never rewrites unchanged bytes merely to normalize formatting or
+timestamps. The one exception to the ordinary `complete` semantic result is a
+supplied Template intentionally protected by authored body content: its
+byte-level no-op or effect facts remain verified, but its semantic status is
+`attention` as defined under [Semantic Results](#semantic-results).
+
+## Planning And Effects
+
+The operation follows the accepted typed mutation flow:
+
+```text
+validated target, field patch, and optional Template
+  -> current target, route, and Template facts
+  -> complete intended destination bytes
+  -> generated-navigation projection
+  -> complete ordered mutation plan
+  -> preflight
+  -> dry-run or application
+  -> verification or recovery
+  -> one typed result
+```
+
+The plan contains at most one destination replacement plus the
+dependency-minimal generated-navigation replacements required by the metadata or
+route representation change. Compatible changes to the same physical file
+coalesce into one exact replacement.
+
+One blocker prevents every effect. The command has no partial-application or
+best-effort mode. It preserves siblings, overwrite companions, authored body
+content, compatibility filenames, and bytes outside planned generated interiors.
+
+## Dry Run And Apply
+
+`--dry-run` and application use the same normalized request, target and Template
+facts, intended bytes, generated projection, planner, expected-state facts,
+preflight, and semantic status. Dry-run shows every exact intended destination
+and generated effect, including the full effect evidence for metadata changes
+and the body-protection observation, then writes nothing.
+
+Omitting `--dry-run` selects application. The explicit target and patch flags
+confirm only the described field changes, eligible Template body changes, and
+generated region changes. The command does not prompt and does not accept
+`--yes`.
+
+A verified no-op has no affected mutation path and needs no Git cleanliness
+check. An actual update checks only paths the complete plan would replace. Dirty
+planned target paths block by default.
+
+`--skip-git-check` bypasses only relevant-path Git cleanliness. It does not
+bypass metadata, authored-body protection, Template identity, compatibility,
+containment, generated boundary, expected-state, verification, or recovery
+requirements.
+
+Gitless application and `--skip-git-check` application use adjacent backups under
+the accepted recovery policy. The command proves backup readiness before writes,
+never overwrites an unknown adjacent artifact, and removes its backups only
+after complete operation verification.
+
+Immediately before application, the command rechecks every target, source,
+Template, route, and generated fact. It applies complete planned bytes through
+safe same-directory replacement, verifies each effect, then verifies the
+requested fields, body-preservation or body-copy decision, routed validity, and
+generated navigation.
+
+When the one protected-Template attention condition applies, application still
+completes and verifies every requested metadata and generated-navigation effect.
+When no replacement effect is needed, it retains the verified byte-level no-op
+facts without running a Git cleanliness check. An unexpected failure after a
+write is `failed`, not `attention`.
+
+A handled failure stops new effects and reverses applied effects in reverse
+order. Recovery changes only targets that still match the applied identity. An
+unexpected concurrent edit is preserved and reported rather than overwritten.
+
+## Human Output
+
+Primary human rendering for `complete`, `attention`, and `incomplete` results
+goes to stdout. Primary human rendering for `invalid`, `blocked`, `failed`, and
+`interrupted` results goes to stderr. Each primary human typed result stays
+together on its assigned stream, including safe facts and coverage observations
+or availability conditions for `incomplete`. Under `--json`, every status is one
+complete structured result on stdout; bounded diagnostics use stderr, and no
+ordinary human text is mixed into JSON stdout.
+
+The default expanded view uses the complete blocks below. Every workspace-aware
+human result retains `Workspace`, `Selected by`, and the target identity when it
+is available. Compact view consumes
+the same typed result and retains the workspace, selection method, and target
+identity when available, preview/application mode, semantic status,
+completeness and safety, selected field state, Template identity, body-protection
+observation, changed and unchanged paths, generated effects, exact preview
+effects, and at most one required `Next:` line. Structured results retain at
+most one required `Next:` action as well. It omits optional explanation and
+provenance. Compact dry-run output still shows every exact planned effect and
+affected path.
+
+Complete results have no `Next:` line. The only attention next action is:
+`Next: review the authored body; the Template body was not applied.` Other
+statuses provide at most one direct correction or recovery action. No result
+proposes overwriting authored body content.
+
+### Verified No-Op
+
+```text
+The routed source is up to date.
+Workspace: D:/work/example
+Selected by: current directory
+ID: memory/crystallized/decisions/cache-policy
+Path: .agents/memory/crystallized/decisions/cache-policy.md
+No files changed.
+```
+
+### Protected Template Body (Attention)
+
+When the complete protected-Template condition applies, human output uses
+`requires attention` even when no replacement effect is needed:
+
+```text
+The routed source requires attention.
+Workspace: D:/work/example
+Selected by: current directory
+ID: memory/crystallized/decisions/cache-policy
+Path: .agents/memory/crystallized/decisions/cache-policy.md
+No files changed.
+Template body not applied: the target already has authored body content.
+Next: review the authored body; the Template body was not applied.
+```
+
+### Successful Application
+
+```text
+The routed source was updated.
+Workspace: D:/work/example
+Selected by: current directory
+ID: memory/crystallized/decisions/cache-policy
+Path: .agents/memory/crystallized/decisions/cache-policy.md
+Changed: description, responsibility
+Updated 1 generated region.
+```
+
+### Successful Dry Run
+
+```text
+The routed source would be updated.
+Workspace: D:/work/example
+Selected by: --workspace
+ID: memory/crystallized/decisions/cache-policy
+
+<exact destination and bounded generated diffs>
+
+No files changed (--dry-run).
+```
+
+Default human output names the changed metadata fields, whether a Template body
+was added or protected, and each changed generated path. It states what happened
+without naming successful internal stages. Verbose and structured output may
+include planning and preflight evidence.
+
+Every error names the route update, target, direct cause, and useful next action
+when one exists.
+
+## Structured Output
+
+`--json` returns the complete typed result used by human rendering. It never
+prompts and never reruns planning, application, or verification.
+
+The structured result exposes:
+
+- Workspace and selection method.
+- Requested and resolved target ID, base path, compatibility form, and overwrite
+  layers.
+- Requested field patches and prior, intended, changed, or unchanged state.
+- Responsibility addition, replacement, removal, or unchanged state.
+- Optional Template ID, path, classification, and body decision.
+- Authored-body preservation or Template-body copy evidence.
+- Intended destination and generated-region effects.
+- Completeness and safety state, including bounded observations and availability
+  conditions.
+- Dry-run, Git, backup, application, verification, and recovery facts.
+- Changed, unchanged, reverted, and residual targets.
+- Exact preview effects when dry-run is selected, semantic status, and at most
+  one required `Next:` action when applicable.
+
+Exact field names, schema versioning, and compatibility rules are defined by the
+CLI Architecture.
+
+## Semantic Results
+
+| Result        | Meaning                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `complete`    | A dry-run established the complete safe plan, or application and final verification completed, including ordinary changes and verified no-ops, with no protected-Template `attention` condition. Planned changes alone do not create `attention`.                                                                                                                                                                                                          |
+| `attention`   | The caller explicitly supplied `--template`, the target has an authored non-whitespace body, all required facts and safety conditions are complete, and the Template body was intentionally not applied. Metadata or generated effects are safely previewed in dry-run, or applied and verified in application, when present. A Template-only byte-level no-op retains its verified facts but remains `attention`; human output says `requires attention`. |
+| `incomplete`  | Safe facts are available, but required inspection or planning coverage cannot complete. No write begins.                                                                                                                                                                                                                                                                                                                                                   |
+| `invalid`     | Command input, field value, Template reference, flag repetition or use, or target kind does not follow this interface.                                                                                                                                                                                                                                                                                                                                     |
+| `blocked`     | A valid request cannot establish or apply one safe complete update plan because an unsafe or ambiguous boundary remains. No mutation begins.                                                                                                                                                                                                                                                                                                               |
+| `failed`      | A post-write unexpected failure, or an application, verification, or recovery failure after effects begin, prevents the update from completing.                                                                                                                                                                                                                                                                                                            |
+| `interrupted` | The caller cancelled before completion and no residual recovery failure remains.                                                                                                                                                                                                                                                                                                                                                                           |
+
+The shared numeric process-status mapping is defined by the CLI Architecture.
+
+For ordinary operation conditions, status precedence is `blocked` > `incomplete`
+
+> `attention` > `complete`. Invalid input stops before operation resolution and
+> forms `invalid`. Failed and interrupted results retain their event meaning.
+
+## Errors
+
+The command blocks or rejects:
+
+- No requested metadata or Template operation.
+- A repeated singleton `--description`, `--responsibility`, or `--template`,
+  including repetition with an equal value.
+- A target that is not one existing routed Markdown base source.
+- Ambiguous source identity, route meaning, or entrypoint structure.
+- Missing, malformed, duplicate, or unsafe scoped frontmatter.
+- A field patch that would remove required metadata or create invalid syntax.
+- A Template reference that does not resolve to one valid routed Template.
+- A Template with an overwrite companion.
+- A Template body that cannot produce a valid frontmatter-only target.
+- An invalid generated ownership boundary or sibling projection.
+- A dirty planned path without the accepted Git bypass.
+- A changed source or destination that invalidates the plan.
+
+Safe facts with unfinished required inspection or planning coverage form
+`incomplete` and begin no write. Unsafe or ambiguous boundaries form `blocked`
+unless an existing input rule makes them `invalid`; an unexpected failure after
+a write forms `failed`. None of these conditions is the protected-Template
+`attention` condition.
+
+## Non-Goals
+
+`route update` does not:
+
+- Create a missing target or route chain.
+- Replace, merge, normalize, or semantically edit an authored body.
+- Apply a Template body over authored content.
+- Copy Template frontmatter or retain Template ownership.
+- Rename canonical or compatibility entrypoint files.
+- Change an overwrite companion.
+- Remove required description or tags.
+- Infer metadata from a filename, body, Template, or generated entry.
+- Repair arbitrary malformed Markdown, frontmatter, routes, links, or markers.
+- Create a Git commit.
+
+Use `route init` for missing route chains and `route create` for one missing
+ordinary routed Markdown file.
+
+## Scenarios
+
+### Metadata update
+
+```text
+open-forge route update memory/crystallized/decisions/cache-policy \
+  --description "Why the revised cache policy was chosen"
+```
+
+This patches only `description`, preserves omitted metadata and the complete
+authored body, and updates generated navigation only when the intended parent
+projection changes.
+
+### Dry-run tag replacement
+
+```text
+open-forge route update memory/crystallized/decisions/cache-policy \
+  --tag=Memory \
+  --tag=Decision \
+  --dry-run
+```
+
+This forms the same intended tag-list replacement and generated effects as
+application, shows every exact planned diff, and writes nothing.
+
+### Protected Template body
+
+```text
+open-forge route update memory/crystallized/decisions/cache-policy \
+  --template templates/memory/decision
+```
+
+When the target already has any authored non-whitespace body byte, the Template
+body is not applied and the result is `attention` once all required facts and
+safety conditions are complete. With no metadata patch, byte-level no-op facts
+remain verified and the body-protection observation is shown, but the semantic
+status is still `attention`; it does not claim that the authored body matches the
+Template. The same observation and status apply to dry-run.
+
+The representative protected-Template, successful-application, and
+successful-dry-run result blocks remain under [Human Output](#human-output).
+
+## Verification
+
+Gate 5 executable proof must cover:
+
+- ID, base path, and overwrite-path target selection.
+- Ordinary routed files, canonical entrypoints, each compatibility entrypoint
+  name, unsupported source kinds, detached files, and ambiguous routes.
+- Description replacement, tag-list replacement and ordering, responsibility
+  addition, replacement, exact-empty removal, omitted fields, duplicates, and
+  invalid values.
+- Singleton rejection for repeated `--description`, `--responsibility`, and
+  `--template` values, idempotent repetition of `--dry-run` and
+  `--skip-git-check`, complete tag-list replacement, and unchanged shared-global
+  repetition rules without last-wins or precedence behavior.
+- Preservation of unrelated frontmatter and blocking when safe preservation is
+  impossible.
+- Template ID and exact-path selection, exact `Template` classification,
+  collisions, blocked overwrite companions, invalid non-Templates, and orphan
+  overwrites.
+- Frontmatter-only targets with whitespace variants and exact Template body
+  insertion.
+- Authored bodies containing prose, headings, comments, markers, or only
+  non-space whitespace, with byte-for-byte preservation.
+- Template-only byte-level no-op facts with `attention` status when authored body
+  exists, including the same observation in dry-run.
+- Proof that Template frontmatter never changes destination metadata and no
+  Template lifecycle state remains.
+- Entrypoint Template completion that is valid and invalid for the intended route
+  representation.
+- Automatic generated effects for description and tag changes, no generated
+  effect for responsibility-only changes, and intended-state planning.
+- Complete dry-run output and no persistent dry-run effects.
+- Dry-run and application parity for request, facts, intended bytes, generated
+  projection, plan, preflight, status, full effects, and no-write behavior.
+- Verified no-op behavior before Git mutation checks.
+- All seven statuses, including safe-but-incomplete coverage with no writes,
+  unsafe or ambiguous blocked boundaries, post-write failed behavior, and the
+  sole protected-Template attention condition. Planned changes alone must remain
+  `complete`.
+- Clean Git, dirty affected paths, Gitless operation, bypassed Git checks,
+  backup collisions, and backup cleanup after verification.
+- Expected-state changes, safe replacement, final semantic verification, reverse
+  recovery, residual preservation, and rerun convergence.
+- Human and structured results from one typed result, with complete/attention/
+  incomplete human output on stdout, invalid/blocked/failed/interrupted human
+  output on stderr, one JSON result for every status on stdout, bounded
+  diagnostics on stderr, compact retention and next-action limits, and no
+  suggestion to overwrite authored body content.
+
+The proof must exercise the accepted CLI Architecture boundaries rather than
+relying on source-level or managed-build claims. It must include the real parser,
+filesystem, workspace lock, recovery, Native AOT, and package/process evidence
+required by that Architecture.
+
+## Related Current Sources
+
+- [route update Behavior Contract](behavior.md)
+- [route update Command Contract Set](_update.md)
+- [Global CLI Flags](../../shared/global-flags/interface.md)
+- [CLI Source References](../../shared/source-references/interface.md)
+- [Context Interface Contract](../../context/interface.md)
+- [Status Interface Contract](../../status/interface.md)
+- [Index Interface Contract](../../index/interface.md)
+- [Route Init Interface Contract](../init/interface.md)
+- [Route Create Interface Contract](../create/interface.md)
+- [CLI Architecture](../../../architecture.md)
+- [CLI Decision Agenda](../../../../../../working/cli-release/decision-agenda.md)
+- [CLI Command Contract Set — Interface Contract](../../../command-contract-set.md#interface-contract)
+- [Shared CLI Operation Contract](../../../shared-operation-contract.md)
+- [CLI Contract Document Templates](../../../../../../../templates/cli/documents/_documents.md)
+- [Routed Markdown Representation](../../../../framework/markdown/routes.md)
+- [Markdown Compatibility Boundary](../../../../framework/markdown/compatibility.md)
+- [Canonical Markdown Syntax](../../../../framework/markdown/syntax.md)
+- [Routing Model](../../../../framework/routing/model.md)
+- [Routing Loading And Continuity](../../../../framework/routing/loading.md)
+- [Route Scope And Inheritance](../../../../framework/routing/scope.md)
+- [Routing Paths And Identity](../../../../framework/routing/paths.md)
+- [Overwrite Customization](../../../../framework/routing/overwrites.md)
+- [Templates](../../../../framework/primitives/templates.md)

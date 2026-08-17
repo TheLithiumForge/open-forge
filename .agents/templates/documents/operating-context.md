@@ -6,15 +6,16 @@ open-forge:
 
 # {Subject} Operating Context
 
-<!--
+{
 Template selection:
+
 - Need: One current view of the external conditions that materially shape a subject.
 - Primary question: Which environment, stakeholders, dependencies, constraints, assumptions, and uncertainties must decisions account for?
 
 Use this document only when the environment around a subject forms a coherent current responsibility.
 Link to live authoritative systems instead of copying data that belongs in them.
-Replace this template's frontmatter, title, placeholders, and comments.
--->
+Replace this template's frontmatter, title, and placeholders, then remove this braced source guidance.
+}
 
 ## Scope
 

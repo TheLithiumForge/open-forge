@@ -53,4 +53,4 @@ A Markdown recipe that coordinates a project goal is a Workflow. General advice 
 
 ## Decisions And Rationale
 
-- [Distinct Core primitive roles](../../../decisions/core-primitives.md)
+- [Distinct Core primitive roles](../../../decisions/framework/core-primitives.md)

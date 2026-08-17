@@ -38,6 +38,8 @@ It must make these questions cheap to answer:
 
 Human-readable Markdown contains the complete semantic answer. Deterministic tools may make every operation faster and safer, but the files remain sufficient to inspect, navigate, and maintain the Framework.
 
+Once direction is sufficient, work continues through coherent in-scope steps until completion or until a material decision, conflict, uncertainty, or authority boundary requires user input. Routine continuation does not require another `continue` message.
+
 ## Architectural Invariants
 
 The following structural constraints realize the [Open Forge Principles](../principles.md) throughout Core and Memory. They are architectural consequences rather than a second authoritative source for product identity:
@@ -57,6 +59,7 @@ The following structural constraints realize the [Open Forge Principles](../prin
 13. Instantiating a template transfers ownership to the created result; the template does not manage it
 14. Framework contracts target the broadest stable authoritative `route` that preserves their required meaning
 15. Agents surface consequential unsettled choices before dependent work, recommend coherent defaults, and avoid questions that do not materially change the result
+16. Authored frontmatter, generated Entries, and overwrite pairs remain semantically inspectable and fail closed when their required meaning cannot be established
 
 ## Shipped Framework
 
@@ -75,11 +78,11 @@ provider bridge files when supported
   skills/
   templates/
   workflows/
-  workspace/
+  maps/
   memory/
     working/
+      checkpoints/
       handoffs/
-      sessions/
     emerging/
       analysis/
       ideas/
@@ -104,7 +107,7 @@ Core is the dependency floor because every other Open Forge area relies on its `
 2. Direct the agent to [the loader](../../../../loader.md) before work begins
 3. Require applicable Open Forge instructions throughout the task
 
-Provider-specific harness files are minimal bridges to that canonical entry. They may use the import syntax required by a provider, but they do not restate Open Forge policy or become separate authoritative sources.
+Provider-specific harness files are minimal bridges to canonical Framework entries. They may use provider-native imports to expose `AGENTS.md` and preload the loader, but they do not restate Open Forge policy or become separate authoritative sources.
 
 Managed entry blocks preserve workspace-owned content outside their markers. A provider bridge can therefore be installed or updated without claiming the entire file.
 
@@ -127,9 +130,9 @@ The seven Core primitives are:
 - Skills
 - Templates
 - Workflows
-- Workspace routes
+- Map `routes`
 
-These primitives are distinct because they answer different questions. Their default `entrypoints` and current local contents are exposed by the [directives](../../../../directives/_directives.md), [guidance](../../../../guidance/_guidance.md), [patterns](../../../../patterns/_patterns.md), [skills](../../../../skills/_skills.md), [templates](../../../../templates/_templates.md), [workflows](../../../../workflows/_workflows.md), and [workspace](../../../../workspace/_workspace.md) `routes`.
+These primitives are distinct because they answer different questions. Their default `entrypoints` and current local contents are exposed by the [directives](../../../../directives/_directives.md), [guidance](../../../../guidance/_guidance.md), [patterns](../../../../patterns/_patterns.md), [skills](../../../../skills/_skills.md), [templates](../../../../templates/_templates.md), [workflows](../../../../workflows/_workflows.md), and [maps](../../../../maps/_maps.md) `routes`.
 
 ### Routing
 
@@ -137,7 +140,7 @@ Routing moves from the canonical loader through small `entrypoints` that expose 
 
 Work may select several scopes without merging them. Each keeps its own `route` chain and authority, explicit relationships connect them, and conflicts about a shared result are resolved by clear direction or the authoritative source for that result rather than by path depth or load order.
 
-Loading determines when routed context becomes visible, not what authority it has. Baseline context follows visible immediate-loading `routes`, continuity context is recovered across `route` and session changes, and other context remains selected on demand.
+Loading determines when routed context becomes visible, not what authority it has. Baseline context follows visible immediate-loading `routes`; target-sensitive continuity recovers applicable entrypoints and globally discoverable ordinary records across `route`, workstream, and context changes; other context remains selected on demand.
 
 The detailed current contracts are separated by responsibility:
 
@@ -174,17 +177,17 @@ Core primitives give reusable content distinct application semantics instead of 
 
 The [Core primitive model](primitives/model.md) defines the complete role vocabulary, selection questions, authority boundaries, relationships, recursive scope, admission threshold, and why Core has no separate Rules primitive.
 
-Every shipped primitive has a focused conceptual contract under [Core Primitives](primitives/_primitives.md): Directives, Guidance, Patterns, Skills, Templates, Workflows, and Workspace. These documents deepen each role's meaning, boundaries, lifecycle, and relationships without becoming parallel runtime instructions.
+Every shipped primitive has a focused conceptual contract under [Core Primitives](primitives/_primitives.md): Directives, Guidance, Patterns, Skills, Templates, Workflows, and Map. These documents deepen each role's meaning, boundaries, lifecycle, and relationships without becoming parallel runtime instructions.
 
 Installed category `entrypoints` own the complete compact operational and file requirements that users and agents receive. Maintenance contracts own canonical sources, alignment obligations, distribution details, and verification.
 
 ## Memory
 
-[Memory](../../../_memory.md) is the Framework's self-growing Markdown state for live work, agent communication and coordination, continuity, accepted records, historical context, and candidate learning. It preserves useful information across work without turning every conversation or recorded statement into current truth or active behavior.
+[Memory](../../../_memory.md) is the Framework's self-growing Markdown state for live work, agent communication and coordination, continuity, accepted records, historical context, and candidate learning. It can grow through useful records and routed scopes without a fixed structural ceiling, while unrelated branches stay outside active context. It preserves useful information across work without turning every conversation or recorded statement into current truth or active behavior.
 
 Memory state and scope are independent. State describes how recorded material should currently be treated. Scope describes the person, project, component, discipline, repository, collection, or other subject to which it applies. The `route` path expresses both dimensions without a centralized registry.
 
-Memory loading follows state purpose. Working and Crystallized navigation enter baseline context, Emerging learning is revisited at continuity boundaries, and Archived history remains on demand. Individual records still load by relevance unless their own tags give them a baseline or continuity role.
+Memory loading follows state purpose. Working and Crystallized navigation enter baseline context, Emerging learning is revisited at applicable continuity boundaries, and Archived history remains on demand. Individual records still load by relevance unless their own tags give them a baseline or continuity role.
 
 The detailed current contracts are separated by responsibility:
 
@@ -199,12 +202,12 @@ The states are not maturity scores or a mandatory pipeline. Installed Memory `en
 
 Open Forge distinguishes standard roles for current meaning, accepted rationale, binding behavior, and useful history:
 
-| Role | Primary question | Contract |
-|---|---|---|
+| Role             | Primary question                        | Contract                                                      |
+| ---------------- | --------------------------------------- | ------------------------------------------------------------- |
 | Current document | What is true now, and how does it work? | Explains a coherent accepted concept completely enough to use |
-| Decision | What was chosen, and why? | Preserves a discrete accepted choice and useful rationale |
-| Directive | What behavior is mandatory here? | Binds work in its loaded route-selected scope |
-| Archive | What happened before? | Preserves useful history without governing current work |
+| Decision         | What was chosen, and why?               | Preserves a discrete accepted choice and useful rationale     |
+| Directive        | What behavior is mandatory here?        | Binds work in its loaded route-selected scope                 |
+| Archive          | What happened before?                   | Preserves useful history without governing current work       |
 
 The [accepted-state contract](truth.md#current-views-decisions-and-history) defines how current documents, decisions, and archives relate without becoming competing authority.
 
@@ -282,9 +285,17 @@ They may not silently promote a candidate, infer accepted direction, or make a p
 
 Extensions add optional reusable content through the same `routes` and primitive meanings. They do not create a second loader, root authority model, or runtime interpretation system.
 
-After installation, an extension's files behave like ordinary directives, patterns, guidance, skills, templates, workflows, workspace routes, or Memory. Its packaging metadata does not become necessary to understand its runtime meaning.
+After installation, an extension's files behave like ordinary directives, patterns, guidance, skills, templates, workflows, Map `routes`, or Memory. Its packaging metadata does not become necessary to understand its runtime meaning.
 
-The current extensions implementation is an MVP under planned architectural review. The [Extensions MVP Architecture](../extensions/architecture.md) is authoritative for its present manifests, dependency system, ownership lifecycle, and liabilities. The [Extensions overhaul candidate](../../../emerging/ideas/extensions-overhaul.md) preserves prospective replacement design. The [CLI MVP Architecture](../cli/architecture.md) is authoritative for the current deterministic implementation, while the [CLI overhaul candidate](../../../emerging/ideas/cli-overhaul.md) preserves its prospective replacement.
+The current extensions implementation remains an MVP. The [Extensions MVP
+Architecture](../extensions/architecture.md) is authoritative for its present
+manifests, dependency system, ownership lifecycle, and liabilities. The
+[Extensions evolution candidate](../../../emerging/ideas/extensions-overhaul.md)
+keeps future distribution, compatibility, migration, multi-root, dependency,
+and governance questions unsettled. The [CLI MVP
+Architecture](../cli/mvp-architecture.md) remains authoritative for the frozen
+legacy implementation. The new CLI must rediscover its Extension boundary from
+current Framework needs rather than inherit deleted CLI-v2 contracts.
 
 ## Distribution And Dogfood
 
@@ -327,29 +338,31 @@ Correct behavior should be the cheapest path, but review remains part of any con
 - [Accepted State and Synchronization](truth.md)
 - [Payload Maintenance](../maintenance/payload/_payload.md)
 - [Extensions MVP Architecture](../extensions/architecture.md)
-- [CLI MVP Architecture](../cli/architecture.md)
+- [CLI MVP Architecture](../cli/mvp-architecture.md)
+- [Active new-CLI program](../../../working/cli-release/_cli-release.md)
+- [Historical CLI-v2 evidence](../../../archived/cli-v2/_cli-v2.md)
 - [Canonical Framework loader](../../../../loader.md)
 - [Current Memory contract](../../../_memory.md)
-- [Current route to important repository authoritative sources](../../../../workspace/sources-of-truth.md)
+- [Current map to important repository authoritative sources](../../../../maps/sources-of-truth.md)
 
 ## Decisions And Rationale
 
 These decisions preserve useful rationale behind the current Framework architecture. Their accepted results remain expressed by this document and its scoped current views:
 
-- [Product direction rationale](../../decisions/product-direction.md)
-- [Distinct Core primitive role rationale](../../decisions/core-primitives.md)
-- [Templates as a Core primitive rationale](../../decisions/template-primitive.md)
-- [Routing model rationale](../../decisions/routing-model.md)
-- [Routing surface rationale](../../decisions/routing-surfaces.md)
-- [Scope and slug rationale](../../decisions/scope-and-slugs.md)
-- [Tag rationale](../../decisions/tags.md)
-- [Loading reliability rationale](../../decisions/loading-reliability.md)
-- [Memory model rationale](../../decisions/memory-model.md)
-- [Workflow shape rationale](../../decisions/workflow-shape.md)
-- [Source and packaging rationale](../../decisions/source-and-packaging.md)
-- [Typed authority and role terminology](../../decisions/authoritative-source-terminology.md)
-- [Canonical Markdown authoring rationale](../../decisions/canonical-markdown.md)
-- [Adaptive decision elicitation](../../decisions/adaptive-decision-elicitation.md)
+- [Product direction rationale](../../decisions/product/product-direction.md)
+- [Distinct Core primitive role rationale](../../decisions/framework/core-primitives.md)
+- [Templates as a Core primitive rationale](../../decisions/framework/template-primitive.md)
+- [Routing model rationale](../../decisions/framework/routing-model.md)
+- [Routing surface rationale](../../decisions/framework/routing-surfaces.md)
+- [Scope and slug rationale](../../decisions/framework/scope-and-slugs.md)
+- [Tag rationale](../../decisions/framework/tags.md)
+- [Loading reliability rationale](../../decisions/framework/loading-reliability.md)
+- [Memory model rationale](../../decisions/framework/memory-model.md)
+- [Workflow shape rationale](../../decisions/framework/workflow-shape.md)
+- [Source and packaging rationale](../../decisions/framework/source-and-packaging.md)
+- [Typed authority and role terminology](../../decisions/framework/authoritative-source-terminology.md)
+- [Canonical Markdown authoring rationale](../../decisions/framework/canonical-markdown.md)
+- [Adaptive decision elicitation](../../decisions/framework/adaptive-decision-elicitation.md)
 
 ## Historical Context
 

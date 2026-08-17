@@ -27,7 +27,7 @@ The standard `routes` provide distinct starting roles:
 
 - [Analysis](../../../../emerging/analysis/_analysis.md) preserves structured reasoning, investigation, and comparison
 - [Ideas](../../../../emerging/ideas/_ideas.md) preserves possibilities, experiments, and open questions
-- [Observations](../../../../emerging/observations/_observations.md) preserves grounded findings that may become reusable learning
+- [Observations](../../../../emerging/observations/_observations.md) preserves concrete occurrences or patterns noticed in evidence that may become reusable learning
 
 These roles improve initial placement and discovery. They are customizable child `routes` within Emerging, not additional Memory states.
 

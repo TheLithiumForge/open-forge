@@ -44,6 +44,8 @@ When an entrypoint explicitly declares that it adds no local Axioms, the canonic
 
 An entrypoint may instead omit `Axioms` or leave the section empty. `none` is not a valid Axioms sentinel because loaded ancestor Axioms always remain active.
 
+The frozen MVP does not yet enforce this metadata-integrity target. It may synthesize a fallback description and tags when generating an entry. The [MVP Architecture](../../cli/mvp-architecture.md#metadata-and-overwrite-integrity) records that temporary limitation without changing this canonical form.
+
 ## Route Entries
 
 Generated `Entries` use one canonical line shape:
@@ -58,7 +60,7 @@ Each line contains:
 - One inline Markdown link
 - A non-empty descriptive label
 - A containing-file-relative destination
-- One ` - ` separator
+- One `-` separator
 - One or more useful bare tags
 
 The label provides enough trigger, purpose, or outcome for pre-load selection. The destination identifies the route. The tags provide compact loading, type, scope, and search signals. The [path contract](../routing/paths.md) defines destination resolution, normalization, encoding, and containment.
@@ -81,11 +83,13 @@ The loader and every category entrypoint end with:
 ## Entries
 
 <!-- open-forge:generated-index:start -->
+
 - none - No entries - #Empty
+
 <!-- open-forge:generated-index:end -->
 ```
 
-The marker-bounded body is derived navigation metadata. Deterministic generation may replace only the content between the markers and must preserve authored content outside them.
+The marker-bounded body is derived navigation metadata. Deterministic generation may replace only the content between the markers and must preserve authored content outside them. It must be the final inline region in its final `Entries` section, and every generated entry must accurately reflect a reachable direct routed source's authored description and tags. Generation and validation fail closed when the region, entry shape, destination, or metadata meaning cannot be established.
 
 The `Entries` heading and generated region:
 
@@ -106,6 +110,6 @@ The [routing model](../routing/model.md) defines which direct destinations the r
 
 ## Decisions And Rationale
 
-- [Routing surfaces](../../../decisions/routing-surfaces.md)
-- [Scope and slugs](../../../decisions/scope-and-slugs.md)
-- [Canonical Markdown authoring](../../../decisions/canonical-markdown.md)
+- [Routing surfaces](../../../decisions/framework/routing-surfaces.md)
+- [Scope and slugs](../../../decisions/framework/scope-and-slugs.md)
+- [Canonical Markdown authoring](../../../decisions/framework/canonical-markdown.md)

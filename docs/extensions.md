@@ -2,30 +2,104 @@
 
 Extensions add optional whole files through existing Open Forge routes.
 
-An Extension may provide any combination of Skills, Workflows, Directives, Patterns, Guidance, Templates, Workspace routes, Memory routes, and support files. A dependency-only pack may provide only dependency edges.
+An Extension may provide any combination of Skills, Workflows, Directives, Patterns, Guidance, Templates, Map `routes`, Memory `routes`, and support files. A dependency-only pack may provide only dependency edges.
 
 The term Extension describes optional packaging and managed ownership, not runtime meaning. Installed files retain the meaning of their destination routes and remain understandable and usable without the package manifest, catalogue, ownership receipt, or CLI.
 
-## Quick Start
+## New CLI contract (not shipping)
 
-Install and commit the standard Framework before installing an Extension. Follow the [README Quick Start](../README.md#quick-start) or the CLI [`install` guide](cli.md#install) first. Catalogue listing and previews are read-only, but a normal Extension installation expects recognizable tracked Core anchors.
+The new native CLI is not released. Its accepted Extension surface is grouped
+under `extension` and has six actual operations:
+
+```text
+open-forge extension list [--installed] [--available] [--source <package-or-catalogue-path>] [global flags]
+open-forge extension inspect <stable-id> [--source <package-or-catalogue-path>] [global flags]
+open-forge extension create [<stable-id>] [--path <catalogue-path>] [--automatic] [--dry-run] [--skip-git-check] [global flags]
+open-forge extension install [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--automatic] [--dry-run] [--skip-git-check] [global flags]
+open-forge extension update [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--prune] [--automatic] [--dry-run] [--skip-git-check] [global flags]
+open-forge extension remove [<stable-id>...] [--prune] [--automatic] [--dry-run] [--skip-git-check] [global flags]
+```
+
+The bare group shows help and performs no operation or wizard. `list` and
+`inspect` are read-only. `create` writes only
+`<catalogue>/<id>/extension.json` and `payload/.agents/` under its catalogue
+destination. Its `--path` is not a package source, and the shared `--workspace`
+flag is a no-op for create.
+
+Install and update use one exact embedded or explicitly selected local package or
+catalogue source. An external source is read-only and must be lexically and
+physically disjoint from the target workspace. Dependencies resolve offline,
+transitively, and only within that source universe. A multi-package source
+requires explicit IDs or `--all`; `--automatic` never means `--all`.
+
+Install establishes managed ownership for selected absent IDs or verifies an
+exact managed no-op. Managed divergence directs to `extension update`, and
+initial `--force` may replace only an eligible exact current occupant without
+adopting its old bytes. Update requires trusted installed lifecycle state and a
+trustworthy Framework anchor. Normal update preserves changed, missing, and
+retired divergence; `--force` handles only changed or missing current expected
+paths; `--prune` handles only eligible retired content.
+
+Remove does not need package source bytes. It releases explicit trusted
+ownership, retains shared files, deletes safe unchanged final-owner files, and
+preserves changed final-owner files as unmanaged unless same-request `--prune`
+selects the eligible Delete boundary. Automatic mode adds no force, prune,
+ownership, or deletion authority. Manual, idless, and direct-overlay content
+remains unmanaged.
+
+Installed and available facts remain separate. New-CLI installed facts are
+classified as `absent`, `trusted`, `untrusted`, or `incomplete`; unsafe ambiguity
+is `blocked` under the contracts. Safely readable installed facts remain visible
+to read-only operations when the package source is unavailable, but source
+unavailability cannot form an update plan or promote lifecycle trust. The only
+lifecycle document is `.agents/open-forge.lifecycle.json`, schema v1, with
+isolated `framework` and `extensions` sections. It does not merge their
+authority. Supported parseable kinds use syntax-aware semantic fingerprints,
+while exact bytes remain fresh operation-time facts. The replacement executes no
+formatter and persists no formatter state.
+
+The replacement does not read, recognize, migrate, alias, or fall back to an old
+lifecycle or Extension file, including `open-forge.extensions.json`. Old-format
+files remain ordinary untouched workspace content outside replacement authority.
+The accepted parser, serialization, filesystem, recovery, and Native AOT choices
+are defined in the [CLI Architecture](../.agents/memory/crystallized/documents/cli/architecture.md).
+
+These are accepted non-shipping replacement contracts, not runtime or release
+evidence.
+See the [CLI command contracts](cli.md#extension-operations) for the public
+overview and the routed [Extension contract group](../.agents/memory/crystallized/documents/cli/contracts/extension/_extension.md)
+for complete Interface and Behavior contracts.
+
+## Frozen executable: `open-forge-old`
+
+The commands in the remainder of this section document the frozen TypeScript
+MVP executable only. `open-forge-old` remains the available executable while the
+new CLI is non-shipping. Its `extend` and `create` syntax does not define the new
+`extension` group.
+
+The receipt commands and receipt facts in this frozen section describe
+`open-forge-old`'s historical `open-forge.extensions.json` behavior only. They do
+not describe lifecycle state, migration, or compatibility for the replacement
+CLI.
+
+Install and commit the standard Framework before installing an Extension. Follow the [README Quick Start](../README.md#quick-start) first. Catalogue listing and previews are read-only, but a normal Extension installation expects recognizable tracked Core anchors.
 
 List the bundled catalogue:
 
 ```sh
-npx open-forge extend --list
+npx open-forge-old extend --list
 ```
 
 Preview one Extension and its dependencies:
 
 ```sh
-npx open-forge extend development-toolkit --dry-run
+npx open-forge-old extend development-toolkit --dry-run
 ```
 
 Install the reviewed plan:
 
 ```sh
-npx open-forge extend development-toolkit
+npx open-forge-old extend development-toolkit
 ```
 
 Review and commit the resulting files:
@@ -81,20 +155,20 @@ Package metadata ensures the complete selected unit arrives together. Installed 
 Use interactive selection:
 
 ```sh
-npx open-forge extend
-npx open-forge extend --select
+npx open-forge-old extend
+npx open-forge-old extend --select
 ```
 
 Install the bundled toolkit as one review unit:
 
 ```sh
-npx open-forge extend development-toolkit
+npx open-forge-old extend development-toolkit
 ```
 
 Install a local package or direct overlay:
 
 ```sh
-npx open-forge extend ./my-extension
+npx open-forge-old extend ./my-extension
 ```
 
 One invocation and its complete dependency closure form one review unit. Install roots in separate commands when separate diffs matter.
@@ -108,7 +182,7 @@ Normal writes require recognizable tracked Open Forge Core anchors, a clean targ
 Preview an installation:
 
 ```sh
-npx open-forge extend development-toolkit --dry-run
+npx open-forge-old extend development-toolkit --dry-run
 ```
 
 An installation preview performs package discovery, dependency resolution, and complete preflight, then summarizes planned file and receipt effects without writing.
@@ -116,23 +190,23 @@ An installation preview performs package discovery, dependency resolution, and c
 Preview a removal:
 
 ```sh
-npx open-forge extend --remove development-toolkit --dry-run
+npx open-forge-old extend --remove development-toolkit --dry-run
 ```
 
 A removal preview reads installed receipt state, validates owned files and retained dependents, and summarizes the removal plan without writing.
 
-The CLI [Preview reference](cli.md#preview) defines the exact installation and removal output fields and their differences.
+Use `open-forge-old --help` for the frozen legacy syntax. Its output does not define the new CLI.
 
 Reinstall a managed id to reconcile its owned files:
 
 ```sh
-npx open-forge extend development-toolkit
+npx open-forge-old extend development-toolkit
 ```
 
 Remove explicitly selected ids:
 
 ```sh
-npx open-forge extend --remove development-toolkit
+npx open-forge-old extend --remove development-toolkit
 ```
 
 Removal stops when a retained Extension still depends on the selected id, an owned file has changed, or deleting an entrypoint would strand retained routes. When another installed Extension shares an identical owned file, removal drops only the selected owner and retains the file. Dependencies that become orphans are not pruned automatically. Preview and remove them explicitly when desired.
@@ -179,14 +253,14 @@ Then:
 
 1. Replace the manifest and README placeholders
 2. Add complete routed files and any required entrypoints beneath `payload/.agents/`
-3. Author ordinary links for their final containing-file-relative locations, and add Required Routes only where installed content depends on them
+3. Author ordinary links for their final containing-file-relative locations
 4. Preview installation into a separate Open Forge workspace
-5. Install, run `open-forge doctor` against the assembled workspace, and review the Git diff
+5. Install, run `open-forge-old doctor` against the assembled workspace, and review the Git diff
 
 ```sh
-npx open-forge extend {package-parent}/my-extension {target-workspace} --dry-run
-npx open-forge extend {package-parent}/my-extension {target-workspace}
-npx open-forge doctor {target-workspace}
+npx open-forge-old extend {package-parent}/my-extension {target-workspace} --dry-run
+npx open-forge-old extend {package-parent}/my-extension {target-workspace}
+npx open-forge-old doctor {target-workspace}
 ```
 
 Using a separate target workspace keeps package sources distinct from installed output. The target must not be the package source or a directory inside it.
@@ -269,7 +343,7 @@ Open Forge-authored routed files normally carry:
 - Their Core primitive or Memory classification
 - Useful scope and topic tags
 
-A complete Workflow payload uses level-2 `Goal`, `Steps`, and `Completion` sections in that order. Add `Required Routes` between `Goal` and `Steps` only for unconditional routed dependencies, and omit it when none apply. Recipe-specific headings may organize details without expanding the Framework schema.
+A complete Workflow payload uses level-2 `Goal`, `Steps`, and `Completion` sections in that order. Recipe-specific headings may organize details without expanding the Framework schema. Use ordinary links and explicit Steps when another installed source must be read or invoked.
 
 Standard formats such as `SKILL.md` retain their native metadata. Use #LoadNow or #KeepInMind only when the installed file deliberately belongs in baseline or continuity loading.
 
@@ -277,7 +351,7 @@ Markdown links resolve relative to their containing file in the assembled worksp
 
 Do not duplicate dependency files or add source-only stubs merely to make a cross-package link resolve in isolation.
 
-`doctor` and `find --follow-required` validate a complete workspace without consulting manifests. When aimed at an isolated payload, they therefore report intentionally absent Core or dependency routes. Validate those links after assembly.
+Validate cross-package links after assembly because an isolated payload does not contain its declared package dependencies.
 
 ## Dependencies, Packs, And Skills
 
@@ -288,7 +362,7 @@ Dependencies:
 - Install before their dependents
 - Are deduplicated across the selected closure
 
-Put reusable content in one canonical package. A Workflow that depends on a Skill package still links to the concrete installed `SKILL.md` through `Required Routes` because manifest dependencies are not runtime context.
+Put reusable content in one canonical package. A Workflow that depends on a Skill package links to the concrete installed `SKILL.md` through an ordinary link and states in its Steps when the Skill must be used. Manifest dependencies remain installation metadata rather than runtime context.
 
 Convenience packs should contain dependency edges instead of duplicated payloads. Keep dependency graphs small and acyclic.
 

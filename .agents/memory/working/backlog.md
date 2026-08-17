@@ -16,18 +16,25 @@ Only open work belongs here. The mixed pre-review history is preserved in `.agen
 4. Add CI for payload structure, source and dogfood synchronization, and machine-checkable Maintenance relationships; decide whether a bounded benchmark gate is reliable and economical enough for payload-changing pull requests.
 5. Replace redundant exact-phrase installation assertions with whole-authored-contract parity where the phrases prove no independent behavior. Retain focused assertions for generated navigation, preservation, overwrite adjacency, rejection, and other observable behavior.
 
-## Extend Extension And CLI Lifecycle
+## Define The New CLI And Extension Lifecycle
 
-1. Redesign and recreate the current MVP CLI under the linked [CLI overhaul](../emerging/ideas/cli-overhaul.md), preserving proven behavioral and safety evidence without treating the current implementation shape as final.
-2. Extend the implemented local receipt-backed install/update/removal lifecycle only where evidence warrants: source trust and provenance, compatibility/version solving, migrations, crash recovery, aliases, an explicit previewable orphan-prune policy, remote provenance, and conflicts across multiple package managers. Treat optional build-time vendoring as a distribution choice, not runtime truth.
-3. Improve dry-run visibility with generated-index diffs and counts while preserving the existing portable-path, topology, indirection, and rollback guarantees.
-4. Consider a deterministic active-context receipt for auditability: selected route chains, overwrite companions, Required Routes, global binding #KeepInMind context, cost, and digest. It must not narrow the baseline #KeepInMind contract or create parallel runtime truth.
-5. Decide the remaining deterministic CLI options: `find --max-tokens`, approximate token counts, startup-budget warnings, `intent-to-route` previews, `route` templates, extension authoring templates, and explicit forceful versus soft upgrade modes.
-6. Revisit a distinct primitive-kind field only if ownership ambiguity recurs beyond the current route-aware validator and tests.
+1. Continue the [new CLI release program](cli-release/_cli-release.md) through
+   explicit evidence, product, architecture, cleanup, and implementation gates.
+   Design the agent-first Framework accelerator from current jobs and maintainer
+   discussion rather than inheriting the frozen MVP or deleted CLI v2.
+2. Keep deleted CLI-v2 knowledge in the [CLI-v2 archive](../archived/cli-v2/_cli-v2.md)
+   as raw input. Reuse an old command, safety idea, implementation shape, or test
+   strategy only after current evidence and maintainer acceptance.
+3. Define Extension lifecycle behavior with the new CLI rather than treating
+   prior managed-lifecycle, source-review, recovery, or formatting proposals as
+   accepted direction.
+4. Deliver one canonical .NET Native AOT executable and the first thin npm
+   wrapper before adding other package-manager channels. Keep the root
+   `package.json` as an ecosystem-neutral orchestration layer.
 
 ## Self-Growth, Documentation, And Release
 
-1. Ship the recurrence-driven observations rework in `.agents/memory/emerging/ideas/observations-rework.md` and validate it with a seeded promotion round.
+1. Validate the residual distributed Observation search, consolidation, and promotion behavior in `.agents/memory/emerging/ideas/observations-rework.md` with a seeded round.
 2. Audit on-demand descriptions and complete the human documentation architecture: README responsibilities, concise guides, primitive and layer glossaries, routing/scoping examples, one-project and multi-project examples, distributed-memory boundaries, and stable terminology.
 3. Rewrite onboarding after the next focused dogfood evaluation, then run a final consistency and security review across routing, generated regions, prompt-injection boundaries, extension lifecycle behavior, packaging, and tests.
 4. Before public release, decide the product-name collision response and whether Git author metadata needs rewriting; file contents are already scrubbed of personal identifiers.

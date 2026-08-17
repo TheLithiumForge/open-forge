@@ -24,9 +24,9 @@ Capable agents still produce inconsistent results when relevant context is missi
 
 Large predefined methodologies answer this problem with more process, instructions, and required workflows. Their onboarding, context, and review costs grow even when most of that machinery is irrelevant to the work.
 
-Open Forge instead makes accepted context explicit, connected, scoped, and cheap to retrieve. The workspace starts with a small useful foundation, then develops its own methods from real decisions, corrections, evidence, and recurring needs.
+Open Forge instead makes accepted context explicit, connected, scoped, and cheap to retrieve. The workspace starts with a small useful foundation. Its self-growing Memory expands through real decisions, corrections, evidence, and recurring needs without putting the whole history into active context.
 
-A user can begin with incomplete natural direction. The agent builds the best current model from available context, matches explanation and planning depth to the request, recommends a coherent direction, surfaces only consequential unsettled choices, and asks for judgment in understandable outcome terms.
+A user can begin with incomplete natural direction. The agent builds the best current model from available context, responds conversationally unless deep analysis was requested, recommends a coherent direction, surfaces one consequential decision frontier at a time, and offers deeper detail as it becomes useful.
 
 ## Scope
 
@@ -71,5 +71,5 @@ Open Forge is not:
 
 ## Decisions And Rationale
 
-- [Product direction](../decisions/product-direction.md)
-- [Adaptive decision elicitation](../decisions/adaptive-decision-elicitation.md)
+- [Product direction](../decisions/product/product-direction.md)
+- [Adaptive decision elicitation](../decisions/framework/adaptive-decision-elicitation.md)

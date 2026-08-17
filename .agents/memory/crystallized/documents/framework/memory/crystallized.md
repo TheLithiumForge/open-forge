@@ -9,7 +9,7 @@ open-forge:
 
 ## State Contract
 
-[Crystallized Memory](../../../../crystallized/_crystallized.md) contains accepted durable state within its stated scope.
+[Crystallized Memory](../../../_crystallized.md) contains accepted durable state within its stated scope.
 
 It keeps one coherent current representation for each distinct question and scope. When accepted state changes, agents update, split, merge, or reshape the existing authoritative source rather than creating a competing current copy.
 
@@ -19,8 +19,8 @@ Other accepted results may live in matching #Core `routes`, source code, declare
 
 The standard `routes` provide two distinct accepted roles:
 
-- [Decisions](../../../../crystallized/decisions/_decisions.md) preserve accepted rationale for important choices
-- [Documents](../../../../crystallized/documents/_documents.md) integrate coherent current records or route to systems that hold them
+- [Decisions](../../../decisions/_decisions.md) preserve accepted rationale for important choices
+- [Documents](../../_documents.md) integrate coherent current records or route to systems that hold them
 
 Decisions and Documents follow the universal [route-scope contract](../routing/scope.md). Their selected `route` chain determines their subject without changing either role.
 

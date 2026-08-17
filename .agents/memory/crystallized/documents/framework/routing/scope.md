@@ -23,6 +23,10 @@ A sparse scope is valid. It can contain only the `routes` useful to its subject 
 
 The `entrypoint` for each `slug` acting as a scope states what it means locally, while loaded ancestors establish the meaning inherited from the `route` above it.
 
+Put specialized material in the narrowest scope that fully expresses where it applies. Workspace-wide placement is appropriate only when the material genuinely applies across the workspace. This keeps future context cost tied to selected scopes instead of total stored content.
+
+Each scoped `entrypoint` is responsible for the loading behavior of the entries it exposes. On-demand is the default. Use #LoadNow when omission is more costly than baseline attention, and use #KeepInMind only for continuity that must be revisited at its defined boundaries. Scope does not imply either loading tag.
+
 Open Forge does not reserve organizational groupings such as `projects`, `domains`, `teams`, or `platforms`. A workspace introduces whichever concrete `slugs` make its own scopes understandable.
 
 ## Concrete Paths
@@ -31,13 +35,13 @@ Documentation, Templates, CLI plans, and Extension definitions may use placehold
 
 Each scope narrows the `routes` and content that follow it:
 
-| Route shape | Meaning |
-|---|---|
-| `memory/crystallized/documents/` | The managed Documents `route` without an added subject scope |
-| `memory/{scope}/crystallized/documents/` | A subject that may contain several Memory states |
-| `memory/crystallized/{scope}/documents/` | A subject that may contain several Crystallized `routes` |
-| `memory/crystallized/documents/{scope}/` | A subject that narrows Documents only |
-| `memory/{outer-scope}/crystallized/{inner-scope}/documents/{local-scope}/` | Nested scopes with successively narrower subjects |
+| Route shape                                                                | Meaning                                                      |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `memory/crystallized/documents/`                                           | The managed Documents `route` without an added subject scope |
+| `memory/{scope}/crystallized/documents/`                                   | A subject that may contain several Memory states             |
+| `memory/crystallized/{scope}/documents/`                                   | A subject that may contain several Crystallized `routes`     |
+| `memory/crystallized/documents/{scope}/`                                   | A subject that narrows Documents only                        |
+| `memory/{outer-scope}/crystallized/{inner-scope}/documents/{local-scope}/` | Nested scopes with successively narrower subjects            |
 
 Place a scope immediately before the first `route` segment it should narrow. Consecutive scopes express nested subjects. Avoid creating several paths for the same subject and role merely because several equivalent-looking placements are possible.
 
@@ -73,7 +77,9 @@ A familiar `slug` beneath another `route` does not recreate a `root route`. For 
 
 Work may select several scopes at once. Each selected scope keeps its own `route` chain, inherited `Axioms`, authority, and meaning. Selection does not merge the scopes or create precedence between them.
 
-Explicit relative links explain a local relationship. A Workspace `route` may map a durable relationship across repositories, projects, systems, or disciplines. Work that spans several scopes selects the relevant branches and follows those declared relationships, while unrelated sibling scopes remain unloaded.
+Start from visible selection surfaces, recursively select every materially relevant scope, and compose those selected chains through their explicit relationships. Reevaluate the selection when the task materially changes. Opening an entrypoint exposes its direct `Entries`; it does not justify loading route bodies only to discover more possible selection.
+
+Explicit relative links explain a local relationship. A Map `route` may preserve a durable relationship across repositories, projects, systems, or disciplines. Work that spans several scopes selects the relevant branches and follows those declared relationships, while unrelated sibling scopes remain unloaded.
 
 When selected scopes disagree about one shared result, path depth and load order do not decide the conflict. Follow clear user direction or the authoritative source declared for that result, and report unresolved conflicts with their scopes.
 
@@ -110,6 +116,6 @@ Component sources remain authoritative for any additional local composition rule
 
 ## Decisions And Rationale
 
-- [Scope and slugs](../../../decisions/scope-and-slugs.md)
-- [Routing model](../../../decisions/routing-model.md)
-- [Typed authority and role terminology](../../../decisions/authoritative-source-terminology.md)
+- [Scope and slugs](../../../decisions/framework/scope-and-slugs.md)
+- [Routing model](../../../decisions/framework/routing-model.md)
+- [Typed authority and role terminology](../../../decisions/framework/authoritative-source-terminology.md)

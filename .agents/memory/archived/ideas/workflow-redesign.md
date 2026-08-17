@@ -9,7 +9,7 @@ open-forge:
 Status: archived 2026-07-18.  
 Original route: `.agents/memory/emerging/ideas/workflow-redesign.md`.  
 Archived because: the workflow contract was accepted, implemented, and subsequently refined with Mode, mandatory Constraints, and phase-aware routing.  
-Current authoritative source: `.agents/memory/crystallized/decisions/workflow-shape.md` and the current Workflow Core route.
+Current authoritative source: `.agents/memory/crystallized/decisions/framework/workflow-shape.md` and the current Workflow Core route.
 
 Status: historical rationale accepted 2026-07-10, revised into the later eight-section phase-aware contract, and superseded by the minimal Workflow contract accepted on 2026-07-29. The body below preserves the earlier design context and worked example. Do not treat its modes, sections, phase assumptions, selection ceremony, or local-Core behavior as current truth.
 
@@ -29,8 +29,8 @@ Humans and agents reason about them the same way: "what is inside me" versus "wh
 ```md
 ---
 open-forge:
-  description: {trigger plus outcome, decision-grade; this is the selection surface}
-  tags: [{Layer}, Workflow, {topic tags}]
+  description: { trigger plus outcome, decision-grade; this is the selection surface }
+  tags: [{ Layer }, Workflow, { topic tags }]
 ---
 
 # {Name}

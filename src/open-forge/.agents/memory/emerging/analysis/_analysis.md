@@ -6,13 +6,13 @@ open-forge:
 
 # Analysis
 
-Analysis preserves structured reasoning, investigation, or comparison that is useful but not accepted truth.
+Analysis keeps structured reasoning, investigation, or comparison that is useful but not accepted yet.
 
 ## Axioms
 
 - Read `Entries` when current work needs prior reasoning.
-- Keep the question, evidence, assumptions, limits, and current conclusion visible.
-- Check whether assumptions still hold before relying on analysis.
+- Keep the question, evidence, assumptions, limits, and current conclusion clear.
+- Check that the assumptions still hold before relying on the Analysis.
 
 ## Entries
 

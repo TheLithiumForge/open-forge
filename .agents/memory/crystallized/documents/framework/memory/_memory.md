@@ -6,11 +6,12 @@ open-forge:
 
 # Memory Architecture
 
-Memory Architecture defines the recorded-state model that preserves continuity, coordination, accepted records, candidate learning, and useful history without turning stored context into automatic truth or behavior.
+Memory Architecture defines the self-growing recorded-state model that preserves continuity, coordination, accepted records, candidate learning, and useful history without turning stored context into automatic truth or behavior.
 
 ## Axioms
 
 - Memory state describes how recorded material should currently be treated. Memory scope describes the subject to which it applies.
+- Memory can grow through useful records and routed scopes without a fixed structural ceiling. Unselected branches remain outside active context.
 - Working, Emerging, Crystallized, and Archived are the standard state contracts and do not form a mandatory pipeline
 - Any transition is valid when the destination accurately expresses current meaning, scope, and authority
 - Memory may record behavior without activating it. Accepted behavior that should guide work belongs in the matching #Core `route`.
@@ -23,6 +24,6 @@ Memory Architecture defines the recorded-state model that preserves continuity, 
 - [Current Crystallized Memory purpose, accepted authority, consolidation, replacement history, and shipped Decisions and Documents roles](crystallized.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #MemoryModel #Crystallized #Authority #Consolidation
 - [Current Emerging Memory purpose, candidate authority, capture threshold, evidence, consolidation, promotion, and shipped candidate roles](emerging.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #MemoryModel #Emerging #Contextual #Candidate
 - [Current Memory purpose, authority boundary, independent state and scope dimensions, recursive growth, capture threshold, and shipped defaults](model.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #MemoryModel #Scope #OrganicGrowth
-- [Current Memory capture, direct movement, consolidation, promotion, replacement, archival, restoration, and relationship-update contract](transitions.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #MemoryModel #Transition #Promotion #Archival #Restoration
-- [Current Working Memory purpose, expected expiration, authority, extraction, resumability, and shipped Handoffs and Sessions roles](working.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #MemoryModel #Working #Contextual #Resumability
+- [Current Memory capture, integration, closeout reconciliation, movement, consolidation, promotion, archival, restoration, and relationship-update contract](transitions.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #MemoryModel #Transition #Promotion #Archival #Restoration
+- [Current Working Memory purpose, expected expiration, authority, extraction, resumability, and shipped Checkpoints and Handoffs roles](working.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #MemoryModel #Working #Contextual #Resumability
 <!-- open-forge:generated-index:end -->

@@ -1,119 +1,91 @@
 ---
 open-forge:
-  description: Define the future Extensions package, source, trust, compatibility, composition, ownership, lifecycle, catalogue, and CLI boundaries
-  tags: [Memory, Idea, Contextual, Candidate, Extension, Architecture, Product, Refactor]
+  description: Explore post-initial Extension distribution, compatibility, migration, multi-root ownership, dependency expressiveness, and catalogue governance
+  tags: [Memory, Idea, Contextual, Candidate, Extension, Architecture, Product, Distribution]
 ---
 
-# Extensions Overhaul
+# Extensions Evolution
 
-Open Forge Extensions are a dogfooded MVP whose long-term architecture remains intentionally open. The [Extensions MVP Architecture](../../crystallized/documents/extensions/architecture.md) owns current behavior, accepted runtime boundaries, safety properties, and known liabilities. This file owns candidate future design until it is coherent and accepted enough to replace the MVP view.
+## Current Boundaries
 
-## Accepted Constraints
+The shipped [Extensions MVP Architecture](../../crystallized/documents/extensions/architecture.md)
+owns current runtime behavior. Deleted CLI v2 proposed an initial next boundary
+for:
 
-The overhaul begins from the stable boundaries already owned by the current architecture:
+- A strict inspectable package and manifest shape.
+- Embedded Open Forge and explicit external filesystem catalogues.
+- Invocation-local review of third-party source.
+- Exact-id acyclic dependencies.
+- One committed workspace lifecycle record.
+- Whole-file ownership, collision, reconciliation, and removal.
+- Git-first recovery, Gitless backups, formatting, route rebuilding, and
+  explicit preservation decisions.
 
-- Extensions remain optional and explicitly selected
-- Installed human-readable files retain complete runtime meaning
-- Packages contribute whole files through ordinary `routes`
-- Package metadata and ownership state do not become agent authority
-- Manual plain-file installation remains possible
-- Composition, mutation, update, and removal remain previewable and reviewable
-- Local content, shared ownership, dependency integrity, containment, and route reachability remain protected
+Those choices are raw historical input, not accepted direction. Inspect them in
+the [CLI-v2 archive](../../archived/cli-v2/_cli-v2.md) when the new CLI reaches
+Extension lifecycle design.
 
-## Design Questions
+## Remaining Opportunities
 
-### Package Boundary
+### Remote Distribution And Provenance
 
-- What makes a set of files one extension?
-- When is a narrow package, mixed package, or convenience pack appropriate?
-- How is one canonical payload owner maintained?
-- Which metadata is required for managed and unmanaged distribution?
+- Should Open Forge ever fetch Extensions from URLs, registries, or another
+  remote catalogue?
+- Which integrity, authorship, provenance, reproducibility, and review evidence
+  must precede installation?
+- How can discovery remain cheap without turning remote metadata into runtime
+  agent authority or silently trusting later bytes?
 
-### Source And Trust
+### Compatibility And Migration
 
-- Which source types are supported?
-- Does remote distribution belong in Open Forge?
-- How are provenance, integrity, authorship, and review presented?
-- Which content may enter baseline-loading routes?
-- How are untrusted instructions inspected before installation?
+- Which version or compatibility statement would provide a real guarantee
+  across an Extension, Framework payload, CLI, and agent runtime?
+- How should deprecation, replacement, migrations, and required user decisions
+  remain inspectable and reversible?
+- Which state actually needs migration before adding a migration language?
 
-### Identity And Compatibility
+### Dependency Expressiveness
 
-- What identity remains stable across source movement?
-- What does a version guarantee?
-- How are Framework and CLI compatibility expressed?
-- How are agent-runtime capability requirements represented without binding Extensions to one provider?
-- How are deprecation and replacement communicated?
+- Do repeated needs justify optional dependencies, conflicts, compatible
+  alternatives, capabilities, or external satisfaction?
+- How can any richer relation remain visible without recreating package-manager
+  complexity or weakening exact ownership?
 
-### Composition
+### Multi-root And Multi-manager Ownership
 
-- Which required, optional, and conflicting relationships earn first-class semantics?
-- Is capability satisfaction justified, or are exact package relationships sufficient?
-- How can external skills or packages satisfy a requirement safely?
-- How does dependency closure remain visible and reviewable?
-
-### Ownership And Scope
-
-- Where does lifecycle ownership live for one workspace, nested scopes, submodules, and multi-repository sources of truth?
-- How does Open Forge coexist with other package managers?
-- What happens when a user modifies a managed file?
-- How do scoped installation, update, and removal work?
-- How do authored, managed, and generated boundaries compose?
-
-One candidate is for an Extension to declare manager-recognized `route` shapes and accept user-selected scope `slugs` at the positions allowed by the loader's universal scoping rules. Planning would resolve that notation to concrete paths before mutation, initialize only the missing scope `entrypoints` the user accepted, and record ownership against the resolved files. Runtime `routes` would remain ordinary Markdown and would not depend on placeholders or package provenance.
-
-### Lifecycle
-
-- How do first installation, update, migration, restoration, removal, and orphan handling differ?
-- Which changes require explicit user direction?
-- How is interrupted application recovered?
+- How should lifecycle authority work across nested repositories, submodules,
+  package-local `.agents` trees, or several managers?
+- Can one path remain safely managed when scopes or repositories disagree about
+  its owner and recovery boundary?
+- Which manager identity and lock placement remain portable without leaking
+  machine-local source locations?
 
 ### Catalogue Governance
 
-- Which admission and review criteria apply?
-- What evidence is required for first-party inclusion?
-- Which stability labels and support promises are useful?
-- Who owns maintenance and deprecation?
-- How does discovery remain cheap without adding mandatory context?
+- Which admission, review, stability, support, and deprecation criteria justify
+  first-party or marketplace inclusion?
+- What evidence proves that a package materially improves outcomes rather than
+  merely adding content?
 
-## Candidate Component Boundary
+## Constraints
 
-The future implementation may separate:
+Any future extension must preserve these boundaries:
 
-```text
-Extension source providers
-  -> package and manifest model
-    -> dependency and compatibility resolver
-      -> assembled installation plan
-        -> CLI safety and transaction application
-          -> ordinary installed Framework files
-```
+- Extensions remain optional, explicitly selected installation units.
+- Installed human-readable files retain complete runtime meaning.
+- Package metadata and lifecycle evidence do not become agent authority.
+- Effects remain previewable, reviewable, contained, and recoverable.
+- Local content, deliberate removals, shared ownership, route reachability, and
+  user-controlled Git history remain protected.
+- Remote distribution is absent by default until its trust model is accepted.
 
-The Extensions domain would own package identity, source metadata, dependencies, compatibility, and desired composition. The CLI would own filesystem inspection, target planning, safety checks, presentation, application, rollback, and Git integration. The Framework would own runtime meaning after installation.
+## Evidence Before Promotion
 
-This boundary remains a candidate until the design questions show whether each component has a stable independent responsibility.
-
-## Migration Direction
-
-Before generalizing the MVP:
-
-1. Review every first-party package for broad reusable value and correct granularity
-2. Classify current manifest and lifecycle behavior as invariant, MVP compatibility, or replacement candidate
-3. Extract Extensions domain behavior from the CLI implementation
-4. Define source, identity, scope, compatibility, ownership, and lifecycle contracts
-5. Establish a common installation plan shared with the CLI architecture
-6. Preserve safety and integration tests around desired invariants
-7. Add migrations only where real versioned state requires them
-8. Avoid remote distribution until trust and provenance have an accepted design
-9. Keep installed files manually understandable throughout the transition
-
-## Promotion Conditions
-
-A replacement current Extensions architecture is justified when:
-
-- Package and source boundaries are accepted
-- Trust and compatibility semantics are explicit
-- Scope and ownership work across the intended workspace shapes
-- Lifecycle intents and required user decisions are distinct
-- The Extensions and CLI responsibilities compose through one plan contract
-- Catalogue governance is credible enough for the distribution being proposed
+1. Implement and dogfood the accepted initial replacement lifecycle first.
+2. Identify a recurring limitation that cannot be solved by an explicit local
+   or embedded catalogue.
+3. Define the smallest additional identity, trust, compatibility, or ownership
+   contract needed for that limitation.
+4. Prove it with representative package, collision, update, removal, recovery,
+   and adversarial source scenarios.
+5. Promote only the independently useful concept supported by that evidence.

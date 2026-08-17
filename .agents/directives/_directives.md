@@ -1,25 +1,29 @@
 ---
 open-forge:
-  description: Binding instructions whose `route` is selected before their contents are loaded
+  description: Required instructions loaded through selected routes
   tags: [LoadNow, Core, Directive]
 ---
 
 # Directives
 
-Directives are binding instructions selected through the `route` tree.
+Directives contain required instructions.
 
 ## Axioms
 
-- Every direct directive file carries #LoadNow, so an already-loaded directive `entrypoint` reads all of its direct files.
-- Direct files loaded from this root are binding throughout the workspace.
-- Select a child directive `route` only when its path, `description`, tags, and ancestor meaning match the work. Loading that `route` establishes its narrower scope before its direct files are read.
-- Direct files loaded from a selected child `route` are binding within that `route`'s scope.
-- Loaded child directives add to loaded ancestor directives. Narrower routing changes scope, not authority.
-- Every direct directive file contains exactly one non-empty `## Axioms` section. Put optional behavior in guidance, a skill, or a workflow.
-- Report any directive conflict or directive that cannot be followed, and explain why.
+- Every sibling Directive listed under an entrypoint's `Entries` carries #LoadNow.
+- Each sibling Directive has one non-empty `## Instructions` section.
+- Sibling Directives listed by this root entrypoint apply throughout the workspace.
+- Select a child Directive route only when its path, description, tags, and parent routes match the work.
+- A selected child entrypoint sets the narrower scope before its sibling Directives load.
+- Those Instructions apply only within the child route's scope.
+- Child Directives add to active parent Directives. A narrower scope does not create higher authority.
+- Report any conflict or instruction that cannot be followed, and explain why.
 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Keep Open Forge contract changes deliberate, current, dogfooded, reviewable, and evidence-backed](deliberate-framework-change.md) - #LoadNow #Directive #Framework #Change #Dogfood #Review #Evidence
+- [Keep consequential decisions with the maintainer while agents and councils supply evidence, alternatives, challenges, and recommendations](decision-authority.md) - #LoadNow #Core #Directive #Decision #Collaboration #Authority
+- [Binding Open Forge-maintenance instructions, narrowed by CLI, Framework, testing, and TypeScript scopes](open-forge/_open-forge.md) - #Directive #CLI #Framework #Testing #TypeScript
+- [Keep behavior and its directly related source, contracts, tests, fixtures, and support together at the narrowest useful scope](source-locality.md) - #LoadNow #Core #Directive #Source #Locality #Contract #Testing #Structure
+- [Write clear, consistent user communication and Open Forge source prose](writing.md) - #LoadNow #Core #Directive #Writing #Terminology
 <!-- open-forge:generated-index:end -->

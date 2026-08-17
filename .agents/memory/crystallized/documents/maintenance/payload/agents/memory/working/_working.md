@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Current maintenance contracts for the installable Working Memory entrypoint and its Handoffs and Sessions routes
-  responsibility: Preserve bounded resumability, expected expiration, extraction, standard nested roles, recursive scope, and source alignment
+  description: Current maintenance contracts for the installable Working Memory entrypoint and its Checkpoints and Handoffs routes
+  responsibility: Preserve active resume state, expected expiration, durable-result extraction, standard nested roles, recursive scope, and source alignment
   tags: [Memory, Document, CurrentTruth, Evergreen, Maintenance, Governance, Payload, Working, Contextual]
 ---
 
@@ -16,20 +16,21 @@ The [Working state contract](../../../../../framework/memory/working.md) defines
 ## Contract
 
 - Frontmatter preserves #LoadNow, #Memory, #Working, and #Contextual classification
-- Working Memory remains live resumability context rather than accepted current truth
-- Active material stays small, current, and cheap to replace or reread
-- Useful state is extracted before stale Working Memory is archived or cleared
-- Handoffs and Sessions remain the two standard #LoadNow child `routes` with distinct transfer and history roles
-- Recursive scopes may add plans, checkpoints, backlogs, or other temporary roles without changing Working state semantics
+- Working Memory does not establish acceptance by itself
+- An explicitly accepted temporary choice may remain in Working when its source, scope, and expected expiration are clear
+- Active material stays small, current, and easy to replace or reread
+- Useful results are saved before stale Working Memory is archived or cleared
+- Checkpoints and Handoffs remain the two standard #LoadNow child `routes` with distinct active-state and transfer roles
+- Recursive scopes may add plans, history, backlogs, or other temporary roles without changing Working state semantics
 - The installed parent contains no workspace-specific active state
 
 ## Verification
 
-- Installation and `route` tests verify Working, Handoffs, and Sessions loading, indexing, classification, and recursive scope
+- Installation and `route` tests verify Working, Checkpoints, and Handoffs loading, indexing, classification, recursive scope, and legacy user-owned Sessions preservation
 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
+- [Current maintenance contract for the installable Checkpoints Memory entrypoint](checkpoints.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Checkpoint #Resumability
 - [Current maintenance contract for the installable Handoffs Memory entrypoint](handoffs.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Handoff #AgentCommunication
-- [Current maintenance contract for the installable Sessions Memory entrypoint](sessions.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Session #WorkHistory
 <!-- open-forge:generated-index:end -->

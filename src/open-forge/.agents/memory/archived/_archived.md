@@ -1,20 +1,20 @@
 ---
 open-forge:
-  description: Historical memory kept for context after it is no longer current truth
+  description: Useful history that no longer controls current work
   tags: [Memory, Archived, Contextual, Historical]
 ---
 
 # Archived Memory
 
-Archived memory preserves historical context after it stops being #CurrentTruth.
+Archived Memory keeps useful history after it stops being #CurrentTruth.
 
 ## Axioms
 
 - Read `Entries` when current work may need archived context.
-- Preserve origin, the reason material was archived, and what replaced it when a replacement exists.
-- Keep historical records that belong in Memory here. Preserve relevant history about other artifacts through links to their retained locations.
-- Extract useful current material to its authoritative source before archiving. That source may be another #Memory `route`, a matching #Core `route`, or an external system.
-- Restore archived material only into an explicit current destination and validate it before treating it as current.
+- Keep historical Memory records here. Link to retained sources when the history belongs elsewhere.
+- Record where the material came from, why it was archived, and what replaced it when a replacement exists.
+- Move useful current meaning to the source that defines it before archiving. That source may be another Memory route, a matching #Core route, or an external system.
+- Validate archived material before restoring it to an explicit current destination.
 
 ## Entries
 

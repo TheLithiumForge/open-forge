@@ -6,15 +6,16 @@ open-forge:
 
 # {Subject} Roadmap
 
-<!--
+{
 Template selection:
+
 - Need: One current document for an accepted outcome sequence that must coordinate work beyond immediate task state.
 - Primary question: Which outcomes come next, in what order, what constrains that order, and what should cause it to change?
 
 Use a roadmap when accepted sequence and dependencies deserve a durable current document.
 Keep active task state, blockers, and immediate next actions in Working memory.
-Replace this template's frontmatter, title, placeholders, and comments.
--->
+Replace this template's frontmatter, title, and placeholders, then remove this braced source guidance.
+}
 
 ## Scope And Horizon
 

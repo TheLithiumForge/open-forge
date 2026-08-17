@@ -18,9 +18,14 @@ Open Forge Extensions are a dogfooded MVP whose long-term architecture remains i
 - Proven invariants worth preserving
 - MVP liabilities
 
-The [top architecture](../architecture.md#framework-composition) is authoritative for the composition relationship among Core, Memory, and Extensions. The [Framework Architecture](../framework/architecture.md) is authoritative for every runtime route, primitive, authority, and Memory meaning used by installed extension files. The [CLI MVP Architecture](../cli/architecture.md) is authoritative for the deterministic implementation that currently discovers, plans, installs, validates, and removes packages.
+The [top architecture](../architecture.md#framework-composition) is authoritative for the composition relationship among Core, Memory, and Extensions. The [Framework Architecture](../framework/architecture.md) is authoritative for every runtime route, primitive, authority, and Memory meaning used by installed extension files. The [CLI MVP Architecture](../cli/mvp-architecture.md) is authoritative for the deterministic implementation that currently discovers, plans, installs, validates, and removes packages.
 
-This document describes the present MVP without declaring that its manifest schema, catalogue, grouping, lifecycle, or CLI integration is the final Extensions design. Open design questions remain contextual in the [Extensions overhaul candidate](../../../emerging/ideas/extensions-overhaul.md) until a replacement architecture is accepted.
+This document describes the present MVP without treating its implementation as
+the final Extensions design. The new CLI must rediscover its package,
+source-review, ownership, and lifecycle boundary from current needs.
+[Extensions evolution](../../../emerging/ideas/extensions-overhaul.md) keeps
+future distribution, compatibility, migration, multi-root, dependency, and
+catalogue questions contextual.
 
 ## Core Proposition
 
@@ -34,8 +39,8 @@ It may contribute:
 - Guidance
 - Patterns
 - Templates
-- Workspace routes
-- Memory routes
+- Map `routes`
+- Memory `routes`
 - Support files
 - A deliberate combination
 - Only dependencies as a convenience pack
@@ -278,7 +283,7 @@ Payloads cannot claim `.git/`, `.gitignore`, the ownership receipt, or workspace
 
 Different bytes targeting one portable path are a conflict. Identical managed bytes may share owners only through explicit compatible plans. Byte equality alone is not permission to adopt an existing file.
 
-The [CLI MVP Architecture](../cli/architecture.md) is authoritative for how these checks are implemented and transacted.
+The [CLI MVP Architecture](../cli/mvp-architecture.md) is authoritative for how these checks are implemented and transacted.
 
 ## Skills And External Managers
 
@@ -310,11 +315,11 @@ The current extension system is verified at several levels:
 
 - Pure tests cover dependency selection, manifest validation, path identity, ownership receipts, and collision rules
 - Closure tests use real subprocesses, filesystems, and Git repositories for installation, update, removal, rollback, and review checkpoints
-- Catalogue integration tests verify the single advertised package, its isolated complete installation, owned lifecycle, direct Workflows, native Skill, Template routes, and dogfood parity
+- Catalogue integration tests verify the single advertised package, its isolated complete installation, owned lifecycle, direct Workflows, native Skill, Template `routes`, and dogfood parity
 - Packaged-layout tests verify discovery from built and npm-style package layouts
 - Framework validation checks assembled routes and links after installation
 
-The primary implementation test sources are linked from the [CLI MVP Architecture](../cli/architecture.md).
+The primary implementation test sources are linked from the [CLI MVP Architecture](../cli/mvp-architecture.md).
 
 These tests validate deterministic packaging and lifecycle behavior. They do not prove that every catalogue package improves agent outcomes.
 
@@ -328,7 +333,8 @@ Manifest parsing, catalogue discovery, dependency resolution, ownership, and lif
 
 The resolver understands bundled packages and local sources. It has no source-provider boundary, registry protocol, remote trust model, provenance verification, or reproducible third-party fetch contract.
 
-This limitation is safe for the MVP. The overhaul must decide whether remote distribution belongs in Open Forge at all before designing it.
+This limitation is safe for the MVP. Post-initial evolution must decide whether
+remote distribution belongs in Open Forge at all before designing it.
 
 ### Versions Do Not Govern Compatibility
 
@@ -360,9 +366,17 @@ Payload paths can target deep `routes`, but the package model does not yet provi
 
 Handled failures roll back, while abrupt process or machine failure relies on Git. There is no persistent recovery journal or workspace mutation lock.
 
-## Candidate Direction
+## Future Direction
 
-The [Extensions overhaul candidate](../../../emerging/ideas/extensions-overhaul.md) collects open design questions and candidate direction for source, trust, packages, compatibility, composition, scope, lifecycle, catalogue, components, and migration. Keeping that material in Emerging Memory prevents it from appearing as accepted current Extensions architecture.
+Deleted CLI-v2 lifecycle and source-review contracts remain available only in
+the [CLI-v2 archive](../../../archived/cli-v2/_cli-v2.md) as raw historical input.
+
+The [Extensions evolution candidate](../../../emerging/ideas/extensions-overhaul.md)
+retains questions that may follow representative use:
+remote distribution and provenance, compatibility and migrations, richer
+dependencies, multi-root or multi-manager ownership, and catalogue governance.
+Keeping those questions in Emerging Memory prevents them from appearing as
+accepted architecture.
 
 ## Non-Goals
 
@@ -383,13 +397,13 @@ Extensions are not:
 
 - [Open Forge architecture](../architecture.md)
 - [Framework Architecture](../framework/architecture.md)
-- [CLI MVP Architecture](../cli/architecture.md)
+- [CLI MVP Architecture](../cli/mvp-architecture.md)
 - [Current extension user contract](../../../../../docs/extensions.md)
 - [Current first-party catalogue](../../../../../src/extensions/README.md)
 
 ## Decisions And Rationale
 
-- [Extension package boundary](../../decisions/extension-package-boundary.md)
+- [Extension package boundary](../../decisions/extensions/extension-package-boundary.md)
 
 ## Historical Context
 

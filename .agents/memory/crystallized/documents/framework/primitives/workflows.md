@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Current Workflow role, minimal recipe contract, optional dependencies, composition, and `route` boundaries
+  description: Current Workflow role, minimal recipe contract, explicit relationships, composition, and `route` boundaries
   responsibility: Define how routed Markdown Workflows pursue goals and use other Core primitives without becoming a mandatory lifecycle or provider-specific orchestration runtime
   tags: [Memory, Document, CurrentTruth, Evergreen, Framework, Core, Workflow, Goal, Composition]
 ---
@@ -35,21 +35,15 @@ Every complete Workflow contains exactly one non-empty level-2 `Goal`, `Steps`, 
 
 This is a minimum contract, not the complete allowed heading vocabulary. A recipe may add level-2 headings that clarify its own subject without making those headings part of every Workflow.
 
-An `entrypoint` may organize descendant Workflows without becoming a recipe. If an `entrypoint` declares `Goal`, `Steps`, `Completion`, or `Required Routes`, it declares the complete applicable recipe contract. Every Workflow file that is not an `entrypoint` is a complete recipe.
+An `entrypoint` may organize descendant Workflows without becoming a recipe. If an `entrypoint` declares `Goal`, `Steps`, or `Completion`, it declares the complete applicable recipe contract. Every Workflow file that is not an `entrypoint` is a complete recipe.
 
-## Route Dependencies
+## Relationships
 
-Generated `Entries` express containment. `Required Routes` express unconditional cross-tree dependencies.
-
-`Required Routes` is optional. Include it between `Goal` and `Steps` only when the recipe cannot proceed correctly without routed context that is not already active. If the section is absent, the Workflow declares no unconditional routed dependency and needs no sentinel.
-
-Before Step 1, read every linked `route` and report an unreadable dependency as a blocker. Each dependency uses the canonical linked `entry` shape, resolves relative to the Workflow file, and includes useful tags with at least the target primitive type.
-
-Prefer `entrypoint`-level dependencies and keep the list short. Stable routed files are allowed when the Workflow requires one exact source. Direct Directive files do not appear because binding behavior enters through active Directive `routes`.
+Use ordinary Markdown links where another source helps selection or execution. State in Steps when a source must be read or a capability invoked at a particular point. A link makes the relationship visible without creating another preload rule or Workflow-specific dependency graph.
 
 ## Composition
 
-A Step may invoke a Skill, consult Guidance, apply a Pattern, instantiate a Template, follow a Workspace `route`, delegate bounded work, or hand off to another Workflow. Selecting another Workflow also activates its own `Required Routes` when present.
+A Step may invoke a Skill, consult Guidance, apply a Pattern, instantiate a Template, follow a Map `route`, delegate bounded work, or hand off to another Workflow.
 
 Composition remains explicit in Steps and handoffs. A Workflow does not silently absorb another Workflow's `Axioms`, convert an optional suggestion into a prerequisite, or create an implicit execution graph.
 
@@ -62,8 +56,8 @@ Other `root routes` do not reinitialize beneath Workflows. A routed folder named
 Workflows use other primitives through explicit relationships:
 
 - Active [Directives](directives.md) remain binding through their own selected `routes`
-- Skills remain under the standard [Skills](skills.md) root for native discovery and enter a recipe through `Required Routes` or Steps
-- Guidance, Patterns, Templates, and Workspace `routes` remain under their own roots and are linked where needed
+- Skills remain under the standard [Skills](skills.md) root for native discovery and enter a recipe through Steps or ordinary links
+- Guidance, Patterns, Templates, and Map `routes` remain under their own roots and are linked where needed
 
 This keeps each Workflow a readable recipe instead of a miniature mixed Core installation.
 
@@ -81,6 +75,6 @@ The installed [Workflows entrypoint](../../../../../workflows/_workflows.md) con
 
 ## Decisions And Rationale
 
-- [Workflow shape](../../../decisions/workflow-shape.md)
-- [Distinct Core primitive roles](../../../decisions/core-primitives.md)
-- [Routing surfaces](../../../decisions/routing-surfaces.md)
+- [Workflow shape](../../../decisions/framework/workflow-shape.md)
+- [Distinct Core primitive roles](../../../decisions/framework/core-primitives.md)
+- [Routing surfaces](../../../decisions/framework/routing-surfaces.md)

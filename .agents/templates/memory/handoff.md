@@ -1,25 +1,28 @@
 ---
 open-forge:
-  description: Handoff template is used when one bounded Working record must transfer enough current state, authority, evidence, blockers, and next action to resume work
+  description: Starting structure for a sealed transfer snapshot with the state, evidence, blockers, and next action needed to resume
   tags: [Extension, Template, Memory, Handoff, Working, Contextual]
 ---
 
 # {Work} Handoff
 
-<!--
+{
 Template selection:
-- Need: One concise transfer record for work crossing an agent, task, session, Workflow, or person boundary.
-- Primary question: What must the recipient know and do to resume this work without private context?
 
-Instantiate under the appropriate Working Handoffs `route`.
-This record is expected to expire. Extract durable results, archive useful transfer history, and prune redundant narration when the transfer completes.
-Link to detailed authoritative sources instead of copying complete history.
-Replace this Template's frontmatter, title, placeholders, and comments.
--->
+- Need: One stable boundary snapshot for an actual transfer or explicitly planned resumption while the active Checkpoint may continue to change.
+- Primary question: What boundary state must the recipient or resumed context preserve to continue without private context?
+
+Do not create a Handoff for a routine pause, ordinary closeout, or possible future interruption.
+Copy this Template into the appropriate Working Handoffs route and seal it when the named boundary occurs.
+Record boundary status, next action, blockers, and verification state in this snapshot. A live Checkpoint may supplement but not replace it.
+Never edit a sealed Handoff. Record later state in the active Checkpoint or a new Handoff. When this snapshot no longer supports its transfer or resumption, keep any durable result and archive the whole Handoff.
+Link to detailed current sources instead of copying complete history.
+Replace the frontmatter, title, and placeholders, then remove this braced guidance.
+}
 
 ## Goal And Scope
 
-{State the intended outcome, current boundary, and any explicit stop or approval gate.}
+{State the intended recipient or named resumption, outcome, current boundary, and any explicit stop or approval gate.}
 
 ## Current State
 
@@ -27,7 +30,7 @@ Replace this Template's frontmatter, title, placeholders, and comments.
 
 ## Accepted Direction
 
-{Link to accepted Decisions and authoritative sources that govern continuation. Keep candidates visibly separate.}
+{Link to accepted Decisions and current sources that guide continuation. Keep candidates clearly separate.}
 
 ## Completed And Verified
 
@@ -43,8 +46,8 @@ Replace this Template's frontmatter, title, placeholders, and comments.
 
 ## Required Context
 
-{Link to the minimum `routes`, files, commands, or external authoritative systems needed to continue.}
+{Link to the minimum routes, files, commands, or external systems needed to continue.}
 
 ## Exit
 
-{State when the Handoff should be extracted, archived, consolidated, or pruned.}
+{State when the transfer ends and the Handoff should be archived.}

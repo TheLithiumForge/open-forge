@@ -1,25 +1,26 @@
 ---
 open-forge:
-  description: Observation template is used when one Emerging record must preserve a grounded finding, its evidence, scope, uncertainty, recurrence, and possible future relevance
+  description: Starting structure for an evidence-backed occurrence or pattern, its scope, uncertainty, recurrence, and possible future value
   tags: [Extension, Template, Memory, Observation, Emerging, Contextual]
 ---
 
 # {Observation}
 
-<!--
+{
 Template selection:
-- Need: One candidate record for a grounded finding that may prevent rediscovery or become reusable learning.
+
+- Need: One candidate record for an evidence-backed occurrence or pattern that may prevent rediscovery or become useful learning.
 - Primary question: What was observed, where and with what evidence, and what may it imply if supported?
 
-Instantiate under the appropriate Emerging Observations `route`.
-One sufficiently reusable, surprising, or costly occurrence may justify capture. Recurrence is mainly a consolidation and promotion signal.
+Copy this Template into the appropriate Emerging Observations route.
+One useful, surprising, or costly occurrence may justify capture. Repetition mainly increases the case for consolidation or promotion.
 Search for an existing Observation first and extend it when scope and meaning match.
-Replace this Template's frontmatter, title, placeholders, and comments.
--->
+Replace the frontmatter, title, and placeholders, then remove this braced guidance.
+}
 
 ## Observation
 
-{State the grounded finding without promoting inference into fact.}
+{State what was noticed. Distinguish direct evidence from interpretation or inference.}
 
 ## Evidence And Source
 
@@ -35,7 +36,7 @@ Replace this Template's frontmatter, title, placeholders, and comments.
 
 ## Relevance
 
-{Explain why preserving this finding may prevent meaningful rediscovery, error, cost, or lost opportunity.}
+{Explain why keeping this finding may prevent rediscovery, error, cost, or lost opportunity.}
 
 ## Occurrences
 
