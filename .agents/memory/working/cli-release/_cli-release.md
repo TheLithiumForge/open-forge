@@ -33,9 +33,10 @@ sources define accepted meaning; this route does not define command behavior.
   for `open-forge-old`; neither `src/cli-mvp/` nor `open-forge-old` is replacement
   implementation or contract authority. `open-forge-old` remains the separate
   frozen executable.
-- No replacement implementation source, `.slnx`, project, dependency lock,
-  lifecycle file, workspace lock, package, Native AOT artifact, or release
-  exists.
+- The pinned `.slnx`, production and test projects, central dependency versions,
+  locks, and local `win-x64` Native AOT evidence now exist. No retained command,
+  accepted executable, lifecycle file, workspace lock, package, release
+  artifact, or release exists.
 - The final contract paths are `contracts/index/` and `contracts/references/`.
   No staging or candidate path is current. The physical-identity regressions
   remain implementation evidence for Gate 5.
@@ -71,10 +72,9 @@ The final validation evidence is:
 
 ## Next actions
 
-1. Complete the [Foundation And Native AOT Spike Task](task-foundation-aot-spike.md):
-   pin exact tools, establish the accepted physical topology, and prove the
-   parser, serialization, filesystem, result, test, build, and six-RID Native
-   AOT assumptions without implementing a retained command.
+1. Run the six pending native CI jobs and complete the
+   [Foundation And Native AOT Spike Task](task-foundation-aot-spike.md) full
+   gate. Keep retained command implementation outside this Task.
 2. Then implement all retained commands in dependency order, create thin npm
    packages, and finish CI and main-only release proof. Return to Architecture
    on a material failure of an accepted assumption.

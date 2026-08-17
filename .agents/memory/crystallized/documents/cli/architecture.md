@@ -11,8 +11,10 @@ open-forge:
 
 This is the accepted Gate 3 Architecture for the replacement Open Forge CLI. The
 replacement is an optional deterministic Framework accelerator with a human
-maintenance surface. It remains explicitly non-shipping. No C# source file,
-project, solution, executable, package, or Native AOT artifact exists yet.
+maintenance surface. It remains explicitly non-shipping. The active Gate 5
+foundation Task has created the pinned solution, production-project skeleton,
+managed and system test projects, and dependency locks, but no retained command,
+accepted executable, package, or release artifact exists yet.
 
 Gate 5 implementation is authorized and active through bounded Tasks. Release
 proof remains pending. This document accepts the structure and boundaries that
@@ -44,8 +46,9 @@ eventually exposed as the `open-forge` command. It is separate from the frozen
   `src/cli-mvp/` nor `open-forge-old` is replacement implementation or contract
   authority. `open-forge-old` remains available for its existing
   repository-routing assistance and historical evidence.
-- The accepted design places the future replacement executable's source under
-  `src/open-forge-cli/OpenForge.Cli`. That source tree is not present yet.
+- The replacement executable's source is under
+  `src/open-forge-cli/OpenForge.Cli`. The active foundation skeleton exposes no
+  retained command behavior yet.
 - `src/cli-mvp/build/` contains the frozen executable's TypeScript build support.
   It remains part of the frozen MVP boundary and is not replacement source.
 - The replacement does not import, dispatch to, build, test, or fall back to
@@ -136,18 +139,19 @@ subject paths mirror the source paths, so a command or capability has one
 obvious corresponding test location. `OpenForge.Cli.SystemTests` is the separate
 system/E2E project for the complete CLI boundary rather than a unit-test seam.
 
-The shown tree is the accepted future topology, not a report of present files.
-No C# files or C# projects are present yet. Every solution folder must correspond
-to a real physical folder. The `.slnx` must contain no solution-only virtual
-folders that have no filesystem counterpart, and physical source or test folders
-must not be hidden behind invented solution groupings.
+The active Gate 5 foundation Task has established the shown topology. The
+solution and all three projects now exist. Their existence is not accepted
+implementation or Native AOT proof. Every solution folder must correspond to a
+real physical folder. The `.slnx` must contain no solution-only virtual folders
+that have no filesystem counterpart, and physical source or test folders must
+not be hidden behind invented solution groupings.
 
-Gate 5 centrally records exact package versions in `Directory.Packages.props`
-and restore locks in committed `packages.lock.json` files. The central
-dependency policy and lock files are part of the implementation evidence, not
-untracked per-project version drift. The SDK pin, project settings, dependency
-versions, lock state, and publish inputs must reproduce the same restore and
-build without floating package resolution.
+Gate 5 requires exact package versions in `Directory.Packages.props` and
+committed restore locks in `packages.lock.json` files. The central dependency
+policy and lock files are part of the implementation evidence, not untracked
+per-project version drift. The SDK pin, project settings, dependency versions,
+lock state, and publish inputs must reproduce the same restore and build without
+floating package resolution.
 
 ## Source Organization And Composition
 
@@ -559,8 +563,9 @@ Gate 5 starts from this accepted structure and proves, at minimum:
 If a foundation spike cannot prove a critical guarantee, implementation stops
 and returns to this Architecture for a narrow decision. A managed build, a
 source-level claim, a package's marketing claim, or a partial command slice
-does not satisfy Gate 5. Until that evidence exists, the replacement remains
-non-shipping and `open-forge-old` remains the only executable CLI reference.
+does not satisfy Gate 5. Until complete Gate 5 evidence is accepted, the
+replacement remains non-shipping. Local foundation outputs are evidence only,
+and `open-forge-old` remains the only established executable CLI reference.
 
 ## Related Current Views
 

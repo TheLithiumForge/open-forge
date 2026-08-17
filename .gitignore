@@ -14,3 +14,7 @@ apm_modules/
 **/.codex
 **/.opencode
 **/.claude
+
+# .NET build output
+**/bin/
+**/obj/

@@ -57,19 +57,19 @@ new library or Architecture choice.
 
 ## Progress
 
-| Phase              | State       | Evidence                                                                                                                                  |
-| ------------------ | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| Preflight          | Adopted     | Exact scope, toolchain, support policy, evidence matrix, and continuation boundary established before Task mutation.                      |
-| Gray contract      | Not started | Internal request/report/result and process-entry signatures remain to be frozen.                                                          |
-| Red                | Not started | Complete affected managed, integration, process, and Native AOT evidence remains to be created and observed failing for missing behavior. |
-| Green              | Not started | Minimal production behavior remains to be implemented.                                                                                    |
-| Blue               | Not started | One bounded production-structure pass remains.                                                                                            |
-| Purple             | Not started | One bounded test-structure pass remains.                                                                                                  |
-| Public scenario    | Not started | The published native executable must prove root help, version, and invalid input.                                                         |
-| Full gate          | Not started | Locked restore, build, tests, local native execution, and all six native CI jobs remain.                                                  |
-| Independent review | Not started | Targeted correctness and local-improvement reviews are planned after the full gate.                                                       |
-| Correction         | Not used    | At most one complete correction cycle is available.                                                                                       |
-| Acceptance         | Not started | Requires the complete gate and Mastermind final review.                                                                                   |
+| Phase              | State       | Evidence                                                                                                                            |
+| ------------------ | ----------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Preflight          | Adopted     | Exact scope, toolchain, support policy, evidence matrix, and continuation boundary established before Task mutation.                |
+| Gray contract      | Frozen      | The internal request/result/report union and process-entry signatures compile; both callables fail explicitly as not implemented.   |
+| Red                | Complete    | Eight initial cases failed at the Gray boundaries; correction Red added one empty-YAML case that failed at the exposed null path.   |
+| Green              | Complete    | The smallest production implementation makes all nine frozen Red cases pass.                                                        |
+| Blue               | Complete    | The fixed Markdown pipeline is explicit and reusable; YAML and JSON source-generation contexts have separate focused files.         |
+| Purple             | Complete    | Native process support passes cancellation through I/O and wait, then requests and awaits child-tree termination on cancellation.   |
+| Public scenario    | Complete    | The published `win-x64` binary returned help and version on stdout with exit 0 and invalid input on stderr with exit 4.             |
+| Full gate          | Partial     | The complete local `win-x64` gate passes; execution of the six native CI jobs remains pending.                                      |
+| Independent review | Passed      | Correction rereview found no blocking issue; six remote native jobs remain an explicit acceptance gap.                              |
+| Correction         | Used        | Fresh review found an empty-YAML null path; correction Red through Purple and the public scenario pass, with the full gate pending. |
+| Acceptance         | Not started | Requires the complete gate and Mastermind final review.                                                                             |
 
 ## Decisions Needed
 
@@ -85,10 +85,17 @@ The active toolchain is .NET SDK `10.0.101`, C# `14.0`, `net10.0`, xUnit v3
 runtime packages. Central Package Management and committed NuGet lock files
 must make all direct and transitive inputs reproducible.
 
+YamlDotNet's runtime package does not carry its source generator. The accepted
+static semantic path therefore uses the matching
+`Vecc.YamlDotNet.Analyzers.StaticGenerator` `18.1.0` package as a compile-time
+private asset. It adds no runtime dependency, and its exact package and hash are
+present in the lock file.
+
 The complete affected matrix is:
 
-- Unit: deterministic typed probe values and source-generated JSON metadata.
-- Integration: valid bounded Markdown and YAML, invalid input, real isolated
+- Unit: relative-workspace validation before filesystem access.
+- Integration: deterministic typed values, source-generated JSON metadata,
+  valid bounded Markdown and YAML, malformed and empty YAML, real isolated
   filesystem byte round-trip, actual exclusive-handle contention, and failure
   without unintended outside mutation.
 - EndToEnd: the real published Native AOT executable returns correct exits and
@@ -121,6 +128,7 @@ dotnet format OpenForge.slnx --verify-no-changes --no-restore
 dotnet build OpenForge.slnx --configuration Release --no-restore
 dotnet test --project tests/open-forge-cli/OpenForge.Cli.Tests/OpenForge.Cli.Tests.csproj --configuration Release --no-build
 git diff --check
+git diff --cached --check
 ```
 
 It also includes the local `win-x64` publish and direct system-test executable
@@ -133,7 +141,7 @@ manager-owned `Entries` representation instead. This does not make a whole-
 repository formatting or frozen-MVP validation claim.
 
 ```sh
-bunx prettier --check ".agents/directives/open-forge/cli/implementation.md" ".agents/memory/crystallized/documents/cli/architecture.md" ".agents/memory/working/cli-release/_cli-release.md" ".agents/memory/working/cli-release/decision-agenda.md" ".agents/memory/working/cli-release/release-plan.md" ".agents/memory/working/cli-release/task-foundation-aot-spike.md" ".agents/memory/working/checkpoints/cli-release.md"
+bunx prettier --check ".github/workflows/cli-foundation-aot.yml" "global.json" ".agents/directives/open-forge/cli/implementation.md" ".agents/memory/crystallized/documents/cli/architecture.md" ".agents/memory/working/cli-release/_cli-release.md" ".agents/memory/working/cli-release/decision-agenda.md" ".agents/memory/working/cli-release/release-plan.md" ".agents/memory/working/cli-release/task-foundation-aot-spike.md" ".agents/memory/working/checkpoints/cli-release.md"
 ```
 
 The public scenario runs the published production executable for `--help`,
@@ -147,9 +155,72 @@ invalidated Gray, Red, or Green phase and repeats all downstream phases. A
 Native AOT or dependency failure that materially invalidates an accepted
 assumption stops the Task and returns to Architecture.
 
-No Task commit exists yet. Likely coherent commits are one Gate 5 activation and
-support-policy record commit, followed by one complete foundation-cycle commit.
-No merge, push, package publication, or release occurs before Task Acceptance.
+The Gate 5 activation and support-policy record is commit `f3b74f2`. This commit
+contains the complete local foundation cycle before remote CI evidence. The
+feature branch and pull request may expose the work only to run the required
+native CI evidence. No merge, package publication, or release occurs before Task
+Acceptance.
+
+The frozen Gray signatures are:
+
+```text
+CliApplication.RunAsync(string[] args, CancellationToken cancellationToken = default) -> Task<int>
+FoundationProbe.RunAsync(FoundationRequest request, CancellationToken cancellationToken = default) -> Task<FoundationResult>
+FoundationRequest(string WorkspacePath, string Markdown, string Yaml)
+FoundationResult = FoundationSucceeded(FoundationReport) | FoundationRejected(FoundationFailure)
+FoundationReport(FoundationSnapshot Snapshot, string Json)
+FoundationSnapshot(int SchemaVersion, int MarkdownHeadingCount, string YamlName, int FileByteCount, string FileSha256, bool ExclusiveLockObserved)
+FoundationFailure(FoundationFailureKind Kind, string Message)
+```
+
+Gray created the pinned `.slnx`, production project, central package versions,
+NuGet source mapping, lock-file input, source-generated YAML and JSON contexts,
+and explicit not-implemented callables. `dotnet restore OpenForge.slnx` and the
+Release build completed with zero warnings and zero errors. No test or domain
+behavior was added.
+
+Red added four managed cases and four system cases. The Unit filter selected one
+case and the Integration filter selected three; all four failed at
+`FoundationProbe.RunAsync` with the explicit not-implemented exception. The
+production Gray skeleton published successfully as a warning-free `win-x64`
+Native AOT binary. Running the four system cases produced one direct probe not-
+implemented failure and three native process exits caused by the not-implemented
+composition root; only the three process cases used the published binary. Test
+setup, discovery, traits, filtering, build, and Native AOT publication succeeded,
+so the failures represent the missing accepted behavior rather than environment
+or configuration defects.
+
+Green made all eight initial frozen Red cases pass. The warning-free local Native
+AOT production publish and managed system run passed. Blue then made the fixed
+Markdig pipeline one explicit immutable configuration and separated the YAML and
+JSON source-generation contexts without changing behavior. Purple made the
+native process tests cancellation-responsive by requesting and awaiting child-
+tree termination on cancellation. Focused managed and system evidence remained
+green after each pass.
+
+The public scenario executed the published `win-x64` binary directly. `--help`
+printed the description, usage, help option, and version option; `--version`
+printed exactly `0.0.0-dev`; and `unexpected` printed its parser diagnostic and
+returned the fixed invalid exit `4`. The separately published Native AOT xUnit
+system executable then ran all four system cases successfully; its three process
+cases used that binary. This is local `win-x64` evidence only; the six native
+workflow jobs have not run.
+
+Fresh review found that an empty YAML document could deserialize to `null` and
+escape the typed invalid-input result. The one allowed correction cycle returned
+to Red. Its ninth case reproduced the null path before Green added the focused
+guard. Correction Blue centralized the six project RIDs while keeping the CI
+runner mapping explicit. Correction Purple awaits child-process termination
+after requesting cancellation cleanup. The local `win-x64` run passes all five
+managed and four system cases and the public scenario. Correction rereview found
+no blocking issue; the six native CI jobs remain the incomplete part of the full
+gate.
+
+Improvement rereview suggested forcing every ordinary restore into locked mode.
+This remains consciously deferred. The full gate and CI already require
+`--locked-mode`, while an intentional dependency update needs an explicit
+unlocked restore to regenerate reviewed lock files. This does not weaken the
+selected reproducibility gate.
 
 Residual risk after this Task will include support-floor execution. Current
 hosted native runners can provide the planned six-RID spike evidence on their

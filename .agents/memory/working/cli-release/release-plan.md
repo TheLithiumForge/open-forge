@@ -38,10 +38,12 @@ review and bounded validation. The known legacy Doctor limitation remains
 preserved Gate 5 evidence and is not claimed clean.
 
 Gate 5 is authorized and active through the [Foundation And Native AOT Spike
-Task](task-foundation-aot-spike.md). The replacement remains non-shipping. No
-replacement implementation source, `.slnx`, project,
-dependency lock, lifecycle file, workspace lock, package, Native AOT artifact,
-or release exists. No staging or candidate path is current.
+Task](task-foundation-aot-spike.md). The pinned `.slnx`, foundation source,
+production project, two test projects, central dependency versions, locks, and
+local `win-x64` Native AOT evidence now exist. The replacement remains
+non-shipping. No retained command, accepted executable, lifecycle file,
+workspace lock, package, release artifact, or release exists. No staging or
+candidate path is current.
 
 | Gate | Purpose                                                           | State                           | Exit authority                                  |
 | ---- | ----------------------------------------------------------------- | ------------------------------- | ----------------------------------------------- |

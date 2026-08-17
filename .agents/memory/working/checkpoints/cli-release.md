@@ -17,9 +17,10 @@ limitation remains preserved Gate 5 evidence and is not claimed clean.
 
 Gate 5 is authorized and active through the [Foundation And Native AOT Spike
 Task](../cli-release/task-foundation-aot-spike.md). The replacement is
-non-shipping. No replacement implementation source, `.slnx`, project, dependency
-lock, lifecycle file, workspace lock, package, Native AOT artifact, or release
-exists.
+non-shipping. The pinned `.slnx`, foundation source, production project, two test
+projects, central dependency versions, locks, and local `win-x64` Native AOT
+evidence now exist. No retained command, accepted executable, lifecycle file,
+workspace lock, package, release artifact, or release exists.
 
 The current replacement sources are the [CLI Architecture](../../crystallized/documents/cli/architecture.md),
 the consolidated [Command Contract Set](../../crystallized/documents/cli/command-contract-set.md),
@@ -43,12 +44,10 @@ immutable history.
 
 ## Resume next
 
-The exact next action is to run the Foundation And Native AOT Spike Task through
-the strict Development Workflow. Pin the accepted tools, create the accepted
-physical topology, and prove the dependency, filesystem, result, test, build,
-and six-RID Native AOT assumptions without implementing a retained command.
-After that Task is accepted and integrated, begin retained commands in dependency
-order. Return to Architecture on a material failure of an accepted assumption.
+The exact next action is to run the six pending native CI jobs and complete the
+Foundation And Native AOT Spike Task full gate. After that Task is accepted and
+integrated, begin retained commands in dependency order. Return to Architecture
+on a material failure of an accepted assumption.
 
 ## Validation boundary
 
