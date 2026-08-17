@@ -11,7 +11,7 @@ open-forge:
 ### Scope And Acceptance
 
 - Apply these instructions only to the new Open Forge CLI after the parent CLI scope is selected. Do not use them for the legacy CLI or unrelated Framework work.
-- Gate 3 Architecture is accepted, and Gate 4’s current source set is available. Do not begin implementation until Gate 5 is accepted.
+- Gate 3 Architecture and Gate 4’s current source set are accepted. Gate 5 is authorized and active through bounded implementation Tasks. Keep the replacement non-shipping until the complete Gate 5 evidence and release boundary are accepted.
 - Do not make an unaccepted Architecture or library choice during implementation. If implementation exposes a material choice outside the accepted Architecture, stop and reopen Architecture for that narrow choice only.
 - The new CLI has no legacy compatibility or migration layer. Do not carry legacy commands, paths, schemas, or behavior into it.
 

@@ -10,7 +10,7 @@ open-forge:
 
 - Select this scope only for the new Open Forge CLI architecture or implementation work. It does not govern the legacy CLI or unrelated Framework work.
 - Architecture discussion and maintainer acceptance precede implementation. The accepted Architecture covers libraries, dependencies, source and folder structure, boundaries, tests, physical filesystem behavior, Native AOT, solution, build, package, and CI shape, and the evidence needed to accept them.
-- Gate 3 Architecture is accepted, and Gate 4’s current source set is available. Implementation still waits for Gate 5 acceptance. Do not describe this Architecture as open or begin implementation before Gate 5.
+- Gate 3 Architecture and Gate 4’s current source set are accepted. Gate 5 is authorized and active through bounded implementation Tasks. Do not describe the Architecture as open, the replacement as shipping, or unproved Gate 5 obligations as accepted.
 - Do not create a speculative source tree or make an unaccepted Architecture choice. The implementation sibling adds the narrower rules that apply after the required acceptance boundary.
 
 ## Entries

@@ -14,11 +14,11 @@ replacement is an optional deterministic Framework accelerator with a human
 maintenance surface. It remains explicitly non-shipping. No C# source file,
 project, solution, executable, package, or Native AOT artifact exists yet.
 
-Gate 5 implementation and release proof remain pending. This document accepts
-the structure and boundaries that Gate 5 must implement. It does not turn
-architecture acceptance into implementation, AOT, package, or release evidence.
-The foundation spike and its stop conditions are Gate 5 evidence, not current
-proof.
+Gate 5 implementation is authorized and active through bounded Tasks. Release
+proof remains pending. This document accepts the structure and boundaries that
+Gate 5 must implement. It does not turn architecture acceptance into
+implementation, AOT, package, or release evidence. The active foundation spike
+and its stop conditions are Gate 5 evidence, not current proof.
 
 The [Command Contract Set](command-contract-set.md) defines the current
 command-contract roles, topology, and authority boundaries. The [Shared CLI
@@ -519,14 +519,20 @@ compilation step, or behavioral wrapper. They do not reimplement command
 parsing, filesystem work, output, or recovery. The accepted design makes the
 future native executable the only behavior implementation.
 
-The initial support floors are Windows 10 22H2 or Windows Server 2022 while the
-selected .NET runtime policy supports them, macOS 13, and glibc 2.35 on Linux.
-The first release has no musl artifact. Each RID needs execution evidence on its
-support floor, not only cross-compilation from one maintainer machine. Release
-artifacts carry checksums and signatures, an SBOM, and build provenance. The
-release workflow uses OIDC for trusted attestation and publication credentials.
-Publication is main-only. Feature and development branches may build evidence,
-but they cannot publish release artifacts or packages.
+The initial support floors follow the current official .NET 10 policy. The
+`win-x64` floor is Windows 10 1607 LTSC or Enterprise, or Windows Server 2012
+with its required prerequisites and extended support; the `win-arm64` floor is
+Windows 10 1607 LTSC or Enterprise because the policy lists no Arm64 Windows
+Server floor. Both macOS RIDs start at macOS 14. Both portable 64-bit Linux RIDs
+start at glibc 2.27. The first release has no musl artifact.
+
+These policy floors are targets, not product evidence. Each RID needs execution
+evidence on its applicable support floor, not only cross-compilation or
+execution on a newer hosted runner. Release artifacts carry checksums and
+signatures, an SBOM, and build provenance. The release workflow uses OIDC for
+trusted attestation and publication credentials. Publication is main-only.
+Feature and development branches may build evidence, but they cannot publish
+release artifacts or packages.
 
 ## Gate 5 Acceptance Boundary
 

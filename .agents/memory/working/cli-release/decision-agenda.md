@@ -13,9 +13,8 @@ questions. Check a Decision only after the maintainer accepts the choice and any
 warranted focused Decision and current source updates are complete.
 
 Gate 3 Architecture and Gate 4 closeout are accepted and current. Gate 4 has no
-active pending item. Gate 5 is the active next gate, but it is not accepted or
-started; its unchecked decisions and evidence remain unaccepted proof or
-implementation obligations.
+active pending item. Gate 5 is authorized and active through bounded Tasks. Its
+unchecked evidence remains unaccepted proof or implementation obligations.
 
 ## Accepted Direction
 
@@ -767,9 +766,10 @@ create`, and `route update` uniform in their existing command meanings and
       `contracts/references/` paths, archived history, reconciled the applicable
       repository guidance and public summaries, and completed review and bounded
       validation. The known legacy Doctor limitation remains preserved Gate 5
-      evidence and is not claimed clean. Gate 5 remains unaccepted and unstarted
-      pending maintainer review. This item does not claim implementation, Native
-      AOT, package, CI, or release evidence.
+      evidence and is not claimed clean. Gate 5 is authorized and active through
+      bounded Tasks, beginning with the exact .NET foundation and six-RID Native
+      AOT spike. This item does not claim completed implementation, Native AOT,
+      package, CI, or release evidence.
 - [x] **CLI-D093 — Full delivery order:** after implementation readiness, deliver
       the foundation first: C#, .NET 10 or newer, modern `.slnx`, selected and
       proven libraries, Native AOT, xUnit v3 and its accepted test framework,
@@ -1006,7 +1006,7 @@ without reopening the accepted choices.
       boundaries in focused integration tests, and keep built Native AOT and
       package journeys for complete process evidence.
 
-## Gate 5 executable evidence, not yet accepted
+## Gate 5 executable evidence, active and not yet accepted
 
 The following remain unperformed proof obligations, not unresolved Architecture
 questions:

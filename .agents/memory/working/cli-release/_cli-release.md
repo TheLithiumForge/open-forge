@@ -26,8 +26,9 @@ sources define accepted meaning; this route does not define command behavior.
   reconciled the applicable Directives, Patterns, Templates, maps, and public
   documents, and completed its review and bounded validation. The known legacy
   Doctor limitation remains preserved Gate 5 evidence and is not claimed clean.
-- Gate 5 is the active next gate, but it is not accepted or started. The
-  maintainer will review the sealed wake-up summary and may authorize Gate 5.
+- Gate 5 is authorized and active. Its first bounded Task establishes the exact
+  .NET foundation and real six-RID Native AOT spike without implementing a
+  retained command.
 - The replacement remains non-shipping. `src/cli-mvp/` contains frozen source
   for `open-forge-old`; neither `src/cli-mvp/` nor `open-forge-old` is replacement
   implementation or contract authority. `open-forge-old` remains the separate
@@ -70,13 +71,13 @@ The final validation evidence is:
 
 ## Next actions
 
-1. The maintainer reviews the [sealed Gate 4 wake-up summary](../handoffs/2026-08-17_cli-release-gate-4-complete.md)
-   and decides whether to authorize Gate 5. Until then, do not implement,
-   package, publish, or claim the replacement is shipping.
-2. If Gate 5 is authorized, begin with the foundation, exact tools, and a real
-   six-RID Native AOT spike. Then implement all retained commands in dependency
-   order, create thin npm packages, and finish CI and main-only release proof.
-   Return to Architecture on a material failure of an accepted assumption.
+1. Complete the [Foundation And Native AOT Spike Task](task-foundation-aot-spike.md):
+   pin exact tools, establish the accepted physical topology, and prove the
+   parser, serialization, filesystem, result, test, build, and six-RID Native
+   AOT assumptions without implementing a retained command.
+2. Then implement all retained commands in dependency order, create thin npm
+   packages, and finish CI and main-only release proof. Return to Architecture
+   on a material failure of an accepted assumption.
 
 ## Current authorities and record responsibilities
 
@@ -94,14 +95,16 @@ The Command Contract Set links to the detailed contracts under
 [`contracts/`](../../crystallized/documents/cli/contracts/_contracts.md).
 The Shared CLI Operation Contract defines cross-command conventions and does not
 replace command-local contracts. Mutable Working retains only this program
-route, the Decision Agenda, the Release Plan, and the Checkpoint. Sealed handoffs
-are transfer snapshots, not command authority. Archived audits, migration
-records, and reviews are historical evidence only.
+route, the Decision Agenda, the Release Plan, the active Task, and the
+Checkpoint. Sealed handoffs are transfer snapshots, not command authority.
+Archived audits, migration records, and reviews are historical evidence only.
 
 The remaining program records have narrower roles:
 
 - `release-plan.md` records gates, tasks, dependencies, and validation.
 - `decision-agenda.md` records accepted direction and explicit deferrals.
+- `task-foundation-aot-spike.md` is the sole detailed status record for the
+  active foundation Task.
 - The [archived migration ledger](../../archived/cli-release/contract-migration-ledger.md) records completed lossless
   migration evidence.
 - `../checkpoints/cli-release.md` records concise resumption state.
@@ -115,10 +118,10 @@ worth preserving independently.
 
 ## Boundaries
 
-- Do not describe the new CLI as shipped or Gate 5 as accepted or started.
+- Do not describe the new CLI as shipped or unproved Gate 5 obligations as
+  accepted.
 - Do not reopen accepted Architecture as a design question. Gate 5 must supply
-  the executable evidence named by the Architecture after maintainer
-  authorization.
+  the executable evidence named by the Architecture through bounded Tasks.
 - Keep `src/cli-mvp/`, its tests, build, and verification frozen and outside
   active implementation work.
 
@@ -127,6 +130,7 @@ worth preserving independently.
 <!-- open-forge:generated-index:start -->
 
 - [Accepted CLI direction, Gate 3 Architecture decisions, and Gate 5 evidence boundary](decision-agenda.md) - #Memory #Working #CLI #Release #Gate #Decision #Discussion #Contextual
+- [Current progress and evidence plan for the exact .NET foundation and six-RID Native AOT spike](task-foundation-aot-spike.md) - #Memory #Working #CLI #Release #Task #Development #DotNet #NativeAOT #Contextual #Active
 - [Current gates, tasks, dependencies, validation, and stop states for the new CLI release program](release-plan.md) - #Memory #Working #CLI #Release #Program #Gate #Plan #Contextual
 
 <!-- open-forge:generated-index:end -->
