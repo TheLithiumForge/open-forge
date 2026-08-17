@@ -1,0 +1,84 @@
+name: CLI foundation Native AOT
+
+on:
+  push:
+  pull_request:
+    branches:
+      - develop
+    paths:
+      - ".editorconfig"
+      - ".github/workflows/cli-foundation-aot.yml"
+      - "Directory.Build.props"
+      - "Directory.Packages.props"
+      - "NuGet.Config"
+      - "OpenForge.slnx"
+      - "global.json"
+      - "src/open-forge-cli/**"
+      - "tests/open-forge-cli/**"
+
+permissions:
+  contents: read
+
+jobs:
+  native-aot:
+    name: ${{ matrix.rid }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - rid: win-x64
+            runner: windows-2022
+            extension: .exe
+          - rid: win-arm64
+            runner: windows-11-arm
+            extension: .exe
+          - rid: linux-x64
+            runner: ubuntu-24.04
+            extension: ""
+          - rid: linux-arm64
+            runner: ubuntu-24.04-arm
+            extension: ""
+          - rid: osx-x64
+            runner: macos-15-intel
+            extension: ""
+          - rid: osx-arm64
+            runner: macos-15
+            extension: ""
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Install Linux Native AOT prerequisites
+        if: startsWith(matrix.rid, 'linux-')
+        run: sudo apt-get update && sudo apt-get install --yes clang zlib1g-dev
+
+      - name: Restore dependencies
+        run: dotnet restore OpenForge.slnx
+
+      - name: Verify formatting
+        if: matrix.rid == 'linux-x64'
+        run: dotnet format OpenForge.slnx --verify-no-changes --no-restore
+
+      - name: Build managed projects
+        run: dotnet build OpenForge.slnx --configuration Release --no-restore
+
+      - name: Run managed foundation evidence
+        run: dotnet test --project tests/open-forge-cli/OpenForge.Cli.Tests/OpenForge.Cli.Tests.csproj --configuration Release --no-build
+
+      - name: Publish Native AOT CLI
+        run: dotnet publish src/open-forge-cli/OpenForge.Cli/OpenForge.Cli.csproj --configuration Release --runtime ${{ matrix.rid }} --no-restore --output artifacts/${{ matrix.rid }}/cli
+
+      - name: Publish Native AOT system evidence
+        run: dotnet publish tests/open-forge-cli/OpenForge.Cli.SystemTests/OpenForge.Cli.SystemTests.csproj --configuration Release --runtime ${{ matrix.rid }} --no-restore --output artifacts/${{ matrix.rid }}/tests
+
+      - name: Run Native AOT system evidence
+        shell: bash
+        run: OPEN_FORGE_CLI_PATH="$PWD/artifacts/${{ matrix.rid }}/cli/OpenForge.Cli${{ matrix.extension }}" "$PWD/artifacts/${{ matrix.rid }}/tests/OpenForge.Cli.SystemTests${{ matrix.extension }}"

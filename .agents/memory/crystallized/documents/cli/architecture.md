@@ -11,14 +11,17 @@ open-forge:
 
 This is the accepted Gate 3 Architecture for the replacement Open Forge CLI. The
 replacement is an optional deterministic Framework accelerator with a human
-maintenance surface. It remains explicitly non-shipping. No C# source file,
-project, solution, executable, package, or Native AOT artifact exists yet.
+maintenance surface. It remains explicitly non-shipping. The locally accepted
+Gate 5 foundation has created the solution, production-project skeleton, managed
+and system test projects, and exact central package policy, but no retained
+command, accepted shipping executable, package, or release artifact exists yet.
 
-Gate 5 implementation and release proof remain pending. This document accepts
-the structure and boundaries that Gate 5 must implement. It does not turn
-architecture acceptance into implementation, AOT, package, or release evidence.
-The foundation spike and its stop conditions are Gate 5 evidence, not current
-proof.
+Gate 5 implementation is authorized and active through bounded Tasks. Release
+proof remains pending. This document accepts the structure and boundaries that
+Gate 5 must implement. It does not turn architecture acceptance into complete
+cross-platform, package, or release evidence. The accepted local foundation is
+Windows `win-x64` evidence; WSL, macOS, six native runner jobs, and support-floor
+execution remain later Gate 5 proof.
 
 The [Command Contract Set](command-contract-set.md) defines the current
 command-contract roles, topology, and authority boundaries. The [Shared CLI
@@ -44,8 +47,9 @@ eventually exposed as the `open-forge` command. It is separate from the frozen
   `src/cli-mvp/` nor `open-forge-old` is replacement implementation or contract
   authority. `open-forge-old` remains available for its existing
   repository-routing assistance and historical evidence.
-- The accepted design places the future replacement executable's source under
-  `src/open-forge-cli/OpenForge.Cli`. That source tree is not present yet.
+- The replacement executable's source is under
+  `src/open-forge-cli/OpenForge.Cli`. The active foundation skeleton exposes no
+  retained command behavior yet.
 - `src/cli-mvp/build/` contains the frozen executable's TypeScript build support.
   It remains part of the frozen MVP boundary and is not replacement source.
 - The replacement does not import, dispatch to, build, test, or fall back to
@@ -100,10 +104,10 @@ completion command, generator, profile edit, or completion dependency.
 ## Runtime, Solution, And Physical Topology
 
 The replacement targets C# on .NET 10 or newer, with `net10.0` as the initial
-target. Gate 5 pins the SDK to `10.0.101`, uses `rollForward=latestPatch`, and
-sets C# `14.0`. The SDK policy must not silently move to another feature band. A
-future intentional baseline change is a new Architecture decision, not an
-implementation convenience.
+target. Gate 5 sets a `10.0.100` SDK baseline, uses
+`rollForward=latestFeature`, rejects prerelease SDKs, and sets C# `14.0`. Any
+installed stable .NET 10 SDK at or above that baseline may build the repository.
+Moving to another .NET major remains an intentional Architecture decision.
 
 The solution is `OpenForge.slnx`. It contains one production project,
 `OpenForge.Cli`, specified to build the one future production executable. The
@@ -136,18 +140,20 @@ subject paths mirror the source paths, so a command or capability has one
 obvious corresponding test location. `OpenForge.Cli.SystemTests` is the separate
 system/E2E project for the complete CLI boundary rather than a unit-test seam.
 
-The shown tree is the accepted future topology, not a report of present files.
-No C# files or C# projects are present yet. Every solution folder must correspond
-to a real physical folder. The `.slnx` must contain no solution-only virtual
-folders that have no filesystem counterpart, and physical source or test folders
-must not be hidden behind invented solution groupings.
+The active Gate 5 foundation Task has established the shown topology. The
+solution and all three projects now exist. Their existence is not accepted
+implementation or Native AOT proof. Every solution folder must correspond to a
+real physical folder. The `.slnx` must contain no solution-only virtual folders
+that have no filesystem counterpart, and physical source or test folders must
+not be hidden behind invented solution groupings.
 
-Gate 5 centrally records exact package versions in `Directory.Packages.props`
-and restore locks in committed `packages.lock.json` files. The central
-dependency policy and lock files are part of the implementation evidence, not
-untracked per-project version drift. The SDK pin, project settings, dependency
-versions, lock state, and publish inputs must reproduce the same restore and
-build without floating package resolution.
+Gate 5 requires exact direct package versions in `Directory.Packages.props`, one
+NuGet source mapping, and dependency auditing. The projects do not commit NuGet
+lock files because the SDK supplies the Native AOT compiler and linker packages,
+whose patch versions follow the selected stable .NET 10 SDK. A lock generated by
+one SDK patch would reject another compatible .NET 10 installation. CI selects
+.NET `10.0.x`; restore evidence records the actual SDK and resolved graph used by
+each run.
 
 ## Source Organization And Composition
 
@@ -519,22 +525,28 @@ compilation step, or behavioral wrapper. They do not reimplement command
 parsing, filesystem work, output, or recovery. The accepted design makes the
 future native executable the only behavior implementation.
 
-The initial support floors are Windows 10 22H2 or Windows Server 2022 while the
-selected .NET runtime policy supports them, macOS 13, and glibc 2.35 on Linux.
-The first release has no musl artifact. Each RID needs execution evidence on its
-support floor, not only cross-compilation from one maintainer machine. Release
-artifacts carry checksums and signatures, an SBOM, and build provenance. The
-release workflow uses OIDC for trusted attestation and publication credentials.
-Publication is main-only. Feature and development branches may build evidence,
-but they cannot publish release artifacts or packages.
+The initial support floors follow the current official .NET 10 policy. The
+`win-x64` floor is Windows 10 1607 LTSC or Enterprise, or Windows Server 2012
+with its required prerequisites and extended support; the `win-arm64` floor is
+Windows 10 1607 LTSC or Enterprise because the policy lists no Arm64 Windows
+Server floor. Both macOS RIDs start at macOS 14. Both portable 64-bit Linux RIDs
+start at glibc 2.27. The first release has no musl artifact.
+
+These policy floors are targets, not product evidence. Each RID needs execution
+evidence on its applicable support floor, not only cross-compilation or
+execution on a newer hosted runner. Release artifacts carry checksums and
+signatures, an SBOM, and build provenance. The release workflow uses OIDC for
+trusted attestation and publication credentials. Publication is main-only.
+Feature and development branches may build evidence, but they cannot publish
+release artifacts or packages.
 
 ## Gate 5 Acceptance Boundary
 
 Gate 5 starts from this accepted structure and proves, at minimum:
 
-1. The pinned SDK, C# 14 build, `OpenForge.slnx`, exact central dependencies,
-   committed locks, warning-free managed build, and warning-free Native AOT
-   publish are reproducible.
+1. A stable .NET 10 SDK, the C# 14 build, `OpenForge.slnx`, exact central direct
+   dependencies, warning-free managed build, and warning-free Native AOT publish
+   are reproducible for the selected SDK.
 2. System.CommandLine 2.0.11, Markdig 1.3.2, YamlDotNet 18.1.0, source
    generation, disabled JSON reflection, the fixed Markdown pipeline, and the
    real `System.IO` boundary work in the published executable.
@@ -553,8 +565,9 @@ Gate 5 starts from this accepted structure and proves, at minimum:
 If a foundation spike cannot prove a critical guarantee, implementation stops
 and returns to this Architecture for a narrow decision. A managed build, a
 source-level claim, a package's marketing claim, or a partial command slice
-does not satisfy Gate 5. Until that evidence exists, the replacement remains
-non-shipping and `open-forge-old` remains the only executable CLI reference.
+does not satisfy Gate 5. Until complete Gate 5 evidence is accepted, the
+replacement remains non-shipping. Local foundation outputs are evidence only,
+and `open-forge-old` remains the only established executable CLI reference.
 
 ## Related Current Views
 

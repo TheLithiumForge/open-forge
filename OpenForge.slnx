@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/open-forge-cli/">
+    <Project Path="src/open-forge-cli/OpenForge.Cli/OpenForge.Cli.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/open-forge-cli/">
+    <Project Path="tests/open-forge-cli/OpenForge.Cli.SystemTests/OpenForge.Cli.SystemTests.csproj" />
+    <Project Path="tests/open-forge-cli/OpenForge.Cli.Tests/OpenForge.Cli.Tests.csproj" />
+  </Folder>
+</Solution>

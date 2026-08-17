@@ -17,6 +17,7 @@ Current responsibilities are:
 | `src/extensions/`                     | First-party Extension packages                                |
 | `.agents/`                            | Repository dogfood, current knowledge, rules, and active work |
 | `src/cli-mvp/`                        | Frozen legacy CLI source, build support, and tests            |
+| `src/open-forge-cli/`                 | Non-shipping replacement CLI source                           |
 | `.agents/memory/archived/cli-v2/`     | Deleted CLI-v2 raw historical input                           |
 | `.agents/memory/working/cli-release/` | Active new-CLI evidence and gate state                        |
 
@@ -56,8 +57,8 @@ Rune is outside the current release effort.
 
 The root `package.json` contains transitional Bun and TypeScript scripts for the
 frozen MVP and repository build. They are not replacement CLI implementation or
-a replacement release gate. The future native CLI toolchain and package wrappers
-remain separate from this frozen support.
+a replacement release gate. The non-shipping native CLI toolchain remains
+separate from this frozen support. Package wrappers do not exist yet.
 
 Do not treat `dist/` or `.temp/` as authored authority. Do not edit generated
 output manually.

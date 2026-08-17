@@ -19,8 +19,9 @@ the [Shared CLI Operation Contract](../../crystallized/documents/cli/shared-oper
 and the detailed contracts under [`contracts/`](../../crystallized/documents/cli/contracts/_contracts.md).
 The scoped [CLI Directives](../../../directives/open-forge/cli/_cli.md) and [CLI
 Patterns](../../../patterns/open-forge/cli/_cli.md) govern applicable work.
-Mutable Working retains only the program, Decision Agenda, Release Plan, and
-Checkpoint; sealed handoffs are transfer snapshots, not command authority.
+Mutable Working retains only the program, Decision Agenda, Release Plan, active
+Task, and Checkpoint; sealed handoffs are transfer snapshots, not command
+authority.
 The [archived Gate 1 records](../../archived/cli-release/gate-1-audit.md),
 [migration ledger](../../archived/cli-release/contract-migration-ledger.md), and
 [review history](../../archived/cli-release/review/gate-2-review-overview.md)
@@ -36,21 +37,23 @@ Directives, Patterns, Templates, maps, and public documents, and completed its
 review and bounded validation. The known legacy Doctor limitation remains
 preserved Gate 5 evidence and is not claimed clean.
 
-Gate 5 is the active next gate, but it is not accepted or started. The maintainer
-will review the [sealed wake-up summary](../handoffs/2026-08-17_cli-release-gate-4-complete.md)
-and may authorize Gate 5. The replacement remains non-shipping. No replacement
-implementation source, `.slnx`, project,
-dependency lock, lifecycle file, workspace lock, package, Native AOT artifact,
-or release exists. No staging or candidate path is current.
+Gate 5 is authorized and active through the [Foundation And Native AOT Spike
+Task](task-foundation-aot-spike.md). The `.slnx`, foundation source, production
+project, two test projects, flexible stable .NET 10 policy, exact central direct
+dependency versions, and local `win-x64` Native AOT evidence now exist. The
+foundation Task is accepted for local integration. The replacement remains
+non-shipping. No retained command, accepted shipping executable, lifecycle file,
+workspace lock, package, release artifact, or release exists. No staging or
+candidate path is current.
 
-| Gate | Purpose                                                           | State                                      | Exit authority                                  |
-| ---- | ----------------------------------------------------------------- | ------------------------------------------ | ----------------------------------------------- |
-| 1    | Evidence and current-truth audit                                  | Complete; non-shipping                     | Maintainer approval                             |
-| 2    | Product and command contract decisions                            | Complete; non-shipping                     | Maintainer acceptance                           |
-| 3    | Architecture and foundation design                                | Complete; accepted                         | Maintainer acceptance                           |
-| 4    | Crystallization, final indexing, review, and readiness validation | Complete; accepted/current                 | Maintainer acceptance                           |
-| 5    | Complete implementation sequence and release proof                | Active next; pending maintainer acceptance | Reproducible evidence and maintainer acceptance |
-| 6    | Post-implementation documentation, history, and release closeout  | Blocked until Gate 5                       | Maintainer release and closeout acceptance      |
+| Gate | Purpose                                                           | State                               | Exit authority                                  |
+| ---- | ----------------------------------------------------------------- | ----------------------------------- | ----------------------------------------------- |
+| 1    | Evidence and current-truth audit                                  | Complete; non-shipping              | Maintainer approval                             |
+| 2    | Product and command contract decisions                            | Complete; non-shipping              | Maintainer acceptance                           |
+| 3    | Architecture and foundation design                                | Complete; accepted                  | Maintainer acceptance                           |
+| 4    | Crystallization, final indexing, review, and readiness validation | Complete; accepted/current          | Maintainer acceptance                           |
+| 5    | Complete implementation sequence and release proof                | Active; foundation locally accepted | Reproducible evidence and maintainer acceptance |
+| 6    | Post-implementation documentation, history, and release closeout  | Blocked until Gate 5                | Maintainer release and closeout acceptance      |
 
 ## Completed Gate 1 and Gate 2 foundations
 
@@ -174,18 +177,22 @@ The final validation evidence is:
 Gate 4 did not implement a command, create a package, run a release, or accept
 Gate 5. The replacement remains non-shipping.
 
-## Gate 5 — Next unstarted plan
+## Gate 5 — Active implementation plan
 
-Gate 5 is active next, but it is not accepted or started. The maintainer will
-review the [sealed wake-up summary](../handoffs/2026-08-17_cli-release-gate-4-complete.md)
-and may authorize it. Until that decision, implementation, packaging,
-publication, and release work remain blocked.
+Gate 5 is authorized and active. The first bounded Task established the stable
+.NET 10 foundation and local Windows `win-x64` Native AOT evidence without
+implementing a retained command. It prepared the six-RID workflow; WSL, macOS,
+the native runner jobs, and support-floor execution remain later Gate 5 evidence.
+Packaging, publication, and release remain outside this Task, and the replacement
+remains non-shipping.
 
-After authorization, use this order:
+Use this order:
 
-1. **Foundation and exact tools:** pin the accepted SDK and exact tool inputs,
-   establish the real six-RID Native AOT spike, and prove the accepted
-   dependency, filesystem, result, test, and build boundaries.
+1. **Foundation and tools:** locally accepted through the
+   [Foundation And Native AOT Spike Task](task-foundation-aot-spike.md). It proves
+   the stable .NET 10 SDK baseline, exact direct package inputs, accepted parser,
+   serialization, filesystem, result, test, build, and Windows Native AOT
+   boundaries. Cross-platform execution remains later evidence.
 2. **All retained commands:** implement and verify every accepted command in
    dependency order. Completion remains rejected. Internal Tasks may move after
    deep Preflight, but they do not create publication slices.

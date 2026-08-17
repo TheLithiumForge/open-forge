@@ -2,9 +2,9 @@
 
 The accepted replacement Open Forge CLI design specifies one future production
 executable for an optional, stateless, deterministic, and idempotent native tool
-for the human-readable Framework. No native executable exists yet, and the
-replacement is not released. This document summarizes its accepted command
-interface. The accepted shared
+for the human-readable Framework. Its active foundation skeleton has no retained
+command or accepted shipping executable, and the replacement is not released. This
+document summarizes its accepted command interface. The accepted shared
 implementation choices are defined in the [CLI Architecture](../.agents/memory/crystallized/documents/cli/architecture.md);
 the linked command contracts define exact public behavior.
 
@@ -162,7 +162,7 @@ Framework-owned content.
 All mutating Extension operations use one complete plan, dry-run parity,
 affected-path Git checks, adjacent-backup recovery, expected-state revalidation,
 verification, and reverse guarded recovery. The seven statuses and human/JSON
-stream rules are shared. No command is implemented or shipped yet.
+stream rules are shared. No retained command is implemented or shipped yet.
 
 See the [Extension documentation](extensions.md) and the
 [Extension contract group](../.agents/memory/crystallized/documents/cli/contracts/extension/_extension.md)

@@ -15,10 +15,17 @@ crystallized one accepted source set, finalized `contracts/index/` and
 sources, and completed review and bounded validation. The known legacy Doctor
 limitation remains preserved Gate 5 evidence and is not claimed clean.
 
-Gate 5 is the active next gate, but it is not accepted or started. The
-replacement is non-shipping. No replacement implementation source, `.slnx`,
-project, dependency lock, lifecycle file, workspace lock, package, Native AOT
+Gate 5 is authorized and active through the [Foundation And Native AOT Spike
+Task](../cli-release/task-foundation-aot-spike.md). The replacement is
+non-shipping. The `.slnx`, foundation source, production project, two test
+projects, flexible stable .NET 10 policy, exact central direct dependency
+versions, and local `win-x64` Native AOT evidence now exist. No retained command,
+accepted shipping executable, lifecycle file, workspace lock, package, release
 artifact, or release exists.
+
+The stable .NET 10 and workflow adjustments remain local. The local feature
+branch has no remote upstream. Keep all remaining work on this PC until the
+maintainer explicitly directs otherwise.
 
 The current replacement sources are the [CLI Architecture](../../crystallized/documents/cli/architecture.md),
 the consolidated [Command Contract Set](../../crystallized/documents/cli/command-contract-set.md),
@@ -42,14 +49,10 @@ immutable history.
 
 ## Resume next
 
-The exact next action is for the maintainer to review the [sealed Gate 4 wake-up
-summary](../handoffs/2026-08-17_cli-release-gate-4-complete.md) and decide
-whether to authorize Gate 5. Until that decision, do not implement, package,
-publish, or claim Gate 5 acceptance. If authorized, begin with the foundation,
-exact tools, and a real six-RID Native AOT spike; then implement all retained
-commands in dependency order, create thin npm packages, and finish CI and
-main-only release proof. Return to Architecture on a material failure of an
-accepted assumption.
+Commit and locally integrate the accepted Foundation And Native AOT Spike Task,
+then begin the next bounded retained-command Task from exact `develop`. WSL,
+macOS, six native runner jobs, and support-floor execution remain later Gate 5
+evidence. Return to Architecture on a material failure of an accepted assumption.
 
 ## Validation boundary
 

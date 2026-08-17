@@ -1,0 +1,16 @@
+root = true
+
+[*.cs]
+indent_style = space
+indent_size = 4
+tab_width = 4
+insert_final_newline = true
+max_line_length = 200
+
+# Preserve readable compact code. Roslyn does not automatically collapse an
+# existing multiline invocation merely because it fits under max_line_length.
+csharp_preserve_single_line_statements = true
+csharp_preserve_single_line_blocks = true
+
+# Review heuristic only; dotnet format has no class-length enforcement option.
+# Classes should normally stay at or below 200 lines.

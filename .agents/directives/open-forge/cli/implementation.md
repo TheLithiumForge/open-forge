@@ -11,7 +11,7 @@ open-forge:
 ### Scope And Acceptance
 
 - Apply these instructions only to the new Open Forge CLI after the parent CLI scope is selected. Do not use them for the legacy CLI or unrelated Framework work.
-- Gate 3 Architecture is accepted, and Gate 4’s current source set is available. Do not begin implementation until Gate 5 is accepted.
+- Gate 3 Architecture and Gate 4’s current source set are accepted. Gate 5 is authorized and active through bounded implementation Tasks. Keep the replacement non-shipping until the complete Gate 5 evidence and release boundary are accepted.
 - Do not make an unaccepted Architecture or library choice during implementation. If implementation exposes a material choice outside the accepted Architecture, stop and reopen Architecture for that narrow choice only.
 - The new CLI has no legacy compatibility or migration layer. Do not carry legacy commands, paths, schemas, or behavior into it.
 
@@ -21,6 +21,7 @@ open-forge:
 - Use the modern `.slnx` solution format. Its project and folder structure must mirror real physical folders; do not create solution-only virtual folders.
 - Managed tests mirror the production feature and capability paths one-to-one under the test root. Put end-to-end and package journeys at system scope rather than under a production feature folder.
 - Treat Native AOT and trimming compatibility as requirements for every runtime feature, dependency, and serialization path. Prove those requirements with actual Native AOT publish evidence rather than source inspection or a nominal setting.
+- Format authored C# with `dotnet format`. Prefer one line for a declaration, invocation, or object construction when it stays at or below 200 characters and remains readable; lines in the 180–200 range are acceptable. Treat 200 lines per class as a review heuristic rather than a hard limit. A materially larger class prompts a locality or architecture review before it is accepted.
 
 ### Filesystem, Platform, And Locality
 

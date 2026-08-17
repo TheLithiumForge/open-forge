@@ -13,9 +13,8 @@ questions. Check a Decision only after the maintainer accepts the choice and any
 warranted focused Decision and current source updates are complete.
 
 Gate 3 Architecture and Gate 4 closeout are accepted and current. Gate 4 has no
-active pending item. Gate 5 is the active next gate, but it is not accepted or
-started; its unchecked decisions and evidence remain unaccepted proof or
-implementation obligations.
+active pending item. Gate 5 is authorized and active through bounded Tasks. Its
+unchecked evidence remains unaccepted proof or implementation obligations.
 
 ## Accepted Direction
 
@@ -767,8 +766,9 @@ create`, and `route update` uniform in their existing command meanings and
       `contracts/references/` paths, archived history, reconciled the applicable
       repository guidance and public summaries, and completed review and bounded
       validation. The known legacy Doctor limitation remains preserved Gate 5
-      evidence and is not claimed clean. Gate 5 remains unaccepted and unstarted
-      pending maintainer review. This item does not claim implementation, Native
+      evidence and is not claimed clean. Gate 5 is authorized and active through
+      bounded Tasks, beginning with the stable .NET 10 foundation and six-RID
+      Native AOT spike. This item does not claim completed implementation, Native
       AOT, package, CI, or release evidence.
 - [x] **CLI-D093 — Full delivery order:** after implementation readiness, deliver
       the foundation first: C#, .NET 10 or newer, modern `.slnx`, selected and
@@ -906,8 +906,8 @@ without reopening the accepted choices.
 
 - [x] **CLI-D096 — One executable and physical solution:** use one production
       project, `OpenForge.Cli`, and one replacement executable in
-      `OpenForge.slnx`. Target `net10.0` with SDK `10.0.101`,
-      `rollForward=latestPatch`, and C# `14.0`. Keep source at
+      `OpenForge.slnx`. Target `net10.0` with a stable .NET 10 SDK at or above
+      baseline `10.0.100`, `rollForward=latestFeature`, and C# `14.0`. Keep source at
       `src/open-forge-cli/OpenForge.Cli`, mirror production paths in
       `tests/open-forge-cli/OpenForge.Cli.Tests`, and use a separate
       `OpenForge.Cli.SystemTests` project for complete system and end-to-end
@@ -1006,14 +1006,14 @@ without reopening the accepted choices.
       boundaries in focused integration tests, and keep built Native AOT and
       package journeys for complete process evidence.
 
-## Gate 5 executable evidence, not yet accepted
+## Gate 5 executable evidence, active and not yet accepted
 
 The following remain unperformed proof obligations, not unresolved Architecture
 questions:
 
-- [ ] Prove the pinned SDK, `.slnx`, central dependency versions, committed lock
-      files, warning-free managed build, trimming, and warning-free Native AOT
-      publish.
+- [ ] Prove stable .NET 10 SDK selection, `.slnx`, exact central direct
+      dependency versions, warning-free managed build, trimming, and
+      warning-free Native AOT publish.
 - [ ] Prove real filesystem identity, containment, UTF-8 ranges, lifecycle
       section preservation, `.agents/open-forge.lock`, recovery provenance, and
       the retained physical-identity regressions.
