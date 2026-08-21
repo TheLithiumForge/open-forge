@@ -305,7 +305,7 @@ a useful next action.
 - [CLI Architecture](../../../architecture.md)
 - [Global CLI Flags Interface Contract](../global-flags/interface.md)
 - [Context Interface Contract](../../context/interface.md)
-- [CLI Decision Agenda](../../../../../../working/cli-release/decision-agenda.md)
+- [Historical CLI Decision Agenda](../../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Framework path rules](../../../../framework/routing/paths.md)
 - [Framework overwrite rules](../../../../framework/routing/overwrites.md)
 - [Shared CLI Operation Contract](../../../shared-operation-contract.md)

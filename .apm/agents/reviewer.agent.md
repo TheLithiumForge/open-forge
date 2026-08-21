@@ -46,6 +46,7 @@ Review one bounded result without editing it.
 - Check correctness, scope, authority, projection, contracts, repository-rule adherence, regressions, maintainability, and documentation meaning as applicable.
 - Review deeper behavior and integration around changed code, not only syntax or style. Verify that direct consumers and tests still agree with the changed contract.
 - Verify that the evidence exercises the behavior claimed.
+- Supply an independent targeted lens; do not present the review as final integrated acceptance, which remains with the Mastermind.
 - Distinguish blockers, required corrections, optional improvements, and preferences.
 - Escalate only when the issue is consequential or outside the assigned review.
 
@@ -57,7 +58,9 @@ Return `PASS`, `CHANGES_REQUIRED`, or `ESCALATE`, then include:
 - exact locations and supporting evidence;
 - missing verification;
 - optional improvements separately;
-- the exact unresolved question when escalation is required.
+- the exact unresolved question when escalation is required;
+- a compact review-rationale record containing the overall conclusion, decisive evidence and reasoning, strongest viable option or counterargument, material tradeoffs, and what would change the conclusion. Use repository-relative evidence and omit provider, model, AI, runtime-profile, session, task, review, handoff, hidden orchestration, personal, user, machine, secret, token, local absolute-path, and incidental environment identifiers so the Mastermind can preserve it as longitudinal observation evidence; and
+- the earliest invalidated phase when the assigned review uses a phased lifecycle.
 
 ## Boundaries
 

@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>OpenForge.Cli</AssemblyName>
+    <RootNamespace>OpenForge.Cli</RootNamespace>
+    <Version>0.0.0</Version>
+    <InformationalVersion>0.0.0-dev</InformationalVersion>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <PublishAot>true</PublishAot>
+    <IsAotCompatible>true</IsAotCompatible>
+    <RuntimeIdentifiers>$(OpenForgeAotRuntimeIdentifiers)</RuntimeIdentifiers>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../core/OpenForge.Cli.Core/OpenForge.Cli.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>OpenForge.Cli.IntegrationTests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <Target Name="GenerateCliBuildVersion" BeforeTargets="CoreCompile">
+    <PropertyGroup>
+      <_CliBuildVersionDirectory>$(IntermediateOutputPath)Generated</_CliBuildVersionDirectory>
+      <_CliBuildVersionFile>$(_CliBuildVersionDirectory)/CliBuildVersion.g.cs</_CliBuildVersionFile>
+    </PropertyGroup>
+    <ItemGroup>
+      <_CliBuildVersionLine Include="namespace OpenForge.Cli.Hosting%3B" />
+      <_CliBuildVersionLine Include="internal static class CliBuildVersion" />
+      <_CliBuildVersionLine Include="{" />
+      <_CliBuildVersionLine Include="    internal const string InformationalVersion = &quot;$(InformationalVersion)&quot;%3B" />
+      <_CliBuildVersionLine Include="}" />
+      <Compile Include="$(_CliBuildVersionFile)" />
+    </ItemGroup>
+    <MakeDir Directories="$(_CliBuildVersionDirectory)" />
+    <WriteLinesToFile File="$(_CliBuildVersionFile)" Lines="@(_CliBuildVersionLine)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+  </Target>
+</Project>

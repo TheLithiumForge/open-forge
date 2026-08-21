@@ -9,12 +9,15 @@ open-forge:
 ## Axioms
 
 - Select this scope only for the new Open Forge CLI architecture or implementation work. It does not govern the legacy CLI or unrelated Framework work.
-- Architecture discussion and maintainer acceptance precede implementation. The accepted Architecture covers libraries, dependencies, source and folder structure, boundaries, tests, physical filesystem behavior, Native AOT, solution, build, package, and CI shape, and the evidence needed to accept them.
-- Gate 3 Architecture and Gate 4’s current source set are accepted. Gate 5 is authorized and active through bounded implementation Tasks. Do not describe the Architecture as open, the replacement as shipping, or unproved Gate 5 obligations as accepted.
-- Do not create a speculative source tree or make an unaccepted Architecture choice. The implementation sibling adds the narrower rules that apply after the required acceptance boundary.
+- Architecture discussion and maintainer acceptance precede implementation. The Architecture covers libraries, dependencies, source and folder structure, boundaries, tests, physical filesystem behavior, Native AOT, solution, build, package, and CI shape, and the evidence needed to accept them.
+- The maintainer superseded the former Gate 3 implementation topology and active Gate 5 route-list program with a greenfield reset under `src/cli/`. The accepted command contracts, current top-down Architecture, and active Plan govern the new program.
+- Do not create a speculative source tree or make an unaccepted Architecture choice. Implementation proceeds only through the selected detailed Task after its parent foundation and contracts are ready.
 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Implement the accepted new Open Forge CLI in C# on .NET 10 or newer with real filesystem boundaries and Native AOT-safe evidence](implementation.md) - #LoadNow #Directive #CLI #Implementation #CSharp #DotNet #NativeAOT #Filesystem #Testing #AOT
+
+- [Capture sanitized CLI dogfooding anomalies and reviewer learning for Framework refinement](dogfooding.md) - #LoadNow #Directive #CLI #Dogfooding #Observation #Review #AgentLearning #Evidence #Privacy
+- [Implement the accepted greenfield replacement CLI below src/cli through architecture-owned foundations and closed Tasks](implementation.md) - #LoadNow #Directive #CLI #Implementation #Architecture #Task #CSharp #DotNet #NativeAOT #Filesystem #Testing
+
 <!-- open-forge:generated-index:end -->

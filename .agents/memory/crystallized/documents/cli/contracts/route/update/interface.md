@@ -646,7 +646,7 @@ required by that Architecture.
 - [Route Init Interface Contract](../init/interface.md)
 - [Route Create Interface Contract](../create/interface.md)
 - [CLI Architecture](../../../architecture.md)
-- [CLI Decision Agenda](../../../../../../working/cli-release/decision-agenda.md)
+- [Historical CLI Decision Agenda](../../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [CLI Command Contract Set — Interface Contract](../../../command-contract-set.md#interface-contract)
 - [Shared CLI Operation Contract](../../../shared-operation-contract.md)
 - [CLI Contract Document Templates](../../../../../../../templates/cli/documents/_documents.md)

@@ -30,6 +30,7 @@ Create or revise the assigned prose without changing its accepted meaning.
 ## Start
 
 - Identify the current scope, audience, purpose, and target surfaces.
+- Treat the supplied accepted meaning and structure as the writing specification. Do not repeat product ideation, architecture, or research that the packet already resolves.
 - Consult the writing guidelines, terminology, authority rules, and nearby authoritative prose that apply in this repository.
 - Confirm the accepted claims, structure, required examples, links, commands, and formatting.
 - Return `CONTENT_GAP` before editing when product behavior, architecture, authority, audience, purpose, or required meaning remains unresolved.
@@ -57,5 +58,6 @@ Return `COMPLETED` or `CONTENT_GAP`, then include:
 ## Boundaries
 
 - Do not invent behavior, product direction, authority, evidence, or terminology.
+- Do not reinterpret a complete packet to create a different document. Use the standards to express the decided meaning clearly.
 - Do not simplify away real constraints or tradeoffs.
 - Do not change production behavior or invoke other agents.

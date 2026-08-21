@@ -1,64 +1,160 @@
 ---
 open-forge:
-  description: Implement the accepted new Open Forge CLI in C# on .NET 10 or newer with real filesystem boundaries and Native AOT-safe evidence
-  tags: [LoadNow, Directive, CLI, Implementation, CSharp, DotNet, NativeAOT, Filesystem, Testing, AOT]
+  description: Implement the accepted greenfield replacement CLI below src/cli through architecture-owned foundations and closed Tasks
+  tags: [LoadNow, Directive, CLI, Implementation, Architecture, Task, CSharp, DotNet, NativeAOT, Filesystem, Testing]
 ---
 
-# New Open Forge CLI Implementation
+# Greenfield CLI Implementation
 
 ## Instructions
 
-### Scope And Acceptance
+### Authority And Readiness
 
-- Apply these instructions only to the new Open Forge CLI after the parent CLI scope is selected. Do not use them for the legacy CLI or unrelated Framework work.
-- Gate 3 Architecture and Gate 4’s current source set are accepted. Gate 5 is authorized and active through bounded implementation Tasks. Keep the replacement non-shipping until the complete Gate 5 evidence and release boundary are accepted.
-- Do not make an unaccepted Architecture or library choice during implementation. If implementation exposes a material choice outside the accepted Architecture, stop and reopen Architecture for that narrow choice only.
-- The new CLI has no legacy compatibility or migration layer. Do not carry legacy commands, paths, schemas, or behavior into it.
+- Apply these instructions only to the non-shipping replacement CLI after the
+  parent CLI route is selected. Do not use them for the frozen MVP or unrelated
+  repository work.
+- Read the current CLI Architecture, active Plan, selected parent Task, and active
+  leaf Task before changing source. The command contracts define behavior. The
+  Architecture defines structure. The Task defines the bounded outcome and
+  allowed changes.
+- Do not implement an unresolved architecture choice. The Mastermind directly
+  authors the project foundation, cross-cutting shell and Framework contracts,
+  composition boundaries, and integration changes. Delegate only Tasks whose
+  architecture, classes or algorithms, dependencies, evidence, and stop
+  conditions are closed.
+- A local test pass does not override the Architecture. Stop and return to the
+  parent context when a Task requires a new dependency, project, shared scope,
+  public behavior, wire shape, filesystem guarantee, lifecycle meaning, or
+  release boundary.
 
-### Runtime, Solution, And Build
+### Physical Workspace And Projects
 
-- Implement the CLI in C# on .NET 10 or newer only. The accepted design specifies one future production executable.
-- Use the modern `.slnx` solution format. Its project and folder structure must mirror real physical folders; do not create solution-only virtual folders.
-- Managed tests mirror the production feature and capability paths one-to-one under the test root. Put end-to-end and package journeys at system scope rather than under a production feature folder.
-- Treat Native AOT and trimming compatibility as requirements for every runtime feature, dependency, and serialization path. Prove those requirements with actual Native AOT publish evidence rather than source inspection or a nominal setting.
-- Format authored C# with `dotnet format`. Prefer one line for a declaration, invocation, or object construction when it stays at or below 200 characters and remains readable; lines in the 180–200 range are acceptable. Treat 200 lines per class as a review heuristic rather than a hard limit. A materially larger class prompts a locality or architecture review before it is accepted.
+- Keep all replacement-specific C# workspace configuration, source, projects,
+  tests, and generated C# artifacts below `src/cli/`. Do not add a replacement
+  `.slnx`, `global.json`, `NuGet.Config`, `Directory.Build.props`, or
+  `Directory.Packages.props` at the repository root.
+- Use the accepted `root/`, `core/`, and `tests/` physical boundaries. The root
+  executable depends on Core. Core never depends on the root. Keep exactly three
+  runnable test projects and one test-support library unless the maintainer
+  accepts a later Architecture change.
+- Keep solution membership direct. Do not create solution-only folders. Use SDK
+  default authored-source globs. Do not list ordinary C# files, disable default
+  compile items, or link production source across projects.
+- Route every C# binary, intermediate, test, publish, and package output through
+  `src/cli/artifacts/`. No project-local `bin/` or `obj/` is accepted.
+- Keep generated source deterministic and explicit. It is the only production
+  compile-item exception.
 
-### Filesystem, Platform, And Locality
+### Source And Dependency Direction
 
-- Use real `System.IO` filesystem boundaries and real isolated OS temporary directories for integration and end-to-end tests. Do not introduce a virtual filesystem abstraction, fake filesystem, or fake filesystem hierarchy. Pure path and value logic may remain directly testable without pretending that filesystem effects occurred.
-- Use cross-platform .NET BCL APIs first. Add platform-specific code only when a critical guarantee is proved impossible otherwise, and reopen Architecture for that narrow choice before adding it.
-- `.agents/open-forge.lock` coordinates operations that mutate the selected workspace. `extension create` has no workspace subject and therefore does not acquire that lock; it uses exact catalogue-destination identity, expected-state revalidation, Git/recovery, and collision guards. This is the only current no-workspace mutation exception.
-- Keep command behavior, source, unit and integration tests, fixtures, and one-use support at the narrowest useful command or capability scope. Keep fixtures and support at the nearest mirrored scope in the separate test root.
-- Do not link test files into production folders merely to simulate locality. Do not create a remote `utils` folder, universal engine, or speculative shared abstraction. Promote support only after demonstrated reuse, and promote it to the nearest common scope of the real consumers.
+- Keep process arguments, environment, streams, cancellation hookup, and explicit
+  command registration in the root host. Keep parser mechanics, invocation,
+  pipeline, presentation, output, Framework capabilities, commands, and concrete
+  results in Core according to the Architecture.
+- Keep Shell free of concrete command dependencies. Keep Framework capabilities
+  free of parser symbols, command requests and results, renderers, and process
+  writers. Let commands depend on Shell contracts and Framework facts.
+- Leave a command's definitions, binding, request, operation, and concrete result
+  at its leaf root. Put supporting source below its narrowest
+  `Shared/<Capability>/` path. Promote a complete semantic unit only when another
+  real consumer needs identical meaning.
+- Match namespaces to physical paths. Do not use aliases, forwarding types,
+  sibling-private imports, `Common`, `Utils`, or an undifferentiated `Shared`
+  folder to hide ownership.
+- Apply the workspace-wide C# design and style Directives to production and tests.
+  Treat a class materially above 200 lines as an architecture or locality review
+  trigger, not an automatic split rule.
 
-### Construction And Composition
+### Construction, Parsing, And Pipeline
 
-- Prefer direct construction and pure, capability-named static functions or extensions when they provide the required behavior clearly.
-- Dependency injection is allowed only when concrete lifecycle or composition value earns it. Any dependency-injection path must be source-generated and Native AOT-safe.
-- Do not use generic `Utils` helpers or folders, global mutable service state, reflective scanning, or a service locator.
-- Choose classes, functions, records, or direct procedural composition according to state, lifecycle, resource ownership, clarity, and local simplicity. No one form is mandatory by dogma.
+- Build the command tree explicitly in one root composition source. Dispatch by
+  exact `System.CommandLine.Command` identity through closed
+  `CliCommandBinding<TRequest, TResult>` instances. Do not add reflection,
+  assembly scanning, runtime registration, service location, shell dependency
+  injection, string dispatch, or an untyped operation registry.
+- Let `System.CommandLine` own selection, arity, occurrence aggregation, typed
+  conversion, unknown symbols, parser diagnostics, and standard help. Read typed
+  parse results. Do not create a second parser. Keep any accepted delimiter guard
+  limited to the exact syntax fact the library cannot expose.
+- Form one immutable process-wide invocation and one complete command-local
+  request. Do not pass `ParseResult`, writers, service collections, or unrelated
+  context bags into domain capabilities.
+- Use directly callable immutable stages for invocation, operation, presentation,
+  rendering, output, and completion. Validate each stage before effects. Invoke
+  the operation at most once, select one cached concrete renderer, write one
+  primary result, and return one fixed process completion.
+- Pass output writers and cancellation explicitly. Do not cache ambient console
+  state or terminate the process inside Core.
 
-### Dependencies And Libraries
+### Results, Help, Diagnostics, And Serialization
 
-- Use the accepted package and boundary choices: explicit/manual `System.CommandLine`, a fixed Markdig pipeline, the source-generated YamlDotNet path, and `System.Text.Json` (STJ) source generation.
-- Require every dependency and accepted boundary to earn its Native AOT and trimming compatibility, binary-size, complexity, maintenance, and security cost. A focused local implementation is allowed when it is simpler and sufficiently verified.
-- Actual Native AOT publish evidence remains required for every accepted package, runtime feature, dependency, parser, and serialization path. Do not replace an accepted choice without reopening Architecture.
+- Form one concrete command result before rendering. Keep shared process facts on
+  the non-wire result contract and command payloads on concrete result records.
+  Serialize only concrete source-generated graphs.
+- Derive standard help from the exact composed symbol tree. Add product sections
+  from command bindings. Do not maintain a second command catalogue or
+  post-process library help through brittle string replacement.
+- Keep diagnostics bounded, escaped, redacted, and on stderr. Verbose mode must
+  not change operation behavior, result, primary output, status, or exit. JSON
+  stdout remains one document.
+- Use `System.Text.Json` source generation with reflection disabled. Use one
+  source-generated YAML context for accepted metadata models. Do not add dynamic
+  resolvers or duplicate command-specific contexts for identical shapes.
 
-### Lifecycle And Packaging
+### Filesystem And Mutation Safety
 
-- Store Open Forge lifecycle state at `.agents/open-forge.lifecycle.json` and the mutation lock at `.agents/open-forge.lock`.
-- The npm package is `@thelithiumforge/open-forge`. Platform packages use the same `@thelithiumforge` scope.
-- Package wrappers install or invoke the canonical executable and never implement CLI behavior. Package end-to-end evidence must exercise the packed wrappers.
+- Use real `System.IO` and real owned temporary resources. Do not introduce a fake
+  or virtual filesystem abstraction.
+- Keep lexical paths, normalized paths, physical identities, and link targets as
+  separate typed facts. Resolve physical paths one existing component at a time
+  and prove containment after every link resolution. Block the first external
+  transition even when a later target re-enters the root.
+- Use managed BCL APIs first. Do not author C, C++, Rust, P/Invoke, native shims,
+  helper executables, or platform production projects. Stop at Architecture if a
+  critical guarantee cannot be proved.
+- Read-only commands create no lock, lifecycle, cache, index, or recovery state.
+  Mutation commands form a command-local plan, acquire the real lock when
+  required, revalidate expected state, apply bounded effects, verify the result,
+  and record accepted lifecycle or recovery facts.
+- Shared mutation support provides primitives, not product decisions. Every
+  command retains its own plan, ordering, findings, compensation or rollback
+  meaning, and result.
+
+### Dependencies And Native AOT
+
+- Use only dependencies and exact versions accepted by the Architecture and
+  central package file. Do not add or update a package inside a command Task.
+- Keep every runtime feature, serializer, package, and test fixture trimming and
+  Native-AOT compatible. Actual publish and execution evidence is required;
+  source inspection and project properties are not proof.
+- Keep the executable managed and BCL-first. Native AOT describes the output, not
+  a license to add native source.
 
 ### Test Evidence
 
-- Use xUnit v3. Every `Fact` and `Theory` must declare an explicit, readable `DisplayName`.
-- Give every test durable, independently selectable `Feature` and `Evidence` traits. Use `Unit`, `Integration`, `EndToEnd`, and `PackageEndToEnd` as the `Evidence` values.
-- Unit tests cover cheap methods, classes, functions, and steps. Integration tests prove modules or commands through real boundaries. End-to-end tests invoke the whole built or native CLI. Package end-to-end tests prove packed wrappers.
-- Each test owns every mutable workspace, home, temporary directory, cache, build, Git, and package state it can affect. Use isolated state rather than shared mutable test state.
-- Prove asset identity once through inventories and hashes. Do not assert random embedded prose. Use snapshots only for focused stable projections, while keeping critical invariants and effects as direct assertions.
+- Keep active Unit, Integration, EndToEnd, and TestSupport source under the exact
+  `src/cli/tests/` boundaries in the Architecture.
+- Give every test a readable display name, one durable feature trait, and one
+  evidence trait. Traits refine selection and do not collapse project tiers.
+- Unit tests claim only pure or directly callable behavior. Integration tests use
+  production modules and real owned OS boundaries. End-to-end tests invoke the
+  published executable and prove arguments, streams, exits, cancellation, and
+  unchanged bytes.
+- Treat `src/cli/tests/preserved/` as candidate evidence. Map a preserved test to
+  a current contract before porting it. Do not compile preserved projects or copy
+  old fixture architecture wholesale.
+- Every test owns its mutable workspace, home, temporary files, Git repository,
+  cache, process, and artifacts. No parallel test shares mutable state.
+- Use snapshots only for stable projections. Assert safety, identity, effects,
+  status, stream selection, and exits directly.
 
-### Public Artifact Hygiene
+### Integration And Acceptance
 
-- Public artifacts, packages, release notes, logs, and documentation must not expose AI, provider, model, or runtime-orchestration identifiers; internal task, review, or handoff identifiers; hidden prompt or system metadata; local user, machine, or path identifiers; secrets; or tokens.
-- Public product, command, schema, version, and artifact identifiers remain allowed when they are part of the accepted public contract, provided they are not identifiers in the prohibited classes above.
+- Keep implementation, focused evidence, necessary cleanup, and Task-state update
+  in one coherent increment. Do not defer known structural debt into the next
+  command.
+- Inspect the actual changed paths, dependency direction, namespaces, consumers,
+  tests, and generated artifacts. Verify focused behavior, affected regressions,
+  full project boundaries, and required Native AOT execution before acceptance.
+- Commit only accepted coherent boundaries. Keep remote actions, publication, and
+  release outside a Task unless its exact delivery boundary authorizes them.

@@ -57,7 +57,9 @@ Return `PASS`, `CHANGES_REQUIRED`, or `ESCALATE`, then include:
 - exact locations and supporting evidence;
 - missing verification;
 - optional improvements separately;
-- the exact unresolved question when escalation is required.
+- the exact unresolved question when escalation is required;
+- a compact review-rationale record containing the overall conclusion, decisive evidence and reasoning, strongest viable option or counterargument, material tradeoffs, and what would change the conclusion. Use repository-relative evidence and omit provider, model, AI, runtime-profile, session, task, review, handoff, hidden orchestration, personal, user, machine, secret, token, local absolute-path, and incidental environment identifiers so the Mastermind can preserve it as longitudinal observation evidence; and
+- the earliest invalidated phase when the assigned review uses a phased lifecycle.
 
 ## Boundaries
 

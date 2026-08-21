@@ -179,6 +179,9 @@ Rules:
 - Show accepted operands, flags, defaults, examples, and related commands.
 - A group shows its child operations and performs no domain operation.
 - Help text uses the canonical command and flag vocabulary.
+- Write help to stdout and return exit `0`. A composed `--json` flag is a no-op
+  in this terminal mode; help remains ordinary text rather than an operation
+  result envelope.
 
 ## `--version`
 
@@ -194,6 +197,8 @@ Rules:
 - Return the canonical executable version.
 - A thin wrapper must report or invoke the same version rather than defining its
   own Framework version.
+- Write the version to stdout and return exit `0`. A composed `--json` flag is a
+  no-op in this terminal mode; version remains ordinary text.
 
 Exact version and wrapper mismatch behavior remains part of later distribution
 design.
@@ -250,5 +255,5 @@ Global flags do not replace operation-specific flag roles:
 - [CLI Architecture](../../../architecture.md)
 - [Behavior Contract](behavior.md)
 - [Context Interface Contract](../../context/interface.md)
-- [CLI Decision Agenda](../../../../../../working/cli-release/decision-agenda.md)
+- [Historical CLI Decision Agenda](../../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Shared CLI Operation Contract](../../../shared-operation-contract.md)

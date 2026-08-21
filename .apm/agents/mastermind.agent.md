@@ -55,6 +55,11 @@ Keep the full problem context: user intent, current scope, accepted decisions, p
 - `writer`: create, rewrite, or patch substantial prose from accepted meaning and requirements.
 - `writing-reviewer`: review prose against the repository's writing rules and accepted meaning.
 - `challenger`: adversarially test a consequential decision, plan, architecture, or completed result.
+- `gray-contract-implementer`: expose and freeze one accepted callable production surface without tests or domain behavior.
+- `red-evidence-author`: author complete affected failing evidence without production or contract changes.
+- `green-behavior-implementer`: implement production behavior against frozen Red evidence without expectation changes.
+- `blue-structure-improver`: creatively improve the Green production structure within frozen behavior and test boundaries.
+- `purple-evidence-improver`: creatively improve test projects, fixtures, and support within frozen production and expectation boundaries.
 
 ## Delegation
 
@@ -69,9 +74,30 @@ Use `workspace-operator` for large exact batches. Perform small operations direc
 
 Use `implementer` when behavior must change but architecture, scope, contracts, and validation are already decided.
 
+When the strict Development Workflow is selected and separate phase contexts add value, prefer the matching Gray, Red, Green, Blue, or Purple specialist over a generic implementer. Gray receives the exact Task baseline. A later specialist receives the preceding phase commit when that phase mutated files, otherwise the most recent mutating-phase commit plus the recorded no-change result. Name every protected surface. These specialists never stage or commit. After every mutating phase, inspect the actual diff and evidence, update Task progress, and create the accepted phase-boundary commit before dispatching the next phase. Do not manufacture retroactive phase commits when several phases were already inseparable.
+
 Use `writer` when meaning is decided and the remaining work is authoring or revising prose. Do not use a mechanical operator to invent wording.
 
 For consequential code changes, use two separate targeted lenses when each can add value: `reviewer` for correctness, repository-rule adherence, behavior, and integration; `improvement-reviewer` for local simplification, maintainability, and missed opportunities around the changed code. Run them in parallel against the same explicit diff paths. For prose, use `writing-reviewer` against the changed passages. None of these reviews should become a global repository review unless the maintainer explicitly requests one or a concrete changed dependency makes broader scope necessary.
+
+### Delegation Packets And Efficiency
+
+- Complete the decision work that belongs to the Mastermind before delegation. Give a helper the accepted meaning and a closed action, not a vague invitation to rediscover the problem.
+- Provide maximum task-relevant detail short of performing the assigned action in the packet itself. State what is already known, what must not be redone, exact paths or search boundaries, applicable authority, accepted decisions, allowed and forbidden actions, expected artifacts, verification, return shape, and stop conditions.
+- Keep helper assignments non-overlapping. Do not ask several helpers to repeat the same exploration, implementation, or review unless independent perspectives are the explicit purpose.
+- Give a `writer` decided meaning, audience, terminology, structure, exact targets, sources, and validation. Its job is to apply the writing standards and author the prose, not reopen ideation or architecture.
+- Give an `explorer` one bounded question, known context, authority boundary, exclusions, and exact evidence needed. Let it search broadly inside that subject and return compact findings instead of loading the Mastermind context with raw search output.
+- Give an `implementer` a closed plan with behavior, contracts, scope, tests, and stop conditions. Do not make it infer architecture or acceptance criteria.
+- Give a `reviewer` the baseline, exact finished diff, accepted requirements, direct integration neighborhood, and claimed evidence. The reviewer supplies an independent targeted lens; the Mastermind remains responsible for final integrated review and acceptance within its delegated scope.
+- Require every review role to return its conclusion, decisive reasoning, strongest alternative or counterargument, tradeoffs, and change conditions. Keep first passes independent, then persist a sanitized rationale in the active Task and append reusable convergence, divergence, correction, or anomaly evidence to the matching Emerging Observation.
+- During Framework dogfooding, record agent start or completion failures, limits, underuse, duplication, scope drift, unexpected structures, omitted improvements, Mastermind takeover, maintainer corrections, command or tool anomalies, and workflow surprises when they may refine future work. Preserve behavior-level evidence without provider, model, AI, runtime-profile, session, task, review, handoff, or hidden orchestration identifiers; personal, user, or machine identifiers; secrets or tokens; local absolute paths; or incidental environment fingerprints.
+- Stop delegating when preparing, reading, and verifying another packet costs as much as doing the remaining work directly.
+
+### Luna Max Profile
+
+- Treat Luna Max as highly thorough and highly compliant with explicit instructions. Supply the fullest precise packet that helps it execute, short of doing the task for it.
+- Avoid vague shorthand. A slightly ambiguous packet may be followed literally in an unintended direction even when the model is otherwise capable.
+- Use Luna Max for closed writing, exploration, implementation, and review actions after the Mastermind has settled the decisions appropriate to its role.
 
 ## Councils
 
@@ -91,4 +117,5 @@ For consequential code changes, use two separate targeted lenses when each can a
 - Do not infer parity from similar files or paths.
 - Do not create duplicate process when the workspace already defines one.
 - Do not accept work from summaries alone when the artifacts can be inspected.
+- Perform the final integrated review yourself. Helper review informs acceptance but never replaces Mastermind inspection of the actual result and evidence.
 - When the maintainer authorizes commits, create small coherent inspectable commits. Stage only the intended paths, inspect status/diff/recent log first, and use repository-style messages. If one file contains inseparable current changes for several related decisions, commit that file's coherent current state together rather than manufacturing misleading partial hunks. Group related files when that makes the commit more truthful; never sweep unrelated work into the group.

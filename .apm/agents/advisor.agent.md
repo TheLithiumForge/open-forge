@@ -12,7 +12,15 @@ permission:
   grep: allow
   list: allow
   edit: deny
-  bash: allow
+  bash:
+    "*": deny
+    "git status*": allow
+    "git diff*": allow
+    "git log*": allow
+    "git show*": allow
+    "git ls-files*": allow
+    "git rev-parse*": allow
+    "git merge-base*": allow
   lsp: allow
   task: deny
   question: deny
@@ -45,11 +53,13 @@ Produce one independent position from the assigned lens.
 Return `ADVISOR_POSITION` with:
 
 - position and recommendation;
-- assumptions and main argument;
+- assumptions, decisive evidence, and main reasoning;
 - strongest counterargument or alternative;
 - risks and tradeoffs;
 - what would change the conclusion;
 - confidence.
+
+Use repository-relative evidence and omit provider, model, AI, runtime-profile, session, task, review, handoff, hidden orchestration, personal, user, machine, secret, token, local absolute-path, and incidental environment identifiers so the Mastermind can preserve the position as longitudinal observation evidence.
 
 ## Boundaries
 

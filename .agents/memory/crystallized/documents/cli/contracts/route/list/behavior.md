@@ -73,6 +73,11 @@ hardcoded standard-root list. Do not emit the Loader as a route row. If the
 Loader-root boundary cannot be established safely, report the applicable blocked
 or incomplete result rather than inventing roots.
 
+For operand-free selection only, the Loader's current direct route declarations
+establish root membership. This narrow boundary does not make their order
+canonical and does not let any generated `Entries` interior establish descendant
+membership, parentage, metadata, depth, or order.
+
 ## Subject And Root Resolution
 
 ### No Operand
@@ -133,6 +138,11 @@ including a routed native source such as `SKILL.md` when its source contract
 establishes route metadata. Exclude unrouted sources and independent overwrite
 rows.
 
+An ordinary routed leaf is a supported direct sibling source with valid Open
+Forge metadata. Its membership does not depend on a current generated entry. A
+child folder participates only through exactly one recognized entrypoint, so a
+file below an unrepresented intermediate folder is not a routed descendant.
+
 For each row, retain typed facts for automatic ID, canonical path, parent and
 hierarchy, absolute depth, relative depth, kind, exact authored description,
 exact authored tags, applicable direct-child count, and provenance/coverage.
@@ -169,6 +179,12 @@ coverage, findings, and semantic status.
 - `incomplete` means safe rows exist but requested topology or closure coverage is
   not fully established. The result states what boundary remains unknown.
 - `invalid`, `blocked`, `failed`, and `interrupted` retain their shared meanings.
+
+Missing or malformed required route metadata is `incomplete`. Unsafe identity or
+ambiguous route structure is `blocked`. Cancellation is `interrupted`, retains
+already confirmed safe rows when available, and never reports complete coverage.
+Cancellation observed after result formation does not replace the completed
+result.
 
 No row cap, minimal mode, metadata predicate, graph query, or semantic inference
 may alter the requested closure. If a later operational limit is ever required,

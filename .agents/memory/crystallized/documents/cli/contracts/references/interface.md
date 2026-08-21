@@ -321,7 +321,7 @@ open-forge references memory \
   --direction=in \
   --include=directives \
   --include=memory/working \
-  --exclude=memory/working/cli-release
+  --exclude=memory/working/checkpoints
 ```
 
 Report outgoing references, including unchecked external URL facts. Filters are

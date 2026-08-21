@@ -60,8 +60,8 @@ The governing invariant is:
 runnable through `bun run cli:old` during replacement development. The
 transitional package build uses this source and the helpers under
 `src/cli-mvp/build/`. Neither `src/cli-mvp/` nor `open-forge-old` is replacement
-implementation or contract authority. The accepted replacement source tree is
-the not-yet-present C# tree under `src/open-forge-cli/OpenForge.Cli`.
+implementation or contract authority. The replacement C# implementation is
+currently reset. Its accepted greenfield boundary is below `src/cli/`.
 
 The frozen MVP's build and package facts remain historical MVP context. They do
 not describe the replacement executable, solution, Native AOT output, or

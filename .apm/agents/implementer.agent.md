@@ -36,6 +36,7 @@ Implement one accepted change and verify the result.
 - Identify the current scope.
 - Consult the repository guidance, patterns, contracts, and verification rules applicable to the affected area.
 - Confirm that the packet defines the outcome, authority, scope, non-goals, accepted decisions, behavior, validation, and stop conditions.
+- Treat those decisions as settled. Do not repeat broad design or repository exploration when the packet already names the required sources and behavior.
 - Return `PLAN_GAP` before editing when a material product, architecture, authority, compatibility, placement, or scope decision is unresolved.
 
 ## Action

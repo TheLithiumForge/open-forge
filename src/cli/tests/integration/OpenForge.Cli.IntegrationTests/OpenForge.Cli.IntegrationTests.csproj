@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>OpenForge.Cli.IntegrationTests</AssemblyName>
+    <RootNamespace>OpenForge.Cli.IntegrationTests</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <PublishAot>true</PublishAot>
+    <DefineConstants>$(DefineConstants);XUNIT_AOT</DefineConstants>
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+    <RuntimeIdentifiers>$(OpenForgeAotRuntimeIdentifiers)</RuntimeIdentifiers>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit.v3.aot.mtp-v2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../../core/OpenForge.Cli.Core/OpenForge.Cli.Core.csproj" />
+    <ProjectReference Include="../../../root/OpenForge.Cli/OpenForge.Cli.csproj" />
+    <ProjectReference Include="../../support/OpenForge.Cli.TestSupport/OpenForge.Cli.TestSupport.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>

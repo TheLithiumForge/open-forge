@@ -124,6 +124,10 @@ wrapper mismatch behavior remains later distribution design. These behaviors
 are the public definitions in [`--help`](interface.md#--help) and
 [`--version`](interface.md#--version), not new Behavior choices.
 
+Both terminal modes write ordinary text to stdout and return exit `0`. `--json`
+is a well-formed no-op in terminal mode and does not wrap help or version in the
+operation-result envelope.
+
 ## Composition And Terminal Modes
 
 The request resolver permits compatible shared flags to compose when their
@@ -174,5 +178,5 @@ Gate 5 executable proof must cover:
 - [Shared CLI Contract Set](../_shared.md)
 - [CLI Architecture](../../../architecture.md)
 - [Context Behavior Contract](../../context/behavior.md)
-- [CLI Decision Agenda](../../../../../../working/cli-release/decision-agenda.md)
+- [Historical CLI Decision Agenda](../../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Shared CLI Operation Contract](../../../shared-operation-contract.md)

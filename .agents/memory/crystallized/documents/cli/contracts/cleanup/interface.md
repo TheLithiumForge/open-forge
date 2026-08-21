@@ -376,5 +376,5 @@ Future conformance evidence must cover:
 - [Doctor Interface Contract](../doctor/interface.md)
 - [Repair Interface Contract](../repair/interface.md)
 - [CLI Command Contract Set — Interface Contract](../../command-contract-set.md#interface-contract)
-- [CLI Decision Agenda](../../../../../working/cli-release/decision-agenda.md)
+- [Historical CLI Decision Agenda](../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Shared CLI Operation Contract](../../shared-operation-contract.md)

@@ -18,10 +18,7 @@ Only open work belongs here. The mixed pre-review history is preserved in `.agen
 
 ## Define The New CLI And Extension Lifecycle
 
-1. Continue the [new CLI release program](cli-release/_cli-release.md) through
-   explicit evidence, product, architecture, cleanup, and implementation gates.
-   Design the agent-first Framework accelerator from current jobs and maintainer
-   discussion rather than inheriting the frozen MVP or deleted CLI v2.
+1. Execute the replacement CLI's [active top-down Plan](cli-development/plan.md), beginning with its detailed Task hierarchy and actual route-free foundation. Design the agent-first Framework accelerator from current contracts and maintainer direction rather than inheriting the frozen MVP, deleted CLI v2, or removed first C# implementation.
 2. Keep deleted CLI-v2 knowledge in the [CLI-v2 archive](../archived/cli-v2/_cli-v2.md)
    as raw input. Reuse an old command, safety idea, implementation shape, or test
    strategy only after current evidence and maintainer acceptance.

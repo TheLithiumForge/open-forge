@@ -201,7 +201,7 @@ Gate 5 executable proof must cover:
 - [CLI Architecture](../../../architecture.md)
 - [Global CLI Flags Behavior Contract](../global-flags/behavior.md)
 - [Context Behavior Contract](../../context/behavior.md)
-- [CLI Decision Agenda](../../../../../../working/cli-release/decision-agenda.md)
+- [Historical CLI Decision Agenda](../../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Framework path rules](../../../../framework/routing/paths.md)
 - [Framework overwrite rules](../../../../framework/routing/overwrites.md)
 - [Shared CLI Operation Contract](../../../shared-operation-contract.md)

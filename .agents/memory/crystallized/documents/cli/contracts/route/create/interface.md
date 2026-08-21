@@ -565,7 +565,7 @@ expected-state changes, and rerun convergence.
 - [Global CLI Flags](../../shared/global-flags/interface.md)
 - [CLI Source References](../../shared/source-references/interface.md)
 - [CLI Architecture](../../../architecture.md)
-- [CLI Decision Agenda](../../../../../../working/cli-release/decision-agenda.md)
+- [Historical CLI Decision Agenda](../../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Templates](../../../../framework/primitives/templates.md)
 - [Routing Model](../../../../framework/routing/model.md)
 - [Routing Paths And Identity](../../../../framework/routing/paths.md)

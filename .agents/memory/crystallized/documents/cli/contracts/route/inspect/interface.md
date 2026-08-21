@@ -475,8 +475,8 @@ Illustrative output:
 Open Forge route inspect
 Workspace: D:/Repositories/open-forge
 Selected by: current directory
-ID: memory/working/cli-release
-Path: .agents/memory/working/cli-release/_cli-release.md
+ID: memory/working/checkpoints
+Path: .agents/memory/working/checkpoints/_checkpoints.md
 Entrypoint: canonical
 
 Reading behavior
@@ -492,7 +492,7 @@ Context cost
 
 Route structure
   Parent: memory/working
-  Route chain: memory → working → cli-release
+  Route chain: memory → working → checkpoints
   Depth: 3
   Direct children: 7 files, 1 child entrypoint
   All descendants: 12 files, 2 descendant entrypoints
@@ -511,11 +511,11 @@ An illustrative compact result is:
 Open Forge route inspect
 Workspace: D:/Repositories/open-forge
 Selected by: current directory
-ID: memory/working/cli-release
-Path: .agents/memory/working/cli-release/_cli-release.md
+ID: memory/working/checkpoints
+Path: .agents/memory/working/checkpoints/_checkpoints.md
 Source state: routed entrypoint
 Route state: routed
-Route chain: memory → working → cli-release
+Route chain: memory → working → checkpoints
 Parent: memory/working
 Depth: 3
 Direct children: 7 files, 1 child entrypoint
@@ -665,15 +665,15 @@ route-profile questions.
 The smallest valid domain invocation has one source reference:
 
 ```text
-open-forge route inspect memory/working/cli-release
+open-forge route inspect memory/working/checkpoints
 ```
 
 It resolves one known source and returns its route profile. The same logical
 source may be identified by an exact path:
 
 ```text
-open-forge route inspect ".agents/memory/working/cli-release/_cli-release.md"
-open-forge route inspect "./.agents/memory/working/cli-release/_cli-release.md"
+open-forge route inspect ".agents/memory/working/checkpoints/_checkpoints.md"
+open-forge route inspect "./.agents/memory/working/checkpoints/_checkpoints.md"
 ```
 
 An overwrite path is also one subject when it names a valid pair:
@@ -689,10 +689,10 @@ Compact human presentation and complete structured presentation are selected
 without changing inspection:
 
 ```text
-open-forge route inspect memory/working/cli-release --view=compact
-open-forge route inspect memory/working/cli-release --view=expanded
-open-forge route inspect memory/working/cli-release --json
-open-forge route inspect memory/working/cli-release --json --view=compact
+open-forge route inspect memory/working/checkpoints --view=compact
+open-forge route inspect memory/working/checkpoints --view=expanded
+open-forge route inspect memory/working/checkpoints --json
+open-forge route inspect memory/working/checkpoints --json --view=compact
 ```
 
 The first two select human density, the third returns the complete typed result,
@@ -700,7 +700,7 @@ and the fourth accepts `--view` as a JSON no-op. A verbose request adds bounded
 diagnostics without changing the result:
 
 ```text
-open-forge route inspect memory/working/cli-release --verbose
+open-forge route inspect memory/working/checkpoints --verbose
 ```
 
 Terminal informational modes follow the shared global contract and do not
@@ -821,7 +821,7 @@ there, including the required direct, integration, and built-process evidence.
 - [Find Interface Contract](../../find/interface.md)
 - [Index Interface Contract](../../index/interface.md)
 - [CLI Architecture](../../../architecture.md)
-- [CLI Decision Agenda](../../../../../../working/cli-release/decision-agenda.md)
+- [Historical CLI Decision Agenda](../../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Shared CLI Operation Contract](../../../shared-operation-contract.md)
 - [Routing Model](../../../../framework/routing/model.md)
 - [Routing Loading And Continuity](../../../../framework/routing/loading.md)

@@ -17,12 +17,21 @@ Make the complete affected Red evidence pass with the smallest correct implement
 3. Run the narrowest failing evidence after each meaningful change, then the selected focused toolchain checks and scoped tests. Classify failures before changing anything. The full gate remains a later cycle step.
 4. Classify any remaining failure as implementation, expectation, contract, setup, environment, or unrelated state. Return non-implementation failures to the Mastermind rather than editing protected evidence or inventing behavior.
 5. Return changed production paths, passing evidence, assumptions, and residual limitations to the Mastermind for integrated inspection.
+6. After integrated inspection, the Mastermind updates the authoritative Task
+   progress in the same coherent commit and commits the accepted Green phase
+   before Blue mutates files. The Green commit makes the frozen Red evidence
+   pass. The Mastermind compares Blue's starting tree with the Green commit and
+   verifies that the Red expectations, fixtures, and snapshots remain
+   unchanged.
 
-Do not edit the callable contract, tests, fixtures, snapshots, accepted expectations, Task state, or unrelated surfaces. Do not use Green to compensate for incomplete Red evidence; return that gap to the Mastermind for the earliest applicable phase.
+Do not edit the callable contract, tests, fixtures, snapshots, accepted expectations, Task state, or unrelated surfaces, and do not stage or commit phase work. Do not use Green to compensate for incomplete Red evidence; return that gap to the Mastermind for the earliest applicable phase. The Mastermind alone performs the Task update and phase commit at the boundary below.
 
 ## Completion
 
 - Every frozen Red expectation passes at the selected focused boundary.
 - The implementation satisfies the accepted contract and case matrix with no unrelated scope.
 - Protected contracts and evidence remain unchanged.
+- The Mastermind inspected the actual Green paths, diff, and passing evidence,
+  recorded Task progress, and committed the accepted Green phase before Blue
+  continued.
 - Remaining failures, if any, have an explicit classification and are outside an unjustified Green change.

@@ -24,6 +24,11 @@ open-forge:
   need the same meaning. Use the
   [Nearest Shared Scope](../patterns/software/source-locality/nearest-shared-scope.md)
   Pattern for that placement.
+- A selected language or product scope may require an explicit support folder at
+  the narrowest owner even before promotion. The replacement CLI uses this
+  specialization through its C# and CLI Directives. That folder communicates the
+  owner and support boundary; it does not by itself prove wider reuse or permit
+  promotion.
 - Preserve authority and lifecycle boundaries. Locality keeps related material
   easy to find; it does not merge current, candidate, generated, or historical
   meaning.

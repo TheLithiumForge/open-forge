@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="core/OpenForge.Cli.Core/OpenForge.Cli.Core.csproj" />
+  <Project Path="root/OpenForge.Cli/OpenForge.Cli.csproj" />
+  <Project Path="tests/end-to-end/OpenForge.Cli.EndToEndTests/OpenForge.Cli.EndToEndTests.csproj" />
+  <Project Path="tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj" />
+  <Project Path="tests/support/OpenForge.Cli.TestSupport/OpenForge.Cli.TestSupport.csproj" />
+  <Project Path="tests/unit/OpenForge.Cli.Core.UnitTests/OpenForge.Cli.Core.UnitTests.csproj" />
+</Solution>

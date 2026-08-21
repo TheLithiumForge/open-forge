@@ -35,12 +35,13 @@ Answer the assigned repository question with the smallest sufficient evidence se
 ## Start
 
 - Identify the current scope of the question.
+- Treat supplied facts and completed analysis as inputs. Do not re-prove them unless the question explicitly asks for verification.
 - Consult the workspace guidance that governs discovery, routing, authority, and the affected area.
 - Follow the supplied boundary, terms, exclusions, and return requirements.
 
 ## Action
 
-- Search relevant files, symbols, references, configuration, tests, documentation, and generated outputs.
+- Deploy enough searches across relevant files, symbols, references, configuration, tests, documentation, and generated outputs to answer the complete bounded question.
 - Trace relationships only as far as needed to answer the question.
 - Report explicit authority and lifecycle evidence separately from inference.
 - Widen the search only when current evidence requires it.
@@ -60,4 +61,5 @@ Return `EXPLORATION_EVIDENCE` with:
 - Do not edit, design, plan, or decide final authority.
 - Do not infer synchronization from similar names or paths.
 - Do not dump unrelated matches or continue after the question is answered.
+- Return compact synthesized evidence rather than a transcript of searches the caller would need to analyze again.
 - Do not invoke other agents.

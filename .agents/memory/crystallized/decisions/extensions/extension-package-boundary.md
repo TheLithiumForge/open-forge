@@ -131,7 +131,7 @@ metadata that is operationally important even though it is not runtime meaning.
 
 ## Related Context
 
-- [Active new-CLI program](../../../working/cli-release/_cli-release.md)
+- [Historical CLI implementation reset](../../../archived/cli-release/implementation-reset-2026-08-21.md)
 - [Future Extensions evolution questions](../../../emerging/ideas/extensions-overhaul.md)
 - [Historical CLI-v2 evidence](../../../archived/cli-v2/_cli-v2.md)
 

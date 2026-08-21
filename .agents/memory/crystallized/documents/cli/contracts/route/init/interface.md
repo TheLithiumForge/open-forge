@@ -580,7 +580,7 @@ attention, dry-run, compact, or verification rules above.
 - [CLI Architecture](../../../architecture.md)
 - [Route Create Interface Contract](../create/interface.md)
 - [Route Update Interface Contract](../update/interface.md)
-- [CLI Decision Agenda](../../../../../../working/cli-release/decision-agenda.md)
+- [Historical CLI Decision Agenda](../../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Routed Markdown Representation](../../../../framework/markdown/routes.md)
 - [Markdown Compatibility Boundary](../../../../framework/markdown/compatibility.md)
 - [Canonical Markdown Syntax](../../../../framework/markdown/syntax.md)

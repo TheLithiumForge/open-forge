@@ -498,7 +498,7 @@ lock, concurrency, and source boundaries; this contract does not change them.
 - [Global CLI Flags Behavior Contract](../../shared/global-flags/behavior.md)
 - [CLI Source References Behavior Contract](../../shared/source-references/behavior.md)
 - [CLI Architecture](../../../architecture.md)
-- [CLI Decision Agenda](../../../../../../working/cli-release/decision-agenda.md)
+- [Historical CLI Decision Agenda](../../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Templates](../../../../framework/primitives/templates.md)
 - [Routing Model](../../../../framework/routing/model.md)
 - [Routing Paths And Identity](../../../../framework/routing/paths.md)

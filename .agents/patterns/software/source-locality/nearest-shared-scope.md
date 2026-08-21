@@ -79,6 +79,14 @@ Do not import a sibling's private support merely because its current implementat
 
 Do not pre-create shared modules for hypothetical reuse. Duplication is evidence to inspect, not automatic proof that two behaviors have the same meaning.
 
+The replacement CLI has one explicit specialization: supporting implementation
+always sits below a `Shared/<Capability>/` child of its narrowest owning CLI,
+command-family, or command-leaf boundary. At the leaf level, `Shared` marks the
+support boundary rather than proving several consumers. The ordinary promotion
+rule still applies when support moves to a wider `Shared` parent. Follow the
+selected CLI and C# Directives for that physical and namespace shape; do not
+apply this spelling to unrelated languages or repositories by analogy.
+
 ## Review Checks
 
 - Every support module is at the narrowest scope containing all actual consumers.
@@ -94,4 +102,6 @@ Do not pre-create shared modules for hypothetical reuse. Duplication is evidence
 - Promotion follows demonstrated reuse and preserves one clear owner.
 - Dependency direction does not pass through a sibling's private folder.
 - Shared files retain capability-specific names.
+- In the replacement CLI, leaf-local support uses the required explicit
+  `Shared/<Capability>/` path without implying wider reuse.
 - Moving a module upward does not turn it into an unrelated utility collection.

@@ -29,5 +29,7 @@ A Checkpoint records the current state, current step, and next steps for one act
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Concise resumption state and next action for the new Open Forge CLI release program](cli-release.md) - #Memory #Working #Checkpoint #Active #KeepInMind #CLI #Release #Contextual
+
+- [Current state and next action for the greenfield replacement CLI development program](cli-development.md) - #Memory #Working #Checkpoint #Active #KeepInMind #CLI #Architecture #Plan #Task #Contextual
+
 <!-- open-forge:generated-index:end -->

@@ -339,7 +339,7 @@ Correct behavior should be the cheapest path, but review remains part of any con
 - [Payload Maintenance](../maintenance/payload/_payload.md)
 - [Extensions MVP Architecture](../extensions/architecture.md)
 - [CLI MVP Architecture](../cli/mvp-architecture.md)
-- [Active new-CLI program](../../../working/cli-release/_cli-release.md)
+- [Current replacement CLI Architecture](../cli/architecture.md)
 - [Historical CLI-v2 evidence](../../../archived/cli-v2/_cli-v2.md)
 - [Canonical Framework loader](../../../../loader.md)
 - [Current Memory contract](../../../_memory.md)

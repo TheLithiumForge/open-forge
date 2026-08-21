@@ -324,5 +324,5 @@ realization; this Behavior Contract does not select another implementation.
 - [Doctor Behavior Contract](../doctor/behavior.md)
 - [Repair Behavior Contract](../repair/behavior.md)
 - [CLI Command Contract Set — Behavior Contract](../../command-contract-set.md#behavior-contract)
-- [CLI Decision Agenda](../../../../../working/cli-release/decision-agenda.md)
+- [Historical CLI Decision Agenda](../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Shared CLI Operation Contract](../../shared-operation-contract.md)

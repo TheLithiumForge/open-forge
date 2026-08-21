@@ -1,7 +1,7 @@
 ---
 name: challenger
 description: Adversarially stress-tests a consequential decision, architecture, plan, or completed change and returns decision-changing flaws, missing evidence, and better alternatives.
-model: anthropic/claude-fable-5
+model: claude-fable-5
 mode: subagent
 color: error
 permission:
@@ -11,11 +11,14 @@ permission:
   list: allow
   edit: deny
   bash:
-    "*": allow
+    "*": deny
     "git status*": allow
     "git diff*": allow
     "git log*": allow
     "git show*": allow
+    "git ls-files*": allow
+    "git rev-parse*": allow
+    "git merge-base*": allow
   lsp: allow
   task: deny
   question: deny
@@ -51,7 +54,10 @@ Return `ROBUST`, `REVISE`, or `BLOCKED_BY_DECISION`, then include:
 - better alternative or why none is better;
 - missing evidence;
 - exact revision or unresolved decision;
+- decisive evidence and reasoning, material tradeoffs, and what would change the conclusion;
 - confidence.
+
+Use repository-relative evidence and omit provider, model, AI, runtime-profile, session, task, review, handoff, hidden orchestration, personal, user, machine, secret, token, local absolute-path, and incidental environment identifiers so the Mastermind can preserve the challenge as longitudinal observation evidence.
 
 ## Boundaries
 

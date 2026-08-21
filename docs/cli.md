@@ -281,7 +281,7 @@ Continuity context (may load again)
   4 files · 6,120 characters · 6.0 KiB · ~1,500 tokens
 
 Largest continuity sources
-  2.4 KiB   memory/working/cli-release
+  2.4 KiB   memory/working/checkpoints
   1.9 KiB   directives/writing
   1.1 KiB   memory/crystallized/documents
 
@@ -688,8 +688,8 @@ Human output explains reading events in ordinary language. It does not replace
 them with labels such as `target-sensitive` or `continuity boundary`:
 
 ```text
-Route: memory/working/cli-release
-Path: .agents/memory/working/cli-release/_cli-release.md
+Route: memory/working/checkpoints
+Path: .agents/memory/working/checkpoints/_checkpoints.md
 Entrypoint: canonical
 
 Reading behavior
@@ -705,7 +705,7 @@ Context cost
 
 Route structure
   Parent: memory/working
-  Route chain: memory → working → cli-release
+  Route chain: memory → working → checkpoints
   Depth: 3
   Direct children: 7 files, 1 child entrypoint
   All descendants: 12 files, 2 descendant entrypoints

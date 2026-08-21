@@ -466,7 +466,7 @@ recovery requirements.
 - [CLI Source References Behavior Contract](../../shared/source-references/behavior.md)
 - [Index Behavior Contract](../../index/behavior.md)
 - [CLI Architecture](../../../architecture.md)
-- [CLI Decision Agenda](../../../../../../working/cli-release/decision-agenda.md)
+- [Historical CLI Decision Agenda](../../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Routed Markdown Representation](../../../../framework/markdown/routes.md)
 - [Markdown Compatibility Boundary](../../../../framework/markdown/compatibility.md)
 - [Canonical Markdown Syntax](../../../../framework/markdown/syntax.md)

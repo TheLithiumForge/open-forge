@@ -1,0 +1,104 @@
+name: CLI
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/cli.yml"
+      - "src/cli/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cli-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  native:
+    name: ${{ matrix.rid }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - rid: win-x64
+            runner: windows-latest
+            suffix: ".exe"
+          - rid: win-arm64
+            runner: windows-11-vs2026-arm
+            suffix: ".exe"
+          - rid: linux-x64
+            runner: ubuntu-latest
+            suffix: ""
+          - rid: linux-arm64
+            runner: ubuntu-24.04-arm
+            suffix: ""
+          - rid: osx-x64
+            runner: macos-15-intel
+            suffix: ""
+          - rid: osx-arm64
+            runner: macos-latest
+            suffix: ""
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: src/cli
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore audited graph
+        run: dotnet restore OpenForge.Cli.slnx --configfile NuGet.Config
+
+      - name: Verify formatting
+        run: dotnet format OpenForge.Cli.slnx --no-restore --verify-no-changes
+
+      - name: Build Release graph
+        run: dotnet build OpenForge.Cli.slnx --configuration Release --no-restore
+
+      - name: Run managed Unit evidence
+        run: dotnet test --project tests/unit/OpenForge.Cli.Core.UnitTests/OpenForge.Cli.Core.UnitTests.csproj --configuration Release --no-build
+
+      - name: Run managed Integration evidence
+        run: dotnet test --project tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj --configuration Release --no-build
+
+      - name: Publish native CLI
+        run: dotnet publish root/OpenForge.Cli/OpenForge.Cli.csproj --configuration Release --runtime ${{ matrix.rid }} --no-restore --output artifacts/publish/${{ matrix.rid }}/open-forge
+
+      - name: Run managed EndToEnd evidence
+        env:
+          OPEN_FORGE_CLI_PATH: ${{ github.workspace }}/src/cli/artifacts/publish/${{ matrix.rid }}/open-forge/OpenForge.Cli${{ matrix.suffix }}
+          OPEN_FORGE_CLI_EXPECTED_VERSION: 0.0.0-dev
+        run: dotnet test --project tests/end-to-end/OpenForge.Cli.EndToEndTests/OpenForge.Cli.EndToEndTests.csproj --configuration Release --no-build
+
+      - name: Publish native Integration evidence
+        run: dotnet publish tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj --configuration Release --runtime ${{ matrix.rid }} --no-restore --output artifacts/publish/${{ matrix.rid }}/integration
+
+      - name: Execute native Integration evidence
+        run: ./artifacts/publish/${{ matrix.rid }}/integration/OpenForge.Cli.IntegrationTests${{ matrix.suffix }}
+
+      - name: Publish native EndToEnd evidence
+        run: dotnet publish tests/end-to-end/OpenForge.Cli.EndToEndTests/OpenForge.Cli.EndToEndTests.csproj --configuration Release --runtime ${{ matrix.rid }} --no-restore --output artifacts/publish/${{ matrix.rid }}/end-to-end
+
+      - name: Execute native EndToEnd evidence
+        env:
+          OPEN_FORGE_CLI_PATH: ${{ github.workspace }}/src/cli/artifacts/publish/${{ matrix.rid }}/open-forge/OpenForge.Cli${{ matrix.suffix }}
+          OPEN_FORGE_CLI_EXPECTED_VERSION: 0.0.0-dev
+        run: ./artifacts/publish/${{ matrix.rid }}/end-to-end/OpenForge.Cli.EndToEndTests${{ matrix.suffix }}
+
+      - name: Upload bounded native artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: open-forge-${{ matrix.rid }}
+          path: src/cli/artifacts/publish/${{ matrix.rid }}/open-forge/OpenForge.Cli${{ matrix.suffix }}
+          if-no-files-found: error
+          retention-days: 7

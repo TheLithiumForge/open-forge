@@ -30,5 +30,7 @@ Memory Templates help create records in the route that matches their current rol
 - [Starting structure for a sealed transfer snapshot with the state, evidence, blockers, and next action needed to resume](handoff.md) - #Extension #Template #Memory #Handoff #Working #Contextual
 - [Starting structure for a possibility worth exploring, what supports it, and what could justify promotion](idea.md) - #Extension #Template #Memory #Idea #Emerging #Contextual
 - [Starting structure for an evidence-backed occurrence or pattern, its scope, uncertainty, recurrence, and possible future value](observation.md) - #Extension #Template #Memory #Observation #Emerging #Contextual
+- [Experimental starting structure for an executable plan with dependencies, parallel work, resources, verification, decisions, risks, and continuity links](plan.md) - #Template #Memory #Working #Plan #Planning #Contextual #Experimental
 - [Project status template is used when one bounded Working record must preserve where active work stands, what matters now, what blocks it, and how to resume](project-status.md) - #Template #Memory #Working #Status #Contextual
+- [Experimental starting structure for a bounded task with a clear problem, outcome, hierarchy, scope, dependencies, acceptance, and linked context](task.md) - #Template #Memory #Working #Task #Contextual #Experimental
 <!-- open-forge:generated-index:end -->

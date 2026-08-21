@@ -1,581 +1,584 @@
 ---
 open-forge:
-  description: Accepted Gate 3 architecture for the non-shipping C# replacement CLI, its evidence, and its release boundary
-  responsibility: Define the current replacement CLI structure, dependency direction, filesystem and recovery boundaries, test evidence, and delivery shape
-  tags: [Memory, Crystallized, CLI, Architecture, Gate, CurrentTruth, Evergreen, DotNet, NativeAOT, Testing, Release]
+  description: Current top-down architecture for the greenfield C# replacement CLI, its source, projects, boundaries, evidence, and delivery sequence
+  responsibility: Define the complete replacement CLI structure and the cross-cutting contracts that implementation Tasks must preserve
+  tags: [Memory, Crystallized, Document, CurrentTruth, Evergreen, CLI, Architecture, Greenfield, DotNet, NativeAOT, Testing, Release]
 ---
 
-# Open Forge CLI Architecture
+# Replacement CLI Architecture
 
-## Status And Scope
+## Status And Authority
 
-This is the accepted Gate 3 Architecture for the replacement Open Forge CLI. The
-replacement is an optional deterministic Framework accelerator with a human
-maintenance surface. It remains explicitly non-shipping. The locally accepted
-Gate 5 foundation has created the solution, production-project skeleton, managed
-and system test projects, and exact central package policy, but no retained
-command, accepted shipping executable, package, or release artifact exists yet.
+This document defines the accepted implementation architecture for the
+non-shipping replacement CLI after the 2026-08-21 greenfield reset. The
+[Command Contract Set](command-contract-set.md), [Shared CLI Operation
+Contract](shared-operation-contract.md), and detailed
+[command contracts](contracts/_contracts.md) define product behavior. This
+Architecture defines how the implementation realizes those contracts.
 
-Gate 5 implementation is authorized and active through bounded Tasks. Release
-proof remains pending. This document accepts the structure and boundaries that
-Gate 5 must implement. It does not turn architecture acceptance into complete
-cross-platform, package, or release evidence. The accepted local foundation is
-Windows `win-x64` evidence; WSL, macOS, six native runner jobs, and support-floor
-execution remain later Gate 5 proof.
+The removed implementation remains historical evidence at Git commit `4b873de`.
+Its [reset record](../../../archived/cli-release/implementation-reset-2026-08-21.md)
+summarizes useful ideas and rejected boundaries. Historical source may inform a
+Task, but it does not constrain class shape, source placement, or implementation.
 
-The [Command Contract Set](command-contract-set.md) defines the current
-command-contract roles, topology, and authority boundaries. The [Shared CLI
-Operation Contract](shared-operation-contract.md) defines cross-command
-conventions, and the detailed [command contracts](contracts/_contracts.md)
-define exact command-local meaning. This Architecture defines the high-level
-implementation structure and the cross-command boundaries that realize those
-contracts.
+The replacement remains non-shipping until every retained command, Native AOT
+target, package, supply-chain control, support-floor journey, and release gate is
+implemented and accepted.
 
-The [Framework Architecture](../framework/architecture.md) and its routed
-Markdown, authority, and lifecycle contracts remain authoritative for the
-meaning of the files that the CLI reads or changes. The CLI never becomes a
-private source of Framework truth.
+## Architectural Goals
 
-## Replacement Boundary
+The implementation must:
 
-The accepted design specifies one future production executable, `OpenForge.Cli`,
-eventually exposed as the `open-forge` command. It is separate from the frozen
-`open-forge-old` executable:
+- provide one predictable native executable for agents and occasional human use;
+- keep the complete retained command surface in view without building speculative
+  universal engines;
+- establish process-wide and cross-command abstractions before command slices
+  depend on them;
+- keep command meaning, facts, plans, results, renderers, and evidence locally
+  discoverable;
+- make parser, filesystem, serialization, mutation, recovery, output, and process
+  boundaries explicit and directly testable;
+- remain deterministic, source-visible, reflection-free in product behavior, and
+  compatible with trimming and Native AOT;
+- use real operating-system filesystems and fail closed when required identity or
+  containment cannot be proved; and
+- let bounded implementers execute closed Tasks without inventing architecture.
 
-- `src/cli-mvp/` contains the frozen TypeScript source for `open-forge-old`, at
-  [`src/cli-mvp/cli.ts`](../../../../../src/cli-mvp/cli.ts). Neither
-  `src/cli-mvp/` nor `open-forge-old` is replacement implementation or contract
-  authority. `open-forge-old` remains available for its existing
-  repository-routing assistance and historical evidence.
-- The replacement executable's source is under
-  `src/open-forge-cli/OpenForge.Cli`. The active foundation skeleton exposes no
-  retained command behavior yet.
-- `src/cli-mvp/build/` contains the frozen executable's TypeScript build support.
-  It remains part of the frozen MVP boundary and is not replacement source.
-- The replacement does not import, dispatch to, build, test, or fall back to
-  `open-forge-old`. There is no compatibility router, command alias layer,
-  behavior selector, migration path, or staged control of one command root.
+The implementation must not add runtime plug-in discovery, dependency injection
+for shell composition, a service locator, a fake filesystem, a universal command
+result, a universal mutation engine, native interop, or a compatibility path to
+`open-forge-old`.
 
-The replacement accepts only the current command contracts. An unimplemented or
-invalid replacement command is an ordinary replacement result; it is never
-silently sent to the frozen executable. Existing old-format workspace files are
-outside replacement authority and remain untouched.
+## Physical Workspace
 
-## Product Boundary And Command Tree
-
-The CLI makes deterministic inspection and bounded file operations cheap,
-repeatable, inspectable, and mechanically verifiable. It does not infer product
-intent, approve candidate Memory, execute agent reasoning, provide semantic or
-fuzzy search, define Framework meaning, or maintain a private workspace database.
-
-The retained delivery surface is exactly this command tree:
+All replacement-specific C# workspace configuration, source, projects, and test
+source live below `src/cli/`:
 
 ```text
-open-forge find
-open-forge index
-open-forge status
-open-forge context
-open-forge references
-open-forge doctor
-open-forge repair
-open-forge install
-open-forge update
-open-forge cleanup
-open-forge route inspect
-open-forge route list
-open-forge route init
-open-forge route create
-open-forge route update
-open-forge route move
-open-forge route remove
-open-forge extension list
-open-forge extension inspect
-open-forge extension create
-open-forge extension install
-open-forge extension update
-open-forge extension remove
-```
+src/cli/
+  global.json
+  NuGet.Config
+  Directory.Build.props
+  Directory.Packages.props
+  OpenForge.Cli.slnx
+  artifacts/
 
-`route` and `extension` are real groups of related operations. A group performs
-no domain operation and its bare form shows help. Every leaf performs one
-complete operation. Shell completion is not part of the product, so there is no
-completion command, generator, profile edit, or completion dependency.
-
-## Runtime, Solution, And Physical Topology
-
-The replacement targets C# on .NET 10 or newer, with `net10.0` as the initial
-target. Gate 5 sets a `10.0.100` SDK baseline, uses
-`rollForward=latestFeature`, rejects prerelease SDKs, and sets C# `14.0`. Any
-installed stable .NET 10 SDK at or above that baseline may build the repository.
-Moving to another .NET major remains an intentional Architecture decision.
-
-The solution is `OpenForge.slnx`. It contains one production project,
-`OpenForge.Cli`, specified to build the one future production executable. The
-solution does not introduce production class-library projects merely to create
-architectural layers. Test projects are not shipped executables.
-
-The required physical topology is:
-
-```text
-OpenForge.slnx
-src/
-  open-forge-cli/
+  root/
     OpenForge.Cli/
       OpenForge.Cli.csproj
-      ... command and capability source ...
-tests/
-  open-forge-cli/
-    OpenForge.Cli.Tests/
-      OpenForge.Cli.Tests.csproj
-      ... mirrored managed unit and integration tests ...
-    OpenForge.Cli.SystemTests/
-      OpenForge.Cli.SystemTests.csproj
-      ... complete-boundary system and end-to-end tests ...
+      Program.cs
+      Hosting/
+      Composition/
+
+  core/
+    OpenForge.Cli.Core/
+      OpenForge.Cli.Core.csproj
+      Shell/
+      Framework/
+      Commands/
+      Properties/
+
+  tests/
+    unit/
+      OpenForge.Cli.Core.UnitTests/
+    integration/
+      OpenForge.Cli.IntegrationTests/
+    end-to-end/
+      OpenForge.Cli.EndToEndTests/
+    support/
+      OpenForge.Cli.TestSupport/
+    preserved/
 ```
 
-The source project is physically rooted at
-`src/open-forge-cli/OpenForge.Cli`. The managed test tree is separate and
-physically rooted at `tests/open-forge-cli/OpenForge.Cli.Tests`. Its production
-subject paths mirror the source paths, so a command or capability has one
-obvious corresponding test location. `OpenForge.Cli.SystemTests` is the separate
-system/E2E project for the complete CLI boundary rather than a unit-test seam.
+The repository root contains no replacement-specific solution, SDK selection,
+NuGet configuration, central package version file, or MSBuild configuration.
+`src/cli/artifacts/` contains all C# binary, intermediate, default publish, test,
+and package output through the SDK artifacts layout. Projects do not create local
+`bin/` or `obj/` folders.
 
-The active Gate 5 foundation Task has established the shown topology. The
-solution and all three projects now exist. Their existence is not accepted
-implementation or Native AOT proof. Every solution folder must correspond to a
-real physical folder. The `.slnx` must contain no solution-only virtual folders
-that have no filesystem counterpart, and physical source or test folders must
-not be hidden behind invented solution groupings.
+The preserved test files currently below `src/cli/tests/` move to `preserved/`
+before active projects are created. A Task adopts each relevant expectation into
+the matching active test project. Preserved files never compile implicitly.
 
-Gate 5 requires exact direct package versions in `Directory.Packages.props`, one
-NuGet source mapping, and dependency auditing. The projects do not commit NuGet
-lock files because the SDK supplies the Native AOT compiler and linker packages,
-whose patch versions follow the selected stable .NET 10 SDK. A lock generated by
-one SDK patch would reject another compatible .NET 10 installation. CI selects
-.NET `10.0.x`; restore evidence records the actual SDK and resolved graph used by
-each run.
+Projects use SDK default recursive authored-source inclusion. They do not list
+ordinary C# files, use virtual solution folders, or link production source into
+another project. Deterministic generated source is the only production compile
+exception. The test-support library is an ordinary non-shipping project rather
+than linked source.
 
-## Source Organization And Composition
+## Project Graph
 
-The composition root builds the explicit command tree, creates the concrete
-capabilities it needs, binds parsed values to a command-local request, invokes
-the command, selects the renderer, and maps the final status to the process
-exit. It is the only place that composes unrelated command branches.
-
-Each command keeps its own local slice. The normal shape is:
+The solution has six direct project entries:
 
 ```text
-Commands/<command-or-group>/<operation>/
-  Request.cs
-  Facts.cs
-  Result.cs
-  Renderer.cs
-  ... local planning and mutation stages ...
+OpenForge.Cli --------------------> OpenForge.Cli.Core
+
+OpenForge.Cli.Core.UnitTests -----> OpenForge.Cli.Core
+OpenForge.Cli.IntegrationTests ---> OpenForge.Cli.Core
+                                \-> OpenForge.Cli
+OpenForge.Cli.EndToEndTests ------> OpenForge.Cli.TestSupport
+OpenForge.Cli.TestSupport --------> no production project
+
+UnitTests, IntegrationTests ------> OpenForge.Cli.TestSupport when needed
 ```
 
-The exact files may split when a command grows, but the responsibilities remain
-local and named. `Request` represents complete validated operation input.
-`Facts` represents the current invocation's inspected state. `Result` represents
-the concrete semantic outcome. `Renderer` projects that result to the accepted
-human or structured surface. A handler does not write streams, choose a view, or
-rerun the operation.
+`OpenForge.Cli` is the only production executable and publish root.
+`OpenForge.Cli.Core` is one non-shipping class library containing the shell,
+Framework-facing capabilities, and commands. The split establishes a hard host
+boundary without turning capabilities into many assemblies.
 
-Mutating commands keep their local plan, preflight, stage, revalidation, apply,
-verification, and recovery coordination beside the command that coordinates the
-mutation. Read-only commands stop after their typed result. Dry-run and apply
-use the same request, facts, planner, and preflight; dry-run stops before
-persistent effects.
+The root project may depend on Core. Core never depends on the root project.
+Tests depend only on the production and support projects required by their
+evidence tier. End-to-end tests do not call production internals. Friend assembly
+access is limited to named test projects and the root composition assembly when a
+closed internal contract would otherwise need to become public solely because of
+the project boundary.
 
-The command tree is bound explicitly. Command registration is visible in source,
-and manual binding maps parser values to concrete request types. Command-local
-meaning is not discovered from strings, reflection, a registry, or a universal
-operation table.
+No assembly in this repository is a supported third-party library API. Public C#
+visibility is an implementation necessity, not a compatibility promise.
 
-Use direct construction and pure capability-named static functions or extensions
-first. Promote code only when multiple real consumers demonstrate the same
-meaning, and place it at their nearest common physical scope. A shared capability
-must remain explicit at each call site and must not hide a command's subject,
-authority, stages, effects, or result.
+## Root Host Boundary
 
-The architecture prohibits a universal operation engine, reflective dispatch,
-string-keyed behavior registries, a service locator, a fake filesystem, a virtual
-filesystem hierarchy, and a remote `utils` folder. It does not prescribe classes
-over records or functions; local state, lifecycle, resource ownership, and
-clarity decide. Dependency injection is permitted only when real composition or
-lifecycle proves it is needed. Any DI path must be source-generated and
-Native-AOT-safe. A general container is not the default composition model.
+The root project owns only process and composition concerns:
 
-## Dependencies And Native AOT Boundary
+- process arguments, environment, current directory, standard streams, and
+  cancellation hookup;
+- the explicit ordered command tree and concrete binding registration;
+- construction of immutable shell services and command capabilities;
+- invocation of one Core host boundary; and
+- conversion of one process completion into the executable exit code.
 
-The accepted runtime dependencies are exact and deliberately narrow:
+`Program.cs` contains no command or domain behavior. `CliHost` owns one complete
+process invocation. `CliCompositionRoot` visibly registers every root command,
+group, and leaf in stable order. Adding a command changes this composition source
+and the command's local source; it does not change a string dispatcher or runtime
+registry.
 
-| Concern                            | Dependency and accepted boundary                                                                                         |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Command parsing                    | `System.CommandLine` 2.0.11, with an explicitly constructed command tree and manual binding to concrete requests.        |
-| Markdown facts                     | Markdig 1.3.2 through one fixed CommonMark pipeline. The pipeline has no plugin discovery or runtime extension loading.  |
-| YAML facts                         | YamlDotNet 18.1.0 through the source-generated semantic path for the accepted typed models, with no reflective fallback. |
-| JSON results and lifecycle values  | `System.Text.Json` source-generated concrete metadata. Reflection-based serialization and deserialization are disabled.  |
-| Filesystem and process foundations | The cross-platform .NET BCL first, especially `System.IO`, with no speculative platform layer.                           |
-| Test execution                     | xUnit v3 through Microsoft Testing Platform (MTP), with the evidence rules below.                                        |
+The root host passes writers, environment facts, and cancellation explicitly. It
+does not cache ambient console state in Core.
 
-System.CommandLine defines only the explicit syntax tree and parser boundary. It
-does not define domain behavior. Markdig parses the bounded Markdown facts needed by
-the operation. YamlDotNet parses the accepted semantic YAML models. Neither
-library renders a whole document. The CLI does not render a whole Markdown
-document or a whole YAML document to produce a mutation. It reads facts and
-applies bounded lossless patches.
+## Core Source Organization
 
-Every dependency, parser path, serializer path, source-generator path, runtime
-feature, and DI path must pass a real Native AOT publish. Source inspection,
-package claims, a nominal `PublishAot` property, or a successful managed build
-is not proof. Gate 5 requires warning-free restore, compilation, trimming, and
-Native AOT publish evidence for the complete production executable. Warnings may
-not be hidden to make the evidence pass. A dependency that cannot meet the
-boundary is removed or returned to Architecture; it is not wrapped in an
-unproved compatibility shim.
-
-## Source Bytes, Parsing, And Semantic Identity
-
-The CLI treats source bytes as the primary preservation boundary.
-
-- Supported text sources must be valid UTF-8. The implementation records exact
-  source bytes and maps parsed facts to byte ranges. Line and column coordinates
-  are derived from those same bytes; they do not replace byte offsets and
-  lengths.
-- A patch replaces only explicitly selected ranges or generated interiors. All
-  unrelated bytes, encoding, line endings, labels, fragments, and surrounding
-  authored content remain byte-for-byte unchanged.
-- Markdown parsing produces headings, visible text, links, sections, ignored
-  regions, generated-region boundaries, and source coordinates. YAML parsing
-  produces only the accepted semantic fields and their coordinates. Parsing does
-  not make a renderer or a second authored document.
-- The accepted conservative semantic fingerprint identifier is exactly
-  `open-forge-markdown-v1`. Its length-delimited, domain-separated input removes
-  a UTF-8 byte-order mark, normalizes CRLF and CR to LF, and preserves every
-  other Unicode scalar, authored spelling, order, and whitespace. It replaces
-  only a parser-proven generated `Entries` interior with one typed sentinel that
-  contains neither the omitted bytes nor their length, while retaining the exact
-  normalized marker boundaries. It does not normalize YAML quoting or order,
-  Markdown marker style, emphasis, list style, Unicode, case, or ordinary
-  whitespace. Unsupported or ambiguous equivalence fails closed; unsupported,
-  binary, or unparseable managed content uses domain-separated exact-byte
-  identity where its local contract permits it.
-- The fingerprint is an identity and comparison aid, not permission to rewrite
-  a document. The CLI does not run a formatter, persist a formatter receipt, or
-  claim that semantically equal bytes are interchangeable when the parser cannot
-  prove that fact.
-
-Every invocation builds an in-memory content graph only when its selected
-operation needs relationships. The graph contains the parsed sources and the
-explicit route, loading, overwrite, section, and link relationships needed by
-that invocation. It is discarded at invocation end. There is no persistent
-content cache, session, receipt, hidden index, remote graph, or private truth.
-Generated `Entries` are a derived projection. They never become the source of
-topology, authority, or semantic meaning.
-
-## Lifecycle State And Legacy Boundary
-
-The replacement's only lifecycle document is:
+Core is organized by bounded capability rather than by artifact type.
 
 ```text
-.agents/open-forge.lifecycle.json
+OpenForge.Cli.Core/
+  Shell/
+    Composition/
+    Definitions/
+    Invocation/
+    Parsing/
+    Pipeline/
+    Presentation/
+    Output/
+    Serialization/
+
+  Framework/
+    Workspace/
+    Filesystem/
+    Sources/
+    Routing/
+    Documents/
+    GeneratedNavigation/
+    Lifecycle/
+    Mutation/
+    Recovery/
+    Extensions/
+
+  Commands/
+    Shared/
+    Route/
+      Shared/
+      List/
+        RouteListBinding.cs
+        RouteListDefinitions.cs
+        RouteListRequest.cs
+        RouteListOperation.cs
+        RouteListResult.cs
+        Shared/<Capability>/
+      Inspect/
+    Extension/
+      Shared/
+      List/
+      Inspect/
+    <RootLeaf>/
 ```
 
-It uses schema version 1 with one common envelope and two isolated logical
-sections, `framework` and `extensions`. The common envelope carries the shared
-workspace and schema/fingerprint identity required to validate the document.
-Subject facts stay in their own section. A Framework operation reads and writes
-only `framework`; an Extension operation reads and writes only `extensions`.
+Only folders with actual cohesive source exist. The tree above is a placement map,
+not authorization to create empty directories.
 
-An operation patches its selected section while preserving the exact bytes and
-meaning of the common envelope and unrelated section. It never drops, rewrites,
-normalizes, migrates, or repairs unrelated state as a side effect. If exact
-preservation, parsing, round-tripping, or verification is not possible, the
-operation writes nothing and returns the contract's incomplete or blocked result.
-Cross-section identity or path collisions block preflight.
+`Shell` contains process-wide CLI mechanics with no Framework-domain behavior.
+`Framework` contains reusable facts and effect boundaries derived from accepted
+Framework contracts. `Commands` contains operation meaning and projections.
 
-The replacement has no legacy compatibility for lifecycle state. It does not
-read, recognize, migrate, alias, or fall back to any old-format lifecycle or
-Extension file, including the old `open-forge.extensions.json` receipt. Existing
-old-format files remain outside new-CLI authority and are untouched. A missing
-new document is not permission to interpret an old document as schema version 1.
+At a command leaf, definitions, binding, request, operation, and concrete result
+remain visible at the leaf root. Supporting implementation sits under
+`Shared/<Capability>/` at the narrowest owning command, family, or cross-family
+scope. A private `Shared` child marks the support boundary. Promotion to a wider
+parent requires another real consumer with identical meaning.
 
-Lifecycle metadata records transparent operational facts. It does not define
-Framework routing, Memory authority, Extension runtime meaning, a session, a
-saved plan, a cache, or a private database of workspace truth.
+Namespaces match physical folders. One command never imports another command's
+private `Shared` namespace. No forwarding namespace preserves a removed layout.
 
-## Filesystem, Platform, And Workspace Lock
+## Dependency Direction
 
-The CLI uses the real cross-platform .NET BCL and `System.IO` as its first
-filesystem boundary. It proves lexical containment, physical identity,
-workspace association, supported file identity, and expected-state conditions
-at the real filesystem boundary. Tests use real operating-system temporary
-directories and real files, directories, links, processes, and permissions where
-the selected guarantee depends on them.
-
-The implementation must not add speculative Windows, Linux, or macOS code. If a
-critical guarantee cannot be proved with cross-platform .NET APIs on the
-supported floor, implementation stops and returns to Architecture before a
-narrow platform adapter is proposed. It must not silently weaken the guarantee,
-use a fake filesystem, or make a platform promise from an untested assumption.
-
-`.agents/open-forge.lock` coordinates operations that mutate the selected
-workspace. The exact workspace lock path is:
+Dependencies flow inward from composition and commands toward stable facts and
+effect boundaries:
 
 ```text
-.agents/open-forge.lock
+Root host
+  -> Shell composition and pipeline
+  -> Concrete command bindings
+  -> Command operations and projections
+  -> Framework facts and explicit effect boundaries
+  -> BCL and accepted libraries
 ```
 
-The lock is an actual operating-system file lock held through the mutation
-planning, application, verification, and recovery boundary for those operations.
-The implementation uses the cross-platform `System.IO` file-handle lock boundary
-and proves its OS semantics at Gate 5. Merely finding the file does not mean that
-the workspace is locked. The implementation must open the file and acquire the
-OS-level exclusive lock, retain the handle for the operation, and release it when
-the handle closes.
-A process crash releases the OS lock even if the file remains.
+Shell types do not depend on concrete commands. Framework capabilities do not
+depend on command requests, results, renderers, parser symbols, or process
+writers. Commands may depend on Shell contracts and Framework capabilities.
 
-An unlocked lock file may be reused or removed only after the implementation has
-successfully established that no process currently holds the lock. There is no
-stale-PID heuristic, force-delete path, or existence-based bypass. An active
-lock blocks another mutating operation. Read-only operations do not acquire
-mutation authority merely to inspect the file.
+Cross-command facts remain free of command-specific status, findings, output, and
+next-action policy. A command translates shared facts into its own result.
 
-`extension create` has no workspace subject and therefore does not acquire that
-lock; it uses exact catalogue-destination identity, expected-state revalidation,
-Git/recovery, and collision guards. This is the only current no-workspace
-mutation exception.
+## Shell Definitions And Composition
 
-## Mutation, Recovery, And Cleanup
+Typed definitions own every executable, command, argument, option, finite value,
+machine code, result-command, and next-action identity exactly once.
 
-Every mutating command has one explicit local flow:
+Global definitions are split by responsibility:
+
+- syntax and executable identity;
+- presentation format, view, verbosity, and output targets;
+- workspace selection;
+- terminal modes and conflict policy;
+- semantic statuses and process exits;
+- process completion and output disposition; and
+- parser and shell error identities.
+
+Each command owns its group, leaf, operands, local options, finite values,
+machine finding codes, result command name, and next-action contents.
+
+The central composition model uses these ideal call surfaces:
+
+```csharp
+CliCommandBinding<TRequest, TResult>
+  CommandDefinition
+  Bind(ParseResult, CliInvocation) -> CliBindResult<TRequest, TResult>
+  Execute(TRequest, CancellationToken) -> ValueTask<TResult>
+  RendererSet<TResult>
+  DiagnosticRenderer<TResult>?
+
+ICliCommandBinding
+  Command
+  InvokeAsync(CliInvocationContext) -> ValueTask<CliProcessCompletion>
+
+CliCommandTree
+  RootCommand
+  Ordered group and leaf bindings
+  Exact Command-identity lookup
+```
+
+The generic binding closes one request/result pair. The non-generic boundary
+stores heterogeneous bindings without erasing their concrete operation or
+serialization types. Dispatch uses exact `System.CommandLine.Command` identity,
+never strings.
+
+No command binding locates services. The composition root supplies its complete
+immutable dependencies through direct construction or small capability records.
+
+## Parsing And Invocation
+
+`System.CommandLine` exclusively owns command selection, arity, occurrence
+aggregation, typed conversion, unknown symbols, parser diagnostics, standard
+syntax help, and version action dispatch.
+
+The shell flow is:
 
 ```text
-validated input
-  -> complete Request
-  -> current Facts
-  -> complete plan
-  -> preflight
-  -> stage
-  -> revalidate
-  -> apply
-  -> verify
-  -> recover when required
-  -> cleanup boundary
-  -> concrete Result
-  -> Renderer
+arguments
+  -> one System.CommandLine parse
+  -> parser diagnostics
+  -> bounded accepted delimiter validation, if still required
+  -> global terminal conflict validation
+  -> exact selected binding
+  -> terminal help or version short-circuit
+  -> normalized global invocation and optional workspace
+  -> command-local request binding or concrete invalid result
 ```
 
-The complete plan contains every selected effect, target identity, expected
-current state, intended bytes, generated projection, lifecycle-section change,
-Git policy, staging or backup readiness, verification condition, and recovery
-condition before the first persistent effect. Preflight rejects any incomplete,
-ambiguous, colliding, unsafe, dirty, or unauthorized effect as one plan; the
-operation does not apply a safe subset around it.
+The implementation does not rescan raw arguments for facts exposed by the parse
+tree. A lexical guard may inspect only an exact recognized option and its attached
+delimiter when an accepted syntax distinction cannot be obtained from the pinned
+library. It does not parse values, count occurrences, select commands, or produce
+parser diagnostics.
 
-Staging prepares contained temporary material and required adjacent recovery
-artifacts. Revalidation checks the plan's volatile assumptions immediately
-before each effect. Application uses the planned bytes or bounded regions, then
-verifies each effect and the complete operation. Handled failures reverse applied
-effects in reverse order only while identity guards still match. Unexpected
-concurrent edits are preserved as residual state rather than overwritten by
-recovery.
+`CliInvocation` contains normalized process-wide facts only. A command request is
+complete and immutable. It does not carry `ParseResult`, parser symbols, writers,
+service collections, or an unrelated context bag.
 
-This is not a global transaction and makes no power-loss atomicity claim across
-multiple files. A process, machine, or power failure can leave a residual
-artifact or partially applied set. The next invocation must inspect fresh facts,
-report residual state, and use only a valid recovery identity; it never replays a
-saved plan or assumes that all files changed atomically.
+Workspace-free commands carry genuine workspace absence. Workspace-aware
+commands receive one selected and normalized `CliWorkspace` before domain work.
 
-Recovery artifacts use a structured provenance identity envelope. The envelope
-binds the workspace identity, operation identity, target logical and physical
-identity, artifact kind, expected before/after identity, and recovery state.
-Recovery acts only when that envelope and the current target satisfy the
-identity and containment guards. The envelope is provenance evidence, not a
-cryptographic signature. The threat model protects against accidental or
-unrelated collisions and concurrent changes. It does not protect against a
-same-user actor who can deliberately forge both the workspace content and the
-provenance envelope; that same-user deliberate-forgery limit is accepted.
+## Execution Pipeline
 
-Git remains the affected-path review and cleanliness boundary when it can classify
-the target. `--skip-git-check` changes only that cleanliness check; it never
-grants overwrite, delete, ownership, identity, containment, verification, or
-recovery authority. Adjacent backups and structured recovery evidence remain
-required where the local operation needs them. Backups are removed only after
-complete verification proves they are no longer needed.
-
-`cleanup` is a narrow explicit exception. It builds a fresh catalogue and may
-delete only inactive artifacts whose positive Open Forge provenance, workspace
-association, physical containment, and expected identity are proved. It does
-not delete arbitrary backups, user files, old-format lifecycle files, receipts,
-generated navigation, source content, build output, package caches, or anything
-identified only by a suffix, age, location, or temporary-looking name. It does
-not create a replacement backup, staging copy, receipt, journal, or tombstone.
-Verified deletions are not reversed after a later failure or interruption; the
-remaining catalogue is visible to a fresh invocation. Cleanup never becomes a
-hidden Index, Doctor, Repair, lifecycle, package, or release operation.
-
-## Result, JSON, Coordinates, And Process Status
-
-Every command forms one concrete typed result. Human output and JSON consume
-that result and never rerun the operation. Result types are concrete and
-source-generated. Polymorphic reflection and untyped object graphs are not a
-serialization escape hatch.
-
-The structured output protocol is fixed at top-level schema version 1. Its
-top-level envelope contains exactly:
+The shell uses immutable messages and directly callable stages:
 
 ```text
-schemaVersion
-command
-status
-workspace
-result
-next
+CliInvocationResolution
+  -> CliOperationRequest<TRequest>
+  -> CliOperationResult<TResult>
+  -> CliPresentation<TResult>
+  -> CliRenderedOutput
+  -> CliOutputReceipt
+  -> CliProcessCompletion
 ```
 
-`schemaVersion` is the integer `1`. `result` is the concrete result for the
-selected command, not a generic map.
-`next` is one concrete next action or `null`, never an array or an unbounded
-recommendation list. `workspace` records the exact selected workspace and
-selection method. Source facts and findings carry canonical coordinates, with
-workspace-relative paths and authoritative UTF-8 byte ranges. All paths use one
-canonical spelling, and all arrays, findings, effects, sources, and coordinates
-use explicit deterministic order independent of filesystem enumeration order.
+Each stage validates its own input before invoking an operation, renderer, or
+writer. Direct stage entry is supported for tests and debugging. Unknown finite
+values fail closed.
 
-The semantic statuses and process exits are fixed:
+The pipeline:
 
-| Status        |  Exit |
-| ------------- | ----: |
-| `complete`    |   `0` |
-| `failed`      |   `1` |
-| `attention`   |   `2` |
-| `incomplete`  |   `3` |
-| `invalid`     |   `4` |
-| `blocked`     |   `5` |
-| `interrupted` | `130` |
+- invokes one operation at most once;
+- propagates caller cancellation to the operation;
+- never reruns operation work during rendering or output;
+- selects one cached concrete renderer;
+- renders one primary result;
+- optionally renders one bounded diagnostic projection;
+- writes primary content once to its selected stream;
+- writes diagnostics at most once to stderr; and
+- returns one fixed process completion from the concrete semantic status.
 
-Help and version exit `0`. Human `complete`, `attention`, and `incomplete`
-results use stdout. Human `invalid`, `blocked`, `failed`, and `interrupted`
-results use stderr. JSON emits its one complete result on stdout for every
-semantic status; bounded diagnostics use stderr and never contaminate JSON.
+`ICliCommandResult` exposes only shared process facts needed by the pipeline:
+command identity, semantic status, workspace presence, and next-action presence.
+Concrete result records retain complete command payloads and serialize through
+concrete source-generated metadata. The interface is never a wire type.
 
-## Test Architecture And Evidence
+## Results, Presentation, Help, And Diagnostics
 
-Tests use xUnit v3 through Microsoft Testing Platform. Every `Fact` and `Theory`
-has an explicit readable `DisplayName`. Every test declares a durable feature
-trait and exactly one evidence trait with one of these values:
+Every operation forms one concrete result before presentation. The JSON envelope
+remains schema version 1 and contains `schemaVersion`, `command`, `status`,
+`workspace`, `result`, and `next`. The seven semantic statuses retain one
+exhaustive process-exit and primary-stream policy.
+
+Human and JSON renderers are command-local because they project command meaning.
+Shell presentation owns finite format selection, primary target selection,
+diagnostic target, output messages, and process completion.
+
+Standard help comes from the exact composed `System.CommandLine` symbol graph.
+Bindings provide ordered product sections such as Discovery, examples, related
+commands, bounded notes, and unavailable planned commands. The implementation
+does not maintain a second command catalogue or normalize library output through
+ad hoc string replacement.
+
+Verbose diagnostics are bounded, escaped, and redacted command-local projections
+of already-known facts. They never change operation status, rows, effects, primary
+content, or exit. JSON stdout remains one valid document.
+
+## Framework Capability Model
+
+The complete command set demonstrates several shared capabilities before the
+first command is implemented. Architecture may establish their contracts early,
+while behavior is implemented only in the Task that first consumes it.
+
+### Workspace
+
+Workspace selection resolves explicit and inferred subjects, records the exact
+selection method, normalizes identity once, and never invents a fallback fact.
+Terminal modes bypass workspace selection. Workspace-free commands preserve null
+workspace in concrete results.
+
+### Filesystem And Physical Identity
+
+Filesystem code uses real `System.IO` and typed outcomes. Path strings,
+normalized lexical paths, physical identities, and resolved link targets are
+separate facts.
+
+`PhysicalPathResolver` walks one existing component at a time from a proven root.
+For every component it:
+
+1. inspects the component without enumerating descendants;
+2. classifies ordinary, missing, inaccessible, dangling, or reparse/link state;
+3. resolves one link target;
+4. proves containment immediately after that resolution;
+5. records physical identity for cycle and alias detection; and
+6. continues only from the proven contained result.
+
+A path that leaves the root and later re-enters is blocked at the first external
+transition. Final-target containment is insufficient. If managed BCL evidence
+cannot prove the accepted guarantee on a target platform, implementation stops at
+Architecture rather than adding P/Invoke or weakening the contract.
+
+Typed reads distinguish complete, missing, invalid encoding or syntax, access
+denied, and I/O failure. They preserve bounded direct causes without leaking
+sensitive content.
+
+### Sources, Routing, And Documents
+
+Source references use one shared grammar and typed identity model. Commands
+retain attempted identity separately from resolved identity.
+
+The source catalogue and route graph expose immutable facts only: canonical
+source identity, recognized entrypoint form, Loader root, route chain, scopes,
+overwrites, loading behavior, and safe topology. List, inspect, context, find,
+index, diagnostics, and mutations translate those facts into command-local
+meaning.
+
+Markdown capabilities use one fixed CommonMark pipeline only when the first real
+consumer requires body parsing. Frontmatter reading uses one CLI-root generated
+YAML context and small semantic models. Generated navigation remains a projection
+of routed sources, never an independent authority.
+
+### Lifecycle, Mutation, And Recovery
+
+Read-only commands never create locks, lifecycle files, caches, indexes, or
+recovery artifacts.
+
+Mutation commands follow this visible shape:
 
 ```text
-Feature=<command-or-capability>
-Evidence=Unit
-Evidence=Integration
-Evidence=EndToEnd
-Evidence=PackageEndToEnd
+resolve and inspect
+  -> form a command-local immutable plan
+  -> validate policy and collisions
+  -> acquire the real workspace lock when applicable
+  -> revalidate expected state
+  -> apply bounded filesystem changes
+  -> verify resulting identity and bytes
+  -> write accepted lifecycle or recovery state
+  -> form one concrete result
 ```
 
-`Feature` names the command or capability under test. The evidence value names
-the boundary crossed. MTP selection must be able to run these categories
-independently without relying on filename conventions or random prose.
+Shared mutation support provides file preconditions, atomic replacement,
+workspace locking, expected-state revalidation, Git or recovery primitives, and
+receipts. Each command owns its plan, effect ordering, rollback or compensation
+meaning, findings, and result. No generic engine decides product behavior.
 
-- Unit tests cover every cheap pure parser, value, coordinate, planner,
-  fingerprint, ordering, and result function that can be proven without a
-  process or filesystem effect.
-- Integration tests use real production modules and real command composition
-  across the boundary they claim. Filesystem integration uses real OS temporary
-  workspaces, not an in-memory or fake hierarchy.
-- End-to-end tests execute the complete built Native AOT CLI and assert the
-  process boundary, arguments, streams, exit, workspace bytes, and structured
-  result.
-- Package end-to-end tests invoke the npm launcher and its optional platform
-  package boundary, not a test-only direct method.
+Lifecycle state remains `.agents/open-forge.lifecycle.json`, schema version 1.
+The mutation lock remains `.agents/open-forge.lock`. Existing legacy lifecycle
+formats are ordinary untouched content.
 
-Every mutable test resource is created in an isolated OS temporary workspace or
-an equally isolated OS temporary resource. Tests own their files, directories,
-processes, lock handles, environment, and package state, and are safe to run in
-parallel. Shared fixtures are immutable or independently copied. A test may not
-depend on another test's cleanup or on the repository's mutable workspace.
+## Serialization And Dependencies
 
-Embedded Framework and catalogue assets are proved once at the focused build or
-package boundary through an inventory and exact hashes. Other tests verify
-behavior and typed facts rather than repeating large embedded prose. Tests do
-not assert random prose, incidental formatting, timestamps, or filesystem
-enumeration order. Focused snapshots are allowed only when one stable public
-projection is clearer than structured assertions; snapshots do not replace
-semantic, byte, safety, or process evidence.
+JSON uses `System.Text.Json` source generation with reflection disabled. YAML uses
+one source-generated static context for accepted Framework metadata shapes.
+Concrete command contexts register concrete result graphs. AOT evidence exercises
+every registered shape.
 
-## Distribution And Release Boundary
+Direct package versions are pinned centrally below `src/cli/`:
 
-The accepted release design specifies publication of the canonical executable
-for exactly these six runtime identifiers:
+- `System.CommandLine` 2.0.11;
+- `YamlDotNet` and its accepted static generator 18.1.0;
+- `Markdig` 1.3.2 only after a retained body consumer exists; and
+- xUnit v3 Microsoft Testing Platform packages 4.0.0.
 
-| RID           | Optional npm package                       |
-| ------------- | ------------------------------------------ |
-| `win-x64`     | `@thelithiumforge/open-forge-win32-x64`    |
-| `win-arm64`   | `@thelithiumforge/open-forge-win32-arm64`  |
-| `linux-x64`   | `@thelithiumforge/open-forge-linux-x64`    |
-| `linux-arm64` | `@thelithiumforge/open-forge-linux-arm64`  |
-| `osx-x64`     | `@thelithiumforge/open-forge-darwin-x64`   |
-| `osx-arm64`   | `@thelithiumforge/open-forge-darwin-arm64` |
+Every dependency must earn Native AOT, trimming, maintenance, security, and
+binary-size cost. A later Task may update an exact version only through an
+explicit dependency decision and complete evidence.
 
-The launcher package is `@thelithiumforge/open-forge`. It selects and invokes
-the installed optional native package for the current supported platform. The
-launcher and platform packages contain no postinstall script, download step,
-compilation step, or behavioral wrapper. They do not reimplement command
-parsing, filesystem work, output, or recovery. The accepted design makes the
-future native executable the only behavior implementation.
+## Test Architecture
 
-The initial support floors follow the current official .NET 10 policy. The
-`win-x64` floor is Windows 10 1607 LTSC or Enterprise, or Windows Server 2012
-with its required prerequisites and extended support; the `win-arm64` floor is
-Windows 10 1607 LTSC or Enterprise because the policy lists no Arm64 Windows
-Server floor. Both macOS RIDs start at macOS 14. Both portable 64-bit Linux RIDs
-start at glibc 2.27. The first release has no musl artifact.
+The active test projects have distinct evidence boundaries:
 
-These policy floors are targets, not product evidence. Each RID needs execution
-evidence on its applicable support floor, not only cross-compilation or
-execution on a newer hosted runner. Release artifacts carry checksums and
-signatures, an SBOM, and build provenance. The release workflow uses OIDC for
-trusted attestation and publication credentials. Publication is main-only.
-Feature and development branches may build evidence, but they cannot publish
-release artifacts or packages.
+- Unit tests cover pure values, definitions, parsers, binders, ordering, result
+  formation, renderers, serialization contracts, and directly callable shell
+  stages without claiming real filesystem or process behavior.
+- Integration tests call production modules with owned real temporary filesystems
+  and cover source generation, physical identity, locking, Git, runtime, and
+  Native AOT internal boundaries.
+- End-to-end tests invoke the published executable and prove arguments, streams,
+  statuses, exits, cancellation, unchanged bytes, and public scenarios.
+- TestSupport contains cohesive real-OS workspace and process fixtures shared by
+  at least two active projects. Command-specific builders remain in their nearest
+  test scope.
 
-## Gate 5 Acceptance Boundary
+Every test has an explicit display name, one durable feature trait, and one
+evidence trait. Traits refine selection and never replace project separation.
 
-Gate 5 starts from this accepted structure and proves, at minimum:
+Each test owns every mutable workspace, home, temporary directory, Git repository,
+cache, and process it can affect. Parallel tests share no mutable state. Snapshots
+cover stable projections only; safety, identity, effects, and status remain direct
+assertions.
 
-1. A stable .NET 10 SDK, the C# 14 build, `OpenForge.slnx`, exact central direct
-   dependencies, warning-free managed build, and warning-free Native AOT publish
-   are reproducible for the selected SDK.
-2. System.CommandLine 2.0.11, Markdig 1.3.2, YamlDotNet 18.1.0, source
-   generation, disabled JSON reflection, the fixed Markdown pipeline, and the
-   real `System.IO` boundary work in the published executable.
-3. The six RIDs execute at their support floors, including the actual workspace
-   lock, lifecycle preservation, UTF-8 ranges, lossless patches, recovery
-   provenance, and cleanup boundaries.
-4. Unit, integration, complete Native AOT end-to-end, and npm package
-   end-to-end evidence passes with the required traits, display names, real
-   isolation, inventory/hash checks, and deterministic assertions.
-5. Every retained command in the accepted command tree is implemented and
-   verified. There is no partial `context` plus `find` publication and no
-   retained-later release slice.
-6. Checksums, signatures, SBOM, provenance, OIDC, main-only publication, and
-   the thin launcher journeys are accepted before any release claim.
+Preserved tests are an evidence inventory. The owning Task maps each case to a
+current contract, observes the required failure against the new boundary, and
+then ports the expectation. No Task bulk-copies old test plumbing.
 
-If a foundation spike cannot prove a critical guarantee, implementation stops
-and returns to this Architecture for a narrow decision. A managed build, a
-source-level claim, a package's marketing claim, or a partial command slice
-does not satisfy Gate 5. Until complete Gate 5 evidence is accepted, the
-replacement remains non-shipping. Local foundation outputs are evidence only,
-and `open-forge-old` remains the only established executable CLI reference.
+## Build, Native AOT, CI, And Artifacts
 
-## Related Current Views
+The CLI uses stable .NET 10 with C# 14, nullable analysis, warnings as errors,
+deterministic builds, package auditing, and no prerelease SDK. `global.json`
+allows compatible stable feature-band roll-forward.
 
-- [CLI route](_cli.md)
-- [Command Contract Set](command-contract-set.md)
-- [Shared CLI Operation Contract](shared-operation-contract.md)
-- [Detailed command contracts](contracts/_contracts.md)
-- [Frozen MVP Architecture](mvp-architecture.md)
-- [Open Forge Architecture](../architecture.md)
-- [Framework Architecture](../framework/architecture.md)
-- [Extensions MVP Architecture](../extensions/architecture.md)
+The six production RIDs remain:
+
+- `win-x64`
+- `win-arm64`
+- `linux-x64`
+- `linux-arm64`
+- `osx-x64`
+- `osx-arm64`
+
+Foundation acceptance requires managed build and tests plus at least local
+`win-x64` Native AOT publication and execution. Command Tasks repeat the affected
+managed and local Native AOT evidence. Final delivery runs all six RIDs on their
+native runners and support floors.
+
+The repository CI workflow may live under `.github/workflows/`, but every C# path
+and command it invokes starts below `src/cli/`. CI uploads bounded artifacts; it
+does not make `.github/` a C# source root.
+
+## Durable Implementation Sequence
+
+Implementation proceeds from cross-cutting foundation to read-only facts, then
+mutations and aggregate diagnosis:
+
+1. C# workspace, project graph, artifacts, dependencies, and active test roots.
+2. Core shell contracts, root composition, parser, invocation, pipeline, output,
+   help boundary, serialization, and Native AOT host proof with no command.
+3. Shared workspace and physical-filesystem safety foundations.
+4. `route list` as the first complete read-only command.
+5. `route inspect`, promoting only identical route facts proved by the second
+   consumer.
+6. `find`, `references`, and `context` on shared source and document facts.
+7. `extension list` and `extension inspect` on shared extension-source facts.
+8. `index` after source, route, document, and generated-navigation facts exist.
+9. Shared mutation, lock, lifecycle, recovery, and Git foundations.
+10. `route init`, `route create`, `route update`, `route move`, and `route remove`.
+11. `extension create`, root `install`, root `update`, `extension install`,
+    `extension update`, and `extension remove`.
+12. `status`, `doctor`, `repair`, and `cleanup` after all producers and recovery
+    states exist.
+13. Thin npm wrappers, package evidence, six-RID CI, supply-chain evidence,
+    support-floor execution, documentation, and release.
+
+Each command reaches complete contract, managed, process, unchanged-state, and
+Native AOT acceptance before the next command consumes or promotes its facts.
+
+## Planning, Tasks, And Delegation
+
+The active top-down Plan defines the work graph. Every implementation file belongs
+to one hierarchical Task with explicit architecture references, predecessor
+outputs, accepted classes or algorithms, allowed paths, protected boundaries,
+tests, verification, integration, and stop conditions.
+
+The Mastermind implements architectural foundations and cross-cutting callable
+contracts directly. Advisors may challenge a named unresolved boundary. Smaller
+implementers receive only closed behavior or mechanical Tasks after their
+foundation exists. A Task that exposes an unresolved system choice returns to the
+Mastermind before code continues.
+
+Local passing tests do not accept a change that violates this Architecture.
+Acceptance combines focused evidence, direct diff inspection, dependency and
+locality checks, affected integration, Native AOT proof, and the parent Task's
+observable outcome.
+
+## Release Boundary
+
+The final release publishes the canonical executable for six RIDs, checksums,
+signatures, SBOM, provenance, OIDC attestation, and thin package wrappers. Wrappers
+contain no behavior, download, postinstall compilation, or fallback runtime.
+
+No partial command publication is accepted. The replacement becomes shipping only
+after the maintainer accepts the complete retained command set, package graph,
+native support matrix, documentation, and release evidence.

@@ -98,7 +98,14 @@ That rule belongs to the selected agent-TDD recipe. It is not a universal Task
 primitive rule. Another Workflow may define a different safe update policy,
 and an external tracker may enforce its own permissions.
 
-## Current CLI Trial
+## Current Trials
+
+The local [Task Template](../../../templates/memory/task.md) and [Plan
+Template](../../../templates/memory/plan.md) are experimental dogfood sources.
+They test whether one Task can define the problem, outcome, boundaries,
+hierarchy, and acceptance while a separate Plan defines the execution graph,
+parallel lanes, resources, verification, and continuity. They do not establish a
+standard Task `route`, a required lifecycle, or a shipped Template.
 
 The historical [CLI Foundation](../../archived/cli-v2/implementation-history/cli-foundation.md) and [CLI
 Development Workflow Task](../../archived/cli-v2/implementation-history/cli-development-workflow.md) suggest

@@ -169,7 +169,7 @@ The architecture is intentionally split by authoritative scope:
 - The [Extensions MVP Architecture](extensions/architecture.md) is authoritative for current optional capability composition, lifecycle, safety boundaries, and liabilities
 - The [CLI MVP Architecture](cli/mvp-architecture.md) is authoritative for shipped commands, deterministic state, safety, verification, implementation, and liabilities
 
-The Extensions view documents its current MVP without treating implementation choices as permanent. The [active CLI release program](../../working/cli-release/_cli-release.md) keeps unsettled new-CLI work, while the [CLI-v2 archive](../../archived/cli-v2/_cli-v2.md) preserves deleted designs without making them current.
+The Extensions view documents its current MVP without treating implementation choices as permanent. The [replacement CLI Architecture](cli/architecture.md) defines the current greenfield implementation boundary, while the [CLI-v2 archive](../../archived/cli-v2/_cli-v2.md) preserves deleted designs without making them current.
 
 ## Related Current Views
 

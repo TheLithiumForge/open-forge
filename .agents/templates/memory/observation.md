@@ -26,6 +26,16 @@ Replace the frontmatter, title, and placeholders, then remove this braced guidan
 
 {Link to or describe the concrete occurrence, output, artifact, measurement, or report that supports the Observation.}
 
+Sanitize the evidence. Do not preserve provider, model, AI, runtime-profile,
+session, task, review, handoff, or hidden orchestration identifiers; personal,
+user, or machine identifiers; secrets or tokens; local absolute paths; or
+incidental environment fingerprints. Prefer role names, repository-relative
+evidence, and behavior-level failure descriptions.
+
+## Conclusion, Reasoning, And Tradeoffs
+
+{When the source is a review, advisor, challenge, maintainer correction, or comparable decision aid, preserve its conclusion, evidence and reasoning, strongest viable option or counterargument, material tradeoffs, and what would change the conclusion. Distinguish the source's conclusion from later synthesis.}
+
 ## Scope
 
 {State where the finding occurred, what it may apply to, and where it should not yet be generalized.}
@@ -40,7 +50,7 @@ Replace the frontmatter, title, and placeholders, then remove this braced guidan
 
 ## Occurrences
 
-{Record later independent occurrences here instead of creating parallel records.}
+{Record later independent occurrences here instead of creating parallel records. Compare reviewer convergence or divergence only after each independent first pass, and preserve changed assumptions or evidence rather than recording agreement alone.}
 
 ## Follow-Up And Promotion Signals
 

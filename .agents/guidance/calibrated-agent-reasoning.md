@@ -17,6 +17,12 @@ Bound the delegation first: state its outcome, authority, allowed and forbidden
 surfaces, required evidence, and handoff. Then choose a default reasoning level
 from the work itself.
 
+Complete caller-owned decisions before delegation. Provide accepted meaning,
+known facts, exact targets or search boundaries, non-goals, required validation,
+return shape, and stop conditions with enough precision that the helper need not
+rediscover the problem. Stop short of performing the assigned action in the
+packet itself.
+
 | Default  | Use when                                                                                                                                                                             |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `medium` | The work is mechanical inspection, state maintenance, or a tightly specified transformation with local failure effects.                                                              |
@@ -39,23 +45,23 @@ Reasoning levels describe the attention budget for one delegation. They do not
 rank agent capability, seniority, or trustworthiness, and they do not replace
 evidence or independent review.
 
-## Local Development Routing
+## Delegation Packets
 
-The selected local Development Workflow uses the following accepted routing:
-
-| Stage             | Model and reasoning |
-| ----------------- | ------------------- |
-| Mastermind        | Sol/high            |
-| Preflight         | Sol/xhigh           |
-| Gray, Red, Green  | Terra/medium        |
-| Blue, Purple      | Terra/high          |
-| Whole-Task Review | Sol/xhigh           |
-
-Do not substitute fast or nano models. Preflight may route Gray, Red, or Green
-to Sol/high when security, concurrency, filesystem safety, migrations, external
-integrations, public compatibility, or cross-domain architecture makes the
-normal middle-phase routing insufficient. APM and runtime-profile implementation
-remain separate work.
+- Keep assignments non-overlapping unless independent perspectives are the
+  explicit purpose. Do not ask several agents to repeat the same exploration,
+  implementation, or review.
+- Treat a writer packet as a prose specification, an explorer packet as one
+  complete bounded evidence question, an implementer packet as a closed plan,
+  and a reviewer packet as an exact diff plus accepted requirements and claimed
+  evidence.
+- Require compact results, validation, uncertainty, and the smallest useful
+  escalation rather than raw search or hidden-reasoning transcripts.
+- Keep provider, model, and runtime-profile choices in the local agent
+  configuration and its package source rather than duplicating them in generic
+  repository guidance.
+- The primary agent must inspect the integrated artifacts and evidence before
+  final acceptance within its delegated scope. Helper reviews add independent
+  lenses but do not replace that final review.
 
 ## Tradeoffs
 

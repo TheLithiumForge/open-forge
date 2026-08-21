@@ -102,6 +102,13 @@ roots and is not a hardcoded list of standard categories. A root that exists in
 the workspace but is not exposed by the current Loader is not silently promoted
 into the operand-free result.
 
+The Loader's current direct route declarations establish this operand-free root
+set. This is the only route-list use of a generated `Entries` interior as a
+selection boundary. It does not make Loader row order canonical and does not let
+generated `Entries` establish descendant membership, parentage, metadata, depth,
+or order. Missing or malformed Loader root declarations make root coverage
+incomplete rather than authorizing a hardcoded fallback.
+
 An explicitly selected detached entrypoint may enumerate its own local routed
 subtree. A detached tree is not claimed to be Loader-rooted. Detached trees are
 not included by the operand-free form; an entrypoint must be selected explicitly.
@@ -142,13 +149,19 @@ The result includes:
 
 - Recognized routed entrypoints, including current workspace-defined roots and
   detached entrypoints when explicitly selected.
-- Ordinary routed Markdown leaves.
+- Supported direct sibling sources with valid Open Forge metadata. These are
+  ordinary routed leaves whether or not the parent entrypoint's generated
+  `Entries` currently names them.
 - Routed native sources whose source contract establishes route metadata, such as
   a routed `SKILL.md`.
 
 It excludes supported but unrouted sources and excludes a valid overwrite companion
 as an independent row. A base row represents the logical source; its overwrite
 relationship is retained in provenance when relevant.
+
+A child folder participates only through exactly one recognized entrypoint. A
+supported file below an unrepresented intermediate folder is not a routed
+descendant merely because it is physically below a routed ancestor.
 
 ## Route Rows
 
@@ -266,6 +279,33 @@ effective depth, semantic result, coverage, findings, and every route row with
 all fields listed above. It retains empty result sets and incomplete coverage
 explicitly. `--view` is accepted but has no effect under JSON.
 
+The camel-case structured shape is fixed for schema version 1:
+
+```text
+{
+  schemaVersion,
+  command,
+  status,
+  workspace: { path, selectedBy },
+  result: {
+    selection,
+    requestedDepth,
+    effectiveDepth,
+    coverage,
+    findings,
+    rows
+  },
+  next
+}
+```
+
+`command` is exactly `route list`. `selection` distinguishes Loader-root
+selection from one explicit source and retains that source's ID and path when
+present. Each row uses `id`, `path`, `parentId`, `parentPath`, `absoluteDepth`,
+`relativeDepth`, `kind`, `description`, `tags`, `directChildCount`, and
+`provenance`. `next` is one `{ command, reason }` value or null. Status and
+workspace facts are not duplicated inside `result`.
+
 There is no minimal projection. `route list` has no `--show`, `--display`,
 metadata filter, literal filter, result cap, graph mode, or semantic query mode.
 
@@ -289,6 +329,14 @@ coverage. Every human error names the operation, affected reference or route
 when known, direct cause, and useful next action. Shared JSON and global-flag
 rules apply to every semantic result.
 
+Missing or malformed required route metadata makes the requested coverage
+`incomplete` because a complete row cannot be established. Unsafe identity or
+ambiguous topology is `blocked`. An authored-form finding may be `attention`
+only when every requested row and coverage fact remains complete. Cancellation
+returns `interrupted`, may retain already confirmed safe rows, and never reports
+complete coverage. Cancellation observed after a complete result has been formed
+does not replace that completed result.
+
 ## Complete Examples
 
 List every current Loader-exposed root and its direct routed children:
@@ -306,7 +354,7 @@ open-forge route list --depth=0
 List a selected route's complete subtree by ID:
 
 ```text
-open-forge route list memory/working/cli-release --depth=all
+open-forge route list memory/working/checkpoints --depth=all
 ```
 
 Select an exact detached entrypoint explicitly:

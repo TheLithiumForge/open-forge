@@ -11,15 +11,14 @@ that defines each affected question.
 
 Current responsibilities are:
 
-| Source                                | Responsibility                                                |
-| ------------------------------------- | ------------------------------------------------------------- |
-| `src/open-forge/`                     | Installable Framework wording                                 |
-| `src/extensions/`                     | First-party Extension packages                                |
-| `.agents/`                            | Repository dogfood, current knowledge, rules, and active work |
-| `src/cli-mvp/`                        | Frozen legacy CLI source, build support, and tests            |
-| `src/open-forge-cli/`                 | Non-shipping replacement CLI source                           |
-| `.agents/memory/archived/cli-v2/`     | Deleted CLI-v2 raw historical input                           |
-| `.agents/memory/working/cli-release/` | Active new-CLI evidence and gate state                        |
+| Source                            | Responsibility                                                     |
+| --------------------------------- | ------------------------------------------------------------------ |
+| `src/open-forge/`                 | Installable Framework wording                                      |
+| `src/extensions/`                 | First-party Extension packages                                     |
+| `.agents/`                        | Repository dogfood, current knowledge, rules, and active work      |
+| `src/cli-mvp/`                    | Frozen legacy CLI source, build support, and tests                 |
+| `src/cli/`                        | Greenfield boundary and preserved evidence for the replacement CLI |
+| `.agents/memory/archived/cli-v2/` | Deleted CLI-v2 raw historical input                                |
 
 ## CLI Transition
 
@@ -59,6 +58,18 @@ The root `package.json` contains transitional Bun and TypeScript scripts for the
 frozen MVP and repository build. They are not replacement CLI implementation or
 a replacement release gate. The non-shipping native CLI toolchain remains
 separate from this frozen support. Package wrappers do not exist yet.
+
+The replacement C# implementation follows the current [CLI
+Architecture](../.agents/memory/crystallized/documents/cli/architecture.md) and
+[active Plan](../.agents/memory/working/cli-development/plan.md). Its source,
+workspace configuration, projects, and tests live below `src/cli/`, divided first
+into `root/`, `core/`, and `tests/`. The repository root contains no active C#
+solution or build configuration. Preserved files under `src/cli/tests/` are
+candidate evidence and are not currently runnable projects.
+
+Do not infer restore, build, test, or Native AOT success before the architectural
+foundation creates and verifies the scoped workspace. The root `package.json` and
+frozen MVP tooling do not provide a replacement CLI build.
 
 Do not treat `dist/` or `.temp/` as authored authority. Do not edit generated
 output manually.

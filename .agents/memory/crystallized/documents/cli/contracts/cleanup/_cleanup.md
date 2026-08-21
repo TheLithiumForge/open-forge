@@ -36,7 +36,7 @@ ship yet; implementation and executable proof remain pending Gate 5.
   realization. This contract remains the authority for cleanup's observable
   meaning.
 
-The [Decision Agenda](../../../../../working/cli-release/decision-agenda.md) records the accepted D017A
+The [historical Decision Agenda](../../../../../archived/cli-release/decision-agenda-2026-08-21.md) records the accepted D017A
 direction. The detailed local contracts remain the authorities for cleanup's
 public and technology-neutral meanings.
 
@@ -47,6 +47,8 @@ public and technology-neutral meanings.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
+
 - [Accepted technology-neutral catalogue, deletion, safety, monotonic recovery, and conformance for cleanup](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Cleanup #Behavior #Mutation #Recovery #Safety #Determinism #CurrentTruth
 - [Accepted non-shipping public interface for operand-free cleanup of recognized Open Forge transient and recovery artifacts](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Cleanup #Interface #Mutation #Recovery #Safety #CurrentTruth
+
 <!-- open-forge:generated-index:end -->

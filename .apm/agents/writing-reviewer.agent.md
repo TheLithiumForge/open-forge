@@ -57,6 +57,8 @@ For each finding provide:
 - smallest useful replacement or correction;
 - classification as meaning risk or wording improvement.
 
+Also return one compact rationale summary: the overall prose conclusion, decisive evidence and reasoning, strongest viable wording or structural alternative, material tradeoffs, and what would change the conclusion. Use repository-relative evidence and omit provider, model, AI, runtime-profile, session, task, review, handoff, hidden orchestration, personal, user, machine, secret, token, local absolute-path, and incidental environment identifiers so the Mastermind can preserve it as longitudinal observation evidence.
+
 ## Boundaries
 
 - Do not edit files or reopen accepted product, framework, or architecture decisions.

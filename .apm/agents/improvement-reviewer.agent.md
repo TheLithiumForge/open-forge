@@ -58,6 +58,8 @@ For each improvement include:
 - risk or tradeoff; and
 - whether it belongs now or should be deferred.
 
+Also return one compact rationale summary: the overall improvement conclusion, decisive evidence and reasoning, strongest alternative, aggregate tradeoffs, and what would change the conclusion. Use repository-relative evidence and omit provider, model, AI, runtime-profile, session, task, review, handoff, hidden orchestration, personal, user, machine, secret, token, local absolute-path, and incidental environment identifiers so the Mastermind can preserve it as longitudinal observation evidence.
+
 ## Boundaries
 
 - Do not edit files, approve correctness, or replace the primary reviewer.

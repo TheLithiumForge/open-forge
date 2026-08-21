@@ -508,6 +508,6 @@ executable proof.
 - [Global CLI Flags Interface Contract](../shared/global-flags/interface.md)
 - [CLI Source References Behavior Contract](../shared/source-references/behavior.md)
 - [CLI Architecture](../../architecture.md)
-- [CLI Decision Agenda](../../../../../working/cli-release/decision-agenda.md)
-- [CLI Release Plan](../../../../../working/cli-release/release-plan.md)
+- [Historical CLI Decision Agenda](../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
+- [Historical CLI Release Plan](../../../../../archived/cli-release/release-plan-2026-08-21.md)
 - [Shared CLI Operation Contract](../../shared-operation-contract.md)

@@ -12,7 +12,7 @@ Produce prioritized actionable findings, or a clear no-findings result, without 
 
 ## Steps
 
-1. Establish the review target, intended behavior, scope, workspace rules, and relevant starting state.
+1. Establish the review target, intended behavior, scope, workspace rules, and relevant starting state. For an independent first pass, use a clean packet containing accepted requirements, baseline, target diff, and claimed evidence while withholding earlier reviewer or advisor conclusions and Observation comparisons until the return is complete.
 2. Inspect the target and enough surrounding context to understand responsibilities, interactions, and accepted constraints.
 3. When durable knowledge changed, compare what was accepted with every resulting durable source. Report missing outcomes, stale candidates, excessive promotion, duplication, and content placed in the wrong role, scope, authority state, or lifetime.
 4. Trace high-risk paths, boundaries, failure modes, state transitions, compatibility concerns, and evidence gaps. Prioritize correctness, security, data loss, regressions, and broken contracts over style preference.
@@ -20,7 +20,8 @@ Produce prioritized actionable findings, or a clear no-findings result, without 
 6. Give each finding a location, evidence, consequence, and smallest credible correction. Label uncertainty that could change the finding.
 7. Challenge every candidate finding against existing safeguards, context, and possible false positives.
 8. Compare the final state with the baseline and account for every change before claiming the review remained read-only.
-9. Report findings in priority order, followed by questions, verification gaps, and residual risk. Make fixes only when explicitly requested, and keep them distinct from the findings they address.
+9. Report findings in priority order, followed by questions, verification gaps, and residual risk. Then include a compact review-rationale record: overall conclusion, evidence and reasoning, strongest viable option or counterargument, material tradeoffs, and what would change the conclusion. Make fixes only when explicitly requested, and keep them distinct from the findings they address.
+10. The owning Mastermind persists the sanitized rationale in the active Task or review record and creates or extends a matching Emerging Observation when the conclusion, anomaly, correction, or tradeoff may be reusable or useful for longitudinal comparison. Compare with prior conclusions only after an independent first pass.
 
 ## Completion
 
@@ -29,3 +30,4 @@ Produce prioritized actionable findings, or a clear no-findings result, without 
 - False positives and existing safeguards were considered.
 - The final state remained unchanged unless fixes were explicitly requested.
 - Verification gaps, uncertainty, and residual risk are stated.
+- The conclusion, reasoning, strongest option or counterargument, tradeoffs, and change conditions are explicit enough for sanitized longitudinal comparison.

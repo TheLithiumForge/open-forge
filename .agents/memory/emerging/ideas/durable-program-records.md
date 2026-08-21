@@ -80,7 +80,7 @@ ceremony.
 
 ## Related Evidence
 
-- [Current CLI release trial](../../working/cli-release/_cli-release.md)
+- [Historical CLI implementation reset](../../archived/cli-release/implementation-reset-2026-08-21.md)
 - [Optional task work modes](task-work-modes.md)
 - [Checkpoint contract](../../working/checkpoints/_checkpoints.md)
 - [Decision lifecycle metadata](decision-lifecycle-metadata.md)
