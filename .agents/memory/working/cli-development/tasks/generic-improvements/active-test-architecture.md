@@ -11,7 +11,7 @@ open-forge:
 - State: Complete through accepted Purple commit `e277227`.
 - Responsible role: Mastermind.
 - Task source: This file.
-- Last updated: 2026-08-22.
+- Last updated: 2026-08-23.
 - Read-only Preflight: Complete from exact clean predecessor `a14f66d` (`Accept parser remediation`) on branch `feature/cli-generic-improvements`.
 - Next phase: None in this child. [Refine Callable And Project Architecture](callable-project-architecture.md)
   was later completed at `cc2387d`; the parent Final Full Gate and integrated review
@@ -302,9 +302,8 @@ gate, or vulnerability gate in this child.
   managed, local `win-x64` Native AOT, package, vulnerability, artifact, and
   integrated-review gate remained deferred until all generic children were
   complete. This child did not claim that parent gate.
-- Next Task-level action: Return to the accepted generic parent. Its final feature
-  gate passes from clean `7871764`, and authorized squash-merge into `develop` is
-  next.
+- Next Task-level action: Run read-only [Find](../read-only/find.md) Preflight from
+  exact `063c59d`; no next-product implementation is active.
 
 ## Completion And Closeout
 

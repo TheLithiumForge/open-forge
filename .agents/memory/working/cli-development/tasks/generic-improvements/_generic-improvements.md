@@ -1,24 +1,24 @@
 ---
 open-forge:
   description: Improve cross-cutting CLI parser, test, callable, and project structure without changing accepted command meaning
-  tags: [Memory, Working, CLI, Task, Generic, Parser, Testing, Architecture, Contextual, Active]
+  tags: [Memory, Working, CLI, Task, Generic, Parser, Testing, Architecture, Contextual, Complete]
 ---
 
 # Improve Generic CLI Structure
 
 ## Task State
 
-- State: Feature result accepted after the complete gate/review from clean
-  `7871764` on branch `feature/cli-generic-improvements`, based on exact `develop`
-  squash `bd5d280`; authorized squash-merge into `develop` is next. The final
-  implementation boundary is `cc2387d` (`Refine callable architecture`).
+- State: Complete; accepted feature tip `a107afe` is squash-integrated into `develop`
+  at `063c59d` (`Improve and accept generic CLI structure`). The integrated tree is
+  exactly equal to the accepted feature tree. The final implementation boundary is
+  `cc2387d` (`Refine callable architecture`).
 - Implementer: Mastermind. Feature-branch phase commits are pre-authorized after
   the applicable Working-only planning boundary; each phase still requires its
   evidence, stop conditions, and acceptance boundary.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Predecessor: Accepted [Route Inspect and Route Discovery](../route-discovery/route-inspect.md).
 - Task source: This file.
-- Last updated: 2026-08-22.
+- Last updated: 2026-08-23.
 
 ## Baseline
 
@@ -64,17 +64,16 @@ contracts and receives its own bounded evidence and review.
    Complete at `cc2387d`; named component inputs are accepted and root/Core remains
    retained without project mutation.
 4. Run one final complete-suite acceptance and review the integrated result —
-   Complete from clean `7871764` after exact `cc2387d`; commit the final acceptance
-   record, then squash-merge this branch into `develop` before the next product Task.
+   Complete from clean `7871764` after exact `cc2387d`; accepted feature tip
+   `a107afe` is squash-integrated at `063c59d` with exact tree equality.
 
 Later children receive their own accepted Preflight packets. Parser work must not
 quietly perform their cleanup.
 
 ## Decisions Needed
 
-None. All three children, feature-branch acceptance, and integrated correctness
-review pass. The final acceptance-record commit, authorized squash-merge into
-`develop`, and integrated-tree verification remain.
+None. All three children, feature-branch acceptance, integrated correctness review,
+squash integration at `063c59d`, and accepted-tree verification are Complete.
 
 ## Evidence
 
@@ -176,12 +175,13 @@ claim six-RID parity; the existing later CI/release owner remains unchanged.
   and integrated review pass from clean `7871764`; no blocker or unresolved material
   finding remains.
 - Blockers: None.
-- Next action: Commit this final acceptance record, then squash-merge the accepted
-  branch into `develop` and verify the integrated tree before starting another Task.
+- Integration: `develop` squash `063c59d` exactly matches accepted feature tip
+  `a107afe`; no post-acceptance implementation difference exists.
+- Next action: Begin read-only Preflight for [Find](../read-only/find.md) from exact
+  `063c59d`; do not mutate the next product Task before its boundary closes.
 
 ## Completion
 
-Feature-branch acceptance is met: all three ordered improvement stages, the complete
-post-change gate, and independent integrated review pass. This Task becomes fully
-Complete after the accepted branch is squash-merged into `develop` and the integrated
-tree is verified.
+Complete. All three ordered improvement stages, the complete post-change gate,
+independent integrated review, squash integration at `063c59d`, and exact
+accepted-tree equality pass.

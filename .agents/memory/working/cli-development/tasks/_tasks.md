@@ -12,7 +12,7 @@ Read the [program Task](00-cli-development.md), [Architecture](../../../crystall
 
 - [x] [CLI Foundation](foundation/_foundation.md) — Complete — Implementer: Mastermind
 - [x] [Route Discovery](route-discovery/_route-discovery.md) — Complete — Implementer: Mastermind
-- [ ] [Generic CLI Improvements](generic-improvements/_generic-improvements.md) — Active — Implementer: Mastermind
+- [x] [Generic CLI Improvements](generic-improvements/_generic-improvements.md) — Complete — Implementer: Mastermind
 - [ ] [Read-Only Commands](read-only/_read-only.md) — Planned — Implementer: Not assigned
 - [ ] [Mutation Foundation](mutation-foundation/_mutation-foundation.md) — Planned — Implementer: Not assigned
 - [ ] [Route Mutation Commands](route-mutation/_route-mutation.md) — Planned — Implementer: Not assigned

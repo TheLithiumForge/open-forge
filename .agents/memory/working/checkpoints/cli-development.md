@@ -384,14 +384,17 @@ boundary without restoring the removed local architecture.
   `213/213`, Native AOT EndToEnd `57/57`, zero skips, no vulnerable packages, clean
   project/artifact audits, exact native public scenarios, and fresh integrated
   correctness review. Local native evidence is explicitly `win-x64`, not six-RID
-  parity. No material finding remains; authorized squash-merge into `develop` is
-  next after the final acceptance-record commit.
+  parity. No material finding remains; the authorized squash-merge later completed
+  at `063c59d`.
+- Generic CLI Improvements are squash-integrated into `develop` at `063c59d`; the
+  integrated tree exactly equals accepted feature tip `a107afe`. The parent Task is
+  Complete. Read-only Find Preflight is next from exact `063c59d`; no next-product
+  source or test mutation has begun.
 
 ## Current Step
 
-Commit the generic parent final acceptance record, then squash-merge
-`feature/cli-generic-improvements` into `develop` and verify the integrated tree
-before starting another Task.
+Run read-only Preflight for [Find](../cli-development/tasks/read-only/find.md) from
+exact integrated commit `063c59d`, then close its Task boundary before mutation.
 
 ## Route-List Closeout Decision
 
@@ -443,6 +446,5 @@ Read:
 8. [Improve Active-Test Architecture](../cli-development/tasks/generic-improvements/active-test-architecture.md)
 9. [Refine Callable And Project Architecture](../cli-development/tasks/generic-improvements/callable-project-architecture.md)
 
-Then commit the final generic acceptance record and perform the authorized
-squash-merge into `develop`. All generic children and the parent feature gate are
-accepted; integrated-tree verification remains before the next Task.
+Then begin read-only Find Preflight from exact `063c59d`. Generic improvements are
+Complete and integrated; no next-product implementation is active.

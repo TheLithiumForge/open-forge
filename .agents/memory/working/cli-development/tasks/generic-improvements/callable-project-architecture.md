@@ -12,7 +12,7 @@ open-forge:
 - Responsible role: Mastermind.
 - Parent: [Improve Generic CLI Structure](_generic-improvements.md).
 - Task source: This file.
-- Last updated: 2026-08-22.
+- Last updated: 2026-08-23.
 - Branch: `feature/cli-generic-improvements`.
 - Read-only Preflight: Complete from exact clean accepted predecessor `eb2e336`
   (`Accept active test architecture`).
@@ -423,9 +423,8 @@ occurs:
 - Blockers: None. This child did not claim the parent full managed, local Native AOT,
   package, vulnerability, artifact, or integrated-review gates. The parent later
   ran those gates from clean `7871764`, and they pass.
-- Next Task-level action: Return to the accepted generic parent. Its final feature
-  gate passes from clean `7871764`, and authorized squash-merge into `develop` is
-  next.
+- Next Task-level action: Run read-only [Find](../read-only/find.md) Preflight from
+  exact `063c59d`; no next-product implementation is active.
 - Completion is claimed at `cc2387d`; the focused evidence, audits, and fresh reviews
   pass with no unresolved material finding.
 
@@ -449,4 +448,5 @@ resumption.
 Completion status: Met at `cc2387d`. Root/Core remains retained without project
 mutation. The parent final full managed, local `win-x64` Native AOT, package,
 vulnerability, artifact, and integrated-review gate passes from clean `7871764`;
-the final acceptance-record commit and squash-merge remain pending.
+the accepted result is squash-integrated into `develop` at `063c59d` with exact tree
+equality.

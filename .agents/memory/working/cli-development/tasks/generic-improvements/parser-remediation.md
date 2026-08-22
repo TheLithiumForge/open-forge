@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Replace generic parser rescans and terminal bypass gaps with pinned library facts and typed validation
-  tags: [Memory, Working, CLI, Task, Generic, Parser, SystemCommandLine, Evidence, Contextual, Active]
+  tags: [Memory, Working, CLI, Task, Generic, Parser, SystemCommandLine, Evidence, Contextual, Complete]
 ---
 
 # Remediate Parser And Standard Behavior
@@ -16,7 +16,7 @@ open-forge:
 - Parent: [Improve Generic CLI Structure](_generic-improvements.md).
 - Pinned dependency: `System.CommandLine` 2.0.11.
 - Task source: This file.
-- Last updated: 2026-08-22.
+- Last updated: 2026-08-23.
 
 ## Baseline
 
@@ -385,9 +385,9 @@ inner loops do not consume that final gate early.
   the parent generic branch's complete managed and Native AOT gate remained deferred
   until every generic child was complete; it now passes from clean `7871764`.
 - Blockers: None.
-- Next action: Return to the accepted generic parent. Its final feature gate passes
-  from clean `7871764`, and authorized squash-merge into `develop` is next; parser
-  remediation remains Complete and its accepted meaning is closed.
+- Next action: Run read-only [Find](../read-only/find.md) Preflight from exact
+  `063c59d`; no next-product implementation is active. Parser remediation remains
+  Complete and its accepted meaning is closed.
 
 ## Completion
 

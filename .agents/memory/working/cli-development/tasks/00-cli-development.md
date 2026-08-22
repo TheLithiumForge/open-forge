@@ -11,7 +11,7 @@ open-forge:
 - State: Active.
 - Responsible role: Mastermind.
 - Task source: This file.
-- Last updated: 2026-08-22.
+- Last updated: 2026-08-23.
 
 ## Problem Statement
 
@@ -115,9 +115,9 @@ bypass the Foundation group.
 
 - Current result: Architecture, Plan, reset, Task governance, Foundation, and
   Route Discovery are accepted. Route List is integrated at `edca509`; Route
-  Inspect is squash-integrated at `bd5d280`. Generic improvements are active from
-  that exact baseline on `feature/cli-generic-improvements`; their complete
-  beginning suite passes. Parser remediation is Complete through Purple `d445e20` and
+  Inspect is squash-integrated at `bd5d280`. Generic improvements are Complete and
+  squash-integrated at `063c59d`; their complete beginning suite passed. Parser
+  remediation is Complete through Purple `d445e20` and
   focused public acceptance. [Improve Active-Test Architecture](generic-improvements/active-test-architecture.md)
   is Complete at `e277227`, with its accepted Working boundary at clean `eb2e336`,
   focused Integration `129/129`, freshly published managed EndToEnd `57/57`, zero
@@ -126,15 +126,15 @@ bypass the Foundation group.
   at `cc2387d` with focused Unit `53/53`,
   Integration `49/49`, freshly published managed EndToEnd `57/57`, zero skips, and
   accepted architecture review. All generic child Tasks are Complete.
-- Blocker: None for generic child completion.
+- Generic integration: `063c59d` exactly matches accepted feature tip `a107afe`.
+- Blocker: None for generic completion or Find Preflight.
 - Final generic feature gate: Warning-free build, format/diff, managed Unit `580/580`,
   Integration `213/213`, EndToEnd `57/57`, local `win-x64` Native AOT root with
   managed EndToEnd `57/57`, Native AOT Integration `213/213`, Native AOT EndToEnd
   `57/57`, package/artifact/public audits, and integrated review pass with zero skips
   and no blocker.
-- Next action: Commit the generic final acceptance record, then squash-merge
-  `feature/cli-generic-improvements` into `develop` and verify the integrated tree
-  before starting the next product Task.
+- Next action: Run read-only [Find](read-only/find.md) Preflight from exact
+  `063c59d`; do not begin implementation before its Task boundary closes.
 
 ## Completion And Closeout
 
