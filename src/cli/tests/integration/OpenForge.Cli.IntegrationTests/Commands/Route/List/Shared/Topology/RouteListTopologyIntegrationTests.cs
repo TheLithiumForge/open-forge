@@ -2,6 +2,8 @@ using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Topology;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Topology;
+using OpenForge.Cli.Core.Commands.Route.Shared.Topology;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Route.List.Shared.Filesystem;
@@ -245,7 +247,14 @@ public sealed class RouteListTopologyIntegrationTests
         }
 
         var input = new RouteListTopologyInput(request, inventory, selection, loaderSelection);
-        var topology = new RouteListRouteGraphBuilder().Build(input);
+        var topology = new RouteTopologyBuilder().Build(
+            input.Inventory.Sources
+                .Where(source => source.Kind is (
+                    RouteListSourceKind.Entrypoint
+                    or RouteListSourceKind.RoutedLeaf
+                    or RouteListSourceKind.RoutedNative))
+                .Select(source => source.Source),
+            input.LoaderRootPaths);
         var selected = new RouteListTopologySelector().Select(input, topology, cancellationToken);
         var coverage = new RouteListCoverageBuilder().Build(input, selected);
         return new RouteListResultBuilder().Build(input, selected, coverage);

@@ -1,6 +1,8 @@
 using OpenForge.Cli.Core.Commands.Route.List;
+using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Loader;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Route.List;
@@ -393,7 +395,7 @@ public sealed class LoaderDestinationResolverIntegrationTests
 
     private static async Task<LoaderDestinationResolution> ResolveLoaderAsync(
         RouteListSelectionIntegrationWorkspace workspace,
-        RouteListSourceCatalogue catalogue)
+        RouteSourceCatalogue catalogue)
     {
         return await new LoaderDestinationResolver(new PhysicalPathResolver())
             .ResolveAsync(

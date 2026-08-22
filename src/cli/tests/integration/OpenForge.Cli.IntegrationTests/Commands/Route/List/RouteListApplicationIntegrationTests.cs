@@ -7,8 +7,8 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.List;
 
 public sealed class RouteListApplicationIntegrationTests
 {
-    [Fact(DisplayName = "CLI root route group and route-list help expose the composed command surface"), Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
-    public async Task ComposedHelpExposesRootGroupAndLeaf()
+    [Fact(DisplayName = "CLI root route family and Route List help expose the composed family and list leaf"), Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
+    public async Task ComposedRouteFamilyHelpExposesListLeaf()
     {
         using var workspace = RouteListFilesystemIntegrationWorkspace.Create();
 
@@ -24,8 +24,9 @@ public sealed class RouteListApplicationIntegrationTests
         Assert.Equal(string.Empty, leaf.Error);
         Assert.Contains("route list", root.Output, StringComparison.Ordinal);
         Assert.Contains("list", group.Output, StringComparison.Ordinal);
-        Assert.Contains("inspect  unavailable", group.Output, StringComparison.Ordinal);
+        Assert.Contains("inspect  available", group.Output, StringComparison.Ordinal);
         Assert.Contains("open-forge route list [source-reference]", leaf.Output, StringComparison.Ordinal);
+        Assert.Contains("route inspect — available", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("The default depth is 1", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("open-forge route list memory", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("open-forge route list .agents/memory/_memory.md", leaf.Output, StringComparison.Ordinal);
@@ -68,6 +69,80 @@ public sealed class RouteListApplicationIntegrationTests
         Assert.Equal(json.Output, verboseJson.Output);
         Assert.Contains("rows=1", verboseJson.Error, StringComparison.Ordinal);
         Assert.DoesNotContain("root/child", verboseJson.Error, StringComparison.Ordinal);
+        Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
+    [Fact(DisplayName = "CLI route-list keeps real results identical across native workspace and view delimiters"), Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
+    public async Task NativeGlobalDelimiterFormsProduceIdenticalRealWorkspaceResults()
+    {
+        using var workspace = RouteListFilesystemIntegrationWorkspace.Create();
+        WriteLoader(workspace, "- [Root](root/_root.md) - #Root");
+        WriteRoute(workspace, ".agents/root/_root.md", "Root route", "Root");
+        var before = workspace.SnapshotHashes();
+
+        var workspaceForms = new (string Name, string[] Arguments)[]
+        {
+            ("workspace-spaced", ["--workspace", workspace.Path]),
+            ("workspace-equals", [$"--workspace={workspace.Path}"]),
+            ("workspace-colon", [$"--workspace:{workspace.Path}"]),
+        };
+        var viewForms = new (string Name, string[] Arguments)[]
+        {
+            ("view-spaced", ["--view", "expanded"]),
+            ("view-equals", ["--view=expanded"]),
+            ("view-colon", ["--view:expanded"]),
+        };
+
+        var baseline = await RunAsync(
+            ["route", "list", "root", "--workspace", workspace.Path, "--depth=0", "--view=expanded"],
+            workspace.Path);
+        Assert.Equal(0, baseline.ExitCode);
+        Assert.Equal(string.Empty, baseline.Error);
+        Assert.Contains("ID: root", baseline.Output, StringComparison.Ordinal);
+
+        foreach (var workspaceForm in workspaceForms)
+        {
+            foreach (var viewForm in viewForms)
+            {
+                var arguments = new List<string> { "route", "list", "root" };
+                arguments.AddRange(workspaceForm.Arguments);
+                arguments.Add("--depth=0");
+                arguments.AddRange(viewForm.Arguments);
+                var result = await RunAsync(arguments.ToArray(), workspace.Path);
+                var form = $"{workspaceForm.Name}, {viewForm.Name}";
+
+                Assert.True(
+                    result.ExitCode == baseline.ExitCode,
+                    $"{form}: expected exit {baseline.ExitCode}, actual {result.ExitCode}.");
+                Assert.True(result.Output == baseline.Output, $"{form}: standard output differed.");
+                Assert.True(result.Error == baseline.Error, $"{form}: standard error differed.");
+            }
+        }
+
+        Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
+    [Theory(DisplayName = "CLI route-list retains its explicit depth delimiter policy before option termination")]
+    [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
+    [InlineData("--depth", "1")]
+    [InlineData("--depth:1", null)]
+    public async Task DepthDelimiterPolicyRemainsExplicitBeforeTerminator(
+        string option,
+        string? separateValue)
+    {
+        using var workspace = RouteListFilesystemIntegrationWorkspace.Create();
+        WriteLoader(workspace, "- [Root](root/_root.md) - #Root");
+        WriteRoute(workspace, ".agents/root/_root.md", "Root route", "Root");
+        var before = workspace.SnapshotHashes();
+        string[] arguments = separateValue is null
+            ? ["route", "list", "root", option, "--json"]
+            : ["route", "list", "root", option, separateValue, "--json"];
+
+        var result = await RunAsync(arguments, workspace.Path);
+
+        Assert.Equal(4, result.ExitCode);
+        Assert.Equal(string.Empty, result.Output);
+        Assert.NotEmpty(result.Error);
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 

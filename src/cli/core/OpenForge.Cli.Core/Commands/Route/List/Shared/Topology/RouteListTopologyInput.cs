@@ -1,4 +1,5 @@
 using System.Collections.Frozen;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 
@@ -83,7 +84,7 @@ internal sealed class RouteListTopologyInput
 
     private static void RequireInventorySource(
         RouteListInventoryFacts inventory,
-        RouteListSource source,
+        RouteSource source,
         string parameterName)
     {
         var inventorySource = inventory.Sources

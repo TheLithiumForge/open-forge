@@ -27,37 +27,53 @@ public sealed class CliProcessTests
         Assert.False(Directory.Exists(missingWorkspace));
     }
 
-    [Fact(DisplayName = "Published root and help expose the accepted route-list command")]
-    [Trait("Feature", "cli-process"), Trait("Evidence", "EndToEnd")]
-    public async Task PublishedRootAndHelpExposeRouteListCommand()
+    [Fact(DisplayName = "Published root and route-family help expose available List and Inspect commands")]
+    [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
+    public async Task PublishedRootAndRouteFamilyHelpExposeAvailableCommands()
     {
         var environment = PublishedExecutableEnvironment.ReadRequired();
         using var working = TemporaryWorkspace.Create("e2e-help");
 
-        var root = await RunAsync(environment, working.Path, []);
-        var help = await RunAsync(environment, working.Path, ["--help"]);
-        var group = await RunAsync(environment, working.Path, ["route"]);
-        var leaf = await RunAsync(environment, working.Path, ["route", "list", "--help"]);
+        var root = await RunWithoutWritesAsync(environment, working.Path, working.SnapshotHashes, []);
+        var help = await RunWithoutWritesAsync(environment, working.Path, working.SnapshotHashes, ["--help"]);
+        var group = await RunWithoutWritesAsync(environment, working.Path, working.SnapshotHashes, ["route"]);
+        var leaf = await RunWithoutWritesAsync(
+            environment,
+            working.Path,
+            working.SnapshotHashes,
+            ["route", "list", "--help"]);
+        var inspectLeaf = await RunWithoutWritesAsync(
+            environment,
+            working.Path,
+            working.SnapshotHashes,
+            ["route", "inspect", "--help"]);
 
         Assert.Equal(0, root.ExitCode);
         Assert.Equal(0, help.ExitCode);
         Assert.Equal(0, group.ExitCode);
         Assert.Equal(0, leaf.ExitCode);
+        Assert.Equal(0, inspectLeaf.ExitCode);
         Assert.Equal(root.StandardOutput, help.StandardOutput);
         Assert.Contains("Open Forge CLI (`open-forge`)", root.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Discovery:", root.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("route list", root.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("route inspect", root.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("list     available", group.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("inspect  unavailable", group.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("inspect  available", group.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(
             "open-forge route list [source-reference] [--depth=<non-negative-integer|all>]",
             leaf.StandardOutput,
             StringComparison.Ordinal);
         Assert.Contains("open-forge route list memory --depth=all", leaf.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains(
+            "open-forge route inspect <source-reference>",
+            inspectLeaf.StandardOutput,
+            StringComparison.Ordinal);
         Assert.Equal(string.Empty, root.StandardError);
         Assert.Equal(string.Empty, help.StandardError);
         Assert.Equal(string.Empty, group.StandardError);
         Assert.Equal(string.Empty, leaf.StandardError);
+        Assert.Equal(string.Empty, inspectLeaf.StandardError);
     }
 
     [Fact(DisplayName = "Published route list emits one structured result without mutating the workspace")]
@@ -81,6 +97,90 @@ public sealed class CliProcessTests
         var row = Assert.Single(document.RootElement.GetProperty("result").GetProperty("rows").EnumerateArray());
         Assert.Equal("root", row.GetProperty("id").GetString());
         Assert.Equal("Root", row.GetProperty("tags")[0].GetString());
+        Assert.Equal(before, working.SnapshotHashes());
+    }
+
+    [Fact(DisplayName = "Published route-list preserves native global delimiters"), Trait("Feature", "route-list"), Trait("Evidence", "EndToEnd")]
+    public async Task PublishedRouteListPreservesGlobalDelimiterParity()
+    {
+        var environment = PublishedExecutableEnvironment.ReadRequired();
+        using var working = PublishedRouteWorkspace.CreateComplete();
+        var before = working.SnapshotHashes();
+
+        var workspaceForms = new (string Name, string[] Arguments)[]
+        {
+            ("workspace-spaced", ["--workspace", working.Path]),
+            ("workspace-equals", [$"--workspace={working.Path}"]),
+            ("workspace-colon", [$"--workspace:{working.Path}"]),
+        };
+        var viewForms = new (string Name, string[] Arguments)[]
+        {
+            ("view-spaced", ["--view", "compact"]),
+            ("view-equals", ["--view=compact"]),
+            ("view-colon", ["--view:compact"]),
+        };
+
+        var baseline = await RunAsync(
+            environment,
+            working.Path,
+            [
+                "route", "list", "root", "--workspace", working.Path,
+                "--json", "--depth=0", "--view=compact",
+            ]);
+        Assert.Equal(0, baseline.ExitCode);
+        Assert.Equal(string.Empty, baseline.StandardError);
+        using (var baselineDocument = JsonDocument.Parse(baseline.StandardOutput))
+        {
+            Assert.Equal("complete", baselineDocument.RootElement.GetProperty("status").GetString());
+            var row = Assert.Single(
+                baselineDocument.RootElement.GetProperty("result").GetProperty("rows").EnumerateArray());
+            Assert.Equal("root", row.GetProperty("id").GetString());
+        }
+
+        foreach (var workspaceForm in workspaceForms)
+        {
+            foreach (var viewForm in viewForms)
+            {
+                var arguments = new List<string> { "route", "list", "root" };
+                arguments.AddRange(workspaceForm.Arguments);
+                arguments.Add("--json");
+                arguments.Add("--depth=0");
+                arguments.AddRange(viewForm.Arguments);
+                var result = await RunAsync(environment, working.Path, arguments);
+                var form = $"{workspaceForm.Name}, {viewForm.Name}";
+
+                Assert.True(
+                    result.ExitCode == baseline.ExitCode,
+                    $"{form}: expected exit {baseline.ExitCode}, actual {result.ExitCode}.");
+                Assert.True(result.StandardOutput == baseline.StandardOutput, $"{form}: standard output differed.");
+                Assert.True(result.StandardError == baseline.StandardError, $"{form}: standard error differed.");
+            }
+        }
+
+        Assert.Equal(before, working.SnapshotHashes());
+    }
+
+    [Fact(DisplayName = "Published route-list accepts an option-like source after the terminator"), Trait("Feature", "route-list"), Trait("Evidence", "EndToEnd")]
+    public async Task PublishedRouteListAcceptsOptionLikeSourceAfterTerminator()
+    {
+        var environment = PublishedExecutableEnvironment.ReadRequired();
+        using var working = PublishedRouteWorkspace.CreateComplete();
+        var before = working.SnapshotHashes();
+
+        var result = await RunAsync(
+            environment,
+            working.Path,
+            ["route", "list", "--workspace", working.Path, "--json", "--", "--depth"]);
+
+        Assert.Equal(4, result.ExitCode);
+        Assert.Equal(string.Empty, result.StandardError);
+        using var invalidDocument = JsonDocument.Parse(result.StandardOutput);
+        Assert.Equal("route list", invalidDocument.RootElement.GetProperty("command").GetString());
+        Assert.Equal("invalid", invalidDocument.RootElement.GetProperty("status").GetString());
+        var findings = invalidDocument.RootElement.GetProperty("result").GetProperty("findings");
+        var finding = Assert.Single(findings.EnumerateArray());
+        Assert.Equal("route-list.unknown-source", finding.GetProperty("code").GetString());
+        Assert.Equal("--depth", finding.GetProperty("subject").GetString());
         Assert.Equal(before, working.SnapshotHashes());
     }
 
@@ -311,5 +411,17 @@ public sealed class CliProcessTests
                 workingDirectory,
                 timeout: TimeSpan.FromSeconds(30)),
             TestContext.Current.CancellationToken);
+    }
+
+    private static async Task<ProcessRunResult> RunWithoutWritesAsync(
+        PublishedExecutableEnvironment environment,
+        string workingDirectory,
+        Func<IReadOnlyDictionary<string, string>> snapshot,
+        IReadOnlyList<string> arguments)
+    {
+        var before = snapshot();
+        var result = await RunAsync(environment, workingDirectory, arguments);
+        Assert.Equal(before, snapshot());
+        return result;
     }
 }

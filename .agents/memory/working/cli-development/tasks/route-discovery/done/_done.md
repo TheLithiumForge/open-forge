@@ -19,5 +19,6 @@ This route collects and routes completed leaf Tasks for [Route Discovery](../_ro
 - [Implement route-list topology, ordering, depth, coverage, status, and next-action formation](route-list-topology.md) - #Memory #Working #CLI #Task #Route #List #Topology #Result #Contextual #Complete
 - [Implement route-list human, JSON, diagnostic, and binding-derived help projections](route-list-presentation.md) - #Memory #Working #CLI #Task #Route #List #Rendering #Help #Diagnostics #Contextual #Complete
 - [Run route-list managed, process, Native AOT, public-scenario, no-write, and architecture acceptance](route-list-acceptance.md) - #Memory #Working #CLI #Task #Route #List #Acceptance #NativeAOT #Contextual #Complete
+- [Resolve one route-inspect source and audit every route-list candidate before any truthful promotion](route-inspect-resolution-promotion.md) - #Memory #Working #CLI #Task #Route #Inspect #Resolution #Promotion #Contextual #Complete
 
 <!-- open-forge:generated-index:end -->

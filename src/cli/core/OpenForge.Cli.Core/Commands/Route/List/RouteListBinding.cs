@@ -3,6 +3,8 @@ using System.CommandLine.Parsing;
 using System.Globalization;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
+using OpenForge.Cli.Core.Commands.Route.Shared.Source;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -22,8 +24,9 @@ internal sealed record RouteListSymbols(
 
 internal static class RouteListBinding
 {
-    internal static RouteListSymbols CreateSymbols()
+    internal static RouteListSymbols CreateSymbols(Command routeGroup)
     {
+        ArgumentNullException.ThrowIfNull(routeGroup);
         var sourceReference = new Argument<string?>(RouteListDefinitions.SourceReference.Name)
         {
             Description = RouteListDefinitions.SourceReference.Description,
@@ -33,7 +36,9 @@ internal static class RouteListBinding
         {
             Description = RouteListDefinitions.Depth.Description,
             HelpName = RouteListDefinitions.Depth.ValueName,
-            Arity = ArgumentArity.ExactlyOne,
+            // Keep attached-empty depth from consuming a following global option;
+            // the binding still rejects every explicit value outside the public grammar.
+            Arity = ArgumentArity.ZeroOrOne,
             DefaultValueFactory = _ => RouteListDefinitions.Depth.DefaultValue,
         };
         var list = new Command(
@@ -41,13 +46,9 @@ internal static class RouteListBinding
             RouteListDefinitions.ListCommand.Description);
         list.Arguments.Add(sourceReference);
         list.Options.Add(depth);
-        var route = new Command(
-            RouteListDefinitions.RouteGroup.Name,
-            RouteListDefinitions.RouteGroup.Description);
-        route.SetAction(static _ => 0);
-        route.Subcommands.Add(list);
+        routeGroup.Subcommands.Add(list);
         return new RouteListSymbols(
-            route,
+            routeGroup,
             list,
             sourceReference,
             depth,
@@ -61,7 +62,7 @@ internal static class RouteListBinding
         RouteListSymbols symbols,
         CliHelpContent help,
         CliRequestBinder<RouteListRequest, RouteListResult> binder,
-        CliInvalidResultFactory<RouteListResult> invalidResultFactory,
+        CliContextualInvalidResultFactory<RouteListResult> invalidResultFactory,
         RouteListOperation operation,
         CliRendererSet<RouteListResult> renderers,
         CliDiagnosticRenderer<RouteListResult>? diagnosticRenderer = null)
@@ -90,12 +91,9 @@ internal static class RouteListBinding
             symbols);
     }
 
-    internal static CliInvalidResultFactory<RouteListResult> CreateInvalidResultFactory()
+    internal static CliContextualInvalidResultFactory<RouteListResult> CreateInvalidResultFactory()
     {
-        return static (invalidInput, input, environment) => CreateWorkspaceInvalidResult(
-            invalidInput,
-            input,
-            environment);
+        return RouteListBindingInputPolicy.CreateWorkspaceInvalidResult;
     }
 
     internal static CliBindResult<RouteListRequest, RouteListResult> Bind(
@@ -109,11 +107,17 @@ internal static class RouteListBinding
         ArgumentNullException.ThrowIfNull(invocation);
         ArgumentNullException.ThrowIfNull(symbols);
         var sourceReference = parseResult.GetValue(symbols.SourceReference);
-        var depthSpelling = ReadDepthSpelling(originalArguments, parseResult, symbols.Depth);
+        var depthSpelling = RouteListBindingInputPolicy.ReadDepthSpelling(
+            originalArguments,
+            parseResult,
+            symbols.Depth);
         if (!TryParseDepth(depthSpelling, out var requestedDepth))
         {
             return CliBindResult<RouteListRequest, RouteListResult>.Invalid(
-                CreateInvalidDepthResult(invocation.Workspace, sourceReference, depthSpelling));
+                RouteListBindingInputPolicy.CreateInvalidDepthResult(
+                    invocation.Workspace,
+                    sourceReference,
+                    depthSpelling));
         }
 
         var workspace = invocation.Workspace
@@ -147,96 +151,5 @@ internal static class RouteListBinding
 
         depth = RouteListDepth.Default;
         return false;
-    }
-
-    private static RouteListResult CreateInvalidDepthResult(
-        CliWorkspace? workspace,
-        string? sourceReference,
-        string? depthSpelling)
-    {
-        var selection = ReadAttemptedSelection(sourceReference);
-        var subject = string.IsNullOrWhiteSpace(depthSpelling)
-            ? "--depth"
-            : RouteListTextEscaping.Clamp(depthSpelling, RouteListTextEscaping.ShortValueLimit);
-        var finding = new RouteListFinding(
-            RouteListFindingCode.InvalidDepth,
-            CliSemanticStatus.Invalid,
-            subject,
-            "Depth must be a non-negative Int32 or the exact value all.");
-        return RouteListResult.Create(
-            CliSemanticStatus.Invalid,
-            workspace,
-            selection,
-            RouteListCoverage.NotStarted(null),
-            [],
-            [finding],
-            new CliNextAction(
-                "open-forge route list --help",
-                "Use a non-negative Int32 depth or all, then rerun the operation."));
-    }
-
-    private static RouteListResult CreateWorkspaceInvalidResult(
-        CliInvalidInput invalidInput,
-        CliGlobalInput input,
-        CliProcessEnvironment environment)
-    {
-        ArgumentNullException.ThrowIfNull(invalidInput);
-        ArgumentNullException.ThrowIfNull(input);
-        ArgumentNullException.ThrowIfNull(environment);
-        var cause = invalidInput.Diagnostics.Count == 1
-            ? invalidInput.Diagnostics[0]
-            : string.Join(" ", invalidInput.Diagnostics);
-        return RouteListResult.Create(
-            CliSemanticStatus.Invalid,
-            null,
-            RouteListSelectionFactory.LoaderRoots(),
-            RouteListCoverage.NotStarted(null),
-            [],
-            [new RouteListFinding(
-                RouteListFindingCode.InvalidWorkspace,
-                CliSemanticStatus.Invalid,
-                input.WorkspaceValue ?? environment.CurrentDirectory,
-                cause)],
-            new CliNextAction(
-                "open-forge route list --help",
-                "Select an available directory with --workspace, then rerun the operation."));
-    }
-
-    private static RouteListSelection ReadAttemptedSelection(string? sourceReference)
-    {
-        var parsed = RouteListSourceReferenceParser.Parse(sourceReference);
-        return parsed.Kind switch
-        {
-            RouteListSourceReferenceKind.LoaderRoots => RouteListSelectionFactory.LoaderRoots(),
-            RouteListSourceReferenceKind.SourceId when parsed.AttemptedId is not null
-                => RouteListSelectionFactory.AttemptedId(parsed.AttemptedId),
-            RouteListSourceReferenceKind.SourcePath when parsed.AttemptedPath is not null
-                => RouteListSelectionFactory.AttemptedPath(parsed.AttemptedPath),
-            _ => RouteListSelectionFactory.LoaderRoots(),
-        };
-    }
-
-    private static string? ReadDepthSpelling(
-        IReadOnlyList<string> originalArguments,
-        ParseResult parseResult,
-        Option<string?> depth)
-    {
-        var prefix = $"{RouteListDefinitions.Depth.Name}=";
-        var original = originalArguments
-            .TakeWhile(value => !string.Equals(value, "--", StringComparison.Ordinal))
-            .FirstOrDefault(value => value.StartsWith(prefix, StringComparison.Ordinal));
-        if (original is not null)
-        {
-            return original[prefix.Length..];
-        }
-
-        try
-        {
-            return parseResult.GetValue(depth);
-        }
-        catch (InvalidOperationException)
-        {
-            return string.Empty;
-        }
     }
 }

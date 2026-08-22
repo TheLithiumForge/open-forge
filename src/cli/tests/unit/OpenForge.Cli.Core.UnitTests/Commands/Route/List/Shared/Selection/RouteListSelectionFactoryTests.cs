@@ -1,6 +1,8 @@
 using System.Reflection;
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
+using OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.List.Shared.Selection;
 
@@ -116,12 +118,10 @@ public sealed class RouteListSelectionFactoryTests
             Source()));
     }
 
-    private static RouteListSource Source()
+    private static RouteSource Source()
     {
-        return new RouteListSource(
-            "memory",
+        return RouteSourceTestData.Source(
             ".agents/memory/_memory.md",
-            Path.Combine(Path.GetTempPath(), "memory", "_memory.md"),
-            RouteListSourceKind.Entrypoint);
+            RouteSourceKind.Entrypoint);
     }
 }

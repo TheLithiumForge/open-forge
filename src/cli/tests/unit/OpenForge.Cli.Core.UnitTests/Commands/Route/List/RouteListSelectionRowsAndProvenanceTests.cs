@@ -1,8 +1,10 @@
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Presentation;
+using OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.List;
 
@@ -12,11 +14,9 @@ public sealed class RouteListSelectionRowsAndProvenanceTests
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void SelectionKeepsAttemptedAndResolvedIdentityDistinct()
     {
-        var source = new RouteListSource(
-            "memory",
+        var source = RouteSourceTestData.Source(
             ".agents/memory/_memory.md",
-            Path.Combine(Path.GetTempPath(), "memory", "_memory.md"),
-            RouteListSourceKind.Entrypoint);
+            RouteSourceKind.Entrypoint);
         var roots = RouteListSelectionFactory.LoaderRoots();
         var attemptedId = RouteListSelectionFactory.AttemptedId("memory");
         var attemptedPath = RouteListSelectionFactory.AttemptedPath(".agents/memory/_memory.md");

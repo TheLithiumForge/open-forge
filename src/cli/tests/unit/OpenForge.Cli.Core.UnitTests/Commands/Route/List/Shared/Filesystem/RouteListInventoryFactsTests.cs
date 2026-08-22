@@ -1,9 +1,11 @@
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.List.Shared.Filesystem;
 
@@ -40,7 +42,7 @@ public sealed class RouteListInventoryFactsTests
             ".agents/collision/_collision.md",
             "physical-two.md",
             RouteListSourceKind.Entrypoint,
-            RouteListSourceForm.CanonicalEntrypoint);
+            RouteSourceForm.CanonicalEntrypoint);
         var sources = new List<RouteListInventorySource> { second, first };
         var findings = new List<RouteListFilesystemFinding>
         {
@@ -198,14 +200,16 @@ public sealed class RouteListInventoryFactsTests
     {
         var nonNormalized = Path.Combine(Path.GetTempPath(), "route-list", "..", "file.md");
 
-        Assert.Throws<ArgumentException>(() => new RouteListInventoryFileFact(
+        Assert.Throws<ArgumentException>(() => new RouteSourceDocument(
             ".agents/file.md",
             "relative.md",
+            RouteSourceForm.Markdown,
             FileReadState.Complete,
             "body"));
-        Assert.Throws<ArgumentException>(() => new RouteListInventoryFileFact(
+        Assert.Throws<ArgumentException>(() => new RouteSourceDocument(
             ".agents/file.md",
             nonNormalized,
+            RouteSourceForm.Markdown,
             FileReadState.Complete,
             "body"));
     }
@@ -215,19 +219,21 @@ public sealed class RouteListInventoryFactsTests
         string canonicalPath,
         string physicalName,
         RouteListSourceKind kind = RouteListSourceKind.RoutedLeaf,
-        RouteListSourceForm form = RouteListSourceForm.Markdown)
+        RouteSourceForm form = RouteSourceForm.Markdown)
     {
-        var selectionSource = new RouteListSource(
-            id,
+        var sourceKind = kind switch
+        {
+            RouteListSourceKind.Loader => RouteSourceKind.Loader,
+            RouteListSourceKind.Entrypoint => RouteSourceKind.Entrypoint,
+            RouteListSourceKind.RoutedLeaf => RouteSourceKind.Markdown,
+            RouteListSourceKind.RoutedNative => RouteSourceKind.Native,
+            _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "The test source kind is not routable."),
+        };
+        var selectionSource = RouteSourceTestData.Source(
             canonicalPath,
-            Physical(physicalName),
-            kind);
-        var metadata = RouteListSourceMetadata.Complete(
-            $"Description for {id}",
-            form == RouteListSourceForm.Skill ? [] : ["Test"],
-            isCompatibilityEntrypoint: false,
-            isOverwritePresent: false);
-        return new RouteListInventorySource(selectionSource, form, metadata, null);
+            sourceKind,
+            form: form);
+        return new RouteListInventorySource(selectionSource);
     }
 
     private static RouteListPhysicalAlias Alias(string path, string physicalName, string firstPath)

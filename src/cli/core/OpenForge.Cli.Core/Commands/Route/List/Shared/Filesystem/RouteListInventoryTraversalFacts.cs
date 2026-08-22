@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 
@@ -11,11 +12,13 @@ internal sealed class RouteListInventoryAccumulator
     private readonly Dictionary<string, string> _firstLogicalByPhysical = new(PhysicalIdentityTracker.PathComparer);
     private readonly HashSet<string> _aliasedLogicalPaths = new(StringComparer.Ordinal);
 
-    internal List<RouteListInventoryFileFact> Files { get; } = [];
+    internal List<RouteSourceDocument> Files { get; } = [];
 
     internal List<RouteListFilesystemFinding> Findings { get; } = [];
 
     internal List<RouteListPhysicalAlias> Aliases { get; } = [];
+
+    internal List<RouteOverwriteFact> OverwriteFacts { get; } = [];
 
     internal void RegisterIdentity(string canonicalLogicalPath, string physicalPath)
     {

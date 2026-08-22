@@ -2,8 +2,10 @@ using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.List;
 
@@ -601,13 +603,9 @@ public sealed class RouteListCoverageAndResultTests
 
     private static RouteListSelection ResolvedSelection(string id, string canonicalPath)
     {
-        var physicalPath = Path.GetFullPath(
-            Path.Combine(Path.GetTempPath(), canonicalPath.Replace('/', Path.DirectorySeparatorChar)));
-        var source = new RouteListSource(
-            id,
+        var source = RouteSourceTestData.Source(
             canonicalPath,
-            physicalPath,
-            RouteListSourceKind.Entrypoint);
+            RouteSourceKind.Entrypoint);
         return RouteListSelectionFactory.ResolvedId(id, source);
     }
 

@@ -31,7 +31,7 @@ public sealed class RouteListInventoryReaderBoundaryIntegrationTests
         Assert.Equal(RouteListInventoryState.Complete, facts.State);
         var source = Assert.Single(facts.Sources);
         Assert.Equal(".agents/source.md", source.Source.CanonicalPath);
-        Assert.Equal("Aliased workspace source", source.Metadata.Description);
+        Assert.Equal("Aliased workspace source", source.Source.Metadata.Description);
         Assert.Equal(before, temporary.SnapshotHashes());
     }
 

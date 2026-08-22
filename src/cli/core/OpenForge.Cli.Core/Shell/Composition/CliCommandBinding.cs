@@ -3,6 +3,7 @@ using System.CommandLine.Parsing;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Invocation;
+using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Parsing;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Presentation;
@@ -51,10 +52,8 @@ internal delegate CliBindResult<TRequest, TResult> CliRequestBinder<TRequest, TR
     CliInvocation invocation)
     where TResult : ICliCommandResult;
 
-internal delegate TResult CliInvalidResultFactory<TResult>(
-    CliInvalidInput invalidInput,
-    CliGlobalInput input,
-    CliProcessEnvironment environment)
+internal delegate TResult CliContextualInvalidResultFactory<TResult>(
+    CliInvalidBindingInput input)
     where TResult : ICliCommandResult;
 
 internal interface ICliCommandBinding
@@ -72,9 +71,7 @@ internal interface ICliCommandBinding
         CancellationToken cancellationToken);
 
     ValueTask<CliProcessCompletion> PresentInvalidAsync(
-        CliInvalidInput invalidInput,
-        CliGlobalInput input,
-        CliProcessEnvironment environment,
+        CliInvalidBindingInput input,
         CliOutputWriters writers,
         CancellationToken cancellationToken);
 }
@@ -83,7 +80,7 @@ internal sealed class CliCommandBinding<TRequest, TResult> : ICliCommandBinding
     where TResult : ICliCommandResult
 {
     private readonly CliRequestBinder<TRequest, TResult> _binder;
-    private readonly CliInvalidResultFactory<TResult> _invalidResultFactory;
+    private readonly CliContextualInvalidResultFactory<TResult> _invalidResultFactory;
     private readonly CliCommandPipeline<TRequest, TResult> _pipeline;
 
     internal CliCommandBinding(
@@ -91,7 +88,7 @@ internal sealed class CliCommandBinding<TRequest, TResult> : ICliCommandBinding
         CliHelpContent help,
         CliWorkspaceRequirement workspaceRequirement,
         CliRequestBinder<TRequest, TResult> binder,
-        CliInvalidResultFactory<TResult> invalidResultFactory,
+        CliContextualInvalidResultFactory<TResult> invalidResultFactory,
         CliOperation<TRequest, TResult> operation,
         CliRendererSet<TResult> renderers,
         CliDiagnosticRenderer<TResult>? diagnosticRenderer = null)
@@ -150,17 +147,15 @@ internal sealed class CliCommandBinding<TRequest, TResult> : ICliCommandBinding
     }
 
     public ValueTask<CliProcessCompletion> PresentInvalidAsync(
-        CliInvalidInput invalidInput,
-        CliGlobalInput input,
-        CliProcessEnvironment environment,
+        CliInvalidBindingInput input,
         CliOutputWriters writers,
         CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(invalidInput);
         ArgumentNullException.ThrowIfNull(input);
-        ArgumentNullException.ThrowIfNull(environment);
-        var result = _invalidResultFactory(invalidInput, input, environment);
+        ArgumentNullException.ThrowIfNull(writers);
+        var result = _invalidResultFactory(input);
         ArgumentNullException.ThrowIfNull(result);
-        return _pipeline.PresentAsync(result, input.Presentation, writers);
+        return _pipeline.PresentAsync(result, input.GlobalInput.Presentation, writers);
     }
+
 }

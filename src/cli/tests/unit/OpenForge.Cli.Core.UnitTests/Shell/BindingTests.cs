@@ -2,9 +2,11 @@ using System.CommandLine;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Composition;
+using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Invocation;
 using OpenForge.Cli.Core.Shell.Parsing;
+using OpenForge.Cli.Core.Shell.Parsing.Models;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Presentation;
 
@@ -29,7 +31,7 @@ public sealed class BindingTests
                 binderCalls++;
                 return CliBindResult<TestRequest, TestResult>.Bound(new TestRequest("value"));
             },
-            (invalid, input, environment) => Result(CliSemanticStatus.Invalid),
+            input => Result(CliSemanticStatus.Invalid),
             (request, cancellationToken) =>
             {
                 operationCalls++;
@@ -104,8 +106,8 @@ public sealed class BindingTests
         var command = new Command("leaf");
         CliRequestBinder<TestRequest, TestResult> binder =
             (parse, invocation) => CliBindResult<TestRequest, TestResult>.Bound(new TestRequest("value"));
-        CliInvalidResultFactory<TestResult> invalid =
-            (input, global, environment) => Result(CliSemanticStatus.Invalid);
+        CliContextualInvalidResultFactory<TestResult> invalid =
+            input => Result(CliSemanticStatus.Invalid);
         CliOperation<TestRequest, TestResult> operation =
             (request, cancellationToken) => ValueTask.FromResult(Result(CliSemanticStatus.Complete));
         var renderers = new CliRendererSet<TestResult>(presentation => "human", presentation => "{}");
@@ -143,7 +145,7 @@ public sealed class BindingTests
             CliHelpContent.Empty,
             CliWorkspaceRequirement.Absent,
             (parse, invocation) => CliBindResult<TestRequest, TestResult>.Bound(new TestRequest("value")),
-            (invalid, input, environment) =>
+            input =>
             {
                 invalidFactoryCalls++;
                 return Result(CliSemanticStatus.Invalid);

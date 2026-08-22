@@ -1,6 +1,8 @@
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Topology;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
+using OpenForge.Cli.Core.Commands.Route.Shared.Topology;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 
 namespace OpenForge.Cli.Core.Commands.Route.List;
@@ -13,7 +15,7 @@ internal static class RouteListOperationFactory
         var coordinator = new RouteListOperationCoordinator(
             new RouteListInventoryReader(),
             new RouteListSelectionResolver(physicalPathResolver),
-            new RouteListRouteGraphBuilder(),
+            new RouteTopologyBuilder(),
             new RouteListTopologySelector(),
             new RouteListCoverageBuilder(),
             new RouteListResultBuilder());
@@ -25,7 +27,7 @@ internal sealed class RouteListOperationCoordinator
 {
     private readonly RouteListInventoryReader _inventoryReader;
     private readonly RouteListSelectionResolver _selectionResolver;
-    private readonly RouteListRouteGraphBuilder _graphBuilder;
+    private readonly RouteTopologyBuilder _graphBuilder;
     private readonly RouteListTopologySelector _topologySelector;
     private readonly RouteListCoverageBuilder _coverageBuilder;
     private readonly RouteListResultBuilder _resultBuilder;
@@ -33,7 +35,7 @@ internal sealed class RouteListOperationCoordinator
     internal RouteListOperationCoordinator(
         RouteListInventoryReader inventoryReader,
         RouteListSelectionResolver selectionResolver,
-        RouteListRouteGraphBuilder graphBuilder,
+        RouteTopologyBuilder graphBuilder,
         RouteListTopologySelector topologySelector,
         RouteListCoverageBuilder coverageBuilder,
         RouteListResultBuilder resultBuilder)
@@ -57,7 +59,7 @@ internal sealed class RouteListOperationCoordinator
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
-        var attemptedSelection = ReadAttemptedSelection(request.SourceReference);
+        var attemptedSelection = RouteListSelectionFactory.Attempted(request.SourceReference);
         try
         {
             var inventory = await _inventoryReader
@@ -88,7 +90,14 @@ internal sealed class RouteListOperationCoordinator
                 inventory,
                 selection,
                 loaderRootSelection);
-            var topology = _graphBuilder.Build(input);
+            var topology = _graphBuilder.Build(
+                inventory.Sources
+                    .Where(source => source.Kind is
+                        RouteListSourceKind.Entrypoint
+                        or RouteListSourceKind.RoutedLeaf
+                        or RouteListSourceKind.RoutedNative)
+                    .Select(source => source.Source),
+                input.LoaderRootPaths);
             var selected = _topologySelector.Select(input, topology, cancellationToken);
             var coverage = _coverageBuilder.Build(input, selected);
             return _resultBuilder.Build(input, selected, coverage);
@@ -103,17 +112,4 @@ internal sealed class RouteListOperationCoordinator
         }
     }
 
-    private static RouteListSelection ReadAttemptedSelection(string? sourceReference)
-    {
-        var parsed = RouteListSourceReferenceParser.Parse(sourceReference);
-        return parsed.Kind switch
-        {
-            RouteListSourceReferenceKind.LoaderRoots => RouteListSelectionFactory.LoaderRoots(),
-            RouteListSourceReferenceKind.SourceId when parsed.AttemptedId is not null
-                => RouteListSelectionFactory.AttemptedId(parsed.AttemptedId),
-            RouteListSourceReferenceKind.SourcePath when parsed.AttemptedPath is not null
-                => RouteListSelectionFactory.AttemptedPath(parsed.AttemptedPath),
-            _ => RouteListSelectionFactory.LoaderRoots(),
-        };
-    }
 }

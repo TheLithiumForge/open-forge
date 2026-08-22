@@ -37,6 +37,11 @@ internal static class CliDelimiterGuard
 
         foreach (var argument in arguments)
         {
+            if (string.Equals(argument, "--", StringComparison.Ordinal))
+            {
+                break;
+            }
+
             foreach (var policy in policies)
             {
                 ArgumentNullException.ThrowIfNull(policy);

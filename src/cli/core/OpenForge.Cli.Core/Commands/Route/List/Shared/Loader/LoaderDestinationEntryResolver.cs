@@ -1,93 +1,12 @@
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Loader;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
+using OpenForge.Cli.Core.Commands.Route.Shared.Source;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Workspace;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Loader;
-
-internal enum LoaderDestinationEntryResolutionState
-{
-    Resolved,
-    Incomplete,
-    Blocked,
-    Interrupted,
-}
-
-internal sealed class LoaderDestinationEntryResolution
-{
-    private LoaderDestinationEntryResolution(
-        LoaderDestinationEntryResolutionState state,
-        RouteListSource? source,
-        RouteListSelectionIssue? issue)
-    {
-        if (!Enum.IsDefined(state))
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(state),
-                state,
-                "The Loader destination entry state is not defined.");
-        }
-
-        if (state == LoaderDestinationEntryResolutionState.Resolved)
-        {
-            ArgumentNullException.ThrowIfNull(source);
-            if (issue is not null)
-            {
-                throw new ArgumentException("A resolved Loader destination entry cannot contain an issue.", nameof(issue));
-            }
-        }
-        else
-        {
-            ArgumentNullException.ThrowIfNull(issue);
-            if (source is not null)
-            {
-                throw new ArgumentException("An unresolved Loader destination entry cannot retain a source.", nameof(source));
-            }
-        }
-
-        State = state;
-        Source = source;
-        Issue = issue;
-    }
-
-    internal LoaderDestinationEntryResolutionState State { get; }
-
-    internal RouteListSource? Source { get; }
-
-    internal RouteListSelectionIssue? Issue { get; }
-
-    internal static LoaderDestinationEntryResolution Resolved(RouteListSource source)
-    {
-        return new LoaderDestinationEntryResolution(
-            LoaderDestinationEntryResolutionState.Resolved,
-            source,
-            null);
-    }
-
-    internal static LoaderDestinationEntryResolution Incomplete(RouteListSelectionIssue issue)
-    {
-        return new LoaderDestinationEntryResolution(
-            LoaderDestinationEntryResolutionState.Incomplete,
-            null,
-            issue);
-    }
-
-    internal static LoaderDestinationEntryResolution Blocked(RouteListSelectionIssue issue)
-    {
-        return new LoaderDestinationEntryResolution(
-            LoaderDestinationEntryResolutionState.Blocked,
-            null,
-            issue);
-    }
-
-    internal static LoaderDestinationEntryResolution Interrupted(RouteListSelectionIssue issue)
-    {
-        return new LoaderDestinationEntryResolution(
-            LoaderDestinationEntryResolutionState.Interrupted,
-            null,
-            issue);
-    }
-}
 
 internal sealed class LoaderDestinationEntryResolver
 {
@@ -101,14 +20,14 @@ internal sealed class LoaderDestinationEntryResolver
 
     internal LoaderDestinationEntryResolution Resolve(
         CliWorkspace workspace,
-        RouteListSourceCatalogue catalogue,
-        LoaderDestinationParseResult destination,
+        RouteSourceCatalogue catalogue,
+        RouteLoaderDestinationParseResult destination,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(workspace);
         ArgumentNullException.ThrowIfNull(catalogue);
         ArgumentNullException.ThrowIfNull(destination);
-        if (destination.State != LoaderDestinationParseState.Valid)
+        if (destination.State != RouteLoaderDestinationParseState.Valid)
         {
             throw new ArgumentException("A Loader destination entry resolver requires a valid parsed destination.", nameof(destination));
         }
@@ -116,7 +35,7 @@ internal sealed class LoaderDestinationEntryResolver
         var physical = _physicalPathResolver.ResolveCandidate(
             workspace.LexicalRoot,
             workspace.PhysicalRoot,
-            CombineWorkspacePath(workspace.LexicalRoot, destination.CanonicalPath!));
+            RouteLogicalPath.ToLexicalPath(workspace.LexicalRoot, destination.CanonicalPath!));
         switch (physical.State)
         {
             case PhysicalPathState.Missing:
@@ -163,7 +82,7 @@ internal sealed class LoaderDestinationEntryResolver
                 "A Loader root declaration cannot target an overwrite companion.");
         }
 
-        if (source.Kind != RouteListSourceKind.Entrypoint)
+        if (source.Kind != RouteSourceKind.Entrypoint)
         {
             return Incomplete(
                 destination.AttemptedDestination,
@@ -219,9 +138,4 @@ internal sealed class LoaderDestinationEntryResolver
                 "Loader root resolution was interrupted."));
     }
 
-    private static string CombineWorkspacePath(string workspaceRoot, string logicalPath)
-    {
-        var relative = logicalPath.Replace('/', Path.DirectorySeparatorChar);
-        return Path.Combine(workspaceRoot, relative);
-    }
 }

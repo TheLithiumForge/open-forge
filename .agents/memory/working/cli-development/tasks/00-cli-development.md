@@ -11,7 +11,7 @@ open-forge:
 - State: Active.
 - Responsible role: Mastermind.
 - Task source: This file.
-- Last updated: 2026-08-21.
+- Last updated: 2026-08-22.
 
 ## Problem Statement
 
@@ -113,10 +113,14 @@ bypass the Foundation group.
 
 ## Progress And Evidence
 
-- Current result: Architecture, Plan, reset, and Task governance are committed.
-- Blocker: Command production is blocked until the Foundation is accepted.
-- Next action: Execute the active workspace/project Task, then complete and accept
-  the Foundation group.
+- Current result: Architecture, Plan, reset, Task governance, Foundation, and
+  Route Discovery are accepted. Route List is integrated at `edca509`; Route
+  Inspect is accepted from final correction `9c690b4` with managed/native,
+  promotion, architecture, and edge closeout complete.
+- Blocker: None for Route Discovery integration.
+- Next action: Squash-merge the focused Route Inspect branch into `develop`, then
+  create the authorized generic-improvements branch and begin parser-remediation
+  Preflight before the next product Task.
 
 ## Completion And Closeout
 

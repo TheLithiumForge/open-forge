@@ -1,5 +1,7 @@
 using OpenForge.Cli.Core.Commands.Route.List;
+using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.IntegrationTests.Commands.Route.List;
 using OpenForge.Cli.TestSupport;
@@ -405,7 +407,7 @@ public sealed class RouteListSelectionResolverIntegrationTests
     private static async Task<RouteListSelectionResolution> ResolveAsync(
         RouteListSelectionIntegrationWorkspace workspace,
         string? sourceReference,
-        RouteListSourceCatalogue catalogue)
+        RouteSourceCatalogue catalogue)
     {
         return await new RouteListSelectionResolver(new PhysicalPathResolver())
             .ResolveAsync(
@@ -416,7 +418,7 @@ public sealed class RouteListSelectionResolverIntegrationTests
 
     private static void AssertResolvedLogicalSource(
         RouteListSelectionResolution result,
-        RouteListSource source,
+        RouteSource source,
         string? attemptedId,
         string? attemptedPath)
     {

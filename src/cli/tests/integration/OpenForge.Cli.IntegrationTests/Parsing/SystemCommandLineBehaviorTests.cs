@@ -1,5 +1,9 @@
 using System.CommandLine.Parsing;
+using OpenForge.Cli.Core.Commands.Route;
+using OpenForge.Cli.Core.Commands.Route.List;
+using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Parsing;
+using OpenForge.Cli.Core.Shell.Parsing.Models;
 using OpenForge.Cli.Core.Shell.Presentation;
 
 namespace OpenForge.Cli.IntegrationTests.Parsing;
@@ -25,18 +29,83 @@ public sealed class SystemCommandLineBehaviorTests
         Assert.Empty(booleanResult.Tokens);
     }
 
-    [Fact(DisplayName = "Pinned parser normalizes values while guard owns delimiter shape")]
+    [Theory(DisplayName = "Pinned parser accepts native global value forms and owns occurrences")]
     [Trait("Feature", "cli-parser"), Trait("Evidence", "Integration")]
-    public void ParserNormalizesAttachedAndSeparateValuesSoGuardOwnsShape()
+    [InlineData("--workspace", "example", "example", true)]
+    [InlineData("--workspace=example", null, "example", true)]
+    [InlineData("--workspace:example", null, "example", true)]
+    [InlineData("--view", "compact", "compact", false)]
+    [InlineData("--view=compact", null, "compact", false)]
+    [InlineData("--view:compact", null, "compact", false)]
+    public void ParserAcceptsNativeGlobalValueFormsAndOwnsOccurrences(
+        string option,
+        string? separateValue,
+        string expectedValue,
+        bool workspace)
     {
         var tree = CliCommandTree.Create(CliHelpContent.Empty, [], []);
-        var attached = new CliParser(tree).Parse(["--workspace=example"]);
-        var separate = new CliParser(tree).Parse(["--workspace", "example"]);
+        string[] arguments = separateValue is null
+            ? [option]
+            : [option, separateValue];
+        var parse = new CliParser(tree).Parse(arguments);
 
-        Assert.Equal(
-            attached.Result.Tokens.Select(token => (token.Type, token.Value)),
-            separate.Result.Tokens.Select(token => (token.Type, token.Value)));
-        Assert.Equal(["--workspace=example"], attached.OriginalArguments);
-        Assert.Equal(["--workspace", "example"], separate.OriginalArguments);
+        Assert.Empty(parse.Result.Errors);
+        Assert.Equal(arguments, parse.OriginalArguments);
+        var optionResult = Assert.IsType<OptionResult>(
+            parse.Result.GetResult(workspace ? tree.Options.Workspace : tree.Options.View));
+        Assert.Equal(1, optionResult.IdentifierTokenCount);
+        Assert.Single(optionResult.Tokens, token => token.Type == TokenType.Argument);
+
+        var input = Assert.IsType<CliGlobalInput>(CliGlobalInputReader.Read(parse));
+        if (workspace)
+        {
+            Assert.Equal(expectedValue, parse.Result.GetValue(tree.Options.Workspace));
+            Assert.Equal(expectedValue, input.WorkspaceValue);
+            Assert.Equal(1, input.WorkspaceOccurrences);
+            Assert.Equal(0, input.ViewOccurrences);
+        }
+        else
+        {
+            Assert.Equal(CliView.Compact, parse.Result.GetValue(tree.Options.View));
+            Assert.Equal(CliView.Compact, input.View);
+            Assert.Equal(0, input.WorkspaceOccurrences);
+            Assert.Equal(1, input.ViewOccurrences);
+        }
+    }
+
+    [Theory(DisplayName = "Pinned parser attached-empty global values remain invalid")]
+    [Trait("Feature", "cli-parser"), Trait("Evidence", "Integration")]
+    [InlineData("--workspace=")]
+    [InlineData("--workspace:")]
+    [InlineData("--view=")]
+    [InlineData("--view:")]
+    public void ParserAttachedEmptyGlobalValuesRemainInvalid(string option)
+    {
+        var tree = CliCommandTree.Create(CliHelpContent.Empty, [], []);
+        var resolution = CliTerminalValidator.Validate(new CliParser(tree).Parse([option]));
+
+        Assert.NotNull(resolution.InvalidInput);
+        Assert.Null(resolution.Input);
+    }
+
+    [Fact(DisplayName = "Pinned parser keeps a global option after attached-empty route-list depth")]
+    [Trait("Feature", "cli-parser"), Trait("Evidence", "Integration")]
+    public void ParserKeepsGlobalOptionAfterAttachedEmptyRouteListDepth()
+    {
+        var symbols = RouteListBinding.CreateSymbols(RouteBinding.CreateGroup());
+        var tree = CliCommandTree.Create(
+            CliHelpContent.Empty,
+            [new CliRootBranch(symbols.RouteGroup, CliHelpContent.Empty, symbols.DelimiterPolicies)],
+            []);
+
+        var parse = new CliParser(tree).Parse(["route", "list", "--depth=", "--json"]);
+
+        Assert.Empty(parse.Result.Errors);
+        var depth = Assert.IsType<OptionResult>(parse.Result.GetResult(symbols.Depth));
+        Assert.Equal(1, depth.IdentifierTokenCount);
+        Assert.Empty(depth.Tokens);
+        var json = Assert.IsType<OptionResult>(parse.Result.GetResult(tree.Options.Json));
+        Assert.Equal(1, json.IdentifierTokenCount);
+        Assert.True(parse.Result.GetValue(tree.Options.Json));
     }
 }

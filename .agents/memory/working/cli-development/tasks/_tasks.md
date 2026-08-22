@@ -11,7 +11,7 @@ Read the [program Task](00-cli-development.md), [Architecture](../../../crystall
 ## Task Groups
 
 - [x] [CLI Foundation](foundation/_foundation.md) — Complete — Implementer: Mastermind
-- [ ] [Route Discovery](route-discovery/_route-discovery.md) — Active — Implementer: Mastermind
+- [x] [Route Discovery](route-discovery/_route-discovery.md) — Complete — Implementer: Mastermind
 - [ ] [Read-Only Commands](read-only/_read-only.md) — Planned — Implementer: Not assigned
 - [ ] [Mutation Foundation](mutation-foundation/_mutation-foundation.md) — Planned — Implementer: Not assigned
 - [ ] [Route Mutation Commands](route-mutation/_route-mutation.md) — Planned — Implementer: Not assigned
@@ -45,6 +45,9 @@ Read the [program Task](00-cli-development.md), [Architecture](../../../crystall
 - `Cancelled`: The outcome is no longer required.
 
 ## Entries
+
+The Route Discovery generated entry retains its pre-closeout projection under the
+accepted `CLI-EDGE-001` routing/index waiver; generated content is not hand-edited.
 
 <!-- open-forge:generated-index:start -->
 

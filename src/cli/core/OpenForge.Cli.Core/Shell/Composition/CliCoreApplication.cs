@@ -2,8 +2,10 @@ using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Invocation;
 using OpenForge.Cli.Core.Shell.Parsing;
+using OpenForge.Cli.Core.Shell.Parsing.Models;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Presentation;
+using OpenForge.Cli.Core.Shell.Composition.Models;
 
 namespace OpenForge.Cli.Core.Shell.Composition;
 
@@ -77,9 +79,11 @@ internal sealed class CliCoreApplication
         {
             return await selection.Binding
                 .PresentInvalidAsync(
-                    invocation.InvalidInput,
-                    input,
-                    environment,
+                    new CliInvalidBindingInput(
+                        invocation.InvalidInput,
+                        input,
+                        environment,
+                        new CliBindingParse(parse.Result, parse.OriginalArguments)),
                     writers,
                     cancellationToken)
                 .ConfigureAwait(false);

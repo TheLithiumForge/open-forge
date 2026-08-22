@@ -2,7 +2,12 @@ using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Topology;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Topology;
+using OpenForge.Cli.Core.Commands.Route.Shared.Source;
+using OpenForge.Cli.Core.Commands.Route.Shared.Topology;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.List.Shared.Topology;
 
@@ -14,7 +19,7 @@ public sealed class RouteListTopologyTests
         var inventory = StandardInventory();
         var input = Input(inventory, RouteListDepth.All);
 
-        var topology = new RouteListRouteGraphBuilder().Build(input);
+        var topology = BuildTopology(input);
 
         var root = topology.FindByPath(".agents/root/_root.md")!;
         Assert.Equal(
@@ -27,8 +32,8 @@ public sealed class RouteListTopologyTests
         Assert.Equal(".agents/root/_root.md", topology.FindByPath(".agents/root/child/_child.md")!.ParentPath);
         Assert.Equal(".agents/root/child/_child.md", topology.FindByPath(".agents/root/child/grand.md")!.ParentPath);
         Assert.Equal(".agents/root/_root.md", topology.FindByPath(".agents/root/native/SKILL.md")!.ParentPath);
-        Assert.Equal(RouteListTopologyParentState.None, topology.FindByPath(".agents/root/unrepresented/leaf.md")!.ParentState);
-        Assert.Equal(0, topology.ReadAbsoluteDepth(root.Source.Source.CanonicalPath));
+        Assert.Equal(RouteTopologyParentState.None, topology.FindByPath(".agents/root/unrepresented/leaf.md")!.ParentState);
+        Assert.Equal(0, topology.ReadAbsoluteDepth(root.Source.CanonicalPath));
         Assert.Equal(2, topology.ReadAbsoluteDepth(".agents/root/child/grand.md"));
         Assert.Null(topology.ReadAbsoluteDepth(".agents/root/unrepresented/leaf.md"));
     }
@@ -235,7 +240,7 @@ public sealed class RouteListTopologyTests
         var malformed = Source(
             ".agents/root/malformed.md",
             RouteListSourceKind.Unrouted,
-            RouteListMetadataState.Malformed);
+            RouteSourceMetadataState.Malformed);
         var inventory = Inventory(
             [root, malformed],
             [RouteListFilesystemFindingPolicy.MetadataMalformed(malformed.Source.CanonicalPath)]);
@@ -297,7 +302,7 @@ public sealed class RouteListTopologyTests
         var collision = Source(
             ".agents/root/collision/SKILL.md",
             RouteListSourceKind.Unrouted,
-            RouteListMetadataState.Malformed);
+            RouteSourceMetadataState.Malformed);
         var inventory = Inventory(root, selected, collision);
         var loaderSelection = RouteListSelectionResolutionFactory.Resolved(
             RouteListSelectionFactory.LoaderRoots(),
@@ -380,11 +385,13 @@ public sealed class RouteListTopologyTests
     {
         var inventory = StandardInventory();
         var accepted = inventory.Sources.Single(source => source.Source.Id == "root").Source;
-        var reconstructed = new RouteListSource(
-            accepted.Id,
+        var reconstructed = RouteSourceTestData.Source(
             accepted.CanonicalPath,
-            accepted.PhysicalPath,
-            accepted.Kind);
+            accepted.Kind,
+            form: accepted.Base.Form,
+            metadataState: accepted.Metadata.State,
+            overwritePath: accepted.OverwritePath,
+            isRouteAmbiguous: accepted.IsRouteAmbiguous);
         var selection = RouteListSelectionResolutionFactory.Resolved(
             RouteListSelectionFactory.LoaderRoots(),
             [reconstructed]);
@@ -494,7 +501,7 @@ public sealed class RouteListTopologyTests
         RouteListTopologyInput input,
         CancellationToken cancellationToken)
     {
-        var topology = new RouteListRouteGraphBuilder().Build(input);
+        var topology = BuildTopology(input);
         var selected = new RouteListTopologySelector().Select(input, topology, cancellationToken);
         var coverage = new RouteListCoverageBuilder().Build(input, selected);
         return new RouteListResultBuilder().Build(input, selected, coverage);
@@ -506,7 +513,7 @@ public sealed class RouteListTopologyTests
         string? sourceId = null,
         params string[] loaderRootPaths)
     {
-        RouteListSource[] roots = loaderRootPaths.Length == 0
+        RouteSource[] roots = loaderRootPaths.Length == 0
             ? [inventory.Sources.Single(source => source.Source.Id == "root").Source]
             : loaderRootPaths.Select(path => inventory.Catalogue.FindByPath(path)!).ToArray();
         var loaderSelection = RouteListSelectionResolutionFactory.Resolved(
@@ -557,64 +564,65 @@ public sealed class RouteListTopologyTests
     private static RouteListInventorySource Source(
         string canonicalPath,
         RouteListSourceKind kind,
-        RouteListMetadataState metadataState = RouteListMetadataState.Complete,
+        RouteSourceMetadataState metadataState = RouteSourceMetadataState.Complete,
         bool isRouteAmbiguous = false,
         string? overwritePath = null)
     {
-        var id = RouteListSourceIdentity.DeriveId(canonicalPath)!;
-        var physicalPath = Path.GetFullPath(Path.Combine(
-            Path.GetTempPath(),
-            "open-forge-topology-unit",
-            canonicalPath.Replace('/', Path.DirectorySeparatorChar)));
         var form = ReadForm(canonicalPath, kind);
-        var metadata = metadataState == RouteListMetadataState.Complete
-            ? RouteListSourceMetadata.Complete(
-                $"Description for {id}",
-                kind == RouteListSourceKind.RoutedNative ? [] : ["Route"],
-                RouteListSourceFormFacts.IsCompatibilityEntrypoint(form),
-                isOverwritePresent: overwritePath is not null)
-            : RouteListSourceMetadata.WithoutValues(
-                metadataState,
-                RouteListSourceFormFacts.IsCompatibilityEntrypoint(form),
-                isOverwritePresent: overwritePath is not null);
-        var source = new RouteListSource(
-            id,
+        var sourceKind = form switch
+        {
+            RouteSourceForm.Loader => RouteSourceKind.Loader,
+            RouteSourceForm.CanonicalEntrypoint
+                or RouteSourceForm.IndexEntrypoint
+                or RouteSourceForm.UnderscoreIndexEntrypoint
+                or RouteSourceForm.ReferencesEntrypoint
+                or RouteSourceForm.UnderscoreReferencesEntrypoint => RouteSourceKind.Entrypoint,
+            RouteSourceForm.Skill => RouteSourceKind.Native,
+            RouteSourceForm.Markdown => RouteSourceKind.Markdown,
+            _ => throw new ArgumentOutOfRangeException(nameof(form), form, "The source form is not defined."),
+        };
+        var source = RouteSourceTestData.Source(
             canonicalPath,
-            physicalPath,
-            kind,
+            sourceKind,
+            form,
+            metadataState,
             overwritePath,
-            isRouteAmbiguous);
-        var overwrite = overwritePath is null
-            ? null
-            : new RouteListOverwriteRelation(
-                overwritePath,
-                Path.GetFullPath(Path.Combine(
-                    Path.GetTempPath(),
-                    "open-forge-topology-unit",
-                    overwritePath.Replace('/', Path.DirectorySeparatorChar))));
-        return new RouteListInventorySource(source, form, metadata, overwrite);
+            isRouteAmbiguous: isRouteAmbiguous);
+        return new RouteListInventorySource(source);
     }
 
-    private static RouteListSourceForm ReadForm(string path, RouteListSourceKind kind)
+    private static RouteSourceForm ReadForm(string path, RouteListSourceKind kind)
     {
         if (RouteListLogicalPath.ReadFileName(path) == "SKILL.md")
         {
-            return RouteListSourceForm.Skill;
+            return RouteSourceForm.Skill;
         }
 
         if (kind != RouteListSourceKind.Entrypoint)
         {
-            return RouteListSourceForm.Markdown;
+            return RouteSourceForm.Markdown;
         }
 
         return RouteListLogicalPath.ReadFileName(path) switch
         {
-            "index.md" => RouteListSourceForm.IndexEntrypoint,
-            "_index.md" => RouteListSourceForm.UnderscoreIndexEntrypoint,
-            "references.md" => RouteListSourceForm.ReferencesEntrypoint,
-            "_references.md" => RouteListSourceForm.UnderscoreReferencesEntrypoint,
-            _ => RouteListSourceForm.CanonicalEntrypoint,
+            "index.md" => RouteSourceForm.IndexEntrypoint,
+            "_index.md" => RouteSourceForm.UnderscoreIndexEntrypoint,
+            "references.md" => RouteSourceForm.ReferencesEntrypoint,
+            "_references.md" => RouteSourceForm.UnderscoreReferencesEntrypoint,
+            _ => RouteSourceForm.CanonicalEntrypoint,
         };
+    }
+
+    private static RouteTopologyFacts BuildTopology(RouteListTopologyInput input)
+    {
+        return new RouteTopologyBuilder().Build(
+            input.Inventory.Sources
+                .Where(source => source.Kind is (
+                    RouteListSourceKind.Entrypoint
+                    or RouteListSourceKind.RoutedLeaf
+                    or RouteListSourceKind.RoutedNative))
+                .Select(source => source.Source),
+            input.LoaderRootPaths);
     }
 
 }

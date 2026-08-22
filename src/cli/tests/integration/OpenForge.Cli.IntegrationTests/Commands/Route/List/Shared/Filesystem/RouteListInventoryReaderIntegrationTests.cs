@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.List.Shared.Filesystem;
@@ -81,34 +82,34 @@ public sealed class RouteListInventoryReaderIntegrationTests
             facts.Sources.Select(source => source.Source.CanonicalPath));
         Assert.DoesNotContain(facts.Sources, source => source.Source.CanonicalPath.Contains("ghost", StringComparison.Ordinal));
         Assert.DoesNotContain(facts.Sources, source => source.Source.CanonicalPath.EndsWith("resource.txt", StringComparison.Ordinal));
-        Assert.DoesNotContain(facts.Sources, source => source.Form == RouteListSourceForm.OverwriteCompanion);
+        Assert.DoesNotContain(facts.Sources, source => source.Source.Base.Form == RouteSourceForm.OverwriteCompanion);
 
-        var loader = facts.Sources.Single(source => source.Form == RouteListSourceForm.Loader);
-        Assert.Equal(RouteListSourceKind.Loader, loader.Source.Kind);
-        Assert.Equal(RouteListMetadataState.NotApplicable, loader.Metadata.State);
-        var canonical = facts.Sources.Single(source => source.Form == RouteListSourceForm.CanonicalEntrypoint);
-        var compatibility = facts.Sources.Single(source => source.Form == RouteListSourceForm.IndexEntrypoint);
+        var loader = facts.Sources.Single(source => source.Source.Base.Form == RouteSourceForm.Loader);
+        Assert.Equal(RouteSourceKind.Loader, loader.Source.Kind);
+        Assert.Equal(RouteSourceMetadataState.NotApplicable, loader.Source.Metadata.State);
+        var canonical = facts.Sources.Single(source => source.Source.Base.Form == RouteSourceForm.CanonicalEntrypoint);
+        var compatibility = facts.Sources.Single(source => source.Source.Base.Form == RouteSourceForm.IndexEntrypoint);
         Assert.True(canonical.Source.IsRouteAmbiguous);
         Assert.True(compatibility.Source.IsRouteAmbiguous);
-        Assert.True(compatibility.Metadata.IsCompatibilityEntrypoint);
+        Assert.True(compatibility.Source.Metadata.IsCompatibilityEntrypoint);
 
         var leaf = facts.Sources.Single(source => source.Source.CanonicalPath == ".agents/root/leaf.md");
-        Assert.Equal(RouteListSourceKind.RoutedLeaf, leaf.Source.Kind);
-        Assert.Equal("Exact leaf description", leaf.Metadata.Description);
-        Assert.Equal(["Leaf", "Route-List"], leaf.Metadata.Tags);
-        Assert.True(leaf.Metadata.IsOverwritePresent);
-        Assert.Equal(".agents/root/leaf.overwrite.md", leaf.Overwrite?.CanonicalLogicalPath);
+        Assert.Equal(RouteSourceKind.Markdown, leaf.Source.Kind);
+        Assert.Equal("Exact leaf description", leaf.Source.Metadata.Description);
+        Assert.Equal(["Leaf", "Route-List"], leaf.Source.Metadata.Tags);
+        Assert.True(leaf.Source.Metadata.IsOverwritePresent);
+        Assert.Equal(".agents/root/leaf.overwrite.md", leaf.Source.Overwrite?.CanonicalLogicalPath);
         Assert.Same(leaf.Source, facts.Catalogue.FindByPath(".agents/root/leaf.overwrite.md"));
 
-        var skill = facts.Sources.Single(source => source.Form == RouteListSourceForm.Skill);
-        Assert.Equal(RouteListSourceKind.RoutedNative, skill.Source.Kind);
-        Assert.Equal("Exact native description.", skill.Metadata.Description);
-        Assert.Empty(skill.Metadata.Tags);
+        var skill = facts.Sources.Single(source => source.Source.Base.Form == RouteSourceForm.Skill);
+        Assert.Equal(RouteSourceKind.Native, skill.Source.Kind);
+        Assert.Equal("Exact native description.", skill.Source.Metadata.Description);
+        Assert.Empty(skill.Source.Metadata.Tags);
         Assert.Equal(
-            RouteListSourceKind.Unrouted,
+            RouteSourceKind.Markdown,
             facts.Sources.Single(source => source.Source.CanonicalPath == ".agents/root/invalid.md").Source.Kind);
         Assert.Equal(
-            RouteListSourceKind.Unrouted,
+            RouteSourceKind.Markdown,
             facts.Sources.Single(source => source.Source.CanonicalPath == ".agents/root/missing.md").Source.Kind);
         Assert.Contains(
             facts.Findings,
@@ -126,6 +127,27 @@ public sealed class RouteListInventoryReaderIntegrationTests
             facts.Findings,
             finding => finding.Code == RouteListFindingCode.MetadataMissing
                 && finding.CanonicalLogicalSubject == ".agents/root/missing.md");
+        Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
+    [Fact(DisplayName = "Route-list inventory retains an unsupported-form finding for a source without an automatic ID")]
+    [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
+    public async Task SourceWithoutAutomaticIdRemainsAnAuthoredFormFinding()
+    {
+        using var workspace = RouteListFilesystemIntegrationWorkspace.Create();
+        const string path = ".agents/.md";
+        workspace.Write(
+            path,
+            RouteListFilesystemIntegrationWorkspace.OpenForgeMetadata("No automatic identity", "Route"));
+        var before = workspace.SnapshotHashes();
+
+        var facts = await workspace.ReadAsync(TestContext.Current.CancellationToken);
+
+        Assert.DoesNotContain(facts.Sources, source => source.Source.CanonicalPath == path);
+        var finding = Assert.Single(
+            facts.Findings,
+            candidate => candidate.CanonicalLogicalSubject == path);
+        Assert.Equal(RouteListFindingCode.AuthoredForm, finding.Code);
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 

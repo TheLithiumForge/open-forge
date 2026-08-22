@@ -1,100 +1,33 @@
-using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
+using OpenForge.Cli.Core.Commands.Route.Shared.Loader;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Loader;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
+using OpenForge.Cli.Core.Commands.Route.Shared.Source;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.Workspace;
-using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Loader;
-
-internal enum LoaderDestinationResolutionState
-{
-    Resolved,
-    Incomplete,
-    Blocked,
-    Interrupted,
-}
-
-internal sealed class LoaderDestinationResolution
-{
-    internal LoaderDestinationResolution(
-        LoaderDestinationResolutionState state,
-        IEnumerable<RouteListSource> selectedSources,
-        IEnumerable<RouteListSelectionIssue> issues)
-    {
-        if (!Enum.IsDefined(state))
-        {
-            throw new ArgumentOutOfRangeException(nameof(state), state, "The Loader resolution state is not defined.");
-        }
-
-        ArgumentNullException.ThrowIfNull(selectedSources);
-        ArgumentNullException.ThrowIfNull(issues);
-        var sources = selectedSources.ToArray();
-        var findings = issues.ToArray();
-        if (sources.Any(source => source is null))
-        {
-            throw new ArgumentException("Loader sources cannot contain null.", nameof(selectedSources));
-        }
-
-        if (findings.Any(issue => issue is null))
-        {
-            throw new ArgumentException("Loader issues cannot contain null.", nameof(issues));
-        }
-
-        if (sources.Any(source => source.Kind != RouteListSourceKind.Entrypoint)
-            || sources.Select(source => source.CanonicalPath).Distinct(StringComparer.Ordinal).Count() != sources.Length)
-        {
-            throw new ArgumentException("Loader selection can retain only unique entrypoint sources.", nameof(selectedSources));
-        }
-
-        var resultStatus = state switch
-        {
-            LoaderDestinationResolutionState.Resolved => CliSemanticStatus.Complete,
-            LoaderDestinationResolutionState.Incomplete => CliSemanticStatus.Incomplete,
-            LoaderDestinationResolutionState.Blocked => CliSemanticStatus.Blocked,
-            LoaderDestinationResolutionState.Interrupted => CliSemanticStatus.Interrupted,
-            _ => throw new ArgumentOutOfRangeException(nameof(state), state, "The Loader resolution state is not defined."),
-        };
-        var statusRule = RouteListDefinitions.ReadFindingResultStatusRule(resultStatus);
-        if (statusRule.RequiredFindingStatus is null && findings.Length != 0
-            || statusRule.RequiredFindingStatus is { } required
-                && !findings.Any(issue => issue.Status == required)
-            || findings.Any(issue => !statusRule.AllowedFindingStatuses.Contains(issue.Status)))
-        {
-            throw new ArgumentException("Loader issues do not match the aggregate resolution state.", nameof(issues));
-        }
-
-        State = state;
-        SelectedSources = new ReadOnlyCollection<RouteListSource>(
-            sources.OrderBy(source => source.CanonicalPath, StringComparer.Ordinal).ToArray());
-        Issues = new ReadOnlyCollection<RouteListSelectionIssue>(findings);
-    }
-
-    internal LoaderDestinationResolutionState State { get; }
-
-    internal IReadOnlyList<RouteListSource> SelectedSources { get; }
-
-    internal IReadOnlyList<RouteListSelectionIssue> Issues { get; }
-}
 
 internal sealed class LoaderDestinationResolver
 {
     private const string LoaderPath = ".agents/loader.md";
 
     private readonly PhysicalPathResolver _physicalPathResolver;
-    private readonly LoaderDestinationEntryResolver _entryResolver;
+    private readonly LoaderDestinationBatchResolver _destinationResolver;
 
     internal LoaderDestinationResolver(PhysicalPathResolver physicalPathResolver)
     {
         ArgumentNullException.ThrowIfNull(physicalPathResolver);
         _physicalPathResolver = physicalPathResolver;
-        _entryResolver = new LoaderDestinationEntryResolver(physicalPathResolver);
+        _destinationResolver = new LoaderDestinationBatchResolver(
+            new LoaderDestinationEntryResolver(physicalPathResolver));
     }
 
     internal async ValueTask<LoaderDestinationResolution> ResolveAsync(
         CliWorkspace workspace,
-        RouteListSourceCatalogue catalogue,
+        RouteSourceCatalogue catalogue,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(workspace);
@@ -107,23 +40,21 @@ internal sealed class LoaderDestinationResolver
         var physical = _physicalPathResolver.ResolveCandidate(
             workspace.LexicalRoot,
             workspace.PhysicalRoot,
-            CombineWorkspacePath(workspace.LexicalRoot, LoaderPath));
+            RouteLogicalPath.ToLexicalPath(workspace.LexicalRoot, LoaderPath));
         switch (physical.State)
         {
             case PhysicalPathState.Missing:
-                return Incomplete(
-                    new RouteListSelectionIssue(
-                        RouteListFindingCode.LoaderUnavailable,
-                        LoaderPath,
-                        "The Loader file is missing."));
+                return Incomplete(new RouteListSelectionIssue(
+                    RouteListFindingCode.LoaderUnavailable,
+                    LoaderPath,
+                    "The Loader file is missing."));
             case PhysicalPathState.Contained:
                 break;
             default:
-                return Blocked(
-                    new RouteListSelectionIssue(
-                        RouteListFindingCode.PhysicalBoundary,
-                        LoaderPath,
-                        "The Loader physical boundary could not be proved."));
+                return Blocked(new RouteListSelectionIssue(
+                    RouteListFindingCode.PhysicalBoundary,
+                    LoaderPath,
+                    "The Loader physical boundary could not be proved."));
         }
 
         var read = await StrictUtf8FileReader.ReadAsync(
@@ -136,32 +67,29 @@ internal sealed class LoaderDestinationResolver
             case FileReadState.Cancelled:
                 return Interrupted(LoaderPath);
             case FileReadState.Missing:
-                return Incomplete(
-                    new RouteListSelectionIssue(
-                        RouteListFindingCode.LoaderUnavailable,
-                        LoaderPath,
-                        "The Loader file became unavailable before it could be read."));
+                return Incomplete(new RouteListSelectionIssue(
+                    RouteListFindingCode.LoaderUnavailable,
+                    LoaderPath,
+                    "The Loader file became unavailable before it could be read."));
             case FileReadState.InvalidEncoding:
-                return Incomplete(
-                    new RouteListSelectionIssue(
-                        RouteListFindingCode.LoaderMalformed,
-                        LoaderPath,
-                        "The Loader file is not valid strict UTF-8."));
+                return Incomplete(new RouteListSelectionIssue(
+                    RouteListFindingCode.LoaderMalformed,
+                    LoaderPath,
+                    "The Loader file is not valid strict UTF-8."));
             case FileReadState.AccessDenied:
             case FileReadState.InputOutputFailure:
-                return Incomplete(
-                    new RouteListSelectionIssue(
-                        RouteListFindingCode.LoaderUnavailable,
-                        LoaderPath,
-                        "The Loader file could not be read."));
+                return Incomplete(new RouteListSelectionIssue(
+                    RouteListFindingCode.LoaderUnavailable,
+                    LoaderPath,
+                    "The Loader file could not be read."));
             case FileReadState.Complete:
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(read.State), read.State, "The Loader read state is not defined.");
         }
 
-        var entries = LoaderEntriesParser.Parse(read.Value!);
-        if (entries.State == LoaderEntriesParseState.Malformed)
+        var entries = RouteLoaderEntriesParser.Parse(read.Value!);
+        if (entries.State == RouteLoaderEntriesParseState.Malformed)
         {
             var issue = new RouteListSelectionIssue(
                 RouteListFindingCode.LoaderMalformed,
@@ -173,7 +101,7 @@ internal sealed class LoaderDestinationResolver
             }
 
             return AddMalformedIssue(
-                ResolveDestinations(
+                _destinationResolver.Resolve(
                     workspace,
                     catalogue,
                     entries.Destinations,
@@ -181,98 +109,11 @@ internal sealed class LoaderDestinationResolver
                 issue);
         }
 
-        return ResolveDestinations(
+        return _destinationResolver.Resolve(
             workspace,
             catalogue,
             entries.Destinations,
             cancellationToken);
-    }
-
-    private LoaderDestinationResolution ResolveDestinations(
-        CliWorkspace workspace,
-        RouteListSourceCatalogue catalogue,
-        IReadOnlyList<LoaderDestinationParseResult> destinations,
-        CancellationToken cancellationToken)
-    {
-        var selectedSources = new Dictionary<string, RouteListSource>(StringComparer.Ordinal);
-        var issues = new List<RouteListSelectionIssue>();
-        var hasBlocked = false;
-        var hasIncomplete = false;
-        var hasInterrupted = false;
-
-        foreach (var destination in destinations)
-        {
-            if (cancellationToken.IsCancellationRequested)
-            {
-                issues.Add(new RouteListSelectionIssue(
-                    RouteListFindingCode.Interrupted,
-                    LoaderPath,
-                    "Loader root resolution was interrupted."));
-                return new LoaderDestinationResolution(
-                    LoaderDestinationResolutionState.Interrupted,
-                    selectedSources.Values,
-                    issues);
-            }
-
-            if (destination.State == LoaderDestinationParseState.Unsafe)
-            {
-                hasBlocked = true;
-                issues.Add(new RouteListSelectionIssue(
-                    RouteListFindingCode.PhysicalBoundary,
-                    destination.AttemptedDestination,
-                    destination.Cause!));
-                continue;
-            }
-
-            var resolved = _entryResolver.Resolve(
-                workspace,
-                catalogue,
-                destination,
-                cancellationToken);
-            if (resolved.State != LoaderDestinationEntryResolutionState.Resolved)
-            {
-                issues.Add(resolved.Issue!);
-                hasInterrupted |= resolved.State == LoaderDestinationEntryResolutionState.Interrupted;
-                hasBlocked |= resolved.State == LoaderDestinationEntryResolutionState.Blocked;
-                hasIncomplete |= resolved.State == LoaderDestinationEntryResolutionState.Incomplete;
-                continue;
-            }
-
-            var source = resolved.Source!;
-            if (!selectedSources.TryAdd(source.CanonicalPath, source))
-            {
-                hasIncomplete = true;
-                issues.Add(new RouteListSelectionIssue(
-                    RouteListFindingCode.LoaderMalformed,
-                    destination.AttemptedDestination,
-                    "The Loader declares the same root source more than once."));
-            }
-        }
-
-        LoaderDestinationResolutionState state;
-        if (hasInterrupted)
-        {
-            state = LoaderDestinationResolutionState.Interrupted;
-        }
-        else if (hasBlocked)
-        {
-            state = LoaderDestinationResolutionState.Blocked;
-        }
-        else if (hasIncomplete)
-        {
-            state = LoaderDestinationResolutionState.Incomplete;
-        }
-        else
-        {
-            state = LoaderDestinationResolutionState.Resolved;
-        }
-        return new LoaderDestinationResolution(state, selectedSources.Values, issues);
-    }
-
-    private static string CombineWorkspacePath(string workspaceRoot, string logicalPath)
-    {
-        var relative = logicalPath.Replace('/', Path.DirectorySeparatorChar);
-        return Path.Combine(workspaceRoot, relative);
     }
 
     private static LoaderDestinationResolution Incomplete(RouteListSelectionIssue issue)
@@ -314,5 +155,4 @@ internal sealed class LoaderDestinationResolver
                 subject,
                 "Loader root resolution was interrupted.")]);
     }
-
 }

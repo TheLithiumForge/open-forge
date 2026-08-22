@@ -43,3 +43,7 @@ open-forge:
 - Inspect the actual integrated result from the top-down system perspective.
   Passing local evidence does not accept a change that violates the architecture,
   creates a future integration dead end, or weakens a cross-cutting invariant.
+- At every development-cycle transition, write and report the exact active Task,
+  the phase just completed, and the phase now starting. Keep the active Task,
+  Plan, or Checkpoint current enough that this position survives resumption; do
+  not leave phase position only in chat or infer it from uncommitted artifacts.

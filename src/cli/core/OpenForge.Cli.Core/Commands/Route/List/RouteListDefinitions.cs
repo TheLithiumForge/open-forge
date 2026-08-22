@@ -82,22 +82,13 @@ internal static class RouteListDefinitions
         FindingResultStatusRules = new[]
         {
             CreateFindingResultStatusRule(CliSemanticStatus.Complete, null),
+            CreateFindingResultStatusRule(CliSemanticStatus.Attention, CliSemanticStatus.Attention, CliSemanticStatus.Attention),
             CreateFindingResultStatusRule(
-                CliSemanticStatus.Attention,
-                CliSemanticStatus.Attention,
-                CliSemanticStatus.Attention),
-            CreateFindingResultStatusRule(
-                CliSemanticStatus.Incomplete,
-                CliSemanticStatus.Incomplete,
-                CliSemanticStatus.Attention,
-                CliSemanticStatus.Incomplete),
+                CliSemanticStatus.Incomplete, CliSemanticStatus.Incomplete, CliSemanticStatus.Attention, CliSemanticStatus.Incomplete),
             CreateFindingResultStatusRule(CliSemanticStatus.Invalid, CliSemanticStatus.Invalid, CliSemanticStatus.Invalid),
             CreateFindingResultStatusRule(
-                CliSemanticStatus.Blocked,
-                CliSemanticStatus.Blocked,
-                CliSemanticStatus.Attention,
-                CliSemanticStatus.Incomplete,
-                CliSemanticStatus.Blocked),
+                CliSemanticStatus.Blocked, CliSemanticStatus.Blocked,
+                CliSemanticStatus.Attention, CliSemanticStatus.Incomplete, CliSemanticStatus.Blocked),
             CreateFindingResultStatusRule(
                 CliSemanticStatus.Failed,
                 CliSemanticStatus.Failed,
@@ -113,10 +104,6 @@ internal static class RouteListDefinitions
                 CliSemanticStatus.Blocked,
                 CliSemanticStatus.Interrupted),
         }.ToFrozenDictionary(rule => rule.ResultStatus);
-
-    internal static readonly CliSyntaxDefinition RouteGroup = new(
-        "route",
-        "Inspect and maintain routed Open Forge sources.");
 
     internal static readonly CliSyntaxDefinition ListCommand = new(
         "list",

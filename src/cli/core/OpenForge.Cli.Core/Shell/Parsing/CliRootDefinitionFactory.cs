@@ -30,11 +30,7 @@ internal static class CliRootDefinitionFactory
         root.Add(version);
         root.SetAction(static _ => 0);
 
-        var policies = new List<CliDelimiterPolicy>
-        {
-            new(CliSyntaxDefinitions.Workspace.Name, CliDelimiterShape.Separate),
-            new(CliSyntaxDefinitions.View.Name, CliDelimiterShape.Equals),
-        };
+        var policies = new List<CliDelimiterPolicy>();
         foreach (var branch in branches)
         {
             ArgumentNullException.ThrowIfNull(branch);
@@ -57,7 +53,25 @@ internal static class CliRootDefinitionFactory
             HelpName = definition.ValueName,
             Arity = ReadArity(definition.Arity),
             Recursive = true,
+            CustomParser = ParseWorkspace,
         };
+    }
+
+    private static string? ParseWorkspace(ArgumentResult result)
+    {
+        if (result.Tokens.Count != 1)
+        {
+            return null;
+        }
+
+        var value = result.Tokens[0].Value;
+        if (!string.IsNullOrEmpty(value))
+        {
+            return value;
+        }
+
+        result.AddError($"{CliSyntaxDefinitions.Workspace.Name} requires a non-empty value.");
+        return null;
     }
 
     private static Option<bool> CreateBooleanOption(CliOptionDefinition<bool> definition)

@@ -1,12 +1,15 @@
 using System.Text.Json;
+using OpenForge.Cli.Core.Commands.Route;
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Composition;
+using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Invocation;
 using OpenForge.Cli.Core.Shell.Parsing;
+using OpenForge.Cli.Core.Shell.Parsing.Models;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Presentation;
 
@@ -17,7 +20,7 @@ public sealed class RouteListPresentationTests
     [Fact(DisplayName = "Route list binding uses the default and accepted finite or all depths"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void BindingUsesDefaultAndAcceptedDepths()
     {
-        var symbols = RouteListBinding.CreateSymbols();
+        var symbols = RouteListBinding.CreateSymbols(RouteBinding.CreateGroup());
         var invocation = Invocation(RouteListContractTestData.Workspace());
         string[] omittedArguments = ["list", "memory"];
         string[] allArguments = ["list", "memory", "--depth=all"];
@@ -41,7 +44,7 @@ public sealed class RouteListPresentationTests
     [Theory(DisplayName = "Route list binding maps invalid depth to one typed invalid result without a request"), InlineData("-1"), InlineData("+1"), InlineData("1.5"), InlineData("ALL"), InlineData("2147483648"), InlineData(""), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void BindingMapsInvalidDepthToTypedResult(string depth)
     {
-        var symbols = RouteListBinding.CreateSymbols();
+        var symbols = RouteListBinding.CreateSymbols(RouteBinding.CreateGroup());
         var invocation = Invocation(RouteListContractTestData.Workspace());
         string[] arguments = ["list", "memory", $"--depth={depth}"];
         var bound = RouteListBinding.Bind(
@@ -61,7 +64,7 @@ public sealed class RouteListPresentationTests
     [Fact(DisplayName = "Route list invalid depth binding bypasses the operation pipeline"), Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public async Task InvalidDepthBypassesOperation()
     {
-        var symbols = RouteListBinding.CreateSymbols();
+        var symbols = RouteListBinding.CreateSymbols(RouteBinding.CreateGroup());
         var operationCalls = 0;
         var fallback = CompleteResult();
         var binding = RouteListBinding.Close(
@@ -209,10 +212,13 @@ public sealed class RouteListPresentationTests
             "cli.workspace.invalid",
             CliInvalidInputSource.Workspace,
             ["The selected workspace is missing."]);
-        var result = RouteListBinding.CreateInvalidResultFactory()(
+        var symbols = RouteListBinding.CreateSymbols(RouteBinding.CreateGroup());
+        var context = new CliInvalidBindingInput(
             invalidInput,
             input,
-            new CliProcessEnvironment(RouteListContractTestData.Workspace().LexicalRoot));
+            new CliProcessEnvironment(RouteListContractTestData.Workspace().LexicalRoot),
+            new CliBindingParse(symbols.RouteGroup.Parse(["list"]), ["route", "list"]));
+        var result = RouteListBinding.CreateInvalidResultFactory()(context);
 
         Assert.Null(result.Workspace);
         Assert.Equal(CliSemanticStatus.Invalid, result.Status);
@@ -248,6 +254,7 @@ public sealed class RouteListPresentationTests
         Assert.Contains("--depth=all", text, StringComparison.Ordinal);
         Assert.Contains("--workspace <path>", text, StringComparison.Ordinal);
         Assert.Contains("JSON always writes one result envelope to stdout", text, StringComparison.Ordinal);
+        Assert.Contains("route inspect — available", text, StringComparison.Ordinal);
         Assert.Contains("open-forge route list memory", text, StringComparison.Ordinal);
         Assert.Contains("open-forge route list .agents/memory/_memory.md", text, StringComparison.Ordinal);
         Assert.Contains("open-forge route list --depth=2 --json", text, StringComparison.Ordinal);

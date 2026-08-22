@@ -6,11 +6,11 @@ namespace OpenForge.Cli.IntegrationTests.Hosting;
 
 public sealed class CliHostTests
 {
-    [Theory(DisplayName = "CLI root and help expose the accepted route-list command")]
+    [Theory(DisplayName = "CLI root and root help expose the accepted route command family")]
     [Trait("Feature", "cli-host"), Trait("Evidence", "Integration")]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task RootAndHelpExposeRouteListCommand(bool explicitHelp)
+    public async Task RootAndHelpExposeRouteCommandFamily(bool explicitHelp)
     {
         using var workspace = TemporaryWorkspace.Create("host-help");
         var standardOutput = new StringWriter();
@@ -27,6 +27,7 @@ public sealed class CliHostTests
         Assert.Contains("Open Forge CLI (`open-forge`)", standardOutput.ToString(), StringComparison.Ordinal);
         Assert.Contains("Discovery:", standardOutput.ToString(), StringComparison.Ordinal);
         Assert.Contains("route list", standardOutput.ToString(), StringComparison.Ordinal);
+        Assert.Contains("route inspect", standardOutput.ToString(), StringComparison.Ordinal);
         Assert.Equal(string.Empty, standardError.ToString());
     }
 

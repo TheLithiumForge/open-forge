@@ -197,6 +197,7 @@ OpenForge.Cli.Core/
         RouteListResult.cs
         Shared/<Capability>/
       Inspect/
+        Models/<Topic>/
     Extension/
       Shared/
       List/
@@ -211,8 +212,12 @@ not authorization to create empty directories.
 `Framework` contains reusable facts and effect boundaries derived from accepted
 Framework contracts. `Commands` contains operation meaning and projections.
 
-At a command leaf, definitions, binding, request, operation, and concrete result
-remain visible at the leaf root. Supporting implementation sits under
+At a command leaf, definitions, binding, and behavior-owning composition remain
+visible at the leaf root. New records, interfaces, and property-only classes, and
+existing models materially changed or promoted by the current Task, sit under
+`Models/` within their nearest owning command or capability. Untouched accepted
+models retain their paths. Once roughly five to ten models collect under one
+owner, split them further by cohesive topic. Supporting behavior sits under
 `Shared/<Capability>/` at the narrowest owning command, family, or cross-family
 scope. A private `Shared` child marks the support boundary. Promotion to a wider
 parent requires another real consumer with identical meaning.

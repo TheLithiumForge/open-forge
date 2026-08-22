@@ -54,16 +54,54 @@ open-forge:
 - Keep Shell free of concrete command dependencies. Keep Framework capabilities
   free of parser symbols, command requests and results, renderers, and process
   writers. Let commands depend on Shell contracts and Framework facts.
-- Leave a command's definitions, binding, request, operation, and concrete result
-  at its leaf root. Put supporting source below its narrowest
-  `Shared/<Capability>/` path. Promote a complete semantic unit only when another
-  real consumer needs identical meaning.
+- Leave a command's definitions, binding, and behavior-owning composition at its
+  leaf root. For new records, interfaces, and property-only classes, and existing
+  models materially changed or promoted by the current Task, use a local
+  `Models/` folder under the nearest command or capability owner. Group further by
+  cohesive topic once roughly five to ten models accumulate. Untouched accepted
+  models remain outside a focused Task's migration. Put supporting behavior below
+  its narrowest `Shared/<Capability>/` path. Promote a complete semantic unit only
+  when another real consumer needs identical meaning.
 - Match namespaces to physical paths. Do not use aliases, forwarding types,
   sibling-private imports, `Common`, `Utils`, or an undifferentiated `Shared`
   folder to hide ownership.
 - Apply the workspace-wide C# design and style Directives to production and tests.
   Treat a class materially above 200 lines as an architecture or locality review
   trigger, not an automatic split rule.
+
+### Standard Behavior, Exceptions, And Edge Triage
+
+- Default to standard behavior supplied by the pinned runtime, BCL, framework,
+  library, compiler, serializer, parser, and test platform. Verify the exact
+  pinned version and use its documented callable surface before adding local
+  policy or replacement mechanics.
+- Add a workaround, compatibility shim, custom parser, raw-token recognizer, or
+  replacement of a standard capability only when an explicitly accepted product
+  requirement cannot be satisfied by standard behavior. Treat that choice as an
+  explicit exception, not an ordinary implementation detail.
+- Surface every exception in the active Task and review evidence. Record the
+  unmet standard capability, user-visible effect, bounded scope, reason it is
+  required, tests, documentation impact, responsible Task or role, and removal or
+  re-evaluation condition. Surface the exception to the maintainer before relying
+  on it. Document it publicly when callers can observe or depend on it.
+- Record unusual inputs and edge cases in the active Task or the [replacement CLI
+  edge-case ledger](../../../memory/working/cli-development/edge-cases.md) before
+  deciding their disposition. An edge case is evidence for triage, not an
+  automatic blocker, defect, or requirement to add special handling. Classify its
+  reproducibility, impact, affected surface, governing contract, and whether
+  standard behavior already gives a safe result. Accepted safety, public-contract,
+  and required-evidence violations remain blockers after triage.
+- Solve the general invariant first. Prefer one typed validation or general
+  capability that also covers edge cases over a branch for one spelling, payload,
+  path, platform, or fixture. Add a special case only after the general solution
+  is accepted and evidence proves that an explicitly accepted product requirement
+  cannot be satisfied by it. Record the special case as an exception.
+- Do not turn a dependency's unusual but safe behavior into local product policy
+  merely to make one example look different. Use an already accepted configuration
+  or validate the dependency's typed result before considering a workaround.
+  Consider an upgrade only through the explicit dependency decision and evidence
+  required by the Architecture. The maintainer must explicitly accept any
+  resulting product behavior.
 
 ### Construction, Parsing, And Pipeline
 
@@ -72,10 +110,32 @@ open-forge:
   `CliCommandBinding<TRequest, TResult>` instances. Do not add reflection,
   assembly scanning, runtime registration, service location, shell dependency
   injection, string dispatch, or an untyped operation registry.
-- Let `System.CommandLine` own selection, arity, occurrence aggregation, typed
-  conversion, unknown symbols, parser diagnostics, and standard help. Read typed
-  parse results. Do not create a second parser. Keep any accepted delimiter guard
-  limited to the exact syntax fact the library cannot expose.
+- Let `System.CommandLine` own tokenization, option delimiters, selection, arity,
+  occurrence aggregation, typed conversion, unknown symbols, parser diagnostics,
+  and standard help. Read typed parse results and library-owned occurrence facts.
+  Do not create a second parser or rescan raw arguments to reinterpret a spelling.
+- For the current pinned `System.CommandLine` 2.0.11, accept its native long-option
+  value forms: `--option value`, `--option=value`, and `--option:value`. Use the
+  ordinary spaced form in generated help. Use that form in examples by default.
+  An explicitly accepted command contract may demonstrate another native form
+  without changing canonical help. Reverify this rule and its focused parser
+  evidence when the pinned package changes.
+- Do not add a delimiter guard merely to reject otherwise accepted native syntax.
+  A narrowly scoped guard remains permitted only when an explicitly accepted
+  public contract requires a distinction the pinned parser cannot expose through
+  typed results. Record it as the exception above, keep it out of domain behavior,
+  and prove every accepted native and rejected contract form directly.
+- For multi-value options, use native repeated occurrences such as
+  `--item one --item two` by default. Enable multiple arguments per token only
+  when an explicitly accepted command contract requires `--item one two`. Use
+  typed library aggregation and conversion; do not split or accumulate raw
+  process strings. An explicitly accepted typed comma-list value grammar remains
+  valid; parse its one typed value rather than rescanning process arguments.
+- Validate the general typed value after parsing, such as a non-negative numeric
+  depth or membership in the accepted view values. When occurrence policy matters,
+  use library-owned occurrence information. Do not add handling for one raw
+  pattern, such as `--depth= --json`, when the general typed validation and parser
+  diagnostics already define a safe result.
 - Form one immutable process-wide invocation and one complete command-local
   request. Do not pass `ParseResult`, writers, service collections, or unrelated
   context bags into domain capabilities.
@@ -132,6 +192,23 @@ open-forge:
 
 ### Test Evidence
 
+- Run the complete CLI test suite once at the beginning of an implementation Task
+  and once at its final acceptance boundary. A complete suite from the exact
+  unchanged predecessor may serve as the beginning baseline when its projects,
+  executable, environment, counts, and result are recorded.
+- During implementation, run the tests authored by the current Task plus every
+  directly affected test boundary. Determine affected tests from changed behavior,
+  shared types, consumers, composition, serialization, filesystem capabilities,
+  and refactors rather than from file names alone.
+- Avoid repeatedly running the complete filesystem, Integration, published-process,
+  or other expensive suite during inner-loop development. Run only the focused
+  affected cases until final acceptance. Fast deterministic in-memory tests may run
+  more often when they improve feedback speed.
+- Rerun the complete suite before acceptance after the final production, test,
+  fixture, composition, or configuration change. A later documentation-only state
+  update does not invalidate that executable result. If a correction follows the
+  final run, rerun the affected evidence and the complete suite only when the
+  correction can affect a broader boundary.
 - Keep active Unit, Integration, EndToEnd, and TestSupport source under the exact
   `src/cli/tests/` boundaries in the Architecture.
 - Give every test a readable display name, one durable feature trait, and one

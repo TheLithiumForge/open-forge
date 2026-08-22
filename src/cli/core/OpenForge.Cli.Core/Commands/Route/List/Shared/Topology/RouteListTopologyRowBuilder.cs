@@ -1,15 +1,17 @@
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Topology;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Topology;
 
 internal sealed class RouteListTopologyRowBuilder
 {
     private readonly RouteListTopologyInput _input;
-    private readonly RouteListTopologyFacts _topology;
+    private readonly RouteTopologyFacts _topology;
 
     internal RouteListTopologyRowBuilder(
         RouteListTopologyInput input,
-        RouteListTopologyFacts topology)
+        RouteTopologyFacts topology)
     {
         ArgumentNullException.ThrowIfNull(input);
         ArgumentNullException.ThrowIfNull(topology);
@@ -18,25 +20,25 @@ internal sealed class RouteListTopologyRowBuilder
     }
 
     internal RouteListRow Build(
-        RouteListTopologyNode node,
+        RouteTopologyNode node,
         int relativeDepth,
         int? absoluteDepth,
         RouteListSelectionProvenance selectionProvenance)
     {
         ArgumentNullException.ThrowIfNull(node);
-        var source = node.Source.Source;
+        var source = node.Source;
         string? parentId = null;
         if (node.ParentPath is { } parentPath)
         {
-            parentId = _topology.FindByPath(parentPath)?.Source.Source.Id
+            parentId = _topology.FindByPath(parentPath)?.Source.Id
                 ?? throw new InvalidOperationException("A resolved topology parent is missing from the immutable graph.");
         }
 
         var sourceProvenance = source.Kind switch
         {
-            RouteListSourceKind.Entrypoint => RouteListSourceProvenance.AuthoredEntrypoint,
-            RouteListSourceKind.RoutedLeaf => RouteListSourceProvenance.AuthoredLeaf,
-            RouteListSourceKind.RoutedNative => RouteListSourceProvenance.RoutedNative,
+            RouteSourceKind.Entrypoint => RouteListSourceProvenance.AuthoredEntrypoint,
+            RouteSourceKind.Markdown => RouteListSourceProvenance.AuthoredLeaf,
+            RouteSourceKind.Native => RouteListSourceProvenance.RoutedNative,
             _ => throw new ArgumentOutOfRangeException(nameof(node), source.Kind, "The routed source kind is not defined."),
         };
         var provenance = new RouteListProvenance(
@@ -44,7 +46,7 @@ internal sealed class RouteListTopologyRowBuilder
             sourceProvenance,
             node.Source.Overwrite is not null);
         var metadata = node.Source.Metadata;
-        if (source.Kind == RouteListSourceKind.Entrypoint)
+        if (source.Kind == RouteSourceKind.Entrypoint)
         {
             return RouteListRow.Entrypoint(
                 source.Id,
@@ -71,10 +73,10 @@ internal sealed class RouteListTopologyRowBuilder
             provenance);
     }
 
-    internal bool CanDescend(RouteListTopologyNode node, int relativeDepth)
+    internal bool CanDescend(RouteTopologyNode node, int relativeDepth)
     {
         ArgumentNullException.ThrowIfNull(node);
-        if (node.Source.Source.Kind != RouteListSourceKind.Entrypoint)
+        if (node.Source.Kind != RouteSourceKind.Entrypoint)
         {
             return false;
         }
@@ -83,11 +85,11 @@ internal sealed class RouteListTopologyRowBuilder
             || relativeDepth < _input.Request.RequestedDepth.Value!.Value;
     }
 
-    private int? ReadDirectChildCount(RouteListTopologyNode node, int relativeDepth)
+    private int? ReadDirectChildCount(RouteTopologyNode node, int relativeDepth)
     {
         if (!CanDescend(node, relativeDepth)
             || node.ChildPaths.Any(path =>
-                _topology.FindByPath(path)!.Source.Source.IsRouteAmbiguous)
+                _topology.FindByPath(path)!.Source.IsRouteAmbiguous)
             || _input.Inventory.Findings.Any(finding =>
                 RouteListTopologyFindingPolicy.AffectsDirectChildren(node, finding)))
         {

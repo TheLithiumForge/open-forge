@@ -1,6 +1,8 @@
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.List.Shared.Selection;
 
@@ -73,11 +75,9 @@ public sealed class RouteListSelectionResolutionFactoryTests
             sources,
             issues);
 
-        sources[0] = new RouteListSource(
-            "other",
+        sources[0] = RouteSourceTestData.Source(
             ".agents/other.md",
-            Path.Combine(Path.GetTempPath(), "other.md"),
-            RouteListSourceKind.RoutedLeaf);
+            RouteSourceKind.Markdown);
         issues[0] = Issue(RouteListFindingCode.RouteAmbiguous, "other");
         candidatePaths[0] = ".agents/changed.md";
 
@@ -114,13 +114,11 @@ public sealed class RouteListSelectionResolutionFactoryTests
             "The source ID is ambiguous."));
     }
 
-    private static RouteListSource Source()
+    private static RouteSource Source()
     {
-        return new RouteListSource(
-            "memory",
+        return RouteSourceTestData.Source(
             ".agents/memory/_memory.md",
-            Path.Combine(Path.GetTempPath(), "memory", "_memory.md"),
-            RouteListSourceKind.Entrypoint);
+            RouteSourceKind.Entrypoint);
     }
 
     private static RouteListSelectionIssue Issue(RouteListFindingCode code, string subject)

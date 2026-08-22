@@ -140,8 +140,8 @@ public sealed class RouteListInventoryReaderPhysicalIntegrationTests
 
     private static string SourceProjection(RouteListInventorySource source)
     {
-        return $"{source.Source.CanonicalPath}|{source.Source.PhysicalPath}|{source.Source.Kind}|{source.Form}|"
-            + $"{source.Metadata.State}|{source.Metadata.Description}|{string.Join(',', source.Metadata.Tags)}|"
+        return $"{source.Source.CanonicalPath}|{source.Source.PhysicalPath}|{source.Source.Kind}|{source.Source.Base.Form}|"
+            + $"{source.Source.Metadata.State}|{source.Source.Metadata.Description}|{string.Join(',', source.Source.Metadata.Tags)}|"
             + $"{source.Source.OverwritePath}|{source.Source.IsRouteAmbiguous}";
     }
 }

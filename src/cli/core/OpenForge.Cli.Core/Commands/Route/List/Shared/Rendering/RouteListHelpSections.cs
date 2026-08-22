@@ -5,25 +5,6 @@ namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Rendering;
 
 internal static class RouteListHelpSections
 {
-    internal static CliHelpContent CreateRouteGroup()
-    {
-        return new CliHelpContent(
-        [
-            new CliHelpSection(
-                "Operations",
-                "  list     available — list routed sources and descendants.\n"
-                + "  inspect  unavailable — planned route inspection.\n"
-                + "  init     unavailable — planned route initialization.\n"
-                + "  create   unavailable — planned route creation.\n"
-                + "  update   unavailable — planned route update.\n"
-                + "  move     unavailable — planned route move.\n"
-                + "  remove   unavailable — planned route removal."),
-            new CliHelpSection(
-                "Notes",
-                "  The route group performs no operation; select an available child command."),
-        ]);
-    }
-
     internal static CliHelpContent CreateList()
     {
         return new CliHelpContent(
@@ -57,7 +38,7 @@ internal static class RouteListHelpSections
                 + "  open-forge route list --depth=2 --json"),
             new CliHelpSection(
                 "Related commands",
-                "  route inspect — unavailable in this build; use it later for one-route inspection.\n"
+                "  route inspect — available; inspect one source's route behavior.\n"
                 + "  find — unavailable in this build; use it later for unrouted source discovery.\n"
                 + "  context — unavailable in this build; use it later for source content."),
         ]);

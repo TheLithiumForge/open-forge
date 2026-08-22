@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Route.List;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
@@ -105,7 +106,7 @@ internal sealed class RouteListSelectionResolution
     internal RouteListSelectionResolution(
         RouteListSelectionResolutionState state,
         RouteListSelection selection,
-        IReadOnlyList<RouteListSource> selectedSources,
+        IReadOnlyList<RouteSource> selectedSources,
         IReadOnlyList<RouteListSelectionIssue> issues)
     {
         if (!Enum.IsDefined(state))
@@ -128,7 +129,7 @@ internal sealed class RouteListSelectionResolution
 
         State = state;
         Selection = selection;
-        SelectedSources = new ReadOnlyCollection<RouteListSource>(selectedSources.ToArray());
+        SelectedSources = new ReadOnlyCollection<RouteSource>(selectedSources.ToArray());
         Issues = new ReadOnlyCollection<RouteListSelectionIssue>(issues.ToArray());
     }
 
@@ -136,7 +137,7 @@ internal sealed class RouteListSelectionResolution
 
     internal RouteListSelection Selection { get; }
 
-    internal IReadOnlyList<RouteListSource> SelectedSources { get; }
+    internal IReadOnlyList<RouteSource> SelectedSources { get; }
 
     internal IReadOnlyList<RouteListSelectionIssue> Issues { get; }
 }

@@ -13,8 +13,10 @@ open-forge:
 - Planning authority: The maintainer accepts consequential decisions. The
   Mastermind owns architecture, sequencing, Task decomposition, integration, and
   Plan maintenance within that direction.
-- Last updated: 2026-08-21.
-- Current step: R2, split and close [route-inspect](tasks/route-discovery/route-inspect.md) child Tasks before production implementation.
+- Last updated: 2026-08-22.
+- Current step: R3 Route Inspect and Route Discovery are accepted from final correction `9c690b4`; squash-merge the focused branch into `develop`, then create the authorized generic-improvements branch and begin parser-remediation Preflight.
+- Route-inspect baseline and sequence: exact `edca509` (`Establish and accept route list`) on `feature/cli-route-inspect`; planning commit `37d2e70`; contracts/evidence (Complete) → resolution/promotion (Complete at `a54f4e0`) → profile (Complete at `c407e24`) → presentation (Complete from production commit `51c0960`) → behavior-neutral locality correction (Complete at `9c690b4`) → integrated acceptance and Route Discovery closeout (Complete).
+- Maintainer-authorized continuation: after route-inspect acceptance, squash-merge this focused branch into `develop`; create one generic-improvements branch, record one full-suite baseline, and first remediate parser/raw-argument/special-edge deviations under the updated standard-behavior Directive and pinned `System.CommandLine` semantics; only then improve reusable test fixtures, followed by long signatures and the evidence-based root-host/Core split; run the full suite once at final acceptance, accept and squash-merge that branch into `develop`, and only then begin the next product Task. Feature-branch commits are pre-authorized.
 
 This Plan defines how the accepted replacement CLI reaches complete local and
 release acceptance. The CLI Architecture and command contracts define what the
@@ -30,8 +32,10 @@ defines dependencies, order, integration gates, evidence, and resumption.
   mutation safety boundary, six native RIDs, package journey, support floor,
   supply-chain artifact, and release gate has reproducible evidence and maintainer
   acceptance.
-- Starting point: Greenfield implementation. Product contracts and selected prior
-  evidence exist. No production C# source or active C# workspace exists.
+- Initial starting point: Greenfield implementation with product contracts and
+  selected prior evidence but no production C# source or active C# workspace.
+  The current `edca509` baseline contains the accepted scoped workspace,
+  Foundation, and route-list implementation.
 - Integration risk: High. The work crosses a complete command tree, filesystem
   identity, persisted lifecycle state, mutation and recovery, Native AOT, package
   distribution, and public release.
@@ -120,7 +124,7 @@ diff, parent requirements, and claimed evidence.
 | F5  | Complete | Establish active Unit, Integration, EndToEnd, TestSupport, Native AOT, and CI foundations                                   | F1-F4      | Sequential  | Foundation           | Managed and published process evidence       |
 | G1  | Complete | Accept the actual command-free architectural foundation                                                                     | F1-F5      | Sequential  | Foundation gate      | Full diff, dependency audit, AOT execution   |
 | R1  | Complete | Accept the complete `route list` slice and keep shared route facts local until route inspect proves identical consumers     | G1         | Sequential  | Route discovery      | Complete contract and public scenario        |
-| R2  | Active   | Split and close route-inspect child Tasks before implementation; then implement and accept `route inspect` and promote proved shared route facts | R1         | Sequential  | Route discovery      | List and inspect regressions                 |
+| R2  | Complete | Split and close route-inspect child Tasks before implementation; then implement and accept `route inspect` and promote proved shared route facts | R1         | Sequential  | Route discovery      | List and inspect regressions                 |
 | Q1  | Pending  | Implement and accept `find`                                                                                                 | R2         | Read-only A | Source queries       | Contract, CommonMark, process, AOT           |
 | Q2  | Pending  | Implement and accept `references`                                                                                           | R2         | Read-only B | Source queries       | Direct-reference evidence                    |
 | Q3  | Pending  | Implement and accept `context` after Q1 and Q2 facts stabilize                                                              | Q1, Q2     | Sequential  | Context              | Ordered context and token evidence           |

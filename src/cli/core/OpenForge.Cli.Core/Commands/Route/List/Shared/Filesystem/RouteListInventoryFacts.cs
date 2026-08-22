@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Shell.Definitions;
 
@@ -17,7 +18,8 @@ internal sealed class RouteListInventoryFacts
     private RouteListInventoryFacts(
         IEnumerable<RouteListInventorySource> sources,
         IEnumerable<RouteListFilesystemFinding> findings,
-        IEnumerable<RouteListPhysicalAlias> physicalAliases)
+        IEnumerable<RouteListPhysicalAlias> physicalAliases,
+        IEnumerable<RouteOverwriteFact>? overwriteFacts)
     {
         ArgumentNullException.ThrowIfNull(sources);
         ArgumentNullException.ThrowIfNull(findings);
@@ -60,7 +62,21 @@ internal sealed class RouteListInventoryFacts
         Sources = new ReadOnlyCollection<RouteListInventorySource>(orderedSources);
         Findings = new ReadOnlyCollection<RouteListFilesystemFinding>(orderedFindings);
         PhysicalAliases = new ReadOnlyCollection<RouteListPhysicalAlias>(orderedAliases);
-        Catalogue = new RouteListSourceCatalogue(orderedSources.Select(source => source.Source));
+        var suppliedOverwriteFacts = overwriteFacts?.ToArray() ?? [];
+        var pairedOverwriteFacts = orderedSources
+            .Where(source => source.Source.Overwrite is not null)
+            .Select(source => new RouteOverwriteFact(
+                RouteOverwriteState.Paired,
+                source.Source.Overwrite!,
+                [source.Source.CanonicalPath]));
+        var allOverwriteFacts = suppliedOverwriteFacts
+            .Where(fact => fact.State != RouteOverwriteState.Paired)
+            .Concat(pairedOverwriteFacts)
+            .ToArray();
+        OverwriteFacts = new ReadOnlyCollection<RouteOverwriteFact>(allOverwriteFacts);
+        Catalogue = new RouteSourceCatalogue(
+            orderedSources.Select(source => source.Source),
+            OverwriteFacts);
     }
 
     internal RouteListInventoryState State { get; }
@@ -71,21 +87,25 @@ internal sealed class RouteListInventoryFacts
 
     internal IReadOnlyList<RouteListPhysicalAlias> PhysicalAliases { get; }
 
-    internal RouteListSourceCatalogue Catalogue { get; }
+    internal IReadOnlyList<RouteOverwriteFact> OverwriteFacts { get; }
+
+    internal RouteSourceCatalogue Catalogue { get; }
 
     internal static RouteListInventoryFacts Create(
         IEnumerable<RouteListInventorySource> sources,
         IEnumerable<RouteListFilesystemFinding> findings,
-        IEnumerable<RouteListPhysicalAlias> physicalAliases)
+        IEnumerable<RouteListPhysicalAlias> physicalAliases,
+        IEnumerable<RouteOverwriteFact>? overwriteFacts = null)
     {
-        return new RouteListInventoryFacts(sources, findings, physicalAliases);
+        return new RouteListInventoryFacts(sources, findings, physicalAliases, overwriteFacts);
     }
 
     internal static RouteListInventoryFacts Interrupted(
         IEnumerable<RouteListInventorySource> sources,
         IEnumerable<RouteListFilesystemFinding> knownFindings,
         IEnumerable<RouteListPhysicalAlias> physicalAliases,
-        RouteListFilesystemFinding interruption)
+        RouteListFilesystemFinding interruption,
+        IEnumerable<RouteOverwriteFact>? overwriteFacts = null)
     {
         ArgumentNullException.ThrowIfNull(interruption);
         if (interruption.Code != RouteListFindingCode.Interrupted
@@ -97,7 +117,8 @@ internal sealed class RouteListInventoryFacts
         return new RouteListInventoryFacts(
             sources,
             knownFindings.Append(interruption),
-            physicalAliases);
+            physicalAliases,
+            overwriteFacts);
     }
 
     private static RouteListInventoryState DeriveState(IReadOnlyList<RouteListFilesystemFinding> findings)

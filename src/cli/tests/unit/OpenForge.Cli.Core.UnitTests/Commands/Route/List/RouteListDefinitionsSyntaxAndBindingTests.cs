@@ -1,4 +1,5 @@
 using System.CommandLine;
+using OpenForge.Cli.Core.Commands.Route;
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Shell.Composition;
@@ -15,10 +16,11 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void DefinitionsOwnCanonicalSyntaxAndFindingCodes()
     {
-        Assert.Equal("route", RouteListDefinitions.RouteGroup.Name);
+        Assert.Equal("route", RouteDefinitions.RouteGroup.Name);
         Assert.Equal("list", RouteListDefinitions.ListCommand.Name);
         Assert.Equal("source-reference", RouteListDefinitions.SourceReference.Name);
         Assert.Equal("--depth", RouteListDefinitions.Depth.Name);
+        Assert.Equal(CliOptionArity.ExactlyOne, RouteListDefinitions.Depth.Arity);
         Assert.Equal("1", RouteListDefinitions.Depth.DefaultValue);
         Assert.Equal("route list", RouteListDefinitions.CommandIdentity);
         Assert.Equal(1, RouteListDefinitions.SchemaVersion);
@@ -67,13 +69,13 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void BindingClosesCommandLocalRequestAndResultTypes()
     {
-        var symbols = RouteListBinding.CreateSymbols();
+        var symbols = RouteListBinding.CreateSymbols(RouteBinding.CreateGroup());
         var fallback = InvalidResult();
         var binding = RouteListBinding.Close(
             symbols,
             CliHelpContent.Empty,
             (parse, invocation) => CliBindResult<RouteListRequest, RouteListResult>.Invalid(fallback),
-            (invalid, input, environment) => fallback,
+            input => fallback,
             (request, cancellationToken) => ValueTask.FromResult(fallback),
             new CliRendererSet<RouteListResult>(presentation => "human", presentation => "{}"));
 
@@ -82,7 +84,7 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
         Assert.Same(symbols.ListCommand, binding.Command);
         Assert.Equal(CliWorkspaceRequirement.Required, binding.WorkspaceRequirement);
         Assert.Equal(ArgumentArity.ZeroOrOne, symbols.SourceReference.Arity);
-        Assert.Equal(ArgumentArity.ExactlyOne, symbols.Depth.Arity);
+        Assert.Equal(ArgumentArity.ZeroOrOne, symbols.Depth.Arity);
         Assert.Empty(symbols.ListCommand.Aliases);
         Assert.Single(symbols.DelimiterPolicies);
         var omitted = symbols.RouteGroup.Parse(["list"]);
@@ -94,6 +96,21 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
         Assert.NotNull(CliDelimiterGuard.Validate(
             ["list", "--depth", "2"],
             symbols.DelimiterPolicies));
+    }
+
+    [Fact(DisplayName = "Route-list raw depth scanning stops at the delimiter before an option-like source")]
+    [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
+    public void RawDepthScanStopsAtTheDelimiter()
+    {
+        var symbols = RouteListBinding.CreateSymbols(RouteBinding.CreateGroup());
+        string[] arguments = ["list", "--", "--depth="];
+        var parse = symbols.RouteGroup.Parse(arguments);
+
+        Assert.Empty(parse.Errors);
+        Assert.Equal("--depth=", parse.GetValue(symbols.SourceReference));
+        Assert.Equal(
+            RouteListDefinitions.Depth.DefaultValue,
+            RouteListBindingInputPolicy.ReadDepthSpelling(arguments, parse, symbols.Depth));
     }
 
     private static RouteListFinding Finding(RouteListFindingCode code, CliSemanticStatus status)

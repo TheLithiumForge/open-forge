@@ -1,14 +1,14 @@
 ---
 open-forge:
   description: Implement read-only route discovery, beginning with route list and then route inspect
-  tags: [Memory, Working, CLI, Task, Route, Discovery, ReadOnly, Contextual, Active]
+  tags: [Memory, Working, CLI, Task, Route, Discovery, ReadOnly, Contextual, Complete]
 ---
 
 # Route Discovery
 
 ## Task State
 
-- State: Active.
+- State: Complete after accepted Route List and Route Inspect slices.
 - Implementer: Mastermind.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Prerequisite: Accepted [Foundation](../foundation/_foundation.md).
@@ -41,7 +41,21 @@ private support.
 - [x] [Implement route-list topology, ordering, depth, coverage, status, and next-action formation](done/route-list-topology.md) — Complete — Implementer: Mastermind
 - [x] [Implement route-list human, JSON, diagnostic, and binding-derived help projections](done/route-list-presentation.md) — Complete — Implementer: Mastermind
 - [x] [Run route-list managed, process, Native AOT, public-scenario, no-write, and architecture acceptance](done/route-list-acceptance.md) — Complete — Implementer: Mastermind
-- [ ] [Implement and accept route inspect, then promote only route facts proved identical by both commands](route-inspect.md) — Active — Implementer: Mastermind
+- [x] [Implement and accept route inspect, then promote only route facts proved identical by both commands](route-inspect.md) — Complete — Implementer: Mastermind
+  - [x] [Freeze route-inspect contracts and evidence](route-inspect-contracts.md) — Complete — Implementer: Mastermind
+  - [x] [Resolve route-inspect inputs and audit promotion](done/route-inspect-resolution-promotion.md) — Complete — Implementer: Mastermind
+  - [x] [Form the route-inspect profile](route-inspect-profile.md) — Complete at `c407e24`; link-safe routing deferred — Implementer: Mastermind
+  - [x] [Present route inspect through the CLI](route-inspect-presentation.md) — Complete at production commit `51c0960` plus final managed acceptance — Implementer: Mastermind
+  - [x] [Accept route inspect and close Route Discovery](route-inspect-acceptance.md) — Complete — integrated managed/native and closeout gates — Implementer: Mastermind
+
+## Closeout And Routing Waiver
+
+Route List is integrated at `edca509`; Route Inspect is accepted from final
+correction `9c690b4` with complete managed and local `win-x64` Native AOT evidence.
+The existing `CLI-EDGE-001` legacy duplicate-entrypoint failure prevents a clean
+link-safe move and generated-index refresh. Completed Inspect records remain in
+place, and generated `Entries` below retain their pre-closeout projection rather
+than being hand-edited.
 
 ## Entries
 
