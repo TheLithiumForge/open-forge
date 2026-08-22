@@ -72,12 +72,15 @@ internal static class RouteInspectBinding
         ArgumentNullException.ThrowIfNull(components);
         return new CliCommandBinding<RouteInspectRequest, RouteInspectResult>(
             symbols.InspectCommand,
-            components.Help,
-            CliWorkspaceRequirement.Required,
-            CreateBinder(symbols),
-            CreateInvalidResultFactory(symbols),
-            components.Operation.Invoke,
-            components.Renderers,
-            components.DiagnosticRenderer);
+            new CliCommandBindingComponents<RouteInspectRequest, RouteInspectResult>
+            {
+                Help = components.Help,
+                WorkspaceRequirement = CliWorkspaceRequirement.Required,
+                Binder = CreateBinder(symbols),
+                InvalidResultFactory = CreateInvalidResultFactory(symbols),
+                Operation = components.Operation.Invoke,
+                Renderers = components.Renderers,
+                DiagnosticRenderer = components.DiagnosticRenderer,
+            });
     }
 }

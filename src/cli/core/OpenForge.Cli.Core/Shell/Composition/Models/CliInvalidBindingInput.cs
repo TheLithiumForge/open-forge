@@ -7,4 +7,4 @@ internal sealed record CliInvalidBindingInput(
     CliInvalidInput InvalidInput,
     CliGlobalInput GlobalInput,
     CliProcessEnvironment ProcessEnvironment,
-    OpenForge.Cli.Core.Shell.Composition.CliBindingParse BindingParse);
+    CliBindingParse BindingParse);

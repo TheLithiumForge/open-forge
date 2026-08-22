@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Commands.Route.Shared.Topology;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Route.List.Shared.Filesystem;
+using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.List.Shared.Topology;
 
@@ -264,15 +265,7 @@ public sealed class RouteListTopologyIntegrationTests
         RouteListFilesystemIntegrationWorkspace workspace,
         string entries)
     {
-        workspace.Write(".agents/loader.md", $"""
-            # Open Forge Loader
-
-            ## Entries
-
-            <!-- open-forge:generated-index:start -->
-            {entries}
-            <!-- open-forge:generated-index:end -->
-            """);
+        workspace.Write(".agents/loader.md", GeneratedLoaderDocumentBuilder.Build(entries));
     }
 
     private static void WriteRoute(

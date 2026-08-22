@@ -1,6 +1,7 @@
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route;
 using OpenForge.Cli.Core.Commands.Route.List;
+using OpenForge.Cli.Core.Commands.Route.List.Models.Binding;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Framework.Workspace;
@@ -27,12 +28,10 @@ public sealed class RouteListPresentationTests
 
         var omitted = RouteListBinding.Bind(
             symbols.RouteGroup.Parse(omittedArguments),
-            omittedArguments,
             invocation,
             symbols);
         var all = RouteListBinding.Bind(
             symbols.RouteGroup.Parse(allArguments),
-            allArguments,
             invocation,
             symbols);
 
@@ -49,7 +48,6 @@ public sealed class RouteListPresentationTests
         string[] arguments = ["list", "memory", $"--depth={depth}"];
         var bound = RouteListBinding.Bind(
             symbols.RouteGroup.Parse(arguments),
-            arguments,
             invocation,
             symbols);
 
@@ -69,17 +67,18 @@ public sealed class RouteListPresentationTests
         var fallback = CompleteResult();
         var binding = RouteListBinding.Close(
             symbols,
-            CliHelpContent.Empty,
-            RouteListBinding.CreateBinder(symbols),
-            RouteListBinding.CreateInvalidResultFactory(),
-            (request, cancellationToken) =>
+            new RouteListBindingComponents
             {
-                operationCalls++;
-                return ValueTask.FromResult(fallback);
-            },
-            new CliRendererSet<RouteListResult>(
-                RouteListHumanRenderer.Render,
-                RouteListJsonRenderer.Render));
+                Help = CliHelpContent.Empty,
+                Operation = (request, cancellationToken) =>
+                {
+                    operationCalls++;
+                    return ValueTask.FromResult(fallback);
+                },
+                Renderers = new CliRendererSet<RouteListResult>(
+                    RouteListHumanRenderer.Render,
+                    RouteListJsonRenderer.Render),
+            });
         var output = new StringWriter();
         var error = new StringWriter();
         var tree = CliCommandTree.Create(
@@ -88,7 +87,7 @@ public sealed class RouteListPresentationTests
             [binding]);
         var parse = new CliParser(tree).Parse(["route", "list", "--depth=-1"]);
         var completion = await binding.InvokeAsync(
-            new CliBindingParse(parse.Result, parse.OriginalArguments),
+            new CliBindingParse(parse.Result),
             Invocation(RouteListContractTestData.Workspace()),
             new CliOutputWriters(output, error),
             TestContext.Current.CancellationToken);
@@ -217,7 +216,7 @@ public sealed class RouteListPresentationTests
             invalidInput,
             input,
             new CliProcessEnvironment(RouteListContractTestData.Workspace().LexicalRoot),
-            new CliBindingParse(symbols.RouteGroup.Parse(["list"]), ["route", "list"]));
+            new CliBindingParse(symbols.RouteGroup.Parse(["list"])));
         var result = RouteListBinding.CreateInvalidResultFactory()(context);
 
         Assert.Null(result.Workspace);

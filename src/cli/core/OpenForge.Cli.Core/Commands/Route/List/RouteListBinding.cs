@@ -1,12 +1,14 @@
 using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Globalization;
+using OpenForge.Cli.Core.Commands.Route.List.Models.Binding;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Commands.Route.Shared.Source;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Composition;
+using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Invocation;
 using OpenForge.Cli.Core.Shell.Parsing;
@@ -60,24 +62,23 @@ internal static class RouteListBinding
 
     internal static CliCommandBinding<RouteListRequest, RouteListResult> Close(
         RouteListSymbols symbols,
-        CliHelpContent help,
-        CliRequestBinder<RouteListRequest, RouteListResult> binder,
-        CliContextualInvalidResultFactory<RouteListResult> invalidResultFactory,
-        RouteListOperation operation,
-        CliRendererSet<RouteListResult> renderers,
-        CliDiagnosticRenderer<RouteListResult>? diagnosticRenderer = null)
+        RouteListBindingComponents components)
     {
         ArgumentNullException.ThrowIfNull(symbols);
-        ArgumentNullException.ThrowIfNull(operation);
+        ArgumentNullException.ThrowIfNull(components);
+        ArgumentNullException.ThrowIfNull(components.Operation);
         return new CliCommandBinding<RouteListRequest, RouteListResult>(
             symbols.ListCommand,
-            help,
-            CliWorkspaceRequirement.Required,
-            binder,
-            invalidResultFactory,
-            operation.Invoke,
-            renderers,
-            diagnosticRenderer);
+            new CliCommandBindingComponents<RouteListRequest, RouteListResult>
+            {
+                Help = components.Help,
+                WorkspaceRequirement = CliWorkspaceRequirement.Required,
+                Binder = CreateBinder(symbols),
+                InvalidResultFactory = CreateInvalidResultFactory(),
+                Operation = components.Operation.Invoke,
+                Renderers = components.Renderers,
+                DiagnosticRenderer = components.DiagnosticRenderer,
+            });
     }
 
     internal static CliRequestBinder<RouteListRequest, RouteListResult> CreateBinder(
@@ -86,7 +87,6 @@ internal static class RouteListBinding
         ArgumentNullException.ThrowIfNull(symbols);
         return (parse, invocation) => Bind(
             parse.Result,
-            parse.OriginalArguments,
             invocation,
             symbols);
     }
@@ -98,19 +98,17 @@ internal static class RouteListBinding
 
     internal static CliBindResult<RouteListRequest, RouteListResult> Bind(
         ParseResult parseResult,
-        IReadOnlyList<string> originalArguments,
         CliInvocation invocation,
         RouteListSymbols symbols)
     {
         ArgumentNullException.ThrowIfNull(parseResult);
-        ArgumentNullException.ThrowIfNull(originalArguments);
         ArgumentNullException.ThrowIfNull(invocation);
         ArgumentNullException.ThrowIfNull(symbols);
         var sourceReference = parseResult.GetValue(symbols.SourceReference);
-        var depthSpelling = RouteListBindingInputPolicy.ReadDepthSpelling(
-            originalArguments,
-            parseResult,
-            symbols.Depth);
+        var depthFacts = CliOptionResultFactsReader.Read(parseResult, symbols.Depth);
+        var depthSpelling = depthFacts.IsExplicitWithoutValue
+            ? null
+            : parseResult.GetValue(symbols.Depth);
         if (!TryParseDepth(depthSpelling, out var requestedDepth))
         {
             return CliBindResult<RouteListRequest, RouteListResult>.Invalid(

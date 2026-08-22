@@ -24,26 +24,29 @@ public sealed class BindingTests
         var rendererCalls = 0;
         var binding = new CliCommandBinding<TestRequest, TestResult>(
             command,
-            CliHelpContent.Empty,
-            CliWorkspaceRequirement.Absent,
-            (parse, invocation) =>
+            new CliCommandBindingComponents<TestRequest, TestResult>
             {
-                binderCalls++;
-                return CliBindResult<TestRequest, TestResult>.Bound(new TestRequest("value"));
-            },
-            input => Result(CliSemanticStatus.Invalid),
-            (request, cancellationToken) =>
-            {
-                operationCalls++;
-                return ValueTask.FromResult(Result(CliSemanticStatus.Complete));
-            },
-            new CliRendererSet<TestResult>(
-                presentation =>
+                Help = CliHelpContent.Empty,
+                WorkspaceRequirement = CliWorkspaceRequirement.Absent,
+                Binder = (parse, invocation) =>
                 {
-                    rendererCalls++;
-                    return "complete";
+                    binderCalls++;
+                    return CliBindResult<TestRequest, TestResult>.Bound(new TestRequest("value"));
                 },
-                presentation => "{}"));
+                InvalidResultFactory = input => Result(CliSemanticStatus.Invalid),
+                Operation = (request, cancellationToken) =>
+                {
+                    operationCalls++;
+                    return ValueTask.FromResult(Result(CliSemanticStatus.Complete));
+                },
+                Renderers = new CliRendererSet<TestResult>(
+                    presentation =>
+                    {
+                        rendererCalls++;
+                        return "complete";
+                    },
+                    presentation => "{}"),
+            });
         var group = new Command("group");
         group.Add(command);
         var tree = CliCommandTree.Create(
@@ -55,7 +58,7 @@ public sealed class BindingTests
         var standardOutput = new StringWriter();
 
         var completion = await ((ICliCommandBinding)binding).InvokeAsync(
-            new CliBindingParse(parse.Result, parse.OriginalArguments),
+            new CliBindingParse(parse.Result),
             invocation,
             new CliOutputWriters(standardOutput, new StringWriter()),
             TestContext.Current.CancellationToken);
@@ -114,20 +117,26 @@ public sealed class BindingTests
 
         Assert.Throws<ArgumentNullException>(() => new CliCommandBinding<TestRequest, TestResult>(
             command,
-            CliHelpContent.Empty,
-            CliWorkspaceRequirement.Absent,
-            null!,
-            invalid,
-            operation,
-            renderers));
+            new CliCommandBindingComponents<TestRequest, TestResult>
+            {
+                Help = CliHelpContent.Empty,
+                WorkspaceRequirement = CliWorkspaceRequirement.Absent,
+                Binder = null!,
+                InvalidResultFactory = invalid,
+                Operation = operation,
+                Renderers = renderers,
+            }));
         Assert.Throws<ArgumentNullException>(() => new CliCommandBinding<TestRequest, TestResult>(
             command,
-            CliHelpContent.Empty,
-            CliWorkspaceRequirement.Absent,
-            binder,
-            invalid,
-            null!,
-            renderers));
+            new CliCommandBindingComponents<TestRequest, TestResult>
+            {
+                Help = CliHelpContent.Empty,
+                WorkspaceRequirement = CliWorkspaceRequirement.Absent,
+                Binder = binder,
+                InvalidResultFactory = invalid,
+                Operation = null!,
+                Renderers = renderers,
+            }));
         Assert.Throws<ArgumentNullException>(() => new CliOutputWriters(null!, TextWriter.Null));
     }
 
@@ -142,20 +151,24 @@ public sealed class BindingTests
         var operationCalls = 0;
         var binding = new CliCommandBinding<TestRequest, TestResult>(
             leaf,
-            CliHelpContent.Empty,
-            CliWorkspaceRequirement.Absent,
-            (parse, invocation) => CliBindResult<TestRequest, TestResult>.Bound(new TestRequest("value")),
-            input =>
+            new CliCommandBindingComponents<TestRequest, TestResult>
             {
-                invalidFactoryCalls++;
-                return Result(CliSemanticStatus.Invalid);
-            },
-            (request, cancellationToken) =>
-            {
-                operationCalls++;
-                return ValueTask.FromResult(Result(CliSemanticStatus.Complete));
-            },
-            new CliRendererSet<TestResult>(presentation => "human", presentation => "{}"));
+                Help = CliHelpContent.Empty,
+                WorkspaceRequirement = CliWorkspaceRequirement.Absent,
+                Binder = (parse, invocation) =>
+                    CliBindResult<TestRequest, TestResult>.Bound(new TestRequest("value")),
+                InvalidResultFactory = input =>
+                {
+                    invalidFactoryCalls++;
+                    return Result(CliSemanticStatus.Invalid);
+                },
+                Operation = (request, cancellationToken) =>
+                {
+                    operationCalls++;
+                    return ValueTask.FromResult(Result(CliSemanticStatus.Complete));
+                },
+                Renderers = new CliRendererSet<TestResult>(presentation => "human", presentation => "{}"),
+            });
         var tree = CliCommandTree.Create(
             CliHelpContent.Empty,
             [new CliRootBranch(group, CliHelpContent.Empty, [])],

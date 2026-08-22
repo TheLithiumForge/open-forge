@@ -1,5 +1,7 @@
 using System.Text.Json;
+using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
+using static OpenForge.Cli.EndToEndTests.Shared.PublishedProcess.PublishedProcessTestSupport;
 
 namespace OpenForge.Cli.EndToEndTests;
 
@@ -13,6 +15,8 @@ public sealed class CliProcessTests
         using var working = TemporaryWorkspace.Create("e2e-version-working");
         using var other = TemporaryWorkspace.Create("e2e-version-other");
         var missingWorkspace = working.Combine("missing-workspace");
+        var workingBefore = working.SnapshotHashes();
+        var otherBefore = other.SnapshotHashes();
         var request = new ProcessRunRequest(
             environment.ExecutablePath,
             ["--workspace", missingWorkspace, "--json", "--version"],
@@ -25,6 +29,8 @@ public sealed class CliProcessTests
         Assert.Equal(environment.ExpectedVersion + Environment.NewLine, result.StandardOutput);
         Assert.Equal(string.Empty, result.StandardError);
         Assert.False(Directory.Exists(missingWorkspace));
+        Assert.Equal(workingBefore, working.SnapshotHashes());
+        Assert.Equal(otherBefore, other.SnapshotHashes());
     }
 
     [Fact(DisplayName = "Published root and route-family help expose available List and Inspect commands")]
@@ -184,6 +190,220 @@ public sealed class CliProcessTests
         Assert.Equal(before, working.SnapshotHashes());
     }
 
+    [Theory(DisplayName = "Published route-list enforces equals-only depth syntax before the terminator")]
+    [Trait("Feature", "route-list"), Trait("Evidence", "EndToEnd")]
+    [InlineData("--depth=1", null, false)]
+    [InlineData("--depth", null, true)]
+    [InlineData("--depth", "1", true)]
+    [InlineData("--depth:1", null, true)]
+    public async Task PublishedRouteListEnforcesEqualsOnlyDepthSyntax(
+        string option,
+        string? separateValue,
+        bool rejected)
+    {
+        var environment = PublishedExecutableEnvironment.ReadRequired();
+        using var working = PublishedRouteWorkspace.CreateComplete();
+        var before = working.SnapshotHashes();
+        var arguments = new List<string>
+        {
+            "route", "list", "root", "--workspace", working.Path,
+        };
+        arguments.Add(option);
+        if (separateValue is not null)
+        {
+            arguments.Add(separateValue);
+        }
+
+        arguments.Add("--json");
+        var result = await RunAsync(environment, working.Path, arguments);
+
+        Assert.Equal(rejected ? 4 : 0, result.ExitCode);
+        if (rejected)
+        {
+            Assert.Equal(string.Empty, result.StandardOutput);
+            Assert.NotEmpty(result.StandardError);
+        }
+        else
+        {
+            Assert.Equal(string.Empty, result.StandardError);
+            using var document = JsonDocument.Parse(result.StandardOutput);
+            Assert.Equal("complete", document.RootElement.GetProperty("status").GetString());
+            Assert.Equal(1, document.RootElement.GetProperty("result").GetProperty("requestedDepth").GetInt32());
+        }
+
+        Assert.Equal(before, working.SnapshotHashes());
+    }
+
+    [Fact(DisplayName = "Published attached-empty depth preserves one typed JSON invalid result")]
+    [Trait("Feature", "route-list"), Trait("Evidence", "EndToEnd")]
+    public async Task PublishedAttachedEmptyDepthPreservesJsonInvalidResult()
+    {
+        var environment = PublishedExecutableEnvironment.ReadRequired();
+        using var working = PublishedRouteWorkspace.CreateComplete();
+        var before = working.SnapshotHashes();
+
+        var result = await RunAsync(
+            environment,
+            working.Path,
+            ["route", "list", "--workspace", working.Path, "--depth=", "--json"]);
+
+        Assert.Equal(4, result.ExitCode);
+        Assert.Equal(string.Empty, result.StandardError);
+        using var document = JsonDocument.Parse(result.StandardOutput);
+        Assert.Equal("invalid", document.RootElement.GetProperty("status").GetString());
+        var finding = Assert.Single(document.RootElement.GetProperty("result").GetProperty("findings").EnumerateArray());
+        Assert.Equal("route-list.invalid-depth", finding.GetProperty("code").GetString());
+        Assert.Equal("--depth", finding.GetProperty("subject").GetString());
+        Assert.Equal(before, working.SnapshotHashes());
+    }
+
+    [Theory(DisplayName = "Published route-list accepts omitted and boundary depth values as typed requests")]
+    [Trait("Feature", "route-list"), Trait("Evidence", "EndToEnd")]
+    [InlineData(null, "Finite", 1)]
+    [InlineData("0", "Finite", 0)]
+    [InlineData("2147483647", "Finite", 2147483647)]
+    [InlineData("all", "All", 0)]
+    public async Task PublishedRouteListAcceptsTypedDepthBoundaries(
+        string? spelling,
+        string expectedKind,
+        int expectedValue)
+    {
+        var environment = PublishedExecutableEnvironment.ReadRequired();
+        using var working = PublishedRouteWorkspace.CreateComplete();
+        var before = working.SnapshotHashes();
+        var arguments = new List<string>
+        {
+            "route", "list", "root", "--workspace", working.Path,
+        };
+        if (spelling is not null)
+        {
+            arguments.Add($"--depth={spelling}");
+        }
+
+        arguments.Add("--json");
+        var result = await RunAsync(environment, working.Path, arguments);
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.Equal(string.Empty, result.StandardError);
+        using var document = JsonDocument.Parse(result.StandardOutput);
+        Assert.Equal("complete", document.RootElement.GetProperty("status").GetString());
+        var requestedDepth = document.RootElement.GetProperty("result").GetProperty("requestedDepth");
+        if (expectedKind == "All")
+        {
+            Assert.Equal("all", requestedDepth.GetString());
+        }
+        else
+        {
+            Assert.Equal(expectedValue, requestedDepth.GetInt32());
+        }
+
+        Assert.Equal(before, working.SnapshotHashes());
+    }
+
+    [Theory(DisplayName = "Published route-list returns one typed invalid result for invalid depth values")]
+    [Trait("Feature", "route-list"), Trait("Evidence", "EndToEnd")]
+    [InlineData("-1", "-1")]
+    [InlineData("2147483648", "2147483648")]
+    [InlineData("unknown", "unknown")]
+    public async Task PublishedRouteListRejectsInvalidDepthValuesWithoutWorkspaceWrites(
+        string spelling,
+        string expectedSubject)
+    {
+        var environment = PublishedExecutableEnvironment.ReadRequired();
+        using var working = PublishedRouteWorkspace.CreateComplete();
+        var before = working.SnapshotHashes();
+
+        var result = await RunAsync(
+            environment,
+            working.Path,
+            ["route", "list", "--workspace", working.Path, $"--depth={spelling}", "--json"]);
+
+        Assert.Equal(4, result.ExitCode);
+        Assert.Equal(string.Empty, result.StandardError);
+        using var document = JsonDocument.Parse(result.StandardOutput);
+        Assert.Equal("invalid", document.RootElement.GetProperty("status").GetString());
+        var finding = Assert.Single(document.RootElement.GetProperty("result").GetProperty("findings").EnumerateArray());
+        Assert.Equal("route-list.invalid-depth", finding.GetProperty("code").GetString());
+        Assert.Equal(expectedSubject, finding.GetProperty("subject").GetString());
+        Assert.Equal(before, working.SnapshotHashes());
+    }
+
+    [Fact(DisplayName = "Published route-list rejects repeated depth occurrences as one parser error")]
+    [Trait("Feature", "route-list"), Trait("Evidence", "EndToEnd")]
+    public async Task PublishedRouteListRejectsRepeatedDepthOccurrencesAsParserError()
+    {
+        var environment = PublishedExecutableEnvironment.ReadRequired();
+        using var working = PublishedRouteWorkspace.CreateComplete();
+        var before = working.SnapshotHashes();
+
+        var result = await RunAsync(
+            environment,
+            working.Path,
+            [
+                "route", "list", "root", "--workspace", working.Path,
+                "--depth=0", "--depth=1", "--json",
+            ]);
+
+        Assert.Equal(4, result.ExitCode);
+        Assert.Equal(string.Empty, result.StandardOutput);
+        Assert.NotEmpty(result.StandardError);
+        Assert.Equal(before, working.SnapshotHashes());
+    }
+
+    [Theory(DisplayName = "Published terminal modes reject Route List domain and local input before effects")]
+    [Trait("Feature", "cli-parser"), Trait("Evidence", "EndToEnd")]
+    [InlineData("--help")]
+    [InlineData("--version")]
+    public async Task PublishedTerminalModesRejectDomainAndLocalInput(string terminalOption)
+    {
+        var environment = PublishedExecutableEnvironment.ReadRequired();
+        using var working = PublishedRouteWorkspace.CreateComplete();
+        var missingWorkspace = Path.Combine(working.Path, "terminal-workspace-must-not-be-created");
+        var before = working.SnapshotHashes();
+
+        var result = await RunAsync(
+            environment,
+            working.Path,
+            [
+                "route", "list", "root", "--depth=0", terminalOption,
+                "--workspace", missingWorkspace,
+            ]);
+
+        Assert.Equal(4, result.ExitCode);
+        Assert.Equal(string.Empty, result.StandardOutput);
+        var diagnostic = Assert.Single(
+            result.StandardError.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries));
+        Assert.InRange(diagnostic.Length, 1, 4096);
+        Assert.False(Directory.Exists(missingWorkspace));
+        Assert.Equal(before, working.SnapshotHashes());
+    }
+
+    [Theory(DisplayName = "Published terminal modes accept well-formed global no-op options")]
+    [Trait("Feature", "cli-parser"), Trait("Evidence", "EndToEnd")]
+    [InlineData("--help")]
+    [InlineData("--version")]
+    public async Task PublishedTerminalModesAcceptWellFormedGlobalNoOpOptions(string terminalOption)
+    {
+        var environment = PublishedExecutableEnvironment.ReadRequired();
+        using var working = PublishedRouteWorkspace.CreateComplete();
+        var missingWorkspace = Path.Combine(working.Path, "terminal-global-workspace");
+        var before = working.SnapshotHashes();
+
+        var result = await RunAsync(
+            environment,
+            working.Path,
+            [
+                "route", "list", terminalOption, "--workspace", missingWorkspace,
+                "--json", "--verbose", "--view=compact",
+            ]);
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.NotEmpty(result.StandardOutput);
+        Assert.Equal(string.Empty, result.StandardError);
+        Assert.False(Directory.Exists(missingWorkspace));
+        Assert.Equal(before, working.SnapshotHashes());
+    }
+
     [Fact(DisplayName = "Published route list preserves root path depth view overwrite and detached semantics")]
     [Trait("Feature", "route-list"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedRouteListPreservesPublicSelectionDepthAndViews()
@@ -286,10 +506,6 @@ public sealed class CliProcessTests
             environment,
             complete.Path,
             ["route", "list", "--depth=-1", "--json"]);
-        var emptyDepth = await RunAsync(
-            environment,
-            complete.Path,
-            ["route", "list", "--depth=", "--json"]);
         var attentionHuman = await RunAsync(
             environment,
             attention.Path,
@@ -317,19 +533,6 @@ public sealed class CliProcessTests
             Assert.Equal(
                 "open-forge route list --help",
                 document.RootElement.GetProperty("next").GetProperty("command").GetString());
-        }
-
-        Assert.Equal(4, emptyDepth.ExitCode);
-        Assert.Equal(string.Empty, emptyDepth.StandardError);
-        using (var document = JsonDocument.Parse(emptyDepth.StandardOutput))
-        {
-            Assert.Equal("invalid", document.RootElement.GetProperty("status").GetString());
-            Assert.Equal(
-                "route-list.invalid-depth",
-                document.RootElement.GetProperty("result").GetProperty("findings")[0].GetProperty("code").GetString());
-            Assert.Equal(
-                "--depth",
-                document.RootElement.GetProperty("result").GetProperty("findings")[0].GetProperty("subject").GetString());
         }
 
         Assert.Equal(2, attentionHuman.ExitCode);
@@ -399,29 +602,4 @@ public sealed class CliProcessTests
         Assert.Equal(before, working.SnapshotHashes());
     }
 
-    private static Task<ProcessRunResult> RunAsync(
-        PublishedExecutableEnvironment environment,
-        string workingDirectory,
-        IReadOnlyList<string> arguments)
-    {
-        return ProcessRunner.RunAsync(
-            new ProcessRunRequest(
-                environment.ExecutablePath,
-                arguments,
-                workingDirectory,
-                timeout: TimeSpan.FromSeconds(30)),
-            TestContext.Current.CancellationToken);
-    }
-
-    private static async Task<ProcessRunResult> RunWithoutWritesAsync(
-        PublishedExecutableEnvironment environment,
-        string workingDirectory,
-        Func<IReadOnlyDictionary<string, string>> snapshot,
-        IReadOnlyList<string> arguments)
-    {
-        var before = snapshot();
-        var result = await RunAsync(environment, workingDirectory, arguments);
-        Assert.Equal(before, snapshot());
-        return result;
-    }
 }

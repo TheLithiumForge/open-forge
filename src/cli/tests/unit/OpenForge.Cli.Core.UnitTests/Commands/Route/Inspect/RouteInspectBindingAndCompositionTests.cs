@@ -6,11 +6,13 @@ using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.Shared.Rendering;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Invocation;
+using OpenForge.Cli.Core.Shell.Parsing;
 using OpenForge.Cli.Core.Shell.Parsing.Models;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Presentation;
@@ -94,12 +96,11 @@ public sealed class RouteInspectBindingAndCompositionTests
         var route = new Command("route");
         var operationCalls = 0;
         var binding = CreateCountingBinding(route, () => operationCalls++);
-        var arguments = new[] { "route", "inspect" };
         var output = new StringWriter();
         var error = new StringWriter();
 
         var completion = await binding.InvokeAsync(
-            new CliBindingParse(route.Parse(["inspect"]), arguments),
+            new CliBindingParse(route.Parse(["inspect"])),
             Invocation(RouteInspectPresentationTestDataWorkspace()),
             new CliOutputWriters(output, error),
             TestContext.Current.CancellationToken);
@@ -115,18 +116,120 @@ public sealed class RouteInspectBindingAndCompositionTests
         var route = new Command("route");
         var operationCalls = 0;
         var binding = CreateCountingBinding(route, () => operationCalls++);
-        var arguments = new[] { "route", "inspect", "first", "second" };
         var output = new StringWriter();
         var error = new StringWriter();
 
         var completion = await binding.InvokeAsync(
-            new CliBindingParse(route.Parse(["inspect", "first", "second"]), arguments),
+            new CliBindingParse(route.Parse(["inspect", "first", "second"])),
             Invocation(RouteInspectPresentationTestDataWorkspace()),
             new CliOutputWriters(output, error),
             TestContext.Current.CancellationToken);
 
         Assert.Equal(0, operationCalls);
         Assert.Equal(4, completion.ExitCode);
+    }
+
+    [Theory(DisplayName = "Route Inspect terminal modes keep well-formed globals as no-ops before workspace and operation")]
+    [InlineData("--help")]
+    [InlineData("--version")]
+    [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
+    public async Task TerminalModesBypassWorkspaceAndOperationWithWellFormedGlobals(string terminalMode)
+    {
+        var bindingCalls = 0;
+        var operationCalls = 0;
+        var application = CreateApplication(() => bindingCalls++, () => operationCalls++);
+        var missingWorkspace = Path.Combine(
+            Path.GetTempPath(),
+            $"open-forge-route-inspect-terminal-unit-{Guid.NewGuid():N}");
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        var completion = await application.RunAsync(
+            [
+                "route",
+                "inspect",
+                "--workspace",
+                missingWorkspace,
+                "--json",
+                "--view=compact",
+                "--verbose",
+                terminalMode,
+            ],
+            new CliProcessEnvironment(missingWorkspace),
+            new CliOutputWriters(output, error),
+            TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Complete, completion.Status);
+        Assert.Equal(0, completion.ExitCode);
+        Assert.Equal(CliOutputTarget.StandardOutput, completion.PrimaryOutputTarget);
+        Assert.Equal(0, bindingCalls);
+        Assert.Equal(0, operationCalls);
+        Assert.NotEmpty(output.ToString());
+        Assert.Equal(string.Empty, error.ToString());
+        Assert.False(Directory.Exists(missingWorkspace));
+    }
+
+    [Theory(DisplayName = "Route Inspect terminal modes reject source input before workspace selection and binding")]
+    [InlineData("--help", "root")]
+    [InlineData("--version", "root")]
+    [InlineData("--help", "option-like")]
+    [InlineData("--version", "option-like")]
+    [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
+    public async Task TerminalModesRejectSourceInputBeforeWorkspaceAndBinding(
+        string terminalMode,
+        string sourceKind)
+    {
+        var bindingCalls = 0;
+        var operationCalls = 0;
+        var application = CreateApplication(() => bindingCalls++, () => operationCalls++);
+        var missingWorkspace = Path.Combine(
+            Path.GetTempPath(),
+            $"open-forge-route-inspect-terminal-conflict-unit-{Guid.NewGuid():N}");
+        var arguments = new List<string>
+        {
+            "route",
+            "inspect",
+            "--workspace",
+            missingWorkspace,
+            "--json",
+            "--view=compact",
+            "--verbose",
+            terminalMode,
+        };
+        switch (sourceKind)
+        {
+            case "root":
+                arguments.Add("root");
+                break;
+            case "option-like":
+                arguments.Add("--");
+                arguments.Add("--view");
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(
+                    nameof(sourceKind),
+                    sourceKind,
+                    "The terminal source case is not defined.");
+        }
+
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+        var completion = await application.RunAsync(
+            arguments.ToArray(),
+            new CliProcessEnvironment(missingWorkspace),
+            new CliOutputWriters(output, error),
+            TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Invalid, completion.Status);
+        Assert.Equal(4, completion.ExitCode);
+        Assert.Equal(CliOutputTarget.StandardError, completion.PrimaryOutputTarget);
+        Assert.Equal(0, bindingCalls);
+        Assert.Equal(0, operationCalls);
+        Assert.Equal(string.Empty, output.ToString());
+        var diagnostic = Assert.Single(
+            error.ToString().Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries));
+        Assert.InRange(diagnostic.Length, 1, 4096);
+        Assert.False(Directory.Exists(missingWorkspace));
     }
 
     [Fact(DisplayName = "Route Inspect workspace failure retains the parser-owned requested source in a typed invalid result")]
@@ -153,9 +256,7 @@ public sealed class RouteInspectBindingAndCompositionTests
             "cli.workspace.invalid",
             CliInvalidInputSource.Workspace,
             ["The selected workspace is missing."]);
-        var bindingParse = new CliBindingParse(
-            parse,
-            ["route", "inspect", "requested-source", "--json"]);
+        var bindingParse = new CliBindingParse(parse);
         var context = new CliInvalidBindingInput(
             invalidInput,
             input,
@@ -167,18 +268,21 @@ public sealed class RouteInspectBindingAndCompositionTests
         RouteInspectResult? fixedResult = null;
         var binding = new CliCommandBinding<RouteInspectRequest, RouteInspectResult>(
             symbols.InspectCommand,
-            CliHelpContent.Empty,
-            CliWorkspaceRequirement.Required,
-            (_, _) => throw new InvalidOperationException("The invalid path must not bind a request."),
-            inputContext => fixedResult = contextualFactory(inputContext),
-            (request, cancellationToken) =>
+            new CliCommandBindingComponents<RouteInspectRequest, RouteInspectResult>
             {
-                operationCalls++;
-                return ValueTask.FromResult(RouteInspectPresentationTestData.CompleteResult());
-            },
-            new CliRendererSet<RouteInspectResult>(
-                _ => "invalid",
-                _ => "{}"));
+                Help = CliHelpContent.Empty,
+                WorkspaceRequirement = CliWorkspaceRequirement.Required,
+                Binder = (_, _) => throw new InvalidOperationException("The invalid path must not bind a request."),
+                InvalidResultFactory = inputContext => fixedResult = contextualFactory(inputContext),
+                Operation = (request, cancellationToken) =>
+                {
+                    operationCalls++;
+                    return ValueTask.FromResult(RouteInspectPresentationTestData.CompleteResult());
+                },
+                Renderers = new CliRendererSet<RouteInspectResult>(
+                    _ => "invalid",
+                    _ => "{}"),
+            });
         using var output = new StringWriter();
         using var error = new StringWriter();
 
@@ -214,14 +318,15 @@ public sealed class RouteInspectBindingAndCompositionTests
         var operationCalls = 0;
         var rendererCalls = 0;
         var diagnosticCalls = 0;
-        var components = new RouteInspectBindingComponents(
-            CliHelpContent.Empty,
-            (request, cancellationToken) =>
+        var components = new RouteInspectBindingComponents
+        {
+            Help = CliHelpContent.Empty,
+            Operation = (request, cancellationToken) =>
             {
                 operationCalls++;
                 return ValueTask.FromResult(RouteInspectPresentationTestData.CompleteResult());
             },
-            new CliRendererSet<RouteInspectResult>(
+            Renderers = new CliRendererSet<RouteInspectResult>(
                 presentation =>
                 {
                     rendererCalls++;
@@ -232,17 +337,18 @@ public sealed class RouteInspectBindingAndCompositionTests
                     rendererCalls++;
                     return "json";
                 }),
-            presentation =>
+            DiagnosticRenderer = presentation =>
             {
                 diagnosticCalls++;
                 return "bounded diagnostic";
-            });
+            },
+        };
         var binding = RouteInspectBinding.Close(symbols, components);
         var parse = route.Parse(["inspect", "root/item"]);
         var output = new StringWriter();
         var error = new StringWriter();
         var completion = await binding.InvokeAsync(
-            new CliBindingParse(parse, ["route", "inspect", "root/item"]),
+            new CliBindingParse(parse),
             new CliInvocation(
                 new CliProcessIdentity("open-forge", "test"),
                 new CliPresentation(
@@ -277,17 +383,59 @@ public sealed class RouteInspectBindingAndCompositionTests
         var symbols = RouteInspectBinding.CreateSymbols(route);
         return RouteInspectBinding.Close(
             symbols,
-            new RouteInspectBindingComponents(
-                CliHelpContent.Empty,
-                (request, cancellationToken) =>
+            new RouteInspectBindingComponents
+            {
+                Help = CliHelpContent.Empty,
+                Operation = (request, cancellationToken) =>
                 {
                     operationCall();
                     return ValueTask.FromResult(RouteInspectPresentationTestData.CompleteResult());
                 },
-                new CliRendererSet<RouteInspectResult>(
+                Renderers = new CliRendererSet<RouteInspectResult>(
                     _ => "human",
                     _ => "{}"),
-                null));
+                DiagnosticRenderer = null,
+            });
+    }
+
+    private static CliCoreApplication CreateApplication(
+        Action bindingCall,
+        Action operationCall)
+    {
+        ArgumentNullException.ThrowIfNull(bindingCall);
+        ArgumentNullException.ThrowIfNull(operationCall);
+        var route = RouteBinding.CreateGroup();
+        var symbols = RouteInspectBinding.CreateSymbols(route);
+        var binding = new CliCommandBinding<RouteInspectRequest, RouteInspectResult>(
+            symbols.InspectCommand,
+            new CliCommandBindingComponents<RouteInspectRequest, RouteInspectResult>
+            {
+                Help = CliHelpContent.Empty,
+                WorkspaceRequirement = CliWorkspaceRequirement.Required,
+                Binder = (parse, invocation) =>
+                {
+                    bindingCall();
+                    return RouteInspectBinding.Bind(parse.Result, invocation, symbols);
+                },
+                InvalidResultFactory = RouteInspectBinding.CreateInvalidResultFactory(symbols),
+                Operation = (request, cancellationToken) =>
+                {
+                    operationCall();
+                    return ValueTask.FromResult(RouteInspectPresentationTestData.CompleteResult());
+                },
+                Renderers = new CliRendererSet<RouteInspectResult>(
+                    _ => "human",
+                    _ => "{}"),
+            });
+        var tree = CliCommandTree.Create(
+            CliHelpContent.Empty,
+            [new CliRootBranch(route, CliHelpContent.Empty, [])],
+            [binding]);
+
+        return new CliCoreApplication(
+            new CliProcessIdentity("open-forge", "test"),
+            tree,
+            new CliWorkspaceSelector(new PhysicalPathResolver()));
     }
 
     private static CliInvocation Invocation(CliWorkspace workspace)

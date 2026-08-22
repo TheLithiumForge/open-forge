@@ -39,15 +39,7 @@ internal sealed class RouteListSelectionIntegrationWorkspace : IDisposable
 
     internal void WriteLoader(string entries)
     {
-        Write(".agents/loader.md", $"""
-            # Open Forge Loader
-
-            ## Entries
-
-            <!-- open-forge:generated-index:start -->
-            {entries}
-            <!-- open-forge:generated-index:end -->
-            """);
+        Write(".agents/loader.md", GeneratedLoaderDocumentBuilder.Build(entries));
     }
 
     internal string Absolute(string relativePath)

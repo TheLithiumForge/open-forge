@@ -1,12 +1,9 @@
-using System.CommandLine.Parsing;
-using System.CommandLine;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Invocation;
-using OpenForge.Cli.Core.Shell.Parsing;
 
 namespace OpenForge.Cli.Core.Commands.Route.List;
 
@@ -60,27 +57,4 @@ internal static class RouteListBindingInputPolicy
                 "Select an available directory with --workspace, then rerun the operation."));
     }
 
-    internal static string? ReadDepthSpelling(
-        IReadOnlyList<string> originalArguments,
-        ParseResult parseResult,
-        Option<string?> depth)
-    {
-        var prefix = $"{RouteListDefinitions.Depth.Name}=";
-        var original = originalArguments
-            .TakeWhile(value => !string.Equals(value, "--", StringComparison.Ordinal))
-            .FirstOrDefault(value => value.StartsWith(prefix, StringComparison.Ordinal));
-        if (original is not null)
-        {
-            return original[prefix.Length..];
-        }
-
-        try
-        {
-            return parseResult.GetValue(depth);
-        }
-        catch (InvalidOperationException)
-        {
-            return string.Empty;
-        }
-    }
 }

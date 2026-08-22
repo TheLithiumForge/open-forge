@@ -115,12 +115,26 @@ bypass the Foundation group.
 
 - Current result: Architecture, Plan, reset, Task governance, Foundation, and
   Route Discovery are accepted. Route List is integrated at `edca509`; Route
-  Inspect is accepted from final correction `9c690b4` with managed/native,
-  promotion, architecture, and edge closeout complete.
-- Blocker: None for Route Discovery integration.
-- Next action: Squash-merge the focused Route Inspect branch into `develop`, then
-  create the authorized generic-improvements branch and begin parser-remediation
-  Preflight before the next product Task.
+  Inspect is squash-integrated at `bd5d280`. Generic improvements are active from
+  that exact baseline on `feature/cli-generic-improvements`; their complete
+  beginning suite passes. Parser remediation is Complete through Purple `d445e20` and
+  focused public acceptance. [Improve Active-Test Architecture](generic-improvements/active-test-architecture.md)
+  is Complete at `e277227`, with its accepted Working boundary at clean `eb2e336`,
+  focused Integration `129/129`, freshly published managed EndToEnd `57/57`, zero
+  skips, and accepted locality review. [Refine Callable And Project
+  Architecture](generic-improvements/callable-project-architecture.md) is Complete
+  at `cc2387d` with focused Unit `53/53`,
+  Integration `49/49`, freshly published managed EndToEnd `57/57`, zero skips, and
+  accepted architecture review. All generic child Tasks are Complete.
+- Blocker: None for generic child completion.
+- Final generic feature gate: Warning-free build, format/diff, managed Unit `580/580`,
+  Integration `213/213`, EndToEnd `57/57`, local `win-x64` Native AOT root with
+  managed EndToEnd `57/57`, Native AOT Integration `213/213`, Native AOT EndToEnd
+  `57/57`, package/artifact/public audits, and integrated review pass with zero skips
+  and no blocker.
+- Next action: Commit the generic final acceptance record, then squash-merge
+  `feature/cli-generic-improvements` into `develop` and verify the integrated tree
+  before starting the next product Task.
 
 ## Completion And Closeout
 

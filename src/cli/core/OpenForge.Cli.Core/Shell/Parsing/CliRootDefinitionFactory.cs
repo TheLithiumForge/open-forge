@@ -51,27 +51,9 @@ internal static class CliRootDefinitionFactory
         {
             Description = definition.Description,
             HelpName = definition.ValueName,
-            Arity = ReadArity(definition.Arity),
+            Arity = ArgumentArity.ZeroOrOne,
             Recursive = true,
-            CustomParser = ParseWorkspace,
         };
-    }
-
-    private static string? ParseWorkspace(ArgumentResult result)
-    {
-        if (result.Tokens.Count != 1)
-        {
-            return null;
-        }
-
-        var value = result.Tokens[0].Value;
-        if (!string.IsNullOrEmpty(value))
-        {
-            return value;
-        }
-
-        result.AddError($"{CliSyntaxDefinitions.Workspace.Name} requires a non-empty value.");
-        return null;
     }
 
     private static Option<bool> CreateBooleanOption(CliOptionDefinition<bool> definition)
@@ -87,33 +69,19 @@ internal static class CliRootDefinitionFactory
     private static Option<CliView> CreateViewOption()
     {
         var definition = CliSyntaxDefinitions.View;
-        return new Option<CliView>(definition.Name)
+        var option = new Option<CliView>(definition.Name)
         {
             Description = definition.Description,
             HelpName = definition.ValueName,
-            Arity = ReadArity(definition.Arity),
+            Arity = ArgumentArity.ZeroOrOne,
             Recursive = true,
             DefaultValueFactory = _ => definition.DefaultValue,
-            CustomParser = ParseView,
         };
-    }
 
-    private static CliView ParseView(ArgumentResult result)
-    {
-        if (result.Tokens.Count != 1)
-        {
-            return CliView.Expanded;
-        }
-
-        var definition = CliSyntaxDefinitions.View;
-        if (definition.TryReadFinite(result.Tokens[0].Value, out var view))
-        {
-            return view;
-        }
-
-        result.AddError(
-            $"{CliSyntaxDefinitions.View.Name} must be {CliPresentationDefinitions.Compact} or {CliPresentationDefinitions.Expanded}.");
-        return CliView.Expanded;
+        option.AcceptOnlyFromAmong(
+            CliPresentationDefinitions.Compact,
+            CliPresentationDefinitions.Expanded);
+        return option;
     }
 
     private static ArgumentArity ReadArity(CliOptionArity arity)

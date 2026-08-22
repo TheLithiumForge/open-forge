@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
+using OpenForge.Cli.Core.Commands.Route.List.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Topology;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
@@ -13,12 +14,15 @@ internal static class RouteListOperationFactory
     {
         var physicalPathResolver = new PhysicalPathResolver();
         var coordinator = new RouteListOperationCoordinator(
-            new RouteListInventoryReader(),
-            new RouteListSelectionResolver(physicalPathResolver),
-            new RouteTopologyBuilder(),
-            new RouteListTopologySelector(),
-            new RouteListCoverageBuilder(),
-            new RouteListResultBuilder());
+            new RouteListOperationComponents
+            {
+                InventoryReader = new RouteListInventoryReader(),
+                SelectionResolver = new RouteListSelectionResolver(physicalPathResolver),
+                TopologyBuilder = new RouteTopologyBuilder(),
+                TopologySelector = new RouteListTopologySelector(),
+                CoverageBuilder = new RouteListCoverageBuilder(),
+                ResultBuilder = new RouteListResultBuilder(),
+            });
         return coordinator.ExecuteAsync;
     }
 }
@@ -32,26 +36,21 @@ internal sealed class RouteListOperationCoordinator
     private readonly RouteListCoverageBuilder _coverageBuilder;
     private readonly RouteListResultBuilder _resultBuilder;
 
-    internal RouteListOperationCoordinator(
-        RouteListInventoryReader inventoryReader,
-        RouteListSelectionResolver selectionResolver,
-        RouteTopologyBuilder graphBuilder,
-        RouteListTopologySelector topologySelector,
-        RouteListCoverageBuilder coverageBuilder,
-        RouteListResultBuilder resultBuilder)
+    internal RouteListOperationCoordinator(RouteListOperationComponents components)
     {
-        ArgumentNullException.ThrowIfNull(inventoryReader);
-        ArgumentNullException.ThrowIfNull(selectionResolver);
-        ArgumentNullException.ThrowIfNull(graphBuilder);
-        ArgumentNullException.ThrowIfNull(topologySelector);
-        ArgumentNullException.ThrowIfNull(coverageBuilder);
-        ArgumentNullException.ThrowIfNull(resultBuilder);
-        _inventoryReader = inventoryReader;
-        _selectionResolver = selectionResolver;
-        _graphBuilder = graphBuilder;
-        _topologySelector = topologySelector;
-        _coverageBuilder = coverageBuilder;
-        _resultBuilder = resultBuilder;
+        ArgumentNullException.ThrowIfNull(components);
+        ArgumentNullException.ThrowIfNull(components.InventoryReader);
+        ArgumentNullException.ThrowIfNull(components.SelectionResolver);
+        ArgumentNullException.ThrowIfNull(components.TopologyBuilder);
+        ArgumentNullException.ThrowIfNull(components.TopologySelector);
+        ArgumentNullException.ThrowIfNull(components.CoverageBuilder);
+        ArgumentNullException.ThrowIfNull(components.ResultBuilder);
+        _inventoryReader = components.InventoryReader;
+        _selectionResolver = components.SelectionResolver;
+        _graphBuilder = components.TopologyBuilder;
+        _topologySelector = components.TopologySelector;
+        _coverageBuilder = components.CoverageBuilder;
+        _resultBuilder = components.ResultBuilder;
     }
 
     internal async ValueTask<RouteListResult> ExecuteAsync(

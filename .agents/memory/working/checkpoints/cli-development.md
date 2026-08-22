@@ -286,12 +286,112 @@ boundary without restoring the removed local architecture.
   Route Inspect and Route Discovery are Complete from production correction
   `9c690b4`. The `CLI-EDGE-001` routing/index waiver leaves completed records and
   generated regions in place without hand editing.
+- Route Inspect is squash-integrated into `develop` at `bd5d280`; its tree exactly
+  matches the accepted feature tip. Branch `feature/cli-generic-improvements`
+  starts from that exact commit. The generic beginning baseline passes warning-free
+  build, format, Unit `549/549`, Integration `166/166`, and freshly published
+  managed EndToEnd `36/36`. Parser-remediation Preflight completed with Gray next.
+- Parser-remediation planning is accepted at `e118daa`. Compile-only Gray adds one
+  immutable option-result fact model and two exact throwing callable skeletons,
+  with no existing production/test mutation or runtime behavior. Release build,
+  format, diff, correctness review, and local-improvement review pass; Red is next.
+- Parser-remediation Gray is accepted at `ddd2683`. Production-free Red adds eight
+  affected test files and leaves Gray production unchanged. Release build, format,
+  and diff pass. Focused Unit is `67` total with `52` pass and `15` intentional
+  failures; focused Integration is `93` total with `52` pass and `41` intentional
+  failures; a fresh managed publish drives `57` selected EndToEnd cases with `51`
+  pass and `6` intentional failures. Failures are limited to Gray skeletons, current
+  raw or custom-parser deviations, and terminal bypass. Final correctness review
+  passes and local-improvement review finds no material improvement. Green is next.
+- Initial Green exposed one contradictory Route List Unit expectation that required
+  terminal-domain validation both in the integrated terminal resolver and through a
+  second direct call. Green production work was isolated. A production-free Red
+  correction now asserts the accepted single integrated validation path, preserves
+  the remaining matrix, and consumes the one exceptional correction cycle from exact
+  Red commit `a47f145`. Green resumes only after this correction is committed.
+- Corrected Green review then found that removing the workspace parser callback also
+  removed non-empty validation for a spaced explicit empty workspace token. Green
+  production remains isolated while one focused Unit expectation supplements the
+  same correction cycle. Corrected Red Unit is `68` total with `52` pass and `16`
+  intentional failures; Green resumes only from the latest correction commit.
+- Corrected Red is accepted at `68455f6`. Parser-remediation Green is complete from
+  that exact predecessor in seven production files: public typed option facts,
+  ZeroOrOne scalar options, semantic missing/empty validation, one integrated typed
+  terminal-input validator, and typed Route List depth replace the removed callbacks
+  and raw depth helper while retaining the one delimiter guard. Release build,
+  format, and diff pass; focused Unit is `68/68`, Integration is `93/93`, and a fresh
+  managed publish drives selected EndToEnd `57/57`, all without skips. Both exact
+  public terminal/domain scenarios pass. Final correctness review passes and final
+  local-improvement review finds no material improvement. The post-Green callable
+  migration is next after the Green phase commit.
+- Parser-remediation Green is accepted at `661b89b`. Its post-Green callable
+  migration is complete from that exact predecessor: `CliBindingParse` now contains
+  only `ParseResult` at its matching Models path, the old declaration/property and
+  Route List raw parameter are absent, and all production/Unit call sites use the
+  narrow model without forwarding compatibility. Release build, format, and diff
+  pass; focused Unit is `68/68`, Integration is `93/93`, and fresh managed selected
+  EndToEnd is `57/57`, all without skips. Correctness review passes; the only local-
+  improvement finding was one stale test method name, now corrected, and final review
+  finds no material improvement. Blue is next after the migration commit.
+- The parser-remediation callable migration is accepted at `d7056e8`. Blue is complete
+  from that exact predecessor: one named explicit-without-value fact replaces repeated
+  predicates, and one immutable omitted-facts instance avoids redundant construction.
+  Release build, format, and diff pass; focused Unit is `68/68`, Integration is
+  `93/93`, and a fresh managed publish drives selected EndToEnd `57/57`, all without
+  skips. Correctness review passes; final local-improvement review recommends keeping
+  the bounded change and finds no further material improvement. Purple is next after
+  the Blue commit.
+- Parser-remediation Blue is accepted at `f9f4dbe`. Purple is complete from that exact
+  predecessor: the published version journey now snapshots both the missing-workspace
+  parent and the separate process current directory and proves both remain byte-
+  unchanged. Release build, format, and diff pass; focused Unit is `68/68`, Integration
+  is `93/93`, and a fresh managed publish drives selected EndToEnd `57/57`, all without
+  skips. Correctness review passes with the existing snapshot helper's metadata and
+  transient-write limitations explicitly bounded. Purple is accepted at `d445e20`.
+- Parser remediation is Complete through Purple `d445e20`. Exact published terminal,
+  ordinary post-terminator domain, and attached-empty depth scenarios pass. Final
+  whole-Task review finds no production or evidence gap after correcting stale next-
+  step text. CLI-EDGE-005 and CLI-EDGE-007 are closed for this Task. The one correction
+  cycle is consumed, and the parent generic final complete managed, local `win-x64`
+  Native AOT, package, and vulnerability gates remain deferred. Active-test architecture read-only
+  Preflight then completed from exact accepted parser baseline `a14f66d`, leading to
+  accepted Purple commit `e277227`.
+- Active-test architecture is Complete at `e277227`. One exact shared Loader-
+  document builder replaces six duplicate bodies; process support is EndToEnd-local;
+  Integration and EndToEnd each own one nearest-scope capture fixture; and Unit's
+  unused TestSupport reference is removed. Warning-free build, format/diff checks,
+  focused Integration `129/129`, freshly published managed EndToEnd `57/57`, zero
+  skips, source/dependency audits, and fresh correctness/local-improvement reviews
+  pass. Shared workspace/hash snapshot support and distinct measurement/rich
+  snapshots remain unchanged. The accepted active-test predecessor is the clean
+  `eb2e336` tree. At the active-test completion boundary, the parent final full
+  managed, local `win-x64` Native AOT, package, vulnerability, artifact, and
+  integrated-review gate remained deferred until all generic children were
+  complete. Callable/project architecture read-only Preflight then completed from
+  that exact clean predecessor, followed by planning commit `e54f2b1` and accepted
+  refinement `cc2387d`.
+- Callable/project architecture is Complete at `cc2387d`. Four required named-input
+  component models replace the accepted long composition surfaces; focused Unit
+  `53/53`, Integration `49/49`, freshly published managed EndToEnd `57/57`, zero
+  skips, warning-free build, format/diff checks, source/project audits, and fresh
+  correctness/local-improvement review pass. Root/Core remains retained without
+  project, IVT, solution, CI, publish-path, package, generated, or Native AOT policy
+  mutation. All generic child Tasks are Complete; the parent Final Full Gate and
+  integrated correctness review pass from clean `7871764` after exact `cc2387d`.
+- Generic-improvements feature acceptance passes from clean `7871764`: warning-free
+  build, format/diff checks, managed Unit `580/580`, Integration `213/213`, fresh
+  EndToEnd `57/57`, native-root managed EndToEnd `57/57`, Native AOT Integration
+  `213/213`, Native AOT EndToEnd `57/57`, zero skips, no vulnerable packages, clean
+  project/artifact audits, exact native public scenarios, and fresh integrated
+  correctness review. Local native evidence is explicitly `win-x64`, not six-RID
+  parity. No material finding remains; authorized squash-merge into `develop` is
+  next after the final acceptance-record commit.
 
 ## Current Step
 
-Squash-merge `feature/cli-route-inspect` into `develop`, verify exact tree equality,
-then create the authorized generic-improvements branch and begin parser-remediation
-Preflight before test architecture.
+Commit the generic parent final acceptance record, then squash-merge
+`feature/cli-generic-improvements` into `develop` and verify the integrated tree
+before starting another Task.
 
 ## Route-List Closeout Decision
 
@@ -339,7 +439,10 @@ Read:
 4. [Replacement CLI Edge-Case Ledger](../cli-development/edge-cases.md)
 5. [Program Architecture Directive](../../../directives/program-architecture.md)
 6. [Architectural Perspectives](../../../guidance/architectural-perspectives.md)
-7. The selected parent and its post-completion sequence
+7. [Generic CLI Improvements](../cli-development/tasks/generic-improvements/_generic-improvements.md)
+8. [Improve Active-Test Architecture](../cli-development/tasks/generic-improvements/active-test-architecture.md)
+9. [Refine Callable And Project Architecture](../cli-development/tasks/generic-improvements/callable-project-architecture.md)
 
-Then verify exact tree equality after the squash merge, create the authorized
-generic-improvements branch, and begin parser-remediation Preflight.
+Then commit the final generic acceptance record and perform the authorized
+squash-merge into `develop`. All generic children and the parent feature gate are
+accepted; integrated-tree verification remains before the next Task.

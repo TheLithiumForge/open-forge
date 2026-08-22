@@ -1,5 +1,4 @@
 using System.CommandLine;
-using System.CommandLine.Parsing;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Invocation;
@@ -15,10 +14,6 @@ internal enum CliWorkspaceRequirement
     Required,
     Absent,
 }
-
-internal sealed record CliBindingParse(
-    ParseResult Result,
-    IReadOnlyList<string> OriginalArguments);
 
 internal sealed class CliBindResult<TRequest, TResult>
     where TResult : ICliCommandResult
@@ -85,32 +80,30 @@ internal sealed class CliCommandBinding<TRequest, TResult> : ICliCommandBinding
 
     internal CliCommandBinding(
         Command command,
-        CliHelpContent help,
-        CliWorkspaceRequirement workspaceRequirement,
-        CliRequestBinder<TRequest, TResult> binder,
-        CliContextualInvalidResultFactory<TResult> invalidResultFactory,
-        CliOperation<TRequest, TResult> operation,
-        CliRendererSet<TResult> renderers,
-        CliDiagnosticRenderer<TResult>? diagnosticRenderer = null)
+        CliCommandBindingComponents<TRequest, TResult> components)
     {
         ArgumentNullException.ThrowIfNull(command);
-        ArgumentNullException.ThrowIfNull(help);
-        ArgumentNullException.ThrowIfNull(binder);
-        ArgumentNullException.ThrowIfNull(invalidResultFactory);
-        if (!Enum.IsDefined(workspaceRequirement))
+        ArgumentNullException.ThrowIfNull(components);
+        ArgumentNullException.ThrowIfNull(components.Help);
+        ArgumentNullException.ThrowIfNull(components.Binder);
+        ArgumentNullException.ThrowIfNull(components.InvalidResultFactory);
+        if (!Enum.IsDefined(components.WorkspaceRequirement))
         {
             throw new ArgumentOutOfRangeException(
-                nameof(workspaceRequirement),
-                workspaceRequirement,
+                nameof(components.WorkspaceRequirement),
+                components.WorkspaceRequirement,
                 "The workspace requirement is not defined.");
         }
 
         Command = command;
-        Help = help;
-        WorkspaceRequirement = workspaceRequirement;
-        _binder = binder;
-        _invalidResultFactory = invalidResultFactory;
-        _pipeline = new CliCommandPipeline<TRequest, TResult>(operation, renderers, diagnosticRenderer);
+        Help = components.Help;
+        WorkspaceRequirement = components.WorkspaceRequirement;
+        _binder = components.Binder;
+        _invalidResultFactory = components.InvalidResultFactory;
+        _pipeline = new CliCommandPipeline<TRequest, TResult>(
+            components.Operation,
+            components.Renderers,
+            components.DiagnosticRenderer);
     }
 
     public Command Command { get; }

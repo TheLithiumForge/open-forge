@@ -1,7 +1,6 @@
 using System.Text.Json;
-using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Hosting;
 using OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Shared.Profile;
+using OpenForge.Cli.IntegrationTests.Hosting;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect;
 
@@ -13,7 +12,7 @@ public sealed class RouteInspectApplicationIntegrationTests
     {
         using var workspace = RouteInspectProfileIntegrationWorkspace.Create();
 
-        var leaf = await RunAsync(["route", "inspect", "--help"], workspace.Path);
+        var leaf = await CliHostCapture.RunAsync(["route", "inspect", "--help"], workspace.Path);
 
         Assert.Equal(0, leaf.ExitCode);
         Assert.Equal(string.Empty, leaf.Error);
@@ -34,10 +33,10 @@ public sealed class RouteInspectApplicationIntegrationTests
         using var workspace = CompleteWorkspace();
         var before = workspace.Snapshot();
 
-        var compact = await RunAsync(
+        var compact = await CliHostCapture.RunAsync(
             ["route", "inspect", "root", "--workspace", workspace.Path, "--view=compact"],
             workspace.Path);
-        var expanded = await RunAsync(
+        var expanded = await CliHostCapture.RunAsync(
             ["route", "inspect", "root", "--workspace", workspace.Path, "--view=expanded"],
             workspace.Path);
 
@@ -64,13 +63,13 @@ public sealed class RouteInspectApplicationIntegrationTests
         using var workspace = CompleteWorkspace();
         var before = workspace.Snapshot();
 
-        var json = await RunAsync(
+        var json = await CliHostCapture.RunAsync(
             ["route", "inspect", "root", "--workspace", workspace.Path, "--json", "--view=compact"],
             workspace.Path);
-        var expandedJson = await RunAsync(
+        var expandedJson = await CliHostCapture.RunAsync(
             ["route", "inspect", "root", "--workspace", workspace.Path, "--json", "--view=expanded"],
             workspace.Path);
-        var verboseJson = await RunAsync(
+        var verboseJson = await CliHostCapture.RunAsync(
             ["route", "inspect", "root", "--workspace", workspace.Path, "--json", "--verbose"],
             workspace.Path);
 
@@ -117,7 +116,7 @@ public sealed class RouteInspectApplicationIntegrationTests
     {
         using var workspace = CompleteWorkspace();
         var before = workspace.Snapshot();
-        var baseline = await RunAsync(
+        var baseline = await CliHostCapture.RunAsync(
             ["route", "inspect", "root", "--workspace", workspace.Path, "--view=compact"],
             workspace.Path);
         Assert.Equal(0, baseline.ExitCode);
@@ -126,7 +125,7 @@ public sealed class RouteInspectApplicationIntegrationTests
         var arguments = new List<string> { "route", "inspect", "root" };
         AddScalar(arguments, "--workspace", workspace.Path, workspaceForm);
         AddScalar(arguments, "--view", "compact", viewForm);
-        var result = await RunAsync(arguments.ToArray(), workspace.Path);
+        var result = await CliHostCapture.RunAsync(arguments.ToArray(), workspace.Path);
 
         Assert.Equal(baseline.ExitCode, result.ExitCode);
         Assert.Equal(baseline.Output, result.Output);
@@ -143,7 +142,7 @@ public sealed class RouteInspectApplicationIntegrationTests
     {
         using var workspace = CompleteWorkspace();
 
-        var missing = await RunAsync(
+        var missing = await CliHostCapture.RunAsync(
             ["route", "inspect", "--workspace", workspace.Path, "--json"],
             workspace.Path);
 
@@ -159,7 +158,7 @@ public sealed class RouteInspectApplicationIntegrationTests
     {
         using var workspace = CompleteWorkspace();
 
-        var multiple = await RunAsync(
+        var multiple = await CliHostCapture.RunAsync(
             ["route", "inspect", "first", "second", "--workspace", workspace.Path, "--json"],
             workspace.Path);
 
@@ -175,7 +174,7 @@ public sealed class RouteInspectApplicationIntegrationTests
     {
         using var workspace = CompleteWorkspace();
 
-        var optionLike = await RunAsync(
+        var optionLike = await CliHostCapture.RunAsync(
             ["route", "inspect", "--workspace", workspace.Path, "--json", "--", "--view"],
             workspace.Path);
 
@@ -196,7 +195,7 @@ public sealed class RouteInspectApplicationIntegrationTests
         var missing = Path.Combine(
             Path.GetTempPath(),
             $"open-forge-route-inspect-missing-{Guid.NewGuid():N}");
-        var result = await RunAsync(
+        var result = await CliHostCapture.RunAsync(
             ["route", "inspect", "requested-source", "--workspace", missing, "--json"],
             missing);
 
@@ -229,7 +228,18 @@ public sealed class RouteInspectApplicationIntegrationTests
         var missing = Path.Combine(
             Path.GetTempPath(),
             $"open-forge-route-inspect-terminal-{Guid.NewGuid():N}");
-        var help = await RunAsync(["route", "inspect", "--help", "--workspace", missing], missing);
+        var help = await CliHostCapture.RunAsync(
+            [
+                "route",
+                "inspect",
+                "--workspace",
+                missing,
+                "--json",
+                "--view=compact",
+                "--verbose",
+                "--help",
+            ],
+            missing);
 
         Assert.Equal(0, help.ExitCode);
         Assert.Equal(string.Empty, help.Error);
@@ -244,12 +254,73 @@ public sealed class RouteInspectApplicationIntegrationTests
         var missing = Path.Combine(
             Path.GetTempPath(),
             $"open-forge-route-inspect-version-{Guid.NewGuid():N}");
-        var version = await RunAsync(["route", "inspect", "--version", "--workspace", missing], missing);
+        var version = await CliHostCapture.RunAsync(
+            [
+                "route",
+                "inspect",
+                "--workspace",
+                missing,
+                "--json",
+                "--view=compact",
+                "--verbose",
+                "--version",
+            ],
+            missing);
 
         Assert.Equal(0, version.ExitCode);
         Assert.Equal("0.0.0-dev" + Environment.NewLine, version.Output);
         Assert.Equal(string.Empty, version.Error);
         Assert.False(Directory.Exists(missing));
+    }
+
+    [Theory(DisplayName = "CLI Route Inspect terminal modes reject source input before workspace selection")]
+    [InlineData("--help", "root")]
+    [InlineData("--version", "root")]
+    [InlineData("--help", "option-like")]
+    [InlineData("--version", "option-like")]
+    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    public async Task TerminalModesRejectSourceInputBeforeWorkspaceSelection(
+        string terminalMode,
+        string sourceKind)
+    {
+        var missingWorkspace = Path.Combine(
+            Path.GetTempPath(),
+            $"open-forge-route-inspect-terminal-conflict-{Guid.NewGuid():N}");
+        var arguments = new List<string>
+        {
+            "route",
+            "inspect",
+            "--workspace",
+            missingWorkspace,
+            "--json",
+            "--view=compact",
+            "--verbose",
+            terminalMode,
+        };
+        switch (sourceKind)
+        {
+            case "root":
+                arguments.Add("root");
+                break;
+            case "option-like":
+                arguments.Add("--");
+                arguments.Add("--view");
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(
+                    nameof(sourceKind),
+                    sourceKind,
+                    "The terminal source case is not defined.");
+        }
+
+        var result = await CliHostCapture.RunAsync(arguments.ToArray(), missingWorkspace);
+
+        Assert.Equal(4, result.ExitCode);
+        Assert.Equal(string.Empty, result.Output);
+        var diagnostic = Assert.Single(
+            result.Error.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries));
+        Assert.InRange(diagnostic.Length, 1, 4096);
+        Assert.False(Directory.Exists(missingWorkspace));
     }
 
     [Fact(DisplayName = "CLI Route Inspect exact-path identity collision reports attention without an invented next action")]
@@ -258,7 +329,7 @@ public sealed class RouteInspectApplicationIntegrationTests
     {
         using var workspace = CollisionWorkspace();
 
-        var exactPath = await RunAsync(
+        var exactPath = await CliHostCapture.RunAsync(
             ["route", "inspect", ".agents/root/collision.md", "--workspace", workspace.Path, "--view=compact"],
             workspace.Path);
 
@@ -276,7 +347,7 @@ public sealed class RouteInspectApplicationIntegrationTests
     {
         using var workspace = CollisionWorkspace();
 
-        var blocked = await RunAsync(
+        var blocked = await CliHostCapture.RunAsync(
             ["route", "inspect", "root/collision", "--workspace", workspace.Path, "--json"],
             workspace.Path);
 
@@ -302,7 +373,7 @@ public sealed class RouteInspectApplicationIntegrationTests
     {
         using var workspace = IncompleteWorkspace();
 
-        var incompleteResult = await RunAsync(
+        var incompleteResult = await CliHostCapture.RunAsync(
             ["route", "inspect", "root", "--workspace", workspace.Path, "--view=compact"],
             workspace.Path);
 
@@ -319,7 +390,7 @@ public sealed class RouteInspectApplicationIntegrationTests
     {
         using var workspace = CollisionWorkspace();
 
-        var invalid = await RunAsync(
+        var invalid = await CliHostCapture.RunAsync(
             ["route", "inspect", "unknown", "--workspace", workspace.Path, "--view=compact"],
             workspace.Path);
 
@@ -427,19 +498,4 @@ public sealed class RouteInspectApplicationIntegrationTests
             result.GetProperty("conditions")[0].GetProperty("code").GetString());
     }
 
-    private static async Task<HostResult> RunAsync(
-        string[] arguments,
-        string currentDirectory)
-    {
-        using var output = new StringWriter();
-        using var error = new StringWriter();
-        var exitCode = await CliHost.RunAsync(
-            arguments,
-            currentDirectory,
-            new CliOutputWriters(output, error),
-            TestContext.Current.CancellationToken);
-        return new HostResult(exitCode, output.ToString(), error.ToString());
-    }
-
-    private sealed record HostResult(int ExitCode, string Output, string Error);
 }

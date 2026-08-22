@@ -13,6 +13,110 @@ namespace OpenForge.Cli.Core.UnitTests.Shell;
 
 public sealed class ParserTests
 {
+    [Fact(DisplayName = "CLI option result facts enforce explicit occurrence and token count invariants")]
+    [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
+    public void OptionResultFactsEnforceExplicitOccurrenceAndTokenCountInvariants()
+    {
+        var omitted = new CliOptionResultFacts(false, 0, 0);
+        var explicitNoValue = new CliOptionResultFacts(true, 1, 0);
+        var explicitValue = new CliOptionResultFacts(true, 1, 1);
+        var repeated = new CliOptionResultFacts(true, 2, 3);
+
+        Assert.False(omitted.IsExplicit);
+        Assert.Equal(0, omitted.IdentifierCount);
+        Assert.Equal(0, omitted.ValueCount);
+        Assert.True(explicitNoValue.IsExplicit);
+        Assert.Equal(1, explicitNoValue.IdentifierCount);
+        Assert.Equal(0, explicitNoValue.ValueCount);
+        Assert.True(explicitValue.IsExplicit);
+        Assert.Equal(1, explicitValue.IdentifierCount);
+        Assert.Equal(1, explicitValue.ValueCount);
+        Assert.True(repeated.IsExplicit);
+        Assert.Equal(2, repeated.IdentifierCount);
+        Assert.Equal(3, repeated.ValueCount);
+
+        Assert.Throws<ArgumentOutOfRangeException>(
+            () => new CliOptionResultFacts(true, -1, 0));
+        Assert.Throws<ArgumentOutOfRangeException>(
+            () => new CliOptionResultFacts(true, 1, -1));
+        Assert.Throws<ArgumentException>(
+            () => new CliOptionResultFacts(false, 1, 0));
+        Assert.Throws<ArgumentException>(
+            () => new CliOptionResultFacts(false, 0, 1));
+        Assert.Throws<ArgumentException>(
+            () => new CliOptionResultFacts(true, 0, 0));
+    }
+
+    [Fact(DisplayName = "CLI option result facts reader reports an omitted option as implicit")]
+    [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
+    public void OptionResultFactsReaderReportsOmittedOptionAsImplicit()
+    {
+        var tree = CreateTree();
+        var parse = new CliParser(tree).Parse([]);
+
+        AssertFacts(
+            CliOptionResultFactsReader.Read(parse.Result, tree.Options.View),
+            false,
+            0,
+            0);
+    }
+
+    [Fact(DisplayName = "CLI option result facts reader reports one explicit value")]
+    [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
+    public void OptionResultFactsReaderReportsOneExplicitValue()
+    {
+        var option = new Option<string?>("--value")
+        {
+            Arity = ArgumentArity.ExactlyOne,
+        };
+        var parse = ParseStandalone(option, ["--value", "one"]);
+
+        Assert.Empty(parse.Errors);
+        AssertFacts(
+            CliOptionResultFactsReader.Read(parse, option),
+            true,
+            1,
+            1);
+    }
+
+    [Fact(DisplayName = "CLI option result facts reader reports an explicit no-value occurrence")]
+    [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
+    public void OptionResultFactsReaderReportsExplicitNoValueOccurrence()
+    {
+        var option = new Option<bool>("--flag")
+        {
+            Arity = ArgumentArity.Zero,
+        };
+        var parse = ParseStandalone(option, ["--flag"]);
+
+        Assert.Empty(parse.Errors);
+        AssertFacts(
+            CliOptionResultFactsReader.Read(parse, option),
+            true,
+            1,
+            0);
+    }
+
+    [Fact(DisplayName = "CLI option result facts reader aggregates repeated scalar occurrences")]
+    [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
+    public void OptionResultFactsReaderAggregatesRepeatedScalarOccurrences()
+    {
+        var option = new Option<string?>("--value")
+        {
+            Arity = ArgumentArity.ExactlyOne,
+        };
+        var parse = ParseStandalone(
+            option,
+            ["--value", "one", "--value", "two"]);
+
+        Assert.NotEmpty(parse.Errors);
+        AssertFacts(
+            CliOptionResultFactsReader.Read(parse, option),
+            true,
+            2,
+            2);
+    }
+
     [Fact(DisplayName = "CLI root exposes canonical options and typed defaults")]
     [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
     public void RootExposesOnlyCanonicalGlobalOptionsAndTypedDefaults()
@@ -43,13 +147,29 @@ public sealed class ParserTests
     [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
     public void RepeatedScalarOptionsAreParserErrorsAndBooleansAreIdempotent()
     {
-        var parser = new CliParser(CreateTree());
+        var tree = CreateTree();
+        var parser = new CliParser(tree);
         var scalar = parser.Parse(["--workspace", "one", "--workspace", "two"]);
         var booleans = parser.Parse(["--json", "--json", "--verbose", "--verbose"]);
 
         Assert.NotEmpty(scalar.Result.Errors);
+        AssertFacts(
+            CliOptionResultFactsReader.Read(scalar.Result, tree.Options.Workspace),
+            true,
+            2,
+            2);
         Assert.Equal(CliInvalidInputSource.Parser, CliTerminalValidator.Validate(scalar).InvalidInput?.Source);
         Assert.Empty(booleans.Result.Errors);
+        AssertFacts(
+            CliOptionResultFactsReader.Read(booleans.Result, booleans.Options.Json),
+            true,
+            2,
+            0);
+        AssertFacts(
+            CliOptionResultFactsReader.Read(booleans.Result, booleans.Options.Verbose),
+            true,
+            2,
+            0);
         var input = CliGlobalInputReader.Read(booleans);
         Assert.Equal(2, input.JsonOccurrences);
         Assert.Equal(2, input.VerboseOccurrences);
@@ -68,6 +188,16 @@ public sealed class ParserTests
 
         Assert.Empty(help.Result.Errors);
         Assert.Empty(version.Result.Errors);
+        AssertFacts(
+            CliOptionResultFactsReader.Read(help.Result, tree.Options.Help),
+            true,
+            2,
+            0);
+        AssertFacts(
+            CliOptionResultFactsReader.Read(version.Result, tree.Options.Version),
+            true,
+            2,
+            0);
         Assert.Equal(
             2,
             Assert.IsType<OptionResult>(help.Result.GetResult(tree.Options.Help)).IdentifierTokenCount);
@@ -123,6 +253,18 @@ public sealed class ParserTests
         var resolution = CliTerminalValidator.Validate(new CliParser(CreateTree()).Parse([option]));
 
         Assert.NotNull(resolution.InvalidInput);
+        Assert.Null(resolution.Input);
+        Assert.Equal(CliTerminalMode.None, resolution.TerminalMode);
+    }
+
+    [Fact(DisplayName = "CLI explicit empty workspace value is semantic invalid input")]
+    [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
+    public void ExplicitEmptyWorkspaceValueIsSemanticInvalidInput()
+    {
+        var resolution = CliTerminalValidator.Validate(
+            new CliParser(CreateTree()).Parse(["--workspace", string.Empty]));
+
+        Assert.Equal(CliInvalidInputSource.Semantic, resolution.InvalidInput?.Source);
         Assert.Null(resolution.Input);
         Assert.Equal(CliTerminalMode.None, resolution.TerminalMode);
     }
@@ -191,6 +333,66 @@ public sealed class ParserTests
         Assert.Equal(CliInvalidInputSource.Semantic, conflict.InvalidInput?.Source);
     }
 
+    [Fact(DisplayName = "CLI terminal globals remain no-op at root, group, and custom leaf")]
+    [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
+    public void TerminalGlobalsRemainNoOpAtRootGroupAndCustomLeaf()
+    {
+        var tree = CreateTerminalTree();
+
+        var root = AssertTerminalNoOp(
+            tree,
+            ["--json", "--help"],
+            CliTerminalMode.Help);
+        Assert.Equal(CliOutputFormat.Json, root.OutputFormat);
+
+        var group = AssertTerminalNoOp(
+            tree,
+            ["group", "--verbose", "--version"],
+            CliTerminalMode.Version);
+        Assert.Equal(CliVerbosity.Verbose, group.Verbosity);
+
+        var leaf = AssertTerminalNoOp(
+            tree,
+            ["group", "leaf", "--json", "--help"],
+            CliTerminalMode.Help);
+        Assert.Equal(CliOutputFormat.Json, leaf.OutputFormat);
+    }
+
+    [Fact(DisplayName = "CLI terminal modes reject domain operands local options and unmatched input")]
+    [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
+    public void TerminalModesRejectTypedDomainInputAtRootGroupAndCustomLeaf()
+    {
+        var tree = CreateTerminalTree();
+
+        AssertTerminalDomainInput(tree, ["--help", "root-input"]);
+        AssertTerminalDomainInput(tree, ["group", "--version", "group-input"]);
+        AssertTerminalDomainInput(tree, ["group", "leaf", "--help", "source"]);
+        AssertTerminalDomainInput(tree, ["group", "leaf", "--version", "--local"]);
+        AssertTerminalDomainInput(tree, ["group", "leaf", "--help", "--unmatched"]);
+        AssertTerminalDomainInput(
+            tree,
+            ["group", "leaf", "--help", "--", "--looks-like-option"]);
+    }
+
+    [Fact(DisplayName = "CLI typed terminal input validator reports domain input")]
+    [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
+    public void TypedTerminalInputValidatorReportsDomainInput()
+    {
+        var tree = CreateTerminalTree();
+        var parse = new CliParser(tree).Parse(["group", "leaf", "--help", "source"]) with
+        {
+            OriginalArguments = Array.AsReadOnly<string>(["group", "leaf", "--help"]),
+        };
+        var input = CliGlobalInputReader.Read(parse);
+
+        var invalid = Assert.IsType<CliInvalidInput>(
+            CliTerminalInputValidator.Validate(parse, input));
+        Assert.Equal(CliInvalidInputSource.Semantic, invalid.Source);
+        var diagnostic = Assert.Single(invalid.Diagnostics);
+        Assert.NotEmpty(diagnostic);
+        Assert.InRange(diagnostic.Length, 1, 4096);
+    }
+
     [Fact(DisplayName = "CLI binding selection uses exact command identity")]
     [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
     public void BindingSelectionUsesExactCommandIdentity()
@@ -231,6 +433,83 @@ public sealed class ParserTests
     private static CliCommandTree CreateTree()
     {
         return CliCommandTree.Create(CliHelpContent.Empty, [], []);
+    }
+
+    private static ParseResult ParseStandalone<T>(Option<T> option, string[] arguments)
+    {
+        var root = new RootCommand();
+        root.Options.Add(option);
+        root.SetAction(static _ => 0);
+        return root.Parse(arguments);
+    }
+
+    private static void AssertFacts(
+        CliOptionResultFacts facts,
+        bool isExplicit,
+        int identifierCount,
+        int valueCount)
+    {
+        Assert.Equal(isExplicit, facts.IsExplicit);
+        Assert.Equal(identifierCount, facts.IdentifierCount);
+        Assert.Equal(valueCount, facts.ValueCount);
+    }
+
+    private static CliGlobalInput AssertTerminalNoOp(
+        CliCommandTree tree,
+        string[] arguments,
+        CliTerminalMode expectedMode)
+    {
+        var resolution = CliTerminalValidator.Validate(new CliParser(tree).Parse(arguments));
+
+        Assert.Null(resolution.InvalidInput);
+        Assert.Equal(expectedMode, resolution.TerminalMode);
+        return Assert.IsType<CliGlobalInput>(resolution.Input);
+    }
+
+    private static void AssertTerminalDomainInput(
+        CliCommandTree tree,
+        string[] arguments)
+    {
+        var resolution = CliTerminalValidator.Validate(new CliParser(tree).Parse(arguments));
+        var invalid = Assert.IsType<CliInvalidInput>(resolution.InvalidInput);
+
+        Assert.Equal(CliInvalidInputSource.Semantic, invalid.Source);
+        Assert.Single(invalid.Diagnostics);
+        Assert.Equal(CliTerminalMode.None, resolution.TerminalMode);
+        Assert.Null(resolution.Input);
+    }
+
+    private static CliCommandTree CreateTerminalTree()
+    {
+        var group = new Command("group")
+        {
+            TreatUnmatchedTokensAsErrors = false,
+        };
+        group.SetAction(static _ => 0);
+
+        var leaf = new Command("leaf")
+        {
+            TreatUnmatchedTokensAsErrors = false,
+        };
+        leaf.SetAction(static _ => 0);
+        leaf.Arguments.Add(
+            new Argument<string?>("source")
+            {
+                Arity = ArgumentArity.ZeroOrOne,
+            });
+        leaf.Options.Add(
+            new Option<bool>("--local")
+            {
+                Arity = ArgumentArity.Zero,
+            });
+        group.Subcommands.Add(leaf);
+
+        var tree = CliCommandTree.Create(
+            CliHelpContent.Empty,
+            [new CliRootBranch(group, CliHelpContent.Empty, [])],
+            []);
+        tree.Root.TreatUnmatchedTokensAsErrors = false;
+        return tree;
     }
 
     private static CliCommandTree CreateRouteListPolicyTree(

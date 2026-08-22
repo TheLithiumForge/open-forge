@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <ProjectReference Include="../../../core/OpenForge.Cli.Core/OpenForge.Cli.Core.csproj" />
-    <ProjectReference Include="../../support/OpenForge.Cli.TestSupport/OpenForge.Cli.TestSupport.csproj" />
   </ItemGroup>
 
   <ItemGroup>

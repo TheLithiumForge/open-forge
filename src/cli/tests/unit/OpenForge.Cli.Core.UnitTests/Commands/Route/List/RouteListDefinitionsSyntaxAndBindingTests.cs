@@ -1,10 +1,15 @@
 using System.CommandLine;
+using System.CommandLine.Parsing;
 using OpenForge.Cli.Core.Commands.Route;
 using OpenForge.Cli.Core.Commands.Route.List;
+using OpenForge.Cli.Core.Commands.Route.List.Models.Binding;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
+using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Invocation;
 using OpenForge.Cli.Core.Shell.Parsing;
+using OpenForge.Cli.Core.Shell.Parsing.Models;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Presentation;
 
@@ -73,11 +78,12 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
         var fallback = InvalidResult();
         var binding = RouteListBinding.Close(
             symbols,
-            CliHelpContent.Empty,
-            (parse, invocation) => CliBindResult<RouteListRequest, RouteListResult>.Invalid(fallback),
-            input => fallback,
-            (request, cancellationToken) => ValueTask.FromResult(fallback),
-            new CliRendererSet<RouteListResult>(presentation => "human", presentation => "{}"));
+            new RouteListBindingComponents
+            {
+                Help = CliHelpContent.Empty,
+                Operation = (request, cancellationToken) => ValueTask.FromResult(fallback),
+                Renderers = new CliRendererSet<RouteListResult>(presentation => "human", presentation => "{}"),
+            });
 
         Assert.Equal("route", symbols.RouteGroup.Name);
         Assert.Equal("list", symbols.ListCommand.Name);
@@ -98,19 +104,213 @@ public sealed class RouteListDefinitionsSyntaxAndBindingTests
             symbols.DelimiterPolicies));
     }
 
-    [Fact(DisplayName = "Route-list raw depth scanning stops at the delimiter before an option-like source")]
+    [Fact(DisplayName = "CLI option result facts expose explicit occurrence and value counts")]
+    [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
+    public void CliOptionResultFactsExposeExplicitOccurrenceAndValueCounts()
+    {
+        var tree = CreateRouteListTree(out var symbols);
+        var parser = new CliParser(tree);
+
+        var omitted = parser.Parse(["route", "list"]);
+        var omittedFacts = CliOptionResultFactsReader.Read(omitted.Result, symbols.Depth);
+        Assert.False(omittedFacts.IsExplicit);
+        Assert.Equal(0, omittedFacts.IdentifierCount);
+        Assert.Equal(0, omittedFacts.ValueCount);
+
+        var explicitValue = parser.Parse(["route", "list", "--depth=2"]);
+        var explicitValueFacts = CliOptionResultFactsReader.Read(explicitValue.Result, symbols.Depth);
+        Assert.True(explicitValueFacts.IsExplicit);
+        Assert.Equal(1, explicitValueFacts.IdentifierCount);
+        Assert.Equal(1, explicitValueFacts.ValueCount);
+
+        var explicitNoValue = parser.Parse(["route", "list", "--depth=", "--json"]);
+        var explicitNoValueFacts = CliOptionResultFactsReader.Read(explicitNoValue.Result, symbols.Depth);
+        var jsonFacts = CliOptionResultFactsReader.Read(explicitNoValue.Result, tree.Options.Json);
+        Assert.True(explicitNoValueFacts.IsExplicit);
+        Assert.Equal(1, explicitNoValueFacts.IdentifierCount);
+        Assert.Equal(0, explicitNoValueFacts.ValueCount);
+        Assert.True(jsonFacts.IsExplicit);
+        Assert.Equal(1, jsonFacts.IdentifierCount);
+        Assert.Equal(0, jsonFacts.ValueCount);
+
+        var repeated = parser.Parse(["route", "list", "--depth=1", "--depth=2"]);
+        Assert.NotEmpty(repeated.Result.Errors);
+        var repeatedFacts = CliOptionResultFactsReader.Read(repeated.Result, symbols.Depth);
+        Assert.True(repeatedFacts.IsExplicit);
+        Assert.Equal(2, repeatedFacts.IdentifierCount);
+        Assert.Equal(2, repeatedFacts.ValueCount);
+    }
+
+    [Theory(DisplayName = "Route List depth requires equals syntax before the option terminator")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
-    public void RawDepthScanStopsAtTheDelimiter()
+    [InlineData("--depth=1", null, false)]
+    [InlineData("--depth", null, true)]
+    [InlineData("--depth", "1", true)]
+    [InlineData("--depth:1", null, true)]
+    public void DepthDelimiterPolicyIsEqualsOnlyBeforeTerminator(
+        string option,
+        string? separateValue,
+        bool rejected)
     {
         var symbols = RouteListBinding.CreateSymbols(RouteBinding.CreateGroup());
+        string[] arguments = separateValue is null
+            ? ["list", option]
+            : ["list", option, separateValue];
+        var parse = symbols.RouteGroup.Parse(arguments);
+
+        Assert.Empty(parse.Errors);
+        var violation = CliDelimiterGuard.Validate(arguments, symbols.DelimiterPolicies);
+        Assert.Equal(rejected, violation is not null);
+    }
+
+    [Theory(DisplayName = "Route List binding maps omitted and boundary depth values to typed requests")]
+    [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
+    [InlineData(null, "Finite", 1)]
+    [InlineData("0", "Finite", 0)]
+    [InlineData("2147483647", "Finite", 2147483647)]
+    [InlineData("all", "All", 0)]
+    public void BindingMapsTypedDepthBoundaries(
+        string? spelling,
+        string expectedKind,
+        int expectedValue)
+    {
+        var symbols = RouteListBinding.CreateSymbols(RouteBinding.CreateGroup());
+        var workspace = RouteListContractTestData.Workspace();
+        string[] arguments = spelling is null
+            ? ["list"]
+            : ["list", $"--depth={spelling}"];
+        var parse = symbols.RouteGroup.Parse(arguments);
+
+        Assert.Empty(parse.Errors);
+        var bound = RouteListBinding.Bind(parse, Invocation(workspace), symbols);
+        var request = Assert.IsType<RouteListRequest>(bound.Request);
+        Assert.Null(bound.InvalidResult);
+        Assert.Equal(expectedKind, request.RequestedDepth.Kind.ToString());
+        Assert.Equal(
+            expectedKind == "All"
+                ? null
+                : expectedValue,
+            request.RequestedDepth.Value);
+    }
+
+    [Fact(DisplayName = "Route List binding derives depth from typed parser facts")]
+    [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
+    public void BindingUsesTypedDepthFromParserFacts()
+    {
+        var symbols = RouteListBinding.CreateSymbols(RouteBinding.CreateGroup());
+        var workspace = RouteListContractTestData.Workspace();
+        var parse = symbols.RouteGroup.Parse(["list", "--depth=2"]);
+
+        Assert.Empty(parse.Errors);
+        var bound = RouteListBinding.Bind(parse, Invocation(workspace), symbols);
+        var request = Assert.IsType<RouteListRequest>(bound.Request);
+        Assert.Null(bound.InvalidResult);
+        Assert.Equal(RouteListDepth.Finite(2), request.RequestedDepth);
+    }
+
+    [Theory(DisplayName = "Route List binding rejects invalid typed depth values")]
+    [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
+    [InlineData("-1")]
+    [InlineData("2147483648")]
+    [InlineData("unknown")]
+    [InlineData("")]
+    public void BindingRejectsInvalidTypedDepthValues(string spelling)
+    {
+        var symbols = RouteListBinding.CreateSymbols(RouteBinding.CreateGroup());
+        var workspace = RouteListContractTestData.Workspace();
+        var arguments = new[] { "list", $"--depth={spelling}" };
+        var parse = symbols.RouteGroup.Parse(arguments);
+
+        Assert.Empty(parse.Errors);
+        var bound = RouteListBinding.Bind(parse, Invocation(workspace), symbols);
+        var result = Assert.IsType<RouteListResult>(bound.InvalidResult);
+        Assert.Null(bound.Request);
+        Assert.Equal(CliSemanticStatus.Invalid, result.Status);
+        Assert.Equal(RouteListFindingCode.InvalidDepth, Assert.Single(result.Findings).Code);
+    }
+
+    [Fact(DisplayName = "Route List repeated depth occurrences remain one parser-owned scalar error")]
+    [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
+    public void RepeatedDepthOccurrencesRemainParserOwnedScalarError()
+    {
+        var symbols = RouteListBinding.CreateSymbols(RouteBinding.CreateGroup());
+        var arguments = new[] { "list", "--depth=1", "--depth=2" };
+        var parse = symbols.RouteGroup.Parse(arguments);
+
+        Assert.NotEmpty(parse.Errors);
+        var optionResult = Assert.IsType<OptionResult>(parse.GetResult(symbols.Depth));
+        Assert.Equal(2, optionResult.IdentifierTokenCount);
+        Assert.Equal(2, optionResult.Tokens.Count(token => token.Type == TokenType.Argument));
+    }
+
+    [Fact(DisplayName = "Route List binding preserves an option-like source after the terminator")]
+    [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
+    public void BindingPreservesOptionLikeSourceAfterTerminator()
+    {
+        var symbols = RouteListBinding.CreateSymbols(RouteBinding.CreateGroup());
+        var workspace = RouteListContractTestData.Workspace();
         string[] arguments = ["list", "--", "--depth="];
         var parse = symbols.RouteGroup.Parse(arguments);
 
         Assert.Empty(parse.Errors);
         Assert.Equal("--depth=", parse.GetValue(symbols.SourceReference));
-        Assert.Equal(
-            RouteListDefinitions.Depth.DefaultValue,
-            RouteListBindingInputPolicy.ReadDepthSpelling(arguments, parse, symbols.Depth));
+        Assert.Null(CliDelimiterGuard.Validate(arguments, symbols.DelimiterPolicies));
+
+        var bound = RouteListBinding.Bind(parse, Invocation(workspace), symbols);
+        var request = Assert.IsType<RouteListRequest>(bound.Request);
+        Assert.Null(bound.InvalidResult);
+        Assert.Equal("--depth=", request.SourceReference);
+        Assert.Equal(RouteListDepth.Default, request.RequestedDepth);
+    }
+
+    [Fact(DisplayName = "Terminal modes reject Route List domain and local input before effects")]
+    [Trait("Feature", "cli-parser"), Trait("Evidence", "Unit")]
+    public void TerminalModesRejectDomainAndLocalInput()
+    {
+        var tree = CreateRouteListTree(out _);
+        var parser = new CliParser(tree);
+
+        var help = parser.Parse(["route", "list", "root", "--help", "--depth=0"]);
+        var helpResolution = CliTerminalValidator.Validate(help);
+        var helpInvalid = Assert.IsType<CliInvalidInput>(helpResolution.InvalidInput);
+        Assert.Null(helpResolution.Input);
+        Assert.Equal(CliInvalidInputSource.Semantic, helpInvalid.Source);
+        Assert.Single(helpInvalid.Diagnostics);
+
+        var version = parser.Parse(["route", "list", "--version", "--depth=0"]);
+        var versionResolution = CliTerminalValidator.Validate(version);
+        var versionInvalid = Assert.IsType<CliInvalidInput>(versionResolution.InvalidInput);
+        Assert.Null(versionResolution.Input);
+        Assert.Equal(CliInvalidInputSource.Semantic, versionInvalid.Source);
+        Assert.Single(versionInvalid.Diagnostics);
+
+        var validGlobals = parser.Parse(
+            [
+                "route", "list", "--help", "--json", "--verbose", "--view=compact",
+                "--workspace", Path.GetTempPath(),
+            ]);
+        var validResolution = CliTerminalValidator.Validate(validGlobals);
+        var validInput = Assert.IsType<CliGlobalInput>(validResolution.Input);
+        Assert.Null(CliTerminalInputValidator.Validate(validGlobals, validInput));
+    }
+
+    private static CliCommandTree CreateRouteListTree(out RouteListSymbols symbols)
+    {
+        symbols = RouteListBinding.CreateSymbols(RouteBinding.CreateGroup());
+        return CliCommandTree.Create(
+            CliHelpContent.Empty,
+            [new CliRootBranch(symbols.RouteGroup, CliHelpContent.Empty, symbols.DelimiterPolicies)],
+            []);
+    }
+
+    private static CliInvocation Invocation(CliWorkspace workspace)
+    {
+        return new CliInvocation(
+            new CliProcessIdentity("open-forge", "test"),
+            new CliPresentation(CliOutputFormat.Json, CliView.Expanded, CliVerbosity.Normal),
+            CliTerminalMode.None,
+            new CliWorkspaceRequest(null, workspace.LexicalRoot),
+            workspace);
     }
 
     private static RouteListFinding Finding(RouteListFindingCode code, CliSemanticStatus status)

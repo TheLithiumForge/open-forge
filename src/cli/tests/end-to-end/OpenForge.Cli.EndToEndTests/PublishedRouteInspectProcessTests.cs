@@ -1,4 +1,5 @@
 using System.Text.Json;
+using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.EndToEndTests;
@@ -11,11 +12,21 @@ public sealed class PublishedRouteInspectHelpProcessTests
     {
         var environment = PublishedExecutableEnvironment.ReadRequired();
         using var working = TemporaryWorkspace.Create("e2e-route-inspect-help");
-        var result = await PublishedRouteInspectProcessTestSupport.RunWithoutWritesAsync(
+        var missingWorkspace = working.Combine("missing-workspace");
+        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             environment,
             working.Path,
             working.SnapshotHashes,
-            ["route", "inspect", "--help"]);
+            [
+                "route",
+                "inspect",
+                "--workspace",
+                missingWorkspace,
+                "--json",
+                "--view=compact",
+                "--verbose",
+                "--help",
+            ]);
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
@@ -25,6 +36,7 @@ public sealed class PublishedRouteInspectHelpProcessTests
         Assert.Contains("--view", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("--verbose", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Related commands", result.StandardOutput, StringComparison.Ordinal);
+        Assert.False(Directory.Exists(missingWorkspace));
     }
 
     [Fact(DisplayName = "Published Route Inspect version bypasses a missing workspace in terminal mode")]
@@ -34,11 +46,20 @@ public sealed class PublishedRouteInspectHelpProcessTests
         var environment = PublishedExecutableEnvironment.ReadRequired();
         using var working = TemporaryWorkspace.Create("e2e-route-inspect-version");
         var missingWorkspace = working.Combine("missing-workspace");
-        var result = await PublishedRouteInspectProcessTestSupport.RunWithoutWritesAsync(
+        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             environment,
             working.Path,
             working.SnapshotHashes,
-            ["route", "inspect", "--workspace", missingWorkspace, "--json", "--version"]);
+            [
+                "route",
+                "inspect",
+                "--workspace",
+                missingWorkspace,
+                "--json",
+                "--view=compact",
+                "--verbose",
+                "--version",
+            ]);
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(environment.ExpectedVersion + Environment.NewLine, result.StandardOutput);
@@ -55,7 +76,7 @@ public sealed class PublishedRouteInspectPresentationProcessTests
     {
         var environment = PublishedExecutableEnvironment.ReadRequired();
         using var working = PublishedRouteInspectWorkspace.CreateComplete();
-        var result = await PublishedRouteInspectProcessTestSupport.RunWithoutWritesAsync(
+        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             environment,
             working.Path,
             working.SnapshotHashes,
@@ -75,7 +96,7 @@ public sealed class PublishedRouteInspectPresentationProcessTests
     {
         var environment = PublishedExecutableEnvironment.ReadRequired();
         using var working = PublishedRouteInspectWorkspace.CreateComplete();
-        var result = await PublishedRouteInspectProcessTestSupport.RunWithoutWritesAsync(
+        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             environment,
             working.Path,
             working.SnapshotHashes,
@@ -95,7 +116,7 @@ public sealed class PublishedRouteInspectPresentationProcessTests
     {
         var environment = PublishedExecutableEnvironment.ReadRequired();
         using var working = PublishedRouteInspectWorkspace.CreateComplete();
-        var result = await PublishedRouteInspectProcessTestSupport.RunWithoutWritesAsync(
+        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             environment,
             working.Path,
             working.SnapshotHashes,
@@ -145,12 +166,12 @@ public sealed class PublishedRouteInspectPresentationProcessTests
     {
         var environment = PublishedExecutableEnvironment.ReadRequired();
         using var working = PublishedRouteInspectWorkspace.CreateComplete();
-        var compact = await PublishedRouteInspectProcessTestSupport.RunWithoutWritesAsync(
+        var compact = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             environment,
             working.Path,
             working.SnapshotHashes,
             ["route", "inspect", "root", "--workspace", working.Path, "--json", "--view=compact"]);
-        var expanded = await PublishedRouteInspectProcessTestSupport.RunWithoutWritesAsync(
+        var expanded = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             environment,
             working.Path,
             working.SnapshotHashes,
@@ -169,12 +190,12 @@ public sealed class PublishedRouteInspectPresentationProcessTests
     {
         var environment = PublishedExecutableEnvironment.ReadRequired();
         using var working = PublishedRouteInspectWorkspace.CreateComplete();
-        var plain = await PublishedRouteInspectProcessTestSupport.RunWithoutWritesAsync(
+        var plain = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             environment,
             working.Path,
             working.SnapshotHashes,
             ["route", "inspect", "root", "--workspace", working.Path, "--view=expanded"]);
-        var verbose = await PublishedRouteInspectProcessTestSupport.RunWithoutWritesAsync(
+        var verbose = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             environment,
             working.Path,
             working.SnapshotHashes,
@@ -192,12 +213,12 @@ public sealed class PublishedRouteInspectPresentationProcessTests
     {
         var environment = PublishedExecutableEnvironment.ReadRequired();
         using var working = PublishedRouteInspectWorkspace.CreateComplete();
-        var plain = await PublishedRouteInspectProcessTestSupport.RunWithoutWritesAsync(
+        var plain = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             environment,
             working.Path,
             working.SnapshotHashes,
             ["route", "inspect", "root", "--workspace", working.Path, "--json"]);
-        var verbose = await PublishedRouteInspectProcessTestSupport.RunWithoutWritesAsync(
+        var verbose = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             environment,
             working.Path,
             working.SnapshotHashes,
@@ -230,7 +251,7 @@ public sealed class PublishedRouteInspectPresentationProcessTests
         AddScalar(arguments, "--workspace", working.Path, workspaceForm);
         AddScalar(arguments, "--view", "compact", viewForm);
 
-        var result = await PublishedRouteInspectProcessTestSupport.RunWithoutWritesAsync(
+        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             environment,
             working.Path,
             working.SnapshotHashes,
@@ -249,7 +270,7 @@ public sealed class PublishedRouteInspectPresentationProcessTests
     {
         var environment = PublishedExecutableEnvironment.ReadRequired();
         using var working = PublishedRouteInspectWorkspace.CreateHostileValue();
-        var result = await PublishedRouteInspectProcessTestSupport.RunWithoutWritesAsync(
+        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             environment,
             working.Path,
             working.SnapshotHashes,
@@ -275,7 +296,7 @@ public sealed class PublishedRouteInspectPresentationProcessTests
     {
         var environment = PublishedExecutableEnvironment.ReadRequired();
         using var working = PublishedRouteInspectWorkspace.CreateComplete();
-        var result = await PublishedRouteInspectProcessTestSupport.RunWithoutWritesAsync(
+        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             environment,
             working.Path,
             working.SnapshotHashes,
@@ -289,6 +310,60 @@ public sealed class PublishedRouteInspectPresentationProcessTests
             "--view",
             document.RootElement.GetProperty("result").GetProperty("selection")
                 .GetProperty("requestedReference").GetString());
+    }
+
+    [Theory(DisplayName = "Published Route Inspect terminal modes reject source input before workspace and operation")]
+    [InlineData("--help", "root")]
+    [InlineData("--version", "root")]
+    [InlineData("--help", "option-like")]
+    [InlineData("--version", "option-like")]
+    [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
+    public async Task TerminalModesRejectSourceInputBeforeWorkspaceAndOperation(
+        string terminalMode,
+        string sourceKind)
+    {
+        var environment = PublishedExecutableEnvironment.ReadRequired();
+        using var working = TemporaryWorkspace.Create("e2e-route-inspect-terminal-conflict");
+        var missingWorkspace = working.Combine("missing-workspace");
+        var arguments = new List<string>
+        {
+            "route",
+            "inspect",
+            "--workspace",
+            missingWorkspace,
+            "--json",
+            "--view=compact",
+            "--verbose",
+            terminalMode,
+        };
+        switch (sourceKind)
+        {
+            case "root":
+                arguments.Add("root");
+                break;
+            case "option-like":
+                arguments.Add("--");
+                arguments.Add("--view");
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(
+                    nameof(sourceKind),
+                    sourceKind,
+                    "The terminal source case is not defined.");
+        }
+
+        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
+            environment,
+            working.Path,
+            working.SnapshotHashes,
+            arguments);
+
+        Assert.Equal(4, result.ExitCode);
+        Assert.Equal(string.Empty, result.StandardOutput);
+        var diagnostic = Assert.Single(
+            result.StandardError.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries));
+        Assert.InRange(diagnostic.Length, 1, 4096);
+        Assert.False(Directory.Exists(missingWorkspace));
     }
 
     private static void AddScalar(
@@ -323,7 +398,7 @@ public sealed class PublishedRouteInspectStatusProcessTests
     {
         var environment = PublishedExecutableEnvironment.ReadRequired();
         using var working = PublishedRouteInspectWorkspace.CreateComplete();
-        var result = await PublishedRouteInspectProcessTestSupport.RunWithoutWritesAsync(
+        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             environment,
             working.Path,
             working.SnapshotHashes,
@@ -341,7 +416,7 @@ public sealed class PublishedRouteInspectStatusProcessTests
     {
         var environment = PublishedExecutableEnvironment.ReadRequired();
         using var working = PublishedRouteInspectWorkspace.CreateAttention();
-        var result = await PublishedRouteInspectProcessTestSupport.RunWithoutWritesAsync(
+        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             environment,
             working.Path,
             working.SnapshotHashes,
@@ -359,7 +434,7 @@ public sealed class PublishedRouteInspectStatusProcessTests
     {
         var environment = PublishedExecutableEnvironment.ReadRequired();
         using var working = PublishedRouteInspectWorkspace.CreateAttention();
-        var result = await PublishedRouteInspectProcessTestSupport.RunWithoutWritesAsync(
+        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             environment,
             working.Path,
             working.SnapshotHashes,
@@ -377,7 +452,7 @@ public sealed class PublishedRouteInspectStatusProcessTests
     {
         var environment = PublishedExecutableEnvironment.ReadRequired();
         using var working = PublishedRouteInspectWorkspace.CreateAttention();
-        var result = await PublishedRouteInspectProcessTestSupport.RunWithoutWritesAsync(
+        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             environment,
             working.Path,
             working.SnapshotHashes,
@@ -405,7 +480,7 @@ public sealed class PublishedRouteInspectStatusProcessTests
     {
         var environment = PublishedExecutableEnvironment.ReadRequired();
         using var working = PublishedRouteInspectWorkspace.CreateIncomplete();
-        var result = await PublishedRouteInspectProcessTestSupport.RunWithoutWritesAsync(
+        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             environment,
             working.Path,
             working.SnapshotHashes,
@@ -423,7 +498,7 @@ public sealed class PublishedRouteInspectStatusProcessTests
     {
         var environment = PublishedExecutableEnvironment.ReadRequired();
         using var working = PublishedRouteInspectWorkspace.CreateComplete();
-        var result = await PublishedRouteInspectProcessTestSupport.RunWithoutWritesAsync(
+        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             environment,
             working.Path,
             working.SnapshotHashes,
@@ -446,7 +521,7 @@ public sealed class PublishedRouteInspectStatusProcessTests
         IReadOnlyList<string> arguments = caseName == "missing"
             ? ["route", "inspect", "--workspace", working.Path, "--json"]
             : ["route", "inspect", "first", "second", "--workspace", working.Path, "--json"];
-        var result = await PublishedRouteInspectProcessTestSupport.RunWithoutWritesAsync(
+        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             environment,
             working.Path,
             working.SnapshotHashes,
@@ -460,26 +535,5 @@ public sealed class PublishedRouteInspectStatusProcessTests
             expectedCondition,
             document.RootElement.GetProperty("result").GetProperty("conditions")[0]
                 .GetProperty("code").GetString());
-    }
-}
-
-internal static class PublishedRouteInspectProcessTestSupport
-{
-    internal static async Task<ProcessRunResult> RunWithoutWritesAsync(
-        PublishedExecutableEnvironment environment,
-        string workingDirectory,
-        Func<IReadOnlyDictionary<string, string>> snapshot,
-        IReadOnlyList<string> arguments)
-    {
-        var before = snapshot();
-        var result = await ProcessRunner.RunAsync(
-            new ProcessRunRequest(
-                environment.ExecutablePath,
-                arguments,
-                workingDirectory,
-                timeout: TimeSpan.FromSeconds(30)),
-            TestContext.Current.CancellationToken);
-        Assert.Equal(before, snapshot());
-        return result;
     }
 }

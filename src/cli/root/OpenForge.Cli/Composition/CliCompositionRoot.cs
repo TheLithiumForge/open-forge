@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Binding;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Route.List;
+using OpenForge.Cli.Core.Commands.Route.List.Models.Binding;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Route.Shared.Rendering;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
@@ -36,23 +37,26 @@ internal static class CliCompositionRoot
         var inspectSymbols = RouteInspectBinding.CreateSymbols(routeGroup);
         var listBinding = RouteListBinding.Close(
             listSymbols,
-            RouteListHelpSections.CreateList(),
-            RouteListBinding.CreateBinder(listSymbols),
-            RouteListBinding.CreateInvalidResultFactory(),
-            RouteListOperationFactory.Create(),
-            new CliRendererSet<RouteListResult>(
-                RouteListHumanRenderer.Render,
-                RouteListJsonRenderer.Render),
-            RouteListDiagnosticRenderer.Render);
+            new RouteListBindingComponents
+            {
+                Help = RouteListHelpSections.CreateList(),
+                Operation = RouteListOperationFactory.Create(),
+                Renderers = new CliRendererSet<RouteListResult>(
+                    RouteListHumanRenderer.Render,
+                    RouteListJsonRenderer.Render),
+                DiagnosticRenderer = RouteListDiagnosticRenderer.Render,
+            });
         var inspectBinding = RouteInspectBinding.Close(
             inspectSymbols,
-            new RouteInspectBindingComponents(
-                RouteInspectHelpSections.CreateInspect(),
-                RouteInspectOperationFactory.Create(),
-                new CliRendererSet<RouteInspectResult>(
+            new RouteInspectBindingComponents
+            {
+                Help = RouteInspectHelpSections.CreateInspect(),
+                Operation = RouteInspectOperationFactory.Create(),
+                Renderers = new CliRendererSet<RouteInspectResult>(
                     RouteInspectHumanRenderer.Render,
                     RouteInspectJsonRenderer.Render),
-                RouteInspectDiagnosticRenderer.Render));
+                DiagnosticRenderer = RouteInspectDiagnosticRenderer.Render,
+            });
         var tree = CliCommandTree.Create(
             rootHelp,
             [new CliRootBranch(

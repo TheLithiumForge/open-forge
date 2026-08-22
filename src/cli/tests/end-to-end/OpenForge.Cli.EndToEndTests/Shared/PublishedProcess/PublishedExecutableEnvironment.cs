@@ -1,10 +1,10 @@
-namespace OpenForge.Cli.TestSupport;
+namespace OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 /// <summary>
 /// Identifies the published executable and informational version used by
 /// end-to-end evidence.
 /// </summary>
-public sealed class PublishedExecutableEnvironment
+internal sealed class PublishedExecutableEnvironment
 {
     /// <summary>
     /// Names the environment variable containing the published executable path.

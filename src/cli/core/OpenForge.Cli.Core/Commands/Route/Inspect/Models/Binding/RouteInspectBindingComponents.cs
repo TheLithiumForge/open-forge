@@ -5,8 +5,13 @@ using OpenForge.Cli.Core.Shell.Presentation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Models.Binding;
 
-internal sealed record RouteInspectBindingComponents(
-    CliHelpContent Help,
-    RouteInspectOperation Operation,
-    CliRendererSet<RouteInspectResult> Renderers,
-    CliDiagnosticRenderer<RouteInspectResult>? DiagnosticRenderer);
+internal sealed class RouteInspectBindingComponents
+{
+    internal required CliHelpContent Help { get; init; }
+
+    internal required RouteInspectOperation Operation { get; init; }
+
+    internal required CliRendererSet<RouteInspectResult> Renderers { get; init; }
+
+    internal CliDiagnosticRenderer<RouteInspectResult>? DiagnosticRenderer { get; init; }
+}

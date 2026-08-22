@@ -24,6 +24,7 @@ Use these current Task links when assigning or closing an item.
 - [Implement Index](tasks/read-only/index.md)
 - [Complete Native CI And Support Floors](tasks/delivery/02-native-ci.md)
 - [Accept And Release The Complete CLI](tasks/delivery/04-release.md)
+- [Remediate Parser And Standard Behavior](tasks/generic-improvements/parser-remediation.md)
 
 ## Deferred Items
 
@@ -122,12 +123,12 @@ Use these current Task links when assigning or closing an item.
 
 ### CLI-EDGE-005 — Raw lexical option edge
 
-- **Current behavior and evidence:** Global values and occurrences now come from
-  typed parser results, and delimiter enforcement stops at `--`. Route List still
-  retains its explicitly contracted raw `--depth=` spelling reader; its
-  attached-empty case preserves a following typed global through the documented
-  parser-symbol arity exception. Dedicated coverage for every option-like
-  workspace or source value remains deferred.
+- **Current behavior and evidence:** Global and Route List depth values,
+  occurrences, and aggregate value counts come from typed parser results. Global
+  custom parsers and the raw depth spelling reader are removed. Route List retains
+  only its explicitly contracted equals-only delimiter guard, and that inspection
+  stops at `--`. Attached-empty workspace, view, and depth values preserve a
+  following typed global and become invalid through typed validation.
 - **Risk:** Future Shell consumers could let raw lexical inspection drift from
   parser-owned typed behavior, especially when a workspace or source value looks
   like an option.
@@ -142,36 +143,54 @@ Use these current Task links when assigning or closing an item.
   exception and broader option-looking workspace/source audit remain assigned to
   the authorized generic parser-remediation branch; Route Inspect adds no lexical
   workaround.
+- **Parser-remediation acceptance disposition:** Public 2.0.11 result facts now own
+  scalar and multi-value occurrences and aggregate values. The retained delimiter
+  guard distinguishes only Route List depth spelling; it does not parse a value,
+  count occurrences, cross `--`, or enter command binding. Focused Unit `68/68`,
+  Integration `93/93`, and freshly published managed selected EndToEnd `57/57`
+  pass. The exact attached-empty depth JSON journey and ordinary option-like
+  post-terminator Inspect journey pass without workspace writes.
 - **Owning Task(s):** [Implement Route Inspect And Promote Shared Route Facts](tasks/route-discovery/route-inspect.md)
-  owns focused option-terminator regression. The maintainer-authorized generic
-  parser-remediation branch owns the remaining raw depth audit before test
-  architecture; [Accept And Release The Complete CLI](tasks/delivery/04-release.md)
-  owns final residual-risk acceptance.
-- **Closure condition:** Route Inspect preserves parser-owned global and operand
-  behavior at `--`. The generic remediation applies general typed validation and
-  removes or explicitly reaccepts the remaining raw depth exception before test
-  architecture, without adding another spelling-specific workaround.
+  owns focused option-terminator regression. [Parser And Standard Behavior
+  Remediation](tasks/generic-improvements/parser-remediation.md) closes the raw depth
+  audit. [Accept And Release The Complete CLI](tasks/delivery/04-release.md) owns final
+  residual-risk acceptance.
+- **Closure condition:** Met for parser remediation. Route Inspect preserves
+  parser-owned global and operand behavior at `--`; generic typed validation removes
+  raw depth value authority; and the one documented equals-only delimiter exception
+  remains bounded without another spelling-specific workaround. Final release still
+  owns broader public input breadth.
 
 ### CLI-EDGE-007 — Terminal modes with domain input
 
-- **Current behavior and evidence:** The shared Shell validates global input and
-  then short-circuits `--help` or `--version` before command binding. A valid leaf
-  may therefore accept and ignore a domain operand or operation-specific option in
-  terminal mode. Valid root, group, and leaf terminal bypass is covered; the
-  conflicting domain-input forms are not claimed as conforming.
+- **Current behavior and evidence:** The shared Shell validates parser and delimiter
+  results, reads typed global input, resolves terminal conflict policy, and applies
+  one typed terminal-input validator before help/version short circuiting, workspace
+  selection, command binding, or operation work. Root, group, List, Inspect, local-
+  option, unmatched, and option-like post-terminator conflicts are rejected. Other
+  well-formed globals remain terminal no-ops.
 - **Risk:** The shared Global Flags contract requires domain operands and local
   flags to remain invalid with terminal modes. A command-local workaround would
   duplicate parser policy and could diverge across leaves.
-- **Triage:** Record as a reproducible general Shell parser-policy deviation, not
-  an automatic blocker for valid Route Inspect help/version presentation. The
-  general solution must inspect library-owned typed symbol results and apply one
-  shared terminal-input invariant; it must not rescan raw arguments.
-- **Owning Task(s):** The maintainer-authorized generic-improvements branch owns
-  parser remediation before test architecture. Route Inspect presentation owns
-  only valid terminal bypass evidence and must not claim the conflicting forms.
-- **Closure condition:** Focused pinned-parser evidence proves root, group, and
-  leaf terminal modes; one general typed validation rejects domain operands and
-  operation-specific options while accepting other well-formed globals as no-ops.
+- **Historical triage:** Record as a reproducible general Shell parser-policy
+  deviation, not an automatic blocker for valid Route Inspect help/version
+  presentation. The general solution must inspect library-owned typed symbol results
+  and apply one shared terminal-input invariant; it must not rescan raw arguments.
+- **Parser-remediation acceptance disposition:** The general invariant is implemented
+  from `CommandResult.Children`, explicit `ArgumentResult` and `OptionResult`
+  identities, and `ParseResult.UnmatchedTokens`. Exact public
+  `route inspect --help root --json` exits `4`, writes no stdout, writes one bounded
+  stderr diagnostic, and performs no workspace work. Focused Unit `68/68`,
+  Integration `93/93`, and freshly published managed selected EndToEnd `57/57`
+  pass.
+- **Owning Task(s):** [Parser And Standard Behavior
+  Remediation](tasks/generic-improvements/parser-remediation.md) closes the general
+  parser-policy deviation. Route Inspect presentation owns only valid terminal bypass
+  evidence and does not claim the conflicting forms.
+- **Closure condition:** Met. Focused pinned-parser evidence proves root, group, and
+  leaf terminal modes; one general typed validation rejects domain operands,
+  operation-specific options, and unmatched input while accepting other well-formed
+  globals as no-ops.
 
 ### CLI-EDGE-006 — Six-RID parity
 

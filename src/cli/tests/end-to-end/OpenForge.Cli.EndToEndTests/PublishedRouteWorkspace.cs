@@ -124,17 +124,7 @@ internal sealed class PublishedRouteWorkspace : IDisposable
 
     private static void WriteLoader(TemporaryWorkspace workspace, string entries)
     {
-        workspace.WriteText(
-            ".agents/loader.md",
-            $"""
-            # Open Forge Loader
-
-            ## Entries
-
-            <!-- open-forge:generated-index:start -->
-            {entries}
-            <!-- open-forge:generated-index:end -->
-            """);
+        workspace.WriteText(".agents/loader.md", GeneratedLoaderDocumentBuilder.Build(entries));
     }
 
     private static void WriteRoute(

@@ -2,12 +2,12 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 
-namespace OpenForge.Cli.TestSupport;
+namespace OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 /// <summary>
 /// Describes one process invocation without constructing a shell command line.
 /// </summary>
-public sealed class ProcessRunRequest
+internal sealed class ProcessRunRequest
 {
     private static readonly StringComparer EnvironmentNameComparer = OperatingSystem.IsWindows()
         ? StringComparer.OrdinalIgnoreCase
@@ -166,12 +166,12 @@ public sealed class ProcessRunRequest
 /// <summary>
 /// Immutable captured output and exit status from one completed process.
 /// </summary>
-public sealed record ProcessRunResult(int ExitCode, string StandardOutput, string StandardError);
+internal sealed record ProcessRunResult(int ExitCode, string StandardOutput, string StandardError);
 
 /// <summary>
 /// Reports cancellation after an owned child has been stopped and drained.
 /// </summary>
-public sealed class ProcessRunCanceledException : OperationCanceledException
+internal sealed class ProcessRunCanceledException : OperationCanceledException
 {
     /// <summary>
     /// Creates a cancellation result for one started child.
@@ -197,7 +197,7 @@ public sealed class ProcessRunCanceledException : OperationCanceledException
 /// <summary>
 /// Starts actual executables with explicit process-start options and no shell.
 /// </summary>
-public static class ProcessRunner
+internal static class ProcessRunner
 {
     /// <summary>
     /// Runs a process to completion and captures standard output and standard

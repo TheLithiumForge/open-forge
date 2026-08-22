@@ -25,11 +25,23 @@ internal static class CliTerminalValidator
                 [delimiterViolation.Describe()]);
         }
 
-        var input = CliGlobalInputReader.Read(parse);
+        CliGlobalInput input;
         try
         {
-            var terminalMode = CliTerminalPolicy.Resolve(input.Help, input.Version);
-            return new CliGlobalInputResolution(input, terminalMode, null);
+            input = CliGlobalInputReader.Read(parse);
+        }
+        catch (ArgumentException exception)
+        {
+            return Invalid(
+                "cli.semantic.invalid",
+                CliInvalidInputSource.Semantic,
+                [exception.Message]);
+        }
+
+        CliTerminalMode terminalMode;
+        try
+        {
+            terminalMode = CliTerminalPolicy.Resolve(input.Help, input.Version);
         }
         catch (ArgumentException exception)
         {
@@ -38,6 +50,11 @@ internal static class CliTerminalValidator
                 CliInvalidInputSource.Semantic,
                 [exception.Message]);
         }
+
+        var terminalInvalid = CliTerminalInputValidator.Validate(parse, input);
+        return terminalInvalid is null
+            ? new CliGlobalInputResolution(input, terminalMode, null)
+            : Invalid(terminalInvalid);
     }
 
     private static CliGlobalInputResolution Invalid(
@@ -49,5 +66,13 @@ internal static class CliTerminalValidator
             null,
             CliTerminalMode.None,
             new CliInvalidInput(code, source, diagnostics));
+    }
+
+    private static CliGlobalInputResolution Invalid(CliInvalidInput invalidInput)
+    {
+        return new CliGlobalInputResolution(
+            null,
+            CliTerminalMode.None,
+            invalidInput);
     }
 }
