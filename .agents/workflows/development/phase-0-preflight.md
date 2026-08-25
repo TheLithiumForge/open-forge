@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Produce a read-only development Task blueprint, active toolchain and commands, evidence plan, and material decision frontier before mutation
+  description: Produce a read-only assurance blueprint with architecture readiness, behavior classes, evidence, path boundaries, and review budget before mutation
   tags: [Workflow, Development, Phase, Preflight, Planning, Evidence, Review, Toolchain]
 ---
 
@@ -8,19 +8,21 @@ open-forge:
 
 ## Goal
 
-Give the Mastermind a bounded read-only blueprint for one proposed custom-behavior Task before Task state, branch state, contracts, or executable evidence change.
+Give the primary owner a bounded read-only blueprint for one proposed high-consequence behavior change before task state, Git state, contracts, production, or executable evidence changes.
 
 ## Steps
 
-1. Read the request, current authority, relevant implementation and tests, baseline, repository constraints, and affected public surfaces.
-2. Propose a bounded Task scope, authority links, accepted or unresolved architecture questions, contract obligations, complete affected behavior matrix, edge classes, evidence tiers, independently runnable test-project paths when the repository separates tiers, durable test identities, paths, and likely cycle boundaries.
-3. Identify the active toolchain and exact focused and full validation commands from the repository and environment. Do not assume a language, runner, provider, model, command name, or filter syntax from this generic workflow.
-4. Identify the public scenario, integrated inspection points, correction starting points, whether a dedicated phase specialist would add value, optional value of independent review, phase-boundary commits, residual risks, and every material decision that could change scope, cost, safety, or acceptance.
-5. Return the populated proposal to the Mastermind. Keep this phase read-only and do not create or edit Task state, branch state, contracts, production code, tests, fixtures, snapshots, or executable evidence.
+1. Read the request, current authority, architecture, relevant implementation and tests, baseline, repository constraints, direct consumers, and public surfaces.
+2. Confirm whether the work truly requires the assured profile. Identify any existing archetype or golden slice that would allow standard or derivative execution instead.
+3. Map capability boundaries, dependency direction, placement, accepted contracts, behavior classes, safety invariants, compatibility obligations, and every unresolved decision that could change meaning or mutation scope.
+4. Select the active toolchain, focused evidence, integration evidence, public scenario, and full gate from repository evidence. Do not assume a language, runner, command, or filter syntax.
+5. Define expected paths, protected paths, direct integration neighborhood, allowed external effects, baseline strategy, useful freeze boundaries, implementation ownership, parallel lanes, correction boundary, and review budget.
+6. Return the compact blueprint to the primary owner. Do not create or edit task state, branch state, contracts, code, tests, fixtures, snapshots, generated output, or external systems.
 
 ## Completion
 
-- Preflight produced one bounded Task blueprint for the Mastermind to adopt.
-- The active toolchain, focused commands, test-project paths, full gate, public scenario, evidence boundaries, phase-specialist value, phase commits, and correction route are explicit rather than inherited from hard-coded examples.
-- Architecture, scope, authority, and other material decisions are separated into settled direction and unresolved questions.
-- No Task, Git, contract, production, test, fixture, snapshot, or executable-evidence mutation occurred. Unresolved material decisions stop later mutation until the Mastermind resolves them within applicable maintainer authority.
+- The execution profile and assurance cost are justified.
+- Architecture readiness, accepted behavior classes, evidence tiers, toolchain, path boundaries, ownership, gates, and review budget are explicit.
+- Existing archetypes and reusable foundations were considered before creating new structure.
+- Settled direction and unresolved material decisions are distinct.
+- No mutation occurred.

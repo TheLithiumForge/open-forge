@@ -1,135 +1,117 @@
 ---
 open-forge:
-  description: Experimental starting structure for a bounded task with a clear problem, outcome, hierarchy, scope, dependencies, acceptance, and linked context
-  tags: [Template, Memory, Working, Task, Contextual, Experimental]
+  description: Starting structure for a bounded task with a clear problem, outcome, execution profile, authority, acceptance, and linked context
+  tags: [Template, Memory, Working, Task, Contextual, Execution]
+execution:
+  profile: null
+  review-budget: null
+  council-budget: null
+  correction-budget: null
 ---
 
 # {Task}
 
 {
-Template selection:
-
-- Need: One bounded unit of work needs durable meaning, relationships, state, and acceptance.
-- Primary question: What problem must this Task solve, what result is expected, and what is outside its boundary?
-
-Use this experimental Template when a backlog item or current request is not enough to preserve the Task accurately. Keep the current request or a declared external tracker as the task source when it already answers the question. Do not create a competing copy of mutable task truth.
-
-Instantiate this file under the appropriate Working route. The Task may stand alone or link to parent, child, and related Tasks. Hierarchy organizes work but creates no status, authority, or completion behavior unless this Task states it.
-
-This Task defines what and why. Put nontrivial execution order, parallel work, resources, and verification sequencing in a linked Plan. Use a Checkpoint only when concise current state must support resumption without rereading the whole Task and Plan.
-
-Keep only sections that help define, execute, review, or close this Task. Replace the frontmatter, title, and placeholders, then remove this braced guidance.
+Use this Template only when the current request or external task source cannot preserve the task accurately. Keep one mutable task source. This record defines what and why; use a linked Plan only when sequencing, parallel lanes, or verification need more detail. Replace every null execution value with an explicit non-negative budget before invoking an external review, council, or correction owner. Remove unused sections and this guidance.
 }
 
 ## Task State
 
-{Name the source that defines Task state. Use the workspace's own state vocabulary rather than assuming an Agile lifecycle.}
-
-- State: {Proposed, ready, active, blocked, complete, cancelled, or another locally defined state.}
-- Responsible person or role: {Who is accountable for moving the Task forward?}
-- Task source: {This file or a link to the external system that defines mutable Task state.}
+- State: {Local state vocabulary.}
+- Responsible person or role: {Accountable owner.}
+- Task source: {This file or external system.}
 - Last updated: {Date or timestamp when freshness matters.}
 
-## Problem Statement
+## Problem And Expected Outcome
 
-{Describe the current condition, who or what it affects, the evidence that it exists, and why it is worth addressing. Separate a known cause from a suspected cause.}
+- Problem: {Current condition, evidence, and consequence.}
+- Known or suspected cause: {Distinguish observed cause, hypothesis, or `Unknown`.}
+- Expected outcome: {Observable changed state and value.}
+- Execution profile: {Must match `execution.profile`: Direct, Standard, Assured, Derivative, or Batch, with reason.}
 
-## Expected Outcome
+## Relationships
 
-{State the observable result and the value it provides. Describe the changed state, not the implementation steps.}
-
-## Relationships And Backlinks
-
-{Link only relationships that help a reader navigate or understand the Task. Add a reciprocal link from a local parent, child, backlog, plan, or document when that backlink materially improves discovery. A link does not copy the destination's authority or lifecycle.}
-
-| Relationship         | Link                   | Relevance                                                                |
-| -------------------- | ---------------------- | ------------------------------------------------------------------------ |
-| Parent Task          | {Link or `None`}       | {How this Task contributes to the parent.}                               |
-| Child Task           | {Link or `None`}       | {Delegated outcome and whether it blocks this Task. Add rows as needed.} |
-| Related Task         | {Link or `None`}       | {Dependency, overlap, follow-up, or another relationship.}               |
-| Plan                 | {Link or `Not needed`} | {Execution plan for this Task.}                                          |
-| Checkpoint           | {Link or `Not needed`} | {Concise resumption state.}                                              |
-| Backlog or roadmap   | {Link or `None`}       | {Where this Task is selected or prioritized.}                            |
-| External task source | {Link or `None`}       | {Which mutable fields the external system defines.}                      |
+| Relationship              | Link                   | Relevance                                         |
+| ------------------------- | ---------------------- | ------------------------------------------------- |
+| Parent or program         | {Link or `None`}       | {Why this task exists.}                           |
+| Child or dependency       | {Link or `None`}       | {Outcome, dependency, or blocking relationship.}  |
+| Archetype or golden slice | {Link or `None`}       | {Pattern inherited or established.}               |
+| Plan                      | {Link or `Not needed`} | {Execution graph.}                                |
+| Checkpoint or handoff     | {Link or `Not needed`} | {Resumption or transfer.}                         |
+| Backlog or roadmap        | {Link or `None`}       | {Selection, priority, or follow-up relationship.} |
+| External task source      | {Link or `None`}       | {Mutable fields it defines.}                      |
 
 ## References And Authority
 
-{List the sources needed to understand or perform the Task. State the question each source answers and whether this Task may change it. Include documents, Decisions, Directives, Patterns, code, tests, data, external systems, prior evidence, and generated surfaces only when relevant.}
+| Source | Question it answers | Status or authority                                      | May this task change it? |
+| ------ | ------------------- | -------------------------------------------------------- | ------------------------ |
+| {Link} | {Question}          | {Current, candidate, generated, historical, or external} | {Yes, no, or boundary}   |
 
-| Source | Question it answers | Status or authority                                                                                 | May this Task change it?                    |
-| ------ | ------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| {Link} | {Relevant question} | {Accepted current source, candidate, historical evidence, generated surface, or external authority} | {Yes, no, or only within a stated boundary} |
+## Accepted Architecture And Decisions
 
-## Scope
+- Invariants: {Dependency, safety, compatibility, lifecycle, or behavior invariants.}
+- Placement map: {Responsibility to local, nearest-shared, or foundational owner.}
+- Accepted decisions: {Links or concise task-local decisions.}
+- Decisions needed: {Only material choices that block or change the task, or `None`.}
+
+## Scope And Paths
 
 ### Included
 
-{List the behaviors, deliverables, surfaces, people, or systems this Task covers.}
+{Behaviors and deliverables.}
 
 ### Excluded
 
-{List non-goals, deferred work, forbidden surfaces, and external effects that are not authorized.}
+{Non-goals, deferred work, forbidden effects, and protected systems.}
 
 ### Constraints
 
-{State compatibility, safety, time, quality, technology, policy, reversibility, or environment constraints that shape a valid result.}
+{Compatibility, safety, time, quality, technology, policy, reversibility, environment, or external-effect constraints.}
 
-## Requirements
+| Scope kind                      | Paths or surfaces               | Meaning                                                                          |
+| ------------------------------- | ------------------------------- | -------------------------------------------------------------------------------- |
+| Expected                        | {Forecast paths}                | Likely changes, not a hard allowlist.                                            |
+| Protected                       | {Hard boundaries}               | Must not change without a new decision.                                          |
+| Direct integration neighborhood | {Adjacent consumers or support} | May change only when accepted meaning directly requires it and must be reported. |
 
-{State the capabilities, behavior, content, or other properties the result must provide. Keep solution choices out unless they are accepted constraints. Use stable identifiers when individual requirements need traceability.}
+## Assumptions, Prerequisites, Resources, And Recovery
 
-- {Requirement and the reason it matters.}
+| ID  | Kind                                                      | Claim, required state, resource, or risk           | Validation, availability, or signal   | Owner or source                 | Response if false or triggered                  |
+| --- | --------------------------------------------------------- | -------------------------------------------------- | ------------------------------------- | ------------------------------- | ----------------------------------------------- |
+| A1  | {Assumption, prerequisite, dependency, resource, or risk} | {What execution relies on or must protect against} | {How and when to establish the state} | {Person, role, system, or link} | {Replan, recovery, rollback, decision, or stop} |
 
-## Acceptance Evidence
+## Behavior And Acceptance Matrix
 
-{Define how the expected outcome will be judged. Each item should be observable and should name the evidence that can prove it.}
+| ID  | Behavior or condition                                        | Evidence tier                             | Expected observation | Source or verifier                           |
+| --- | ------------------------------------------------------------ | ----------------------------------------- | -------------------- | -------------------------------------------- |
+| B1  | {Success, boundary, failure, safety, or regression behavior} | {Direct, integration, public, end-to-end} | {Observable result}  | {Command, artifact, system, person, or role} |
 
-| Acceptance condition   | Evidence                                                       | Source or verifier                       |
-| ---------------------- | -------------------------------------------------------------- | ---------------------------------------- |
-| {Observable condition} | {Test, review, artifact, measurement, scenario, or inspection} | {Command, file, system, person, or role} |
+## Execution Capsule
 
-## Prerequisites And Dependencies
+- Current owner: {Primary or delegated owner.}
+- Current boundary: {Planning, contract, Red, implementation, review, correction, acceptance, or local vocabulary.}
+- Dependencies: {Inputs and predecessor outputs.}
+- Focused evidence: {Commands or inspections.}
+- Integration or full gate: {Boundary and commands.}
+- Review budget: {Must match `execution.review-budget`; name each lens and consumption ID.}
+- Council budget: {Must match `execution.council-budget`; name each authorized round.}
+- Correction budget: {Must match `execution.correction-budget`; name each consumed cycle.}
+- Stop conditions: {Plan gap, protected path, safety, external effect, or invalid assumption.}
+- Next action: {Exact next useful action.}
 
-{Separate conditions that must be true before work starts from dependencies needed during execution. Link a dependency instead of copying its mutable state.}
+## Findings And Corrections
 
-| Kind         | Item                                         | Required state                   | Source             | Current effect                  |
-| ------------ | -------------------------------------------- | -------------------------------- | ------------------ | ------------------------------- |
-| Prerequisite | {Condition}                                  | {State required before starting} | {Link or evidence} | {Ready, blocks, or unknown}     |
-| Dependency   | {Capability, task, person, system, or input} | {State needed during the Task}   | {Link}             | {Impact on sequence or outcome} |
-
-## Decisions And Assumptions
-
-### Accepted Decisions
-
-{Link accepted Decisions or record Task-local choices whose source, scope, and expected lifetime are clear.}
-
-### Assumptions To Validate
-
-| Assumption   | Why it matters                            | Validation                | Result if false                     |
-| ------------ | ----------------------------------------- | ------------------------- | ----------------------------------- |
-| {Assumption} | {Affected scope, approach, or acceptance} | {How and when to test it} | {Replan, stop, or another response} |
-
-### Decisions Needed
-
-| Decision   | Decision-maker   | Needed by          | Effect if unresolved                |
-| ---------- | ---------------- | ------------------ | ----------------------------------- |
-| {Question} | {Person or role} | {Boundary or date} | {What cannot proceed or may change} |
-
-## Risks And Safeguards
-
-| Risk   | Signal                          | Prevention or mitigation  | Recovery or stop condition       |
-| ------ | ------------------------------- | ------------------------- | -------------------------------- |
-| {Risk} | {Evidence that it is occurring} | {Proportionate safeguard} | {How to recover or when to stop} |
+| ID   | Severity               | Finding                         | Disposition                                                        | Owner   | Recheck evidence   |
+| ---- | ---------------------- | ------------------------------- | ------------------------------------------------------------------ | ------- | ------------------ |
+| {R1} | {Blocking or material} | {Concise evidence-backed issue} | {Accepted, rejected, duplicate, preference, false positive, fixed} | {Owner} | {Targeted recheck} |
 
 ## Progress And Evidence
 
-{Keep Task-level state and decisive evidence here only when this file is the declared Task source. Let the Plan define step state and a Checkpoint define concise resumption state. Link detailed logs and artifacts.}
-
-- Current result: {What has changed or been learned.}
-- Evidence: {Links to verification, review, or artifacts.}
+- Current result: {What changed or was learned.}
+- Evidence: {Links or concise results.}
 - Blockers: {Current blockers or `None`.}
-- Next Task-level action: {The next meaningful transition.}
+- Residual risk: {Known unproved boundary or `None`.}
 
 ## Completion And Closeout
 
-{State the exact conditions that complete the Task. Include required acceptance, integration, linked-source updates, child-Task disposition, durable outcome extraction, and residual-risk recording. State whether this Working record should then be archived or pruned.}
+{Exact completion conditions, durable source updates, integration authority, child-task disposition, residual-risk recording, and whether this Working record should be archived or pruned.}

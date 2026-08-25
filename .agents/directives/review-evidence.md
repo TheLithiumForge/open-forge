@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Preserve reviewer conclusions, reasoning, alternatives, tradeoffs, and longitudinal comparison as sanitized evidence
+  description: Preserve material review findings with stable identity while avoiding duplicate rationale, repeated review, and observation noise
   tags: [LoadNow, Core, Directive, Review, Evidence, Reasoning, Tradeoff, Observation, Dogfooding]
 ---
 
@@ -8,9 +8,11 @@ open-forge:
 
 ## Instructions
 
-- Every reviewer, writing reviewer, improvement reviewer, challenger, advisor, or council return must include a concise conclusion, the evidence and reasoning that produced it, the strongest viable option or counterargument, material tradeoffs, and what would change the conclusion. Preserve a clear no-finding conclusion with the same rationale shape when no correction is recommended.
-- Keep first-pass independent reviews independent. Do not prime a fresh reviewer with earlier conclusions merely to measure agreement. After the return, the Mastermind compares it with relevant prior evidence and records meaningful convergence, divergence, repeated recommendations, changed assumptions, and newly decisive facts.
-- The Mastermind persists a sanitized review rationale in the active Task or review record. When the conclusion, failure mode, correction, or tradeoff may be reusable, surprising, costly to rediscover, or useful for longitudinal comparison, create or extend the matching Emerging Observation before handoff or closeout.
-- Record the role and bounded review scope. Do not record provider, model, AI, runtime-profile, session, task, review, handoff, or hidden orchestration identifiers; personal, user, or machine identifiers; secrets or tokens; local absolute paths; or incidental environment fingerprints. Keep only the normalized repository-relative evidence needed to understand and reproduce the conclusion.
-- Repeated agreement is promotion evidence, not automatic authority. Propose the smallest matching Pattern, Directive, Workflow, agent instruction, or implementation change only after recurrence and impact justify it; preserve disagreement and counterexamples rather than manufacturing consensus.
-- Do not create a second review workflow or one observation per invocation. Extend an existing Observation when scope and meaning align, and keep operational Task evidence distinct from reusable Emerging evidence.
+- Give every blocking or material review finding a stable identifier, severity, category, exact location, evidence, consequence, smallest credible correction, and earliest invalidated boundary when applicable.
+- Keep an independent first pass independent. Do not prime a fresh reviewer with earlier conclusions merely to measure agreement. After return, compare only the material findings with prior evidence.
+- Group accepted findings into one correction packet. Prefer the original implementation owner for local corrections. Recheck the changed finding identifiers and affected neighborhood rather than rerunning the complete review when the rest of the artifact is unchanged.
+- A routine pass or no-finding result needs only a concise conclusion, evidence coverage, and residual risk. Require a fuller rationale, strongest alternative, tradeoffs, and change conditions only when the review changes a consequential decision, exposes a surprising failure mode, resolves material disagreement, or produces reusable evidence.
+- Record accepted, rejected, duplicate, preference-only, and false-positive dispositions when review yield matters. Do not treat raw finding count as quality.
+- Preserve reusable review evidence in the active task or matching Emerging Observation only when recurrence, cost, surprise, or decision value justifies future discovery. Do not create one Observation per invocation or duplicate the same rationale across task, review, and memory records.
+- Sanitize reusable evidence. Keep repository-relative locations and behavior-level facts. Omit provider, model, runtime profile, session, hidden orchestration, personal, machine, secret, token, local absolute-path, and incidental environment identifiers.
+- Repeated agreement is promotion evidence, not automatic authority. Preserve counterexamples and propose the smallest supported Directive, Pattern, Workflow, agent change, or implementation change only after impact and recurrence justify it.

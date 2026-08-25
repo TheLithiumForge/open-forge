@@ -1,107 +1,62 @@
 ---
 open-forge:
-  description: Deliver custom behavior through a Mastermind-owned strict cycle with read-only Preflight, complete evidence, bounded cleanup, a public gate, and one correction allowance
-  tags: [Workflow, Development, Orchestration, Implementation, Testing, Refactoring, Review]
+  description: Deliver high-consequence custom behavior through explicit architecture, frozen critical boundaries, progressive evidence, conditional improvement passes, and one correction budget
+  tags: [Workflow, Development, Assurance, Orchestration, Implementation, Testing, Refactoring, Review]
 ---
 
-# Development
+# Assured Development
 
 ## Goal
 
-Deliver one authorized custom-behavior Task through a strict lifecycle that begins with read-only Preflight analysis owned and adopted by the Mastermind. One complete delivery cycle is Gray callable contract, complete affected Red evidence, the smallest correct Green implementation, one material Blue production-improvement pass, one material Purple test-improvement pass, a public scenario and full gate, independent review when useful, and Mastermind final review.
+Deliver one authorized high-consequence behavior change with explicit architecture, independently inspectable contract and evidence boundaries, protected mutation surfaces, integrated public proof, and bounded correction.
 
 ## Applicability
 
-Use this lifecycle for custom product behavior when explicit contract, evidence, implementation, cleanup, and review boundaries materially protect correctness. Routine dependency, configuration, script, documentation, repository, test-infrastructure, formatting, linting, and generated-maintenance work may use proportionate direct or adaptive execution instead. Do not impose this cycle on routine work that does not need it.
+Use this workflow when new public or shared contracts, filesystem or security safety, concurrency, persistence, migration, destructive behavior, compatibility, or a new architecture archetype makes ordinary adaptive development insufficient. Do not use it for routine dependency, configuration, formatting, documentation, generated maintenance, or derivative work.
 
 ## Ownership And Boundaries
 
-- The Mastermind owns planning, phase transitions, integration, integrated inspection, correction-cost decisions, final review, and commits. The maintainer retains architecture and acceptance decisions unless that exact authority is explicitly delegated. The Mastermind may perform the work directly or use a helper for bounded evidence. Helpers are optional evidence sources, not mandatory ceremony or parallel owners.
-- Read-only Preflight selects the active toolchain, focused commands, full-gate commands, affected paths, evidence depth, and material decision frontier. The generic lifecycle does not prescribe a language, runner, provider, model, command name, or filter syntax.
-- The generic [Testing Directive](../../directives/open-forge/testing/evidence-integrity.md) binds test selection and isolation. Technology-specific rules apply only after Preflight selects the active implementation scope.
-- The Gray, Red, and Green subcycle is the behavior-discovery boundary. Complete affected Red evidence and the smallest correct Green implementation must expose the affected behavior defects before Blue or Purple begins. A behavior defect first noticed in Blue, Purple, or final review invalidates the applicable contract, Red, or Green work; it is evidence that the core subcycle was incomplete.
-- Blue makes one material production-structure improvement pass. Purple makes one material test-structure and evidence improvement pass. Neither phase is an alternate behavior-discovery phase. Missing, incorrect, or incomplete behavior returns to the earliest applicable contract, Red, or Green work.
-- The Mastermind groups findings across phase outputs, integrated inspection, the public scenario, the full gate, and any independent review. It explicitly decides whether an exceptional correction cycle is worth its cost.
-
-### Optional Phase Specialists
-
-The Mastermind may select a dedicated phase specialist when a separate context
-adds value. These are optional execution roles, not mandatory ceremony. The
-Mastermind supplies each specialist with a complete accepted packet, owns phase
-transitions and integration, verifies the result, and may perform the phase
-directly when that is cheaper.
-
-- The Gray contract implementer changes only the production callable surface or
-  skeleton. It does not author tests or domain behavior.
-- The Red evidence author changes only tests, fixtures, and evidence. It does
-  not mutate production code or the callable contract.
-- The Green behavior implementer changes only production behavior against the
-  frozen Red evidence. It does not edit expectations.
-- The Blue structure improver makes a production-only creative improvement pass
-  after Green. It actively inspects locality, duplication, overlarge classes,
-  command composition, error handling, stronger types, simpler control flow,
-  and justified reusable support in the changed code and immediate neighborhood.
-  It may make bounded creative structural changes, not only list issues, while
-  preserving behavior, contracts, and tests.
-- The Purple evidence improver changes only tests, projects, fixtures,
-  test-support source, and the narrow production test-access declarations
-  required by an accepted test-project rename or split. When the accepted Task
-  explicitly identifies a production source as a test-only probe with no product
-  consumer, Purple may relocate that probe to its owning test tier while
-  preserving production behavior. It actively inspects tier placement, duplicate
-  temporary-directory, workspace, and process helpers, fixture composition,
-  independently runnable projects, assertion focus, traits, cleanup,
-  cancellation, and justified shared support. It may creatively restructure
-  tests and evidence without changing expectation meaning or production
-  behavior; only an accepted narrow test-access declaration or explicitly
-  accepted relocation of a test-only probe may change production files.
-
-Blue and Purple deliberately look for duplicated implementations and missed
-local simplification or promotion opportunities exposed by the change. They do
-not create speculative abstractions. Promotion requires demonstrated consumers
-and the nearest common scope. A behavior defect or missing expectation found in
-either pass returns to the earliest invalidated phase instead of being disguised
-as refactoring. A phase specialist may edit within its frozen surface;
-independent improvement or correctness reviewers remain read-only later lenses.
+- One primary owner retains intent, architecture, transitions, integration, evidence, correction routing, and acceptance.
+- One implementation owner should continue across contract, evidence, production, and local refactoring when surface permissions can change safely. Use separate phase contexts only when independent evidence, frozen write boundaries, or fresh scrutiny materially protects the result.
+- Record the baseline and protected surfaces at each selected boundary. A local commit may provide a useful snapshot when authorized, but a commit per phase is not mandatory ceremony.
+- Expected paths are forecasts. Protected paths are hard boundaries. Directly required neighboring paths inside accepted meaning may be added and reported.
+- A finding returns to the earliest invalidated architecture, contract, evidence, or implementation boundary. Improvement phases must not become alternate behavior-discovery phases.
 
 ## Steps
 
-1. Run [Phase 0 - Preflight](phase-0-preflight.md) as read-only analysis. The Mastermind adopts its bounded blueprint before mutation. Preflight may occur before Task creation, branch mutation, or plan approval. It does not write Task state, Git state, contracts, or executable evidence.
-2. Apply [Task Lifecycle](task-lifecycle.md). Use the maintainer-accepted architecture, adopt routine plan details within existing authority, stop while a material decision remains unresolved, and establish the exact baseline and focused feature branch before implementation mutation.
-3. Run [Phase 1 - Gray Contract](phase-1-contract.md) and freeze the accepted callable contract.
-4. Run [Phase 2 - Red](phase-2-red.md) and complete the affected executable behavior evidence against that contract.
-5. Run [Phase 3 - Green](phase-3-green.md) and implement the smallest correct behavior that satisfies the frozen Red evidence.
-6. Run [Phase 4 - Blue](phase-4-blue.md) once for a material production improvement pass, then [Phase 5 - Purple](phase-5-purple.md) once for a material test-improvement pass. A pass may report no justified change, but neither may become cosmetic cleanup or new behavior discovery.
-7. After each mutating Gray, Red, Green, Blue, or Purple phase, the Mastermind inspects the actual changed paths, diff, and evidence, updates the authoritative Task progress in the same coherent commit, and commits the accepted phase before the next phase mutates files. Gray starts from the exact Task baseline. A later phase starts from the preceding phase commit when that phase mutated files; after a recorded no-change phase, it starts from the most recent mutating-phase commit plus that no-change evidence. A no-change phase records its evidence in the next coherent phase or acceptance commit rather than creating an empty commit.
-8. Run one real public-surface scenario and the full gate selected by Preflight. The Mastermind inspects the resulting paths, diff, and evidence as an integrated result.
-9. Use [Phase 6 - Whole-Task Review](phase-6-review.md) for an independent read-only review when a fresh perspective is useful. The review is optional. The Mastermind always performs the final review and acceptance decision.
-10. Allow at most two complete cycles: the initial cycle and one exceptional correction cycle. If a material or blocking finding remains, the Mastermind groups the findings and explicitly decides whether the second cycle is worth its cost. If it is, rerun from the earliest invalidated phase through all applicable downstream phases, then rerun the public scenario, full gate, any useful independent review, and Mastermind final review. An environment-only retry with no tracked change is not a cycle. There is no third cycle. Unresolved blocking findings return to the maintainer.
-11. Apply [Task Acceptance](task-acceptance.md) only after Mastermind final review and the selected full gate pass.
+1. Run [Phase 0 - Preflight](phase-0-preflight.md) as read-only analysis and adopt its architecture readiness, behavior matrix, evidence ladder, path boundaries, profile justification, and review budget.
+2. Establish the task baseline and compact execution capsule through [Task Lifecycle](task-lifecycle.md). Stop while a material product, architecture, safety, authority, or compatibility decision remains unresolved.
+3. Run [Phase 1 - Gray Contract](phase-1-contract.md) only when the task introduces or changes a callable contract or shared foundation that benefits from an independently frozen surface. Otherwise record the accepted existing contract and continue.
+4. Run [Phase 2 - Red](phase-2-red.md). Freeze the accepted behavior matrix and complete affected failing evidence before production mutation. Safety, destructive, compatibility, regression, boundary, failure, and externally visible behavior require explicit Red evidence.
+5. Run [Phase 3 - Green](phase-3-green.md) and make the frozen evidence pass with the smallest correct production implementation. Keep tests protected. Allow necessary local refactoring while evidence remains green.
+6. Run [Phase 4 - Blue](phase-4-blue.md) only when a named material production-structure trigger remains. Run [Phase 5 - Purple](phase-5-purple.md) only when a named material test-structure or evidence trigger remains. A pass may conclude that no change is justified.
+7. Run one real public or externally visible scenario when applicable and the selected integrated or full gate. Inspect the actual artifacts and classify anomalies instead of explaining them away.
+8. Use [Phase 6 - Whole-Task Review](phase-6-review.md) for one independent read-only review. Add a second lens only for a named distinct risk. The primary owner always performs final integrated review.
+9. Permit one grouped correction cycle. Give findings stable IDs, start at the earliest invalidated boundary, repeat only affected downstream work, and recheck the changed findings. There is no automatic third cycle.
+10. Apply [Task Acceptance](task-acceptance.md) only when required evidence passes and no blocking finding remains.
 
 ## Completion
 
-- Read-only Preflight produced an adopted blueprint with the active toolchain, focused evidence, public scenario, full gate, correction boundary, and material decisions explicit.
-- The work used the maintainer-accepted architecture, the plan was adopted within applicable authority, and no unresolved material decision permitted mutation.
-- Each completed cycle preserved the order Gray, Red, Green, Blue, Purple, public scenario, full gate, optional independent review when useful, and Mastermind final review, except for an explicitly modeled maintainer-directed Task-local refinement with its own baseline, boundaries, evidence, and commit. Blue and Purple each ran as one bounded material-improvement pass and did not discover alternate behavior.
-- The contract, complete affected Red evidence, and smallest correct Green implementation agree, and the affected behavior defects were exposed in that subcycle rather than deferred to cleanup phases.
-- After each mutating phase, the Mastermind inspected the actual result, updated the authoritative Task in the same coherent commit, and committed that accepted phase before the next phase mutated files. Gray froze the callable surface, Red compiled and explicitly recorded any intended failures, Green made frozen Red evidence pass, and Blue and Purple used separate commits when they mutated files.
-- Each phase boundary compared the next starting tree with the exact Task baseline for Gray, otherwise the preceding phase commit or the most recent mutating-phase commit plus recorded no-change evidence, and verified its protected surfaces. Red did not alter Gray production, Green did not alter Red expectations, Blue did not alter the contract or tests, and Purple did not alter the contract or production behavior beyond an explicitly accepted test-access declaration required by test-project identity or an explicitly accepted test-only probe relocation with no product consumer. Only the Mastermind staged exact paths and committed. If this rule arrived after phases were inseparably complete, the exception was recorded and the truthful combined state was committed rather than manufacturing historical snapshots.
-- No more than one correction cycle was used. Any correction began at the earliest invalidated phase, covered all applicable downstream work, and repeated review and the gate. Environment-only retries did not consume a cycle.
-- The Mastermind inspected the integrated result, made the correction-cost decision, committed accepted work, and recorded acceptance, evidence, residual risk, and any unresolved finding.
-- The branch and integration rules in [Task Lifecycle](task-lifecycle.md) and [Task Acceptance](task-acceptance.md) were followed.
+- The assured profile was justified by concrete consequence or novelty.
+- Architecture, authority, invariants, behavior, and protected surfaces were explicit before mutation.
+- Selected contract and Red boundaries were frozen truthfully without requiring artificial phase ownership or commits.
+- Green satisfied the accepted evidence without weakening expectations.
+- Blue and Purple ran only for named material triggers.
+- Public and integrated evidence passed, review stayed within budget, and correction remained bounded.
+- Acceptance preserved local-only and external-effect boundaries and recorded residual risk.
 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
 
-- [Produce a read-only development Task blueprint, active toolchain and commands, evidence plan, and material decision frontier before mutation](phase-0-preflight.md) - #Workflow #Development #Phase #Preflight #Planning #Evidence #Review #Toolchain
-- [Define and freeze the Gray callable contract for one authorized custom-behavior Task](phase-1-contract.md) - #Workflow #Development #Phase #Contract #Interface
-- [Create complete affected executable behavior evidence against the frozen Gray callable contract](phase-2-red.md) - #Workflow #Development #Phase #Red #Testing #Evidence
-- [Implement the smallest correct custom behavior that satisfies the frozen Red evidence](phase-3-green.md) - #Workflow #Development #Phase #Green #Implementation #Testing
-- [Make one material production-structure improvement after Green without changing accepted behavior or evidence](phase-4-blue.md) - #Workflow #Development #Phase #Blue #Refactoring #Readability
-- [Make one material test-improvement pass after Green and Blue without changing behavior or expectation meaning](phase-5-purple.md) - #Workflow #Development #Phase #Purple #Testing #Refactoring #Evidence
-- [Provide an optional independent read-only review of a delivery cycle and route material findings to the earliest invalidated phase](phase-6-review.md) - #Workflow #Development #Phase #Review #Quality #Evidence
-- [Finalize an authorized development Task after the full gate and Mastermind final review, then integrate it under the repository branch and release rules](task-acceptance.md) - #LoadNow #Workflow #Development #Orchestration #Acceptance #Continuation
-- [Adopt Preflight, plan and isolate one development Task from exact develop, preserve coherent commits, and keep authoritative progress current](task-lifecycle.md) - #LoadNow #Workflow #Development #Orchestration #Planning #Git #Branch #Commit #Progress
+- [Produce a read-only assurance blueprint with architecture readiness, behavior classes, evidence, path boundaries, and review budget before mutation](phase-0-preflight.md) - #Workflow #Development #Phase #Preflight #Planning #Evidence #Review #Toolchain
+- [Define and freeze a callable contract only when an independent Gray boundary materially protects later work](phase-1-contract.md) - #Workflow #Development #Phase #Contract #Interface
+- [Freeze accepted behavior classes and representative failing evidence before production mutation](phase-2-red.md) - #Workflow #Development #Phase #Red #Testing #Evidence
+- [Implement the smallest correct behavior against frozen evidence while protecting expectations](phase-3-green.md) - #Workflow #Development #Phase #Green #Implementation #Testing
+- [Apply one conditional material production-structure improvement without changing behavior or evidence](phase-4-blue.md) - #Workflow #Development #Phase #Blue #Refactoring #Readability
+- [Apply one conditional material test-structure or evidence improvement without changing accepted meaning](phase-5-purple.md) - #Workflow #Development #Phase #Purple #Testing #Refactoring #Evidence
+- [Provide one bounded independent review and route material findings by stable ID to the earliest invalidated boundary](phase-6-review.md) - #Workflow #Development #Phase #Review #Quality #Evidence
+- [Finalize an authorized development task after evidence and final review without implying remote integration or release authority](task-acceptance.md) - #LoadNow #Workflow #Development #Orchestration #Acceptance #Continuation
+- [Prepare and run one task from an exact local baseline with a compact execution capsule, protected surfaces, and coherent checkpoints](task-lifecycle.md) - #LoadNow #Workflow #Development #Orchestration #Planning #Git #Branch #Commit #Progress
 
 <!-- open-forge:generated-index:end -->

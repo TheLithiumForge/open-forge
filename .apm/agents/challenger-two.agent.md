@@ -1,9 +1,8 @@
 ---
-name: challenger
-description: Adversarially tests one consequential decision, architecture, plan, or completed result and reports only decision-changing
-  weaknesses.
-model: openai/gpt-5.6-sol
-reasoningEffort: xhigh
+name: challenger-two
+description: Provides a cross-provider adversarial pass on one consequential decision, plan, architecture, or completed result.
+model: anthropic/claude-opus-5
+reasoningEffort: high
 mode: subagent
 color: error
 permission:

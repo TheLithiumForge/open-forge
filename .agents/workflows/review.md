@@ -1,33 +1,31 @@
 ---
 open-forge:
-  description: Review a change, design, or repository state and report prioritized evidence-backed findings without modifying it by default
-  tags: [Extension, Workflow, Quality, Review]
+  description: Review a bounded change or design with stable finding IDs, evidence-backed consequences, and no automatic duplicate review
+  tags: [Extension, Workflow, Quality, Review, Evidence, Efficiency]
 ---
 
 # Review
 
 ## Goal
 
-Produce prioritized actionable findings, or a clear no-findings result, without making conclusions stronger than the evidence.
+Produce prioritized actionable findings, or a clear no-findings result, without modifying the target or making conclusions stronger than the evidence.
 
 ## Steps
 
-1. Establish the review target, intended behavior, scope, workspace rules, and relevant starting state. For an independent first pass, use a clean packet containing accepted requirements, baseline, target diff, and claimed evidence while withholding earlier reviewer or advisor conclusions and Observation comparisons until the return is complete.
-2. Inspect the target and enough surrounding context to understand responsibilities, interactions, and accepted constraints.
-3. When durable knowledge changed, compare what was accepted with every resulting durable source. Report missing outcomes, stale candidates, excessive promotion, duplication, and content placed in the wrong role, scope, authority state, or lifetime.
-4. Trace high-risk paths, boundaries, failure modes, state transitions, compatibility concerns, and evidence gaps. Prioritize correctness, security, data loss, regressions, and broken contracts over style preference.
-5. Run or inspect verification matched to the suspected issue. In read-only work, use only checks known not to change snapshots, generated files, dependencies, caches, or external state.
-6. Give each finding a location, evidence, consequence, and smallest credible correction. Label uncertainty that could change the finding.
-7. Challenge every candidate finding against existing safeguards, context, and possible false positives.
-8. Compare the final state with the baseline and account for every change before claiming the review remained read-only.
-9. Report findings in priority order, followed by questions, verification gaps, and residual risk. Then include a compact review-rationale record: overall conclusion, evidence and reasoning, strongest viable option or counterargument, material tradeoffs, and what would change the conclusion. Make fixes only when explicitly requested, and keep them distinct from the findings they address.
-10. The owning Mastermind persists the sanitized rationale in the active Task or review record and creates or extends a matching Emerging Observation when the conclusion, anomaly, correction, or tradeoff may be reusable or useful for longitudinal comparison. Compare with prior conclusions only after an independent first pass.
+1. Establish the accepted outcome, review horizon, baseline, exact changed and untracked artifacts, protected surfaces, direct integration neighborhood, workspace rules, claimed evidence, maximum review budget, and already consumed review IDs. Stop before invocation when no unit remains.
+2. Consume one review-budget unit with a stable invocation ID. For an independent first pass, withhold earlier reviewer conclusions. Inspect the target and only enough surrounding context to understand responsibilities and interactions.
+3. Trace high-risk paths, contracts, consumers, failure modes, compatibility, source and test locality, durable-source transitions, and evidence gaps.
+4. Run or inspect verification matched to a suspected issue and known to be read-only.
+5. Challenge each candidate finding against existing safeguards and plausible false positives.
+6. Give every blocking or material finding a stable ID, severity, category, location, evidence, consequence, smallest credible correction, and earliest invalidated boundary.
+7. Separate residual risk, optional material improvements, preference, duplicate findings, and missing verification.
+8. The owning context groups accepted findings into one correction packet and records accepted, rejected, duplicate, preference-only, and false-positive disposition when useful.
+9. After correction, recheck changed finding IDs and affected context. Rerun the complete review only when the correction materially changes the whole artifact or review horizon.
 
 ## Completion
 
-- Every reported finding has evidence, consequence, and correction guidance.
-- Durable knowledge transitions were reconciled when relevant.
+- Every material finding has stable identity, evidence, consequence, and correction guidance.
 - False positives and existing safeguards were considered.
-- The final state remained unchanged unless fixes were explicitly requested.
-- Verification gaps, uncertainty, and residual risk are stated.
-- The conclusion, reasoning, strongest option or counterargument, tradeoffs, and change conditions are explicit enough for sanitized longitudinal comparison.
+- The target remained unchanged.
+- Verification gaps, residual risk, and uncertainty are explicit.
+- Duplicate review and repeated rationale were avoided.

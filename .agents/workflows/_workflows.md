@@ -13,30 +13,31 @@ Workflows are optional Markdown recipes for reaching defined goals.
 ### Selection And Use
 
 - Check `Entries` when the user selects a Workflow or its visible description shows that the recipe would significantly help the current goal. Work directly when no Workflow adds value.
-- Choose a Workflow from its description, tags, route meaning, and user direction. After loading it, use `Goal` to confirm that it fits. Honor an explicit choice or opt-out.
 - Choose the smallest Workflow that resolves an important missing decision or execution risk. Do not turn installed Workflows into mandatory stages or require users to name them.
-- When a Workflow significantly changes the interaction, tell the user which approach is being used and why in one natural sentence. Internal route details are optional.
+- Honor an explicit choice or opt-out. Change workflow only when evidence shows that its risk profile no longer fits.
+- When a Workflow significantly changes execution, tell the user which approach is being used and why in one natural sentence.
 
 ### Recipe Shape
 
-- Create a Workflow only when repeating its recipe significantly changes execution, preserves a deliberate user method, or improves reliability beyond normal agent behavior.
+- Create a Workflow only when repeating its recipe significantly changes execution, preserves a deliberate method, or improves reliability beyond normal behavior.
 - Every direct sibling Workflow file is a complete recipe.
 - A complete recipe has one non-empty `## Goal`, `## Steps`, and `## Completion` section in that order.
 - An `entrypoint` may omit recipe sections only when it organizes descendants.
 - If a file uses any standard recipe section, it must include the complete recipe shape.
-- Recipe-specific headings may add useful context without becoming part of the Framework schema.
 - Steps may link to relevant sources, invoke capabilities, delegate bounded work, repeat based on evidence, or hand off to another Workflow. State these relationships directly.
 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Deliver development work through one persistent primary owner with proportionate planning, implementation, testing, cleanup, and optional bounded delegation instead of mandatory phase separation](adaptive-development.md) - #Workflow #Development #Adaptive #Implementation #Testing #Review #Delegation
-- [Define or review a system's structure, boundaries, tradeoffs, and transition](architecture.md) - #Extension #Workflow #Architecture #Design
-- [Obtain independent perspectives on one high-leverage decision, resolve factual disagreement with evidence, and synthesize without voting or consensus pressure](council.md) - #Workflow #Council #Collaboration #Decision #Ideation #Architecture #Review #Evidence
-- [Reproduce and isolate a defect, identify its root cause, and verify an authorized minimal fix](debugging.md) - #Extension #Workflow #Quality #Debugging
-- [Deliver custom behavior through a Mastermind-owned strict cycle with read-only Preflight, complete evidence, bounded cleanup, a public gate, and one correction allowance](development/_development.md) - #Workflow #Development #Orchestration #Implementation #Testing #Refactoring #Review
-- [Deliver a planned development program efficiently through brilliant contract work, normal Luna implementation, and one Mastermind-owned correctness and improvement spotter pass](experimental-development.md) - #Workflow #Development #Experimental #Orchestration #Planning #Implementation #Efficiency #Review
-- [Turn an accepted direction into an executable plan with explicit dependencies, decisions, and verification](planning.md) - #Extension #Workflow #Planning
-- [Review a change, design, or repository state and report prioritized evidence-backed findings without modifying it by default](review.md) - #Extension #Workflow #Quality #Review
+
+- [Deliver development work through profile-based rigor, one persistent owner per coherent slice, bounded parallelism, and conditional review](adaptive-development.md) - #Workflow #Development #Adaptive #Implementation #Testing #Review #Delegation #Efficiency
+- [Define or review a system's structure, placement, archetypes, invariants, tradeoffs, and transition in one accepted top-down model](architecture.md) - #Extension #Workflow #Architecture #Design #Planning
+- [Obtain compact independent perspectives on one high-leverage uncertainty, resolve factual disagreement, and synthesize without voting](council.md) - #Workflow #Council #Collaboration #Decision #Ideation #Architecture #Review #Evidence #Efficiency
+- [Reproduce and isolate a defect, test competing hypotheses efficiently, and verify an authorized cause-level fix](debugging.md) - #Extension #Workflow #Quality #Debugging #Efficiency
+- [Deliver high-consequence custom behavior through explicit architecture, frozen critical boundaries, progressive evidence, conditional improvement passes, and one correction budget](development/_development.md) - #Workflow #Development #Assurance #Orchestration #Implementation #Testing #Refactoring #Review
+- [Accelerate a related development program by extracting archetypes, golden slices, shared foundations, delta packets, parallel lanes, and batch gates](program-development.md) - #Workflow #Development #Program #Orchestration #Planning #Implementation #Efficiency #Review #Batch
+- [Turn accepted direction into an executable profile, compact execution capsule, dependency graph, parallel lanes, and evidence plan](planning.md) - #Extension #Workflow #Planning #Efficiency #Delegation
+- [Review a bounded change or design with stable finding IDs, evidence-backed consequences, and no automatic duplicate review](review.md) - #Extension #Workflow #Quality #Review #Evidence #Efficiency
 - [Define or challenge a subject's purpose, core value, first useful version, boundaries, and success before execution](vision.md) - #Extension #Workflow #Vision #Product
+
 <!-- open-forge:generated-index:end -->

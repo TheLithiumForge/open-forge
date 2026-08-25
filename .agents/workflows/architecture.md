@@ -1,28 +1,29 @@
 ---
 open-forge:
-  description: Define or review a system's structure, boundaries, tradeoffs, and transition
-  tags: [Extension, Workflow, Architecture, Design]
+  description: Define or review a system's structure, placement, archetypes, invariants, tradeoffs, and transition in one accepted top-down model
+  tags: [Extension, Workflow, Architecture, Design, Planning]
 ---
 
 # Architecture
 
 ## Goal
 
-Produce an accepted or decision-ready structure that future work can understand, adopt, and verify.
+Produce an accepted or decision-ready top-down structure that future work can adopt without inventing cross-cutting decisions inside implementation slices.
 
 ## Steps
 
-1. Classify the starting point as greenfield, unstructured or rescue, or established. Confirm the subject, who can decide, what may change, and whether the request needs analysis, current documentation, implementation direction, or a combination.
-2. Map the relevant components, responsibilities, ownership, dependency direction, information and control flows, integrations, runtime and deployment shape, failure boundaries, constraints, and accepted decisions. For greenfield work, map the first useful vertical slice instead of inventing a current system.
-3. Identify the qualities and current-stage constraints that must shape the structure, including security, reliability, observability, cost, evolution, scale triggers, and team capability where relevant.
-4. Compare meaningfully different viable directions by fit, complexity, verification, operations, transition cost, and reversibility. State rejected options only when their reasoning will matter later.
-5. Define or recommend the smallest coherent structure that satisfies the accepted drivers. Make responsibilities, boundaries, dependency direction, failure containment, and important tradeoffs explicit.
-6. After the direction is accepted, update the current architecture. Put only useful invariants, reusable shapes, advice, locations, or reasoning in their matching #Core or #Memory routes. Keep useful unaccepted alternatives contextual.
-7. Slice adoption into coherent implementation, compatibility, verification, rollback, cleanup, and later trigger-based work.
+1. Classify the starting point as greenfield, rescue, or established. Confirm outcome, decision authority, accepted horizon, mutable surfaces, and whether the request needs analysis, documentation, implementation direction, or all three.
+2. Map components, responsibilities, ownership, dependency direction, information and control flow, composition, state, integrations, failure and safety boundaries, constraints, and direct consumers.
+3. Distinguish process-wide foundations, nearest-shared capabilities, family-local support, and consumer-local semantics. Count accepted future consumers as evidence; do not count hypothetical reuse.
+4. Identify command, feature, or component archetypes and the first golden slice for each when the work is a related program.
+5. Compare meaningfully different viable directions by fit, complexity, evidence, operations, compatibility, transition cost, and reversibility.
+6. Define the smallest coherent architecture, placement map, invariant set, callable foundations, evidence strategy, integration sequence, and stop conditions.
+7. Slice adoption into foundation and derivative outcomes with one owner, expected paths, protected paths, integration neighborhoods, and observable verification.
+8. After acceptance, update the source that defines current architecture and preserve only consequential rationale or unresolved alternatives in their matching roles.
 
 ## Completion
 
-- The current or intended system and its starting condition are explicit.
-- The selected or proposed structure states responsibilities, boundaries, relationships, constraints, and tradeoffs.
-- Acceptance status and rejected options are clear.
-- The transition is divided into adoptable, verifiable slices.
+- Starting condition, authority, and accepted horizon are explicit.
+- Responsibilities, boundaries, dependency direction, placement, invariants, archetypes, and tradeoffs are clear.
+- Accepted consumers and hypothetical reuse are distinguished.
+- Adoption is divided into independently executable and verifiable slices.

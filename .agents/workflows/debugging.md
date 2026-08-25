@@ -1,29 +1,30 @@
 ---
 open-forge:
-  description: Reproduce and isolate a defect, identify its root cause, and verify an authorized minimal fix
-  tags: [Extension, Workflow, Quality, Debugging]
+  description: Reproduce and isolate a defect, test competing hypotheses efficiently, and verify an authorized cause-level fix
+  tags: [Extension, Workflow, Quality, Debugging, Efficiency]
 ---
 
 # Debugging
 
 ## Goal
 
-Connect an observed symptom to a reproducible root cause and, when changes are authorized, a minimal verified fix.
+Connect an observed symptom to a reproducible root cause and, when authorized, a minimal verified fix without multiplying owners or masking evidence.
 
 ## Steps
 
-1. Capture the symptom, expected behavior, environment, inputs, frequency, and recent relevant changes without altering the failing evidence.
-2. Reproduce the failure with the smallest reliable case, or explain why reproduction is unavailable.
-3. Trace the failing path and observe boundaries where actual behavior diverges from expected behavior.
-4. Form competing hypotheses and test the cheapest check that distinguishes among them. Do not use speculative product changes as the primary investigation method.
-5. Identify the root cause and explain how it produces the symptom, which conditions contribute, and why existing safeguards missed it.
-6. If changes are authorized, define regression evidence and apply the smallest cause-level correction. Do not mask the symptom or weaken a valid expectation.
-7. Rerun the reproduction, regression evidence, and nearby checks justified by the risk.
+1. Capture the symptom, expected behavior, environment, inputs, frequency, recent changes, and external-effect boundaries without altering failing evidence.
+2. Reproduce the failure with the smallest reliable case, or state why reproduction is unavailable.
+3. Keep one investigation owner responsible for the hypothesis set and root-cause synthesis.
+4. Trace the failing path and identify the earliest boundary where actual behavior diverges from expected behavior.
+5. Form competing hypotheses and run the cheapest discriminating checks. Parallelize only independent read-only checks with compact returns.
+6. Identify the root cause, contributing conditions, affected scope, and why safeguards missed it.
+7. When changes are authorized, add regression evidence and apply the smallest cause-level correction. Do not weaken a valid expectation or mask the symptom.
+8. Rerun reproduction, regression evidence, direct integration checks, and broader gates justified by risk.
+9. Use an independent review only for safety-critical, cross-cutting, or persistently unexplained defects.
 
 ## Completion
 
-- The symptom, trigger, contributing conditions, and root cause are distinguished.
-- Conclusions are tied to observed evidence and rejected hypotheses.
-- Files or behavior changed only when authorized.
+- Symptom, trigger, contributing conditions, and root cause are distinguished.
+- Rejected hypotheses and decisive evidence are explicit.
 - Any fix addresses the cause and passes regression evidence.
-- Remaining uncertainty and the next discriminating check are explicit.
+- Remaining uncertainty and the next discriminating check are visible.

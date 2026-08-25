@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Keep architecture and cross-cutting contracts in one top-down context before delegating closed implementation Tasks
+  description: Keep architecture and cross-cutting contracts in one accepted top-down model before delegating closed implementation slices
   tags: [LoadNow, Core, Directive, Architecture, Planning, Task, Delegation, Integration]
 ---
 
@@ -8,42 +8,13 @@ open-forge:
 
 ## Instructions
 
-- For greenfield systems and consequential cross-cutting changes, maintain one
-  top-down model of the complete accepted scope before implementation begins.
-  The model must cover system boundaries, dependency direction, composition,
-  shared capabilities, command or feature growth, build and release boundaries,
-  evidence, and integration order.
-- The primary architecture agent owns architecture, system decomposition,
-  cross-cutting callable contracts, and final integration. In this workspace that
-  responsibility belongs to the Mastermind unless the maintainer explicitly
-  assigns another architecture implementer. Advisors and explorers may supply
-  evidence and alternatives, but a slice implementer must not resolve an open
-  architecture question.
-- Implement the architectural foundation before delegating feature slices that
-  depend on it. Do not ask a feature implementer to create a local substitute for
-  a missing global abstraction, composition boundary, build convention, or test
-  boundary.
-- Use known future scope to prevent local dead ends and to name extension points,
-  dependency direction, and promotion triggers. Do not turn possible future
-  consumers into speculative shared code. Keep the accepted horizon visible
-  while placing each capability at its narrowest current scope.
-- Before delegating implementation, close the Task's architectural decisions and
-  provide its parent outcome, system context, dependencies, exact allowed and
-  protected surfaces, accepted contracts or model, consumers, integration point,
-  evidence, verification, and stop conditions. Link the complete sources instead
-  of requiring the implementer to rediscover them.
-- A delegated Task is not ready when its implementer must choose system
-  structure, invent a cross-cutting contract, infer authority, reconcile several
-  possible designs, or guess how later Tasks consume the result. Return that work
-  to architecture or planning before implementation.
-- Decompose work until each delegated Task has one coherent observable outcome
-  and can be reviewed against a bounded artifact set. Preserve necessary parent
-  context through backlinks and explicit inherited constraints rather than
-  copying a large program history into every Task.
-- Inspect the actual integrated result from the top-down system perspective.
-  Passing local evidence does not accept a change that violates the architecture,
-  creates a future integration dead end, or weakens a cross-cutting invariant.
-- At every development-cycle transition, write and report the exact active Task,
-  the phase just completed, and the phase now starting. Keep the active Task,
-  Plan, or Checkpoint current enough that this position survives resumption; do
-  not leave phase position only in chat or infer it from uncommitted artifacts.
+- For greenfield systems and consequential cross-cutting changes, maintain one accepted top-down model of the complete current horizon before dependent implementation begins. Cover system boundaries, dependency direction, composition, shared capabilities, local semantics, failure and safety boundaries, build and release constraints, evidence, and integration order.
+- One primary owner remains responsible for architecture and final integration. A separate architect may prepare a bounded architecture packet only when an isolated deep context reduces repeated loading or protects the primary context. The primary owner must inspect, adapt, and accept that packet before implementation.
+- Resolve cross-cutting callable contracts and neutral foundations before delegating slices that depend on them. Do not ask a feature implementer to create a local substitute for a missing composition boundary, safety primitive, shared format, identity model, build convention, or test boundary.
+- Use accepted future consumers to prevent local dead ends and to name extension points, dependency direction, and promotion triggers. Do not turn hypothetical reuse into speculative shared code. Keep each semantic policy local unless multiple accepted consumers require identical meaning.
+- Before delegation, create a compact execution capsule containing the parent outcome, accepted architecture, invariants, placement map, direct consumers, dependencies, behavior or acceptance matrix, expected paths, protected paths, direct integration neighborhood, evidence, and stop conditions.
+- Expected paths are planning forecasts, not hard allowlists. A delegated owner may add a directly required neighboring path when accepted meaning already implies the change and must report it. Protected paths are hard boundaries.
+- A delegated slice is not ready when its owner must choose system structure, invent a cross-cutting contract, infer authority, reconcile materially different designs, or guess how accepted later slices consume the result.
+- Decompose until each delegated slice has one coherent observable outcome, one owner, bounded mutation responsibility, an integration point, and reviewable evidence. Preserve parent context through links and a compact capsule rather than copying a large program history into every packet.
+- Inspect the integrated result from the top-down perspective. Passing local evidence does not accept a change that violates dependency direction, weakens a cross-cutting invariant, or creates an accepted-program dead end.
+- Keep the active outcome, execution profile, current owner, completed boundary, next boundary, and decisive evidence current enough to survive resumption without rereading the complete history.

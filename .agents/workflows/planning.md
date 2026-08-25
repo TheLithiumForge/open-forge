@@ -1,28 +1,29 @@
 ---
 open-forge:
-  description: Turn an accepted direction into an executable plan with explicit dependencies, decisions, and verification
-  tags: [Extension, Workflow, Planning]
+  description: Turn accepted direction into an executable profile, compact execution capsule, dependency graph, parallel lanes, and evidence plan
+  tags: [Extension, Workflow, Planning, Efficiency, Delegation]
 ---
 
 # Planning
 
 ## Goal
 
-Produce an executable plan with one source for task state so another capable agent can proceed without guessing important intent.
+Produce an executable plan with one task source, one compact current context, explicit dependencies, bounded ownership, and verification that another capable owner can follow without rediscovering intent.
 
 ## Steps
 
-1. Name the task source declared by the user or workspace. Use the current user task when no durable task source exists. Do not choose another file only because it exists.
-2. Confirm the accepted outcome, scope, non-goals, constraints, acceptance evidence, and decisions that remain outside implementation authority.
-3. Inspect the affected system, current work, interfaces, relevant patterns, and available verification before choosing the sequence.
-4. Identify dependencies, risks, unknowns, compatibility boundaries, rollback needs, and decisions that must precede execution.
-5. Divide the work into the smallest coherent ordered steps. Give each step an observable result and verification matched to its risk.
-6. Mark work that can proceed in parallel, sequencing constraints, user decision points, and the condition that completes the plan.
-7. Update task state only in the source that defines it and only when authorized. Link to accepted reasoning and current project sources instead of copying them.
+1. Name the task source declared by the user or workspace. Use the current user task when no durable source is needed.
+2. Confirm the accepted outcome, scope, non-goals, constraints, authority, acceptance evidence, and consequential decisions outside implementation authority.
+3. Inspect the affected system, direct consumers, current work, contracts, patterns, and verification before choosing sequence.
+4. Select Direct, Standard, Assured, Derivative, or Batch execution. Set explicit non-negative review, council, and correction budgets. Identify an existing archetype or golden slice before designing a new foundation.
+5. When a durable task record exists, write the selected profile and maximum budgets to its `execution` frontmatter. Record the compact execution capsule: accepted architecture, invariants, placement map, behavior matrix, expected paths, protected paths, direct integration neighborhood, dependencies, evidence ladder, consumed-budget IDs, and stop conditions.
+6. Divide work into the smallest coherent outcomes with one owner each. Mark sequencing, non-overlapping parallel lanes, integration points, and conditions that require replan.
+7. Give every step an observable result and verification matched to its risk. Place full gates at coherent task, archetype, or batch boundaries.
+8. Update task or plan state only in its declared source. Link accepted reasoning and current sources instead of copying them.
 
 ## Completion
 
-- One task source, or the current user task, is clear.
-- The plan states the accepted outcome, boundaries, dependencies, ordered steps, decision points, and completion condition.
-- Every step has an observable result and verification path.
-- No unauthorized task or competing task source was created.
+- One task source and one compact execution capsule are clear.
+- The profile, architecture, boundaries, dependencies, ownership, parallelism, evidence, review budget, and completion condition are explicit.
+- Every step has an observable result and stop condition.
+- No competing task source or speculative process was created.

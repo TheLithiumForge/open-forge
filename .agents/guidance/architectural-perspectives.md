@@ -1,128 +1,63 @@
 ---
 open-forge:
-  description: Apply explicit top-down architecture and task-decomposition perspectives before bounded implementation and review
-  tags: [Core, Guidance, Architecture, Planning, Task, Delegation, Review, Perspective]
+  description: Apply explicit top-down architecture, task decomposition, bounded implementation, and integration-review perspectives without multiplying owners
+  tags: [Core, Guidance, Architecture, Planning, Task, Delegation, Review, Perspective, Efficiency]
 ---
 
 # Architectural Perspectives
 
 ## Scenario
 
-Use this Guidance when a system, program, or broad change must be designed and
-decomposed before several bounded agents can implement it safely. A perspective
-is an explicit question set and planning horizon. It is not a provider, model,
-runtime profile, or decision authority.
+Use this Guidance when a system, program, or broad change must be designed and decomposed before bounded implementation can proceed safely. A perspective is a question set and planning horizon, not a provider, model, or separate decision authority.
 
-## Top-Down Architect Perspective
+## Primary Architect Perspective
 
-The top-down architect keeps the complete accepted system in view while shaping
-the foundation and every cross-cutting boundary.
+Keep the complete accepted system horizon in view.
 
 Ask:
 
-- What complete user and system outcomes must the final design support?
-- Which accepted contracts, platform constraints, and external boundaries govern
-  the system?
-- Which capabilities are process-wide, shared by a bounded family, or local to
-  one current consumer?
-- What is the dependency direction, composition root, state flow, failure model,
-  and side-effect boundary?
-- Which later features are already known, and which extension points must exist
-  now to prevent a local dead end?
-- Which neutral format, protocol, parser, serialization, identity, or safety
-  capabilities are already required by several outcomes in the accepted program,
-  even when delivery order means only one consumer is implemented today?
-- Which possible reuse should remain local until another real consumer proves the
-  same meaning?
-- What build, test, packaging, migration, security, performance, and release
-  boundaries constrain the source design?
-- Which decisions and callable contracts must be settled before a smaller Task
-  can be closed?
+- What user and system outcomes must the accepted program support?
+- Which public contracts, platform constraints, safety boundaries, and external systems govern it?
+- What is process-wide, nearest-shared, family-local, and consumer-local?
+- What are the dependency direction, composition root, state flow, failure model, and side-effect boundaries?
+- Which accepted later consumers require a neutral foundation now, and which possible reuse should remain local?
+- What build, test, packaging, migration, performance, and release constraints shape source design?
+- Which decisions and callable contracts must be settled before implementation can be closed?
 
-Produce an accepted architecture map, dependency and composition boundaries,
-cross-cutting contracts, integration sequence, and explicit stop conditions.
-Implement the architectural foundation directly or through an explicitly
-assigned architecture implementer. Do not delegate unresolved system design to a
-feature implementer.
+Produce one compact architecture map, placement map, invariant set, integration sequence, evidence plan, and unresolved frontier.
 
-Treat accepted program consumers differently from hypothetical reuse. When
-several accepted outcomes require the same neutral mechanical boundary, establish
-that foundation at their nearest shared scope before the first dependent slice.
-Examples include a source grammar, format parser, protocol adapter, serializer
-context, identity model, and safety primitive. Keep each consumer's semantic
-interpretation, policy, findings, status, and presentation local. A possible
-future feature or merely similar semantic policy does not justify early
-promotion.
+## Delegated Architect Perspective
+
+Use a separate architect only when the architecture problem can be bounded and its compact return will reduce primary-context loading or protect independent analysis.
+
+The packet must provide the outcome, accepted horizon, authority, constraints, known evidence, and unresolved frontier. The return should contain decisions and maps, not a transcript of repository reading. The primary owner must inspect and accept it. Do not create two concurrent architecture owners.
 
 ## Task-Master Perspective
 
-The task master turns accepted architecture into a hierarchy of independently
-understandable, executable, and reviewable outcomes.
+Turn accepted architecture into coherent outcomes. For each slice, establish:
 
-For each Task, establish:
+- parent outcome and why the slice exists;
+- inherited architecture, contracts, and predecessor outputs;
+- inputs, outputs, consumers, dependency direction, and integration point;
+- accepted models, algorithms, or file shape when already decided;
+- expected paths, protected paths, direct integration neighborhood, and non-goals;
+- acceptance evidence, focused verification, and batch or system gate; and
+- stop conditions that return unresolved meaning to the responsible context.
 
-- its parent outcome and why this slice exists;
-- the exact architecture, Directives, Patterns, contracts, and predecessor
-  outputs it inherits;
-- its inputs, outputs, consumers, dependency direction, and integration point;
-- accepted class, interface, data-flow, algorithm, or file-shape detail when that
-  detail is already decided;
-- exact allowed changes, protected surfaces, non-goals, and forbidden shortcuts;
-- Red or other acceptance evidence, focused verification, and full integration
-  evidence;
-- stop conditions that return an unresolved architecture or product decision to
-  the responsible context; and
-- a truthful commit and review boundary.
-
-Create child Tasks only when the child has a coherent outcome, dependency, state,
-or evidence boundary. A checklist item may remain inside its parent when a
-separate file would add navigation cost without improving execution.
+Create a child task only when it has independent outcome, ownership, state, or evidence. Keep checklist items inside their parent when a separate record adds only navigation cost.
 
 ## Advisor Perspective
 
-Give each advisor one named lens, such as dependency integrity, Native AOT,
-filesystem safety, developer experience, test architecture, or delivery risk.
-State whether the position is cold or grounded. Require the advisor to return its
-conclusion, decisive evidence, strongest counterargument, tradeoffs, and what
-would change the conclusion. Advisors inform the top-down synthesis and do not
-vote or convert a recommendation into accepted architecture.
+Give each advisor one named lens such as dependency integrity, filesystem safety, developer experience, evidence architecture, or delivery risk. Require a recommendation, decisive evidence, strongest counterargument, tradeoffs, and change conditions. Advisors do not vote or convert recommendations into architecture.
 
 ## Reviewer Perspective
 
-Give a reviewer an exact baseline, changed artifacts, accepted requirements,
-claimed evidence, and one review horizon. A local correctness reviewer checks the
-closed Task and its direct integration neighborhood. An architectural reviewer
-checks dependency direction, shared boundaries, future integration, and
-cross-cutting invariants. Do not ask a local diff reviewer to reconstruct the
-whole system implicitly, and do not call a local pass architectural acceptance.
+Give a reviewer an exact baseline, changed artifacts, accepted requirements, claimed evidence, and one review horizon. A local reviewer checks the closed slice and direct integration neighborhood. An architectural reviewer checks dependency direction, shared boundaries, accepted future integration, and cross-cutting invariants. Do not ask one reviewer to reconstruct both horizons implicitly.
 
 ## Delegated Implementer Perspective
 
-A delegated implementer should see enough of the whole system to understand why
-the slice exists, but should decide only within its closed boundary. Its packet
-must point to the parent Plan and Architecture, identify direct consumers and
-predecessors, provide decided models and algorithms, and name every condition
-that requires return rather than improvisation.
-
-## Applying The Perspectives
-
-Use the top-down architect perspective first, then the task-master perspective.
-Use advisors only for unresolved evidence or useful independent alternatives.
-Use implementers only after the relevant Task is ready. Review each result at the
-same local horizon used for implementation and at the system integration horizon
-owned by the primary architecture agent.
-
-These perspectives may later justify a reusable Framework primitive. Current
-evidence supports explicit Guidance and Task fields, not a new primitive with its
-own loading or authority behavior.
+Give the implementation owner enough system context to understand why the slice exists, while keeping decisions inside a closed boundary. Preserve ownership through tests, production, local refactoring, and correction when possible.
 
 ## Tradeoffs
 
-- More up-front architecture reduces repeated rediscovery and incompatible local
-  choices, but it must not become speculative implementation of every future
-  feature.
-- Detailed Tasks make bounded implementation cheaper and safer, but unnecessary
-  child records increase maintenance and loading cost.
-- Keeping one top-down context improves coherence, but it can become a bottleneck.
-  Parallelize evidence gathering and closed Tasks without distributing unresolved
-  architecture authority.
+Up-front architecture prevents incompatible local choices, but it must not become speculative implementation of possible futures. Detailed slices reduce rediscovery, but unnecessary records and agents increase context and integration cost. Keep one accepted top-down model and parallelize only evidence gathering or closed slices.

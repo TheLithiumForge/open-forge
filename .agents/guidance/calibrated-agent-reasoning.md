@@ -1,73 +1,44 @@
 ---
 open-forge:
-  description: Calibrate delegated agent reasoning to bounded work, concrete risk, complexity, and review independence
-  tags: [Core, Guidance, Collaboration, Orchestration, Delegation, Reasoning, Review, Risk]
+  description: Calibrate delegated reasoning, ownership continuity, review depth, and parallelism to bounded work and concrete risk
+  tags: [Core, Guidance, Collaboration, Orchestration, Delegation, Reasoning, Review, Risk, Efficiency]
 ---
 
 # Calibrated Agent Reasoning
 
 ## Scenario
 
-Use this guidance when delegated work can run at different reasoning levels and
-the mastermind must balance confidence, independence, time, and token cost.
+Use this Guidance when delegated work can run at different reasoning levels and the primary owner must balance confidence, wall-clock time, context, and token cost.
 
 ## Preferred Approach
 
-Bound the delegation first: state its outcome, authority, allowed and forbidden
-surfaces, required evidence, and handoff. Then choose a default reasoning level
-from the work itself.
+Bound the work before choosing reasoning. State the outcome, accepted meaning, authority, expected paths, protected paths, direct integration neighborhood, non-goals, evidence, return shape, and stop conditions.
 
-Complete caller-owned decisions before delegation. Provide accepted meaning,
-known facts, exact targets or search boundaries, non-goals, required validation,
-return shape, and stop conditions with enough precision that the helper need not
-rediscover the problem. Stop short of performing the assigned action in the
-packet itself.
+| Default  | Use when                                                                                                                                                                     |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `medium` | Exact operations, mechanical inspection, state maintenance, formatting, or a tightly specified transformation with local failure effects.                                    |
+| `high`   | Bounded exploration, external research, ordinary advice, substantial prose, focused review, or implementation decisions inside a well-established pattern.                   |
+| `xhigh`  | Cross-surface architecture, difficult contract interpretation, broad integration review, or a bounded audit whose value depends on finding interactions.                     |
+| `max`    | One coherent implementation or evidence-authoring owner faces difficult behavior, expensive rework, or many interacting local decisions inside an already accepted boundary. |
 
-| Default  | Use when                                                                                                                                                                             |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `medium` | The work is mechanical inspection, state maintenance, or a tightly specified transformation with local failure effects.                                                              |
-| `high`   | The work requires phase judgment, contract interpretation, test design, implementation decisions, or structural improvement across related surfaces.                                 |
-| `xhigh`  | The work is a read-only Preflight or Whole-Task Review, or another bounded audit whose value depends on finding cross-surface gaps without inheriting the implementer's conclusions. |
+Raise or lower the level only for concrete complexity, risk, reversibility, evidence cost, or latency. Maximum reasoning is most valuable when one owner can carry a hard slice to completion. It is usually wasteful when multiplied across explorers, councils, routine reviewers, mechanical operators, or repeated confirmation passes.
 
-Raise or lower the default only when concrete risk, complexity, reversibility,
-or evidence cost warrants it. Preserve a fresh context and read-only authority
-when independence matters.
+## Ownership And Context
 
-## Reasoning
+- Keep one implementation owner through tests, production, local refactoring, and correction whenever the boundaries allow it.
+- Use a separate context for independent evidence, architecture compaction, or review only when isolation adds value greater than packet and reintegration cost.
+- Do not ask a helper to rediscover accepted architecture or history. Provide a compact execution capsule and link the decisive sources.
+- Expected paths are a forecast. Protected paths are hard boundaries. Directly required neighboring paths may be added only inside accepted meaning and must be reported.
+- Require compact returns. Raw searches, full logs, and long transcripts should remain in artifacts.
 
-A clear boundary improves the value of additional reasoning because the agent
-can spend attention on the actual decision surface. Calibrated defaults give
-mechanical work enough rigor, phase work enough judgment, and acceptance gates
-enough independent scrutiny without treating maximum reasoning as a universal
-quality setting.
+## Parallelism And Review
 
-Reasoning levels describe the attention budget for one delegation. They do not
-rank agent capability, seniority, or trustworthiness, and they do not replace
-evidence or independent review.
-
-## Delegation Packets
-
-- Keep assignments non-overlapping unless independent perspectives are the
-  explicit purpose. Do not ask several agents to repeat the same exploration,
-  implementation, or review.
-- Treat a writer packet as a prose specification, an explorer packet as one
-  complete bounded evidence question, an implementer packet as a closed plan,
-  and a reviewer packet as an exact diff plus accepted requirements and claimed
-  evidence.
-- Require compact results, validation, uncertainty, and the smallest useful
-  escalation rather than raw search or hidden-reasoning transcripts.
-- Keep provider, model, and runtime-profile choices in the local agent
-  configuration and its package source rather than duplicating them in generic
-  repository guidance.
-- The primary agent must inspect the integrated artifacts and evidence before
-  final acceptance within its delegated scope. Helper reviews add independent
-  lenses but do not replace that final review.
+- Parallelize non-overlapping actions or independent read-only perspectives with a named integration point.
+- Do not parallelize several agents over the same mutable responsibility unless comparison is the explicit deliverable.
+- Use one independent review by default only when a named risk justifies it. Add a second reviewer only for a distinct risk or genuinely independent provider perspective.
+- Give findings stable identifiers, group corrections, and recheck only changed findings and their neighborhood.
+- Measure review value by accepted blocking or material findings, prevented rework, and decision impact, not by finding count.
 
 ## Tradeoffs
 
-Higher reasoning can improve cross-surface analysis, but it costs more time and
-tokens and can overvalue speculative concerns when the scope is mechanical.
-Lower reasoning is efficient for closed transformations, but it can miss
-interactions when authority or evidence spans several sources. Match the level
-to the bounded task and record deliberate deviations when they affect review
-confidence.
+Higher reasoning can improve difficult cross-surface work, but it costs time and can overvalue speculative concerns. Lower reasoning is efficient for closed work, but it can miss interactions when the packet is incomplete. Better boundaries and ownership continuity often save more than changing reasoning level.

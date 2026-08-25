@@ -1,44 +1,41 @@
 ---
 open-forge:
-  description: Deliver development work through one persistent primary owner with proportionate planning, implementation, testing, cleanup, and optional bounded delegation instead of mandatory phase separation
-  tags: [Workflow, Development, Adaptive, Implementation, Testing, Review, Delegation]
+  description: Deliver development work through profile-based rigor, one persistent owner per coherent slice, bounded parallelism, and conditional review
+  tags: [Workflow, Development, Adaptive, Implementation, Testing, Review, Delegation, Efficiency]
 ---
 
 # Adaptive Development
 
 ## Goal
 
-Deliver authorized development work with one primary owner retaining intent, architecture, planning, integration, and acceptance while using bounded helper agents only where a separate context materially helps.
-
-This is a secondary development workflow. It does not replace the stricter Development workflow or its phase recipes. Use either workflow directly, or compose a relevant strict phase into this workflow when that phase adds value.
+Deliver authorized development work safely and efficiently while preserving one primary owner for intent, architecture, integration, and acceptance, and one persistent implementation owner for each coherent slice.
 
 ## Steps
 
-1. **Orient.** Establish the requested outcome, applicable workspace rules, source authority, affected surfaces, and success evidence. Delegate bounded repository discovery to `explorer` or external evidence gathering to `researcher` when that is cheaper than loading broad evidence into the primary context.
-2. **Plan.** Keep planning in the primary context. Use a micro-plan for small reversible work and an executable plan for nontrivial work. When relevant, state canonical source, dogfood or local counterpart, generated surfaces, public or installable projection, scope, non-goals, ordered work, validation, and stop conditions.
-3. **Harden proportionately.** Challenge the plan internally first. Use `advisor` or the Council workflow when diverse perspectives matter. Use `challenger` only for consequential architecture, security, migration, public compatibility, hard-to-reverse work, or material unresolved disagreement.
-4. **Implement and test.** Implement directly while substantial contextual judgment remains. Delegate to `executor` only when the plan is closed enough that no material product, architecture, authority, or compatibility decision remains. Keep required tests with the implementation rather than creating a separate testing phase by default.
-5. **Clean up when earned.** Refactor only when the change reveals a material structural improvement or the accepted result would otherwise remain unnecessarily difficult to maintain. Keep behavior protected by evidence.
-6. **Review proportionately.** The primary owner inspects the actual result and verification. Use one fresh `reviewer` when an independent bounded read is likely to catch omissions cheaply. Use `challenger` as a final falsification only when consequence warrants it.
-7. **Correct and close.** Route a material finding to the earliest invalidated assumption, plan step, contract, or implementation surface. Avoid repeated review loops. Finish when the requested outcome, relevant authority relationships, and proportionate evidence agree.
+1. **Orient and classify.** Establish the outcome, authority, current architecture, affected consumers, external and destructive boundaries, and success evidence. Select Direct, Standard, Assured, Derivative, or Batch execution based on consequence and novelty, not file count. Set explicit non-negative review, council, and correction budgets.
+2. **Create the execution capsule.** When a durable task record exists, write the profile and maximum budgets to its `execution` frontmatter. Otherwise record them in the current capsule. Record accepted decisions, invariants, placement map, behavior or acceptance matrix, expected paths, protected paths, direct integration neighborhood, dependencies, evidence ladder, consumed-budget IDs, and stop conditions. Keep it compact and link full sources.
+3. **Resolve architecture before delegation.** Keep cross-cutting decisions in the primary context. Use a separate architecture pass only when it can be bounded and returned compactly. Do not spend an implementation run discovering unresolved system structure.
+4. **Execute with persistent ownership.** Work directly when context dominates. Otherwise give one implementation owner a closed slice and keep tests, production, configuration, local refactoring, and repair together by default. Use separate contract, Red, Green, production-structure, or test-structure boundaries only when the separation materially protects correctness.
+5. **Parallelize only independent lanes.** Give each lane non-overlapping mutation ownership, shared read-only inputs, an integration point, and its own evidence. Do not parallelize several owners over the same responsibility.
+6. **Verify progressively.** Run focused evidence throughout, direct integration evidence after the slice, and public or full gates at coherent task, archetype, or batch boundaries. Classify failures before changing artifacts.
+7. **Review proportionately.** The primary owner inspects the actual result. Consume one recorded review-budget unit for each independent reviewer. Use at most one independent reviewer for ordinary meaningful work and one by default for assured work. Add a second only after exact authorization expands the recorded budget for a named distinct risk. Do not run separate correctness, improvement, and writing reviews automatically.
+8. **Correct once and narrowly.** Give material findings stable IDs, group accepted corrections, and return them to the original implementation owner when possible. Recheck changed findings and affected context rather than rerunning the complete review. Reopen architecture, contract, or evidence only when that boundary is invalidated.
+9. **Accept and close.** Account for every change, run the selected gate, update only affected durable sources, preserve unrelated state, and report the result, evidence, residual risk, and next authorized action.
 
-### Using the strict Development workflow in tandem
+### Profile Defaults
 
-Use the existing Development workflow, or one of its phase recipes, when the task specifically benefits from stronger separation such as:
-
-- freezing a public callable contract before implementation;
-- constructing an explicit expectation matrix before production changes;
-- high-risk refactoring where a separate structural pass is useful;
-- independent test-structure work;
-- a deliberately formal whole-task review and acceptance gate.
-
-Do not invoke those phases merely because they exist. Escalate from this workflow when the risk they control becomes material.
+| Profile             | Architecture                                         | Implementation                                        | External review                      | Full gate                    |
+| ------------------- | ---------------------------------------------------- | ----------------------------------------------------- | ------------------------------------ | ---------------------------- |
+| Direct              | Existing context                                     | Primary owner                                         | None                                 | Only if required by risk     |
+| Standard            | Compact plan                                         | One persistent owner                                  | Zero or one                          | Task boundary                |
+| Assured             | Explicit architecture and frozen critical boundaries | One persistent owner or deliberately separated phases | One, second only for a distinct risk | Required acceptance boundary |
+| Derivative or Batch | Delta from a golden archetype                        | Parallel non-overlapping owners                       | Batched or trigger-based             | Batch boundary               |
 
 ## Completion
 
-- One primary owner retained user intent, architecture, plan, integration, and final judgment.
-- Delegated work was bounded and did not invent material decisions.
-- Implementation and tests satisfy the accepted outcome.
-- Refactoring and independent review were used only where they added value.
-- Relevant canonical, dogfood, generated, and public relationships are coherent without accidental mirroring.
-- Verification is proportionate to the behavior and consequence of the change.
+- The selected profile matched the actual risk and changed when evidence required it.
+- Architecture and semantic decisions remained with one accepted owner.
+- Each coherent slice had one implementation owner unless deliberate write isolation justified separation.
+- Delegated packets were closed, compact, and explicit about expected and protected paths.
+- Review, councils, full gates, and durable prose work occurred only when their expected value justified their cost.
+- The requested behavior, integration, evidence, durable sources, and safety boundaries agree.

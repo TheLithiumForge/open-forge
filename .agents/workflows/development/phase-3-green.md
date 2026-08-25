@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Implement the smallest correct custom behavior that satisfies the frozen Red evidence
+  description: Implement the smallest correct behavior against frozen evidence while protecting expectations
   tags: [Workflow, Development, Phase, Green, Implementation, Testing]
 ---
 
@@ -8,30 +8,20 @@ open-forge:
 
 ## Goal
 
-Make the complete affected Red evidence pass with the smallest correct implementation of the accepted callable contract and behavior.
+Make the frozen evidence pass with the smallest correct implementation of the accepted contract and behavior.
 
 ## Steps
 
-1. Read the Task, frozen callable contract, complete Red case matrix, allowed production paths, forbidden surfaces, accepted architecture, and baseline supplied by the Mastermind.
-2. Implement only the production behavior required by the accepted case matrix and contract. Preserve existing system boundaries and use the simplest readable design that is correct. Do not make an unaccepted architecture or library choice.
-3. Run the narrowest failing evidence after each meaningful change, then the selected focused toolchain checks and scoped tests. Classify failures before changing anything. The full gate remains a later cycle step.
-4. Classify any remaining failure as implementation, expectation, contract, setup, environment, or unrelated state. Return non-implementation failures to the Mastermind rather than editing protected evidence or inventing behavior.
-5. Return changed production paths, passing evidence, assumptions, and residual limitations to the Mastermind for integrated inspection.
-6. After integrated inspection, the Mastermind updates the authoritative Task
-   progress in the same coherent commit and commits the accepted Green phase
-   before Blue mutates files. The Green commit makes the frozen Red evidence
-   pass. The Mastermind compares Blue's starting tree with the Green commit and
-   verifies that the Red expectations, fixtures, and snapshots remain
-   unchanged.
-
-Do not edit the callable contract, tests, fixtures, snapshots, accepted expectations, Task state, or unrelated surfaces, and do not stage or commit phase work. Do not use Green to compensate for incomplete Red evidence; return that gap to the Mastermind for the earliest applicable phase. The Mastermind alone performs the Task update and phase commit at the boundary below.
+1. Read the accepted architecture, callable contract, frozen behavior matrix and evidence, baseline, expected production paths, protected test paths, direct integration neighborhood, and focused commands.
+2. Implement only the accepted production behavior. Treat expected paths as forecasts; report a directly required neighboring production path inside accepted meaning. Never cross a protected surface.
+3. Run the narrowest failing evidence after each meaningful change. Classify failures before changing artifacts.
+4. Keep tests, fixtures, snapshots, and frozen contracts unchanged. Return expectation or contract defects to the earlier boundary instead of correcting them in Green.
+5. Apply necessary implementation-local refactoring while evidence remains green. Do not start a broad structural pass.
+6. Run focused and direct integration evidence, then record the exact Green baseline and residual risk.
 
 ## Completion
 
-- Every frozen Red expectation passes at the selected focused boundary.
-- The implementation satisfies the accepted contract and case matrix with no unrelated scope.
-- Protected contracts and evidence remain unchanged.
-- The Mastermind inspected the actual Green paths, diff, and passing evidence,
-  recorded Task progress, and committed the accepted Green phase before Blue
-  continued.
-- Remaining failures, if any, have an explicit classification and are outside an unjustified Green change.
+- Frozen evidence passes without changed expectation meaning.
+- The implementation is the smallest clear correct result inside accepted architecture.
+- Direct integration evidence passes and protected surfaces remained unchanged.
+- Any unresolved architecture, contract, or evidence defect was returned to its owning boundary.

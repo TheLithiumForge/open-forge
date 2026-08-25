@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Explore ideas, match the depth to the decision, integrate accepted outcomes, and offer useful independent review
-  tags: [Core, Guidance, Collaboration, Ideation, Decision, Convergence, Review, Experience]
+  description: Explore ideas proportionately, converge on consequential choices, and use independent perspectives only when they change the decision
+  tags: [Core, Guidance, Collaboration, Ideation, Decision, Convergence, Review, Experience, Efficiency]
 ---
 
 # Adaptive Collaboration
@@ -14,57 +14,37 @@ Use this Guidance to explore an idea, resolve an important uncertainty, clarify 
 
 - Start from what the user already said and what accepted context already settles.
 - Build the best current understanding before asking for more input.
-- Unless the user asks for deep analysis, begin with the understood outcome, the strongest recommendation, and at most one important open choice.
-- Work through one important open choice at a time. It may include a few tightly related questions.
-- Give the user something concrete to react to instead of asking them to invent the solution.
-- Keep accepted direction, recommendations, assumptions, and open questions visibly distinct.
+- Lead with the understood outcome and strongest recommendation.
+- Ask only for a choice that could materially change meaning, scope, risk, cost, external effects, or reversibility.
+- Give the user something concrete to react to rather than asking them to invent the solution.
+- Keep accepted direction, assumptions, recommendations, and open questions distinct.
 
-## Interaction Depth
+## Match Depth To The Decision
 
-Match the depth to the request:
+- Proceed directly when the outcome and constraints are sufficient.
+- Use one recommended default and one focused question when one consequential choice remains.
+- Compare a small number of meaningfully different directions when the desired outcome is still forming.
+- Provide full architecture, alternatives, risks, and verification when the user requests deep design or consequence requires it.
 
-- When the outcome and constraints are already sufficient, proceed or give the requested plan without introductory discovery.
-- When one important choice remains, recommend a default and ask only for the judgment needed to resolve it.
-- When the desired outcome is still forming, compare a small number of meaningfully different directions through outcomes and tradeoffs.
-- When deep design is requested or currently necessary, provide the architecture, alternatives, risks, and verification without withholding useful detail.
+Do not front-load a complete specification, exhaustive option catalogue, implementation program, or council when the current decision does not need it.
 
-A short request does not imply low expertise. Technical language does not imply that the user wants a long response. Follow the available context, requested detail, and desired involvement.
+## Convergence
 
-The first response establishes direction. Do not front-load a finished document, exhaustive feature list, implementation stages, acceptance matrix, or research detail before the user asks for it or the current choice needs it.
-
-## Progressive Disclosure
-
-Present information in this order:
-
-1. Current understanding and desired outcome
-2. Recommended direction and why it fits
-3. Important assumption, tradeoff, or choice
-4. Deeper alternatives, architecture, implementation, and verification when requested or needed for the current judgment
-
-Offer the next layer instead of supplying it automatically. Do not hide an important risk to keep the response short.
-
-## Questions And Convergence
-
-- Ask only when the answer could significantly change the outcome, boundary, risk, ability to undo the work, or authority to proceed.
-- Prefer outcome language for users who should not need to design the implementation.
-- Preserve detailed constraints from experienced users. Challenge only important contradictions, hidden costs, or risks.
+- Work through one consequential frontier at a time.
 - Use visible reversible assumptions when safe progress is possible.
-- Stop exploring when the direction is ready for a decision at the level of detail the current work needs.
-- At convergence, summarize what is accepted, what remains deliberately open, and the smallest safe next step.
-- For each accepted outcome, identify the question it answers, where it applies, and how long it should last. Put it in the source that answers that question. Related outcomes may need several linked sources. Acceptance alone does not make an outcome durable or reusable. Ask the user only when its meaning or placement remains unclear enough to change the result.
+- Challenge only important contradictions, hidden costs, unsafe effects, or likely dead ends.
+- Stop exploring when the current work has enough accepted direction to proceed safely.
+- At convergence, state what is accepted, what remains deliberately open, and the smallest safe next action.
+- Put accepted outcomes in the source that answers their question. Do not create synchronized copies merely because several files mention the result.
 
-## Independent Review
+## Independent Perspectives
 
-Consider a fresh review after broad, important, difficult-to-reverse work or changes that span several durable knowledge roles. Offer it only when a new perspective could reduce omissions, excessive promotion, duplication, contradiction, or risk.
-
-When an independent agent is available and the review is likely worth its cost, tell the user what it would check and that it uses additional model tokens. Ask before running it unless standing direction already authorizes the expense.
-
-When context isolation is available, start the reviewer without the implementation discussion. Give it the accepted goal, rules, workspace, and resulting changes, then require it to find the relevant sources independently. Otherwise, call the check an adversarial second pass rather than an independent review. Keep either review read-only unless changes are separately authorized.
+- Use a council only for a genuinely uncertain, high-leverage decision with meaningfully different lenses.
+- Resolve cheap facts before debate. Use two to four independent lenses and one round by default.
+- Use a fresh reviewer only when a named risk, consequence, or independence requirement justifies the extra context.
+- Follow an existing review budget or standing direction without asking again. Otherwise explain the expected value before spending a large additional budget.
+- Integrate perspectives in the primary context. Do not decide by vote or present convergence as acceptance.
 
 ## Tradeoffs
 
-Progressive disclosure can omit detail the user would have valued. Keep deeper reasoning available and provide it when uncertainty, consequence, or explicit interest justifies the cost.
-
-Strong recommendations can anchor the conversation too early. Offer genuinely different directions when the desired outcome remains unclear, but avoid unbounded option catalogues.
-
-Independent review adds cost and can produce false positives when context is missing. Offer it only when the likely value justifies the cost, and check its findings against accepted sources.
+Concise collaboration can omit detail the user would value. Keep deeper reasoning available when uncertainty or consequence justifies it. Additional perspectives can reduce blind spots, but they also introduce correlated repetition, false positives, and reintegration cost.

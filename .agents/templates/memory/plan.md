@@ -1,130 +1,108 @@
 ---
 open-forge:
-  description: Experimental starting structure for an executable plan with dependencies, parallel work, resources, verification, decisions, risks, and continuity links
-  tags: [Template, Memory, Working, Plan, Planning, Contextual, Experimental]
+  description: Starting structure for an executable plan with a compact capsule, dependencies, parallel lanes, ownership, verification, and continuity
+  tags: [Template, Memory, Working, Plan, Planning, Contextual, Execution]
 ---
 
 # {Task} Plan
 
 {
-Template selection:
-
-- Need: An accepted outcome requires enough sequencing, coordination, or verification that an inline list would be ambiguous.
-- Primary question: How will the Task reach its outcome, including dependencies, parallel work, resources, integration, and proof?
-
-Instantiate this file under the appropriate Working route and link the Task that defines the problem, outcome, scope, and acceptance. The Task remains the source for what must be accomplished. This Plan defines how to accomplish it and may track the state of its own steps.
-
-Use one source for execution state. If an external system or another plan defines the live sequence, link it and keep only the local context that system does not provide. Create child Tasks only for coherent outcomes that need independent scope, state, evidence, or coordination.
-
-Keep the Plan current while it is in use. A Checkpoint may link here and preserve only the current position, next action, blockers, and minimum resumption context. A Handoff remains a separate sealed transfer snapshot.
-
-Keep only sections and fields that reduce execution or resumption risk. Replace the frontmatter, title, and placeholders, then remove this braced guidance.
+Use this Template when an accepted outcome needs enough sequencing, ownership, parallelism, or verification that an inline plan would be ambiguous. The linked Task remains the source for what must be accomplished. Keep one live execution-state source. Remove unused sections and this guidance.
 }
 
-## Task And Planning Boundary
+## Planning Boundary
 
-- Task: {Link to the Task or declared external task source.}
-- Plan state: {Draft, ready, active, blocked, complete, superseded, or another locally defined state.}
-- Planning authority: {Who may change the sequence, scope allocation, or decision points?}
+- Task: {Link or current request.}
+- Plan state: {Draft, ready, active, blocked, complete, superseded, or local vocabulary.}
+- Execution profile: {Match the linked Task `execution.profile`: Direct, Standard, Assured, Derivative, or Batch.}
+- Planning authority: {Who may change sequence or allocation?}
+- Current step or lane: {ID or `Not started`.}
 - Last updated: {Date or timestamp when freshness matters.}
-- Current step or lane: {Step ID, parallel lane, or `Not started`.}
-
-{State which questions this Plan answers and which remain with the Task, an accepted document, a Decision, an external system, or the user.}
 
 ## Planning Basis
 
-{Summarize only the Task meaning needed to understand the Plan, then link to the source for full detail.}
-
-- Outcome: {Linked summary of the expected result.}
-- Acceptance: {Linked summary of the decisive evidence.}
-- Constraints and non-goals: {Linked summary of the boundaries that shape execution.}
-- Assumptions: {Only assumptions that change sequencing, resources, or verification.}
+- Outcome: {Linked summary.}
+- Architecture and invariants: {Linked summary.}
+- Acceptance: {Decisive evidence.}
+- Constraints and non-goals: {Boundaries.}
+- Assumptions: {Only claims that change sequence, resources, safety, or verification.}
+- Archetype or golden slice: {Link or `None`.}
 
 ### References And Authority
 
-| Source | Question it answers | Status or authority                                                                                 | Use in this Plan                                            |
-| ------ | ------------------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| {Link} | {Relevant question} | {Accepted current source, candidate, historical evidence, generated surface, or external authority} | {Input, constraint, output, verification, or update target} |
+| Source | Question it answers | Status or authority                                      | Use in this Plan                             |
+| ------ | ------------------- | -------------------------------------------------------- | -------------------------------------------- |
+| {Link} | {Question}          | {Current, candidate, generated, historical, or external} | {Input, constraint, output, or verification} |
 
-## Approach
+## Execution Capsule
 
-{Explain the execution strategy, why the ordering is appropriate, and the important invariants to preserve. Name alternatives only when they explain a consequential choice or a replan trigger.}
+- Expected paths: {Forecast paths.}
+- Protected paths: {Hard boundaries.}
+- Direct integration neighborhood: {Adjacent paths allowed only when directly required and reported.}
+- Dependencies: {Prerequisites and predecessor outputs.}
+- Focused evidence: {Per-step checks.}
+- Integration or full gates: {Task, archetype, or batch boundaries.}
+- Review budget: {Maximum and consumed IDs from the linked Task `execution.review-budget`.}
+- Council budget: {Maximum and consumed rounds from `execution.council-budget`.}
+- Correction budget: {Maximum and consumed cycles from `execution.correction-budget`.}
+- Stop conditions: {Evidence that requires replan or decision.}
+- Resumption path: {Minimum sources and exact next action.}
 
-## Prerequisites
+## Prerequisites, Assumptions, Resources, And Recovery
 
-| ID  | Prerequisite | Required state and evidence | Responsible source or role      | Blocks                     |
-| --- | ------------ | --------------------------- | ------------------------------- | -------------------------- |
-| P1  | {Condition}  | {What proves readiness}     | {Link, person, role, or system} | {Step IDs or `Plan start`} |
-
-## Resources
-
-{Include only resources the Plan must acquire, reserve, prepare, or coordinate. Examples include people, roles, tools, environments, data, credentials, budgets, hardware, external services, and review capacity. Do not place secrets in the Plan.}
-
-| Resource   | Purpose            | Availability or source                          | Needed by  | Responsible person or role   |
-| ---------- | ------------------ | ----------------------------------------------- | ---------- | ---------------------------- |
-| {Resource} | {Why it is needed} | {Ready, missing, constrained, or linked source} | {Step IDs} | {Who secures or supplies it} |
+| ID  | Kind                                                      | Required state, claim, resource, or risk       | Owner or source                 | Validation, availability, or signal   | Blocks or response                                     |
+| --- | --------------------------------------------------------- | ---------------------------------------------- | ------------------------------- | ------------------------------------- | ------------------------------------------------------ |
+| P1  | {Prerequisite, assumption, dependency, resource, or risk} | {What execution needs or must protect against} | {Person, role, system, or link} | {How and when to establish the state} | {Steps blocked, recovery, rollback, decision, or stop} |
 
 ## Work Graph
 
-{Give every step a stable ID. `Depends on` names prerequisites that must complete first. A parallel lane groups work that can proceed concurrently without conflicting ownership. Use a linked child Task when a step needs independent scope or state.}
+| ID  | State     | Owner       | Action and observable result | Depends on      | Parallel lane          | Verification |
+| --- | --------- | ----------- | ---------------------------- | --------------- | ---------------------- | ------------ |
+| S1  | {Pending} | {One owner} | {Action and result}          | {IDs or `None`} | {Lane or `Sequential`} | {Evidence}   |
 
-| ID  | State     | Action and observable result | Depends on                | Parallel lane            | Linked Task      | Verification        |
-| --- | --------- | ---------------------------- | ------------------------- | ------------------------ | ---------------- | ------------------- |
-| S1  | {Pending} | {Action and result}          | {P1, step IDs, or `None`} | {Lane A or `Sequential`} | {Link or `None`} | {Evidence produced} |
+## Parallel Lanes
 
-### Parallel Lanes
+{Remove when all work is sequential. Mutation ownership must not overlap unless an explicit coordination protocol exists.}
 
-{Remove this section when all work is sequential. Give concurrent work non-overlapping mutation boundaries or an explicit coordination rule.}
-
-| Lane     | Steps      | May start when         | Owned or allowed surfaces                        | Shared dependency                                 | Integration point                             |
-| -------- | ---------- | ---------------------- | ------------------------------------------------ | ------------------------------------------------- | --------------------------------------------- |
-| {Lane A} | {Step IDs} | {Prerequisite or step} | {Files, systems, artifacts, or responsibilities} | {Read-only source, interface, fixture, or `None`} | {Step or evidence gate where results combine} |
+| Lane     | Steps | May start when | Owned mutation surfaces     | Shared read-only inputs | Integration point |
+| -------- | ----- | -------------- | --------------------------- | ----------------------- | ----------------- |
+| {Lane A} | {IDs} | {Prerequisite} | {Paths or responsibilities} | {Sources or contracts}  | {Gate or step}    |
 
 ## Step Details
-
-{Use one subsection for each step that needs more detail than the Work Graph. Omit it for self-explanatory steps.}
 
 ### {S1: Step Name}
 
 - Purpose: {Why this step exists.}
-- Inputs: {Required sources, artifacts, decisions, and predecessor outputs.}
-- Actions: {Concrete work to perform.}
-- Allowed changes: {Files, systems, or effects this step may change.}
-- Protected boundaries: {What this step must not change or decide.}
-- Output: {Observable result or artifact.}
-- Verification: {How to establish that the output is correct.}
-- Handoff or integration: {Recipient, linked Task, or next step.}
-- Replan or stop condition: {Evidence that invalidates the step or requires a decision.}
+- Inputs: {Sources, decisions, and predecessor outputs.}
+- Actions: {Concrete work.}
+- Expected paths: {Forecast.}
+- Protected boundaries: {Hard limits.}
+- Direct integration neighborhood: {Permitted adjacent scope.}
+- Output: {Observable result.}
+- Verification: {Focused and integration evidence.}
+- Stop condition: {Plan gap, invalid assumption, safety, or authority boundary.}
+- Handoff or integration: {Recipient or gate.}
 
-## Decision Points
+## Decision Points And Risks
 
-| ID  | Decision   | Options or recommendation                       | Decision-maker   | Needed before       | Resulting branch       |
-| --- | ---------- | ----------------------------------------------- | ---------------- | ------------------- | ---------------------- |
-| D1  | {Question} | {Options, tradeoff, and current recommendation} | {Person or role} | {Step ID or effect} | {How the Plan changes} |
+| ID  | Decision or risk   | Signal               | Owner                     | Branch, recovery, rollback, or stop response |
+| --- | ------------------ | -------------------- | ------------------------- | -------------------------------------------- |
+| D1  | {Question or risk} | {Observable trigger} | {Decision-maker or owner} | {Branch, recovery, or stop}                  |
 
-## Risks, Recovery, And Stop Conditions
+## Review And Correction
 
-| Risk or trigger              | Affected steps | Safeguard                       | Recovery, rollback, or stop response    |
-| ---------------------------- | -------------- | ------------------------------- | --------------------------------------- |
-| {Risk or observable trigger} | {Step IDs}     | {Prevention or early detection} | {Bounded recovery or decision boundary} |
-
-## Verification And Integration
-
-{Describe how step evidence combines into Task acceptance. Include focused checks, cross-step integration, end-to-end or public scenarios, review, generated or packaged projections, and final authority updates only when they apply.}
-
-| Gate   | Inputs         | Verification                               | Pass condition         | Resulting update or next step                               |
-| ------ | -------------- | ------------------------------------------ | ---------------------- | ----------------------------------------------------------- |
-| {Gate} | {Step outputs} | {Command, inspection, review, or scenario} | {Observable threshold} | {Task state, source update, integration step, or next gate} |
+- Review triggers: {Named risks only.}
+- Finding ledger: {Link or location for stable IDs and disposition.}
+- Correction owner: {Prefer original implementation owner.}
+- Recheck rule: {Changed finding IDs and affected context, not automatic full review.}
 
 ## Coordination And Continuity
 
-- Child Tasks: {Links and the outcome each contributes, or `None`.}
-- Checkpoint: {Link to concise current resumption state, or `Not needed`.}
-- Handoffs: {Links to sealed transfer snapshots, or `None`.}
-- Related plans, backlogs, or roadmaps: {Links or `None`.}
-- Update points: {Steps, decisions, integrations, or evidence gates after which this Plan and any active Checkpoint must be refreshed.}
-- Resumption path: {Minimum sources to read and the exact next action after interruption.}
+- Child tasks or dependencies: {Links and contributed outcomes, or `None`.}
+- Checkpoint: {Link or `Not needed`.}
+- Handoffs: {Sealed transfer links or `None`.}
+- Update points: {Steps, decisions, or gates that refresh this Plan and any active Checkpoint.}
 
 ## Completion
 
-{State when execution of this Plan is complete. Include Task acceptance, integration of parallel lanes and child Tasks, required verification, current-source and backlink updates, unresolved-risk disposition, and the Task-state update at its declared source. State whether this Working Plan should then be archived or pruned.}
+{State when the Plan is complete, including integration of lanes, required evidence, task-state update, durable source reconciliation, residual-risk disposition, and archive or prune behavior.}
