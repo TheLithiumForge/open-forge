@@ -116,7 +116,6 @@ permission:
     "*helm upgrade*": ask
     "*terraform apply*": ask
     "*terraform destroy*": ask
-    "* publish*": ask
     "* deploy*": ask
     "*aws *": ask
     "*az *": ask
@@ -145,28 +144,28 @@ permission:
   webfetch: allow
   todowrite: allow
   question: allow
-  external_directory: ask
+  external_directory: allow
   task:
     "*": deny
-    architect: ask
+    architect: allow
     explorer: allow
     researcher: allow
-    advisor: ask
+    advisor: allow
     implementer: allow
     brilliant-implementer: allow
     workspace-operator: allow
-    reviewer: ask
-    reviewer-terra: ask
-    improvement-reviewer: ask
+    reviewer: allow
+    reviewer-terra: allow
+    improvement-reviewer: allow
     writer: allow
-    writing-reviewer: ask
-    challenger: ask
-    challenger-two: ask
-    gray-contract-implementer: ask
-    red-evidence-author: ask
-    green-behavior-implementer: ask
-    blue-structure-improver: ask
-    purple-evidence-improver: ask
+    writing-reviewer: allow
+    challenger: allow
+    challenger-two: allow
+    gray-contract-implementer: allow
+    red-evidence-author: allow
+    green-behavior-implementer: allow
+    blue-structure-improver: allow
+    purple-evidence-improver: allow
   doom_loop: ask
 ---
 

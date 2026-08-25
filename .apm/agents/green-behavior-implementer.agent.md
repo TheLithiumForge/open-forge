@@ -116,7 +116,6 @@ permission:
     "*helm upgrade*": ask
     "*terraform apply*": ask
     "*terraform destroy*": ask
-    "* publish*": ask
     "* deploy*": ask
     "*aws *": ask
     "*az *": ask

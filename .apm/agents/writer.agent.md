@@ -39,7 +39,7 @@ permission:
     "*.git-credentials": deny
     "*.env.example": allow
   bash:
-    "*": ask
+    "*": allow
     "*git add*": deny
     "*git commit*": deny
     "*git merge*": deny
@@ -81,7 +81,6 @@ permission:
     "*aws *": deny
     "*az *": deny
     "*gcloud *": deny
-    "* publish*": deny
     "* deploy*": deny
     "*git restore*": deny
     "*git branch -d*": deny

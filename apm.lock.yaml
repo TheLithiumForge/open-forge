@@ -10,7 +10,16 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:c2f9acaf9913e2dbc7b2ce2d1042a11c3b2e0b9124fd32dad4e1ad3beb6af17a
+  content_hash: sha256:68f4028da10c16d1046dca2af23a44310b6459f1dae43faae4deb0e3e4577046
+- kind: project-relative
+  target: codex
+  value: .codex/agents/architect.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:66b181e1a3a832c404a3b4bafd8db4ba2949fc2984099372ea22492f4f94fc2d
 - kind: project-relative
   target: codex
   value: .codex/agents/blue-structure-improver.toml
@@ -19,7 +28,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:00d58146daaab181f59fe10bb4f157b358e99c22ef479afc1d2b7582b525b90b
+  content_hash: sha256:3c24426332f592571a0fd990385993309f5d59fc2304c69f18f5251c834ec538
 - kind: project-relative
   target: codex
   value: .codex/agents/brilliant-implementer.toml
@@ -28,7 +37,16 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:ef9e7f5e0372cff1e448b3c4f37b11459b02a1859273427185525e1a32a68662
+  content_hash: sha256:206f023794dc49e3c88be3e173c425890331ae7561f5df8f835ca3b2eff94f1e
+- kind: project-relative
+  target: codex
+  value: .codex/agents/challenger-two.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:b0964da3ecc53affc9e39f96cf07a7d95099cb6d0d01d7ae1f7f72f91f490093
 - kind: project-relative
   target: codex
   value: .codex/agents/challenger.toml
@@ -37,7 +55,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:a2fca7742349ce456c723977b9b83d8f121f6ba095be8ded5f720ee0512575d7
+  content_hash: sha256:d8b0085f91a2cd5cb5429926be6f61752116ff92fb4b50a7536a11ea654b4cd7
 - kind: project-relative
   target: codex
   value: .codex/agents/explorer.toml
@@ -46,7 +64,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:a1edecd5d3192a977c4fc789b30b88e72d43d6b9cfa6efe3c6c6965a58d1f441
+  content_hash: sha256:5328981476534cfb2e287af22bb3d1eecbaa4a4509a78d942bd0b0e1fffd1da2
 - kind: project-relative
   target: codex
   value: .codex/agents/gray-contract-implementer.toml
@@ -55,7 +73,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:e186fc739c7d1029ca1c4b7d6e66d3e687e0b75e05a98680a6e641e8bd79eceb
+  content_hash: sha256:1e2512514e2e9ccf3f8940488842dfc4987657758b1050c8780a3d86da05010f
 - kind: project-relative
   target: codex
   value: .codex/agents/green-behavior-implementer.toml
@@ -64,7 +82,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:1486594dcaa25e6d9885e8c8662540d32262d0d8aa3b52be5df74f858ffd6ac0
+  content_hash: sha256:2377e5f4160abdc8764842c4521fbdf04de13ff37cb7d91677d78bdb6cd3b4ee
 - kind: project-relative
   target: codex
   value: .codex/agents/implementer.toml
@@ -73,7 +91,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:a732c163539ae2bb3661d990e54aa2289c8874cfc3f73f5d3afa32d5820a50f2
+  content_hash: sha256:d79c0beb51339390f3ebc59cfc84b840ef910482b1341722537c7e3c01040581
 - kind: project-relative
   target: codex
   value: .codex/agents/improvement-reviewer.toml
@@ -82,7 +100,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:bb46912ae99345fc8aab55affc5ead9a3890a55000127286f283d85694ffd8f3
+  content_hash: sha256:d65925db09358dffe436551c894b2a8d88470fea159f0add0f675d82537ecd10
 - kind: project-relative
   target: codex
   value: .codex/agents/mastermind.toml
@@ -91,7 +109,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:e5b8176fcb6586c790e0ae773ea5a2516b2f86910425a7e0d82765166c8dde7c
+  content_hash: sha256:91f72fa8ea287337291b88d89bedc5d42edf66d4a1fade42429f0f01668b50f7
 - kind: project-relative
   target: codex
   value: .codex/agents/purple-evidence-improver.toml
@@ -100,7 +118,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:21a9828ad852b1e25647895f097e993089b688d04d7f45d59273c4b69671d727
+  content_hash: sha256:f32fc79529b05977b94d624730a6423d2f940ca27057184642ca2dcb6c9802ce
 - kind: project-relative
   target: codex
   value: .codex/agents/red-evidence-author.toml
@@ -109,7 +127,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:c09b148a60dc4c2f6e241eecf64baf188db54283292a489f6ddd5b536f86225f
+  content_hash: sha256:18949e81b6c28b78e40bc40dc9c9ed4d3e8af29bc45451c096c28b201ba7ea79
 - kind: project-relative
   target: codex
   value: .codex/agents/researcher.toml
@@ -118,7 +136,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:55c5b8aee2c861c83b11bcaf8ebd2729663e888569edf1f555a41dbd3631ec65
+  content_hash: sha256:c7989cc3c28183adf723cfb07fdb3d8ef87e468387f722d096078e7cb4e00b84
 - kind: project-relative
   target: codex
   value: .codex/agents/reviewer-terra.toml
@@ -127,7 +145,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:dd5f2c60458130418002f6f72becc919fda5a2148868e32f76cf0b74093adbd4
+  content_hash: sha256:ce910154bb41d30db2d5a4e60f818a7da8b509d1e5612c34cb21d3b464f46207
 - kind: project-relative
   target: codex
   value: .codex/agents/reviewer.toml
@@ -136,7 +154,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:3534a3be08bae98ad80f7094d9bf1580a9f2e6175ea7799edde805c8a84df42e
+  content_hash: sha256:00bb00024134bb2d3971d87e61516f8f059898d483938d52b91700004be84cfc
 - kind: project-relative
   target: codex
   value: .codex/agents/workspace-operator.toml
@@ -145,7 +163,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:9c1b773dea522dbe7ab5a0e4d0d41c0fa4b6d7bbcd031745bc65352b9c5e70ed
+  content_hash: sha256:9a6217252a0353d7b2f3b7ad83a0e3890f4054bfaf471ab0ce19ed68547b128d
 - kind: project-relative
   target: codex
   value: .codex/agents/writer.toml
@@ -154,7 +172,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:c7f8a90fe7a2e0622d737cd031b38537f96d2dd6c506aa1fd24f0c27dab8f3d0
+  content_hash: sha256:81a63103c0d0a71b5ededdd28124a43b4b69c073dc01005e6de09b07b11a96cb
 - kind: project-relative
   target: codex
   value: .codex/agents/writing-reviewer.toml
@@ -163,7 +181,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:c22fc1e2b1bb6439d6ab075e9b5265066fa6b7483bf8107c33656fa3f17b15b1
+  content_hash: sha256:61726357069ef832e71ecba23719311823189f6032382e5bf604efb481c91785
 - kind: project-relative
   target: opencode
   value: .opencode/agents/advisor.md
@@ -172,7 +190,16 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:330e2139612c0a9232469eb8d757420fb287df8cdd3112ded02b8008c5557f13
+  content_hash: sha256:8320a6bc849070e9c53fa7a506aa744be632c9e90d41266695b523685738d67f
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/architect.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:e608dd4b6a909dd2670b656b8ee9fdef0ebad0ba68840795bebc8867125f1fc7
 - kind: project-relative
   target: opencode
   value: .opencode/agents/blue-structure-improver.md
@@ -181,7 +208,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:0f45a08ffc8d0e51f17c4a3d425c8d94d8c788a78927fb2ed61ea4d3dc0b64f4
+  content_hash: sha256:0545905537ba1940a621bfcd2a59a401c081bde6f20ec9f84d5351a61b9c5840
 - kind: project-relative
   target: opencode
   value: .opencode/agents/brilliant-implementer.md
@@ -190,7 +217,16 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:1d4b03392d19436e5a02a737e2599315a334e867fc2494c8dd77cdb048068706
+  content_hash: sha256:cfcc466b7ee0b44201ea5c5f3c23579c6b1c637112055b93cf02f7443146418e
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/challenger-two.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:d67782b2152eae082843419033732706680b136af4dd5bcfc044fa9d6f5cccf6
 - kind: project-relative
   target: opencode
   value: .opencode/agents/challenger.md
@@ -199,7 +235,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:1ce1364747372560ff193346a9056306dbef7cc00747680629f583b818cd9ee1
+  content_hash: sha256:601ad0db96176de88a89143c8f3029dd98bbe7b57f5ae8355cba1b48564c0255
 - kind: project-relative
   target: opencode
   value: .opencode/agents/explorer.md
@@ -208,7 +244,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:1234896fbf6491efe88500ad07a12751cd8bc34bdd1df010c9cdb69420df1c8f
+  content_hash: sha256:328881a37c57b63b1f2acea1f73e6166b7c4be27cb43983bbc83105f4d7243ca
 - kind: project-relative
   target: opencode
   value: .opencode/agents/gray-contract-implementer.md
@@ -217,7 +253,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:fc8831cb28ad32994469e8c6f9e5a5616d53589d4dfaaa2d0c7ca24ce428b1d8
+  content_hash: sha256:cb55b96898b5cbab4f8095ca9cdac12cb04d383ead58d1291b7bfe674af65fa5
 - kind: project-relative
   target: opencode
   value: .opencode/agents/green-behavior-implementer.md
@@ -226,7 +262,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:29adefb5adc26365113c64271513f1d503ff5ef7ddc5bb4c9cf85839da4f001b
+  content_hash: sha256:c2e9542b7b189d11bafd9bf9559360b85fcc9d09fa304d67c0a0ff6e816453fc
 - kind: project-relative
   target: opencode
   value: .opencode/agents/implementer.md
@@ -235,7 +271,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:99e4b9442487a4a68dab2e547663a21892d765bde9e4990a5423367a0b039965
+  content_hash: sha256:ee95559652b3bcb5b4b31eedc076907322a68859342fd054b0e98e85a6749e89
 - kind: project-relative
   target: opencode
   value: .opencode/agents/improvement-reviewer.md
@@ -244,7 +280,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:803864cee14b9dd186b96842274d5f426a451d2d442585cb6c55565cf6542439
+  content_hash: sha256:2df45223196e3248636d1571f74fe329caada5cf1fc3469932b29f9ebcffdbca
 - kind: project-relative
   target: opencode
   value: .opencode/agents/mastermind.md
@@ -253,7 +289,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:d635067acf13aee4f9433ef18a8f82d42ea67f53070c7feb1bf36df0d08ca189
+  content_hash: sha256:834462d83193af5ce250099ffd18b97a47e15b566519bbc55efdb6594927da81
 - kind: project-relative
   target: opencode
   value: .opencode/agents/purple-evidence-improver.md
@@ -262,7 +298,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:ecc9269c403b8afc6ab8893e40d122e1187ad6680e7e0d5cb6659606ae7c7f85
+  content_hash: sha256:15f537b0f48d1fe0d70449b7be1e5dfddec23745ef9dd354e6fd98fc45bc1640
 - kind: project-relative
   target: opencode
   value: .opencode/agents/red-evidence-author.md
@@ -271,7 +307,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:32769c13d847f8dd91cbfcb6c57367f482906cd375aa207659638afbdf13211a
+  content_hash: sha256:ea43b071f764b10d5b9630a9a45400acab1dfe4944756628f229cc0990b03da5
 - kind: project-relative
   target: opencode
   value: .opencode/agents/researcher.md
@@ -280,7 +316,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:48b5f1a7fa509a993efeb7877b76e32dc18cd15afc2f221788ff55b3b4f672c1
+  content_hash: sha256:1e6f86a093402a760ba8c605bd4f6436518eb26a90981713981581097bfa4c1c
 - kind: project-relative
   target: opencode
   value: .opencode/agents/reviewer-terra.md
@@ -289,7 +325,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:c8024750496df8302011620bee04c73df5d5b831bc2f7ac40dfef37b8534f266
+  content_hash: sha256:b3053ede5a23582cf9bf13733248ddb4d2278aeafe54a9bb5c74e0fd3490ed2f
 - kind: project-relative
   target: opencode
   value: .opencode/agents/reviewer.md
@@ -298,7 +334,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:be9ae2b3868b18ba3002686beacc5a47729ec302a9f260d71d3625aae7bc9116
+  content_hash: sha256:70127d39c6b76f0f131e1377b495351520636806ded25dbc39b5a9cc42dbe9a5
 - kind: project-relative
   target: opencode
   value: .opencode/agents/workspace-operator.md
@@ -307,7 +343,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:74470c02d14c57aab4043a59c7b86e0c55b57700204132881bd4163c5e6534d9
+  content_hash: sha256:a501bef83362aa4567ce85e1c00f88610f0aa85253f59ad6c5dad73eb99f58df
 - kind: project-relative
   target: opencode
   value: .opencode/agents/writer.md
@@ -316,7 +352,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:c2c1a4ca499658c9f65a63b130da9e7339b76f5b5780523bcac38a94e74b079d
+  content_hash: sha256:fc3ce7b5813c5a4c6806cd4d74e0a0a8df20d4855094859d99300acf892c243c
 - kind: project-relative
   target: opencode
   value: .opencode/agents/writing-reviewer.md
@@ -325,11 +361,13 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:23558383967d36b605f5ab43dbe23eaaf36ee9041d7e355534fe62d2b1932a0d
+  content_hash: sha256:16d86820cd5e9aa09a6252ae63c5987645ea524dc0e8eaaf1b417869674d3391
 local_deployed_files:
 - .codex/agents/advisor.toml
+- .codex/agents/architect.toml
 - .codex/agents/blue-structure-improver.toml
 - .codex/agents/brilliant-implementer.toml
+- .codex/agents/challenger-two.toml
 - .codex/agents/challenger.toml
 - .codex/agents/explorer.toml
 - .codex/agents/gray-contract-implementer.toml
@@ -346,8 +384,10 @@ local_deployed_files:
 - .codex/agents/writer.toml
 - .codex/agents/writing-reviewer.toml
 - .opencode/agents/advisor.md
+- .opencode/agents/architect.md
 - .opencode/agents/blue-structure-improver.md
 - .opencode/agents/brilliant-implementer.md
+- .opencode/agents/challenger-two.md
 - .opencode/agents/challenger.md
 - .opencode/agents/explorer.md
 - .opencode/agents/gray-contract-implementer.md
@@ -364,39 +404,43 @@ local_deployed_files:
 - .opencode/agents/writer.md
 - .opencode/agents/writing-reviewer.md
 local_deployed_file_hashes:
-  .codex/agents/advisor.toml: sha256:c2f9acaf9913e2dbc7b2ce2d1042a11c3b2e0b9124fd32dad4e1ad3beb6af17a
-  .codex/agents/blue-structure-improver.toml: sha256:00d58146daaab181f59fe10bb4f157b358e99c22ef479afc1d2b7582b525b90b
-  .codex/agents/brilliant-implementer.toml: sha256:ef9e7f5e0372cff1e448b3c4f37b11459b02a1859273427185525e1a32a68662
-  .codex/agents/challenger.toml: sha256:a2fca7742349ce456c723977b9b83d8f121f6ba095be8ded5f720ee0512575d7
-  .codex/agents/explorer.toml: sha256:a1edecd5d3192a977c4fc789b30b88e72d43d6b9cfa6efe3c6c6965a58d1f441
-  .codex/agents/gray-contract-implementer.toml: sha256:e186fc739c7d1029ca1c4b7d6e66d3e687e0b75e05a98680a6e641e8bd79eceb
-  .codex/agents/green-behavior-implementer.toml: sha256:1486594dcaa25e6d9885e8c8662540d32262d0d8aa3b52be5df74f858ffd6ac0
-  .codex/agents/implementer.toml: sha256:a732c163539ae2bb3661d990e54aa2289c8874cfc3f73f5d3afa32d5820a50f2
-  .codex/agents/improvement-reviewer.toml: sha256:bb46912ae99345fc8aab55affc5ead9a3890a55000127286f283d85694ffd8f3
-  .codex/agents/mastermind.toml: sha256:e5b8176fcb6586c790e0ae773ea5a2516b2f86910425a7e0d82765166c8dde7c
-  .codex/agents/purple-evidence-improver.toml: sha256:21a9828ad852b1e25647895f097e993089b688d04d7f45d59273c4b69671d727
-  .codex/agents/red-evidence-author.toml: sha256:c09b148a60dc4c2f6e241eecf64baf188db54283292a489f6ddd5b536f86225f
-  .codex/agents/researcher.toml: sha256:55c5b8aee2c861c83b11bcaf8ebd2729663e888569edf1f555a41dbd3631ec65
-  .codex/agents/reviewer-terra.toml: sha256:dd5f2c60458130418002f6f72becc919fda5a2148868e32f76cf0b74093adbd4
-  .codex/agents/reviewer.toml: sha256:3534a3be08bae98ad80f7094d9bf1580a9f2e6175ea7799edde805c8a84df42e
-  .codex/agents/workspace-operator.toml: sha256:9c1b773dea522dbe7ab5a0e4d0d41c0fa4b6d7bbcd031745bc65352b9c5e70ed
-  .codex/agents/writer.toml: sha256:c7f8a90fe7a2e0622d737cd031b38537f96d2dd6c506aa1fd24f0c27dab8f3d0
-  .codex/agents/writing-reviewer.toml: sha256:c22fc1e2b1bb6439d6ab075e9b5265066fa6b7483bf8107c33656fa3f17b15b1
-  .opencode/agents/advisor.md: sha256:330e2139612c0a9232469eb8d757420fb287df8cdd3112ded02b8008c5557f13
-  .opencode/agents/blue-structure-improver.md: sha256:0f45a08ffc8d0e51f17c4a3d425c8d94d8c788a78927fb2ed61ea4d3dc0b64f4
-  .opencode/agents/brilliant-implementer.md: sha256:1d4b03392d19436e5a02a737e2599315a334e867fc2494c8dd77cdb048068706
-  .opencode/agents/challenger.md: sha256:1ce1364747372560ff193346a9056306dbef7cc00747680629f583b818cd9ee1
-  .opencode/agents/explorer.md: sha256:1234896fbf6491efe88500ad07a12751cd8bc34bdd1df010c9cdb69420df1c8f
-  .opencode/agents/gray-contract-implementer.md: sha256:fc8831cb28ad32994469e8c6f9e5a5616d53589d4dfaaa2d0c7ca24ce428b1d8
-  .opencode/agents/green-behavior-implementer.md: sha256:29adefb5adc26365113c64271513f1d503ff5ef7ddc5bb4c9cf85839da4f001b
-  .opencode/agents/implementer.md: sha256:99e4b9442487a4a68dab2e547663a21892d765bde9e4990a5423367a0b039965
-  .opencode/agents/improvement-reviewer.md: sha256:803864cee14b9dd186b96842274d5f426a451d2d442585cb6c55565cf6542439
-  .opencode/agents/mastermind.md: sha256:d635067acf13aee4f9433ef18a8f82d42ea67f53070c7feb1bf36df0d08ca189
-  .opencode/agents/purple-evidence-improver.md: sha256:ecc9269c403b8afc6ab8893e40d122e1187ad6680e7e0d5cb6659606ae7c7f85
-  .opencode/agents/red-evidence-author.md: sha256:32769c13d847f8dd91cbfcb6c57367f482906cd375aa207659638afbdf13211a
-  .opencode/agents/researcher.md: sha256:48b5f1a7fa509a993efeb7877b76e32dc18cd15afc2f221788ff55b3b4f672c1
-  .opencode/agents/reviewer-terra.md: sha256:c8024750496df8302011620bee04c73df5d5b831bc2f7ac40dfef37b8534f266
-  .opencode/agents/reviewer.md: sha256:be9ae2b3868b18ba3002686beacc5a47729ec302a9f260d71d3625aae7bc9116
-  .opencode/agents/workspace-operator.md: sha256:74470c02d14c57aab4043a59c7b86e0c55b57700204132881bd4163c5e6534d9
-  .opencode/agents/writer.md: sha256:c2c1a4ca499658c9f65a63b130da9e7339b76f5b5780523bcac38a94e74b079d
-  .opencode/agents/writing-reviewer.md: sha256:23558383967d36b605f5ab43dbe23eaaf36ee9041d7e355534fe62d2b1932a0d
+  .codex/agents/advisor.toml: sha256:68f4028da10c16d1046dca2af23a44310b6459f1dae43faae4deb0e3e4577046
+  .codex/agents/architect.toml: sha256:66b181e1a3a832c404a3b4bafd8db4ba2949fc2984099372ea22492f4f94fc2d
+  .codex/agents/blue-structure-improver.toml: sha256:3c24426332f592571a0fd990385993309f5d59fc2304c69f18f5251c834ec538
+  .codex/agents/brilliant-implementer.toml: sha256:206f023794dc49e3c88be3e173c425890331ae7561f5df8f835ca3b2eff94f1e
+  .codex/agents/challenger-two.toml: sha256:b0964da3ecc53affc9e39f96cf07a7d95099cb6d0d01d7ae1f7f72f91f490093
+  .codex/agents/challenger.toml: sha256:d8b0085f91a2cd5cb5429926be6f61752116ff92fb4b50a7536a11ea654b4cd7
+  .codex/agents/explorer.toml: sha256:5328981476534cfb2e287af22bb3d1eecbaa4a4509a78d942bd0b0e1fffd1da2
+  .codex/agents/gray-contract-implementer.toml: sha256:1e2512514e2e9ccf3f8940488842dfc4987657758b1050c8780a3d86da05010f
+  .codex/agents/green-behavior-implementer.toml: sha256:2377e5f4160abdc8764842c4521fbdf04de13ff37cb7d91677d78bdb6cd3b4ee
+  .codex/agents/implementer.toml: sha256:d79c0beb51339390f3ebc59cfc84b840ef910482b1341722537c7e3c01040581
+  .codex/agents/improvement-reviewer.toml: sha256:d65925db09358dffe436551c894b2a8d88470fea159f0add0f675d82537ecd10
+  .codex/agents/mastermind.toml: sha256:91f72fa8ea287337291b88d89bedc5d42edf66d4a1fade42429f0f01668b50f7
+  .codex/agents/purple-evidence-improver.toml: sha256:f32fc79529b05977b94d624730a6423d2f940ca27057184642ca2dcb6c9802ce
+  .codex/agents/red-evidence-author.toml: sha256:18949e81b6c28b78e40bc40dc9c9ed4d3e8af29bc45451c096c28b201ba7ea79
+  .codex/agents/researcher.toml: sha256:c7989cc3c28183adf723cfb07fdb3d8ef87e468387f722d096078e7cb4e00b84
+  .codex/agents/reviewer-terra.toml: sha256:ce910154bb41d30db2d5a4e60f818a7da8b509d1e5612c34cb21d3b464f46207
+  .codex/agents/reviewer.toml: sha256:00bb00024134bb2d3971d87e61516f8f059898d483938d52b91700004be84cfc
+  .codex/agents/workspace-operator.toml: sha256:9a6217252a0353d7b2f3b7ad83a0e3890f4054bfaf471ab0ce19ed68547b128d
+  .codex/agents/writer.toml: sha256:81a63103c0d0a71b5ededdd28124a43b4b69c073dc01005e6de09b07b11a96cb
+  .codex/agents/writing-reviewer.toml: sha256:61726357069ef832e71ecba23719311823189f6032382e5bf604efb481c91785
+  .opencode/agents/advisor.md: sha256:8320a6bc849070e9c53fa7a506aa744be632c9e90d41266695b523685738d67f
+  .opencode/agents/architect.md: sha256:e608dd4b6a909dd2670b656b8ee9fdef0ebad0ba68840795bebc8867125f1fc7
+  .opencode/agents/blue-structure-improver.md: sha256:0545905537ba1940a621bfcd2a59a401c081bde6f20ec9f84d5351a61b9c5840
+  .opencode/agents/brilliant-implementer.md: sha256:cfcc466b7ee0b44201ea5c5f3c23579c6b1c637112055b93cf02f7443146418e
+  .opencode/agents/challenger-two.md: sha256:d67782b2152eae082843419033732706680b136af4dd5bcfc044fa9d6f5cccf6
+  .opencode/agents/challenger.md: sha256:601ad0db96176de88a89143c8f3029dd98bbe7b57f5ae8355cba1b48564c0255
+  .opencode/agents/explorer.md: sha256:328881a37c57b63b1f2acea1f73e6166b7c4be27cb43983bbc83105f4d7243ca
+  .opencode/agents/gray-contract-implementer.md: sha256:cb55b96898b5cbab4f8095ca9cdac12cb04d383ead58d1291b7bfe674af65fa5
+  .opencode/agents/green-behavior-implementer.md: sha256:c2e9542b7b189d11bafd9bf9559360b85fcc9d09fa304d67c0a0ff6e816453fc
+  .opencode/agents/implementer.md: sha256:ee95559652b3bcb5b4b31eedc076907322a68859342fd054b0e98e85a6749e89
+  .opencode/agents/improvement-reviewer.md: sha256:2df45223196e3248636d1571f74fe329caada5cf1fc3469932b29f9ebcffdbca
+  .opencode/agents/mastermind.md: sha256:834462d83193af5ce250099ffd18b97a47e15b566519bbc55efdb6594927da81
+  .opencode/agents/purple-evidence-improver.md: sha256:15f537b0f48d1fe0d70449b7be1e5dfddec23745ef9dd354e6fd98fc45bc1640
+  .opencode/agents/red-evidence-author.md: sha256:ea43b071f764b10d5b9630a9a45400acab1dfe4944756628f229cc0990b03da5
+  .opencode/agents/researcher.md: sha256:1e6f86a093402a760ba8c605bd4f6436518eb26a90981713981581097bfa4c1c
+  .opencode/agents/reviewer-terra.md: sha256:b3053ede5a23582cf9bf13733248ddb4d2278aeafe54a9bb5c74e0fd3490ed2f
+  .opencode/agents/reviewer.md: sha256:70127d39c6b76f0f131e1377b495351520636806ded25dbc39b5a9cc42dbe9a5
+  .opencode/agents/workspace-operator.md: sha256:a501bef83362aa4567ce85e1c00f88610f0aa85253f59ad6c5dad73eb99f58df
+  .opencode/agents/writer.md: sha256:fc3ce7b5813c5a4c6806cd4d74e0a0a8df20d4855094859d99300acf892c243c
+  .opencode/agents/writing-reviewer.md: sha256:16d86820cd5e9aa09a6252ae63c5987645ea524dc0e8eaaf1b417869674d3391

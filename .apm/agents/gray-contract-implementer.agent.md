@@ -5,7 +5,7 @@ description: Conditional assured-profile specialist that freezes one accepted ca
 model: openai/gpt-5.6-luna
 reasoningEffort: xhigh
 mode: subagent
-color: muted
+color: info
 permission:
   read:
     "*": allow
@@ -116,7 +116,6 @@ permission:
     "*helm upgrade*": ask
     "*terraform apply*": ask
     "*terraform destroy*": ask
-    "* publish*": ask
     "* deploy*": ask
     "*aws *": ask
     "*az *": ask
