@@ -122,6 +122,25 @@ therefore demonstrates stronger architecture closure, slicing, and Mastermind
 integration, but it does not prove delegation efficiency or empirically superior
 delegation.
 
+### Find Gray Evidence
+
+Find Child 2 adds evidence against treating a closed architecture packet as proof
+that one large bounded assignment is operationally efficient. Three Gray contract
+implementation attempts reached their execution limit before completing the full
+neutral Markdown, Find model, wiring, and validation packet. The first retained
+partial artifacts, the second completed most source but not the final gate, and a
+fresh attempt completed analysis without edits. The Mastermind inspected and
+completed the integrated result. Bounded correctness review still found material
+model-invariant gaps and required focused continuations before passing.
+
+The result does not show that delegation itself is unsuitable. The packet was
+closed and scope remained intact, but its volume combined several independently
+inspectable contract families. The strongest future option is to keep one Gray
+phase and commit while assigning smaller neutral-document, result-model, and
+wiring packets. That reduces per-assignment breadth but adds handoff and
+integration cost. Another similarly closed slice must reproduce the limit before
+this observation supports a reusable workflow or agent-package change.
+
 ## Guidance To Retain For Route Inspect
 
 The [route-inspect Task](../../working/cli-development/tasks/route-discovery/route-inspect.md)

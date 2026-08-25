@@ -1,6 +1,10 @@
 using OpenForge.Cli.Core.Framework.Filesystem;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
@@ -29,16 +33,16 @@ internal static class RouteListFilesystemFindingPolicy
                 "The physical link chain contains a cycle."),
             PhysicalPathState.Inaccessible => PhysicalBoundary(
                 canonicalLogicalSubject,
-                ReadFailureCause(resolution.Failure!, "Physical path access was denied.")),
+                ReadFailureCause(ReadFailure(resolution), "Physical path access was denied.")),
             PhysicalPathState.Invalid => PhysicalBoundary(
                 canonicalLogicalSubject,
-                ReadFailureCause(resolution.Failure!, "The physical path is invalid.")),
+                ReadFailureCause(ReadFailure(resolution), "The physical path is invalid.")),
             PhysicalPathState.Unsupported => PhysicalBoundary(
                 canonicalLogicalSubject,
-                ReadFailureCause(resolution.Failure!, "The physical path operation is unsupported.")),
+                ReadFailureCause(ReadFailure(resolution), "The physical path operation is unsupported.")),
             PhysicalPathState.InputOutputFailure => PhysicalBoundary(
                 canonicalLogicalSubject,
-                ReadFailureCause(resolution.Failure!, "The physical path operation failed.")),
+                ReadFailureCause(ReadFailure(resolution), "The physical path operation failed.")),
             _ => throw new ArgumentOutOfRangeException(
                 nameof(resolution),
                 resolution.State,
@@ -57,10 +61,10 @@ internal static class RouteListFilesystemFindingPolicy
                 "The directory is unavailable."),
             DirectoryEnumerationState.AccessDenied => ReadUnavailable(
                 result.CanonicalLogicalPath,
-                ReadFailureCause(result.Failure!, "Directory access was denied.")),
+                ReadFailureCause(result.ReadFailure(), "Directory access was denied.")),
             DirectoryEnumerationState.InputOutputFailure => ReadUnavailable(
                 result.CanonicalLogicalPath,
-                ReadFailureCause(result.Failure!, "Directory enumeration failed.")),
+                ReadFailureCause(result.ReadFailure(), "Directory enumeration failed.")),
             DirectoryEnumerationState.Cancelled => Interrupted(result.CanonicalLogicalPath),
             _ => throw new ArgumentOutOfRangeException(nameof(result), result.State, "The directory state is not defined."),
         };
@@ -77,13 +81,13 @@ internal static class RouteListFilesystemFindingPolicy
                 "The filesystem candidate is unavailable."),
             RouteListFilesystemEntryState.Inaccessible => PhysicalBoundary(
                 result.CanonicalLogicalPath,
-                ReadFailureCause(result.Failure!, "Filesystem entry access was denied.")),
+                ReadFailureCause(result.ReadFailure(), "Filesystem entry access was denied.")),
             RouteListFilesystemEntryState.Unsupported => PhysicalBoundary(
                 result.CanonicalLogicalPath,
-                ReadFailureCause(result.Failure!, "The filesystem entry is unsupported.")),
+                ReadFailureCause(result.ReadFailure(), "The filesystem entry is unsupported.")),
             RouteListFilesystemEntryState.InputOutputFailure => PhysicalBoundary(
                 result.CanonicalLogicalPath,
-                ReadFailureCause(result.Failure!, "Filesystem entry inspection failed.")),
+                ReadFailureCause(result.ReadFailure(), "Filesystem entry inspection failed.")),
             _ => throw new ArgumentOutOfRangeException(nameof(result), result.State, "The filesystem entry state is not defined."),
         };
     }
@@ -91,7 +95,7 @@ internal static class RouteListFilesystemFindingPolicy
     internal static RouteListFilesystemFinding? FromFile<T>(FileReadResult<T> result)
     {
         ArgumentNullException.ThrowIfNull(result);
-        if (!RouteListLogicalPath.IsCanonical(result.LogicalPath))
+        if (!SourceLogicalPath.IsCanonicalSource(result.LogicalPath))
         {
             throw new ArgumentException("The file read logical path is not canonical.", nameof(result));
         }
@@ -102,19 +106,91 @@ internal static class RouteListFilesystemFindingPolicy
             FileReadState.Missing => ReadUnavailable(result.LogicalPath, "The source file is unavailable."),
             FileReadState.InvalidEncoding => ReadUnavailable(
                 result.LogicalPath,
-                ReadFailureCause(result.Failure!, "The source file is not valid UTF-8.")),
+                ReadFailureCause(ReadFailure(result), "The source file is not valid UTF-8.")),
             FileReadState.AccessDenied => ReadUnavailable(
                 result.LogicalPath,
-                ReadFailureCause(result.Failure!, "Source file access was denied.")),
+                ReadFailureCause(ReadFailure(result), "Source file access was denied.")),
             FileReadState.InputOutputFailure => ReadUnavailable(
                 result.LogicalPath,
-                ReadFailureCause(result.Failure!, "The source file read failed.")),
+                ReadFailureCause(ReadFailure(result), "The source file read failed.")),
             FileReadState.Cancelled => Interrupted(result.LogicalPath),
             FileReadState.InvalidSyntax => throw new ArgumentOutOfRangeException(
                 nameof(result),
                 result.State,
                 "Route-list metadata syntax is classified by its command-local parser."),
             _ => throw new ArgumentOutOfRangeException(nameof(result), result.State, "The file read state is not defined."),
+        };
+    }
+
+    internal static RouteListFilesystemFinding? FromCatalogueIssue(
+        SourceCatalogueIssue issue,
+        SourceCandidate? candidate)
+    {
+        ArgumentNullException.ThrowIfNull(issue);
+        return issue.Code switch
+        {
+            SourceCatalogueIssueCode.RootMissing => ReadUnavailable(
+                issue.AttemptedCanonicalPath,
+                "The filesystem candidate is unavailable."),
+            SourceCatalogueIssueCode.RootUnsafe => PhysicalBoundary(
+                issue.AttemptedCanonicalPath,
+                ReadPhysicalCause(candidate?.PhysicalState, issue.Failure)),
+            SourceCatalogueIssueCode.RootUnavailable => issue.Failure is null
+                ? DirectoryExpected(issue.AttemptedCanonicalPath)
+                : PhysicalBoundary(
+                    issue.AttemptedCanonicalPath,
+                    ReadFailureCause(issue.Failure, "The physical path operation failed.")),
+            SourceCatalogueIssueCode.DirectoryUnavailable => ReadUnavailable(
+                issue.AttemptedCanonicalPath,
+                ReadFailureCause(issue.Failure, "Directory enumeration failed.")),
+            SourceCatalogueIssueCode.CandidateUnsafe => ReadCandidateUnsafe(issue, candidate),
+            SourceCatalogueIssueCode.CandidateUnavailable => PhysicalBoundary(
+                issue.AttemptedCanonicalPath,
+                ReadFailureCause(issue.Failure, "Filesystem entry inspection failed.")),
+            SourceCatalogueIssueCode.IdentityUnavailable
+                when candidate?.PhysicalState == PhysicalPathState.Contained
+                    && candidate.Form.HasValue
+                    && candidate.Form.Value != SourceDocumentForm.OverwriteCompanion =>
+                UnsupportedSourceForm(issue.AttemptedCanonicalPath),
+            SourceCatalogueIssueCode.IdentityUnavailable => null,
+            SourceCatalogueIssueCode.OrphanOverwrite => OrphanOverwrite(issue.AttemptedCanonicalPath),
+            SourceCatalogueIssueCode.IdentityCollision
+                or SourceCatalogueIssueCode.PhysicalAlias => null,
+            _ => throw new ArgumentOutOfRangeException(nameof(issue), issue.Code, "The source catalogue issue code is not defined."),
+        };
+    }
+
+    internal static RouteListFilesystemFinding? FromDocumentRead(SourceDocumentReadResult result)
+    {
+        ArgumentNullException.ThrowIfNull(result);
+        if (result.Verification.State is SourceLayerVerificationState.Verified
+            or SourceLayerVerificationState.Missing)
+        {
+            var read = result.Read
+                ?? throw new InvalidOperationException("A verified or missing source layer requires its typed read result.");
+            return read.State == FileReadState.Cancelled
+                ? null
+                : FromFile(read);
+        }
+
+        return result.Verification.State switch
+        {
+            SourceLayerVerificationState.Unsafe => PhysicalBoundary(
+                result.Layer.CanonicalPath,
+                "The source layer no longer has a safely contained physical identity."),
+            SourceLayerVerificationState.Unavailable => PhysicalBoundary(
+                result.Layer.CanonicalPath,
+                ReadFailureCause(
+                    result.Verification.Failure,
+                    "The source layer physical identity is unavailable.")),
+            SourceLayerVerificationState.Changed => PhysicalBoundary(
+                result.Layer.CanonicalPath,
+                "The source layer physical identity changed after catalogue formation."),
+            SourceLayerVerificationState.Cancelled => null,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(result),
+                result.Verification.State,
+                "The source layer verification state is not defined."),
         };
     }
 
@@ -220,9 +296,53 @@ internal static class RouteListFilesystemFindingPolicy
             cause);
     }
 
-    private static string ReadFailureCause(FilesystemFailure failure, string fallback)
+    private static RouteListFilesystemFinding ReadCandidateUnsafe(
+        SourceCatalogueIssue issue,
+        SourceCandidate? candidate)
     {
-        ArgumentNullException.ThrowIfNull(failure);
+        return candidate?.PhysicalState == PhysicalPathState.Missing
+            ? ReadUnavailable(issue.AttemptedCanonicalPath, "The filesystem candidate is unavailable.")
+            : PhysicalBoundary(
+                issue.AttemptedCanonicalPath,
+                ReadPhysicalCause(candidate?.PhysicalState, issue.Failure));
+    }
+
+    private static string ReadPhysicalCause(
+        PhysicalPathState? state,
+        FilesystemFailure? failure)
+    {
+        if (failure is not null)
+        {
+            return ReadFailureCause(failure, "The physical path operation failed.");
+        }
+
+        return state switch
+        {
+            PhysicalPathState.Dangling => "The physical link target is unavailable.",
+            PhysicalPathState.Cycle => "The physical link chain contains a cycle.",
+            _ => "The physical path leaves the selected workspace.",
+        };
+    }
+
+    private static FilesystemFailure ReadFailure(PhysicalPathResolution resolution)
+    {
+        return resolution.Failure
+            ?? throw new InvalidOperationException("A failed physical resolution requires its direct failure.");
+    }
+
+    private static FilesystemFailure ReadFailure<T>(FileReadResult<T> result)
+    {
+        return result.Failure
+            ?? throw new InvalidOperationException("A failed file read requires a failure.");
+    }
+
+    private static string ReadFailureCause(FilesystemFailure? failure, string fallback)
+    {
+        if (failure is null)
+        {
+            return fallback;
+        }
+
         var cause = failure.DirectCause;
         var technicalPrefixEnd = cause.IndexOf("): ", StringComparison.Ordinal);
         if (technicalPrefixEnd >= 0)

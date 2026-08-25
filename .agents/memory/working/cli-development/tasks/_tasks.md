@@ -13,7 +13,8 @@ Read the [program Task](00-cli-development.md), [Architecture](../../../crystall
 - [x] [CLI Foundation](foundation/_foundation.md) — Complete — Implementer: Mastermind
 - [x] [Route Discovery](route-discovery/_route-discovery.md) — Complete — Implementer: Mastermind
 - [x] [Generic CLI Improvements](generic-improvements/_generic-improvements.md) — Complete — Implementer: Mastermind
-- [ ] [Read-Only Commands](read-only/_read-only.md) — Planned — Implementer: Not assigned
+- [ ] [Read-Only Commands](read-only/_read-only.md) — Active; Find Child 1 and Modern C# Improvements Complete, Find Child 2 focused Preflight accepted at `e24b9fe`, strict Gray accepted in the commit containing this record, Red next — Implementer: Mastermind
+- [x] [Modern C# Improvements](modern-csharp-improvements.md) — Complete; Preflight `55eb82e`, Framework `a90af59`, Shell/root `fe10525`, Route Inspect/family `62a1dd9`, Route List `273eb45`, Tests/support `6af5fb1`, and final managed, Native AOT, package, audit, and public no-write gates accepted in the commit containing this record — Implementer: Mastermind
 - [ ] [Mutation Foundation](mutation-foundation/_mutation-foundation.md) — Planned — Implementer: Not assigned
 - [ ] [Route Mutation Commands](route-mutation/_route-mutation.md) — Planned — Implementer: Not assigned
 - [ ] [Lifecycle Commands](lifecycle/_lifecycle.md) — Planned — Implementer: Not assigned
@@ -49,6 +50,8 @@ Read the [program Task](00-cli-development.md), [Architecture](../../../crystall
 
 Generated entries retain their pre-generic-improvements projection under the
 accepted `CLI-EDGE-001` routing/index waiver; generated content is not hand-edited.
+The explicit Modern C# Improvements link above records maintainer-authorized
+future work without claiming a generated-index refresh.
 
 <!-- open-forge:generated-index:start -->
 

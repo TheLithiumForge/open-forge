@@ -94,7 +94,9 @@ public sealed class RouteInspectProfileBuilderMeasurementTests
             [root.CanonicalPath]);
         var logicalProfile = Build(logicalGraph, target.CanonicalPath);
 
-        Assert.Equal(2, logicalProfile.Measurements.SelectedClosure.Value!.PhysicalFileCount);
+        Assert.Equal(
+            2,
+            Assert.IsType<RouteInspectMeasurement>(logicalProfile.Measurements.SelectedClosure.Value).PhysicalFileCount);
 
         var aliasedRoot = RouteInspectSourceTestData.Source(
             new RouteInspectSourceSpec
@@ -122,8 +124,12 @@ public sealed class RouteInspectProfileBuilderMeasurementTests
             [aliasedRoot.CanonicalPath]);
         var physicalProfile = Build(physicalGraph, aliasedTarget.CanonicalPath);
 
-        Assert.Equal(1, physicalProfile.Measurements.SelectedClosure.Value!.PhysicalFileCount);
-        Assert.Equal(0, physicalProfile.Measurements.SelectionAddition.Value!.PhysicalFileCount);
+        Assert.Equal(
+            1,
+            Assert.IsType<RouteInspectMeasurement>(physicalProfile.Measurements.SelectedClosure.Value).PhysicalFileCount);
+        Assert.Equal(
+            0,
+            Assert.IsType<RouteInspectMeasurement>(physicalProfile.Measurements.SelectionAddition.Value).PhysicalFileCount);
     }
 
     [Fact(DisplayName = "Route inspect selected closure retains base-first overwrites on ancestors and target")]
@@ -240,10 +246,18 @@ public sealed class RouteInspectProfileBuilderMeasurementTests
 
         var profile = Build(graph, target.CanonicalPath);
 
-        Assert.Equal(3, profile.Measurements.SelectedClosure.Value!.PhysicalFileCount);
-        Assert.Equal(1, profile.Measurements.LoadNowDescendants.Value!.PhysicalFileCount);
-        Assert.Equal(1, profile.Measurements.TaskStartOverlap.Value!.PhysicalFileCount);
-        Assert.Equal(2, profile.Measurements.SelectionAddition.Value!.PhysicalFileCount);
+        Assert.Equal(
+            3,
+            Assert.IsType<RouteInspectMeasurement>(profile.Measurements.SelectedClosure.Value).PhysicalFileCount);
+        Assert.Equal(
+            1,
+            Assert.IsType<RouteInspectMeasurement>(profile.Measurements.LoadNowDescendants.Value).PhysicalFileCount);
+        Assert.Equal(
+            1,
+            Assert.IsType<RouteInspectMeasurement>(profile.Measurements.TaskStartOverlap.Value).PhysicalFileCount);
+        Assert.Equal(
+            2,
+            Assert.IsType<RouteInspectMeasurement>(profile.Measurements.SelectionAddition.Value).PhysicalFileCount);
     }
 
     [Fact(DisplayName = "Route inspect preserves measured zero unavailable and not-applicable measurement states")]
@@ -332,7 +346,6 @@ public sealed class RouteInspectProfileBuilderMeasurementTests
         RouteInspectFact<RouteInspectMeasurement> fact,
         RouteInspectMeasurementExpectation expected)
     {
-        ArgumentNullException.ThrowIfNull(expected);
         Assert.Equal(RouteInspectFactState.Value, fact.State);
         var measurement = Assert.IsType<RouteInspectMeasurement>(fact.Value);
         Assert.Equal(expected.PhysicalFileCount, measurement.PhysicalFileCount);

@@ -1,6 +1,5 @@
-using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Models.Topology;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile;
 
@@ -8,7 +7,8 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
 {
     private IReadOnlyList<RouteSource>? ReadChain(string path)
     {
-        var current = _graph.Topology.FindByPath(path);
+        var topology = _graph.RouteFacts.Topology;
+        var current = topology.FindByPath(path);
         if (current is null)
         {
             return null;
@@ -16,17 +16,23 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
 
         var chain = new List<RouteSource>();
         var seen = new HashSet<string>(StringComparer.Ordinal);
-        while (seen.Add(current.Source.CanonicalPath))
+        while (seen.Add(current.Identity.CanonicalBasePath))
         {
-            chain.Add(current.Source);
-            if (current.ParentState != RouteTopologyParentState.Resolved)
+            var source = _graph.ProjectionSet.FindByPath(current.Identity.CanonicalBasePath);
+            if (source is null)
             {
-                return current.ParentState == RouteTopologyParentState.None
+                return null;
+            }
+
+            chain.Add(source);
+            if (current.ParentState != SourceRouteParentState.Resolved)
+            {
+                return current.ParentState == SourceRouteParentState.None
                     ? chain.AsEnumerable().Reverse().ToArray()
                     : null;
             }
 
-            current = _graph.Topology.FindByPath(current.ParentPath!);
+            current = topology.FindByPath(current.ParentPaths[0]);
             if (current is null)
             {
                 return null;

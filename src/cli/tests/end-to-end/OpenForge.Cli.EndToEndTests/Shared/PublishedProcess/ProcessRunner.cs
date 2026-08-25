@@ -231,10 +231,12 @@ internal static class ProcessRunner
         catch (OperationCanceledException) when (waitToken.IsCancellationRequested)
         {
             var killRequested = await StopAndDrainAsync(process, stdout, stderr).ConfigureAwait(false);
-            if (timeoutSource?.IsCancellationRequested == true && !cancellationToken.IsCancellationRequested)
+            if (timeoutSource?.IsCancellationRequested == true
+                && !cancellationToken.IsCancellationRequested
+                && request.Timeout is { } timeout)
             {
                 throw new TimeoutException(
-                    $"Executable '{request.ExecutablePath}' did not exit within {request.Timeout!.Value}.");
+                    $"Executable '{request.ExecutablePath}' did not exit within {timeout}.");
             }
 
             if (cancellationToken.IsCancellationRequested)

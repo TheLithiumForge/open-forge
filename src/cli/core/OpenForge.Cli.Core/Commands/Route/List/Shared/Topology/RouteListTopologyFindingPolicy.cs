@@ -1,7 +1,7 @@
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Models.Topology;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Topology;
@@ -14,7 +14,6 @@ internal static class RouteListTopologyFindingPolicy
 {
     internal static RouteListFinding FromSelectionIssue(RouteListSelectionIssue issue)
     {
-        ArgumentNullException.ThrowIfNull(issue);
         return new RouteListFinding(
             issue.Code,
             issue.Status,
@@ -25,7 +24,6 @@ internal static class RouteListTopologyFindingPolicy
 
     internal static RouteListFinding FromFilesystem(RouteListFilesystemFinding finding)
     {
-        ArgumentNullException.ThrowIfNull(finding);
         return new RouteListFinding(
             finding.Code,
             finding.Status,
@@ -33,14 +31,40 @@ internal static class RouteListTopologyFindingPolicy
             finding.Cause);
     }
 
+    internal static RouteListFinding FromRouteIssue(SourceRouteIssue issue)
+    {
+        return issue.Code switch
+        {
+            SourceRouteIssueCode.LoaderMalformed => new RouteListFinding(
+                RouteListFindingCode.LoaderMalformed,
+                CliSemanticStatus.Incomplete,
+                issue.CanonicalPath,
+                issue.Cause),
+            SourceRouteIssueCode.LoaderUnsafe => new RouteListFinding(
+                RouteListFindingCode.PhysicalBoundary,
+                CliSemanticStatus.Blocked,
+                issue.CanonicalPath,
+                issue.Cause),
+            SourceRouteIssueCode.RouteAmbiguous => new RouteListFinding(
+                RouteListFindingCode.RouteAmbiguous,
+                CliSemanticStatus.Blocked,
+                issue.CanonicalPath,
+                issue.Cause,
+                issue.RelatedPaths),
+            SourceRouteIssueCode.LoaderUnavailable or SourceRouteIssueCode.RouteSupportUnavailable => new RouteListFinding(
+                RouteListFindingCode.LoaderUnavailable,
+                CliSemanticStatus.Incomplete,
+                issue.CanonicalPath,
+                issue.Cause),
+            _ => throw new ArgumentOutOfRangeException(nameof(issue), issue.Code, "The source route issue code is not defined."),
+        };
+    }
+
     internal static IReadOnlyList<RouteListTopologyFindingAtDepth> ReadRelevantInventoryFindings(
         RouteListTopologyInput input,
-        RouteTopologyFacts topology,
-        IReadOnlyList<RouteTopologyNode> selectedRoots)
+        SourceRouteTopology topology,
+        IReadOnlyList<SourceRouteNode> selectedRoots)
     {
-        ArgumentNullException.ThrowIfNull(input);
-        ArgumentNullException.ThrowIfNull(topology);
-        ArgumentNullException.ThrowIfNull(selectedRoots);
         var relevant = new List<RouteListTopologyFindingAtDepth>();
         foreach (var finding in input.Inventory.Findings)
         {
@@ -63,13 +87,12 @@ internal static class RouteListTopologyFindingPolicy
     }
 
     internal static bool AffectsDirectChildren(
-        RouteTopologyNode node,
+        SourceRouteNode node,
+        RouteSource source,
         RouteListFilesystemFinding finding)
     {
-        ArgumentNullException.ThrowIfNull(node);
-        ArgumentNullException.ThrowIfNull(finding);
         if (finding.Status == CliSemanticStatus.Attention
-            || node.Source.Kind != RouteSourceKind.Entrypoint)
+            || source.Kind != RouteSourceKind.Entrypoint)
         {
             return false;
         }
@@ -105,7 +128,6 @@ internal static class RouteListTopologyFindingPolicy
         RouteListSelectionResolutionState selectionState,
         IReadOnlyList<RouteListFinding> findings)
     {
-        ArgumentNullException.ThrowIfNull(findings);
         if (selectionState == RouteListSelectionResolutionState.Invalid)
         {
             return CliSemanticStatus.Invalid;
@@ -146,7 +168,6 @@ internal static class RouteListTopologyFindingPolicy
 
     internal static string ReadBoundary(RouteListFinding finding)
     {
-        ArgumentNullException.ThrowIfNull(finding);
         return finding.Subject is null
             ? finding.Cause
             : $"{finding.Subject}: {finding.Cause}";

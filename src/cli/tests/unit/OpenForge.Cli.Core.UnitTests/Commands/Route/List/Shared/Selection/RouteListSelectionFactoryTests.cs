@@ -3,11 +3,25 @@ using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models;
+using OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models.Source;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.List.Shared.Selection;
 
 public sealed class RouteListSelectionFactoryTests
 {
+    [Fact(DisplayName = "Route-list selection policy classifies an omitted reference as Loader roots")]
+    [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
+    public void OmittedReferenceUsesLoaderRootSelectionPolicy()
+    {
+        var selection = RouteListSelectionFactory.Attempted(null);
+
+        Assert.Equal(RouteListSelectionKind.LoaderRoots, selection.Kind);
+        Assert.Null(selection.AttemptedId);
+        Assert.Null(selection.AttemptedPath);
+        Assert.Null(selection.ResolvedId);
+        Assert.Null(selection.ResolvedPath);
+    }
+
     [Fact(DisplayName = "Route-list selection factory forms Loader roots without any attempted or resolved identity")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void LoaderRootsContainNoSourceIdentity()

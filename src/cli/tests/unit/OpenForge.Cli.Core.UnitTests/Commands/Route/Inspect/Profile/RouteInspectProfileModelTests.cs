@@ -112,7 +112,8 @@ public sealed class RouteInspectProfileModelTests
             RouteInspectFact<RouteInspectAxiomsSources>.Available(new RouteInspectAxiomsSources(["loader", "root"])),
             RouteInspectFact<RouteInspectAxiomsLocalState>.Available(RouteInspectAxiomsLocalState.Substantive));
 
-        Assert.Equal(["loader", "root"], substantive.Inherited.Value!.SourceIds);
+        var substantiveSources = Assert.IsType<RouteInspectAxiomsSources>(substantive.Inherited.Value);
+        Assert.Equal(["loader", "root"], substantiveSources.SourceIds);
         Assert.Equal(RouteInspectAxiomsLocalState.Substantive, substantive.Local.Value);
     }
 

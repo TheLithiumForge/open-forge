@@ -61,9 +61,18 @@ internal sealed class RouteInspectProfileBuilder
 
     private static bool HasUnavailableAxioms(RouteInspectFact<RouteInspectAxiomsProfile> axioms)
     {
-        return axioms.State == RouteInspectFactState.Unavailable
-            || axioms.Value is { } value
-                && (value.Inherited.State == RouteInspectFactState.Unavailable
-                    || value.Local.State == RouteInspectFactState.Unavailable);
+        if (axioms.State == RouteInspectFactState.Unavailable)
+        {
+            return true;
+        }
+
+        if (axioms.State != RouteInspectFactState.Value)
+        {
+            return false;
+        }
+
+        var value = axioms.ReadValue();
+        return value.Inherited.State == RouteInspectFactState.Unavailable
+            || value.Local.State == RouteInspectFactState.Unavailable;
     }
 }

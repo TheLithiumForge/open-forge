@@ -1,7 +1,9 @@
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Profile;
+using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Rendering;
+using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect.Shared.Presentation;
 
@@ -60,7 +62,8 @@ public sealed class RouteInspectJsonPresentationTests
         Assert.Equal(
             ["path", "selectedBy"],
             workspace.EnumerateObject().Select(property => property.Name));
-        Assert.Equal(result.Workspace!.LexicalRoot, workspace.GetProperty("path").GetString());
+        var workspaceValue = Assert.IsType<CliWorkspace>(result.Workspace);
+        Assert.Equal(workspaceValue.LexicalRoot, workspace.GetProperty("path").GetString());
         Assert.Equal("current-directory", workspace.GetProperty("selectedBy").GetString());
 
         var selection = root.GetProperty("result").GetProperty("selection");
@@ -76,8 +79,9 @@ public sealed class RouteInspectJsonPresentationTests
         Assert.Equal(
             ["id", "path", "sourceKind", "sourceForm", "routeState", "physicalLayers"],
             identity.EnumerateObject().Select(property => property.Name));
-        Assert.Equal(result.Identity!.Id, identity.GetProperty("id").GetString());
-        Assert.Equal(result.Identity.CanonicalWorkspaceRelativePath, identity.GetProperty("path").GetString());
+        var identityValue = Assert.IsType<RouteInspectIdentity>(result.Identity);
+        Assert.Equal(identityValue.Id, identity.GetProperty("id").GetString());
+        Assert.Equal(identityValue.CanonicalWorkspaceRelativePath, identity.GetProperty("path").GetString());
         Assert.Equal("entrypoint", identity.GetProperty("sourceKind").GetString());
         Assert.Equal("canonical", identity.GetProperty("sourceForm").GetString());
         Assert.Equal("routed", identity.GetProperty("routeState").GetString());
@@ -90,8 +94,8 @@ public sealed class RouteInspectJsonPresentationTests
         Assert.Equal(
             ["workspaceRelativePath", "physicalPath", "role"],
             layers[1].EnumerateObject().Select(property => property.Name));
-        AssertPhysicalLayer(layers[0], result.Identity.PhysicalLayers[0], "base");
-        AssertPhysicalLayer(layers[1], result.Identity.PhysicalLayers[1], "overwrite");
+        AssertPhysicalLayer(layers[0], identityValue.PhysicalLayers[0], "base");
+        AssertPhysicalLayer(layers[1], identityValue.PhysicalLayers[1], "overwrite");
 
         var profile = root.GetProperty("result").GetProperty("profile");
         Assert.Equal(
@@ -129,11 +133,12 @@ public sealed class RouteInspectJsonPresentationTests
         Assert.Equal(
             ["ownSource", "selectedClosure", "taskStartOverlap", "selectionAddition", "loadNowDescendants"],
             measurements.EnumerateObject().Select(property => property.Name));
-        AssertMeasurement(measurements.GetProperty("ownSource"), result.Profile!.Measurements.OwnSource);
-        AssertMeasurement(measurements.GetProperty("selectedClosure"), result.Profile.Measurements.SelectedClosure);
-        AssertMeasurement(measurements.GetProperty("taskStartOverlap"), result.Profile.Measurements.TaskStartOverlap);
-        AssertMeasurement(measurements.GetProperty("selectionAddition"), result.Profile.Measurements.SelectionAddition);
-        AssertMeasurement(measurements.GetProperty("loadNowDescendants"), result.Profile.Measurements.LoadNowDescendants);
+        var profileValue = Assert.IsType<RouteInspectProfile>(result.Profile);
+        AssertMeasurement(measurements.GetProperty("ownSource"), profileValue.Measurements.OwnSource);
+        AssertMeasurement(measurements.GetProperty("selectedClosure"), profileValue.Measurements.SelectedClosure);
+        AssertMeasurement(measurements.GetProperty("taskStartOverlap"), profileValue.Measurements.TaskStartOverlap);
+        AssertMeasurement(measurements.GetProperty("selectionAddition"), profileValue.Measurements.SelectionAddition);
+        AssertMeasurement(measurements.GetProperty("loadNowDescendants"), profileValue.Measurements.LoadNowDescendants);
 
         var topology = profile.GetProperty("topology");
         Assert.Equal("value", topology.GetProperty("state").GetString());
@@ -179,11 +184,13 @@ public sealed class RouteInspectJsonPresentationTests
         var unavailable = measurements.GetProperty("ownSource");
         Assert.Equal("unavailable", unavailable.GetProperty("state").GetString());
         Assert.Equal(JsonValueKind.Null, unavailable.GetProperty("value").ValueKind);
-        Assert.NotEmpty(unavailable.GetProperty("reason").GetString()!);
+        var unavailableReason = Assert.IsType<string>(unavailable.GetProperty("reason").GetString());
+        Assert.NotEmpty(unavailableReason);
         var notApplicable = measurements.GetProperty("loadNowDescendants");
         Assert.Equal("not-applicable", notApplicable.GetProperty("state").GetString());
         Assert.Equal(JsonValueKind.Null, notApplicable.GetProperty("value").ValueKind);
-        Assert.NotEmpty(notApplicable.GetProperty("reason").GetString()!);
+        var notApplicableReason = Assert.IsType<string>(notApplicable.GetProperty("reason").GetString());
+        Assert.NotEmpty(notApplicableReason);
     }
 
     [Theory(DisplayName = "Route Inspect JSON preserves typed next command and reason for every fixed action result")]
@@ -253,10 +260,11 @@ public sealed class RouteInspectJsonPresentationTests
     {
         Assert.Equal("value", json.GetProperty("state").GetString());
         var value = json.GetProperty("value");
-        Assert.Equal(expected.Value!.PhysicalFileCount, value.GetProperty("physicalFileCount").GetInt64());
-        Assert.Equal(expected.Value.UnicodeScalarCount, value.GetProperty("unicodeScalarCount").GetInt64());
-        Assert.Equal(expected.Value.Utf8ByteCount, value.GetProperty("utf8ByteCount").GetInt64());
-        Assert.Equal(expected.Value.EstimatedTokens, value.GetProperty("estimatedTokens").GetInt64());
+        var expectedMeasurement = Assert.IsType<RouteInspectMeasurement>(expected.Value);
+        Assert.Equal(expectedMeasurement.PhysicalFileCount, value.GetProperty("physicalFileCount").GetInt64());
+        Assert.Equal(expectedMeasurement.UnicodeScalarCount, value.GetProperty("unicodeScalarCount").GetInt64());
+        Assert.Equal(expectedMeasurement.Utf8ByteCount, value.GetProperty("utf8ByteCount").GetInt64());
+        Assert.Equal(expectedMeasurement.EstimatedTokens, value.GetProperty("estimatedTokens").GetInt64());
         Assert.Equal(JsonValueKind.Null, json.GetProperty("reason").ValueKind);
     }
 }

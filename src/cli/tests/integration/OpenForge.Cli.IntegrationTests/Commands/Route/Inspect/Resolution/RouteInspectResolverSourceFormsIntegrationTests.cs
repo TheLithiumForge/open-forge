@@ -1,17 +1,17 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
-using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Models.Topology;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Resolution;
 
 public sealed class RouteInspectResolverSourceFormsIntegrationTests
 {
     [Theory(DisplayName = "Route inspect resolves the canonical and every compatibility entrypoint form"),
-        InlineData(".agents/canonical/_canonical.md", "canonical", nameof(RouteInspectSourceForm.CanonicalEntrypoint), nameof(RouteSourceForm.CanonicalEntrypoint)),
-        InlineData(".agents/index/index.md", "index", nameof(RouteInspectSourceForm.CompatibilityEntrypoint), nameof(RouteSourceForm.IndexEntrypoint)),
-        InlineData(".agents/underscore-index/_index.md", "underscore-index", nameof(RouteInspectSourceForm.CompatibilityEntrypoint), nameof(RouteSourceForm.UnderscoreIndexEntrypoint)),
-        InlineData(".agents/references/references.md", "references", nameof(RouteInspectSourceForm.CompatibilityEntrypoint), nameof(RouteSourceForm.ReferencesEntrypoint)),
-        InlineData(".agents/underscore-references/_references.md", "underscore-references", nameof(RouteInspectSourceForm.CompatibilityEntrypoint), nameof(RouteSourceForm.UnderscoreReferencesEntrypoint))]
+        InlineData(".agents/canonical/_canonical.md", "canonical", nameof(RouteInspectSourceForm.CanonicalEntrypoint), nameof(SourceDocumentForm.CanonicalEntrypoint)),
+        InlineData(".agents/index/index.md", "index", nameof(RouteInspectSourceForm.CompatibilityEntrypoint), nameof(SourceDocumentForm.IndexEntrypoint)),
+        InlineData(".agents/underscore-index/_index.md", "underscore-index", nameof(RouteInspectSourceForm.CompatibilityEntrypoint), nameof(SourceDocumentForm.UnderscoreIndexEntrypoint)),
+        InlineData(".agents/references/references.md", "references", nameof(RouteInspectSourceForm.CompatibilityEntrypoint), nameof(SourceDocumentForm.ReferencesEntrypoint)),
+        InlineData(".agents/underscore-references/_references.md", "underscore-references", nameof(RouteInspectSourceForm.CompatibilityEntrypoint), nameof(SourceDocumentForm.UnderscoreReferencesEntrypoint))]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
     public async Task EntrypointFormsRetainIntrinsicIdentity(
         string path,
@@ -26,16 +26,22 @@ public sealed class RouteInspectResolverSourceFormsIntegrationTests
         var result = await workspace.ResolveAsync(path, TestContext.Current.CancellationToken);
 
         Assert.Equal(RouteInspectResolutionState.Resolved, result.State);
-        Assert.Equal(expectedId, result.Identity!.Id);
-        Assert.Equal(RouteInspectSourceKind.Entrypoint, result.Identity!.Kind);
-        Assert.Equal(Enum.Parse<RouteInspectSourceForm>(expectedInspectForm), result.Identity.Form);
-        Assert.Equal(RouteInspectRouteState.Routed, result.Identity.RouteState);
+        var identity = Assert.IsType<RouteInspectIdentity>(result.Identity);
+        Assert.Equal(expectedId, identity.Id);
+        Assert.Equal(RouteInspectSourceKind.Entrypoint, identity.Kind);
+        Assert.Equal(Enum.Parse<RouteInspectSourceForm>(expectedInspectForm), identity.Form);
+        Assert.Equal(RouteInspectRouteState.Routed, identity.RouteState);
+        var graph = Assert.IsType<RouteInspectGraph>(result.Graph);
+        var projection = Assert.Single(
+            graph.ProjectionSet.Projections,
+            projection => projection.LogicalSource.Identity.CanonicalBasePath == path);
+        var node = Assert.IsType<SourceRouteNode>(graph.RouteFacts.Topology.FindByPath(path));
         Assert.Equal(
-            Enum.Parse<RouteSourceForm>(expectedSourceForm),
-            result.Graph!.Catalogue.FindByPath(path)!.Base.Form);
+            Enum.Parse<SourceDocumentForm>(expectedSourceForm),
+            projection.LogicalSource.Base.Form);
         Assert.Same(
-            result.Graph.Catalogue.FindByPath(path),
-            result.Graph.Topology.FindByPath(path)!.Source);
+            projection.LogicalSource.Identity,
+            node.Identity);
         Assert.Empty(result.Issues);
     }
 
@@ -63,17 +69,23 @@ public sealed class RouteInspectResolverSourceFormsIntegrationTests
         var result = await workspace.ResolveAsync(id, TestContext.Current.CancellationToken);
 
         Assert.Equal(RouteInspectResolutionState.Resolved, result.State);
-        Assert.Equal(id, result.Identity!.Id);
-        Assert.Equal(Enum.Parse<RouteInspectSourceKind>(expectedKind), result.Identity.Kind);
+        var identity = Assert.IsType<RouteInspectIdentity>(result.Identity);
+        Assert.Equal(id, identity.Id);
+        Assert.Equal(Enum.Parse<RouteInspectSourceKind>(expectedKind), identity.Kind);
         Assert.Equal(
             path.EndsWith("SKILL.md", StringComparison.Ordinal)
                 ? RouteInspectSourceForm.Native
                 : RouteInspectSourceForm.Markdown,
-            result.Identity.Form);
-        Assert.Equal(RouteInspectRouteState.Routed, result.Identity.RouteState);
-        var node = result.Graph!.Topology.FindByPath(path)!;
-        Assert.Equal(".agents/root/_root.md", node.ParentPath);
-        Assert.Same(result.Graph.Catalogue.FindByPath(path), node.Source);
+            identity.Form);
+        Assert.Equal(RouteInspectRouteState.Routed, identity.RouteState);
+        var graph = Assert.IsType<RouteInspectGraph>(result.Graph);
+        var node = Assert.IsType<SourceRouteNode>(graph.RouteFacts.Topology.FindByPath(path));
+        Assert.Equal(SourceRouteParentState.Resolved, node.ParentState);
+        Assert.Equal([".agents/root/_root.md"], node.ParentPaths);
+        var projection = Assert.Single(
+            graph.ProjectionSet.Projections,
+            projection => projection.LogicalSource.Identity.CanonicalBasePath == path);
+        Assert.Same(projection.LogicalSource.Identity, node.Identity);
     }
 
     [Fact(DisplayName = "Route inspect resolves a detached entrypoint without fabricating Loader roots")]
@@ -88,11 +100,16 @@ public sealed class RouteInspectResolverSourceFormsIntegrationTests
         var result = await workspace.ResolveAsync(path, TestContext.Current.CancellationToken);
 
         Assert.Equal(RouteInspectResolutionState.Resolved, result.State);
-        Assert.Equal(RouteInspectRouteState.Detached, result.Identity!.RouteState);
-        Assert.Empty(result.Graph!.Topology.LoaderRootPaths);
-        var node = Assert.IsType<RouteTopologyNode>(result.Graph.Topology.FindByPath(path));
-        Assert.Equal(RouteTopologyParentState.None, node.ParentState);
-        Assert.Same(result.Graph.Catalogue.FindByPath(path), node.Source);
+        var identity = Assert.IsType<RouteInspectIdentity>(result.Identity);
+        Assert.Equal(RouteInspectRouteState.Detached, identity.RouteState);
+        var graph = Assert.IsType<RouteInspectGraph>(result.Graph);
+        Assert.Empty(graph.RouteFacts.Topology.LoaderRootPaths);
+        var node = Assert.IsType<SourceRouteNode>(graph.RouteFacts.Topology.FindByPath(path));
+        Assert.Equal(SourceRouteParentState.None, node.ParentState);
+        var projection = Assert.Single(
+            graph.ProjectionSet.Projections,
+            projection => projection.LogicalSource.Identity.CanonicalBasePath == path);
+        Assert.Same(projection.LogicalSource.Identity, node.Identity);
     }
 
     [Theory(DisplayName = "Route inspect reports known supported unrouted Markdown and native sources without route facts"),
@@ -118,14 +135,17 @@ public sealed class RouteInspectResolverSourceFormsIntegrationTests
         var result = await workspace.ResolveAsync(path, TestContext.Current.CancellationToken);
 
         Assert.Equal(RouteInspectResolutionState.Resolved, result.State);
-        Assert.Equal(RouteInspectRouteState.NotRouted, result.Identity!.RouteState);
-        Assert.Equal(Enum.Parse<RouteInspectSourceKind>(expectedKind), result.Identity.Kind);
-        Assert.Equal(Enum.Parse<RouteInspectSourceForm>(expectedForm), result.Identity.Form);
-        Assert.Null(result.Graph!.Topology.FindByPath(path));
-        var source = result.Graph.Catalogue.FindByPath(path);
-        Assert.NotNull(source);
-        Assert.Equal(result.Identity.Id, source!.Id);
-        Assert.Equal(path, source.CanonicalPath);
+        var identity = Assert.IsType<RouteInspectIdentity>(result.Identity);
+        Assert.Equal(RouteInspectRouteState.NotRouted, identity.RouteState);
+        Assert.Equal(Enum.Parse<RouteInspectSourceKind>(expectedKind), identity.Kind);
+        Assert.Equal(Enum.Parse<RouteInspectSourceForm>(expectedForm), identity.Form);
+        var graph = Assert.IsType<RouteInspectGraph>(result.Graph);
+        Assert.Null(graph.RouteFacts.Topology.FindByPath(path));
+        var projection = Assert.Single(
+            graph.ProjectionSet.Projections,
+            projection => projection.LogicalSource.Identity.CanonicalBasePath == path);
+        Assert.Equal(identity.Id, projection.LogicalSource.Identity.AutomaticId);
+        Assert.Equal(path, projection.LogicalSource.Identity.CanonicalBasePath);
     }
 
     [Fact(DisplayName = "Route inspect derives authored topology without treating generated Entries as graph edges")]
@@ -154,9 +174,11 @@ public sealed class RouteInspectResolverSourceFormsIntegrationTests
         var result = await workspace.ResolveAsync("root", TestContext.Current.CancellationToken);
 
         Assert.Equal(RouteInspectResolutionState.Resolved, result.State);
-        var root = result.Graph!.Topology.FindByPath(".agents/root/_root.md")!;
+        var graph = Assert.IsType<RouteInspectGraph>(result.Graph);
+        var root = Assert.IsType<SourceRouteNode>(
+            graph.RouteFacts.Topology.FindByPath(".agents/root/_root.md"));
         Assert.DoesNotContain(detachedPath, root.ChildPaths);
-        var detached = result.Graph.Topology.FindByPath(detachedPath)!;
-        Assert.Equal(RouteTopologyParentState.None, detached.ParentState);
+        var detached = Assert.IsType<SourceRouteNode>(graph.RouteFacts.Topology.FindByPath(detachedPath));
+        Assert.Equal(SourceRouteParentState.None, detached.ParentState);
     }
 }

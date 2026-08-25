@@ -18,10 +18,6 @@ internal static class CliInvocationResolver
         CliWorkspaceRequirement workspaceRequirement,
         CliWorkspaceSelector workspaceSelector)
     {
-        ArgumentNullException.ThrowIfNull(input);
-        ArgumentNullException.ThrowIfNull(process);
-        ArgumentNullException.ThrowIfNull(environment);
-        ArgumentNullException.ThrowIfNull(workspaceSelector);
         CliPresentationDefinitions.Validate(input.Presentation);
         if (!Enum.IsDefined(workspaceRequirement))
         {

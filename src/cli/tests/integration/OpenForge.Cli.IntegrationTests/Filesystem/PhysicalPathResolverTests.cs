@@ -87,11 +87,12 @@ public sealed class PhysicalPathResolverTests
         var resolver = new PhysicalPathResolver();
 
         var root = resolver.ResolveRoot(rootAlias);
-        var first = resolver.ResolveCandidate(rootAlias, root.ResolvedPhysicalPath!, Path.Combine(rootAlias, "alias-one"));
-        var second = resolver.ResolveCandidate(rootAlias, root.ResolvedPhysicalPath!, Path.Combine(rootAlias, "alias-two"));
+        var containedRootPath = Assert.IsType<string>(root.ResolvedPhysicalPath);
+        var first = resolver.ResolveCandidate(rootAlias, containedRootPath, Path.Combine(rootAlias, "alias-one"));
+        var second = resolver.ResolveCandidate(rootAlias, containedRootPath, Path.Combine(rootAlias, "alias-two"));
         var repeatedAlias = resolver.ResolveCandidate(
             rootAlias,
-            root.ResolvedPhysicalPath!,
+            containedRootPath,
             Path.Combine(rootAlias, "root-alias", "root-alias"));
 
         Assert.Equal(PhysicalPathState.Contained, root.State);

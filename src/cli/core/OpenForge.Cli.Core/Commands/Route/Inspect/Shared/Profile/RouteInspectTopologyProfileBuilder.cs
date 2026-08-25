@@ -1,7 +1,7 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Models.Topology;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile;
 
@@ -14,14 +14,13 @@ internal sealed class RouteInspectTopologyProfileBuilder
         RouteInspectResolution resolution,
         CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(resolution);
         _resolution = resolution;
         _cancellationToken = cancellationToken;
     }
 
     internal RouteInspectFact<RouteInspectTopology> Build()
     {
-        var identity = _resolution.Identity!;
+        var identity = _resolution.ReadIdentity();
         if (identity.RouteState == RouteInspectRouteState.NotRouted)
         {
             return RouteInspectFact<RouteInspectTopology>.NotApplicable(
@@ -34,9 +33,9 @@ internal sealed class RouteInspectTopologyProfileBuilder
                 "The Loader-rooted route topology is unavailable.");
         }
 
-        var graph = _resolution.Graph!;
-        var selected = graph.Catalogue.FindByPath(identity.CanonicalWorkspaceRelativePath);
-        var chain = selected is null ? null : ReadChain(graph.Topology, selected.CanonicalPath);
+        var graph = _resolution.ReadGraph();
+        var selected = graph.ProjectionSet.FindByPath(identity.CanonicalWorkspaceRelativePath);
+        var chain = selected is null ? null : ReadChain(graph, selected.CanonicalPath);
         if (selected is null || chain is null)
         {
             return RouteInspectFact<RouteInspectTopology>.Unavailable(
@@ -44,7 +43,7 @@ internal sealed class RouteInspectTopologyProfileBuilder
         }
 
         var counts = selected.Kind == RouteSourceKind.Entrypoint
-            ? ReadCounts(graph.Topology, selected.CanonicalPath)
+            ? ReadCounts(graph, selected.CanonicalPath)
             : RouteInspectFact<RouteInspectTopologyCounts>.NotApplicable(
                 "Child topology counts do not apply to an ordinary source.");
         if (counts is null)
@@ -68,9 +67,10 @@ internal sealed class RouteInspectTopologyProfileBuilder
     }
 
     private RouteInspectFact<RouteInspectTopologyCounts>? ReadCounts(
-        RouteTopologyFacts topology,
+        RouteInspectGraph graph,
         string selectedPath)
     {
+        var topology = graph.RouteFacts.Topology;
         var selected = topology.FindByPath(selectedPath);
         if (selected is null)
         {
@@ -88,7 +88,13 @@ internal sealed class RouteInspectTopologyProfileBuilder
                 return null;
             }
 
-            if (child.Source.Kind == RouteSourceKind.Entrypoint)
+            var childSource = graph.ProjectionSet.FindByPath(child.Identity.CanonicalBasePath);
+            if (childSource is null)
+            {
+                return null;
+            }
+
+            if (childSource.Kind == RouteSourceKind.Entrypoint)
             {
                 directEntrypoints++;
             }
@@ -120,8 +126,24 @@ internal sealed class RouteInspectTopologyProfileBuilder
             }
         }
 
-        var descendantEntrypoints = descendants.Count(path =>
-            topology.FindByPath(path)!.Source.Kind == RouteSourceKind.Entrypoint);
+        var descendantEntrypoints = 0;
+        foreach (var path in descendants)
+        {
+            var node = topology.FindByPath(path);
+            var source = node is null
+                ? null
+                : graph.ProjectionSet.FindByPath(node.Identity.CanonicalBasePath);
+            if (source is null)
+            {
+                return null;
+            }
+
+            if (source.Kind == RouteSourceKind.Entrypoint)
+            {
+                descendantEntrypoints++;
+            }
+        }
+
         return RouteInspectFact<RouteInspectTopologyCounts>.Available(
             new RouteInspectTopologyCounts(
                 directFiles,
@@ -130,8 +152,9 @@ internal sealed class RouteInspectTopologyProfileBuilder
                 descendantEntrypoints));
     }
 
-    private static IReadOnlyList<RouteSource>? ReadChain(RouteTopologyFacts topology, string path)
+    private static IReadOnlyList<RouteSource>? ReadChain(RouteInspectGraph graph, string path)
     {
+        var topology = graph.RouteFacts.Topology;
         var current = topology.FindByPath(path);
         if (current is null)
         {
@@ -140,17 +163,23 @@ internal sealed class RouteInspectTopologyProfileBuilder
 
         var chain = new List<RouteSource>();
         var seen = new HashSet<string>(StringComparer.Ordinal);
-        while (seen.Add(current.Source.CanonicalPath))
+        while (seen.Add(current.Identity.CanonicalBasePath))
         {
-            chain.Add(current.Source);
-            if (current.ParentState != RouteTopologyParentState.Resolved)
+            var source = graph.ProjectionSet.FindByPath(current.Identity.CanonicalBasePath);
+            if (source is null)
             {
-                return current.ParentState == RouteTopologyParentState.None
+                return null;
+            }
+
+            chain.Add(source);
+            if (current.ParentState != SourceRouteParentState.Resolved)
+            {
+                return current.ParentState == SourceRouteParentState.None
                     ? chain.AsEnumerable().Reverse().ToArray()
                     : null;
             }
 
-            current = topology.FindByPath(current.ParentPath!);
+            current = topology.FindByPath(current.ParentPaths[0]);
             if (current is null)
             {
                 return null;

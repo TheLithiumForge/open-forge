@@ -27,7 +27,7 @@ internal static class RouteInspectExpandedRenderer
         lines.Add($"  Why: {StatusReason(result.Status)}");
         if (result.Profile?.Reading.Automatic is { State: RouteInspectFactState.Value } automatic)
         {
-            foreach (var reason in automatic.Value!.Reasons)
+            foreach (var reason in automatic.ReadValue().Reasons)
             {
                 lines.Add($"  Why: the source is read when {RouteInspectHumanAutomaticReading.Explanation(reason)}");
             }
@@ -81,11 +81,11 @@ internal static class RouteInspectExpandedRenderer
         var axioms = profile.Axioms;
         if (axioms.State != RouteInspectFactState.Value)
         {
-            lines.Add($"  {RouteInspectHumanValues.FactState(axioms.State)}: {RouteInspectHumanValues.Text(axioms.Reason!)}");
+            lines.Add($"  {RouteInspectHumanValues.FactState(axioms.State)}: {RouteInspectHumanValues.Text(axioms.ReadReason())}");
             return;
         }
 
-        var value = axioms.Value!;
+        var value = axioms.ReadValue();
         lines.Add($"  Inherited from: {Inherited(value.Inherited)}");
         lines.Add($"  Local: {Local(value.Local)}");
     }
@@ -150,18 +150,19 @@ internal static class RouteInspectExpandedRenderer
     {
         if (fact.State == RouteInspectFactState.Value)
         {
-            return fact.Value!.SourceIds.Count == 0
+            var value = fact.ReadValue();
+            return value.SourceIds.Count == 0
                 ? "none"
-                : string.Join(", ", fact.Value.SourceIds.Select(RouteInspectHumanValues.Text));
+                : string.Join(", ", value.SourceIds.Select(RouteInspectHumanValues.Text));
         }
 
-        return $"{RouteInspectHumanValues.FactState(fact.State)} ({RouteInspectHumanValues.Text(fact.Reason!)})";
+        return $"{RouteInspectHumanValues.FactState(fact.State)} ({RouteInspectHumanValues.Text(fact.ReadReason())})";
     }
 
     private static string Local(RouteInspectFact<RouteInspectAxiomsLocalState> fact)
     {
         return fact.State == RouteInspectFactState.Value
-            ? RouteInspectHumanValues.LocalAxioms(fact.Value!)
-            : $"{RouteInspectHumanValues.FactState(fact.State)} ({RouteInspectHumanValues.Text(fact.Reason!)})";
+            ? RouteInspectHumanValues.LocalAxioms(fact.ReadValue())
+            : $"{RouteInspectHumanValues.FactState(fact.State)} ({RouteInspectHumanValues.Text(fact.ReadReason())})";
     }
 }

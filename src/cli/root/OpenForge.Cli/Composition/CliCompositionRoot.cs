@@ -1,3 +1,7 @@
+using OpenForge.Cli.Core.Commands.Find;
+using OpenForge.Cli.Core.Commands.Find.Models.Binding;
+using OpenForge.Cli.Core.Commands.Find.Models.Result;
+using OpenForge.Cli.Core.Commands.Find.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Route;
 using OpenForge.Cli.Core.Commands.Route.Inspect;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Binding;
@@ -21,7 +25,6 @@ internal static class CliCompositionRoot
 {
     internal static CliCoreApplication Create(CliProcessIdentity process)
     {
-        ArgumentNullException.ThrowIfNull(process);
         var rootHelp = new CliHelpContent(
         [
             new CliHelpSection(
@@ -29,8 +32,11 @@ internal static class CliCompositionRoot
                 $"  Open Forge CLI (`{CliSyntaxDefinitions.ExecutableName}`)."),
             new CliHelpSection(
                 "Discovery",
-                "  route list     List routed sources and descendants at a structural depth.\n"
-                + "  route inspect  Explain one source's route behavior without returning authored content."),
+                "  route list     List routed sources and descendants at a structural depth."
+                + Environment.NewLine
+                + "  route inspect  Explain one source's route behavior without returning authored content."
+                + Environment.NewLine
+                + "  find           Find Markdown sources by authored tags and structural headings."),
         ]);
         var routeGroup = RouteBinding.CreateGroup();
         var listSymbols = RouteListBinding.CreateSymbols(routeGroup);
@@ -57,13 +63,26 @@ internal static class CliCompositionRoot
                     RouteInspectJsonRenderer.Render),
                 DiagnosticRenderer = RouteInspectDiagnosticRenderer.Render,
             });
+        var findSymbols = FindBinding.CreateSymbols();
+        var findBinding = FindBinding.Close(
+            findSymbols,
+            new FindBindingComponents
+            {
+                Help = FindHelpSections.Create(),
+                Operation = FindOperationFactory.Create(),
+                Renderers = new CliRendererSet<FindResult>(
+                    FindHumanRenderer.Render,
+                    FindJsonRenderer.Render),
+                DiagnosticRenderer = FindDiagnosticRenderer.Render,
+            });
         var tree = CliCommandTree.Create(
             rootHelp,
             [new CliRootBranch(
                 routeGroup,
                 RouteHelpSections.CreateGroup(),
                 listSymbols.DelimiterPolicies)],
-            [listBinding, inspectBinding]);
+            [listBinding, inspectBinding, findBinding],
+            rootLeaves: [new CliRootLeaf(findSymbols.FindCommand, [])]);
         var workspaceSelector = new CliWorkspaceSelector(new PhysicalPathResolver());
         return new CliCoreApplication(process, tree, workspaceSelector);
     }

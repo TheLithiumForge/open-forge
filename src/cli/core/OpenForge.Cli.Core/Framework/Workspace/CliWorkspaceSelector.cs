@@ -9,7 +9,6 @@ internal sealed class CliWorkspaceSelector
 
     internal CliWorkspaceSelector(PhysicalPathResolver physicalPathResolver)
     {
-        ArgumentNullException.ThrowIfNull(physicalPathResolver);
         _physicalPathResolver = physicalPathResolver;
     }
 
@@ -29,7 +28,7 @@ internal sealed class CliWorkspaceSelector
                 return FromPhysicalFailure(physical);
             }
 
-            var physicalRoot = physical.ResolvedPhysicalPath!;
+            var physicalRoot = physical.GetContainedPhysicalPath();
             FileAttributes attributes;
             try
             {
@@ -88,17 +87,23 @@ internal sealed class CliWorkspaceSelector
                 CliWorkspaceSelectionResult.Classified(CliWorkspaceSelectionState.Unsafe),
             PhysicalPathState.Inaccessible => CliWorkspaceSelectionResult.Failed(
                 CliWorkspaceSelectionState.Inaccessible,
-                physical.Failure!),
+                ReadFailure(physical)),
             PhysicalPathState.Unsupported => CliWorkspaceSelectionResult.Failed(
                 CliWorkspaceSelectionState.Unsupported,
-                physical.Failure!),
+                ReadFailure(physical)),
             PhysicalPathState.Invalid => CliWorkspaceSelectionResult.Failed(
                 CliWorkspaceSelectionState.Invalid,
-                physical.Failure!),
+                ReadFailure(physical)),
             PhysicalPathState.InputOutputFailure => CliWorkspaceSelectionResult.Failed(
                 CliWorkspaceSelectionState.InputOutputFailure,
-                physical.Failure!),
+                ReadFailure(physical)),
             _ => throw new ArgumentOutOfRangeException(nameof(physical), physical.State, "The physical path state is not defined."),
         };
+    }
+
+    private static FilesystemFailure ReadFailure(PhysicalPathResolution physical)
+    {
+        return physical.Failure
+            ?? throw new InvalidOperationException("A failed physical resolution requires its direct failure.");
     }
 }

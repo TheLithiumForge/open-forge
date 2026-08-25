@@ -17,7 +17,7 @@ public sealed class RouteListSelectionResolverIntegrationTests
         using var workspace = RouteListSelectionIntegrationWorkspace.Create();
         workspace.WriteLoader("");
 
-        var result = await ResolveAsync(workspace, null, workspace.Catalogue());
+        var result = await ResolveAsync(workspace, null);
 
         Assert.Equal(RouteListSelectionResolutionState.Resolved, result.State);
         Assert.Equal(RouteListSelectionKind.LoaderRoots, result.Selection.Kind);
@@ -37,12 +37,10 @@ public sealed class RouteListSelectionResolverIntegrationTests
             "root",
             expectedCanonicalPath,
             RouteListSourceKind.Entrypoint);
-        var catalogue = workspace.Catalogue(source);
-
-        var result = await ResolveAsync(workspace, firstReference, catalogue);
+        var result = await ResolveAsync(workspace, firstReference);
 
         Assert.Equal(RouteListSelectionResolutionState.Resolved, result.State);
-        Assert.Same(source, Assert.Single(result.SelectedSources));
+        AssertSelectedSource(result, source);
         Assert.Equal("root", result.Selection.ResolvedId);
         Assert.Equal(expectedCanonicalPath, result.Selection.ResolvedPath);
         Assert.Empty(result.Issues);
@@ -56,8 +54,7 @@ public sealed class RouteListSelectionResolverIntegrationTests
 
         var result = await ResolveAsync(
             workspace,
-            "unknown/source",
-            workspace.Catalogue());
+            "unknown/source");
 
         Assert.Equal(RouteListSelectionResolutionState.Invalid, result.State);
         Assert.Equal(RouteListSelectionKind.SourceId, result.Selection.Kind);
@@ -80,8 +77,7 @@ public sealed class RouteListSelectionResolverIntegrationTests
 
         var result = await ResolveAsync(
             workspace,
-            "./.agents/root/missing.md",
-            workspace.Catalogue());
+            "./.agents/root/missing.md");
 
         Assert.Equal(RouteListSelectionResolutionState.Invalid, result.State);
         Assert.Equal(RouteListSelectionKind.SourcePath, result.Selection.Kind);
@@ -95,7 +91,7 @@ public sealed class RouteListSelectionResolverIntegrationTests
         Assert.Equal(expectedPath, issue.Subject);
     }
 
-    [Theory(DisplayName = "Route-list selection rejects malformed ID and path grammar before filesystem lookup"),
+    [Theory(DisplayName = "Route-list selection rejects malformed ID and path grammar while retaining interpreted input"),
         InlineData("root/../child", "root/../child", null),
         InlineData("./.agents/root/../child.md", null, ".agents/root/../child.md")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
@@ -108,8 +104,7 @@ public sealed class RouteListSelectionResolverIntegrationTests
 
         var result = await ResolveAsync(
             workspace,
-            sourceReference,
-            workspace.Catalogue());
+            sourceReference);
 
         Assert.Equal(RouteListSelectionResolutionState.Invalid, result.State);
         Assert.Equal(attemptedId, result.Selection.AttemptedId);
@@ -135,8 +130,7 @@ public sealed class RouteListSelectionResolverIntegrationTests
 
         var result = await ResolveAsync(
             workspace,
-            "root/collision",
-            workspace.Catalogue(leaf, entrypoint));
+            "root/collision");
 
         Assert.Equal(RouteListSelectionResolutionState.Blocked, result.State);
         Assert.Equal("root/collision", result.Selection.AttemptedId);
@@ -145,7 +139,7 @@ public sealed class RouteListSelectionResolverIntegrationTests
         var issue = Assert.Single(result.Issues);
         Assert.Equal(RouteListFindingCode.AmbiguousSource, issue.Code);
         Assert.Equal(
-            [".agents/root/collision.md", ".agents/root/collision/_collision.md"],
+            [leaf.CanonicalPath, entrypoint.CanonicalPath],
             issue.CandidatePaths);
     }
 
@@ -154,21 +148,23 @@ public sealed class RouteListSelectionResolverIntegrationTests
     public async Task BaseAndOverwriteReferencesHaveParity()
     {
         using var workspace = RouteListSelectionIntegrationWorkspace.Create();
-        workspace.Write(".agents/guidance/style.md", "base");
+        workspace.WriteLoader("- [Guidance](guidance/_guidance.md) - #Guidance");
+        workspace.Write(".agents/guidance/_guidance.md", "guidance");
+        workspace.Write(
+            ".agents/guidance/style.md",
+            "---\nopen-forge:\n  description: Style guidance\n  tags: [Route]\n---\nbase");
         workspace.Write(".agents/guidance/style.overwrite.md", "overwrite");
         var source = workspace.Source(
             "guidance/style",
             ".agents/guidance/style.md",
             RouteListSourceKind.RoutedLeaf,
             overwritePath: ".agents/guidance/style.overwrite.md");
-        var catalogue = workspace.Catalogue(source);
 
-        var idResult = await ResolveAsync(workspace, "guidance/style", catalogue);
-        var baseResult = await ResolveAsync(workspace, ".agents/guidance/style.md", catalogue);
+        var idResult = await ResolveAsync(workspace, "guidance/style");
+        var baseResult = await ResolveAsync(workspace, ".agents/guidance/style.md");
         var overwriteResult = await ResolveAsync(
             workspace,
-            "./.agents/guidance/style.overwrite.md",
-            catalogue);
+            "./.agents/guidance/style.overwrite.md");
 
         AssertResolvedLogicalSource(idResult, source, "guidance/style", null);
         AssertResolvedLogicalSource(baseResult, source, null, ".agents/guidance/style.md");
@@ -186,16 +182,9 @@ public sealed class RouteListSelectionResolverIntegrationTests
     {
         using var workspace = RouteListSelectionIntegrationWorkspace.Create();
         workspace.Write(".agents/guidance/style.overwrite.md", "orphan overwrite");
-        var source = workspace.Source(
-            "guidance/style",
-            ".agents/guidance/style.md",
-            RouteListSourceKind.RoutedLeaf,
-            overwritePath: ".agents/guidance/style.overwrite.md");
-
         var result = await ResolveAsync(
             workspace,
-            ".agents/guidance/style.overwrite.md",
-            workspace.Catalogue(source));
+            ".agents/guidance/style.overwrite.md");
 
         Assert.Equal(RouteListSelectionResolutionState.Invalid, result.State);
         Assert.Equal(".agents/guidance/style.overwrite.md", result.Selection.AttemptedPath);
@@ -217,11 +206,10 @@ public sealed class RouteListSelectionResolverIntegrationTests
 
         var result = await ResolveAsync(
             workspace,
-            ".agents/detached/_detached.md",
-            workspace.Catalogue(source));
+            ".agents/detached/_detached.md");
 
         Assert.Equal(RouteListSelectionResolutionState.Resolved, result.State);
-        Assert.Same(source, Assert.Single(result.SelectedSources));
+        AssertSelectedSource(result, source);
         Assert.Equal("detached", result.Selection.ResolvedId);
         Assert.Equal(".agents/detached/_detached.md", result.Selection.ResolvedPath);
         Assert.Empty(result.Issues);
@@ -238,13 +226,10 @@ public sealed class RouteListSelectionResolverIntegrationTests
             ".agents/loader.md",
             RouteListSourceKind.Loader);
 
-        var result = await ResolveAsync(
-            workspace,
-            "loader",
-            workspace.Catalogue(loader));
+        var result = await ResolveAsync(workspace, loader.Id);
 
         Assert.Equal(RouteListSelectionResolutionState.Invalid, result.State);
-        Assert.Equal("loader", result.Selection.AttemptedId);
+        Assert.Equal(loader.Id, result.Selection.AttemptedId);
         Assert.Null(result.Selection.ResolvedId);
         Assert.Null(result.Selection.ResolvedPath);
         Assert.Empty(result.SelectedSources);
@@ -264,11 +249,10 @@ public sealed class RouteListSelectionResolverIntegrationTests
 
         var result = await ResolveAsync(
             workspace,
-            ".agents/flat.md",
-            workspace.Catalogue(source));
+            ".agents/flat.md");
 
         Assert.Equal(RouteListSelectionResolutionState.Invalid, result.State);
-        Assert.Equal(".agents/flat.md", result.Selection.AttemptedPath);
+        Assert.Equal(source.CanonicalPath, result.Selection.AttemptedPath);
         Assert.Null(result.Selection.ResolvedId);
         Assert.Equal(RouteListFindingCode.UnsupportedSource, Assert.Single(result.Issues).Code);
     }
@@ -278,7 +262,10 @@ public sealed class RouteListSelectionResolverIntegrationTests
     public async Task AmbiguousRouteIsBlocked()
     {
         using var workspace = RouteListSelectionIntegrationWorkspace.Create();
+        workspace.WriteLoader("- [Root](root/_root.md) - #Root");
+        workspace.Write(".agents/root/_root.md", "root");
         workspace.Write(".agents/ambiguous/_ambiguous.md", "ambiguous");
+        workspace.Write(".agents/ambiguous/index.md", "ambiguous compatibility entrypoint");
         var source = workspace.Source(
             "ambiguous",
             ".agents/ambiguous/_ambiguous.md",
@@ -287,11 +274,10 @@ public sealed class RouteListSelectionResolverIntegrationTests
 
         var result = await ResolveAsync(
             workspace,
-            "ambiguous",
-            workspace.Catalogue(source));
+            ".agents/ambiguous/_ambiguous.md");
 
         Assert.Equal(RouteListSelectionResolutionState.Blocked, result.State);
-        Assert.Equal("ambiguous", result.Selection.AttemptedId);
+        Assert.Equal(source.CanonicalPath, result.Selection.AttemptedPath);
         Assert.Null(result.Selection.ResolvedId);
         Assert.Empty(result.SelectedSources);
         Assert.Equal(RouteListFindingCode.RouteAmbiguous, Assert.Single(result.Issues).Code);
@@ -318,11 +304,10 @@ public sealed class RouteListSelectionResolverIntegrationTests
 
         var result = await ResolveAsync(
             workspace,
-            ".agents/root/_root.md",
-            workspace.Catalogue(source));
+            ".agents/root/_root.md");
 
         Assert.Equal(RouteListSelectionResolutionState.Resolved, result.State);
-        Assert.Same(source, Assert.Single(result.SelectedSources));
+        AssertSelectedSource(result, source);
         Assert.Equal(".agents/root/_root.md", result.Selection.ResolvedPath);
         Assert.Equal(before, workspace.SnapshotHashes());
     }
@@ -340,18 +325,12 @@ public sealed class RouteListSelectionResolverIntegrationTests
                 outsideFile,
                 out _),
             "This integration case requires real symbolic-link support.");
-        var source = workspace.Source(
-            "root/escape",
-            ".agents/root/escape.md",
-            RouteListSourceKind.RoutedLeaf,
-            physicalRelativePath: "outside-placeholder.md");
         var workspaceBefore = workspace.SnapshotHashes();
         var outsideBefore = outside.SnapshotHashes();
 
         var result = await ResolveAsync(
             workspace,
-            ".agents/root/escape.md",
-            workspace.Catalogue(source));
+            ".agents/root/escape.md");
 
         Assert.Equal(RouteListSelectionResolutionState.Blocked, result.State);
         Assert.Equal(".agents/root/escape.md", result.Selection.AttemptedPath);
@@ -383,16 +362,11 @@ public sealed class RouteListSelectionResolverIntegrationTests
                 out _),
             "This integration case requires real symbolic-link support.");
         const string logicalPath = ".agents/root/return/back/_back.md";
-        var source = workspace.Source(
-            "root/return/back",
-            logicalPath,
-            RouteListSourceKind.Entrypoint,
-            physicalRelativePath: "inside/_back.md");
         var workspaceBefore = workspace.SnapshotHashes();
         var outsideBefore = outside.SnapshotHashes();
 
-        var first = await ResolveAsync(workspace, logicalPath, workspace.Catalogue(source));
-        var second = await ResolveAsync(workspace, logicalPath, workspace.Catalogue(source));
+        var first = await ResolveAsync(workspace, logicalPath);
+        var second = await ResolveAsync(workspace, logicalPath);
 
         AssertResolutionEquivalent(first, second);
         Assert.Equal(RouteListSelectionResolutionState.Blocked, first.State);
@@ -406,14 +380,20 @@ public sealed class RouteListSelectionResolverIntegrationTests
 
     private static async Task<RouteListSelectionResolution> ResolveAsync(
         RouteListSelectionIntegrationWorkspace workspace,
-        string? sourceReference,
-        RouteSourceCatalogue catalogue)
+        string? sourceReference)
     {
-        return await new RouteListSelectionResolver(new PhysicalPathResolver())
+        var cancellationToken = TestContext.Current.CancellationToken;
+        var boundary = await workspace.BoundaryAsync(cancellationToken);
+        var result = await new RouteListSelectionResolver(new PhysicalPathResolver())
             .ResolveAsync(
-                workspace.Request(sourceReference),
-                catalogue,
-                TestContext.Current.CancellationToken);
+                workspace.RouteRequest(sourceReference),
+                boundary.Catalogue,
+                boundary.ProjectionSet,
+                boundary.RouteFacts,
+                cancellationToken);
+        Assert.All(result.SelectedSources, selected =>
+            Assert.Same(selected, boundary.ProjectionSet.FindByPath(selected.CanonicalPath)));
+        return result;
     }
 
     private static void AssertResolvedLogicalSource(
@@ -423,12 +403,21 @@ public sealed class RouteListSelectionResolverIntegrationTests
         string? attemptedPath)
     {
         Assert.Equal(RouteListSelectionResolutionState.Resolved, result.State);
-        Assert.Same(source, Assert.Single(result.SelectedSources));
+        AssertSelectedSource(result, source);
         Assert.Equal(attemptedId, result.Selection.AttemptedId);
         Assert.Equal(attemptedPath, result.Selection.AttemptedPath);
         Assert.Equal(source.Id, result.Selection.ResolvedId);
         Assert.Equal(source.CanonicalPath, result.Selection.ResolvedPath);
         Assert.Empty(result.Issues);
+    }
+
+    private static void AssertSelectedSource(
+        RouteListSelectionResolution result,
+        RouteSource expected)
+    {
+        var selected = Assert.Single(result.SelectedSources);
+        Assert.Equal(expected.Id, selected.Id);
+        Assert.Equal(expected.CanonicalPath, selected.CanonicalPath);
     }
 
     private static void AssertResolutionEquivalent(
@@ -444,6 +433,9 @@ public sealed class RouteListSelectionResolverIntegrationTests
         Assert.Equal(
             first.SelectedSources.Select(source => source.CanonicalPath),
             second.SelectedSources.Select(source => source.CanonicalPath));
+        Assert.Equal(
+            first.SelectedSources.Select(source => source.Id),
+            second.SelectedSources.Select(source => source.Id));
         Assert.Equal(first.Issues.Count, second.Issues.Count);
         for (var index = 0; index < first.Issues.Count; index++)
         {

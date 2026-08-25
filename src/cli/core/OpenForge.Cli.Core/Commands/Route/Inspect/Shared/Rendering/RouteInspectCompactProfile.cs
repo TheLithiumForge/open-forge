@@ -34,7 +34,7 @@ internal static class RouteInspectCompactProfile
         lines.Add($"Read at task start or resume: {BooleanFact(reading.TaskStart)}");
         if (reading.Automatic.State == RouteInspectFactState.Value)
         {
-            foreach (var reason in reading.Automatic.Value!.Reasons)
+            foreach (var reason in reading.Automatic.ReadValue().Reasons)
             {
                 if (reason.Kind == RouteInspectAutomaticReadingKind.OnDemand)
                 {
@@ -54,7 +54,7 @@ internal static class RouteInspectCompactProfile
 
         if (reading.Later.State == RouteInspectFactState.Value)
         {
-            var later = reading.Later.Value!;
+            var later = reading.Later.ReadValue();
             lines.Add($"May be read again: {(later.MayBeReadAgain ? "yes" : "no")}");
             if (later.MayBeReadAgain)
             {
@@ -84,7 +84,7 @@ internal static class RouteInspectCompactProfile
     {
         if (fact.State != RouteInspectFactState.Value)
         {
-            var display = $"{RouteInspectHumanValues.FactState(fact.State)} ({RouteInspectHumanValues.Text(fact.Reason!)})";
+            var display = $"{RouteInspectHumanValues.FactState(fact.State)} ({RouteInspectHumanValues.Text(fact.ReadReason())})";
             lines.Add($"Route chain: {display}");
             lines.Add($"Parent: {display}");
             lines.Add($"Depth: {display}");
@@ -93,7 +93,7 @@ internal static class RouteInspectCompactProfile
             return;
         }
 
-        var topology = fact.Value!;
+        var topology = fact.ReadValue();
         var parent = topology.ParentId is null
             ? "none"
             : RouteInspectHumanValues.Text(topology.ParentId);
@@ -115,7 +115,7 @@ internal static class RouteInspectCompactProfile
             return;
         }
 
-        var value = counts.Value!;
+        var value = counts.ReadValue();
         lines.Add($"Direct children: {value.DirectRoutedFileCount} files, {value.DirectEntrypointCount} entrypoints");
         lines.Add($"Descendants: {value.DescendantRoutedFileCount} files, {value.DescendantEntrypointCount} entrypoints");
     }
@@ -124,7 +124,7 @@ internal static class RouteInspectCompactProfile
     {
         if (fact.State == RouteInspectFactState.Value)
         {
-            return fact.Value == true ? "yes" : "no";
+            return fact.ReadValue() ? "yes" : "no";
         }
 
         return FactReason(fact);
@@ -132,6 +132,6 @@ internal static class RouteInspectCompactProfile
 
     private static string FactReason<T>(RouteInspectFact<T> fact)
     {
-        return $"{RouteInspectHumanValues.FactState(fact.State)} ({RouteInspectHumanValues.Text(fact.Reason!)})";
+        return $"{RouteInspectHumanValues.FactState(fact.State)} ({RouteInspectHumanValues.Text(fact.ReadReason())})";
     }
 }

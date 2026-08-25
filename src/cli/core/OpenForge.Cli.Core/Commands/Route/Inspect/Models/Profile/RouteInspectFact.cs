@@ -22,6 +22,27 @@ internal sealed class RouteInspectFact<T>
 
     internal string? Reason { get; }
 
+    internal T ReadValue()
+    {
+        if (State != RouteInspectFactState.Value || Value is not { } value)
+        {
+            throw new InvalidOperationException("A route-inspect fact value requires the value state.");
+        }
+
+        return value;
+    }
+
+    internal string ReadReason()
+    {
+        if (State is not (RouteInspectFactState.Unavailable or RouteInspectFactState.NotApplicable)
+            || Reason is not { } reason)
+        {
+            throw new InvalidOperationException("A route-inspect fact reason requires an unavailable or not-applicable state.");
+        }
+
+        return reason;
+    }
+
     internal static RouteInspectFact<T> Available(T value)
     {
         if (value is null)

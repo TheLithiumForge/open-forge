@@ -203,8 +203,9 @@ public sealed class RouteInspectProfileBuilderTopologyAndAxiomsTests
         Assert.Equal(RouteInspectFactState.NotApplicable, profile.Measurements.LoadNowDescendants.State);
         Assert.Equal(RouteInspectFactState.NotApplicable, profile.Topology.State);
         Assert.Equal(RouteInspectFactState.Value, profile.Axioms.State);
-        Assert.Equal(RouteInspectFactState.NotApplicable, profile.Axioms.Value!.Inherited.State);
-        Assert.Equal(RouteInspectFactState.NotApplicable, profile.Axioms.Value.Local.State);
+        var axioms = Assert.IsType<RouteInspectAxiomsProfile>(profile.Axioms.Value);
+        Assert.Equal(RouteInspectFactState.NotApplicable, axioms.Inherited.State);
+        Assert.Equal(RouteInspectFactState.NotApplicable, axioms.Local.State);
     }
 
     [Fact(DisplayName = "Route inspect incomplete Loader-root facts remain unavailable rather than becoming unrouted or zero")]
@@ -291,8 +292,10 @@ public sealed class RouteInspectProfileBuilderTopologyAndAxiomsTests
         var profile = Build(graph, target.CanonicalPath);
 
         Assert.Equal(RouteInspectFactState.Value, profile.Axioms.State);
-        Assert.Equal(["loader", "root"], profile.Axioms.Value!.Inherited.Value!.SourceIds);
-        Assert.Equal((RouteInspectAxiomsLocalState)expectedState, profile.Axioms.Value.Local.Value);
+        var axioms = Assert.IsType<RouteInspectAxiomsProfile>(profile.Axioms.Value);
+        var inherited = Assert.IsType<RouteInspectAxiomsSources>(axioms.Inherited.Value);
+        Assert.Equal(["loader", "root"], inherited.SourceIds);
+        Assert.Equal((RouteInspectAxiomsLocalState)expectedState, axioms.Local.Value);
     }
 
     [Fact(DisplayName = "Route inspect local Axioms remains substantive when inherited provenance is unavailable")]
@@ -342,9 +345,10 @@ public sealed class RouteInspectProfileBuilderTopologyAndAxiomsTests
             resolution,
             TestContext.Current.CancellationToken);
 
-        Assert.Equal(RouteInspectFactState.Unavailable, profile.Axioms.Value!.Inherited.State);
-        Assert.Equal(RouteInspectFactState.Value, profile.Axioms.Value.Local.State);
-        Assert.Equal(RouteInspectAxiomsLocalState.Substantive, profile.Axioms.Value.Local.Value);
+        var axioms = Assert.IsType<RouteInspectAxiomsProfile>(profile.Axioms.Value);
+        Assert.Equal(RouteInspectFactState.Unavailable, axioms.Inherited.State);
+        Assert.Equal(RouteInspectFactState.Value, axioms.Local.State);
+        Assert.Equal(RouteInspectAxiomsLocalState.Substantive, axioms.Local.Value);
     }
 
     [Fact(DisplayName = "Route inspect ordinary leaf Axioms heading remains inactive while ancestor provenance remains visible")]
@@ -372,8 +376,10 @@ public sealed class RouteInspectProfileBuilderTopologyAndAxiomsTests
 
         var profile = Build(graph, leaf.CanonicalPath);
 
-        Assert.Equal(["loader", "root"], profile.Axioms.Value!.Inherited.Value!.SourceIds);
-        Assert.Equal(RouteInspectAxiomsLocalState.NotApplicable, profile.Axioms.Value.Local.Value);
+        var axioms = Assert.IsType<RouteInspectAxiomsProfile>(profile.Axioms.Value);
+        var inherited = Assert.IsType<RouteInspectAxiomsSources>(axioms.Inherited.Value);
+        Assert.Equal(["loader", "root"], inherited.SourceIds);
+        Assert.Equal(RouteInspectAxiomsLocalState.NotApplicable, axioms.Local.Value);
     }
 
     [Fact(DisplayName = "Route inspect detached entrypoint local Axioms remains available without Loader inheritance")]
@@ -407,8 +413,9 @@ public sealed class RouteInspectProfileBuilderTopologyAndAxiomsTests
             detached.CanonicalPath,
             RouteInspectRouteState.Detached);
 
-        Assert.Equal(RouteInspectFactState.NotApplicable, profile.Axioms.Value!.Inherited.State);
-        Assert.Equal(RouteInspectAxiomsLocalState.Substantive, profile.Axioms.Value.Local.Value);
+        var axioms = Assert.IsType<RouteInspectAxiomsProfile>(profile.Axioms.Value);
+        Assert.Equal(RouteInspectFactState.NotApplicable, axioms.Inherited.State);
+        Assert.Equal(RouteInspectAxiomsLocalState.Substantive, axioms.Local.Value);
     }
 
     private static RouteInspectProfile Build(

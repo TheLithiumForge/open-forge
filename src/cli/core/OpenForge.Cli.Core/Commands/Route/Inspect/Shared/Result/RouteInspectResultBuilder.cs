@@ -13,12 +13,14 @@ internal sealed class RouteInspectResultBuilder
         RouteInspectResolution resolution,
         RouteInspectProfile? profile)
     {
-        ArgumentNullException.ThrowIfNull(request);
-        ArgumentNullException.ThrowIfNull(resolution);
         if (resolution.State is RouteInspectResolutionState.Resolved
             or RouteInspectResolutionState.Incomplete)
         {
-            ArgumentNullException.ThrowIfNull(profile);
+            if (profile is null)
+            {
+                throw new InvalidOperationException(
+                    "A resolved or incomplete route-inspect resolution requires a profile.");
+            }
         }
 
         var observations = ReadObservations(resolution);
@@ -72,19 +74,18 @@ internal sealed class RouteInspectResultBuilder
     {
         if (resolution.State is not (
                 RouteInspectResolutionState.Resolved
-                or RouteInspectResolutionState.Incomplete)
-            || resolution.Identity is null
-            || resolution.Graph is null)
+                or RouteInspectResolutionState.Incomplete))
         {
             return [];
         }
 
         var observations = new List<RouteInspectObservation>();
-        var identity = resolution.Identity;
+        var identity = resolution.ReadIdentity();
+        var graph = resolution.ReadGraph();
         if (resolution.Selection.SelectionMethod is RouteInspectSelectionMethod.ExactPath
             or RouteInspectSelectionMethod.Interactive)
         {
-            var collision = resolution.Graph.Catalogue.IdentityCollisions
+            var collision = graph.ProjectionSet.IdentityCollisions
                 .FirstOrDefault(candidate => candidate.Id == identity.Id);
             if (collision is not null)
             {

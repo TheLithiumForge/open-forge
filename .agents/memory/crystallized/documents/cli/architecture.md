@@ -219,8 +219,10 @@ existing models materially changed or promoted by the current Task, sit under
 models retain their paths. Once roughly five to ten models collect under one
 owner, split them further by cohesive topic. Supporting behavior sits under
 `Shared/<Capability>/` at the narrowest owning command, family, or cross-family
-scope. A private `Shared` child marks the support boundary. Promotion to a wider
-parent requires another real consumer with identical meaning.
+scope. A private `Shared` child marks the support boundary. Semantic behavior
+moves to a wider parent only when another real consumer needs identical meaning.
+A neutral mechanical foundation required by several accepted program outcomes is
+implemented at their nearest shared scope before the first dependent slice.
 
 Namespaces match physical folders. One command never imports another command's
 private `Shared` namespace. No forwarding namespace preserves a removed layout.
@@ -360,7 +362,82 @@ command identity, semantic status, workspace presence, and next-action presence.
 Concrete result records retain complete command payloads and serialize through
 concrete source-generated metadata. The interface is never a wire type.
 
-## Results, Presentation, Help, And Diagnostics
+## Result JSON Coordinates And Process Status
+
+The Architecture defines the shared schema-v1 JSON envelope, source-location
+primitive, and status/process coordinates. Each command contract set defines its
+exact `result` object, finding codes, command-local finite values, and `next`
+contents.
+
+For a domain operation using JSON presentation, the top-level JSON envelope uses
+camel-case members in exactly this order. Every member is present, including
+members whose value is `null`:
+
+```text
+CliJsonEnvelopeV1 {
+  schemaVersion: integer(1),
+  command: exact command-owned machine identity,
+  status: "complete" | "attention" | "incomplete" | "invalid" | "blocked" | "failed" | "interrupted",
+  workspace: { path: string, selectedBy: "current-directory" | "explicit-workspace" } | null,
+  result: command-owned object,
+  next: { command: string, reason: string } | null
+}
+```
+
+`schemaVersion` is the integer `1`. `command` is the exact machine identity
+owned by the selected command. `workspace` is either `{ path, selectedBy }` or
+`null`; `selectedBy` is exactly `current-directory` or
+`explicit-workspace`. `result` is the command-owned object and is never `null`.
+`next` is either `{ command, reason }` or `null`. `status`, `workspace`,
+`command`, and `next` are not duplicated inside `result`.
+
+For a domain operation using JSON presentation, JSON is one stdout document for
+every status. Terminal help and version retain their shared text-only bypass.
+Human primary output follows this exhaustive status table, and bounded
+diagnostics remain on stderr:
+
+| Status        | Process exit | Human primary stream |
+| ------------- | ------------ | -------------------- |
+| `complete`    | `0`          | stdout               |
+| `attention`   | `2`          | stdout               |
+| `incomplete`  | `3`          | stdout               |
+| `invalid`     | `4`          | stderr               |
+| `blocked`     | `5`          | stderr               |
+| `failed`      | `1`          | stderr               |
+| `interrupted` | `130`        | stderr               |
+
+Architecture also defines one authored source-location primitive for command
+results that expose an authored occurrence or span:
+
+```text
+SourceLocation {
+  line: integer >= 1,
+  column: integer >= 1,
+  byteOffset: integer >= 0,
+  byteLength: integer >= 0
+}
+```
+
+`line` and `column` are 1-based Unicode-scalar positions. `byteOffset` is
+0-based from the start of the exact UTF-8 physical layer, and `byteLength` is a
+nonnegative UTF-8 byte count. The byte span is half-open:
+`[byteOffset, byteOffset + byteLength)`. When a location applies to a public
+fact, it is `null` only when it is unavailable and a typed finding explains
+that unavailability. A field may also be `null` when location does not apply to
+that fact. Parser-native spans are not exposed.
+
+Shared schema-v1 compatibility includes the envelope field names and order, JSON
+types, required-versus-`null` rules, source-location shape, and shared finite
+values. A breaking change to those shared coordinates increments
+`schemaVersion`. Architecture owns only the shared envelope, location, and
+status coordinates. Each command contract set owns its exact result object,
+finding codes, command-local finite values, `next` contents, and compatibility
+rules. It may keep an additive optional command-local field in schema v1 only
+when absence preserves prior meaning. References in command contracts to the
+Architecture's exact shared JSON schema mean the shared coordinates; they do not
+assign an unstated command-local result shape to Architecture.
+
+## Presentation, Help, And Diagnostics
 
 Every operation forms one concrete result before presentation. The JSON envelope
 remains schema version 1 and contains `schemaVersion`, `command`, `status`,
@@ -384,8 +461,10 @@ content, or exit. JSON stdout remains one valid document.
 ## Framework Capability Model
 
 The complete command set demonstrates several shared capabilities before the
-first command is implemented. Architecture may establish their contracts early,
-while behavior is implemented only in the Task that first consumes it.
+first command is implemented. Architecture establishes neutral mechanical
+foundations at their nearest shared scope before the first dependent slice.
+Other shared contracts may be established early, while semantic behavior is
+implemented only when a consuming Task proves identical meaning.
 
 ### Workspace
 
@@ -425,15 +504,22 @@ Source references use one shared grammar and typed identity model. Commands
 retain attempted identity separately from resolved identity.
 
 The source catalogue and route graph expose immutable facts only: canonical
-source identity, recognized entrypoint form, Loader root, route chain, scopes,
-overwrites, loading behavior, and safe topology. List, inspect, context, find,
-index, diagnostics, and mutations translate those facts into command-local
-meaning.
+source identity, recognized entrypoint form, Loader root, route chain,
+overwrites, loading behavior, and safe topology. A Framework scope is authored
+meaning, not a mechanically identifiable path segment; a consumer reports scope
+only when an applicable component contract supplies explicit evidence and never
+infers it from route shape. List, inspect, context, find, index, diagnostics, and
+mutations translate the shared facts into command-local meaning.
 
 Markdown capabilities use one fixed CommonMark pipeline only when the first real
-consumer requires body parsing. Frontmatter reading uses one CLI-root generated
-YAML context and small semantic models. Generated navigation remains a projection
-of routed sources, never an independent authority.
+consumer requires body parsing. One neutral Markdown frontmatter parser owns
+exact delimiter and body boundaries without requiring body parsing. One neutral
+YAML syntax parser owns the source-preserving node shape, scalar spans, alias and
+unsupported-mapping facts required by Find, Route discovery, and later Route
+mutation. Semantic metadata uses one CLI-root generated YAML context and small
+models; command interpretation, policy, findings, and status remain local.
+Generated navigation remains a projection of routed sources, never an independent
+authority.
 
 ### Lifecycle, Mutation, And Recovery
 
@@ -542,6 +628,8 @@ mutations and aggregate diagnosis:
 2. Core shell contracts, root composition, parser, invocation, pipeline, output,
    help boundary, serialization, and Native AOT host proof with no command.
 3. Shared workspace and physical-filesystem safety foundations.
+   Shared document foundations include neutral Markdown frontmatter boundaries
+   and YAML syntax facts before command-local metadata interpretation.
 4. `route list` as the first complete read-only command.
 5. `route inspect`, promoting only identical route facts proved by the second
    consumer.

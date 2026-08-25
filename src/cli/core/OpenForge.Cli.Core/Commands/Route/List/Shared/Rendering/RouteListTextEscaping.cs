@@ -5,14 +5,13 @@ internal static class RouteListTextEscaping
     internal const int ShortValueLimit = 160;
     internal const int DiagnosticValueLimit = 240;
 
-    internal static string Escape(string? value)
+    internal static string Escape(string value)
     {
         return Escape(value, int.MaxValue);
     }
 
-    internal static string Escape(string? value, int maximumLength)
+    internal static string Escape(string value, int maximumLength)
     {
-        ArgumentNullException.ThrowIfNull(value);
         if (maximumLength < 1)
         {
             throw new ArgumentOutOfRangeException(nameof(maximumLength), maximumLength, "The text limit must be positive.");
@@ -36,9 +35,8 @@ internal static class RouteListTextEscaping
         return builder.ToString();
     }
 
-    internal static string Clamp(string? value, int maximumLength)
+    internal static string Clamp(string value, int maximumLength)
     {
-        ArgumentNullException.ThrowIfNull(value);
         if (maximumLength < 1)
         {
             throw new ArgumentOutOfRangeException(nameof(maximumLength), maximumLength, "The text limit must be positive.");

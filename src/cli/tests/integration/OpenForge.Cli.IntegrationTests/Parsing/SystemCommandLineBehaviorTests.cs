@@ -202,7 +202,8 @@ public sealed class SystemCommandLineBehaviorTests
         var parse = root.Parse(["--item", "one", "--item", "two", "--item", "three"]);
 
         Assert.Empty(parse.Errors);
-        Assert.Equal(["one", "two", "three"], parse.GetValue(items)!);
+        var values = Assert.IsType<string[]>(parse.GetValue(items));
+        Assert.Equal(["one", "two", "three"], values);
         AssertFacts(
             CliOptionResultFactsReader.Read(parse, items),
             true,

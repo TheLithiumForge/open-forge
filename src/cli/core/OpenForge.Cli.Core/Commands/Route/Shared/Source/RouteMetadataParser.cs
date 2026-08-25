@@ -1,5 +1,9 @@
-using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using System.Text;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Yaml;
+using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
 using OpenForge.Cli.Core.Shell.Serialization;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
@@ -8,14 +12,9 @@ namespace OpenForge.Cli.Core.Commands.Route.Shared.Source;
 
 internal sealed class RouteMetadataParser
 {
-    private enum FrontmatterState
-    {
-        Complete,
-        Missing,
-        Malformed,
-    }
-
     private readonly IDeserializer _deserializer = new StaticDeserializerBuilder(new CliYamlContext()).Build();
+    private readonly MarkdownFrontmatterParser _frontmatterParser = new();
+    private readonly YamlDocumentParser _yamlParser = new();
 
     internal RouteSourceMetadata ParseOpenForge(
         string sourceBody,
@@ -23,15 +22,16 @@ internal sealed class RouteMetadataParser
         bool isOverwritePresent)
     {
         ArgumentNullException.ThrowIfNull(sourceBody);
-        var frontmatter = ExtractFrontmatter(sourceBody);
-        if (frontmatter.State != FrontmatterState.Complete)
+        var frontmatter = ReadFrontmatter(sourceBody);
+        if (frontmatter.State != RouteSourceMetadataState.Complete
+            || frontmatter.Yaml is not { } yaml)
         {
             return WithoutValues(frontmatter.State, isCompatibilityEntrypoint, isOverwritePresent);
         }
 
         try
         {
-            var authored = _deserializer.Deserialize<CliAuthoredMetadata>(frontmatter.Yaml!);
+            var authored = _deserializer.Deserialize<CliAuthoredMetadata>(yaml);
             if (authored?.OpenForge is null
                 || string.IsNullOrWhiteSpace(authored.OpenForge.Description)
                 || authored.OpenForge.Tags is null
@@ -69,15 +69,16 @@ internal sealed class RouteMetadataParser
     internal RouteSourceMetadata ParseSkill(string sourceBody, bool isOverwritePresent)
     {
         ArgumentNullException.ThrowIfNull(sourceBody);
-        var frontmatter = ExtractFrontmatter(sourceBody);
-        if (frontmatter.State != FrontmatterState.Complete)
+        var frontmatter = ReadFrontmatter(sourceBody);
+        if (frontmatter.State != RouteSourceMetadataState.Complete
+            || frontmatter.Yaml is not { } yaml)
         {
             return WithoutValues(frontmatter.State, isCompatibilityEntrypoint: false, isOverwritePresent);
         }
 
         try
         {
-            var skill = _deserializer.Deserialize<CliSkillMetadata>(frontmatter.Yaml!);
+            var skill = _deserializer.Deserialize<CliSkillMetadata>(yaml);
             if (skill is null
                 || string.IsNullOrWhiteSpace(skill.Name)
                 || string.IsNullOrWhiteSpace(skill.Description))
@@ -142,41 +143,38 @@ internal sealed class RouteMetadataParser
         return true;
     }
 
-    private static (FrontmatterState State, string? Yaml) ExtractFrontmatter(string sourceBody)
+    private (RouteSourceMetadataState State, string? Yaml) ReadFrontmatter(string sourceBody)
     {
-        using var reader = new StringReader(sourceBody);
-        if (!string.Equals(reader.ReadLine(), "---", StringComparison.Ordinal))
+        var boundary = _frontmatterParser.Parse(sourceBody);
+        if (boundary.State != MarkdownFrontmatterState.Complete
+            || boundary.YamlSpan is not { } yamlSpan)
         {
-            return (FrontmatterState.Missing, null);
+            return (
+                boundary.State == MarkdownFrontmatterState.Missing
+                    ? RouteSourceMetadataState.Missing
+                    : RouteSourceMetadataState.Malformed,
+                null);
         }
 
-        var yaml = new StringBuilder();
-        while (reader.ReadLine() is { } line)
-        {
-            if (string.Equals(line, "---", StringComparison.Ordinal))
-            {
-                return (FrontmatterState.Complete, yaml.ToString());
-            }
-
-            yaml.AppendLine(line);
-        }
-
-        return (FrontmatterState.Malformed, null);
+        var yaml = sourceBody[yamlSpan.Start..yamlSpan.End];
+        var syntax = _yamlParser.Parse(yaml);
+        return syntax.State == YamlDocumentState.Complete
+            ? (RouteSourceMetadataState.Complete, yaml)
+            : (RouteSourceMetadataState.Malformed, null);
     }
 
     private static RouteSourceMetadata WithoutValues(
-        FrontmatterState state,
+        RouteSourceMetadataState state,
         bool isCompatibilityEntrypoint,
         bool isOverwritePresent)
     {
-        var metadataState = state switch
+        if (state is not (RouteSourceMetadataState.Missing or RouteSourceMetadataState.Malformed))
         {
-            FrontmatterState.Missing => RouteSourceMetadataState.Missing,
-            FrontmatterState.Malformed => RouteSourceMetadataState.Malformed,
-            _ => throw new ArgumentOutOfRangeException(nameof(state), state, "Complete frontmatter requires metadata parsing."),
-        };
+            throw new ArgumentOutOfRangeException(nameof(state), state, "Complete metadata requires semantic parsing.");
+        }
+
         return RouteSourceMetadata.WithoutValues(
-            metadataState,
+            state,
             isCompatibilityEntrypoint,
             isOverwritePresent);
     }

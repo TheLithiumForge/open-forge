@@ -1,20 +1,18 @@
-using OpenForge.Cli.Core.Commands.Route.Shared.Models.Topology;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Topology;
 
 internal static class RouteListTopologyRootOrderer
 {
-    internal static IReadOnlyList<RouteTopologyNode> Order(
-        IReadOnlyList<RouteTopologyNode> roots,
-        RouteTopologyFacts topology)
+    internal static IReadOnlyList<SourceRouteNode> Order(
+        IReadOnlyList<SourceRouteNode> roots,
+        SourceRouteTopology topology)
     {
-        ArgumentNullException.ThrowIfNull(roots);
-        ArgumentNullException.ThrowIfNull(topology);
         var selectedByPath = roots.ToDictionary(
-            root => root.Source.CanonicalPath,
+            root => root.Identity.CanonicalBasePath,
             StringComparer.Ordinal);
-        var childrenBySelectedParent = new Dictionary<string, List<RouteTopologyNode>>(StringComparer.Ordinal);
-        var topLevel = new List<RouteTopologyNode>();
+        var childrenBySelectedParent = new Dictionary<string, List<SourceRouteNode>>(StringComparer.Ordinal);
+        var topLevel = new List<SourceRouteNode>();
         foreach (var root in roots)
         {
             var selectedParent = ReadNearestSelectedParent(root, selectedByPath, topology);
@@ -33,8 +31,8 @@ internal static class RouteListTopologyRootOrderer
             children.Add(root);
         }
 
-        var ordered = new List<RouteTopologyNode>(roots.Count);
-        foreach (var root in topLevel.OrderBy(node => node.Source.CanonicalPath, StringComparer.Ordinal))
+        var ordered = new List<SourceRouteNode>(roots.Count);
+        foreach (var root in topLevel.OrderBy(node => node.Identity.CanonicalBasePath, StringComparer.Ordinal))
         {
             AddRootAndSelectedDescendants(root, childrenBySelectedParent, ordered);
         }
@@ -43,38 +41,39 @@ internal static class RouteListTopologyRootOrderer
     }
 
     private static string? ReadNearestSelectedParent(
-        RouteTopologyNode root,
-        IReadOnlyDictionary<string, RouteTopologyNode> selectedByPath,
-        RouteTopologyFacts topology)
+        SourceRouteNode root,
+        IReadOnlyDictionary<string, SourceRouteNode> selectedByPath,
+        SourceRouteTopology topology)
     {
         var current = root;
-        while (current.ParentState == RouteTopologyParentState.Resolved)
+        while (current.ParentState == SourceRouteParentState.Resolved)
         {
-            var parentPath = current.ParentPath!;
+            var parentPath = current.ParentPaths[0];
             if (selectedByPath.ContainsKey(parentPath))
             {
                 return parentPath;
             }
 
-            current = topology.FindByPath(parentPath)!;
+            current = topology.FindByPath(parentPath)
+                ?? throw new InvalidOperationException("A selected root parent is missing from the immutable source topology.");
         }
 
         return null;
     }
 
     private static void AddRootAndSelectedDescendants(
-        RouteTopologyNode root,
-        IReadOnlyDictionary<string, List<RouteTopologyNode>> childrenBySelectedParent,
-        ICollection<RouteTopologyNode> ordered)
+        SourceRouteNode root,
+        IReadOnlyDictionary<string, List<SourceRouteNode>> childrenBySelectedParent,
+        ICollection<SourceRouteNode> ordered)
     {
         ordered.Add(root);
-        var path = root.Source.CanonicalPath;
+        var path = root.Identity.CanonicalBasePath;
         if (!childrenBySelectedParent.TryGetValue(path, out var children))
         {
             return;
         }
 
-        foreach (var child in children.OrderBy(node => node.Source.CanonicalPath, StringComparer.Ordinal))
+        foreach (var child in children.OrderBy(node => node.Identity.CanonicalBasePath, StringComparer.Ordinal))
         {
             AddRootAndSelectedDescendants(child, childrenBySelectedParent, ordered);
         }

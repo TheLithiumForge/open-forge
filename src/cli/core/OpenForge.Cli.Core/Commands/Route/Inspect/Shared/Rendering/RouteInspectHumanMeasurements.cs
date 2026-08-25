@@ -9,9 +9,9 @@ internal static class RouteInspectHumanMeasurements
     {
         return fact.State switch
         {
-            RouteInspectFactState.Value => Value(fact.Value!),
-            RouteInspectFactState.Unavailable => $"unavailable ({RouteInspectHumanValues.Text(fact.Reason!)})",
-            RouteInspectFactState.NotApplicable => $"not applicable ({RouteInspectHumanValues.Text(fact.Reason!)})",
+            RouteInspectFactState.Value => Value(fact.ReadValue()),
+            RouteInspectFactState.Unavailable => $"unavailable ({RouteInspectHumanValues.Text(fact.ReadReason())})",
+            RouteInspectFactState.NotApplicable => $"not applicable ({RouteInspectHumanValues.Text(fact.ReadReason())})",
             _ => throw new ArgumentOutOfRangeException(nameof(fact), fact.State, "The fact state is not defined."),
         };
     }
@@ -21,8 +21,8 @@ internal static class RouteInspectHumanMeasurements
         return fact.State switch
         {
             RouteInspectFactState.Value => "value",
-            RouteInspectFactState.Unavailable => $"unavailable ({RouteInspectHumanValues.Text(fact.Reason!)})",
-            RouteInspectFactState.NotApplicable => $"not applicable ({RouteInspectHumanValues.Text(fact.Reason!)})",
+            RouteInspectFactState.Unavailable => $"unavailable ({RouteInspectHumanValues.Text(fact.ReadReason())})",
+            RouteInspectFactState.NotApplicable => $"not applicable ({RouteInspectHumanValues.Text(fact.ReadReason())})",
             _ => throw new ArgumentOutOfRangeException(nameof(fact), fact.State, "The fact state is not defined."),
         };
     }

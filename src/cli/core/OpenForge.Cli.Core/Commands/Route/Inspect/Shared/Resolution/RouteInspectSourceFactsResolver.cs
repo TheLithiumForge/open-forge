@@ -1,38 +1,30 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Models.Topology;
-using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Resolution;
 
-internal sealed class RouteInspectSourceFactsResolver
+internal sealed partial class RouteInspectSourceFactsResolver
 {
-    private readonly RouteInspectPhysicalVerifier _physicalVerifier;
-    private readonly RouteInspectLoaderRootResolver _loaderRootResolver;
-    private readonly RouteInspectTopologyResolver _topologyResolver = new();
-
-    internal RouteInspectSourceFactsResolver(
-        RouteInspectPhysicalVerifier physicalVerifier,
-        RouteInspectLoaderRootResolver loaderRootResolver)
-    {
-        ArgumentNullException.ThrowIfNull(physicalVerifier);
-        ArgumentNullException.ThrowIfNull(loaderRootResolver);
-        _physicalVerifier = physicalVerifier;
-        _loaderRootResolver = loaderRootResolver;
-    }
-
     internal RouteInspectResolution Resolve(
         RouteInspectSourceResolutionInput input,
         CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(input);
-        var source = input.Source;
         if (cancellationToken.IsCancellationRequested)
         {
             return RouteInspectResolutionSupport.Interrupted(input.Selection, input.RequestedPath);
         }
 
-        if (source.Kind == RouteSourceKind.Loader)
+        var logicalSource = input.LogicalSource;
+        if (input.Projection.Source is not { } projectedSource)
+        {
+            throw new InvalidOperationException("A selected Route source projection must be available.");
+        }
+
+        if (logicalSource.Base.Form == SourceDocumentForm.Loader)
         {
             return RouteInspectResolution.Create(
                 RouteInspectResolutionState.Invalid,
@@ -45,54 +37,26 @@ internal sealed class RouteInspectSourceFactsResolver
                     "The Loader is the workspace routing root, not an inspectable route source.")]);
         }
 
-        var physicalIssue = _physicalVerifier.VerifyPhysicalLayers(input.Request.Workspace, source);
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return RouteInspectResolutionSupport.Interrupted(input.Selection, input.RequestedPath);
-        }
-
-        if (physicalIssue is not null)
-        {
-            return RouteInspectResolution.Create(
-                RouteInspectResolutionState.Blocked,
-                input.Selection,
-                null,
-                null,
-                [physicalIssue]);
-        }
-
-        var loaderRoots = _loaderRootResolver.Resolve(
-            input.Request.Workspace,
-            input.Catalogue,
-            cancellationToken);
-        if (loaderRoots.Interrupted || cancellationToken.IsCancellationRequested)
-        {
-            return RouteInspectResolutionSupport.Interrupted(input.Selection, input.RequestedPath);
-        }
-
-        var topology = _topologyResolver.Build(input.Catalogue, loaderRoots.RootPaths);
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return RouteInspectResolutionSupport.Interrupted(input.Selection, input.RequestedPath);
-        }
-
-        var graph = new RouteInspectGraph(input.Catalogue, topology);
-        var routeState = _topologyResolver.ReadRouteState(
-            source,
-            topology,
-            loaderRoots.AreLoaderRootFactsComplete);
+        var routeFacts = input.Resolution.RouteFacts;
+        var routeFact = routeFacts.RouteFacts.Single(fact =>
+            ReferenceEquals(fact.Identity, logicalSource.Identity));
+        var routeState = ReadRouteState(logicalSource, routeFact, input.Resolution.Projections.ProjectionSet);
+        var graph = new RouteInspectGraph(
+            input.Resolution.Projections.ProjectionSet,
+            routeFacts);
         var identity = new RouteInspectIdentity(
-            source.Id,
-            source.CanonicalPath,
-            RouteInspectSourcePolicy.ReadInspectKind(source.Kind),
-            RouteInspectSourcePolicy.ReadInspectForm(source.Base.Form),
+            logicalSource.Identity.AutomaticId,
+            logicalSource.Identity.CanonicalBasePath,
+            RouteInspectSourcePolicy.ReadInspectKind(logicalSource.Base.Form),
+            RouteInspectSourcePolicy.ReadInspectForm(logicalSource.Base.Form),
             routeState,
-            RouteInspectTopologyResolver.ReadPhysicalLayers(source));
+            ReadPhysicalLayers(projectedSource));
 
         var issues = new List<RouteInspectResolutionIssue>();
-        issues.AddRange(loaderRoots.Issues);
-        AddReadIssues(source, topology, issues);
-        if (routeState == RouteInspectRouteState.Ambiguous)
+        AddRouteIssues(input, issues);
+        AddReadIssues(input, issues);
+        if (routeState == RouteInspectRouteState.Ambiguous
+            && issues.All(issue => issue.Code != RouteInspectResolutionIssueCode.AmbiguousRoute))
         {
             issues.Add(RouteInspectResolutionSupport.CreateIssue(
                 RouteInspectResolutionIssueCode.AmbiguousRoute,
@@ -109,64 +73,44 @@ internal sealed class RouteInspectSourceFactsResolver
         return RouteInspectResolution.Create(state, input.Selection, identity, graph, issues);
     }
 
-    private static void AddReadIssues(
-        RouteSource source,
-        RouteTopologyFacts topology,
-        ICollection<RouteInspectResolutionIssue> issues)
+    private static RouteInspectRouteState ReadRouteState(
+        SourceLogicalSource logicalSource,
+        SourceRouteFact fact,
+        RouteSourceProjectionSet projectionSet)
     {
-        var requiredSources = ReadRequiredRouteChain(source, topology);
-        var seenPaths = new HashSet<string>(StringComparer.Ordinal);
-        foreach (var required in requiredSources)
+        if (HasDuplicateEntrypoint(logicalSource, projectionSet))
         {
-            AddDocumentReadIssue(required.Base, seenPaths, issues);
-            if (required.Overwrite is not null)
-            {
-                AddDocumentReadIssue(required.Overwrite, seenPaths, issues);
-            }
+            return RouteInspectRouteState.Ambiguous;
         }
+
+        return fact.State switch
+        {
+            SourceRouteState.Routed => RouteInspectRouteState.Routed,
+            SourceRouteState.Unrouted when SourceFormClassifier.IsEntrypoint(logicalSource.Base.Form) =>
+                RouteInspectRouteState.Detached,
+            SourceRouteState.Unrouted => RouteInspectRouteState.NotRouted,
+            SourceRouteState.Ambiguous => RouteInspectRouteState.Ambiguous,
+            SourceRouteState.Unavailable => RouteInspectRouteState.Unresolved,
+            _ => throw new ArgumentOutOfRangeException(nameof(fact), fact.State, "The neutral route state is not defined."),
+        };
     }
 
-    private static IReadOnlyList<RouteSource> ReadRequiredRouteChain(
-        RouteSource source,
-        RouteTopologyFacts topology)
+    private static bool HasDuplicateEntrypoint(
+        SourceLogicalSource logicalSource,
+        RouteSourceProjectionSet projectionSet)
     {
-        var chain = new List<RouteSource>();
-        var current = topology.FindByPath(source.CanonicalPath);
-        if (current is null)
+        if (!SourceFormClassifier.IsEntrypoint(logicalSource.Base.Form))
         {
-            return [source];
+            return false;
         }
 
-        while (true)
-        {
-            chain.Add(current.Source);
-            if (current.ParentState != RouteTopologyParentState.Resolved)
-            {
-                break;
-            }
-
-            current = topology.FindByPath(current.ParentPath!)
-                ?? throw new InvalidOperationException("A resolved route parent is missing from the topology.");
-        }
-
-        chain.Reverse();
-        return chain;
+        var parent = SourceLogicalPath.ReadParent(logicalSource.Identity.CanonicalBasePath);
+        return projectionSet.Projections.Count(projection =>
+            SourceFormClassifier.IsEntrypoint(projection.LogicalSource.Base.Form)
+            && string.Equals(
+                SourceLogicalPath.ReadParent(projection.LogicalSource.Identity.CanonicalBasePath),
+                parent,
+                StringComparison.Ordinal)) > 1;
     }
 
-    private static void AddDocumentReadIssue(
-        RouteSourceDocument document,
-        ISet<string> seenPaths,
-        ICollection<RouteInspectResolutionIssue> issues)
-    {
-        if (document.ReadState == FileReadState.Complete
-            || !seenPaths.Add(document.CanonicalLogicalPath))
-        {
-            return;
-        }
-
-        issues.Add(RouteInspectResolutionSupport.CreateIssue(
-            RouteInspectResolutionIssueCode.ReadUnavailable,
-            document.CanonicalLogicalPath,
-            "A required route-chain source body could not be read completely."));
-    }
 }

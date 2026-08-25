@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Source;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 
@@ -31,12 +32,12 @@ internal static class RouteListSelectionFactory
             return LoaderRoots();
         }
 
-        var parsed = RouteSourceReferenceParser.Parse(sourceReference);
+        var parsed = SourceReferenceParser.Parse(sourceReference);
         return parsed.Kind switch
         {
-            RouteSourceReferenceKind.SourceId when parsed.AttemptedId is not null
+            SourceReferenceKind.SourceId when parsed.AttemptedId is not null
                 => AttemptedId(parsed.AttemptedId),
-            RouteSourceReferenceKind.SourcePath when parsed.AttemptedPath is not null
+            SourceReferenceKind.SourcePath when parsed.AttemptedPath is not null
                 => AttemptedPath(parsed.AttemptedPath),
             _ => LoaderRoots(),
         };
@@ -110,7 +111,7 @@ internal static class RouteListSelectionFactory
 
     private static void ValidateId(string value, string parameterName)
     {
-        if (!RouteSourceIdentity.IsValidId(value))
+        if (!SourceIdentity.IsValidId(value))
         {
             throw new ArgumentException("The source ID is not valid.", parameterName);
         }
@@ -118,7 +119,7 @@ internal static class RouteListSelectionFactory
 
     private static void ValidatePath(string value, string parameterName)
     {
-        if (!RouteSourceReferenceParser.IsValidCanonicalPath(value))
+        if (!SourceLogicalPath.IsCanonical(value))
         {
             throw new ArgumentException("The source path is not canonical.", parameterName);
         }

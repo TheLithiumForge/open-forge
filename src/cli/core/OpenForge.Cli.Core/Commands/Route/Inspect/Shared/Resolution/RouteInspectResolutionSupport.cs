@@ -1,15 +1,14 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
-using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Source;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Resolution;
 
 internal static class RouteInspectResolutionSupport
 {
-    internal static RouteInspectSelection UnresolvedSelection(RouteSourceReferenceParseResult parsed)
+    internal static RouteInspectSelection UnresolvedSelection(SourceReferenceParseResult parsed)
     {
-        ArgumentNullException.ThrowIfNull(parsed);
-        if (parsed.State == RouteSourceReferenceParseState.Invalid)
+        if (parsed.State == SourceReferenceParseState.Invalid)
         {
             return new RouteInspectSelection(
                 RouteInspectReferenceKind.Invalid,
@@ -18,7 +17,7 @@ internal static class RouteInspectResolutionSupport
                 []);
         }
 
-        return parsed.Kind == RouteSourceReferenceKind.SourceId
+        return parsed.Kind == SourceReferenceKind.SourceId
             ? new RouteInspectSelection(
                 RouteInspectReferenceKind.SourceId,
                 RouteInspectSelectionMethod.Unresolved,
@@ -33,7 +32,6 @@ internal static class RouteInspectResolutionSupport
 
     internal static RouteInspectSelection UnresolvedSelection(RouteInspectSelection selection)
     {
-        ArgumentNullException.ThrowIfNull(selection);
         return new RouteInspectSelection(
             selection.ReferenceKind,
             RouteInspectSelectionMethod.Unresolved,
@@ -49,6 +47,44 @@ internal static class RouteInspectResolutionSupport
             ? RouteInspectResolutionState.Blocked
             : RouteInspectResolutionState.Incomplete;
         return RouteInspectResolution.Create(state, selection, null, null, issues);
+    }
+
+    internal static IReadOnlyList<RouteInspectResolutionIssue> ReadCatalogueBoundaryIssues(
+        SourceCatalogue catalogue)
+    {
+        var issues = new List<RouteInspectResolutionIssue>();
+        foreach (var issue in catalogue.Issues)
+        {
+            var mapped = issue.Code switch
+            {
+                SourceCatalogueIssueCode.RootUnsafe => CreateIssue(
+                    RouteInspectResolutionIssueCode.UnsafeSource,
+                    issue.AttemptedCanonicalPath,
+                    "The .agents source boundary could not be proved or read."),
+                SourceCatalogueIssueCode.RootUnavailable
+                    or SourceCatalogueIssueCode.DirectoryUnavailable => CreateIssue(
+                        RouteInspectResolutionIssueCode.ReadUnavailable,
+                        issue.AttemptedCanonicalPath,
+                        "The .agents source boundary could not be proved or read."),
+                SourceCatalogueIssueCode.CandidateUnsafe
+                    when string.Equals(issue.AttemptedCanonicalPath, ".agents/loader.md", StringComparison.Ordinal) => CreateIssue(
+                        RouteInspectResolutionIssueCode.UnsafeSource,
+                        issue.AttemptedCanonicalPath,
+                        "The Loader source boundary could not be proved or read."),
+                SourceCatalogueIssueCode.CandidateUnavailable
+                    when string.Equals(issue.AttemptedCanonicalPath, ".agents/loader.md", StringComparison.Ordinal) => CreateIssue(
+                        RouteInspectResolutionIssueCode.ReadUnavailable,
+                        issue.AttemptedCanonicalPath,
+                        "The Loader source boundary could not be proved or read."),
+                _ => null,
+            };
+            if (mapped is not null)
+            {
+                issues.Add(mapped);
+            }
+        }
+
+        return issues;
     }
 
     internal static RouteInspectResolution Interrupted(

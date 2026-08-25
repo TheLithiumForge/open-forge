@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Workspace;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
@@ -8,7 +9,7 @@ internal sealed record RouteListInventoryRequest
     internal RouteListInventoryRequest(
         CliWorkspace workspace,
         CancellationToken cancellationToken)
-        : this(workspace, [RouteListLogicalPath.AgentsRoot], cancellationToken)
+        : this(workspace, [SourceLogicalPath.AgentsRoot], cancellationToken)
     {
     }
 
@@ -25,7 +26,7 @@ internal sealed record RouteListInventoryRequest
             throw new ArgumentException("Route-list inventory requires at least one logical root.", nameof(logicalRoots));
         }
 
-        if (roots.Any(root => !RouteListLogicalPath.IsCanonical(root)))
+        if (roots.Any(root => !SourceLogicalPath.IsCanonicalRoot(root)))
         {
             throw new ArgumentException("Every route-list inventory root must be a canonical .agents logical path.", nameof(logicalRoots));
         }

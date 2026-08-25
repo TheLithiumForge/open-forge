@@ -14,17 +14,15 @@ internal sealed partial class RouteInspectMeasurementsBuilder
         RouteInspectLoadingFacts loading,
         CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(resolution);
-        ArgumentNullException.ThrowIfNull(loading);
         _resolution = resolution;
         _loading = loading;
-        _catalogue = resolution.Graph!.Catalogue;
+        _projectionSet = resolution.ReadGraph().ProjectionSet;
         _cancellationToken = cancellationToken;
     }
 
     internal RouteInspectMeasurements Build()
     {
-        var selectedPath = _resolution.Identity!.CanonicalWorkspaceRelativePath;
+        var selectedPath = _resolution.ReadIdentity().CanonicalWorkspaceRelativePath;
         var own = Measure([selectedPath], "The selected source body is unavailable.");
         var selectedClosure = ReadSelectedClosure();
         var overlap = ReadOverlap();

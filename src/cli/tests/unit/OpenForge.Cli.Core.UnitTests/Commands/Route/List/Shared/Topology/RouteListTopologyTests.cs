@@ -3,11 +3,16 @@ using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Topology;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Models.Topology;
-using OpenForge.Cli.Core.Commands.Route.Shared.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Topology;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Routing;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models;
+using OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models.Source;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.List.Shared.Topology;
 
@@ -19,9 +24,11 @@ public sealed class RouteListTopologyTests
         var inventory = StandardInventory();
         var input = Input(inventory, RouteListDepth.All);
 
-        var topology = BuildTopology(input);
+        var topology = new SourceRouteTopologyBuilder().Build(
+            inventory.SourceCatalogue.Sources,
+            input.LoaderRootPaths.OrderBy(path => path, StringComparer.Ordinal).ToArray());
 
-        var root = topology.FindByPath(".agents/root/_root.md")!;
+        SourceRouteNode root = Assert.IsType<SourceRouteNode>(topology.FindByPath(".agents/root/_root.md"));
         Assert.Equal(
             [
                 ".agents/root/child/_child.md",
@@ -29,11 +36,17 @@ public sealed class RouteListTopologyTests
                 ".agents/root/native/SKILL.md",
             ],
             root.ChildPaths);
-        Assert.Equal(".agents/root/_root.md", topology.FindByPath(".agents/root/child/_child.md")!.ParentPath);
-        Assert.Equal(".agents/root/child/_child.md", topology.FindByPath(".agents/root/child/grand.md")!.ParentPath);
-        Assert.Equal(".agents/root/_root.md", topology.FindByPath(".agents/root/native/SKILL.md")!.ParentPath);
-        Assert.Equal(RouteTopologyParentState.None, topology.FindByPath(".agents/root/unrepresented/leaf.md")!.ParentState);
-        Assert.Equal(0, topology.ReadAbsoluteDepth(root.Source.CanonicalPath));
+        SourceRouteNode child = Assert.IsType<SourceRouteNode>(topology.FindByPath(".agents/root/child/_child.md"));
+        Assert.Equal(SourceRouteParentState.Resolved, child.ParentState);
+        Assert.Equal([root.Identity.CanonicalBasePath], child.ParentPaths);
+        SourceRouteNode grandchild = Assert.IsType<SourceRouteNode>(topology.FindByPath(".agents/root/child/grand.md"));
+        Assert.Equal(SourceRouteParentState.Resolved, grandchild.ParentState);
+        Assert.Equal([child.Identity.CanonicalBasePath], grandchild.ParentPaths);
+        SourceRouteNode native = Assert.IsType<SourceRouteNode>(topology.FindByPath(".agents/root/native/SKILL.md"));
+        Assert.Equal(SourceRouteParentState.Resolved, native.ParentState);
+        Assert.Equal([root.Identity.CanonicalBasePath], native.ParentPaths);
+        Assert.Null(topology.FindByPath(".agents/root/unrepresented/leaf.md"));
+        Assert.Equal(0, topology.ReadAbsoluteDepth(root.Identity.CanonicalBasePath));
         Assert.Equal(2, topology.ReadAbsoluteDepth(".agents/root/child/grand.md"));
         Assert.Null(topology.ReadAbsoluteDepth(".agents/root/unrepresented/leaf.md"));
     }
@@ -46,7 +59,8 @@ public sealed class RouteListTopologyTests
             ? RouteListDepth.All
             : RouteListDepth.Finite(requestedDepth);
 
-        var result = BuildResult(Input(inventory, depth));
+        var input = Input(inventory, depth);
+        var result = BuildResult(input, StandardRouteFacts(input));
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal(expectedRows, result.Rows.Count);
@@ -77,7 +91,7 @@ public sealed class RouteListTopologyTests
         var inventory = StandardInventory();
         var input = Input(inventory, RouteListDepth.All, "root/child");
 
-        var result = BuildResult(input);
+        var result = BuildResult(input, StandardRouteFacts(input));
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal(["root/child", "root/child/grand"], result.Rows.Select(row => row.Id));
@@ -104,7 +118,13 @@ public sealed class RouteListTopologyTests
             root.Source.CanonicalPath,
             child.Source.CanonicalPath);
 
-        var result = BuildResult(input);
+        var routeFacts = CreateRouteFacts(
+            input,
+            [
+                RoutedRoot(root.Source.CanonicalPath, child.Source.CanonicalPath),
+                RoutedChild(child.Source.CanonicalPath, root.Source.CanonicalPath),
+            ]);
+        var result = BuildResult(input, routeFacts);
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal(["root", "root/child"], result.Rows.Select(row => row.Id));
@@ -135,7 +155,13 @@ public sealed class RouteListTopologyTests
             null,
             child.Source.CanonicalPath);
 
-        var result = BuildResult(input);
+        var routeFacts = CreateRouteFacts(
+            input,
+            [
+                UnroutedRoot(root.Source.CanonicalPath, child.Source.CanonicalPath),
+                RoutedChild(child.Source.CanonicalPath, root.Source.CanonicalPath),
+            ]);
+        var result = BuildResult(input, routeFacts);
 
         var row = Assert.Single(result.Rows);
         Assert.Equal("root", row.ParentId);
@@ -154,7 +180,14 @@ public sealed class RouteListTopologyTests
         var inventory = Inventory(root, detached, leaf);
         var input = Input(inventory, RouteListDepth.All, "detached");
 
-        var result = BuildResult(input);
+        var routeFacts = CreateRouteFacts(
+            input,
+            [
+                RoutedRoot(root.Source.CanonicalPath),
+                UnroutedRoot(detached.Source.CanonicalPath, leaf.Source.CanonicalPath),
+                UnroutedChild(leaf.Source.CanonicalPath, detached.Source.CanonicalPath),
+            ]);
+        var result = BuildResult(input, routeFacts);
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal(["detached", "detached/leaf"], result.Rows.Select(row => row.Id));
@@ -171,7 +204,7 @@ public sealed class RouteListTopologyTests
         var inventory = StandardInventory();
         var input = Input(inventory, RouteListDepth.All, "root/unrepresented/leaf");
 
-        var result = BuildResult(input);
+        var result = BuildResult(input, StandardRouteFacts(input));
 
         Assert.Equal(CliSemanticStatus.Invalid, result.Status);
         Assert.Empty(result.Rows);
@@ -202,7 +235,13 @@ public sealed class RouteListTopologyTests
             selection,
             loaderSelection);
 
-        var result = BuildResult(input);
+        var routeFacts = CreateRouteFacts(
+            input,
+            [
+                RoutedRoot(root.Source.CanonicalPath, leaf.Source.CanonicalPath),
+                RoutedChild(leaf.Source.CanonicalPath, root.Source.CanonicalPath),
+            ]);
+        var result = BuildResult(input, routeFacts);
 
         var row = Assert.Single(result.Rows);
         Assert.Equal(".agents/root/leaf.md", row.Path);
@@ -226,7 +265,28 @@ public sealed class RouteListTopologyTests
         var inventory = Inventory(root, canonical, compatibility, leaf);
         var input = Input(inventory, RouteListDepth.All, "root/ambiguous/leaf");
 
-        var result = BuildResult(input);
+        var ambiguousIssue = new SourceRouteIssue(
+            SourceRouteIssueCode.RouteAmbiguous,
+            leaf.Source.CanonicalPath,
+            [canonical.Source.CanonicalPath, compatibility.Source.CanonicalPath],
+            0,
+            "The source has multiple authored route parents.");
+        var routeFacts = CreateRouteFacts(
+            input,
+            [
+                RoutedRoot(
+                    root.Source.CanonicalPath,
+                    canonical.Source.CanonicalPath,
+                    compatibility.Source.CanonicalPath),
+                RoutedChild(canonical.Source.CanonicalPath, root.Source.CanonicalPath),
+                RoutedChild(compatibility.Source.CanonicalPath, root.Source.CanonicalPath),
+                AmbiguousSource(
+                    leaf.Source.CanonicalPath,
+                    canonical.Source.CanonicalPath,
+                    compatibility.Source.CanonicalPath),
+            ],
+            [ambiguousIssue]);
+        var result = BuildResult(input, routeFacts);
 
         Assert.Equal(CliSemanticStatus.Blocked, result.Status);
         Assert.Empty(result.Rows);
@@ -246,7 +306,13 @@ public sealed class RouteListTopologyTests
             [RouteListFilesystemFindingPolicy.MetadataMalformed(malformed.Source.CanonicalPath)]);
         var input = Input(inventory, RouteListDepth.All);
 
-        var result = BuildResult(input);
+        var routeFacts = CreateRouteFacts(
+            input,
+            [
+                RoutedRoot(root.Source.CanonicalPath, malformed.Source.CanonicalPath),
+                RoutedChild(malformed.Source.CanonicalPath, root.Source.CanonicalPath),
+            ]);
+        var result = BuildResult(input, routeFacts);
 
         Assert.Equal(CliSemanticStatus.Incomplete, result.Status);
         Assert.Equal(["root"], result.Rows.Select(row => row.Id));
@@ -266,7 +332,14 @@ public sealed class RouteListTopologyTests
             [root, compatibility],
             [RouteListFilesystemFindingPolicy.CompatibilityEntrypoint(compatibility.Source.CanonicalPath)]);
 
-        var result = BuildResult(Input(inventory, RouteListDepth.All));
+        var input = Input(inventory, RouteListDepth.All);
+        var routeFacts = CreateRouteFacts(
+            input,
+            [
+                RoutedRoot(root.Source.CanonicalPath, compatibility.Source.CanonicalPath),
+                RoutedChild(compatibility.Source.CanonicalPath, root.Source.CanonicalPath),
+            ]);
+        var result = BuildResult(input, routeFacts);
 
         Assert.Equal(CliSemanticStatus.Attention, result.Status);
         Assert.Equal(RouteListCoverageState.Complete, result.Coverage.State);
@@ -283,7 +356,18 @@ public sealed class RouteListTopologyTests
         var nested = Source(".agents/root/collision/_collision.md", RouteListSourceKind.Entrypoint);
         var inventory = Inventory(root, leaf, nested);
 
-        var result = BuildResult(Input(inventory, RouteListDepth.All));
+        var input = Input(inventory, RouteListDepth.All);
+        var routeFacts = CreateRouteFacts(
+            input,
+            [
+                RoutedRoot(
+                    root.Source.CanonicalPath,
+                    leaf.Source.CanonicalPath,
+                    nested.Source.CanonicalPath),
+                RoutedChild(leaf.Source.CanonicalPath, root.Source.CanonicalPath),
+                RoutedChild(nested.Source.CanonicalPath, root.Source.CanonicalPath),
+            ]);
+        var result = BuildResult(input, routeFacts);
 
         Assert.Equal(CliSemanticStatus.Blocked, result.Status);
         Assert.Equal(["root", "root/collision", "root/collision"], result.Rows.Select(row => row.Id));
@@ -316,7 +400,17 @@ public sealed class RouteListTopologyTests
             sourceSelection,
             loaderSelection);
 
-        var result = BuildResult(input);
+        var routeFacts = CreateRouteFacts(
+            input,
+            [
+                RoutedRoot(
+                    root.Source.CanonicalPath,
+                    selected.Source.CanonicalPath,
+                    collision.Source.CanonicalPath),
+                RoutedChild(selected.Source.CanonicalPath, root.Source.CanonicalPath),
+                RoutedChild(collision.Source.CanonicalPath, root.Source.CanonicalPath),
+            ]);
+        var result = BuildResult(input, routeFacts);
 
         Assert.Equal(CliSemanticStatus.Attention, result.Status);
         Assert.Single(result.Rows);
@@ -336,7 +430,11 @@ public sealed class RouteListTopologyTests
             "The unrelated path leaves the workspace.");
         var inventory = Inventory([root], [unrelated]);
 
-        var result = BuildResult(Input(inventory, RouteListDepth.All));
+        var input = Input(inventory, RouteListDepth.All);
+        var routeFacts = CreateRouteFacts(
+            input,
+            [RoutedRoot(root.Source.CanonicalPath)]);
+        var result = BuildResult(input, routeFacts);
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Empty(result.Findings);
@@ -349,13 +447,24 @@ public sealed class RouteListTopologyTests
         var root = Source(".agents/root/_root.md", RouteListSourceKind.Entrypoint);
         var leaf = Source(".agents/root/leaf.md", RouteListSourceKind.RoutedLeaf);
         var interruption = RouteListFilesystemFindingPolicy.Interrupted(".agents/root/pending.md");
+        RouteListInventorySource[] sources = [root, leaf];
+        var neutral = NeutralInventory(sources, isCancelled: true);
         var inventory = RouteListInventoryFacts.Interrupted(
-            [root, leaf],
+            neutral.SourceCatalogue,
+            neutral.ProjectionBuildResult,
+            sources,
             [],
             [],
             interruption);
 
-        var result = BuildResult(Input(inventory, RouteListDepth.All));
+        var input = Input(inventory, RouteListDepth.All);
+        var routeFacts = CreateRouteFacts(
+            input,
+            [
+                RoutedRoot(root.Source.CanonicalPath, leaf.Source.CanonicalPath),
+                RoutedChild(leaf.Source.CanonicalPath, root.Source.CanonicalPath),
+            ]);
+        var result = BuildResult(input, routeFacts);
 
         Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
         Assert.Equal(["root", "root/leaf"], result.Rows.Select(row => row.Id));
@@ -372,7 +481,10 @@ public sealed class RouteListTopologyTests
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
 
-        var result = BuildResultWithCancellation(input, cancellation.Token);
+        var result = BuildResultWithCancellation(
+            input,
+            StandardRouteFacts(input),
+            cancellation.Token);
 
         Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
         Assert.Empty(result.Rows);
@@ -492,17 +604,25 @@ public sealed class RouteListTopologyTests
                 [interrupted]));
     }
 
-    private static RouteListResult BuildResult(RouteListTopologyInput input)
+    private static RouteListResult BuildResult(
+        RouteListTopologyInput input,
+        SourceRouteFacts routeFacts)
     {
-        return BuildResultWithCancellation(input, TestContext.Current.CancellationToken);
+        return BuildResultWithCancellation(
+            input,
+            routeFacts,
+            TestContext.Current.CancellationToken);
     }
 
     private static RouteListResult BuildResultWithCancellation(
         RouteListTopologyInput input,
+        SourceRouteFacts routeFacts,
         CancellationToken cancellationToken)
     {
-        var topology = BuildTopology(input);
-        var selected = new RouteListTopologySelector().Select(input, topology, cancellationToken);
+        var selected = new RouteListTopologySelector().SelectSources(
+            input,
+            routeFacts,
+            cancellationToken);
         var coverage = new RouteListCoverageBuilder().Build(input, selected);
         return new RouteListResultBuilder().Build(input, selected, coverage);
     }
@@ -515,7 +635,9 @@ public sealed class RouteListTopologyTests
     {
         RouteSource[] roots = loaderRootPaths.Length == 0
             ? [inventory.Sources.Single(source => source.Source.Id == "root").Source]
-            : loaderRootPaths.Select(path => inventory.Catalogue.FindByPath(path)!).ToArray();
+            : loaderRootPaths
+                .Select(path => inventory.Sources.Single(source => source.Source.CanonicalPath == path).Source)
+                .ToArray();
         var loaderSelection = RouteListSelectionResolutionFactory.Resolved(
             RouteListSelectionFactory.LoaderRoots(),
             roots);
@@ -527,7 +649,9 @@ public sealed class RouteListTopologyTests
                 loaderSelection);
         }
 
-        var source = Assert.Single(inventory.Catalogue.FindById(sourceId));
+        var source = Assert.Single(inventory.Sources
+            .Where(candidate => candidate.Source.Id == sourceId)
+            .Select(candidate => candidate.Source));
         var selection = RouteListSelectionResolutionFactory.Resolved(
             RouteListSelectionFactory.ResolvedId(sourceId, source),
             [source]);
@@ -558,7 +682,17 @@ public sealed class RouteListTopologyTests
         IEnumerable<RouteListInventorySource> sources,
         IEnumerable<RouteListFilesystemFinding> findings)
     {
-        return RouteListInventoryFacts.Create(sources, findings, []);
+        var materializedSources = sources.ToArray();
+        var materializedFindings = findings.ToArray();
+        var neutral = NeutralInventory(
+            materializedSources,
+            materializedFindings.Any(finding => finding.Code == RouteListFindingCode.Interrupted));
+        return RouteListInventoryFacts.Create(
+            neutral.SourceCatalogue,
+            neutral.ProjectionBuildResult,
+            materializedSources,
+            materializedFindings,
+            []);
     }
 
     private static RouteListInventorySource Source(
@@ -571,14 +705,14 @@ public sealed class RouteListTopologyTests
         var form = ReadForm(canonicalPath, kind);
         var sourceKind = form switch
         {
-            RouteSourceForm.Loader => RouteSourceKind.Loader,
-            RouteSourceForm.CanonicalEntrypoint
-                or RouteSourceForm.IndexEntrypoint
-                or RouteSourceForm.UnderscoreIndexEntrypoint
-                or RouteSourceForm.ReferencesEntrypoint
-                or RouteSourceForm.UnderscoreReferencesEntrypoint => RouteSourceKind.Entrypoint,
-            RouteSourceForm.Skill => RouteSourceKind.Native,
-            RouteSourceForm.Markdown => RouteSourceKind.Markdown,
+            SourceDocumentForm.Loader => RouteSourceKind.Loader,
+            SourceDocumentForm.CanonicalEntrypoint
+                or SourceDocumentForm.IndexEntrypoint
+                or SourceDocumentForm.UnderscoreIndexEntrypoint
+                or SourceDocumentForm.ReferencesEntrypoint
+                or SourceDocumentForm.UnderscoreReferencesEntrypoint => RouteSourceKind.Entrypoint,
+            SourceDocumentForm.Skill => RouteSourceKind.Native,
+            SourceDocumentForm.Markdown => RouteSourceKind.Markdown,
             _ => throw new ArgumentOutOfRangeException(nameof(form), form, "The source form is not defined."),
         };
         var source = RouteSourceTestData.Source(
@@ -591,38 +725,312 @@ public sealed class RouteListTopologyTests
         return new RouteListInventorySource(source);
     }
 
-    private static RouteSourceForm ReadForm(string path, RouteListSourceKind kind)
+    private static SourceDocumentForm ReadForm(string path, RouteListSourceKind kind)
     {
-        if (RouteListLogicalPath.ReadFileName(path) == "SKILL.md")
+        if (SourceLogicalPath.ReadFileName(path) == "SKILL.md")
         {
-            return RouteSourceForm.Skill;
+            return SourceDocumentForm.Skill;
         }
 
         if (kind != RouteListSourceKind.Entrypoint)
         {
-            return RouteSourceForm.Markdown;
+            return SourceDocumentForm.Markdown;
         }
 
-        return RouteListLogicalPath.ReadFileName(path) switch
+        return SourceLogicalPath.ReadFileName(path) switch
         {
-            "index.md" => RouteSourceForm.IndexEntrypoint,
-            "_index.md" => RouteSourceForm.UnderscoreIndexEntrypoint,
-            "references.md" => RouteSourceForm.ReferencesEntrypoint,
-            "_references.md" => RouteSourceForm.UnderscoreReferencesEntrypoint,
-            _ => RouteSourceForm.CanonicalEntrypoint,
+            "index.md" => SourceDocumentForm.IndexEntrypoint,
+            "_index.md" => SourceDocumentForm.UnderscoreIndexEntrypoint,
+            "references.md" => SourceDocumentForm.ReferencesEntrypoint,
+            "_references.md" => SourceDocumentForm.UnderscoreReferencesEntrypoint,
+            _ => SourceDocumentForm.CanonicalEntrypoint,
         };
     }
 
-    private static RouteTopologyFacts BuildTopology(RouteListTopologyInput input)
+    private static SourceRouteFacts StandardRouteFacts(RouteListTopologyInput input)
     {
-        return new RouteTopologyBuilder().Build(
-            input.Inventory.Sources
-                .Where(source => source.Kind is (
-                    RouteListSourceKind.Entrypoint
-                    or RouteListSourceKind.RoutedLeaf
-                    or RouteListSourceKind.RoutedNative))
-                .Select(source => source.Source),
-            input.LoaderRootPaths);
+        return CreateRouteFacts(
+            input,
+            [
+                RoutedRoot(
+                    ".agents/root/_root.md",
+                    ".agents/root/child/_child.md",
+                    ".agents/root/leaf.md",
+                    ".agents/root/native/SKILL.md"),
+                RoutedChild(
+                    ".agents/root/child/_child.md",
+                    ".agents/root/_root.md",
+                    ".agents/root/child/grand.md"),
+                RoutedChild(".agents/root/child/grand.md", ".agents/root/child/_child.md"),
+                RoutedChild(".agents/root/leaf.md", ".agents/root/_root.md"),
+                RoutedChild(".agents/root/native/SKILL.md", ".agents/root/_root.md"),
+                Unrepresented(".agents/root/unrepresented/leaf.md"),
+            ]);
     }
+
+    private static SourceRouteFacts CreateRouteFacts(
+        RouteListTopologyInput input,
+        IReadOnlyList<SourceRouteFixture> fixtures,
+        IReadOnlyList<SourceRouteIssue>? issues = null)
+    {
+        var sources = input.Inventory.SourceCatalogue.Sources
+            .Where(source => source.Base.Form != SourceDocumentForm.Loader)
+            .ToArray();
+        var fixturesByPath = fixtures.ToDictionary(fixture => fixture.CanonicalPath, StringComparer.Ordinal);
+        if (fixturesByPath.Count != sources.Length
+            || sources.Any(source => !fixturesByPath.ContainsKey(source.Identity.CanonicalBasePath)))
+        {
+            throw new ArgumentException("Every neutral source requires one explicit route-fact fixture.", nameof(fixtures));
+        }
+
+        var sourcesByPath = sources.ToDictionary(
+            source => source.Identity.CanonicalBasePath,
+            StringComparer.Ordinal);
+        var nodes = fixtures
+            .Where(fixture => fixture.ParentState is not null)
+            .Select(fixture =>
+            {
+                var parentState = fixture.ParentState
+                    ?? throw new InvalidOperationException("A topology fixture requires its explicit parent state.");
+                return new SourceRouteNode(
+                    sourcesByPath[fixture.CanonicalPath].Identity,
+                    parentState,
+                    fixture.ParentPaths,
+                    fixture.ChildPaths);
+            })
+            .ToArray();
+        var topology = new SourceRouteTopology(nodes, input.LoaderRootPaths);
+        var identityCounts = sources
+            .GroupBy(source => source.Identity.AutomaticId, StringComparer.Ordinal)
+            .ToDictionary(group => group.Key, group => group.Count(), StringComparer.Ordinal);
+        var routeFacts = sources.Select(source => new SourceRouteFact(
+            source.Identity,
+            fixturesByPath[source.Identity.CanonicalBasePath].RouteState,
+            identityCounts[source.Identity.AutomaticId] == 1));
+        return new SourceRouteFacts(
+            topology,
+            routeFacts,
+            issues ?? [],
+            input.LoaderRootBoundaryIsComplete,
+            input.Inventory.SourceCatalogue.IsCancelled
+                || input.Inventory.ProjectionBuildResult.IsCancelled);
+    }
+
+    private static SourceRouteFixture RoutedRoot(
+        string canonicalPath,
+        params string[] childPaths)
+    {
+        return new SourceRouteFixture(
+            canonicalPath,
+            SourceRouteState.Routed,
+            SourceRouteParentState.None,
+            [],
+            childPaths);
+    }
+
+    private static SourceRouteFixture RoutedChild(
+        string canonicalPath,
+        string parentPath,
+        params string[] childPaths)
+    {
+        return new SourceRouteFixture(
+            canonicalPath,
+            SourceRouteState.Routed,
+            SourceRouteParentState.Resolved,
+            [parentPath],
+            childPaths);
+    }
+
+    private static SourceRouteFixture UnroutedRoot(
+        string canonicalPath,
+        params string[] childPaths)
+    {
+        return new SourceRouteFixture(
+            canonicalPath,
+            SourceRouteState.Unrouted,
+            SourceRouteParentState.None,
+            [],
+            childPaths);
+    }
+
+    private static SourceRouteFixture UnroutedChild(
+        string canonicalPath,
+        string parentPath,
+        params string[] childPaths)
+    {
+        return new SourceRouteFixture(
+            canonicalPath,
+            SourceRouteState.Unrouted,
+            SourceRouteParentState.Resolved,
+            [parentPath],
+            childPaths);
+    }
+
+    private static SourceRouteFixture Unrepresented(string canonicalPath)
+    {
+        return new SourceRouteFixture(
+            canonicalPath,
+            SourceRouteState.Unrouted,
+            null,
+            [],
+            []);
+    }
+
+    private static SourceRouteFixture AmbiguousSource(
+        string canonicalPath,
+        params string[] parentPaths)
+    {
+        return new SourceRouteFixture(
+            canonicalPath,
+            SourceRouteState.Ambiguous,
+            SourceRouteParentState.Ambiguous,
+            parentPaths,
+            []);
+    }
+
+    private static (
+        SourceCatalogue SourceCatalogue,
+        RouteSourceProjectionBuildResult ProjectionBuildResult) NeutralInventory(
+        IReadOnlyList<RouteListInventorySource> inventorySources,
+        bool isCancelled = false)
+    {
+        var sourcePairs = inventorySources
+            .Select(source => (
+                Inventory: source,
+                Logical: LogicalSource(source.Source)))
+            .ToArray();
+        var projections = sourcePairs
+            .Select(pair => Projection(pair.Inventory.Source, pair.Logical))
+            .ToArray();
+        var overwriteFacts = sourcePairs
+            .Where(pair => pair.Inventory.Source.Overwrite is not null)
+            .Select(pair =>
+            {
+                var overwrite = pair.Inventory.Source.Overwrite
+                    ?? throw new InvalidOperationException("A paired overwrite fixture requires its Route document.");
+                return new RouteOverwriteFact(
+                    RouteOverwriteState.Paired,
+                    overwrite,
+                    [pair.Inventory.Source.CanonicalPath]);
+            })
+            .ToArray();
+        var candidates = sourcePairs
+            .SelectMany(pair => new SourceCandidate?[]
+            {
+                Candidate(pair.Logical.Base, pair.Logical.Identity.AutomaticId),
+                pair.Logical.Overwrite is null
+                    ? null
+                    : Candidate(pair.Logical.Overwrite, pair.Logical.Identity.AutomaticId),
+            })
+            .Where(candidate => candidate is not null)
+            .Cast<SourceCandidate>()
+            .ToArray();
+        var issues = sourcePairs
+            .GroupBy(pair => pair.Logical.Identity.AutomaticId, StringComparer.Ordinal)
+            .Where(group => group.Count() > 1)
+            .Select(group =>
+            {
+                var paths = group
+                    .Select(pair => pair.Logical.Identity.CanonicalBasePath)
+                    .OrderBy(path => path, StringComparer.Ordinal)
+                    .ToArray();
+                return new SourceCatalogueIssue(
+                    SourceCatalogueIssueStage.Identity,
+                    SourceCatalogueIssueCode.IdentityCollision,
+                    paths[0],
+                    paths,
+                    Path.GetDirectoryName(group.First().Logical.Base.PhysicalPath),
+                    null);
+            })
+            .ToArray();
+        var sourceCatalogue = new SourceCatalogue(
+            RouteListContractTestData.Workspace(),
+            candidates,
+            sourcePairs.Select(pair => pair.Logical),
+            issues,
+            isCancelled);
+        var projectionSet = new RouteSourceProjectionSet(projections, overwriteFacts);
+        return (
+            sourceCatalogue,
+            new RouteSourceProjectionBuildResult(
+                projectionSet,
+                projections,
+                [],
+                isCancelled));
+    }
+
+    private static SourceLogicalSource LogicalSource(RouteSource source)
+    {
+        return new SourceLogicalSource(
+            new SourceLogicalIdentity(source.Id, source.CanonicalPath),
+            NeutralLayer(source.Base),
+            source.Overwrite is null ? null : NeutralLayer(source.Overwrite));
+    }
+
+    private static RouteSourceProjection Projection(
+        RouteSource source,
+        SourceLogicalSource logicalSource)
+    {
+        var baseRead = CompleteRead(logicalSource.Base, source.Base);
+        SourceDocumentReadResult? overwriteRead = null;
+        if (source.Overwrite is not null)
+        {
+            var logicalOverwrite = logicalSource.Overwrite
+                ?? throw new InvalidOperationException("The neutral fixture must retain the Route overwrite layer.");
+            overwriteRead = CompleteRead(logicalOverwrite, source.Overwrite);
+        }
+
+        return new RouteSourceProjection(logicalSource, source, baseRead, overwriteRead);
+    }
+
+    private static SourceDocumentReadResult CompleteRead(
+        SourceLayer layer,
+        RouteSourceDocument document)
+    {
+        if (document.ReadState != FileReadState.Complete || document.Body is null)
+        {
+            throw new ArgumentException("The topology fixture requires a complete projected source document.", nameof(document));
+        }
+
+        return new SourceDocumentReadResult(
+            layer,
+            new SourceLayerVerification(
+                layer,
+                SourceLayerVerificationState.Verified,
+                layer.PhysicalPath,
+                null),
+            FileReadResult<string>.Complete(layer.CanonicalPath, document.Body));
+    }
+
+    private static SourceCandidate Candidate(
+        SourceLayer layer,
+        string automaticId)
+    {
+        return new SourceCandidate(
+            layer.CanonicalPath,
+            layer.Form,
+            automaticId,
+            PhysicalPathState.Contained,
+            layer.PhysicalPath,
+            Path.GetDirectoryName(layer.PhysicalPath));
+    }
+
+    private static SourceLayer NeutralLayer(RouteSourceDocument document)
+    {
+        return new SourceLayer(
+            document.CanonicalLogicalPath,
+            document.PhysicalPath,
+            document.Form,
+            document.Form == SourceDocumentForm.OverwriteCompanion
+                ? SourceLayerKind.Overwrite
+                : SourceLayerKind.Base);
+    }
+
+    private sealed record SourceRouteFixture(
+        string CanonicalPath,
+        SourceRouteState RouteState,
+        SourceRouteParentState? ParentState,
+        IReadOnlyList<string> ParentPaths,
+        IReadOnlyList<string> ChildPaths);
 
 }

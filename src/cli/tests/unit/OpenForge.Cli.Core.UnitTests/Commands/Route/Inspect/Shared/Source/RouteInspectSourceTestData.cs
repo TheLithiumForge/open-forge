@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect.Shared.Source;
 
@@ -21,7 +22,6 @@ internal static class RouteInspectSourceTestData
 
     internal static RouteSource Source(RouteInspectSourceSpec spec)
     {
-        ArgumentNullException.ThrowIfNull(spec);
         var sourceForm = spec.Form ?? ReadForm(spec.Path, spec.Kind);
         var compatibility = IsCompatibility(sourceForm);
         var tags = spec.Tags ?? (spec.Kind == RouteSourceKind.Native ? [] : ["Route"]);
@@ -56,7 +56,7 @@ internal static class RouteInspectSourceTestData
                 new RouteInspectDocumentSpec
                 {
                     Path = spec.OverwritePath,
-                    Form = RouteSourceForm.OverwriteCompanion,
+                    Form = SourceDocumentForm.OverwriteCompanion,
                     ReadState = spec.OverwriteReadState,
                     Body = spec.OverwriteBody,
                     PhysicalPath = spec.OverwritePhysicalPath ?? PhysicalPath(spec.OverwritePath),
@@ -67,7 +67,6 @@ internal static class RouteInspectSourceTestData
 
     internal static RouteSourceDocument Document(RouteInspectDocumentSpec spec)
     {
-        ArgumentNullException.ThrowIfNull(spec);
         return new RouteSourceDocument(
             spec.Path,
             spec.PhysicalPath ?? PhysicalPath(spec.Path),
@@ -99,40 +98,40 @@ internal static class RouteInspectSourceTestData
         return $"{prefix}## Entries\n\n{GeneratedIndexStart}\n{generatedBody}\n{GeneratedIndexEnd}";
     }
 
-    private static RouteSourceForm ReadForm(string path, RouteSourceKind kind)
+    private static SourceDocumentForm ReadForm(string path, RouteSourceKind kind)
     {
         if (kind == RouteSourceKind.Loader)
         {
-            return RouteSourceForm.Loader;
+            return SourceDocumentForm.Loader;
         }
 
         var fileName = path[(path.LastIndexOf('/') + 1)..];
         if (kind == RouteSourceKind.Native)
         {
-            return RouteSourceForm.Skill;
+            return SourceDocumentForm.Skill;
         }
 
         if (kind == RouteSourceKind.Markdown)
         {
-            return RouteSourceForm.Markdown;
+            return SourceDocumentForm.Markdown;
         }
 
         return fileName switch
         {
-            "index.md" => RouteSourceForm.IndexEntrypoint,
-            "_index.md" => RouteSourceForm.UnderscoreIndexEntrypoint,
-            "references.md" => RouteSourceForm.ReferencesEntrypoint,
-            "_references.md" => RouteSourceForm.UnderscoreReferencesEntrypoint,
-            _ => RouteSourceForm.CanonicalEntrypoint,
+            "index.md" => SourceDocumentForm.IndexEntrypoint,
+            "_index.md" => SourceDocumentForm.UnderscoreIndexEntrypoint,
+            "references.md" => SourceDocumentForm.ReferencesEntrypoint,
+            "_references.md" => SourceDocumentForm.UnderscoreReferencesEntrypoint,
+            _ => SourceDocumentForm.CanonicalEntrypoint,
         };
     }
 
-    private static bool IsCompatibility(RouteSourceForm form)
+    private static bool IsCompatibility(SourceDocumentForm form)
     {
-        return form is RouteSourceForm.IndexEntrypoint
-            or RouteSourceForm.UnderscoreIndexEntrypoint
-            or RouteSourceForm.ReferencesEntrypoint
-            or RouteSourceForm.UnderscoreReferencesEntrypoint;
+        return form is SourceDocumentForm.IndexEntrypoint
+            or SourceDocumentForm.UnderscoreIndexEntrypoint
+            or SourceDocumentForm.ReferencesEntrypoint
+            or SourceDocumentForm.UnderscoreReferencesEntrypoint;
     }
 }
 
@@ -144,7 +143,7 @@ internal sealed record RouteInspectSourceSpec
 
     internal string Body { get; init; } = "body";
 
-    internal RouteSourceForm? Form { get; init; }
+    internal SourceDocumentForm? Form { get; init; }
 
     internal RouteSourceMetadataState MetadataState { get; init; } = RouteSourceMetadataState.Complete;
 
@@ -169,7 +168,7 @@ internal sealed record RouteInspectDocumentSpec
 {
     internal required string Path { get; init; }
 
-    internal required RouteSourceForm Form { get; init; }
+    internal required SourceDocumentForm Form { get; init; }
 
     internal FileReadState ReadState { get; init; } = FileReadState.Complete;
 

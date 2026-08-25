@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 
@@ -16,7 +17,7 @@ internal sealed class RouteListInventorySource
     internal RouteListInventorySource(RouteSource source)
     {
         ArgumentNullException.ThrowIfNull(source);
-        if (source.Base.Form == RouteSourceForm.OverwriteCompanion)
+        if (source.Base.Form == SourceDocumentForm.OverwriteCompanion)
         {
             throw new ArgumentException("An overwrite companion cannot be an inventory source base.", nameof(source));
         }

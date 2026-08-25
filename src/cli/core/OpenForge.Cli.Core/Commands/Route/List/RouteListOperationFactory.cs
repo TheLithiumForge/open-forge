@@ -2,9 +2,10 @@ using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Commands.Route.List.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Topology;
-using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Topology;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Reading;
+using OpenForge.Cli.Core.Framework.Sources.Routing;
 
 namespace OpenForge.Cli.Core.Commands.Route.List;
 
@@ -18,7 +19,7 @@ internal static class RouteListOperationFactory
             {
                 InventoryReader = new RouteListInventoryReader(),
                 SelectionResolver = new RouteListSelectionResolver(physicalPathResolver),
-                TopologyBuilder = new RouteTopologyBuilder(),
+                RouteFactsResolver = new SourceRouteFactsResolver(),
                 TopologySelector = new RouteListTopologySelector(),
                 CoverageBuilder = new RouteListCoverageBuilder(),
                 ResultBuilder = new RouteListResultBuilder(),
@@ -31,7 +32,7 @@ internal sealed class RouteListOperationCoordinator
 {
     private readonly RouteListInventoryReader _inventoryReader;
     private readonly RouteListSelectionResolver _selectionResolver;
-    private readonly RouteTopologyBuilder _graphBuilder;
+    private readonly SourceRouteFactsResolver _routeFactsResolver;
     private readonly RouteListTopologySelector _topologySelector;
     private readonly RouteListCoverageBuilder _coverageBuilder;
     private readonly RouteListResultBuilder _resultBuilder;
@@ -41,13 +42,13 @@ internal sealed class RouteListOperationCoordinator
         ArgumentNullException.ThrowIfNull(components);
         ArgumentNullException.ThrowIfNull(components.InventoryReader);
         ArgumentNullException.ThrowIfNull(components.SelectionResolver);
-        ArgumentNullException.ThrowIfNull(components.TopologyBuilder);
+        ArgumentNullException.ThrowIfNull(components.RouteFactsResolver);
         ArgumentNullException.ThrowIfNull(components.TopologySelector);
         ArgumentNullException.ThrowIfNull(components.CoverageBuilder);
         ArgumentNullException.ThrowIfNull(components.ResultBuilder);
         _inventoryReader = components.InventoryReader;
         _selectionResolver = components.SelectionResolver;
-        _graphBuilder = components.TopologyBuilder;
+        _routeFactsResolver = components.RouteFactsResolver;
         _topologySelector = components.TopologySelector;
         _coverageBuilder = components.CoverageBuilder;
         _resultBuilder = components.ResultBuilder;
@@ -61,11 +62,28 @@ internal sealed class RouteListOperationCoordinator
         var attemptedSelection = RouteListSelectionFactory.Attempted(request.SourceReference);
         try
         {
+            var documentReader = new SourceDocumentReader(request.Workspace);
             var inventory = await _inventoryReader
-                .ReadAsync(new RouteListInventoryRequest(request.Workspace, cancellationToken))
+                .ReadAsync(
+                    new RouteListInventoryRequest(request.Workspace, cancellationToken),
+                    documentReader)
+                .ConfigureAwait(false);
+            var sourceCatalogue = inventory.SourceCatalogue;
+            var catalogueSelection = sourceCatalogue.SelectAll();
+            var projectionSet = inventory.ProjectionBuildResult.ProjectionSet;
+            var routeFacts = await _routeFactsResolver
+                .ResolveAsync(
+                    new SourceRouteFactsRequest(sourceCatalogue, catalogueSelection),
+                    documentReader,
+                    cancellationToken)
                 .ConfigureAwait(false);
             var selection = await _selectionResolver
-                .ResolveAsync(request, inventory.Catalogue, cancellationToken)
+                .ResolveAsync(
+                    request,
+                    sourceCatalogue,
+                    projectionSet,
+                    routeFacts,
+                    cancellationToken)
                 .ConfigureAwait(false);
             attemptedSelection = selection.Selection;
 
@@ -79,7 +97,9 @@ internal sealed class RouteListOperationCoordinator
                             request.Workspace,
                             null,
                             request.RequestedDepth),
-                        inventory.Catalogue,
+                        sourceCatalogue,
+                        projectionSet,
+                        routeFacts,
                         cancellationToken)
                     .ConfigureAwait(false);
             }
@@ -89,15 +109,7 @@ internal sealed class RouteListOperationCoordinator
                 inventory,
                 selection,
                 loaderRootSelection);
-            var topology = _graphBuilder.Build(
-                inventory.Sources
-                    .Where(source => source.Kind is
-                        RouteListSourceKind.Entrypoint
-                        or RouteListSourceKind.RoutedLeaf
-                        or RouteListSourceKind.RoutedNative)
-                    .Select(source => source.Source),
-                input.LoaderRootPaths);
-            var selected = _topologySelector.Select(input, topology, cancellationToken);
+            var selected = _topologySelector.SelectSources(input, routeFacts, cancellationToken);
             var coverage = _coverageBuilder.Build(input, selected);
             return _resultBuilder.Build(input, selected, coverage);
         }

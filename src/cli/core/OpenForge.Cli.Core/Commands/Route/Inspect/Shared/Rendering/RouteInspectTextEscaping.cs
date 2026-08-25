@@ -8,14 +8,13 @@ internal static class RouteInspectTextEscaping
 
     internal const int DefaultValueLimit = 8192;
 
-    internal static string Escape(string? value)
+    internal static string Escape(string value)
     {
         return Escape(value, DefaultValueLimit);
     }
 
-    internal static string Escape(string? value, int maximumLength)
+    internal static string Escape(string value, int maximumLength)
     {
-        ArgumentNullException.ThrowIfNull(value);
         ValidateMaximumLength(maximumLength);
 
         var builder = new System.Text.StringBuilder(Math.Min(value.Length, maximumLength));
@@ -34,9 +33,8 @@ internal static class RouteInspectTextEscaping
         return builder.ToString();
     }
 
-    internal static string Clamp(string? value, int maximumLength)
+    internal static string Clamp(string value, int maximumLength)
     {
-        ArgumentNullException.ThrowIfNull(value);
         ValidateMaximumLength(maximumLength);
         if (value.Length <= maximumLength)
         {

@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Framework.Filesystem;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 
@@ -25,7 +26,7 @@ internal sealed record RouteListFilesystemEntry
             throw new ArgumentOutOfRangeException(nameof(state), state, "The filesystem entry state is not defined.");
         }
 
-        if (!RouteListLogicalPath.IsCanonical(canonicalLogicalPath))
+        if (!SourceLogicalPath.IsCanonicalRoot(canonicalLogicalPath))
         {
             throw new ArgumentException("The filesystem entry logical path is not canonical.", nameof(canonicalLogicalPath));
         }
@@ -53,6 +54,20 @@ internal sealed record RouteListFilesystemEntry
     internal string CanonicalLogicalPath { get; }
 
     internal FilesystemFailure? Failure { get; }
+
+    internal FilesystemFailure ReadFailure()
+    {
+        if (State is not (RouteListFilesystemEntryState.Inaccessible
+            or RouteListFilesystemEntryState.Unsupported
+            or RouteListFilesystemEntryState.InputOutputFailure)
+            || Failure is not { } failure)
+        {
+            throw new InvalidOperationException(
+                "A failed filesystem entry requires a failure state and failure.");
+        }
+
+        return failure;
+    }
 }
 
 internal static class RouteListFilesystemEntryReader
@@ -62,7 +77,7 @@ internal static class RouteListFilesystemEntryReader
         string canonicalLogicalPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(provenPhysicalPath);
-        if (!RouteListLogicalPath.IsCanonical(canonicalLogicalPath))
+        if (!SourceLogicalPath.IsCanonicalRoot(canonicalLogicalPath))
         {
             throw new ArgumentException("The filesystem entry logical path is not canonical.", nameof(canonicalLogicalPath));
         }

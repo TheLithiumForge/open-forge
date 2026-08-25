@@ -1,8 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
-using OpenForge.Cli.Core.Commands.Route.List.Shared.Loader;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
-using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Route.List;
@@ -21,9 +19,9 @@ public sealed class LoaderDestinationResolverIntegrationTests
         using var workspace = RouteListSelectionIntegrationWorkspace.Create();
         workspace.WriteLoader(markerBody);
 
-        var result = await ResolveLoaderAsync(workspace, workspace.Catalogue());
+        var result = await ResolveLoaderAsync(workspace);
 
-        Assert.Equal(LoaderDestinationResolutionState.Resolved, result.State);
+        AssertLoaderState(RouteListSelectionResolutionState.Resolved, result);
         Assert.Empty(result.SelectedSources);
         Assert.Empty(result.Issues);
     }
@@ -42,23 +40,11 @@ public sealed class LoaderDestinationResolverIntegrationTests
         workspace.Write(".agents/project alpha/_project alpha.md", "alpha");
         workspace.Write(".agents/工作/_工作.md", "unicode");
         workspace.Write(".agents/encoded%20name/_encoded%20name.md", "percent");
-        var sources = new[]
-        {
-            workspace.Source("root", ".agents/root/_root.md", RouteListSourceKind.Entrypoint),
-            workspace.Source(
-                "project alpha",
-                ".agents/project alpha/_project alpha.md",
-                RouteListSourceKind.Entrypoint),
-            workspace.Source("工作", ".agents/工作/_工作.md", RouteListSourceKind.Entrypoint),
-            workspace.Source(
-                "encoded%20name",
-                ".agents/encoded%20name/_encoded%20name.md",
-                RouteListSourceKind.Entrypoint),
-        };
+        var before = workspace.SnapshotHashes();
 
-        var result = await ResolveLoaderAsync(workspace, workspace.Catalogue(sources));
+        var result = await ResolveLoaderAsync(workspace);
 
-        Assert.Equal(LoaderDestinationResolutionState.Resolved, result.State);
+        AssertLoaderState(RouteListSelectionResolutionState.Resolved, result);
         Assert.Equal(
             [
                 ".agents/encoded%20name/_encoded%20name.md",
@@ -67,7 +53,11 @@ public sealed class LoaderDestinationResolverIntegrationTests
                 ".agents/工作/_工作.md",
             ],
             result.SelectedSources.Select(source => source.CanonicalPath));
+        Assert.Equal(
+            ["encoded%20name", "project alpha", "root", "工作"],
+            result.SelectedSources.Select(source => source.Id));
         Assert.Empty(result.Issues);
+        Assert.Equal(before, workspace.SnapshotHashes());
     }
 
     [Fact(DisplayName = "Route-list Loader reports malformed percent encoding as incomplete Loader input")]
@@ -77,9 +67,9 @@ public sealed class LoaderDestinationResolverIntegrationTests
         using var workspace = RouteListSelectionIntegrationWorkspace.Create();
         workspace.WriteLoader("- [Root](root%2/_root.md) - #Root");
 
-        var result = await ResolveLoaderAsync(workspace, workspace.Catalogue());
+        var result = await ResolveLoaderAsync(workspace);
 
-        Assert.Equal(LoaderDestinationResolutionState.Incomplete, result.State);
+        AssertLoaderState(RouteListSelectionResolutionState.Incomplete, result);
         var issue = Assert.Single(result.Issues);
         Assert.Equal(RouteListFindingCode.LoaderMalformed, issue.Code);
         Assert.Equal("root%2/_root.md", issue.Subject);
@@ -100,10 +90,10 @@ public sealed class LoaderDestinationResolverIntegrationTests
             ".agents/root/_root.md",
             RouteListSourceKind.Entrypoint);
 
-        var result = await ResolveLoaderAsync(workspace, workspace.Catalogue(source));
+        var result = await ResolveLoaderAsync(workspace);
 
-        Assert.Equal(LoaderDestinationResolutionState.Incomplete, result.State);
-        Assert.Same(source, Assert.Single(result.SelectedSources));
+        AssertLoaderState(RouteListSelectionResolutionState.Incomplete, result);
+        AssertSelectedSource(result, source.Id, source.CanonicalPath);
         var issue = Assert.Single(result.Issues);
         Assert.Equal(RouteListFindingCode.LoaderMalformed, issue.Code);
         Assert.Equal("broken%2/_broken.md", issue.Subject);
@@ -123,10 +113,10 @@ public sealed class LoaderDestinationResolverIntegrationTests
             ".agents/root/_root.md",
             RouteListSourceKind.Entrypoint);
 
-        var result = await ResolveLoaderAsync(workspace, workspace.Catalogue(source));
+        var result = await ResolveLoaderAsync(workspace);
 
-        Assert.Equal(LoaderDestinationResolutionState.Incomplete, result.State);
-        Assert.Same(source, Assert.Single(result.SelectedSources));
+        AssertLoaderState(RouteListSelectionResolutionState.Incomplete, result);
+        AssertSelectedSource(result, source.Id, source.CanonicalPath);
         Assert.Equal(RouteListFindingCode.LoaderMalformed, Assert.Single(result.Issues).Code);
     }
 
@@ -139,9 +129,9 @@ public sealed class LoaderDestinationResolverIntegrationTests
             "- [Unsafe](root%2F%2F_root.md) - #Root\n"
             + "- [Malformed](broken%2/_broken.md) - #Broken");
 
-        var result = await ResolveLoaderAsync(workspace, workspace.Catalogue());
+        var result = await ResolveLoaderAsync(workspace);
 
-        Assert.Equal(LoaderDestinationResolutionState.Blocked, result.State);
+        AssertLoaderState(RouteListSelectionResolutionState.Blocked, result);
         Assert.Equal(
             [CliSemanticStatus.Blocked, CliSemanticStatus.Incomplete],
             result.Issues.Select(issue => issue.Status));
@@ -163,9 +153,9 @@ public sealed class LoaderDestinationResolverIntegrationTests
         workspace.WriteLoader($"- [Unsafe]({destination}) - #Unsafe");
         var before = workspace.SnapshotHashes();
 
-        var result = await ResolveLoaderAsync(workspace, workspace.Catalogue());
+        var result = await ResolveLoaderAsync(workspace);
 
-        Assert.Equal(LoaderDestinationResolutionState.Blocked, result.State);
+        AssertLoaderState(RouteListSelectionResolutionState.Blocked, result);
         var issue = Assert.Single(result.Issues);
         Assert.Equal(RouteListFindingCode.PhysicalBoundary, issue.Code);
         Assert.Equal(destination, issue.Subject);
@@ -181,9 +171,9 @@ public sealed class LoaderDestinationResolverIntegrationTests
         const string destination = "missing/_missing.md";
         workspace.WriteLoader($"- [Missing]({destination}) - #Missing");
 
-        var result = await ResolveLoaderAsync(workspace, workspace.Catalogue());
+        var result = await ResolveLoaderAsync(workspace);
 
-        Assert.Equal(LoaderDestinationResolutionState.Incomplete, result.State);
+        AssertLoaderState(RouteListSelectionResolutionState.Incomplete, result);
         var issue = Assert.Single(result.Issues);
         Assert.Equal(RouteListFindingCode.LoaderUnavailable, issue.Code);
         Assert.Equal(destination, issue.Subject);
@@ -197,11 +187,11 @@ public sealed class LoaderDestinationResolverIntegrationTests
         using var workspace = RouteListSelectionIntegrationWorkspace.Create();
         const string destination = "root/_root.md";
         workspace.WriteLoader($"- [Root]({destination}) - #Root");
-        workspace.Write(".agents/root/_root.md", "unrecognized by catalogue");
+        workspace.Write(".agents/root/_root.md/child.txt", "unrecognized directory contents");
 
-        var result = await ResolveLoaderAsync(workspace, workspace.Catalogue());
+        var result = await ResolveLoaderAsync(workspace);
 
-        Assert.Equal(LoaderDestinationResolutionState.Incomplete, result.State);
+        AssertLoaderState(RouteListSelectionResolutionState.Incomplete, result);
         var issue = Assert.Single(result.Issues);
         Assert.Equal(RouteListFindingCode.LoaderUnavailable, issue.Code);
         Assert.Equal(destination, issue.Subject);
@@ -216,14 +206,9 @@ public sealed class LoaderDestinationResolverIntegrationTests
         const string destination = "root/leaf.md";
         workspace.WriteLoader($"- [Leaf]({destination}) - #Leaf");
         workspace.Write(".agents/root/leaf.md", "leaf");
-        var leaf = workspace.Source(
-            "root/leaf",
-            ".agents/root/leaf.md",
-            RouteListSourceKind.RoutedLeaf);
+        var result = await ResolveLoaderAsync(workspace);
 
-        var result = await ResolveLoaderAsync(workspace, workspace.Catalogue(leaf));
-
-        Assert.Equal(LoaderDestinationResolutionState.Incomplete, result.State);
+        AssertLoaderState(RouteListSelectionResolutionState.Incomplete, result);
         var issue = Assert.Single(result.Issues);
         Assert.Equal(RouteListFindingCode.LoaderMalformed, issue.Code);
         Assert.Equal(destination, issue.Subject);
@@ -239,15 +224,9 @@ public sealed class LoaderDestinationResolverIntegrationTests
         workspace.WriteLoader($"- [Overwrite]({destination}) - #Root");
         workspace.Write(".agents/root/_root.md", "base");
         workspace.Write(".agents/root/_root.overwrite.md", "overwrite");
-        var source = workspace.Source(
-            "root",
-            ".agents/root/_root.md",
-            RouteListSourceKind.Entrypoint,
-            overwritePath: ".agents/root/_root.overwrite.md");
+        var result = await ResolveLoaderAsync(workspace);
 
-        var result = await ResolveLoaderAsync(workspace, workspace.Catalogue(source));
-
-        Assert.Equal(LoaderDestinationResolutionState.Incomplete, result.State);
+        AssertLoaderState(RouteListSelectionResolutionState.Incomplete, result);
         var issue = Assert.Single(result.Issues);
         Assert.Equal(RouteListFindingCode.LoaderMalformed, issue.Code);
         Assert.Equal(destination, issue.Subject);
@@ -267,9 +246,9 @@ public sealed class LoaderDestinationResolverIntegrationTests
         workspace.WriteLoader(declaration);
         workspace.Write(physicalPath, contents);
 
-        var result = await ResolveLoaderAsync(workspace, workspace.Catalogue());
+        var result = await ResolveLoaderAsync(workspace);
 
-        Assert.Equal(LoaderDestinationResolutionState.Incomplete, result.State);
+        AssertLoaderState(RouteListSelectionResolutionState.Incomplete, result);
         Assert.Equal(RouteListFindingCode.LoaderMalformed, Assert.Single(result.Issues).Code);
         Assert.Empty(result.SelectedSources);
     }
@@ -282,15 +261,11 @@ public sealed class LoaderDestinationResolverIntegrationTests
         const string destination = "root/_root.md";
         workspace.WriteLoader($"- [Root]({destination}) - #Root");
         workspace.Write(".agents/root/_root.md", "ambiguous");
-        var source = workspace.Source(
-            "root",
-            ".agents/root/_root.md",
-            RouteListSourceKind.Entrypoint,
-            isRouteAmbiguous: true);
+        workspace.Write(".agents/root/index.md", "ambiguous compatibility entrypoint");
 
-        var result = await ResolveLoaderAsync(workspace, workspace.Catalogue(source));
+        var result = await ResolveLoaderAsync(workspace);
 
-        Assert.Equal(LoaderDestinationResolutionState.Blocked, result.State);
+        AssertLoaderState(RouteListSelectionResolutionState.Blocked, result);
         var issue = Assert.Single(result.Issues);
         Assert.Equal(RouteListFindingCode.RouteAmbiguous, issue.Code);
         Assert.Equal(destination, issue.Subject);
@@ -317,10 +292,10 @@ public sealed class LoaderDestinationResolverIntegrationTests
             physicalRelativePath: "contained/_root.md");
         var before = workspace.SnapshotHashes();
 
-        var result = await ResolveLoaderAsync(workspace, workspace.Catalogue(source));
+        var result = await ResolveLoaderAsync(workspace);
 
-        Assert.Equal(LoaderDestinationResolutionState.Resolved, result.State);
-        Assert.Same(source, Assert.Single(result.SelectedSources));
+        AssertLoaderState(RouteListSelectionResolutionState.Resolved, result);
+        AssertSelectedSource(result, source.Id, source.CanonicalPath);
         Assert.Equal(".agents/root/_root.md", result.SelectedSources[0].CanonicalPath);
         Assert.Empty(result.Issues);
         Assert.Equal(before, workspace.SnapshotHashes());
@@ -344,9 +319,9 @@ public sealed class LoaderDestinationResolverIntegrationTests
         var workspaceBefore = workspace.SnapshotHashes();
         var outsideBefore = outside.SnapshotHashes();
 
-        var result = await ResolveLoaderAsync(workspace, workspace.Catalogue());
+        var result = await ResolveLoaderAsync(workspace);
 
-        Assert.Equal(LoaderDestinationResolutionState.Blocked, result.State);
+        AssertLoaderState(RouteListSelectionResolutionState.Blocked, result);
         var issue = Assert.Single(result.Issues);
         Assert.Equal(RouteListFindingCode.PhysicalBoundary, issue.Code);
         Assert.Equal(destination, issue.Subject);
@@ -379,12 +354,12 @@ public sealed class LoaderDestinationResolverIntegrationTests
         var workspaceBefore = workspace.SnapshotHashes();
         var outsideBefore = outside.SnapshotHashes();
 
-        var first = await ResolveLoaderAsync(workspace, workspace.Catalogue());
-        var second = await ResolveLoaderAsync(workspace, workspace.Catalogue());
+        var first = await ResolveLoaderAsync(workspace);
+        var second = await ResolveLoaderAsync(workspace);
 
         Assert.Equal(first.State, second.State);
         Assert.Equal(first.Issues.Select(issue => issue.Code), second.Issues.Select(issue => issue.Code));
-        Assert.Equal(LoaderDestinationResolutionState.Blocked, first.State);
+        AssertLoaderState(RouteListSelectionResolutionState.Blocked, first);
         var issue = Assert.Single(first.Issues);
         Assert.Equal(RouteListFindingCode.PhysicalBoundary, issue.Code);
         Assert.Equal(destination, issue.Subject);
@@ -393,14 +368,68 @@ public sealed class LoaderDestinationResolverIntegrationTests
         Assert.Equal(outsideBefore, outside.SnapshotHashes());
     }
 
-    private static async Task<LoaderDestinationResolution> ResolveLoaderAsync(
-        RouteListSelectionIntegrationWorkspace workspace,
-        RouteSourceCatalogue catalogue)
+    [Fact(DisplayName = "Route-list Loader maps pre-cancellation to interrupted selection without workspace writes")]
+    [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
+    public async Task PreCancellationIsInterruptedWithoutWrites()
     {
-        return await new LoaderDestinationResolver(new PhysicalPathResolver())
+        using var workspace = RouteListSelectionIntegrationWorkspace.Create();
+        workspace.WriteLoader("- [Root](root/_root.md) - #Root");
+        workspace.Write(".agents/root/_root.md", "root");
+        var before = workspace.SnapshotHashes();
+        using var cancellation = new CancellationTokenSource();
+        cancellation.Cancel();
+
+        var result = await ResolveLoaderWithCancellationAsync(workspace, cancellation.Token);
+
+        AssertLoaderState(RouteListSelectionResolutionState.Interrupted, result);
+        Assert.Empty(result.SelectedSources);
+        var issue = Assert.Single(result.Issues);
+        Assert.Equal(CliSemanticStatus.Interrupted, issue.Status);
+        Assert.Equal(RouteListFindingCode.Interrupted, issue.Code);
+        Assert.Equal(".agents/loader.md", issue.Subject);
+        Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
+    private static Task<RouteListSelectionResolution> ResolveLoaderAsync(
+        RouteListSelectionIntegrationWorkspace workspace)
+    {
+        return ResolveLoaderWithCancellationAsync(
+            workspace,
+            TestContext.Current.CancellationToken);
+    }
+
+    private static async Task<RouteListSelectionResolution> ResolveLoaderWithCancellationAsync(
+        RouteListSelectionIntegrationWorkspace workspace,
+        CancellationToken cancellationToken)
+    {
+        var boundary = await workspace.BoundaryAsync(cancellationToken);
+        var result = await new RouteListSelectionResolver(new PhysicalPathResolver())
             .ResolveAsync(
-                workspace.Workspace,
-                catalogue,
-                TestContext.Current.CancellationToken);
+                workspace.RouteRequest(),
+                boundary.Catalogue,
+                boundary.ProjectionSet,
+                boundary.RouteFacts,
+                cancellationToken);
+        Assert.All(result.SelectedSources, selected =>
+            Assert.Same(selected, boundary.ProjectionSet.FindByPath(selected.CanonicalPath)));
+        return result;
+    }
+
+    private static void AssertLoaderState(
+        RouteListSelectionResolutionState expected,
+        RouteListSelectionResolution result)
+    {
+        Assert.Equal(expected, result.State);
+        Assert.Equal(RouteListSelectionKind.LoaderRoots, result.Selection.Kind);
+    }
+
+    private static void AssertSelectedSource(
+        RouteListSelectionResolution result,
+        string expectedId,
+        string expectedPath)
+    {
+        var selected = Assert.Single(result.SelectedSources);
+        Assert.Equal(expectedId, selected.Id);
+        Assert.Equal(expectedPath, selected.CanonicalPath);
     }
 }

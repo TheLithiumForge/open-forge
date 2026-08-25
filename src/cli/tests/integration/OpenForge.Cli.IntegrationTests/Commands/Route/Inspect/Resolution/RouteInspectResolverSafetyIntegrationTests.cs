@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Resolution;
@@ -136,9 +137,13 @@ public sealed class RouteInspectResolverSafetyIntegrationTests
         Assert.Equal(".agents/root/leaf.md", identity.CanonicalWorkspaceRelativePath);
         Assert.Equal(RouteInspectRouteState.Routed, identity.RouteState);
         var graph = Assert.IsType<RouteInspectGraph>(result.Graph);
+        var projection = Assert.Single(
+            graph.ProjectionSet.Projections,
+            projection => projection.LogicalSource.Identity.CanonicalBasePath == identity.CanonicalWorkspaceRelativePath);
         Assert.Same(
-            graph.Catalogue.FindByPath(identity.CanonicalWorkspaceRelativePath),
-            graph.Topology.FindByPath(identity.CanonicalWorkspaceRelativePath)!.Source);
+            projection.LogicalSource.Identity,
+            Assert.IsType<SourceRouteNode>(
+                graph.RouteFacts.Topology.FindByPath(identity.CanonicalWorkspaceRelativePath)).Identity);
         var issue = Assert.Single(result.Issues);
         Assert.Equal(RouteInspectResolutionIssueCode.ReadUnavailable, issue.Code);
         Assert.Equal(".agents/root/_root.md", issue.Subject);

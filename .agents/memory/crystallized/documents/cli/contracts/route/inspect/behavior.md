@@ -488,10 +488,11 @@ compatibility, overwrite, Git-independent, and malformed route structures. It
 should cover parsing, concise human output, structured output, exit behavior, and
 packaged execution, including the accepted AOT boundary.
 
-The CLI Architecture defines exact schema and structured compatibility,
+The Route Inspect Interface defines its exact command-local structured result.
+The CLI Architecture defines the shared envelope and compatibility coordinates,
 process-status mapping, parser and filesystem realization, diagnostics and
-redaction, and source boundaries. The source-stated exact heading-name
-comparison belongs to the Context contract, not this route-profile operation. No
+redaction, and source boundaries. The source-stated exact heading-name comparison
+belongs to the Context contract, not this route-profile operation. No
 command-local Technical Design is needed for `route inspect`.
 
 ## Related Current Sources

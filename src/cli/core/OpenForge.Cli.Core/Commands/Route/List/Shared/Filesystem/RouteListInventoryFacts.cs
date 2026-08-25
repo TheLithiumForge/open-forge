@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
@@ -15,15 +15,21 @@ internal enum RouteListInventoryState
 
 internal sealed class RouteListInventoryFacts
 {
+    private readonly SourceCatalogue _sourceCatalogue;
+    private readonly RouteSourceProjectionBuildResult _projectionBuildResult;
+
     private RouteListInventoryFacts(
         IEnumerable<RouteListInventorySource> sources,
         IEnumerable<RouteListFilesystemFinding> findings,
         IEnumerable<RouteListPhysicalAlias> physicalAliases,
-        IEnumerable<RouteOverwriteFact>? overwriteFacts)
+        SourceCatalogue sourceCatalogue,
+        RouteSourceProjectionBuildResult projectionBuildResult)
     {
         ArgumentNullException.ThrowIfNull(sources);
         ArgumentNullException.ThrowIfNull(findings);
         ArgumentNullException.ThrowIfNull(physicalAliases);
+        ArgumentNullException.ThrowIfNull(sourceCatalogue);
+        ArgumentNullException.ThrowIfNull(projectionBuildResult);
 
         var orderedSources = sources
             .Select(RequireSource)
@@ -62,21 +68,13 @@ internal sealed class RouteListInventoryFacts
         Sources = new ReadOnlyCollection<RouteListInventorySource>(orderedSources);
         Findings = new ReadOnlyCollection<RouteListFilesystemFinding>(orderedFindings);
         PhysicalAliases = new ReadOnlyCollection<RouteListPhysicalAlias>(orderedAliases);
-        var suppliedOverwriteFacts = overwriteFacts?.ToArray() ?? [];
-        var pairedOverwriteFacts = orderedSources
-            .Where(source => source.Source.Overwrite is not null)
-            .Select(source => new RouteOverwriteFact(
-                RouteOverwriteState.Paired,
-                source.Source.Overwrite!,
-                [source.Source.CanonicalPath]));
-        var allOverwriteFacts = suppliedOverwriteFacts
-            .Where(fact => fact.State != RouteOverwriteState.Paired)
-            .Concat(pairedOverwriteFacts)
-            .ToArray();
-        OverwriteFacts = new ReadOnlyCollection<RouteOverwriteFact>(allOverwriteFacts);
-        Catalogue = new RouteSourceCatalogue(
-            orderedSources.Select(source => source.Source),
-            OverwriteFacts);
+        ValidateNeutralInputs(
+            sourceCatalogue,
+            projectionBuildResult,
+            orderedSources);
+        _sourceCatalogue = sourceCatalogue;
+        _projectionBuildResult = projectionBuildResult;
+        OverwriteFacts = projectionBuildResult.ProjectionSet.OverwriteFacts;
     }
 
     internal RouteListInventoryState State { get; }
@@ -89,23 +87,88 @@ internal sealed class RouteListInventoryFacts
 
     internal IReadOnlyList<RouteOverwriteFact> OverwriteFacts { get; }
 
-    internal RouteSourceCatalogue Catalogue { get; }
+    internal SourceCatalogue SourceCatalogue => _sourceCatalogue;
+
+    internal RouteSourceProjectionBuildResult ProjectionBuildResult => _projectionBuildResult;
 
     internal static RouteListInventoryFacts Create(
+        SourceCatalogue sourceCatalogue,
+        RouteSourceProjectionBuildResult projectionBuildResult,
         IEnumerable<RouteListInventorySource> sources,
         IEnumerable<RouteListFilesystemFinding> findings,
-        IEnumerable<RouteListPhysicalAlias> physicalAliases,
-        IEnumerable<RouteOverwriteFact>? overwriteFacts = null)
+        IEnumerable<RouteListPhysicalAlias> physicalAliases)
     {
-        return new RouteListInventoryFacts(sources, findings, physicalAliases, overwriteFacts);
+        ArgumentNullException.ThrowIfNull(sourceCatalogue);
+        ArgumentNullException.ThrowIfNull(projectionBuildResult);
+        return new RouteListInventoryFacts(
+            sources,
+            findings,
+            physicalAliases,
+            sourceCatalogue,
+            projectionBuildResult);
     }
 
     internal static RouteListInventoryFacts Interrupted(
+        SourceCatalogue sourceCatalogue,
+        RouteSourceProjectionBuildResult projectionBuildResult,
         IEnumerable<RouteListInventorySource> sources,
         IEnumerable<RouteListFilesystemFinding> knownFindings,
         IEnumerable<RouteListPhysicalAlias> physicalAliases,
-        RouteListFilesystemFinding interruption,
-        IEnumerable<RouteOverwriteFact>? overwriteFacts = null)
+        RouteListFilesystemFinding interruption)
+    {
+        ArgumentNullException.ThrowIfNull(sourceCatalogue);
+        ArgumentNullException.ThrowIfNull(projectionBuildResult);
+        ValidateInterruption(interruption);
+        return new RouteListInventoryFacts(
+            sources,
+            knownFindings.Append(interruption),
+            physicalAliases,
+            sourceCatalogue,
+            projectionBuildResult);
+    }
+
+    private static void ValidateNeutralInputs(
+        SourceCatalogue sourceCatalogue,
+        RouteSourceProjectionBuildResult projectionBuildResult,
+        IReadOnlyList<RouteListInventorySource> sources)
+    {
+        foreach (var projection in projectionBuildResult.Projections)
+        {
+            if (!ReferenceEquals(
+                    sourceCatalogue.FindByPath(projection.LogicalSource.Identity.CanonicalBasePath),
+                    projection.LogicalSource))
+            {
+                throw new ArgumentException(
+                    "Every Route projection must retain a source-catalogue member.",
+                    nameof(projectionBuildResult));
+            }
+        }
+
+        foreach (var read in projectionBuildResult.ReadResults)
+        {
+            var candidate = sourceCatalogue.FindCandidateByPath(read.Layer.CanonicalPath);
+            if (candidate is null
+                || !string.Equals(candidate.PhysicalPath, read.Layer.PhysicalPath, StringComparison.Ordinal))
+            {
+                throw new ArgumentException(
+                    "Every source-less Route read must retain a source-catalogue candidate.",
+                    nameof(projectionBuildResult));
+            }
+        }
+
+        var projectedSources = projectionBuildResult.ProjectionSet.Sources
+            .ToHashSet(ReferenceEqualityComparer.Instance);
+        if (projectedSources.Count != sources.Count
+            || sources.Any(source => !projectedSources.Contains(source.Source)))
+        {
+            throw new ArgumentException(
+                "Route-list inventory sources must be the projection-set source instances.",
+                nameof(sources));
+        }
+
+    }
+
+    private static void ValidateInterruption(RouteListFilesystemFinding interruption)
     {
         ArgumentNullException.ThrowIfNull(interruption);
         if (interruption.Code != RouteListFindingCode.Interrupted
@@ -113,12 +176,6 @@ internal sealed class RouteListInventoryFacts
         {
             throw new ArgumentException("The cancellation-retention factory requires an interrupted finding.", nameof(interruption));
         }
-
-        return new RouteListInventoryFacts(
-            sources,
-            knownFindings.Append(interruption),
-            physicalAliases,
-            overwriteFacts);
     }
 
     private static RouteListInventoryState DeriveState(IReadOnlyList<RouteListFilesystemFinding> findings)

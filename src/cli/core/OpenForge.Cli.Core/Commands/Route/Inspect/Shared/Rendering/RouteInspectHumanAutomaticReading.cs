@@ -6,10 +6,19 @@ internal static class RouteInspectHumanAutomaticReading
 {
     internal static string Explanation(RouteInspectAutomaticReading reading)
     {
+        if (reading.Kind == RouteInspectAutomaticReadingKind.ParentLoadNow)
+        {
+            if (reading.RelatedSourceId is not { } relatedSourceId)
+            {
+                throw new InvalidOperationException(
+                    "A parent-load automatic reading requires a related source ID.");
+            }
+
+            return $"{RouteInspectHumanValues.Text(relatedSourceId)} is read";
+        }
+
         return reading.Kind switch
         {
-            RouteInspectAutomaticReadingKind.ParentLoadNow =>
-                $"{RouteInspectHumanValues.Text(reading.RelatedSourceId!)} is read",
             RouteInspectAutomaticReadingKind.EntrypointKeepInMind => Events(reading.Events),
             RouteInspectAutomaticReadingKind.RoutedFileKeepInMind => Events(reading.Events),
             RouteInspectAutomaticReadingKind.OnDemand => "this route is selected",

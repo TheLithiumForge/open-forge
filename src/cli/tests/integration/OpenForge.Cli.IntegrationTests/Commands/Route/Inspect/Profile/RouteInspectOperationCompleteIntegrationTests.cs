@@ -266,7 +266,8 @@ public sealed class RouteInspectOperationCompleteIntegrationTests
         Assert.Equal(overwriteBytes, strict.GetBytes(decodedOverwrite));
 
         var profile = Assert.IsType<RouteInspectProfile>(result.Profile);
-        Assert.Equal(RouteInspectAxiomsLocalState.Substantive, profile.Axioms.Value!.Local.Value);
+        var axioms = Assert.IsType<RouteInspectAxiomsProfile>(profile.Axioms.Value);
+        Assert.Equal(RouteInspectAxiomsLocalState.Substantive, axioms.Local.Value);
         RouteInspectProfileIntegrationAssertions.AssertMeasurement(
             profile.Measurements.OwnSource,
             workspace,

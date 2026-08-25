@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
@@ -19,7 +20,7 @@ internal sealed class RouteListFilesystemFinding
             throw new ArgumentException("The status does not match the filesystem finding code.", nameof(status));
         }
 
-        if (!RouteListLogicalPath.IsCanonical(canonicalLogicalSubject))
+        if (!SourceLogicalPath.IsCanonicalRoot(canonicalLogicalSubject))
         {
             throw new ArgumentException("The filesystem finding subject is not canonical.", nameof(canonicalLogicalSubject));
         }

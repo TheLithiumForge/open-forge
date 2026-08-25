@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Framework.Filesystem;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 
@@ -21,7 +22,7 @@ internal sealed class RouteListDirectoryEnumeration
             throw new ArgumentOutOfRangeException(nameof(state), state, "The directory enumeration state is not defined.");
         }
 
-        if (!RouteListLogicalPath.IsCanonical(canonicalLogicalPath))
+        if (!SourceLogicalPath.IsCanonicalRoot(canonicalLogicalPath))
         {
             throw new ArgumentException("The directory logical path is not canonical.", nameof(canonicalLogicalPath));
         }
@@ -67,6 +68,18 @@ internal sealed class RouteListDirectoryEnumeration
     internal IReadOnlyList<RouteListDirectoryEntry>? Entries { get; }
 
     internal FilesystemFailure? Failure { get; }
+
+    internal FilesystemFailure ReadFailure()
+    {
+        if (State is not (DirectoryEnumerationState.AccessDenied or DirectoryEnumerationState.InputOutputFailure)
+            || Failure is not { } failure)
+        {
+            throw new InvalidOperationException(
+                "A failed directory enumeration requires a failure state and failure.");
+        }
+
+        return failure;
+    }
 }
 
 internal sealed class RouteListDirectoryEnumerator
@@ -77,7 +90,7 @@ internal sealed class RouteListDirectoryEnumerator
         CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(provenPhysicalPath);
-        if (!RouteListLogicalPath.IsCanonical(canonicalLogicalPath))
+        if (!SourceLogicalPath.IsCanonicalRoot(canonicalLogicalPath))
         {
             throw new ArgumentException("The directory logical path is not canonical.", nameof(canonicalLogicalPath));
         }
@@ -95,12 +108,17 @@ internal sealed class RouteListDirectoryEnumerator
                 result.Failure);
         }
 
-        var entries = result.Entries!
+        if (result.Entries is not { } enumeratedEntries)
+        {
+            throw new InvalidOperationException("A complete directory enumeration must carry entries.");
+        }
+
+        var entries = enumeratedEntries
             .Select(ReadEntryName)
-            .Where(RouteListLogicalPath.IsCanonicalSegment)
+            .Where(SourceLogicalPath.IsCanonicalSegment)
             .Select(name => new RouteListDirectoryEntry(
-                name!,
-                RouteListLogicalPath.Combine(canonicalLogicalPath, name!)))
+                name,
+                SourceLogicalPath.Combine(canonicalLogicalPath, name)))
             .OrderBy(entry => entry.Name, StringComparer.Ordinal)
             .ThenBy(entry => entry.CanonicalLogicalPath, StringComparer.Ordinal)
             .ToArray();

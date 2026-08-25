@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.List.Shared.Filesystem;
 
@@ -82,13 +83,13 @@ public sealed class RouteListInventoryReaderIntegrationTests
             facts.Sources.Select(source => source.Source.CanonicalPath));
         Assert.DoesNotContain(facts.Sources, source => source.Source.CanonicalPath.Contains("ghost", StringComparison.Ordinal));
         Assert.DoesNotContain(facts.Sources, source => source.Source.CanonicalPath.EndsWith("resource.txt", StringComparison.Ordinal));
-        Assert.DoesNotContain(facts.Sources, source => source.Source.Base.Form == RouteSourceForm.OverwriteCompanion);
+        Assert.DoesNotContain(facts.Sources, source => source.Source.Base.Form == SourceDocumentForm.OverwriteCompanion);
 
-        var loader = facts.Sources.Single(source => source.Source.Base.Form == RouteSourceForm.Loader);
+        var loader = facts.Sources.Single(source => source.Source.Base.Form == SourceDocumentForm.Loader);
         Assert.Equal(RouteSourceKind.Loader, loader.Source.Kind);
         Assert.Equal(RouteSourceMetadataState.NotApplicable, loader.Source.Metadata.State);
-        var canonical = facts.Sources.Single(source => source.Source.Base.Form == RouteSourceForm.CanonicalEntrypoint);
-        var compatibility = facts.Sources.Single(source => source.Source.Base.Form == RouteSourceForm.IndexEntrypoint);
+        var canonical = facts.Sources.Single(source => source.Source.Base.Form == SourceDocumentForm.CanonicalEntrypoint);
+        var compatibility = facts.Sources.Single(source => source.Source.Base.Form == SourceDocumentForm.IndexEntrypoint);
         Assert.True(canonical.Source.IsRouteAmbiguous);
         Assert.True(compatibility.Source.IsRouteAmbiguous);
         Assert.True(compatibility.Source.Metadata.IsCompatibilityEntrypoint);
@@ -99,9 +100,11 @@ public sealed class RouteListInventoryReaderIntegrationTests
         Assert.Equal(["Leaf", "Route-List"], leaf.Source.Metadata.Tags);
         Assert.True(leaf.Source.Metadata.IsOverwritePresent);
         Assert.Equal(".agents/root/leaf.overwrite.md", leaf.Source.Overwrite?.CanonicalLogicalPath);
-        Assert.Same(leaf.Source, facts.Catalogue.FindByPath(".agents/root/leaf.overwrite.md"));
+        Assert.Same(
+            leaf.Source,
+            facts.ProjectionBuildResult.ProjectionSet.FindByPath(".agents/root/leaf.overwrite.md"));
 
-        var skill = facts.Sources.Single(source => source.Source.Base.Form == RouteSourceForm.Skill);
+        var skill = facts.Sources.Single(source => source.Source.Base.Form == SourceDocumentForm.Skill);
         Assert.Equal(RouteSourceKind.Native, skill.Source.Kind);
         Assert.Equal("Exact native description.", skill.Source.Metadata.Description);
         Assert.Empty(skill.Source.Metadata.Tags);

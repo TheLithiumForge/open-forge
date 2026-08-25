@@ -83,7 +83,9 @@ public sealed class RouteInspectPresentationTests
         Assert.Equal(RouteInspectFactState.Value, topology.Counts.State);
         Assert.NotNull(topology.Counts.Value);
         Assert.Equal(RouteInspectFactState.Value, profile.Measurements.LoadNowDescendants.State);
-        Assert.Equal(0, profile.Measurements.LoadNowDescendants.Value!.PhysicalFileCount);
+        Assert.Equal(
+            0,
+            Assert.IsType<RouteInspectMeasurement>(profile.Measurements.LoadNowDescendants.Value).PhysicalFileCount);
     }
 
     [Fact(DisplayName = "Route Inspect help owns exact grammar flags statuses examples related commands and JSON view relationship")]

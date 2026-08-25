@@ -21,7 +21,11 @@ open-forge:
   system boundary. Do not link test files into production folders merely to
   simulate locality.
 - Promote a capability to a shared parent only after multiple real consumers
-  need the same meaning. Use the
+  need the same meaning. In an accepted greenfield program, several accepted
+  program outcomes may instead require one neutral mechanical foundation;
+  implementation order does not justify a feature-local substitute. This applies
+  to boundaries such as grammars, format parsers, protocol adapters, identity
+  models, and safety primitives, not to speculative semantic policy. Use the
   [Nearest Shared Scope](../patterns/software/source-locality/nearest-shared-scope.md)
   Pattern for that placement.
 - A selected language or product scope may require an explicit support folder at

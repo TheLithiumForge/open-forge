@@ -1,6 +1,9 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 
@@ -8,18 +11,22 @@ internal sealed class RouteInspectResolutionInput
 {
     internal RouteInspectResolutionInput(
         RouteInspectRequest request,
-        RouteSourceReferenceParseResult parsed,
+        SourceReferenceParseResult parsed,
         RouteInspectSelection unresolvedSelection,
-        RouteSourceCatalogue catalogue,
-        IReadOnlySet<string> unsafePaths,
+        SourceCatalogue catalogue,
+        SourceCatalogueSelection catalogueSelection,
+        RouteSourceProjectionBuildResult projections,
+        SourceRouteFacts routeFacts,
         PhysicalPathResolution? exactPathPhysical)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(parsed);
         ArgumentNullException.ThrowIfNull(unresolvedSelection);
         ArgumentNullException.ThrowIfNull(catalogue);
-        ArgumentNullException.ThrowIfNull(unsafePaths);
-        if ((parsed.Kind == RouteSourceReferenceKind.SourcePath) != (exactPathPhysical is not null))
+        ArgumentNullException.ThrowIfNull(catalogueSelection);
+        ArgumentNullException.ThrowIfNull(projections);
+        ArgumentNullException.ThrowIfNull(routeFacts);
+        if ((parsed.Kind == SourceReferenceKind.SourcePath) != (exactPathPhysical is not null))
         {
             throw new ArgumentException(
                 "An exact physical path is required only for a parsed source-path reference.",
@@ -30,19 +37,25 @@ internal sealed class RouteInspectResolutionInput
         Parsed = parsed;
         UnresolvedSelection = unresolvedSelection;
         Catalogue = catalogue;
-        UnsafePaths = unsafePaths;
+        CatalogueSelection = catalogueSelection;
+        Projections = projections;
+        RouteFacts = routeFacts;
         ExactPathPhysical = exactPathPhysical;
     }
 
     internal RouteInspectRequest Request { get; }
 
-    internal RouteSourceReferenceParseResult Parsed { get; }
+    internal SourceReferenceParseResult Parsed { get; }
 
     internal RouteInspectSelection UnresolvedSelection { get; }
 
-    internal RouteSourceCatalogue Catalogue { get; }
+    internal SourceCatalogue Catalogue { get; }
 
-    internal IReadOnlySet<string> UnsafePaths { get; }
+    internal SourceCatalogueSelection CatalogueSelection { get; }
+
+    internal RouteSourceProjectionBuildResult Projections { get; }
+
+    internal SourceRouteFacts RouteFacts { get; }
 
     internal PhysicalPathResolution? ExactPathPhysical { get; }
 }

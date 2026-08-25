@@ -62,17 +62,19 @@ public sealed class RouteInspectOperationApplicabilityIntegrationTests
             ".agents/detached/local.md");
 
         var topology = Assert.IsType<RouteInspectTopology>(profile.Topology.Value);
+        var counts = Assert.IsType<RouteInspectTopologyCounts>(topology.Counts.Value);
         Assert.Equal("detached", topology.RootRoute);
         Assert.Equal(["detached"], topology.RouteChain);
         Assert.Null(topology.ParentId);
         Assert.Equal(1, topology.Depth);
-        Assert.Equal(1, topology.Counts.Value!.DirectRoutedFileCount);
-        Assert.Equal(0, topology.Counts.Value.DirectEntrypointCount);
-        Assert.Equal(1, topology.Counts.Value.DescendantRoutedFileCount);
-        Assert.Equal(0, topology.Counts.Value.DescendantEntrypointCount);
+        Assert.Equal(1, counts.DirectRoutedFileCount);
+        Assert.Equal(0, counts.DirectEntrypointCount);
+        Assert.Equal(1, counts.DescendantRoutedFileCount);
+        Assert.Equal(0, counts.DescendantEntrypointCount);
 
-        Assert.Equal(RouteInspectFactState.NotApplicable, profile.Axioms.Value!.Inherited.State);
-        Assert.Equal(RouteInspectAxiomsLocalState.Substantive, profile.Axioms.Value.Local.Value);
+        var axioms = Assert.IsType<RouteInspectAxiomsProfile>(profile.Axioms.Value);
+        Assert.Equal(RouteInspectFactState.NotApplicable, axioms.Inherited.State);
+        Assert.Equal(RouteInspectAxiomsLocalState.Substantive, axioms.Local.Value);
         Assert.Empty(result.Conditions);
         RouteInspectProfileIntegrationAssertions.AssertNoWriteOrInspectionState(before, workspace.Snapshot());
     }
@@ -115,8 +117,9 @@ public sealed class RouteInspectOperationApplicabilityIntegrationTests
         RouteInspectProfileIntegrationAssertions.AssertNotApplicable(profile.Measurements.SelectionAddition);
         RouteInspectProfileIntegrationAssertions.AssertNotApplicable(profile.Measurements.LoadNowDescendants);
         RouteInspectProfileIntegrationAssertions.AssertNotApplicable(profile.Topology);
-        Assert.Equal(RouteInspectFactState.NotApplicable, profile.Axioms.Value!.Inherited.State);
-        Assert.Equal(RouteInspectFactState.NotApplicable, profile.Axioms.Value.Local.State);
+        var axioms = Assert.IsType<RouteInspectAxiomsProfile>(profile.Axioms.Value);
+        Assert.Equal(RouteInspectFactState.NotApplicable, axioms.Inherited.State);
+        Assert.Equal(RouteInspectFactState.NotApplicable, axioms.Local.State);
         Assert.Empty(result.Conditions);
         RouteInspectProfileIntegrationAssertions.AssertNoWriteOrInspectionState(before, workspace.Snapshot());
     }

@@ -38,6 +38,18 @@ internal sealed class RouteInspectResolution
 
     internal IReadOnlyList<RouteInspectResolutionIssue> Issues { get; }
 
+    internal RouteInspectIdentity ReadIdentity()
+    {
+        return Identity
+            ?? throw new InvalidOperationException("A route-inspect resolution requires an identity before it can expose one.");
+    }
+
+    internal RouteInspectGraph ReadGraph()
+    {
+        return Graph
+            ?? throw new InvalidOperationException("A route-inspect resolution requires a graph before it can expose one.");
+    }
+
     internal static RouteInspectResolution Create(
         RouteInspectResolutionState state,
         RouteInspectSelection selection,

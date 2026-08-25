@@ -1,7 +1,7 @@
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Topology;
-using OpenForge.Cli.Core.Commands.Route.Shared.Topology;
+using OpenForge.Cli.Core.Framework.Sources.Routing;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Models.Operation;
 
@@ -11,7 +11,7 @@ internal sealed class RouteListOperationComponents
 
     internal required RouteListSelectionResolver SelectionResolver { get; init; }
 
-    internal required RouteTopologyBuilder TopologyBuilder { get; init; }
+    internal required SourceRouteFactsResolver RouteFactsResolver { get; init; }
 
     internal required RouteListTopologySelector TopologySelector { get; init; }
 

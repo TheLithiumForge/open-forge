@@ -25,6 +25,7 @@ Use these current Task links when assigning or closing an item.
 - [Complete Native CI And Support Floors](tasks/delivery/02-native-ci.md)
 - [Accept And Release The Complete CLI](tasks/delivery/04-release.md)
 - [Remediate Parser And Standard Behavior](tasks/generic-improvements/parser-remediation.md)
+- [Implement The Find Query Operation](tasks/read-only/find-query-operation.md)
 
 ## Deferred Items
 
@@ -209,3 +210,59 @@ Use these current Task links when assigning or closing an item.
 - **Closure condition:** Native CI records reproducible evidence for all six native
   RIDs and the support-floor environments. Release consumes that evidence and
   records acceptance or an explicit residual risk before its gate completes.
+
+### CLI-EDGE-008 — Find selector state completeness
+
+- **Current behavior and evidence:** The accepted Find selector schema has no
+  not-started or unavailable resolution state. Child 2 therefore reports a
+  syntactically valid supplied selector as `invalid` when another Find-local input
+  prevents source resolution from starting. It reports an exact path as
+  `unsupported` when the path is physically eligible but an unavailable parent
+  directory enumeration prevented the sole source catalogue from admitting it.
+  The physical fallback classifies the existing finite outcome only; it never
+  creates a second catalogue candidate or selected source.
+- **Maintainer disposition:** Reuse the existing `invalid` and `unsupported`
+  states for Child 2 and keep this edge durable as a possible contract improvement.
+  This disposition is accepted for the current non-shipping Find implementation
+  and does not authorize a Shell change, second catalogue, guessed source, or
+  hidden selector state.
+- **Risk:** `invalid` can describe a selector that was not itself invalid, and
+  `unsupported` can describe a supported source whose catalogue admission was
+  unavailable. Automation cannot distinguish those narrower causes from ordinary
+  invalid or unsupported selectors through the current finite selector field.
+- **Owning Task(s):** [Implement The Find Query
+  Operation](tasks/read-only/find-query-operation.md) records and proves the bounded
+  reuse. [Accept And Release The Complete CLI](tasks/delivery/04-release.md) owns
+  any later public-schema refinement before shipping.
+- **Closure condition:** A later accepted Find contract may add truthful
+  `not-started` and `unavailable` selector states, with any required finding,
+  status, renderer, JSON, and compatibility changes. Until then, tests preserve
+  the current finite-state reuse and no implementation infers a missing source or
+  bypasses the neutral catalogue.
+
+### CLI-EDGE-009 — Find identity-unavailable finding reuse
+
+- **Current behavior and evidence:** The neutral catalogue can retain a recognized
+  Markdown candidate without an automatic ID, including a root `.agents/SKILL.md`
+  or a file named `.agents/.md`. It emits `IdentityUnavailable` and cannot form a
+  logical source. The accepted Find finding vocabulary has no identity-unavailable
+  code, while every unresolved candidate that could change the result set must
+  keep matching coverage incomplete.
+- **Maintainer disposition:** Map `IdentityUnavailable` to the existing
+  `find.layer-unresolved` incomplete finding for Child 2. This keeps the candidate
+  visible, avoids inventing an ID or logical source, and preserves safe unrelated
+  matches. Record a dedicated identity finding as a possible contract improvement
+  rather than changing the frozen vocabulary during this child.
+- **Risk:** `find.layer-unresolved` currently describes orphan or ambiguous
+  overwrite relationships in the Interface. Automation cannot distinguish that
+  ordinary meaning from unavailable automatic identity through the current
+  finding code alone. The finding subject, path, and cause must retain the direct
+  identity failure without pretending an overwrite exists.
+- **Owning Task(s):** [Implement The Find Query
+  Operation](tasks/read-only/find-query-operation.md) owns the bounded mapping and
+  Red evidence. [Accept And Release The Complete CLI](tasks/delivery/04-release.md)
+  owns any later public finding-vocabulary refinement before shipping.
+- **Closure condition:** A later accepted Find contract may add a dedicated
+  `find.identity-unavailable` finding and update status, ordering, renderers, JSON,
+  and compatibility evidence. Until then, tests preserve the incomplete
+  `layer-unresolved` reuse and prove that no ID or source is fabricated.

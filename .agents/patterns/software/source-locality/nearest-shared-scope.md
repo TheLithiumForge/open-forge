@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Keep support local until demonstrated reuse promotes it to the nearest common ancestor of its consumers
+  description: Place support through demonstrated semantic reuse or an accepted neutral foundation at the nearest shared scope of its consumers
   tags: [Pattern, Software, Source, Locality, Shared, Reuse, Dependency]
 ---
 
@@ -79,11 +79,19 @@ Do not import a sibling's private support merely because its current implementat
 
 Do not pre-create shared modules for hypothetical reuse. Duplication is evidence to inspect, not automatic proof that two behaviors have the same meaning.
 
+For a greenfield program with an accepted top-down work graph, do not confuse
+later implementation with hypothetical use. If several accepted program outcomes
+require one neutral grammar, parser, protocol adapter, serializer, identity model,
+or safety primitive, place that mechanical capability at their nearest shared
+scope before the first dependent consumer. Keep feature semantics and policy
+local, and record the accepted outcomes that justify the foundation.
+
 The replacement CLI has one explicit specialization: supporting implementation
 always sits below a `Shared/<Capability>/` child of its narrowest owning CLI,
 command-family, or command-leaf boundary. At the leaf level, `Shared` marks the
-support boundary rather than proving several consumers. The ordinary promotion
-rule still applies when support moves to a wider `Shared` parent. Follow the
+support boundary rather than proving several consumers. Demonstrated semantic
+reuse or an accepted top-down neutral foundation is still required when support
+moves to a wider `Shared` parent. Follow the
 selected CLI and C# Directives for that physical and namespace shape; do not
 apply this spelling to unrelated languages or repositories by analogy.
 
@@ -99,7 +107,10 @@ apply this spelling to unrelated languages or repositories by analogy.
   tests are at the system boundary.
 - No test file is linked into a production folder merely to simulate locality.
 - Artifact-type categories do not separate files that change together.
-- Promotion follows demonstrated reuse and preserves one clear owner.
+- Promotion follows demonstrated semantic reuse or an accepted top-down neutral
+  foundation and preserves one clear owner.
+- A top-down foundation names its accepted consumers and contains no consumer
+  policy merely to anticipate their delivery.
 - Dependency direction does not pass through a sibling's private folder.
 - Shared files retain capability-specific names.
 - In the replacement CLI, leaf-local support uses the required explicit

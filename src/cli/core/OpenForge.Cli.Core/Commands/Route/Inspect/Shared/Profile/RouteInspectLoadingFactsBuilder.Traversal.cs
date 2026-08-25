@@ -1,7 +1,7 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile.Models;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Models.Topology;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile;
 
@@ -9,7 +9,7 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
 {
     private void ReadLoaderStartup(ISet<string> paths, Queue<string> queue)
     {
-        var loader = _graph.Catalogue.FindByPath(LoaderPath);
+        var loader = _graph.ProjectionSet.FindByPath(LoaderPath);
         if (loader is null)
         {
             _startupAvailable = false;
@@ -123,7 +123,7 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
         Queue<string> startupQueue,
         ISet<string> requiredAncestors)
     {
-        foreach (var source in _graph.Catalogue.Sources
+        foreach (var source in _graph.ProjectionSet.Sources
                      .Where(source => source.Kind != RouteSourceKind.Entrypoint)
                      .OrderBy(source => source.CanonicalPath, StringComparer.Ordinal))
         {
@@ -172,15 +172,15 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
             return;
         }
 
-        var node = _graph.Topology.FindByPath(_selected.CanonicalPath);
+        var node = _graph.RouteFacts.Topology.FindByPath(_selected.CanonicalPath);
         if (node is null)
         {
             _readingAvailable = false;
             return;
         }
 
-        if (node.ParentState == RouteTopologyParentState.Resolved
-            && !ReadVisibleEntries(node.ParentPath!).IsAvailable)
+        if (node.ParentState == SourceRouteParentState.Resolved
+            && !ReadVisibleEntries(node.ParentPaths[0]).IsAvailable)
         {
             _readingAvailable = false;
         }

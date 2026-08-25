@@ -1,7 +1,6 @@
-using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Models.Topology;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Topology;
@@ -9,15 +8,19 @@ namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Topology;
 internal sealed class RouteListTopologySelectionFindings
 {
     private readonly RouteListTopologyInput _input;
+    private readonly SourceRouteFacts _routeFacts;
     private readonly RouteListTopologySelectionState _state;
 
     internal RouteListTopologySelectionFindings(
         RouteListTopologyInput input,
+        SourceRouteFacts routeFacts,
         RouteListTopologySelectionState state)
     {
         ArgumentNullException.ThrowIfNull(input);
+        ArgumentNullException.ThrowIfNull(routeFacts);
         ArgumentNullException.ThrowIfNull(state);
         _input = input;
+        _routeFacts = routeFacts;
         _state = state;
     }
 
@@ -29,12 +32,26 @@ internal sealed class RouteListTopologySelectionFindings
         }
     }
 
-    internal void InspectIdentity(RouteTopologyNode node, int relativeDepth)
+    internal void InspectIdentity(
+        SourceRouteNode node,
+        SourceRouteFact routeFact,
+        int relativeDepth)
     {
-        var source = node.Source;
-        var collision = _input.Inventory.Catalogue.IdentityCollisions.SingleOrDefault(candidate =>
-            candidate.Paths.Contains(source.CanonicalPath, StringComparer.Ordinal));
-        if (collision is not null
+        var source = RouteListTopologyProjectionPolicy.ReadSource(_input, node);
+        var collisionPaths = _input.Inventory.SourceCatalogue.Sources
+            .Where(candidate => string.Equals(
+                candidate.Identity.AutomaticId,
+                routeFact.Identity.AutomaticId,
+                StringComparison.Ordinal))
+            .Select(candidate => candidate.Identity.CanonicalBasePath)
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+        if (routeFact.IsIdentityUnique != (collisionPaths.Length == 1))
+        {
+            throw new InvalidOperationException("The neutral route identity fact does not match the selected source facts.");
+        }
+
+        if (!routeFact.IsIdentityUnique
             && !_state.TryReadSelectedPath(source.Id, out _))
         {
             _state.AddFinding(
@@ -42,7 +59,7 @@ internal sealed class RouteListTopologySelectionFindings
                     RouteListFindingCode.IdentityCollision,
                     CliSemanticStatus.Attention,
                     source.CanonicalPath,
-                    $"The source ID also identifies {string.Join(", ", collision.Paths.Where(path => !string.Equals(path, source.CanonicalPath, StringComparison.Ordinal)))}."),
+                    $"The source ID also identifies {string.Join(", ", collisionPaths.Where(path => !string.Equals(path, source.CanonicalPath, StringComparison.Ordinal)))}."),
                 relativeDepth);
         }
 
@@ -62,9 +79,9 @@ internal sealed class RouteListTopologySelectionFindings
         _state.RegisterSelectedPath(source.Id, source.CanonicalPath);
     }
 
-    internal void EnsureMetadataFinding(RouteTopologyNode node, int relativeDepth)
+    internal void EnsureMetadataFinding(SourceRouteNode node, int relativeDepth)
     {
-        var source = node.Source;
+        var source = RouteListTopologyProjectionPolicy.ReadSource(_input, node);
         if (_state.Findings.Any(finding =>
                 string.Equals(finding.Subject, source.CanonicalPath, StringComparison.Ordinal)
                 && finding.Code is (
@@ -76,7 +93,7 @@ internal sealed class RouteListTopologySelectionFindings
             return;
         }
 
-        var (code, cause) = node.Source.Metadata.State switch
+        var (code, cause) = source.Metadata.State switch
         {
             RouteSourceMetadataState.Missing => (
                 RouteListFindingCode.MetadataMissing,
@@ -112,18 +129,61 @@ internal sealed class RouteListTopologySelectionFindings
         AddSelectionIssues(loaderSelection.Issues);
     }
 
-    internal void AddRouteAmbiguous(RouteTopologyNode node, int relativeDepth, string cause)
+    internal void AddRouteAmbiguous(SourceRouteNode node, int relativeDepth, string cause)
     {
+        var source = RouteListTopologyProjectionPolicy.FindSource(_input, node);
         _state.AddFinding(
             new RouteListFinding(
                 RouteListFindingCode.RouteAmbiguous,
                 CliSemanticStatus.Blocked,
-                node.Source.CanonicalPath,
+                source?.CanonicalPath ?? node.Identity.CanonicalBasePath,
                 cause,
-                node.ParentState == RouteTopologyParentState.Ambiguous
+                node.ParentState == SourceRouteParentState.Ambiguous
                     ? node.ParentPaths
                     : null),
             relativeDepth);
+    }
+
+    internal void AddUnavailable(SourceRouteFact routeFact, int relativeDepth)
+    {
+        if (routeFact.State != SourceRouteState.Unavailable)
+        {
+            throw new ArgumentException("Only an unavailable source route fact can form an unavailable boundary.", nameof(routeFact));
+        }
+
+        if (_input.LoaderRootSelection is { State: not RouteListSelectionResolutionState.Resolved })
+        {
+            AddLoaderBoundaryIssues();
+            return;
+        }
+
+        var issue = _routeFacts.Issues.FirstOrDefault(candidate =>
+            string.Equals(candidate.CanonicalPath, routeFact.Identity.CanonicalBasePath, StringComparison.Ordinal)
+            || candidate.RelatedPaths.Contains(routeFact.Identity.CanonicalBasePath, StringComparer.Ordinal));
+        if (issue is null)
+        {
+            _state.AddFinding(
+                new RouteListFinding(
+                    RouteListFindingCode.LoaderUnavailable,
+                    CliSemanticStatus.Incomplete,
+                    routeFact.Identity.CanonicalBasePath,
+                    "Required route facts are unavailable."),
+                relativeDepth);
+            return;
+        }
+
+        _state.AddFinding(RouteListTopologyFindingPolicy.FromRouteIssue(issue), relativeDepth);
+    }
+
+    internal void AddUnsupportedSource(RouteSource source)
+    {
+        _state.AddFinding(
+            new RouteListFinding(
+                RouteListFindingCode.UnsupportedSource,
+                CliSemanticStatus.Invalid,
+                source.CanonicalPath,
+                "The selected source is not a routed sibling of an entrypoint."),
+            relativeDepth: 0);
     }
 
     internal void AddInterruption(string subject, int relativeDepth)

@@ -228,10 +228,9 @@ public sealed class RouteListPresentationTests
     public void DiagnosticsAreBoundedAndDoNotDumpRows()
     {
         var result = CompleteResult();
-        var diagnostics = RouteListDiagnosticRenderer.Render(Presentation(result, CliView.Expanded));
+        var diagnostics = Assert.IsType<string>(RouteListDiagnosticRenderer.Render(Presentation(result, CliView.Expanded)));
 
-        Assert.NotNull(diagnostics);
-        Assert.InRange(diagnostics!.Length, 1, CliRenderingStage.MaximumDiagnosticLength);
+        Assert.InRange(diagnostics.Length, 1, CliRenderingStage.MaximumDiagnosticLength);
         Assert.Contains("workspace.lexical=", diagnostics, StringComparison.Ordinal);
         Assert.Contains("workspace.physical=", diagnostics, StringComparison.Ordinal);
         Assert.Contains("selection.kind=loader-roots", diagnostics, StringComparison.Ordinal);

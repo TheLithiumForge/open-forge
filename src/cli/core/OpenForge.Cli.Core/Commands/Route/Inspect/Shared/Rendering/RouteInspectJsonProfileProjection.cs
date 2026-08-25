@@ -7,7 +7,6 @@ internal static class RouteInspectJsonProfileProjection
 {
     internal static RouteInspectJsonProfile Create(RouteInspectProfile profile)
     {
-        ArgumentNullException.ThrowIfNull(profile);
         return new RouteInspectJsonProfile
         {
             Reading = Reading(profile.Reading),

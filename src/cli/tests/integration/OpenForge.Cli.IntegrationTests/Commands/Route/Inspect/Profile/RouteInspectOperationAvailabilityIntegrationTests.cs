@@ -37,9 +37,12 @@ public sealed class RouteInspectOperationAvailabilityIntegrationTests
             profile.Measurements.OwnSource,
             workspace,
             ".agents/root/_root.md");
-        Assert.Equal(RouteInspectAxiomsLocalState.Substantive, profile.Axioms.Value!.Local.Value);
+        var axioms = Assert.IsType<RouteInspectAxiomsProfile>(profile.Axioms.Value);
+        Assert.Equal(RouteInspectAxiomsLocalState.Substantive, axioms.Local.Value);
         Assert.Equal(RouteInspectFactState.Value, profile.Topology.State);
-        Assert.Equal(1, profile.Topology.Value!.Counts.Value!.DirectRoutedFileCount);
+        var topology = Assert.IsType<RouteInspectTopology>(profile.Topology.Value);
+        var counts = Assert.IsType<RouteInspectTopologyCounts>(topology.Counts.Value);
+        Assert.Equal(1, counts.DirectRoutedFileCount);
         RouteInspectProfileIntegrationAssertions.AssertUnavailable(profile.Measurements.SelectedClosure);
         RouteInspectProfileIntegrationAssertions.AssertUnavailable(profile.Measurements.TaskStartOverlap);
         RouteInspectProfileIntegrationAssertions.AssertUnavailable(profile.Measurements.SelectionAddition);
@@ -89,12 +92,14 @@ public sealed class RouteInspectOperationAvailabilityIntegrationTests
             profile.Measurements.OwnSource,
             workspace,
             ".agents/root/selected/_selected.md");
-        Assert.Equal(["root"], profile.Axioms.Value!.Inherited.Value!.SourceIds);
-        Assert.Equal(RouteInspectAxiomsLocalState.Substantive, profile.Axioms.Value.Local.Value);
+        var axioms = Assert.IsType<RouteInspectAxiomsProfile>(profile.Axioms.Value);
+        var inherited = Assert.IsType<RouteInspectAxiomsSources>(axioms.Inherited.Value);
+        Assert.Equal(["root"], inherited.SourceIds);
+        Assert.Equal(RouteInspectAxiomsLocalState.Substantive, axioms.Local.Value);
         Assert.Equal(RouteInspectFactState.Value, profile.Topology.State);
         Assert.Equal(
             ["root", "selected"],
-            profile.Topology.Value!.RouteChain);
+            Assert.IsType<RouteInspectTopology>(profile.Topology.Value).RouteChain);
         RouteInspectProfileIntegrationAssertions.AssertUnavailable(profile.Reading.TaskStart);
         RouteInspectProfileIntegrationAssertions.AssertUnavailable(profile.Reading.Automatic);
         RouteInspectProfileIntegrationAssertions.AssertUnavailable(profile.Reading.Later);
@@ -136,9 +141,12 @@ public sealed class RouteInspectOperationAvailabilityIntegrationTests
             profile.Measurements.OwnSource,
             workspace,
             ".agents/root/_root.md");
-        Assert.Equal(RouteInspectAxiomsLocalState.Substantive, profile.Axioms.Value!.Local.Value);
+        var axioms = Assert.IsType<RouteInspectAxiomsProfile>(profile.Axioms.Value);
+        Assert.Equal(RouteInspectAxiomsLocalState.Substantive, axioms.Local.Value);
         Assert.Equal(RouteInspectFactState.Value, profile.Topology.State);
-        Assert.Equal(1, profile.Topology.Value!.Counts.Value!.DirectRoutedFileCount);
+        var topology = Assert.IsType<RouteInspectTopology>(profile.Topology.Value);
+        var counts = Assert.IsType<RouteInspectTopologyCounts>(topology.Counts.Value);
+        Assert.Equal(1, counts.DirectRoutedFileCount);
         RouteInspectProfileIntegrationAssertions.AssertUnavailable(profile.Measurements.SelectedClosure);
         RouteInspectProfileIntegrationAssertions.AssertUnavailable(profile.Measurements.TaskStartOverlap);
         RouteInspectProfileIntegrationAssertions.AssertUnavailable(profile.Measurements.SelectionAddition);

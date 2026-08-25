@@ -1,38 +1,30 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
-using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Source;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Reading;
+using OpenForge.Cli.Core.Framework.Sources.Routing;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Resolution;
 
-internal sealed class RouteInspectResolver
+internal sealed partial class RouteInspectResolver
 {
     private readonly PhysicalPathResolver _physicalPathResolver = new();
-    private readonly RouteInspectInventoryTraversal _inventoryTraversal;
-    private readonly RouteInspectPhysicalVerifier _physicalVerifier;
-    private readonly RouteInspectSourceSelectionResolver _sourceSelectionResolver;
-    private readonly RouteInspectCatalogueBuilder _catalogueBuilder = new();
-
-    internal RouteInspectResolver()
-    {
-        _inventoryTraversal = new RouteInspectInventoryTraversal(_physicalPathResolver);
-        _physicalVerifier = new RouteInspectPhysicalVerifier(_physicalPathResolver);
-        _sourceSelectionResolver = new RouteInspectSourceSelectionResolver(
-            _physicalVerifier,
-            new RouteInspectSourceFactsResolver(
-                _physicalVerifier,
-                new RouteInspectLoaderRootResolver(_physicalVerifier)));
-    }
+    private readonly SourceCatalogueReader _catalogueReader = new();
+    private readonly RouteInspectSourceProjectionBuilder _projectionBuilder = new();
+    private readonly SourceRouteFactsResolver _routeFactsResolver = new();
+    private readonly RouteInspectSourceSelectionResolver _sourceSelectionResolver =
+        new(new RouteInspectSourceFactsResolver());
 
     internal async ValueTask<RouteInspectResolution> ResolveAsync(
         RouteInspectRequest request,
         CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(request);
-
-        var parsed = RouteSourceReferenceParser.Parse(request.SourceReference);
+        var parsed = SourceReferenceParser.Parse(request.SourceReference);
         var unresolvedSelection = RouteInspectResolutionSupport.UnresolvedSelection(parsed);
         if (cancellationToken.IsCancellationRequested)
         {
@@ -41,8 +33,11 @@ internal sealed class RouteInspectResolver
                 request.SourceReference);
         }
 
-        if (parsed.State == RouteSourceReferenceParseState.Invalid)
+        if (parsed.State == SourceReferenceParseState.Invalid)
         {
+            var attemptedReference = ReadAttemptedReference(parsed);
+            var cause = parsed.Cause
+                ?? throw new InvalidOperationException("An invalid source reference requires its cause.");
             return RouteInspectResolution.Create(
                 RouteInspectResolutionState.Invalid,
                 unresolvedSelection,
@@ -50,19 +45,19 @@ internal sealed class RouteInspectResolver
                 null,
                 [RouteInspectResolutionSupport.CreateIssue(
                     RouteInspectResolutionIssueCode.InvalidReference,
-                    parsed.AttemptedId ?? parsed.AttemptedPath!,
-                    parsed.Cause!)]);
+                    attemptedReference,
+                    cause)]);
         }
 
         try
         {
-            var exactPathPhysical = parsed.Kind == RouteSourceReferenceKind.SourcePath
-                ? _physicalVerifier.ResolveCandidate(request.Workspace, parsed.AttemptedPath!)
+            var exactPathPhysical = parsed.Kind == SourceReferenceKind.SourcePath
+                ? ResolveExactPath(request.Workspace, ReadAttemptedReference(parsed))
                 : null;
             if (exactPathPhysical is not null)
             {
                 var earlyResult = ReadEarlyPathResult(
-                    parsed.AttemptedPath!,
+                    ReadAttemptedReference(parsed),
                     unresolvedSelection,
                     exactPathPhysical,
                     cancellationToken);
@@ -72,35 +67,65 @@ internal sealed class RouteInspectResolver
                 }
             }
 
-            var inventory = await _inventoryTraversal
-                .ReadAsync(request.Workspace, cancellationToken)
+            var reader = new SourceDocumentReader(request.Workspace);
+            var catalogue = await _catalogueReader
+                .ReadAsync(
+                    new SourceCatalogueRequest(request.Workspace, [SourceLogicalPath.AgentsRoot]),
+                    cancellationToken)
                 .ConfigureAwait(false);
-            if (inventory.Interrupted || cancellationToken.IsCancellationRequested)
+            if (catalogue.IsCancelled || cancellationToken.IsCancellationRequested)
             {
                 return RouteInspectResolutionSupport.Interrupted(
                     unresolvedSelection,
-                    parsed.AttemptedId ?? parsed.AttemptedPath!);
+                    ReadAttemptedReference(parsed));
             }
 
-            if (inventory.BoundaryIssues.Count != 0)
+            var boundaryIssues = RouteInspectResolutionSupport.ReadCatalogueBoundaryIssues(catalogue);
+            if (boundaryIssues.Count != 0)
             {
                 return RouteInspectResolutionSupport.CreateBoundaryResolution(
                     unresolvedSelection,
-                    inventory.BoundaryIssues);
+                    boundaryIssues);
+            }
+
+            var catalogueSelection = catalogue.SelectAll();
+            var projections = await _projectionBuilder
+                .ReadAsync(catalogueSelection, reader, cancellationToken)
+                .ConfigureAwait(false);
+            if (projections.IsCancelled || cancellationToken.IsCancellationRequested)
+            {
+                return RouteInspectResolutionSupport.Interrupted(
+                    unresolvedSelection,
+                    ReadAttemptedReference(parsed));
+            }
+
+            var routeFacts = await _routeFactsResolver
+                .ResolveAsync(
+                    new SourceRouteFactsRequest(catalogue, catalogueSelection),
+                    reader,
+                    cancellationToken)
+                .ConfigureAwait(false);
+            if (routeFacts.IsCancelled || cancellationToken.IsCancellationRequested)
+            {
+                return RouteInspectResolutionSupport.Interrupted(
+                    unresolvedSelection,
+                    ReadAttemptedReference(parsed));
             }
 
             var input = new RouteInspectResolutionInput(
                 request,
                 parsed,
                 unresolvedSelection,
-                _catalogueBuilder.Build(inventory.Files),
-                inventory.UnsafePaths,
+                catalogue,
+                catalogueSelection,
+                projections,
+                routeFacts,
                 exactPathPhysical);
             if (cancellationToken.IsCancellationRequested)
             {
                 return RouteInspectResolutionSupport.Interrupted(
                     unresolvedSelection,
-                    parsed.AttemptedId ?? parsed.AttemptedPath!);
+                    ReadAttemptedReference(parsed));
             }
 
             return _sourceSelectionResolver.Resolve(input, cancellationToken);
@@ -109,7 +134,7 @@ internal sealed class RouteInspectResolver
         {
             return RouteInspectResolutionSupport.Interrupted(
                 unresolvedSelection,
-                parsed.AttemptedId ?? parsed.AttemptedPath!);
+                ReadAttemptedReference(parsed));
         }
         catch (Exception)
         {
@@ -120,48 +145,15 @@ internal sealed class RouteInspectResolver
                 null,
                 [RouteInspectResolutionSupport.CreateIssue(
                     RouteInspectResolutionIssueCode.OperationFailure,
-                    parsed.AttemptedId ?? parsed.AttemptedPath!,
+                    ReadAttemptedReference(parsed),
                     "Route inspection failed while resolving the source.")]);
         }
     }
 
-    private static RouteInspectResolution? ReadEarlyPathResult(
-        string requestedPath,
-        RouteInspectSelection unresolvedSelection,
-        PhysicalPathResolution exactPathPhysical,
-        CancellationToken cancellationToken)
+    private static string ReadAttemptedReference(SourceReferenceParseResult parsed)
     {
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return RouteInspectResolutionSupport.Interrupted(unresolvedSelection, requestedPath);
-        }
-
-        if (exactPathPhysical.State == PhysicalPathState.Missing)
-        {
-            return RouteInspectResolution.Create(
-                RouteInspectResolutionState.Invalid,
-                unresolvedSelection,
-                null,
-                null,
-                [RouteInspectResolutionSupport.CreateIssue(
-                    RouteInspectResolutionIssueCode.MissingSource,
-                    requestedPath,
-                    "The exact source path does not exist.")]);
-        }
-
-        if (exactPathPhysical.State != PhysicalPathState.Contained)
-        {
-            return RouteInspectResolution.Create(
-                RouteInspectResolutionState.Blocked,
-                unresolvedSelection,
-                null,
-                null,
-                [RouteInspectResolutionSupport.CreateIssue(
-                    RouteInspectResolutionIssueCode.UnsafeSource,
-                    requestedPath,
-                    "The exact source path crosses an unproved physical boundary.")]);
-        }
-
-        return null;
+        return parsed.AttemptedId ?? parsed.AttemptedPath
+            ?? throw new InvalidOperationException("A source-reference result requires an attempted identity.");
     }
+
 }

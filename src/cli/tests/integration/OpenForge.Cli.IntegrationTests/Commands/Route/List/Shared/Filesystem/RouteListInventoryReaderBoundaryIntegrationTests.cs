@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
+using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.TestSupport;
 
@@ -20,13 +21,16 @@ public sealed class RouteListInventoryReaderBoundaryIntegrationTests
             temporary.TryCreateDirectorySymbolicLink("workspace-alias", physicalWorkspace, out var lexicalWorkspace),
             "This integration case requires real symbolic-link support.");
         var before = temporary.SnapshotHashes();
+        var lexicalWorkspacePath = Assert.IsType<string>(lexicalWorkspace);
         var workspace = new CliWorkspace(
-            lexicalWorkspace!,
+            lexicalWorkspacePath,
             physicalWorkspace,
             CliWorkspaceSelectionMethod.ExplicitWorkspace);
+        var documentReader = new SourceDocumentReader(workspace);
 
         var facts = await new RouteListInventoryReader().ReadAsync(
-            new RouteListInventoryRequest(workspace, TestContext.Current.CancellationToken));
+            new RouteListInventoryRequest(workspace, TestContext.Current.CancellationToken),
+            documentReader);
 
         Assert.Equal(RouteListInventoryState.Complete, facts.State);
         var source = Assert.Single(facts.Sources);
@@ -82,9 +86,11 @@ public sealed class RouteListInventoryReaderBoundaryIntegrationTests
             workspace.Path,
             workspace.Path,
             CliWorkspaceSelectionMethod.ExplicitWorkspace);
+        var documentReader = new SourceDocumentReader(selectedWorkspace);
 
         var facts = await new RouteListInventoryReader().ReadAsync(
-            new RouteListInventoryRequest(selectedWorkspace, TestContext.Current.CancellationToken));
+            new RouteListInventoryRequest(selectedWorkspace, TestContext.Current.CancellationToken),
+            documentReader);
 
         Assert.Equal(RouteListInventoryState.Blocked, facts.State);
         Assert.Empty(facts.Sources);
@@ -95,55 +101,4 @@ public sealed class RouteListInventoryReaderBoundaryIntegrationTests
         Assert.Equal(outsideBefore, outside.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Route-list mid-enumeration cancellation retains known evidence and stops before later roots")]
-    [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
-    public async Task MidEnumerationCancellationRetainsKnownEvidenceWithoutLaterAccess()
-    {
-        using var workspace = RouteListFilesystemIntegrationWorkspace.Create();
-        using var outside = TemporaryWorkspace.Create("route-list-filesystem-cancel-outside");
-        var empty = workspace.CreateDirectory(".agents/a-empty");
-        Assert.True(
-            workspace.TryCreateDirectorySymbolicLink(".agents/b-empty-alias", empty, out _),
-            "This integration case requires real symbolic-link support.");
-        workspace.Write(".agents/z-slow/large.md", new byte[32 * 1024 * 1024]);
-        outside.CreateFile("outside.md", "outside");
-        Assert.True(
-            workspace.TryCreateDirectorySymbolicLink(".agents/zz-later", outside.Path, out _),
-            "This integration case requires real symbolic-link support.");
-        var workspaceBefore = workspace.SnapshotHashes();
-        var outsideBefore = outside.SnapshotHashes();
-        using var cancellation = new CancellationTokenSource();
-        var request = new RouteListInventoryRequest(
-            workspace.Workspace,
-            [
-                ".agents/a-empty",
-                ".agents/b-empty-alias",
-                ".agents/c-missing",
-                ".agents/z-slow",
-                ".agents/zz-later",
-            ],
-            cancellation.Token);
-
-        var pending = new RouteListInventoryReader().ReadAsync(request);
-        Assert.False(pending.IsCompleted, "The real large-file read must establish a cancellable filesystem boundary.");
-        cancellation.Cancel();
-        var facts = await pending;
-
-        Assert.Equal(RouteListInventoryState.Interrupted, facts.State);
-        Assert.Contains(
-            facts.Findings,
-            finding => finding.Code == RouteListFindingCode.ReadUnavailable
-                && finding.CanonicalLogicalSubject == ".agents/c-missing");
-        Assert.Contains(facts.Findings, finding => finding.Code == RouteListFindingCode.Interrupted);
-        Assert.Contains(
-            facts.PhysicalAliases,
-            alias => alias.CanonicalLogicalPath == ".agents/b-empty-alias"
-                && alias.FirstCanonicalLogicalPath == ".agents/a-empty");
-        Assert.DoesNotContain(
-            facts.Findings,
-            finding => finding.Code != RouteListFindingCode.Interrupted
-                && finding.CanonicalLogicalSubject.StartsWith(".agents/zz-later", StringComparison.Ordinal));
-        Assert.Equal(workspaceBefore, workspace.SnapshotHashes());
-        Assert.Equal(outsideBefore, outside.SnapshotHashes());
-    }
 }

@@ -13,7 +13,6 @@ internal sealed class CliCoreApplication
 {
     private readonly CliProcessIdentity _process;
     private readonly CliParser _parser;
-    private readonly CliCommandTree _tree;
     private readonly CliWorkspaceSelector _workspaceSelector;
 
     internal CliCoreApplication(
@@ -25,7 +24,6 @@ internal sealed class CliCoreApplication
         ArgumentNullException.ThrowIfNull(tree);
         ArgumentNullException.ThrowIfNull(workspaceSelector);
         _process = process;
-        _tree = tree;
         _parser = new CliParser(tree);
         _workspaceSelector = workspaceSelector;
     }
@@ -62,7 +60,7 @@ internal sealed class CliCoreApplication
 
         if (global.TerminalMode == CliTerminalMode.Help || selection.Binding is null)
         {
-            var help = CliHelpRenderer.Render(parse.Result, _tree.ReadHelp(selection.Command));
+            var help = CliHelpRenderer.Render(parse.Result, parse.Tree.ReadHelp(selection.Command));
             await writers.StandardOutput.WriteLineAsync(help.AsMemory(), cancellationToken).ConfigureAwait(false);
             return CliProcessCompletionPolicy.Complete(
                 CliSemanticStatus.Complete,
@@ -89,10 +87,13 @@ internal sealed class CliCoreApplication
                 .ConfigureAwait(false);
         }
 
+        var resolvedInvocation = invocation.Invocation
+            ?? throw new InvalidOperationException("A valid invocation resolution requires an invocation.");
+
         return await selection.Binding
             .InvokeAsync(
                 new CliBindingParse(parse.Result),
-                invocation.Invocation!,
+                resolvedInvocation,
                 writers,
                 cancellationToken)
             .ConfigureAwait(false);

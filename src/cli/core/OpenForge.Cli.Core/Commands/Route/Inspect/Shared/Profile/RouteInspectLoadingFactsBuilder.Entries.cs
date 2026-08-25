@@ -1,6 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile.Models;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Source;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile;
 
@@ -13,7 +13,7 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
             return cached;
         }
 
-        var parent = _graph.Catalogue.FindByPath(parentPath);
+        var parent = _graph.ProjectionSet.FindByPath(parentPath);
         var read = parent is null
             ? new RouteInspectVisibleEntriesRead { IsAvailable = false, Reason = "The exposing entrypoint is absent." }
             : ReadVisibleEntries(parent);
@@ -26,21 +26,21 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
         var generated = RouteInspectGeneratedEntriesReader.Read(parent);
         if (!generated.IsAvailable)
         {
-            return new RouteInspectVisibleEntriesRead { IsAvailable = false, Reason = generated.Reason! };
+            return new RouteInspectVisibleEntriesRead { IsAvailable = false, Reason = generated.ReadReason() };
         }
 
         var entries = new Dictionary<string, RouteInspectVisibleEntry>(StringComparer.Ordinal);
         foreach (var generatedEntry in generated.Entries)
         {
             var targetPath = ResolveDestination(
-                RouteLogicalPath.ReadParent(parent.CanonicalPath),
+                SourceLogicalPath.ReadParent(parent.CanonicalPath),
                 generatedEntry.Destination);
             if (targetPath is null || !IsDirectChild(parent, targetPath))
             {
                 continue;
             }
 
-            var child = _graph.Catalogue.FindByPath(targetPath);
+            var child = _graph.ProjectionSet.FindByPath(targetPath);
             if (child is null)
             {
                 continue;
@@ -85,22 +85,22 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
     {
         if (parent.Kind == RouteSourceKind.Loader)
         {
-            return _graph.Topology.LoaderRootPaths.Contains(targetPath, StringComparer.Ordinal);
+            return _graph.RouteFacts.Topology.LoaderRootPaths.Contains(targetPath, StringComparer.Ordinal);
         }
 
-        var node = _graph.Topology.FindByPath(parent.CanonicalPath);
+        var node = _graph.RouteFacts.Topology.FindByPath(parent.CanonicalPath);
         return node is not null && node.ChildPaths.Contains(targetPath, StringComparer.Ordinal);
     }
 
     private bool IsEntrypoint(string path)
     {
-        return _graph.Catalogue.FindByPath(path)?.Kind == RouteSourceKind.Entrypoint;
+        return _graph.ProjectionSet.FindByPath(path)?.Kind == RouteSourceKind.Entrypoint;
     }
 
     private bool IsRouted(RouteSource source)
     {
-        return _graph.Topology.FindByPath(source.CanonicalPath) is not null
-            && _graph.Topology.ReadAbsoluteDepth(source.CanonicalPath) is not null;
+        return _graph.RouteFacts.Topology.FindByPath(source.CanonicalPath) is not null
+            && _graph.RouteFacts.Topology.ReadAbsoluteDepth(source.CanonicalPath) is not null;
     }
 
     private void AddSource(
@@ -109,7 +109,7 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
         Queue<string>? entrypointQueue,
         bool selected)
     {
-        var source = _graph.Catalogue.FindByPath(path);
+        var source = _graph.ProjectionSet.FindByPath(path);
         if (source is null)
         {
             if (selected)

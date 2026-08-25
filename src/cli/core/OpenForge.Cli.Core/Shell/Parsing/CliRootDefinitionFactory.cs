@@ -11,9 +11,13 @@ internal sealed record CliRootDefinition(
 
 internal static class CliRootDefinitionFactory
 {
-    internal static CliRootDefinition Create(IReadOnlyList<CliRootBranch> branches)
+    internal static CliRootDefinition Create(
+        IReadOnlyList<CliRootBranch> branches,
+        IReadOnlyList<CliRootLeaf> rootLeaves)
     {
         ArgumentNullException.ThrowIfNull(branches);
+        ArgumentNullException.ThrowIfNull(rootLeaves);
+
         var workspace = CreateWorkspaceOption();
         var json = CreateBooleanOption(CliSyntaxDefinitions.Json);
         var view = CreateViewOption();
@@ -36,6 +40,13 @@ internal static class CliRootDefinitionFactory
             ArgumentNullException.ThrowIfNull(branch);
             root.Add(branch.Command);
             policies.AddRange(branch.DelimiterPolicies);
+        }
+
+        foreach (var rootLeaf in rootLeaves)
+        {
+            ArgumentNullException.ThrowIfNull(rootLeaf, "root leaf");
+            root.Add(rootLeaf.Command);
+            policies.AddRange(rootLeaf.DelimiterPolicies);
         }
 
         return new CliRootDefinition(

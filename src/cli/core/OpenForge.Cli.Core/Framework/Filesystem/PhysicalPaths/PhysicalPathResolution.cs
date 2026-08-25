@@ -35,6 +35,16 @@ internal sealed class PhysicalPathResolution
 
     internal FilesystemFailure? Failure { get; }
 
+    internal string GetContainedPhysicalPath()
+    {
+        if (State != PhysicalPathState.Contained || ResolvedPhysicalPath is null)
+        {
+            throw new InvalidOperationException("A contained physical resolution requires its resolved path.");
+        }
+
+        return ResolvedPhysicalPath;
+    }
+
     internal static PhysicalPathResolution Contained(string logicalPath, string physicalPath)
     {
         ValidatePath(logicalPath);
@@ -60,7 +70,7 @@ internal sealed class PhysicalPathResolution
 
         if (state is PhysicalPathState.External or PhysicalPathState.Dangling or PhysicalPathState.Cycle)
         {
-            ValidatePath(resolvedPhysicalPath!);
+            ValidatePath(resolvedPhysicalPath);
         }
         else if (resolvedPhysicalPath is not null)
         {
@@ -101,7 +111,7 @@ internal sealed class PhysicalPathResolution
         return new PhysicalPathResolution(state, logicalPath, null, failure);
     }
 
-    private static void ValidatePath(string path)
+    private static void ValidatePath(string? path)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
     }

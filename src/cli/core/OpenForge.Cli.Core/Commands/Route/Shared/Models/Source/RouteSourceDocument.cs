@@ -1,31 +1,19 @@
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
-using OpenForge.Cli.Core.Commands.Route.Shared.Source;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-
-internal enum RouteSourceForm
-{
-    Loader,
-    CanonicalEntrypoint,
-    IndexEntrypoint,
-    UnderscoreIndexEntrypoint,
-    ReferencesEntrypoint,
-    UnderscoreReferencesEntrypoint,
-    Skill,
-    Markdown,
-    OverwriteCompanion,
-}
 
 internal sealed class RouteSourceDocument
 {
     internal RouteSourceDocument(
         string canonicalLogicalPath,
         string physicalPath,
-        RouteSourceForm form,
+        SourceDocumentForm form,
         FileReadState readState,
         string? body)
     {
-        if (!RouteLogicalPath.IsCanonical(canonicalLogicalPath))
+        if (!SourceLogicalPath.IsCanonical(canonicalLogicalPath))
         {
             throw new ArgumentException("The source document logical path is not canonical.", nameof(canonicalLogicalPath));
         }
@@ -43,7 +31,7 @@ internal sealed class RouteSourceDocument
             throw new ArgumentOutOfRangeException(nameof(form), form, "The source document form is not defined.");
         }
 
-        if (!RouteSourceFormClassifier.Matches(canonicalLogicalPath, form))
+        if (!SourceFormClassifier.Matches(canonicalLogicalPath, form))
         {
             throw new ArgumentException("The source document form does not match its canonical logical path.", nameof(form));
         }
@@ -68,7 +56,7 @@ internal sealed class RouteSourceDocument
 
     internal string PhysicalPath { get; }
 
-    internal RouteSourceForm Form { get; }
+    internal SourceDocumentForm Form { get; }
 
     internal FileReadState ReadState { get; }
 

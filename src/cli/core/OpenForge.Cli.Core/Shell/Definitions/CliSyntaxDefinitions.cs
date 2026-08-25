@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace OpenForge.Cli.Core.Shell.Definitions;
 
@@ -68,10 +69,10 @@ internal sealed class CliOptionDefinition<T>
 
     internal IReadOnlyDictionary<string, T> FiniteSpellings { get; }
 
-    internal bool TryReadFinite(string spelling, out T value)
+    internal bool TryReadFinite(string spelling, [MaybeNullWhen(false)] out T value)
     {
         ArgumentNullException.ThrowIfNull(spelling);
-        return FiniteSpellings.TryGetValue(spelling, out value!);
+        return FiniteSpellings.TryGetValue(spelling, out value);
     }
 }
 

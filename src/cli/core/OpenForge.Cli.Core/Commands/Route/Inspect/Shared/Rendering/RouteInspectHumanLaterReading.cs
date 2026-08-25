@@ -6,7 +6,6 @@ internal static class RouteInspectHumanLaterReading
 {
     internal static string Description(IReadOnlyList<RouteInspectLaterReadOccasion> occasions)
     {
-        ArgumentNullException.ThrowIfNull(occasions);
         var descriptions = new List<string>();
         if (occasions.Contains(RouteInspectLaterReadOccasion.ContextRestoration))
         {

@@ -45,15 +45,21 @@ public sealed class RouteInspectProfileBuilderReadingTests
 
         Assert.True(byId.Reading.TaskStart.Value);
         Assert.True(byPath.Reading.TaskStart.Value);
+        var byIdAutomatic = Assert.IsType<RouteInspectAutomaticReadings>(byId.Reading.Automatic.Value);
+        var byPathAutomatic = Assert.IsType<RouteInspectAutomaticReadings>(byPath.Reading.Automatic.Value);
+        var byIdSelectedClosure = Assert.IsType<RouteInspectMeasurement>(byId.Measurements.SelectedClosure.Value);
+        var byPathSelectedClosure = Assert.IsType<RouteInspectMeasurement>(byPath.Measurements.SelectedClosure.Value);
+        var byIdSelectionAddition = Assert.IsType<RouteInspectMeasurement>(byId.Measurements.SelectionAddition.Value);
+        var byPathSelectionAddition = Assert.IsType<RouteInspectMeasurement>(byPath.Measurements.SelectionAddition.Value);
         Assert.Equal(
-            byId.Reading.Automatic.Value!.Reasons.Select(reason => reason.Kind),
-            byPath.Reading.Automatic.Value!.Reasons.Select(reason => reason.Kind));
+            byIdAutomatic.Reasons.Select(reason => reason.Kind),
+            byPathAutomatic.Reasons.Select(reason => reason.Kind));
         Assert.Equal(
-            byId.Measurements.SelectedClosure.Value!.UnicodeScalarCount,
-            byPath.Measurements.SelectedClosure.Value!.UnicodeScalarCount);
+            byIdSelectedClosure.UnicodeScalarCount,
+            byPathSelectedClosure.UnicodeScalarCount);
         Assert.Equal(
-            byId.Measurements.SelectionAddition.Value!.PhysicalFileCount,
-            byPath.Measurements.SelectionAddition.Value!.PhysicalFileCount);
+            byIdSelectionAddition.PhysicalFileCount,
+            byPathSelectionAddition.PhysicalFileCount);
     }
 
     [Fact(DisplayName = "Route inspect startup roots and visible ordered LoadNow entries form the task-start closure")]
@@ -110,15 +116,19 @@ public sealed class RouteInspectProfileBuilderReadingTests
         var profile = Build(graph, third.CanonicalPath);
 
         Assert.True(profile.Reading.TaskStart.Value);
-        var automatic = Assert.Single(profile.Reading.Automatic.Value!.Reasons);
+        var automaticReadings = Assert.IsType<RouteInspectAutomaticReadings>(profile.Reading.Automatic.Value);
+        var automatic = Assert.Single(automaticReadings.Reasons);
         Assert.Equal(RouteInspectAutomaticReadingKind.ParentLoadNow, automatic.Kind);
         Assert.Equal("root/second", automatic.RelatedSourceId);
-        var later = profile.Reading.Later.Value!;
+        var later = Assert.IsType<RouteInspectLaterReading>(profile.Reading.Later.Value);
+        var taskStartOverlap = Assert.IsType<RouteInspectMeasurement>(profile.Measurements.TaskStartOverlap.Value);
+        var selectedClosure = Assert.IsType<RouteInspectMeasurement>(profile.Measurements.SelectedClosure.Value);
+        var selectionAddition = Assert.IsType<RouteInspectMeasurement>(profile.Measurements.SelectionAddition.Value);
         Assert.False(later.MayBeReadAgain);
         Assert.Empty(later.Occasions);
-        Assert.Equal(4, profile.Measurements.TaskStartOverlap.Value!.PhysicalFileCount);
-        Assert.Equal(4, profile.Measurements.SelectedClosure.Value!.PhysicalFileCount);
-        Assert.Equal(0, profile.Measurements.SelectionAddition.Value!.PhysicalFileCount);
+        Assert.Equal(4, taskStartOverlap.PhysicalFileCount);
+        Assert.Equal(4, selectedClosure.PhysicalFileCount);
+        Assert.Equal(0, selectionAddition.PhysicalFileCount);
     }
 
     [Fact(DisplayName = "Route inspect globally routed non-entrypoint KeepInMind retains its ancestor closure and every later occasion")]
@@ -161,7 +171,8 @@ public sealed class RouteInspectProfileBuilderReadingTests
         var profile = Build(graph, continuity.CanonicalPath);
 
         Assert.True(profile.Reading.TaskStart.Value);
-        var automatic = Assert.Single(profile.Reading.Automatic.Value!.Reasons);
+        var automaticReadings = Assert.IsType<RouteInspectAutomaticReadings>(profile.Reading.Automatic.Value);
+        var automatic = Assert.Single(automaticReadings.Reasons);
         Assert.Equal(RouteInspectAutomaticReadingKind.RoutedFileKeepInMind, automatic.Kind);
         Assert.Null(automatic.RelatedSourceId);
         Assert.Equal(
@@ -170,7 +181,11 @@ public sealed class RouteInspectProfileBuilderReadingTests
                 RouteInspectAutomaticReadingEvent.LaterReview,
             ],
             automatic.Events);
-        Assert.True(profile.Reading.Later.Value!.MayBeReadAgain);
+        var later = Assert.IsType<RouteInspectLaterReading>(profile.Reading.Later.Value);
+        var selectedClosure = Assert.IsType<RouteInspectMeasurement>(profile.Measurements.SelectedClosure.Value);
+        var taskStartOverlap = Assert.IsType<RouteInspectMeasurement>(profile.Measurements.TaskStartOverlap.Value);
+        var selectionAddition = Assert.IsType<RouteInspectMeasurement>(profile.Measurements.SelectionAddition.Value);
+        Assert.True(later.MayBeReadAgain);
         Assert.Equal(
             [
                 RouteInspectLaterReadOccasion.ContextRestoration,
@@ -178,10 +193,10 @@ public sealed class RouteInspectProfileBuilderReadingTests
                 RouteInspectLaterReadOccasion.Closeout,
                 RouteInspectLaterReadOccasion.FollowupTransition,
             ],
-            profile.Reading.Later.Value.Occasions);
-        Assert.Equal(3, profile.Measurements.SelectedClosure.Value!.PhysicalFileCount);
-        Assert.Equal(3, profile.Measurements.TaskStartOverlap.Value!.PhysicalFileCount);
-        Assert.Equal(0, profile.Measurements.SelectionAddition.Value!.PhysicalFileCount);
+            later.Occasions);
+        Assert.Equal(3, selectedClosure.PhysicalFileCount);
+        Assert.Equal(3, taskStartOverlap.PhysicalFileCount);
+        Assert.Equal(0, selectionAddition.PhysicalFileCount);
     }
 
     [Fact(DisplayName = "Route inspect selected KeepInMind entrypoints retain task-start visibility and route selection reasons")]
@@ -217,7 +232,8 @@ public sealed class RouteInspectProfileBuilderReadingTests
         var profile = Build(graph, selected.CanonicalPath);
 
         Assert.True(profile.Reading.TaskStart.Value);
-        var automatic = Assert.Single(profile.Reading.Automatic.Value!.Reasons);
+        var automaticReadings = Assert.IsType<RouteInspectAutomaticReadings>(profile.Reading.Automatic.Value);
+        var automatic = Assert.Single(automaticReadings.Reasons);
         Assert.Equal(RouteInspectAutomaticReadingKind.EntrypointKeepInMind, automatic.Kind);
         Assert.Null(automatic.RelatedSourceId);
         Assert.Equal(
@@ -226,8 +242,10 @@ public sealed class RouteInspectProfileBuilderReadingTests
                 RouteInspectAutomaticReadingEvent.RouteSelected,
             ],
             automatic.Events);
-        Assert.True(profile.Reading.Later.Value!.MayBeReadAgain);
-        Assert.Equal(2, profile.Measurements.SelectedClosure.Value!.PhysicalFileCount);
+        var later = Assert.IsType<RouteInspectLaterReading>(profile.Reading.Later.Value);
+        var selectedClosure = Assert.IsType<RouteInspectMeasurement>(profile.Measurements.SelectedClosure.Value);
+        Assert.True(later.MayBeReadAgain);
+        Assert.Equal(2, selectedClosure.PhysicalFileCount);
     }
 
     [Fact(DisplayName = "Route inspect entrypoint KeepInMind selection preserves the selected reason while its ancestor is measured in the closure")]
@@ -274,14 +292,19 @@ public sealed class RouteInspectProfileBuilderReadingTests
         var selectedProfile = Build(graph, selected.CanonicalPath, RouteInspectSelectionMethod.ExactPath);
         var leafProfile = Build(graph, leaf.CanonicalPath);
 
-        var selectedReason = Assert.Single(selectedProfile.Reading.Automatic.Value!.Reasons);
+        var selectedAutomatic = Assert.IsType<RouteInspectAutomaticReadings>(selectedProfile.Reading.Automatic.Value);
+        var selectedReason = Assert.Single(selectedAutomatic.Reasons);
         Assert.Equal(RouteInspectAutomaticReadingKind.EntrypointKeepInMind, selectedReason.Kind);
         Assert.Equal([RouteInspectAutomaticReadingEvent.RouteSelected], selectedReason.Events);
         Assert.False(selectedProfile.Reading.TaskStart.Value);
-        Assert.Equal(4, leafProfile.Measurements.SelectedClosure.Value!.PhysicalFileCount);
-        Assert.Equal(3, leafProfile.Measurements.SelectionAddition.Value!.PhysicalFileCount);
-        Assert.Equal(1, leafProfile.Measurements.TaskStartOverlap.Value!.PhysicalFileCount);
-        Assert.Equal(RouteInspectAutomaticReadingKind.OnDemand, Assert.Single(leafProfile.Reading.Automatic.Value!.Reasons).Kind);
+        var leafSelectedClosure = Assert.IsType<RouteInspectMeasurement>(leafProfile.Measurements.SelectedClosure.Value);
+        var leafSelectionAddition = Assert.IsType<RouteInspectMeasurement>(leafProfile.Measurements.SelectionAddition.Value);
+        var leafTaskStartOverlap = Assert.IsType<RouteInspectMeasurement>(leafProfile.Measurements.TaskStartOverlap.Value);
+        var leafAutomatic = Assert.IsType<RouteInspectAutomaticReadings>(leafProfile.Reading.Automatic.Value);
+        Assert.Equal(4, leafSelectedClosure.PhysicalFileCount);
+        Assert.Equal(3, leafSelectionAddition.PhysicalFileCount);
+        Assert.Equal(1, leafTaskStartOverlap.PhysicalFileCount);
+        Assert.Equal(RouteInspectAutomaticReadingKind.OnDemand, Assert.Single(leafAutomatic.Reasons).Kind);
     }
 
     [Fact(DisplayName = "Route inspect LoadNow and routed-file KeepInMind reasons remain dual and overwrite remains last")]
@@ -316,17 +339,21 @@ public sealed class RouteInspectProfileBuilderReadingTests
 
         var profile = Build(graph, target.CanonicalPath);
 
+        var automaticReadings = Assert.IsType<RouteInspectAutomaticReadings>(profile.Reading.Automatic.Value);
+        var automaticReasons = automaticReadings.Reasons;
         Assert.Equal(
             [
                 RouteInspectAutomaticReadingKind.ParentLoadNow,
                 RouteInspectAutomaticReadingKind.RoutedFileKeepInMind,
                 RouteInspectAutomaticReadingKind.OverwriteAfterBase,
             ],
-            profile.Reading.Automatic.Value!.Reasons.Select(reason => reason.Kind));
-        Assert.Equal("root", profile.Reading.Automatic.Value.Reasons[0].RelatedSourceId);
-        Assert.Equal(target.Id, profile.Reading.Automatic.Value.Reasons[^1].RelatedSourceId);
-        Assert.True(profile.Reading.Later.Value!.MayBeReadAgain);
-        Assert.Equal(2, profile.Measurements.OwnSource.Value!.PhysicalFileCount);
+            automaticReasons.Select(reason => reason.Kind));
+        Assert.Equal("root", automaticReasons[0].RelatedSourceId);
+        Assert.Equal(target.Id, automaticReasons[^1].RelatedSourceId);
+        Assert.True(Assert.IsType<RouteInspectLaterReading>(profile.Reading.Later.Value).MayBeReadAgain);
+        Assert.Equal(
+            2,
+            Assert.IsType<RouteInspectMeasurement>(profile.Measurements.OwnSource.Value).PhysicalFileCount);
     }
 
     [Fact(DisplayName = "Route inspect OnDemand source with overwrite retains selection and immediate-after-base reasons")]
@@ -359,19 +386,20 @@ public sealed class RouteInspectProfileBuilderReadingTests
 
         var profile = Build(graph, target.CanonicalPath);
 
+        var automaticReadings = Assert.IsType<RouteInspectAutomaticReadings>(profile.Reading.Automatic.Value);
         Assert.Equal(
             [
                 RouteInspectAutomaticReadingKind.OnDemand,
                 RouteInspectAutomaticReadingKind.OverwriteAfterBase,
             ],
-            profile.Reading.Automatic.Value!.Reasons.Select(reason => reason.Kind));
+            automaticReadings.Reasons.Select(reason => reason.Kind));
         Assert.Equal(
             [RouteInspectAutomaticReadingEvent.RouteSelected],
-            profile.Reading.Automatic.Value.Reasons[0].Events);
+            automaticReadings.Reasons[0].Events);
         Assert.Equal(
             [RouteInspectAutomaticReadingEvent.BaseRead],
-            profile.Reading.Automatic.Value.Reasons[1].Events);
-        Assert.False(profile.Reading.Later.Value!.MayBeReadAgain);
+            automaticReadings.Reasons[1].Events);
+        Assert.False(Assert.IsType<RouteInspectLaterReading>(profile.Reading.Later.Value).MayBeReadAgain);
     }
 
     private static RouteInspectProfile Build(

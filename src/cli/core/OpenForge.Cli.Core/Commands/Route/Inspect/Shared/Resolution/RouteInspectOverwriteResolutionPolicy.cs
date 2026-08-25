@@ -6,12 +6,11 @@ namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Resolution;
 internal static class RouteInspectOverwriteResolutionPolicy
 {
     internal static RouteOverwriteFact? FindAmbiguousCandidate(
-        RouteSourceCatalogue catalogue,
+        RouteSourceProjectionSet projectionSet,
         string candidatePath)
     {
-        ArgumentNullException.ThrowIfNull(catalogue);
         ArgumentException.ThrowIfNullOrWhiteSpace(candidatePath);
-        return catalogue.OverwriteFacts.FirstOrDefault(fact =>
+        return projectionSet.OverwriteFacts.FirstOrDefault(fact =>
             fact.State == RouteOverwriteState.Ambiguous
             && fact.CandidateBasePaths.Contains(candidatePath, StringComparer.Ordinal));
     }
@@ -20,8 +19,6 @@ internal static class RouteInspectOverwriteResolutionPolicy
         RouteInspectSelection selection,
         RouteOverwriteFact overwrite)
     {
-        ArgumentNullException.ThrowIfNull(selection);
-        ArgumentNullException.ThrowIfNull(overwrite);
         var issueCode = overwrite.State == RouteOverwriteState.Orphan
             ? RouteInspectResolutionIssueCode.OrphanOverwrite
             : RouteInspectResolutionIssueCode.AmbiguousOverwrite;

@@ -1,59 +1,51 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Source;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Resolution;
 
-internal sealed class RouteInspectSourceSelectionResolver
+internal sealed partial class RouteInspectSourceSelectionResolver
 {
-    private readonly RouteInspectPhysicalVerifier _physicalVerifier;
     private readonly RouteInspectSourceFactsResolver _sourceFactsResolver;
 
-    internal RouteInspectSourceSelectionResolver(
-        RouteInspectPhysicalVerifier physicalVerifier,
-        RouteInspectSourceFactsResolver sourceFactsResolver)
+    internal RouteInspectSourceSelectionResolver(RouteInspectSourceFactsResolver sourceFactsResolver)
     {
-        ArgumentNullException.ThrowIfNull(physicalVerifier);
-        ArgumentNullException.ThrowIfNull(sourceFactsResolver);
-        _physicalVerifier = physicalVerifier;
         _sourceFactsResolver = sourceFactsResolver;
     }
+
     internal RouteInspectResolution Resolve(
         RouteInspectResolutionInput input,
         CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(input);
         if (cancellationToken.IsCancellationRequested)
         {
-            return RouteInspectResolutionSupport.Interrupted(
-                input.UnresolvedSelection,
-                input.Parsed.AttemptedId ?? input.Parsed.AttemptedPath!);
+            return Interrupted(input);
         }
-        return input.Parsed.Kind == RouteSourceReferenceKind.SourceId
+
+        return input.Parsed.Kind == SourceReferenceKind.SourceId
             ? ResolveId(input, cancellationToken)
             : ResolvePath(input, cancellationToken);
     }
+
     private RouteInspectResolution ResolveId(
         RouteInspectResolutionInput input,
         CancellationToken cancellationToken)
     {
-        var requestedId = input.Parsed.AttemptedId!;
-        var safeCandidates = input.Catalogue.FindById(requestedId);
-        var unsafeCandidates = input.UnsafePaths
-            .Where(path => string.Equals(RouteSourceIdentity.DeriveId(path), requestedId, StringComparison.Ordinal))
-            .OrderBy(path => path, StringComparer.Ordinal)
-            .ToArray();
-        var candidatePaths = safeCandidates
-            .Select(source => source.CanonicalPath)
-            .Concat(unsafeCandidates)
+        var requestedId = input.Parsed.AttemptedId
+            ?? throw new InvalidOperationException("A source-ID selection requires its attempted ID.");
+        var candidates = input.Catalogue.FindAllCandidatesById(requestedId);
+        var candidatePaths = candidates
+            .Select(candidate => candidate.CanonicalPath)
             .Distinct(StringComparer.Ordinal)
             .OrderBy(path => path, StringComparer.Ordinal)
             .ToArray();
         if (cancellationToken.IsCancellationRequested)
         {
-            return RouteInspectResolutionSupport.Interrupted(input.UnresolvedSelection, requestedId);
+            return Interrupted(input);
         }
+
         if (candidatePaths.Length == 0)
         {
             return RouteInspectResolution.Create(
@@ -66,6 +58,7 @@ internal sealed class RouteInspectSourceSelectionResolver
                     requestedId,
                     "The source ID does not identify a current source.")]);
         }
+
         if (candidatePaths.Length > 1)
         {
             return RouteInspectResolution.Create(
@@ -83,49 +76,53 @@ internal sealed class RouteInspectSourceSelectionResolver
                     "The source ID identifies more than one current source.",
                     candidatePaths)]);
         }
-        if (unsafeCandidates.Length != 0)
+
+        var candidate = candidates.Single();
+        if (candidate.PhysicalState != PhysicalPathState.Contained)
         {
-            return RouteInspectResolution.Create(
-                RouteInspectResolutionState.Blocked,
-                input.UnresolvedSelection,
-                null,
-                null,
-                [RouteInspectResolutionSupport.CreateIssue(
-                    RouteInspectResolutionIssueCode.UnsafeSource,
-                    requestedId,
-                    "The selected source crosses an unproved physical boundary.")]);
+            return Unsafe(input.UnresolvedSelection, requestedId);
         }
-        var source = safeCandidates.Single();
+
+        var logicalSource = input.Catalogue.FindAllById(requestedId).SingleOrDefault();
+        if (logicalSource is null)
+        {
+            return Unsafe(input.UnresolvedSelection, requestedId);
+        }
+
         var selection = new RouteInspectSelection(
             RouteInspectReferenceKind.SourceId,
             RouteInspectSelectionMethod.AutomaticId,
             requestedId,
             []);
-        return ResolveSource(input, selection, source, source.CanonicalPath, cancellationToken);
+        return ResolveSource(input, selection, logicalSource, logicalSource.Identity.CanonicalBasePath, cancellationToken);
     }
+
     private RouteInspectResolution ResolvePath(
         RouteInspectResolutionInput input,
         CancellationToken cancellationToken)
     {
-        var requestedPath = input.Parsed.AttemptedPath!;
-        var source = input.Catalogue.FindByPath(requestedPath);
+        var requestedPath = input.Parsed.AttemptedPath
+            ?? throw new InvalidOperationException("A source-path selection requires its attempted path.");
+        var logicalSource = input.Catalogue.FindByPath(requestedPath);
         if (cancellationToken.IsCancellationRequested)
         {
-            return RouteInspectResolutionSupport.Interrupted(input.UnresolvedSelection, requestedPath);
+            return Interrupted(input);
         }
-        if (source is null)
+
+        if (logicalSource is null)
         {
-            var overwrite = input.Catalogue.FindOverwriteByPath(requestedPath);
-            if (cancellationToken.IsCancellationRequested)
+            var unmatchedOverwrite = input.Projections.ProjectionSet.FindOverwriteByPath(requestedPath);
+            if (unmatchedOverwrite is not null)
             {
-                return RouteInspectResolutionSupport.Interrupted(input.UnresolvedSelection, requestedPath);
+                return RouteInspectOverwriteResolutionPolicy.Blocked(input.UnresolvedSelection, unmatchedOverwrite);
             }
-            if (overwrite is not null)
+
+            var candidate = input.Catalogue.FindCandidateByPath(requestedPath);
+            if (candidate is not null && candidate.PhysicalState != PhysicalPathState.Contained)
             {
-                return RouteInspectOverwriteResolutionPolicy.Blocked(
-                    input.UnresolvedSelection,
-                    overwrite);
+                return Unsafe(input.UnresolvedSelection, requestedPath);
             }
+
             return RouteInspectResolution.Create(
                 RouteInspectResolutionState.Invalid,
                 input.UnresolvedSelection,
@@ -136,53 +133,62 @@ internal sealed class RouteInspectSourceSelectionResolver
                     requestedPath,
                     "The exact contained path is not a recognized source.")]);
         }
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return RouteInspectResolutionSupport.Interrupted(input.UnresolvedSelection, requestedPath);
-        }
+
         var selection = new RouteInspectSelection(
             RouteInspectReferenceKind.SourcePath,
             RouteInspectSelectionMethod.ExactPath,
             requestedPath,
             []);
         var ambiguousOverwrite = RouteInspectOverwriteResolutionPolicy.FindAmbiguousCandidate(
-            input.Catalogue,
-            source.CanonicalPath);
+            input.Projections.ProjectionSet,
+            logicalSource.Identity.CanonicalBasePath);
         if (ambiguousOverwrite is not null)
         {
             return RouteInspectOverwriteResolutionPolicy.Blocked(selection, ambiguousOverwrite);
         }
-        if (!_physicalVerifier.MatchesCataloguePhysicalIdentity(
-                source,
-                requestedPath,
-                input.ExactPathPhysical!))
+
+        var requestedLayer = logicalSource.Base;
+        if (logicalSource.Overwrite is { } overwrite
+            && string.Equals(overwrite.CanonicalPath, requestedPath, StringComparison.Ordinal))
         {
-            return RouteInspectResolution.Create(
-                RouteInspectResolutionState.Blocked,
-                input.UnresolvedSelection,
-                null,
-                null,
-                [RouteInspectResolutionSupport.CreateIssue(
-                    RouteInspectResolutionIssueCode.UnsafeSource,
-                    requestedPath,
-                    "The selected source does not match its catalogue physical identity.")]);
+            requestedLayer = overwrite;
         }
-        return ResolveSource(input, selection, source, requestedPath, cancellationToken);
+
+        var exactPathPhysical = input.ExactPathPhysical
+            ?? throw new InvalidOperationException("An exact-path selection requires its physical resolution.");
+        var resolvedPhysicalPath = exactPathPhysical.GetContainedPhysicalPath();
+        if (!PhysicalIdentityTracker.PathComparer.Equals(
+                requestedLayer.PhysicalPath,
+                resolvedPhysicalPath))
+        {
+            return Unsafe(input.UnresolvedSelection, requestedPath);
+        }
+
+        return ResolveSource(input, selection, logicalSource, requestedPath, cancellationToken);
     }
+
     private RouteInspectResolution ResolveSource(
         RouteInspectResolutionInput input,
         RouteInspectSelection selection,
-        RouteSource source,
+        SourceLogicalSource logicalSource,
         string requestedPath,
         CancellationToken cancellationToken)
     {
+        var projection = input.Projections.Projections.Single(candidate =>
+            ReferenceEquals(candidate.LogicalSource, logicalSource));
+        var physicalResolution = ReadPhysicalResolution(selection, projection, requestedPath);
+        if (physicalResolution is not null)
+        {
+            return physicalResolution;
+        }
+
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return RouteInspectResolutionSupport.Interrupted(selection, requestedPath);
+        }
+
         return _sourceFactsResolver.Resolve(
-            new RouteInspectSourceResolutionInput(
-                input.Request,
-                selection,
-                source,
-                requestedPath,
-                input.Catalogue),
+            new RouteInspectSourceResolutionInput(input, selection, projection, requestedPath),
             cancellationToken);
     }
 }

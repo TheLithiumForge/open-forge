@@ -2,7 +2,7 @@ using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Binding;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Resolution;
-using OpenForge.Cli.Core.Commands.Route.Shared.Source;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -19,19 +19,28 @@ internal static class RouteInspectBindingInputPolicy
         ArgumentNullException.ThrowIfNull(invocation);
         ArgumentNullException.ThrowIfNull(sourceReferences);
         var missing = sourceReferences.Count == 0;
-        var requestedReference = missing ? null : string.Join(" ", sourceReferences);
-        var selection = missing
-            ? new RouteInspectSelection(
+        RouteInspectSelection selection;
+        string subject;
+        if (missing)
+        {
+            selection = new RouteInspectSelection(
                 RouteInspectReferenceKind.Missing,
                 RouteInspectSelectionMethod.Unresolved,
                 null,
-                [])
-            : RouteInspectResolutionSupport.UnresolvedSelection(
-                RouteSourceReferenceParser.Parse(requestedReference!));
+                []);
+            subject = "source-reference";
+        }
+        else
+        {
+            var requestedReference = string.Join(" ", sourceReferences);
+            var parsed = SourceReferenceParser.Parse(requestedReference);
+            selection = RouteInspectResolutionSupport.UnresolvedSelection(parsed);
+            subject = requestedReference;
+        }
+
         var code = missing
             ? RouteInspectConditionCode.MissingSource
             : RouteInspectConditionCode.MultipleSources;
-        var subject = missing ? "source-reference" : requestedReference!;
         var message = missing
             ? "route inspect requires one source reference."
             : "route inspect accepts exactly one source reference.";
@@ -60,9 +69,9 @@ internal static class RouteInspectBindingInputPolicy
                 null,
                 []),
             1 => RouteInspectResolutionSupport.UnresolvedSelection(
-                RouteSourceReferenceParser.Parse(sourceReferences[0])),
+                SourceReferenceParser.Parse(sourceReferences[0])),
             _ => RouteInspectResolutionSupport.UnresolvedSelection(
-                RouteSourceReferenceParser.Parse(string.Join(" ", sourceReferences))),
+                SourceReferenceParser.Parse(string.Join(" ", sourceReferences))),
         };
         var subject = input.GlobalInput.WorkspaceValue
             ?? input.ProcessEnvironment.CurrentDirectory;

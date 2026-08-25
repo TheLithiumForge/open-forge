@@ -73,7 +73,6 @@ internal sealed class RouteListJsonDepth
 {
     private RouteListJsonDepth(RouteListDepth value)
     {
-        ArgumentNullException.ThrowIfNull(value);
         Value = value;
     }
 
@@ -115,7 +114,7 @@ internal sealed class RouteListJsonDepthConverter : JsonConverter<RouteListJsonD
             return;
         }
 
-        writer.WriteNumberValue(value.Value.Value!.Value);
+        writer.WriteNumberValue(value.Value.FiniteValue);
     }
 }
 

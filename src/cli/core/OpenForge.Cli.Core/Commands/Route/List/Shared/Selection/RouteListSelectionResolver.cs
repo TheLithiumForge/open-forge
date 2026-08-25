@@ -1,90 +1,114 @@
 using OpenForge.Cli.Core.Commands.Route.List;
-using OpenForge.Cli.Core.Commands.Route.List.Shared.Loader;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Source;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 
-internal sealed class RouteListSelectionResolver
+internal sealed partial class RouteListSelectionResolver
 {
+    private sealed record RouteListSelectionStage(
+        RouteListSelection Attempted,
+        string AttemptedReference,
+        RouteListRequest Request,
+        SourceCatalogue Catalogue,
+        RouteSourceProjectionSet ProjectionSet,
+        SourceRouteFacts RouteFacts,
+        CancellationToken CancellationToken);
+
+    private const string LoaderPath = ".agents/loader.md";
+
     private readonly PhysicalPathResolver _physicalPathResolver;
-    private readonly RouteListExplicitSelectionResolver _explicitResolver;
 
     internal RouteListSelectionResolver(PhysicalPathResolver physicalPathResolver)
     {
         ArgumentNullException.ThrowIfNull(physicalPathResolver);
         _physicalPathResolver = physicalPathResolver;
-        _explicitResolver = new RouteListExplicitSelectionResolver(physicalPathResolver);
     }
 
-    internal async ValueTask<RouteListSelectionResolution> ResolveAsync(
+    internal ValueTask<RouteListSelectionResolution> ResolveAsync(
         RouteListRequest request,
-        RouteSourceCatalogue catalogue,
+        SourceCatalogue catalogue,
+        RouteSourceProjectionSet projectionSet,
+        SourceRouteFacts routeFacts,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(catalogue);
+        ArgumentNullException.ThrowIfNull(projectionSet);
+        ArgumentNullException.ThrowIfNull(routeFacts);
+        ValidateBoundary(request, catalogue, projectionSet, routeFacts);
 
         if (request.SourceReference is null)
         {
-            var loader = await new LoaderDestinationResolver(_physicalPathResolver)
-                .ResolveAsync(request.Workspace, catalogue, cancellationToken)
-                .ConfigureAwait(false);
-            return FromLoaderResolution(loader);
+            return new ValueTask<RouteListSelectionResolution>(
+                ResolveLoaderRoots(catalogue, projectionSet, routeFacts, cancellationToken));
         }
 
-        var parsed = RouteSourceReferenceParser.Parse(request.SourceReference);
-        if (parsed.State == RouteSourceReferenceParseState.Invalid)
+        var parsed = SourceReferenceParser.Parse(request.SourceReference);
+        var attempted = CreateSelection(parsed);
+        var attemptedReference = ReadAttemptedSubject(attempted);
+        if (parsed.State == SourceReferenceParseState.Invalid)
         {
-            return RouteListSelectionResolutionFactory.Invalid(
-                CreateSelection(parsed),
-                new RouteListSelectionIssue(
-                    RouteListFindingCode.InvalidSourceReference,
-                    parsed.AttemptedId ?? parsed.AttemptedPath,
-                    parsed.Cause!));
+            return new ValueTask<RouteListSelectionResolution>(
+                RouteListSelectionResolutionFactory.Invalid(
+                    attempted,
+                    new RouteListSelectionIssue(
+                        RouteListFindingCode.InvalidSourceReference,
+                        attemptedReference,
+                        parsed.Cause ?? throw new InvalidOperationException("An invalid source reference requires a cause."))));
         }
 
-        if (cancellationToken.IsCancellationRequested)
+        if (WasCancelled(catalogue, projectionSet, routeFacts, cancellationToken))
         {
-            return Interrupted(CreateSelection(parsed), parsed.AttemptedId ?? parsed.AttemptedPath ?? ".agents/loader.md");
+            return new ValueTask<RouteListSelectionResolution>(
+                Interrupted(attempted, attemptedReference));
         }
 
-        return _explicitResolver.Resolve(parsed, request, catalogue);
+        var stage = new RouteListSelectionStage(
+            attempted,
+            attemptedReference,
+            request,
+            catalogue,
+            projectionSet,
+            routeFacts,
+            cancellationToken);
+        var resolution = parsed.Kind switch
+        {
+            SourceReferenceKind.SourceId => ResolveId(stage),
+            SourceReferenceKind.SourcePath => ResolvePath(stage),
+            _ => throw new ArgumentOutOfRangeException(nameof(parsed), parsed.Kind, "The source reference kind is not defined."),
+        };
+        return new ValueTask<RouteListSelectionResolution>(resolution);
     }
 
-    private static RouteListSelection CreateSelection(RouteSourceReferenceParseResult parsed)
+    private static RouteListSelection CreateSelection(SourceReferenceParseResult parsed)
     {
         return parsed.Kind switch
         {
-            RouteSourceReferenceKind.SourceId => RouteListSelectionFactory.AttemptedId(parsed.AttemptedId!),
-            RouteSourceReferenceKind.SourcePath => RouteListSelectionFactory.AttemptedPath(parsed.AttemptedPath!),
+            SourceReferenceKind.SourceId => RouteListSelectionFactory.AttemptedId(
+                parsed.AttemptedId ?? throw new InvalidOperationException("An ID reference requires an attempted ID.")),
+            SourceReferenceKind.SourcePath => RouteListSelectionFactory.AttemptedPath(
+                parsed.AttemptedPath ?? throw new InvalidOperationException("A path reference requires an attempted path.")),
             _ => throw new ArgumentOutOfRangeException(nameof(parsed), parsed.Kind, "The source reference kind is not defined."),
         };
     }
 
-    private static RouteListSelectionResolution FromLoaderResolution(
-        LoaderDestinationResolution loader)
+    private static string ReadAttemptedSubject(RouteListSelection selection)
     {
-        var selection = RouteListSelectionFactory.LoaderRoots();
-        return loader.State switch
+        return selection.Kind switch
         {
-            LoaderDestinationResolutionState.Resolved => RouteListSelectionResolutionFactory.Resolved(
-                selection,
-                loader.SelectedSources),
-            LoaderDestinationResolutionState.Blocked => RouteListSelectionResolutionFactory.Blocked(
-                selection,
-                loader.SelectedSources,
-                loader.Issues),
-            LoaderDestinationResolutionState.Incomplete => RouteListSelectionResolutionFactory.Incomplete(
-                selection,
-                loader.SelectedSources,
-                loader.Issues),
-            LoaderDestinationResolutionState.Interrupted => RouteListSelectionResolutionFactory.Interrupted(
-                selection,
-                loader.SelectedSources,
-                loader.Issues),
-            _ => throw new ArgumentOutOfRangeException(nameof(loader), loader.State, "The Loader resolution state is not defined."),
+            RouteListSelectionKind.SourceId => selection.AttemptedId
+                ?? throw new InvalidOperationException("An ID selection requires an attempted ID."),
+            RouteListSelectionKind.SourcePath => selection.AttemptedPath
+                ?? throw new InvalidOperationException("A path selection requires an attempted path."),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(selection),
+                selection.Kind,
+                "An explicit route-list selection kind is required."),
         };
     }
 

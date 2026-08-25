@@ -21,15 +21,17 @@ Native AOT. The command does not ship. This document claims no existing code,
 executable, test suite, package, or proof. Actual Native AOT proof is pending
 Gate 5.
 
-The Architecture defines the exact shared JSON schema and numeric process-status
-mapping. This design uses those shared definitions and does not duplicate their
-exact field or exit tables.
+The Architecture defines only the shared schema-v1 JSON envelope,
+source-location primitive, and status/process coordinates. The Find Interface
+defines the exact command-local result schema, finding codes, finite values, and
+`next` contents. This design uses those definitions and does not redefine either
+authority.
 
 ## Contract Traceability
 
 | Contract boundary                                                                                                                                                                    | Accepted design response                                                                                                                                                                                                                                                                         | Evidence state                                       |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------- |
-| [Structured Result Fields](interface.md#structured-result-fields) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities)           | Produce one typed result rich enough for the public workspace, universe, query, projection, counts, coverage, ordered sources, evidence, content, findings, and semantic status. Use the shared Architecture schema and status-to-exit mapping without creating a command-private public schema. | Design accepted; executable proof is pending Gate 5. |
+| [Structured Result Fields](interface.md#structured-result-fields) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities)           | Produce one typed result rich enough for the public workspace, universe, query, projection, counts, coverage, ordered sources, evidence, content, findings, and semantic status. Follow the exact Find Interface command-local schema inside the shared Architecture envelope and use the Architecture status-to-exit mapping. | Design accepted; executable proof is pending Gate 5. |
 | [Semantic Results](interface.md#semantic-results) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities)                           | Map semantic results to process completion behavior without changing the named semantic conditions.                                                                                                                                                                                              | Design accepted; executable proof is pending Gate 5. |
 | [Public Heading Matching](interface.md#public-heading-matching) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities)             | Use the fixed Markdig 1.3.2 CommonMark pipeline to expose the required structural heading nodes, visible inline text, source forms, levels, locations, and section boundaries.                                                                                                                   | Design accepted; executable proof is pending Gate 5. |
 | [Workspace And Source Universe](interface.md#workspace-and-source-universe) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities) | Use real `System.IO` boundaries and command-local source units that establish the declared workspace and source-universe containment without hiding eligible files.                                                                                                                              | Design accepted; executable proof is pending Gate 5. |
@@ -45,14 +47,15 @@ Markdown parsing uses Markdig 1.3.2 with one fixed CommonMark pipeline. Plugin
 discovery is disabled. The fixed pipeline does not discover extensions or add a
 public heading form beyond the accepted CommonMark ATX and Setext boundary.
 
-Semantic YAML frontmatter uses YamlDotNet 18.1.0 through its source-generated
-semantic frontmatter path. The operation matches parsed authored values, not
-serialized YAML text, and does not make unknown metadata or generated `Entries`
-copies part of tag semantics.
+YAML frontmatter uses the shared neutral YamlDotNet 18.1.0 syntax boundary plus
+the one source-generated semantic metadata path. The operation matches parsed
+authored values, not serialized YAML text, and does not make unknown metadata or
+generated `Entries` copies part of tag semantics.
 
 Structured JSON uses System.Text.Json source generation. The serializer realizes
-the shared Architecture schema without reflection-based discovery becoming a
-private compatibility contract.
+the shared Architecture envelope and the exact Find Interface command-local
+result graph without reflection-based discovery becoming a private compatibility
+contract.
 
 All selected dependencies and runtime features must remain compatible with
 Native AOT and trimming. The implementation uses real `System.IO` filesystem
@@ -61,12 +64,12 @@ claimed here; actual Native AOT proof is pending Gate 5.
 
 ## Source Structure And Boundaries
 
-The source tree mirrors the `find` contract boundary. Enumeration, workspace and
-source-universe resolution, Markdown inspection, comparison, result formation,
-and rendering remain in command-local or nearest-shared source units according
-to demonstrated reuse. Body-tag scanners, UTF-8 origin mapping, and compatibility
-patches stay local to `find`; no remote `utils` folder, universal engine, or
-speculative shared abstraction is introduced.
+The source tree mirrors the `find` contract boundary. Enumeration, comparison,
+result formation, rendering, body-tag scanning, UTF-8 origin mapping, and
+compatibility patches stay local to `find`. Neutral Markdown frontmatter and YAML
+syntax foundations sit under `Framework/Documents` because Find, Route discovery,
+and accepted later Route mutation require the same mechanical boundary. No remote
+`utils` folder, universal engine, or speculative shared abstraction is introduced.
 
 Request binding, source enumeration, layer resolution, inspection, parsing,
 region evaluation, evidence aggregation, coverage, ordering, projection, result
@@ -81,6 +84,15 @@ before a candidate is admitted as an inspectable layer, and an unsafe identity,
 unreadable byte sequence, orphan, ambiguity, or incomplete origin remains a
 finding rather than a guessed fact.
 
+The optional Find metadata projection consumes neutral shared route facts rather
+than Route command results. Those facts distinguish routed, unrouted, ambiguous,
+and unavailable states. Find exposes a route only for one unambiguous
+Loader-rooted source identity, treats ambiguous or unavailable metadata as an
+incomplete projection, and does not infer a Framework scope from path segments.
+The route-facts resolver reads only supporting sources in the effective Find
+universe; metadata projection does not widen source filters to inspect excluded
+sources.
+
 ## Parsing And Origin Mapping
 
 The fixed Markdig 1.3.2 CommonMark pipeline supplies ATX and Setext heading nodes,
@@ -88,19 +100,31 @@ visible inline text, source forms, levels, and section boundaries. It preserves
 the technology-neutral rules for formatted, linked, code-containing, duplicate,
 and malformed headings. No plugin discovery changes that boundary.
 
-Frontmatter is parsed through the YamlDotNet 18.1.0 source-generated semantic
-path. The semantic path retains authored list-value tags, source order, physical
-layer, canonical path, and the locations needed by the typed result. It does not
-turn serialized YAML, unknown fields, descriptions, responsibilities, or
-generated `Entries` into tag matches.
+The shared Markdown frontmatter boundary preserves exact delimiter, YAML, and
+body spans. The shared neutral YamlDotNet 18.1.0 syntax parser preserves the
+decoded node shape and half-open UTF-16 scalar spans while reporting aliases,
+duplicate keys, and non-scalar mapping keys without importing Find policy. The
+one source-generated semantic path supplies accepted metadata values. Together
+they retain authored list-value tags, source order, physical layer, canonical
+path, and the locations needed by the typed result. They do not turn serialized
+YAML, unknown fields, descriptions, responsibilities, or generated `Entries`
+into tag matches.
+
+The Find-local frontmatter reader pairs source-generated semantic values with
+shared neutral scalar facts for `open-forge.tags`, then maps their spans through
+the strict UTF-8 origin map. A mismatch or unavailable span remains a typed
+frontmatter finding rather than a guessed location. Find owns no YAML event
+reader or handwritten YAML grammar; the shared parser remains subject to
+trimming and Native AOT evidence.
 
 Strict UTF-8 byte-origin mapping is the source-location boundary for parser and
 scanner observations. Local scanners and compatibility patches preserve the
 mapping when a library does not expose the needed byte origin, line, column, or
 span directly. They do not normalize Unicode, repair malformed authored input,
 or broaden the accepted public syntax. Exact column and source-span fields follow
-the shared Architecture schema and retain the Interface Contract's authored
-spelling, layer, region, line, occurrence, and source-location requirements.
+the shared Architecture location primitive and retain the Interface Contract's
+authored spelling, layer, region, line, occurrence, and source-location
+requirements.
 
 ## Comparison APIs
 
@@ -117,9 +141,11 @@ authored spelling.
 Result construction produces the one typed result consumed by compact, expanded,
 content-projected, verbose, and structured renderers. Human and structured
 renderers do not rerun enumeration, parsing, matching, projection, or verification.
-The exact shared JSON fields, compatibility rules, and numeric process-status
-mapping come from the [CLI Architecture](../../architecture.md#result-json-coordinates-and-process-status), not
-from a duplicated `find` schema in this file.
+The shared envelope fields, location primitive, compatibility rules, and numeric
+process-status mapping come from the [CLI Architecture](../../architecture.md#result-json-coordinates-and-process-status).
+The exact `find.result` schema, finding codes, finite values, and `next` contents
+come from the [Find Interface](interface.md). This design does not replace either
+authority.
 
 ## Evidence Design
 

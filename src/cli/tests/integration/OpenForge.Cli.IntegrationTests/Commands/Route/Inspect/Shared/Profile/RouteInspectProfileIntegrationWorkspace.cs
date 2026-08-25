@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
 using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Shared.Profile;
@@ -71,7 +72,6 @@ internal sealed class RouteInspectProfileIntegrationWorkspace : IDisposable
 
     internal void WriteEntrypoint(RouteInspectProfileIntegrationEntrypoint source)
     {
-        ArgumentNullException.ThrowIfNull(source);
         Write(
             source.RelativePath,
             BuildSource(
@@ -298,13 +298,13 @@ internal static class RouteInspectProfileIntegrationAssertions
         RouteInspectResult result,
         RouteInspectConditionCode code)
     {
-        var condition = result.Conditions.FirstOrDefault(candidate => candidate.Code == code);
-        Assert.NotNull(condition);
-        Assert.False(string.IsNullOrWhiteSpace(condition!.Subject));
+        var condition = Assert.IsType<RouteInspectCondition>(
+            result.Conditions.FirstOrDefault(candidate => candidate.Code == code));
+        Assert.False(string.IsNullOrWhiteSpace(condition.Subject));
         Assert.False(string.IsNullOrWhiteSpace(condition.Message));
-        Assert.NotNull(result.Next);
-        Assert.False(string.IsNullOrWhiteSpace(result.Next!.Command));
-        Assert.False(string.IsNullOrWhiteSpace(result.Next.Reason));
+        var next = Assert.IsType<CliNextAction>(result.Next);
+        Assert.False(string.IsNullOrWhiteSpace(next.Command));
+        Assert.False(string.IsNullOrWhiteSpace(next.Reason));
     }
 
     internal static void AssertNoWriteOrInspectionState(

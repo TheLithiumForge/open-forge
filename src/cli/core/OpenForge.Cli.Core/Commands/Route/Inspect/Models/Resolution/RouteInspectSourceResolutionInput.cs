@@ -1,36 +1,39 @@
-using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 
 internal sealed class RouteInspectSourceResolutionInput
 {
     internal RouteInspectSourceResolutionInput(
-        RouteInspectRequest request,
+        RouteInspectResolutionInput resolution,
         RouteInspectSelection selection,
-        RouteSource source,
-        string requestedPath,
-        RouteSourceCatalogue catalogue)
+        RouteSourceProjection projection,
+        string requestedPath)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(resolution);
         ArgumentNullException.ThrowIfNull(selection);
-        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(projection);
         ArgumentException.ThrowIfNullOrWhiteSpace(requestedPath);
-        ArgumentNullException.ThrowIfNull(catalogue);
-        Request = request;
+        if (projection.Source is null)
+        {
+            throw new ArgumentException("A selected Route source projection must be available.", nameof(projection));
+        }
+
+        Resolution = resolution;
         Selection = selection;
-        Source = source;
+        Projection = projection;
         RequestedPath = requestedPath;
-        Catalogue = catalogue;
     }
 
-    internal RouteInspectRequest Request { get; }
+    internal RouteInspectResolutionInput Resolution { get; }
 
     internal RouteInspectSelection Selection { get; }
 
-    internal RouteSource Source { get; }
+    internal RouteSourceProjection Projection { get; }
+
+    internal SourceLogicalSource LogicalSource => Projection.LogicalSource;
 
     internal string RequestedPath { get; }
 
-    internal RouteSourceCatalogue Catalogue { get; }
 }

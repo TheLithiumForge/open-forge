@@ -29,6 +29,9 @@ Ask:
   and side-effect boundary?
 - Which later features are already known, and which extension points must exist
   now to prevent a local dead end?
+- Which neutral format, protocol, parser, serialization, identity, or safety
+  capabilities are already required by several outcomes in the accepted program,
+  even when delivery order means only one consumer is implemented today?
 - Which possible reuse should remain local until another real consumer proves the
   same meaning?
 - What build, test, packaging, migration, security, performance, and release
@@ -41,6 +44,15 @@ cross-cutting contracts, integration sequence, and explicit stop conditions.
 Implement the architectural foundation directly or through an explicitly
 assigned architecture implementer. Do not delegate unresolved system design to a
 feature implementer.
+
+Treat accepted program consumers differently from hypothetical reuse. When
+several accepted outcomes require the same neutral mechanical boundary, establish
+that foundation at their nearest shared scope before the first dependent slice.
+Examples include a source grammar, format parser, protocol adapter, serializer
+context, identity model, and safety primitive. Keep each consumer's semantic
+interpretation, policy, findings, status, and presentation local. A possible
+future feature or merely similar semantic policy does not justify early
+promotion.
 
 ## Task-Master Perspective
 

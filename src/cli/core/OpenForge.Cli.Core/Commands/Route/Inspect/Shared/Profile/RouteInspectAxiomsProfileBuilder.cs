@@ -1,7 +1,7 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Models.Topology;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile;
 
@@ -9,22 +9,22 @@ internal sealed partial class RouteInspectAxiomsProfileBuilder
 {
     private const string LoaderPath = ".agents/loader.md";
     private const string InheritedSentinel = "- inherited - No local axioms; loaded ancestor axioms remain active.";
-    private readonly RouteInspectResolution _resolution;
+    private readonly RouteInspectGraph _graph;
+    private readonly RouteInspectIdentity _identity;
     private readonly CancellationToken _cancellationToken;
 
     internal RouteInspectAxiomsProfileBuilder(
         RouteInspectResolution resolution,
         CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(resolution);
-        _resolution = resolution;
+        _graph = resolution.ReadGraph();
+        _identity = resolution.ReadIdentity();
         _cancellationToken = cancellationToken;
     }
 
     internal RouteInspectFact<RouteInspectAxiomsProfile> Build()
     {
-        var identity = _resolution.Identity!;
-        if (identity.RouteState == RouteInspectRouteState.NotRouted)
+        if (_identity.RouteState == RouteInspectRouteState.NotRouted)
         {
             const string reason = "Route Axioms do not apply to an unrouted source.";
             return RouteInspectFact<RouteInspectAxiomsProfile>.Available(
@@ -33,7 +33,7 @@ internal sealed partial class RouteInspectAxiomsProfileBuilder
                     RouteInspectFact<RouteInspectAxiomsLocalState>.NotApplicable(reason)));
         }
 
-        var selected = _resolution.Graph!.Catalogue.FindByPath(identity.CanonicalWorkspaceRelativePath);
+        var selected = _graph.ProjectionSet.FindByPath(_identity.CanonicalWorkspaceRelativePath);
         if (selected is null)
         {
             return RouteInspectFact<RouteInspectAxiomsProfile>.Unavailable(
@@ -48,22 +48,22 @@ internal sealed partial class RouteInspectAxiomsProfileBuilder
 
     private RouteInspectFact<RouteInspectAxiomsSources> ReadInherited(RouteSource selected)
     {
-        if (_resolution.Identity!.RouteState == RouteInspectRouteState.Detached)
+        if (_identity.RouteState == RouteInspectRouteState.Detached)
         {
             return RouteInspectFact<RouteInspectAxiomsSources>.NotApplicable(
                 "Detached sources have no Loader-rooted inherited Axioms.");
         }
 
-        var chain = ReadChain(_resolution.Graph!.Topology, selected.CanonicalPath);
-        if (chain is null || _resolution.Identity.RouteState == RouteInspectRouteState.Unresolved)
+        var chain = ReadChain(_graph, selected.CanonicalPath);
+        if (chain is null || _identity.RouteState == RouteInspectRouteState.Unresolved)
         {
             return RouteInspectFact<RouteInspectAxiomsSources>.Unavailable(
                 "The inherited route chain is unavailable.");
         }
 
         var sources = new List<string>();
-        var loader = _resolution.Graph!.Catalogue.FindByPath(LoaderPath);
-        if (loader is null && _resolution.Graph.Topology.LoaderRootPaths.Count != 0)
+        var loader = _graph.ProjectionSet.FindByPath(LoaderPath);
+        if (loader is null && _graph.RouteFacts.Topology.LoaderRootPaths.Count != 0)
         {
             return RouteInspectFact<RouteInspectAxiomsSources>.Unavailable(
                 "The Loader Axioms body is unavailable.");
@@ -150,8 +150,9 @@ internal sealed partial class RouteInspectAxiomsProfileBuilder
         return RouteInspectFact<RouteInspectAxiomsLocalState>.Available(ReadLocalState(state));
     }
 
-    private static IReadOnlyList<RouteSource>? ReadChain(RouteTopologyFacts topology, string path)
+    private static IReadOnlyList<RouteSource>? ReadChain(RouteInspectGraph graph, string path)
     {
+        var topology = graph.RouteFacts.Topology;
         var current = topology.FindByPath(path);
         if (current is null)
         {
@@ -160,17 +161,23 @@ internal sealed partial class RouteInspectAxiomsProfileBuilder
 
         var chain = new List<RouteSource>();
         var seen = new HashSet<string>(StringComparer.Ordinal);
-        while (seen.Add(current.Source.CanonicalPath))
+        while (seen.Add(current.Identity.CanonicalBasePath))
         {
-            chain.Add(current.Source);
-            if (current.ParentState != RouteTopologyParentState.Resolved)
+            var source = graph.ProjectionSet.FindByPath(current.Identity.CanonicalBasePath);
+            if (source is null)
             {
-                return current.ParentState == RouteTopologyParentState.None
+                return null;
+            }
+
+            chain.Add(source);
+            if (current.ParentState != SourceRouteParentState.Resolved)
+            {
+                return current.ParentState == SourceRouteParentState.None
                     ? chain.AsEnumerable().Reverse().ToArray()
                     : null;
             }
 
-            current = topology.FindByPath(current.ParentPath!);
+            current = topology.FindByPath(current.ParentPaths[0]);
             if (current is null)
             {
                 return null;

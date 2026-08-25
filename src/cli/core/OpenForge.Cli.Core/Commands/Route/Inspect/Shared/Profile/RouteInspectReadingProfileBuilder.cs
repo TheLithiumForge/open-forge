@@ -2,7 +2,7 @@ using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile.Models;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Models.Topology;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile;
 
@@ -14,7 +14,8 @@ internal sealed class RouteInspectReadingProfileBuilder
         RouteInspectLaterReadOccasion.Closeout, RouteInspectLaterReadOccasion.FollowupTransition,
     ];
 
-    private readonly RouteInspectResolution _resolution;
+    private readonly RouteInspectGraph _graph;
+    private readonly RouteInspectIdentity _identity;
     private readonly RouteInspectLoadingFacts _loading;
     private readonly RouteSource _selected;
 
@@ -22,16 +23,16 @@ internal sealed class RouteInspectReadingProfileBuilder
         RouteInspectResolution resolution,
         RouteInspectLoadingFacts loading)
     {
-        ArgumentNullException.ThrowIfNull(resolution);
-        ArgumentNullException.ThrowIfNull(loading);
-        _resolution = resolution;
+        _graph = resolution.ReadGraph();
+        _identity = resolution.ReadIdentity();
         _loading = loading;
-        _selected = resolution.Graph!.Catalogue.FindByPath(resolution.Identity!.CanonicalWorkspaceRelativePath)!;
+        _selected = _graph.ProjectionSet.FindByPath(_identity.CanonicalWorkspaceRelativePath)
+            ?? throw new InvalidOperationException("The selected source is absent from the inspect projection set.");
     }
 
     internal RouteInspectReadingProfile Build()
     {
-        var routeState = _resolution.Identity!.RouteState;
+        var routeState = _identity.RouteState;
         if (routeState is RouteInspectRouteState.Detached or RouteInspectRouteState.NotRouted)
         {
             return NotApplicable();
@@ -83,7 +84,7 @@ internal sealed class RouteInspectReadingProfileBuilder
                      .SelectMany(entries => entries)
                      .Where(entry => entry.TargetPath == _selected.CanonicalPath && entry.LoadNow))
         {
-            var parent = _resolution.Graph!.Catalogue.FindByPath(entry.ParentPath);
+            var parent = _graph.ProjectionSet.FindByPath(entry.ParentPath);
             if (parent is null)
             {
                 continue;
@@ -152,20 +153,21 @@ internal sealed class RouteInspectReadingProfileBuilder
 
     private bool IsScopeSelected()
     {
-        var node = _resolution.Graph!.Topology.FindByPath(_selected.CanonicalPath);
-        if (node is null || node.ParentState == RouteTopologyParentState.None)
+        var node = _graph.RouteFacts.Topology.FindByPath(_selected.CanonicalPath);
+        if (node is null || node.ParentState == SourceRouteParentState.None)
         {
             return true;
         }
 
         return _loading.RequiredAncestorPaths.Contains(_selected.CanonicalPath)
-            || !_loading.StartupPaths.Contains(_selected.CanonicalPath)
-                && _loading.StartupPaths.Contains(node.ParentPath!);
+            || node.ParentState == SourceRouteParentState.Resolved
+                && !_loading.StartupPaths.Contains(_selected.CanonicalPath)
+                && _loading.StartupPaths.Contains(node.ParentPaths[0]);
     }
 
     private bool IsRouted()
     {
-        var topology = _resolution.Graph!.Topology;
+        var topology = _graph.RouteFacts.Topology;
         return topology.FindByPath(_selected.CanonicalPath) is not null
             && topology.ReadAbsoluteDepth(_selected.CanonicalPath) is not null;
     }

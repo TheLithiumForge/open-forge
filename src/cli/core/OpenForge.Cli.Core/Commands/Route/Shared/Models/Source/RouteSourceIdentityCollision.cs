@@ -1,5 +1,5 @@
 using System.Collections.ObjectModel;
-using OpenForge.Cli.Core.Commands.Route.Shared.Source;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 
@@ -27,6 +27,6 @@ internal sealed class RouteSourceIdentityCollision
 
     private static bool IsCanonicalPath(string? path)
     {
-        return RouteLogicalPath.IsCanonical(path);
+        return SourceLogicalPath.IsCanonical(path);
     }
 }

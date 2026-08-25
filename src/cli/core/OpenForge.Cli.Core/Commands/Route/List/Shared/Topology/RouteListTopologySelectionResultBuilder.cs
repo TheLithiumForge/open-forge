@@ -70,9 +70,10 @@ internal sealed class RouteListTopologySelectionResultBuilder
         }
 
         var completeDepth = _state.FirstUnresolvedDepth.Value - 1;
-        if (_input.Request.RequestedDepth is { Kind: RouteListDepthKind.Finite, Value: { } requested })
+        var requestedDepth = _input.Request.RequestedDepth;
+        if (requestedDepth.Kind == RouteListDepthKind.Finite)
         {
-            completeDepth = Math.Min(completeDepth, requested);
+            completeDepth = Math.Min(completeDepth, requestedDepth.FiniteValue);
         }
 
         return RouteListDepth.Finite(completeDepth);

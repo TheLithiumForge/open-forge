@@ -16,14 +16,24 @@ internal sealed class RouteListCoverageBuilder
         }
 
         var requestedDepth = input.Request.RequestedDepth;
-        return selection.Status switch
+        if (selection.Status is CliSemanticStatus.Complete or CliSemanticStatus.Attention)
         {
-            CliSemanticStatus.Complete or CliSemanticStatus.Attention => RouteListCoverage.Complete(
+            if (selection.EffectiveDepth is not { } effectiveDepth)
+            {
+                throw new InvalidOperationException(
+                    "Complete route-list topology selection requires an effective depth.");
+            }
+
+            return RouteListCoverage.Complete(
                 requestedDepth,
-                selection.EffectiveDepth!,
+                effectiveDepth,
                 selection.SelectedRootCount,
                 selection.Rows.Count,
-                selection.Evidence),
+                selection.Evidence);
+        }
+
+        return selection.Status switch
+        {
             CliSemanticStatus.Incomplete => RouteListCoverage.Incomplete(
                 requestedDepth,
                 selection.EffectiveDepth,

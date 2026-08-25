@@ -8,9 +8,69 @@ open-forge:
 
 ## Task State
 
-- State: Planned.
+- State: Active. Find Child 3 and the Find parent are Complete and accepted in the
+  commit containing this record update. Find Child 1 is Complete and accepted at exact commit `96fe413`
+  (`Accept Find source catalogue`). Modern C# Improvements is Complete and
+  accepted at exact `a1cbf09`. Its Preflight was accepted at `55eb82e`, Framework
+  at `a90af59`, Shell/root at `fe10525` (`Modernize Shell nullable flow`), Route
+  Inspect/family at `62a1dd9` (`Modernize Route Inspect nullable flow`), Route List
+  at `273eb45` (`Modernize Route List nullable flow`), and Tests/support at exact
+  clean source commit `6af5fb1` (`Modernize test support nullable flow`). All five
+  ordered mutation batches and the final gate are accepted, with no task-local
+  correction pass consumed. Find Child 2 is Complete and accepted at exact
+  `ff7ce3f` (`Accept Find query operation`). Child 3 focused Preflight is accepted
+  at exact `28d316a`, Gray at exact `a76a217`, original Red at exact `22d3bff`,
+  the Integration metadata correction at exact `6a9a0de`, and the mirrored
+  EndToEnd metadata correction at exact `eea3d59` (`Complete Find presentation
+  metadata evidence`). Its post-commit Red reproduction succeeded as intentional
+  Red: managed non-AOT `win-x64` publish passed, and published Find EndToEnd was
+  `13` total with `13` intentional failures and zero skips, all terminating at
+  absent Green root registration. Historical pre-correction Green review returned
+  narrowly to Red for the frozen-contract human `\t`/lowercase `\uXXXX` mismatch
+  and diagnostic escaped-code-unit slicing defect. Supplemental escaping Red
+  correction is accepted at exact `a865fd1` (`Correct Find escaping evidence`),
+  with corrected Red focused Unit `206` total, `92` pass, `114` intentional
+  Gray-boundary failures, and zero skips. Child 3 Green is accepted at exact commit
+  `cb7874c` (`Implement Find presentation`) over corrected Red `a865fd1`. It is
+  production/root-composition-only, with no test, support, contract, project,
+  package, configuration, generated-routing, or Route behavior change. Its exact
+  scope is the 15 production paths for Find binding/request/result builder/
+  validation, compact/expanded/JSON/diagnostic/help/shared text escaping, Shell
+  direct-root command tree/root factory, and root composition. Fresh Green evidence
+  passes all recorded focused, affected, publish, and `13/13` published Find
+  EndToEnd gates with zero skips; the final bounded correctness review is `PASS`
+  with no material findings. Blue is accepted at exact `3f81e76`
+  (`Simplify Find JSON projection`) after changing production structure only in
+  `src/cli/core/OpenForge.Cli.Core/Commands/Find/Shared/Rendering/FindJsonProjection.cs`:
+  the duplicate local finite status and finding-code switches were replaced by
+  `CliStatusDefinitions.Read(...).MachineName` and
+  `FindDefinitions.ReadFindingCode(...)`, and the two duplicate private mapping
+  methods were removed. No behavior, public output/order/schema, test/support,
+  contract, package/project/configuration, generated routing, Shell/root, Route,
+  workspace-write, or Native AOT change occurred. The warning-free Release build,
+  format verification, diff check, focused Unit `206/206`, and focused Integration
+  `43/43` pass with zero skips; no managed republish or Native AOT claim is needed.
+  Fresh bounded Blue correctness review is `PASS`: all 7 status and 17 finding-code
+  mappings and undefined-value exception behavior are exact; JSON model/property
+  order/context is unchanged; static canonical readers remain source-generation/
+  AOT-safe. Fresh local improvement review is
+  `APPROVED — NO_MATERIAL_IMPROVEMENTS`. Fresh Purple assessment ran read-only
+  from exact clean Blue `3f81e76` against the exact ten Find Child 3 test/support
+  surfaces. Verdict: `NO_MATERIAL_IMPROVEMENTS`; the no-op Purple acceptance is
+  recorded at exact `426d4f5`. Its focused Unit `206/206`,
+  focused Integration/serialization `43/43`, and published Find EndToEnd `13/13`
+  evidence pass with zero skips, and source diff/check against `3f81e76` is
+  clean/empty. No test/support, production, contract, project, package,
+  configuration, generated, Route, Shell, or root file changed, and no Purple
+  code/test commit is manufactured. No Native AOT claim is made, and the
+  record-only commit is not a test change. Final acceptance is recorded in the
+  commit containing this record update.
+- Responsible role: Mastermind.
+- Last updated: 2026-08-25.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
-- Prerequisites: Accepted Foundation and route discovery facts.
+- Prerequisites: Foundation, Route Discovery, Generic CLI Improvements, and Find
+  Child 1 are accepted. The exact production/source baseline before Find remains
+  `063c59d`.
 
 ## Outcome And Boundaries
 
@@ -18,24 +78,88 @@ Read-only commands answer source, reference, context, extension, and generated
 navigation questions without creating locks, lifecycle files, caches, indexes
 outside explicit `index`, recovery artifacts, or workspace mutations.
 
-Find and References may proceed in parallel after shared source and route facts
-freeze. Context waits for both. Extension discovery may proceed independently on
-accepted source-catalogue boundaries. Index waits for routing, document, source,
-and reference facts.
+Find proceeds through its ordered source-catalogue, query-operation, and
+presentation/acceptance children. No shared source capability may be mutated in
+parallel. References may begin only after the source and document facts it needs
+are accepted. Context waits for accepted Find and References facts. Extension
+discovery may proceed independently on its accepted source-catalogue boundary.
+Index waits for routing, document, source, and reference facts.
 
 Every child owns its request, result, findings, presentation, help, and public
 scenario. Shared facts move only through a Mastermind integration increment.
 
 ## Child Tasks
 
-- [ ] [Implement deterministic CommonMark-aware source discovery and accepted Find projections](find.md) — Planned — Implementer: Not assigned
+- [x] [Implement deterministic CommonMark-aware source discovery and accepted Find projections](find.md) — Complete and accepted in the commit containing this record update; Child 1 is Complete at exact `96fe413`, Child 2 at exact `ff7ce3f`, and Child 3's no-op Purple at exact `426d4f5`. The final managed/native gate and package, artifact, static, public no-write, and protected-surface audits passed — Implementer: Mastermind
 - [ ] [Implement direct incoming and outgoing reference facts with shared source-universe filters](references.md) — Planned — Implementer: Not assigned
 - [ ] [Implement ordered context selection, loading reasons, overlap, size, and token projections](context.md) — Planned — Implementer: Not assigned
 - [ ] [Implement Extension catalogue and source listing without lifecycle inference](extension-list.md) — Planned — Implementer: Not assigned
 - [ ] [Implement exact Extension package inspection without mutation or installation behavior](extension-inspect.md) — Planned — Implementer: Not assigned
 - [ ] [Implement deterministic generated Entries projection and idempotent index application](index.md) — Planned — Implementer: Not assigned
 
+## Find Progress And Routing Condition
+
+The Find planning packet is accepted at `b2e3106` on clean branch
+`feature/cli-find`; `develop` remains `e77902a`, and the production/source
+baseline before Find remains exact `063c59d`. Child 1 is accepted at exact
+`96fe413`, and Child 2's query implementation and typed result are accepted at
+exact `ff7ce3f`. Child 3 Gray is accepted at exact `a76a217`, and original Red is
+accepted at exact `22d3bff`, with metadata corrections at exact `6a9a0de` and
+`eea3d59`, and supplemental escaping Red correction at exact `a865fd1`. The
+current corrected Red Unit boundary is `206` total with `92` pass and `114`
+intentional Gray-boundary failures, zero skips. Child 3 Green is accepted at
+exact `cb7874c` (`Implement Find presentation`) over corrected Red `a865fd1`;
+fresh focused and affected evidence passes, published Find EndToEnd is `13/13`,
+and the final bounded correctness review is `PASS` with no material findings.
+Blue is accepted at exact `3f81e76` (`Simplify Find JSON projection`) after the
+one-file `FindJsonProjection.cs` canonical mapping simplification. Its focused
+Unit `206/206` and generated-serialization Integration `43/43`, warning-free
+build, format verification, and diff check pass with zero skips; its bounded
+correctness review is `PASS`, and its local improvement review is
+`APPROVED — NO_MATERIAL_IMPROVEMENTS`. The no-op Purple acceptance is recorded
+at exact `426d4f5` with verdict `NO_MATERIAL_IMPROVEMENTS`;
+focused Unit `206/206`, focused Integration/serialization `43/43`, and published
+Find EndToEnd `13/13` pass with zero skips, and source diff/check is clean/empty.
+No test/support, production, contract, project, package, configuration,
+generated, Route, Shell, or root file changed, and no Purple code/test commit is
+manufactured. No Native AOT claim was made, and the record-only commit was not a
+test change. Final acceptance is recorded in the commit containing this record
+update. The [Child 1 acceptance record](find-source-catalogue.md)
+contains the neutral authority, Route-local policy boundary, final evidence, and
+recorded cancellation limitation.
+
+Find Child 3 and the Find parent are Complete and accepted in the commit containing
+this record update. The final managed/native gate and package, artifact, static,
+public no-write, and protected-surface audits passed. The sole immediate
+continuation is to freshly verify `develop`, squash-integrate the accepted
+`feature/cli-find` tip into local `develop`, commit that one squash, prove exact tree
+equality, do not push, and halt. Do not start References in this session.
+`CLI-EDGE-001` remains non-product only.
+
+`CLI-EDGE-001` remains non-product only. Its legacy `open-forge-old index`
+duplicate-entrypoint failure prevents an authoritative routing refresh, so the
+generated block remains unchanged. Until the owning routing tool can refresh it,
+use these explicit parent-before-children navigation
+links:
+
+1. [Implement Find](find.md)
+2. [Establish The Neutral Find Source Catalogue](find-source-catalogue.md) — Complete
+3. [Modern C# Improvements](../modern-csharp-improvements.md) — Complete; all five ordered modernization batches and the final managed, Native AOT, package, audit, and public no-write gate are accepted
+4. [Implement The Find Query Operation](find-query-operation.md) — Complete; final acceptance at exact `ff7ce3f`
+5. [Present And Accept Find](find-presentation-acceptance.md) — Complete and accepted in the commit containing this record update; Preflight `28d316a`, Gray `a76a217`, original Red `22d3bff`, metadata corrections `6a9a0de` and `eea3d59`, supplemental escaping Red `a865fd1`, Green `cb7874c`, Blue `3f81e76`, and no-op Purple `426d4f5` remain recorded
+
+These links do not claim generated routing state or an `open-forge-old index` run.
+
+Child 3 and Find parent completion is synchronized across this Read-Only group, the
+Plan, the Checkpoint, and the eight live records in the containing accepted record
+update. Generated `Entries` remain unchanged until the owning routing tool can
+refresh them.
+
 ## Entries
+
+Generated entries retain their existing projection under the accepted
+`CLI-EDGE-001` routing/index waiver. No manual edit or `open-forge-old index`
+refresh is claimed.
 
 <!-- open-forge:generated-index:start -->
 

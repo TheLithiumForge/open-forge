@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Inspect.Resolution;
 
@@ -18,16 +19,24 @@ public sealed class RouteInspectResolverIntegrationTests
 
         Assert.Equal(RouteInspectResolutionState.Resolved, byId.State);
         Assert.Equal(RouteInspectResolutionState.Resolved, byPath.State);
-        Assert.Equal("root", byId.Identity!.Id);
-        Assert.Equal(".agents/root/_root.md", byId.Identity.CanonicalWorkspaceRelativePath);
-        Assert.Equal(byId.Identity.Id, byPath.Identity!.Id);
-        Assert.Equal(byId.Identity.CanonicalWorkspaceRelativePath, byPath.Identity.CanonicalWorkspaceRelativePath);
+        var byIdIdentity = Assert.IsType<RouteInspectIdentity>(byId.Identity);
+        var byPathIdentity = Assert.IsType<RouteInspectIdentity>(byPath.Identity);
+        Assert.Equal("root", byIdIdentity.Id);
+        Assert.Equal(".agents/root/_root.md", byIdIdentity.CanonicalWorkspaceRelativePath);
+        Assert.Equal(byIdIdentity.Id, byPathIdentity.Id);
+        Assert.Equal(byIdIdentity.CanonicalWorkspaceRelativePath, byPathIdentity.CanonicalWorkspaceRelativePath);
         Assert.Equal(RouteInspectSelectionMethod.AutomaticId, byId.Selection.SelectionMethod);
         Assert.Equal(RouteInspectSelectionMethod.ExactPath, byPath.Selection.SelectionMethod);
+        var byIdGraph = Assert.IsType<RouteInspectGraph>(byId.Graph);
+        var projection = Assert.Single(
+            byIdGraph.ProjectionSet.Projections,
+            projection => projection.LogicalSource.Identity.CanonicalBasePath == ".agents/root/_root.md");
+        var node = Assert.IsType<SourceRouteNode>(
+            byIdGraph.RouteFacts.Topology.FindByPath(".agents/root/_root.md"));
         Assert.Same(
-            byId.Graph!.Catalogue.FindByPath(".agents/root/_root.md"),
-            byId.Graph.Topology.FindByPath(".agents/root/_root.md")!.Source);
-        Assert.Equal([".agents/root/_root.md"], byId.Graph.Topology.LoaderRootPaths);
+            projection.LogicalSource.Identity,
+            node.Identity);
+        Assert.Equal([".agents/root/_root.md"], byIdGraph.RouteFacts.Topology.LoaderRootPaths);
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
@@ -126,11 +135,18 @@ public sealed class RouteInspectResolverIntegrationTests
 
         Assert.Equal(RouteInspectResolutionState.Resolved, result.State);
         Assert.Equal(RouteInspectSelectionMethod.ExactPath, result.Selection.SelectionMethod);
-        Assert.Equal("root/collision", result.Identity!.Id);
-        Assert.Equal(".agents/root/collision.md", result.Identity.CanonicalWorkspaceRelativePath);
+        var identity = Assert.IsType<RouteInspectIdentity>(result.Identity);
+        Assert.Equal("root/collision", identity.Id);
+        Assert.Equal(".agents/root/collision.md", identity.CanonicalWorkspaceRelativePath);
+        var graph = Assert.IsType<RouteInspectGraph>(result.Graph);
+        var projection = Assert.Single(
+            graph.ProjectionSet.Projections,
+            projection => projection.LogicalSource.Identity.CanonicalBasePath == identity.CanonicalWorkspaceRelativePath);
+        var node = Assert.IsType<SourceRouteNode>(
+            graph.RouteFacts.Topology.FindByPath(identity.CanonicalWorkspaceRelativePath));
         Assert.Same(
-            result.Graph!.Catalogue.FindByPath(result.Identity.CanonicalWorkspaceRelativePath),
-            result.Graph.Topology.FindByPath(result.Identity.CanonicalWorkspaceRelativePath)!.Source);
+            projection.LogicalSource.Identity,
+            node.Identity);
         Assert.Empty(result.Issues);
     }
 
@@ -153,11 +169,12 @@ public sealed class RouteInspectResolverIntegrationTests
         Assert.All(new[] { byId, byBase, byOverwrite }, result =>
         {
             Assert.Equal(RouteInspectResolutionState.Resolved, result.State);
-            Assert.Equal("root/leaf", result.Identity!.Id);
-            Assert.Equal(".agents/root/leaf.md", result.Identity.CanonicalWorkspaceRelativePath);
+            var identity = Assert.IsType<RouteInspectIdentity>(result.Identity);
+            Assert.Equal("root/leaf", identity.Id);
+            Assert.Equal(".agents/root/leaf.md", identity.CanonicalWorkspaceRelativePath);
             Assert.Equal(
                 [".agents/root/leaf.md", ".agents/root/leaf.overwrite.md"],
-                result.Identity.PhysicalLayers.Select(layer => layer.WorkspaceRelativePath));
+                identity.PhysicalLayers.Select(layer => layer.WorkspaceRelativePath));
         });
         Assert.Equal(RouteInspectSelectionMethod.AutomaticId, byId.Selection.SelectionMethod);
         Assert.Equal(RouteInspectSelectionMethod.ExactPath, byBase.Selection.SelectionMethod);

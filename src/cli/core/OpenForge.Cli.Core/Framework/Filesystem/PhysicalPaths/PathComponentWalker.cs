@@ -6,7 +6,6 @@ internal sealed class PathComponentWalker
 
     internal PathComponentWalker(PhysicalIdentityTracker identityTracker)
     {
-        ArgumentNullException.ThrowIfNull(identityTracker);
         _identityTracker = identityTracker;
     }
 
@@ -82,7 +81,9 @@ internal sealed class PathComponentWalker
                 continue;
             }
 
-            var target = ResolveTarget(componentPath, component.LinkTarget!);
+            var linkTarget = component.LinkTarget
+                ?? throw new InvalidOperationException("A link path component requires its immediate target.");
+            var target = ResolveTarget(componentPath, linkTarget);
             if (containmentRoot is not null && !PhysicalContainment.Contains(containmentRoot, target))
             {
                 return PhysicalPathResolution.Classified(PhysicalPathState.External, logicalPath, target);
@@ -115,7 +116,7 @@ internal sealed class PathComponentWalker
                 return targetResult;
             }
 
-            current = targetResult.ResolvedPhysicalPath!;
+            current = targetResult.GetContainedPhysicalPath();
         }
 
         return PhysicalPathResolution.Contained(logicalPath, current);
@@ -130,25 +131,36 @@ internal sealed class PathComponentWalker
             PathComponentState.Inaccessible => PhysicalPathResolution.Failed(
                 PhysicalPathState.Inaccessible,
                 logicalPath,
-                component.Failure!),
+                ReadFailure(component)),
             PathComponentState.Unsupported => PhysicalPathResolution.Failed(
                 PhysicalPathState.Unsupported,
                 logicalPath,
-                component.Failure!),
+                ReadFailure(component)),
             PathComponentState.InputOutputFailure => PhysicalPathResolution.Failed(
                 PhysicalPathState.InputOutputFailure,
                 logicalPath,
-                component.Failure!),
+                ReadFailure(component)),
             _ => throw new ArgumentOutOfRangeException(nameof(component), component.State, "The component state is not defined."),
         };
     }
 
+    private static FilesystemFailure ReadFailure(PathComponent component)
+    {
+        return component.Failure
+            ?? throw new InvalidOperationException("A failed path component requires its direct failure.");
+    }
+
     private static string ResolveTarget(string linkPath, string linkTarget)
     {
-        var target = Path.IsPathRooted(linkTarget)
+        if (Path.IsPathRooted(linkTarget))
+        {
+            return Path.GetFullPath(linkTarget);
+        }
+
+        var directory = Path.GetDirectoryName(linkPath);
+        return Path.GetFullPath(directory is null
             ? linkTarget
-            : Path.Combine(Path.GetDirectoryName(linkPath)!, linkTarget);
-        return Path.GetFullPath(target);
+            : Path.Combine(directory, linkTarget));
     }
 
     private static string[] Split(string relativePath)

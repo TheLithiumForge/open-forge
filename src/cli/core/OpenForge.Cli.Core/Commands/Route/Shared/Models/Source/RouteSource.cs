@@ -1,4 +1,5 @@
-using OpenForge.Cli.Core.Commands.Route.Shared.Source;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 
@@ -26,7 +27,7 @@ internal sealed class RouteSource
             throw new ArgumentOutOfRangeException(nameof(kind), kind, "The source kind is not defined.");
         }
 
-        if (@base.Form == RouteSourceForm.OverwriteCompanion)
+        if (@base.Form == SourceDocumentForm.OverwriteCompanion)
         {
             throw new ArgumentException("An overwrite companion cannot be a logical source base.", nameof(@base));
         }
@@ -35,7 +36,7 @@ internal sealed class RouteSource
         ValidateMetadata(@base.Form, metadata);
         ValidateOverwrite(@base, metadata, overwrite);
 
-        Id = RouteSourceIdentity.DeriveId(@base.CanonicalLogicalPath)
+        Id = SourceIdentity.DeriveId(@base.CanonicalLogicalPath)
             ?? throw new ArgumentException("The source base path does not have a derivable automatic ID.", nameof(@base));
         Base = @base;
         Metadata = metadata;
@@ -62,15 +63,15 @@ internal sealed class RouteSource
 
     internal string? OverwritePath => Overwrite?.CanonicalLogicalPath;
 
-    private static void ValidateKindAndForm(RouteSourceKind kind, RouteSourceForm form)
+    private static void ValidateKindAndForm(RouteSourceKind kind, SourceDocumentForm form)
     {
-        var valid = RouteSourceFormClassifier.IsEntrypoint(form)
+        var valid = SourceFormClassifier.IsEntrypoint(form)
                 ? kind == RouteSourceKind.Entrypoint
                 : form switch
                 {
-                    RouteSourceForm.Loader => kind == RouteSourceKind.Loader,
-                    RouteSourceForm.Skill => kind == RouteSourceKind.Native,
-                    RouteSourceForm.Markdown => kind == RouteSourceKind.Markdown,
+                    SourceDocumentForm.Loader => kind == RouteSourceKind.Loader,
+                    SourceDocumentForm.Skill => kind == RouteSourceKind.Native,
+                    SourceDocumentForm.Markdown => kind == RouteSourceKind.Markdown,
                     _ => false,
                 };
         if (!valid)
@@ -79,18 +80,18 @@ internal sealed class RouteSource
         }
     }
 
-    private static void ValidateMetadata(RouteSourceForm form, RouteSourceMetadata metadata)
+    private static void ValidateMetadata(SourceDocumentForm form, RouteSourceMetadata metadata)
     {
-        var compatibility = RouteSourceFormClassifier.IsCompatibilityEntrypoint(form);
+        var compatibility = SourceFormClassifier.IsCompatibilityEntrypoint(form);
         if (metadata.IsCompatibilityEntrypoint != compatibility)
         {
             throw new ArgumentException("The metadata compatibility fact does not match the source form.", nameof(metadata));
         }
 
         if (metadata.State == RouteSourceMetadataState.Complete
-            && (form == RouteSourceForm.Loader
-                || form == RouteSourceForm.Skill && metadata.Tags.Count != 0
-                || form != RouteSourceForm.Skill && metadata.Tags.Count == 0))
+            && (form == SourceDocumentForm.Loader
+                || form == SourceDocumentForm.Skill && metadata.Tags.Count != 0
+                || form != SourceDocumentForm.Skill && metadata.Tags.Count == 0))
         {
             throw new ArgumentException("The complete metadata values do not match the source form.", nameof(metadata));
         }
@@ -112,7 +113,7 @@ internal sealed class RouteSource
             return;
         }
 
-        if (overwrite.Form != RouteSourceForm.OverwriteCompanion
+        if (overwrite.Form != SourceDocumentForm.OverwriteCompanion
             || !string.Equals(overwrite.CanonicalLogicalPath, ReadAdjacentOverwritePath(@base.CanonicalLogicalPath), StringComparison.Ordinal))
         {
             throw new ArgumentException("The overwrite document must be the adjacent companion of the base.", nameof(overwrite));

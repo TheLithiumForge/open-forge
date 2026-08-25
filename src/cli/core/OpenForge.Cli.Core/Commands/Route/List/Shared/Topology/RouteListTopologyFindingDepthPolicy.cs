@@ -1,7 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
-using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Models.Topology;
-using OpenForge.Cli.Core.Commands.Route.Shared.Source;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Topology;
 
@@ -9,11 +8,11 @@ internal static class RouteListTopologyFindingDepthPolicy
 {
     internal static int? ReadRelevantDepth(
         RouteListTopologyInput input,
-        RouteTopologyFacts topology,
-        IReadOnlyList<RouteTopologyNode> selectedRoots,
+        SourceRouteTopology topology,
+        IReadOnlyList<SourceRouteNode> selectedRoots,
         RouteListFilesystemFinding finding)
     {
-        if (string.Equals(finding.CanonicalLogicalSubject, RouteLogicalPath.AgentsRoot, StringComparison.Ordinal))
+        if (string.Equals(finding.CanonicalLogicalSubject, SourceLogicalPath.AgentsRoot, StringComparison.Ordinal))
         {
             return 0;
         }
@@ -21,7 +20,7 @@ internal static class RouteListTopologyFindingDepthPolicy
         int? minimum = null;
         foreach (var root in selectedRoots)
         {
-            var depth = ReadRelativeDepth(root, topology, finding.CanonicalLogicalSubject);
+            var depth = ReadRelativeDepth(root, topology, input, finding.CanonicalLogicalSubject);
             if (depth is null || !IsRequested(input.Request.RequestedDepth, depth.Value))
             {
                 continue;
@@ -36,11 +35,11 @@ internal static class RouteListTopologyFindingDepthPolicy
     }
 
     internal static int? ReadLexicalRelativeDepth(
-        RouteTopologyNode root,
+        SourceRouteNode root,
         string subject)
     {
         var sourcePath = ReadLogicalSourcePath(subject);
-        var routeDirectory = RouteTopologyFacts.ReadRouteDirectory(root);
+        var routeDirectory = SourceLogicalPath.ReadParent(root.Identity.CanonicalBasePath);
         if (string.Equals(sourcePath, routeDirectory, StringComparison.Ordinal))
         {
             return 1;
@@ -56,7 +55,7 @@ internal static class RouteListTopologyFindingDepthPolicy
         var depth = segments.Length;
         var fileName = segments[^1];
         if (string.Equals(fileName, "SKILL.md", StringComparison.Ordinal)
-            || RouteSourceIdentity.IsRecognizedEntrypointPath(sourcePath))
+            || SourceIdentity.IsRecognizedEntrypointPath(sourcePath))
         {
             depth--;
         }
@@ -65,30 +64,31 @@ internal static class RouteListTopologyFindingDepthPolicy
     }
 
     private static int? ReadRelativeDepth(
-        RouteTopologyNode root,
-        RouteTopologyFacts topology,
+        SourceRouteNode root,
+        SourceRouteTopology topology,
+        RouteListTopologyInput input,
         string subject)
     {
-        var source = root.Source;
-        if (string.Equals(subject, source.CanonicalPath, StringComparison.Ordinal)
-            || string.Equals(subject, source.OverwritePath, StringComparison.Ordinal))
+        var projection = RouteListTopologyProjectionPolicy.ReadProjection(input, root);
+        if (string.Equals(subject, root.Identity.CanonicalBasePath, StringComparison.Ordinal)
+            || string.Equals(subject, projection.LogicalSource.Overwrite?.CanonicalPath, StringComparison.Ordinal))
         {
             return 0;
         }
 
-        if (source.Kind != RouteSourceKind.Entrypoint)
+        if (!SourceFormClassifier.IsEntrypoint(projection.LogicalSource.Base.Form))
         {
             return null;
         }
 
-        if (topology.TryReadRelativeDepth(source.CanonicalPath, subject, out var graphDepth))
+        if (topology.TryReadRelativeDepth(root.Identity.CanonicalBasePath, subject, out var graphDepth))
         {
             return graphDepth;
         }
 
         var lexicalDepth = ReadLexicalRelativeDepth(root, subject);
         if (lexicalDepth is null
-            || !HasRepresentedIntermediateChain(root, topology, subject, lexicalDepth.Value))
+            || !HasRepresentedIntermediateChain(root, topology, input, subject, lexicalDepth.Value))
         {
             return null;
         }
@@ -99,7 +99,7 @@ internal static class RouteListTopologyFindingDepthPolicy
     private static bool IsRequested(RouteListDepth requestedDepth, int relativeDepth)
     {
         return requestedDepth.Kind == RouteListDepthKind.All
-            || relativeDepth <= requestedDepth.Value!.Value;
+            || relativeDepth <= requestedDepth.FiniteValue;
     }
 
     private static string ReadLogicalSourcePath(string subject)
@@ -110,8 +110,9 @@ internal static class RouteListTopologyFindingDepthPolicy
     }
 
     private static bool HasRepresentedIntermediateChain(
-        RouteTopologyNode root,
-        RouteTopologyFacts topology,
+        SourceRouteNode root,
+        SourceRouteTopology topology,
+        RouteListTopologyInput input,
         string subject,
         int relativeDepth)
     {
@@ -120,7 +121,7 @@ internal static class RouteListTopologyFindingDepthPolicy
             return true;
         }
 
-        var routeDirectory = RouteTopologyFacts.ReadRouteDirectory(root);
+        var routeDirectory = SourceLogicalPath.ReadParent(root.Identity.CanonicalBasePath);
         var relative = subject[(routeDirectory.Length + 1)..];
         var segments = relative.Split('/', StringSplitOptions.None);
         var currentDirectory = routeDirectory;
@@ -128,9 +129,10 @@ internal static class RouteListTopologyFindingDepthPolicy
         {
             currentDirectory += "/" + segments[index];
             var represented = topology.Nodes.Any(node =>
-                node.Source.Kind == RouteSourceKind.Entrypoint
+                SourceFormClassifier.IsEntrypoint(
+                    RouteListTopologyProjectionPolicy.ReadProjection(input, node).LogicalSource.Base.Form)
                 && string.Equals(
-                    RouteLogicalPath.ReadParent(node.Source.CanonicalPath),
+                    SourceLogicalPath.ReadParent(node.Identity.CanonicalBasePath),
                     currentDirectory,
                     StringComparison.Ordinal));
             if (!represented)

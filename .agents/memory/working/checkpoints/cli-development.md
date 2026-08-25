@@ -14,6 +14,303 @@ boundary without restoring the removed local architecture.
 
 ## Current State
 
+Find Child 1 is Complete and accepted at exact commit `96fe413` (`Accept Find
+source catalogue`). The [Child 1 acceptance
+record](../cli-development/tasks/read-only/find-source-catalogue.md)
+contains the neutral authority, Route-local projections and policy, final review
+corrections, complete verification, public no-write gate, and recorded
+cancellation limitation.
+
+Find Child 3 and the Find parent are Complete and accepted in the commit containing
+this record update. The Read-Only Commands group and replacement CLI program remain
+Active. References remains Planned and must not start in this session. Find Child 2
+original Preflight through Blue history is accepted through
+exact commit `685e2dd`, but Purple exposed a top-down architecture defect:
+generic YAML parsing remained Find-local while Route duplicated Markdown
+frontmatter extraction. The Mastermind-owned shared document-foundation correction
+is accepted through corrected Purple at exact `2d10474`. Corrected authored-tag
+Green is accepted at exact `2337d62`. Final Child 2 evidence and acceptance are
+recorded at exact `ff7ce3f` (`Accept Find query operation`). Child 3 focused
+Preflight is accepted at exact `28d316a` (`Freeze Find presentation preflight`).
+Gray contracts and stubs are accepted at exact `a76a217` (`Establish Find
+presentation contracts`). The original ten-file Red packet is accepted at exact
+`22d3bff`; its historical Unit evidence was `202` total with `92` passing and
+`110` intentional failures, Integration was `43` total with `23` passing and
+`20` intentional failures, and published EndToEnd was `13` total with `13`
+intentional failures, all with zero skips. The Integration metadata correction
+is accepted at exact `6a9a0de`; the mirrored EndToEnd metadata correction is
+accepted at exact `eea3d59` (`Complete Find presentation metadata evidence`). Its
+post-commit Red reproduction succeeded as intentional Red: managed non-AOT
+`win-x64` publish passed, and published Find EndToEnd was `13` total with `13`
+intentional failures and zero skips, all terminating at absent Green root
+registration.
+
+Historical pre-correction review found two escaping defects: the independent
+human test expected `\t` although the frozen contract requires every control as
+lowercase `\uXXXX`, and bounded diagnostics escaped before slicing code units,
+allowing partial `\\`, `\"`, or `\uXXXX` tokens. That review returned the work
+narrowly to Red without changing contracts, Child 2, Integration, EndToEnd,
+production, package/project, generated routing, or Route behavior. Supplemental
+escaping Red correction is accepted at exact `a865fd1` (`Correct Find escaping
+evidence`). It changes only `FindHumanRenderingRedTests.cs` and
+`FindDiagnosticsAndHelpRedTests.cs`: the TAB expectation is `\u0009`, and four
+Windows renderer-level cases place backslash, quote, TAB, and U+0001 at the
+diagnostic truncation boundary and independently validate complete escape-token
+grammar, bounds, one-line output, and no payload leak. Clean detached-worktree
+evidence includes locked restore, a warning-free Release solution build, format
+verification, full focused Unit `206` total with `92` pass and `114` intentional
+Gray-boundary failures, and narrow selected evidence `6` total with `6`
+intentional failures at named Gray expanded/diagnostic stubs, all with zero
+skips. Fresh test-only correctness review at that Red boundary is `PASS`, with
+no material optional improvement. The pre-correction narrow Green selection for
+TAB plus four token-boundary cases was `6` total with `1` pass and `5` intended
+defect-exposing failures, zero skips.
+
+Child 3 Green is accepted at exact commit `cb7874c` (`Implement Find
+presentation`) over corrected Red `a865fd1`. It is the production/root-
+composition-only Green; no test, support, contract, project, package,
+configuration, generated-routing, or Route behavior change enters Green. The
+exact Green scope is 15 production paths: Find binding, request, result builder,
+and validation; compact, expanded, JSON, diagnostic, help, and shared text
+escaping; Shell direct-root command tree and root factory; and root composition.
+It keeps one symbol graph and operation/result flow, binding-owned help,
+source-generated concrete `FindJsonDocument`, explicit malformed-content request
+presence, deterministic bounded human/JSON/diagnostic behavior, and exact one
+root Find registration. It adds no reflection, second parser/operation/renderer
+catalogue, workspace writes, or Native AOT work. The correction encodes TAB as
+`\u0009` and truncates only at complete escaped-token boundaries.
+
+Fresh Green evidence passes locked restore, a warning-free Release solution build,
+format verification, and `git diff --check`; focused Find+direct-root Unit
+`206/206`; focused Find+generated-serialization Integration `43/43`; affected
+Shell+Route Unit `347/347`; affected Shell+Route Integration `160/160`; managed
+non-AOT `win-x64` publish; and published Find EndToEnd `13/13`. Every run has
+zero skips. Fresh final bounded Green correctness review is `PASS` with no
+material findings. It verifies corrected escaping, Find binding, explicit
+malformed-content state, root leaf registration, renderer dispatch, JSON
+projection/source generation, diagnostics, help, direct Shell integration, one
+operation/result flow, and no protected-surface drift. Native AOT is intentionally
+not claimed.
+
+Earlier local-improvement review found one material bounded Blue candidate only:
+in `FindJsonProjection`, replace duplicate finite `Status` and `FindingCode`
+switches with canonical `CliStatusDefinitions.Read(...).MachineName` and
+`FindDefinitions.ReadFindingCode(...)`. Its separate escaping correctness finding
+was resolved in Green; it is not a Green defect. Blue applied that candidate and
+is accepted at exact `3f81e76` (`Simplify Find JSON projection`). It changed production
+structure only in
+`src/cli/core/OpenForge.Cli.Core/Commands/Find/Shared/Rendering/FindJsonProjection.cs`:
+it replaced the duplicate local switches with the canonical readers, then removed
+the two duplicate private mapping methods. No behavior, public
+output/order/schema, test/support, contract, package/project/configuration,
+generated routing, Shell/root, Route, workspace-write, or Native AOT change
+occurred. Blue evidence is a warning-free Release solution build, format
+verification, `git diff --check`, focused Find+direct-root Unit `206/206`, and
+focused Find+generated-serialization Integration `43/43`, all with zero skips.
+No managed republish or Native AOT claim is needed for this one-file
+behavior-preserving Blue. Fresh bounded Blue correctness review is `PASS`: all 7
+status and 17 finding-code mappings and undefined-value exception behavior are
+exact; JSON model/property order/context is unchanged; static canonical readers
+remain source-generation/AOT-safe. Fresh local improvement review is
+`APPROVED — NO_MATERIAL_IMPROVEMENTS`; the one-file simplification is complete,
+removing duplicate mapping ownership without adding indirection.
+
+Fresh Purple assessment ran read-only from exact clean Blue `3f81e76` against the
+exact ten Find Child 3 test/support surfaces. Verdict:
+`NO_MATERIAL_IMPROVEMENTS`; the no-op Purple acceptance is recorded at exact
+`426d4f5`. It changed no test/support, production, contract, project, package,
+configuration, generated, Route, Shell, or root file, and no Purple code/test
+commit was manufactured. Unit tests and typed `FindPresentationTestData` are
+coherent at nearest scope; splitting the fixture fragments authority. Integration
+and EndToEnd workspace/assertion helpers are intentionally project-local. The
+supplemental diagnostic token-boundary fixture/parser is local, independent,
+structurally sound, and proves complete escapes, bounds, one-line output, and
+payload exclusion. Minor wrappers and repeated status expectations are
+preference-only independent contract oracles. Purple evidence from clean Blue is
+focused Unit `206/206`, focused Integration/serialization `43/43`, and published
+Find EndToEnd `13/13`, all with zero skips; source diff/check against `3f81e76` is
+clean/empty. No Native AOT claim is made, and the record-only commit is not a test
+change.
+
+Find Child 3 and the Find parent are now Complete and accepted in the commit
+containing this record update. The final managed/native gate and package, artifact,
+static, public no-write, and protected-surface audits passed. The sole immediate
+continuation is to freshly verify `develop`, squash-integrate the accepted
+`feature/cli-find` tip into local `develop`, commit that one squash, prove exact tree
+equality, do not push, and halt. `CLI-EDGE-001` remains non-product only.
+
+The solution-wide
+[Modern C# Improvements](../cli-development/tasks/modern-csharp-improvements.md)
+Task is Complete and accepted at exact `a1cbf09`. Its Preflight
+was accepted at exact commit `55eb82e`; the Framework modernization batch at
+`a90af59`; the Shell/root batch at `fe10525` (`Modernize Shell nullable flow`);
+the Route Inspect/family batch at `62a1dd9` (`Modernize Route Inspect nullable
+flow`); the Route List batch at `273eb45` (`Modernize Route List nullable flow`);
+and the Tests/support batch at exact clean source commit `6af5fb1`
+(`Modernize test support nullable flow`). All five ordered mutation batches are
+accepted, and no task-local correction pass was consumed. The final gate passed
+from clean source commit `6af5fb1` and is recorded at `a1cbf09`. Find Child 2's
+focused Preflight is accepted at exact `e24b9fe`. It freezes the detached grammar,
+parser-owned occurrence adapter, neutral Markdown facts, typed operation/result
+graph, complete Unit/Integration Red matrix, commands, and strict phase
+boundaries. The Gray
+callable contract is accepted at exact `8cef8f7` after a
+warning-free build, exact package resolution, protected-path audit, and final
+correctness and improvement passes. The complete Red packet is accepted at exact
+`571ee87` with 50 declarations and 110 executable cases. Its exceptional Gray/Red
+boundary correction is accepted at `c0af2d1`, and the maintainer-authorized final
+match-count assertion correction at `ebbd9d0`. Green is accepted at exact
+`02b5f7a` after a warning-free Release build, format and diff checks, focused Unit
+`90/90`, focused Integration `20/20`, affected Source/Route Unit `562/562`, and
+affected Source/Route Integration `183/183`, all with zero skips. Blue is accepted
+at exact `685e2dd` after preserving focused `90/90` and `20/20`.
+Two final bounded correctness reviews pass after correcting unavailable Markdown
+boundary coverage, projection-only ambiguity coverage, repeated inspection
+findings, and explicit-null `open-forge` shape handling. Child 2 is Complete with
+shared `Framework/Documents/{Markdown,Yaml}` Gray accepted at exact `2cae7a4`, Red
+accepted at exact `a673ebe`, and Green accepted at exact `d4701ad`. Correction Blue
+is accepted at exact `0006915`, and corrected Purple at exact `2d10474`. Final
+review supplemental Red is accepted at exact `c72dd5e`, and its evidence
+correction at exact `23fe39a` after its Unit portion at exact `d494adb`. Corrected
+Green is accepted at exact `2337d62`; final Child 2 evidence and acceptance are
+  recorded at exact `ff7ce3f` (`Accept Find query operation`). Child 3 focused
+  Preflight is accepted at exact `28d316a`, Gray at exact `a76a217`, original Red
+  at exact `22d3bff`, the Integration metadata correction at exact `6a9a0de`,
+  the mirrored EndToEnd metadata correction at exact `eea3d59`, and the
+  supplemental escaping Red correction at exact `a865fd1`. The corrected Red
+  boundary has Unit `206` total with `92` pass and `114` intentional Gray-boundary
+  failures, zero skips. Child 3 Green is accepted at exact commit `cb7874c`
+  (`Implement Find presentation`) over corrected Red `a865fd1`; fresh focused and
+  affected evidence passes, and the final bounded correctness review is `PASS`
+  with no material findings. Blue is accepted at exact `3f81e76`
+  (`Simplify Find JSON projection`) after the one-file `FindJsonProjection.cs`
+  canonical mapping simplification. Its focused Unit `206/206` and
+  generated-serialization Integration `43/43` evidence, warning-free build,
+  format verification, and diff check pass with zero skips; its bounded
+  correctness review is `PASS`, and its local improvement review is
+  `APPROVED — NO_MATERIAL_IMPROVEMENTS`. The no-op Purple acceptance is recorded
+  at exact `426d4f5` with verdict `NO_MATERIAL_IMPROVEMENTS`;
+  focused Unit `206/206`, focused Integration/serialization `43/43`, and
+  published Find EndToEnd `13/13` pass with zero skips, and source diff/check is
+  clean/empty. No test/support, production, contract, project, package,
+  configuration, generated, Route, Shell, or root file changed, and no Purple
+  code/test commit was manufactured. Find Child 3 and the Find parent are now
+  Complete and accepted in the commit containing this record update.
+
+The accepted Route Inspect/family batch changed exactly 32 production C# files in
+`Commands/Route/Shared/**` and `Commands/Route/Inspect/**`; the exact
+`RouteBinding.cs` and `RouteDefinitions.cs` files were in the owned boundary and
+were unchanged. No tests, projects, packages, dependencies, generated files, or
+configuration changed. Directory-pathspec audits reduced ordinary postfix null
+suppressions from `50` to `0` and `ArgumentNullException.ThrowIfNull` from `113`
+to `83` (30 removed). After Framework, Shell/root, and Route Inspect/family,
+global authored
+production counts are `26` suppressions and `327` `ThrowIfNull` calls. Retained
+guards and the truthful state, metadata, graph, JSON, and escaping changes
+preserve parser/filesystem/cancellation/status/output behavior and the accepted
+collection, ordering, allocation, comparer, serializer, source-generation,
+AOT-shape, and public-exception boundaries.
+
+Verification after the final local improvements passed `git diff --check`, format,
+the Release solution build with zero warnings/errors, zero informational
+CA1062/CA1510/CA2264 diagnostics, Unit Shared/Inspect `171/171`, Integration
+List/Inspect `159/159`, and a fresh managed publish with PublishedRouteInspect
+EndToEnd `31/31`, with zero skips. This batch makes no Native AOT claim. Fresh
+correctness review passed, improvement review closed
+`NO_MATERIAL_IMPROVEMENTS` after two local findings were applied, and the missing
+internal parsed-model `RouteInspectGeneratedEntries.ReadReason` accessor found
+missing by the initial build was added before acceptance and evidence rerun. No
+task-local correction pass was consumed.
+
+The accepted Route List modernization batch changed exactly 18 production C# files
+under the exact `Commands/Route/List/**` scope from Route Inspect acceptance
+commit `62a1dd9` (`Modernize Route Inspect nullable flow`) and was accepted at
+exact commit `273eb45` (`Modernize Route List nullable flow`). No tests, projects,
+packages, dependencies, generated files, configuration, or product contracts
+changed. No output or test expectation changed. Scoped ordinary postfix null
+suppressions fell from `26` to `0`; `ArgumentNullException.ThrowIfNull` fell from
+`136` to `106` after removing 30 trusted internal duplicates. After all four
+production batches, global authored production counts are `0` ordinary postfix
+null suppressions and `297` `ArgumentNullException.ThrowIfNull` calls.
+
+The retained 106 guards cover System.CommandLine/parser, physical filesystem,
+read/writer/serializer ingress, request/operation/resolver/topology stage
+boundaries, constructors/model/state factories and invariants, cancellation, and
+frozen direct exception boundaries. An initial review found over-aggressive
+boundary removals; the guards were restored before acceptance and all evidence was
+rerun. No task-local correction pass was consumed. The truthful changes use a
+private immutable `RouteListSelectionStage` only for ResolveId/ResolvePath repeated
+context, derive the attempted explicit reference once, use
+`RouteListDepth.FiniteValue` for finite-depth consumers without changing the
+`<=`/`<` off-by-one behavior, add filesystem `Entries`/failure-state accessors and
+patterns, complete metadata patterns, and make `RouteListTextEscaping` inputs
+non-null.
+
+Loader/topology/depth, physical containment/alias/cycle/symlink, UTF-8/read,
+cancellation, status/finding/next-action/no-write, exact human/diagnostic/JSON
+output and source-generation/AOT shape, collection/order/allocation/comparer
+semantics, and accepted public/direct exception behavior remain unchanged. Final
+verification passed git diff/path checks, format, the Release build with zero
+warnings/errors, zero `CA1062`/`CA1510`/`CA2264` diagnostics, Route List Unit
+`117/117`, Integration `89/89`, and a fresh managed publish with
+`CliProcessTests` EndToEnd `26/26`, all with zero skips. This batch makes no Native
+AOT claim. Fresh correctness review passed after guards were restored. Improvement
+review closed `NO_MATERIAL_IMPROVEMENTS` after applying the single-reference-
+derivation and centralized-`FiniteValue` findings.
+
+The accepted Tests/support modernization batch changed exactly 40 active test and
+support C# files: Unit 24, Integration 14, EndToEnd 1, and TestSupport 1. The
+production, project, package, dependency, generated, configuration, and product-
+contract surfaces are unchanged, as are test identities, expectations, tiers,
+order, fixtures, and count. Active test postfix suppressions fell from `169` to
+`8`, and test `ArgumentNullException.ThrowIfNull` calls fell from `21` to `8`;
+production remains at `0` suppressions and `297` guards. Full Unit `617/617`,
+Integration `241/241`, fresh managed published EndToEnd `57/57`, and the final
+EndToEnd rerun `57/57` pass with zero skips. Static audits and reviews pass. This
+batch makes no Native AOT claim. The detailed truthful-change and frozen-retention ledger is in
+the [Modern C# Improvements](../cli-development/tasks/modern-csharp-improvements.md)
+Task.
+
+The final Modern C# acceptance gate passed from exact clean source commit
+`6af5fb1`. The Release build was warning-free, format and diff checks passed, and
+informational `CA1062`, `CA1510`, and `CA2264` diagnostics were zero. Full managed
+Unit, Integration, and freshly managed-published EndToEnd passed `617/617`,
+`241/241`, and `57/57`; focused Source/Route Unit and Integration passed
+`562/562` and `183/183`. The local `win-x64` Native AOT root publication drove
+managed EndToEnd `57/57` against the native root, the Native AOT Integration
+executable passed `241/241`, and the Native AOT EndToEnd executable passed
+`57/57`; every run had zero skips.
+
+The managed and native public no-write fixture passed all four invocations. Route
+List returned exit `5` and `blocked`, and Route Inspect returned exit `3` and
+`incomplete`, for both executables. Each invocation had empty stderr, typed JSON
+`command` and `status`, and unchanged byte/hash/entry snapshots. The package audit
+listed all six projects and found no vulnerable transitive package. The exact
+project graph, one `.slnx`, six projects, 343 authored active C# files,
+reflection-disabled JSON/source-generation/AOT settings, and artifact routing
+remained unchanged. No project-local `bin/obj` directories were present; ignored
+outputs remained under `src/cli/artifacts/`.
+
+The final static audits report production suppressions `126 → 0` and production
+`ArgumentNullException.ThrowIfNull` `380 → 297`. Active test suppressions are
+`169 → 8` frozen intentional injections, and test guards are `21 → 8`.
+`required` remains `97`, `init` remains `122`, nullable-analysis attributes are
+`14`, and all active tests retain `500/500` `DisplayName`, `Feature`, and
+`Evidence` identities with `103` argument assertions. No forbidden nullable
+pragmas or `SuppressMessage` entries exist.
+
+The changed-path audit from accepted Child 1 commit `96fe413` is exactly 121
+authorized paths: 112 C# paths and these nine Working records. No project,
+configuration, dependency, or generated path changed. Fresh final integrated
+production correctness review: `PASS`. Final test/evidence review: `PASS`. Final
+improvement review: `NO_MATERIAL_IMPROVEMENTS/PASS`. Optional pre-existing shared
+projection and failure-reader extraction remains deferred because it is not a
+blocker and would reopen accepted architecture or mutation batches. The native
+claim is local `win-x64` only. No six-RID parity, `develop` integration, or push is
+claimed; `feature/cli-find` remains isolated and `develop` remains `e77902a`.
+
+## Historical Progress
+
 - The final removed implementation is preserved at Git commit `4b873de`.
 - Architecture and delegation governance is committed at `aa7d178`.
 - The old production tree and root C# workspace were removed at `40ba03e`.
@@ -171,7 +468,7 @@ boundary without restoring the removed local architecture.
   fewer parameters. Final correctness review passes and final improvement review
   finds no material improvement.
 - The completed profile record remains in its current route because the authorized
-  `open-forge index` routing action reproduced the existing `CLI-EDGE-001`
+  `open-forge-old index` routing action reproduced the existing `CLI-EDGE-001`
   duplicate-entrypoint report outside this Task. Integrated acceptance owns the
   later link-safe move and generated-index refresh; presentation is not blocked.
 - Presentation Phase 0 inspected the actual binding, composition, rendering,
@@ -388,13 +685,195 @@ boundary without restoring the removed local architecture.
   at `063c59d`.
 - Generic CLI Improvements are squash-integrated into `develop` at `063c59d`; the
   integrated tree exactly equals accepted feature tip `a107afe`. The parent Task is
-  Complete. Read-only Find Preflight is next from exact `063c59d`; no next-product
-  source or test mutation has begun.
+  Complete. The reviewed Find planning packet is accepted at `b2e3106`; Child 1
+  execution now follows its recorded Preflight.
+
+## Historical Find Preflight (2026-08-23)
+
+- Planning boundary: the reviewed 14-path Find planning packet is accepted at
+  `b2e3106` (`Plan and freeze CLI find`) on clean branch `feature/cli-find`.
+  `develop` remains `e77902a` (`Record generic CLI integration`). The initial
+  production/source baseline is the exact `063c59d` (`Improve and accept generic
+  CLI structure`); later Child 1 execution baselines remain distinct.
+- The accepted parent boundary freezes one fresh neutral Framework source
+  catalogue, one selected-layer strict-read boundary, neutral on-demand route
+  facts without scope inference, one fixed Markdig `1.3.2` CommonMark pipeline,
+  one location-preserving semantic frontmatter reader, and one deterministic
+  read-only Find operation with the exact Interface schema, findings, statuses,
+  and `next` values. Filters form the effective universe before selected-layer
+  reads; no index, cache, network, or workspace mutation is allowed.
+- Read-only explorers, correctness reviewers, and grounded adversarial advisors
+  inspected current Route List, Route Inspect, Framework code, accepted filters,
+  and affected evidence from exact `b2e3106`. They made no source or test edits.
+  Their evidence closed the Child 1 gaps for roots, parse results, lookups,
+  scope-derived filtered selection, physical revalidation and memoized logical-
+  path rebinding, Loader stages, topology, missing Loader, aliases, overwrite
+  divergence, profile reads, projection invariants, and graph mapping.
+- The detailed Child 1 Gray/migration/evidence Preflight passed targeted review
+  and is recorded at `7e081ef`. It freezes exact Framework paths and neutral names,
+  issue and ordering invariants, selected-layer reads, route allowlists and
+  missing-Loader facts, Route projections, migration boundaries, and the exact
+  Unit/Integration evidence paths. The Preflight itself claimed no implementation
+  or tests.
+- Accepted Child 1 decisions include: contained aliases remain distinct logical
+  candidates with ordered `PhysicalAlias` facts; identity collisions retain all
+  sources; only exact adjacent overwrites pair; neutral pairing does not reproduce
+  Inspect's legacy ambiguity; Inspect recreates multiple-candidate ambiguity
+  locally with a base-only projection while non-adjacent single candidates remain
+  orphans; selected route sources are a complete allowlist; and cancellation
+  retains safe facts.
+- Gray is compile-only and throws `NotSupportedException` at new behavior
+  entrypoints. Temporary old-authority coexistence is allowed through Gray and
+  production-free Red, with no dual runtime wiring or forwarding wrappers. Green
+  migrates Route consumers and removes duplicate authorities. The full Child 1
+  gate runs once after the final Child 1 change, including local `win-x64` Native
+  AOT Route regressions. No Find command, six-RID parity, or Find-specific AOT
+  claim belongs to Child 1.
+- Ordered children remain: source catalogue and Route migration; query operation
+  and document facts; presentation, registration, and final acceptance. No
+  shared source mutation runs in parallel. References may begin only after the
+  source/document facts it needs are accepted; Context waits for Find and
+  References.
+- Beginning evidence is the accepted generic gate: managed Unit `580/580`,
+  Integration `213/213`, EndToEnd `57/57`, local `win-x64` Native AOT root with
+  native-root managed EndToEnd `57/57`, Native AOT Integration `213/213`, and
+  Native AOT EndToEnd `57/57`, zero skips,
+  package/vulnerability/artifact/public audits, and exact accepted-tree equality.
+  Find's inner loop is focused; its final gate repeats complete managed and local
+  `win-x64` managed/native/public/no-write/package audits once after the final
+  change.
+- Routing condition: `CLI-EDGE-001` prevents an authoritative legacy
+  `open-forge-old index` refresh. The generated block remains unchanged; explicit
+  parent-before-children navigation links sit outside it. No manual generated
+  edit or routing-tool run is claimed.
+- Review result at the accepted planning boundary: targeted correctness and
+  writing reviews pass with no findings. Child 1's initial correctness and
+  adversarial lenses required corrections for root semantics, filtered candidate
+  evidence, physical revalidation, overwrite/profile adapters, Loader/topology
+  support, phase coexistence, and exact test commands. Fresh correctness review
+  passes after correcting scope-derived issue membership, Native AOT EndToEnd,
+  route-issue ordering, Inspect's early terminal path, typed projection
+  association, test disposition, and overwrite metadata/adjacency invariants. At
+  the recorded Preflight boundary, no production, test, project, package, or
+  generated source had changed for Child 1.
+- Child 1 Preflight is recorded at `7e081ef`. Compile-only Gray is complete in 39
+  new production files. It freezes neutral source Identity, Inventory, Reading,
+  and Routing contracts plus Route projection/List/Inspect adapter contracts;
+  every behavior entrypoint throws `NotSupportedException`. Existing runtime
+  wiring and old authorities are unchanged, and no tests or project/package files
+  changed. Release build passes with zero warnings/errors; format and diff checks
+  pass. Correctness review passes after projection association corrections. The
+  only improvement recommendation, centralizing repeated path-shape checks, is
+  deferred until Green because Gray's identity callables intentionally throw.
+- The maintainer accepted two C# design directions after analysis. They apply now
+  to new or materially changed C#: use truthful nullable contracts and compiler
+  flow for trusted internal values while retaining runtime guards at uncertain
+  ingress; and choose constructors, factories, object initializers, primary
+  constructors, target-typed creation, and collection expressions by invariant
+  and semantic fitness rather than novelty.
+  The binding [C# callable design Directive](../../../directives/csharp/design.md)
+  records the rules and evidence. The planned [Modern C# Improvements Task](../cli-development/tasks/modern-csharp-improvements.md)
+  migrates existing source solution-wide after Child 1 acceptance without
+  widening current Red/Green.
+- Child 1 production-free Red is complete and reviewed in the commit containing
+  this checkpoint update. Gray production remains unchanged from `7b34cc7`.
+  Release build and format pass with zero warnings/errors; Unit is `562` total,
+  `403` passing, and `159` intentional Gray failures; Integration is `183` total,
+  `155` passing, and `28` intentional Gray failures; both projects have zero
+  skips. Existing Route List and Inspect regressions remain green. Correctness
+  review passes after fixture, selected-candidate, alias-identity, unsafe-path,
+  compatibility-predicate, and Inspect BaseOnly corrections. Local improvement
+  review has only optional Purple fixture-consolidation ideas.
+- Red records two real-filesystem evidence limits. Physical-resolution
+  `Unavailable` has exact model evidence and a separate verified-then-read locked
+  file case, but no safe portable physical-resolution fixture. Catalogue
+  pre-cancellation is direct, but deterministic accumulated mid-traversal
+  cancellation would require a race or an artificial seam. Green and final review
+  must preserve and report these limits.
+- Initial Green made the neutral focused packet pass but exposed a Gray contract
+  gap: active Route policy evidence still requires obsolete catalogue, identity,
+  Loader, and topology authorities, and the initial Gray surface cannot accept
+  final neutral command inputs. The one correction cycle returned to Gray rather
+  than changing frozen tests in Green, retaining wrappers, or deferring obsolete
+  production to Purple.
+- Corrected Gray is complete in the commit containing this checkpoint update. It
+  adds five compile-only neutral migration seams across Route List inventory,
+  selection, topology, and the Route Inspect graph. Every new entrypoint throws a
+  named `NotSupportedException`; old runtime wiring remains unchanged. Release
+  build, format, diff, correctness review, and local improvement review pass after
+  removing one overload ambiguity. Corrected Red must now migrate every active
+  test that references an authority corrected Green will delete.
+- Corrected Gray is committed at `6a9b143`. Corrected Red is complete in the
+  commit containing this checkpoint update. It migrates the exercised neutral
+  identity, reference, Loader, catalogue, and topology call paths while retaining
+  command policy through final neutral seams. Its review recorded the obsolete-
+  reference audit as clear, but the corrected Green deletion audit later
+  disproved that broad conclusion for the Route projection form, Route List path
+  wrapper, and one-argument inventory entrypoint. Release build and format pass
+  with zero warnings/errors. Unit is `562` total with `251` passing and `311`
+  intentional Gray failures. Integration is `184` total with `79` passing and
+  `105` intentional Gray failures. Both report zero skips. Production remains
+  unchanged from corrected Gray.
+- Corrected Red correctness review passes after empty-Loader completeness,
+  duplicate-entrypoint policy, projection ownership, and neutral trait
+  corrections. Local improvement review defers only Purple consolidation of
+  large boundary-specific fixture builders. Initial Green remains isolated and
+  may be restored only after corrected Red commits.
+- Pre-refinement Green result: Corrected Red is committed at `70cde33`. Restored
+  corrected Green substantially implements neutral Framework behavior and
+  migrates active Route List, Route Inspect resolution, profile, and result
+  composition to one invocation-scoped reader, neutral catalogue/projections, and
+  neutral route facts. That unaccepted
+  production worktree passed a warning-free Release build. Its last
+  complete focused Unit run is `562/562`; the last complete focused Integration
+  run was `181/184`. Two neutral Loader external-boundary mappings were corrected
+  afterward and their exact targeted rerun passes `2/2`; no complete post-fix
+  Integration result is claimed.
+- Final legacy-authority deletion exposed a corrected-Red contradiction. Active
+  frozen tests still compile against `RouteSourceForm`, `RouteListLogicalPath`,
+  and the one-argument Route List inventory entrypoint, while the accepted Child
+  1 boundary requires neutral `SourceDocumentForm`, deletion of Route-prefixed
+  duplicate identity/form authorities and every legacy overload, no forwarding
+  wrappers, and no Green test edits. Removing the production surfaces breaks the
+  frozen test build; retaining them violates the accepted Green boundary. The
+  attempted production-only form migration was reverted immediately, and the
+  worktree builds again without changing tests.
+- The one exceptional Child 1 correction cycle is already consumed. Child 1
+  returned to the Find parent, and the maintainer's continuation direction is now
+  adopted as a bounded parent refinement. The unaccepted Green worktree is
+  isolated while one combined behavior-neutral production/evidence correction
+  replaces `RouteSourceForm` with `SourceDocumentForm`, replaces active-test
+  `RouteListLogicalPath` use with `SourceLogicalPath`, and moves the three Route
+  List inventory boundary calls to the final reader seam. Compatibility APIs are
+  rejected. Modern C# improvements and Find Children 2 and 3 remain blocked until
+  Child 1 acceptance.
+- The bounded parent refinement is implemented and reviewed in the current
+  worktree and ready to commit. It changes exactly 27 production and active-test
+  paths, removes `RouteSourceForm` and its classifier, moves consumers to neutral
+  `SourceDocumentForm`, implements neutral `SourceLogicalPath` and
+  `SourceFormClassifier` to preserve existing Route construction, moves the two
+  retained inventory boundary cases to the final reader seam, and removes the
+  predecessor-only timing cancellation test. Build is warning-free; format and
+  diff checks pass. Focused Unit is `562` total with `295` passing and `267`
+  intentional Gray failures. Focused Integration is `183` total with `76` passing
+  and `107` intentional Gray failures. Both have zero skips, and every failed block
+  reaches a named Gray `NotSupportedException`. Symbol audits and fresh correctness
+  review pass; local-improvement review finds no material change.
 
 ## Current Step
 
-Run read-only Preflight for [Find](../cli-development/tasks/read-only/find.md) from
-exact integrated commit `063c59d`, then close its Task boundary before mutation.
+The Modern C# Improvements Task is Complete and accepted at exact `a1cbf09`.
+Find Child 2 is Complete and accepted at exact `ff7ce3f`. Find Child 3 and the
+Find parent are Complete and accepted in the commit containing this record update.
+The accepted Child 3 history is Preflight `28d316a`, Gray `a76a217`, original Red
+`22d3bff`, metadata corrections `6a9a0de` and `eea3d59`, supplemental escaping Red
+`a865fd1`, Green `cb7874c`, Blue `3f81e76`, and no-op Purple `426d4f5`. The final
+managed/native gate and package, artifact, static, public no-write, and
+protected-surface audits passed. The sole immediate continuation is to freshly
+verify `develop`, squash-integrate the accepted `feature/cli-find` tip into local
+`develop`, commit that one squash, prove exact tree equality, do not push, and halt.
+References remains Planned and must not start in this session. `CLI-EDGE-001`
+remains non-product only.
 
 ## Route-List Closeout Decision
 
@@ -424,27 +903,37 @@ evidence above are recorded for the current route-inspect baseline.
 
 ## Blockers
 
-- No Route Discovery or integration blocker remains. `CLI-EDGE-007` is triaged to
-  the authorized general parser-remediation branch and does not authorize a
-  command-local workaround.
-- `CLI-EDGE-002` through `CLI-EDGE-005` have accepted Route Inspect dispositions;
-  their recorded residuals remain with generic remediation, delivery, or release.
-- The deferred `route init` Framework-shape blocker remains a later,
-  non-blocking decision and does not affect route discovery.
+- No decision blocker remains for Find. Child 3 and the Find parent are Complete
+  and accepted in the commit containing this record update. The final
+  managed/native gate and package, artifact, static, public no-write, and
+  protected-surface audits passed.
+- The Read-Only group and broader CLI program remain Active. References remains
+  Planned and must not start in this session. The only immediate continuation is
+  the local `develop` verification, one squash integration of the accepted
+  `feature/cli-find` tip, exact tree-equality proof, no push, and halt.
+- `open-forge-old index` remains unable to provide an authoritative routing refresh
+  because of the duplicate `_index.md` `CLI-EDGE-001` report. `CLI-EDGE-001`
+  remains non-product only; it is not a product blocker or a Child 3 decision.
 
 ## Resume
 
 Read:
 
-1. [CLI Architecture](../../crystallized/documents/cli/architecture.md)
-2. [CLI Development Plan](../cli-development/plan.md)
-3. [Route Inspect](../cli-development/tasks/route-discovery/route-inspect.md)
-4. [Replacement CLI Edge-Case Ledger](../cli-development/edge-cases.md)
-5. [Program Architecture Directive](../../../directives/program-architecture.md)
-6. [Architectural Perspectives](../../../guidance/architectural-perspectives.md)
-7. [Generic CLI Improvements](../cli-development/tasks/generic-improvements/_generic-improvements.md)
-8. [Improve Active-Test Architecture](../cli-development/tasks/generic-improvements/active-test-architecture.md)
-9. [Refine Callable And Project Architecture](../cli-development/tasks/generic-improvements/callable-project-architecture.md)
+1. [CLI Find Accepted Handoff](../handoffs/2026-08-25_cli-find-accepted.md)
+2. [CLI Architecture](../../crystallized/documents/cli/architecture.md)
+3. [Find Contract Set](../../crystallized/documents/cli/contracts/find/_find.md)
+4. [Find Task](../cli-development/tasks/read-only/find.md)
+5. [Find Source Catalogue](../cli-development/tasks/read-only/find-source-catalogue.md)
+6. [Find Query Operation](../cli-development/tasks/read-only/find-query-operation.md)
+7. [Find Presentation And Acceptance](../cli-development/tasks/read-only/find-presentation-acceptance.md)
+8. [CLI Development Plan](../cli-development/plan.md)
+9. [Program Architecture Directive](../../../directives/program-architecture.md)
+10. [CLI Implementation Directive](../../../directives/open-forge/cli/implementation.md)
+11. [Test Evidence Integrity](../../../directives/open-forge/testing/evidence-integrity.md)
+12. [Evidence Tiers](../../../patterns/testing/evidence-tiers.md)
 
-Then begin read-only Find Preflight from exact `063c59d`. Generic improvements are
-Complete and integrated; no next-product implementation is active.
+After the containing acceptance commit, freshly verify `develop`, squash-integrate
+the accepted `feature/cli-find` tip into local `develop`, commit that one squash,
+prove exact tree equality, do not push, and halt. Do not start References in this
+session. The Find parent, Read-Only Commands group, and program remain Active, and
+`CLI-EDGE-001` remains non-product only.

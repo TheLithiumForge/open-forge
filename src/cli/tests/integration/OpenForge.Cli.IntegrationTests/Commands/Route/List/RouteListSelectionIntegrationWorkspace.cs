@@ -1,10 +1,14 @@
 using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
-using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Source;
-using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Sources.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Reading;
+using OpenForge.Cli.Core.Framework.Sources.Routing;
+using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.List;
@@ -56,25 +60,20 @@ internal sealed class RouteListSelectionIntegrationWorkspace : IDisposable
         bool isRouteAmbiguous = false)
     {
         var physicalPath = _temporary.Combine(physicalRelativePath ?? canonicalPath);
-        if (!string.Equals(id, RouteSourceIdentity.DeriveId(canonicalPath), StringComparison.Ordinal))
-        {
-            throw new ArgumentException("The source ID must match its canonical path identity.", nameof(id));
-        }
-
         var form = ReadForm(canonicalPath, kind);
         var sourceKind = form switch
         {
-            RouteSourceForm.Loader => RouteSourceKind.Loader,
-            RouteSourceForm.CanonicalEntrypoint
-                or RouteSourceForm.IndexEntrypoint
-                or RouteSourceForm.UnderscoreIndexEntrypoint
-                or RouteSourceForm.ReferencesEntrypoint
-                or RouteSourceForm.UnderscoreReferencesEntrypoint => RouteSourceKind.Entrypoint,
-            RouteSourceForm.Skill => RouteSourceKind.Native,
-            RouteSourceForm.Markdown => RouteSourceKind.Markdown,
+            SourceDocumentForm.Loader => RouteSourceKind.Loader,
+            SourceDocumentForm.CanonicalEntrypoint
+                or SourceDocumentForm.IndexEntrypoint
+                or SourceDocumentForm.UnderscoreIndexEntrypoint
+                or SourceDocumentForm.ReferencesEntrypoint
+                or SourceDocumentForm.UnderscoreReferencesEntrypoint => RouteSourceKind.Entrypoint,
+            SourceDocumentForm.Skill => RouteSourceKind.Native,
+            SourceDocumentForm.Markdown => RouteSourceKind.Markdown,
             _ => throw new ArgumentOutOfRangeException(nameof(form), form, "The source form is not defined."),
         };
-        var metadata = form == RouteSourceForm.Loader
+        var metadata = form == SourceDocumentForm.Loader
             ? RouteSourceMetadata.WithoutValues(
                 RouteSourceMetadataState.NotApplicable,
                 isCompatibilityEntrypoint: false,
@@ -86,7 +85,7 @@ internal sealed class RouteListSelectionIntegrationWorkspace : IDisposable
                 overwritePath is not null)
             : RouteSourceMetadata.Complete(
                 $"Description for {id}",
-                form == RouteSourceForm.Skill ? [] : ["Route"],
+                form == SourceDocumentForm.Skill ? [] : ["Route"],
                 IsCompatibility(form),
                 overwritePath is not null);
         var baseDocument = new RouteSourceDocument(
@@ -100,65 +99,49 @@ internal sealed class RouteListSelectionIntegrationWorkspace : IDisposable
             : new RouteSourceDocument(
                 overwritePath,
                 _temporary.Combine(overwritePath),
-                RouteSourceForm.OverwriteCompanion,
+            SourceDocumentForm.OverwriteCompanion,
                 FileReadState.Complete,
                 "overwrite");
-        return new RouteSource(
+        var source = new RouteSource(
             baseDocument,
             metadata,
             sourceKind,
             overwrite,
             isRouteAmbiguous);
-    }
-
-    internal RouteSourceCatalogue Catalogue(params RouteSource[] sources)
-    {
-        var overwriteFacts = sources
-            .Where(source => source.Overwrite is not null)
-            .Select(source => new RouteOverwriteFact(
-                RouteOverwriteState.Paired,
-                source.Overwrite!,
-                [source.CanonicalPath]));
-        return new RouteSourceCatalogue(sources, overwriteFacts);
-    }
-
-    private static RouteSourceForm ReadForm(string path, RouteListSourceKind kind)
-    {
-        if (kind == RouteListSourceKind.Loader)
+        if (!string.Equals(id, source.Id, StringComparison.Ordinal))
         {
-            return RouteSourceForm.Loader;
+            throw new ArgumentException("The source ID must match its canonical path identity.", nameof(id));
         }
 
-        var fileName = path[(path.LastIndexOf('/') + 1)..];
-        if (fileName == "SKILL.md")
-        {
-            return RouteSourceForm.Skill;
-        }
-
-        if (kind != RouteListSourceKind.Entrypoint)
-        {
-            return RouteSourceForm.Markdown;
-        }
-
-        return fileName switch
-        {
-            "index.md" => RouteSourceForm.IndexEntrypoint,
-            "_index.md" => RouteSourceForm.UnderscoreIndexEntrypoint,
-            "references.md" => RouteSourceForm.ReferencesEntrypoint,
-            "_references.md" => RouteSourceForm.UnderscoreReferencesEntrypoint,
-            _ => RouteSourceForm.CanonicalEntrypoint,
-        };
+        return source;
     }
 
-    private static bool IsCompatibility(RouteSourceForm form)
+    internal async ValueTask<RouteListSelectionIntegrationBoundary> BoundaryAsync(
+        CancellationToken cancellationToken)
     {
-        return form is RouteSourceForm.IndexEntrypoint
-            or RouteSourceForm.UnderscoreIndexEntrypoint
-            or RouteSourceForm.ReferencesEntrypoint
-            or RouteSourceForm.UnderscoreReferencesEntrypoint;
+        var catalogue = await new SourceCatalogueReader()
+            .ReadAsync(Request(".agents"), cancellationToken);
+        var selection = catalogue.SelectAll();
+        var reader = new SourceDocumentReader(Workspace);
+        var projection = await new RouteListSourceProjectionBuilder()
+            .ReadAsync(selection, reader, cancellationToken);
+        var routeFacts = await new SourceRouteFactsResolver()
+            .ResolveAsync(
+                new SourceRouteFactsRequest(catalogue, selection),
+                reader,
+                cancellationToken);
+        return new RouteListSelectionIntegrationBoundary(
+            catalogue,
+            projection.ProjectionSet,
+            routeFacts);
     }
 
-    internal RouteListRequest Request(string? sourceReference = null)
+    internal SourceCatalogueRequest Request(params string[] logicalRoots)
+    {
+        return new SourceCatalogueRequest(Workspace, logicalRoots);
+    }
+
+    internal RouteListRequest RouteRequest(string? sourceReference = null)
     {
         return new RouteListRequest(
             Workspace,
@@ -191,4 +174,45 @@ internal sealed class RouteListSelectionIntegrationWorkspace : IDisposable
     {
         _temporary.Dispose();
     }
+
+    private static SourceDocumentForm ReadForm(string path, RouteListSourceKind kind)
+    {
+        if (kind == RouteListSourceKind.Loader)
+        {
+            return SourceDocumentForm.Loader;
+        }
+
+        var fileName = path[(path.LastIndexOf('/') + 1)..];
+        if (fileName == "SKILL.md")
+        {
+            return SourceDocumentForm.Skill;
+        }
+
+        if (kind != RouteListSourceKind.Entrypoint)
+        {
+            return SourceDocumentForm.Markdown;
+        }
+
+        return fileName switch
+        {
+            "index.md" => SourceDocumentForm.IndexEntrypoint,
+            "_index.md" => SourceDocumentForm.UnderscoreIndexEntrypoint,
+            "references.md" => SourceDocumentForm.ReferencesEntrypoint,
+            "_references.md" => SourceDocumentForm.UnderscoreReferencesEntrypoint,
+            _ => SourceDocumentForm.CanonicalEntrypoint,
+        };
+    }
+
+    private static bool IsCompatibility(SourceDocumentForm form)
+    {
+        return form is SourceDocumentForm.IndexEntrypoint
+            or SourceDocumentForm.UnderscoreIndexEntrypoint
+            or SourceDocumentForm.ReferencesEntrypoint
+            or SourceDocumentForm.UnderscoreReferencesEntrypoint;
+    }
 }
+
+internal sealed record RouteListSelectionIntegrationBoundary(
+    SourceCatalogue Catalogue,
+    RouteSourceProjectionSet ProjectionSet,
+    SourceRouteFacts RouteFacts);

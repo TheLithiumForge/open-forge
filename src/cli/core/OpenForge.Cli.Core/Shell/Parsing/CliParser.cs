@@ -6,7 +6,6 @@ internal sealed class CliParser
 
     internal CliParser(CliCommandTree tree)
     {
-        ArgumentNullException.ThrowIfNull(tree);
         _tree = tree;
     }
 

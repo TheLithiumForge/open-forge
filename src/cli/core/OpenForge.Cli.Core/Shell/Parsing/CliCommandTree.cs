@@ -65,14 +65,65 @@ internal sealed class CliCommandTree
         CliHelpContent rootHelp,
         IEnumerable<CliRootBranch> branches,
         IEnumerable<ICliCommandBinding> bindings,
-        IEnumerable<CliCommandHelp>? additionalHelp = null)
+        IEnumerable<CliCommandHelp>? additionalHelp = null,
+        IEnumerable<CliRootLeaf>? rootLeaves = null)
     {
-        ArgumentNullException.ThrowIfNull(rootHelp);
-        ArgumentNullException.ThrowIfNull(branches);
-        ArgumentNullException.ThrowIfNull(bindings);
-
         var branchArray = branches.ToArray();
-        var definition = CliRootDefinitionFactory.Create(branchArray);
+        var rootLeafArray = rootLeaves?.ToArray() ?? [];
+
+        var bindingByCommand = new Dictionary<Command, ICliCommandBinding>(ReferenceEqualityComparer.Instance);
+        foreach (var binding in bindings)
+        {
+            ArgumentNullException.ThrowIfNull(binding);
+            bindingByCommand.Add(binding.Command, binding);
+        }
+
+        var branchCommands = new HashSet<Command>(ReferenceEqualityComparer.Instance);
+        var branchNames = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var branch in branchArray)
+        {
+            ArgumentNullException.ThrowIfNull(branch);
+            branchCommands.Add(branch.Command);
+            branchNames.Add(branch.Command.Name);
+        }
+
+        var rootLeafCommands = new HashSet<Command>(ReferenceEqualityComparer.Instance);
+        var rootLeafNames = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var rootLeaf in rootLeafArray)
+        {
+            ArgumentNullException.ThrowIfNull(rootLeaf, "root leaf");
+
+            var command = rootLeaf.Command;
+            if (!rootLeafCommands.Add(command))
+            {
+                throw new ArgumentException(
+                    "A direct root leaf command may be attached only once.",
+                    nameof(rootLeaves));
+            }
+
+            if (branchCommands.Contains(command))
+            {
+                throw new ArgumentException(
+                    "A direct root leaf command cannot also be a root branch.",
+                    nameof(rootLeaves));
+            }
+
+            if (branchNames.Contains(command.Name) || !rootLeafNames.Add(command.Name))
+            {
+                throw new ArgumentException(
+                    "Direct root command names cannot have a collision.",
+                    nameof(rootLeaves));
+            }
+
+            if (!bindingByCommand.ContainsKey(command))
+            {
+                throw new ArgumentException(
+                    "Each direct root leaf must have a binding for the same command instance.",
+                    nameof(rootLeaves));
+            }
+        }
+
+        var definition = CliRootDefinitionFactory.Create(branchArray, rootLeafArray);
         var helpByCommand = new Dictionary<Command, CliHelpContent>(ReferenceEqualityComparer.Instance)
         {
             [definition.Root] = rootHelp,
@@ -80,16 +131,12 @@ internal sealed class CliCommandTree
         var groups = new HashSet<Command>(ReferenceEqualityComparer.Instance);
         foreach (var branch in branchArray)
         {
-            ArgumentNullException.ThrowIfNull(branch);
             groups.Add(branch.Command);
             helpByCommand.Add(branch.Command, branch.Help);
         }
 
-        var bindingByCommand = new Dictionary<Command, ICliCommandBinding>(ReferenceEqualityComparer.Instance);
-        foreach (var binding in bindings)
+        foreach (var binding in bindingByCommand.Values)
         {
-            ArgumentNullException.ThrowIfNull(binding);
-            bindingByCommand.Add(binding.Command, binding);
             helpByCommand.TryAdd(binding.Command, binding.Help);
         }
 
@@ -98,6 +145,11 @@ internal sealed class CliCommandTree
             foreach (var registration in additionalHelp)
             {
                 ArgumentNullException.ThrowIfNull(registration);
+                if (rootLeafCommands.Contains(registration.Command))
+                {
+                    continue;
+                }
+
                 helpByCommand[registration.Command] = registration.Content;
             }
         }
@@ -113,7 +165,6 @@ internal sealed class CliCommandTree
 
     internal CliParseOutcome Parse(string[] arguments)
     {
-        ArgumentNullException.ThrowIfNull(arguments);
         var originalArguments = Array.AsReadOnly(arguments.ToArray());
         return new CliParseOutcome(
             Root.Parse(originalArguments, _parserConfiguration),

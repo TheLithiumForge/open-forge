@@ -586,10 +586,11 @@ public sealed class RouteInspectResultBuilderTests
         Assert.False(string.IsNullOrWhiteSpace(condition.Message));
     }
 
-    private static void AssertNextReason(RouteInspectResult result)
+    private static CliNextAction AssertNextReason(RouteInspectResult result)
     {
-        Assert.NotNull(result.Next);
-        Assert.False(string.IsNullOrWhiteSpace(result.Next!.Reason));
+        var next = Assert.IsType<CliNextAction>(result.Next);
+        Assert.False(string.IsNullOrWhiteSpace(next.Reason));
+        return next;
     }
 
     private static void AssertAction(
@@ -597,15 +598,14 @@ public sealed class RouteInspectResultBuilderTests
         string commandFragment,
         string reasonFragment)
     {
-        AssertNextReason(result);
-        Assert.Contains(commandFragment, result.Next!.Command, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains(reasonFragment, result.Next.Reason, StringComparison.OrdinalIgnoreCase);
+        var next = AssertNextReason(result);
+        Assert.Contains(commandFragment, next.Command, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(reasonFragment, next.Reason, StringComparison.OrdinalIgnoreCase);
     }
 
     private static void AssertSafeRecoveryAction(RouteInspectResult result)
     {
-        AssertNextReason(result);
-        var command = result.Next!.Command;
+        var command = AssertNextReason(result).Command;
         Assert.True(
             command.Contains("doctor", StringComparison.OrdinalIgnoreCase)
             || command.Contains("route inspect", StringComparison.OrdinalIgnoreCase));

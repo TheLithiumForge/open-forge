@@ -1,37 +1,41 @@
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Models.Topology;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Topology;
 
 internal sealed class RouteListTopologyRowBuilder
 {
     private readonly RouteListTopologyInput _input;
-    private readonly RouteTopologyFacts _topology;
+    private readonly SourceRouteFacts _routeFacts;
+    private readonly SourceRouteTopology _topology;
 
     internal RouteListTopologyRowBuilder(
         RouteListTopologyInput input,
-        RouteTopologyFacts topology)
+        SourceRouteFacts routeFacts)
     {
         ArgumentNullException.ThrowIfNull(input);
-        ArgumentNullException.ThrowIfNull(topology);
+        ArgumentNullException.ThrowIfNull(routeFacts);
         _input = input;
-        _topology = topology;
+        _routeFacts = routeFacts;
+        _topology = routeFacts.Topology;
     }
 
     internal RouteListRow Build(
-        RouteTopologyNode node,
+        SourceRouteNode node,
         int relativeDepth,
         int? absoluteDepth,
         RouteListSelectionProvenance selectionProvenance)
     {
-        ArgumentNullException.ThrowIfNull(node);
-        var source = node.Source;
+        var source = RouteListTopologyProjectionPolicy.ReadSource(_input, node);
         string? parentId = null;
-        if (node.ParentPath is { } parentPath)
+        string? parentPath = null;
+        if (node.ParentState == SourceRouteParentState.Resolved)
         {
-            parentId = _topology.FindByPath(parentPath)?.Source.Id
-                ?? throw new InvalidOperationException("A resolved topology parent is missing from the immutable graph.");
+            parentPath = node.ParentPaths[0];
+            var parent = _topology.FindByPath(parentPath)
+                ?? throw new InvalidOperationException("A resolved topology parent is missing from the immutable source graph.");
+            parentId = RouteListTopologyProjectionPolicy.ReadSource(_input, parent).Id;
         }
 
         var sourceProvenance = source.Kind switch
@@ -44,18 +48,25 @@ internal sealed class RouteListTopologyRowBuilder
         var provenance = new RouteListProvenance(
             selectionProvenance,
             sourceProvenance,
-            node.Source.Overwrite is not null);
-        var metadata = node.Source.Metadata;
+            source.Overwrite is not null);
+        var metadata = source.Metadata;
+        if (metadata.State != RouteSourceMetadataState.Complete
+            || metadata.Description is not { } description)
+        {
+            throw new InvalidOperationException(
+                "A route-list row requires complete source metadata with a description.");
+        }
+
         if (source.Kind == RouteSourceKind.Entrypoint)
         {
             return RouteListRow.Entrypoint(
                 source.Id,
                 source.CanonicalPath,
                 parentId,
-                node.ParentPath,
+                parentPath,
                 absoluteDepth,
                 relativeDepth,
-                metadata.Description!,
+                description,
                 metadata.Tags,
                 ReadDirectChildCount(node, relativeDepth),
                 provenance);
@@ -65,33 +76,42 @@ internal sealed class RouteListTopologyRowBuilder
             source.Id,
             source.CanonicalPath,
             parentId,
-            node.ParentPath,
+            parentPath,
             absoluteDepth,
             relativeDepth,
-            metadata.Description!,
+            description,
             metadata.Tags,
             provenance);
     }
 
-    internal bool CanDescend(RouteTopologyNode node, int relativeDepth)
+    internal bool CanDescend(SourceRouteNode node, int relativeDepth)
     {
-        ArgumentNullException.ThrowIfNull(node);
-        if (node.Source.Kind != RouteSourceKind.Entrypoint)
+        var source = RouteListTopologyProjectionPolicy.FindSource(_input, node);
+        if (source?.Kind != RouteSourceKind.Entrypoint)
         {
             return false;
         }
 
-        return _input.Request.RequestedDepth.Kind == RouteListDepthKind.All
-            || relativeDepth < _input.Request.RequestedDepth.Value!.Value;
+        var requestedDepth = _input.Request.RequestedDepth;
+        return requestedDepth.Kind == RouteListDepthKind.All
+            || relativeDepth < requestedDepth.FiniteValue;
     }
 
-    private int? ReadDirectChildCount(RouteTopologyNode node, int relativeDepth)
+    private int? ReadDirectChildCount(SourceRouteNode node, int relativeDepth)
     {
+        var source = RouteListTopologyProjectionPolicy.ReadSource(_input, node);
         if (!CanDescend(node, relativeDepth)
             || node.ChildPaths.Any(path =>
-                _topology.FindByPath(path)!.Source.IsRouteAmbiguous)
+            {
+                var child = _topology.FindByPath(path)
+                    ?? throw new InvalidOperationException("A topology child is missing from the immutable source graph.");
+                var childFact = RouteListTopologyProjectionPolicy.ReadRouteFact(_input, _routeFacts, child);
+                return childFact.State is SourceRouteState.Ambiguous or SourceRouteState.Unavailable
+                    || RouteListTopologyProjectionPolicy.FindSource(_input, child) is null
+                    || RouteListTopologyProjectionPolicy.IsAmbiguousEntrypoint(_input, child);
+            })
             || _input.Inventory.Findings.Any(finding =>
-                RouteListTopologyFindingPolicy.AffectsDirectChildren(node, finding)))
+                RouteListTopologyFindingPolicy.AffectsDirectChildren(node, source, finding)))
         {
             return null;
         }

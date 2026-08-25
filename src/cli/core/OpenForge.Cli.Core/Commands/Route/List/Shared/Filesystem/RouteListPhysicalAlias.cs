@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+
 namespace OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 
 internal sealed record RouteListPhysicalAlias
@@ -7,12 +9,12 @@ internal sealed record RouteListPhysicalAlias
         string physicalPath,
         string firstCanonicalLogicalPath)
     {
-        if (!RouteListLogicalPath.IsCanonical(canonicalLogicalPath))
+        if (!SourceLogicalPath.IsCanonicalRoot(canonicalLogicalPath))
         {
             throw new ArgumentException("The alias logical path is not canonical.", nameof(canonicalLogicalPath));
         }
 
-        if (!RouteListLogicalPath.IsCanonical(firstCanonicalLogicalPath))
+        if (!SourceLogicalPath.IsCanonicalRoot(firstCanonicalLogicalPath))
         {
             throw new ArgumentException("The first alias logical path is not canonical.", nameof(firstCanonicalLogicalPath));
         }

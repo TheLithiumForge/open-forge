@@ -9,7 +9,7 @@ namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile;
 internal sealed partial class RouteInspectMeasurementsBuilder
 {
     private static readonly UTF8Encoding StrictUtf8 = new(false, true);
-    private readonly RouteSourceCatalogue _catalogue;
+    private readonly RouteSourceProjectionSet _projectionSet;
     private readonly CancellationToken _cancellationToken;
 
     private RouteInspectFact<RouteInspectMeasurement> Measure(
@@ -21,7 +21,7 @@ internal sealed partial class RouteInspectMeasurementsBuilder
         foreach (var path in paths.OrderBy(path => path, StringComparer.Ordinal))
         {
             _cancellationToken.ThrowIfCancellationRequested();
-            var source = _catalogue.FindByPath(path);
+            var source = _projectionSet.FindByPath(path);
             if (source is null || !MeasureSource(source, accumulator))
             {
                 return Unavailable(unavailableReason);
@@ -92,7 +92,7 @@ internal sealed partial class RouteInspectMeasurementsBuilder
         foreach (var path in paths.OrderBy(path => path, StringComparer.Ordinal))
         {
             _cancellationToken.ThrowIfCancellationRequested();
-            var source = _catalogue.FindByPath(path);
+            var source = _projectionSet.FindByPath(path);
             if (source is null)
             {
                 continue;

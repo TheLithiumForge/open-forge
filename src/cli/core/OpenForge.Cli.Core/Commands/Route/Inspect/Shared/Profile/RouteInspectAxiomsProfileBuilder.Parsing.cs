@@ -43,11 +43,12 @@ internal sealed partial class RouteInspectAxiomsProfileBuilder
         var content = lines[(headings[0] + 1)..sectionEnd]
             .Where(line => line.Length != 0)
             .ToArray();
-        state = content.Length == 0
-            ? AxiomsSectionState.Empty
-            : content is [InheritedSentinel]
-                ? AxiomsSectionState.InheritedSentinel
-                : AxiomsSectionState.Substantive;
+        state = content switch
+        {
+            [] => AxiomsSectionState.Empty,
+            [InheritedSentinel] => AxiomsSectionState.InheritedSentinel,
+            _ => AxiomsSectionState.Substantive,
+        };
         return true;
     }
 

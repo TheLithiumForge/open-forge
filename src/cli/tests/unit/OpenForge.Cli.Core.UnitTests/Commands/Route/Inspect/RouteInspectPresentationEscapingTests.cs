@@ -62,10 +62,9 @@ public sealed class RouteInspectPresentationEscapingTests
                 _ => primary,
                 _ => "{}"),
             RouteInspectDiagnosticRenderer.Render);
-        var diagnostics = rendered.DiagnosticContent;
+        var diagnostics = Assert.IsType<string>(rendered.DiagnosticContent);
 
-        Assert.NotNull(diagnostics);
-        Assert.InRange(diagnostics!.Length, 1, CliRenderingStage.MaximumDiagnosticLength);
+        Assert.InRange(diagnostics.Length, 1, CliRenderingStage.MaximumDiagnosticLength);
         Assert.Contains("status=invalid", diagnostics, StringComparison.Ordinal);
         Assert.DoesNotContain("The source value was rejected", diagnostics, StringComparison.Ordinal);
         foreach (var line in diagnostics.Split(Environment.NewLine, StringSplitOptions.None))

@@ -56,7 +56,6 @@ internal static class RouteInspectProfileTestData
 
     internal static RouteInspectMeasurements Measurements(RouteInspectMeasurementsSpec spec)
     {
-        ArgumentNullException.ThrowIfNull(spec);
         return new RouteInspectMeasurements(
             spec.OwnSource,
             spec.SelectedClosure,
@@ -86,7 +85,6 @@ internal static class RouteInspectProfileTestData
 
     internal static RouteInspectTopology Topology(RouteInspectTopologySpec spec)
     {
-        ArgumentNullException.ThrowIfNull(spec);
         return new RouteInspectTopology(spec.RootRoute, spec.RouteChain, spec.ParentId, spec.Depth, spec.Counts);
     }
 

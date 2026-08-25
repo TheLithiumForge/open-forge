@@ -59,7 +59,8 @@ public sealed class RouteInspectOperationLoadingIntegrationTests
         Assert.Equal(0, counts.DescendantEntrypointCount);
 
         var axioms = Assert.IsType<RouteInspectAxiomsProfile>(profile.Axioms.Value);
-        Assert.Equal(["loader", "root"], axioms.Inherited.Value!.SourceIds);
+        var inherited = Assert.IsType<RouteInspectAxiomsSources>(axioms.Inherited.Value);
+        Assert.Equal(["loader", "root"], inherited.SourceIds);
         Assert.Equal(RouteInspectAxiomsLocalState.Substantive, axioms.Local.Value);
 
         RouteInspectProfileIntegrationAssertions.AssertMeasurement(
@@ -117,9 +118,9 @@ public sealed class RouteInspectOperationLoadingIntegrationTests
                 RouteInspectAutomaticReadingEvent.LaterReview,
             ],
             globalReason.Events);
-        Assert.Equal(
-            ["loader", "root"],
-            Assert.IsType<RouteInspectAxiomsSources>(globalProfile.Axioms.Value!.Inherited.Value).SourceIds);
+        var globalAxioms = Assert.IsType<RouteInspectAxiomsProfile>(globalProfile.Axioms.Value);
+        var globalInherited = Assert.IsType<RouteInspectAxiomsSources>(globalAxioms.Inherited.Value);
+        Assert.Equal(["loader", "root"], globalInherited.SourceIds);
         RouteInspectProfileIntegrationAssertions.AssertMeasurement(
             globalProfile.Measurements.OwnSource,
             workspace,
@@ -144,9 +145,7 @@ public sealed class RouteInspectOperationLoadingIntegrationTests
         Assert.Equal(
             RouteInspectFactState.NotApplicable,
             Assert.IsType<RouteInspectTopology>(globalProfile.Topology.Value).Counts.State);
-        Assert.Equal(
-            RouteInspectAxiomsLocalState.NotApplicable,
-            globalProfile.Axioms.Value!.Local.Value);
+        Assert.Equal(RouteInspectAxiomsLocalState.NotApplicable, globalAxioms.Local.Value);
 
         var ancestor = await workspace.InspectAsync(
             "root/other",

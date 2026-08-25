@@ -28,7 +28,7 @@ and the [Status Interface Contract](../../status/interface.md) defines the share
 measurements and token estimate.
 
 The [CLI Architecture](../../../architecture.md) defines the accepted shared
-structured schema, process-status mapping, source structure, package and runtime
+JSON envelope, process-status mapping, source structure, package and runtime
 boundaries, BCL-first filesystem boundary, and diagnostic realization. Primary
 human `complete`, `attention`, and `incomplete` results use
 stdout. Primary human `invalid`, `blocked`, `failed`, and `interrupted` results
@@ -37,11 +37,11 @@ status; bounded diagnostics use stderr, and human text is never mixed into JSON
 stdout. Command-specific repetition beyond the shared global flags is not
 invented here.
 
-The CLI Architecture defines exact structured fields, schema compatibility,
+The CLI Architecture defines the shared envelope, schema compatibility,
 process-status mapping, serialization, parser and filesystem realization,
 physical identity, containment, diagnostics, source structure, package and
-runtime boundaries, and test boundaries. This contract chooses none of those
-implementation details and remains technology-neutral.
+runtime boundaries, and test boundaries. This Interface defines the exact
+command-local structured fields below without choosing their implementation.
 
 ## Purpose
 
@@ -575,6 +575,29 @@ listed exact paths.`
 A direct safe correction names only the observed input or safety boundary when
 that correction is already known. It is not a route mutation proposal.
 
+The structured `next` member uses `{ command, reason }` with these exact values:
+
+- `complete`, and `attention` after exact-path selection: null;
+- interactive `attention`: the command is `open-forge route inspect
+  "<canonical-path>"`, and the reason is `Rerun with the exact path for
+  non-interactive use.`;
+- `invalid`: `{ command: "open-forge route inspect --help", reason: "Correct
+  the named source or input, then rerun route inspect." }`;
+- `incomplete`: `{ command: "open-forge doctor", reason: "Review the unavailable
+  route fact, then rerun route inspect." }`;
+- a blocked source-ID collision: the command reruns `open-forge route inspect`
+  with the first listed exact path, and the reason is `Rerun with one listed
+  exact path to resolve the source collision.`;
+- an ambiguous-route block: the command reruns `open-forge route inspect` with
+  the selected exact path, and the reason is `Rerun with the exact source path
+  after resolving the ambiguous route.`;
+- another `blocked` result: `{ command: "open-forge doctor", reason: "Review the
+  blocked source boundary, then rerun route inspect." }`;
+- `failed`: `{ command: "open-forge route inspect", reason: "Address the reported
+  failure, then retry route inspect." }`; and
+- `interrupted`: `{ command: "open-forge route inspect", reason: "Rerun the same
+  route-inspect request." }`.
+
 `route inspect` never emits route mutation proposals, health recommendations,
 content-placement advice, or diagnostic recommendations. `doctor` owns complete
 diagnosis and recommendations; this command reports only observations,
@@ -604,11 +627,170 @@ The structured result exposes:
   `unavailable`, and `not-applicable` states.
 - Semantic status and next operations only when a required next operation exists.
 
+The accepted camel-case command-local `result` object uses this exact member
+shape and order. Every listed member is present. Generic `Fact<T>` values use
+`{ state, value, reason }`; Boolean facts use the same members with a Boolean or
+null `value`.
+
+```text
+result: {
+  selection: {
+    referenceKind: ReferenceKind,
+    selectionMethod: SelectionMethod,
+    requestedReference: string | null,
+    candidatePaths: string[]
+  },
+  identity: {
+    id: string,
+    path: string,
+    sourceKind: SourceKind,
+    sourceForm: SourceForm,
+    routeState: RouteState,
+    physicalLayers: [{
+      workspaceRelativePath: string,
+      physicalPath: string,
+      role: LayerRole
+    }]
+  } | null,
+  profile: {
+    reading: {
+      taskStart: BooleanFact,
+      automatic: Fact<{
+        reasons: [{
+          kind: ReadingKind,
+          relatedSourceId: string | null,
+          events: ReadingEvent[]
+        }]
+      }>,
+      later: Fact<{
+        mayBeReadAgain: boolean,
+        occasions: LaterOccasion[]
+      }>
+    },
+    measurements: {
+      ownSource: Fact<Measurement>,
+      selectedClosure: Fact<Measurement>,
+      taskStartOverlap: Fact<Measurement>,
+      selectionAddition: Fact<Measurement>,
+      loadNowDescendants: Fact<Measurement>
+    },
+    topology: Fact<{
+      rootRoute: string,
+      routeChain: string[],
+      parentId: string | null,
+      depth: nonnegative-integer,
+      counts: Fact<{
+        directRoutedFileCount: nonnegative-integer,
+        directEntrypointCount: nonnegative-integer,
+        descendantRoutedFileCount: nonnegative-integer,
+        descendantEntrypointCount: nonnegative-integer
+      }>
+    }>,
+    axioms: Fact<{
+      inherited: Fact<{ sourceIds: string[] }>,
+      local: Fact<LocalAxiomsState>
+    }>,
+    completeness: Completeness,
+    safety: Safety
+  } | null,
+  observations: [{
+    code: ObservationCode,
+    subject: string,
+    message: string,
+    paths: string[]
+  }],
+  conditions: [{
+    code: ConditionCode,
+    status: SharedStatus,
+    subject: string,
+    message: string,
+    paths: string[]
+  }]
+}
+
+Measurement: {
+  physicalFileCount: nonnegative-integer,
+  unicodeScalarCount: nonnegative-integer,
+  utf8ByteCount: nonnegative-integer,
+  estimatedTokens: nonnegative-integer
+}
+
+Fact<T>: {
+  state: FactState,
+  value: T | null,
+  reason: string | null
+}
+
+BooleanFact: {
+  state: FactState,
+  value: boolean | null,
+  reason: string | null
+}
+```
+
+String, Boolean, integer, array, and null members use their JSON types.
+Measurement and topology count members are nonnegative integers. `depth` is a
+nonnegative integer. The finite strings are:
+
+- `referenceKind`: `missing`, `source-id`, `source-path`, or `invalid`;
+- `selectionMethod`: `unresolved`, `automatic-id`, `exact-path`, or
+  `interactive`;
+- `sourceKind`: `entrypoint`, `markdown`, or `native`;
+- `sourceForm`: `canonical`, `compatibility`, `markdown`, or `native`;
+- `routeState`: `routed`, `detached`, `not-routed`, `ambiguous`, or
+  `unresolved`;
+- physical-layer `role`: `base` or `overwrite`;
+- fact `state`: `value`, `unavailable`, or `not-applicable`;
+- automatic-reading `kind`: `on-demand`, `parent-load-now`,
+  `entrypoint-keep-in-mind`, `routed-file-keep-in-mind`, or
+  `overwrite-after-base`;
+- automatic-reading `events`: `route-selected`, `exposing-parent-read`,
+  `task-start-visible`, `scope-selected`, `ancestor-required`, `task-review`,
+  `later-review`, or `base-read`;
+- later-reading `occasions`: `context-restoration`, `handoff`, `closeout`, or
+  `followup-transition`;
+- profile `completeness`: `complete`, `incomplete`, or `not-started`;
+- profile `safety`: `safe`, `blocked`, or `unknown`; and
+- local Axioms fact value: `substantive`, `inherited-sentinel`, `empty`,
+  `missing`, or `not-applicable`.
+
+A fact in `value` state has a non-null value and null reason. An `unavailable` or
+`not-applicable` fact has null value and one nonempty reason. Arrays are always
+present. The exact observation codes are
+`route-inspect.automatic-id-not-unique`,
+`route-inspect.compatibility-entrypoint`, `route-inspect.detached-source`,
+`route-inspect.not-routed`, and `route-inspect.valid-overwrite`.
+
+The exact condition codes and their condition status are:
+
+- `invalid`: `route-inspect.invalid-workspace`, `route-inspect.missing-source`,
+  `route-inspect.multiple-sources`, `route-inspect.invalid-source-reference`,
+  `route-inspect.loader-subject`, `route-inspect.unknown-source`,
+  `route-inspect.missing-source-file`, and
+  `route-inspect.unsupported-source`;
+- `blocked`: `route-inspect.workspace-unavailable`,
+  `route-inspect.unsafe-workspace`, `route-inspect.ambiguous-source`,
+  `route-inspect.unsafe-source`, `route-inspect.ambiguous-route`,
+  `route-inspect.orphan-overwrite`, and `route-inspect.ambiguous-overwrite`;
+- `incomplete`: `route-inspect.unreadable-source`,
+  `route-inspect.incomplete-route`, and `route-inspect.unavailable-fact`;
+- `failed`: `route-inspect.operation-failed`; and
+- `interrupted`: `route-inspect.interrupted`.
+
+`command` in the shared envelope is exactly `route inspect`. The envelope's
+`workspace` uses the shared Architecture member, and `next` uses that shared
+shape with the exact Route Inspect values above; neither is repeated inside
+`result`. Arrays are present when empty. `requestedReference`, `identity`,
+`profile`, nullable fact values, fact reasons, `relatedSourceId`, and `parentId`
+retain null when their typed fact is unavailable or inapplicable under this
+Interface.
+
 The result does not include authored source bodies or sections, ordinary links,
 all route paths in the workspace, a generated-index comparison, diagnosis,
 recommendations, or route mutation proposals. Exact field names, schema
-versioning, structured compatibility rules, and serialization are defined by the
-CLI Architecture.
+versioning, and command-local field meaning are defined by this Interface. The
+shared envelope, compatibility coordinates, and serialization realization are
+defined by the CLI Architecture.
 
 `--view` is accepted with `--json` but has no effect because JSON always emits
 the complete structured result under the shared global contract.

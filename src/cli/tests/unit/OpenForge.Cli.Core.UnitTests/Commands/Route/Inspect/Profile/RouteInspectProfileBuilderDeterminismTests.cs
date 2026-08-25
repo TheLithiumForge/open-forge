@@ -51,8 +51,10 @@ public sealed class RouteInspectProfileBuilderDeterminismTests
         AssertFactStateEqual(first.Reading.Automatic, second.Reading.Automatic);
         AssertFactStateEqual(first.Reading.Later, second.Reading.Later);
 
-        var firstReasons = first.Reading.Automatic.Value!.Reasons;
-        var secondReasons = second.Reading.Automatic.Value!.Reasons;
+        var firstAutomatic = Assert.IsType<RouteInspectAutomaticReadings>(first.Reading.Automatic.Value);
+        var secondAutomatic = Assert.IsType<RouteInspectAutomaticReadings>(second.Reading.Automatic.Value);
+        var firstReasons = firstAutomatic.Reasons;
+        var secondReasons = secondAutomatic.Reasons;
         Assert.Equal(firstReasons.Count, secondReasons.Count);
         for (var index = 0; index < firstReasons.Count; index++)
         {
@@ -67,8 +69,8 @@ public sealed class RouteInspectProfileBuilderDeterminismTests
             }
         }
 
-        var firstLater = first.Reading.Later.Value!;
-        var secondLater = second.Reading.Later.Value!;
+        var firstLater = Assert.IsType<RouteInspectLaterReading>(first.Reading.Later.Value);
+        var secondLater = Assert.IsType<RouteInspectLaterReading>(second.Reading.Later.Value);
         Assert.Equal(firstLater.MayBeReadAgain, secondLater.MayBeReadAgain);
         Assert.Equal(firstLater.Occasions.Count, secondLater.Occasions.Count);
         for (var index = 0; index < firstLater.Occasions.Count; index++)
@@ -84,8 +86,8 @@ public sealed class RouteInspectProfileBuilderDeterminismTests
 
         Assert.Equal(first.Topology.State, second.Topology.State);
         Assert.Equal(first.Topology.Reason, second.Topology.Reason);
-        var firstTopology = first.Topology.Value!;
-        var secondTopology = second.Topology.Value!;
+        var firstTopology = Assert.IsType<RouteInspectTopology>(first.Topology.Value);
+        var secondTopology = Assert.IsType<RouteInspectTopology>(second.Topology.Value);
         Assert.Equal(firstTopology.RootRoute, secondTopology.RootRoute);
         Assert.Equal(firstTopology.RouteChain.Count, secondTopology.RouteChain.Count);
         for (var index = 0; index < firstTopology.RouteChain.Count; index++)
@@ -112,12 +114,12 @@ public sealed class RouteInspectProfileBuilderDeterminismTests
 
         Assert.Equal(first.Axioms.State, second.Axioms.State);
         Assert.Equal(first.Axioms.Reason, second.Axioms.Reason);
-        var firstAxioms = first.Axioms.Value!;
-        var secondAxioms = second.Axioms.Value!;
+        var firstAxioms = Assert.IsType<RouteInspectAxiomsProfile>(first.Axioms.Value);
+        var secondAxioms = Assert.IsType<RouteInspectAxiomsProfile>(second.Axioms.Value);
         Assert.Equal(firstAxioms.Inherited.State, secondAxioms.Inherited.State);
         Assert.Equal(firstAxioms.Inherited.Reason, secondAxioms.Inherited.Reason);
-        var firstInherited = firstAxioms.Inherited.Value!;
-        var secondInherited = secondAxioms.Inherited.Value!;
+        var firstInherited = Assert.IsType<RouteInspectAxiomsSources>(firstAxioms.Inherited.Value);
+        var secondInherited = Assert.IsType<RouteInspectAxiomsSources>(secondAxioms.Inherited.Value);
         Assert.Equal(firstInherited.SourceIds.Count, secondInherited.SourceIds.Count);
         for (var index = 0; index < firstInherited.SourceIds.Count; index++)
         {
@@ -173,10 +175,15 @@ public sealed class RouteInspectProfileBuilderDeterminismTests
 
         var profile = new RouteInspectProfileBuilder().Build(resolution, CancellationToken.None);
 
-        Assert.True(((IList<RouteInspectAutomaticReading>)profile.Reading.Automatic.Value!.Reasons).IsReadOnly);
-        Assert.True(((IList<RouteInspectAutomaticReadingEvent>)profile.Reading.Automatic.Value.Reasons[0].Events).IsReadOnly);
-        Assert.True(((IList<string>)profile.Axioms.Value!.Inherited.Value!.SourceIds).IsReadOnly);
-        Assert.True(((IList<string>)profile.Topology.Value!.RouteChain).IsReadOnly);
+        var automatic = Assert.IsType<RouteInspectAutomaticReadings>(profile.Reading.Automatic.Value);
+        var axioms = Assert.IsType<RouteInspectAxiomsProfile>(profile.Axioms.Value);
+        var inherited = Assert.IsType<RouteInspectAxiomsSources>(axioms.Inherited.Value);
+        var topology = Assert.IsType<RouteInspectTopology>(profile.Topology.Value);
+
+        Assert.True(((IList<RouteInspectAutomaticReading>)automatic.Reasons).IsReadOnly);
+        Assert.True(((IList<RouteInspectAutomaticReadingEvent>)automatic.Reasons[0].Events).IsReadOnly);
+        Assert.True(((IList<string>)inherited.SourceIds).IsReadOnly);
+        Assert.True(((IList<string>)topology.RouteChain).IsReadOnly);
     }
 
     private static void AssertFactStateEqual<T>(RouteInspectFact<T> expected, RouteInspectFact<T> actual)

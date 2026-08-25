@@ -33,7 +33,6 @@ internal sealed class CliWorkspaceSelectionResult
 
     internal static CliWorkspaceSelectionResult Selected(CliWorkspace workspace)
     {
-        ArgumentNullException.ThrowIfNull(workspace);
         return new CliWorkspaceSelectionResult(CliWorkspaceSelectionState.Selected, workspace, null);
     }
 

@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -167,7 +168,7 @@ public sealed class TemporaryWorkspace : IDisposable
     public bool TryCreateDirectorySymbolicLink(
         string relativeLinkPath,
         string targetPath,
-        out string? linkPath)
+        [NotNullWhen(true)] out string? linkPath)
     {
         try
         {
@@ -198,7 +199,7 @@ public sealed class TemporaryWorkspace : IDisposable
     public bool TryCreateFileSymbolicLink(
         string relativeLinkPath,
         string targetPath,
-        out string? linkPath)
+        [NotNullWhen(true)] out string? linkPath)
     {
         try
         {

@@ -237,7 +237,9 @@ internal sealed class RouteListResult : ICliCommandResult
                 continue;
             }
 
-            if (!indexByPath.TryGetValue(row.ParentPath!, out var parentIndex) || parentIndex >= index)
+            if (row.ParentPath is not { } parentPath
+                || !indexByPath.TryGetValue(parentPath, out var parentIndex)
+                || parentIndex >= index)
             {
                 throw new ArgumentException("A descendant row requires its parent earlier in the result.", nameof(rows));
             }
@@ -262,7 +264,7 @@ internal sealed class RouteListResult : ICliCommandResult
         var effectiveDepth = coverage.EffectiveDepth
             ?? throw new ArgumentException("Complete coverage requires effective depth.", nameof(coverage));
         if (effectiveDepth.Kind == RouteListDepthKind.Finite
-            && rows.Any(row => row.RelativeDepth > effectiveDepth.Value!.Value))
+            && rows.Any(row => row.RelativeDepth > effectiveDepth.FiniteValue))
         {
             throw new ArgumentException("A route row exceeds the effective structural depth.", nameof(rows));
         }
@@ -272,7 +274,7 @@ internal sealed class RouteListResult : ICliCommandResult
         foreach (var entrypoint in rows.Where(row => row.Kind == RouteListRowKind.Entrypoint))
         {
             var childrenWereRequested = requestedDepth.Kind == RouteListDepthKind.All
-                || entrypoint.RelativeDepth < requestedDepth.Value!.Value;
+                || entrypoint.RelativeDepth < requestedDepth.FiniteValue;
             if (!childrenWereRequested)
             {
                 continue;
@@ -286,7 +288,7 @@ internal sealed class RouteListResult : ICliCommandResult
             var emittedChildren = rows.Count(row =>
                 string.Equals(row.ParentPath, entrypoint.Path, StringComparison.Ordinal));
             var effectiveBoundaryIncludesChildren = effectiveDepth.Kind == RouteListDepthKind.All
-                || entrypoint.RelativeDepth < effectiveDepth.Value!.Value;
+                || entrypoint.RelativeDepth < effectiveDepth.FiniteValue;
             if ((effectiveBoundaryIncludesChildren && emittedChildren != directChildCount)
                 || (!effectiveBoundaryIncludesChildren && directChildCount != 0))
             {

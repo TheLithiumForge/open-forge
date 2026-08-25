@@ -15,10 +15,11 @@ open-forge:
 
 ## Outcome And Architecture
 
-`route list` and `route inspect` become the first accepted commands. List proves
-safe route inventory and deterministic projection. Inspect becomes the second
-consumer and promotes only identical source, route, identity, loading, overwrite,
-and topology facts to `Commands/Route/Shared/` or `Framework/Routing/`.
+`route list` and `route inspect` are complete. `Framework/Sources/` is the sole
+neutral authority for source identity, inventory, selected reading, Loader facts,
+topology, and routing/route facts. Route List and Route Inspect retain
+command-local projections and policy; neither command creates a competing neutral
+authority.
 
 Command bindings, requests, results, findings, depth or profile semantics,
 renderers, help, and evidence remain local. Neither command imports the other's
@@ -52,10 +53,12 @@ private support.
 
 Route List is integrated at `edca509`; Route Inspect is accepted from final
 correction `9c690b4` with complete managed and local `win-x64` Native AOT evidence.
-The existing `CLI-EDGE-001` legacy duplicate-entrypoint failure prevents a clean
-link-safe move and generated-index refresh. Completed Inspect records remain in
-place, and generated `Entries` below retain their pre-closeout projection rather
-than being hand-edited.
+`CLI-EDGE-001` remains the generated-index/routing refresh blocker: its legacy
+duplicate-entrypoint failure prevents a clean link-safe move and generated-index
+refresh. Completed Inspect records remain in place, and generated `Entries` below
+retain their pre-closeout projection rather than being hand-edited. Manual
+navigation and status text outside the generated region is current under this
+waiver. No routing-tool success or generated-index refresh is claimed.
 
 ## Entries
 

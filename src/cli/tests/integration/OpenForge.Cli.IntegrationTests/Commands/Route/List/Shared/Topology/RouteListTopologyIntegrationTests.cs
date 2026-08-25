@@ -2,9 +2,10 @@ using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Topology;
-using OpenForge.Cli.Core.Commands.Route.Shared.Models.Topology;
-using OpenForge.Cli.Core.Commands.Route.Shared.Topology;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Reading;
+using OpenForge.Cli.Core.Framework.Sources.Routing;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.TestSupport;
@@ -234,29 +235,40 @@ public sealed class RouteListTopologyIntegrationTests
         RouteListDepth depth)
     {
         var cancellationToken = TestContext.Current.CancellationToken;
-        var inventory = await workspace.ReadAsync(cancellationToken);
+        var documentReader = new SourceDocumentReader(workspace.Workspace);
+        var inventory = await new RouteListInventoryReader().ReadAsync(
+            new RouteListInventoryRequest(workspace.Workspace, cancellationToken),
+            documentReader);
+        var routeFacts = await new SourceRouteFactsResolver().ResolveAsync(
+            new SourceRouteFactsRequest(
+                inventory.SourceCatalogue,
+                inventory.SourceCatalogue.SelectAll()),
+            documentReader,
+            cancellationToken);
         var resolver = new RouteListSelectionResolver(new PhysicalPathResolver());
         var request = new RouteListRequest(workspace.Workspace, sourceReference, depth);
-        var selection = await resolver.ResolveAsync(request, inventory.Catalogue, cancellationToken);
+        var selection = await resolver.ResolveAsync(
+            request,
+            inventory.SourceCatalogue,
+            inventory.ProjectionBuildResult.ProjectionSet,
+            routeFacts,
+            cancellationToken);
         RouteListSelectionResolution? loaderSelection = null;
         if (sourceReference is not null && selection.State == RouteListSelectionResolutionState.Resolved)
         {
             loaderSelection = await resolver.ResolveAsync(
                 new RouteListRequest(workspace.Workspace, null, depth),
-                inventory.Catalogue,
+                inventory.SourceCatalogue,
+                inventory.ProjectionBuildResult.ProjectionSet,
+                routeFacts,
                 cancellationToken);
         }
 
         var input = new RouteListTopologyInput(request, inventory, selection, loaderSelection);
-        var topology = new RouteTopologyBuilder().Build(
-            input.Inventory.Sources
-                .Where(source => source.Kind is (
-                    RouteListSourceKind.Entrypoint
-                    or RouteListSourceKind.RoutedLeaf
-                    or RouteListSourceKind.RoutedNative))
-                .Select(source => source.Source),
-            input.LoaderRootPaths);
-        var selected = new RouteListTopologySelector().Select(input, topology, cancellationToken);
+        var selected = new RouteListTopologySelector().SelectSources(
+            input,
+            routeFacts,
+            cancellationToken);
         var coverage = new RouteListCoverageBuilder().Build(input, selected);
         return new RouteListResultBuilder().Build(input, selected, coverage);
     }

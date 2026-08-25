@@ -9,6 +9,7 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
     private const string LoaderPath = ".agents/loader.md";
     private readonly RouteInspectResolution _resolution;
     private readonly RouteInspectGraph _graph;
+    private readonly RouteInspectIdentity _identity;
     private readonly RouteSource _selected;
     private readonly CancellationToken _cancellationToken;
     private readonly Dictionary<string, RouteInspectVisibleEntriesRead> _visibleEntries = new(StringComparer.Ordinal);
@@ -21,18 +22,18 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
         RouteInspectResolution resolution,
         CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(resolution);
         _resolution = resolution;
-        _graph = resolution.Graph ?? throw new ArgumentException("A profile requires an inspect graph.", nameof(resolution));
-        _selected = _graph.Catalogue.FindByPath(resolution.Identity?.CanonicalWorkspaceRelativePath ?? string.Empty)
-            ?? throw new ArgumentException("The selected source is absent from the inspect catalogue.", nameof(resolution));
+        _graph = resolution.ReadGraph();
+        _identity = resolution.ReadIdentity();
+        _selected = _graph.ProjectionSet.FindByPath(_identity.CanonicalWorkspaceRelativePath)
+            ?? throw new InvalidOperationException("The selected source is absent from the inspect projection set.");
         _cancellationToken = cancellationToken;
     }
 
     internal RouteInspectLoadingFacts Build()
     {
         CheckCancellation();
-        var routeState = _resolution.Identity!.RouteState;
+        var routeState = _identity.RouteState;
         ApplyResolutionAvailability();
         if (routeState == RouteInspectRouteState.NotRouted)
         {

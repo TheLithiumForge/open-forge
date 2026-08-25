@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
-using OpenForge.Cli.Core.Commands.Route.Shared.Source;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 
@@ -23,7 +24,7 @@ internal sealed class RouteOverwriteFact
         }
 
         ArgumentNullException.ThrowIfNull(overwrite);
-        if (overwrite.Form != RouteSourceForm.OverwriteCompanion)
+        if (overwrite.Form != SourceDocumentForm.OverwriteCompanion)
         {
             throw new ArgumentException("An overwrite fact requires an overwrite companion document.", nameof(overwrite));
         }
@@ -39,7 +40,7 @@ internal sealed class RouteOverwriteFact
         var validCount = state switch
         {
             RouteOverwriteState.Paired => paths.Length == 1,
-            RouteOverwriteState.Orphan => paths.Length == 0,
+            RouteOverwriteState.Orphan => true,
             RouteOverwriteState.Ambiguous => paths.Length >= 2,
             _ => false,
         };
@@ -65,8 +66,9 @@ internal sealed class RouteOverwriteFact
 
     private static bool IsBasePath(string? path)
     {
-        if (!RouteLogicalPath.IsCanonical(path)
-            || path!.EndsWith(".overwrite.md", StringComparison.Ordinal))
+        if (path is not { } canonicalPath
+            || !SourceLogicalPath.IsCanonical(canonicalPath)
+            || canonicalPath.EndsWith(".overwrite.md", StringComparison.Ordinal))
         {
             return false;
         }

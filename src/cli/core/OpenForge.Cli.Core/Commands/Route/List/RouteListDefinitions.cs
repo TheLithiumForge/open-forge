@@ -21,9 +21,24 @@ internal sealed record RouteListDepth
 
     internal int? Value { get; }
 
+    internal int FiniteValue
+    {
+        get
+        {
+            if (Kind != RouteListDepthKind.Finite
+                || Value is not { } finiteValue)
+            {
+                throw new InvalidOperationException(
+                    "A finite route-list depth requires a finite value.");
+            }
+
+            return finiteValue;
+        }
+    }
+
     internal string MachineValue => Kind switch
     {
-        RouteListDepthKind.Finite => Value!.Value.ToString(System.Globalization.CultureInfo.InvariantCulture),
+        RouteListDepthKind.Finite => FiniteValue.ToString(System.Globalization.CultureInfo.InvariantCulture),
         RouteListDepthKind.All => RouteListDefinitions.AllDepth,
         _ => throw new ArgumentOutOfRangeException(nameof(Kind), Kind, "The route-list depth kind is not defined."),
     };

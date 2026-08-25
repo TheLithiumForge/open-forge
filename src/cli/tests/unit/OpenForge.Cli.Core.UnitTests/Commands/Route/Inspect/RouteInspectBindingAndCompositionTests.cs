@@ -379,7 +379,6 @@ public sealed class RouteInspectBindingAndCompositionTests
         Command route,
         Action operationCall)
     {
-        ArgumentNullException.ThrowIfNull(operationCall);
         var symbols = RouteInspectBinding.CreateSymbols(route);
         return RouteInspectBinding.Close(
             symbols,
@@ -402,8 +401,6 @@ public sealed class RouteInspectBindingAndCompositionTests
         Action bindingCall,
         Action operationCall)
     {
-        ArgumentNullException.ThrowIfNull(bindingCall);
-        ArgumentNullException.ThrowIfNull(operationCall);
         var route = RouteBinding.CreateGroup();
         var symbols = RouteInspectBinding.CreateSymbols(route);
         var binding = new CliCommandBinding<RouteInspectRequest, RouteInspectResult>(

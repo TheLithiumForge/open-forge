@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Presentation;
 using OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models;
+using OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Models.Source;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.List;
 

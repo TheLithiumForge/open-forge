@@ -3,8 +3,12 @@ using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Models.Topology;
-using OpenForge.Cli.Core.Commands.Route.Shared.Topology;
+using OpenForge.Cli.Core.Framework.Filesystem;
+using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
+using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Workspace;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect.Shared.Resolution;
@@ -16,22 +20,51 @@ internal static class RouteInspectResolutionTestData
         IEnumerable<string> loaderRootPaths,
         IEnumerable<RouteOverwriteFact>? additionalOverwriteFacts = null)
     {
-        ArgumentNullException.ThrowIfNull(sources);
-        ArgumentNullException.ThrowIfNull(loaderRootPaths);
         var materializedSources = sources.ToArray();
+        var materializedLoaderRootPaths = loaderRootPaths.ToArray();
+        var sourcePairs = materializedSources
+            .Select(source => (
+                RouteSource: source,
+                LogicalSource: LogicalSource(source)))
+            .ToArray();
+        var projections = sourcePairs
+            .Select(pair => Projection(pair.RouteSource, pair.LogicalSource))
+            .ToArray();
         var overwriteFacts = materializedSources
             .Where(source => source.Overwrite is not null)
-            .Select(source => new RouteOverwriteFact(
-                RouteOverwriteState.Paired,
-                source.Overwrite!,
-                [source.CanonicalPath]))
+            .Select(source =>
+            {
+                var overwrite = source.Overwrite
+                    ?? throw new InvalidOperationException("The fixed source must retain its overwrite layer.");
+                return new RouteOverwriteFact(
+                    RouteOverwriteState.Paired,
+                    overwrite,
+                    [source.CanonicalPath]);
+            })
             .Concat(additionalOverwriteFacts ?? [])
             .ToArray();
-        var catalogue = new RouteSourceCatalogue(materializedSources, overwriteFacts);
-        var topology = new RouteTopologyBuilder().Build(
-            materializedSources.Where(source => source.Kind != RouteSourceKind.Loader),
-            loaderRootPaths);
-        return new RouteInspectGraph(catalogue, topology);
+        var projectionSet = new RouteSourceProjectionSet(projections, overwriteFacts);
+        var routeSourcePairs = sourcePairs
+            .Where(pair => pair.RouteSource.Kind != RouteSourceKind.Loader)
+            .ToArray();
+        var topology = Topology(routeSourcePairs, materializedLoaderRootPaths);
+        var identityCounts = routeSourcePairs
+            .GroupBy(pair => pair.LogicalSource.Identity.AutomaticId, StringComparer.Ordinal)
+            .ToDictionary(group => group.Key, group => group.Count(), StringComparer.Ordinal);
+        const bool areLoaderRootFactsComplete = true;
+        var routeFacts = new SourceRouteFacts(
+            topology,
+            routeSourcePairs.Select(pair => new SourceRouteFact(
+                pair.LogicalSource.Identity,
+                ReadRouteState(
+                    topology,
+                    pair.LogicalSource.Identity.CanonicalBasePath,
+                    areLoaderRootFactsComplete),
+                identityCounts[pair.LogicalSource.Identity.AutomaticId] == 1)),
+            [],
+            areLoaderRootFactsComplete,
+            isCancelled: false);
+        return new RouteInspectGraph(projectionSet, routeFacts);
     }
 
     internal static RouteInspectResolution Resolved(
@@ -40,8 +73,7 @@ internal static class RouteInspectResolutionTestData
         RouteInspectSelectionMethod selectionMethod = RouteInspectSelectionMethod.AutomaticId,
         RouteInspectRouteState routeState = RouteInspectRouteState.Routed)
     {
-        ArgumentNullException.ThrowIfNull(graph);
-        var source = graph.Catalogue.FindByPath(selectedPath)
+        var source = graph.ProjectionSet.FindByPath(selectedPath)
             ?? throw new ArgumentException("The selected test source is absent from the graph.", nameof(selectedPath));
         var selection = Selection(source, selectionMethod);
         var identity = Identity(source, routeState);
@@ -55,7 +87,6 @@ internal static class RouteInspectResolutionTestData
 
     internal static RouteInspectResolution Create(RouteInspectResolutionSpec spec)
     {
-        ArgumentNullException.ThrowIfNull(spec);
         return RouteInspectResolution.Create(spec.State, spec.Selection, spec.Identity, spec.Graph, spec.Issues);
     }
 
@@ -166,17 +197,17 @@ internal static class RouteInspectResolutionTestData
         };
     }
 
-    private static RouteInspectSourceForm ReadInspectForm(RouteSourceForm form)
+    private static RouteInspectSourceForm ReadInspectForm(SourceDocumentForm form)
     {
         return form switch
         {
-            RouteSourceForm.CanonicalEntrypoint => RouteInspectSourceForm.CanonicalEntrypoint,
-            RouteSourceForm.IndexEntrypoint
-                or RouteSourceForm.UnderscoreIndexEntrypoint
-                or RouteSourceForm.ReferencesEntrypoint
-                or RouteSourceForm.UnderscoreReferencesEntrypoint => RouteInspectSourceForm.CompatibilityEntrypoint,
-            RouteSourceForm.Markdown => RouteInspectSourceForm.Markdown,
-            RouteSourceForm.Skill => RouteInspectSourceForm.Native,
+            SourceDocumentForm.CanonicalEntrypoint => RouteInspectSourceForm.CanonicalEntrypoint,
+            SourceDocumentForm.IndexEntrypoint
+                or SourceDocumentForm.UnderscoreIndexEntrypoint
+                or SourceDocumentForm.ReferencesEntrypoint
+                or SourceDocumentForm.UnderscoreReferencesEntrypoint => RouteInspectSourceForm.CompatibilityEntrypoint,
+            SourceDocumentForm.Markdown => RouteInspectSourceForm.Markdown,
+            SourceDocumentForm.Skill => RouteInspectSourceForm.Native,
             _ => throw new ArgumentOutOfRangeException(
                 nameof(form),
                 form,
@@ -199,6 +230,229 @@ internal static class RouteInspectResolutionTestData
         }
 
         return layers;
+    }
+
+    private static SourceLogicalSource LogicalSource(RouteSource source)
+    {
+        return new SourceLogicalSource(
+            new SourceLogicalIdentity(source.Id, source.CanonicalPath),
+            Layer(source.Base),
+            source.Overwrite is null ? null : Layer(source.Overwrite));
+    }
+
+    private static RouteSourceProjection Projection(
+        RouteSource source,
+        SourceLogicalSource logicalSource)
+    {
+        var baseRead = Read(logicalSource.Base, source.Base);
+        SourceDocumentReadResult? overwriteRead = null;
+        if (source.Overwrite is not null)
+        {
+            var logicalOverwrite = logicalSource.Overwrite
+                ?? throw new InvalidOperationException("The neutral fixture must retain the Route overwrite layer.");
+            overwriteRead = Read(logicalOverwrite, source.Overwrite);
+        }
+
+        return new RouteSourceProjection(logicalSource, source, baseRead, overwriteRead);
+    }
+
+    private static SourceDocumentReadResult Read(
+        SourceLayer layer,
+        RouteSourceDocument document)
+    {
+        var verificationState = document.ReadState == FileReadState.Missing
+            ? SourceLayerVerificationState.Missing
+            : SourceLayerVerificationState.Verified;
+        var verification = new SourceLayerVerification(
+            layer,
+            verificationState,
+            verificationState == SourceLayerVerificationState.Verified
+                ? layer.PhysicalPath
+                : null,
+            null);
+        var read = document.ReadState switch
+        {
+            FileReadState.Complete => FileReadResult<string>.Complete(
+                layer.CanonicalPath,
+                document.Body ?? throw new InvalidOperationException("A complete Route document requires its body.")),
+            FileReadState.Missing => FileReadResult<string>.Missing(layer.CanonicalPath),
+            FileReadState.Cancelled => FileReadResult<string>.Cancelled(layer.CanonicalPath),
+            FileReadState.InvalidEncoding
+                or FileReadState.InvalidSyntax
+                or FileReadState.AccessDenied
+                or FileReadState.InputOutputFailure => FileReadResult<string>.Failed(
+                    document.ReadState,
+                    layer.CanonicalPath,
+                    new FilesystemFailure(
+                        ReadFailureKind(document.ReadState),
+                        $"Fixed {document.ReadState} Route projection fixture.")),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(document),
+                document.ReadState,
+                "The Route document read state is not defined."),
+        };
+        return new SourceDocumentReadResult(layer, verification, read);
+    }
+
+    private static SourceLayer Layer(RouteSourceDocument document)
+    {
+        return new SourceLayer(
+            document.CanonicalLogicalPath,
+            document.PhysicalPath,
+            document.Form,
+            document.Form == SourceDocumentForm.OverwriteCompanion
+                ? SourceLayerKind.Overwrite
+                : SourceLayerKind.Base);
+    }
+
+    private static SourceRouteTopology Topology(
+        IReadOnlyList<(RouteSource RouteSource, SourceLogicalSource LogicalSource)> sourcePairs,
+        IReadOnlyList<string> loaderRootPaths)
+    {
+        var entrypointsByDirectory = sourcePairs
+            .Where(pair => pair.RouteSource.Kind == RouteSourceKind.Entrypoint)
+            .GroupBy(
+                pair => ReadParent(pair.LogicalSource.Identity.CanonicalBasePath),
+                StringComparer.Ordinal)
+            .ToDictionary(
+                group => group.Key,
+                group => group
+                    .OrderBy(pair => pair.LogicalSource.Identity.CanonicalBasePath, StringComparer.Ordinal)
+                    .ToArray(),
+                StringComparer.Ordinal);
+        var admittedPairs = sourcePairs
+            .Where(pair => IsAdmitted(pair, entrypointsByDirectory))
+            .ToArray();
+        var relationships = admittedPairs.ToDictionary(
+            pair => pair.LogicalSource.Identity.CanonicalBasePath,
+            pair => ReadParentRelationship(pair, entrypointsByDirectory),
+            StringComparer.Ordinal);
+        var childrenByParent = admittedPairs
+            .Select(pair => (
+                Path: pair.LogicalSource.Identity.CanonicalBasePath,
+                Parent: relationships[pair.LogicalSource.Identity.CanonicalBasePath]))
+            .Where(item => item.Parent.State == SourceRouteParentState.Resolved)
+            .GroupBy(item => item.Parent.Paths[0], StringComparer.Ordinal)
+            .ToDictionary(
+                group => group.Key,
+                group => group.Select(item => item.Path).OrderBy(path => path, StringComparer.Ordinal).ToArray(),
+                StringComparer.Ordinal);
+        var nodes = admittedPairs.Select(pair =>
+        {
+            var path = pair.LogicalSource.Identity.CanonicalBasePath;
+            var parent = relationships[path];
+            return new SourceRouteNode(
+                pair.LogicalSource.Identity,
+                parent.State,
+                parent.Paths,
+                childrenByParent.GetValueOrDefault(path) ?? []);
+        });
+        return new SourceRouteTopology(nodes, loaderRootPaths);
+    }
+
+    private static bool IsAdmitted(
+        (RouteSource RouteSource, SourceLogicalSource LogicalSource) pair,
+        IReadOnlyDictionary<string, (RouteSource RouteSource, SourceLogicalSource LogicalSource)[]> entrypointsByDirectory)
+    {
+        if (pair.RouteSource.Kind == RouteSourceKind.Entrypoint)
+        {
+            return true;
+        }
+
+        var containingDirectory = ReadParent(pair.LogicalSource.Identity.CanonicalBasePath);
+        var representedParentDirectory = pair.RouteSource.Kind == RouteSourceKind.Markdown
+            ? containingDirectory
+            : ReadParent(containingDirectory);
+        return entrypointsByDirectory.ContainsKey(representedParentDirectory);
+    }
+
+    private static (SourceRouteParentState State, string[] Paths) ReadParentRelationship(
+        (RouteSource RouteSource, SourceLogicalSource LogicalSource) pair,
+        IReadOnlyDictionary<string, (RouteSource RouteSource, SourceLogicalSource LogicalSource)[]> entrypointsByDirectory)
+    {
+        var containingDirectory = ReadParent(pair.LogicalSource.Identity.CanonicalBasePath);
+        var representedParentDirectory = pair.RouteSource.Kind == RouteSourceKind.Markdown
+            ? containingDirectory
+            : ReadParent(containingDirectory);
+        if (!entrypointsByDirectory.TryGetValue(representedParentDirectory, out var candidates))
+        {
+            return (SourceRouteParentState.None, []);
+        }
+
+        var candidatePaths = candidates
+            .Select(candidate => candidate.LogicalSource.Identity.CanonicalBasePath)
+            .Where(candidatePath => !string.Equals(
+                candidatePath,
+                pair.LogicalSource.Identity.CanonicalBasePath,
+                StringComparison.Ordinal))
+            .ToArray();
+        return candidatePaths.Length switch
+        {
+            0 => (SourceRouteParentState.None, []),
+            1 => (SourceRouteParentState.Resolved, candidatePaths),
+            _ => (SourceRouteParentState.Ambiguous, candidatePaths),
+        };
+    }
+
+    private static SourceRouteState ReadRouteState(
+        SourceRouteTopology topology,
+        string canonicalPath,
+        bool areLoaderRootFactsComplete)
+    {
+        var nodesByPath = topology.Nodes.ToDictionary(
+            node => node.Identity.CanonicalBasePath,
+            StringComparer.Ordinal);
+        if (!nodesByPath.TryGetValue(canonicalPath, out var current))
+        {
+            return areLoaderRootFactsComplete
+                ? SourceRouteState.Unrouted
+                : SourceRouteState.Unavailable;
+        }
+
+        while (true)
+        {
+            if (topology.LoaderRootPaths.Contains(current.Identity.CanonicalBasePath, StringComparer.Ordinal))
+            {
+                return SourceRouteState.Routed;
+            }
+
+            if (current.ParentState == SourceRouteParentState.Ambiguous)
+            {
+                return SourceRouteState.Ambiguous;
+            }
+
+            if (current.ParentState == SourceRouteParentState.None)
+            {
+                return areLoaderRootFactsComplete
+                    ? SourceRouteState.Unrouted
+                    : SourceRouteState.Unavailable;
+            }
+
+            current = nodesByPath[current.ParentPaths[0]];
+        }
+    }
+
+    private static string ReadParent(string canonicalPath)
+    {
+        var separatorIndex = canonicalPath.LastIndexOf('/');
+        if (separatorIndex <= 0)
+        {
+            throw new ArgumentException("The fixed source path has no canonical parent.", nameof(canonicalPath));
+        }
+
+        return canonicalPath[..separatorIndex];
+    }
+
+    private static FilesystemFailureKind ReadFailureKind(FileReadState state)
+    {
+        return state switch
+        {
+            FileReadState.InvalidEncoding => FilesystemFailureKind.InvalidEncoding,
+            FileReadState.InvalidSyntax => FilesystemFailureKind.InvalidSyntax,
+            FileReadState.AccessDenied => FilesystemFailureKind.AccessDenied,
+            FileReadState.InputOutputFailure => FilesystemFailureKind.InputOutput,
+            _ => throw new ArgumentOutOfRangeException(nameof(state), state, "The read state is not a failure state."),
+        };
     }
 }
 

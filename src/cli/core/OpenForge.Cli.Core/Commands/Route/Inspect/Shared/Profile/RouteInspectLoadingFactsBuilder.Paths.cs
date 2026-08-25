@@ -1,6 +1,6 @@
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Source;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile;
 
@@ -43,7 +43,7 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
                     continue;
                 }
 
-                if (!RouteLogicalPath.IsCanonicalSegment(segment))
+                if (!SourceLogicalPath.IsCanonicalSegment(segment))
                 {
                     return null;
                 }
@@ -52,7 +52,7 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
             }
 
             var path = string.Join('/', segments);
-            return RouteLogicalPath.IsCanonical(path) ? path : null;
+            return SourceLogicalPath.IsCanonical(path) ? path : null;
         }
         catch (DecoderFallbackException)
         {

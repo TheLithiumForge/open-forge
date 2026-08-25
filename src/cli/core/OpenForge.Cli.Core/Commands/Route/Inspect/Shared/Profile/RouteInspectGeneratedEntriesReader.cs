@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile.Models;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Commands.Route.Shared.Source;
@@ -90,10 +92,10 @@ internal static class RouteInspectGeneratedEntriesReader
 
             if (!TryParseEntry(line, out var destination, out var tags, out var cause))
             {
-                return RouteInspectGeneratedEntries.Unavailable(cause!);
+                return RouteInspectGeneratedEntries.Unavailable(cause);
             }
 
-            entries.Add(new RouteInspectGeneratedEntry(destination!, tags));
+            entries.Add(new RouteInspectGeneratedEntry(destination, tags));
         }
 
         return RouteInspectGeneratedEntries.Available(entries);
@@ -101,9 +103,9 @@ internal static class RouteInspectGeneratedEntriesReader
 
     private static bool TryParseEntry(
         string line,
-        out string? destination,
+        [NotNullWhen(true)] out string? destination,
         out IReadOnlyList<string> tags,
-        out string? cause)
+        [NotNullWhen(false)] out string? cause)
     {
         destination = null;
         tags = [];

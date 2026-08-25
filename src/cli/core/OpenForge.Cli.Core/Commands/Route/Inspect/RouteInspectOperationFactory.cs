@@ -5,8 +5,7 @@ using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Result;
-using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Commands.Route.Shared.Source;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect;
@@ -148,7 +147,7 @@ internal sealed class RouteInspectOperationCoordinator
     private static RouteInspectSelection ReadUnresolvedSelection(string sourceReference)
     {
         return RouteInspectResolutionSupport.UnresolvedSelection(
-            RouteSourceReferenceParser.Parse(sourceReference));
+            SourceReferenceParser.Parse(sourceReference));
     }
 
     private static RouteInspectResult CreateFallbackResult(

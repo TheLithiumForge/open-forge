@@ -27,6 +27,16 @@ internal sealed class RouteInspectGeneratedEntries
 
     internal string? Reason { get; }
 
+    internal string ReadReason()
+    {
+        if (IsAvailable || Reason is not { } reason)
+        {
+            throw new InvalidOperationException("Unavailable generated Entries require a reason.");
+        }
+
+        return reason;
+    }
+
     internal static RouteInspectGeneratedEntries Available(
         IEnumerable<RouteInspectGeneratedEntry> entries)
     {

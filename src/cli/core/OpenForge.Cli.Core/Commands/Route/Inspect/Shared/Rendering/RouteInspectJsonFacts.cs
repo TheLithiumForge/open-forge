@@ -10,39 +10,45 @@ internal static class RouteInspectJsonFacts
         Func<TSource, TJson> projection)
         where TJson : class
     {
-        ArgumentNullException.ThrowIfNull(fact);
         ArgumentNullException.ThrowIfNull(projection);
+        var state = RouteInspectJsonNames.FactState(fact.State);
         if (fact.State != RouteInspectFactState.Value)
         {
             return new RouteInspectJsonFact<TJson>
             {
-                State = RouteInspectJsonNames.FactState(fact.State),
+                State = state,
                 Value = null,
-                Reason = fact.Reason,
+                Reason = fact.ReadReason(),
             };
         }
 
-        if (fact.Value is null)
-        {
-            throw new InvalidOperationException("An available route-inspect fact must contain a value.");
-        }
-
+        var value = fact.ReadValue();
         return new RouteInspectJsonFact<TJson>
         {
-            State = RouteInspectJsonNames.FactState(fact.State),
-            Value = projection(fact.Value),
+            State = state,
+            Value = projection(value),
             Reason = null,
         };
     }
 
     internal static RouteInspectJsonBooleanFact Boolean(RouteInspectFact<bool> fact)
     {
-        ArgumentNullException.ThrowIfNull(fact);
+        var state = RouteInspectJsonNames.FactState(fact.State);
+        if (fact.State == RouteInspectFactState.Value)
+        {
+            return new RouteInspectJsonBooleanFact
+            {
+                State = state,
+                Value = fact.ReadValue(),
+                Reason = null,
+            };
+        }
+
         return new RouteInspectJsonBooleanFact
         {
-            State = RouteInspectJsonNames.FactState(fact.State),
-            Value = fact.State == RouteInspectFactState.Value ? fact.Value : null,
-            Reason = fact.Reason,
+            State = state,
+            Value = null,
+            Reason = fact.ReadReason(),
         };
     }
 
