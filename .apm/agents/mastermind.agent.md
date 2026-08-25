@@ -39,163 +39,106 @@ permission:
     "*.git-credentials": ask
     "*.env.example": allow
   bash:
-    "*": ask
-    "*git branch -D*": ask
-    "*git push*": ask
-    "*git * push*": ask
-    "*git fetch*": ask
-    "*git * fetch*": ask
-    "*git pull*": ask
-    "*git * pull*": ask
-    "*git clone*": ask
-    "*git * clone*": ask
-    "*git ls-remote*": ask
-    "*git submodule*": ask
-    "*git reset --hard*": ask
-    "*git clean*": ask
-    "*gh *": ask
-    "*curl *": ask
-    "*wget *": ask
-    "*ssh *": ask
-    "*scp *": ask
-    "*rsync *": ask
-    "*npm publish*": ask
-    "*pnpm publish*": ask
-    "*yarn publish*": ask
-    "*bun publish*": ask
-    "*dotnet nuget push*": ask
-    "*docker push*": ask
-    "*kubectl apply*": ask
-    "*kubectl delete*": ask
-    "*helm upgrade*": ask
-    "*terraform apply*": ask
-    "*terraform destroy*": ask
-    "*aws *": ask
-    "*az *": ask
-    "*gcloud *": ask
-    "* publish*": ask
-    "* deploy*": ask
-    "*git restore*": ask
-    "*git switch*": ask
-    "*git checkout*": ask
-    "*git rebase*": ask
-    "*git merge*": ask
-    "*git cherry-pick*": ask
-    "*git reset*": ask
-    "*git branch -d*": ask
-    "*git branch --delete*": ask
-    "*git credential*": ask
-    "*find * -delete*": ask
-    "*sudo *": ask
-    "*doas *": ask
-    "*mkfs*": ask
-    "*npm install*": ask
-    "*npm ci*": ask
-    "*pnpm install*": ask
-    "*yarn install*": ask
-    "*bun install*": ask
-    "*dotnet restore*": ask
-    "*dotnet add * package*": ask
-    "*pip install*": ask
-    "*uv pip install*": ask
-    "*poetry add*": ask
-    "*cargo install*": ask
-    "*cargo add*": ask
-    "*go get*": ask
-    "*apt *": ask
-    "*apt-get *": ask
-    "*dnf *": ask
-    "*yum *": ask
-    "*pacman *": ask
-    "*brew *": ask
-    "*ssh-keygen*": ask
-    "*gpg *": ask
+    "*": allow
+
+    # Keep destructive filesystem and data operations approval-gated.
     rm: ask
     rm *: ask
-    "*&& rm": ask
-    "*&& rm *": ask
-    "*; rm": ask
-    "*; rm *": ask
-    "*|| rm": ask
-    "*|| rm *": ask
-    "*| rm": ask
-    "*| rm *": ask
+    "* rm *": ask
     rmdir: ask
     rmdir *: ask
-    "*&& rmdir": ask
-    "*&& rmdir *": ask
-    "*; rmdir": ask
-    "*; rmdir *": ask
-    "*|| rmdir": ask
-    "*|| rmdir *": ask
-    "*| rmdir": ask
-    "*| rmdir *": ask
+    "* rmdir *": ask
     unlink: ask
     unlink *: ask
-    "*&& unlink": ask
-    "*&& unlink *": ask
-    "*; unlink": ask
-    "*; unlink *": ask
-    "*|| unlink": ask
-    "*|| unlink *": ask
-    "*| unlink": ask
-    "*| unlink *": ask
+    "* unlink *": ask
     shred: ask
     shred *: ask
-    "*&& shred": ask
-    "*&& shred *": ask
-    "*; shred": ask
-    "*; shred *": ask
-    "*|| shred": ask
-    "*|| shred *": ask
-    "*| shred": ask
-    "*| shred *": ask
+    "* shred *": ask
     truncate: ask
     truncate *: ask
-    "*&& truncate": ask
-    "*&& truncate *": ask
-    "*; truncate": ask
-    "*; truncate *": ask
-    "*|| truncate": ask
-    "*|| truncate *": ask
-    "*| truncate": ask
-    "*| truncate *": ask
-    dd: ask
-    dd *: ask
-    "*&& dd": ask
-    "*&& dd *": ask
-    "*; dd": ask
-    "*; dd *": ask
-    "*|| dd": ask
-    "*|| dd *": ask
-    "*| dd": ask
-    "*| dd *": ask
-    mount: ask
-    mount *: ask
-    "*&& mount": ask
-    "*&& mount *": ask
-    "*; mount": ask
-    "*; mount *": ask
-    "*|| mount": ask
-    "*|| mount *": ask
-    "*| mount": ask
-    "*| mount *": ask
-    umount: ask
-    umount *: ask
-    "*&& umount": ask
-    "*&& umount *": ask
-    "*; umount": ask
-    "*; umount *": ask
-    "*|| umount": ask
-    "*|| umount *": ask
-    "*| umount": ask
-    "*| umount *": ask
+    "* truncate *": ask
+    "*find * -delete*": ask
+    "*Remove-Item*": ask
+    "*remove-item*": ask
+    del: ask
+    del *: ask
+    "* del *": ask
+    erase: ask
+    erase *: ask
+    "* erase *": ask
+    rd: ask
+    rd *: ask
+    "* rd *": ask
+    "*Clear-Content*": ask
+    "*clear-content*": ask
+    "*shutil.rmtree*": ask
+    "*os.remove*": ask
+    "*os.unlink*": ask
+    "*Path.unlink*": ask
+
+    # Preserve worktree and history unless the exact destructive Git action is approved.
+    "*git branch -D*": ask
+    "*git branch --delete --force*": ask
+    "*git clean*": ask
+    "*git reset --hard*": ask
+    "*git restore*": ask
+    "*git checkout --*": ask
+    "*git rm*": ask
+    "*git * rm*": ask
+    "*git reflog expire*": ask
+    "*git gc *--prune*": ask
+
+    # Remote mutations, publication, deployment, and privileged system effects stay explicit.
+    "*git push*": ask
+    "*git * push*": ask
     "*git remote add*": ask
     "*git remote set-url*": ask
     "*git remote remove*": ask
     "*git remote rename*": ask
     "*git remote update*": ask
     "*git remote prune*": ask
+    "*gh pr create*": ask
+    "*gh pr merge*": ask
+    "*gh issue create*": ask
+    "*gh release create*": ask
+    "*gh release delete*": ask
+    "*gh repo delete*": ask
+    "*gh api *--method DELETE*": ask
+    "*npm publish*": ask
+    "*pnpm publish*": ask
+    "*yarn publish*": ask
+    "*bun publish*": ask
+    "*dotnet nuget push*": ask
+    "*docker push*": ask
+    "*docker * prune*": ask
+    "*kubectl apply*": ask
+    "*kubectl delete*": ask
+    "*helm upgrade*": ask
+    "*terraform apply*": ask
+    "*terraform destroy*": ask
+    "* publish*": ask
+    "* deploy*": ask
+    "*aws *": ask
+    "*az *": ask
+    "*gcloud *": ask
+    "*curl *": ask
+    "*wget *": ask
+    "*ssh *": ask
+    "*scp *": ask
+    "*rsync *": ask
+    "*git credential*": ask
+    "*ssh-keygen*": ask
+    "*gpg *": ask
+    "*sudo *": ask
+    "*doas *": ask
+    "*mkfs*": ask
+    "*diskpart*": ask
+    mount: ask
+    mount *: ask
+    "* mount *": ask
+    umount: ask
+    umount *: ask
+    "* umount *": ask
   lsp: allow
   skill: allow
   websearch: allow

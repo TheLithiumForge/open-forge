@@ -39,159 +39,106 @@ permission:
     "*.git-credentials": deny
     "*.env.example": allow
   bash:
-    "*": ask
-    "*git add*": deny
-    "*git commit*": deny
-    "*git merge*": deny
-    "*git rebase*": deny
-    "*git cherry-pick*": deny
-    "*git switch*": deny
-    "*git checkout*": deny
-    "*git branch -D*": deny
-    "*git push*": deny
-    "*git * push*": deny
-    "*git fetch*": deny
-    "*git * fetch*": deny
-    "*git pull*": deny
-    "*git * pull*": deny
-    "*git clone*": deny
-    "*git * clone*": deny
-    "*git remote *": deny
-    "*git ls-remote*": deny
-    "*git submodule*": deny
-    "*git reset*": deny
-    "*git clean*": deny
-    "*gh *": deny
-    "*curl *": deny
-    "*wget *": deny
-    "*ssh *": deny
-    "*scp *": deny
-    "*rsync *": deny
-    "*npm publish*": deny
-    "*pnpm publish*": deny
-    "*yarn publish*": deny
-    "*bun publish*": deny
-    "*dotnet nuget push*": deny
-    "*docker push*": deny
-    "*kubectl apply*": deny
-    "*kubectl delete*": deny
-    "*helm upgrade*": deny
-    "*terraform apply*": deny
-    "*terraform destroy*": deny
-    "*aws *": deny
-    "*az *": deny
-    "*gcloud *": deny
-    "* publish*": deny
-    "* deploy*": deny
-    "*git restore*": deny
-    "*git branch -d*": deny
-    "*git branch --delete*": deny
-    "*git credential*": deny
-    "*find * -delete*": deny
-    "*sudo *": deny
-    "*doas *": deny
-    "*mkfs*": deny
-    "*npm install*": deny
-    "*npm ci*": deny
-    "*pnpm install*": deny
-    "*yarn install*": deny
-    "*bun install*": deny
-    "*dotnet restore*": deny
-    "*dotnet add * package*": deny
-    "*pip install*": deny
-    "*uv pip install*": deny
-    "*poetry add*": deny
-    "*cargo install*": deny
-    "*cargo add*": deny
-    "*go get*": deny
-    "*apt *": deny
-    "*apt-get *": deny
-    "*dnf *": deny
-    "*yum *": deny
-    "*pacman *": deny
-    "*brew *": deny
-    "*ssh-keygen*": deny
-    "*gpg *": deny
-    rm: deny
-    rm *: deny
-    "*&& rm": deny
-    "*&& rm *": deny
-    "*; rm": deny
-    "*; rm *": deny
-    "*|| rm": deny
-    "*|| rm *": deny
-    "*| rm": deny
-    "*| rm *": deny
-    rmdir: deny
-    rmdir *: deny
-    "*&& rmdir": deny
-    "*&& rmdir *": deny
-    "*; rmdir": deny
-    "*; rmdir *": deny
-    "*|| rmdir": deny
-    "*|| rmdir *": deny
-    "*| rmdir": deny
-    "*| rmdir *": deny
-    unlink: deny
-    unlink *: deny
-    "*&& unlink": deny
-    "*&& unlink *": deny
-    "*; unlink": deny
-    "*; unlink *": deny
-    "*|| unlink": deny
-    "*|| unlink *": deny
-    "*| unlink": deny
-    "*| unlink *": deny
-    shred: deny
-    shred *: deny
-    "*&& shred": deny
-    "*&& shred *": deny
-    "*; shred": deny
-    "*; shred *": deny
-    "*|| shred": deny
-    "*|| shred *": deny
-    "*| shred": deny
-    "*| shred *": deny
-    truncate: deny
-    truncate *: deny
-    "*&& truncate": deny
-    "*&& truncate *": deny
-    "*; truncate": deny
-    "*; truncate *": deny
-    "*|| truncate": deny
-    "*|| truncate *": deny
-    "*| truncate": deny
-    "*| truncate *": deny
-    dd: deny
-    dd *: deny
-    "*&& dd": deny
-    "*&& dd *": deny
-    "*; dd": deny
-    "*; dd *": deny
-    "*|| dd": deny
-    "*|| dd *": deny
-    "*| dd": deny
-    "*| dd *": deny
-    mount: deny
-    mount *: deny
-    "*&& mount": deny
-    "*&& mount *": deny
-    "*; mount": deny
-    "*; mount *": deny
-    "*|| mount": deny
-    "*|| mount *": deny
-    "*| mount": deny
-    "*| mount *": deny
-    umount: deny
-    umount *: deny
-    "*&& umount": deny
-    "*&& umount *": deny
-    "*; umount": deny
-    "*; umount *": deny
-    "*|| umount": deny
-    "*|| umount *": deny
-    "*| umount": deny
-    "*| umount *": deny
+    "*": allow
+
+    # Keep destructive filesystem and data operations approval-gated.
+    rm: ask
+    rm *: ask
+    "* rm *": ask
+    rmdir: ask
+    rmdir *: ask
+    "* rmdir *": ask
+    unlink: ask
+    unlink *: ask
+    "* unlink *": ask
+    shred: ask
+    shred *: ask
+    "* shred *": ask
+    truncate: ask
+    truncate *: ask
+    "* truncate *": ask
+    "*find * -delete*": ask
+    "*Remove-Item*": ask
+    "*remove-item*": ask
+    del: ask
+    del *: ask
+    "* del *": ask
+    erase: ask
+    erase *: ask
+    "* erase *": ask
+    rd: ask
+    rd *: ask
+    "* rd *": ask
+    "*Clear-Content*": ask
+    "*clear-content*": ask
+    "*shutil.rmtree*": ask
+    "*os.remove*": ask
+    "*os.unlink*": ask
+    "*Path.unlink*": ask
+
+    # Preserve worktree and history unless the exact destructive Git action is approved.
+    "*git branch -D*": ask
+    "*git branch --delete --force*": ask
+    "*git clean*": ask
+    "*git reset --hard*": ask
+    "*git restore*": ask
+    "*git checkout --*": ask
+    "*git rm*": ask
+    "*git * rm*": ask
+    "*git reflog expire*": ask
+    "*git gc *--prune*": ask
+
+    # Remote mutations, publication, deployment, and privileged system effects stay explicit.
+    "*git push*": ask
+    "*git * push*": ask
+    "*git remote add*": ask
+    "*git remote set-url*": ask
+    "*git remote remove*": ask
+    "*git remote rename*": ask
+    "*git remote update*": ask
+    "*git remote prune*": ask
+    "*gh pr create*": ask
+    "*gh pr merge*": ask
+    "*gh issue create*": ask
+    "*gh release create*": ask
+    "*gh release delete*": ask
+    "*gh repo delete*": ask
+    "*gh api *--method DELETE*": ask
+    "*npm publish*": ask
+    "*pnpm publish*": ask
+    "*yarn publish*": ask
+    "*bun publish*": ask
+    "*dotnet nuget push*": ask
+    "*docker push*": ask
+    "*docker * prune*": ask
+    "*kubectl apply*": ask
+    "*kubectl delete*": ask
+    "*helm upgrade*": ask
+    "*terraform apply*": ask
+    "*terraform destroy*": ask
+    "* publish*": ask
+    "* deploy*": ask
+    "*aws *": ask
+    "*az *": ask
+    "*gcloud *": ask
+    "*curl *": ask
+    "*wget *": ask
+    "*ssh *": ask
+    "*scp *": ask
+    "*rsync *": ask
+    "*git credential*": ask
+    "*ssh-keygen*": ask
+    "*gpg *": ask
+    "*sudo *": ask
+    "*doas *": ask
+    "*mkfs*": ask
+    "*diskpart*": ask
+    mount: ask
+    mount *: ask
+    "* mount *": ask
+    umount: ask
+    umount *: ask
+    "* umount *": ask
   lsp: allow
   task: deny
   question: deny
