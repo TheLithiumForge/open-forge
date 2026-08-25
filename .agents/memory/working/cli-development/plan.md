@@ -14,11 +14,12 @@ open-forge:
   Mastermind owns architecture, sequencing, Task decomposition, integration, and
   Plan maintenance within that direction.
 - Last updated: 2026-08-25.
-- Current task: [Improve The Repository-Root CLI Developer
-  Workflow](tasks/repository-root-developer-workflow.md) is Active through local
-  squash integration. References remains Planned and is not authorized.
-- Current step: Commit the accepted feature tree, squash it locally into
-  `develop`, and prove exact tree equality. Root tooling, automatic managed
+- Current task: No implementation Task is selected. [Improve The Repository-Root
+  CLI Developer Workflow](tasks/repository-root-developer-workflow.md) is Complete
+  and squash-integrated into local `develop` at `d9e0686`. References remains
+  Planned and is not authorized.
+- Current step: Await maintainer selection of the next Task. Root tooling,
+  automatic managed
   `open-forge-dev` publication from ordinary CLI builds, build-selected native
   EndToEnd discovery without executable environment variables, temporary
   compatibility-name routing, WSL portability, and obsolete preserved-test
@@ -333,7 +334,7 @@ diff, parent requirements, and claimed evidence.
 | GI1 | Complete | Remediate parser behavior, improve active-test architecture, and accept the closed callable/root-host structure before the next product Task | R2 | Sequential | Generic improvement | Beginning/final complete suites and focused phase evidence |
 | Q1  | Complete | Complete Find's source catalogue, corrected query operation, and presentation children in order. Children 1 and 2 are accepted, and Child 3 plus the Find parent are Complete and accepted in the commit containing this record update. The no-op Purple acceptance is recorded at exact `426d4f5`; the final managed/native gate and package, artifact, static, no-write, Route/Shell/root, and generated-routing audits passed. | GI1, P6 | Sequential | Source queries | Contract, CommonMark, process, AOT |
 | GI2 | Complete | Complete the accepted behavior-neutral Modern C# Improvements batches and final managed, Native AOT, package, audit, and public no-write gates. | Q1 Child 1 acceptance | Sequential | Generic improvement | Final gate and integrated reviews pass |
-| DX1 | Active   | Move .NET workspace controls and artifacts to the repository root, make ordinary EndToEnd builds publish and discover `open-forge-dev`, remove obsolete preserved tests, and repair temporary compatibility-name routing. | Q1, GI2 | Sequential | Developer workflow | Root build/test, environment-free EndToEnd, routing, review |
+| DX1 | Complete | Move .NET workspace controls and artifacts to the repository root, make ordinary EndToEnd builds publish and discover `open-forge-dev`, remove obsolete preserved tests, and repair temporary compatibility-name routing. | Q1, GI2 | Sequential | Developer workflow | Root build/test, environment-free EndToEnd, routing, review |
 | Q2  | Pending  | Implement and accept `references` after the source and document facts it needs are accepted; do not mutate shared source facts in parallel. | GI1, Q1 source/document acceptance, DX1 | Sequential | Source queries | Direct-reference evidence |
 | Q3  | Pending  | Implement and accept `context` after Q1 and Q2 facts stabilize                                                              | Q1, Q2     | Sequential  | Context              | Ordered context and token evidence           |
 | E1  | Pending  | Implement and accept `extension list` and `extension inspect`                                                               | G1, GI1    | Read-only C | Extension discovery  | Catalogue and package-source evidence        |

@@ -14,11 +14,12 @@ release.
 
 ## Current State
 
-Find is Complete and squash-integrated into local `develop` at `1f03d16`.
-References remains Planned and is not authorized in the current Task.
+Find is Complete and squash-integrated into local `develop` at `1f03d16`. The
+repository-root developer workflow is Complete and squash-integrated into local
+`develop` at `d9e0686`. References remains Planned and is not authorized.
 
-The active branch is `feature/cli-root-developer-experience`. Its accepted
-direction is recorded in the [repository-root developer workflow
+The active branch is `develop`. The accepted developer-workflow direction is
+recorded in the [repository-root developer workflow
 Task](../cli-development/tasks/repository-root-developer-workflow.md) and the
 [Repository-Root CLI Tooling Decision](../../crystallized/decisions/repository-root-cli-tooling.md).
 
@@ -51,8 +52,8 @@ publication, remote action, or push occurred.
 
 ## Current Step
 
-Commit the accepted feature tree, squash it locally into `develop`, and prove
-exact tree equality without pushing.
+Await maintainer selection of the next CLI Task. Do not begin References, Index,
+or mutation behavior without that selection.
 
 ## Protected State
 
@@ -64,10 +65,9 @@ exact tree equality without pushing.
 
 ## Next Actions
 
-1. Commit the maintainer-authorized feature files while preserving unrelated
-   worktree state.
-2. Create one local squash commit on `develop` and prove exact tree equality.
-3. Keep References and Index Planned until the maintainer selects the next Task.
+1. Keep References and Index Planned until the maintainer selects the next Task.
+2. Create the next feature branch only after that Task and its dependencies are
+   accepted for implementation.
 
 ## Current Sources
 

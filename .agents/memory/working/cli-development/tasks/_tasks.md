@@ -15,7 +15,7 @@ Read the [program Task](00-cli-development.md), [Architecture](../../../crystall
 - [x] [Generic CLI Improvements](generic-improvements/_generic-improvements.md) — Complete — Implementer: Mastermind
 - [ ] [Read-Only Commands](read-only/_read-only.md) — Active; Find is Complete and integrated at `1f03d16`, while References remains Planned — Implementer: Mastermind
 - [x] [Modern C# Improvements](modern-csharp-improvements.md) — Complete; Preflight `55eb82e`, Framework `a90af59`, Shell/root `fe10525`, Route Inspect/family `62a1dd9`, Route List `273eb45`, Tests/support `6af5fb1`, and final managed, Native AOT, package, audit, and public no-write gates accepted in the commit containing this record — Implementer: Mastermind
-- [ ] [Repository-root CLI developer workflow](repository-root-developer-workflow.md) — Active through local squash integration; implementation, evidence, review, and correction are accepted — Implementer: Mastermind
+- [x] [Repository-root CLI developer workflow](repository-root-developer-workflow.md) — Complete and squash-integrated into local `develop` at `d9e0686` — Implementer: Mastermind
 - [ ] [Mutation Foundation](mutation-foundation/_mutation-foundation.md) — Planned — Implementer: Not assigned
 - [ ] [Route Mutation Commands](route-mutation/_route-mutation.md) — Planned — Implementer: Not assigned
 - [ ] [Lifecycle Commands](lifecycle/_lifecycle.md) — Planned — Implementer: Not assigned
@@ -64,7 +64,7 @@ define execution state.
 - [Build and accept locking, lifecycle, planning, application, recovery, and Git foundations before mutations](mutation-foundation/_mutation-foundation.md) - #Memory #Working #CLI #Task #Mutation #Lifecycle #Recovery #Git #Contextual
 - [Implement aggregate status, diagnosis, repair, and cleanup after every state producer exists](operations/_operations.md) - #Memory #Working #CLI #Task #Status #Doctor #Repair #Cleanup #Contextual
 - [Implement retained read-only source, context, extension, and generated-navigation commands](read-only/_read-only.md) - #Memory #Working #CLI #Task #ReadOnly #Source #Extension #Index #Contextual
-- [Move replacement CLI tooling to the repository root and make ordinary test runs publish and discover the local development executable](repository-root-developer-workflow.md) - #Memory #Working #CLI #Task #DotNet #Testing #DeveloperExperience #Contextual #Active
+- [Move replacement CLI tooling to the repository root and make ordinary test runs publish and discover the local development executable](repository-root-developer-workflow.md) - #Memory #Working #CLI #Task #DotNet #Testing #DeveloperExperience #Contextual #Complete
 - [Implement read-only route discovery, beginning with route list and then route inspect](route-discovery/_route-discovery.md) - #Memory #Working #CLI #Task #Route #Discovery #ReadOnly #Contextual #Complete
 - [Implement retained route mutation commands on the accepted mutation foundation](route-mutation/_route-mutation.md) - #Memory #Working #CLI #Task #Route #Mutation #Contextual
 <!-- open-forge:generated-index:end -->

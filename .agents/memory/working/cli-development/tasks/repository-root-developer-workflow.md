@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Move replacement CLI tooling to the repository root and make ordinary test runs publish and discover the local development executable
-  tags: [Memory, Working, CLI, Task, DotNet, Testing, DeveloperExperience, Contextual, Active]
+  tags: [Memory, Working, CLI, Task, DotNet, Testing, DeveloperExperience, Contextual, Complete]
 execution:
   profile: Assured
   review-budget: 1
@@ -13,11 +13,12 @@ execution:
 
 ## Task State
 
-- State: Active through local squash integration. The implementation and evidence
-  are accepted.
+- State: Complete. The accepted feature tree is squash-integrated into local
+  `develop` at `d9e0686`.
 - Responsible role: Mastermind.
 - Parent: [Complete The Replacement CLI](00-cli-development.md).
 - Branch: `feature/cli-root-developer-experience`.
+- Integration: `d9e0686` (`Improve CLI developer workflow`).
 - Review consumed: `DX1-R1` (`CHANGES_REQUIRED`; accepted finding `DX1-R1-F1`).
 - Correction consumed: `DX1-C1` (complete; corrected `DX1-R1-F1`).
 

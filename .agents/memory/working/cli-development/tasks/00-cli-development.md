@@ -9,8 +9,8 @@ open-forge:
 ## Task State
 
 - State: Active. Find is integrated at `1f03d16`. The repository-root developer
-  workflow Task is Active through local squash integration; the broader
-  replacement CLI program remains Active.
+  workflow Task is Complete and squash-integrated into local `develop` at
+  `d9e0686`; the broader replacement CLI program remains Active.
 - Responsible role: Mastermind.
 - Task source: This file.
 - Last updated: 2026-08-25.

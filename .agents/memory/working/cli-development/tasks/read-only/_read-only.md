@@ -9,8 +9,8 @@ open-forge:
 ## Task State
 
 - State: Active. Find is Complete and squash-integrated into local `develop` at
-  `1f03d16`. The repository-root developer workflow is Active through local
-  squash integration before the next command begins. Find Child 1 is Complete and
+  `1f03d16`. The repository-root developer workflow is Complete and
+  squash-integrated into local `develop` at `d9e0686`. Find Child 1 is Complete and
   accepted at exact commit `96fe413`
   (`Accept Find source catalogue`). Modern C# Improvements is Complete and
   accepted at exact `a1cbf09`. Its Preflight was accepted at `55eb82e`, Framework
@@ -133,8 +133,8 @@ recorded cancellation limitation.
 Find Child 3 and the Find parent are Complete. Their accepted feature tree was
 squash-integrated into local `develop` at `1f03d16`. The final managed/native gate
 and package, artifact, static, public no-write, and protected-surface audits remain
-the accepted Find evidence. References remains Planned while the repository-root
-developer workflow Task completes.
+the accepted Find evidence. The repository-root developer workflow is Complete at
+`d9e0686`. References remains Planned until the maintainer selects it.
 
 The temporary compatibility-name correction renames the Working Index and
 References Task files and stages their command contracts under candidate route
