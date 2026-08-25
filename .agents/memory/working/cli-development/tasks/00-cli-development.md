@@ -10,7 +10,9 @@ open-forge:
 
 - State: Active. Find is integrated at `1f03d16`. The repository-root developer
   workflow Task is Complete and squash-integrated into local `develop` at
-  `d9e0686`; the broader replacement CLI program remains Active.
+  `d9e0686`. References is Active in Preflight and blocked on its exact public
+  result and Markdown-reference boundary; the broader replacement CLI program
+  remains Active.
 - Responsible role: Mastermind.
 - Task source: This file.
 - Last updated: 2026-08-25.
@@ -141,7 +143,7 @@ bypass the Foundation group.
   Three read-only explorers and one grounded advisor inspected the current Route
   List, Route Inspect, and Framework code from that exact boundary without edits.
 - Child 1 is Complete and accepted at exact commit `96fe413` (`Accept Find source
-  catalogue`). Its
+catalogue`). Its
   [acceptance record](read-only/find-source-catalogue.md)
   contains the neutral authority, Route-local projections and policy, final
   corrections, full gate, no-write gate, and recorded cancellation limitation.
@@ -183,7 +185,7 @@ bypass the Foundation group.
   `13` total with `13` intentional failures, all with zero skips. The Integration
   metadata correction is accepted at exact `6a9a0de`, and the mirrored EndToEnd
   metadata correction is accepted at exact `eea3d59` (`Complete Find presentation
-  metadata evidence`). Its post-commit Red reproduction succeeded as intentional
+metadata evidence`). Its post-commit Red reproduction succeeded as intentional
   Red: managed non-AOT `win-x64` publish passed, and published Find EndToEnd was
   `13` total with `13` intentional failures and zero skips, all terminating at
   absent Green root registration. Historical pre-correction review found the
@@ -207,7 +209,7 @@ bypass the Foundation group.
   was `6` total with `1` pass and `5` intended defect-exposing failures, zero
   skips.
 - Green result: Child 3 Green is accepted at exact commit `cb7874c` (`Implement
-  Find presentation`) over corrected Red `a865fd1`. It is the production/root-
+Find presentation`) over corrected Red `a865fd1`. It is the production/root-
   composition-only Green; no test, support, contract, project, package,
   configuration, generated-routing, or Route behavior change enters Green. The
   exact scope is 15 production paths: Find binding, request, result builder, and

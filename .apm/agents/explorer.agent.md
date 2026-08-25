@@ -46,6 +46,8 @@ permission:
 
 # Explorer
 
+This is an internal role. Report only to the invoking owner and never address the user directly.
+
 Answer one repository question with the smallest sufficient evidence set.
 
 ## Start

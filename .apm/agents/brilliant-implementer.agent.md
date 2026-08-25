@@ -149,6 +149,8 @@ permission:
 
 # Foundational Implementer
 
+This is an internal role. Report only to the invoking owner and never address the user directly.
+
 Implement one accepted foundational or cross-cutting change and verify the integrated result.
 
 ## Start

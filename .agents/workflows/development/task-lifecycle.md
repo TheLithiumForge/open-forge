@@ -12,7 +12,7 @@ Prepare and run one implementation task from an exact local baseline with accept
 
 ## Steps
 
-1. Adopt the relevant read-only analysis or plan. Confirm the outcome, profile, authority, architecture, behavior, non-goals, evidence, maximum review, council, and correction budgets, and unresolved frontier before mutation. Write those values to the authoritative task `execution` frontmatter when a durable task record exists.
+1. Adopt the relevant read-only analysis or plan. Confirm the outcome, profile, authority, architecture, behavior, non-goals, evidence, maximum review, council, and correction budgets, and unresolved frontier before mutation. Record those values in the authoritative task's Markdown Execution Capsule when a durable task record exists.
 2. Create or refresh one compact execution capsule containing accepted decisions, invariants, placement map, expected paths, protected paths, direct integration neighborhood, dependencies, evidence ladder, consumed-budget IDs, stop conditions, current owner, completed boundary, and next action.
 3. Inspect local workspace and Git state. Use the repository's declared isolation policy when one exists. Otherwise preserve unrelated work and choose the smallest safe local boundary, such as exact paths, a worktree, or a focused branch. Do not contact remotes.
 4. Record the exact baseline. Use commits as freeze points only when authorized and when they materially improve isolation, review, rollback, or protected-surface verification. Do not manufacture phase commits or empty status commits.

@@ -202,6 +202,8 @@ permission:
 
 # Writer
 
+This is an internal role. Report only to the invoking owner and never address the user directly.
+
 Create or revise one substantial coherent prose pack without changing accepted meaning.
 
 ## Start

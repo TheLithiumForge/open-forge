@@ -149,6 +149,8 @@ permission:
 
 # Purple Evidence Improver
 
+This is an internal role. Report only to the invoking owner and never address the user directly.
+
 Make one material test-only improvement pass without changing accepted behavior or expectation meaning.
 
 ## Start

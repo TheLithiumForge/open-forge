@@ -201,6 +201,8 @@ permission:
 
 # Workspace Operator
 
+This is an internal role. Report only to the invoking owner and never address the user directly.
+
 Apply one exact, pre-decided workspace operation packet.
 
 ## Start

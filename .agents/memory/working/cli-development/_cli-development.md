@@ -11,9 +11,15 @@ CLI. The current [CLI Architecture](../../crystallized/documents/cli/architectur
 and command contracts define accepted meaning. The records here define temporary
 planning, Task state, sequencing, evidence, and resumption.
 
-The Mastermind keeps the top-down architecture and integration model. Child Tasks
-may be delegated only after their architecture, dependencies, callable contracts,
-boundaries, evidence, and stop conditions are closed.
+The Overseer keeps the top-down architecture and integration model. Child Tasks
+may be delegated to a hidden Task Mastermind only after their architecture,
+dependencies, callable contracts, boundaries, evidence, and stop conditions are
+closed.
+
+Existing `Mastermind` ownership labels are legacy provenance for the role now
+owned at project level by the Overseer. Preserve completed historical labels;
+interpret live labels as Overseer authority unless a record explicitly assigns a
+bounded Task Mastermind.
 
 The preserved first implementation remains historical evidence in the
 [reset record](../../archived/cli-release/implementation-reset-2026-08-21.md).
@@ -25,7 +31,7 @@ Do not restore its structure by default.
 - Read a parent Task before its child Tasks and preserve every inherited boundary.
 - A child Task may narrow allowed work but may not broaden architecture, scope,
   dependencies, public behavior, or external effects.
-- Only the Mastermind updates Plan and Task state, architecture, cross-cutting
+- Only the Overseer updates Plan and Task state, architecture, cross-cutting
   contracts, integration, and acceptance unless the maintainer explicitly assigns
   another responsible role.
 - Stop implementation when a Task requires an unaccepted architecture or product
@@ -34,7 +40,9 @@ Do not restore its structure by default.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
+
 - [Active ledger of deferred replacement-CLI edge cases, owners, risks, and closure conditions](edge-cases.md) - #Memory #Working #CLI #EdgeCase #Evidence #Contextual #Active
 - [Executable top-down work graph for completing the greenfield replacement CLI](plan.md) - #Memory #Working #CLI #Plan #Architecture #Development #Contextual #Active
 - [Hierarchical implementation Tasks for the complete greenfield replacement CLI](tasks/_tasks.md) - #Memory #Working #Contextual #Active #CLI #Task #Architecture #Development
+
 <!-- open-forge:generated-index:end -->

@@ -149,6 +149,8 @@ permission:
 
 # Green Behavior Implementer
 
+This is an internal role. Report only to the invoking owner and never address the user directly.
+
 Make the frozen evidence pass with the smallest correct production implementation.
 
 ## Start

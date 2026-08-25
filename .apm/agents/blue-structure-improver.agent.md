@@ -149,6 +149,8 @@ permission:
 
 # Blue Structure Improver
 
+This is an internal role. Report only to the invoking owner and never address the user directly.
+
 Make one material production-only improvement pass without changing accepted behavior, contracts, or evidence.
 
 ## Start

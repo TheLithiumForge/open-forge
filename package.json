@@ -28,7 +28,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",
-    "apm:install": "apm install --frozen --target opencode,codex",
+    "apm:install": "apm install --frozen --target opencode,codex && node --experimental-strip-types scripts/patch-codex-agent-models.ts",
     "check:fast": "bun run typecheck && bun run lint",
     "check": "bun run format:check && bun run typecheck && bun run lint ",
     "pack:local": "npm link"

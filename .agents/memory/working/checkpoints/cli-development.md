@@ -16,7 +16,14 @@ release.
 
 Find is Complete and squash-integrated into local `develop` at `1f03d16`. The
 repository-root developer workflow is Complete and squash-integrated into local
-`develop` at `d9e0686`. References remains Planned and is not authorized.
+`develop` at `d9e0686`. References is now the selected next command.
+
+The maintainer selected References before Context. References is Active in
+Preflight, but production implementation has not started. Repository exploration
+confirmed that the current contracts do not yet define the exact command-local
+JSON result object, finite finding codes, or complete supported Markdown-reference
+forms required by the Architecture. The References Task records the recommended
+closure and remains blocked until that public boundary is accepted.
 
 The active branch is `develop`. The accepted developer-workflow direction is
 recorded in the [repository-root developer workflow
@@ -52,22 +59,24 @@ publication, remote action, or push occurred.
 
 ## Current Step
 
-Await maintainer selection of the next CLI Task. Do not begin References, Index,
-or mutation behavior without that selection.
+Obtain maintainer acceptance of the References contract closure. Then freeze its
+callables and evidence before creating the feature branch or changing source.
 
 ## Protected State
 
 - Do not stage or alter unrelated `.apm` and `apm.lock.yaml` worktree changes.
 - Do not edit sealed Handoffs or archived evidence to rewrite history.
-- Do not implement References or Index behavior.
+- Do not implement References before its result, finding-code, and supported-link
+  contract boundary is accepted. Do not implement Index behavior.
 - Do not download dependencies without exact authorization.
 - Do not contact remotes, publish, globally install, deploy, or push.
 
 ## Next Actions
 
-1. Keep References and Index Planned until the maintainer selects the next Task.
-2. Create the next feature branch only after that Task and its dependencies are
-   accepted for implementation.
+1. Close the References contract boundary recorded in its active Task.
+2. Freeze References callables, allowed paths, and evidence after that acceptance.
+3. Create the References feature branch only when the Task is Ready for
+   implementation.
 
 ## Current Sources
 

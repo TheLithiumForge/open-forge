@@ -2,17 +2,12 @@
 open-forge:
   description: Starting structure for a bounded task with a clear problem, outcome, execution profile, authority, acceptance, and linked context
   tags: [Template, Memory, Working, Task, Contextual, Execution]
-execution:
-  profile: null
-  review-budget: null
-  council-budget: null
-  correction-budget: null
 ---
 
 # {Task}
 
 {
-Use this Template only when the current request or external task source cannot preserve the task accurately. Keep one mutable task source. This record defines what and why; use a linked Plan only when sequencing, parallel lanes, or verification need more detail. Replace every null execution value with an explicit non-negative budget before invoking an external review, council, or correction owner. Remove unused sections and this guidance.
+Use this Template only when the current request or external task source cannot preserve the task accurately. Keep one mutable task source. This record defines what and why; use a linked Plan only when sequencing, parallel lanes, or verification need more detail. Record the execution profile and explicit non-negative budgets in the Markdown Execution Capsule before invoking an external review, council, or correction owner. Remove unused sections and this guidance.
 }
 
 ## Task State
@@ -27,7 +22,7 @@ Use this Template only when the current request or external task source cannot p
 - Problem: {Current condition, evidence, and consequence.}
 - Known or suspected cause: {Distinguish observed cause, hypothesis, or `Unknown`.}
 - Expected outcome: {Observable changed state and value.}
-- Execution profile: {Must match `execution.profile`: Direct, Standard, Assured, Derivative, or Batch, with reason.}
+- Execution profile: {Direct, Standard, Assured, Derivative, or Batch, with reason.}
 
 ## Relationships
 
@@ -93,9 +88,9 @@ Use this Template only when the current request or external task source cannot p
 - Dependencies: {Inputs and predecessor outputs.}
 - Focused evidence: {Commands or inspections.}
 - Integration or full gate: {Boundary and commands.}
-- Review budget: {Must match `execution.review-budget`; name each lens and consumption ID.}
-- Council budget: {Must match `execution.council-budget`; name each authorized round.}
-- Correction budget: {Must match `execution.correction-budget`; name each consumed cycle.}
+- Review budget: {Explicit maximum; name each lens and consumption ID.}
+- Council budget: {Explicit maximum; name each authorized and consumed round.}
+- Correction budget: {Explicit maximum; name each consumed cycle.}
 - Stop conditions: {Plan gap, protected path, safety, external effect, or invalid assumption.}
 - Next action: {Exact next useful action.}
 

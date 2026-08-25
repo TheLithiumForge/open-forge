@@ -14,7 +14,7 @@ Use this Template when an accepted outcome needs enough sequencing, ownership, p
 
 - Task: {Link or current request.}
 - Plan state: {Draft, ready, active, blocked, complete, superseded, or local vocabulary.}
-- Execution profile: {Match the linked Task `execution.profile`: Direct, Standard, Assured, Derivative, or Batch.}
+- Execution profile: {Match the linked Task Markdown Execution Capsule: Direct, Standard, Assured, Derivative, or Batch.}
 - Planning authority: {Who may change sequence or allocation?}
 - Current step or lane: {ID or `Not started`.}
 - Last updated: {Date or timestamp when freshness matters.}
@@ -42,9 +42,9 @@ Use this Template when an accepted outcome needs enough sequencing, ownership, p
 - Dependencies: {Prerequisites and predecessor outputs.}
 - Focused evidence: {Per-step checks.}
 - Integration or full gates: {Task, archetype, or batch boundaries.}
-- Review budget: {Maximum and consumed IDs from the linked Task `execution.review-budget`.}
-- Council budget: {Maximum and consumed rounds from `execution.council-budget`.}
-- Correction budget: {Maximum and consumed cycles from `execution.correction-budget`.}
+- Review budget: {Maximum and consumed IDs from the linked Task Execution Capsule.}
+- Council budget: {Maximum and consumed rounds from the linked Task Execution Capsule.}
+- Correction budget: {Maximum and consumed cycles from the linked Task Execution Capsule.}
 - Stop conditions: {Evidence that requires replan or decision.}
 - Resumption path: {Minimum sources and exact next action.}
 

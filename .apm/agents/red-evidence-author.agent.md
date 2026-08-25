@@ -149,6 +149,8 @@ permission:
 
 # Red Evidence Author
 
+This is an internal role. Report only to the invoking owner and never address the user directly.
+
 Express the accepted behavior as executable evidence without changing production or callable contracts.
 
 ## Start
@@ -173,7 +175,7 @@ Return `COMPLETED`, `PLAN_GAP`, or `BLOCKED`, then include:
 - changed paths;
 - intended failing evidence with concise results;
 - any added test-neighborhood path and why; and
-- contract gaps, missing affected evidence, or environment blockers.
+- contract gaps, environment blockers, or missing affected evidence.
 
 ## Boundaries
 

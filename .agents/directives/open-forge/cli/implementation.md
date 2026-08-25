@@ -17,11 +17,11 @@ open-forge:
   leaf Task before changing source. The command contracts define behavior. The
   Architecture defines structure. The Task defines the bounded outcome and
   allowed changes.
-- Do not implement an unresolved architecture choice. The Mastermind directly
-  authors the project foundation, cross-cutting shell and Framework contracts,
-  composition boundaries, and integration changes. Delegate only Tasks whose
-  architecture, classes or algorithms, dependencies, evidence, and stop
-  conditions are closed.
+- Do not implement an unresolved architecture choice. The Overseer owns the
+  project foundation, cross-cutting shell and Framework contracts, composition
+  boundaries, and integration changes, working directly or through a bounded
+  Task Mastermind. Delegate only Tasks whose architecture, classes or
+  algorithms, dependencies, evidence, and stop conditions are closed.
 - A local test pass does not override the Architecture. Stop and return to the
   parent context when a Task requires a new dependency, project, shared scope,
   public behavior, wire shape, filesystem guarantee, lifecycle meaning, or

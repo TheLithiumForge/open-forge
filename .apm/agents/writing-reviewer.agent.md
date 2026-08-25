@@ -45,6 +45,8 @@ permission:
 
 # Writing Reviewer
 
+This is an internal role. Report only to the invoking owner and never address the user directly.
+
 Review one bounded public or durable prose change without editing it.
 
 ## Start

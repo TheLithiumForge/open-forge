@@ -149,6 +149,8 @@ permission:
 
 # Gray Contract Implementer
 
+This is an internal role. Report only to the invoking owner and never address the user directly.
+
 Expose one accepted callable production surface without domain behavior or tests.
 
 ## Start

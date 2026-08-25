@@ -8,7 +8,9 @@ open-forge:
 
 ## Task State
 
-- State: Active. Find is Complete and squash-integrated into local `develop` at
+- State: Active. References is Active in Preflight after maintainer selection and
+  is blocked on its exact result, finding-code, and Markdown-reference contract
+  closure. Find is Complete and squash-integrated into local `develop` at
   `1f03d16`. The repository-root developer workflow is Complete and
   squash-integrated into local `develop` at `d9e0686`. Find Child 1 is Complete and
   accepted at exact commit `96fe413`
@@ -24,7 +26,7 @@ open-forge:
   at exact `28d316a`, Gray at exact `a76a217`, original Red at exact `22d3bff`,
   the Integration metadata correction at exact `6a9a0de`, and the mirrored
   EndToEnd metadata correction at exact `eea3d59` (`Complete Find presentation
-  metadata evidence`). Its post-commit Red reproduction succeeded as intentional
+metadata evidence`). Its post-commit Red reproduction succeeded as intentional
   Red: managed non-AOT `win-x64` publish passed, and published Find EndToEnd was
   `13` total with `13` intentional failures and zero skips, all terminating at
   absent Green root registration. Historical pre-correction Green review returned
@@ -93,7 +95,7 @@ scenario. Shared facts move only through a Mastermind integration increment.
 ## Child Tasks
 
 - [x] [Implement deterministic CommonMark-aware source discovery and accepted Find projections](find.md) — Complete and integrated at `1f03d16`; Child 1 is Complete at exact `96fe413`, Child 2 at exact `ff7ce3f`, and Child 3's no-op Purple at exact `426d4f5`. The final managed/native gate and package, artifact, static, public no-write, and protected-surface audits passed — Implementer: Mastermind
-- [ ] [Implement direct incoming and outgoing reference facts with shared source-universe filters](references-command.md) — Planned — Implementer: Not assigned
+- [ ] [Implement direct incoming and outgoing reference facts with shared source-universe filters](references-command.md) — Active in Preflight; production blocked on contract closure — Implementer: Mastermind
 - [ ] [Implement ordered context selection, loading reasons, overlap, size, and token projections](context.md) — Planned — Implementer: Not assigned
 - [ ] [Implement Extension catalogue and source listing without lifecycle inference](extension-list.md) — Planned — Implementer: Not assigned
 - [ ] [Implement exact Extension package inspection without mutation or installation behavior](extension-inspect.md) — Planned — Implementer: Not assigned
@@ -134,7 +136,9 @@ Find Child 3 and the Find parent are Complete. Their accepted feature tree was
 squash-integrated into local `develop` at `1f03d16`. The final managed/native gate
 and package, artifact, static, public no-write, and protected-surface audits remain
 the accepted Find evidence. The repository-root developer workflow is Complete at
-`d9e0686`. References remains Planned until the maintainer selects it.
+`d9e0686`. The maintainer selected References before Context; its Preflight is
+active and production remains blocked on the contract boundary recorded in its
+Task.
 
 The temporary compatibility-name correction renames the Working Index and
 References Task files and stages their command contracts under candidate route
@@ -155,8 +159,8 @@ history that generated navigation does not define:
 
 ## Entries
 
-
 <!-- open-forge:generated-index:start -->
+
 - [Implement ordered context selection, loading reasons, overlap, size, and token projections](context.md) - #Memory #Working #CLI #Task #Context #ReadOnly #Loading #Contextual
 - [Implement exact Extension package inspection without mutation or installation behavior](extension-inspect.md) - #Memory #Working #CLI #Task #Extension #Inspect #ReadOnly #Contextual
 - [Implement Extension catalogue and source listing without lifecycle inference](extension-list.md) - #Memory #Working #CLI #Task #Extension #List #ReadOnly #Contextual
@@ -166,4 +170,5 @@ history that generated navigation does not define:
 - [Establish the neutral Framework source catalogue and migrate Route List and Inspect without public behavior change](find-source-catalogue.md) - #Memory #Working #CLI #Task #Find #ReadOnly #Sources #Route #Framework #Architecture #Contextual
 - [Implement deterministic generated Entries projection and idempotent index application](index-command.md) - #Memory #Working #CLI #Task #Index #Generated #Mutation #Contextual
 - [Implement direct incoming and outgoing reference facts with shared source-universe filters](references-command.md) - #Memory #Working #CLI #Task #References #ReadOnly #Links #Contextual
+
 <!-- open-forge:generated-index:end -->

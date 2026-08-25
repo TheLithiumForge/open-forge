@@ -2,11 +2,6 @@
 open-forge:
   description: Move replacement CLI tooling to the repository root and make ordinary test runs publish and discover the local development executable
   tags: [Memory, Working, CLI, Task, DotNet, Testing, DeveloperExperience, Contextual, Complete]
-execution:
-  profile: Assured
-  review-budget: 1
-  council-budget: 0
-  correction-budget: 1
 ---
 
 # Improve The Repository-Root CLI Developer Workflow
@@ -21,6 +16,13 @@ execution:
 - Integration: `d9e0686` (`Improve CLI developer workflow`).
 - Review consumed: `DX1-R1` (`CHANGES_REQUIRED`; accepted finding `DX1-R1-F1`).
 - Correction consumed: `DX1-C1` (complete; corrected `DX1-R1-F1`).
+
+## Execution Capsule
+
+- Profile: Assured.
+- Review budget: One; consumed by `DX1-R1`.
+- Council budget: Zero.
+- Correction budget: One; consumed by `DX1-C1`.
 
 ## Outcome
 

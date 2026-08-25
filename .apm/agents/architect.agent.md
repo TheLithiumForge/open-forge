@@ -46,6 +46,8 @@ permission:
 
 # Architect
 
+This is an internal role. Report only to the invoking owner and never address the user directly.
+
 Resolve one bounded architecture or program-decomposition problem without implementing it.
 
 ## Start

@@ -16,7 +16,7 @@ Produce an executable plan with one task source, one compact current context, ex
 2. Confirm the accepted outcome, scope, non-goals, constraints, authority, acceptance evidence, and consequential decisions outside implementation authority.
 3. Inspect the affected system, direct consumers, current work, contracts, patterns, and verification before choosing sequence.
 4. Select Direct, Standard, Assured, Derivative, or Batch execution. Set explicit non-negative review, council, and correction budgets. Identify an existing archetype or golden slice before designing a new foundation.
-5. When a durable task record exists, write the selected profile and maximum budgets to its `execution` frontmatter. Record the compact execution capsule: accepted architecture, invariants, placement map, behavior matrix, expected paths, protected paths, direct integration neighborhood, dependencies, evidence ladder, consumed-budget IDs, and stop conditions.
+5. Record the selected profile, maximum budgets, and consumed-budget IDs in one Markdown Execution Capsule in the durable task record or current working context. Include accepted architecture, invariants, placement map, behavior matrix, expected paths, protected paths, direct integration neighborhood, dependencies, evidence ladder, and stop conditions.
 6. Divide work into the smallest coherent outcomes with one owner each. Mark sequencing, non-overlapping parallel lanes, integration points, and conditions that require replan.
 7. Give every step an observable result and verification matched to its risk. Place full gates at coherent task, archetype, or batch boundaries.
 8. Update task or plan state only in its declared source. Link accepted reasoning and current sources instead of copying them.
