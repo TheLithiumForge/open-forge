@@ -47,8 +47,6 @@ public and technology-neutral meanings.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
 - [Accepted technology-neutral catalogue, deletion, safety, monotonic recovery, and conformance for cleanup](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Cleanup #Behavior #Mutation #Recovery #Safety #Determinism #CurrentTruth
 - [Accepted non-shipping public interface for operand-free cleanup of recognized Open Forge transient and recovery artifacts](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Cleanup #Interface #Mutation #Recovery #Safety #CurrentTruth
-
 <!-- open-forge:generated-index:end -->

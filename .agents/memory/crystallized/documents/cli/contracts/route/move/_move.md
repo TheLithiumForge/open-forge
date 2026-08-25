@@ -29,7 +29,7 @@ batch of leaf moves.
   behind that interface.
 - The shared [Global CLI Flags](../../shared/global-flags/interface.md), [CLI
   Source References](../../shared/source-references/interface.md), and [Index
-  contracts](../../index/interface.md) retain authority for the
+  contracts](../../index-candidate/interface.md) retain authority for the
   shared meanings consumed by this operation.
 
 Generated `Entries` provide navigation and help routing only. They are not a

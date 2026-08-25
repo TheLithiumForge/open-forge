@@ -11,14 +11,14 @@ public sealed class CliProcessTests
     [Trait("Feature", "cli-process"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedVersionIsExactAndWorkspaceIndependent()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = TemporaryWorkspace.Create("e2e-version-working");
         using var other = TemporaryWorkspace.Create("e2e-version-other");
         var missingWorkspace = working.Combine("missing-workspace");
         var workingBefore = working.SnapshotHashes();
         var otherBefore = other.SnapshotHashes();
         var request = new ProcessRunRequest(
-            environment.ExecutablePath,
+            target.ExecutablePath,
             ["--workspace", missingWorkspace, "--json", "--version"],
             other.Path,
             timeout: TimeSpan.FromSeconds(30));
@@ -26,7 +26,7 @@ public sealed class CliProcessTests
         var result = await ProcessRunner.RunAsync(request, TestContext.Current.CancellationToken);
 
         Assert.Equal(0, result.ExitCode);
-        Assert.Equal(environment.ExpectedVersion + Environment.NewLine, result.StandardOutput);
+        Assert.Equal(target.ExpectedVersion + Environment.NewLine, result.StandardOutput);
         Assert.Equal(string.Empty, result.StandardError);
         Assert.False(Directory.Exists(missingWorkspace));
         Assert.Equal(workingBefore, working.SnapshotHashes());
@@ -37,19 +37,19 @@ public sealed class CliProcessTests
     [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedRootAndRouteFamilyHelpExposeAvailableCommands()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = TemporaryWorkspace.Create("e2e-help");
 
-        var root = await RunWithoutWritesAsync(environment, working.Path, working.SnapshotHashes, []);
-        var help = await RunWithoutWritesAsync(environment, working.Path, working.SnapshotHashes, ["--help"]);
-        var group = await RunWithoutWritesAsync(environment, working.Path, working.SnapshotHashes, ["route"]);
+        var root = await RunWithoutWritesAsync(target, working.Path, working.SnapshotHashes, []);
+        var help = await RunWithoutWritesAsync(target, working.Path, working.SnapshotHashes, ["--help"]);
+        var group = await RunWithoutWritesAsync(target, working.Path, working.SnapshotHashes, ["route"]);
         var leaf = await RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             ["route", "list", "--help"]);
         var inspectLeaf = await RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             ["route", "inspect", "--help"]);
@@ -86,12 +86,12 @@ public sealed class CliProcessTests
     [Trait("Feature", "route-list"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedRouteListEmitsStructuredReadOnlyResult()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteWorkspace.CreateComplete();
         var before = working.SnapshotHashes();
 
         var result = await RunAsync(
-            environment,
+            target,
             working.Path,
             ["route", "list", "root", "--depth=0", "--json"]);
 
@@ -109,7 +109,7 @@ public sealed class CliProcessTests
     [Fact(DisplayName = "Published route-list preserves native global delimiters"), Trait("Feature", "route-list"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedRouteListPreservesGlobalDelimiterParity()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteWorkspace.CreateComplete();
         var before = working.SnapshotHashes();
 
@@ -127,7 +127,7 @@ public sealed class CliProcessTests
         };
 
         var baseline = await RunAsync(
-            environment,
+            target,
             working.Path,
             [
                 "route", "list", "root", "--workspace", working.Path,
@@ -152,7 +152,7 @@ public sealed class CliProcessTests
                 arguments.Add("--json");
                 arguments.Add("--depth=0");
                 arguments.AddRange(viewForm.Arguments);
-                var result = await RunAsync(environment, working.Path, arguments);
+                var result = await RunAsync(target, working.Path, arguments);
                 var form = $"{workspaceForm.Name}, {viewForm.Name}";
 
                 Assert.True(
@@ -169,12 +169,12 @@ public sealed class CliProcessTests
     [Fact(DisplayName = "Published route-list accepts an option-like source after the terminator"), Trait("Feature", "route-list"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedRouteListAcceptsOptionLikeSourceAfterTerminator()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteWorkspace.CreateComplete();
         var before = working.SnapshotHashes();
 
         var result = await RunAsync(
-            environment,
+            target,
             working.Path,
             ["route", "list", "--workspace", working.Path, "--json", "--", "--depth"]);
 
@@ -201,7 +201,7 @@ public sealed class CliProcessTests
         string? separateValue,
         bool rejected)
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteWorkspace.CreateComplete();
         var before = working.SnapshotHashes();
         var arguments = new List<string>
@@ -215,7 +215,7 @@ public sealed class CliProcessTests
         }
 
         arguments.Add("--json");
-        var result = await RunAsync(environment, working.Path, arguments);
+        var result = await RunAsync(target, working.Path, arguments);
 
         Assert.Equal(rejected ? 4 : 0, result.ExitCode);
         if (rejected)
@@ -238,12 +238,12 @@ public sealed class CliProcessTests
     [Trait("Feature", "route-list"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedAttachedEmptyDepthPreservesJsonInvalidResult()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteWorkspace.CreateComplete();
         var before = working.SnapshotHashes();
 
         var result = await RunAsync(
-            environment,
+            target,
             working.Path,
             ["route", "list", "--workspace", working.Path, "--depth=", "--json"]);
 
@@ -268,7 +268,7 @@ public sealed class CliProcessTests
         string expectedKind,
         int expectedValue)
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteWorkspace.CreateComplete();
         var before = working.SnapshotHashes();
         var arguments = new List<string>
@@ -281,7 +281,7 @@ public sealed class CliProcessTests
         }
 
         arguments.Add("--json");
-        var result = await RunAsync(environment, working.Path, arguments);
+        var result = await RunAsync(target, working.Path, arguments);
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
@@ -309,12 +309,12 @@ public sealed class CliProcessTests
         string spelling,
         string expectedSubject)
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteWorkspace.CreateComplete();
         var before = working.SnapshotHashes();
 
         var result = await RunAsync(
-            environment,
+            target,
             working.Path,
             ["route", "list", "--workspace", working.Path, $"--depth={spelling}", "--json"]);
 
@@ -332,12 +332,12 @@ public sealed class CliProcessTests
     [Trait("Feature", "route-list"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedRouteListRejectsRepeatedDepthOccurrencesAsParserError()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteWorkspace.CreateComplete();
         var before = working.SnapshotHashes();
 
         var result = await RunAsync(
-            environment,
+            target,
             working.Path,
             [
                 "route", "list", "root", "--workspace", working.Path,
@@ -356,13 +356,13 @@ public sealed class CliProcessTests
     [InlineData("--version")]
     public async Task PublishedTerminalModesRejectDomainAndLocalInput(string terminalOption)
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteWorkspace.CreateComplete();
         var missingWorkspace = Path.Combine(working.Path, "terminal-workspace-must-not-be-created");
         var before = working.SnapshotHashes();
 
         var result = await RunAsync(
-            environment,
+            target,
             working.Path,
             [
                 "route", "list", "root", "--depth=0", terminalOption,
@@ -384,13 +384,13 @@ public sealed class CliProcessTests
     [InlineData("--version")]
     public async Task PublishedTerminalModesAcceptWellFormedGlobalNoOpOptions(string terminalOption)
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteWorkspace.CreateComplete();
         var missingWorkspace = Path.Combine(working.Path, "terminal-global-workspace");
         var before = working.SnapshotHashes();
 
         var result = await RunAsync(
-            environment,
+            target,
             working.Path,
             [
                 "route", "list", terminalOption, "--workspace", missingWorkspace,
@@ -408,29 +408,29 @@ public sealed class CliProcessTests
     [Trait("Feature", "route-list"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedRouteListPreservesPublicSelectionDepthAndViews()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteWorkspace.CreateComplete();
         var before = working.SnapshotHashes();
 
-        var defaults = await RunAsync(environment, working.Path, ["route", "list"]);
+        var defaults = await RunAsync(target, working.Path, ["route", "list"]);
         var exactPath = await RunAsync(
-            environment,
+            target,
             working.Path,
             ["route", "list", ".agents/root/_root.md", "--depth=0", "--view=compact"]);
         var allCompactJson = await RunAsync(
-            environment,
+            target,
             working.Path,
             ["route", "list", "root", "--depth=all", "--view=compact", "--json"]);
         var allExpandedJson = await RunAsync(
-            environment,
+            target,
             working.Path,
             ["route", "list", "root", "--depth=all", "--view=expanded", "--json"]);
         var overwrite = await RunAsync(
-            environment,
+            target,
             working.Path,
             ["route", "list", ".agents/root/adjusted.overwrite.md", "--depth=0", "--json"]);
         var detached = await RunAsync(
-            environment,
+            target,
             working.Path,
             ["route", "list", "detached", "--depth=all", "--json"]);
 
@@ -486,7 +486,7 @@ public sealed class CliProcessTests
     [Trait("Feature", "route-list"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedRouteListKeepsDiagnosticsAndFailureStreamsTyped()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var complete = PublishedRouteWorkspace.CreateComplete();
         using var attention = PublishedRouteWorkspace.CreateAttention();
         using var incomplete = PublishedRouteWorkspace.CreateIncomplete();
@@ -495,23 +495,23 @@ public sealed class CliProcessTests
         var incompleteBefore = incomplete.SnapshotHashes();
 
         var plainJson = await RunAsync(
-            environment,
+            target,
             complete.Path,
             ["route", "list", "root", "--depth=0", "--json"]);
         var verboseJson = await RunAsync(
-            environment,
+            target,
             complete.Path,
             ["route", "list", "root", "--depth=0", "--json", "--verbose"]);
         var invalidDepth = await RunAsync(
-            environment,
+            target,
             complete.Path,
             ["route", "list", "--depth=-1", "--json"]);
         var attentionHuman = await RunAsync(
-            environment,
+            target,
             attention.Path,
             ["route", "list", "root", "--depth=all", "--view=expanded"]);
         var incompleteHuman = await RunAsync(
-            environment,
+            target,
             incomplete.Path,
             ["route", "list", "root", "--depth=all", "--view=compact"]);
 
@@ -560,11 +560,11 @@ public sealed class CliProcessTests
     [Trait("Feature", "cli-process"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedParserFailureUsesFixedInvalidExitAndStandardError()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = TemporaryWorkspace.Create("e2e-invalid");
 
-        var unknown = await RunAsync(environment, working.Path, ["--unknown"]);
-        var conflict = await RunAsync(environment, working.Path, ["--help", "--version"]);
+        var unknown = await RunAsync(target, working.Path, ["--unknown"]);
+        var conflict = await RunAsync(target, working.Path, ["--help", "--version"]);
 
         Assert.Equal(4, unknown.ExitCode);
         Assert.Equal(string.Empty, unknown.StandardOutput);
@@ -578,13 +578,13 @@ public sealed class CliProcessTests
     [Trait("Feature", "cli-process"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedProcessCancellationKillsAndDrainsOwnedChild()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteWorkspace.CreateCancellation(childCount: 500);
         var before = working.SnapshotHashes();
         using var cancellation = new CancellationTokenSource();
         var startedProcessId = 0;
         var request = new ProcessRunRequest(
-            environment.ExecutablePath,
+            target.ExecutablePath,
             ["route", "list", "root", "--depth=all", "--json"],
             working.Path,
             timeout: TimeSpan.FromSeconds(30),

@@ -30,7 +30,7 @@ defines existing entrypoint filenames the command recognizes and preserves.
 The [Behavior Contract](behavior.md) defines the deterministic operation behind
 this public surface. Shared flag and source-reference meaning remains in the
 [Global CLI Flags](../../shared/global-flags/interface.md) and [CLI Source References](../../shared/source-references/interface.md)
-contracts. Generated navigation uses the complete [Index Interface Contract](../../index/interface.md)
+contracts. Generated navigation uses the complete [Index Interface Contract](../../index-candidate/interface.md)
 projection.
 
 ## Purpose
@@ -269,7 +269,7 @@ Generated navigation may still change in a different bounded region:
 - Responsibility-only and ordinary-body-only changes do not affect generated
   entry text.
 
-Automatic generated effects use the complete [Index Interface Contract](../../index/interface.md)
+Automatic generated effects use the complete [Index Interface Contract](../../index-candidate/interface.md)
 projection, ordering, generated-boundary, verification, and recovery behavior.
 They are planned against the hypothetical post-update workspace and belong to
 the same parent plan, dry run, application, and result. The command never starts
@@ -642,7 +642,7 @@ required by that Architecture.
 - [CLI Source References](../../shared/source-references/interface.md)
 - [Context Interface Contract](../../context/interface.md)
 - [Status Interface Contract](../../status/interface.md)
-- [Index Interface Contract](../../index/interface.md)
+- [Index Interface Contract](../../index-candidate/interface.md)
 - [Route Init Interface Contract](../init/interface.md)
 - [Route Create Interface Contract](../create/interface.md)
 - [CLI Architecture](../../../architecture.md)

@@ -20,3 +20,15 @@ Open product candidates after the 2026-07-18 pruning pass. These are options, no
   counts, startup-budget warnings, intent-to-route previews, additional
   Template authoring assistance, and stronger explicitly named upgrade modes.
 - External `.memory/` or distributed package-local memory as a documented user pattern, not default behavior.
+- **AST-based Index region boundaries:** Analyze whether the replacement Index
+  command should find one ordered generated-marker pair anywhere inside the
+  parsed `## Entries` section instead of requiring the start marker immediately
+  after the heading. Authored explanation before or after the managed region
+  should remain untouched. Evidence should cover nested headings, marker-like
+  code examples, duplicate or missing markers, multiple `Entries` headings,
+  line-ending preservation, dry-run parity, and idempotent apply.
+- **Marker-free generated navigation:** Separately analyze whether the Markdown
+  AST can make generated marker comments unnecessary. Keep markers unless a new
+  ownership rule can identify exactly which AST nodes Index owns without risking
+  an authored list, and can migrate existing workspaces while preserving bytes,
+  formatting, and malformed-region safety.

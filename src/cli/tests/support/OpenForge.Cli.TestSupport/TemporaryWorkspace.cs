@@ -403,7 +403,14 @@ public sealed class TemporaryWorkspace : IDisposable
 
                 if (pair.Value == OwnedEntryKind.DirectoryLink)
                 {
-                    Directory.Delete(pair.Key);
+                    if (OperatingSystem.IsWindows())
+                    {
+                        Directory.Delete(pair.Key);
+                    }
+                    else
+                    {
+                        File.Delete(pair.Key);
+                    }
                 }
                 else
                 {

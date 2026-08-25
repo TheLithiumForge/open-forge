@@ -45,7 +45,7 @@ cancellation, preserve stdout/stderr separately, and never invoke a shell.
 
 ## Native AOT Evidence
 
-1. Publish the root executable for local `win-x64` into `src/cli/artifacts/`.
+1. Publish the root executable for local `win-x64` into root `/artifacts/`.
 2. Execute published help, version, and invalid-input journeys.
 3. Publish Integration and EndToEnd test executables through the accepted xUnit v3
    AOT runner.
@@ -59,9 +59,9 @@ artifacts. It performs no publication.
 
 ## Preserved Evidence Rules
 
-Do not compile `tests/preserved`. Port only foundation-relevant cases after mapping
-them to current Architecture and contracts. Route-list cases remain preserved for
-their later command Task.
+Historical tests are candidate evidence only. Port an expectation only after
+mapping it to current Architecture and contracts; do not recreate a preserved
+test project or parallel fixture architecture.
 
 ## Verification
 

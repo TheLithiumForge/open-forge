@@ -87,14 +87,9 @@ completion.
   and `git diff --check` clean.
 - Integration and EndToEnd workspace hashes prove that the exercised route-list
   scenarios do not mutate workspace bytes.
-- `open-forge-old doctor` remains blocked by 2 pre-existing routing errors and
-  502 warnings. The exact errors are:
-  1. `.agents/memory/working/cli-development/tasks/read-only` is reported as
-     having `_read-only.md`, `index.md`, and `references.md` as multiple
-     recognized entrypoints.
-  2. `.agents/memory/crystallized/documents/cli/contracts/index` reports
-     `_index.md, _index.md`.
-
-  `open-forge-old index` stops at the first error. These are unrelated
-  tool/repository issues; no routing-verification pass is claimed, and they are
-  not fixed here.
+- The later repository-routing compatibility correction temporarily renamed the
+  Working Index and References Tasks to `index-command.md` and
+  `references-command.md`. Their command contracts remain staged under
+  `index-candidate/` and `references-candidate/` until the replacement `index`
+  command validates the final compatibility-name paths. This later correction
+  does not change route-list behavior or evidence.

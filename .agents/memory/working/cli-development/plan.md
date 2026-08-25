@@ -14,12 +14,19 @@ open-forge:
   Mastermind owns architecture, sequencing, Task decomposition, integration, and
   Plan maintenance within that direction.
 - Last updated: 2026-08-25.
-- Current task: [Present And Accept Find](tasks/read-only/find-presentation-acceptance.md)
-  and its parent [Find](tasks/read-only/find.md) are Complete and accepted in the
-  commit containing this record update. The Plan remains Active for the immediate
-  local integration continuation. References remains Planned and must not start in
-  this session.
-- Current step: Find Child 2 original Preflight through Blue history is accepted
+- Current task: [Improve The Repository-Root CLI Developer
+  Workflow](tasks/repository-root-developer-workflow.md) is Active through local
+  squash integration. References remains Planned and is not authorized.
+- Current step: Commit the accepted feature tree, squash it locally into
+  `develop`, and prove exact tree equality. Root tooling, automatic managed
+  `open-forge-dev` publication from ordinary CLI builds, build-selected native
+  EndToEnd discovery without executable environment variables, temporary
+  compatibility-name routing, WSL portability, and obsolete preserved-test
+  removal are implemented. The unchanged managed baseline is `1190/1190`.
+  After review correction `DX1-C1`, focused final evidence passes root-selected
+  `72/72`, ordinary publication-selected EndToEnd `70/70`, and explicit
+  `linux-x64` publication-selected EndToEnd `70/70`, all with zero skips.
+- Previous accepted Find history: Find Child 2 original Preflight through Blue history is accepted
   through exact commit `685e2dd`. During original Purple, top-down review found
   generic YAML event parsing inside Find and duplicate Markdown-frontmatter
   extraction in Route. The Mastermind established the shared
@@ -122,13 +129,9 @@ open-forge:
   source diff/check against `3f81e76` was clean/empty. No Native AOT claim was made,
   and the record-only commit was not a test change.
 
-  Find Child 3 and the Find parent are now Complete and accepted in the commit
-  containing this record update. The final gate passed from exact clean source
-  `426d4f5`; package, artifact, static, no-write, Route/Shell/root, and generated-
-  routing audits passed. The sole immediate continuation is to freshly verify
-  `develop`, squash-integrate the accepted `feature/cli-find` tip into local
-  `develop`, commit that one squash, prove exact tree equality, do not push, and
-  halt. `CLI-EDGE-001` remains non-product only.
+  Find Child 3 and the Find parent completed the recorded acceptance boundary.
+  Their accepted feature tree was later squash-integrated into local `develop` at
+  `1f03d16`; that completed continuation no longer controls current work.
 
 - Generic predecessor: Generic CLI Improvements are Complete and squash-integrated into `develop` at `063c59d`, with exact tree equality to accepted feature tip `a107afe`. Their final gate passes managed Unit `580/580`, Integration `213/213`, and EndToEnd `57/57`; local `win-x64` Native AOT root with managed EndToEnd `57/57`; Native AOT Integration `213/213`; Native AOT EndToEnd `57/57`; package/artifact/public audits; and integrated review.
 - Route Inspect/family modernization: Complete and accepted at exact commit
@@ -192,9 +195,10 @@ were typed, and byte/hash/entry snapshots were unchanged. The package audit list
 all six projects and found no vulnerable transitive package. The exact
 root→Core, Unit→Core, Integration→Core+root+TestSupport, and EndToEnd→TestSupport
 graph, one `.slnx`, six projects, 343 authored active C# files, reflection-disabled
-JSON/source-generation/AOT settings, and artifact routing were unchanged. No
-project-local `bin/obj` directories exist; ignored outputs remain under
-`src/cli/artifacts/`.
+JSON/source-generation/AOT settings, and artifact routing were unchanged. At that
+historical acceptance boundary, no project-local `bin/obj` directories existed
+and ignored output remained under `src/cli/artifacts/`. DX1 later moved the
+solution controls and ignored output to the repository root.
 
 Static audits report production suppressions `126 → 0`, production
 `ThrowIfNull` `380 → 297`, active test suppressions `169 → 8` frozen intentional
@@ -329,7 +333,8 @@ diff, parent requirements, and claimed evidence.
 | GI1 | Complete | Remediate parser behavior, improve active-test architecture, and accept the closed callable/root-host structure before the next product Task | R2 | Sequential | Generic improvement | Beginning/final complete suites and focused phase evidence |
 | Q1  | Complete | Complete Find's source catalogue, corrected query operation, and presentation children in order. Children 1 and 2 are accepted, and Child 3 plus the Find parent are Complete and accepted in the commit containing this record update. The no-op Purple acceptance is recorded at exact `426d4f5`; the final managed/native gate and package, artifact, static, no-write, Route/Shell/root, and generated-routing audits passed. | GI1, P6 | Sequential | Source queries | Contract, CommonMark, process, AOT |
 | GI2 | Complete | Complete the accepted behavior-neutral Modern C# Improvements batches and final managed, Native AOT, package, audit, and public no-write gates. | Q1 Child 1 acceptance | Sequential | Generic improvement | Final gate and integrated reviews pass |
-| Q2  | Pending  | Implement and accept `references` after the source and document facts it needs are accepted; do not mutate shared source facts in parallel. | GI1, Q1 source/document acceptance | Sequential | Source queries | Direct-reference evidence |
+| DX1 | Active   | Move .NET workspace controls and artifacts to the repository root, make ordinary EndToEnd builds publish and discover `open-forge-dev`, remove obsolete preserved tests, and repair temporary compatibility-name routing. | Q1, GI2 | Sequential | Developer workflow | Root build/test, environment-free EndToEnd, routing, review |
+| Q2  | Pending  | Implement and accept `references` after the source and document facts it needs are accepted; do not mutate shared source facts in parallel. | GI1, Q1 source/document acceptance, DX1 | Sequential | Source queries | Direct-reference evidence |
 | Q3  | Pending  | Implement and accept `context` after Q1 and Q2 facts stabilize                                                              | Q1, Q2     | Sequential  | Context              | Ordered context and token evidence           |
 | E1  | Pending  | Implement and accept `extension list` and `extension inspect`                                                               | G1, GI1    | Read-only C | Extension discovery  | Catalogue and package-source evidence        |
 | I1  | Pending  | Implement and accept `index`                                                                                                | Q1-Q3, R2  | Sequential  | Generated navigation | Idempotence and unchanged-authority evidence |

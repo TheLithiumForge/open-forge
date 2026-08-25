@@ -29,10 +29,10 @@ open-forge:
 
 ### Physical Workspace And Projects
 
-- Keep all replacement-specific C# workspace configuration, source, projects,
-  tests, and generated C# artifacts below `src/cli/`. Do not add a replacement
-  `.slnx`, `global.json`, `NuGet.Config`, `Directory.Build.props`, or
-  `Directory.Packages.props` at the repository root.
+- Keep replacement source, projects, and tests below `src/cli/`. Keep the
+  replacement `.slnx`, `global.json`, `NuGet.Config`, `Directory.Build.props`,
+  and `Directory.Packages.props` at the repository root so ordinary .NET and IDE
+  workflows discover one workspace without changing directories.
 - Use the accepted `root/`, `core/`, and `tests/` physical boundaries. The root
   executable depends on Core. Core never depends on the root. Keep exactly three
   runnable test projects and one test-support library unless the maintainer
@@ -41,7 +41,14 @@ open-forge:
   default authored-source globs. Do not list ordinary C# files, disable default
   compile items, or link production source across projects.
 - Route every C# binary, intermediate, test, publish, and package output through
-  `src/cli/artifacts/`. No project-local `bin/` or `obj/` is accepted.
+  the ignored repository-root `/artifacts/` directory. No project-local `bin/`
+  or `obj/` is accepted.
+- Let an ordinary non-RID CLI build publish the managed `open-forge-dev` artifact
+  used by local EndToEnd evidence. Use the explicit
+  `OpenForgeSkipDevelopmentPublish=true` property only when that build does not
+  need the artifact. Native evidence selects one supported target RID at build
+  time; do not select test executables or expected versions through environment
+  variables or arbitrary paths.
 - Keep generated source deterministic and explicit. It is the only production
   compile-item exception.
 
@@ -217,9 +224,10 @@ open-forge:
   production modules and real owned OS boundaries. End-to-end tests invoke the
   published executable and prove arguments, streams, exits, cancellation, and
   unchanged bytes.
-- Treat `src/cli/tests/preserved/` as candidate evidence. Map a preserved test to
-  a current contract before porting it. Do not compile preserved projects or copy
-  old fixture architecture wholesale.
+- Treat removed or historical tests as candidate evidence only when a current
+  Task maps their expectation to a current contract. Put accepted evidence in the
+  matching active project. Do not restore preserved projects or copy old fixture
+  architecture wholesale.
 - Every test owns its mutable workspace, home, temporary files, Git repository,
   cache, process, and artifacts. No parallel test shares mutable state.
 - Use snapshots only for stable projections. Assert safety, identity, effects,

@@ -8,18 +8,21 @@ open-forge:
 
 ## Task State
 
-- State: Active. Find is Complete and accepted in the commit containing this
-  record update; the broader replacement CLI program remains Active.
+- State: Active. Find is integrated at `1f03d16`. The repository-root developer
+  workflow Task is Active through local squash integration; the broader
+  replacement CLI program remains Active.
 - Responsible role: Mastermind.
 - Task source: This file.
 - Last updated: 2026-08-25.
 
 ## Problem Statement
 
-Open Forge has accepted command contracts and a complete top-down C# Architecture,
-but no active replacement source. The removed first implementation demonstrated
-useful behavior and evidence while also proving that command-first delegation can
-create incompatible local architecture and miss system safety boundaries.
+Open Forge has accepted command contracts, a complete top-down C# Architecture,
+and active replacement source for the foundation, Route List, Route Inspect, and
+Find. Remaining commands and delivery surfaces still require implementation and
+acceptance. The removed first implementation remains evidence that command-first
+delegation can create incompatible local architecture and miss system safety
+boundaries.
 
 ## Expected Outcome
 
@@ -53,7 +56,8 @@ behavior remain explicit, locally navigable, and safe to extend.
 ### Included
 
 - The complete retained command tree and cross-command foundations.
-- `src/cli/` workspace, root, Core, active tests, artifacts, and package source.
+- Repository-root .NET controls and artifacts, plus `src/cli/` root, Core, active
+  tests, and package source.
 - Native AOT, CI, packages, supply-chain evidence, documentation, and release.
 - Necessary current Architecture, Plan, Task, Checkpoint, Directive, Pattern, and
   dogfooding updates.
@@ -68,7 +72,8 @@ behavior remain explicit, locally navigable, and safe to extend.
 
 ### Constraints
 
-- All replacement C# material stays below `src/cli/`.
+- All replacement projects, C# source, and tests stay below `src/cli/`; shared
+  .NET workspace controls and artifacts remain at the repository root.
 - The root host remains thin and Core remains independent of it.
 - Real `System.IO`, managed BCL-first safety, source generation, trimming, and
   Native AOT are hard boundaries.

@@ -1155,7 +1155,7 @@ dry run, recovery, verification, and result include those changes instead of
 running a hidden follow-up command.
 
 See the
-[index contract set](../.agents/memory/crystallized/documents/cli/contracts/index/_index.md)
+[index contract set](../.agents/memory/crystallized/documents/cli/contracts/index-candidate/_index-candidate.md)
 for the complete interface.
 
 ## References
@@ -1186,7 +1186,7 @@ different from `route list`, which reports authored route topology, and from
 `find`, which returns a flat Markdown inventory and predicate matches. It does not
 diagnose or repair broken references; diagnosis belongs to `doctor`, and repair
 requires its separate mutation authority. See the
-[references contract set](../.agents/memory/crystallized/documents/cli/contracts/references/_references.md)
+[references contract set](../.agents/memory/crystallized/documents/cli/contracts/references-candidate/_references-candidate.md)
 for the complete interface and behavior.
 
 ## Doctor

@@ -57,7 +57,7 @@ successful repeated updates are `complete` no-ops.
 The operation is a field patch rather than whole-file replacement. It changes
 the base file of the resolved logical source, never its overwrite companion,
 and protects an authored target body byte-for-byte. Generated navigation is a
-separate bounded dependency effect governed by the complete [Index Behavior Contract](../../index/behavior.md)
+separate bounded dependency effect governed by the complete [Index Behavior Contract](../../index-candidate/behavior.md)
 contract.
 
 No persistent effect begins until the complete target, Template decision,
@@ -182,7 +182,7 @@ safe update and its dependency-minimal generated navigation:
   eligible Template completion establishes one.
 - The current authoritative routed topology, authored descriptions and tags,
   generated boundaries, sibling projections, route identities, and actual
-  compatibility destinations needed by the [Index Behavior Contract](../../index/behavior.md)
+  compatibility destinations needed by the [Index Behavior Contract](../../index-candidate/behavior.md)
   projection.
 - The expected current bytes, relevant-path Git state, backup readiness, and
   volatile target facts needed for preflight and later revalidation.
@@ -247,7 +247,7 @@ needed by the requested field patch or eligible body completion.
 ### Generated projection
 
 After the intended destination is established, the operation projects generated
-navigation against the hypothetical post-update workspace. It uses the [Index Behavior Contract](../../index/behavior.md)
+navigation against the hypothetical post-update workspace. It uses the [Index Behavior Contract](../../index-candidate/behavior.md)
 rules for authoritative topology, authored metadata, direct-child projection,
 ordering, generated boundaries, bounded interiors, verification, and recovery.
 
@@ -533,7 +533,7 @@ execution without adding another command-local implementation choice.
 - [route update Interface Contract](interface.md)
 - [route update Command Contract Set](_update.md)
 - [CLI Architecture](../../../architecture.md)
-- [Index Behavior Contract](../../index/behavior.md)
+- [Index Behavior Contract](../../index-candidate/behavior.md)
 - [Global CLI Flags Behavior Contract](../../shared/global-flags/behavior.md)
 - [CLI Source References Behavior Contract](../../shared/source-references/behavior.md)
 - [Context Behavior Contract](../../context/behavior.md)

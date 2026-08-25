@@ -15,10 +15,10 @@ open-forge:
 
 ## Expected Outcome
 
-`src/cli/` contains the retained command-free workspace, Core library, thin host,
-shared safety boundaries, active test projects, local Native AOT proof, and CI
-foundation. It is the actual base for every command, not a probe or disposable
-spike.
+The repository root contains the retained .NET workspace controls and ignored
+artifact boundary. `src/cli/` contains the Core library, thin host, shared safety
+boundaries, and active test projects. This is the actual base for every command,
+not a probe or disposable spike.
 
 ## Inherited Authority
 
@@ -27,8 +27,9 @@ Read the parent Task, [Architecture](../../../../crystallized/documents/cli/arch
 
 ## Scope And Boundaries
 
-- Allowed: `src/cli/`, the CLI workflow under `.github/workflows/`, direct CLI
-  development documentation, and this active Plan/Task/Checkpoint set.
+- Allowed: repository-root .NET control and artifact paths, `src/cli/`, the CLI
+  workflow under `.github/workflows/`, direct CLI development documentation, and
+  this active Plan/Task/Checkpoint set.
 - Protected: Every command contract, command symbol, command behavior, frozen MVP,
   package publication, and unrelated repository source.
 - The foundation exposes no fake or retained command. Root help may show product
@@ -42,8 +43,9 @@ Read the parent Task, [Architecture](../../../../crystallized/documents/cli/arch
 2. Shell does not depend on commands. Framework capabilities do not depend on
    parser, command, renderer, or process types.
 3. Every stage is directly callable, immutable, fail-closed, and effect-bounded.
-4. All C# outputs remain under `src/cli/artifacts/`.
-5. Preserved tests are quarantined and cannot compile implicitly.
+4. All C# outputs remain under root `/artifacts/`.
+5. Obsolete preserved tests remain removed; active evidence carries retained
+   expectations.
 6. Managed and Native AOT execution prove the retained host and serialization
    paths.
 7. No architectural debt is deferred into `route list`.
@@ -52,13 +54,13 @@ Read the parent Task, [Architecture](../../../../crystallized/documents/cli/arch
 
 The group completes when all child Tasks pass, the solution restores and builds
 without warnings, active tests pass independently, local `win-x64` Native AOT
-publish and execution pass, package auditing is clean, no root C# control file or
-project-local output exists, and Mastermind accepts the integrated dependency and
-source model.
+publish and execution pass, package auditing is clean, no root C# source project
+or project-local output exists, and Mastermind accepts the integrated dependency
+and source model.
 
 ## Child Tasks
 
-- [x] [Create the scoped .NET workspace, six-project graph, dependencies, artifacts, and preserved-test quarantine](done/01-workspace-projects.md) — Complete — Implementer: Mastermind
+- [x] [Create the .NET workspace, six-project graph, dependencies, root artifacts, and active-test boundary](done/01-workspace-projects.md) — Complete — Implementer: Mastermind
 - [x] [Freeze the route-free Shell definitions, binding model, immutable messages, result contract, and serialization call surfaces](done/02-shell-contracts.md) — Complete — Implementer: Mastermind
 - [x] [Implement parser-owned input, terminal policy, normalized invocation, workspace absence, and exact binding selection](done/03-parser-invocation.md) — Complete — Implementer: Mastermind
 - [x] [Implement fail-closed operation, presentation, rendering, diagnostic, output, and completion stages](done/04-pipeline-output.md) — Complete — Implementer: Mastermind
@@ -70,7 +72,5 @@ source model.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
 - [Routes completed leaf Tasks for the CLI Foundation group without changing their historical Task meaning](done/_done.md) - #Memory #Working #CLI #Task #Foundation #Complete #Contextual
-
 <!-- open-forge:generated-index:end -->

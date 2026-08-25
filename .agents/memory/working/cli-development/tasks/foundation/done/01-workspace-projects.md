@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Create the scoped .NET workspace, six-project graph, dependencies, artifacts, and preserved-test quarantine
+  description: Create the repository-root .NET workspace controls, six-project graph, dependencies, root artifacts, and active-test boundary
   tags: [Memory, Working, CLI, Task, Foundation, DotNet, Workspace, Project, Contextual, Complete]
 ---
 
@@ -16,33 +16,31 @@ open-forge:
 
 ## Expected Outcome
 
-The accepted six-project .NET workspace exists entirely under `src/cli/`, restores
-with exact dependencies, routes every C# output to `src/cli/artifacts/`, and keeps
-preserved tests outside active compile roots.
+The accepted six-project .NET workspace uses repository-root control files,
+restores exact dependencies, routes every C# output to root `/artifacts/`, and
+keeps projects, source, and active tests below `src/cli/`.
 
 ## Exact Physical Result
 
 Create:
 
 ```text
-src/cli/global.json
-src/cli/NuGet.Config
-src/cli/Directory.Build.props
-src/cli/Directory.Packages.props
-src/cli/OpenForge.Cli.slnx
+global.json
+NuGet.Config
+Directory.Build.props
+Directory.Packages.props
+OpenForge.Cli.slnx
 src/cli/root/OpenForge.Cli/OpenForge.Cli.csproj
 src/cli/core/OpenForge.Cli.Core/OpenForge.Cli.Core.csproj
 src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/OpenForge.Cli.Core.UnitTests.csproj
 src/cli/tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj
 src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/OpenForge.Cli.EndToEndTests.csproj
 src/cli/tests/support/OpenForge.Cli.TestSupport/OpenForge.Cli.TestSupport.csproj
-src/cli/tests/preserved/route-list-v1/
 ```
 
-Move every currently preserved C# test and project file below
-`src/cli/tests/preserved/route-list-v1/`. Preserve bytes and relative grouping.
-Do not compile those files or retain their old project references as active
-workspace configuration.
+The original foundation quarantined a preserved route-list inventory. A later
+audit removed it after active tests already represented its useful expectations;
+the only unique empty-YAML assertion moved into active Integration evidence.
 
 ## Project And Build Decisions
 
@@ -50,8 +48,8 @@ workspace configuration.
 - Language: C# 14, nullable and implicit usings enabled.
 - Build: warnings and analyzer/code-style warnings are errors; deterministic;
   package audit mode `all`.
-- Artifacts: `UseArtifactsOutput=true` and one absolute artifacts root derived
-  from `src/cli/Directory.Build.props`.
+- Artifacts: `UseArtifactsOutput=true` and one absolute root `/artifacts/` path
+  derived from repository-root `Directory.Build.props`.
 - Solution: six direct project entries and no virtual folders.
 - Root project: executable, `PublishAot`, `IsAotCompatible`, invariant version
   source, no command package references beyond Core and accepted host needs.
@@ -68,12 +66,12 @@ until the Find Task activates the first body consumer.
 ## Allowed Changes
 
 - Exact paths above.
-- `.gitignore` entries needed for `src/cli/artifacts/` and forbidden local output.
+- `.gitignore` entries needed for root `/artifacts/` and forbidden local output.
 - No C# production or test behavior beyond project metadata.
 
 ## Protected Boundaries
 
-- No repository-root C# workspace file.
+- No repository-root C# source project or authored production source.
 - No command source, fake operation, test double, generated version source, CI
   behavior, or production class.
 - No project-local `bin/` or `obj/` acceptance.
@@ -81,14 +79,14 @@ until the Find Task activates the first body consumer.
 
 ## Verification
 
-1. `dotnet --version` satisfies `src/cli/global.json`.
-2. `dotnet sln src/cli/OpenForge.Cli.slnx list` reports exactly six projects.
-3. `dotnet restore src/cli/OpenForge.Cli.slnx --configfile src/cli/NuGet.Config`
+1. `dotnet --version` satisfies root `global.json`.
+2. `dotnet sln OpenForge.Cli.slnx list` reports exactly six projects.
+3. `dotnet restore OpenForge.Cli.slnx --configfile NuGet.Config`
    resolves the exact graph without warnings.
 4. MSBuild property inspection proves the artifact root for every project.
 5. A repository scan finds no replacement C# control file at root, no authored
-   Compile inventory, no virtual solution folder, and no active compile path under
-   `tests/preserved`.
+    Compile inventory, no virtual solution folder, and no obsolete preserved-test
+    compile path.
 6. `git diff --check` passes.
 
 The integrated Foundation, not this substep alone, owns the first full build.
@@ -96,7 +94,7 @@ The integrated Foundation, not this substep alone, owns the first full build.
 ## Stop Conditions
 
 Stop before changing topology if the SDK artifacts layout cannot keep all binary
-and intermediate output below `src/cli/artifacts/`, if a test package cannot
+and intermediate output below root `/artifacts/`, if a test package cannot
 support the accepted AOT runner, or if the six-project dependency graph requires
 an additional production assembly.
 

@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Route the current Crystallized non-shipping `index` contracts for its public interface, deterministic behavior, and accepted technical design
-  responsibility: Route the current `index` contracts at the final `contracts/index/` scope while keeping the command non-shipping
+  responsibility: Route the current `index` contracts in candidate `contracts/index-candidate/` staging while keeping the command non-shipping
   tags: [Memory, Crystallized, CLI, Release, Command, Index, Contract, CurrentTruth]
 ---
 
@@ -10,16 +10,20 @@ open-forge:
 ## Status
 
 This is the current Crystallized contract set for the non-shipping `index`
-command at the final `contracts/index/` scope. Its Interface and Behavior files
-define the public and technology-neutral contracts. Its Technical Design records
-the accepted command-local realization under the contracts and the accepted
-Architecture. The command does not ship.
+command, currently staged under `contracts/index-candidate/`. Its Interface and
+Behavior files define the public and technology-neutral contracts. Its Technical
+Design records the accepted command-local realization under the contracts and the
+accepted Architecture. The command does not ship. Candidate staging remains
+until the replacement `index` command can validate the final compatibility-name
+paths.
 
-The public command identity is `index`, and the complete contract set is located
-under `contracts/index/`. A recognized `_index.md` entrypoint is canonicalized by
-physical identity and processed exactly once, even when traversal reaches that
-physical file more than once. This is a conformance requirement, not a staging
-or migration rule.
+The public command identity is `index`, and the candidate contract set is located
+under `contracts/index-candidate/`. The candidate `_index-candidate.md`
+entrypoint remains staged until the replacement `index` command can validate the
+final compatibility-name path `contracts/index/_index.md`. That final
+compatibility entrypoint is canonicalized by physical identity and processed
+exactly once, even when traversal reaches that physical file more than once.
+This is a conformance requirement, not a staging or migration rule.
 
 The sibling contracts separate the public interface, technology-neutral
 behavior, and accepted technical design. The technical design cannot change the

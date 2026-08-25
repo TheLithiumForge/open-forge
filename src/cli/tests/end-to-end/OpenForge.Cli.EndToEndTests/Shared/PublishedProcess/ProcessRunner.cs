@@ -9,10 +9,6 @@ namespace OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 /// </summary>
 internal sealed class ProcessRunRequest
 {
-    private static readonly StringComparer EnvironmentNameComparer = OperatingSystem.IsWindows()
-        ? StringComparer.OrdinalIgnoreCase
-        : StringComparer.Ordinal;
-
     /// <summary>
     /// Creates a process invocation.
     /// </summary>
@@ -20,8 +16,6 @@ internal sealed class ProcessRunRequest
         string executablePath,
         IEnumerable<string> arguments,
         string workingDirectory,
-        IReadOnlyDictionary<string, string>? environmentAdditions = null,
-        IEnumerable<string>? environmentRemovals = null,
         TimeSpan? timeout = null,
         Action<int>? processStarted = null)
     {
@@ -36,23 +30,9 @@ internal sealed class ProcessRunRequest
             throw new ArgumentException("Process arguments cannot contain null values.", nameof(arguments));
         }
 
-        var additions = CopyEnvironmentAdditions(environmentAdditions);
-        var removals = CopyEnvironmentRemovals(environmentRemovals);
-        foreach (var name in removals)
-        {
-            if (additions.ContainsKey(name))
-            {
-                throw new ArgumentException(
-                    $"The environment variable '{name}' cannot be both added and removed.",
-                    nameof(environmentRemovals));
-            }
-        }
-
         ExecutablePath = executablePath;
         Arguments = new ReadOnlyCollection<string>(argumentCopy);
         WorkingDirectory = workingDirectory;
-        EnvironmentAdditions = new ReadOnlyDictionary<string, string>(additions);
-        EnvironmentRemovals = new ReadOnlyCollection<string>(removals);
         Timeout = timeout;
         ProcessStarted = processStarted;
     }
@@ -73,16 +53,6 @@ internal sealed class ProcessRunRequest
     public string WorkingDirectory { get; }
 
     /// <summary>
-    /// Gets environment variables added or replaced for the child process.
-    /// </summary>
-    public IReadOnlyDictionary<string, string> EnvironmentAdditions { get; }
-
-    /// <summary>
-    /// Gets inherited environment variable names removed from the child process.
-    /// </summary>
-    public IReadOnlyList<string> EnvironmentRemovals { get; }
-
-    /// <summary>
     /// Gets the optional process lifetime. A null or infinite value means no timeout.
     /// </summary>
     public TimeSpan? Timeout { get; }
@@ -91,64 +61,6 @@ internal sealed class ProcessRunRequest
     /// Gets an optional observer invoked once with the started child process ID.
     /// </summary>
     public Action<int>? ProcessStarted { get; }
-
-    private static Dictionary<string, string> CopyEnvironmentAdditions(
-        IReadOnlyDictionary<string, string>? environmentAdditions)
-    {
-        var copy = new Dictionary<string, string>(EnvironmentNameComparer);
-        if (environmentAdditions is null)
-        {
-            return copy;
-        }
-
-        foreach (var pair in environmentAdditions)
-        {
-            ValidateEnvironmentName(pair.Key);
-            ArgumentNullException.ThrowIfNull(pair.Value);
-            if (!copy.TryAdd(pair.Key, pair.Value))
-            {
-                throw new ArgumentException(
-                    $"The environment variable '{pair.Key}' was supplied more than once.",
-                    nameof(environmentAdditions));
-            }
-        }
-
-        return copy;
-    }
-
-    private static List<string> CopyEnvironmentRemovals(IEnumerable<string>? environmentRemovals)
-    {
-        var copy = new List<string>();
-        if (environmentRemovals is null)
-        {
-            return copy;
-        }
-
-        var seen = new HashSet<string>(EnvironmentNameComparer);
-        foreach (var name in environmentRemovals)
-        {
-            ValidateEnvironmentName(name);
-            if (!seen.Add(name))
-            {
-                throw new ArgumentException(
-                    $"The environment variable '{name}' was supplied for removal more than once.",
-                    nameof(environmentRemovals));
-            }
-
-            copy.Add(name);
-        }
-
-        return copy;
-    }
-
-    private static void ValidateEnvironmentName(string name)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(name);
-        if (name.Contains('=', StringComparison.Ordinal))
-        {
-            throw new ArgumentException("Environment variable names cannot contain '='.", nameof(name));
-        }
-    }
 
     private static void ValidateTimeout(TimeSpan? timeout)
     {
@@ -280,16 +192,6 @@ internal static class ProcessRunner
         foreach (var argument in request.Arguments)
         {
             startInfo.ArgumentList.Add(argument);
-        }
-
-        foreach (var name in request.EnvironmentRemovals)
-        {
-            startInfo.Environment.Remove(name);
-        }
-
-        foreach (var pair in request.EnvironmentAdditions)
-        {
-            startInfo.Environment[pair.Key] = pair.Value;
         }
 
         return startInfo;

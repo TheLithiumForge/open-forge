@@ -1001,7 +1001,7 @@ there, including the required direct, integration, and built-process evidence.
 - [Route Create Interface Contract](../create/interface.md)
 - [Route Update Interface Contract](../update/interface.md)
 - [Find Interface Contract](../../find/interface.md)
-- [Index Interface Contract](../../index/interface.md)
+- [Index Interface Contract](../../index-candidate/interface.md)
 - [CLI Architecture](../../../architecture.md)
 - [Historical CLI Decision Agenda](../../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Shared CLI Operation Contract](../../../shared-operation-contract.md)

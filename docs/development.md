@@ -17,7 +17,7 @@ Current responsibilities are:
 | `src/extensions/`                 | First-party Extension packages                                     |
 | `.agents/`                        | Repository dogfood, current knowledge, rules, and active work      |
 | `src/cli-mvp/`                    | Frozen legacy CLI source, build support, and tests                 |
-| `src/cli/`                        | Greenfield boundary and preserved evidence for the replacement CLI |
+| `src/cli/`                        | Replacement CLI source, projects, and active tests                  |
 | `.agents/memory/archived/cli-v2/` | Deleted CLI-v2 raw historical input                                |
 
 ## CLI Transition
@@ -61,15 +61,33 @@ separate from this frozen support. Package wrappers do not exist yet.
 
 The replacement C# implementation follows the current [CLI
 Architecture](../.agents/memory/crystallized/documents/cli/architecture.md) and
-[active Plan](../.agents/memory/working/cli-development/plan.md). Its source,
-workspace configuration, projects, and tests live below `src/cli/`, divided first
-into `root/`, `core/`, and `tests/`. The repository root contains no active C#
-solution or build configuration. Preserved files under `src/cli/tests/` are
-candidate evidence and are not currently runnable projects.
+[active Plan](../.agents/memory/working/cli-development/plan.md). Source and
+projects live below `src/cli/`, divided first into `root/`, `core/`, and `tests/`.
+The repository root owns `OpenForge.Cli.slnx`, `global.json`, `NuGet.Config`,
+`Directory.Build.props`, and `Directory.Packages.props`. All .NET output goes to
+the ignored root `artifacts/` directory.
 
-Do not infer restore, build, test, or Native AOT success before the architectural
-foundation creates and verifies the scoped workspace. The root `package.json` and
-frozen MVP tooling do not provide a replacement CLI build.
+Use ordinary commands from the repository root:
+
+```sh
+dotnet restore
+dotnet build
+dotnet test
+```
+
+Building the CLI project directly, through the solution, or through the EndToEnd
+project publishes the local managed development executable as
+`artifacts/publish/open-forge-dev/<Configuration>/open-forge-dev[.exe]` and writes
+`open-forge-dev.version`. EndToEnd tests discover that artifact directly, so local
+terminal, Visual Studio, and VS Code test runs require no environment variables.
+Use `-p:OpenForgeSkipDevelopmentPublish=true` only for a build that deliberately
+does not need this artifact. A `dotnet test --no-build` run requires the artifact
+selected by an earlier build. CI and explicit Native AOT evidence compile the
+EndToEnd project for one supported target RID and use the corresponding
+`artifacts/publish/<RID>/open-forge/OpenForge.Cli[.exe]` publication.
+
+The root `package.json` and frozen MVP tooling do not provide a replacement CLI
+build.
 
 Do not treat `dist/` or `.temp/` as authored authority. Do not edit generated
 output manually.

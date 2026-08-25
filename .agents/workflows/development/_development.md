@@ -48,7 +48,6 @@ Use this workflow when new public or shared contracts, filesystem or security sa
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
 - [Produce a read-only assurance blueprint with architecture readiness, behavior classes, evidence, path boundaries, and review budget before mutation](phase-0-preflight.md) - #Workflow #Development #Phase #Preflight #Planning #Evidence #Review #Toolchain
 - [Define and freeze a callable contract only when an independent Gray boundary materially protects later work](phase-1-contract.md) - #Workflow #Development #Phase #Contract #Interface
 - [Freeze accepted behavior classes and representative failing evidence before production mutation](phase-2-red.md) - #Workflow #Development #Phase #Red #Testing #Evidence
@@ -58,5 +57,4 @@ Use this workflow when new public or shared contracts, filesystem or security sa
 - [Provide one bounded independent review and route material findings by stable ID to the earliest invalidated boundary](phase-6-review.md) - #Workflow #Development #Phase #Review #Quality #Evidence
 - [Finalize an authorized development task after evidence and final review without implying remote integration or release authority](task-acceptance.md) - #LoadNow #Workflow #Development #Orchestration #Acceptance #Continuation
 - [Prepare and run one task from an exact local baseline with a compact execution capsule, protected surfaces, and coherent checkpoints](task-lifecycle.md) - #LoadNow #Workflow #Development #Orchestration #Planning #Git #Branch #Commit #Progress
-
 <!-- open-forge:generated-index:end -->

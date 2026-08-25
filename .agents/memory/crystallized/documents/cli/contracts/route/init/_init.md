@@ -20,7 +20,7 @@ This entrypoint does not duplicate their detail.
 - [`behavior.md`](behavior.md) is the technology-neutral Behavior Contract
   behind that interface.
 - The shared [Global CLI Flags Interface Contract](../../shared/global-flags/interface.md), [CLI Source References Interface Contract](../../shared/source-references/interface.md),
-  and the [Index Interface Contract](../../index/interface.md) remain
+  and the [Index Interface Contract](../../index-candidate/interface.md) remain
   authoritative at their own scopes. These contracts are linked here instead of
   copied in full.
 - The linked Framework routing and Markdown sources remain authoritative for

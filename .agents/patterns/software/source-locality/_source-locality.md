@@ -13,5 +13,5 @@ open-forge:
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Keep support local until demonstrated reuse promotes it to the nearest common ancestor of its consumers](nearest-shared-scope.md) - #Pattern #Software #Source #Locality #Shared #Reuse #Dependency
+- [Place support through demonstrated semantic reuse or an accepted neutral foundation at the nearest shared scope of its consumers](nearest-shared-scope.md) - #Pattern #Software #Source #Locality #Shared #Reuse #Dependency
 <!-- open-forge:generated-index:end -->

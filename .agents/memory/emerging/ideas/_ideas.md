@@ -17,7 +17,6 @@ Ideas keep possibilities, experiments, open questions, and options worth explori
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
 - [Define the accepted `--verbose` diagnostic content after ordinary human-readable failures and dogfood evidence exist](cli-debug-diagnostics.md) - #Memory #Idea #Contextual #Candidate #CLI #Debug #Diagnostics #Dogfood #Brownfield
 - [Explore additional thin package-manager wrappers after canonical native artifacts and the first npm wrapper ship](cli-distribution-channels.md) - #Memory #Idea #Contextual #Candidate #CLI #Distribution #Package #Bundle #Executable #Dogfood
 - [Evaluate whether the locally dogfooded recipe-bearing Development subtree should become a shipped specialization example or Extension](composable-workflow-entrypoints.md) - #Memory #Idea #Contextual #Candidate #Workflow #Routing #Orchestration #Agent
@@ -31,5 +30,4 @@ Ideas keep possibilities, experiments, open questions, and options worth explori
 - [Explore whether reusable perspective lenses should become a distinct Framework primitive or remain guidance and Task context](perspective-lenses.md) - #Memory #Idea #Contextual #Candidate #Perspective #Architecture #Task #Review #Agent
 - [Explore optional simple and sprint task Extensions that preserve one task authority while interoperating openly with external trackers](task-work-modes.md) - #Memory #Idea #Contextual #Candidate #Task #Backlog #Sprint #Extension #Integration
 - [Explore whether binding behavior needs explicit temporary or conditional activation beyond ordinary routed scope](temporary-conditional-directives.md) - #Memory #Idea #Contextual #Candidate #Directive #Scope #Lifecycle #Temporary
-
 <!-- open-forge:generated-index:end -->

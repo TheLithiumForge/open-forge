@@ -34,10 +34,8 @@ identities. Aggregate findings preserve domain provenance and deterministic orde
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
-- [Implement complete workspace, lifecycle, managed-source, generated, recovery, and Git status facts](status.md) - #Memory #Working #CLI #Task #Status #Observation #Contextual
+- [Implement bounded cleanup of recognized disposable and recovery artifacts](cleanup.md) - #Memory #Working #CLI #Task #Cleanup #Mutation #Contextual
 - [Implement diagnosis domains, severity, recommendations, and complete doctor projections](doctor.md) - #Memory #Working #CLI #Task #Doctor #Diagnosis #Contextual
 - [Implement explicit repair planning, dry run, application, verification, and recovery](repair.md) - #Memory #Working #CLI #Task #Repair #Mutation #Recovery #Contextual
-- [Implement bounded cleanup of recognized disposable and recovery artifacts](cleanup.md) - #Memory #Working #CLI #Task #Cleanup #Mutation #Contextual
-
+- [Implement complete workspace, lifecycle, managed-source, generated, recovery, and Git status facts](status.md) - #Memory #Working #CLI #Task #Status #Observation #Contextual
 <!-- open-forge:generated-index:end -->

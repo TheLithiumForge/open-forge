@@ -278,7 +278,7 @@ The parent entrypoint's generated `Entries` must expose the new routed file from
 its destination description and tags. The command plans this generated effect
 against the hypothetical post-create workspace before any persistent effect.
 
-The automatic effect uses the complete [Index Interface Contract](../../index/interface.md)
+The automatic effect uses the complete [Index Interface Contract](../../index-candidate/interface.md)
 projection, ordering, generated-boundary, verification, and recovery behavior.
 It is part of the same parent plan, dry run, application, and result. The
 command never starts a hidden `index` subprocess.
@@ -561,7 +561,7 @@ expected-state changes, and rerun convergence.
 - [route create Command Contract Set](_create.md)
 - [Route Init Interface Contract](../init/interface.md)
 - [Route Update Interface Contract](../update/interface.md)
-- [Index Interface Contract](../../index/interface.md)
+- [Index Interface Contract](../../index-candidate/interface.md)
 - [Global CLI Flags](../../shared/global-flags/interface.md)
 - [CLI Source References](../../shared/source-references/interface.md)
 - [CLI Architecture](../../../architecture.md)

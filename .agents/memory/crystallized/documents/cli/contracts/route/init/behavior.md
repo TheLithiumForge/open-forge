@@ -24,7 +24,7 @@ semantic result, or implementation technology.
 The [Behavior Contract in the CLI Command Contract Set](../../../command-contract-set.md#behavior-contract)
 and [Shared CLI Operation Contract](../../../shared-operation-contract.md)
 guide this boundary. The shared [Global CLI Flags](../../shared/global-flags/behavior.md),
-[CLI Source References](../../shared/source-references/behavior.md), and [Index Behavior Contract](../../index/behavior.md)
+[CLI Source References](../../shared/source-references/behavior.md), and [Index Behavior Contract](../../index-candidate/behavior.md)
 contracts remain authoritative at their own scopes. The Framework routing and
 Markdown sources remain authoritative for the meaning this operation consumes.
 
@@ -191,7 +191,7 @@ The complete current-fact set for one plan includes:
   revalidation, application, and recovery.
 
 Selection and projection do not treat current generated lines as an independent
-route inventory or metadata fallback. The complete [Index Behavior Contract](../../index/behavior.md)
+route inventory or metadata fallback. The complete [Index Behavior Contract](../../index-candidate/behavior.md)
 projection derives generated navigation from current topology and authored
 metadata, and the parent operation applies it to the complete intended
 post-initialization topology.
@@ -224,7 +224,7 @@ The generated projection then includes, when applicable:
 - The first new entrypoint under a valid exposing Loader.
 - Existing direct routed children in a newly routable folder.
 
-Use the complete [Index Behavior Contract](../../index/behavior.md) projection for generated
+Use the complete [Index Behavior Contract](../../index-candidate/behavior.md) projection for generated
 line shape, destination containment, ordering, marker ownership, and the
 verification and recovery relationship. The route-init operation owns the
 complete intended topology and its combined result; it does not start a hidden
@@ -279,7 +279,7 @@ this operation may be removed during handled recovery only if it is still empty
 and the operation created it.
 
 Generated-navigation effects are part of this same parent plan. They use the
-complete [Index Behavior Contract](../../index/behavior.md) projection, ordering, generated
+complete [Index Behavior Contract](../../index-candidate/behavior.md) projection, ordering, generated
 boundary, verification, and recovery behavior. Compatible authored and
 generated effects for the same physical file remain one bounded planned effect
 under that contract. The operation never invokes a hidden `index` subprocess.
@@ -339,7 +339,7 @@ collision, route, metadata, generated-boundary, and expected-state facts. Rechec
 volatile target facts immediately before each replacement. Apply complete planned
 bytes, not an in-place authored edit, and preserve all bytes outside the planned
 generated interiors. The generated-region replacement must retain the safe
-replacement and identity properties required by the [Index Behavior Contract](../../index/behavior.md)
+replacement and identity properties required by the [Index Behavior Contract](../../index-candidate/behavior.md)
 contract; no weaker fallback is introduced when those properties cannot be
 established.
 
@@ -424,7 +424,7 @@ in addition to the public checks in [Interface Verification](interface.md#verifi
 - Existing direct children in a newly routable folder and blocking when child
   metadata needed by the intended generated region is missing.
 - Automatic generated effects formed against the complete intended topology and
-  the complete [Index Behavior Contract](../../index/behavior.md) projection.
+  the complete [Index Behavior Contract](../../index-candidate/behavior.md) projection.
 - Dry-run and application parity for request, current facts, intended state,
   generated projection, ordered plan, preflight, and semantic status conditions;
   complete effects and exact bounded diffs in dry-run with no persistent effects.
@@ -464,7 +464,7 @@ recovery requirements.
 - [Shared CLI Operation Contract](../../../shared-operation-contract.md)
 - [Global CLI Flags Behavior Contract](../../shared/global-flags/behavior.md)
 - [CLI Source References Behavior Contract](../../shared/source-references/behavior.md)
-- [Index Behavior Contract](../../index/behavior.md)
+- [Index Behavior Contract](../../index-candidate/behavior.md)
 - [CLI Architecture](../../../architecture.md)
 - [Historical CLI Decision Agenda](../../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Routed Markdown Representation](../../../../framework/markdown/routes.md)

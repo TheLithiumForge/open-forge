@@ -37,11 +37,9 @@ discuss an old idea before carrying it into the replacement.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
 - [Current top-down architecture for the greenfield C# replacement CLI, its source, projects, boundaries, evidence, and delivery sequence](architecture.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #Architecture #Greenfield #DotNet #NativeAOT #Testing #Release
 - [Accepted current replacement CLI command-contract roles, topology, and authority boundaries](command-contract-set.md) - #Memory #Crystallized #CLI #Release #Document #Evergreen #CurrentTruth #Contract #Set #Interface #Behavior #TechnicalDesign #Routing #Locality
 - [Accepted detailed command contracts for the non-shipping replacement Open Forge CLI after Gate 2 and Gate 3 closeout](contracts/_contracts.md) - #Memory #Crystallized #CLI #Release #Command #Interface #Contract #CurrentTruth #Evergreen #Architecture
 - [Historical frozen Open Forge CLI MVP role, command surface, deterministic state, safety model, verification boundary, proven properties, and liabilities](mvp-architecture.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #Architecture #CLI #MVP #Tooling #Legacy
 - [Accepted current shared operation contract for the non-shipping Open Forge CLI](shared-operation-contract.md) - #Memory #Crystallized #CLI #Release #Document #Evergreen #CurrentTruth #Contract #Operation #Shared #Interface #Behavior #Determinism #Output #Safety #Locality
-
 <!-- open-forge:generated-index:end -->

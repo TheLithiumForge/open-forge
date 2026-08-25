@@ -227,7 +227,10 @@ A conforming implementation should prove at least these observable scenarios:
    build a graph, or apply a hidden result cap.
 10. Compact, expanded, and JSON have identical section membership, occurrence
     identity, order, and coverage; JSON ignores `--view`.
-11. The final `contracts/references/_references.md` physical source is processed once.
+11. The candidate `contracts/references-candidate/_references-candidate.md`
+    remains staged until the replacement `index` command validates the final
+    compatibility-name path `contracts/references/_references.md` and proves
+    that physical source is processed once.
 12. Repeated unchanged invocations are semantically identical and incomplete,
     blocked, failed, or interrupted scans never appear complete.
 

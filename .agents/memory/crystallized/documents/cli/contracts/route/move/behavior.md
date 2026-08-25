@@ -23,7 +23,7 @@ implementation technology.
 
 The shared [Global CLI Flags Behavior Contract](../../shared/global-flags/behavior.md),
 [CLI Source References Behavior Contract](../../shared/source-references/behavior.md),
-and [Index Behavior Contract](../../index/behavior.md) remain
+and [Index Behavior Contract](../../index-candidate/behavior.md) remain
 authoritative at their own scopes. The current Framework routing, Markdown,
 overwrite, and lifecycle sources define the meaning consumed by this operation.
 
@@ -273,7 +273,7 @@ separately.
 
 ## Generated Projection
 
-The projection uses the accepted [Index Behavior Contract](../../index/behavior.md)
+The projection uses the accepted [Index Behavior Contract](../../index-candidate/behavior.md)
 against the hypothetical post-move workspace. It derives topology from intended
 physical placement and authored metadata, not from stale generated lines.
 
@@ -503,11 +503,11 @@ managed build alone is insufficient.
 - [route move Interface Contract](interface.md)
 - [route move Command Contract Set](_move.md)
 - [Route group entrypoint](../_route.md)
-- [Index Behavior Contract](../../index/behavior.md)
-- [Index Interface Contract](../../index/interface.md)
+- [Index Behavior Contract](../../index-candidate/behavior.md)
+- [Index Interface Contract](../../index-candidate/interface.md)
 - [Global CLI Flags Behavior Contract](../../shared/global-flags/behavior.md)
 - [CLI Source References Behavior Contract](../../shared/source-references/behavior.md)
-- [References Behavior Contract](../../references/behavior.md)
+- [References Behavior Contract](../../references-candidate/behavior.md)
 - [Doctor Behavior Contract](../../doctor/behavior.md)
 - [Route Update Behavior Contract](../update/behavior.md)
 - [CLI Architecture](../../../architecture.md)

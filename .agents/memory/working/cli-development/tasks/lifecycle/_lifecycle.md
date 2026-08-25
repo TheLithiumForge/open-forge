@@ -35,12 +35,10 @@ destination identity and isolated Git/recovery instead of the workspace lock.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
 - [Implement creation of one reviewable Extension package outside a workspace](extension-create.md) - #Memory #Working #CLI #Task #Extension #Create #Lifecycle #Contextual
+- [Implement Extension installation from exact reviewed package identity](extension-install.md) - #Memory #Working #CLI #Task #Extension #Install #Lifecycle #Contextual
+- [Implement Extension removal with preserved user content and recovery integrity](extension-remove.md) - #Memory #Working #CLI #Task #Extension #Remove #Lifecycle #Contextual
+- [Implement Extension update with source review, ownership, and recovery integrity](extension-update.md) - #Memory #Working #CLI #Task #Extension #Update #Lifecycle #Contextual
 - [Implement root Framework installation into a selected workspace](install.md) - #Memory #Working #CLI #Task #Install #Framework #Lifecycle #Contextual
 - [Implement root Framework update from accepted lifecycle identity](update.md) - #Memory #Working #CLI #Task #Update #Framework #Lifecycle #Contextual
-- [Implement Extension installation from exact reviewed package identity](extension-install.md) - #Memory #Working #CLI #Task #Extension #Install #Lifecycle #Contextual
-- [Implement Extension update with source review, ownership, and recovery integrity](extension-update.md) - #Memory #Working #CLI #Task #Extension #Update #Lifecycle #Contextual
-- [Implement Extension removal with preserved user content and recovery integrity](extension-remove.md) - #Memory #Working #CLI #Task #Extension #Remove #Lifecycle #Contextual
-
 <!-- open-forge:generated-index:end -->

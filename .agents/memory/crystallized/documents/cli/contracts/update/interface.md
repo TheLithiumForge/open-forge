@@ -19,7 +19,7 @@ The sibling [Behavior Contract](behavior.md) defines the technology-neutral
 operation behind this surface. The [Install Interface](../install/interface.md)
 owns management establishment and exact install no-op behavior. The shared
 [Global CLI Flags](../shared/global-flags/interface.md), current [Index
-Interface](../index/interface.md), and Framework sources own their
+Interface](../index-candidate/interface.md), and Framework sources own their
 shared meanings. The new CLI remains non-shipping.
 
 The only new-CLI lifecycle document is `.agents/open-forge.lifecycle.json`, schema

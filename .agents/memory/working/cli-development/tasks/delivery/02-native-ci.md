@@ -21,7 +21,7 @@ collects reproducible bounded artifacts without publishing them.
 
 - `win-x64`, `win-arm64`, `linux-x64`, `linux-arm64`, `osx-x64`, and `osx-arm64`
   on native runners.
-- Restore from scoped `src/cli/NuGet.Config` with package audit.
+- Restore from repository-root `NuGet.Config` with package audit.
 - Format and managed build once in an appropriate primary job.
 - Managed Unit, Integration, and EndToEnd evidence.
 - Native root, Integration, and EndToEnd publishes and executions.

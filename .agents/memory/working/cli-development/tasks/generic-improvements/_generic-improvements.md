@@ -131,8 +131,10 @@ test, fixture, composition, and configuration change:
 - transitive vulnerability audit across all six projects with no vulnerable package
   reported;
 - accepted project references (`root -> Core`, `Unit -> Core`, `Integration ->
-  Core + root + TestSupport`, `EndToEnd -> TestSupport`), no project-local `bin/` or
-  `obj/`, and all ignored outputs centralized under `src/cli/artifacts/`;
+  Core + root + TestSupport`, `EndToEnd -> TestSupport`), no project-local `bin/`
+  or `obj/`, and, at this historical acceptance boundary, all ignored outputs
+  centralized under `src/cli/artifacts/`; the later repository-root developer
+  workflow moved those outputs to root `/artifacts/`;
 - exact native terminal-conflict, ordinary option-like post-terminator Inspect, and
   attached-empty Route List depth public scenarios with the required exits, streams,
   and typed results; and
@@ -185,3 +187,11 @@ claim six-RID parity; the existing later CI/release owner remains unchanged.
 Complete. All three ordered improvement stages, the complete post-change gate,
 independent integrated review, squash integration at `063c59d`, and exact
 accepted-tree equality pass.
+
+## Entries
+
+<!-- open-forge:generated-index:start -->
+- [Improve active-test locality and reuse without changing test meaning or CLI behavior](active-test-architecture.md) - #Memory #Working #CLI #Task #Generic #Testing #Locality #Architecture #Refactoring #Contextual #Complete
+- [Close callable-input and root-host/Core architecture decisions before the behavior-neutral CLI refactor](callable-project-architecture.md) - #Memory #Working #CLI #Task #Generic #Callable #Architecture #Project #Refactoring #Contextual #Complete
+- [Replace generic parser rescans and terminal bypass gaps with pinned library facts and typed validation](parser-remediation.md) - #Memory #Working #CLI #Task #Generic #Parser #SystemCommandLine #Evidence #Contextual #Complete
+<!-- open-forge:generated-index:end -->

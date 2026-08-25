@@ -24,10 +24,8 @@ Working Memory is temporary context for continuing or resuming active work.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
 - [Current open priorities for validating, evolving, dogfooding, and preparing Open Forge for release](backlog.md) - #Memory #Working #Backlog #Contextual
 - [Current state, current step, and next steps for one active workstream](checkpoints/_checkpoints.md) - #LoadNow #Memory #Working #Checkpoint #Contextual
 - [Active top-down architecture, Plan, Tasks, and evidence for the greenfield replacement CLI](cli-development/_cli-development.md) - #Memory #Working #Contextual #Active #KeepInMind #CLI #Architecture #Plan #Task #Development
 - [Sealed transfer snapshots that preserve one boundary for resumption](handoffs/_handoffs.md) - #LoadNow #Memory #Handoff #AgentCommunication #Contextual
-
 <!-- open-forge:generated-index:end -->

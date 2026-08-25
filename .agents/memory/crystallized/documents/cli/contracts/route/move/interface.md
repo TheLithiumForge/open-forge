@@ -26,7 +26,7 @@ The [Routed Markdown Representation](../../../../framework/markdown/routes.md),
 [Overwrite Customization](../../../../framework/routing/overwrites.md),
 and [Markdown Compatibility Boundary](../../../../framework/markdown/compatibility.md)
 sources remain authoritative for the Framework meaning consumed by this
-operation. The [Index Interface Contract](../../index/interface.md)
+operation. The [Index Interface Contract](../../index-candidate/interface.md)
 remains authoritative for generated-navigation projection and bounded generated
 regions.
 
@@ -302,7 +302,7 @@ The command never silently leaves a supported reference stale.
 ## Generated Navigation
 
 Move projects generated navigation against the hypothetical post-move workspace
-through the accepted [Index Behavior Contract](../../index/behavior.md).
+through the accepted [Index Behavior Contract](../../index-candidate/behavior.md).
 It includes the old and new exposing parent projections and includes the Loader
 projection when the moved subject is a Loader-exposed category. Any other
 generated region is included only when its direct-child projection changes under
@@ -608,9 +608,9 @@ required by that Architecture.
 - [Route Inspect Interface Contract](../inspect/interface.md)
 - [Route List Interface Contract](../list/interface.md)
 - [CLI Architecture](../../../architecture.md)
-- [Index Interface Contract](../../index/interface.md)
-- [Index Behavior Contract](../../index/behavior.md)
-- [References Interface Contract](../../references/interface.md)
+- [Index Interface Contract](../../index-candidate/interface.md)
+- [Index Behavior Contract](../../index-candidate/behavior.md)
+- [References Interface Contract](../../references-candidate/interface.md)
 - [Doctor Interface Contract](../../doctor/interface.md)
 - [Global CLI Flags](../../shared/global-flags/interface.md)
 - [CLI Source References](../../shared/source-references/interface.md)

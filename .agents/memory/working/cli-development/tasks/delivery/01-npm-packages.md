@@ -27,7 +27,7 @@ not download, compile, implement behavior, or fall back to another runtime.
 - Launcher selection is deterministic from supported Node platform/architecture
   facts and emits one bounded unsupported-platform error.
 - Package source stays below the accepted `src/cli/root/` distribution boundary;
-  packed output stays under `src/cli/artifacts/`.
+  packed output stays under root `/artifacts/`.
 
 ## Evidence
 

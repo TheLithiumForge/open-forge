@@ -10,7 +10,7 @@ open-forge:
 
 - State: Planned after route discovery, Find, References, and Context facts.
 - Parent: [Read-Only Commands](_read-only.md).
-- Contracts: [Interface](../../../../crystallized/documents/cli/contracts/index/interface.md), [Behavior](../../../../crystallized/documents/cli/contracts/index/behavior.md), and [Technical Design](../../../../crystallized/documents/cli/contracts/index/technical-design.md).
+- Contracts: [Interface](../../../../crystallized/documents/cli/contracts/index-candidate/interface.md), [Behavior](../../../../crystallized/documents/cli/contracts/index-candidate/behavior.md), and [Technical Design](../../../../crystallized/documents/cli/contracts/index-candidate/technical-design.md).
 
 ## Expected Outcome
 

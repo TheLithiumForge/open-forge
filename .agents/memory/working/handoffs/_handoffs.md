@@ -33,4 +33,6 @@ A Handoff is a sealed snapshot for another reader. It preserves the boundary-spe
 - [Sealed continuation state for the CLI release program after Queue 32 integration and before Queue 33 completion disposition.](2026-08-16_cli-release-gate-2-queue-33.md) - #Memory #Working #Handoff #KeepInMind
 - [Sealed continuation state for beginning the full Gate 3 Architecture discussion after Gate 2 completion.](2026-08-16_cli-release-gate-3-start.md) - #Memory #Working #Handoff #KeepInMind
 - [Sealed Gate 4 closeout and Gate 5 wake-up summary for the replacement Open Forge CLI release program.](2026-08-17_cli-release-gate-4-complete.md) - #Memory #Working #Handoff #KeepInMind
+- [Sealed continuation state for Find Child 2 after Gray acceptance and during incomplete Red evidence authoring](2026-08-24_cli-find-query-red-start.md) - #Memory #Working #Handoff #KeepInMind #CLI #Find #Red #Contextual
+- [Sealed continuation state for accepted Find before local integration and equality proof](2026-08-25_cli-find-accepted.md) - #Memory #Working #Handoff #KeepInMind #CLI #Find #Acceptance #Contextual
 <!-- open-forge:generated-index:end -->

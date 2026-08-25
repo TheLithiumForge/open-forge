@@ -3,12 +3,15 @@
     <OutputType>Exe</OutputType>
     <AssemblyName>OpenForge.Cli</AssemblyName>
     <RootNamespace>OpenForge.Cli</RootNamespace>
-    <Version>0.0.0</Version>
-    <InformationalVersion>0.0.0-dev</InformationalVersion>
+    <Version>$(OpenForgeCliVersion)</Version>
+    <InformationalVersion>$(OpenForgeCliInformationalVersion)</InformationalVersion>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <PublishAot>true</PublishAot>
     <IsAotCompatible>true</IsAotCompatible>
     <RuntimeIdentifiers>$(OpenForgeAotRuntimeIdentifiers)</RuntimeIdentifiers>
+    <OpenForgeDevelopmentPublishDirectory>$(ArtifactsPath)/publish/open-forge-dev/$(Configuration)/</OpenForgeDevelopmentPublishDirectory>
+    <OpenForgeDevelopmentExecutableSuffix Condition="'$(OS)' == 'Windows_NT'">.exe</OpenForgeDevelopmentExecutableSuffix>
+    <PublishDir Condition="'$(OpenForgeDevelopmentPublish)' == 'true'">$(OpenForgeDevelopmentPublishDirectory)</PublishDir>
   </PropertyGroup>
 
   <ItemGroup>
@@ -36,5 +39,42 @@
     </ItemGroup>
     <MakeDir Directories="$(_CliBuildVersionDirectory)" />
     <WriteLinesToFile File="$(_CliBuildVersionFile)" Lines="@(_CliBuildVersionLine)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+  </Target>
+
+  <Target Name="PublishOpenForgeDevelopmentExecutable" DependsOnTargets="Publish">
+    <PropertyGroup>
+      <_OpenForgeDevelopmentExecutableSuffix Condition="'$(OS)' == 'Windows_NT'">.exe</_OpenForgeDevelopmentExecutableSuffix>
+      <_OpenForgePublishedExecutable>$(PublishDir)$(AssemblyName)$(_OpenForgeDevelopmentExecutableSuffix)</_OpenForgePublishedExecutable>
+      <_OpenForgeDevelopmentExecutable>$(PublishDir)open-forge-dev$(_OpenForgeDevelopmentExecutableSuffix)</_OpenForgeDevelopmentExecutable>
+      <_OpenForgeDevelopmentVersionFile>$(PublishDir)open-forge-dev.version</_OpenForgeDevelopmentVersionFile>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(_OpenForgePublishedExecutable)')" Text="The development CLI publication did not produce '$(_OpenForgePublishedExecutable)'." />
+    <!-- Refresh both declared outputs so the outer target converges after an input changes. -->
+    <Copy SourceFiles="$(_OpenForgePublishedExecutable)" DestinationFiles="$(_OpenForgeDevelopmentExecutable)" />
+    <WriteLinesToFile File="$(_OpenForgeDevelopmentVersionFile)" Lines="$(InformationalVersion)" Overwrite="true" />
+  </Target>
+
+  <Target
+    Name="PublishOpenForgeDevelopmentCliAfterBuild"
+    AfterTargets="Build"
+    Inputs="$(TargetPath);
+      $(TargetDir)$(AssemblyName).deps.json;
+      $(TargetDir)$(AssemblyName).runtimeconfig.json;
+      @(ReferenceCopyLocalPaths)"
+    Outputs="$(OpenForgeDevelopmentPublishDirectory)open-forge-dev$(OpenForgeDevelopmentExecutableSuffix);
+      $(OpenForgeDevelopmentPublishDirectory)open-forge-dev.version"
+    Condition="'$(DesignTimeBuild)' != 'true'
+      and '$(OpenForgeSkipDevelopmentPublish)' != 'true'
+      and '$(OpenForgeDevelopmentPublish)' != 'true'
+      and '$(RuntimeIdentifier)' == ''">
+    <MSBuild
+      Projects="$(MSBuildProjectFullPath)"
+      Targets="PublishOpenForgeDevelopmentExecutable"
+      BuildInParallel="false"
+      Properties="Configuration=$(Configuration);TargetFramework=$(TargetFramework);OpenForgeDevelopmentPublish=true;PublishAot=false;PublishTrimmed=false;SelfContained=false;UseAppHost=true;RuntimeIdentifier=;NoBuild=true;NoRestore=true;OpenForgeSkipDevelopmentPublish=true" />
+  </Target>
+
+  <Target Name="WriteOpenForgePublishedVersion" AfterTargets="Publish" Condition="'$(OpenForgeDevelopmentPublish)' != 'true'">
+    <WriteLinesToFile File="$(PublishDir)$(AssemblyName).version" Lines="$(InformationalVersion)" Overwrite="true" WriteOnlyWhenDifferent="true" />
   </Target>
 </Project>

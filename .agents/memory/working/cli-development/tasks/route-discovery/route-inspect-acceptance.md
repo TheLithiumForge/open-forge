@@ -149,8 +149,10 @@ runner; it does not infer another RID.
   journeys pass without reflection fallback. No project/dependency file changed
   from `develop`.
 - The vulnerability audit reports zero vulnerable top-level or transitive packages
-  across all six projects. No `bin`, `obj`, or `artifacts` path is tracked; scoped
-  output remains under ignored `src/cli/artifacts/`.
+  across all six projects. At this historical acceptance boundary, no `bin`,
+  `obj`, or `artifacts` path was tracked and ignored output remained under
+  `src/cli/artifacts/`. The later repository-root developer workflow moved that
+  output to ignored root `/artifacts/`.
 - Changed/new production files remain below 200 lines; the maximum is 198. The
   accepted low-arity audit remains green; the correction adds only two- and
   three-value records and relocates the pre-existing data-contract shape.

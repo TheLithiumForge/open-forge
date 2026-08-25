@@ -10,11 +10,11 @@ public sealed class PublishedRouteInspectHelpProcessTests
     [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
     public async Task InspectHelpExposesPublicGrammar()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = TemporaryWorkspace.Create("e2e-route-inspect-help");
         var missingWorkspace = working.Combine("missing-workspace");
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             [
@@ -43,11 +43,11 @@ public sealed class PublishedRouteInspectHelpProcessTests
     [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
     public async Task InspectVersionBypassesWorkspaceAndOperation()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = TemporaryWorkspace.Create("e2e-route-inspect-version");
         var missingWorkspace = working.Combine("missing-workspace");
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             [
@@ -62,7 +62,7 @@ public sealed class PublishedRouteInspectHelpProcessTests
             ]);
 
         Assert.Equal(0, result.ExitCode);
-        Assert.Equal(environment.ExpectedVersion + Environment.NewLine, result.StandardOutput);
+        Assert.Equal(target.ExpectedVersion + Environment.NewLine, result.StandardOutput);
         Assert.Equal(string.Empty, result.StandardError);
         Assert.False(Directory.Exists(missingWorkspace));
     }
@@ -74,10 +74,10 @@ public sealed class PublishedRouteInspectPresentationProcessTests
     [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
     public async Task CompactHumanResultUsesSuccessStream()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteInspectWorkspace.CreateComplete();
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             ["route", "inspect", "root", "--workspace", working.Path, "--view=compact"]);
@@ -94,10 +94,10 @@ public sealed class PublishedRouteInspectPresentationProcessTests
     [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
     public async Task ExpandedHumanResultUsesSuccessStream()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteInspectWorkspace.CreateComplete();
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             ["route", "inspect", "root", "--workspace", working.Path, "--view=expanded"]);
@@ -114,10 +114,10 @@ public sealed class PublishedRouteInspectPresentationProcessTests
     [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
     public async Task JsonResultExposesCompleteTypedGraph()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteInspectWorkspace.CreateComplete();
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             ["route", "inspect", "root", "--workspace", working.Path, "--json"]);
@@ -164,15 +164,15 @@ public sealed class PublishedRouteInspectPresentationProcessTests
     [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
     public async Task JsonViewDoesNotChangeTheTypedDocument()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteInspectWorkspace.CreateComplete();
         var compact = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             ["route", "inspect", "root", "--workspace", working.Path, "--json", "--view=compact"]);
         var expanded = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             ["route", "inspect", "root", "--workspace", working.Path, "--json", "--view=expanded"]);
@@ -188,15 +188,15 @@ public sealed class PublishedRouteInspectPresentationProcessTests
     [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
     public async Task VerboseHumanOutputPreservesPrimaryResult()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteInspectWorkspace.CreateComplete();
         var plain = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             ["route", "inspect", "root", "--workspace", working.Path, "--view=expanded"]);
         var verbose = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             ["route", "inspect", "root", "--workspace", working.Path, "--view=expanded", "--verbose"]);
@@ -211,15 +211,15 @@ public sealed class PublishedRouteInspectPresentationProcessTests
     [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
     public async Task VerboseJsonPreservesPrimaryDocument()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteInspectWorkspace.CreateComplete();
         var plain = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             ["route", "inspect", "root", "--workspace", working.Path, "--json"]);
         var verbose = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             ["route", "inspect", "root", "--workspace", working.Path, "--json", "--verbose"]);
@@ -245,14 +245,14 @@ public sealed class PublishedRouteInspectPresentationProcessTests
     [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
     public async Task NativeScalarFormsRemainAccepted(string workspaceForm, string viewForm)
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteInspectWorkspace.CreateComplete();
         var arguments = new List<string> { "route", "inspect", "root" };
         AddScalar(arguments, "--workspace", working.Path, workspaceForm);
         AddScalar(arguments, "--view", "compact", viewForm);
 
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             arguments);
@@ -268,10 +268,10 @@ public sealed class PublishedRouteInspectPresentationProcessTests
     [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
     public async Task HostileFilesystemSafeSourceValuesRemainExact(string sourcePath)
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteInspectWorkspace.CreateHostileValue();
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             ["route", "inspect", sourcePath, "--workspace", working.Path, "--json"]);
@@ -294,10 +294,10 @@ public sealed class PublishedRouteInspectPresentationProcessTests
     [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
     public async Task OptionLikeOperandAfterTerminatorRemainsDomainInput()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteInspectWorkspace.CreateComplete();
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             ["route", "inspect", "--workspace", working.Path, "--json", "--", "--view"]);
@@ -322,7 +322,7 @@ public sealed class PublishedRouteInspectPresentationProcessTests
         string terminalMode,
         string sourceKind)
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = TemporaryWorkspace.Create("e2e-route-inspect-terminal-conflict");
         var missingWorkspace = working.Combine("missing-workspace");
         var arguments = new List<string>
@@ -353,7 +353,7 @@ public sealed class PublishedRouteInspectPresentationProcessTests
         }
 
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             arguments);
@@ -396,10 +396,10 @@ public sealed class PublishedRouteInspectStatusProcessTests
     [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
     public async Task CompleteStatusUsesSuccessStreamWithoutNext()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteInspectWorkspace.CreateComplete();
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             ["route", "inspect", "root", "--view=compact"]);
@@ -414,10 +414,10 @@ public sealed class PublishedRouteInspectStatusProcessTests
     [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
     public async Task ExactPathAttentionStatusHasNoInventedNext()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteInspectWorkspace.CreateAttention();
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             ["route", "inspect", ".agents/root/collision.md", "--view=compact"]);
@@ -432,10 +432,10 @@ public sealed class PublishedRouteInspectStatusProcessTests
     [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
     public async Task BlockedCollisionUsesExactNextWording()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteInspectWorkspace.CreateAttention();
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             ["route", "inspect", "root/collision", "--view=compact"]);
@@ -450,10 +450,10 @@ public sealed class PublishedRouteInspectStatusProcessTests
     [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
     public async Task BlockedJsonRetainsCollisionCandidates()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteInspectWorkspace.CreateAttention();
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             ["route", "inspect", "root/collision", "--json"]);
@@ -478,10 +478,10 @@ public sealed class PublishedRouteInspectStatusProcessTests
     [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
     public async Task IncompleteStatusUsesDoctorNextAction()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteInspectWorkspace.CreateIncomplete();
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             ["route", "inspect", "root", "--view=compact"]);
@@ -496,10 +496,10 @@ public sealed class PublishedRouteInspectStatusProcessTests
     [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
     public async Task InvalidSourceUsesExactNextWording()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteInspectWorkspace.CreateComplete();
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             ["route", "inspect", "unknown", "--view=compact"]);
@@ -516,13 +516,13 @@ public sealed class PublishedRouteInspectStatusProcessTests
     [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
     public async Task InvalidCardinalityUsesTypedJson(string caseName, string expectedCondition)
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedRouteInspectWorkspace.CreateComplete();
         IReadOnlyList<string> arguments = caseName == "missing"
             ? ["route", "inspect", "--workspace", working.Path, "--json"]
             : ["route", "inspect", "first", "second", "--workspace", working.Path, "--json"];
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotHashes,
             arguments);

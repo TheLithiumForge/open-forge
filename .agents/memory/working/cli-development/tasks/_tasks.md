@@ -13,8 +13,9 @@ Read the [program Task](00-cli-development.md), [Architecture](../../../crystall
 - [x] [CLI Foundation](foundation/_foundation.md) — Complete — Implementer: Mastermind
 - [x] [Route Discovery](route-discovery/_route-discovery.md) — Complete — Implementer: Mastermind
 - [x] [Generic CLI Improvements](generic-improvements/_generic-improvements.md) — Complete — Implementer: Mastermind
-- [ ] [Read-Only Commands](read-only/_read-only.md) — Active; Find Child 1 and Modern C# Improvements Complete, Find Child 2 focused Preflight accepted at `e24b9fe`, strict Gray accepted in the commit containing this record, Red next — Implementer: Mastermind
+- [ ] [Read-Only Commands](read-only/_read-only.md) — Active; Find is Complete and integrated at `1f03d16`, while References remains Planned — Implementer: Mastermind
 - [x] [Modern C# Improvements](modern-csharp-improvements.md) — Complete; Preflight `55eb82e`, Framework `a90af59`, Shell/root `fe10525`, Route Inspect/family `62a1dd9`, Route List `273eb45`, Tests/support `6af5fb1`, and final managed, Native AOT, package, audit, and public no-write gates accepted in the commit containing this record — Implementer: Mastermind
+- [ ] [Repository-root CLI developer workflow](repository-root-developer-workflow.md) — Active through local squash integration; implementation, evidence, review, and correction are accepted — Implementer: Mastermind
 - [ ] [Mutation Foundation](mutation-foundation/_mutation-foundation.md) — Planned — Implementer: Not assigned
 - [ ] [Route Mutation Commands](route-mutation/_route-mutation.md) — Planned — Implementer: Not assigned
 - [ ] [Lifecycle Commands](lifecycle/_lifecycle.md) — Planned — Implementer: Not assigned
@@ -46,23 +47,24 @@ Read the [program Task](00-cli-development.md), [Architecture](../../../crystall
 - `Complete`: Acceptance evidence and integration are committed.
 - `Cancelled`: The outcome is no longer required.
 
+
+Generated Entries were refreshed after the temporary compatibility-name changes.
+They provide current navigation only; the Task Group list and each Task record
+define execution state.
+
 ## Entries
 
-Generated entries retain their pre-generic-improvements projection under the
-accepted `CLI-EDGE-001` routing/index waiver; generated content is not hand-edited.
-The explicit Modern C# Improvements link above records maintainer-authorized
-future work without claiming a generated-index refresh.
-
 <!-- open-forge:generated-index:start -->
-
 - [Parent outcome, scope, authority, and acceptance for the complete replacement CLI program](00-cli-development.md) - #Memory #Working #CLI #Task #Program #Architecture #Development #Contextual #Active
-- [Build and accept the actual command-free C# workspace, Core, host, safety, tests, and Native AOT foundation](foundation/_foundation.md) - #Memory #Working #CLI #Task #Foundation #Architecture #DotNet #NativeAOT #Contextual #Complete
-- [Implement read-only route discovery, beginning with route list and then route inspect](route-discovery/_route-discovery.md) - #Memory #Working #CLI #Task #Route #Discovery #ReadOnly #Contextual #Active
-- [Implement retained read-only source, context, extension, and generated-navigation commands](read-only/_read-only.md) - #Memory #Working #CLI #Task #ReadOnly #Source #Extension #Index #Contextual
-- [Build and accept locking, lifecycle, planning, application, recovery, and Git foundations before mutations](mutation-foundation/_mutation-foundation.md) - #Memory #Working #CLI #Task #Mutation #Lifecycle #Recovery #Git #Contextual
-- [Implement retained route mutation commands on the accepted mutation foundation](route-mutation/_route-mutation.md) - #Memory #Working #CLI #Task #Route #Mutation #Contextual
-- [Implement root and Extension creation, installation, update, and removal lifecycle commands](lifecycle/_lifecycle.md) - #Memory #Working #CLI #Task #Lifecycle #Extension #Install #Update #Contextual
-- [Implement aggregate status, diagnosis, repair, and cleanup after every state producer exists](operations/_operations.md) - #Memory #Working #CLI #Task #Status #Doctor #Repair #Cleanup #Contextual
 - [Package, prove, document, and release the complete native CLI without partial publication](delivery/_delivery.md) - #Memory #Working #CLI #Task #Distribution #NativeAOT #SupplyChain #Release #Contextual
-
+- [Build and accept the actual command-free C# workspace, Core, host, safety, tests, and Native AOT foundation](foundation/_foundation.md) - #Memory #Working #CLI #Task #Foundation #Architecture #DotNet #NativeAOT #Contextual #Complete
+- [Improve cross-cutting CLI parser, test, callable, and project structure without changing accepted command meaning](generic-improvements/_generic-improvements.md) - #Memory #Working #CLI #Task #Generic #Parser #Testing #Architecture #Contextual #Complete
+- [Implement root and Extension creation, installation, update, and removal lifecycle commands](lifecycle/_lifecycle.md) - #Memory #Working #CLI #Task #Lifecycle #Extension #Install #Update #Contextual
+- [Apply accepted truthful nullability, construction, and modern C# syntax rules across the complete replacement solution](modern-csharp-improvements.md) - #Memory #Working #CLI #Task #CSharp #Nullability #Initialization #Refactoring #Contextual #Complete
+- [Build and accept locking, lifecycle, planning, application, recovery, and Git foundations before mutations](mutation-foundation/_mutation-foundation.md) - #Memory #Working #CLI #Task #Mutation #Lifecycle #Recovery #Git #Contextual
+- [Implement aggregate status, diagnosis, repair, and cleanup after every state producer exists](operations/_operations.md) - #Memory #Working #CLI #Task #Status #Doctor #Repair #Cleanup #Contextual
+- [Implement retained read-only source, context, extension, and generated-navigation commands](read-only/_read-only.md) - #Memory #Working #CLI #Task #ReadOnly #Source #Extension #Index #Contextual
+- [Move replacement CLI tooling to the repository root and make ordinary test runs publish and discover the local development executable](repository-root-developer-workflow.md) - #Memory #Working #CLI #Task #DotNet #Testing #DeveloperExperience #Contextual #Active
+- [Implement read-only route discovery, beginning with route list and then route inspect](route-discovery/_route-discovery.md) - #Memory #Working #CLI #Task #Route #Discovery #ReadOnly #Contextual #Complete
+- [Implement retained route mutation commands on the accepted mutation foundation](route-mutation/_route-mutation.md) - #Memory #Working #CLI #Task #Route #Mutation #Contextual
 <!-- open-forge:generated-index:end -->

@@ -4,6 +4,11 @@ on:
   pull_request:
     paths:
       - ".github/workflows/cli.yml"
+      - "Directory.Build.props"
+      - "Directory.Packages.props"
+      - "global.json"
+      - "NuGet.Config"
+      - "OpenForge.Cli.slnx"
       - "src/cli/**"
   workflow_dispatch:
 
@@ -45,7 +50,6 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: src/cli
 
     steps:
       - name: Check out source
@@ -63,42 +67,36 @@ jobs:
         run: dotnet format OpenForge.Cli.slnx --no-restore --verify-no-changes
 
       - name: Build Release graph
-        run: dotnet build OpenForge.Cli.slnx --configuration Release --no-restore
+        run: dotnet build OpenForge.Cli.slnx --configuration Release --no-restore -p:OpenForgeSkipDevelopmentPublish=true -p:OpenForgeEndToEndTargetRuntimeIdentifier=${{ matrix.rid }}
 
       - name: Run managed Unit evidence
-        run: dotnet test --project tests/unit/OpenForge.Cli.Core.UnitTests/OpenForge.Cli.Core.UnitTests.csproj --configuration Release --no-build
+        run: dotnet test --project src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/OpenForge.Cli.Core.UnitTests.csproj --configuration Release --no-build
 
       - name: Run managed Integration evidence
-        run: dotnet test --project tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj --configuration Release --no-build
+        run: dotnet test --project src/cli/tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj --configuration Release --no-build
 
       - name: Publish native CLI
-        run: dotnet publish root/OpenForge.Cli/OpenForge.Cli.csproj --configuration Release --runtime ${{ matrix.rid }} --no-restore --output artifacts/publish/${{ matrix.rid }}/open-forge
+        run: dotnet publish src/cli/root/OpenForge.Cli/OpenForge.Cli.csproj --configuration Release --runtime ${{ matrix.rid }} --no-restore --output artifacts/publish/${{ matrix.rid }}/open-forge -p:OpenForgeSkipDevelopmentPublish=true
 
       - name: Run managed EndToEnd evidence
-        env:
-          OPEN_FORGE_CLI_PATH: ${{ github.workspace }}/src/cli/artifacts/publish/${{ matrix.rid }}/open-forge/OpenForge.Cli${{ matrix.suffix }}
-          OPEN_FORGE_CLI_EXPECTED_VERSION: 0.0.0-dev
-        run: dotnet test --project tests/end-to-end/OpenForge.Cli.EndToEndTests/OpenForge.Cli.EndToEndTests.csproj --configuration Release --no-build
+        run: dotnet test --project src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/OpenForge.Cli.EndToEndTests.csproj --configuration Release --no-build
 
       - name: Publish native Integration evidence
-        run: dotnet publish tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj --configuration Release --runtime ${{ matrix.rid }} --no-restore --output artifacts/publish/${{ matrix.rid }}/integration
+        run: dotnet publish src/cli/tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj --configuration Release --runtime ${{ matrix.rid }} --no-restore --output artifacts/publish/${{ matrix.rid }}/integration -p:OpenForgeSkipDevelopmentPublish=true
 
       - name: Execute native Integration evidence
         run: ./artifacts/publish/${{ matrix.rid }}/integration/OpenForge.Cli.IntegrationTests${{ matrix.suffix }}
 
       - name: Publish native EndToEnd evidence
-        run: dotnet publish tests/end-to-end/OpenForge.Cli.EndToEndTests/OpenForge.Cli.EndToEndTests.csproj --configuration Release --runtime ${{ matrix.rid }} --no-restore --output artifacts/publish/${{ matrix.rid }}/end-to-end
+        run: dotnet publish src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/OpenForge.Cli.EndToEndTests.csproj --configuration Release --runtime ${{ matrix.rid }} --no-restore --output artifacts/publish/${{ matrix.rid }}/end-to-end -p:OpenForgeSkipDevelopmentPublish=true
 
       - name: Execute native EndToEnd evidence
-        env:
-          OPEN_FORGE_CLI_PATH: ${{ github.workspace }}/src/cli/artifacts/publish/${{ matrix.rid }}/open-forge/OpenForge.Cli${{ matrix.suffix }}
-          OPEN_FORGE_CLI_EXPECTED_VERSION: 0.0.0-dev
         run: ./artifacts/publish/${{ matrix.rid }}/end-to-end/OpenForge.Cli.EndToEndTests${{ matrix.suffix }}
 
       - name: Upload bounded native artifact
         uses: actions/upload-artifact@v4
         with:
           name: open-forge-${{ matrix.rid }}
-          path: src/cli/artifacts/publish/${{ matrix.rid }}/open-forge/OpenForge.Cli${{ matrix.suffix }}
+          path: artifacts/publish/${{ matrix.rid }}/open-forge/OpenForge.Cli${{ matrix.suffix }}
           if-no-files-found: error
           retention-days: 7

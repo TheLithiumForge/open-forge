@@ -20,7 +20,11 @@ open-forge:
 
 Every `route inspect` Interface and Behavior heading maps to its production owner and required Unit, Integration, EndToEnd, and Native AOT evidence. Candidate and historical evidence is inventoried with an explicit disposition requirement. Before behavior begins, the command-local definitions, binding, request, operation call surface, typed result/profile/availability models, help ownership, and JSON projection ownership are frozen.
 
-There is no preserved route-inspect production or test tree at this baseline. Commit `4b873de` and [`src/cli/tests/preserved/route-list-v1/`](../../../../../../src/cli/tests/preserved/route-list-v1/) contain route-list evidence only. Historical material is candidate evidence, never Architecture authority.
+There is no preserved route-inspect production or test tree at this baseline.
+Commit `4b873de` and the former preserved route-list inventory contained
+route-list evidence only. The obsolete inventory was later audited and removed;
+Git retains it as historical evidence. Historical material is candidate evidence,
+never Architecture authority.
 
 ## Authority And Backlinks
 
@@ -56,11 +60,11 @@ There is no preserved route-inspect production or test tree at this baseline. Co
 | ID | Candidate or historical source | Known scope at the baseline | Required disposition |
 | --- | --- | --- | --- |
 | C1 | Git commit `4b873de`, summarized by the [implementation reset](../../../../archived/cli-release/implementation-reset-2026-08-21.md) | Removed route-list WIP and its historical implementation ideas | Inspect each relevant claim against the current contracts, then mark it candidate-only, retest it, reject it, or retain it as a clearly linked historical observation. Never restore its structure or authority. |
-| C2 | [`src/cli/tests/preserved/route-list-v1/`](../../../../../../src/cli/tests/preserved/route-list-v1/) | Route-list fixtures and tests only; no preserved route-inspect files | Map each potentially relevant case to an inspect heading and choose keep-as-concept, rewrite, split, merge, or remove with a contract reason. Do not call any file preserved inspect evidence. |
+| C2 | Former preserved route-list inventory retained in Git history | Route-list fixtures and tests only; no preserved route-inspect files | Map each potentially relevant case to an inspect heading and choose keep-as-concept, rewrite, split, merge, or remove with a contract reason. Do not call any file preserved inspect evidence. |
 | C3 | Current route-list production and active tests under [`src/cli/`](../../../../../../src/cli/) | The accepted first consumer and its private selection, Loader, filesystem, topology, result, and presentation support | Use only as a predecessor comparison and evidence source. Do not import a List-private path or treat route-list meaning as inspect meaning; the promotion Task makes the per-capability decision. |
 | C4 | Completed [route-list contract Task](done/route-list-contracts.md), [route-list acceptance Task](done/route-list-acceptance.md), and their linked evidence | Current route-list planning and acceptance record | Preserve its route-list meaning and exact evidence reference. Reuse no inspect conclusion without a heading-level comparison. |
 | C5 | [CLI development-flow observation](../../../../emerging/observations/2026-08-21_cli-development-flow-evaluation.md) | Contextual comparison and rationale, not current architecture | Mark each used claim as accepted by a current source, retest it, or reject it. Historical material never resolves an architecture choice by itself. |
-| C6 | Maintainer-supplied [`architecture review`](../../../../../../.temp/review-20.08.2026/open-forge-cli-architecture-review-and-implementation-plan.md), [`shared-folder review`](../../../../../../.temp/review-20.08.2026/open-forge-cli-review-addendum-shared-folders-modern-dotnet-and-scoped-routes.md), and [`3.md`](../../../../../../.temp/review-20.08.2026/3.md.txt) | External or historical review evidence accepted only when projected into current sources | Inventory every used claim, link it to an exact heading, and mark it accepted, retested, or rejected. Do not treat review conclusions as Architecture authority. |
+| C6 | Maintainer-supplied architecture, shared-folder, and scoped-route reviews formerly held under ignored `.temp/` evidence | External or historical review evidence accepted only when projected into current sources | Inventory every used claim, link it to an exact heading, and mark it accepted, retested, or rejected. Do not treat review conclusions as Architecture authority. |
 
 ## Complete Capability And Evidence Matrix
 
@@ -92,7 +96,8 @@ Every Interface and Behavior heading is named below, including their nested head
 - `Models/Result/`: observations, status-compatible availability conditions, and one concrete Shell command result with structural status/selection/profile/next-action invariants.
 - Workspace vocabulary retains invalid, unavailable, and unsafe conditions for the required CLI-EDGE-002 comparison; Gray does not change the current Shell classification.
 - No route-list-private type is imported or promoted. No parser, filesystem, graph, measurement, rendering, serialization, process, or composition behavior exists in Gray.
-- Active toolchain: .NET 10, the scoped `src/cli/OpenForge.Cli.slnx`, and repository `dotnet format`/Release build commands.
+- Active toolchain: .NET 10, the repository-root `OpenForge.Cli.slnx`, and root
+  `dotnet format` and Release build commands.
 - Gray evidence: focused formatting verification and the full Release solution build pass with zero warnings and errors. No tests were added or run as Gray evidence.
 - Targeted correctness and improvement reviews pass for the Gray surface.
 - Public scenario, managed behavior, real-OS evidence, EndToEnd, and Native AOT remain assigned to later children; Gray claims none of them.

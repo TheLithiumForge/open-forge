@@ -26,7 +26,7 @@ The [Routed Markdown Representation](../../../../framework/markdown/routes.md),
 [Overwrite Customization](../../../../framework/routing/overwrites.md),
 and [Markdown Compatibility Boundary](../../../../framework/markdown/compatibility.md)
 sources remain authoritative for the Framework meaning consumed by this
-operation. The [Index Interface Contract](../../index/interface.md)
+operation. The [Index Interface Contract](../../index-candidate/interface.md)
 remains authoritative for generated-navigation projection and bounded generated
 regions.
 
@@ -246,7 +246,7 @@ the removed subject.
 ## Generated Navigation
 
 Remove projects generated navigation against the hypothetical post-remove
-workspace through the accepted [Index Behavior Contract](../../index/behavior.md).
+workspace through the accepted [Index Behavior Contract](../../index-candidate/behavior.md).
 It includes the old exposing parent projection and includes the Loader
 projection when the removed subject is a Loader-exposed category. Any other
 generated region is included only when its direct-child projection changes under
@@ -572,12 +572,12 @@ required by that Architecture.
 - [route remove Interface Contract](interface.md)
 - [route remove Command Contract Set](_remove.md)
 - [Route group entrypoint](../_route.md)
-- [Index Behavior Contract](../../index/behavior.md)
-- [Index Interface Contract](../../index/interface.md)
+- [Index Behavior Contract](../../index-candidate/behavior.md)
+- [Index Interface Contract](../../index-candidate/interface.md)
 - [CLI Architecture](../../../architecture.md)
 - [Global CLI Flags Behavior Contract](../../shared/global-flags/behavior.md)
 - [CLI Source References Behavior Contract](../../shared/source-references/behavior.md)
-- [References Behavior Contract](../../references/behavior.md)
+- [References Behavior Contract](../../references-candidate/behavior.md)
 - [Doctor Behavior Contract](../../doctor/behavior.md)
 - [Route Update Behavior Contract](../update/behavior.md)
 - [CLI Command Contract Set — Interface Contract](../../../command-contract-set.md#interface-contract)

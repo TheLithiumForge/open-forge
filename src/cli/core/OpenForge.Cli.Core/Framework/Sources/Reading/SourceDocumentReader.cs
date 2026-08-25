@@ -194,6 +194,8 @@ internal sealed class SourceDocumentReader
     private static bool IsAccessDeniedSharingFailure(string directCause)
     {
         return directCause.Contains("0x80070005", StringComparison.OrdinalIgnoreCase)
-            || directCause.Contains("0x80070020", StringComparison.OrdinalIgnoreCase);
+            || directCause.Contains("0x80070020", StringComparison.OrdinalIgnoreCase)
+            || (OperatingSystem.IsLinux()
+                && directCause.Contains("0x0000000B", StringComparison.OrdinalIgnoreCase));
     }
 }

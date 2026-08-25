@@ -935,9 +935,11 @@ package. Project, dependency, configuration, and generated surfaces remained
 unchanged. The accepted dependency graph remains root→Core, Unit→Core,
 Integration→Core+root+TestSupport, and EndToEnd→TestSupport. Core's
 reflection-disabled JSON/source-generation/AOT settings remain unchanged. The
-workspace still has one `.slnx`, six projects, and 343 authored active C# files;
-no project-local `bin/obj` directories exist, and ignored outputs remain under
-`src/cli/artifacts/`.
+At this historical acceptance boundary, the workspace had one `.slnx`, six
+projects, and 343 authored active C# files. No project-local `bin/obj`
+directories existed, and ignored outputs remained under `src/cli/artifacts/`.
+The later repository-root developer workflow moved the solution and output to
+the repository root without changing the six-project graph.
 
 The final static audits report production suppressions `126 → 0` and production
 `ArgumentNullException.ThrowIfNull` `380 → 297`. Active test suppressions are

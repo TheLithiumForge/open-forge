@@ -26,7 +26,7 @@ for `--workspace`, `--json`, `--view`, `--verbose`, `--help`, and `--version`.
 All six apply to `route init` under that contract. The shared [CLI Source
 References](../../shared/source-references/interface.md) contract defines source-ID segments,
 exact `.agents/...` path detection, quoting, containment, and result identity.
-The [Index Interface Contract](../../index/interface.md) defines the generated
+The [Index Interface Contract](../../index-candidate/interface.md) defines the generated
 navigation projection, ordering, generated boundary, verification, and recovery
 behavior consumed by this command.
 
@@ -276,7 +276,7 @@ empty generated region. Automatic generated-navigation effects then add:
   applicable.
 - Any existing direct routed children already present in a newly routable folder.
 
-The automatic effects use the complete [Index Interface Contract](../../index/interface.md)
+The automatic effects use the complete [Index Interface Contract](../../index-candidate/interface.md)
 projection, ordering, generated-boundary, verification, and recovery behavior.
 They are part of the same parent plan, dry run, application, and result. The
 command never starts a hidden `index` subprocess.
@@ -576,7 +576,7 @@ attention, dry-run, compact, or verification rules above.
 - [Shared CLI Operation Contract](../../../shared-operation-contract.md)
 - [Global CLI Flags](../../shared/global-flags/interface.md)
 - [CLI Source References](../../shared/source-references/interface.md)
-- [Index Interface Contract](../../index/interface.md)
+- [Index Interface Contract](../../index-candidate/interface.md)
 - [CLI Architecture](../../../architecture.md)
 - [Route Create Interface Contract](../create/interface.md)
 - [Route Update Interface Contract](../update/interface.md)

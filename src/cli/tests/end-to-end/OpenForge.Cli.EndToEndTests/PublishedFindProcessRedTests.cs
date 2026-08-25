@@ -9,12 +9,12 @@ public sealed class PublishedFindProcessRedTests
     [Fact(DisplayName = "Published Find help exposes direct-leaf grammar, sections, exits, examples, and related commands"), Trait("Feature", "find-presentation"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedFindHelpExposesCompleteContract()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedFindWorkspace.CreateBare();
         var missing = working.Combine("missing-help-workspace");
         AssertPathAbsent(missing);
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotState,
             ["find", "--help", "--workspace", missing]);
@@ -32,10 +32,10 @@ public sealed class PublishedFindProcessRedTests
     [Fact(DisplayName = "Published Find bare invocation uses the workspace current directory and default expanded view"), Trait("Feature", "find-presentation"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedFindBareUsesCurrentDirectoryAndDefaultExpandedView()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedFindWorkspace.CreateBare();
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotState,
             ["find"]);
@@ -54,10 +54,10 @@ public sealed class PublishedFindProcessRedTests
     [Fact(DisplayName = "Published Find explicit --workspace uses the default expanded view"), Trait("Feature", "find-presentation"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedFindExplicitWorkspaceUsesDefaultExpandedView()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedFindWorkspace.CreateBare();
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotState,
             ["find", "--workspace", working.Path]);
@@ -73,10 +73,10 @@ public sealed class PublishedFindProcessRedTests
     [Fact(DisplayName = "Published Find compact filtering returns the exact matched source identity"), Trait("Feature", "find-presentation"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedFindCompactFilteringReturnsMatch()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedFindWorkspace.CreateBare();
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotState,
             ["find", "--workspace", working.Path, "--view=compact", "--tag=Architecture", "--heading=Architecture"]);
@@ -94,15 +94,15 @@ public sealed class PublishedFindProcessRedTests
     [Fact(DisplayName = "Published Find JSON content projection is complete and JSON view is a no-op"), Trait("Feature", "find-presentation"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedFindJsonContentAndViewAreStable()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedFindWorkspace.CreateBare();
         var compact = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotState,
             ["find", "--workspace", working.Path, "--tag=Architecture", "--json", "--view=compact", "--content=metadata,frontmatter,headings,body,section:Target"]);
         var expanded = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotState,
             ["find", "--workspace", working.Path, "--tag=Architecture", "--json", "--view=expanded", "--content=metadata,frontmatter,headings,body,section:Target"]);
@@ -121,10 +121,10 @@ public sealed class PublishedFindProcessRedTests
     [Fact(DisplayName = "Published Find typed invalid content has the invalid exit and JSON projection presence distinction"), Trait("Feature", "find-presentation"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedFindInvalidContentIsTyped()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedFindWorkspace.CreateBare();
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotState,
             ["find", "--workspace", working.Path, "--json", "--content=unknown"]);
@@ -140,12 +140,12 @@ public sealed class PublishedFindProcessRedTests
     [Fact(DisplayName = "Published Find blocked workspace emits stderr only for human output and null workspace in JSON"), Trait("Feature", "find-presentation"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedFindBlockedWorkspaceUsesBlockedPolicy()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedFindWorkspace.CreateBare();
         var missing = working.Combine("missing-workspace");
         AssertPathAbsent(missing);
         var human = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotState,
             ["find", "--workspace", missing, "--view=compact"]);
@@ -158,7 +158,7 @@ public sealed class PublishedFindProcessRedTests
         AssertPathAbsent(missing);
 
         var json = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotState,
             ["find", "--workspace", missing, "--json"]);
@@ -182,13 +182,13 @@ public sealed class PublishedFindProcessRedTests
         int exitCode,
         string findingCode)
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = scenario == "attention"
             ? PublishedFindWorkspace.CreateAttention()
             : PublishedFindWorkspace.CreateIncomplete(scenario == "invalid-encoding");
         var content = scenario == "attention" ? "body" : "metadata,body";
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotState,
             ["find", "--workspace", working.Path, "--json", $"--content={content}"]);
@@ -207,15 +207,15 @@ public sealed class PublishedFindProcessRedTests
     [Fact(DisplayName = "Published Find verbose mode preserves the primary result and writes only bounded diagnostics to stderr"), Trait("Feature", "find-presentation"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedFindVerboseStreamsRemainSeparate()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedFindWorkspace.CreateBare();
         var plain = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotState,
             ["find", "--workspace", working.Path, "--view=expanded"]);
         var verbose = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotState,
             ["find", "--workspace", working.Path, "--view=expanded", "--verbose"]);
@@ -229,16 +229,16 @@ public sealed class PublishedFindProcessRedTests
     [Fact(DisplayName = "Published Find invalid JSON keeps primary output, status, and exit invariant under verbose diagnostics"), Trait("Feature", "find-presentation"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedFindInvalidJsonVerboseModePreservesPrimaryDocument()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedFindWorkspace.CreateBare();
         string[] arguments = ["find", "--workspace", working.Path, "--json", "--content=unknown"];
         var plain = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotState,
             arguments);
         var verbose = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotState,
             arguments.Append("--verbose").ToArray());
@@ -263,15 +263,15 @@ public sealed class PublishedFindProcessRedTests
     [Fact(DisplayName = "Published Find representative public journeys leave all workspace bytes unchanged"), Trait("Feature", "find-presentation"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedFindRepresentativeJourneysDoNotWrite()
     {
-        var environment = PublishedExecutableEnvironment.ReadRequired();
+        var target = PublishedExecutableTarget.Discover();
         using var working = PublishedFindWorkspace.CreateBare();
         var json = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotState,
             ["find", "--workspace", working.Path, "--json"]);
         var compact = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            environment,
+            target,
             working.Path,
             working.SnapshotState,
             ["find", "--workspace", working.Path, "--view=compact", "--tag=Architecture"]);

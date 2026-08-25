@@ -9,6 +9,7 @@
     <DefineConstants>$(DefineConstants);XUNIT_AOT</DefineConstants>
     <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
     <RuntimeIdentifiers>$(OpenForgeAotRuntimeIdentifiers)</RuntimeIdentifiers>
+    <OpenForgeEndToEndTargetRuntimeIdentifier Condition="'$(OpenForgeEndToEndTargetRuntimeIdentifier)' == '' and '$(RuntimeIdentifier)' != ''">$(RuntimeIdentifier)</OpenForgeEndToEndTargetRuntimeIdentifier>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,10 +17,30 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../../../root/OpenForge.Cli/OpenForge.Cli.csproj" ReferenceOutputAssembly="false" />
     <ProjectReference Include="../../support/OpenForge.Cli.TestSupport/OpenForge.Cli.TestSupport.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
+
+  <Target Name="GeneratePublishedExecutableBuildTarget" BeforeTargets="CoreCompile">
+    <PropertyGroup>
+      <_PublishedExecutableBuildTargetDirectory>$(IntermediateOutputPath)Generated</_PublishedExecutableBuildTargetDirectory>
+      <_PublishedExecutableBuildTargetFile>$(_PublishedExecutableBuildTargetDirectory)/PublishedExecutableBuildTarget.g.cs</_PublishedExecutableBuildTargetFile>
+    </PropertyGroup>
+    <ItemGroup>
+      <_PublishedExecutableBuildTargetLine Include="namespace OpenForge.Cli.EndToEndTests.Shared.PublishedProcess%3B" />
+      <_PublishedExecutableBuildTargetLine Include="internal static class PublishedExecutableBuildTarget" />
+      <_PublishedExecutableBuildTargetLine Include="{" />
+      <_PublishedExecutableBuildTargetLine Include="    internal const string Configuration = &quot;$(Configuration)&quot;%3B" />
+      <_PublishedExecutableBuildTargetLine Include="    internal const string ExpectedVersion = &quot;$(OpenForgeCliInformationalVersion)&quot;%3B" />
+      <_PublishedExecutableBuildTargetLine Include="    internal const string RuntimeIdentifier = &quot;$(OpenForgeEndToEndTargetRuntimeIdentifier)&quot;%3B" />
+      <_PublishedExecutableBuildTargetLine Include="}" />
+      <Compile Include="$(_PublishedExecutableBuildTargetFile)" />
+    </ItemGroup>
+    <MakeDir Directories="$(_PublishedExecutableBuildTargetDirectory)" />
+    <WriteLinesToFile File="$(_PublishedExecutableBuildTargetFile)" Lines="@(_PublishedExecutableBuildTargetLine)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+  </Target>
 </Project>

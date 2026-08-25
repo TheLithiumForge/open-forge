@@ -51,18 +51,19 @@ result, a universal mutation engine, native interop, or a compatibility path to
 
 ## Physical Workspace
 
-All replacement-specific C# workspace configuration, source, projects, and test
-source live below `src/cli/`:
+The repository root owns the replacement CLI's .NET workspace configuration and
+ignored build output. Replacement source, projects, and test source remain below
+`src/cli/`:
 
 ```text
-src/cli/
-  global.json
-  NuGet.Config
-  Directory.Build.props
-  Directory.Packages.props
-  OpenForge.Cli.slnx
-  artifacts/
+global.json
+NuGet.Config
+Directory.Build.props
+Directory.Packages.props
+OpenForge.Cli.slnx
+artifacts/
 
+src/cli/
   root/
     OpenForge.Cli/
       OpenForge.Cli.csproj
@@ -87,18 +88,18 @@ src/cli/
       OpenForge.Cli.EndToEndTests/
     support/
       OpenForge.Cli.TestSupport/
-    preserved/
 ```
 
-The repository root contains no replacement-specific solution, SDK selection,
-NuGet configuration, central package version file, or MSBuild configuration.
-`src/cli/artifacts/` contains all C# binary, intermediate, default publish, test,
-and package output through the SDK artifacts layout. Projects do not create local
-`bin/` or `obj/` folders.
+The root workspace lets maintainers and IDEs use ordinary `dotnet restore`,
+`dotnet build`, and `dotnet test` commands without changing directories or
+supplying a solution path. `/artifacts/` contains all C# binary, intermediate,
+default publish, test, and package output through the SDK artifacts layout.
+Projects do not create local `bin/` or `obj/` folders.
 
-The preserved test files currently below `src/cli/tests/` move to `preserved/`
-before active projects are created. A Task adopts each relevant expectation into
-the matching active test project. Preserved files never compile implicitly.
+The former preserved route-list test inventory was audited and removed after its
+useful expectations were already represented in active evidence. Completed Tasks
+and Git retain its historical disposition. Do not restore preserved projects as
+an executable or parallel test architecture.
 
 Projects use SDK default recursive authored-source inclusion. They do not list
 ordinary C# files, use virtual solution folders, or link production source into
@@ -556,7 +557,8 @@ one source-generated static context for accepted Framework metadata shapes.
 Concrete command contexts register concrete result graphs. AOT evidence exercises
 every registered shape.
 
-Direct package versions are pinned centrally below `src/cli/`:
+Direct package versions are pinned centrally in the repository-root
+`Directory.Packages.props`:
 
 - `System.CommandLine` 2.0.11;
 - `YamlDotNet` and its accepted static generator 18.1.0;
@@ -591,15 +593,26 @@ cache, and process it can affect. Parallel tests share no mutable state. Snapsho
 cover stable projections only; safety, identity, effects, and status remain direct
 assertions.
 
-Preserved tests are an evidence inventory. The owning Task maps each case to a
-current contract, observes the required failure against the new boundary, and
-then ports the expectation. No Task bulk-copies old test plumbing.
+Historical or removed tests are evidence only when a current Task maps their
+expectation to an accepted contract. Active evidence belongs in the matching
+active project. Do not restore old test plumbing or parallel preserved projects.
 
 ## Build, Native AOT, CI, And Artifacts
 
 The CLI uses stable .NET 10 with C# 14, nullable analysis, warnings as errors,
 deterministic builds, package auditing, and no prerelease SDK. `global.json`
 allows compatible stable feature-band roll-forward.
+
+An ordinary non-RID build of the CLI project publishes a managed, non-AOT
+executable to
+`artifacts/publish/open-forge-dev/<Configuration>/open-forge-dev[.exe]` and writes
+its informational version to `open-forge-dev.version`. Solution and EndToEnd
+builds reach the same project boundary. EndToEnd tests discover that explicit
+local artifact without environment configuration. Design-time builds skip the
+publication; an explicit `OpenForgeSkipDevelopmentPublish=true` MSBuild property
+also disables it when a build does not need the development artifact. `dotnet
+test --no-build` requires an existing development publication because it
+deliberately skips the build dependency.
 
 The six production RIDs remain:
 
@@ -615,9 +628,14 @@ Foundation acceptance requires managed build and tests plus at least local
 managed and local Native AOT evidence. Final delivery runs all six RIDs on their
 native runners and support floors.
 
-The repository CI workflow may live under `.github/workflows/`, but every C# path
-and command it invokes starts below `src/cli/`. CI uploads bounded artifacts; it
-does not make `.github/` a C# source root.
+The repository CI workflow may live under `.github/workflows/`. It invokes the
+root solution and configuration files while project paths remain below
+`src/cli/`. Native and release evidence compiles the EndToEnd project with one of
+the six explicit target RIDs and discovers
+`artifacts/publish/<RID>/open-forge/OpenForge.Cli[.exe]` plus its
+`OpenForge.Cli.version` marker. Executable-path and expected-version environment
+overrides do not exist. CI uploads bounded artifacts; it does not make `.github/`
+a C# source root.
 
 ## Durable Implementation Sequence
 

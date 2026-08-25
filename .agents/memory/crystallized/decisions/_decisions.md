@@ -22,4 +22,5 @@ Decisions record important accepted choices and why they were made.
 - [Accepted rationale for optional Extension packaging, ownership, and catalogue choices](extensions/_extensions.md) - #Memory #Decision #CurrentTruth #Extension #Rationale
 - [Accepted Framework rationale for routing, authority, Core roles, Memory, Markdown, packaging, and user-facing writing](framework/_framework.md) - #Memory #Decision #CurrentTruth #Framework #Rationale
 - [Accepted product-direction rationale, distinct from Framework and implementation decisions](product/_product.md) - #Memory #Decision #CurrentTruth #Product #Rationale
+- [The replacement CLI uses repository-root .NET tooling and an automatically built local development publication for ordinary tests](repository-root-cli-tooling.md) - #Memory #Decision #CurrentTruth #CLI #DotNet #Testing #DeveloperExperience
 <!-- open-forge:generated-index:end -->

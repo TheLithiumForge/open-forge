@@ -39,10 +39,8 @@ main-only release.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
 - [Create and prove the thin launcher package and six platform packages from accepted native artifacts](01-npm-packages.md) - #Memory #Working #CLI #Task #Distribution #Npm #Package #Contextual
 - [Complete six-RID native CI, support-floor execution, and reproducible artifact collection](02-native-ci.md) - #Memory #Working #CLI #Task #Distribution #NativeAOT #CI #Contextual
 - [Produce checksums, signatures, SBOM, provenance, and OIDC attestation for exact release artifacts](03-supply-chain.md) - #Memory #Working #CLI #Task #Distribution #SupplyChain #Security #Contextual
 - [Align public documentation, run complete acceptance, publish from main, and close the program](04-release.md) - #Memory #Working #CLI #Task #Distribution #Documentation #Release #Contextual
-
 <!-- open-forge:generated-index:end -->

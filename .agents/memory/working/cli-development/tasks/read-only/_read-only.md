@@ -8,8 +8,10 @@ open-forge:
 
 ## Task State
 
-- State: Active. Find Child 3 and the Find parent are Complete and accepted in the
-  commit containing this record update. Find Child 1 is Complete and accepted at exact commit `96fe413`
+- State: Active. Find is Complete and squash-integrated into local `develop` at
+  `1f03d16`. The repository-root developer workflow is Active through local
+  squash integration before the next command begins. Find Child 1 is Complete and
+  accepted at exact commit `96fe413`
   (`Accept Find source catalogue`). Modern C# Improvements is Complete and
   accepted at exact `a1cbf09`. Its Preflight was accepted at `55eb82e`, Framework
   at `a90af59`, Shell/root at `fe10525` (`Modernize Shell nullable flow`), Route
@@ -90,14 +92,14 @@ scenario. Shared facts move only through a Mastermind integration increment.
 
 ## Child Tasks
 
-- [x] [Implement deterministic CommonMark-aware source discovery and accepted Find projections](find.md) — Complete and accepted in the commit containing this record update; Child 1 is Complete at exact `96fe413`, Child 2 at exact `ff7ce3f`, and Child 3's no-op Purple at exact `426d4f5`. The final managed/native gate and package, artifact, static, public no-write, and protected-surface audits passed — Implementer: Mastermind
-- [ ] [Implement direct incoming and outgoing reference facts with shared source-universe filters](references.md) — Planned — Implementer: Not assigned
+- [x] [Implement deterministic CommonMark-aware source discovery and accepted Find projections](find.md) — Complete and integrated at `1f03d16`; Child 1 is Complete at exact `96fe413`, Child 2 at exact `ff7ce3f`, and Child 3's no-op Purple at exact `426d4f5`. The final managed/native gate and package, artifact, static, public no-write, and protected-surface audits passed — Implementer: Mastermind
+- [ ] [Implement direct incoming and outgoing reference facts with shared source-universe filters](references-command.md) — Planned — Implementer: Not assigned
 - [ ] [Implement ordered context selection, loading reasons, overlap, size, and token projections](context.md) — Planned — Implementer: Not assigned
 - [ ] [Implement Extension catalogue and source listing without lifecycle inference](extension-list.md) — Planned — Implementer: Not assigned
 - [ ] [Implement exact Extension package inspection without mutation or installation behavior](extension-inspect.md) — Planned — Implementer: Not assigned
-- [ ] [Implement deterministic generated Entries projection and idempotent index application](index.md) — Planned — Implementer: Not assigned
+- [ ] [Implement deterministic generated Entries projection and idempotent index application](index-command.md) — Planned — Implementer: Not assigned
 
-## Find Progress And Routing Condition
+## Historical Find Progress And Current Routing Condition
 
 The Find planning packet is accepted at `b2e3106` on clean branch
 `feature/cli-find`; `develop` remains `e77902a`, and the production/source
@@ -128,46 +130,40 @@ update. The [Child 1 acceptance record](find-source-catalogue.md)
 contains the neutral authority, Route-local policy boundary, final evidence, and
 recorded cancellation limitation.
 
-Find Child 3 and the Find parent are Complete and accepted in the commit containing
-this record update. The final managed/native gate and package, artifact, static,
-public no-write, and protected-surface audits passed. The sole immediate
-continuation is to freshly verify `develop`, squash-integrate the accepted
-`feature/cli-find` tip into local `develop`, commit that one squash, prove exact tree
-equality, do not push, and halt. Do not start References in this session.
-`CLI-EDGE-001` remains non-product only.
+Find Child 3 and the Find parent are Complete. Their accepted feature tree was
+squash-integrated into local `develop` at `1f03d16`. The final managed/native gate
+and package, artifact, static, public no-write, and protected-surface audits remain
+the accepted Find evidence. References remains Planned while the repository-root
+developer workflow Task completes.
 
-`CLI-EDGE-001` remains non-product only. Its legacy `open-forge-old index`
-duplicate-entrypoint failure prevents an authoritative routing refresh, so the
-generated block remains unchanged. Until the owning routing tool can refresh it,
-use these explicit parent-before-children navigation
-links:
+The temporary compatibility-name correction renames the Working Index and
+References Task files and stages their command contracts under candidate route
+names until the replacement Index command proves final physical-identity
+handling. The repository index manager refreshed generated Entries after the
+renames. These explicit parent-before-children links retain phase state and
+history that generated navigation does not define:
 
 1. [Implement Find](find.md)
 2. [Establish The Neutral Find Source Catalogue](find-source-catalogue.md) — Complete
 3. [Modern C# Improvements](../modern-csharp-improvements.md) — Complete; all five ordered modernization batches and the final managed, Native AOT, package, audit, and public no-write gate are accepted
 4. [Implement The Find Query Operation](find-query-operation.md) — Complete; final acceptance at exact `ff7ce3f`
-5. [Present And Accept Find](find-presentation-acceptance.md) — Complete and accepted in the commit containing this record update; Preflight `28d316a`, Gray `a76a217`, original Red `22d3bff`, metadata corrections `6a9a0de` and `eea3d59`, supplemental escaping Red `a865fd1`, Green `cb7874c`, Blue `3f81e76`, and no-op Purple `426d4f5` remain recorded
-
-These links do not claim generated routing state or an `open-forge-old index` run.
-
-Child 3 and Find parent completion is synchronized across this Read-Only group, the
-Plan, the Checkpoint, and the eight live records in the containing accepted record
-update. Generated `Entries` remain unchanged until the owning routing tool can
-refresh them.
+5. [Present And Accept Find](find-presentation-acceptance.md) — Complete and
+   included in the Find tree integrated at `1f03d16`; Preflight `28d316a`, Gray
+   `a76a217`, original Red `22d3bff`, metadata corrections `6a9a0de` and
+   `eea3d59`, supplemental escaping Red `a865fd1`, Green `cb7874c`, Blue
+   `3f81e76`, and no-op Purple `426d4f5` remain recorded.
 
 ## Entries
 
-Generated entries retain their existing projection under the accepted
-`CLI-EDGE-001` routing/index waiver. No manual edit or `open-forge-old index`
-refresh is claimed.
 
 <!-- open-forge:generated-index:start -->
-
-- [Implement deterministic CommonMark-aware source discovery and accepted Find projections](find.md) - #Memory #Working #CLI #Task #Find #ReadOnly #Markdown #Contextual
-- [Implement direct incoming and outgoing reference facts with shared source-universe filters](references.md) - #Memory #Working #CLI #Task #References #ReadOnly #Links #Contextual
 - [Implement ordered context selection, loading reasons, overlap, size, and token projections](context.md) - #Memory #Working #CLI #Task #Context #ReadOnly #Loading #Contextual
-- [Implement Extension catalogue and source listing without lifecycle inference](extension-list.md) - #Memory #Working #CLI #Task #Extension #List #ReadOnly #Contextual
 - [Implement exact Extension package inspection without mutation or installation behavior](extension-inspect.md) - #Memory #Working #CLI #Task #Extension #Inspect #ReadOnly #Contextual
-- [Implement deterministic generated Entries projection and idempotent index application](index.md) - #Memory #Working #CLI #Task #Index #Generated #Mutation #Contextual
-
+- [Implement Extension catalogue and source listing without lifecycle inference](extension-list.md) - #Memory #Working #CLI #Task #Extension #List #ReadOnly #Contextual
+- [Author and accept deterministic CommonMark-aware source discovery and Find projections](find.md) - #Memory #Working #CLI #Task #Find #ReadOnly #Markdown #Contextual
+- [Bind, present, and accept the non-shipping Find command through its public views, JSON, diagnostics, and evidence](find-presentation-acceptance.md) - #Memory #Working #CLI #Task #Find #ReadOnly #Presentation #Acceptance #NativeAOT #Contextual
+- [Implement the exact Find query operation over the accepted source catalogue and fixed Markdown facts](find-query-operation.md) - #Memory #Working #CLI #Task #Find #ReadOnly #Query #Markdown #Matching #Projection #Contextual
+- [Establish the neutral Framework source catalogue and migrate Route List and Inspect without public behavior change](find-source-catalogue.md) - #Memory #Working #CLI #Task #Find #ReadOnly #Sources #Route #Framework #Architecture #Contextual
+- [Implement deterministic generated Entries projection and idempotent index application](index-command.md) - #Memory #Working #CLI #Task #Index #Generated #Mutation #Contextual
+- [Implement direct incoming and outgoing reference facts with shared source-universe filters](references-command.md) - #Memory #Working #CLI #Task #References #ReadOnly #Links #Contextual
 <!-- open-forge:generated-index:end -->

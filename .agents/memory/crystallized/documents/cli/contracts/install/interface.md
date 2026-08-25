@@ -116,8 +116,8 @@ The recognized footprint is closed. It contains only:
 
 Generated `Entries` are derived navigation. Their expected bodies come from the
 intended authored topology and metadata in the selected workspace, not from
-generated interiors embedded in the payload. The current [Index Interface](../index/interface.md)
-and [Index Behavior](../index/behavior.md) own the generated-region
+generated interiors embedded in the payload. The current [Index Interface](../index-candidate/interface.md)
+and [Index Behavior](../index-candidate/behavior.md) own the generated-region
 projection and bounded-marker rules that install consumes in its one plan.
 
 Install never expands this footprint from filename resemblance, tags, route

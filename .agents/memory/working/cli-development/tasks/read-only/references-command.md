@@ -8,10 +8,10 @@ open-forge:
 
 ## Task State
 
-- State: Planned after route inspect; may run in parallel with Find after shared
-  source contracts freeze.
+- State: Planned after the repository-root developer workflow. Find and the
+  neutral source and document facts required for References are accepted.
 - Parent: [Read-Only Commands](_read-only.md).
-- Contracts: [Interface](../../../../crystallized/documents/cli/contracts/references/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/references/behavior.md).
+- Contracts: [Interface](../../../../crystallized/documents/cli/contracts/references-candidate/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/references-candidate/behavior.md).
 
 ## Expected Outcome
 

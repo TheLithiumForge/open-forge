@@ -41,11 +41,9 @@ lifecycle state without a universal mutation engine.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
 - [Freeze workspace-lock, lifecycle-envelope, mutation-precondition, receipt, and recovery contracts](01-contracts.md) - #Memory #Working #CLI #Task #Mutation #Contract #Lifecycle #Recovery #Contextual
 - [Implement real lock ownership, lifecycle reads and writes, and expected-state revalidation](02-lock-lifecycle.md) - #Memory #Working #CLI #Task #Mutation #Lock #Lifecycle #Contextual
 - [Implement atomic file operations, verified application receipts, and command-local plan execution primitives](03-apply.md) - #Memory #Working #CLI #Task #Mutation #Filesystem #Atomic #Contextual
 - [Implement isolated Git checkpoints, recovery artifacts, interruption boundaries, and crash-oriented evidence](04-recovery-git.md) - #Memory #Working #CLI #Task #Mutation #Recovery #Git #Contextual
 - [Integrate and accept the mutation foundation before any mutating command](05-acceptance.md) - #Memory #Working #CLI #Task #Mutation #Acceptance #Integration #Contextual
-
 <!-- open-forge:generated-index:end -->

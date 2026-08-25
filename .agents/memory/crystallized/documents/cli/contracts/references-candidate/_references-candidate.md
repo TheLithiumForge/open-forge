@@ -16,8 +16,10 @@ deterministic, technology-neutral reference resolution, scan coverage, safety,
 and conformance. This entrypoint does not create another command contract and
 no command-local Technical Design file exists for this operation.
 
-The public command identity and final physical contract route are `references`
-and `contracts/references/`. Recognizing the compatibility entrypoint
+The public command identity is `references`, and the candidate contract set is
+located under `contracts/references-candidate/`. Candidate staging remains until
+the replacement `index` command can validate the final compatibility-name path
+`contracts/references/_references.md`. Recognizing the compatibility entrypoint
 `_references.md` must not create a second logical source: the same physical
 entrypoint is canonicalized by identity and processed once. Gate 5 executable
 proof must preserve this physical-identity regression.

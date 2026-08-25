@@ -21,7 +21,7 @@ Use these current Task links when assigning or closing an item.
 
 - [Accept Route List](tasks/route-discovery/done/route-list-acceptance.md)
 - [Implement Route Inspect And Promote Shared Route Facts](tasks/route-discovery/route-inspect.md)
-- [Implement Index](tasks/read-only/index.md)
+- [Implement Index](tasks/read-only/index-command.md)
 - [Complete Native CI And Support Floors](tasks/delivery/02-native-ci.md)
 - [Accept And Release The Complete CLI](tasks/delivery/04-release.md)
 - [Remediate Parser And Standard Behavior](tasks/generic-improvements/parser-remediation.md)
@@ -31,25 +31,24 @@ Use these current Task links when assigning or closing an item.
 
 ### CLI-EDGE-001 — Legacy routing-tool duplicate-entrypoint reports
 
-- **Current behavior and evidence:** `open-forge-old doctor` and `open-forge-old index`
-  report the read-only Task folder as having `_read-only.md`, `index.md`, and
-  `references.md` as multiple recognized entrypoints. They also report
-  `.agents/memory/crystallized/documents/cli/contracts/index` as
-  `_index.md, _index.md`, and the runs emit 502 warnings. The maintainer directed
-  these false/duplicate-entrypoint reports to this ledger, so they no longer
-  block route-list closeout.
-- **Risk:** The legacy router cannot provide clean Doctor or generated-Entries
-  evidence for these paths, which can obscure repository-routing validation. This
-  is a routing-tool and repository-validation issue, not evidence that route-list
-  behavior is incorrect.
-- **Owning Task(s):** [Implement Index](tasks/read-only/index.md), with [Complete
+- **Current behavior and evidence:** The compatibility filenames `index.md`,
+  `references.md`, `_index.md`, and `_references.md` made the frozen routing tool
+  classify ordinary Task files or the same compatibility entrypoint more than
+  once. The Working Tasks now use `index-command.md` and
+  `references-command.md`. The current contracts remain staged under
+  `index-candidate/` and `references-candidate/` until the replacement `index`
+  command validates their final compatibility-name paths.
+- **Risk:** The temporary names preserve legacy routing assistance, but the final
+  compatibility-name regression remains unproved by the replacement command.
+- **Owning Task(s):** [Implement Index](tasks/read-only/index-command.md), with [Complete
   Native CI And Support Floors](tasks/delivery/02-native-ci.md) and [Accept And
   Release The Complete CLI](tasks/delivery/04-release.md) handling delivery and
   release validation as appropriate.
-- **Closure condition:** The Index Task records a correction or explicit
-  compatibility/validation acceptance for the duplicate-entrypoint reports. The
-  applicable delivery or release gate records any remaining waiver and does not
-  claim that legacy routing passed without evidence.
+- **Closure condition:** The replacement Index Task validates each final
+  compatibility entrypoint by physical identity before the candidate contracts
+  move to `contracts/index/_index.md` and
+  `contracts/references/_references.md`. The applicable delivery or release gate
+  records any remaining limitation without claiming unproved compatibility.
 
 ### CLI-EDGE-002 — Workspace failure classification
 
@@ -266,3 +265,22 @@ Use these current Task links when assigning or closing an item.
   `find.identity-unavailable` finding and update status, ordering, renderers, JSON,
   and compatibility evidence. Until then, tests preserve the incomplete
   `layer-unresolved` reuse and prove that no ID or source is fabricated.
+
+### CLI-EDGE-010 — Authored prose around the generated `Entries` region
+
+- **Current behavior and evidence:** The frozen indexer requires the generated
+  start marker to immediately follow `## Entries`. Moving an authored description
+  above that heading lets the current repository index complete, but an ordinary
+  description below the heading and before the start marker is rejected even
+  though it is outside the marked generated interior.
+- **Risk:** The replacement Index command could retain a line-oriented adjacency
+  restriction despite already parsing Markdown into an AST, or could overcorrect
+  by treating every node under `Entries` as manager-owned and overwrite authored
+  explanation.
+- **Owning Task(s):** [Implement Index](tasks/read-only/index-command.md).
+- **Closure condition:** Index uses its parsed Markdown structure to recognize one
+  valid managed region within the `Entries` section, preserves authored nodes and
+  bytes outside that region, and proves malformed, duplicate, nested, and
+  marker-like code cases. The separate [managed-region
+  ideas](../../emerging/ideas/deferred-product-ideas.md#deferred-product-ideas)
+  analyze whether marker comments can ever be removed safely.

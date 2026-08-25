@@ -19,4 +19,4 @@ apm_modules/
 # .NET build output
 **/bin/
 **/obj/
-src/cli/artifacts/
+/artifacts/

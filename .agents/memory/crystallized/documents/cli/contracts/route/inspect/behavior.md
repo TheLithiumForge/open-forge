@@ -509,7 +509,7 @@ command-local Technical Design is needed for `route inspect`.
 - [Route Create Behavior Contract](../create/behavior.md)
 - [Route Update Behavior Contract](../update/behavior.md)
 - [Find Behavior Contract](../../find/behavior.md)
-- [Index Behavior Contract](../../index/behavior.md)
+- [Index Behavior Contract](../../index-candidate/behavior.md)
 - [CLI Architecture](../../../architecture.md)
 - [Historical CLI Decision Agenda](../../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Shared CLI Operation Contract](../../../shared-operation-contract.md)

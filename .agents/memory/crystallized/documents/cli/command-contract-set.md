@@ -84,25 +84,29 @@ complete detailed source set remains under [`contracts/`](contracts/_contracts.m
 
 Direct commands keep their detailed files in one local scope:
 
-| Command      | Interface                                                   | Behavior                                                  | Technical Design                                                    |
-| ------------ | ----------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------- |
-| `find`       | [`find Interface`](contracts/find/interface.md)             | [`find Behavior`](contracts/find/behavior.md)             | [`find Technical Design`](contracts/find/technical-design.md)       |
-| `index`      | [`index Interface`](contracts/index/interface.md)           | [`index Behavior`](contracts/index/behavior.md)           | [`index Technical Design`](contracts/index/technical-design.md)     |
-| `status`     | [`status Interface`](contracts/status/interface.md)         | [`status Behavior`](contracts/status/behavior.md)         | None; no Technical Design exists.                                   |
-| `context`    | [`context Interface`](contracts/context/interface.md)       | [`context Behavior`](contracts/context/behavior.md)       | [`context Technical Design`](contracts/context/technical-design.md) |
-| `references` | [`references Interface`](contracts/references/interface.md) | [`references Behavior`](contracts/references/behavior.md) | None; no Technical Design exists.                                   |
-| `doctor`     | [`doctor Interface`](contracts/doctor/interface.md)         | [`doctor Behavior`](contracts/doctor/behavior.md)         | None; no Technical Design exists.                                   |
-| `repair`     | [`repair Interface`](contracts/repair/interface.md)         | [`repair Behavior`](contracts/repair/behavior.md)         | None; no Technical Design exists.                                   |
-| `install`    | [`install Interface`](contracts/install/interface.md)       | [`install Behavior`](contracts/install/behavior.md)       | None; no Technical Design exists.                                   |
-| `update`     | [`update Interface`](contracts/update/interface.md)         | [`update Behavior`](contracts/update/behavior.md)         | None; no Technical Design exists.                                   |
-| `cleanup`    | [`cleanup Interface`](contracts/cleanup/interface.md)       | [`cleanup Behavior`](contracts/cleanup/behavior.md)       | None; no Technical Design exists.                                   |
+| Command      | Interface                                                            | Behavior                                                           | Technical Design                                                            |
+| ------------ | -------------------------------------------------------------------- | ------------------------------------------------------------------ | --------------------------------------------------------------------------- |
+| `find`       | [`find Interface`](contracts/find/interface.md)                      | [`find Behavior`](contracts/find/behavior.md)                      | [`find Technical Design`](contracts/find/technical-design.md)               |
+| `index`      | [`index Interface`](contracts/index-candidate/interface.md)           | [`index Behavior`](contracts/index-candidate/behavior.md)           | [`index Technical Design`](contracts/index-candidate/technical-design.md)   |
+| `status`     | [`status Interface`](contracts/status/interface.md)                  | [`status Behavior`](contracts/status/behavior.md)                  | None; no Technical Design exists.                                           |
+| `context`    | [`context Interface`](contracts/context/interface.md)                | [`context Behavior`](contracts/context/behavior.md)                | [`context Technical Design`](contracts/context/technical-design.md)         |
+| `references` | [`references Interface`](contracts/references-candidate/interface.md) | [`references Behavior`](contracts/references-candidate/behavior.md) | None; no Technical Design exists.                                           |
+| `doctor`     | [`doctor Interface`](contracts/doctor/interface.md)                  | [`doctor Behavior`](contracts/doctor/behavior.md)                  | None; no Technical Design exists.                                           |
+| `repair`     | [`repair Interface`](contracts/repair/interface.md)                  | [`repair Behavior`](contracts/repair/behavior.md)                  | None; no Technical Design exists.                                           |
+| `install`    | [`install Interface`](contracts/install/interface.md)                | [`install Behavior`](contracts/install/behavior.md)                | None; no Technical Design exists.                                           |
+| `update`     | [`update Interface`](contracts/update/interface.md)                  | [`update Behavior`](contracts/update/behavior.md)                  | None; no Technical Design exists.                                           |
+| `cleanup`    | [`cleanup Interface`](contracts/cleanup/interface.md)                | [`cleanup Behavior`](contracts/cleanup/behavior.md)                | None; no Technical Design exists.                                           |
 
-The public `index` command files are at their final physical path under
-[`contracts/index/`](contracts/index/_index.md). The public `references` command
-files are at their final physical path under [`contracts/references/`](contracts/references/_references.md).
-The replacement identifies recognized entrypoints by physical identity and
-processes each one once. Frozen `open-forge-old` compatibility does not create a
-candidate path or change the replacement contract topology.
+The public `index` command files are currently staged under
+[`contracts/index-candidate/`](contracts/index-candidate/_index-candidate.md).
+The public `references` command files are currently staged under
+[`contracts/references-candidate/`](contracts/references-candidate/_references-candidate.md).
+Candidate staging remains until the replacement `index` command can validate the
+final compatibility-name paths `contracts/index/_index.md` and
+`contracts/references/_references.md`. The replacement identifies recognized
+compatibility entrypoints by physical identity and processes each one once.
+Frozen `open-forge-old` compatibility does not change either command's public
+identity or the replacement's logical contract topology.
 
 The grouped `route` command is routing-only. Each operation has its own local
 Interface and Behavior files:

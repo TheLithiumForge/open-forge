@@ -180,7 +180,7 @@ facts needed to prove one complete creation plan:
   and expected-state facts for every planned existing replacement.
 
 Filesystem topology and authored metadata, rather than current generated lines,
-define the expected parent navigation. The complete [Index Behavior Contract](../../index/behavior.md)
+define the expected parent navigation. The complete [Index Behavior Contract](../../index-candidate/behavior.md)
 projection derives the parent's direct routed children, validates the metadata
 needed to represent them, produces canonical generated lines, orders them by
 canonical containing-file-relative destination using ordinal comparison, and
@@ -297,7 +297,7 @@ generated interiors. A blocker prevents every effect.
 The parent mutation first establishes the complete intended destination. It then
 projects the parent generated `Entries` body against that hypothetical
 post-create workspace before any persistent effect. The projection uses the
-complete [Index Behavior Contract](../../index/behavior.md) ordering, generated-boundary,
+complete [Index Behavior Contract](../../index-candidate/behavior.md) ordering, generated-boundary,
 verification, and recovery behavior. Generated effects are dependency-minimal,
 part of the same parent plan, and never invoke a hidden `index` subprocess.
 
@@ -494,7 +494,7 @@ lock, concurrency, and source boundaries; this contract does not change them.
 - [route create Command Contract Set](_create.md)
 - [Route Init Behavior Contract](../init/behavior.md)
 - [Route Update Behavior Contract](../update/behavior.md)
-- [Index Behavior Contract](../../index/behavior.md)
+- [Index Behavior Contract](../../index-candidate/behavior.md)
 - [Global CLI Flags Behavior Contract](../../shared/global-flags/behavior.md)
 - [CLI Source References Behavior Contract](../../shared/source-references/behavior.md)
 - [CLI Architecture](../../../architecture.md)

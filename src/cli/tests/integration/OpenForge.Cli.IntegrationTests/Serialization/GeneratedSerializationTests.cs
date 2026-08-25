@@ -45,4 +45,15 @@ public sealed class GeneratedSerializationTests
         Assert.Throws<YamlException>(() =>
             deserializer.Deserialize<CliAuthoredMetadata>("open-forge: [\n"));
     }
+
+    [Fact(DisplayName = "Static YAML context returns null for an empty document")]
+    [Trait("Feature", "cli-serialization"), Trait("Evidence", "Integration")]
+    public void StaticYamlContextReturnsNullForEmptyDocument()
+    {
+        var deserializer = new StaticDeserializerBuilder(new CliYamlContext()).Build();
+
+        var metadata = deserializer.Deserialize<CliSkillMetadata>(string.Empty);
+
+        Assert.Null(metadata);
+    }
 }
