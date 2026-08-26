@@ -10,7 +10,7 @@ open-forge:
 
 - State: Active. Find and the repository-root developer workflow are accepted.
   References is Complete and squash-integrated into local `develop` at
-  `53b2cf7`, with exact tree equality to accepted feature tip `1312368`. Public
+  `09f00ef`, with exact tree equality to accepted feature tip `1312368`. Public
   Green is `23d5e2e`, managed is `1270/1270`, and the final supported local
   `linux-x64` root, Integration, and EndToEnd Native AOT gates pass. The broader
   replacement CLI program remains Active.

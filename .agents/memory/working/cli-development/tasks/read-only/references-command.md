@@ -14,7 +14,7 @@ open-forge:
   Managed `1270/1270`, published-process, no-write, architecture,
   protected-surface, and final supported local `linux-x64` Native AOT evidence
   pass. The accepted feature tree at `1312368` is squash-integrated into local
-  `develop` at `53b2cf7` with exact tree equality.
+  `develop` at `09f00ef` with exact tree equality.
 - Responsible role: Overseer; one Task Mastermind owns each active sequential
   increment.
 - Task source: This file.

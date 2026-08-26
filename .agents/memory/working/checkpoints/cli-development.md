@@ -16,7 +16,7 @@ release.
 
 Find is Complete and squash-integrated into local `develop` at `1f03d16`. The
 repository-root developer workflow is Complete. References is Complete and
-squash-integrated into local `develop` at `53b2cf7`, with exact tree equality to
+squash-integrated into local `develop` at `09f00ef`, with exact tree equality to
 accepted feature tip `1312368`.
 
 The maintainer selected References before Context. References Preflight is
@@ -27,7 +27,7 @@ protected-surface, and supported local `linux-x64` Native AOT evidence pass.
 
 The accepted References feature branch remains `codex/cli-references` in its
 dedicated worktree; the current integrated program baseline is local `develop`
-at `53b2cf7`. The accepted developer-workflow direction is recorded in the
+at `09f00ef`. The accepted developer-workflow direction is recorded in the
 [repository-root developer workflow
 Task](../cli-development/tasks/repository-root-developer-workflow.md) and the
 [Repository-Root CLI Tooling Decision](../../crystallized/decisions/repository-root-cli-tooling.md).

@@ -15,7 +15,7 @@ open-forge:
   Plan maintenance within that direction.
 - Last updated: 2026-08-25.
 - Current task: [Implement References](tasks/read-only/references-command.md) is
-  Complete and squash-integrated into local `develop` at `53b2cf7`, with exact
+  Complete and squash-integrated into local `develop` at `09f00ef`, with exact
   tree equality to accepted feature tip `1312368`. Public Red `43b75f3`, Green
   `23d5e2e`, managed `1270/1270`, published process, no-write, architecture,
   protected-surface, and supported local `linux-x64` Native AOT gates pass.
