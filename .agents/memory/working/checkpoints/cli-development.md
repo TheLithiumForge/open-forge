@@ -36,6 +36,13 @@ and passes full managed Unit `1012/1012`, Integration `354/354`, and local
 `linux-x64` Native AOT Integration `354/354`, all with zero failures/skips.
 Generated Navigation's sole project-change request is therefore closed.
 
+Generated Navigation is Complete. Accepted feature `5a882e8` is
+squash-integrated into local `develop` at `21e5200`. Final evidence passes focused
+Unit `18/18`, focused real-filesystem Integration `3/3`, full managed Unit
+`1030/1030`, Integration `357/357`, and republished local `linux-x64` Native AOT
+Integration `357/357`, with zero failures or skips. The final Sol/xhigh recheck is
+`ACCEPTED`; post-integration focused Unit `18/18` and Integration `3/3` pass.
+
 Implemented boundaries:
 
 - Repository-root `OpenForge.Cli.slnx`, SDK, NuGet, and shared MSBuild files.
@@ -66,13 +73,9 @@ external publication, remote action, or push occurred.
 
 ## Current Step
 
-Continue the authorized wave from integrated routed-metadata baseline `5924698`:
-
-1. implement Extension Inspect from its accepted exact
-   command-local result/finding/fingerprint contract in an independent lane; and
-2. rebase and complete the pure read-only
-   `Framework/GeneratedNavigation` foundation with no command, lock, write,
-   recovery, root registration, or JSON surface.
+Continue Extension Inspect from its accepted exact command-local
+result/finding/fingerprint contract. Generated Navigation is integrated and no
+longer active.
 
 Public Index application and Mutation Foundation remain sequential. Do not start
 either until their current dependency-order contradiction is resolved in the
@@ -91,10 +94,10 @@ accepted Architecture and Plan. Do not push.
 
 ## Next Actions
 
-1. Rebase Generated Navigation onto the post-closeout baseline, consume the
-   promoted fact, and rerun its complete affected evidence and independent review.
-2. Review and integrate only accepted Extension Inspect and Generated Navigation
-   candidates, reproduce the combined evidence, and keep remotes unchanged.
+1. Correct Extension Inspect's invalid lifecycle fixture/workaround boundary,
+   re-establish Red, and complete independent review and Native AOT evidence.
+2. Rebase an accepted Extension Inspect candidate onto current `develop`, rerun
+   combined evidence, and squash-integrate it. Keep remotes unchanged.
 
 ## Current Sources
 

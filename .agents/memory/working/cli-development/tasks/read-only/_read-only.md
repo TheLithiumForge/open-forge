@@ -15,8 +15,10 @@ open-forge:
   and Native AOT EndToEnd `111/111` gates pass with zero skips. Extension Inspect
   contract closure is integrated and its implementation is an independent lane.
   Routed Authored Metadata is Complete at `5924698`; Generated Navigation is
-  Active for rebase and completion. Public Index mutation remains blocked on the
-  accepted lock/recovery dependency-order decision.
+  Complete and squash-integrated at `21e5200`, with full managed Unit `1030/1030`,
+  Integration `357/357`, and Native AOT Integration `357/357`. Public Index
+  mutation remains blocked on the accepted lock/recovery dependency-order
+  decision.
 - Responsible role: Overseer.
 - Last updated: 2026-08-26.
 
@@ -116,7 +118,7 @@ scenario. Shared facts move only through a Mastermind integration increment.
 - [x] [Implement Extension catalogue and source listing without lifecycle inference](extension-list.md) — Complete; accepted rebased integration tip `5e6babf`, squash-integrated at `db0d39a` — Implementer: Extension Discovery Task Mastermind
 - [ ] [Implement exact Extension package inspection without mutation or installation behavior](extension-inspect.md) — Active from accepted integrated contract base; independent production lane — Implementer: Extension Inspect Task Mastermind
 - [x] [Promote one neutral routed authored-metadata fact for Open Forge Markdown and native Skills](routed-authored-metadata-foundation.md) — Complete; accepted feature `8a29321`, squash-integrated at `5924698` with managed and native AOT evidence — Implementer: Routed Metadata Task Mastermind
-- [ ] [Implement deterministic generated Entries projection and idempotent index application](index-command.md) — Generated Navigation is Active for rebase and completion; public command/application remains blocked on mutation dependency ordering — Implementer: Generated Navigation Task Mastermind for the foundation; Overseer for the blocked boundary
+- [ ] [Implement deterministic generated Entries projection and idempotent index application](index-command.md) — Generated Navigation foundation is Complete and integrated at `21e5200`; public command/application remains blocked on mutation dependency ordering — Implementer: Overseer for the blocked public boundary
 
 ## Historical Find Progress And Current Routing Condition
 
@@ -157,8 +159,8 @@ and included in the current baseline. References is Complete and integrated at
 `09f00ef`; Context is Complete and integrated at `ca097a2`; Extension List is
 Complete and integrated at `db0d39a`. Extension Inspect's accepted contract is
 integrated and its implementation proceeds independently. Routed Authored
-Metadata is Complete at `5924698`; Generated Navigation is Active for rebase and
-completion.
+Metadata is Complete at `5924698`; Generated Navigation is Complete and
+integrated at `21e5200`.
 
 The temporary compatibility-name correction renames the Working Index and
 References Task files and stages their command contracts under candidate route

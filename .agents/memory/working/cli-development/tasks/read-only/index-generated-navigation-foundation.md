@@ -8,13 +8,10 @@ open-forge:
 
 ## Task State
 
-- State: Active for rebase and completion. [Routed Authored
-  Metadata](routed-authored-metadata-foundation.md) is Complete and integrated at
-  `5924698a3d79156b403348743f31453c03fe48a4`, closing the sole `GN-R1` project
-  change request. Rebase the existing feature lane onto the current post-closeout
-  `develop`, consume `SourceAuthoredMetadataFacts` while retaining
-  `SourceDocumentForm`, and rerun full affected and Native AOT evidence plus the
-  independent acceptance review.
+- State: Complete. Accepted feature `5a882e8` is squash-integrated into local
+  `develop` at `21e5200`. The foundation consumes `SourceAuthoredMetadataFacts`
+  while retaining `SourceDocumentForm`, including form-derived native Skill
+  classification, and exposes no command or effect surface.
 - Parent: [Implement Index](index-command.md).
 - Responsible role: bounded Generated Navigation Task Mastermind.
 - Profile: Assured shared foundation because later Index, route mutation, Doctor,
@@ -81,8 +78,20 @@ temporary/backup artifacts, or public-process evidence.
 
 `GN-R1` found one generated-link delimiter defect and the neutral metadata
 boundary above. `GN-C1` corrected delimiter encoding and added Loader
-parser/resolver round-trip evidence. The metadata boundary remains the sole
-acceptance blocker; no candidate commit or AOT acceptance is claimed yet.
+parser/resolver round-trip evidence. Routed Authored Metadata then closed the
+shared boundary. Final `GN-R2` found one CommonMark label-escaping defect;
+`GN-R2-001` now doubles authored backslashes only in serialized link labels while
+retaining the exact authored description. Complete-document Markdown reparsing
+proves trailing and repeated backslashes form exactly one inline link. Final
+Sol/xhigh recheck is `ACCEPTED`.
+
+Final evidence passes focused Unit `18/18`, focused real-filesystem Integration
+`3/3`, affected Markdown/loading Unit `351/351` and Integration `27/27`, full
+managed Unit `1030/1030` and Integration `357/357`, and republished local
+`linux-x64` Native AOT Integration `357/357`, with zero failures or skips. The
+Release build is warning-free; format, diff, dependency, protected-path, and
+no-write audits pass. Post-integration focused evidence is Unit `18/18` and
+Integration `3/3`.
 
 ## Stop Conditions
 

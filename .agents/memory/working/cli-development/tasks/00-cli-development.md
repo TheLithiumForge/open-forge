@@ -19,12 +19,13 @@ open-forge:
   Complete and integrated at `5924698`, closing Generated Navigation's first
   review project-change request. Its acceptance gate passes full managed Unit
   `1012/1012`, Integration `354/354`, and Native AOT Integration `354/354`.
-  Generated Navigation is Active for rebase and completion. Public Index mutation
-  remains blocked on the accepted
-  lock/recovery dependency-order decision. Extension Inspect's exact contract is
-  integrated at `92313a0`, its implementation-ready state is `db037ee`, and its
-  production lane is independent of the routed-metadata prerequisite. The
-  broader replacement CLI program remains Active.
+  Generated Navigation is Complete and squash-integrated at `21e5200`; its full
+  managed Unit `1030/1030`, Integration `357/357`, and local `linux-x64` Native
+  AOT Integration `357/357` gates pass. Public Index mutation remains blocked on
+  the accepted lock/recovery dependency-order decision. Extension Inspect's exact
+  contract is integrated at `92313a0`, its implementation-ready state is
+  `db037ee`, and its production lane is independent of the routed-metadata
+  prerequisite. The broader replacement CLI program remains Active.
 - Responsible role: Overseer.
 - Task source: This file.
 - Last updated: 2026-08-26.

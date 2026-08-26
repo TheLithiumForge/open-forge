@@ -9,11 +9,10 @@ open-forge:
 ## Task State
 
 - State: Split for safe execution. [Routed Authored
-  Metadata](routed-authored-metadata-foundation.md) is Complete at `5924698`, so
+  Metadata](routed-authored-metadata-foundation.md) is Complete at `5924698`, and
   the pure [Generated Navigation
-  foundation](index-generated-navigation-foundation.md) is Active for rebase,
-  promoted-fact consumption, final evidence, and review. Public Index binding,
-  selection, application,
+  foundation](index-generated-navigation-foundation.md) is Complete and
+  squash-integrated at `21e5200`. Public Index binding, selection, application,
   result, and presentation remain blocked because the accepted design requires
   workspace locking, post-lock revalidation, atomic replacement, Git policy,
   verification, and recovery while the current Plan places their shared Mutation
@@ -51,10 +50,10 @@ idempotence.
 
 ## Child Boundary
 
-- [Routed Authored Metadata](routed-authored-metadata-foundation.md) is Complete
-  and integrated. The [Generated Navigation
-  foundation](index-generated-navigation-foundation.md) now rebases and resumes.
-  Extension Inspect implementation remains independent.
+- [Routed Authored Metadata](routed-authored-metadata-foundation.md) and the
+  [Generated Navigation foundation](index-generated-navigation-foundation.md)
+  are Complete and integrated. Extension Inspect implementation remains
+  independent.
 - Public Index implementation does not start until the maintainer accepts a
   dependency-order correction or another accepted architecture source resolves
   the lock/recovery contradiction. Do not implement an Index-local substitute.
