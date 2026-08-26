@@ -34,7 +34,7 @@ internal sealed class LifecycleExtensionPackageV1
 
     public required string? Version { get; init; }
 
-    public required string Source { get; init; }
+    public required string? Source { get; init; }
 
     public required string[] Dependencies { get; init; }
 

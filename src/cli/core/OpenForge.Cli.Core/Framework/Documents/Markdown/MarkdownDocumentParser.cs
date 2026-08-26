@@ -48,7 +48,7 @@ internal sealed class MarkdownDocumentParser
 
             if (block is CodeBlock or HtmlBlock)
             {
-                AddOpaqueSpan(opaqueSpans, block.Span, bodyStart);
+                AddOpaqueSpan(opaqueSpans, block.Span, bodyStart, block is CodeBlock);
                 continue;
             }
 
@@ -137,6 +137,8 @@ internal sealed class MarkdownDocumentParser
             switch (current)
             {
                 case CodeInline:
+                    AddOpaqueSpan(opaqueSpans, current.Span, bodyStart, isCode: true);
+                    break;
                 case HtmlInline:
                     AddOpaqueSpan(opaqueSpans, current.Span, bodyStart);
                     break;
@@ -327,11 +329,12 @@ internal sealed class MarkdownDocumentParser
     private static void AddOpaqueSpan(
         ICollection<MarkdownOpaqueSpan> opaqueSpans,
         SourceSpan span,
-        int bodyStart)
+        int bodyStart,
+        bool isCode = false)
     {
         if (ToDocumentSpan(span, bodyStart) is { } documentSpan)
         {
-            opaqueSpans.Add(new MarkdownOpaqueSpan(documentSpan));
+            opaqueSpans.Add(new MarkdownOpaqueSpan(documentSpan, isCode));
         }
     }
 

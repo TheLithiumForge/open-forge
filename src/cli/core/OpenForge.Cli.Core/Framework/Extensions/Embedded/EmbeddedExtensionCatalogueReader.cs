@@ -75,7 +75,7 @@ internal static class EmbeddedExtensionCatalogueReader
     {
         string? previousPath = null;
         byte[]? manifestBytes = null;
-        var payloadFileCount = 0;
+        var payload = new List<ExtensionPackageFileFact>();
         foreach (var asset in package.Assets)
         {
             if (asset is null
@@ -105,7 +105,21 @@ internal static class EmbeddedExtensionCatalogueReader
             }
             else if (path.StartsWith("payload/", StringComparison.Ordinal))
             {
-                payloadFileCount++;
+                var target = path["payload/".Length..];
+                if (!ExtensionTargetPath.TryNormalize(target, out var normalizedTarget))
+                {
+                    throw new JsonException("An embedded Extension payload target path is invalid.");
+                }
+
+                payload.Add(ExtensionPackageFileFact.Create(new ExtensionPackageFileSnapshot
+                {
+                    Path = path,
+                    TargetPath = normalizedTarget,
+                    State = ExtensionPackageFileReadState.Available,
+                    ByteLength = bytes.Length,
+                    Sha256 = asset.Sha256,
+                    Bytes = bytes,
+                }));
             }
 
             previousPath = path;
@@ -116,7 +130,7 @@ internal static class EmbeddedExtensionCatalogueReader
             throw new InvalidDataException($"Embedded Extension package '{package.Id}' has no manifest.");
         }
 
-        var manifest = ExtensionManifestReader.Read(manifestBytes, payloadFileCount);
+        var manifest = ExtensionManifestReader.Read(manifestBytes, "extension.json", payload);
         if (!string.Equals(manifest.Id, package.Id, StringComparison.Ordinal))
         {
             throw new InvalidDataException($"Embedded Extension package '{package.Id}' has a conflicting manifest ID.");

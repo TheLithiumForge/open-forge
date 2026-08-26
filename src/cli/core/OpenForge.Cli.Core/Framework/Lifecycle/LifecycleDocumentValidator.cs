@@ -13,17 +13,17 @@ internal static class LifecycleDocumentValidator
     {
         if (document.SchemaVersion != 1)
         {
-            return InvalidCoverage("The lifecycle schema version is unsupported.");
+            return InvalidCoverage("The lifecycle schema version is unsupported.", LifecycleWorkspaceBinding.Unavailable, document.FingerprintPolicy);
         }
 
         if (!string.Equals(document.FingerprintPolicy, LifecycleDocumentReader.FingerprintPolicy, StringComparison.Ordinal))
         {
-            return InvalidCoverage("The lifecycle fingerprint policy is unsupported.");
+            return InvalidCoverage("The lifecycle fingerprint policy is unsupported.", LifecycleWorkspaceBinding.Unavailable, document.FingerprintPolicy);
         }
 
         if (string.IsNullOrWhiteSpace(document.WorkspacePath))
         {
-            return Blocked("The lifecycle workspace binding is invalid.");
+            return Blocked("The lifecycle workspace binding is invalid.", workspaceBinding: LifecycleWorkspaceBinding.Unavailable, fingerprintPolicy: document.FingerprintPolicy);
         }
 
         string documentWorkspace;
@@ -31,35 +31,48 @@ internal static class LifecycleDocumentValidator
         {
             if (!Path.IsPathFullyQualified(document.WorkspacePath))
             {
-                return Blocked("The lifecycle workspace binding is not a canonical absolute path.");
+                return Blocked("The lifecycle workspace binding is not a canonical absolute path.", workspaceBinding: LifecycleWorkspaceBinding.Unavailable, fingerprintPolicy: document.FingerprintPolicy);
             }
 
             documentWorkspace = NormalizeRoot(document.WorkspacePath);
         }
         catch (Exception exception) when (exception is ArgumentException or NotSupportedException or PathTooLongException)
         {
-            return Blocked("The lifecycle workspace binding is invalid.");
+            return Blocked("The lifecycle workspace binding is invalid.", workspaceBinding: LifecycleWorkspaceBinding.Unavailable, fingerprintPolicy: document.FingerprintPolicy);
         }
 
         if (!string.Equals(document.WorkspacePath, documentWorkspace, StringComparison.Ordinal)
             || !string.Equals(documentWorkspace, NormalizeRoot(workspace.LexicalRoot), PathComparison()))
         {
-            return Blocked("The lifecycle workspace binding does not match the selected workspace.");
+            return Blocked("The lifecycle workspace binding does not match the selected workspace.", workspaceBinding: LifecycleWorkspaceBinding.Mismatched, fingerprintPolicy: document.FingerprintPolicy);
         }
 
         if (document.Extensions is null)
         {
-            return InvalidCoverage("The lifecycle Extension section is missing.");
+            return LifecycleReadResult.Create(
+                state: LifecycleReadState.Missing,
+                trust: LifecycleExtensionTrust.Incomplete,
+                packages: [],
+                cause: "The lifecycle Extension section is missing.",
+                coverageFacts: new LifecycleCoverageFacts
+                {
+                    Paths = [],
+                    Coverage = LifecycleCoverageState.Incomplete,
+                    WorkspaceBinding = LifecycleWorkspaceBinding.Matched,
+                    FingerprintPolicy = document.FingerprintPolicy,
+                });
         }
 
-        return ValidateExtensions(document.Extensions);
+        return ValidateExtensions(document.Extensions, document.FingerprintPolicy);
     }
 
-    private static LifecycleReadResult ValidateExtensions(LifecycleExtensionsSectionV1 extensions)
+    private static LifecycleReadResult ValidateExtensions(
+        LifecycleExtensionsSectionV1 extensions,
+        string fingerprintPolicy)
     {
         if (extensions.Packages is null || extensions.Paths is null)
         {
-            return InvalidCoverage("The lifecycle Extension coverage is incomplete.");
+            return InvalidCoverage("The lifecycle Extension coverage is incomplete.", LifecycleWorkspaceBinding.Matched, fingerprintPolicy);
         }
 
         var packages = new List<LifecycleInstalledPackage>();
@@ -70,17 +83,16 @@ internal static class LifecycleDocumentValidator
         {
             if (package is null
                 || !ExtensionIdentity.IsValidStableId(package.Id)
-                || string.IsNullOrWhiteSpace(package.Source)
                 || package.Dependencies is null
                 || package.Paths is null)
             {
-                return Blocked("A lifecycle package identity is malformed.", packages);
+                return Blocked("A lifecycle package identity is malformed.", packages, workspaceBinding: LifecycleWorkspaceBinding.Matched, fingerprintPolicy: fingerprintPolicy);
             }
 
             if (previousPackageId is not null
                 && string.CompareOrdinal(previousPackageId, package.Id) >= 0)
             {
-                return Blocked("Lifecycle package identities are duplicated or not in stable order.", packages);
+                return Blocked("Lifecycle package identities are duplicated or not in stable order.", packages, workspaceBinding: LifecycleWorkspaceBinding.Matched, fingerprintPolicy: fingerprintPolicy);
             }
 
             if (!packageById.TryAdd(package.Id, package)
@@ -88,7 +100,7 @@ internal static class LifecycleDocumentValidator
                 || !IsDistinctOrdered(package.Dependencies)
                 || !TryNormalizePaths(package.Paths, out var normalizedPaths))
             {
-                return Blocked("A lifecycle package contains ambiguous dependency or path identity.", packages);
+                return Blocked("A lifecycle package contains ambiguous dependency or path identity.", packages, workspaceBinding: LifecycleWorkspaceBinding.Matched, fingerprintPolicy: fingerprintPolicy);
             }
 
             previousPackageId = package.Id;
@@ -117,13 +129,13 @@ internal static class LifecycleDocumentValidator
                 || !IsLowerHexSha256(path.BaselineFingerprint)
                 || path.FingerprintKind is not ("semantic" or "exact-bytes"))
             {
-                return Blocked("A lifecycle path identity or fingerprint is malformed.", packages);
+                return Blocked("A lifecycle path identity or fingerprint is malformed.", packages, workspaceBinding: LifecycleWorkspaceBinding.Matched, fingerprintPolicy: fingerprintPolicy);
             }
 
             if ((previousPath is not null && string.CompareOrdinal(previousPath, normalizedPath) >= 0)
                 || !pathByIdentity.TryAdd(ExtensionTargetPath.CreatePortableKey(normalizedPath), path))
             {
-                return Blocked("Lifecycle path identities are duplicated or not in stable order.", packages);
+                return Blocked("Lifecycle path identities are duplicated or not in stable order.", packages, workspaceBinding: LifecycleWorkspaceBinding.Matched, fingerprintPolicy: fingerprintPolicy);
             }
 
             previousPath = normalizedPath;
@@ -139,7 +151,7 @@ internal static class LifecycleDocumentValidator
                     || !string.Equals(path, record.Path, StringComparison.Ordinal)
                     || !record.Owners.Contains(package.Id, StringComparer.Ordinal)))
             {
-                return Blocked("Lifecycle package dependency or path ownership is not reciprocal.", packages);
+                return Blocked("Lifecycle package dependency or path ownership is not reciprocal.", packages, workspaceBinding: LifecycleWorkspaceBinding.Matched, fingerprintPolicy: fingerprintPolicy);
             }
         }
 
@@ -148,30 +160,57 @@ internal static class LifecycleDocumentValidator
             if (record.Owners.Any(owner => !packageById.TryGetValue(owner, out var package)
                 || !package.Paths.Contains(record.Path, StringComparer.Ordinal)))
             {
-                return Blocked("Lifecycle path ownership is not reciprocal.", packages);
+                return Blocked("Lifecycle path ownership is not reciprocal.", packages, workspaceBinding: LifecycleWorkspaceBinding.Matched, fingerprintPolicy: fingerprintPolicy);
             }
         }
 
         if (HasDependencyCycle(dependenciesById))
         {
-            return Blocked("The lifecycle package dependency graph contains a cycle.", packages);
+            return Blocked("The lifecycle package dependency graph contains a cycle.", packages, workspaceBinding: LifecycleWorkspaceBinding.Matched, fingerprintPolicy: fingerprintPolicy);
         }
 
         if (!string.Equals(extensions.Coverage, "complete", StringComparison.Ordinal))
         {
-            return new(
+            return LifecycleReadResult.Create(
                 state: LifecycleReadState.Invalid,
                 trust: LifecycleExtensionTrust.Untrusted,
                 packages: packages,
-                cause: "The lifecycle Extension coverage is incomplete.");
+                cause: "The lifecycle Extension coverage is incomplete.",
+                coverageFacts: new LifecycleCoverageFacts
+                {
+                    Paths = ReadPaths(pathByIdentity),
+                    Coverage = LifecycleCoverageState.Incomplete,
+                    WorkspaceBinding = LifecycleWorkspaceBinding.Matched,
+                    FingerprintPolicy = fingerprintPolicy,
+                });
         }
 
-        return new(
+        return LifecycleReadResult.Create(
             state: LifecycleReadState.Complete,
             trust: packages.Count == 0 ? LifecycleExtensionTrust.Absent : LifecycleExtensionTrust.Trusted,
             packages: packages,
-            cause: null);
+            cause: null,
+            coverageFacts: new LifecycleCoverageFacts
+            {
+                Paths = ReadPaths(pathByIdentity),
+                Coverage = LifecycleCoverageState.Complete,
+                WorkspaceBinding = LifecycleWorkspaceBinding.Matched,
+                FingerprintPolicy = fingerprintPolicy,
+            });
     }
+
+    private static IReadOnlyList<LifecycleInstalledPath> ReadPaths(
+        IReadOnlyDictionary<string, LifecycleExtensionPathV1> paths)
+        => paths.Values
+            .OrderBy(path => path.Path, StringComparer.Ordinal)
+            .Select(path => new LifecycleInstalledPath
+            {
+                Path = path.Path,
+                Owners = Array.AsReadOnly(path.Owners.ToArray()),
+                BaselineFingerprint = path.BaselineFingerprint,
+                FingerprintKind = path.FingerprintKind,
+            })
+            .ToArray();
 
     private static bool TryNormalizePaths(string[] paths, out string[] normalized)
     {
@@ -260,19 +299,39 @@ internal static class LifecycleDocumentValidator
     private static StringComparison PathComparison()
         => OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
 
-    private static LifecycleReadResult InvalidCoverage(string cause)
-        => new(
+    private static LifecycleReadResult InvalidCoverage(
+        string cause,
+        LifecycleWorkspaceBinding workspaceBinding = LifecycleWorkspaceBinding.NotChecked,
+        string? fingerprintPolicy = null)
+        => LifecycleReadResult.Create(
             state: LifecycleReadState.Invalid,
             trust: LifecycleExtensionTrust.Incomplete,
             packages: [],
-            cause: cause);
+            cause: cause,
+            coverageFacts: new LifecycleCoverageFacts
+            {
+                Paths = [],
+                Coverage = LifecycleCoverageState.Incomplete,
+                WorkspaceBinding = workspaceBinding,
+                FingerprintPolicy = fingerprintPolicy,
+            });
 
     private static LifecycleReadResult Blocked(
         string cause,
-        IEnumerable<LifecycleInstalledPackage>? packages = null)
-        => new(
+        IEnumerable<LifecycleInstalledPackage>? packages = null,
+        IEnumerable<LifecycleInstalledPath>? paths = null,
+        LifecycleWorkspaceBinding workspaceBinding = LifecycleWorkspaceBinding.NotChecked,
+        string? fingerprintPolicy = null)
+        => LifecycleReadResult.Create(
             state: LifecycleReadState.Invalid,
             trust: LifecycleExtensionTrust.Blocked,
             packages: packages ?? [],
-            cause: cause);
+            cause: cause,
+            coverageFacts: new LifecycleCoverageFacts
+            {
+                Paths = (paths ?? []).ToArray(),
+                Coverage = LifecycleCoverageState.Blocked,
+                WorkspaceBinding = workspaceBinding,
+                FingerprintPolicy = fingerprintPolicy,
+            });
 }

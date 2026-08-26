@@ -80,39 +80,72 @@ internal sealed class LifecycleDocumentReader(PhysicalPathResolver physicalPathR
         }
         catch (Exception exception) when (exception is JsonException or DecoderFallbackException)
         {
-            return new(
-                state: LifecycleReadState.Invalid,
-                trust: LifecycleExtensionTrust.Incomplete,
-                packages: [],
-                cause: $"The lifecycle document is invalid: {exception.Message}");
+            return InvalidJson(exception);
         }
     }
 
+    private static LifecycleReadResult InvalidJson(Exception exception)
+        => LifecycleReadResult.Create(
+            state: LifecycleReadState.Invalid,
+            trust: LifecycleExtensionTrust.Incomplete,
+            packages: [],
+            cause: $"The lifecycle document is invalid: {exception.Message}",
+            coverageFacts: new LifecycleCoverageFacts
+            {
+                Paths = [],
+                Coverage = LifecycleCoverageState.Incomplete,
+                WorkspaceBinding = LifecycleWorkspaceBinding.NotChecked,
+            });
+
     private static LifecycleReadResult Missing()
-        => new(
+        => LifecycleReadResult.Create(
             state: LifecycleReadState.Missing,
             trust: LifecycleExtensionTrust.Incomplete,
             packages: [],
-            cause: "The lifecycle document is missing; installed coverage cannot be proven empty.");
+            cause: "The lifecycle document is missing; installed coverage cannot be proven empty.",
+            coverageFacts: new LifecycleCoverageFacts
+            {
+                Paths = [],
+                Coverage = LifecycleCoverageState.Incomplete,
+                WorkspaceBinding = LifecycleWorkspaceBinding.NotChecked,
+            });
 
     private static LifecycleReadResult Blocked(string cause)
-        => new(
+        => LifecycleReadResult.Create(
             state: LifecycleReadState.Invalid,
             trust: LifecycleExtensionTrust.Blocked,
             packages: [],
-            cause: cause);
+            cause: cause,
+            coverageFacts: new LifecycleCoverageFacts
+            {
+                Paths = [],
+                Coverage = LifecycleCoverageState.Blocked,
+                WorkspaceBinding = LifecycleWorkspaceBinding.Unavailable,
+            });
 
     private static LifecycleReadResult Cancelled()
-        => new(
+        => LifecycleReadResult.Create(
             state: LifecycleReadState.Cancelled,
             trust: LifecycleExtensionTrust.Incomplete,
             packages: [],
-            cause: "Lifecycle inspection was interrupted.");
+            cause: "Lifecycle inspection was interrupted.",
+            coverageFacts: new LifecycleCoverageFacts
+            {
+                Paths = [],
+                Coverage = LifecycleCoverageState.Interrupted,
+                WorkspaceBinding = LifecycleWorkspaceBinding.NotChecked,
+            });
 
     private static LifecycleReadResult Unavailable(string cause)
-        => new(
+        => LifecycleReadResult.Create(
             state: LifecycleReadState.Unavailable,
             trust: LifecycleExtensionTrust.Incomplete,
             packages: [],
-            cause: cause);
+            cause: cause,
+            coverageFacts: new LifecycleCoverageFacts
+            {
+                Paths = [],
+                Coverage = LifecycleCoverageState.Incomplete,
+                WorkspaceBinding = LifecycleWorkspaceBinding.NotChecked,
+            });
 }

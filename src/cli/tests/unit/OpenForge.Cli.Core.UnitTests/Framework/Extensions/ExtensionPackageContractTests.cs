@@ -164,5 +164,5 @@ public sealed class ExtensionPackageContractTests
     }
 
     private static ExtensionPackageFact Read(string json)
-        => ExtensionManifestReader.Read(Encoding.UTF8.GetBytes(json), 0);
+        => ExtensionManifestReader.ReadManifestOnly(Encoding.UTF8.GetBytes(json));
 }
