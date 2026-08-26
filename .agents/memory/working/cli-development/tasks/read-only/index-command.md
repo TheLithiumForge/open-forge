@@ -9,11 +9,15 @@ open-forge:
 ## Task State
 
 - State: Split for safe execution. The pure Generated Navigation foundation is
-  Ready on integrated baseline `db0d39a213d26f3ad0bab00de1da5922457d854f`.
-  Public Index binding, selection, application, result, and presentation remain
-  blocked because the accepted design requires workspace locking, post-lock
-  revalidation, atomic replacement, Git policy, verification, and recovery while
-  the current Plan places their shared Mutation Foundation after Index.
+  Paused after `GN-R1` proved that native `SKILL.md` metadata semantics must be
+  promoted out of Route before the accepted projection can be complete. The
+  [Routed Authored Metadata](routed-authored-metadata-foundation.md) foundation
+  is the Ready sequential prerequisite; Generated Navigation rebases and resumes
+  only after it integrates. Public Index binding, selection, application,
+  result, and presentation remain blocked because the accepted design requires
+  workspace locking, post-lock revalidation, atomic replacement, Git policy,
+  verification, and recovery while the current Plan places their shared Mutation
+  Foundation after Index.
 - Parent: [Read-Only Commands](_read-only.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/index-candidate/interface.md), [Behavior](../../../../crystallized/documents/cli/contracts/index-candidate/behavior.md), and [Technical Design](../../../../crystallized/documents/cli/contracts/index-candidate/technical-design.md).
 
@@ -47,9 +51,10 @@ idempotence.
 
 ## Child Boundary
 
-- [Establish pure Generated Navigation foundation](index-generated-navigation-foundation.md)
-  is delegation-ready and may run in parallel with Extension Inspect contract
-  closure.
+- [Establish the neutral Routed Authored Metadata foundation](routed-authored-metadata-foundation.md)
+  is delegation-ready and must integrate before the paused
+  [Generated Navigation foundation](index-generated-navigation-foundation.md)
+  rebases and resumes. Extension Inspect implementation remains independent.
 - Public Index implementation does not start until the maintainer accepts a
   dependency-order correction or another accepted architecture source resolves
   the lock/recovery contradiction. Do not implement an Index-local substitute.

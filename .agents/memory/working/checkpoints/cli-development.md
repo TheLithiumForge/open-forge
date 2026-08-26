@@ -25,8 +25,10 @@ build, format verification, managed Unit `978/978`, Integration `354/354`, and
 EndToEnd `111/111`, all with zero skips. The supported local `linux-x64` Native
 AOT root publishes and executes both commands; Native AOT Integration is
 `354/354` and EndToEnd is `111/111`, with zero skips. Final independent Context
-and Extension List correctness reviews found no material issues. No remote
-action or push occurred.
+and Extension List correctness reviews found no material issues. Extension
+Inspect's exact public contract is accepted and squash-integrated at `92313a0`;
+the leaf is implementation-ready from `db037ee`. No remote action or push
+occurred.
 
 Implemented boundaries:
 
@@ -58,12 +60,14 @@ external publication, remote action, or push occurred.
 
 ## Current Step
 
-Freeze and execute the authorized two-lane wave from one reconciled baseline:
+Continue the authorized wave from integrated coordination baseline `db037ee`:
 
-1. close Extension Inspect's exact command-local result/finding/fingerprint
-   contract before production implementation; and
-2. establish the pure read-only `Framework/GeneratedNavigation` foundation with
-   no command, lock, write, recovery, root registration, or JSON surface.
+1. implement Extension Inspect from its accepted exact
+   command-local result/finding/fingerprint contract in an independent lane; and
+2. promote the neutral routed authored-metadata fact proved necessary by the
+   Generated Navigation review, then rebase and complete the pure read-only
+   `Framework/GeneratedNavigation` foundation with no command, lock, write,
+   recovery, root registration, or JSON surface.
 
 Public Index application and Mutation Foundation remain sequential. Do not start
 either until their current dependency-order contradiction is resolved in the
@@ -82,12 +86,12 @@ accepted Architecture and Plan. Do not push.
 
 ## Next Actions
 
-1. Integrate this reconciled coordination boundary and branch both isolated lanes
-   from its exact commit.
-2. Run the two bounded Task Masterminds with task-local reviewers, integrate only
-   accepted candidates, and keep remotes unchanged.
-3. Return the proposed Extension Inspect public contract and the Index/Mutation
-   ordering correction for project-level acceptance before dependent production.
+1. Accept and integrate the routed authored-metadata foundation from an isolated
+   feature branch without altering Generated Navigation's current worktree.
+2. Rebase Generated Navigation onto that exact baseline, consume the promoted
+   fact, and rerun its complete affected evidence and independent review.
+3. Review and integrate only accepted Extension Inspect and Generated Navigation
+   candidates, reproduce the combined evidence, and keep remotes unchanged.
 
 ## Current Sources
 

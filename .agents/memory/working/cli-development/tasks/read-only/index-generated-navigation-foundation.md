@@ -8,8 +8,14 @@ open-forge:
 
 ## Task State
 
-- State: Ready from integrated baseline
-  `db0d39a213d26f3ad0bab00de1da5922457d854f`.
+- State: Paused after `GN-R1` from integrated coordination baseline
+  `4ffb04483b8e3a0127fc2bf55ff64c5098cf211a`.
+- Current blocker: the accepted native `SKILL.md` metadata meaning needed beside
+  the existing neutral form classification exists only behind Route-local types.
+  The lane correctly returned a project
+  change request instead of creating a second parser. Resume after
+  [Routed Authored Metadata](routed-authored-metadata-foundation.md) is accepted
+  and integrated, then rebase this feature lane and consume the promoted fact.
 - Parent: [Implement Index](index-command.md).
 - Responsible role: bounded Generated Navigation Task Mastermind.
 - Profile: Assured shared foundation because later Index, route mutation, Doctor,
@@ -73,6 +79,11 @@ temporary/backup artifacts, or public-process evidence.
 
 - `GN-R1`: one independent architecture/locality/correctness review.
 - `GN-C1`: one grouped correction cycle for accepted material findings.
+
+`GN-R1` found one generated-link delimiter defect and the neutral metadata
+boundary above. `GN-C1` corrected delimiter encoding and added Loader
+parser/resolver round-trip evidence. The metadata boundary remains the sole
+acceptance blocker; no candidate commit or AOT acceptance is claimed yet.
 
 ## Stop Conditions
 

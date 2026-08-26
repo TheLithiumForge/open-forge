@@ -8,14 +8,15 @@ open-forge:
 
 ## Task State
 
-- State: Active at clean integrated baseline `db0d39a`. Context is Complete and
+- State: Active. Context is Complete and
   squash-integrated at `ca097a2`; Extension List is Complete and
   squash-integrated at `db0d39a`. The combined managed Unit `978/978`,
   Integration `354/354`, EndToEnd `111/111`, Native AOT Integration `354/354`,
-  and Native AOT EndToEnd `111/111` gates pass with zero skips. The next
-  authorized wave is Extension Inspect contract closure plus the pure Generated
-  Navigation foundation. Public Index mutation remains blocked on the accepted
-  lock/recovery dependency-order decision.
+  and Native AOT EndToEnd `111/111` gates pass with zero skips. Extension Inspect
+  contract closure is integrated and its implementation is an independent lane.
+  Routed Authored Metadata is the current sequential prerequisite for the paused
+  Generated Navigation foundation. Public Index mutation remains blocked on the
+  accepted lock/recovery dependency-order decision.
 - Responsible role: Overseer.
 - Last updated: 2026-08-26.
 
@@ -113,8 +114,9 @@ scenario. Shared facts move only through a Mastermind integration increment.
 - [x] [Implement direct incoming and outgoing reference facts with shared source-universe filters](references-command.md) — Complete and integrated at `09f00ef`; public Green `23d5e2e`, managed `1270/1270`, public no-write, and final local `linux-x64` Native AOT gates pass — Implementer: Overseer
 - [x] [Implement ordered context selection, loading reasons, overlap, size, and token projections](context.md) — Complete; accepted feature tip `303ad7d`, squash-integrated at `ca097a2` — Implementer: Context Task Mastermind
 - [x] [Implement Extension catalogue and source listing without lifecycle inference](extension-list.md) — Complete; accepted rebased integration tip `5e6babf`, squash-integrated at `db0d39a` — Implementer: Extension Discovery Task Mastermind
-- [ ] [Implement exact Extension package inspection without mutation or installation behavior](extension-inspect.md) — Ready for exact public-contract closure; production remains gated on that closure — Implementer: Extension Inspect Task Mastermind
-- [ ] [Implement deterministic generated Entries projection and idempotent index application](index-command.md) — Active only through its pure Generated Navigation foundation; public command/application is blocked on mutation dependency ordering — Implementer: Generated Navigation Task Mastermind for the foundation; Overseer for the blocked boundary
+- [ ] [Implement exact Extension package inspection without mutation or installation behavior](extension-inspect.md) — Active from accepted integrated contract base; independent production lane — Implementer: Extension Inspect Task Mastermind
+- [ ] [Promote one neutral routed authored-metadata fact for Open Forge Markdown and native Skills](routed-authored-metadata-foundation.md) — Ready and current sequential prerequisite for Generated Navigation — Implementer: Routed Metadata Task Mastermind
+- [ ] [Implement deterministic generated Entries projection and idempotent index application](index-command.md) — Generated Navigation is Paused pending Routed Authored Metadata integration; public command/application remains blocked on mutation dependency ordering — Implementer: Generated Navigation Task Mastermind for the foundation; Overseer for the blocked boundary
 
 ## Historical Find Progress And Current Routing Condition
 
@@ -153,8 +155,10 @@ and package, artifact, static, public no-write, and protected-surface audits rem
 the accepted Find evidence. The repository-root developer workflow is Complete
 and included in the current baseline. References is Complete and integrated at
 `09f00ef`; Context is Complete and integrated at `ca097a2`; Extension List is
-Complete and integrated at `db0d39a`. Extension Inspect contract closure and the
-pure Generated Navigation foundation are the selected next wave.
+Complete and integrated at `db0d39a`. Extension Inspect's accepted contract is
+integrated and its implementation proceeds independently. Routed Authored
+Metadata is Ready/current; Generated Navigation remains Paused until that
+prerequisite integrates.
 
 The temporary compatibility-name correction renames the Working Index and
 References Task files and stages their command contracts under candidate route
@@ -186,4 +190,5 @@ history that generated navigation does not define:
 - [Implement deterministic generated Entries projection and idempotent index application](index-command.md) - #Memory #Working #CLI #Task #Index #Generated #Mutation #Contextual
 - [Establish pure deterministic Generated Navigation projection and bounded-region facts without effects](index-generated-navigation-foundation.md) - #Memory #Working #CLI #Task #Index #Generated #Framework #ReadOnly #Contextual
 - [Implement direct incoming and outgoing reference facts with shared source-universe filters](references-command.md) - #Memory #Working #CLI #Task #References #ReadOnly #Links #Contextual
+- [Promote one neutral routed authored-metadata fact for Open Forge Markdown and native Skills](routed-authored-metadata-foundation.md) - #Memory #Working #CLI #Task #Framework #Sources #Metadata #ReadOnly #Index #Contextual
 <!-- open-forge:generated-index:end -->
