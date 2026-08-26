@@ -6,6 +6,12 @@ using OpenForge.Cli.Core.Commands.Find;
 using OpenForge.Cli.Core.Commands.Find.Models.Binding;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Commands.Find.Shared.Rendering;
+using OpenForge.Cli.Core.Commands.Extension;
+using OpenForge.Cli.Core.Commands.Extension.List;
+using OpenForge.Cli.Core.Commands.Extension.List.Models.Binding;
+using OpenForge.Cli.Core.Commands.Extension.List.Models.Result;
+using OpenForge.Cli.Core.Commands.Extension.List.Shared.Rendering;
+using OpenForge.Cli.Core.Commands.Extension.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.References;
 using OpenForge.Cli.Core.Commands.References.Models.Binding;
 using OpenForge.Cli.Core.Commands.References.Models.Result;
@@ -40,11 +46,7 @@ internal static class CliCompositionRoot
                 $"  Open Forge CLI (`{CliSyntaxDefinitions.ExecutableName}`)."),
             new CliHelpSection(
                 "Discovery",
-                "  route list     List routed sources and descendants at a structural depth."
-                + Environment.NewLine
-                + "  route inspect  Explain one source's route behavior without returning authored content."
-                + Environment.NewLine
-                + "  find           Find Markdown sources by authored tags and structural headings."),
+                $"  route list     List routed sources and descendants at a structural depth.{Environment.NewLine}  route inspect  Explain one source's route behavior without returning authored content.{Environment.NewLine}  find           Find Markdown sources by authored tags and structural headings.{Environment.NewLine}  extension list  List installed and available Extension packages."),
         ]);
         var routeGroup = RouteBinding.CreateGroup();
         var listSymbols = RouteListBinding.CreateSymbols(routeGroup);
@@ -107,13 +109,32 @@ internal static class CliCompositionRoot
                     ContextJsonRenderer.Render),
                 DiagnosticRenderer = ContextDiagnosticRenderer.Render,
             });
+        var extensionGroup = ExtensionBinding.CreateGroup();
+        var extensionListSymbols = ExtensionListBinding.CreateSymbols(extensionGroup);
+        var extensionListBinding = ExtensionListBinding.Close(
+            extensionListSymbols,
+            new ExtensionListBindingComponents
+            {
+                Help = ExtensionListHelpSections.Create(),
+                Operation = ExtensionListOperationFactory.Create(),
+                Renderers = new CliRendererSet<ExtensionListResult>(
+                    ExtensionListHumanRenderer.Render,
+                    ExtensionListJsonRenderer.Render),
+                DiagnosticRenderer = ExtensionListDiagnosticRenderer.Render,
+            });
         var tree = CliCommandTree.Create(
             rootHelp,
-            [new CliRootBranch(
-                routeGroup,
-                RouteHelpSections.CreateGroup(),
-                listSymbols.DelimiterPolicies)],
-            [listBinding, inspectBinding, findBinding, referencesBinding, contextBinding],
+            [
+                new CliRootBranch(
+                    routeGroup,
+                    RouteHelpSections.CreateGroup(),
+                    listSymbols.DelimiterPolicies),
+                new CliRootBranch(
+                    extensionGroup,
+                    ExtensionHelpSections.CreateGroup(),
+                    []),
+            ],
+            [listBinding, inspectBinding, findBinding, referencesBinding, extensionListBinding, contextBinding],
             rootLeaves:
             [
                 new CliRootLeaf(findSymbols.FindCommand, []),
