@@ -1,448 +1,448 @@
-lockfile_version: "1"
-generated_at: "2026-08-04T22:55:45.731138+00:00"
+lockfile_version: '1'
+generated_at: '2026-08-04T22:55:45.731138+00:00'
 dependencies: []
 deployments:
-  - kind: project-relative
-    target: codex
-    value: .codex/agents/advisor.toml
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:7922495f42b265238b316d3cc0d811f16472566350168328cd514c3a7e75643d
-  - kind: project-relative
-    target: codex
-    value: .codex/agents/architect.toml
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:91af8f26a81d1d13aca55e653be347a622ecf1aa397815982abf8976996e36d6
-  - kind: project-relative
-    target: codex
-    value: .codex/agents/blue-structure-improver.toml
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:3ea9b392adf1c69f29f6168f5d14db85c1329dd8d05eb5116c31457b2527b9ad
-  - kind: project-relative
-    target: codex
-    value: .codex/agents/brilliant-implementer.toml
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:3f6ad973f944a2dd5d5f7e20614ac97727b2463cc8bd99c314a255ea0d6f8a65
-  - kind: project-relative
-    target: codex
-    value: .codex/agents/challenger-two.toml
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:76c18f29db5322409e2d3d1a834656ddcb2c51d808feb0ff27387f4c13add318
-  - kind: project-relative
-    target: codex
-    value: .codex/agents/challenger.toml
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:4cb430a22b655b06c219dd80b1081409b2d8731c2560d8d42c88f302e29557f9
-  - kind: project-relative
-    target: codex
-    value: .codex/agents/explorer.toml
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:0c9ea79fadeb22e7560da7b492c43d3260b64bde491d8d08415f8e5a9758deb1
-  - kind: project-relative
-    target: codex
-    value: .codex/agents/gray-contract-implementer.toml
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:09fd0990c77ce61fe97e52110a70d6e80df3178b3e7543e9ead4565b1c974ae2
-  - kind: project-relative
-    target: codex
-    value: .codex/agents/green-behavior-implementer.toml
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:b37c9317e00d2bcdb05a761a5ff97f4f9ba0e78d18fc60464b8f4bcd0ec96cda
-  - kind: project-relative
-    target: codex
-    value: .codex/agents/implementer.toml
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:e131e7881785eb1245f8a7a6ae7f078216e88d37e3612457ea0682eb938c7c6a
-  - kind: project-relative
-    target: codex
-    value: .codex/agents/improvement-reviewer.toml
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:1a51df63220604874d8c7f257d7405c9fc47754fa148d365044a27041b0510ab
-  - kind: project-relative
-    target: codex
-    value: .codex/agents/integration-mastermind.toml
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:717e5f9c28a08b5d07176193f9d7a4a103aaf0de9aa318fbf66c4707f87fcede
-  - kind: project-relative
-    target: codex
-    value: .codex/agents/overseer.toml
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:8d1d38081f991cc5ddee321c9ffdfab9da64345fe50aa12b1eed0618ccb5812d
-  - kind: project-relative
-    target: codex
-    value: .codex/agents/purple-evidence-improver.toml
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:1ebccb6ebd33952c8188a44b483bee2966442fabaa315fdb9f527cd00e7227bd
-  - kind: project-relative
-    target: codex
-    value: .codex/agents/red-evidence-author.toml
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:68baed7911ccf07fa3f1d0066aa9800659593822977d89e53e57c35628ca825e
-  - kind: project-relative
-    target: codex
-    value: .codex/agents/researcher.toml
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:c269aa23d2fd7dca8bd5038285875148eaa464c2c7294a104a27184934d52bea
-  - kind: project-relative
-    target: codex
-    value: .codex/agents/reviewer-terra.toml
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:a1919b79321f5714536728d51b3583127c98462142c7c09b1d10e9365d00d37c
-  - kind: project-relative
-    target: codex
-    value: .codex/agents/reviewer.toml
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:0b28b439e6c15e6f533b7bbbf701de7513bb484aeb3937af1f94d7664d4a7731
-  - kind: project-relative
-    target: codex
-    value: .codex/agents/task-mastermind.toml
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:f8c53528248c0ace5263feee94dadf4d38ea03463c3ab4a92a76e450c78250bb
-  - kind: project-relative
-    target: codex
-    value: .codex/agents/workspace-operator.toml
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:196ca92f9cd756ad66b16ecb8ab4555ee4585fb00ec995b6557be2108fd6087b
-  - kind: project-relative
-    target: codex
-    value: .codex/agents/writer.toml
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:0099b7d20d1ae14228fcf6f5706c24cf6ef49cd1a6dc04d9a83516ddea2edf2a
-  - kind: project-relative
-    target: codex
-    value: .codex/agents/writing-reviewer.toml
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:ccd5128af1dc3f2f6c8b70e8979ded6a958e9804d6a70a4c74a99522d1ff3caf
-  - kind: project-relative
-    target: opencode
-    value: .opencode/agents/advisor.md
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:9d3c81ba08452262998fb83158eadfe23033a514d9ae2050f9a7b2da0a9e88e6
-  - kind: project-relative
-    target: opencode
-    value: .opencode/agents/architect.md
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:4004fd717f7a2a090d4cc49b146da8bc6e2f5ab463fd09424f0564d9e57f44a8
-  - kind: project-relative
-    target: opencode
-    value: .opencode/agents/blue-structure-improver.md
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:250296769f6a6784802507e699cde9164279bd9312feb07eeccb01afb107568a
-  - kind: project-relative
-    target: opencode
-    value: .opencode/agents/brilliant-implementer.md
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:a4801a517d6c6801c33ec3732c0bad5d6b8da6b62443f215314c32e45f6032bc
-  - kind: project-relative
-    target: opencode
-    value: .opencode/agents/challenger-two.md
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:b5187de75d8597ca75ef9e716f9e2e923d955472ed3c92a4691052c6111d254c
-  - kind: project-relative
-    target: opencode
-    value: .opencode/agents/challenger.md
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:ccb4027d6c9da2c90e4df8bc6cb74ea4d44c4e94ff5ba9e5cdd9d23b6402beeb
-  - kind: project-relative
-    target: opencode
-    value: .opencode/agents/explorer.md
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:344a87c111f5f4dfc85aacaeab752e20705dcef31d64363bbc829de7a6f22453
-  - kind: project-relative
-    target: opencode
-    value: .opencode/agents/gray-contract-implementer.md
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:d3ddb7b401646a848da2ad56796181b4aa60da0de37f83263b754b03c2d8bd1d
-  - kind: project-relative
-    target: opencode
-    value: .opencode/agents/green-behavior-implementer.md
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:13713d9d186edd083b19dceb6a866cb9f28b1cce0175d7d00aaa7f95b3db67d9
-  - kind: project-relative
-    target: opencode
-    value: .opencode/agents/implementer.md
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:51ea86b4f4044bb2cbd8e40efdc4710dcbfb85777eddadf102cb39c9965b11b8
-  - kind: project-relative
-    target: opencode
-    value: .opencode/agents/improvement-reviewer.md
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:04d7e96e0b9039626a56df355b136921367aa067b0c60a52bb271cc4b857999e
-  - kind: project-relative
-    target: opencode
-    value: .opencode/agents/integration-mastermind.md
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:29750b8e96ae1a15560673493a522ae844a1161d413b87fd717c8b5adfd8d1fa
-  - kind: project-relative
-    target: opencode
-    value: .opencode/agents/overseer.md
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:9ca696f2cc5d0637f9f0678656009be63ff295f95464cb155543b83c081d5aad
-  - kind: project-relative
-    target: opencode
-    value: .opencode/agents/purple-evidence-improver.md
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:2efa3a5e889bbc31b798a519aa289f47364c3c1a2dcf16dc18f1529dfc0168af
-  - kind: project-relative
-    target: opencode
-    value: .opencode/agents/red-evidence-author.md
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:659f51fd9fbdc6b8e790f11f1a1a776a3f06a095b5954a97906990d03c63d18f
-  - kind: project-relative
-    target: opencode
-    value: .opencode/agents/researcher.md
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:0d8e0b16996b7f2e467550f72d86ac79a66cff0bf92e0c5da24c00851224790e
-  - kind: project-relative
-    target: opencode
-    value: .opencode/agents/reviewer-terra.md
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:d72bb152b496aa7db77aa4f1fb3cd08e0c38b432de480f928614bab7866ffe9a
-  - kind: project-relative
-    target: opencode
-    value: .opencode/agents/reviewer.md
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:e0562f4b4d5b01070d628a90f391ffc72eb548f84108b924cef6fcc3d27abdb2
-  - kind: project-relative
-    target: opencode
-    value: .opencode/agents/task-mastermind.md
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:2532a6d47a58c492fc2a4945f23c4a6e8ad75bed1884ef2f29befdcad5fc308f
-  - kind: project-relative
-    target: opencode
-    value: .opencode/agents/workspace-operator.md
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:480ffdfe4c73f4b10da87ad6ff775ad88b35f56bf2aecac845628f9f3ce4b790
-  - kind: project-relative
-    target: opencode
-    value: .opencode/agents/writer.md
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:8cad90ad9390b633330ff94beb69480a0c535d8f91d96717d8cf876092287f78
-  - kind: project-relative
-    target: opencode
-    value: .opencode/agents/writing-reviewer.md
-    runtime: null
-    scope: project
-    owners:
-      - .
-    active_owner: .
-    content_hash: sha256:ba806494eeeb4e4fbbcfb2237a83b320d45b3e2390a87da088ae532a84d5d72c
+- kind: project-relative
+  target: codex
+  value: .codex/agents/advisor.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:7922495f42b265238b316d3cc0d811f16472566350168328cd514c3a7e75643d
+- kind: project-relative
+  target: codex
+  value: .codex/agents/architect.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:91af8f26a81d1d13aca55e653be347a622ecf1aa397815982abf8976996e36d6
+- kind: project-relative
+  target: codex
+  value: .codex/agents/blue-structure-improver.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:3ea9b392adf1c69f29f6168f5d14db85c1329dd8d05eb5116c31457b2527b9ad
+- kind: project-relative
+  target: codex
+  value: .codex/agents/brilliant-implementer.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:3f6ad973f944a2dd5d5f7e20614ac97727b2463cc8bd99c314a255ea0d6f8a65
+- kind: project-relative
+  target: codex
+  value: .codex/agents/challenger-two.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:76c18f29db5322409e2d3d1a834656ddcb2c51d808feb0ff27387f4c13add318
+- kind: project-relative
+  target: codex
+  value: .codex/agents/challenger.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:4cb430a22b655b06c219dd80b1081409b2d8731c2560d8d42c88f302e29557f9
+- kind: project-relative
+  target: codex
+  value: .codex/agents/explorer.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:0c9ea79fadeb22e7560da7b492c43d3260b64bde491d8d08415f8e5a9758deb1
+- kind: project-relative
+  target: codex
+  value: .codex/agents/gray-contract-implementer.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:09fd0990c77ce61fe97e52110a70d6e80df3178b3e7543e9ead4565b1c974ae2
+- kind: project-relative
+  target: codex
+  value: .codex/agents/green-behavior-implementer.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:b37c9317e00d2bcdb05a761a5ff97f4f9ba0e78d18fc60464b8f4bcd0ec96cda
+- kind: project-relative
+  target: codex
+  value: .codex/agents/implementer.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:e131e7881785eb1245f8a7a6ae7f078216e88d37e3612457ea0682eb938c7c6a
+- kind: project-relative
+  target: codex
+  value: .codex/agents/improvement-reviewer.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:1a51df63220604874d8c7f257d7405c9fc47754fa148d365044a27041b0510ab
+- kind: project-relative
+  target: codex
+  value: .codex/agents/integration-mastermind.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:717e5f9c28a08b5d07176193f9d7a4a103aaf0de9aa318fbf66c4707f87fcede
+- kind: project-relative
+  target: codex
+  value: .codex/agents/overseer.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:8d1d38081f991cc5ddee321c9ffdfab9da64345fe50aa12b1eed0618ccb5812d
+- kind: project-relative
+  target: codex
+  value: .codex/agents/purple-evidence-improver.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:1ebccb6ebd33952c8188a44b483bee2966442fabaa315fdb9f527cd00e7227bd
+- kind: project-relative
+  target: codex
+  value: .codex/agents/red-evidence-author.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:68baed7911ccf07fa3f1d0066aa9800659593822977d89e53e57c35628ca825e
+- kind: project-relative
+  target: codex
+  value: .codex/agents/researcher.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:c269aa23d2fd7dca8bd5038285875148eaa464c2c7294a104a27184934d52bea
+- kind: project-relative
+  target: codex
+  value: .codex/agents/reviewer-terra.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:a1919b79321f5714536728d51b3583127c98462142c7c09b1d10e9365d00d37c
+- kind: project-relative
+  target: codex
+  value: .codex/agents/reviewer.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:0b28b439e6c15e6f533b7bbbf701de7513bb484aeb3937af1f94d7664d4a7731
+- kind: project-relative
+  target: codex
+  value: .codex/agents/task-mastermind.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:f8c53528248c0ace5263feee94dadf4d38ea03463c3ab4a92a76e450c78250bb
+- kind: project-relative
+  target: codex
+  value: .codex/agents/workspace-operator.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:196ca92f9cd756ad66b16ecb8ab4555ee4585fb00ec995b6557be2108fd6087b
+- kind: project-relative
+  target: codex
+  value: .codex/agents/writer.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:0099b7d20d1ae14228fcf6f5706c24cf6ef49cd1a6dc04d9a83516ddea2edf2a
+- kind: project-relative
+  target: codex
+  value: .codex/agents/writing-reviewer.toml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:ccd5128af1dc3f2f6c8b70e8979ded6a958e9804d6a70a4c74a99522d1ff3caf
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/advisor.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:9d3c81ba08452262998fb83158eadfe23033a514d9ae2050f9a7b2da0a9e88e6
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/architect.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:4004fd717f7a2a090d4cc49b146da8bc6e2f5ab463fd09424f0564d9e57f44a8
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/blue-structure-improver.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:65b5314ca5ed80f62ce76dfe24a30249bde5b750a33fc4b23c1c9e7da2e5e210
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/brilliant-implementer.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:a4801a517d6c6801c33ec3732c0bad5d6b8da6b62443f215314c32e45f6032bc
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/challenger-two.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:b5187de75d8597ca75ef9e716f9e2e923d955472ed3c92a4691052c6111d254c
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/challenger.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:ccb4027d6c9da2c90e4df8bc6cb74ea4d44c4e94ff5ba9e5cdd9d23b6402beeb
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/explorer.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:344a87c111f5f4dfc85aacaeab752e20705dcef31d64363bbc829de7a6f22453
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/gray-contract-implementer.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:d30c98a6519d6973e59deaddda7ba9ed8510533367022aa5838e82b2be0dbc4d
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/green-behavior-implementer.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:13713d9d186edd083b19dceb6a866cb9f28b1cce0175d7d00aaa7f95b3db67d9
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/implementer.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:51ea86b4f4044bb2cbd8e40efdc4710dcbfb85777eddadf102cb39c9965b11b8
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/improvement-reviewer.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:04d7e96e0b9039626a56df355b136921367aa067b0c60a52bb271cc4b857999e
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/integration-mastermind.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:29750b8e96ae1a15560673493a522ae844a1161d413b87fd717c8b5adfd8d1fa
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/overseer.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:9ca696f2cc5d0637f9f0678656009be63ff295f95464cb155543b83c081d5aad
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/purple-evidence-improver.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:dcff0c0565e57c5c974fdf9604157c229fc78a619892fd5d37aa69b74567c68b
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/red-evidence-author.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:659f51fd9fbdc6b8e790f11f1a1a776a3f06a095b5954a97906990d03c63d18f
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/researcher.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:0d8e0b16996b7f2e467550f72d86ac79a66cff0bf92e0c5da24c00851224790e
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/reviewer-terra.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:d72bb152b496aa7db77aa4f1fb3cd08e0c38b432de480f928614bab7866ffe9a
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/reviewer.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:77a19258d81aab9012fc88adbcd3bfc146d25a8ced68c39b7d39feca56d8ed27
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/task-mastermind.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:2532a6d47a58c492fc2a4945f23c4a6e8ad75bed1884ef2f29befdcad5fc308f
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/workspace-operator.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:480ffdfe4c73f4b10da87ad6ff775ad88b35f56bf2aecac845628f9f3ce4b790
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/writer.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:ea0263f96fffbbfc24b6c1b99a04b544e54e66d7c959ffd938e27ff917b2fe4e
+- kind: project-relative
+  target: opencode
+  value: .opencode/agents/writing-reviewer.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:ba806494eeeb4e4fbbcfb2237a83b320d45b3e2390a87da088ae532a84d5d72c
 local_deployed_files:
-  - .codex/agents/advisor.toml
-  - .codex/agents/architect.toml
-  - .codex/agents/blue-structure-improver.toml
-  - .codex/agents/brilliant-implementer.toml
-  - .codex/agents/challenger-two.toml
-  - .codex/agents/challenger.toml
-  - .codex/agents/explorer.toml
-  - .codex/agents/gray-contract-implementer.toml
-  - .codex/agents/green-behavior-implementer.toml
-  - .codex/agents/implementer.toml
-  - .codex/agents/improvement-reviewer.toml
-  - .codex/agents/integration-mastermind.toml
-  - .codex/agents/overseer.toml
-  - .codex/agents/purple-evidence-improver.toml
-  - .codex/agents/red-evidence-author.toml
-  - .codex/agents/researcher.toml
-  - .codex/agents/reviewer-terra.toml
-  - .codex/agents/reviewer.toml
-  - .codex/agents/task-mastermind.toml
-  - .codex/agents/workspace-operator.toml
-  - .codex/agents/writer.toml
-  - .codex/agents/writing-reviewer.toml
-  - .opencode/agents/advisor.md
-  - .opencode/agents/architect.md
-  - .opencode/agents/blue-structure-improver.md
-  - .opencode/agents/brilliant-implementer.md
-  - .opencode/agents/challenger-two.md
-  - .opencode/agents/challenger.md
-  - .opencode/agents/explorer.md
-  - .opencode/agents/gray-contract-implementer.md
-  - .opencode/agents/green-behavior-implementer.md
-  - .opencode/agents/implementer.md
-  - .opencode/agents/improvement-reviewer.md
-  - .opencode/agents/integration-mastermind.md
-  - .opencode/agents/overseer.md
-  - .opencode/agents/purple-evidence-improver.md
-  - .opencode/agents/red-evidence-author.md
-  - .opencode/agents/researcher.md
-  - .opencode/agents/reviewer-terra.md
-  - .opencode/agents/reviewer.md
-  - .opencode/agents/task-mastermind.md
-  - .opencode/agents/workspace-operator.md
-  - .opencode/agents/writer.md
-  - .opencode/agents/writing-reviewer.md
+- .codex/agents/advisor.toml
+- .codex/agents/architect.toml
+- .codex/agents/blue-structure-improver.toml
+- .codex/agents/brilliant-implementer.toml
+- .codex/agents/challenger-two.toml
+- .codex/agents/challenger.toml
+- .codex/agents/explorer.toml
+- .codex/agents/gray-contract-implementer.toml
+- .codex/agents/green-behavior-implementer.toml
+- .codex/agents/implementer.toml
+- .codex/agents/improvement-reviewer.toml
+- .codex/agents/integration-mastermind.toml
+- .codex/agents/overseer.toml
+- .codex/agents/purple-evidence-improver.toml
+- .codex/agents/red-evidence-author.toml
+- .codex/agents/researcher.toml
+- .codex/agents/reviewer-terra.toml
+- .codex/agents/reviewer.toml
+- .codex/agents/task-mastermind.toml
+- .codex/agents/workspace-operator.toml
+- .codex/agents/writer.toml
+- .codex/agents/writing-reviewer.toml
+- .opencode/agents/advisor.md
+- .opencode/agents/architect.md
+- .opencode/agents/blue-structure-improver.md
+- .opencode/agents/brilliant-implementer.md
+- .opencode/agents/challenger-two.md
+- .opencode/agents/challenger.md
+- .opencode/agents/explorer.md
+- .opencode/agents/gray-contract-implementer.md
+- .opencode/agents/green-behavior-implementer.md
+- .opencode/agents/implementer.md
+- .opencode/agents/improvement-reviewer.md
+- .opencode/agents/integration-mastermind.md
+- .opencode/agents/overseer.md
+- .opencode/agents/purple-evidence-improver.md
+- .opencode/agents/red-evidence-author.md
+- .opencode/agents/researcher.md
+- .opencode/agents/reviewer-terra.md
+- .opencode/agents/reviewer.md
+- .opencode/agents/task-mastermind.md
+- .opencode/agents/workspace-operator.md
+- .opencode/agents/writer.md
+- .opencode/agents/writing-reviewer.md
 local_deployed_file_hashes:
   .codex/agents/advisor.toml: sha256:7922495f42b265238b316d3cc0d811f16472566350168328cd514c3a7e75643d
   .codex/agents/architect.toml: sha256:91af8f26a81d1d13aca55e653be347a622ecf1aa397815982abf8976996e36d6
@@ -468,23 +468,23 @@ local_deployed_file_hashes:
   .codex/agents/writing-reviewer.toml: sha256:ccd5128af1dc3f2f6c8b70e8979ded6a958e9804d6a70a4c74a99522d1ff3caf
   .opencode/agents/advisor.md: sha256:9d3c81ba08452262998fb83158eadfe23033a514d9ae2050f9a7b2da0a9e88e6
   .opencode/agents/architect.md: sha256:4004fd717f7a2a090d4cc49b146da8bc6e2f5ab463fd09424f0564d9e57f44a8
-  .opencode/agents/blue-structure-improver.md: sha256:250296769f6a6784802507e699cde9164279bd9312feb07eeccb01afb107568a
+  .opencode/agents/blue-structure-improver.md: sha256:65b5314ca5ed80f62ce76dfe24a30249bde5b750a33fc4b23c1c9e7da2e5e210
   .opencode/agents/brilliant-implementer.md: sha256:a4801a517d6c6801c33ec3732c0bad5d6b8da6b62443f215314c32e45f6032bc
   .opencode/agents/challenger-two.md: sha256:b5187de75d8597ca75ef9e716f9e2e923d955472ed3c92a4691052c6111d254c
   .opencode/agents/challenger.md: sha256:ccb4027d6c9da2c90e4df8bc6cb74ea4d44c4e94ff5ba9e5cdd9d23b6402beeb
   .opencode/agents/explorer.md: sha256:344a87c111f5f4dfc85aacaeab752e20705dcef31d64363bbc829de7a6f22453
-  .opencode/agents/gray-contract-implementer.md: sha256:d3ddb7b401646a848da2ad56796181b4aa60da0de37f83263b754b03c2d8bd1d
+  .opencode/agents/gray-contract-implementer.md: sha256:d30c98a6519d6973e59deaddda7ba9ed8510533367022aa5838e82b2be0dbc4d
   .opencode/agents/green-behavior-implementer.md: sha256:13713d9d186edd083b19dceb6a866cb9f28b1cce0175d7d00aaa7f95b3db67d9
   .opencode/agents/implementer.md: sha256:51ea86b4f4044bb2cbd8e40efdc4710dcbfb85777eddadf102cb39c9965b11b8
   .opencode/agents/improvement-reviewer.md: sha256:04d7e96e0b9039626a56df355b136921367aa067b0c60a52bb271cc4b857999e
   .opencode/agents/integration-mastermind.md: sha256:29750b8e96ae1a15560673493a522ae844a1161d413b87fd717c8b5adfd8d1fa
   .opencode/agents/overseer.md: sha256:9ca696f2cc5d0637f9f0678656009be63ff295f95464cb155543b83c081d5aad
-  .opencode/agents/purple-evidence-improver.md: sha256:2efa3a5e889bbc31b798a519aa289f47364c3c1a2dcf16dc18f1529dfc0168af
+  .opencode/agents/purple-evidence-improver.md: sha256:dcff0c0565e57c5c974fdf9604157c229fc78a619892fd5d37aa69b74567c68b
   .opencode/agents/red-evidence-author.md: sha256:659f51fd9fbdc6b8e790f11f1a1a776a3f06a095b5954a97906990d03c63d18f
   .opencode/agents/researcher.md: sha256:0d8e0b16996b7f2e467550f72d86ac79a66cff0bf92e0c5da24c00851224790e
   .opencode/agents/reviewer-terra.md: sha256:d72bb152b496aa7db77aa4f1fb3cd08e0c38b432de480f928614bab7866ffe9a
-  .opencode/agents/reviewer.md: sha256:e0562f4b4d5b01070d628a90f391ffc72eb548f84108b924cef6fcc3d27abdb2
+  .opencode/agents/reviewer.md: sha256:77a19258d81aab9012fc88adbcd3bfc146d25a8ced68c39b7d39feca56d8ed27
   .opencode/agents/task-mastermind.md: sha256:2532a6d47a58c492fc2a4945f23c4a6e8ad75bed1884ef2f29befdcad5fc308f
   .opencode/agents/workspace-operator.md: sha256:480ffdfe4c73f4b10da87ad6ff775ad88b35f56bf2aecac845628f9f3ce4b790
-  .opencode/agents/writer.md: sha256:8cad90ad9390b633330ff94beb69480a0c535d8f91d96717d8cf876092287f78
+  .opencode/agents/writer.md: sha256:ea0263f96fffbbfc24b6c1b99a04b544e54e66d7c959ffd938e27ff917b2fe4e
   .opencode/agents/writing-reviewer.md: sha256:ba806494eeeb4e4fbbcfb2237a83b320d45b3e2390a87da088ae532a84d5d72c

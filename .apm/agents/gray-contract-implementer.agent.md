@@ -3,7 +3,7 @@ name: gray-contract-implementer
 description: Conditional assured-profile specialist that freezes one accepted callable production surface when a separate
   contract boundary materially protects later work.
 model: openai/gpt-5.6-luna
-reasoningEffort: xhigh
+reasoningEffort: max
 mode: subagent
 color: info
 permission:

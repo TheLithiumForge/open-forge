@@ -3,7 +3,7 @@ name: writer
 description: Authors or revises a substantial coherent prose pack from accepted meaning, audience, terminology, structure,
   and verified sources.
 model: openai/gpt-5.6-luna
-reasoningEffort: xhigh
+reasoningEffort: max
 mode: subagent
 color: accent
 permission:

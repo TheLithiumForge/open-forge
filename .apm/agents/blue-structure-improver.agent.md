@@ -3,7 +3,7 @@ name: blue-structure-improver
 description: Conditional assured-profile specialist that applies one bounded production-structure improvement only for a named
   material trigger.
 model: openai/gpt-5.6-luna
-reasoningEffort: xhigh
+reasoningEffort: max
 mode: subagent
 color: info
 permission:

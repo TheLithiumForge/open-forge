@@ -3,7 +3,7 @@ name: purple-evidence-improver
 description: Conditional assured-profile specialist that applies one bounded test-structure or evidence improvement only for
   a named material trigger.
 model: openai/gpt-5.6-luna
-reasoningEffort: xhigh
+reasoningEffort: max
 mode: subagent
 color: accent
 permission:

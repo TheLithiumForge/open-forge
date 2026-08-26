@@ -3,7 +3,7 @@ name: reviewer
 description: Performs a cost-conscious fresh-context review of targeted changes for correctness, integration, evidence, repository
   rules, and material maintainability.
 model: openai/gpt-5.6-luna
-reasoningEffort: xhigh
+reasoningEffort: max
 mode: subagent
 color: warning
 permission:
