@@ -8,11 +8,12 @@ open-forge:
 
 ## Task State
 
-- State: Ready for exact public-contract closure from integrated baseline
-  `db0d39a213d26f3ad0bab00de1da5922457d854f`. Production implementation must not
-  start until the command-local JSON field graph, finite finding vocabulary,
-  status/`next` mapping, and `open-forge-markdown-v1` fingerprint algorithm are
-  frozen and accepted.
+- State: Exact public-contract closure accepted for a local candidate commit from
+  isolated lane base `4ffb04483b8e3a0127fc2bf55ff64c5098cf211a`;
+  integration is pending. The command-local JSON field graph, finite finding
+  vocabulary, status/`next` mapping, and `open-forge-markdown-v1` fingerprint
+  algorithm are frozen in the accepted closure. Production implementation must
+  not start until the Overseer assigns the exact post-integration base.
 - Parent: [Read-Only Commands](_read-only.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/extension/inspect/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/extension/inspect/behavior.md).
 - Responsible role: bounded Extension Inspect Task Mastermind.
@@ -121,6 +122,49 @@ existing Extension List consumer in the same increment with unchanged behavior.
 
 Do not consume a second correction cycle or broaden the public contract without
 returning a project change request to the Overseer.
+
+### Contract-Closure Acceptance Evidence
+
+- The Interface freezes the complete ordered command-local schema, 31 finite
+  finding codes with one status each, total status precedence, exhaustive
+  zero-or-one `next` mapping, two exact structured examples, and 14 calculated
+  fingerprint byte vectors.
+- The Behavior freezes staged read-only formation, safe retained facts,
+  comparison and finding formation, operation-time fingerprint application,
+  presentation from one typed result, and the no-write boundary. No adjacent
+  Technical Design was needed because the Interface remains the sole public
+  byte-compatibility authority and Architecture owns implementation placement.
+- `EI-R1` returned four material findings: executable update-action formation,
+  generated-route metadata consistency, shared embedded-source identity, and
+  generated-region byte-coordinate determinism. All four were reproduced and
+  closed together in `EI-C1`; the primary recheck confirms the emitted update
+  action uses the resolved stable ID, embedded identity is `embedded catalogue`
+  while kind is `embedded-catalogue`, and valid region offsets are normalized
+  UTF-8 fingerprint-byte coordinates. The focused post-`EI-C1` `EI-R1`
+  re-review returned `ACCEPTED` with no remaining findings.
+- Both JSON examples parse and preserve the frozen key order. All 14 byte-vector
+  hashes recompute, including the valid generated-region coordinates `54`, `66`,
+  and excluded length `12`. Local links resolve, `git diff --check` passes, and
+  the changed-path audit is limited to the two Inspect contracts and this leaf
+  Task.
+- `open-forge doctor --json` reports zero errors and one unrelated pre-existing
+  C# directive warning. This prose-only closure makes no .NET, Native AOT,
+  process, or no-write implementation claim.
+
+### Deferred Project Decision `EI-D1`
+
+The accepted schema-v1 reader can surface an authored lifecycle
+`fingerprintKind: "exact-bytes"` record. Inspect reports that record as lifecycle
+evidence but does not relabel it, persist a fingerprint, grant mutation
+authority, or claim that a future writer stores exact-byte baselines. Only an
+accepted semantic `open-forge-markdown-v1` baseline supports a persisted
+semantic three-way claim; current and intended exact-byte identities remain
+fresh operation facts.
+
+Mutation Foundation must resolve reader admission versus future-writer policy
+before it freezes lifecycle writer behavior. `EI-D1` is a named deferred project
+decision, not an Inspect contract change and not authority for a mutation
+implementation.
 
 ## Expected Outcome
 
