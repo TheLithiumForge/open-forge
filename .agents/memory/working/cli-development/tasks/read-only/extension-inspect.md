@@ -8,12 +8,12 @@ open-forge:
 
 ## Task State
 
-- State: Exact public-contract closure accepted for a local candidate commit from
-  isolated lane base `4ffb04483b8e3a0127fc2bf55ff64c5098cf211a`;
-  integration is pending. The command-local JSON field graph, finite finding
-  vocabulary, status/`next` mapping, and `open-forge-markdown-v1` fingerprint
-  algorithm are frozen in the accepted closure. Production implementation must
-  not start until the Overseer assigns the exact post-integration base.
+- State: Ready for production implementation from exact integrated contract base
+  `92313a09bc541b1a4631def27aff331da6b4861f`. The command-local JSON field
+  graph, finite finding vocabulary, status/`next` mapping, and
+  `open-forge-markdown-v1` fingerprint algorithm are frozen in that accepted
+  closure. The implementation Task Mastermind must preserve `EI-D1` as a
+  read-only reporting boundary and must not invent lifecycle writer policy.
 - Parent: [Read-Only Commands](_read-only.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/extension/inspect/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/extension/inspect/behavior.md).
 - Responsible role: bounded Extension Inspect Task Mastermind.
