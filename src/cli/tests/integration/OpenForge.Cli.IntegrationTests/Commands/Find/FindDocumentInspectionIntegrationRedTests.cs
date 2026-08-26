@@ -11,6 +11,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Workspace;
@@ -380,7 +381,7 @@ public sealed class FindDocumentInspectionIntegrationRedTests
         Assert.Empty(finding.Candidates);
     }
 
-    private static FindSourceLocation ExpectedAuthoredTagLocation(string source, string tag)
+    private static SourceLocation ExpectedAuthoredTagLocation(string source, string tag)
     {
         var marker = $"#{tag}";
         var markerStart = source.IndexOf(marker, StringComparison.Ordinal);
@@ -388,14 +389,14 @@ public sealed class FindDocumentInspectionIntegrationRedTests
         return ExpectedLocation(source, markerStart + 1, tag.Length);
     }
 
-    private static FindSourceLocation ExpectedLocation(string source, string token)
+    private static SourceLocation ExpectedLocation(string source, string token)
     {
         var start = source.IndexOf(token, StringComparison.Ordinal);
         Assert.True(start >= 0, $"The source does not contain the expected token '{token}'.");
         return ExpectedLocation(source, start, token.Length);
     }
 
-    private static FindSourceLocation ExpectedLocation(string source, int start, int length)
+    private static SourceLocation ExpectedLocation(string source, int start, int length)
     {
         var line = 1;
         var column = 1;
@@ -421,7 +422,7 @@ public sealed class FindDocumentInspectionIntegrationRedTests
             column++;
         }
 
-        return new FindSourceLocation(
+        return new SourceLocation(
             line,
             column,
             Encoding.UTF8.GetByteCount(source.AsSpan(0, start)),

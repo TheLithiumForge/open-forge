@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Find.Models.Presentation;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 
 namespace OpenForge.Cli.Core.Commands.Find.Models.Result;
 
@@ -146,7 +147,7 @@ internal sealed record FindProjectedHeading
         string text,
         int level,
         MarkdownHeadingForm form,
-        FindSourceLocation location,
+        SourceLocation location,
         bool canonical)
     {
         ArgumentNullException.ThrowIfNull(text);
@@ -179,7 +180,7 @@ internal sealed record FindProjectedHeading
 
     internal MarkdownHeadingForm Form { get; }
 
-    internal FindSourceLocation Location { get; }
+    internal SourceLocation Location { get; }
 
     internal bool Canonical { get; }
 }
@@ -195,7 +196,7 @@ internal sealed record FindProjection
         FindMetadata? metadata,
         string? text,
         IEnumerable<FindProjectedHeading> headings,
-        FindSourceLocation? location)
+        SourceLocation? location)
     {
         if (!Enum.IsDefined(part))
         {
@@ -328,5 +329,5 @@ internal sealed record FindProjection
 
     internal IReadOnlyList<FindProjectedHeading> Headings { get; }
 
-    internal FindSourceLocation? Location { get; }
+    internal SourceLocation? Location { get; }
 }

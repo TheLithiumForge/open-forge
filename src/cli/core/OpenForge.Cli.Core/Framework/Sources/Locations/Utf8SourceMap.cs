@@ -1,12 +1,13 @@
 using System.Text;
-using OpenForge.Cli.Core.Commands.Find.Models.Result;
-using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 
-namespace OpenForge.Cli.Core.Commands.Find.Shared.Documents;
+namespace OpenForge.Cli.Core.Framework.Sources.Locations;
 
 internal sealed class Utf8SourceMap
 {
-    private static readonly Encoding Utf8 = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
+    private static readonly Encoding Utf8 = new UTF8Encoding(
+        encoderShouldEmitUTF8Identifier: false,
+        throwOnInvalidBytes: true);
     private readonly string _source;
 
     internal Utf8SourceMap(string source)
@@ -16,21 +17,31 @@ internal sealed class Utf8SourceMap
         _source = source;
     }
 
-    internal FindSourceLocation Map(MarkdownTextSpan span)
+    internal SourceLocation Map(int start, int length)
     {
-        ArgumentNullException.ThrowIfNull(span);
-        if (span.End > _source.Length)
+        if (start < 0)
         {
-            throw new ArgumentException("The Markdown span must be contained by the mapped source.", nameof(span));
+            throw new ArgumentOutOfRangeException(nameof(start), start, "A source span start cannot be negative.");
         }
 
-        ValidateBoundary(span.Start, nameof(span));
-        ValidateBoundary(span.End, nameof(span));
+        if (length < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(length), length, "A source span length cannot be negative.");
+        }
 
-        var (line, column) = GetLineAndColumn(span.Start);
-        var byteOffset = Utf8.GetByteCount(_source.AsSpan(0, span.Start));
-        var byteLength = Utf8.GetByteCount(_source.AsSpan(span.Start, span.Length));
-        return new FindSourceLocation(line, column, byteOffset, byteLength);
+        var end = checked(start + length);
+        if (end > _source.Length)
+        {
+            throw new ArgumentException("The source span must be contained by the mapped source.", nameof(length));
+        }
+
+        ValidateBoundary(start, nameof(start));
+        ValidateBoundary(end, nameof(length));
+
+        var (line, column) = GetLineAndColumn(start);
+        var byteOffset = Utf8.GetByteCount(_source.AsSpan(0, start));
+        var byteLength = Utf8.GetByteCount(_source.AsSpan(start, length));
+        return new SourceLocation(line, column, byteOffset, byteLength);
     }
 
     private static void ValidateUtf16(string source)
@@ -60,7 +71,7 @@ internal sealed class Utf8SourceMap
             && char.IsLowSurrogate(_source[index])
             && char.IsHighSurrogate(_source[index - 1]))
         {
-            throw new ArgumentException("A Markdown span cannot split a Unicode scalar value.", parameterName);
+            throw new ArgumentException("A source span cannot split a Unicode scalar value.", parameterName);
         }
     }
 

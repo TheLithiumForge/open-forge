@@ -11,6 +11,7 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -332,7 +333,9 @@ public sealed class FindMatcherRedTests
             [],
             [],
             [],
-            []);
+            [],
+            [],
+            MarkdownGeneratedRegionFact.Unavailable("The body boundary is unavailable."));
         Assert.Equal(MarkdownFrontmatterState.Unavailable, unavailableDocument.Frontmatter.State);
         Assert.Null(unavailableDocument.BodySpan);
 
@@ -549,6 +552,7 @@ public sealed class FindMatcherRedTests
                 specification.Level,
                 specification.Form,
                 specification.Canonical,
+                null,
                 new MarkdownTextSpan(specification.Start, specification.Length)))
             .ToArray();
         return DocumentFromHeadings(source, body, headings);
@@ -584,7 +588,9 @@ public sealed class FindMatcherRedTests
             headings,
             sections,
             [],
-            []);
+            [],
+            [],
+            MarkdownGeneratedRegionFact.Absent());
     }
 
     private static MarkdownDocumentFacts DocumentFromHeadings(
@@ -609,9 +615,10 @@ public sealed class FindMatcherRedTests
             level,
             MarkdownHeadingForm.Atx,
             true,
+            null,
             new MarkdownTextSpan(start, Math.Max(1, text.Length)));
 
-    private static FindSourceLocation Location(long offset, long length)
+    private static SourceLocation Location(long offset, long length)
         => new(1, checked((int)Math.Min(offset + 1, int.MaxValue)), offset, length);
 
     private static CliWorkspace CreateWorkspace()

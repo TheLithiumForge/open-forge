@@ -12,6 +12,7 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Definitions;
 
@@ -554,7 +555,7 @@ public sealed class FindResultBuilderRedTests
             null,
             text,
             [],
-            new FindSourceLocation(1, 1, 0, text.Length));
+            new SourceLocation(1, 1, 0, text.Length));
 
     private static FindContentPart ReadContentPart(string value)
         => value switch

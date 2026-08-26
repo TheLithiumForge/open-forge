@@ -4,12 +4,13 @@ using OpenForge.Cli.Core.Commands.Find.Models.Request;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Commands.Find.Models.Selection;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 
 namespace OpenForge.Cli.Core.Commands.Find.Models.Matching;
 
 internal sealed record FindBodyTagOccurrence
 {
-    internal FindBodyTagOccurrence(string authored, FindSourceLocation location)
+    internal FindBodyTagOccurrence(string authored, SourceLocation location)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(authored);
         ArgumentNullException.ThrowIfNull(location);
@@ -19,7 +20,7 @@ internal sealed record FindBodyTagOccurrence
 
     internal string Authored { get; }
 
-    internal FindSourceLocation Location { get; }
+    internal SourceLocation Location { get; }
 }
 
 internal sealed record FindBodyTagInput

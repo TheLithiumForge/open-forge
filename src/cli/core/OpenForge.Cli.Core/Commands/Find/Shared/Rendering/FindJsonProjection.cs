@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Commands.Find.Models.Selection;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Definitions;
 using FindJsonProjectionModel = OpenForge.Cli.Core.Commands.Find.Models.Presentation.FindJsonProjection;
@@ -295,7 +296,7 @@ internal static class FindJsonProjection
         };
     }
 
-    private static FindJsonLocation Location(FindSourceLocation location)
+    private static FindJsonLocation Location(SourceLocation location)
     {
         return new FindJsonLocation
         {

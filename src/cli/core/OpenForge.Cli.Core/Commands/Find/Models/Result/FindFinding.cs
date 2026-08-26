@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Find;
 using OpenForge.Cli.Core.Commands.Find.Models.Query;
 using OpenForge.Cli.Core.Commands.Find.Models.Selection;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Shell.Definitions;
 
@@ -27,7 +28,7 @@ internal sealed record FindFinding
         SourceLayerKind? layer,
         string? path,
         FindRegion? region,
-        FindSourceLocation? location,
+        SourceLocation? location,
         IEnumerable<FindSourceIdentity> candidates)
     {
         _ = FindDefinitions.ReadFindingCode(code);
@@ -155,7 +156,7 @@ internal sealed record FindFinding
 
     internal FindRegion? Region { get; }
 
-    internal FindSourceLocation? Location { get; }
+    internal SourceLocation? Location { get; }
 
     internal IReadOnlyList<FindSourceIdentity> Candidates { get; }
 }

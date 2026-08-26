@@ -8,11 +8,12 @@ open-forge:
 
 ## Task State
 
-- State: Active. References is Active in Preflight after maintainer selection and
-  is blocked on its exact result, finding-code, and Markdown-reference contract
-  closure. Find is Complete and squash-integrated into local `develop` at
-  `1f03d16`. The repository-root developer workflow is Complete and
-  squash-integrated into local `develop` at `d9e0686`. Find Child 1 is Complete and
+- State: Active. References is Complete on `codex/cli-references`. Public Red
+  `43b75f3`, Green `23d5e2e`, managed `1270/1270`, process, no-write,
+  architecture, protected-surface, and final supported local `linux-x64` Native
+  AOT gates pass. Find is Complete and squash-integrated into local `develop` at
+  `1f03d16`. The repository-root developer workflow is
+  Complete and included in the current baseline. Find Child 1 is Complete and
   accepted at exact commit `96fe413`
   (`Accept Find source catalogue`). Modern C# Improvements is Complete and
   accepted at exact `a1cbf09`. Its Preflight was accepted at `55eb82e`, Framework
@@ -69,7 +70,7 @@ metadata evidence`). Its post-commit Red reproduction succeeded as intentional
   code/test commit is manufactured. No Native AOT claim is made, and the
   record-only commit is not a test change. Final acceptance is recorded in the
   commit containing this record update.
-- Responsible role: Mastermind.
+- Responsible role: Overseer.
 - Last updated: 2026-08-25.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Prerequisites: Foundation, Route Discovery, Generic CLI Improvements, and Find
@@ -95,7 +96,7 @@ scenario. Shared facts move only through a Mastermind integration increment.
 ## Child Tasks
 
 - [x] [Implement deterministic CommonMark-aware source discovery and accepted Find projections](find.md) — Complete and integrated at `1f03d16`; Child 1 is Complete at exact `96fe413`, Child 2 at exact `ff7ce3f`, and Child 3's no-op Purple at exact `426d4f5`. The final managed/native gate and package, artifact, static, public no-write, and protected-surface audits passed — Implementer: Mastermind
-- [ ] [Implement direct incoming and outgoing reference facts with shared source-universe filters](references-command.md) — Active in Preflight; production blocked on contract closure — Implementer: Mastermind
+- [x] [Implement direct incoming and outgoing reference facts with shared source-universe filters](references-command.md) — Complete on `codex/cli-references`; public Green `23d5e2e`, managed `1270/1270`, public no-write, and final local `linux-x64` Native AOT gates pass — Implementer: Overseer
 - [ ] [Implement ordered context selection, loading reasons, overlap, size, and token projections](context.md) — Planned — Implementer: Not assigned
 - [ ] [Implement Extension catalogue and source listing without lifecycle inference](extension-list.md) — Planned — Implementer: Not assigned
 - [ ] [Implement exact Extension package inspection without mutation or installation behavior](extension-inspect.md) — Planned — Implementer: Not assigned
@@ -135,10 +136,10 @@ recorded cancellation limitation.
 Find Child 3 and the Find parent are Complete. Their accepted feature tree was
 squash-integrated into local `develop` at `1f03d16`. The final managed/native gate
 and package, artifact, static, public no-write, and protected-surface audits remain
-the accepted Find evidence. The repository-root developer workflow is Complete at
-`d9e0686`. The maintainer selected References before Context; its Preflight is
-active and production remains blocked on the contract boundary recorded in its
-Task.
+the accepted Find evidence. The repository-root developer workflow is Complete
+and included in the References baseline. The maintainer selected References
+before Context. References is now Complete on `codex/cli-references`; its local
+integration must finish before Context starts.
 
 The temporary compatibility-name correction renames the Working Index and
 References Task files and stages their command contracts under candidate route

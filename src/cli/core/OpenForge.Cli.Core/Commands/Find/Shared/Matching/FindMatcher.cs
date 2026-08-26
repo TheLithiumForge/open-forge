@@ -7,6 +7,8 @@ using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Commands.Find.Models.Selection;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
+using OpenForge.Cli.Core.Framework.Sources.Locations;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Find.Shared.Matching;
@@ -535,7 +537,7 @@ internal sealed class FindMatcher
     private static bool IsByteSpanWithin(
         string source,
         MarkdownTextSpan container,
-        FindSourceLocation location)
+        SourceLocation location)
     {
         var containerStart = Encoding.UTF8.GetByteCount(source.AsSpan(0, container.Start));
         var containerEnd = Encoding.UTF8.GetByteCount(source.AsSpan(0, container.End));
@@ -543,38 +545,8 @@ internal sealed class FindMatcher
         return location.ByteOffset >= containerStart && locationEnd <= containerEnd;
     }
 
-    private static FindSourceLocation MapLocation(string source, MarkdownTextSpan span)
-    {
-        var line = 1;
-        var column = 1;
-        for (var index = 0; index < span.Start;)
-        {
-            if (source[index] == '\r')
-            {
-                index += index + 1 < source.Length && source[index + 1] == '\n' ? 2 : 1;
-                line++;
-                column = 1;
-                continue;
-            }
-
-            if (source[index] == '\n')
-            {
-                index++;
-                line++;
-                column = 1;
-                continue;
-            }
-
-            index += char.IsHighSurrogate(source[index]) ? 2 : 1;
-            column++;
-        }
-
-        return new FindSourceLocation(
-            line,
-            column,
-            Encoding.UTF8.GetByteCount(source.AsSpan(0, span.Start)),
-            Encoding.UTF8.GetByteCount(source.AsSpan(span.Start, span.Length)));
-    }
+    private static SourceLocation MapLocation(string source, MarkdownTextSpan span)
+        => new Utf8SourceMap(source).Map(span.Start, span.Length);
 
     private static FindFinding CreateFinding(
         FindFindingCode code,
@@ -712,7 +684,7 @@ internal sealed class FindMatcher
         string Authored,
         FindRegion Region,
         SourceLayer Layer,
-        FindSourceLocation Location,
+        SourceLocation Location,
         FindHeadingEvidence? Heading,
         int Occurrence)
     {

@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
@@ -125,7 +126,7 @@ internal static class FindPresentationTestData
                 SourceLayerKind.Base,
                 source.Base.CanonicalPath,
                 new FindRegion(FindRegionKind.Section, "Target", "section:Target"),
-                new FindSourceLocation(12, 1, 120, 10),
+                new SourceLocation(12, 1, 120, 10),
                 [])],
             new FindStageCompletion(FindCoverageState.Complete, FindProjectionCoverageState.Incomplete),
             null);
@@ -488,7 +489,7 @@ internal static class FindPresentationTestData
                 SourceLayerKind.Base,
                 source.Base.CanonicalPath,
                 new FindRegion(FindRegionKind.Body, null, FindDefinitions.Body),
-                new FindSourceLocation(9, 1, 90, 12),
+                new SourceLocation(9, 1, 90, 12),
                 [])],
             new FindStageCompletion(
                 FindCoverageState.Incomplete,
@@ -874,7 +875,7 @@ internal static class FindPresentationTestData
                     new FindRegion(FindRegionKind.Frontmatter, null, FindDefinitions.Frontmatter),
                     SourceLayerKind.Base,
                     basePath,
-                    new FindSourceLocation(2, 4, 12, 8),
+                    new SourceLocation(2, 4, 12, 8),
                     1,
                     null),
                 new FindEvidence(
@@ -885,7 +886,7 @@ internal static class FindPresentationTestData
                     new FindRegion(FindRegionKind.Frontmatter, null, FindDefinitions.Frontmatter),
                     SourceLayerKind.Overwrite,
                     overwritePath,
-                    new FindSourceLocation(2, 4, 14, 8),
+                    new SourceLocation(2, 4, 14, 8),
                     1,
                     null),
                 new FindEvidence(
@@ -896,7 +897,7 @@ internal static class FindPresentationTestData
                     new FindRegion(FindRegionKind.Body, null, FindDefinitions.Body),
                     SourceLayerKind.Base,
                     basePath,
-                    new FindSourceLocation(8, 1, 80, 20),
+                    new SourceLocation(8, 1, 80, 20),
                     1,
                     new FindHeadingEvidence(2, MarkdownHeadingForm.Atx, true)),
                 new FindEvidence(
@@ -907,7 +908,7 @@ internal static class FindPresentationTestData
                     new FindRegion(FindRegionKind.Body, null, FindDefinitions.Body),
                     SourceLayerKind.Overwrite,
                     overwritePath,
-                    new FindSourceLocation(8, 1, 82, 20),
+                    new SourceLocation(8, 1, 82, 20),
                     1,
                     new FindHeadingEvidence(2, MarkdownHeadingForm.Setext, false)),
             ],
@@ -940,7 +941,7 @@ internal static class FindPresentationTestData
                 new FindRegion(FindRegionKind.Frontmatter, null, FindDefinitions.Frontmatter),
                 SourceLayerKind.Base,
                 path,
-                new FindSourceLocation(2, 1, 12, 3),
+                new SourceLocation(2, 1, 12, 3),
                 1,
                 null)],
             []);
@@ -1010,7 +1011,7 @@ internal static class FindPresentationTestData
             ? source.Base.CanonicalPath
             : source.Overwrite?.CanonicalPath
                 ?? throw new InvalidOperationException("The Find projection fixture requires its overwrite layer.");
-        var location = new FindSourceLocation(
+        var location = new SourceLocation(
             layer == SourceLayerKind.Base ? 5 : 15,
             1,
             layer == SourceLayerKind.Base ? 40 : 140,
@@ -1020,7 +1021,7 @@ internal static class FindPresentationTestData
                 "Projected heading",
                 2,
                 layer == SourceLayerKind.Base ? MarkdownHeadingForm.Atx : MarkdownHeadingForm.Setext,
-                new FindSourceLocation(
+                new SourceLocation(
                     layer == SourceLayerKind.Base ? 8 : 18,
                     1,
                     layer == SourceLayerKind.Base ? 80 : 180,
@@ -1096,7 +1097,7 @@ internal static class FindPresentationTestData
             layer,
             path,
             null,
-            source is null ? null : new FindSourceLocation(1, 1, 0, 1),
+            source is null ? null : new SourceLocation(1, 1, 0, 1),
             []);
     }
 

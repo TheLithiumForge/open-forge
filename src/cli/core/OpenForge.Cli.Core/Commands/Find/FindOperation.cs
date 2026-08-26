@@ -20,7 +20,7 @@ namespace OpenForge.Cli.Core.Commands.Find;
 internal sealed class FindOperation(FindOperationComponents components)
 {
     private readonly FindOperationComponents _components = components;
-    private readonly FindUniverseResolver _universeResolver = new(components.PhysicalPathResolver);
+    private readonly FindUniverseResolver _universeResolver = new(components.UniverseFilterResolver);
     private readonly FindLayerInspector _layerInspector = new(
         components.SelectedLayerReader,
         components.MarkdownDocumentReader,

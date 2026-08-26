@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Commands.Find.Shared.Documents;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Find.Shared.Documents;
 
@@ -223,7 +224,9 @@ public sealed class FindFrontmatterReaderRedTests
                 [],
                 [],
                 [],
-                []);
+                [],
+                [],
+                MarkdownGeneratedRegionFact.Absent());
         }
 
         var openingLineEnd = source.IndexOf('\n') + 1;
@@ -242,17 +245,19 @@ public sealed class FindFrontmatterReaderRedTests
             [],
             [],
             [],
-            []);
+            [],
+            [],
+            MarkdownGeneratedRegionFact.Absent());
     }
 
-    private static FindSourceLocation ExpectedLocation(
+    private static SourceLocation ExpectedLocation(
         string source,
         int start,
         int length,
         int line,
         int column)
     {
-        return new FindSourceLocation(
+        return new SourceLocation(
             line,
             column,
             Encoding.UTF8.GetByteCount(source[..start]),

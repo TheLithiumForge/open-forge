@@ -14,9 +14,11 @@ using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
+using OpenForge.Cli.Core.Framework.Sources.Selection;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Definitions;
 
@@ -174,7 +176,7 @@ public sealed class FindOperationRedTests
                         ".agents",
                         Physical(fixture.Workspace.PhysicalRoot, ".agents"))));
             });
-        FindPhysicalPathResolver physicalPathResolver = (_, path) =>
+        SourcePhysicalPathResolver physicalPathResolver = (_, path) =>
         {
             calls.Add("physical");
             fixture.PhysicalPathCalls++;
@@ -204,7 +206,7 @@ public sealed class FindOperationRedTests
                 "Description",
                 [new FindFrontmatterTagOccurrence(
                     "Topic",
-                    new FindSourceLocation(1, 1, 0, 5))]);
+                    new SourceLocation(1, 1, 0, 5))]);
         };
 
         if (!routeFacts)
@@ -215,6 +217,8 @@ public sealed class FindOperationRedTests
         return new FindOperationComponents
         {
             SourceBoundaryReader = boundaryReader,
+            UniverseFilterResolver = new SourceUniverseFilterResolver(
+                new SourceReferenceResolver(physicalPathResolver)),
             PhysicalPathResolver = physicalPathResolver,
             SelectedLayerReader = readLayer,
             RouteFactsReader = readRouteFacts,
@@ -360,7 +364,9 @@ public sealed class FindOperationRedTests
             [],
             [],
             [],
-            []);
+            [],
+            [],
+            MarkdownGeneratedRegionFact.Absent());
     }
 
     private static FindContentPart ReadContentPart(string value)

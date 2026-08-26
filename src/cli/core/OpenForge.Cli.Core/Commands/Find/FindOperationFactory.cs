@@ -12,6 +12,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Selection;
 using OpenForge.Cli.Core.Framework.Workspace;
 
 namespace OpenForge.Cli.Core.Commands.Find;
@@ -41,11 +42,13 @@ internal static class FindOperationFactory
                 : null;
             return new FindSourceReadContext(catalogue, documentReader, defaultSelectionScope);
         };
-        FindPhysicalPathResolver physicalPathResolver = (workspace, canonicalPath) =>
+        SourcePhysicalPathResolver physicalPathResolver = (workspace, canonicalPath) =>
             physicalPathResolverImplementation.ResolveCandidate(
                 workspace.LexicalRoot,
                 workspace.PhysicalRoot,
                 SourceLogicalPath.ToLexicalPath(workspace.LexicalRoot, canonicalPath));
+        var universeFilterResolver = new SourceUniverseFilterResolver(
+            new SourceReferenceResolver(physicalPathResolver));
         FindSelectedLayerReader selectedLayerReader = static (reader, layer, cancellationToken) =>
             reader.ReadAsync(layer, cancellationToken);
         FindRouteFactsReader routeFactsReader = (request, reader, cancellationToken) =>
@@ -55,6 +58,7 @@ internal static class FindOperationFactory
         var components = new FindOperationComponents
         {
             SourceBoundaryReader = sourceBoundaryReader,
+            UniverseFilterResolver = universeFilterResolver,
             PhysicalPathResolver = physicalPathResolver,
             SelectedLayerReader = selectedLayerReader,
             RouteFactsReader = routeFactsReader,

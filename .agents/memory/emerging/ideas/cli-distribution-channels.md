@@ -22,6 +22,11 @@ native artifacts, wrapper placement, and later channels remain unsettled.
 - Consider direct executable release assets only with an accepted checksum,
   signature, provenance, and upgrade story. Do not revive a source archive as
   a side effect of adding binary delivery.
+- Evaluate publishing each generic Linux RID artifact together with an opt-in
+  distro-specific artifact for users who need a narrower platform baseline. Keep
+  the generic artifact canonical unless compatibility evidence justifies another
+  support contract. Define artifact naming and installer selection so the two
+  variants cannot be confused.
 
 ## Evidence Before Promotion
 
@@ -34,3 +39,8 @@ native artifacts, wrapper placement, and later channels remain unsettled.
    reproducibility, and upgrades on the supported platform matrix.
 5. Accept each additional channel as its own distribution decision and release
    responsibility.
+6. Before accepting distro-specific Linux artifacts, measure their compatibility
+   gain against generic artifacts on named distro and glibc support floors. Also
+   account for native-runner coverage, duplicated signing and provenance,
+   vulnerability rebuild cadence, installer selection, documentation, and the
+   long-term support cost of every added variant.

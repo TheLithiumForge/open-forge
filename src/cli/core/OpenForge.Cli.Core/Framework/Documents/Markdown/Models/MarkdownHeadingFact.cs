@@ -13,6 +13,7 @@ internal sealed record MarkdownHeadingFact
         int level,
         MarkdownHeadingForm form,
         bool isCanonical,
+        string? fragmentIdentifier,
         MarkdownTextSpan span)
     {
         ArgumentNullException.ThrowIfNull(visibleText);
@@ -31,11 +32,21 @@ internal sealed record MarkdownHeadingFact
             throw new ArgumentException("Only an ATX Markdown heading can be canonical.", nameof(isCanonical));
         }
 
+        if (fragmentIdentifier is not null)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(fragmentIdentifier);
+            if (!isCanonical)
+            {
+                throw new ArgumentException("Only a canonical ATX heading can establish a fragment identifier.", nameof(fragmentIdentifier));
+            }
+        }
+
         ArgumentNullException.ThrowIfNull(span);
         VisibleText = visibleText;
         Level = level;
         Form = form;
         IsCanonical = isCanonical;
+        FragmentIdentifier = fragmentIdentifier;
         Span = span;
     }
 
@@ -46,6 +57,8 @@ internal sealed record MarkdownHeadingFact
     internal MarkdownHeadingForm Form { get; }
 
     internal bool IsCanonical { get; }
+
+    internal string? FragmentIdentifier { get; }
 
     internal MarkdownTextSpan Span { get; }
 }

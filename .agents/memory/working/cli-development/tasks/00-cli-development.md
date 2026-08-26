@@ -8,12 +8,12 @@ open-forge:
 
 ## Task State
 
-- State: Active. Find is integrated at `1f03d16`. The repository-root developer
-  workflow Task is Complete and squash-integrated into local `develop` at
-  `d9e0686`. References is Active in Preflight and blocked on its exact public
-  result and Markdown-reference boundary; the broader replacement CLI program
-  remains Active.
-- Responsible role: Mastermind.
+- State: Active. Find and the repository-root developer workflow are accepted.
+  References is Complete on `codex/cli-references`: public Green is `23d5e2e`,
+  managed is `1270/1270`, and the final supported local `linux-x64` root,
+  Integration, and EndToEnd Native AOT gates pass. The broader replacement CLI
+  program remains Active.
+- Responsible role: Overseer.
 - Task source: This file.
 - Last updated: 2026-08-25.
 
@@ -268,8 +268,8 @@ Find presentation`) over corrected Red `a865fd1`. It is the production/root-
   Integration/serialization `43/43`, and published Find EndToEnd `13/13`, all with
   zero skips; source diff/check against `3f81e76` was clean/empty. No Native AOT
   claim was made, and the record-only commit was not a test change.
-- Blocker: None for accepted Find. The Read-Only group and replacement CLI program
-  remain Active; References remains Planned and must not start in this session.
+- At the accepted Find boundary, the Read-Only group and replacement CLI program
+  remained Active, and References had not started in that session.
 - Final generic feature gate: Warning-free build, format/diff, managed Unit `580/580`,
   Integration `213/213`, EndToEnd `57/57`, local `win-x64` Native AOT root with
   managed EndToEnd `57/57`, Native AOT Integration `213/213`, Native AOT EndToEnd

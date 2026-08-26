@@ -3,6 +3,8 @@ using System.Text;
 using OpenForge.Cli.Core.Commands.Find.Models.Matching;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
+using OpenForge.Cli.Core.Framework.Sources.Locations;
 
 namespace OpenForge.Cli.Core.Commands.Find.Shared.Matching;
 
@@ -245,42 +247,8 @@ internal sealed class FindBodyTagScanner
         return status == OperationStatus.Done && Rune.IsLetterOrDigit(rune);
     }
 
-    private static FindSourceLocation MapLocation(string source, int start, int length)
-    {
-        var line = 1;
-        var column = 1;
-        for (var index = 0; index < start;)
-        {
-            if (source[index] == '\r')
-            {
-                index += index + 1 < source.Length && source[index + 1] == '\n' ? 2 : 1;
-                line++;
-                column = 1;
-                continue;
-            }
-
-            if (source[index] == '\n')
-            {
-                index++;
-                line++;
-                column = 1;
-                continue;
-            }
-
-            index += char.IsHighSurrogate(source[index])
-                && index + 1 < source.Length
-                && char.IsLowSurrogate(source[index + 1])
-                    ? 2
-                    : 1;
-            column++;
-        }
-
-        return new FindSourceLocation(
-            line,
-            column,
-            Encoding.UTF8.GetByteCount(source.AsSpan(0, start)),
-            Encoding.UTF8.GetByteCount(source.AsSpan(start, length)));
-    }
+    private static SourceLocation MapLocation(string source, int start, int length)
+        => new Utf8SourceMap(source).Map(start, length);
 
     private enum GeneratedMarkerKind
     {

@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Find.Models.Matching;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Commands.Find.Shared.Matching;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Find.Shared.Matching;
 
@@ -104,7 +105,9 @@ public sealed class FindBodyTagScannerRedTests
             [],
             [],
             visibleText.Select(span => new MarkdownVisibleTextFact(span)),
-            (opaqueSpans ?? []).Select(span => new MarkdownOpaqueSpan(span)));
+            (opaqueSpans ?? []).Select(span => new MarkdownOpaqueSpan(span)),
+            [],
+            MarkdownGeneratedRegionFact.Absent());
     }
 
     private static MarkdownTextSpan SpanOf(string source, string value)
@@ -118,14 +121,14 @@ public sealed class FindBodyTagScannerRedTests
         return new MarkdownTextSpan(start, value.Length);
     }
 
-    private static FindSourceLocation ExpectedLocation(
+    private static SourceLocation ExpectedLocation(
         string source,
         int start,
         int length,
         int line,
         int column)
     {
-        return new FindSourceLocation(
+        return new SourceLocation(
             line,
             column,
             Encoding.UTF8.GetByteCount(source[..start]),

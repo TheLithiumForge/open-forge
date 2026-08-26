@@ -8,6 +8,8 @@ using OpenForge.Cli.Core.Commands.Find.Models.Selection;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
+using OpenForge.Cli.Core.Framework.Sources.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Shell.Definitions;
 
@@ -491,59 +493,8 @@ internal sealed class FindProjectionBuilder
         return source.Substring(span.Start, span.Length);
     }
 
-    private static FindSourceLocation MapLocation(string source, MarkdownTextSpan span)
-    {
-        var (line, column) = ReadLineAndColumn(source, span.Start);
-        var byteOffset = Encoding.UTF8.GetByteCount(source.AsSpan(0, span.Start));
-        var byteLength = Encoding.UTF8.GetByteCount(source.AsSpan(span.Start, span.Length));
-        return new FindSourceLocation(line, column, byteOffset, byteLength);
-    }
-
-    private static (int Line, int Column) ReadLineAndColumn(string source, int start)
-    {
-        var line = 1;
-        var column = 1;
-        var index = 0;
-        while (index < start)
-        {
-            var character = source[index];
-            if (character == '\r')
-            {
-                if (index + 1 < source.Length && source[index + 1] == '\n')
-                {
-                    index++;
-                }
-
-                line = checked(line + 1);
-                column = 1;
-                index++;
-                continue;
-            }
-
-            if (character == '\n')
-            {
-                line = checked(line + 1);
-                column = 1;
-                index++;
-                continue;
-            }
-
-            var scalarLength = char.IsHighSurrogate(character)
-                && index + 1 < source.Length
-                && char.IsLowSurrogate(source[index + 1])
-                ? 2
-                : 1;
-            if (index + scalarLength > start)
-            {
-                throw new ArgumentException("A Find projection location cannot split a Unicode scalar.", nameof(start));
-            }
-
-            column = checked(column + 1);
-            index += scalarLength;
-        }
-
-        return (line, column);
-    }
+    private static SourceLocation MapLocation(string source, MarkdownTextSpan span)
+        => new Utf8SourceMap(source).Map(span.Start, span.Length);
 
     private static int ReadLayerRank(SourceLayerKind? layer)
         => layer switch

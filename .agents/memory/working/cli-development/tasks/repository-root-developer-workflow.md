@@ -107,6 +107,15 @@ A framework-dependent `linux-x64` publication proved the changed version-marker
 and build-selected EndToEnd path; previously accepted Native AOT product evidence
 remains unchanged.
 
+This was a local pack-availability limitation, not evidence that the portable
+`linux-x64` RID was unsupported. During later References acceptance, standard
+SDK publication with restore authority obtained the exact portable
+`Microsoft.NETCore.App.Runtime.NativeAOT.linux-x64` `10.0.11` pack from the
+configured NuGet source. The same `linux-x64` command then published and executed
+the root, Integration, and EndToEnd Native AOT artifacts successfully. No
+distro-specific RID, direct package reference, symlink, or project workaround was
+needed.
+
 ## Review Disposition
 
 `DX1-R1-F1` found that five direct publication-target tests used temporary files

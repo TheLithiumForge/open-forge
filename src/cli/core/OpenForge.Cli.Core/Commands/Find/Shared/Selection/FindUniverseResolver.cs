@@ -1,24 +1,28 @@
 using OpenForge.Cli.Core.Commands.Find.Models.Operation;
-using OpenForge.Cli.Core.Commands.Find.Models.Request;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Commands.Find.Models.Selection;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
-using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Sources.Models.Selection;
+using OpenForge.Cli.Core.Framework.Sources.Selection;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Find.Shared.Selection;
 
 internal sealed class FindUniverseResolver
 {
-    private readonly FindPhysicalPathResolver _physicalPathResolver;
+    private readonly SourceUniverseFilterResolver _filterResolver;
 
-    internal FindUniverseResolver(FindPhysicalPathResolver physicalPathResolver)
+    internal FindUniverseResolver(SourceUniverseFilterResolver filterResolver)
     {
-        ArgumentNullException.ThrowIfNull(physicalPathResolver);
-        _physicalPathResolver = physicalPathResolver;
+        ArgumentNullException.ThrowIfNull(filterResolver);
+        _filterResolver = filterResolver;
+    }
+
+    internal FindUniverseResolver(SourcePhysicalPathResolver physicalPathResolver)
+        : this(new SourceUniverseFilterResolver(new SourceReferenceResolver(physicalPathResolver)))
+    {
     }
 
     internal FindUniverseResolution Resolve(FindUniverseInput input)
@@ -27,40 +31,27 @@ internal sealed class FindUniverseResolver
 
         var request = input.Request;
         var catalogue = input.SourceContext.Catalogue;
-        var include = ResolveSelectors(
+        var occurrences = CreateOccurrences(
             request.UniverseFilter.Include,
-            FindSelectorRole.Include,
-            request.Workspace,
-            catalogue);
-        var exclude = ResolveSelectors(
-            request.UniverseFilter.Exclude,
-            FindSelectorRole.Exclude,
-            request.Workspace,
-            catalogue);
-        var allSelectors = include.Concat(exclude).ToArray();
-        var selectorFindings = allSelectors
-            .Select((resolution, index) => CreateSelectorFinding(resolution, index, include.Count))
+            request.UniverseFilter.Exclude);
+        var resolution = _filterResolver.Resolve(new SourceUniverseFilterRequest(
+            catalogue,
+            input.SourceContext.DefaultSelectionScope,
+            occurrences));
+        var selectors = resolution.Selectors
+            .Select(selector => ProjectSelector(selector, catalogue))
+            .ToArray();
+        var include = selectors
+            .Where(selector => selector.Role == FindSelectorRole.Include)
+            .ToArray();
+        var exclude = selectors
+            .Where(selector => selector.Role == FindSelectorRole.Exclude)
+            .ToArray();
+        var findings = selectors
+            .Select(CreateSelectorFinding)
             .Where(finding => finding is not null)
             .Cast<FindFinding>()
-            .ToArray();
-
-        var hasUnresolvedSelector = allSelectors.Any(
-            resolution => resolution.Selector.Resolution != FindSelectorResolution.Resolved);
-        SourceCatalogueSelection selection;
-        int? candidateCount;
-        if (hasUnresolvedSelector)
-        {
-            selection = SelectNothing(catalogue);
-            candidateCount = null;
-        }
-        else
-        {
-            selection = SelectEffectiveSources(input.SourceContext, include, exclude);
-            candidateCount = ReadCandidateCount(catalogue, selection);
-        }
-
-        var findings = selectorFindings
-            .Concat(ProjectCatalogueFindings(catalogue, selection))
+            .Concat(ProjectCatalogueFindings(catalogue, resolution.Selection))
             .ToList();
         if (catalogue.IsCancelled)
         {
@@ -80,292 +71,111 @@ internal sealed class FindUniverseResolver
         }
 
         var universe = new FindUniverse(
-            include.Count == 0 && exclude.Count == 0
-                ? FindUniverseMode.Default
-                : FindUniverseMode.Filtered,
-            include.Select(resolution => resolution.Selector),
-            exclude.Select(resolution => resolution.Selector),
-            candidateCount,
+            occurrences.Count == 0 ? FindUniverseMode.Default : FindUniverseMode.Filtered,
+            include.Select(selector => selector.Selector),
+            exclude.Select(selector => selector.Selector),
+            resolution.IsResolved ? ReadCandidateCount(catalogue, resolution.Selection) : null,
             null,
             null);
-
         return new FindUniverseResolution(
             universe,
-            selection,
+            resolution.Selection,
             OrderFindings(findings));
     }
 
-    private IReadOnlyList<SelectorResolution> ResolveSelectors(
-        IReadOnlyList<string> values,
-        FindSelectorRole role,
-        CliWorkspace workspace,
-        SourceCatalogue catalogue)
+    private static IReadOnlyList<SourceUniverseSelectorOccurrence> CreateOccurrences(
+        IReadOnlyList<string> include,
+        IReadOnlyList<string> exclude)
     {
-        var resolutions = new List<SelectorResolution>(values.Count);
-        for (var index = 0; index < values.Count; index++)
+        var occurrences = new List<SourceUniverseSelectorOccurrence>(include.Count + exclude.Count);
+        foreach (var value in include)
         {
-            resolutions.Add(ResolveSelector(values[index], role, workspace, catalogue));
+            occurrences.Add(new SourceUniverseSelectorOccurrence(
+                SourceUniverseSelectorRole.Include,
+                value,
+                occurrences.Count + 1));
         }
 
-        return resolutions;
+        foreach (var value in exclude)
+        {
+            occurrences.Add(new SourceUniverseSelectorOccurrence(
+                SourceUniverseSelectorRole.Exclude,
+                value,
+                occurrences.Count + 1));
+        }
+
+        return occurrences;
     }
 
-    private SelectorResolution ResolveSelector(
-        string value,
-        FindSelectorRole role,
-        CliWorkspace workspace,
+    private static ProjectedSelector ProjectSelector(
+        SourceUniverseSelectorResolution selector,
         SourceCatalogue catalogue)
     {
-        var parsed = SourceReferenceParser.Parse(value);
-        if (parsed.State == SourceReferenceParseState.Invalid)
-        {
-            return Unresolved(
-                value,
-                role,
-                parsed.Kind,
-                FindSelectorResolution.Invalid,
-                parsed.Cause,
-                ReadCanonicalPath(parsed.AttemptedPath));
-        }
+        var source = selector.Reference.Source;
+        var projected = new FindSelector(
+            selector.Occurrence.Value,
+            selector.Reference.Form,
+            ReadSelectorResolution(selector.Reference.State),
+            source is null ? null : CreateIdentity(source),
+            source is null ? null : ReadSourceKind(source.Base.Form),
+            ReadExpansion(selector.Expansion),
+            selector.Reference.Candidates.Select(CreateIdentity));
+        return new ProjectedSelector(
+            selector.Occurrence.Role == SourceUniverseSelectorRole.Include
+                ? FindSelectorRole.Include
+                : FindSelectorRole.Exclude,
+            selector.RoleOccurrence,
+            projected,
+            selector.Reference.CanonicalPath,
+            ReadFindCause(selector.Reference, catalogue));
+    }
 
-        return parsed.Kind switch
+    private static FindSelectorResolution ReadSelectorResolution(SourceReferenceResolutionState state)
+        => state switch
         {
-            SourceReferenceKind.SourceId => ResolveId(
-                value,
-                role,
-                parsed,
-                catalogue),
-            SourceReferenceKind.SourcePath => ResolvePath(
-                value,
-                role,
-                parsed,
-                workspace,
-                catalogue),
-            _ => throw new ArgumentOutOfRangeException(nameof(parsed), parsed.Kind, "The source-reference kind is not defined."),
+            SourceReferenceResolutionState.Resolved => FindSelectorResolution.Resolved,
+            SourceReferenceResolutionState.Invalid => FindSelectorResolution.Invalid,
+            SourceReferenceResolutionState.Unknown => FindSelectorResolution.Unknown,
+            SourceReferenceResolutionState.Unsupported => FindSelectorResolution.Unsupported,
+            SourceReferenceResolutionState.Ambiguous => FindSelectorResolution.Ambiguous,
+            SourceReferenceResolutionState.Unsafe => FindSelectorResolution.Unsafe,
+            _ => throw new ArgumentOutOfRangeException(nameof(state), state, "The source-reference resolution state is not defined."),
         };
-    }
 
-    private static SelectorResolution ResolveId(
-        string value,
-        FindSelectorRole role,
-        SourceReferenceParseResult parsed,
+    private static FindSelectorExpansion? ReadExpansion(SourceUniverseSelectorExpansion? expansion)
+        => expansion switch
+        {
+            SourceUniverseSelectorExpansion.Source => FindSelectorExpansion.Source,
+            SourceUniverseSelectorExpansion.Folder => FindSelectorExpansion.Folder,
+            null => null,
+            _ => throw new ArgumentOutOfRangeException(nameof(expansion), expansion, "The source-universe expansion is not defined."),
+        };
+
+    private static string? ReadFindCause(
+        SourceReferenceResolution reference,
         SourceCatalogue catalogue)
     {
-        var id = parsed.AttemptedId
-            ?? throw new InvalidOperationException("A valid source ID reference requires an attempted ID.");
-        var sources = catalogue.FindAllById(id);
-        if (sources.Count == 1)
+        if (reference.State == SourceReferenceResolutionState.Resolved)
         {
-            return Resolved(value, role, parsed.Kind, sources[0], catalogue);
+            return null;
         }
 
-        if (sources.Count > 1)
+        if (reference.Form == SourceReferenceKind.SourcePath
+            && reference.CanonicalPath is { } path)
         {
-            var candidates = sources
-                .Select(CreateIdentity)
-                .OrderBy(identity => identity.Id, StringComparer.Ordinal)
-                .ThenBy(identity => identity.Path, StringComparer.Ordinal)
-                .ToArray();
-            return new SelectorResolution(
-                value,
-                role,
-                new FindSelector(
-                    value,
-                    parsed.Kind,
-                    FindSelectorResolution.Ambiguous,
-                    null,
-                    null,
-                    null,
-                    candidates),
-                null,
-                [],
-                null,
-                null,
-                "The source ID resolves to more than one logical source.");
+            return reference.State switch
+            {
+                SourceReferenceResolutionState.Unsupported => "The exact path is not an admitted logical Find source.",
+                SourceReferenceResolutionState.Unknown when catalogue.FindCandidateByPath(path) is not null
+                    => "The exact source path is no longer present.",
+                SourceReferenceResolutionState.Unknown => "The exact source path does not exist.",
+                SourceReferenceResolutionState.Unsafe => "The exact source path is outside an established safe physical boundary.",
+                _ => reference.Cause,
+            };
         }
 
-        var candidatesById = catalogue.FindAllCandidatesById(id);
-        if (candidatesById.Any(candidate => IsUnsafe(candidate.PhysicalState)))
-        {
-            return Unresolved(
-                value,
-                role,
-                parsed.Kind,
-                FindSelectorResolution.Unsafe,
-                "The source ID has a candidate outside an established safe physical boundary.",
-                null);
-        }
-
-        return Unresolved(
-            value,
-            role,
-            parsed.Kind,
-            FindSelectorResolution.Unknown,
-            "The source ID does not identify a retained logical source.",
-            null);
+        return reference.Cause;
     }
-
-    private SelectorResolution ResolvePath(
-        string value,
-        FindSelectorRole role,
-        SourceReferenceParseResult parsed,
-        CliWorkspace workspace,
-        SourceCatalogue catalogue)
-    {
-        var path = parsed.AttemptedPath
-            ?? throw new InvalidOperationException("A valid source path reference requires an attempted path.");
-        var source = catalogue.FindByPath(path);
-        if (source is not null)
-        {
-            return Resolved(value, role, parsed.Kind, source, catalogue);
-        }
-
-        var candidate = catalogue.FindCandidateByPath(path);
-        if (candidate is not null)
-        {
-            return Unresolved(
-                value,
-                role,
-                parsed.Kind,
-                ReadSelectorResolution(candidate.PhysicalState),
-                ReadCandidateCause(candidate.PhysicalState),
-                path);
-        }
-
-        var physical = _physicalPathResolver(workspace, path);
-        return Unresolved(
-            value,
-            role,
-            parsed.Kind,
-            ReadSelectorResolution(physical.State),
-            ReadPhysicalCause(physical.State),
-            path);
-    }
-
-    private static SelectorResolution Resolved(
-        string value,
-        FindSelectorRole role,
-        SourceReferenceKind form,
-        SourceLogicalSource source,
-        SourceCatalogue catalogue)
-    {
-        var identity = CreateIdentity(source);
-        var sourceKind = ReadSourceKind(source.Base.Form);
-        var expansion = sourceKind == FindSourceKind.Ordinary
-            ? FindSelectorExpansion.Source
-            : FindSelectorExpansion.Folder;
-        SourceCatalogueSelectionScope? scope = null;
-        IReadOnlyList<SourceLogicalSource> expandedSources;
-        if (expansion == FindSelectorExpansion.Folder)
-        {
-            scope = CreateScope(source);
-            expandedSources = catalogue.Sources
-                .Where(candidate => PhysicalContainment.Contains(
-                    scope.PhysicalDirectoryPath,
-                    candidate.Base.PhysicalPath))
-                .ToArray();
-        }
-        else
-        {
-            expandedSources = [source];
-        }
-
-        return new SelectorResolution(
-            value,
-            role,
-            new FindSelector(
-                value,
-                form,
-                FindSelectorResolution.Resolved,
-                identity,
-                sourceKind,
-                expansion,
-                []),
-            source,
-            expandedSources,
-            scope,
-            ReadCanonicalPath(value),
-            null);
-    }
-
-    private static SelectorResolution Unresolved(
-        string value,
-        FindSelectorRole role,
-        SourceReferenceKind form,
-        FindSelectorResolution resolution,
-        string? cause,
-        string? canonicalPath)
-    {
-        return new SelectorResolution(
-            value,
-            role,
-            new FindSelector(
-                value,
-                form,
-                resolution,
-                null,
-                null,
-                null,
-                []),
-            null,
-            [],
-            null,
-            canonicalPath,
-            cause ?? ReadSelectorCause(resolution));
-    }
-
-    private static SourceCatalogueSelection SelectEffectiveSources(
-        FindSourceReadContext sourceContext,
-        IReadOnlyList<SelectorResolution> include,
-        IReadOnlyList<SelectorResolution> exclude)
-    {
-        var catalogue = sourceContext.Catalogue;
-        if (include.Count == 0 && exclude.Count == 0)
-        {
-            return catalogue.SelectAll();
-        }
-
-        var excludedPaths = exclude
-            .SelectMany(resolution => resolution.ExpandedSources)
-            .Select(source => source.Identity.CanonicalBasePath)
-            .ToHashSet(StringComparer.Ordinal);
-        var selectedSources = (include.Count == 0
-                ? catalogue.Sources
-                : include.SelectMany(resolution => resolution.ExpandedSources))
-            .Where(source => !excludedPaths.Contains(source.Identity.CanonicalBasePath))
-            .GroupBy(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal)
-            .Select(group => group.First())
-            .ToArray();
-
-        var includedScopes = include.Count == 0
-            ? ReadDefaultScope(sourceContext.DefaultSelectionScope)
-            : ReadScopes(include);
-        var excludedScopes = ReadScopes(exclude);
-        return catalogue.Select(new SourceCatalogueSelectionRequest(
-            selectedSources,
-            includedScopes,
-            excludedScopes));
-    }
-
-    private static IReadOnlyList<SourceCatalogueSelectionScope> ReadDefaultScope(
-        SourceCatalogueSelectionScope? scope)
-        => scope is null ? [] : [scope];
-
-    private static IReadOnlyList<SourceCatalogueSelectionScope> ReadScopes(
-        IEnumerable<SelectorResolution> resolutions)
-    {
-        return resolutions
-            .Select(resolution => resolution.Scope)
-            .Where(scope => scope is not null)
-            .Cast<SourceCatalogueSelectionScope>()
-            .GroupBy(scope => scope.CanonicalDirectoryPath, StringComparer.Ordinal)
-            .Select(group => group.First())
-            .OrderBy(scope => scope.CanonicalDirectoryPath, StringComparer.Ordinal)
-            .ToArray();
-    }
-
-    private static SourceCatalogueSelection SelectNothing(SourceCatalogue catalogue)
-        => catalogue.Select(new SourceCatalogueSelectionRequest([], [], []));
 
     private static int? ReadCandidateCount(
         SourceCatalogue catalogue,
@@ -417,8 +227,7 @@ internal sealed class FindUniverseResolver
     private static IReadOnlyList<FindSourceIdentity> ReadCollisionCandidates(
         SourceCatalogue catalogue,
         SourceCatalogueIssue issue)
-    {
-        return issue.RelatedPaths
+        => issue.RelatedPaths
             .Select(catalogue.FindByPath)
             .Where(source => source is not null)
             .Cast<SourceLogicalSource>()
@@ -428,14 +237,10 @@ internal sealed class FindUniverseResolver
             .OrderBy(identity => identity.Id, StringComparer.Ordinal)
             .ThenBy(identity => identity.Path, StringComparer.Ordinal)
             .ToArray();
-    }
 
-    private static FindFinding? CreateSelectorFinding(
-        SelectorResolution resolution,
-        int index,
-        int includeCount)
+    private static FindFinding? CreateSelectorFinding(ProjectedSelector selector)
     {
-        var findingCode = resolution.Selector.Resolution switch
+        var findingCode = selector.Selector.Resolution switch
         {
             FindSelectorResolution.Invalid
                 or FindSelectorResolution.Unknown
@@ -444,8 +249,8 @@ internal sealed class FindUniverseResolver
             FindSelectorResolution.Unsafe => FindFindingCode.SelectorUnsafe,
             FindSelectorResolution.Resolved => (FindFindingCode?)null,
             _ => throw new ArgumentOutOfRangeException(
-                nameof(resolution),
-                resolution.Selector.Resolution,
+                nameof(selector),
+                selector.Selector.Resolution,
                 "The Find selector resolution is not defined."),
         };
         if (findingCode is null)
@@ -453,49 +258,20 @@ internal sealed class FindUniverseResolver
             return null;
         }
 
-        var isInclude = index < includeCount;
-        var occurrence = isInclude ? index + 1 : index - includeCount + 1;
         return new FindFinding(
             findingCode.Value,
             FindDefinitions.ReadFindingStatus(findingCode.Value),
-            resolution.Value,
-            resolution.Cause ?? ReadSelectorCause(resolution.Selector.Resolution),
-            isInclude ? FindSelectorRole.Include : FindSelectorRole.Exclude,
-            occurrence,
+            selector.Selector.Value,
+            selector.Cause ?? ReadSelectorCause(selector.Selector.Resolution),
+            selector.Role,
+            selector.RoleOccurrence,
             null,
             null,
-            resolution.CanonicalPath,
+            selector.CanonicalPath,
             null,
             null,
-            resolution.Selector.Candidates);
+            selector.Selector.Candidates);
     }
-
-    private static FindSelectorResolution ReadSelectorResolution(PhysicalPathState state)
-        => state switch
-        {
-            PhysicalPathState.Contained => FindSelectorResolution.Unsupported,
-            PhysicalPathState.Missing => FindSelectorResolution.Unknown,
-            _ => FindSelectorResolution.Unsafe,
-        };
-
-    private static bool IsUnsafe(PhysicalPathState state)
-        => state is not (PhysicalPathState.Contained or PhysicalPathState.Missing);
-
-    private static string ReadCandidateCause(PhysicalPathState state)
-        => state switch
-        {
-            PhysicalPathState.Contained => "The exact path is not an admitted logical Find source.",
-            PhysicalPathState.Missing => "The exact source path is no longer present.",
-            _ => "The exact source path is outside an established safe physical boundary.",
-        };
-
-    private static string ReadPhysicalCause(PhysicalPathState state)
-        => state switch
-        {
-            PhysicalPathState.Contained => "The exact path is not an admitted logical Find source.",
-            PhysicalPathState.Missing => "The exact source path does not exist.",
-            _ => "The exact source path is outside an established safe physical boundary.",
-        };
 
     private static string ReadSelectorCause(FindSelectorResolution resolution)
         => resolution switch
@@ -544,9 +320,6 @@ internal sealed class FindUniverseResolver
             _ => throw new ArgumentOutOfRangeException(nameof(code), code, "The source catalogue issue code is not defined."),
         };
 
-    private static string? ReadCanonicalPath(string? path)
-        => path is not null && SourceLogicalPath.IsCanonicalRoot(path) ? path : null;
-
     private static FindSourceIdentity CreateIdentity(SourceLogicalSource source)
         => new(source.Identity.AutomaticId, source.Identity.CanonicalBasePath);
 
@@ -559,18 +332,8 @@ internal sealed class FindUniverseResolver
             _ => FindSourceKind.Ordinary,
         };
 
-    private static SourceCatalogueSelectionScope CreateScope(SourceLogicalSource source)
-    {
-        var physicalDirectory = Path.GetDirectoryName(source.Base.PhysicalPath)
-            ?? throw new InvalidOperationException("A source layer must have a physical parent directory.");
-        return new SourceCatalogueSelectionScope(
-            SourceLogicalPath.ReadParent(source.Base.CanonicalPath),
-            physicalDirectory);
-    }
-
     private static IReadOnlyList<FindFinding> OrderFindings(IEnumerable<FindFinding> findings)
-    {
-        return findings
+        => findings
             .OrderBy(finding => ReadFindingOrder(finding.Code))
             .ThenBy(finding => finding.SelectorRole == FindSelectorRole.Include ? 0 : 1)
             .ThenBy(finding => finding.SelectorOccurrence ?? int.MaxValue)
@@ -583,7 +346,6 @@ internal sealed class FindUniverseResolver
                     finding.Candidates.Select(candidate => $"{candidate.Id}\u001e{candidate.Path}")),
                 StringComparer.Ordinal)
             .ToArray();
-    }
 
     private static int ReadFindingOrder(FindFindingCode code)
         => code switch
@@ -608,13 +370,10 @@ internal sealed class FindUniverseResolver
             _ => throw new ArgumentOutOfRangeException(nameof(code), code, "The Find finding code is not defined."),
         };
 
-    private sealed record SelectorResolution(
-        string Value,
+    private sealed record ProjectedSelector(
         FindSelectorRole Role,
+        int RoleOccurrence,
         FindSelector Selector,
-        SourceLogicalSource? Source,
-        IReadOnlyList<SourceLogicalSource> ExpandedSources,
-        SourceCatalogueSelectionScope? Scope,
         string? CanonicalPath,
         string? Cause);
 }

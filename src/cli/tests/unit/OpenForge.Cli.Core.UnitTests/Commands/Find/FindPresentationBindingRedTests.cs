@@ -8,6 +8,8 @@ using OpenForge.Cli.Core.Commands.Find.Shared.Documents;
 using OpenForge.Cli.Core.Commands.Find.Shared.Result;
 using OpenForge.Cli.Core.Commands.Find.Shared.Selection;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Selection;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Composition.Models;
@@ -82,6 +84,8 @@ public sealed class FindPresentationBindingRedTests
         var humanCalls = 0;
         var jsonCalls = 0;
         var diagnosticCalls = 0;
+        SourcePhysicalPathResolver physicalPathResolver = (_, _) => throw new InvalidOperationException(
+            "The failed boundary must stop before path resolution.");
         var operation = new FindOperation(new FindOperationComponents
         {
             SourceBoundaryReader = (_, _) =>
@@ -89,7 +93,9 @@ public sealed class FindPresentationBindingRedTests
                 operationCalls++;
                 throw new IOException("The test operation boundary failed deterministically.");
             },
-            PhysicalPathResolver = (_, _) => throw new InvalidOperationException("The failed boundary must stop before path resolution."),
+            UniverseFilterResolver = new SourceUniverseFilterResolver(
+                new SourceReferenceResolver(physicalPathResolver)),
+            PhysicalPathResolver = physicalPathResolver,
             SelectedLayerReader = (_, _, _) => throw new InvalidOperationException("The failed boundary must stop before layer reads."),
             RouteFactsReader = (_, _, _) => throw new InvalidOperationException("The failed boundary must stop before route facts."),
             MarkdownDocumentReader = _ => throw new InvalidOperationException("The failed boundary must stop before Markdown parsing."),

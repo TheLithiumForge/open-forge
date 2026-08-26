@@ -15,17 +15,18 @@ release.
 ## Current State
 
 Find is Complete and squash-integrated into local `develop` at `1f03d16`. The
-repository-root developer workflow is Complete and squash-integrated into local
-`develop` at `d9e0686`. References is now the selected next command.
+repository-root developer workflow is Complete. References is Complete on its
+feature branch, with public Green baseline `23d5e2e` and final acceptance in the
+commit containing its current record.
 
-The maintainer selected References before Context. References is Active in
-Preflight, but production implementation has not started. Repository exploration
-confirmed that the current contracts do not yet define the exact command-local
-JSON result object, finite finding codes, or complete supported Markdown-reference
-forms required by the Architecture. The References Task records the recommended
-closure and remains blocked until that public boundary is accepted.
+The maintainer selected References before Context. References Preflight is
+closed. Its neutral foundation is accepted at `e7516f0`, operation at `f7bb9f9`,
+structure improvement at `6922ca6`, final Red at `43b75f3`, and public Green at
+`23d5e2e`. Managed `1270/1270`, published process, no-write, architecture,
+protected-surface, and supported local `linux-x64` Native AOT evidence pass.
 
-The active branch is `develop`. The accepted developer-workflow direction is
+The active implementation branch is `codex/cli-references` in dedicated worktree
+`/home/tedy/dev/open-forge-cli-references`. The accepted developer-workflow direction is
 recorded in the [repository-root developer workflow
 Task](../cli-development/tasks/repository-root-developer-workflow.md) and the
 [Repository-Root CLI Tooling Decision](../../crystallized/decisions/repository-root-cli-tooling.md).
@@ -48,35 +49,35 @@ Implemented boundaries:
 - Temporary Index and References compatibility-name routes and Task filenames,
   pending replacement Index validation of their final names.
 
-The unchanged managed baseline is `1190/1190`. After review correction
-`DX1-C1`, focused final evidence passes root selection at `72/72`, ordinary
-publication-selected EndToEnd at `70/70`, and explicit `linux-x64`
-publication-selected EndToEnd at `70/70`, all with zero skips. The local Native
-AOT rerun is blocked before
-compilation because the installed WSL SDK lacks the accepted `linux-x64` Native
-AOT runtime pack; no download was authorized. No global installation, external
-publication, remote action, or push occurred.
+The Ubuntu SDK installation exposes a distro-specific `ubuntu.24.04-x64` local
+AOT pack, while the accepted product RID remains portable `linux-x64`. With exact
+restore authority, standard SDK publication restored
+`Microsoft.NETCore.App.Runtime.NativeAOT.linux-x64` `10.0.11` from the configured
+NuGet source and produced the native root without a project workaround. The
+explicit `linux-x64` build passed with zero warnings and errors; build-selected
+References EndToEnd passed `12/12`; Native AOT Integration passed `308/308`; and
+Native AOT EndToEnd passed `82/82`, all with zero skips. No global installation,
+external publication, remote action, or push occurred.
 
 ## Current Step
 
-Obtain maintainer acceptance of the References contract closure. Then freeze its
-callables and evidence before creating the feature branch or changing source.
+Integrate the accepted References feature tree into local `develop`, prove exact
+tree equality, and then make Context eligible to start. Do not push.
 
 ## Protected State
 
 - Do not stage or alter unrelated `.apm` and `apm.lock.yaml` worktree changes.
 - Do not edit sealed Handoffs or archived evidence to rewrite history.
-- Do not implement References before its result, finding-code, and supported-link
-  contract boundary is accepted. Do not implement Index behavior.
-- Do not download dependencies without exact authorization.
+- Do not change the accepted References result, finding-code, supported-link,
+  fragment, or generated-region meanings during implementation. Do not implement
+  Index behavior.
+- Do not download additional dependencies without exact authorization.
 - Do not contact remotes, publish, globally install, deploy, or push.
 
 ## Next Actions
 
-1. Close the References contract boundary recorded in its active Task.
-2. Freeze References callables, allowed paths, and evidence after that acceptance.
-3. Create the References feature branch only when the Task is Ready for
-   implementation.
+1. Squash-integrate the accepted `codex/cli-references` tree into local `develop`.
+2. Prove exact tree equality, keep remotes unchanged, and then prepare Context.
 
 ## Current Sources
 

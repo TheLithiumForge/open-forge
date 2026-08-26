@@ -2,6 +2,7 @@ using System.Text;
 using Markdig;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
+using Markdig.Renderers.Html;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 
 namespace OpenForge.Cli.Core.Framework.Documents.Markdown;
@@ -17,7 +18,16 @@ internal sealed class MarkdownDocumentParser
         var frontmatter = _frontmatterParser.Parse(source);
         if (frontmatter.State == MarkdownFrontmatterState.Unavailable)
         {
-            return new MarkdownDocumentFacts(source, frontmatter, null, [], [], [], []);
+            return new MarkdownDocumentFacts(
+                source,
+                frontmatter,
+                null,
+                [],
+                [],
+                [],
+                [],
+                [],
+                MarkdownGeneratedRegionFact.Unavailable("The Markdown body boundary is unavailable."));
         }
 
         var bodyStart = frontmatter.BodyStart ?? throw new InvalidOperationException(
@@ -27,6 +37,7 @@ internal sealed class MarkdownDocumentParser
         var headings = new List<MarkdownHeadingFact>();
         var visibleText = new List<MarkdownVisibleTextFact>();
         var opaqueSpans = new List<MarkdownOpaqueSpan>();
+        var links = new List<MarkdownLinkFact>();
 
         foreach (var block in EnumerateBlocks(document))
         {
@@ -43,11 +54,16 @@ internal sealed class MarkdownDocumentParser
 
             if (block is LeafBlock { Inline: not null } leaf)
             {
-                CollectInlineFacts(leaf.Inline!, bodyStart, visibleText, opaqueSpans);
+                CollectInlineFacts(leaf.Inline!, bodyStart, visibleText, opaqueSpans, links);
             }
         }
 
         var sections = CreateSections(headings, bodySpan);
+        var generatedRegion = MarkdownGeneratedRegionParser.Parse(
+            source,
+            bodySpan,
+            headings,
+            opaqueSpans);
 
         return new MarkdownDocumentFacts(
             source,
@@ -56,7 +72,9 @@ internal sealed class MarkdownDocumentParser
             headings,
             sections,
             visibleText,
-            opaqueSpans);
+            opaqueSpans,
+            links,
+            generatedRegion);
     }
 
     private static MarkdownHeadingFact CreateHeadingFact(HeadingBlock heading, int bodyStart)
@@ -68,7 +86,19 @@ internal sealed class MarkdownDocumentParser
             heading.Level,
             heading.IsSetext ? MarkdownHeadingForm.Setext : MarkdownHeadingForm.Atx,
             !heading.IsSetext,
+            ReadFragmentIdentifier(heading),
             span);
+    }
+
+    private static string? ReadFragmentIdentifier(HeadingBlock heading)
+    {
+        if (heading.IsSetext || !HasSupportedHeadingText(heading.Inline))
+        {
+            return null;
+        }
+
+        var identifier = heading.TryGetAttributes()?.Id;
+        return string.IsNullOrWhiteSpace(identifier) ? null : identifier;
     }
 
     private static IReadOnlyList<MarkdownSectionFact> CreateSections(
@@ -92,7 +122,6 @@ internal sealed class MarkdownDocumentParser
                 headings[index],
                 new MarkdownTextSpan(headings[index].Span.Start, end - headings[index].Span.Start));
         }
-
         return sections;
     }
 
@@ -100,7 +129,8 @@ internal sealed class MarkdownDocumentParser
         Inline inline,
         int bodyStart,
         ICollection<MarkdownVisibleTextFact> visibleText,
-        ICollection<MarkdownOpaqueSpan> opaqueSpans)
+        ICollection<MarkdownOpaqueSpan> opaqueSpans,
+        ICollection<MarkdownLinkFact> links)
     {
         for (var current = inline; current is not null; current = current.NextSibling)
         {
@@ -113,15 +143,111 @@ internal sealed class MarkdownDocumentParser
                 case LiteralInline:
                     AddVisibleSpan(visibleText, current.Span, bodyStart);
                     break;
+                case AutolinkInline autolink:
+                    AddAutolinkFact(links, autolink, bodyStart);
+                    break;
+                case LinkInline { IsImage: false } link:
+                    AddLinkFact(links, link, bodyStart);
+                    if (link.FirstChild is not null)
+                    {
+                        CollectInlineFacts(link.FirstChild, bodyStart, visibleText, opaqueSpans, links);
+                    }
+
+                    break;
                 case ContainerInline container:
                     if (container.FirstChild is not null)
                     {
-                        CollectInlineFacts(container.FirstChild, bodyStart, visibleText, opaqueSpans);
+                        CollectInlineFacts(container.FirstChild, bodyStart, visibleText, opaqueSpans, links);
                     }
 
                     break;
             }
         }
+    }
+
+    private static void AddLinkFact(
+        ICollection<MarkdownLinkFact> links,
+        LinkInline link,
+        int bodyStart)
+    {
+        var span = ToDocumentSpan(link.Span, bodyStart);
+        if (span is null)
+        {
+            return;
+        }
+
+        var form = MarkdownLinkForm.Inline;
+        if (link.Reference is not null)
+        {
+            form = MarkdownLinkForm.Reference;
+        }
+        else if (link.IsAutoLink)
+        {
+            form = MarkdownLinkForm.Autolink;
+        }
+        var parserDestinationSpan = form switch
+        {
+            MarkdownLinkForm.Reference => link.Reference?.UrlSpan,
+            MarkdownLinkForm.Inline => link.UrlSpan,
+            MarkdownLinkForm.Autolink => null,
+            _ => throw new ArgumentOutOfRangeException(nameof(link), form, "The Markdown link form is not defined."),
+        };
+        var destinationSpan = parserDestinationSpan is { } sourceSpan
+            ? ToDocumentSpan(sourceSpan, bodyStart)
+            : null;
+        var rawDestination = link.Url ?? string.Empty;
+        links.Add(new MarkdownLinkFact(form, rawDestination, span, destinationSpan));
+    }
+
+    private static void AddAutolinkFact(
+        ICollection<MarkdownLinkFact> links,
+        AutolinkInline autolink,
+        int bodyStart)
+    {
+        if (ToDocumentSpan(autolink.Span, bodyStart) is { } span)
+        {
+            links.Add(new MarkdownLinkFact(
+                MarkdownLinkForm.Autolink,
+                autolink.Url,
+                span,
+                null));
+        }
+    }
+
+    private static bool HasSupportedHeadingText(ContainerInline? inline)
+        => inline?.FirstChild is null || HasSupportedHeadingText(inline.FirstChild);
+
+    private static bool HasSupportedHeadingText(Inline inline)
+    {
+        for (var current = inline; current is not null; current = current.NextSibling)
+        {
+            switch (current)
+            {
+                case LiteralInline:
+                case HtmlEntityInline:
+                case CodeInline:
+                case LineBreakInline:
+                    break;
+                case LinkInline link when link.FirstChild is not null:
+                    if (!HasSupportedHeadingText(link.FirstChild))
+                    {
+                        return false;
+                    }
+
+                    break;
+                case ContainerInline container when container.FirstChild is not null:
+                    if (!HasSupportedHeadingText(container.FirstChild))
+                    {
+                        return false;
+                    }
+
+                    break;
+                default:
+                    return false;
+            }
+        }
+
+        return true;
     }
 
     private static string ReadHeadingText(ContainerInline? inline)
@@ -235,5 +361,4 @@ internal sealed class MarkdownDocumentParser
             }
         }
     }
-
 }

@@ -11,7 +11,9 @@ internal sealed record MarkdownDocumentFacts
         IEnumerable<MarkdownHeadingFact> headings,
         IEnumerable<MarkdownSectionFact> sections,
         IEnumerable<MarkdownVisibleTextFact> visibleText,
-        IEnumerable<MarkdownOpaqueSpan> opaqueSpans)
+        IEnumerable<MarkdownOpaqueSpan> opaqueSpans,
+        IEnumerable<MarkdownLinkFact> links,
+        MarkdownGeneratedRegionFact generatedRegion)
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(frontmatter);
@@ -19,15 +21,19 @@ internal sealed record MarkdownDocumentFacts
         ArgumentNullException.ThrowIfNull(sections);
         ArgumentNullException.ThrowIfNull(visibleText);
         ArgumentNullException.ThrowIfNull(opaqueSpans);
+        ArgumentNullException.ThrowIfNull(links);
+        ArgumentNullException.ThrowIfNull(generatedRegion);
 
         var materializedHeadings = headings.ToArray();
         var materializedSections = sections.ToArray();
         var materializedVisibleText = visibleText.ToArray();
         var materializedOpaqueSpans = opaqueSpans.ToArray();
+        var materializedLinks = links.ToArray();
         if (materializedHeadings.Any(heading => heading is null)
             || materializedSections.Any(section => section is null)
             || materializedVisibleText.Any(fact => fact is null)
-            || materializedOpaqueSpans.Any(span => span is null))
+            || materializedOpaqueSpans.Any(span => span is null)
+            || materializedLinks.Any(link => link is null))
         {
             throw new ArgumentException("Markdown facts cannot contain null members.");
         }
@@ -95,10 +101,30 @@ internal sealed record MarkdownDocumentFacts
             ValidateBodySpan(opaqueSpan.Span, bodySpan, nameof(opaqueSpans));
         }
 
+
+        foreach (var link in materializedLinks)
+        {
+            ValidateSpan(source, link.Span, nameof(links));
+            ValidateSpan(source, link.DestinationSpan, nameof(links));
+            ValidateBodySpan(link.Span, bodySpan, nameof(links));
+            if (link.DestinationSpan is { } destinationSpan)
+            {
+                ValidateBodySpan(destinationSpan, bodySpan, nameof(links));
+            }
+        }
+
+        ValidateSpan(source, generatedRegion.RegionSpan, nameof(generatedRegion));
+        ValidateSpan(source, generatedRegion.ContentSpan, nameof(generatedRegion));
+        if (generatedRegion.RegionSpan is { } generatedRegionSpan)
+        {
+            ValidateBodySpan(generatedRegionSpan, bodySpan, nameof(generatedRegion));
+        }
+
         ValidateHeadingOrder(materializedHeadings);
         ValidateSections(materializedHeadings, materializedSections, bodySpan);
         ValidateVisibleTextOrder(materializedVisibleText);
         ValidateOpaqueSpanOrder(materializedOpaqueSpans);
+        ValidateLinkOrder(materializedLinks);
 
         Source = source;
         Frontmatter = frontmatter;
@@ -107,6 +133,8 @@ internal sealed record MarkdownDocumentFacts
         Sections = Array.AsReadOnly(materializedSections);
         VisibleText = Array.AsReadOnly(materializedVisibleText);
         OpaqueSpans = Array.AsReadOnly(materializedOpaqueSpans);
+        Links = Array.AsReadOnly(materializedLinks);
+        GeneratedRegion = generatedRegion;
     }
 
     internal string Source { get; }
@@ -122,6 +150,10 @@ internal sealed record MarkdownDocumentFacts
     internal IReadOnlyList<MarkdownVisibleTextFact> VisibleText { get; }
 
     internal IReadOnlyList<MarkdownOpaqueSpan> OpaqueSpans { get; }
+
+    internal IReadOnlyList<MarkdownLinkFact> Links { get; }
+
+    internal MarkdownGeneratedRegionFact GeneratedRegion { get; }
 
     private static void ValidateSpan(string source, MarkdownTextSpan? span, string parameterName)
     {
@@ -206,6 +238,17 @@ internal sealed record MarkdownDocumentFacts
             if (spans[index].Span.Start < spans[index - 1].Span.Start)
             {
                 throw new ArgumentException("Markdown opaque spans must retain source order.", nameof(spans));
+            }
+        }
+    }
+
+    private static void ValidateLinkOrder(IReadOnlyList<MarkdownLinkFact> links)
+    {
+        for (var index = 1; index < links.Count; index++)
+        {
+            if (links[index].Span.Start < links[index - 1].Span.Start)
+            {
+                throw new ArgumentException("Markdown links must retain source order.", nameof(links));
             }
         }
     }

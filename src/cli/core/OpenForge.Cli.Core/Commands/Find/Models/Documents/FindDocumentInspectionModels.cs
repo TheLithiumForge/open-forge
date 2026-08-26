@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Find.Models.Matching;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 
@@ -16,7 +17,7 @@ internal enum FindFrontmatterAvailability
 
 internal sealed record FindFrontmatterTagOccurrence
 {
-    internal FindFrontmatterTagOccurrence(string authored, FindSourceLocation location)
+    internal FindFrontmatterTagOccurrence(string authored, SourceLocation location)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(authored);
         ArgumentNullException.ThrowIfNull(location);
@@ -26,7 +27,7 @@ internal sealed record FindFrontmatterTagOccurrence
 
     internal string Authored { get; }
 
-    internal FindSourceLocation Location { get; }
+    internal SourceLocation Location { get; }
 }
 
 internal sealed record FindFrontmatterInput

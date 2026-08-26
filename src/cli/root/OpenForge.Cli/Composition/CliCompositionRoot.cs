@@ -2,6 +2,10 @@ using OpenForge.Cli.Core.Commands.Find;
 using OpenForge.Cli.Core.Commands.Find.Models.Binding;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Commands.Find.Shared.Rendering;
+using OpenForge.Cli.Core.Commands.References;
+using OpenForge.Cli.Core.Commands.References.Models.Binding;
+using OpenForge.Cli.Core.Commands.References.Models.Result;
+using OpenForge.Cli.Core.Commands.References.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Route;
 using OpenForge.Cli.Core.Commands.Route.Inspect;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Binding;
@@ -75,14 +79,30 @@ internal static class CliCompositionRoot
                     FindJsonRenderer.Render),
                 DiagnosticRenderer = FindDiagnosticRenderer.Render,
             });
+        var referencesSymbols = ReferencesBinding.CreateSymbols();
+        var referencesBinding = ReferencesBinding.Close(
+            referencesSymbols,
+            new ReferencesBindingComponents
+            {
+                Help = ReferencesHelpSections.Create(),
+                Operation = ReferencesOperationFactory.Create(),
+                Renderers = new CliRendererSet<ReferencesResult>(
+                    ReferencesHumanRenderer.Render,
+                    ReferencesJsonRenderer.Render),
+                DiagnosticRenderer = ReferencesDiagnosticRenderer.Render,
+            });
         var tree = CliCommandTree.Create(
             rootHelp,
             [new CliRootBranch(
                 routeGroup,
                 RouteHelpSections.CreateGroup(),
                 listSymbols.DelimiterPolicies)],
-            [listBinding, inspectBinding, findBinding],
-            rootLeaves: [new CliRootLeaf(findSymbols.FindCommand, [])]);
+            [listBinding, inspectBinding, findBinding, referencesBinding],
+            rootLeaves:
+            [
+                new CliRootLeaf(findSymbols.FindCommand, []),
+                new CliRootLeaf(referencesSymbols.ReferencesCommand, []),
+            ]);
         var workspaceSelector = new CliWorkspaceSelector(new PhysicalPathResolver());
         return new CliCoreApplication(process, tree, workspaceSelector);
     }

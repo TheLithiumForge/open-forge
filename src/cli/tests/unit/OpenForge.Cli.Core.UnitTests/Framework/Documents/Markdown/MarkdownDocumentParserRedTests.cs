@@ -1,4 +1,5 @@
 using Markdig;
+using Markdig.Extensions.AutoIdentifiers;
 using Markdig.Syntax;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
@@ -7,9 +8,9 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Documents.Markdown;
 
 public sealed class MarkdownDocumentParserRedTests
 {
-    [Fact(DisplayName = "Markdown pipeline is cached, precise, and extension-free")]
+    [Fact(DisplayName = "Markdown pipeline is cached and combines precise locations with GitHub identifiers")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
-    public void PipelineIsCachedPreciseAndExtensionFree()
+    public void PipelineIsCachedPreciseAndUsesGitHubIdentifiers()
     {
         var first = MarkdownPipelineFactory.Get();
         var second = MarkdownPipelineFactory.Get();
@@ -18,7 +19,7 @@ public sealed class MarkdownDocumentParserRedTests
         Assert.Same(first, second);
         Assert.Equal(0, heading.Span.Start);
         Assert.Equal("# Heading".Length - 1, heading.Span.End);
-        Assert.Empty(first.Extensions);
+        Assert.IsType<AutoIdentifierExtension>(Assert.Single(first.Extensions));
     }
 
     [Fact(DisplayName = "Markdown frontmatter boundaries preserve line endings and unavailable input")]
@@ -111,6 +112,9 @@ public sealed class MarkdownDocumentParserRedTests
         Assert.Equal(
             [true, true, true, true, true, true, false, false],
             facts.Headings.Select(heading => heading.IsCanonical));
+        Assert.Equal(
+            ["one", "two", "three", "four", "five", "six", null, null],
+            facts.Headings.Select(heading => heading.FragmentIdentifier));
 
         Assert.Equal(new MarkdownTextSpan(0, "# One".Length), facts.Headings[0].Span);
         Assert.Equal(
@@ -144,6 +148,102 @@ public sealed class MarkdownDocumentParserRedTests
         Assert.DoesNotContain("destination", heading.VisibleText, StringComparison.Ordinal);
         Assert.DoesNotContain("title", heading.VisibleText, StringComparison.Ordinal);
         Assert.DoesNotContain("br", heading.VisibleText, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact(DisplayName = "Markdown GitHub heading identifiers preserve Unicode and deterministic duplicate suffixes")]
+    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
+    public void GitHubHeadingIdentifiersPreserveUnicodeAndDuplicateSuffixes()
+    {
+        const string source =
+            "# Café 工作\n"
+            + "# Café 工作\n"
+            + "# Visible <span>unsupported</span>\n"
+            + "Setext\n"
+            + "======\n";
+
+        var facts = new MarkdownDocumentParser().Parse(source);
+
+        Assert.Equal("café-工作", facts.Headings[0].FragmentIdentifier);
+        Assert.Equal("café-工作-1", facts.Headings[1].FragmentIdentifier);
+        Assert.Null(facts.Headings[2].FragmentIdentifier);
+        Assert.Null(facts.Headings[3].FragmentIdentifier);
+    }
+
+    [Fact(DisplayName = "Markdown link facts preserve inline, reference-definition, and explicit-autolink spans")]
+    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
+    public void LinksPreservePinnedMarkdigFormsDestinationsAndSpans()
+    {
+        const string inline = "[inline](folder/target%20one.md#Frag)";
+        const string reference = "[reference][ref]";
+        const string autolink = "<https://example.invalid/path?q=one>";
+        const string referenceDestination = "ref target.md#Part";
+        const string source =
+            inline + "\n"
+            + reference + "\n"
+            + autolink + "\n"
+            + "![image](image.png)\n"
+            + "<a href=\"raw.html\">raw</a>\n"
+            + "`[code](code.md)`\n"
+            + "https://example.invalid/bare\n\n"
+            + "[ref]: <" + referenceDestination + ">\n";
+
+        var facts = new MarkdownDocumentParser().Parse(source);
+
+        Assert.Equal(
+            [MarkdownLinkForm.Inline, MarkdownLinkForm.Reference, MarkdownLinkForm.Autolink],
+            facts.Links.Select(link => link.Form));
+        Assert.Equal(
+            ["folder/target%20one.md#Frag", referenceDestination, "https://example.invalid/path?q=one"],
+            facts.Links.Select(link => link.RawDestination));
+        Assert.Equal(SpanOf(source, inline), facts.Links[0].Span);
+        Assert.Equal(SpanOf(source, "folder/target%20one.md#Frag"), facts.Links[0].DestinationSpan);
+        Assert.Equal(SpanOf(source, reference), facts.Links[1].Span);
+        Assert.Equal(SpanOf(source, $"<{referenceDestination}>"), facts.Links[1].DestinationSpan);
+        Assert.Equal(SpanOf(source, autolink), facts.Links[2].Span);
+        Assert.Null(facts.Links[2].DestinationSpan);
+    }
+
+    [Fact(DisplayName = "Markdown generated-region facts require one final Entries section and ordered marker pair")]
+    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
+    public void GeneratedRegionRequiresStrictFinalEntriesBoundary()
+    {
+        const string generatedLink = "- [Generated](generated.md)";
+        const string source =
+            "# Document\n\n"
+            + "## Entries\n\n"
+            + "<!-- open-forge:generated-index:start -->\n"
+            + generatedLink + "\n"
+            + "<!-- open-forge:generated-index:end -->\n";
+
+        var facts = new MarkdownDocumentParser().Parse(source);
+
+        Assert.Equal(MarkdownGeneratedRegionState.Complete, facts.GeneratedRegion.State);
+        var contentSpan = Assert.IsType<MarkdownTextSpan>(facts.GeneratedRegion.ContentSpan);
+        Assert.Contains(generatedLink, source[contentSpan.Start..contentSpan.End], StringComparison.Ordinal);
+        var regionSpan = Assert.IsType<MarkdownTextSpan>(facts.GeneratedRegion.RegionSpan);
+        Assert.StartsWith("<!-- open-forge:generated-index:start -->", source[regionSpan.Start..regionSpan.End], StringComparison.Ordinal);
+        Assert.EndsWith("<!-- open-forge:generated-index:end -->", source[regionSpan.Start..regionSpan.End], StringComparison.Ordinal);
+
+        var absent = new MarkdownDocumentParser().Parse("# Document\n");
+        Assert.Equal(MarkdownGeneratedRegionState.Absent, absent.GeneratedRegion.State);
+
+        var malformed = new[]
+        {
+            source + "## Later\n",
+            source.Replace(
+                "<!-- open-forge:generated-index:end -->",
+                "<!-- open-forge:generated-index:start -->\n<!-- open-forge:generated-index:end -->",
+                StringComparison.Ordinal),
+            source.Replace(
+                "<!-- open-forge:generated-index:end -->\n",
+                "<!-- open-forge:generated-index:end -->\nauthored prose\n",
+                StringComparison.Ordinal),
+        };
+        Assert.All(
+            malformed,
+            value => Assert.Equal(
+                MarkdownGeneratedRegionState.Unavailable,
+                new MarkdownDocumentParser().Parse(value).GeneratedRegion.State));
     }
 
     [Fact(DisplayName = "Markdown sections and visible literal spans stay within exact document boundaries")]
@@ -208,5 +308,12 @@ public sealed class MarkdownDocumentParserRedTests
         Assert.Contains(
             facts.OpaqueSpans,
             fact => source[fact.Span.Start..fact.Span.End].Contains("#raw-html", StringComparison.Ordinal));
+    }
+
+    private static MarkdownTextSpan SpanOf(string source, string value)
+    {
+        var start = source.IndexOf(value, StringComparison.Ordinal);
+        Assert.True(start >= 0);
+        return new MarkdownTextSpan(start, value.Length);
     }
 }

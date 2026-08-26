@@ -12,6 +12,7 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Workspace;
@@ -368,7 +369,7 @@ public sealed class FindProjectionBuilderRedTests
             "Description",
             tags.Select((tag, index) => new FindFrontmatterTagOccurrence(
                 tag,
-                new FindSourceLocation(1, index + 1, index, tag.Length))));
+                new SourceLocation(1, index + 1, index, tag.Length))));
         return new FindLayerInspectionFacts(
             source,
             layer,
@@ -476,7 +477,9 @@ public sealed class FindProjectionBuilderRedTests
             headings,
             sections,
             [],
-            []);
+            [],
+            [],
+            MarkdownGeneratedRegionFact.Absent());
     }
 
     private static MarkdownHeadingFact Heading(
@@ -488,6 +491,7 @@ public sealed class FindProjectionBuilderRedTests
             level,
             MarkdownHeadingForm.Atx,
             true,
+            null,
             new MarkdownTextSpan(start, level + 1 + text.Length));
 
     private static FindContentPart[] ReadParts(string value)

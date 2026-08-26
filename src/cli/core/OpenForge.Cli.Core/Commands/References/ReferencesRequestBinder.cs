@@ -1,0 +1,44 @@
+using OpenForge.Cli.Core.Commands.References.Models.Binding;
+using OpenForge.Cli.Core.Commands.References.Models.Request;
+using OpenForge.Cli.Core.Commands.References.Models.Result;
+using OpenForge.Cli.Core.Commands.References.Shared.Binding;
+using OpenForge.Cli.Core.Commands.References.Shared.Result;
+using OpenForge.Cli.Core.Shell.Composition;
+using OpenForge.Cli.Core.Shell.Composition.Models;
+using OpenForge.Cli.Core.Shell.Invocation;
+using OpenForge.Cli.Core.Shell.Parsing.Models;
+
+namespace OpenForge.Cli.Core.Commands.References;
+
+internal sealed class ReferencesRequestBinder(
+    ReferencesSymbols symbols,
+    ReferencesResultBuilder resultBuilder)
+{
+    private readonly ReferencesSymbols _symbols = symbols;
+    private readonly ReferencesResultBuilder _resultBuilder = resultBuilder;
+
+    internal CliBindResult<ReferencesRequest, ReferencesResult> Bind(
+        CliBindingParse parse,
+        CliInvocation invocation)
+    {
+        ArgumentNullException.ThrowIfNull(parse);
+        ArgumentNullException.ThrowIfNull(invocation);
+
+        var input = ReferencesBindingInputReader.Read(parse.Result, _symbols);
+        var invalid = ReferencesBindingValidator.ReadInvalidFindings(input);
+        if (invalid.Count != 0)
+        {
+            return CliBindResult<ReferencesRequest, ReferencesResult>.Invalid(
+                _resultBuilder.CreateInvalidResult(input, invocation.Workspace, invalid));
+        }
+
+        var workspace = invocation.Workspace
+            ?? throw new InvalidOperationException("A bound References invocation requires a selected workspace.");
+        return CliBindResult<ReferencesRequest, ReferencesResult>.Bound(
+            new ReferencesRequest(
+                workspace,
+                input.SourceReference!,
+                input.Direction!.Value,
+                input.SelectorOccurrences));
+    }
+}

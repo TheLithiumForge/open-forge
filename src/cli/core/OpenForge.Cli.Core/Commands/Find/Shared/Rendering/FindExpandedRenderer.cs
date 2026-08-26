@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Commands.Find;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
@@ -475,7 +476,7 @@ internal static class FindExpandedRenderer
     private static string Optional(string? value)
         => value is null ? "none" : FindTextEscaping.Escape(value);
 
-    private static string Location(FindSourceLocation? location)
+    private static string Location(SourceLocation? location)
         => location is null
             ? "none"
             : $"line {location.Line}, column {location.Column}, byte {location.ByteOffset}, length {location.ByteLength}";

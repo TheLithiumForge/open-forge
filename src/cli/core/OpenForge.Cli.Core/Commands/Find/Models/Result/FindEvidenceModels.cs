@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Find.Models.Selection;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Find.Models.Result;
@@ -69,7 +70,7 @@ internal sealed record FindEvidence
         FindRegion region,
         SourceLayerKind layer,
         string path,
-        FindSourceLocation location,
+        SourceLocation location,
         int occurrence,
         FindHeadingEvidence? heading)
     {
@@ -148,7 +149,7 @@ internal sealed record FindEvidence
 
     internal string Path { get; }
 
-    internal FindSourceLocation Location { get; }
+    internal SourceLocation Location { get; }
 
     internal int Occurrence { get; }
 
