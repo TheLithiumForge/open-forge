@@ -13,7 +13,8 @@ open-forge:
   `6922ca6`, final Red evidence at `43b75f3`, and public Green at `23d5e2e`.
   Managed `1270/1270`, published-process, no-write, architecture,
   protected-surface, and final supported local `linux-x64` Native AOT evidence
-  pass. Final acceptance is recorded in the commit containing this record.
+  pass. The accepted feature tree at `1312368` is squash-integrated into local
+  `develop` at `53b2cf7` with exact tree equality.
 - Responsible role: Overseer; one Task Mastermind owns each active sequential
   increment.
 - Task source: This file.
@@ -176,9 +177,9 @@ and unchanged snapshots. EndToEnd and AOT prove public streams and exits.
   parser or custom heading slugger, changed shared-filter or Find meaning,
   recursive graph behavior, package or project change, generated-route mutation,
   or a filesystem guarantee outside the accepted BCL boundary.
-- Next action: Project-level local integration may squash the accepted
-  `codex/cli-references` tree into `develop`, prove tree equality, and then make
-  Context eligible to start. Do not push.
+- Next action: No further References-local action. Context is dependency-eligible;
+  select it or another independent pending Task only after maintainer discussion
+  and closed preflight. Do not push.
 
 ## Stop Conditions
 

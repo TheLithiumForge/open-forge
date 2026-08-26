@@ -15,16 +15,17 @@ open-forge:
   Plan maintenance within that direction.
 - Last updated: 2026-08-25.
 - Current task: [Implement References](tasks/read-only/references-command.md) is
-  Complete on `codex/cli-references`. Public Red `43b75f3`, Green `23d5e2e`,
-  managed `1270/1270`, published process, no-write, architecture,
-  protected-surface, and supported local `linux-x64` Native AOT gates pass. The
-  feature branch remains in the dedicated
-  `/home/tedy/dev/open-forge-cli-references` worktree. [Improve The
+  Complete and squash-integrated into local `develop` at `53b2cf7`, with exact
+  tree equality to accepted feature tip `1312368`. Public Red `43b75f3`, Green
+  `23d5e2e`, managed `1270/1270`, published process, no-write, architecture,
+  protected-surface, and supported local `linux-x64` Native AOT gates pass.
+  [Improve The
   Repository-Root CLI Developer Workflow](tasks/repository-root-developer-workflow.md)
   is Complete and its accepted changes are included in that baseline.
-- Current step: Project-level local integration may squash the accepted
-  References feature tree into `develop` and prove exact tree equality before
-  Context starts. Standard SDK publication restored the exact portable
+- Current step: Discuss the remaining task order and parallelization boundaries
+  with the maintainer before selecting another Active Task. Context is now
+  dependency-eligible; Extension discovery remains an independent candidate, but
+  neither starts implicitly. Standard SDK publication restored the exact portable
   `Microsoft.NETCore.App.Runtime.NativeAOT.linux-x64` `10.0.11` pack without a
   project workaround. The explicit `linux-x64` build passed with zero warnings
   and errors; build-selected References EndToEnd passed `12/12`; Native AOT

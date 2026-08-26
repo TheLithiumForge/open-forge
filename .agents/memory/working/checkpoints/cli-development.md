@@ -15,9 +15,9 @@ release.
 ## Current State
 
 Find is Complete and squash-integrated into local `develop` at `1f03d16`. The
-repository-root developer workflow is Complete. References is Complete on its
-feature branch, with public Green baseline `23d5e2e` and final acceptance in the
-commit containing its current record.
+repository-root developer workflow is Complete. References is Complete and
+squash-integrated into local `develop` at `53b2cf7`, with exact tree equality to
+accepted feature tip `1312368`.
 
 The maintainer selected References before Context. References Preflight is
 closed. Its neutral foundation is accepted at `e7516f0`, operation at `f7bb9f9`,
@@ -25,9 +25,10 @@ structure improvement at `6922ca6`, final Red at `43b75f3`, and public Green at
 `23d5e2e`. Managed `1270/1270`, published process, no-write, architecture,
 protected-surface, and supported local `linux-x64` Native AOT evidence pass.
 
-The active implementation branch is `codex/cli-references` in dedicated worktree
-`/home/tedy/dev/open-forge-cli-references`. The accepted developer-workflow direction is
-recorded in the [repository-root developer workflow
+The accepted References feature branch remains `codex/cli-references` in its
+dedicated worktree; the current integrated program baseline is local `develop`
+at `53b2cf7`. The accepted developer-workflow direction is recorded in the
+[repository-root developer workflow
 Task](../cli-development/tasks/repository-root-developer-workflow.md) and the
 [Repository-Root CLI Tooling Decision](../../crystallized/decisions/repository-root-cli-tooling.md).
 
@@ -61,8 +62,10 @@ external publication, remote action, or push occurred.
 
 ## Current Step
 
-Integrate the accepted References feature tree into local `develop`, prove exact
-tree equality, and then make Context eligible to start. Do not push.
+Discuss the pending task graph and acceptable parallel lanes before selecting the
+next implementation Task. Context is now dependency-eligible, and Extension
+discovery remains an independent candidate. Do not start either implicitly and
+do not push.
 
 ## Protected State
 
@@ -76,8 +79,10 @@ tree equality, and then make Context eligible to start. Do not push.
 
 ## Next Actions
 
-1. Squash-integrate the accepted `codex/cli-references` tree into local `develop`.
-2. Prove exact tree equality, keep remotes unchanged, and then prepare Context.
+1. Review the remaining task order and parallelization boundaries with the
+   maintainer.
+2. Select and close the preflight for the next Task or explicitly authorized
+   parallel wave; keep remotes unchanged.
 
 ## Current Sources
 
