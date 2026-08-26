@@ -17,6 +17,7 @@ Read the [program Task](00-cli-development.md), [Architecture](../../../crystall
 - [x] [Modern C# Improvements](modern-csharp-improvements.md) — Complete; Preflight `55eb82e`, Framework `a90af59`, Shell/root `fe10525`, Route Inspect/family `62a1dd9`, Route List `273eb45`, Tests/support `6af5fb1`, and final managed, Native AOT, package, audit, and public no-write gates accepted in the commit containing this record — Implementer: Mastermind
 - [x] [Repository-root CLI developer workflow](repository-root-developer-workflow.md) — Complete and squash-integrated into local `develop` at `d9e0686` — Implementer: Mastermind
 - [ ] [Mutation Foundation](mutation-foundation/_mutation-foundation.md) — Ready; accepted to precede public Index — Implementer: Mutation Foundation Task Mastermind
+- [ ] [Test Architecture And Constants](test-architecture-and-constants.md) — Planned after the active Mutation Foundation contract slice is accepted and validated — Implementer: Not assigned
 - [ ] [Route Mutation Commands](route-mutation/_route-mutation.md) — Planned — Implementer: Not assigned
 - [ ] [Lifecycle Commands](lifecycle/_lifecycle.md) — Planned — Implementer: Not assigned
 - [ ] [Operational Commands](operations/_operations.md) — Planned — Implementer: Not assigned
@@ -66,4 +67,5 @@ define execution state.
 - [Move replacement CLI tooling to the repository root and make ordinary test runs publish and discover the local development executable](repository-root-developer-workflow.md) - #Memory #Working #CLI #Task #DotNet #Testing #DeveloperExperience #Contextual #Complete
 - [Implement read-only route discovery, beginning with route list and then route inspect](route-discovery/_route-discovery.md) - #Memory #Working #CLI #Task #Route #Discovery #ReadOnly #Contextual #Complete
 - [Implement retained route mutation commands on the accepted mutation foundation](route-mutation/_route-mutation.md) - #Memory #Working #CLI #Task #Route #Mutation #Contextual
+- [Audit symbolic constants, generated-region authority, and composable active-test foundations across the replacement CLI](test-architecture-and-constants.md) - #Memory #Working #CLI #Task #Testing #Architecture #Constants #Fixtures #Snapshot #Contextual
 <!-- open-forge:generated-index:end -->

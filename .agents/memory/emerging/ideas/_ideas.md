@@ -17,6 +17,7 @@ Ideas keep possibilities, experiments, open questions, and options worth explori
 ## Entries
 
 <!-- open-forge:generated-index:start -->
+- [Explore a read-only browser WebAssembly CLI playground backed by seeded Open Forge workspaces in documentation](cli-browser-wasm-playground.md) - #Memory #Idea #Contextual #Candidate #CLI #WebAssembly #Browser #Documentation #Docusaurus #Testing
 - [Define the accepted `--verbose` diagnostic content after ordinary human-readable failures and dogfood evidence exist](cli-debug-diagnostics.md) - #Memory #Idea #Contextual #Candidate #CLI #Debug #Diagnostics #Dogfood #Brownfield
 - [Explore additional thin package-manager wrappers after canonical native artifacts and the first npm wrapper ship](cli-distribution-channels.md) - #Memory #Idea #Contextual #Candidate #CLI #Distribution #Package #Bundle #Executable #Dogfood
 - [Evaluate whether the locally dogfooded recipe-bearing Development subtree should become a shipped specialization example or Extension](composable-workflow-entrypoints.md) - #Memory #Idea #Contextual #Candidate #Workflow #Routing #Orchestration #Agent
