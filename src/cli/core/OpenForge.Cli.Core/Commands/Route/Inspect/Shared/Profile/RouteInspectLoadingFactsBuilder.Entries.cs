@@ -1,6 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile.Models;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Loading;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile;
 
@@ -32,8 +32,9 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
         var entries = new Dictionary<string, RouteInspectVisibleEntry>(StringComparer.Ordinal);
         foreach (var generatedEntry in generated.Entries)
         {
-            var targetPath = ResolveDestination(
-                SourceLogicalPath.ReadParent(parent.CanonicalPath),
+            var targetPath = SourceGeneratedDestinationResolver.Resolve(
+                parent.CanonicalPath,
+                parent.Kind == RouteSourceKind.Loader,
                 generatedEntry.Destination);
             if (targetPath is null || !IsDirectChild(parent, targetPath))
             {

@@ -742,6 +742,335 @@ preserves required status, completeness, safety, and next actions. Selected
 authored content bytes remain exact in both views. JSON exposes the same complete
 facts and source order from the same typed result.
 
+### Exact Schema-v1 Command-Local Result
+
+The Architecture's schema-v1 envelope wraps this command-local `result` object.
+The envelope remains exactly `{ schemaVersion, command, status, workspace,
+result, next }`; its aggregate `status`, workspace, and next action are not
+duplicated below. The shared `SourceLocation` primitive is the Architecture's
+exact `{ line, column, byteOffset, byteLength }` shape.
+
+The following camel-case grammar lists every command-local member in wire order.
+No member is omitted.
+
+```text
+type ContextResult = {
+  selection: Selection;
+  presentation: Presentation;
+  coverage: Coverage;
+  paths: PathProjection[];
+  links: Link[];
+  sources: Source[];
+  findings: Finding[];
+};
+
+type Selection = {
+  requestedSources: RequestedSource[];
+  startupIncluded: boolean;
+  additionsOnly: boolean;
+  linkExpansion: LinkExpansion;
+  sourceCount: nonnegative-integer | null;
+};
+
+type RequestedSource = {
+  supplied: string;
+  form: "source-id" | "source-path";
+  resolution: "resolved" | "invalid" | "unknown" | "ambiguous" | "unsupported" | "unsafe";
+  source: SourceIdentity | null;
+  routeState: RouteState | null;
+  candidates: SourceIdentity[];
+};
+
+type SourceIdentity = {
+  id: string | null;
+  path: string;
+};
+
+type LinkExpansion = {
+  mode: "none" | "bounded" | "all";
+  depth: positive-integer | null;
+};
+
+type Presentation = {
+  view: {
+    supplied: "compact" | "expanded" | null;
+    effective: "compact" | "expanded";
+  };
+  content: {
+    supplied: CanonicalPart[];
+    effective: CanonicalPart[];
+  };
+};
+
+type Coverage = {
+  state: CoverageState;
+  selection: CoverageState;
+  links: OptionalCoverageState;
+  projection: CoverageState;
+};
+
+type PathProjection = {
+  position: positive-integer;
+  sourcePosition: positive-integer;
+  id: string | null;
+  path: string;
+  layer: SourceLayer;
+  inclusionReasons: InclusionReason[];
+};
+
+type Source = {
+  position: positive-integer;
+  id: string | null;
+  path: string;
+  routeState: RouteState;
+  route: string | null;
+  scope: string | null;
+  inclusionReasons: InclusionReason[];
+  layers: Layer[];
+};
+
+type Layer = {
+  pathPosition: positive-integer;
+  kind: SourceLayer;
+  path: string;
+  inclusionReasons: InclusionReason[];
+  projections: Projection[];
+};
+
+type InclusionReason = {
+  kind: "workspace-entry" | "loader" | "load-now" | "keep-in-mind" | "ancestor-required" | "selected-source" | "scope-local" | "linked-source" | "overwrite-companion";
+  source: SourceIdentity | null;
+  reference: string | null;
+  depth: positive-integer | null;
+  location: SourceLocation | null;
+};
+
+type Projection = {
+  part: "frontmatter" | "headings" | "body" | "section";
+  name: string | null;
+  state: "available" | "missing" | "unavailable" | "ambiguous";
+  text: string | null;
+  headings: ProjectedHeading[];
+  location: SourceLocation | null;
+};
+
+type ProjectedHeading = {
+  text: string;
+  level: positive-integer;
+  form: "atx" | "setext";
+  location: SourceLocation;
+  canonical: boolean;
+};
+
+type Link = {
+  depth: positive-integer;
+  source: {
+    id: string | null;
+    path: string;
+    layer: SourceLayer;
+  };
+  location: SourceLocation;
+  destinationLocation: SourceLocation | null;
+  rawDestination: string;
+  fragment: string | null;
+  target: {
+    kind: "local" | "external" | "unsupported";
+    id: string | null;
+    path: string | null;
+    layer: SourceLayer | null;
+    resolution: "complete" | "missing" | "fragment-missing" | "case-mismatch" | "malformed" | "absolute" | "query" | "encoding-unsupported" | "outside-workspace" | "physical-escape" | "ambiguous" | "unreadable" | "unsupported" | "external-unchecked";
+    network: "network-not-attempted" | null;
+  };
+  disposition: "selected" | "already-selected" | "cycle" | "external-unchecked" | "unresolved";
+};
+
+type Finding = {
+  code: ContextFindingCode;
+  status: SharedStatus;
+  subject: string | null;
+  cause: string;
+  reference: string | null;
+  source: SourceIdentity | null;
+  layer: SourceLayer | null;
+  path: string | null;
+  part: CanonicalPart | null;
+  location: SourceLocation | null;
+  destinationLocation: SourceLocation | null;
+  candidates: SourceIdentity[];
+};
+
+type RouteState = "routed" | "unrouted" | "ambiguous" | "unavailable";
+
+type SourceLayer = "base" | "overwrite";
+
+type CoverageState =
+  "not-started" | "complete" | "incomplete" | "blocked" | "failed" | "interrupted";
+
+type OptionalCoverageState = CoverageState | "not-requested";
+
+type CanonicalPart =
+  "metadata" | "paths" | "frontmatter" | "headings" | "body" | "section:<name>";
+
+type SharedStatus =
+  "complete" | "attention" | "incomplete" | "invalid" | "blocked" | "failed" | "interrupted";
+```
+
+`requestedSources` preserves operand order. `supplied` is the exact value after
+shell parsing. `form`, `resolution`, `source`, `routeState`, and `candidates`
+retain the shared source-reference facts even when resolution cannot continue.
+`candidates` is always present and is empty unless ambiguity evidence exists.
+An operand-free request uses an empty array.
+
+`startupIncluded` states whether startup sources are emitted in the result. It
+is false for `--additions-only` and for invalid input that stops before
+resolution. `additionsOnly` retains the normalized Boolean request.
+`linkExpansion.mode` is `none` when the flag is omitted, `bounded` for a positive
+integer, and `all` for the complete reachable closure. `depth` is non-null only
+for `bounded`. `sourceCount` is the known nonnegative ordered logical-source
+count when selection is established and `null` otherwise. A complete empty
+additions difference uses zero. Physical-layer cardinality remains derivable
+from `sources[].layers`.
+
+`view.supplied` is null when omitted, and `view.effective` is always `compact` or
+`expanded`. `content.supplied` preserves parsed part order. `content.effective`
+uses the canonical order `metadata`, `paths`, `frontmatter`, `headings`, `body`,
+then requested sections in their first supplied order. Omission uses an empty
+`supplied` array and effective `frontmatter,body`. Both arrays use canonical
+`section:<name>` strings after list escaping is resolved.
+
+`coverage.state` is the complete operation coverage. `selection` covers startup,
+explicit-route, additions, ordering, and identity work. `links` is
+`not-requested` when link expansion is omitted. `projection` covers every
+requested effective content part. A known missing requested section has complete
+projection coverage and an `attention` finding. Unavailable or ambiguous content
+has incomplete projection coverage. Coverage does not repeat the aggregate
+semantic status; attention is complete coverage with a safe finding.
+
+`paths` contains the operation-level physical-layer rows only when `paths` is
+selected and is otherwise empty. Its `position` is the 1-based global physical
+layer order, and `sourcePosition` is the 1-based logical-source position in `sources`.
+The array retains complete provenance even when paths are the only selected
+content part.
+
+`sources` uses first canonical selection position. `id` is null only for the
+workspace entry or contained linked content outside `.agents`. `path` is the
+canonical workspace-relative base path. `route` is non-null only for one
+established unambiguous route. `scope` is non-null only when an applicable
+Framework component contract supplies explicit scope evidence; Context never
+infers a semantic scope name from path shape or tags. Every source and layer
+retains all independently established inclusion reasons in discovery order.
+
+An inclusion reason's `source` is the established parent, target, seed, or base
+logical identity when that relationship has one. `reference` is non-null only
+for an explicit source operand. `depth` and `location` are non-null only for a
+linked-source reason. The overwrite reason belongs to the overwrite layer; the
+logical source remains one base-first identity.
+
+Layer `pathPosition` equals the same 1-based global physical path position used
+by `paths[].position`. `projections` contains only requested authored or derived
+layer projections, in canonical part and document order. Generated metadata is
+represented by the always-present source, layer, and inclusion-reason members
+rather than a duplicate projection payload. The operation-level path projection
+is represented by `paths`.
+
+Projection `name` is non-null only for `section`. `text` is non-null only for an
+available `frontmatter`, `body`, or `section`, and an empty string is valid.
+`headings` is populated only for an available heading outline and is otherwise
+empty. `location` applies to available authored text; every projected heading
+owns its own location. Missing is a proven absence, unavailable means required
+inspection did not complete, and ambiguous means one requested section matched
+several headings in the same layer.
+
+`links` retains every inspected graph edge in stable breadth-first order,
+including edges whose targets were already selected, cycles, external unchecked
+observations, and unresolved edges. `depth` counts from the complete pre-expansion
+seed set. `disposition` explains why the edge did or did not add one source.
+External HTTP and HTTPS targets alone use `external-unchecked` together with
+`network-not-attempted` and never create a finding.
+
+Finding members are always present. `subject` and `cause` are bounded escaped
+strings; `cause` is never null. `reference`, `source`, `layer`, `path`, `part`,
+locations, and candidates retain typed evidence when applicable and are null or
+empty otherwise. A finding never exposes exception identity or unbounded source
+content.
+
+#### Finding Codes And Ordering
+
+Context has exactly the following finding vocabulary. Each code has only the
+status shown, and this table order is the primary finding order.
+
+| Machine code | Finding status |
+| --- | --- |
+| `context.invalid-input` | `invalid` |
+| `context.invalid-source` | `invalid` |
+| `context.invalid-content` | `invalid` |
+| `context.invalid-link-depth` | `invalid` |
+| `context.workspace-unavailable` | `blocked` |
+| `context.workspace-unsafe` | `blocked` |
+| `context.source-ambiguous` | `blocked` |
+| `context.source-unsafe` | `blocked` |
+| `context.overwrite-ambiguous` | `blocked` |
+| `context.target-ambiguous` | `blocked` |
+| `context.target-unsafe` | `blocked` |
+| `context.closure-unavailable` | `incomplete` |
+| `context.layer-unavailable` | `incomplete` |
+| `context.invalid-encoding` | `incomplete` |
+| `context.markdown-unavailable` | `incomplete` |
+| `context.target-missing` | `incomplete` |
+| `context.fragment-missing` | `incomplete` |
+| `context.link-encoding-invalid` | `incomplete` |
+| `context.target-unreadable` | `incomplete` |
+| `context.section-ambiguous` | `incomplete` |
+| `context.projection-unavailable` | `incomplete` |
+| `context.identity-collision` | `attention` |
+| `context.target-case-mismatch` | `attention` |
+| `context.frontmatter-missing` | `attention` |
+| `context.section-missing` | `attention` |
+| `context.operation-failed` | `failed` |
+| `context.interrupted` | `interrupted` |
+
+Invalid findings stop before operation resolution. Blocked findings mean the
+workspace, source, overwrite, or local-target safety boundary cannot be
+established. `closure-unavailable` covers a safe but incomplete workspace entry,
+Loader, generated-order, parent, `#LoadNow`, `#KeepInMind`, or scope-local
+relationship. `layer-unavailable` covers a missing race, access failure,
+directory-enumeration failure, or other safe physical-layer read failure.
+`markdown-unavailable` covers structural parse or range evidence that cannot be
+established after strict decoding. The more specific target, section, and
+projection codes retain their Interface meanings.
+
+An established non-unique automatic ID is attention only after exact-path or
+interactive resolution leaves the selected physical and route boundary safe.
+A missing authored frontmatter block is attention only when loading and requested
+projection coverage remain otherwise complete; unavailable loading metadata uses
+the incomplete closure or Markdown finding. An exact target case mismatch is a
+safe attention observation. A completely inspected missing section is attention,
+while an unreadable layer or duplicate match is incomplete.
+
+Within one code, request evidence precedes closure evidence, then sources use
+canonical logical order, base precedes overwrite, links use breadth-first edge
+order, content uses canonical projection and document order, and locations are
+final ordinal tie-breaks. Failure and interruption are last. Filesystem,
+enumeration, parser, or exception order never controls finding order.
+
+#### Exact Next Actions
+
+The top-level envelope's `next` member uses at most one Context action. After the
+aggregate status and ordered findings are fixed, the first applicable row wins.
+
+| Condition | `next.command` | `next.reason` |
+| --- | --- | --- |
+| `complete` or `attention` | `null` | `null` |
+| `invalid` | `open-forge context --help` | `Correct the named Context input, then rerun the request.` |
+| `blocked` with `context.source-ambiguous` as the first blocked finding | `open-forge context` | `Replace every ambiguous source reference with one listed exact path, then rerun the same request.` |
+| Other `blocked` | `open-forge doctor` | `Inspect the blocked workspace, source, overwrite, or link-target boundary before rerunning Context.` |
+| `incomplete` | `open-forge doctor` | `Inspect the unavailable closure, source, link, or projection facts before relying on this Context result.` |
+| `failed` | `open-forge context --verbose` | `Report the failure and retry the same Context request with bounded diagnostics.` |
+| `interrupted` | `open-forge context` | `Rerun the same Context request.` |
+
+Human compact and expanded output use the same optional action. Renderers do not
+choose, rewrite, or multiply next actions.
+
 ### Human-Readable Errors
 
 Every error names:

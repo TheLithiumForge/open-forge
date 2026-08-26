@@ -35,7 +35,10 @@ internal static class CliInvocationResolver
                 input.Presentation,
                 CliTerminalMode.None,
                 request,
-                null));
+                null)
+            {
+                SuppliedView = ReadSuppliedView(input),
+            });
         }
 
         var selection = workspaceSelector.Select(request);
@@ -46,7 +49,10 @@ internal static class CliInvocationResolver
                 input.Presentation,
                 CliTerminalMode.None,
                 request,
-                selection.Workspace));
+                selection.Workspace)
+            {
+                SuppliedView = ReadSuppliedView(input),
+            });
         }
 
         var diagnostic = selection.Failure?.DirectCause
@@ -63,4 +69,7 @@ internal static class CliInvocationResolver
     {
         return new CliInvocationResolution(invocation, null);
     }
+
+    private static CliView? ReadSuppliedView(CliGlobalInput input)
+        => input.ViewOccurrences == 0 ? null : input.View;
 }

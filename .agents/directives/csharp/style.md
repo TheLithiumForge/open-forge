@@ -9,6 +9,16 @@ open-forge:
 ## Instructions
 
 - Honor `.editorconfig` and `dotnet format`. The accepted 200-character line ceiling remains a guideline. Prefer a shorter split when readability improves it.
+- When one coherent string contains fixed text and values, prefer an interpolated template over concatenation, composite-format argument trains, or formatting each value separately. For deterministic culture-sensitive text outside a `StringBuilder`, use the exact provider with an interpolated-string-handler API such as `string.Create(CultureInfo.InvariantCulture, $"...")`. Keep escaping, encoding, and conditional inclusion explicit when they are real policy. Do not interpolate a static literal, replace genuinely character-by-character construction, or defeat a structured-logging API that intentionally owns named message-template placeholders.
+- When a `StringBuilder` emits one coherent output line with fixed separators and several values, prefer one interpolated template in a single `Append` or `AppendLine` call over a chain of tiny appends. For deterministic culture-sensitive values, use the interpolated-string-handler overload with the exact provider and let it format the values directly instead of calling `ToString` on each value:
+
+  ```csharp
+  builder.AppendLine(
+      CultureInfo.InvariantCulture,
+      $"{layer.PathPosition} {source.Id ?? "none"} {layer.Path} {Layer(layer.Kind)}");
+  ```
+
+  Use `Append` instead when the line must not end yet. Precompute a value only when that clarifies real conditional policy; do not fragment a stable line merely to append each token separately.
 - When a `StringBuilder` emits one coherent multi-line text block, prefer one raw interpolated string call over many per-line `AppendLine` calls or chains of tiny `.Append(...)` calls:
 
   ```csharp
@@ -21,7 +31,7 @@ open-forge:
 
   Use the same raw multi-line shape when only some lines interpolate values, and use a raw non-interpolated string when none do. Preserve deliberate blank lines, indentation, escaping, and final-newline behavior. Use `Append` instead of `AppendLine` when an extra newline would be unintended.
 
-- Keep loops and conditionals as separate appends when rows or sections repeat or are conditionally omitted. Build each coherent fixed block with a raw interpolated string rather than cluttered fragments.
+- Keep loops and conditionals structurally separate when rows or sections repeat or are conditionally omitted. Inside each iteration or selected branch, still emit a coherent fixed row or block with one interpolated template when practical. Build each coherent fixed multi-line block with a raw interpolated string rather than cluttered fragments.
 - Group related C# attributes onto one physical line and normally one attribute list, such as `[Fact(...), Trait(...), Trait(...)]`, when the line remains readable and within the accepted limit. Split only when attribute arguments, generated or tool constraints, conditional compilation, or readability require it. Do not change semantic attribute order or meaning merely for style.
 - Keep physical folders and namespaces cohesive. Do not let one feature folder become a flat catalogue of many distinct responsibilities. When several related types form a real cluster, place them in a named subfolder and matching namespace, such as `Rendering`, `Topology`, `Parsing`, or `Filesystem`. Keep behavior-owning operation and composition types at the feature root when that makes the entry path clear.
 - Do not replace a crowded flat folder with one-file microfolders. Introduce a subfolder when it gives multiple related files one clear responsibility and improves navigation, not merely to reduce a file count.

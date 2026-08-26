@@ -163,8 +163,7 @@ history that generated navigation does not define:
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
-- [Implement ordered context selection, loading reasons, overlap, size, and token projections](context.md) - #Memory #Working #CLI #Task #Context #ReadOnly #Loading #Contextual
+- [Implement ordered context selection, exact content projection, and explicit contained-link expansion](context.md) - #Memory #Working #CLI #Task #Context #ReadOnly #Loading #Contextual
 - [Implement exact Extension package inspection without mutation or installation behavior](extension-inspect.md) - #Memory #Working #CLI #Task #Extension #Inspect #ReadOnly #Contextual
 - [Implement Extension catalogue and source listing without lifecycle inference](extension-list.md) - #Memory #Working #CLI #Task #Extension #List #ReadOnly #Contextual
 - [Author and accept deterministic CommonMark-aware source discovery and Find projections](find.md) - #Memory #Working #CLI #Task #Find #ReadOnly #Markdown #Contextual
@@ -173,5 +172,4 @@ history that generated navigation does not define:
 - [Establish the neutral Framework source catalogue and migrate Route List and Inspect without public behavior change](find-source-catalogue.md) - #Memory #Working #CLI #Task #Find #ReadOnly #Sources #Route #Framework #Architecture #Contextual
 - [Implement deterministic generated Entries projection and idempotent index application](index-command.md) - #Memory #Working #CLI #Task #Index #Generated #Mutation #Contextual
 - [Implement direct incoming and outgoing reference facts with shared source-universe filters](references-command.md) - #Memory #Working #CLI #Task #References #ReadOnly #Links #Contextual
-
 <!-- open-forge:generated-index:end -->

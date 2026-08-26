@@ -1,3 +1,7 @@
+using OpenForge.Cli.Core.Commands.Context;
+using OpenForge.Cli.Core.Commands.Context.Models.Binding;
+using OpenForge.Cli.Core.Commands.Context.Models.Result;
+using OpenForge.Cli.Core.Commands.Context.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Find;
 using OpenForge.Cli.Core.Commands.Find.Models.Binding;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
@@ -91,17 +95,30 @@ internal static class CliCompositionRoot
                     ReferencesJsonRenderer.Render),
                 DiagnosticRenderer = ReferencesDiagnosticRenderer.Render,
             });
+        var contextSymbols = ContextBinding.CreateSymbols();
+        var contextBinding = ContextBinding.Close(
+            contextSymbols,
+            new ContextBindingComponents
+            {
+                Help = ContextHelpSections.Create(),
+                Operation = ContextOperationFactory.Create(),
+                Renderers = new CliRendererSet<ContextResult>(
+                    ContextHumanRenderer.Render,
+                    ContextJsonRenderer.Render),
+                DiagnosticRenderer = ContextDiagnosticRenderer.Render,
+            });
         var tree = CliCommandTree.Create(
             rootHelp,
             [new CliRootBranch(
                 routeGroup,
                 RouteHelpSections.CreateGroup(),
                 listSymbols.DelimiterPolicies)],
-            [listBinding, inspectBinding, findBinding, referencesBinding],
+            [listBinding, inspectBinding, findBinding, referencesBinding, contextBinding],
             rootLeaves:
             [
                 new CliRootLeaf(findSymbols.FindCommand, []),
                 new CliRootLeaf(referencesSymbols.ReferencesCommand, []),
+                new CliRootLeaf(contextSymbols.ContextCommand, []),
             ]);
         var workspaceSelector = new CliWorkspaceSelector(new PhysicalPathResolver());
         return new CliCoreApplication(process, tree, workspaceSelector);

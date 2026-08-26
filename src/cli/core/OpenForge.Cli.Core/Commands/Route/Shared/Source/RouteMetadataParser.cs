@@ -4,6 +4,8 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Documents.Yaml;
 using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
+using OpenForge.Cli.Core.Framework.Sources.Metadata;
+using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Shell.Serialization;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
@@ -22,48 +24,24 @@ internal sealed class RouteMetadataParser
         bool isOverwritePresent)
     {
         ArgumentNullException.ThrowIfNull(sourceBody);
-        var frontmatter = ReadFrontmatter(sourceBody);
-        if (frontmatter.State != RouteSourceMetadataState.Complete
-            || frontmatter.Yaml is not { } yaml)
-        {
-            return WithoutValues(frontmatter.State, isCompatibilityEntrypoint, isOverwritePresent);
-        }
-
-        try
-        {
-            var authored = _deserializer.Deserialize<CliAuthoredMetadata>(yaml);
-            if (authored?.OpenForge is null
-                || string.IsNullOrWhiteSpace(authored.OpenForge.Description)
-                || authored.OpenForge.Tags is null
-                || authored.OpenForge.Tags.Length == 0)
-            {
-                return RouteSourceMetadata.WithoutValues(
-                    RouteSourceMetadataState.Missing,
-                    isCompatibilityEntrypoint,
-                    isOverwritePresent);
-            }
-
-            if (authored.OpenForge.Tags.Any(tag => !IsValidTag(tag)))
-            {
-                return RouteSourceMetadata.WithoutValues(
-                    RouteSourceMetadataState.Malformed,
-                    isCompatibilityEntrypoint,
-                    isOverwritePresent);
-            }
-
-            return RouteSourceMetadata.Complete(
-                authored.OpenForge.Description,
-                authored.OpenForge.Tags,
-                isCompatibilityEntrypoint,
-                isOverwritePresent);
-        }
-        catch (YamlException)
+        var facts = new SourceOpenForgeMetadataParser().Parse(
+            new MarkdownDocumentParser().Parse(sourceBody));
+        if (facts.State != SourceOpenForgeMetadataState.Complete)
         {
             return RouteSourceMetadata.WithoutValues(
-                RouteSourceMetadataState.Malformed,
+                facts.State == SourceOpenForgeMetadataState.Missing
+                    ? RouteSourceMetadataState.Missing
+                    : RouteSourceMetadataState.Malformed,
                 isCompatibilityEntrypoint,
                 isOverwritePresent);
         }
+
+        return RouteSourceMetadata.Complete(
+            facts.Description
+                ?? throw new InvalidOperationException("Complete Open Forge metadata requires a description."),
+            facts.Tags,
+            isCompatibilityEntrypoint,
+            isOverwritePresent);
     }
 
     internal RouteSourceMetadata ParseSkill(string sourceBody, bool isOverwritePresent)
@@ -105,43 +83,7 @@ internal sealed class RouteMetadataParser
     }
 
     internal static bool IsValidTag(string? tag)
-    {
-        if (string.IsNullOrEmpty(tag))
-        {
-            return false;
-        }
-
-        var runes = tag.EnumerateRunes().ToArray();
-        if (runes.Length == 0 || !Rune.IsLetter(runes[0]))
-        {
-            return false;
-        }
-
-        var previousWasHyphen = false;
-        for (var index = 1; index < runes.Length; index++)
-        {
-            var rune = runes[index];
-            if (rune.Value == '-')
-            {
-                if (previousWasHyphen || index == runes.Length - 1)
-                {
-                    return false;
-                }
-
-                previousWasHyphen = true;
-                continue;
-            }
-
-            if (!Rune.IsLetterOrDigit(rune))
-            {
-                return false;
-            }
-
-            previousWasHyphen = false;
-        }
-
-        return true;
-    }
+        => SourceOpenForgeMetadataParser.IsValidTag(tag);
 
     private (RouteSourceMetadataState State, string? Yaml) ReadFrontmatter(string sourceBody)
     {

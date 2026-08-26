@@ -29,7 +29,6 @@ Workflows are optional Markdown recipes for reaching defined goals.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
 - [Deliver development work through profile-based rigor, one persistent owner per coherent slice, bounded parallelism, and conditional review](adaptive-development.md) - #Workflow #Development #Adaptive #Implementation #Testing #Review #Delegation #Efficiency
 - [Define or review a system's structure, placement, archetypes, invariants, tradeoffs, and transition in one accepted top-down model](architecture.md) - #Extension #Workflow #Architecture #Design #Planning
 - [Obtain compact independent perspectives on one high-leverage uncertainty, resolve factual disagreement, and synthesize without voting](council.md) - #Workflow #Council #Collaboration #Decision #Ideation #Architecture #Review #Evidence #Efficiency
@@ -41,5 +40,4 @@ Workflows are optional Markdown recipes for reaching defined goals.
 - [Review a bounded change or design with stable finding IDs, evidence-backed consequences, and no automatic duplicate review](review.md) - #Extension #Workflow #Quality #Review #Evidence #Efficiency
 - [Define or challenge a subject's purpose, core value, first useful version, boundaries, and success before execution](vision.md) - #Extension #Workflow #Vision #Product
 - [Deliver an explicitly authorized parallel project wave through isolated worktrees, hidden task ownership, bounded integration, and one project-level result](worktree-program-development.md) - #Workflow #Development #Project #Orchestration #Worktree #Parallelism #Integration #Review #Efficiency
-
 <!-- open-forge:generated-index:end -->

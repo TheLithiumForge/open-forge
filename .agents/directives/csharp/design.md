@@ -10,6 +10,7 @@ open-forge:
 
 - Prefer one or two explicit parameters for a behavioral method, constructor, or delegate. Treat four or five as the normal maximum. Use more only at an exceptional framework, interop, serialization, recursive traversal, or data-contract boundary where the separate values are genuinely clearer than a cohesive input.
 - Pass an existing cohesive immutable record or stage context directly when the callee operates within that record's semantic boundary. Do not unpack a record merely to forward or repack many of its members. Let the receiving capability select the facts it owns.
+- Treat repeated member forwarding as a design signal. When one call would pass several facts from the same cohesive immutable source, such as `combined.Sources`, `combined.Links`, `combined.Findings`, and `combined.Complete`, pass that source once and let the receiving constructor, factory, or capability select or project the facts it legitimately owns. Apply this together with the normal parameter limit; do not preserve a long call merely by naming several extractions from one object. Do not pass a broad source object when the callee owns only one fact or when doing so would grant unrelated authority or couple distant layers; use a narrow typed view instead.
 - Introduce a context only when its values share one stage, lifecycle, invariant, or ownership boundary. Do not hide unrelated dependencies in an `Args`, `Options`, `Context`, dictionary, or service bag merely to satisfy a parameter count. Prefer a narrower typed view when passing a broad record would grant unrelated authority or couple distant layers.
 - Distinguish behavior call surfaces from genuine data shapes. A concrete serialized result, immutable fact record, or source-generated model may contain more than five fields when that is its accepted schema. Keep construction readable with named members, focused factories, or cohesive nested values rather than long positional plumbing through behavioral methods.
 - When one finite typed key repeatedly selects stable data or behavior, prefer one centralized immutable static map or table of small strategy values or non-capturing delegates over duplicated switches, condition chains, strategy class hierarchies, dependency injection, or reflective dispatch. Use enum or other typed keys, validate unknown values exhaustively, and keep the table at the nearest scope that owns the shared meaning.
@@ -56,10 +57,20 @@ open-forge:
   bag.
 - Use named object initializers with `required init` for genuine data-shaped
   contracts whose members are independently supplied and intentionally writable
-  during construction. Keep a constructor or factory when public setters,
-  temporary invalidity, inherited required members, runtime validation, or
-  serializer behavior would weaken the type. Adding a required member to an
-  evolving public type is a compatibility decision.
+  during construction. On an `internal` containing type, `public required init`
+  members do not widen the type beyond its containing assembly; prefer that clear
+  construction surface when no member-specific access restriction is required.
+  Do not make the containing type or an external API public only to enable an
+  initializer. Keep a constructor or factory when non-public members, temporary
+  invalidity, inherited required members, runtime validation, cross-member
+  invariants, resource ownership, or serializer behavior would weaken the type.
+  Adding a required member to an evolving public type is a compatibility decision.
+- When a constructor or factory remains, use named arguments at an ambiguous call
+  site. Named arguments are required when four or five values would otherwise be
+  difficult to identify locally, when adjacent values have the same or compatible
+  types, or when swapping them could compile. Prefer passing one cohesive source
+  record over naming several repeated member extractions when the receiving
+  capability legitimately owns that record's semantic boundary.
 - Use primary constructors when they remove boilerplate and the parameter scope,
   storage, inheritance, and lifetime remain obvious. They do not turn parameters
   into properties on ordinary classes or replace invariant validation.

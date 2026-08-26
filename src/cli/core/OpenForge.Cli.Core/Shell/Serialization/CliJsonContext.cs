@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using OpenForge.Cli.Core.Commands.Context.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Find.Models.Presentation;
 using OpenForge.Cli.Core.Commands.References.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Presentation;
@@ -12,6 +13,7 @@ namespace OpenForge.Cli.Core.Shell.Serialization;
     WriteIndented = true,
     GenerationMode = JsonSourceGenerationMode.Serialization)]
 [JsonSerializable(typeof(CliProcessCompletion))]
+[JsonSerializable(typeof(ContextJsonDocument))]
 [JsonSerializable(typeof(FindJsonDocument))]
 [JsonSerializable(typeof(ReferencesJsonDocument))]
 [JsonSerializable(typeof(RouteListJsonDocument))]

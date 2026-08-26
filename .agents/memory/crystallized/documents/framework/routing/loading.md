@@ -85,10 +85,12 @@ When a base file has a user-owned `{name}.overwrite.md` companion, read it immed
 
 ## Deterministic Assistance
 
-A future CLI may batch this plain-file traversal, but its command and output
-contract are not accepted yet. Deterministic assistance must implement this
-loading model without defining loading meaning, inferring relevance, or becoming
-required for ordinary inspection.
+The accepted CLI `context` command may batch the exact startup-required and
+explicitly selected traversal defined by its command contracts. No generic
+batching or agent-assistance command and output contract is accepted. Any
+deterministic assistance must implement this loading model without defining
+loading meaning, inferring relevance, or becoming required for ordinary
+inspection.
 
 During the transition, `open-forge-old load --bodies` remains available as a
 frozen broad audit traversal. It is not target-sensitive and does not define

@@ -8,7 +8,10 @@ internal sealed record CliInvocation(
     CliPresentation Presentation,
     CliTerminalMode TerminalMode,
     CliWorkspaceRequest WorkspaceRequest,
-    CliWorkspace? Workspace);
+    CliWorkspace? Workspace)
+{
+    internal CliView? SuppliedView { get; init; }
+}
 
 internal sealed record CliProcessEnvironment
 {

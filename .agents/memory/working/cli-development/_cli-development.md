@@ -40,9 +40,7 @@ Do not restore its structure by default.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
 - [Active ledger of deferred replacement-CLI edge cases, owners, risks, and closure conditions](edge-cases.md) - #Memory #Working #CLI #EdgeCase #Evidence #Contextual #Active
 - [Executable top-down work graph for completing the greenfield replacement CLI](plan.md) - #Memory #Working #CLI #Plan #Architecture #Development #Contextual #Active
 - [Hierarchical implementation Tasks for the complete greenfield replacement CLI](tasks/_tasks.md) - #Memory #Working #Contextual #Active #CLI #Task #Architecture #Development
-
 <!-- open-forge:generated-index:end -->
