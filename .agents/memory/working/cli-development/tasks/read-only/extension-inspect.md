@@ -8,18 +8,32 @@ open-forge:
 
 ## Task State
 
-- State: Ready for production implementation from exact integrated contract base
-  `92313a09bc541b1a4631def27aff331da6b4861f`. The command-local JSON field
-  graph, finite finding vocabulary, status/`next` mapping, and
-  `open-forge-markdown-v1` fingerprint algorithm are frozen in that accepted
-  closure. The implementation Task Mastermind must preserve `EI-D1` as a
-  read-only reporting boundary and must not invent lifecycle writer policy.
+- State: Complete. The exact contract base is `92313a0`; accepted rebased
+  feature `2b1e63d` is squash-integrated into local `develop` at `73b01be`.
+  `EI-D1` remains a read-only reporting boundary: authored exact-byte lifecycle
+  evidence stays visible but cannot create semantic equivalence, update advice,
+  persistence, or writer authority.
 - Parent: [Read-Only Commands](_read-only.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/extension/inspect/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/extension/inspect/behavior.md).
 - Responsible role: bounded Extension Inspect Task Mastermind.
 - Profile: Assured because the public result schema, persisted fingerprint
   compatibility, lifecycle trust, containment, and Native AOT boundaries are
   compatibility and safety surfaces.
+
+### Acceptance
+
+- Focused Unit `24/24`, Integration `21/21`, and EndToEnd `5/5` pass.
+- Extension List regressions pass Unit `12/12`, Integration `10/10`, and
+  EndToEnd `16/16`.
+- The rebased combined tree passes warning-free Release build, managed Unit
+  `1054/1054`, Integration `378/378`, EndToEnd `116/116`, portable `linux-x64`
+  Native AOT Integration `378/378`, and Native AOT EndToEnd `116/116`, with zero
+  failures or skips.
+- The final Sol/xhigh correction recheck is `ACCEPTED`. Unsupported payload
+  fallback, finding fail-closed behavior, staged event fact retention, no-write,
+  source-generated serialization, and modern C# design boundaries are accepted.
+- The squash-integrated tree exactly equals the accepted rebased feature tree.
+  No remote action or push occurred.
 
 ## Execution Capsule
 

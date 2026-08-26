@@ -13,14 +13,16 @@ open-forge:
   squash-integrated at `db0d39a`. The combined managed Unit `978/978`,
   Integration `354/354`, EndToEnd `111/111`, Native AOT Integration `354/354`,
   and Native AOT EndToEnd `111/111` gates pass with zero skips. Extension Inspect
-  contract closure is integrated and its implementation is an independent lane.
+  accepted rebased feature `2b1e63d` is squash-integrated at `73b01be`; the
+  combined baseline passes managed Unit `1054/1054`, Integration `378/378`,
+  EndToEnd `116/116`, and portable `linux-x64` Native AOT Integration `378/378`
+  and EndToEnd `116/116`.
   Routed Authored Metadata is Complete at `5924698`; Generated Navigation is
   Complete and squash-integrated at `21e5200`, with full managed Unit `1030/1030`,
   Integration `357/357`, and Native AOT Integration `357/357`. Public Index
-  mutation remains blocked on the accepted lock/recovery dependency-order
-  decision.
+  application remains sequential after accepted Mutation Foundation mechanics.
 - Responsible role: Overseer.
-- Last updated: 2026-08-26.
+- Last updated: 2026-08-27.
 
 ## Historical Acceptance Record
 
@@ -116,9 +118,9 @@ scenario. Shared facts move only through a Mastermind integration increment.
 - [x] [Implement direct incoming and outgoing reference facts with shared source-universe filters](references-command.md) — Complete and integrated at `09f00ef`; public Green `23d5e2e`, managed `1270/1270`, public no-write, and final local `linux-x64` Native AOT gates pass — Implementer: Overseer
 - [x] [Implement ordered context selection, loading reasons, overlap, size, and token projections](context.md) — Complete; accepted feature tip `303ad7d`, squash-integrated at `ca097a2` — Implementer: Context Task Mastermind
 - [x] [Implement Extension catalogue and source listing without lifecycle inference](extension-list.md) — Complete; accepted rebased integration tip `5e6babf`, squash-integrated at `db0d39a` — Implementer: Extension Discovery Task Mastermind
-- [ ] [Implement exact Extension package inspection without mutation or installation behavior](extension-inspect.md) — Active from accepted integrated contract base; independent production lane — Implementer: Extension Inspect Task Mastermind
+- [x] [Implement exact Extension package inspection without mutation or installation behavior](extension-inspect.md) — Complete; accepted rebased feature `2b1e63d`, squash-integrated at `73b01be`, with managed and portable `linux-x64` Native AOT acceptance — Implementer: Extension Inspect Task Mastermind and Overseer
 - [x] [Promote one neutral routed authored-metadata fact for Open Forge Markdown and native Skills](routed-authored-metadata-foundation.md) — Complete; accepted feature `8a29321`, squash-integrated at `5924698` with managed and native AOT evidence — Implementer: Routed Metadata Task Mastermind
-- [ ] [Implement deterministic generated Entries projection and idempotent index application](index-command.md) — Generated Navigation foundation is Complete and integrated at `21e5200`; public command/application remains blocked on mutation dependency ordering — Implementer: Overseer for the blocked public boundary
+- [ ] [Implement deterministic generated Entries projection and idempotent index application](index-command.md) — Generated Navigation foundation is Complete and integrated at `21e5200`; public command/application waits for accepted Mutation Foundation mechanics — Implementer: Overseer for the sequential public boundary
 
 ## Historical Find Progress And Current Routing Condition
 
@@ -157,8 +159,8 @@ and package, artifact, static, public no-write, and protected-surface audits rem
 the accepted Find evidence. The repository-root developer workflow is Complete
 and included in the current baseline. References is Complete and integrated at
 `09f00ef`; Context is Complete and integrated at `ca097a2`; Extension List is
-Complete and integrated at `db0d39a`. Extension Inspect's accepted contract is
-integrated and its implementation proceeds independently. Routed Authored
+Complete and integrated at `db0d39a`. Extension Inspect is Complete and
+integrated at `73b01be`. Routed Authored
 Metadata is Complete at `5924698`; Generated Navigation is Complete and
 integrated at `21e5200`.
 

@@ -21,14 +21,15 @@ open-forge:
   `1012/1012`, Integration `354/354`, and Native AOT Integration `354/354`.
   Generated Navigation is Complete and squash-integrated at `21e5200`; its full
   managed Unit `1030/1030`, Integration `357/357`, and local `linux-x64` Native
-  AOT Integration `357/357` gates pass. Public Index mutation remains blocked on
-  the accepted lock/recovery dependency-order decision. Extension Inspect's exact
-  contract is integrated at `92313a0`, its implementation-ready state is
-  `db037ee`, and its production lane is independent of the routed-metadata
-  prerequisite. The broader replacement CLI program remains Active.
+  AOT Integration `357/357` gates pass. Extension Inspect accepted rebased
+  feature `2b1e63d` is squash-integrated at `73b01be`; combined managed Unit
+  `1054/1054`, Integration `378/378`, EndToEnd `116/116`, and portable
+  `linux-x64` Native AOT Integration `378/378` and EndToEnd `116/116` pass.
+  Mutation Foundation now precedes public Index by accepted maintainer decision.
+  The broader replacement CLI program remains Active.
 - Responsible role: Overseer.
 - Task source: This file.
-- Last updated: 2026-08-26.
+- Last updated: 2026-08-27.
 
 ## Problem Statement
 

@@ -14,7 +14,7 @@ release.
 
 ## Current State
 
-Find, References, Context, and Extension List are Complete. Context is
+Find, References, Context, Extension List, and Extension Inspect are Complete. Context is
 squash-integrated into local `develop` at `ca097a2`, and Extension List is
 squash-integrated at current clean baseline `db0d39a`. The final tree exactly
 matches the rebased Extension List integration tip `5e6babf` and retains both
@@ -26,8 +26,12 @@ EndToEnd `111/111`, all with zero skips. The supported local `linux-x64` Native
 AOT root publishes and executes both commands; Native AOT Integration is
 `354/354` and EndToEnd is `111/111`, with zero skips. Final independent Context
 and Extension List correctness reviews found no material issues. Extension
-Inspect's exact public contract is accepted and squash-integrated at `92313a0`;
-the leaf is implementation-ready from `db037ee`. No remote action or push
+Inspect's exact public contract is accepted and squash-integrated at `92313a0`.
+Its accepted rebased feature `2b1e63d` is squash-integrated at `73b01be`. The
+combined baseline passes warning-free Release build, managed Unit `1054/1054`,
+Integration `378/378`, EndToEnd `116/116`, and portable `linux-x64` Native AOT
+Integration `378/378` and EndToEnd `116/116`, all with zero failures or skips.
+The final Sol/xhigh correction recheck is `ACCEPTED`. No remote action or push
 occurred.
 
 Routed Authored Metadata is Complete and squash-integrated at `5924698`. Its
@@ -73,13 +77,14 @@ external publication, remote action, or push occurred.
 
 ## Current Step
 
-Continue Extension Inspect from its accepted exact command-local
-result/finding/fingerprint contract. Generated Navigation is integrated and no
-longer active.
+Begin the shared Mutation Foundation sequentially from its contract-closure
+child. The maintainer accepted the architecture recommendation to place shared
+locking, post-lock revalidation, atomic application, verification, recovery, and
+Git mechanics before public Index application. Generated Navigation and
+Extension Inspect are integrated and no longer active.
 
-Public Index application and Mutation Foundation remain sequential. Do not start
-either until their current dependency-order contradiction is resolved in the
-accepted Architecture and Plan. Do not push.
+Public Index remains sequential after Mutation Foundation acceptance. Do not
+create an Index-local mutation substitute. Do not push.
 
 ## Protected State
 
@@ -94,10 +99,10 @@ accepted Architecture and Plan. Do not push.
 
 ## Next Actions
 
-1. Correct Extension Inspect's invalid lifecycle fixture/workaround boundary,
-   re-establish Red, and complete independent review and Native AOT evidence.
-2. Rebase an accepted Extension Inspect candidate onto current `develop`, rerun
-   combined evidence, and squash-integrate it. Keep remotes unchanged.
+1. Freeze and independently accept the callable Mutation Foundation contracts.
+2. Implement its lock,
+   lifecycle, revalidation, atomic-apply, receipt, recovery, and Git children in
+   dependency order. Keep remotes unchanged.
 
 ## Current Sources
 

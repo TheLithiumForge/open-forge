@@ -13,10 +13,10 @@ Read the [program Task](00-cli-development.md), [Architecture](../../../crystall
 - [x] [CLI Foundation](foundation/_foundation.md) — Complete — Implementer: Mastermind
 - [x] [Route Discovery](route-discovery/_route-discovery.md) — Complete — Implementer: Mastermind
 - [x] [Generic CLI Improvements](generic-improvements/_generic-improvements.md) — Complete — Implementer: Mastermind
-- [ ] [Read-Only Commands](read-only/_read-only.md) — Active; Find, References, Context, Extension List, Routed Authored Metadata, and the Generated Navigation foundation are Complete; Extension Inspect implementation remains active — Implementer: Overseer
+- [ ] [Read-Only Commands](read-only/_read-only.md) — Active; Find, References, Context, Extension List, Extension Inspect, Routed Authored Metadata, and the Generated Navigation foundation are Complete; public Index waits for Mutation Foundation — Implementer: Overseer
 - [x] [Modern C# Improvements](modern-csharp-improvements.md) — Complete; Preflight `55eb82e`, Framework `a90af59`, Shell/root `fe10525`, Route Inspect/family `62a1dd9`, Route List `273eb45`, Tests/support `6af5fb1`, and final managed, Native AOT, package, audit, and public no-write gates accepted in the commit containing this record — Implementer: Mastermind
 - [x] [Repository-root CLI developer workflow](repository-root-developer-workflow.md) — Complete and squash-integrated into local `develop` at `d9e0686` — Implementer: Mastermind
-- [ ] [Mutation Foundation](mutation-foundation/_mutation-foundation.md) — Planned — Implementer: Not assigned
+- [ ] [Mutation Foundation](mutation-foundation/_mutation-foundation.md) — Ready; accepted to precede public Index — Implementer: Mutation Foundation Task Mastermind
 - [ ] [Route Mutation Commands](route-mutation/_route-mutation.md) — Planned — Implementer: Not assigned
 - [ ] [Lifecycle Commands](lifecycle/_lifecycle.md) — Planned — Implementer: Not assigned
 - [ ] [Operational Commands](operations/_operations.md) — Planned — Implementer: Not assigned

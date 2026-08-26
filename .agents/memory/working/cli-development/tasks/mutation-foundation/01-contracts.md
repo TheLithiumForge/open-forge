@@ -8,7 +8,8 @@ open-forge:
 
 ## Task State
 
-- State: Planned after read-only and Index acceptance.
+- State: Ready after accepted read-only facts, Extension Inspect, and Generated
+  Navigation. These contracts must be accepted before public Index application.
 - Responsible role: Mastermind.
 - Parent: [Mutation Foundation](_mutation-foundation.md).
 

@@ -8,9 +8,12 @@ open-forge:
 
 ## Task State
 
-- State: Planned.
+- State: Ready for the contract-closure child. The maintainer accepted that the
+  shared Mutation Foundation precedes public Index application.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
-- Prerequisites: Accepted read-only facts and `index`.
+- Prerequisites: Accepted read-only facts, Extension Inspect, and the pure
+  Generated Navigation foundation. Public `index` is a consumer, not a
+  prerequisite.
 
 ## Expected Outcome
 

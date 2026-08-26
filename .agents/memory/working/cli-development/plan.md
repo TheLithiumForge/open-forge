@@ -13,31 +13,35 @@ open-forge:
 - Planning authority: The maintainer accepts consequential decisions. The
   Mastermind owns architecture, sequencing, Task decomposition, integration, and
   Plan maintenance within that direction.
-- Last updated: 2026-08-26.
+- Last updated: 2026-08-27.
 - Current accepted baseline: Context and Extension List are Complete and squash-integrated at
   `ca097a2` and `db0d39a`. Extension Inspect's exact public contract is
-  squash-integrated at `92313a0`, and its implementation-ready state is recorded
-  at `db037ee`. Routed Authored Metadata is Complete and squash-integrated at
+  squash-integrated at `92313a0`; accepted rebased feature `2b1e63d` is
+  squash-integrated at `73b01be`. Routed Authored Metadata is Complete and squash-integrated at
   `5924698`. Generated Navigation is Complete and squash-integrated at `21e5200`;
   its full managed Unit `1030/1030`, Integration `357/357`, and local `linux-x64`
   Native AOT Integration `357/357` gates pass. The last complete public baseline
   passes managed Unit `978/978`, Integration `354/354`, EndToEnd `111/111`,
   Native AOT Integration `354/354`, and Native AOT EndToEnd `111/111`, all with
-  zero skips.
+  zero skips. The current combined baseline passes managed Unit `1054/1054`,
+  Integration `378/378`, EndToEnd `116/116`, and `linux-x64` Native AOT
+  Integration `378/378` and EndToEnd `116/116`.
   The routed-metadata acceptance gate separately passes full managed Unit
   `1012/1012`, Integration `354/354`, and Native AOT Integration `354/354`.
   [Improve The
   Repository-Root CLI Developer Workflow](tasks/repository-root-developer-workflow.md)
   is Complete and its accepted changes are included in that baseline.
-- Current task: [Extension Inspect](tasks/read-only/extension-inspect.md)
-  implementation. The [pure Generated Navigation
+- Current task: [Mutation Foundation](tasks/mutation-foundation/_mutation-foundation.md)
+  contract closure. [Extension Inspect](tasks/read-only/extension-inspect.md) is
+  Complete and integrated at `73b01be`. The [pure Generated Navigation
   foundation](tasks/read-only/index-generated-navigation-foundation.md) is
   Complete and integrated at `21e5200`.
   [Routed Authored Metadata
   foundation](tasks/read-only/routed-authored-metadata-foundation.md) is Complete
   and integrated at `5924698`.
-- Current step: complete and independently accept Extension Inspect. Public Index
-  mutation remains blocked on its Mutation Foundation dependency-order decision.
+- Current step: implement and accept Mutation Foundation before public Index.
+  The maintainer accepted that dependency correction; public Index must consume
+  the shared accepted mechanics and must not create a local substitute.
   Standard SDK publication restored the exact portable
   `Microsoft.NETCore.App.Runtime.NativeAOT.linux-x64` `10.0.11` pack without a
   project workaround. The explicit `linux-x64` build passed with zero warnings
@@ -356,11 +360,11 @@ diff, parent requirements, and claimed evidence.
 | DX1 | Complete | Move .NET workspace controls and artifacts to the repository root, make ordinary EndToEnd builds publish and discover `open-forge-dev`, remove obsolete preserved tests, and repair temporary compatibility-name routing.                                                                                                                                                                                                         | Q1, GI2                                 | Sequential  | Developer workflow   | Root build/test, environment-free EndToEnd, routing, review |
 | Q2  | Complete | Public Red `43b75f3`, Green `23d5e2e`, managed `1270/1270`, public no-write, and supported local `linux-x64` root, Integration, and EndToEnd Native AOT execution pass.                                                                                                                                                                                                                                                                | GI1, Q1 source/document acceptance, DX1 | Sequential  | Source queries       | Contract, process, no-write, and Native AOT execution pass  |
 | Q3  | Complete | Implement and accept `context`; accepted tip `303ad7d` is squash-integrated at `ca097a2` and retained in the combined managed/native baseline.                                                                                                                                                                                                                                                                                     | Q1, Q2                                  | Sequential  | Context              | Ordered context and exact content evidence passes           |
-| E1  | Active   | Extension List is Complete at `db0d39a`; implement Extension Inspect from its accepted exact contract integrated at `92313a0` and implementation-ready state `db037ee`.                                                                                                                                                                                                                                                           | G1, GI1                                 | Read-only C | Extension discovery  | Catalogue, package-source, lifecycle, process, and AOT      |
+| E1  | Complete | Extension List is Complete at `db0d39a`; Extension Inspect accepted rebased feature `2b1e63d` is squash-integrated at `73b01be`, with combined managed `1054/378/116` and portable `linux-x64` Native AOT `378/116` acceptance.                                                                                                                                                                                                        | G1, GI1                                 | Read-only C | Extension discovery  | Catalogue, package-source, lifecycle, process, and AOT      |
 | RM1 | Complete | Promote the neutral routed authored-metadata fact while retaining `SourceDocumentForm` as the sole source classification authority; accepted feature `8a29321` is integrated at `5924698`.                                                                                                                                                                                                                                        | Q1-Q3, R2                               | Sequential  | Source metadata      | Route preservation, metadata grammar, and Native AOT pass   |
 | GN1 | Complete | Pure Generated Navigation projection and bounded-region facts are accepted and squash-integrated at `21e5200`; full managed and local `linux-x64` Native AOT Integration evidence passes.                                                                                                                                                                                                                                           | Q1-Q3, R2, RM1                          | Read-only D | Generated navigation | Determinism, exact bytes, no-write, and affected regressions |
-| I1  | Blocked  | Implement and accept public `index` only after GN1 and resolution of the lock/revalidation/application/recovery dependency-order contradiction.                                                                                                                                                                                                                                                                                   | GN1 and accepted mutation ordering      | Sequential  | Generated navigation | Idempotence and unchanged-authority evidence                |
-| M1  | Pending  | Implement shared lock, lifecycle, mutation, recovery, and Git foundations                                                                                                                                                                                                                                                                                                                                                         | I1, E1                                  | Sequential  | Mutation foundation  | Direct failure and crash-boundary evidence                  |
+| I1  | Pending  | Implement and accept public `index` only after GN1 and the shared Mutation Foundation are accepted; do not implement a command-local locking, application, Git, or recovery substitute.                                                                                                                                                                                                                                             | GN1, M1                                 | Sequential  | Generated navigation | Idempotence and unchanged-authority evidence                |
+| M1  | Ready    | Implement shared lock, lifecycle, revalidation, atomic application, receipt, recovery, and Git foundations before the first public mutating command.                                                                                                                                                                                                                                                                              | GN1, E1                                 | Sequential  | Mutation foundation  | Direct failure and crash-boundary evidence                  |
 | M2  | Pending  | Implement route init/create/update/move/remove in dependency order                                                                                                                                                                                                                                                                                                                                                                | M1, R2, I1                              | Sequential  | Route mutation       | Per-command public and recovery evidence                    |
 | M3  | Pending  | Implement extension create and root install/update                                                                                                                                                                                                                                                                                                                                                                                | M1, E1, I1                              | Sequential  | Lifecycle mutation   | Package, lifecycle, and workspace evidence                  |
 | M4  | Pending  | Implement extension install/update/remove                                                                                                                                                                                                                                                                                                                                                                                         | M3                                      | Sequential  | Extension mutation   | Collision, recovery, and catalogue evidence                 |
