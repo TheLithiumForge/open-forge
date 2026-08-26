@@ -8,14 +8,13 @@ open-forge:
 
 ## Task State
 
-- State: Paused after `GN-R1` from integrated coordination baseline
-  `4ffb04483b8e3a0127fc2bf55ff64c5098cf211a`.
-- Current blocker: the accepted native `SKILL.md` metadata meaning needed beside
-  the existing neutral form classification exists only behind Route-local types.
-  The lane correctly returned a project
-  change request instead of creating a second parser. Resume after
-  [Routed Authored Metadata](routed-authored-metadata-foundation.md) is accepted
-  and integrated, then rebase this feature lane and consume the promoted fact.
+- State: Active for rebase and completion. [Routed Authored
+  Metadata](routed-authored-metadata-foundation.md) is Complete and integrated at
+  `5924698a3d79156b403348743f31453c03fe48a4`, closing the sole `GN-R1` project
+  change request. Rebase the existing feature lane onto the current post-closeout
+  `develop`, consume `SourceAuthoredMetadataFacts` while retaining
+  `SourceDocumentForm`, and rerun full affected and Native AOT evidence plus the
+  independent acceptance review.
 - Parent: [Implement Index](index-command.md).
 - Responsible role: bounded Generated Navigation Task Mastermind.
 - Profile: Assured shared foundation because later Index, route mutation, Doctor,

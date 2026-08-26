@@ -14,13 +14,13 @@ open-forge:
   is integrated at current clean baseline `db0d39a`, whose tree exactly matches
   rebased integration tip `5e6babf`. The combined managed Unit `978/978`,
   Integration `354/354`, EndToEnd `111/111`, Native AOT Integration `354/354`,
-  and Native AOT EndToEnd `111/111` gates pass with zero skips. Generated
-  Navigation is paused after its first review correctly proved that native Skill
-  metadata must move from Route-local parsing into a neutral Framework fact. The
-  bounded
-  [Routed Authored Metadata](read-only/routed-authored-metadata-foundation.md)
-  foundation is the current sequential prerequisite; Generated Navigation then
-  rebases and resumes. Public Index mutation remains blocked on the accepted
+  and Native AOT EndToEnd `111/111` gates pass with zero skips.
+  [Routed Authored Metadata](read-only/routed-authored-metadata-foundation.md) is
+  Complete and integrated at `5924698`, closing Generated Navigation's first
+  review project-change request. Its acceptance gate passes full managed Unit
+  `1012/1012`, Integration `354/354`, and Native AOT Integration `354/354`.
+  Generated Navigation is Active for rebase and completion. Public Index mutation
+  remains blocked on the accepted
   lock/recovery dependency-order decision. Extension Inspect's exact contract is
   integrated at `92313a0`, its implementation-ready state is `db037ee`, and its
   production lane is independent of the routed-metadata prerequisite. The

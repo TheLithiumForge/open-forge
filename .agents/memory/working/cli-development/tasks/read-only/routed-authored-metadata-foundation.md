@@ -8,8 +8,10 @@ open-forge:
 
 ## Task State
 
-- State: Ready from integrated coordination baseline
-  `4ffb04483b8e3a0127fc2bf55ff64c5098cf211a`.
+- State: Complete and squash-integrated at
+  `5924698a3d79156b403348743f31453c03fe48a4`. The accepted feature candidate
+  was `8a2932151518f6355d630be9ba9a40236a56102a`; the integrated tree preserves
+  its exact production and evidence changes.
 - Trigger: the Generated Navigation foundation proved a second consumer of the
   native `SKILL.md` metadata semantics currently trapped in Route-local parsing.
   Neutral source classification remains owned by the accepted
@@ -139,6 +141,32 @@ foundation.
 - `RM-R1`: one independent correctness, dependency-direction, AOT, and
   behavior-preservation review.
 - `RM-C1`: one grouped correction cycle for accepted material findings.
+
+## Acceptance Record
+
+The accepted capability adds one two-argument
+`SourceAuthoredMetadataParser.Parse(MarkdownDocumentFacts, SourceDocumentForm)`
+and one immutable fact containing only metadata state, description, and authored
+tags. `SourceDocumentForm` remains the sole classifier. Route consumes the fact
+without changing its compatibility/overwrite flags or form-derived kind; Find,
+Context, Shell serialization, Generated Navigation, projects, packages,
+configuration, and public contracts remain unchanged.
+
+The final grammar preserves prior scalar aliases, rejects forward or non-scalar
+aliases, duplicate keys, unmatched members, and non-scalar required values;
+classifies empty or plain-null required values as missing; preserves quoted and
+explicit-string null spellings; makes Loader not applicable; and fails fast for
+overwrite companions and undefined forms. `RM-R1` found one raw-scalar null
+compatibility defect. Grouped `RM-C1` corrected it, and the focused Sol/xhigh
+recheck returned `ACCEPTED`.
+
+Final evidence is focused Unit `89/89`, real-filesystem Route Integration `5/5`,
+affected Unit `860/860`, affected Integration `237/237`, full managed Unit
+`1012/1012`, full managed Integration `354/354`, and local locked `linux-x64`
+Native AOT Integration `354/354`, all with zero failures/skips. Release is
+warning-clean; format, diff, dependency, exact/protected-path, Framework
+dependency, and doctor audits pass. Doctor reports only the unrelated existing
+C# directive warning. No push or remote operation occurred.
 
 ## Stop Conditions
 

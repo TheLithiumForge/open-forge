@@ -30,6 +30,12 @@ Inspect's exact public contract is accepted and squash-integrated at `92313a0`;
 the leaf is implementation-ready from `db037ee`. No remote action or push
 occurred.
 
+Routed Authored Metadata is Complete and squash-integrated at `5924698`. Its
+accepted neutral parser preserves `SourceDocumentForm` as the sole classifier
+and passes full managed Unit `1012/1012`, Integration `354/354`, and local
+`linux-x64` Native AOT Integration `354/354`, all with zero failures/skips.
+Generated Navigation's sole project-change request is therefore closed.
+
 Implemented boundaries:
 
 - Repository-root `OpenForge.Cli.slnx`, SDK, NuGet, and shared MSBuild files.
@@ -60,12 +66,11 @@ external publication, remote action, or push occurred.
 
 ## Current Step
 
-Continue the authorized wave from integrated coordination baseline `db037ee`:
+Continue the authorized wave from integrated routed-metadata baseline `5924698`:
 
 1. implement Extension Inspect from its accepted exact
    command-local result/finding/fingerprint contract in an independent lane; and
-2. promote the neutral routed authored-metadata fact proved necessary by the
-   Generated Navigation review, then rebase and complete the pure read-only
+2. rebase and complete the pure read-only
    `Framework/GeneratedNavigation` foundation with no command, lock, write,
    recovery, root registration, or JSON surface.
 
@@ -86,11 +91,9 @@ accepted Architecture and Plan. Do not push.
 
 ## Next Actions
 
-1. Accept and integrate the routed authored-metadata foundation from an isolated
-   feature branch without altering Generated Navigation's current worktree.
-2. Rebase Generated Navigation onto that exact baseline, consume the promoted
-   fact, and rerun its complete affected evidence and independent review.
-3. Review and integrate only accepted Extension Inspect and Generated Navigation
+1. Rebase Generated Navigation onto the post-closeout baseline, consume the
+   promoted fact, and rerun its complete affected evidence and independent review.
+2. Review and integrate only accepted Extension Inspect and Generated Navigation
    candidates, reproduce the combined evidence, and keep remotes unchanged.
 
 ## Current Sources

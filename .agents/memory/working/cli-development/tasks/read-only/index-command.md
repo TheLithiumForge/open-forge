@@ -8,12 +8,12 @@ open-forge:
 
 ## Task State
 
-- State: Split for safe execution. The pure Generated Navigation foundation is
-  Paused after `GN-R1` proved that native `SKILL.md` metadata semantics must be
-  promoted out of Route before the accepted projection can be complete. The
-  [Routed Authored Metadata](routed-authored-metadata-foundation.md) foundation
-  is the Ready sequential prerequisite; Generated Navigation rebases and resumes
-  only after it integrates. Public Index binding, selection, application,
+- State: Split for safe execution. [Routed Authored
+  Metadata](routed-authored-metadata-foundation.md) is Complete at `5924698`, so
+  the pure [Generated Navigation
+  foundation](index-generated-navigation-foundation.md) is Active for rebase,
+  promoted-fact consumption, final evidence, and review. Public Index binding,
+  selection, application,
   result, and presentation remain blocked because the accepted design requires
   workspace locking, post-lock revalidation, atomic replacement, Git policy,
   verification, and recovery while the current Plan places their shared Mutation
@@ -51,10 +51,10 @@ idempotence.
 
 ## Child Boundary
 
-- [Establish the neutral Routed Authored Metadata foundation](routed-authored-metadata-foundation.md)
-  is delegation-ready and must integrate before the paused
-  [Generated Navigation foundation](index-generated-navigation-foundation.md)
-  rebases and resumes. Extension Inspect implementation remains independent.
+- [Routed Authored Metadata](routed-authored-metadata-foundation.md) is Complete
+  and integrated. The [Generated Navigation
+  foundation](index-generated-navigation-foundation.md) now rebases and resumes.
+  Extension Inspect implementation remains independent.
 - Public Index implementation does not start until the maintainer accepts a
   dependency-order correction or another accepted architecture source resolves
   the lock/recovery contradiction. Do not implement an Index-local substitute.
