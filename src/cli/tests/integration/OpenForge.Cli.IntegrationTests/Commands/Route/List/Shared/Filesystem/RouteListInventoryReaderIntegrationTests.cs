@@ -60,7 +60,7 @@ public sealed class RouteListInventoryReaderIntegrationTests
         workspace.Write(".agents/root/leaf.overwrite.md", "Local overwrite body.\n");
         workspace.Write(
             ".agents/root/tool/SKILL.md",
-            RouteListFilesystemIntegrationWorkspace.SkillMetadata("native-tool", "Exact native description."));
+            RouteListFilesystemIntegrationWorkspace.SkillMetadataWithAlias("Exact native description."));
         workspace.Write(".agents/root/orphan.overwrite.md", "Orphan overwrite.\n");
         workspace.Write(".agents/root/invalid.md", [0xC3, 0x28]);
         workspace.Write(".agents/root/missing.md", "# No frontmatter\n");

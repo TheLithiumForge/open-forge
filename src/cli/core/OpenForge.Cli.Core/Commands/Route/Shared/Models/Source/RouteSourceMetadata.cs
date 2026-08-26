@@ -1,5 +1,5 @@
 using System.Collections.ObjectModel;
-using OpenForge.Cli.Core.Commands.Route.Shared.Source;
+using OpenForge.Cli.Core.Framework.Sources.Metadata;
 
 namespace OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 
@@ -36,7 +36,7 @@ internal sealed class RouteSourceMetadata
         if (state == RouteSourceMetadataState.Complete)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(description);
-            if (materializedTags.Any(tag => !RouteMetadataParser.IsValidTag(tag)))
+            if (materializedTags.Any(tag => !SourceOpenForgeMetadataParser.IsValidTag(tag)))
             {
                 throw new ArgumentException("Source metadata contains an invalid tag.", nameof(tags));
             }

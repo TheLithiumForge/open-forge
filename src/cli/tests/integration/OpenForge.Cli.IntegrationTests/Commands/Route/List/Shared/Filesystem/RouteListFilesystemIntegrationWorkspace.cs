@@ -98,6 +98,16 @@ internal sealed class RouteListFilesystemIntegrationWorkspace : IDisposable
             """;
     }
 
+    internal static string SkillMetadataWithAlias(string description)
+    {
+        return $"""
+            ---
+            description: &metadata {description}
+            name: *metadata
+            ---
+            """;
+    }
+
     public void Dispose()
     {
         _temporary.Dispose();

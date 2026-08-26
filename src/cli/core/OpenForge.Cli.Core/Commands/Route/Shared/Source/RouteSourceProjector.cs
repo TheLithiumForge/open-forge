@@ -1,4 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Sources.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
@@ -101,20 +103,11 @@ internal sealed class RouteSourceProjector
                 hasOverwrite);
         }
 
-        if (form == SourceDocumentForm.Loader)
-        {
-            return RouteSourceMetadata.WithoutValues(
-                RouteSourceMetadataState.NotApplicable,
-                false,
-                hasOverwrite);
-        }
-
-        var parser = new RouteMetadataParser();
         var body = file.Value
             ?? throw new InvalidOperationException("A complete Route document read requires a value.");
-        return form == SourceDocumentForm.Skill
-            ? parser.ParseSkill(body, hasOverwrite)
-            : parser.ParseOpenForge(body, compatibility, hasOverwrite);
+        var document = new MarkdownDocumentParser().Parse(body);
+        var facts = new SourceAuthoredMetadataParser().Parse(document, form);
+        return new RouteMetadataParser().Parse(facts, compatibility, hasOverwrite);
     }
 
     private static RouteSourceKind ReadSourceKind(SourceDocumentForm form)

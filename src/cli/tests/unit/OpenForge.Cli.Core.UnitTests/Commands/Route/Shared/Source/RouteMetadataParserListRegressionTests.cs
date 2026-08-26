@@ -1,5 +1,8 @@
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Commands.Route.Shared.Source;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Sources.Metadata;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Source;
 
@@ -28,21 +31,6 @@ public sealed class RouteMetadataParserListRegressionTests
         { "---\nname: skill\ndescription: '  '\n---\n", RouteSourceMetadataState.Missing },
     };
 
-    public static TheoryData<string, bool> TagCases => new()
-    {
-        { "Tag", true },
-        { "Évidence2", true },
-        { "Route-List", true },
-        { "", false },
-        { "2Route", false },
-        { "-Route", false },
-        { "Route-", false },
-        { "Route--List", false },
-        { "Route_List", false },
-        { "#Route", false },
-        { "Route List", false },
-    };
-
     [Theory(DisplayName = "Route-list metadata parser distinguishes missing and malformed Open Forge metadata"),
         MemberData(nameof(OpenForgeMetadataCases))]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
@@ -51,8 +39,9 @@ public sealed class RouteMetadataParserListRegressionTests
         object expectedStateValue)
     {
         var expectedState = Assert.IsType<RouteSourceMetadataState>(expectedStateValue);
-        var metadata = new RouteMetadataParser().ParseOpenForge(
+        var metadata = Parse(
             sourceBody,
+            SourceDocumentForm.Markdown,
             isCompatibilityEntrypoint: false,
             isOverwritePresent: false);
 
@@ -69,7 +58,11 @@ public sealed class RouteMetadataParserListRegressionTests
         object expectedStateValue)
     {
         var expectedState = Assert.IsType<RouteSourceMetadataState>(expectedStateValue);
-        var metadata = new RouteMetadataParser().ParseSkill(sourceBody, isOverwritePresent: false);
+        var metadata = Parse(
+            sourceBody,
+            SourceDocumentForm.Skill,
+            isCompatibilityEntrypoint: false,
+            isOverwritePresent: false);
 
         Assert.Equal(expectedState, metadata.State);
         Assert.Null(metadata.Description);
@@ -80,8 +73,9 @@ public sealed class RouteMetadataParserListRegressionTests
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void CompleteOpenForgeMetadataPreservesExactValues()
     {
-        var metadata = new RouteMetadataParser().ParseOpenForge(
+        var metadata = Parse(
             "---\r\nopen-forge:\r\n  description: '  Exact description  '\r\n  tags: [Route-List, Évidence2]\r\n---\r\nbody",
+            SourceDocumentForm.IndexEntrypoint,
             isCompatibilityEntrypoint: true,
             isOverwritePresent: true);
 
@@ -96,8 +90,10 @@ public sealed class RouteMetadataParserListRegressionTests
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
     public void CompleteSkillMetadataUsesTopLevelValuesAndNoTags()
     {
-        var metadata = new RouteMetadataParser().ParseSkill(
+        var metadata = Parse(
             "---\nname: native-skill\ndescription: Exact native description.\n---\nbody",
+            SourceDocumentForm.Skill,
+            isCompatibilityEntrypoint: false,
             isOverwritePresent: true);
 
         Assert.Equal(RouteSourceMetadataState.Complete, metadata.State);
@@ -105,14 +101,6 @@ public sealed class RouteMetadataParserListRegressionTests
         Assert.Empty(metadata.Tags);
         Assert.False(metadata.IsCompatibilityEntrypoint);
         Assert.True(metadata.IsOverwritePresent);
-    }
-
-    [Theory(DisplayName = "Route-list metadata tags begin with a letter and contain only alphanumerics and internal hyphens"),
-        MemberData(nameof(TagCases))]
-    [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
-    public void TagGrammarIsFinite(string tag, bool expected)
-    {
-        Assert.Equal(expected, RouteMetadataParser.IsValidTag(tag));
     }
 
     [Fact(DisplayName = "Route-list source metadata snapshots exact tags")]
@@ -128,5 +116,19 @@ public sealed class RouteMetadataParserListRegressionTests
         tags.Clear();
 
         Assert.Equal(["First", "Second"], metadata.Tags);
+    }
+
+    private static RouteSourceMetadata Parse(
+        string source,
+        SourceDocumentForm form,
+        bool isCompatibilityEntrypoint,
+        bool isOverwritePresent)
+    {
+        var document = new MarkdownDocumentParser().Parse(source);
+        var facts = new SourceAuthoredMetadataParser().Parse(document, form);
+        return new RouteMetadataParser().Parse(
+            facts,
+            isCompatibilityEntrypoint,
+            isOverwritePresent);
     }
 }

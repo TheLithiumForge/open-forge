@@ -1,5 +1,8 @@
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Commands.Route.Shared.Source;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Sources.Metadata;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Shared.Source;
 
@@ -18,8 +21,9 @@ public sealed class RouteMetadataParserRedTests
         string body,
         string expectedState)
     {
-        var metadata = new RouteMetadataParser().ParseOpenForge(
+        var metadata = Parse(
             body,
+            SourceDocumentForm.Markdown,
             isCompatibilityEntrypoint: false,
             isOverwritePresent: false);
 
@@ -32,8 +36,9 @@ public sealed class RouteMetadataParserRedTests
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void CompleteOpenForgeMetadataPreservesAuthoredValues()
     {
-        var metadata = new RouteMetadataParser().ParseOpenForge(
+        var metadata = Parse(
             "---\r\nopen-forge:\r\n  description: '  Exact 描述  '\r\n  tags: [Route-List, Évidence2, 工作]\r\n---\r\nbody",
+            SourceDocumentForm.IndexEntrypoint,
             isCompatibilityEntrypoint: true,
             isOverwritePresent: true);
 
@@ -55,7 +60,11 @@ public sealed class RouteMetadataParserRedTests
         string body,
         string expectedState)
     {
-        var metadata = new RouteMetadataParser().ParseSkill(body, isOverwritePresent: false);
+        var metadata = Parse(
+            body,
+            SourceDocumentForm.Skill,
+            isCompatibilityEntrypoint: false,
+            isOverwritePresent: false);
 
         Assert.Equal(Enum.Parse<RouteSourceMetadataState>(expectedState), metadata.State);
         Assert.Null(metadata.Description);
@@ -66,8 +75,10 @@ public sealed class RouteMetadataParserRedTests
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void CompleteSkillMetadataPreservesUnicodeValues()
     {
-        var metadata = new RouteMetadataParser().ParseSkill(
+        var metadata = Parse(
             "---\nname: 工作技能\ndescription: 'Native 描述'\n---\nbody",
+            SourceDocumentForm.Skill,
+            isCompatibilityEntrypoint: false,
             isOverwritePresent: true);
 
         Assert.Equal(RouteSourceMetadataState.Complete, metadata.State);
@@ -77,22 +88,17 @@ public sealed class RouteMetadataParserRedTests
         Assert.True(metadata.IsOverwritePresent);
     }
 
-    [Theory(DisplayName = "Open Forge metadata tags use letters with alphanumerics and internal hyphens only"),
-        InlineData("Tag", true),
-        InlineData("Évidence2", true),
-        InlineData("工作-2", true),
-        InlineData("", false),
-        InlineData("2Route", false),
-        InlineData("-Route", false),
-        InlineData("Route-", false),
-        InlineData("Route--List", false),
-        InlineData("Route_List", false),
-        InlineData("#Route", false),
-        InlineData("Route List", false),
-        InlineData("Route%20List", false)]
-    [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
-    public void TagGrammarIsStrict(string tag, bool expected)
+    private static RouteSourceMetadata Parse(
+        string source,
+        SourceDocumentForm form,
+        bool isCompatibilityEntrypoint,
+        bool isOverwritePresent)
     {
-        Assert.Equal(expected, RouteMetadataParser.IsValidTag(tag));
+        var document = new MarkdownDocumentParser().Parse(source);
+        var facts = new SourceAuthoredMetadataParser().Parse(document, form);
+        return new RouteMetadataParser().Parse(
+            facts,
+            isCompatibilityEntrypoint,
+            isOverwritePresent);
     }
 }
