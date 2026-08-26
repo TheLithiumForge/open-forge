@@ -8,7 +8,12 @@ open-forge:
 
 ## Task State
 
-- State: Corrected candidate sealed for rereview. Contract and Preflight are
+- State: Complete. Accepted feature tip `303ad7d897de78f55d19aa7b5bca0da9ff786ed9`
+  is squash-integrated into local `develop` at
+  `ca097a24d9d7fdc30e2872ba35c8ca96175b2319`. The final integrated correctness
+  review found no material behavior, regression, CLI-contract,
+  Native-AOT/source-generated-JSON, safety, or C# Directive issue. Contract and
+  Preflight are
   `0e04061`, callable Gray is `39827cc`, independently failing Red evidence is
   `f16dc2d`, closure/projection Green is `716afc8`, the grouped loading repair is
   `d45da71`, link expansion is `e8a82cb`, presentation/public evidence is

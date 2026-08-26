@@ -8,6 +8,19 @@ open-forge:
 
 ## Task State
 
+- State: Active at clean integrated baseline `db0d39a`. Context is Complete and
+  squash-integrated at `ca097a2`; Extension List is Complete and
+  squash-integrated at `db0d39a`. The combined managed Unit `978/978`,
+  Integration `354/354`, EndToEnd `111/111`, Native AOT Integration `354/354`,
+  and Native AOT EndToEnd `111/111` gates pass with zero skips. The next
+  authorized wave is Extension Inspect contract closure plus the pure Generated
+  Navigation foundation. Public Index mutation remains blocked on the accepted
+  lock/recovery dependency-order decision.
+- Responsible role: Overseer.
+- Last updated: 2026-08-26.
+
+## Historical Acceptance Record
+
 - State: Active. References is Complete and squash-integrated into local
   `develop` at `09f00ef`, with exact tree equality to accepted feature tip
   `1312368`. Public Red `43b75f3`, Green `23d5e2e`, managed `1270/1270`, process,
@@ -98,10 +111,10 @@ scenario. Shared facts move only through a Mastermind integration increment.
 
 - [x] [Implement deterministic CommonMark-aware source discovery and accepted Find projections](find.md) — Complete and integrated at `1f03d16`; Child 1 is Complete at exact `96fe413`, Child 2 at exact `ff7ce3f`, and Child 3's no-op Purple at exact `426d4f5`. The final managed/native gate and package, artifact, static, public no-write, and protected-surface audits passed — Implementer: Mastermind
 - [x] [Implement direct incoming and outgoing reference facts with shared source-universe filters](references-command.md) — Complete and integrated at `09f00ef`; public Green `23d5e2e`, managed `1270/1270`, public no-write, and final local `linux-x64` Native AOT gates pass — Implementer: Overseer
-- [ ] [Implement ordered context selection, loading reasons, overlap, size, and token projections](context.md) — Planned — Implementer: Not assigned
-- [ ] [Implement Extension catalogue and source listing without lifecycle inference](extension-list.md) — Planned — Implementer: Not assigned
-- [ ] [Implement exact Extension package inspection without mutation or installation behavior](extension-inspect.md) — Planned — Implementer: Not assigned
-- [ ] [Implement deterministic generated Entries projection and idempotent index application](index-command.md) — Planned — Implementer: Not assigned
+- [x] [Implement ordered context selection, loading reasons, overlap, size, and token projections](context.md) — Complete; accepted feature tip `303ad7d`, squash-integrated at `ca097a2` — Implementer: Context Task Mastermind
+- [x] [Implement Extension catalogue and source listing without lifecycle inference](extension-list.md) — Complete; accepted rebased integration tip `5e6babf`, squash-integrated at `db0d39a` — Implementer: Extension Discovery Task Mastermind
+- [ ] [Implement exact Extension package inspection without mutation or installation behavior](extension-inspect.md) — Ready for exact public-contract closure; production remains gated on that closure — Implementer: Extension Inspect Task Mastermind
+- [ ] [Implement deterministic generated Entries projection and idempotent index application](index-command.md) — Active only through its pure Generated Navigation foundation; public command/application is blocked on mutation dependency ordering — Implementer: Generated Navigation Task Mastermind for the foundation; Overseer for the blocked boundary
 
 ## Historical Find Progress And Current Routing Condition
 
@@ -138,10 +151,10 @@ Find Child 3 and the Find parent are Complete. Their accepted feature tree was
 squash-integrated into local `develop` at `1f03d16`. The final managed/native gate
 and package, artifact, static, public no-write, and protected-surface audits remain
 the accepted Find evidence. The repository-root developer workflow is Complete
-and included in the References baseline. The maintainer selected References
-before Context. References is now Complete and integrated at `09f00ef`; Context
-is dependency-eligible, while Extension discovery remains independently
-selectable. Neither starts without maintainer selection and closed preflight.
+and included in the current baseline. References is Complete and integrated at
+`09f00ef`; Context is Complete and integrated at `ca097a2`; Extension List is
+Complete and integrated at `db0d39a`. Extension Inspect contract closure and the
+pure Generated Navigation foundation are the selected next wave.
 
 The temporary compatibility-name correction renames the Working Index and
 References Task files and stages their command contracts under candidate route
@@ -171,5 +184,6 @@ history that generated navigation does not define:
 - [Implement the exact Find query operation over the accepted source catalogue and fixed Markdown facts](find-query-operation.md) - #Memory #Working #CLI #Task #Find #ReadOnly #Query #Markdown #Matching #Projection #Contextual
 - [Establish the neutral Framework source catalogue and migrate Route List and Inspect without public behavior change](find-source-catalogue.md) - #Memory #Working #CLI #Task #Find #ReadOnly #Sources #Route #Framework #Architecture #Contextual
 - [Implement deterministic generated Entries projection and idempotent index application](index-command.md) - #Memory #Working #CLI #Task #Index #Generated #Mutation #Contextual
+- [Establish pure deterministic Generated Navigation projection and bounded-region facts without effects](index-generated-navigation-foundation.md) - #Memory #Working #CLI #Task #Index #Generated #Framework #ReadOnly #Contextual
 - [Implement direct incoming and outgoing reference facts with shared source-universe filters](references-command.md) - #Memory #Working #CLI #Task #References #ReadOnly #Links #Contextual
 <!-- open-forge:generated-index:end -->

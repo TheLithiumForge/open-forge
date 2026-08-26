@@ -8,9 +8,13 @@ open-forge:
 
 ## Task State
 
-- State: Corrected candidate, waiting only on fresh `EL-R2` rereview, on isolated
-  branch `codex/cli-extension-discovery` from exact
-  baseline `32069d3e0516cde007bd35f31da82b88ff613759`.
+- State: Complete. Original accepted feature tip
+  `95b1280de98c8e1928cafab2fc70f0f5c190a6ec` was rebased over Context as
+  `5e6babf095ac319429c8b787e338a2e6192ef5d3` and squash-integrated into local
+  `develop` at `db0d39a213d26f3ad0bab00de1da5922457d854f`. The final integrated
+  correctness review found no material correctness, integration,
+  Native-AOT/source-generated-JSON, CLI-contract, determinism, or C# Directive
+  issue.
 - Responsible role: bounded Extension Discovery Task Mastermind.
 - Profile: Assured. The public command, package-source identity, deterministic
   embedded assets, and immutable lifecycle read schema are compatibility and
@@ -26,14 +30,19 @@ open-forge:
   local `linux-x64` Native AOT evidence is the beginning baseline.
 - Last updated: 2026-08-26.
 
-## Candidate Evidence
+## Accepted Evidence
 
-- Preflight is `ff5376a`; the original coherent production and evidence
-  candidate is `371d67d`. The grouped `EL-R1-01` through `EL-R1-07`
-  correctness repair is `5ac887d`, followed by the exact output-template style
-  corrections `1ceeefa` and `7f5395d`. The grouped `EL-R2-01` through
-  `EL-R2-03` repair and executable evidence packet is `56b0d07`. The corrected
-  tip is intentionally not accepted until the fresh `EL-R2` rereview returns.
+- Preflight is `ff5376a`; the original coherent production and evidence candidate
+  is `371d67d`. The grouped `EL-R1-01` through `EL-R1-07` correctness repair is
+  `5ac887d`, followed by the exact output-template style corrections `1ceeefa`
+  and `7f5395d`. The grouped `EL-R2-01` through `EL-R2-03` repair and executable
+  evidence packet is `56b0d07`.
+- Fresh `EL-R2` rereview returned `ACCEPTED` with no material correctness,
+  integration, Native-AOT/serialization, CLI-contract, determinism, or scoped C#
+  Directive finding. After the Context-first rebase and squash integration, a
+  second fresh read-only review of exact `develop` at `db0d39a` also returned
+  `ACCEPTED` with no material finding. These verdicts close the candidate-only
+  state; they are durably recorded here with the containing coordination commit.
 - Locked restore passes. The Release solution builds with zero warnings and zero
   errors. Focused managed Unit is `51/51`; focused managed Integration is
   `32/32`; published managed Extension List EndToEnd is `16/16`, all with zero

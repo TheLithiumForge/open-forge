@@ -14,23 +14,19 @@ release.
 
 ## Current State
 
-Find is Complete and squash-integrated into local `develop` at `1f03d16`. The
-repository-root developer workflow is Complete. References is Complete and
-squash-integrated into local `develop` at `09f00ef`, with exact tree equality to
-accepted feature tip `1312368`.
+Find, References, Context, and Extension List are Complete. Context is
+squash-integrated into local `develop` at `ca097a2`, and Extension List is
+squash-integrated at current clean baseline `db0d39a`. The final tree exactly
+matches the rebased Extension List integration tip `5e6babf` and retains both
+Context and Extension List composition and source-generated JSON registration.
 
-The maintainer selected References before Context. References Preflight is
-closed. Its neutral foundation is accepted at `e7516f0`, operation at `f7bb9f9`,
-structure improvement at `6922ca6`, final Red at `43b75f3`, and public Green at
-`23d5e2e`. Managed `1270/1270`, published process, no-write, architecture,
-protected-surface, and supported local `linux-x64` Native AOT evidence pass.
-
-The accepted References feature branch remains `codex/cli-references` in its
-dedicated worktree; the current integrated program baseline is local `develop`
-at `09f00ef`. The accepted developer-workflow direction is recorded in the
-[repository-root developer workflow
-Task](../cli-development/tasks/repository-root-developer-workflow.md) and the
-[Repository-Root CLI Tooling Decision](../../crystallized/decisions/repository-root-cli-tooling.md).
+The combined accepted baseline passes locked restore, warning-free Release
+build, format verification, managed Unit `978/978`, Integration `354/354`, and
+EndToEnd `111/111`, all with zero skips. The supported local `linux-x64` Native
+AOT root publishes and executes both commands; Native AOT Integration is
+`354/354` and EndToEnd is `111/111`, with zero skips. Final independent Context
+and Extension List correctness reviews found no material issues. No remote
+action or push occurred.
 
 Implemented boundaries:
 
@@ -62,27 +58,36 @@ external publication, remote action, or push occurred.
 
 ## Current Step
 
-Discuss the pending task graph and acceptable parallel lanes before selecting the
-next implementation Task. Context is now dependency-eligible, and Extension
-discovery remains an independent candidate. Do not start either implicitly and
-do not push.
+Freeze and execute the authorized two-lane wave from one reconciled baseline:
+
+1. close Extension Inspect's exact command-local result/finding/fingerprint
+   contract before production implementation; and
+2. establish the pure read-only `Framework/GeneratedNavigation` foundation with
+   no command, lock, write, recovery, root registration, or JSON surface.
+
+Public Index application and Mutation Foundation remain sequential. Do not start
+either until their current dependency-order contradiction is resolved in the
+accepted Architecture and Plan. Do not push.
 
 ## Protected State
 
 - Do not stage or alter unrelated `.apm` and `apm.lock.yaml` worktree changes.
 - Do not edit sealed Handoffs or archived evidence to rewrite history.
-- Do not change the accepted References result, finding-code, supported-link,
-  fragment, or generated-region meanings during implementation. Do not implement
-  Index behavior.
+- Do not change accepted Find, References, Context, Extension List, Route, Shell,
+  or source-reference meaning during the wave.
+- Do not implement public Index selection, binding, application, locking,
+  recovery, Git policy, or result presentation in the Generated Navigation lane.
 - Do not download additional dependencies without exact authorization.
 - Do not contact remotes, publish, globally install, deploy, or push.
 
 ## Next Actions
 
-1. Review the remaining task order and parallelization boundaries with the
-   maintainer.
-2. Select and close the preflight for the next Task or explicitly authorized
-   parallel wave; keep remotes unchanged.
+1. Integrate this reconciled coordination boundary and branch both isolated lanes
+   from its exact commit.
+2. Run the two bounded Task Masterminds with task-local reviewers, integrate only
+   accepted candidates, and keep remotes unchanged.
+3. Return the proposed Extension Inspect public contract and the Index/Mutation
+   ordering correction for project-level acceptance before dependent production.
 
 ## Current Sources
 

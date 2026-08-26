@@ -8,7 +8,12 @@ open-forge:
 
 ## Task State
 
-- State: Planned after route discovery, Find, References, and Context facts.
+- State: Split for safe execution. The pure Generated Navigation foundation is
+  Ready on integrated baseline `db0d39a213d26f3ad0bab00de1da5922457d854f`.
+  Public Index binding, selection, application, result, and presentation remain
+  blocked because the accepted design requires workspace locking, post-lock
+  revalidation, atomic replacement, Git policy, verification, and recovery while
+  the current Plan places their shared Mutation Foundation after Index.
 - Parent: [Read-Only Commands](_read-only.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/index-candidate/interface.md), [Behavior](../../../../crystallized/documents/cli/contracts/index-candidate/behavior.md), and [Technical Design](../../../../crystallized/documents/cli/contracts/index-candidate/technical-design.md).
 
@@ -39,6 +44,15 @@ descriptions/tags, overwrite and route semantics, unchanged files, line endings
 where contracted, malformed-region blocking, dry-run attention, write policy,
 atomic application, post-write verification, human/JSON/diagnostics/help, and
 idempotence.
+
+## Child Boundary
+
+- [Establish pure Generated Navigation foundation](index-generated-navigation-foundation.md)
+  is delegation-ready and may run in parallel with Extension Inspect contract
+  closure.
+- Public Index implementation does not start until the maintainer accepts a
+  dependency-order correction or another accepted architecture source resolves
+  the lock/recovery contradiction. Do not implement an Index-local substitute.
 
 ## Evidence
 

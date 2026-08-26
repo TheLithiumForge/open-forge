@@ -8,15 +8,20 @@ open-forge:
 
 ## Task State
 
-- State: Active. Find and the repository-root developer workflow are accepted.
-  References is Complete and squash-integrated into local `develop` at
-  `09f00ef`, with exact tree equality to accepted feature tip `1312368`. Public
-  Green is `23d5e2e`, managed is `1270/1270`, and the final supported local
-  `linux-x64` root, Integration, and EndToEnd Native AOT gates pass. The broader
-  replacement CLI program remains Active.
+- State: Active. Find, References, Context, Extension List, Modern C#
+  Improvements, and the repository-root developer workflow are accepted.
+  Context is squash-integrated into local `develop` at `ca097a2`; Extension List
+  is integrated at current clean baseline `db0d39a`, whose tree exactly matches
+  rebased integration tip `5e6babf`. The combined managed Unit `978/978`,
+  Integration `354/354`, EndToEnd `111/111`, Native AOT Integration `354/354`,
+  and Native AOT EndToEnd `111/111` gates pass with zero skips. Extension Inspect
+  contract closure and the pure Generated Navigation foundation are the active
+  non-overlapping wave. Public Index mutation remains blocked on the accepted
+  lock/recovery dependency-order decision. The broader replacement CLI program
+  remains Active.
 - Responsible role: Overseer.
 - Task source: This file.
-- Last updated: 2026-08-25.
+- Last updated: 2026-08-26.
 
 ## Problem Statement
 
