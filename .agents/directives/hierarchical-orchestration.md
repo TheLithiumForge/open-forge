@@ -13,6 +13,14 @@ open-forge:
 - Keep proposals, recommendations, accepted decisions, authorization, and executed changes distinct. Brainstorming, questions, examples, and hypothetical language do not authorize mutation.
 - Preserve the old single-owner behavior for ordinary sequential work: discuss directly, make small changes directly, and own architecture, implementation routing, verification, and acceptance without manufacturing an internal organization.
 - Use hidden Task Masterminds only when a bounded task benefits from a separate execution context. Use the Integration Mastermind only for a completed parallel wave or a difficult integration boundary.
+- When more than three genuinely independent tasks are active, the user-facing
+  Overseer may assign disjoint subprograms to hidden subordinate Overseers. Each
+  subordinate Overseer owns the finer task graph, Task Masterminds, local review,
+  and integration readiness only within its frozen boundary and returns compact
+  state upward. The user-facing Overseer retains project architecture, shared
+  contracts, cross-subprogram ordering, acceptance, and all user communication.
+  Do not add this layer for three or fewer tasks or when their semantic authority
+  overlaps.
 - Use parallel worktrees only when the user explicitly requests parallel execution or has explicitly authorized a managed parallel wave. Otherwise use direct or sequential execution.
 - Create one durable project control ledger only when work spans multiple tasks, worktrees, sessions, integration boundaries, or resumptions. Do not create project machinery for ordinary discussion or a small sequential change. Extend an existing ledger instead of creating a competing one.
 - Record execution profiles, maximum review, council, and correction budgets, and stable consumed IDs in Markdown execution capsules. Never put live execution controls or orchestration state in frontmatter. Treat these budgets as internal resource controls, not interactive spawn permissions.
@@ -21,6 +29,21 @@ open-forge:
 - A true parallel task requires an exact base commit, distinct local branch and worktree, a session rooted in that worktree, bounded ownership, dependencies, evidence, review budget, and stop conditions. Separate conversations against one mutable worktree are not isolated.
 - Use a worktree-aware orchestration broker or equivalent capability when available. If safe isolated child-session execution is unavailable, use sequential hidden tasks or direct work instead of asking the user to manage sessions or pretending parallel mutation is isolated.
 - Keep project-level context in the Overseer. Pass compact packets downward and return compact checkpoints or completion packets upward. Do not copy complete program history, raw successful logs, or routine child transcripts between levels.
+- A Task Mastermind must independently inspect the assigned worktree before it
+  designs, delegates, or accepts a task. It reads the Loader, selects the actual
+  applicable route and scope chains, follows task and contract links, inspects
+  current production code, tests, and their consumers, and verifies Git state.
+  Treat the Overseer's execution capsule as a bounded starting map, not a
+  substitute for repository investigation. Return a project change request when
+  the inspected sources materially disagree with the packet.
+- Before spawning a subagent, the Task Mastermind converts that investigation
+  into one explicit child packet: observable outcome, accepted meaning,
+  dependencies, exact responsibility, expected and protected paths, direct
+  integration neighborhood, evidence, stop conditions, and every discovered
+  constraint needed to avoid guessing. Do not delegate an unresolved design or
+  rely on the child to rediscover critical scope. Prefer literal, unambiguous
+  instructions for strict execution agents while requiring the child to report
+  any genuine contradiction upward.
 - Expected paths are forecasts. Protected paths and protected semantic authorities are hard boundaries. A directly required integration-neighborhood path may be added when accepted meaning already requires it and must be reported.
 - Keep one continuous implementation owner for a coherent tests, production, repair, and local-refactor loop. Use separate phase specialists only when an independently frozen boundary materially protects a named risk.
 - Default to no independent review for direct or routine work. Use one review when a named risk justifies it and add another only for a different named risk. Consolidate accepted findings into one repair pass and recheck only affected boundaries.
