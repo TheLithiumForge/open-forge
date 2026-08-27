@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Commands.References.Models.Source;
 using OpenForge.Cli.Core.Commands.References.Shared.Extraction;
 using OpenForge.Cli.Core.Commands.References.Shared.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
@@ -179,8 +180,8 @@ public sealed class ReferencesDomainModelTests
             CliSemanticStatus.Blocked));
     }
 
-    [Fact(DisplayName = "References extraction reports unavailable generated boundaries without silent suppression"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
-    public void ExtractionRetainsLinksWhenGeneratedBoundaryIsUnavailable()
+    [Fact(DisplayName = "References extraction retains links and reports an invalid generated boundary"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
+    public void ExtractionRetainsLinksWhenGeneratedBoundaryIsInvalid()
     {
         const string sourceText =
             "# Document\n\n"
@@ -191,12 +192,14 @@ public sealed class ReferencesDomainModelTests
             + "<!-- open-forge:generated-index:end -->\n"
             + "## Later\n";
         var source = CreateLogicalSource();
+        var document = new MarkdownDocumentParser().Parse(sourceText);
+        Assert.Equal(MarkdownGeneratedRegionState.Invalid, document.GeneratedRegion.State);
 
         var extracted = new ReferencesLinkExtractor().Extract(
             source,
             source.Base,
             source.Base.CanonicalPath,
-            new MarkdownDocumentParser().Parse(sourceText),
+            document,
             ReferencesDirection.Out,
             ReferencesProvenance.SelectedSource);
 
@@ -206,13 +209,21 @@ public sealed class ReferencesDomainModelTests
         var finding = Assert.Single(extracted.Findings);
         Assert.Equal(ReferencesFindingCode.GeneratedRegionUnavailable, finding.Code);
         Assert.False(finding.Blocked);
+    }
 
+    [Fact(DisplayName = "References extraction blocks only when the Markdown body boundary is unavailable"), Trait("Feature", "references"), Trait("Evidence", "Unit")]
+    public void ExtractionBlocksOnlyWhenBodyBoundaryIsUnavailable()
+    {
+        var source = CreateLogicalSource();
         const string noBodyBoundary = "---\nopen-forge:\n  tags: [One]\n# Missing terminator\n";
+        var document = new MarkdownDocumentParser().Parse(noBodyBoundary);
+        Assert.Equal(MarkdownGeneratedRegionState.Unavailable, document.GeneratedRegion.State);
+
         var blocked = new ReferencesLinkExtractor().Extract(
             source,
             source.Base,
             source.Base.CanonicalPath,
-            new MarkdownDocumentParser().Parse(noBodyBoundary),
+            document,
             ReferencesDirection.Out,
             ReferencesProvenance.SelectedSource);
         Assert.False(blocked.Established);

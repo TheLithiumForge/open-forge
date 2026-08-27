@@ -444,6 +444,32 @@ public sealed class ExtensionInspectApplicationIntegrationTests
         Assert.Equal(beforeSource, fixture.Source.SnapshotHashes());
     }
 
+    [Fact(DisplayName = "Extension Inspect keeps unavailable generated boundaries distinct, non-invalid, and incomplete")]
+    [Trait("Feature", "extension-inspect"), Trait("Evidence", "Integration")]
+    public async Task UnavailableGeneratedBoundaryRemainsDistinctAndIncomplete()
+    {
+        using var fixture = InspectScenario.Create("intended-generated-unavailable");
+        fixture.WriteInstalledToolkit();
+        fixture.WritePackage(
+            string.Empty,
+            "toolkit",
+            [],
+            (".agents/toolkit.md", "---\nopen-forge:\n  tags: [One]\n# Missing terminator\n"));
+
+        var result = await fixture.InspectAsync();
+
+        Assert.Equal(
+            ExtensionInspectGeneratedRegionState.Unavailable,
+            Assert.Single(result.Generated.Regions).State);
+        Assert.DoesNotContain(
+            result.Findings,
+            finding => finding.Code == ExtensionInspectFindingCode.GeneratedBoundaryInvalid);
+        Assert.Contains(
+            result.Findings,
+            finding => finding.Code == ExtensionInspectFindingCode.FingerprintFallback);
+        Assert.Equal(ExtensionInspectGeneratedState.Incomplete, result.Generated.State);
+    }
+
     [Fact(DisplayName = "Extension Inspect reports unsupported payloads through the v1 exact-byte fallback"), Trait("Feature", "extension-inspect"), Trait("Evidence", "Integration")]
     public async Task UnsupportedPayloadUsesSelectedPolicyFallback()
     {

@@ -220,6 +220,10 @@ public sealed class MarkdownDocumentParserRedTests
         Assert.Equal(MarkdownGeneratedRegionState.Complete, facts.GeneratedRegion.State);
         var contentSpan = Assert.IsType<MarkdownTextSpan>(facts.GeneratedRegion.ContentSpan);
         Assert.Contains(generatedLink, source[contentSpan.Start..contentSpan.End], StringComparison.Ordinal);
+        var omissionSpan = Assert.IsType<MarkdownTextSpan>(facts.GeneratedRegion.OmissionSpan);
+        Assert.Equal(
+            generatedLink + "\n",
+            source[omissionSpan.Start..omissionSpan.End]);
         var regionSpan = Assert.IsType<MarkdownTextSpan>(facts.GeneratedRegion.RegionSpan);
         Assert.StartsWith("<!-- open-forge:generated-index:start -->", source[regionSpan.Start..regionSpan.End], StringComparison.Ordinal);
         Assert.EndsWith("<!-- open-forge:generated-index:end -->", source[regionSpan.Start..regionSpan.End], StringComparison.Ordinal);
@@ -242,8 +246,120 @@ public sealed class MarkdownDocumentParserRedTests
         Assert.All(
             malformed,
             value => Assert.Equal(
-                MarkdownGeneratedRegionState.Unavailable,
+                MarkdownGeneratedRegionState.Invalid,
                 new MarkdownDocumentParser().Parse(value).GeneratedRegion.State));
+    }
+
+    [Fact(DisplayName = "Markdown generated-region grammar distinguishes absent markers from unavailable candidates")]
+    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
+    public void GeneratedRegionCandidateStatesRemainDistinct()
+    {
+        const string start = "<!-- open-forge:generated-index:start -->";
+        const string end = "<!-- open-forge:generated-index:end -->";
+
+        Assert.Equal(
+            MarkdownGeneratedRegionState.Absent,
+            new MarkdownDocumentParser().Parse("## Entries\n").GeneratedRegion.State);
+        Assert.Equal(
+            MarkdownGeneratedRegionState.Invalid,
+            new MarkdownDocumentParser().Parse("<!-- open-forge:generated-index:bogus -->\n").GeneratedRegion.State);
+        foreach (var sourceWithMarkerPrefix in new[]
+        {
+            "---\nopen-forge: \"open-forge:generated-index:bogus\"\n---\n# Document\n",
+            "[unused][ref]\n\n[ref]: <open-forge:generated-index:bogus>\n",
+            "![image](open-forge:generated-index:bogus)\n",
+        })
+        {
+            Assert.Equal(
+                MarkdownGeneratedRegionState.Invalid,
+                new MarkdownDocumentParser().Parse(sourceWithMarkerPrefix).GeneratedRegion.State);
+        }
+        Assert.Equal(
+            MarkdownGeneratedRegionState.Invalid,
+            new MarkdownDocumentParser().Parse($"## Entries   \n{start}\nbody\n{end}\n").GeneratedRegion.State);
+
+        foreach (var markerPair in new[]
+        {
+            $"  {start}\nbody\n{end}",
+            $"{start} trailing\nbody\n{end}",
+            $"{start}\nbody\n{end} trailing",
+        })
+        {
+            Assert.Equal(
+                MarkdownGeneratedRegionState.Invalid,
+                new MarkdownDocumentParser().Parse($"## Entries\n{markerPair}\n").GeneratedRegion.State);
+        }
+
+        Assert.Equal(
+            MarkdownGeneratedRegionState.Absent,
+            new MarkdownDocumentParser().Parse($"`{start}`\n```\n{end}\n```\n").GeneratedRegion.State);
+
+        foreach (var lineEnding in new[] { "\n", "\r\n", "\r" })
+        {
+            var source = string.Join(
+                lineEnding,
+                "## Entries",
+                "",
+                start,
+                "body",
+                end,
+                "");
+            Assert.Equal(
+                MarkdownGeneratedRegionState.Complete,
+                new MarkdownDocumentParser().Parse(source).GeneratedRegion.State);
+        }
+    }
+
+    [Fact(DisplayName = "Markdown generated-region facts classify malformed marker syntax as invalid")]
+    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
+    public void MalformedGeneratedRegionIsInvalid()
+    {
+        var facts = new MarkdownDocumentParser().Parse(
+            "## Entries\n<!-- open-forge:generated-index:bogus -->\n");
+
+        Assert.Equal(MarkdownGeneratedRegionState.Invalid, facts.GeneratedRegion.State);
+    }
+
+    [Fact(DisplayName = "Markdown generated-region facts retain authored content before the generated marker")]
+    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
+    public void GeneratedRegionAllowsAuthoredContentBeforeMarker()
+    {
+        const string start = "<!-- open-forge:generated-index:start -->";
+        const string end = "<!-- open-forge:generated-index:end -->";
+        const string authored = "Authored route notes remain part of the document.\n";
+        var source = $"## Entries\n{authored}{start}\n- generated\n{end}\n";
+
+        var facts = new MarkdownDocumentParser().Parse(source);
+
+        Assert.Equal(MarkdownGeneratedRegionState.Complete, facts.GeneratedRegion.State);
+    }
+
+    [Theory(DisplayName = "Markdown generated-region facts reject horizontal whitespace after the end marker")]
+    [InlineData(" ")]
+    [InlineData("\t")]
+    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
+    public void GeneratedRegionRejectsHorizontalWhitespaceAfterEndMarker(string trailing)
+    {
+        const string sourcePrefix =
+            "## Entries\n"
+            + "<!-- open-forge:generated-index:start -->\n"
+            + "body\n"
+            + "<!-- open-forge:generated-index:end -->\n";
+
+        var facts = new MarkdownDocumentParser().Parse(sourcePrefix + trailing);
+
+        Assert.Equal(MarkdownGeneratedRegionState.Invalid, facts.GeneratedRegion.State);
+    }
+
+    [Fact(DisplayName = "Markdown generated-region facts keep an unparseable body boundary unavailable")]
+    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
+    public void GeneratedRegionRemainsUnavailableWhenFrontmatterIsUnterminated()
+    {
+        const string source = "---\nopen-forge:\n  tags: [One]\n# Body\n";
+
+        var facts = new MarkdownDocumentParser().Parse(source);
+
+        Assert.Equal(MarkdownGeneratedRegionState.Unavailable, facts.GeneratedRegion.State);
     }
 
     [Fact(DisplayName = "Markdown sections and visible literal spans stay within exact document boundaries")]

@@ -54,16 +54,22 @@ internal sealed class MarkdownFingerprintReader
             return ExactFallback(bytes, "The normalized Markdown source could not be parsed safely.");
         }
 
-        var region = FindGeneratedRegion(normalized, facts);
+        var generatedRegion = facts.GeneratedRegion;
+        var region = MapGeneratedRegion(normalized, generatedRegion);
         if (region.State is MarkdownFingerprintRegionState.Invalid
             or MarkdownFingerprintRegionState.Ambiguous
             or MarkdownFingerprintRegionState.Unavailable)
         {
-            return ExactFallback(bytes, "The generated Markdown boundary is not a valid final Entries region.", region);
+            return ExactFallback(
+                bytes,
+                generatedRegion.State == MarkdownGeneratedRegionState.Unavailable
+                    ? generatedRegion.Cause ?? "The Markdown document is unavailable for semantic fingerprinting."
+                    : "The generated Markdown boundary is not a valid final Entries region.",
+                region);
         }
 
         var output = region.State == MarkdownFingerprintRegionState.Valid
-            ? RemoveInterior(normalized, region)
+            ? RemoveInterior(normalized, generatedRegion)
             : normalized;
         var hash = Convert.ToHexStringLower(SHA256.HashData(StrictUtf8.GetBytes(output)));
         return new MarkdownFingerprintFacts(
@@ -112,92 +118,29 @@ internal sealed class MarkdownFingerprintReader
         return builder.ToString();
     }
 
-    private static MarkdownFingerprintRegion FindGeneratedRegion(
+    private static MarkdownFingerprintRegion MapGeneratedRegion(
         string source,
-        MarkdownDocumentFacts facts)
+        MarkdownGeneratedRegionFact generatedRegion)
     {
-        var lines = ReadLines(source);
-        var markerCandidates = new List<MarkerCandidate>();
-        var malformedMarker = false;
-        foreach (var line in lines)
-        {
-            var content = source[line.Start..line.End];
-            if (string.Equals(content, MarkdownGeneratedRegionSyntax.StartMarker, StringComparison.Ordinal)
-                && ContainsOutsideCode(
-                    facts,
-                    source,
-                    line.Start,
-                    line.End,
-                    MarkdownGeneratedRegionSyntax.StartMarker))
-            {
-                markerCandidates.Add(new MarkerCandidate(MarkerKind.Start, line));
-            }
-            else if (string.Equals(content, MarkdownGeneratedRegionSyntax.EndMarker, StringComparison.Ordinal)
-                && ContainsOutsideCode(
-                    facts,
-                    source,
-                    line.Start,
-                    line.End,
-                    MarkdownGeneratedRegionSyntax.EndMarker))
-            {
-                markerCandidates.Add(new MarkerCandidate(MarkerKind.End, line));
-            }
-            else if (content.Contains(MarkdownGeneratedRegionSyntax.MarkerPrefix, StringComparison.Ordinal)
-                && ContainsOutsideCode(
-                    facts,
-                    source,
-                    line.Start,
-                    line.End,
-                    MarkdownGeneratedRegionSyntax.MarkerPrefix))
-            {
-                malformedMarker = true;
-            }
-        }
-
-        var entries = facts.Headings
-            .Where(heading => heading.Level == 2
-                && heading.IsCanonical
-                && string.Equals(
-                    heading.VisibleText,
-                    MarkdownGeneratedRegionSyntax.EntriesHeadingText,
-                    StringComparison.Ordinal)
-                && lines.Any(line => line.Start == heading.Span.Start
-                    && string.Equals(
-                        source[line.Start..line.End],
-                        MarkdownGeneratedRegionSyntax.EntriesHeadingLine,
-                        StringComparison.Ordinal)))
-            .ToArray();
-        if (malformedMarker)
-        {
-            return MarkdownFingerprintRegion.Invalid(MarkdownFingerprintRegionState.Invalid);
-        }
-
-        if (markerCandidates.Count == 0)
+        if (generatedRegion.State == MarkdownGeneratedRegionState.Absent)
         {
             return MarkdownFingerprintRegion.Absent();
         }
 
-        if (entries.Length != 1
-            || markerCandidates.Count != 2
-            || markerCandidates[0].Kind != MarkerKind.Start
-            || markerCandidates[1].Kind != MarkerKind.End)
+        if (generatedRegion.State == MarkdownGeneratedRegionState.Invalid)
         {
             return MarkdownFingerprintRegion.Invalid(MarkdownFingerprintRegionState.Invalid);
         }
 
-        var heading = entries[0];
-        var start = markerCandidates[0].Line;
-        var end = markerCandidates[1].Line;
-        if (facts.Headings.Any(candidate => candidate.Span.Start > heading.Span.Start && candidate.Level <= 2)
-            || start.Start < heading.Span.End
-            || end.Start < start.NextStart
-            || lines.Any(line => line.Start >= end.NextStart && line.End > line.Start))
+        if (generatedRegion.State == MarkdownGeneratedRegionState.Unavailable)
         {
-            return MarkdownFingerprintRegion.Invalid(MarkdownFingerprintRegionState.Invalid);
+            return MarkdownFingerprintRegion.Invalid(MarkdownFingerprintRegionState.Unavailable);
         }
 
-        var startOffset = ByteCount(source, start.NextStart);
-        var endOffset = ByteCount(source, end.Start);
+        var omission = generatedRegion.OmissionSpan
+            ?? throw new InvalidOperationException("A complete generated region must establish an omission span.");
+        var startOffset = ByteCount(source, omission.Start);
+        var endOffset = ByteCount(source, omission.End);
         return new MarkdownFingerprintRegion(
             MarkdownFingerprintRegionState.Valid,
             MarkdownGeneratedRegionSyntax.StartMarker,
@@ -208,115 +151,15 @@ internal sealed class MarkdownFingerprintReader
             markerLinesRetained: true);
     }
 
-    private static bool ContainsOutsideCode(
-        MarkdownDocumentFacts facts,
+    private static string RemoveInterior(
         string source,
-        int lineStart,
-        int lineEnd,
-        string value)
+        MarkdownGeneratedRegionFact generatedRegion)
     {
-        var content = source[lineStart..lineEnd];
-        var offset = content.IndexOf(value, StringComparison.Ordinal);
-        while (offset >= 0)
-        {
-            var valueStart = lineStart + offset;
-            var valueEnd = valueStart + value.Length;
-            if (!facts.OpaqueSpans.Any(opaque => opaque.IsCode
-                && opaque.Span.Start <= valueStart
-                && opaque.Span.End >= valueEnd))
-            {
-                return true;
-            }
-
-            var nextOffset = offset + value.Length;
-            offset = nextOffset < content.Length
-                ? content[nextOffset..].IndexOf(value, StringComparison.Ordinal)
-                : -1;
-            if (offset >= 0)
-            {
-                offset += nextOffset;
-            }
-        }
-
-        return false;
-    }
-
-    private static string RemoveInterior(string source, MarkdownFingerprintRegion region)
-    {
-        var normalizedStart = CharOffsetForUtf8ByteCount(source, region.StartByteOffset
-            ?? throw new InvalidOperationException("A valid region must establish a start offset."));
-        var normalizedEnd = CharOffsetForUtf8ByteCount(source, region.EndByteOffset
-            ?? throw new InvalidOperationException("A valid region must establish an end offset."));
-        return string.Concat(source.AsSpan(0, normalizedStart), source.AsSpan(normalizedEnd));
+        var omission = generatedRegion.OmissionSpan
+            ?? throw new InvalidOperationException("A complete generated region must establish an omission span.");
+        return string.Concat(source.AsSpan(0, omission.Start), source.AsSpan(omission.End));
     }
 
     private static int ByteCount(string source, int charCount)
         => checked((int)StrictUtf8.GetByteCount(source.AsSpan(0, charCount)));
-
-    private static int CharOffsetForUtf8ByteCount(string source, int byteCount)
-    {
-        if (byteCount == 0)
-        {
-            return 0;
-        }
-
-        var offset = 0;
-        var index = 0;
-        foreach (var rune in source.EnumerateRunes())
-        {
-            offset = checked(offset + rune.Utf8SequenceLength);
-            if (offset == byteCount)
-            {
-                return index + rune.Utf16SequenceLength;
-            }
-
-            if (offset > byteCount)
-            {
-                throw new InvalidOperationException("A UTF-8 byte offset split a scalar value.");
-            }
-
-            index += rune.Utf16SequenceLength;
-        }
-
-        throw new InvalidOperationException("A UTF-8 byte offset was outside the normalized source.");
-    }
-
-    private static IReadOnlyList<SourceLine> ReadLines(string source)
-    {
-        var lines = new List<SourceLine>();
-        var start = 0;
-        while (start < source.Length || (source.Length == 0 && lines.Count == 0))
-        {
-            var end = start;
-            while (end < source.Length && source[end] != '\n')
-            {
-                end++;
-            }
-
-            var next = end < source.Length ? end + 1 : end;
-            lines.Add(new SourceLine(start, end, next));
-            if (next == start)
-            {
-                break;
-            }
-
-            start = next;
-            if (start == source.Length)
-            {
-                break;
-            }
-        }
-
-        return lines;
-    }
-
-    private readonly record struct SourceLine(int Start, int End, int NextStart);
-
-    private readonly record struct MarkerCandidate(MarkerKind Kind, SourceLine Line);
-
-    private enum MarkerKind
-    {
-        Start,
-        End,
-    }
 }

@@ -60,10 +60,11 @@ internal sealed class MarkdownDocumentParser
 
         var sections = CreateSections(headings, bodySpan);
         var generatedRegion = MarkdownGeneratedRegionParser.Parse(
-            source,
-            bodySpan,
-            headings,
-            opaqueSpans);
+            new MarkdownGeneratedRegionParseInput(
+                Source: source,
+                BodySpan: bodySpan,
+                Headings: headings,
+                OpaqueSpans: opaqueSpans));
 
         return new MarkdownDocumentFacts(
             source,

@@ -245,10 +245,12 @@ internal sealed class ExtensionInspectComparisonBuilder(MarkdownFingerprintReade
             }
         }
 
-        var invalid = regions.Any(region => region.State is ExtensionInspectGeneratedRegionState.Invalid or ExtensionInspectGeneratedRegionState.Ambiguous);
+        var incomplete = regions.Any(region => region.State is ExtensionInspectGeneratedRegionState.Invalid
+            or ExtensionInspectGeneratedRegionState.Ambiguous
+            or ExtensionInspectGeneratedRegionState.Unavailable);
         return new ExtensionInspectGenerated
         {
-            State = invalid || pathState is ExtensionInspectPathState.Incomplete or ExtensionInspectPathState.Blocked
+            State = incomplete || pathState is ExtensionInspectPathState.Incomplete or ExtensionInspectPathState.Blocked
                 ? ExtensionInspectGeneratedState.Incomplete
                 : ExtensionInspectGeneratedState.Complete,
             Ownership = GeneratedOwnership,

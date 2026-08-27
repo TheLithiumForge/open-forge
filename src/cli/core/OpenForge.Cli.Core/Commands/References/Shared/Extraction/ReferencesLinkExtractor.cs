@@ -31,7 +31,7 @@ internal sealed class ReferencesLinkExtractor
         var region = document.GeneratedRegion;
         var noSuppressionBoundary = document.BodySpan is not null;
         var blocked = false;
-        if (region.State == MarkdownGeneratedRegionState.Unavailable)
+        if (region.State is MarkdownGeneratedRegionState.Invalid or MarkdownGeneratedRegionState.Unavailable)
         {
             blocked = !noSuppressionBoundary;
             findings.Add(new ReferencesInspectionFinding(
