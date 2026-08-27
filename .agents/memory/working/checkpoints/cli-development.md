@@ -14,6 +14,16 @@ release.
 
 ## Current State
 
+Proportional CLI Corrections are Complete and squash-integrated through clean
+local `develop` commit `0d88606`. Proportionate guidance is `5f9f59e`; Route List
+bounded escaping and proved-dead support removal are `2cd525d`; the authoritative
+Markdown generated-region and fingerprint state flow is `0d88606`. The integrated
+Release build is warning-free; managed Unit `1053/1053`, Integration `411/411`,
+and EndToEnd `120/120` pass. Portable `linux-x64` Native AOT root publication and
+execution pass, with Native AOT Integration `411/411` and EndToEnd `120/120`.
+Native dogfood makes no writes, Doctor reports zero errors and the known C#
+`Axioms` warning, and final Sol/xhigh review is `ROBUST`. No push occurred.
+
 Find, References, Context, Extension List, and Extension Inspect are Complete. Context is
 squash-integrated into local `develop` at `ca097a2`, and Extension List is
 squash-integrated at current clean baseline `db0d39a`. The final tree exactly
@@ -83,18 +93,11 @@ external publication, remote action, or push occurred.
 
 ## Current Step
 
-[Correct Proportional CLI Findings](../cli-development/tasks/proportional-cli-corrections.md)
-is Active from clean local `develop` commit `bba84b6`. Proportionate development,
-the cooperative managed-filesystem threat boundary, and the Development and C#
-Development extension placeholders are committed at feature commit `0f40622`.
-The audit record accepts two independent correction lanes: exact shared
-generated-region semantics and Route List diagnostic bounds plus proved-dead
-support removal. The remaining architecture findings are preserved with explicit
-defer, retain, or revisit boundaries rather than being silently implemented.
-
-Integrate the proportional-development feature, execute both correction lanes in
-isolated worktrees, integrate and run the complete gate, then resume Mutation
-Foundation at its persisted lifecycle-schema decision. Public Index remains
+[Mutation Foundation](../cli-development/tasks/mutation-foundation/_mutation-foundation.md)
+is the next Ready boundary. Reconcile its persisted lifecycle-schema decision and
+dirty feature worktree with the accepted cooperative stable-workspace threat
+model, proportional recovery policy, modern C# directives, and retained PCF-006
+and PCF-009 decisions before resuming implementation. Public Index remains
 sequential after Mutation Foundation. Do not push.
 
 ## Protected State
@@ -110,14 +113,12 @@ sequential after Mutation Foundation. Do not push.
 
 ## Next Actions
 
-1. Squash-integrate the proportional-development and audit-record feature without
-   a remote action.
-2. Run the two correction lanes in parallel, review and integrate them, and pass
-   the complete managed and public dogfood gate.
-3. Return to the exact Mutation Foundation lifecycle-schema decision, then freeze
+1. Return to the exact Mutation Foundation lifecycle-schema decision, then freeze
    and accept its callable contracts before implementing lock, lifecycle,
    revalidation, atomic-apply, receipt, recovery, and Git children in dependency
    order. Keep remotes unchanged.
+2. Implement public Index only after Mutation Foundation is accepted; do not
+   create command-local mutation, lock, recovery, or Git substitutes.
 
 ## Current Sources
 

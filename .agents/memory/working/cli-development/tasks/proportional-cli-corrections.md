@@ -1,18 +1,20 @@
 ---
 open-forge:
   description: Correct confirmed read-only CLI defects and preserve proportionate architecture findings before Mutation Foundation resumes
-  tags: [Memory, Working, CLI, Task, Audit, Correctness, Architecture, Proportionality, Contextual, Active]
+  tags: [Memory, Working, CLI, Task, Audit, Correctness, Architecture, Proportionality, Contextual, Complete]
 ---
 
 # Correct Proportional CLI Findings
 
 ## Task State
 
-- State: Active.
+- State: Complete.
 - Responsible role: Overseer, with one bounded Task Mastermind for each parallel
   correction lane.
 - Parent: [Complete The Replacement CLI](00-cli-development.md).
 - Accepted base: local `develop` commit `bba84b6`.
+- Integrated boundary: proportionate guidance `5f9f59e`, Route List correction
+  `2cd525d`, and Markdown correction `0d88606`.
 - Required predecessor: the proportional-development and CLI threat-boundary
   package committed at feature commit `0f40622`.
 - Last updated: 2026-08-27.
@@ -39,13 +41,13 @@ accepted public command meaning beyond the named defects.
 
 | ID      | Severity | Finding | Disposition and earliest boundary |
 | ------- | -------- | ------- | --------------------------------- |
-| PCF-001 | Medium   | `RouteListTextEscaping` can append an ellipsis after consuming the complete limit, and raw clamping can split an escape or Unicode scalar. | Correct now in the Route List lane. Preserve the configured maximum as a total output bound and add direct hostile-value evidence. Earliest boundary: Route List diagnostic rendering. |
-| PCF-002 | High     | The shared Markdown generated-region parser admits canonical visible `Entries` text with trailing heading whitespace, while Extension Inspect fingerprinting requires the exact raw `## Entries` line. | Correct now in the Markdown lane. One authoritative parsed region fact must enforce the accepted exact heading and marker grammar; fingerprinting must consume or truthfully map that fact instead of implementing a second grammar. Earliest boundary: shared Markdown semantics. |
-| PCF-003 | High     | Earlier `physical identity` wording overstated what managed resolved-path observation proves. | Resolved by `0f40622`: the accepted boundary is managed-API-observable links and reparse points in a stable workspace, not inode, file-ID, hidden mount, or adversarial handle identity. Integrate that commit before production corrections. |
+| PCF-001 | Medium   | `RouteListTextEscaping` can append an ellipsis after consuming the complete limit, and raw clamping can split an escape or Unicode scalar. | Resolved at `2cd525d`: configured limits are total UTF-16 output bounds including the truncation marker; complete escape tokens and scalar boundaries are preserved. |
+| PCF-002 | High     | The shared Markdown generated-region parser admits canonical visible `Entries` text with trailing heading whitespace, while Extension Inspect fingerprinting requires the exact raw `## Entries` line. | Resolved at `0d88606`: one authoritative parsed fact owns exact region grammar and distinguishes invalid grammar from unavailable parsing; fingerprinting maps that fact without a second grammar. |
+| PCF-003 | High     | Earlier `physical identity` wording overstated what managed resolved-path observation proves. | Resolved at `5f9f59e`: the accepted boundary is managed-API-observable links and reparse points in a stable workspace, not inode, file-ID, hidden mount, or adversarial handle identity. |
 | PCF-004 | High     | Generated Navigation is a substantial foundation whose public Index consumer is still pending. | Do not remove it during this correction because Index is an accepted direct consumer. Do not broaden it. Reassess its actual retained surface at Index acceptance and promote only meaning proved by additional consumers. |
 | PCF-005 | High     | Extension Inspect comparison and result formation carry extensive future-facing lifecycle, fingerprint, and generated-state machinery. | Preserve accepted public behavior now. Before Status or Doctor consumes these facts, run a bounded architecture reduction pass and promote only neutral capabilities with real consumers. |
 | PCF-006 | Medium   | Lifecycle validation includes exhaustive coverage states and custom duplicate-property scanning before lifecycle mutation exists. | Mutation Foundation must investigate which facts are required as write authority. Keep source-generated typed schema; treat retained custom scanning as an explicit justified exception. |
-| PCF-007 | Medium   | `RouteListDirectoryEnumerator` and `RouteListFilesystemEntryReader` appear to have no production consumer; one has only a direct test. | The Route List lane must prove the reference graph and remove the helpers and orphaned tests if they are dead. Stop if a real runtime or accepted imminent consumer is found. |
+| PCF-007 | Medium   | `RouteListDirectoryEnumerator` and `RouteListFilesystemEntryReader` appear to have no production consumer; one has only a direct test. | Resolved at `2cd525d`: Git history and the complete reference graph proved that `SourceCatalogueReader` superseded both helpers; the dead helpers and only orphaned policy/test branches were removed. |
 | PCF-008 | Low      | `SourceLinkDestinationResolver` exposes three delegates that References immediately forwards through lambdas. | Preference-only for this wave. Revisit the seam when a real consumer changes; prefer one cohesive capability or concrete Framework services if the forwarding remains. |
 | PCF-009 | Medium   | Extension and Lifecycle JSON syntax validators duplicate property-tracking mechanics. | Revisit before lifecycle mutation. Share one narrow mechanism only if strict duplicate rejection remains accepted and both consumers retain identical semantics. |
 
@@ -127,10 +129,29 @@ one project-level Sol/xhigh correctness and architecture review.
 - Stop promotion when consumers have similar syntax but different semantic
   authority.
 
+## Acceptance Result
+
+- The integrated Release solution build passes with zero warnings and errors.
+- Managed Unit `1053/1053`, Integration `411/411`, and EndToEnd `120/120` pass
+  with zero failures or skips.
+- Portable `linux-x64` Native AOT root publication and execution pass without a
+  distro-specific RID or project workaround. Native AOT Integration is
+  `411/411` and Native AOT EndToEnd is `120/120`, with zero skips.
+- Native Route List and Extension Inspect dogfood preserve expected public
+  status, stream, generated-region, and no-write behavior.
+- Format verification exits zero with the known repository-local reference-load
+  warnings even after a successful standard restore. `git diff --check` passes,
+  the integrated tree is clean, and legacy Doctor reports zero errors plus the
+  pre-existing C# `Axioms` warning.
+- Both lane reviews and the final integrated Sol/xhigh review have no unresolved
+  material finding. The integrated review independently reproduced the complete
+  managed and Native AOT suites.
+- PCF-004 through PCF-006 and PCF-008 through PCF-009 retain their recorded
+  defer or revisit boundaries; this wave did not broaden them.
+
 ## Completion
 
-Complete only when PCF-001, PCF-002, PCF-003, and PCF-007 are closed in the
-integrated tree; all other findings retain the dispositions above; complete
-managed evidence and public dogfood pass; independent review has no unresolved
-material finding; and the Plan, parent Task, and Checkpoint identify the next
-accepted development boundary.
+Complete. PCF-001, PCF-002, PCF-003, and PCF-007 are closed in the integrated
+tree at `0d88606`; all other findings retain the dispositions above. Complete
+managed and Native AOT evidence, public dogfood, no-write checks, and independent
+review pass. Mutation Foundation M1 is the next accepted development boundary.

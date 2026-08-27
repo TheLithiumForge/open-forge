@@ -19,7 +19,7 @@ Read the [program Task](00-cli-development.md), [Architecture](../../../crystall
 - [ ] [Mutation Foundation](mutation-foundation/_mutation-foundation.md) — Ready; accepted to precede public Index — Implementer: Mutation Foundation Task Mastermind
 - [x] [Test Architecture And Constants](test-architecture-and-constants.md) — Complete and squash-integrated at `b6ce31f` — Implementer: Overseer
 - [x] [Read-Only CLI Dogfooding Corrections](read-only-dogfooding-corrections.md) — Complete and squash-integrated at `bba84b6` — Implementer: Overseer
-- [ ] [Proportional CLI Corrections](proportional-cli-corrections.md) — Active; correct accepted audit findings before Mutation Foundation resumes — Implementer: Overseer with bounded Task Masterminds
+- [x] [Proportional CLI Corrections](proportional-cli-corrections.md) — Complete and squash-integrated through `0d88606`; Mutation Foundation may resume — Implementer: Overseer with bounded Task Masterminds
 - [ ] [Route Mutation Commands](route-mutation/_route-mutation.md) — Planned — Implementer: Not assigned
 - [ ] [Lifecycle Commands](lifecycle/_lifecycle.md) — Planned — Implementer: Not assigned
 - [ ] [Operational Commands](operations/_operations.md) — Planned — Implementer: Not assigned
@@ -65,7 +65,7 @@ define execution state.
 - [Apply accepted truthful nullability, construction, and modern C# syntax rules across the complete replacement solution](modern-csharp-improvements.md) - #Memory #Working #CLI #Task #CSharp #Nullability #Initialization #Refactoring #Contextual #Complete
 - [Build and accept locking, lifecycle, planning, application, recovery, and Git foundations before mutations](mutation-foundation/_mutation-foundation.md) - #Memory #Working #CLI #Task #Mutation #Lifecycle #Recovery #Git #Contextual
 - [Implement aggregate status, diagnosis, repair, and cleanup after every state producer exists](operations/_operations.md) - #Memory #Working #CLI #Task #Status #Doctor #Repair #Cleanup #Contextual
-- [Correct confirmed read-only CLI defects and preserve proportionate architecture findings before Mutation Foundation resumes](proportional-cli-corrections.md) - #Memory #Working #CLI #Task #Audit #Correctness #Architecture #Proportionality #Contextual #Active
+- [Correct confirmed read-only CLI defects and preserve proportionate architecture findings before Mutation Foundation resumes](proportional-cli-corrections.md) - #Memory #Working #CLI #Task #Audit #Correctness #Architecture #Proportionality #Contextual #Complete
 - [Implement retained read-only source, context, extension, and generated-navigation commands](read-only/_read-only.md) - #Memory #Working #CLI #Task #ReadOnly #Source #Extension #Index #Contextual
 - [Correct three bounded read-only CLI dogfooding defects before Mutation Foundation resumes](read-only-dogfooding-corrections.md) - #Memory #Working #CLI #Task #ReadOnly #Context #Find #RouteInspect #Dogfooding #Contextual #Complete
 - [Move replacement CLI tooling to the repository root and make ordinary test runs publish and discover the local development executable](repository-root-developer-workflow.md) - #Memory #Working #CLI #Task #DotNet #Testing #DeveloperExperience #Contextual #Complete

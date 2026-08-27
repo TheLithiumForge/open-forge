@@ -36,10 +36,13 @@ open-forge:
   portable `linux-x64` Native AOT Integration `411/411` and EndToEnd `120/120`
   gates pass with zero skips. Accepted feature candidate `deb3f14` is
   squash-integrated at `bba84b6`.
-  [Proportional CLI Corrections](proportional-cli-corrections.md) is Active. Its
-  accepted record preserves the whole-CLI audit, integrates the proportionate
-  development and cooperative managed-filesystem boundary, and closes two
-  independent read-only correction lanes before Mutation Foundation resumes.
+  [Proportional CLI Corrections](proportional-cli-corrections.md) is Complete.
+  Proportionate guidance `5f9f59e`, Route List correction `2cd525d`, and
+  authoritative Markdown generated-region correction `0d88606` are
+  squash-integrated. The complete managed `1053/411/120` and portable
+  `linux-x64` Native AOT `411/120` gates pass with zero skips, and final
+  Sol/xhigh review found no material issue. Mutation Foundation is Ready to
+  resume at its persisted lifecycle-schema decision.
   Mutation Foundation now precedes public Index by accepted maintainer decision.
   The broader replacement CLI program remains Active.
 - Responsible role: Overseer.

@@ -14,7 +14,7 @@ open-forge:
   Overseer owns architecture, sequencing, Task decomposition, integration, and
   Plan maintenance within that direction.
 - Last updated: 2026-08-27.
-- Current accepted baseline: clean local `develop` commit `bba84b6`. Context and Extension List are Complete and squash-integrated at
+- Current accepted baseline: clean local `develop` commit `0d88606`. Context and Extension List are Complete and squash-integrated at
   `ca097a2` and `db0d39a`. Extension Inspect's exact public contract is
   squash-integrated at `92313a0`; accepted rebased feature `2b1e63d` is
   squash-integrated at `73b01be`. Routed Authored Metadata is Complete and squash-integrated at
@@ -34,15 +34,19 @@ open-forge:
   CLI Dogfooding Corrections are squash-integrated at `bba84b6`, with managed
   Unit `1031/1031`, Integration `411/411`, and EndToEnd `120/120`, plus supported
   `linux-x64` Native AOT Integration `411/411` and EndToEnd `120/120`.
-- Current task: [Correct Proportional CLI
-  Findings](tasks/proportional-cli-corrections.md) is Active from `bba84b6`.
-  Proportionate development and the corrected managed-filesystem threat boundary
-  are committed at feature commit `0f40622`; its audit record freezes two
-  independent correction lanes and preserves the remaining dispositions.
+- [Correct Proportional CLI Findings](tasks/proportional-cli-corrections.md) is
+  Complete. Proportionate guidance is integrated at `5f9f59e`, Route List
+  corrections at `2cd525d`, and authoritative Markdown generated-region
+  corrections at `0d88606`. The integrated Release build, managed
+  `1053/411/120`, and portable `linux-x64` Native AOT `411/120` gates pass with
+  zero skips; final Sol/xhigh review is `ROBUST`.
+- Current task: [Mutation Foundation](tasks/mutation-foundation/_mutation-foundation.md)
+  is Ready at its persisted lifecycle-schema decision. It must reconcile its
+  dirty feature worktree with the accepted proportional safety boundary before
+  resuming implementation.
   [Test Architecture And
   Constants](tasks/test-architecture-and-constants.md) is Complete and its exact
-  accepted tree is squash-integrated at `b6ce31f`. Mutation Foundation remains
-  paused at its persisted lifecycle-schema decision until PC1 integrates.
+  accepted tree is squash-integrated at `b6ce31f`.
   [Extension Inspect](tasks/read-only/extension-inspect.md) is
   Complete and integrated at `73b01be`. The [pure Generated Navigation
   foundation](tasks/read-only/index-generated-navigation-foundation.md) is
@@ -50,12 +54,11 @@ open-forge:
   [Routed Authored Metadata
   foundation](tasks/read-only/routed-authored-metadata-foundation.md) is Complete
   and integrated at `5924698`.
-- Current step: integrate the proportional-development and audit record, execute
-  the Markdown and Route List correction lanes in parallel, integrate their
-  reviewed commits, and pass the complete managed and public dogfood gate. Then
-  resume Mutation Foundation at its persisted lifecycle-schema decision and
-  continue public Index, route mutation, lifecycle mutation, operations,
-  delivery, and final acceptance in the persisted order.
+- Current step: resume Mutation Foundation at its persisted lifecycle-schema
+  decision, reconcile the accepted cooperative safety and recovery boundary with
+  its existing dirty feature worktree, then implement and accept its dependent
+  children in order. Continue public Index, route mutation, lifecycle mutation,
+  operations, delivery, and final acceptance in the persisted order.
   The snapshot slice remains a no-op, with possible LithSnap-backed
   presentation candidates recorded only as a deferred Idea.
   The maintainer accepted that dependency correction; public Index must consume
@@ -382,7 +385,7 @@ diff, parent requirements, and claimed evidence.
 | RM1 | Complete | Promote the neutral routed authored-metadata fact while retaining `SourceDocumentForm` as the sole source classification authority; accepted feature `8a29321` is integrated at `5924698`.                                                                                                                                                                                                                                        | Q1-Q3, R2                               | Sequential  | Source metadata      | Route preservation, metadata grammar, and Native AOT pass   |
 | GN1 | Complete | Pure Generated Navigation projection and bounded-region facts are accepted and squash-integrated at `21e5200`; full managed and local `linux-x64` Native AOT Integration evidence passes.                                                                                                                                                                                                                                           | Q1-Q3, R2, RM1                          | Read-only D | Generated navigation | Determinism, exact bytes, no-write, and affected regressions |
 | DGC1 | Complete | Correct form-aware Context Skill metadata, source-specific compact Context/Find findings, and stale Route Inspect Context help without changing structured command meaning; accepted feature candidate `deb3f14` is squash-integrated at `bba84b6`.                                                                                                                                                                                   | Q1-Q3, R2, RM1, GN1                     | Sequential  | Dogfooding correction | Managed `1031/411/120` and Native AOT `411/120` pass         |
-| PC1 | Active | Integrate the proportionate-development boundary, correct generated-region semantic drift and Route List diagnostic bounds, remove only proved-dead Route List support, and preserve the remaining audit dispositions. | DGC1 | Parallel correction | Proportional correctness | Two focused lanes, complete managed gate, public dogfood, and Sol/xhigh review |
+| PC1 | Complete | Proportionate guidance `5f9f59e`, Route List correction `2cd525d`, and Markdown correction `0d88606` are squash-integrated; PCF-001/002/003/007 are closed and all remaining dispositions are preserved. | DGC1 | Parallel correction | Proportional correctness | Release 0/0; managed `1053/411/120`; portable `linux-x64` Native AOT `411/120`; dogfood and Sol/xhigh review pass |
 | I1  | Pending  | Implement and accept public `index` only after GN1 and the shared Mutation Foundation are accepted; do not implement a command-local locking, application, Git, or recovery substitute.                                                                                                                                                                                                                                             | GN1, M1                                 | Sequential  | Generated navigation | Idempotence and unchanged-authority evidence                |
 | M1  | Ready    | Implement shared lock, lifecycle, revalidation, atomic application, receipt, recovery, and Git foundations before the first public mutating command.                                                                                                                                                                                                                                                                              | GN1, E1, DGC1, PC1                      | Sequential  | Mutation foundation  | Direct failure and crash-boundary evidence                  |
 | M2  | Pending  | Implement route init/create/update/move/remove in dependency order                                                                                                                                                                                                                                                                                                                                                                | M1, R2, I1                              | Sequential  | Route mutation       | Per-command public and recovery evidence                    |
