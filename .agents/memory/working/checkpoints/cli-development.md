@@ -83,27 +83,19 @@ external publication, remote action, or push occurred.
 
 ## Current Step
 
-[Correct Read-Only CLI Dogfooding
-Defects](../cli-development/tasks/read-only-dogfooding-corrections.md) is Complete
-on accepted local feature candidate `deb3f14` from exact clean integrated
-baseline `b6ce31f`. It closes only
-`CLI-EDGE-011`, `CLI-EDGE-012`, and `CLI-EDGE-015`: consume the accepted
-form-aware metadata fact in Context, make compact Context and Find findings name
-known affected coordinates, and make Route Inspect help describe implemented
-Context truthfully. It must retain malformed Skill fail-closed behavior,
-structured results, statuses, no-write behavior, and managed/Native AOT parity.
-Final managed Unit `1031/1031`, Integration `411/411`, and EndToEnd `120/120`
-pass; freshly published portable `linux-x64` Native AOT Integration `411/411`
-and EndToEnd `120/120` pass. All suites have zero failures/skips. Repository
-dogfooding preserves the expected 65 Context and 66 Find metadata findings while
-naming every compact coordinate and no longer blaming the valid
-`experience-design/SKILL.md`.
+[Correct Proportional CLI Findings](../cli-development/tasks/proportional-cli-corrections.md)
+is Active from clean local `develop` commit `bba84b6`. Proportionate development,
+the cooperative managed-filesystem threat boundary, and the Development and C#
+Development extension placeholders are committed at feature commit `0f40622`.
+The audit record accepts two independent correction lanes: exact shared
+generated-region semantics and Route List diagnostic bounds plus proved-dead
+support removal. The remaining architecture findings are preserved with explicit
+defer, retain, or revisit boundaries rather than being silently implemented.
 
-Locally squash-integrate the accepted candidate when authorized, then resume
-Mutation Foundation at the exact persisted Framework lifecycle-schema decision.
-Public Index remains sequential after Mutation Foundation, followed by route
-mutation, lifecycle mutation, operations, delivery, and final acceptance. Do not
-create an Index-local mutation substitute. Do not push.
+Integrate the proportional-development feature, execute both correction lanes in
+isolated worktrees, integrate and run the complete gate, then resume Mutation
+Foundation at its persisted lifecycle-schema decision. Public Index remains
+sequential after Mutation Foundation. Do not push.
 
 ## Protected State
 
@@ -118,9 +110,11 @@ create an Index-local mutation substitute. Do not push.
 
 ## Next Actions
 
-1. Squash-integrate accepted local dogfooding candidate `deb3f14` without a
-   remote action.
-2. Return to the exact Mutation Foundation lifecycle-schema decision, then freeze
+1. Squash-integrate the proportional-development and audit-record feature without
+   a remote action.
+2. Run the two correction lanes in parallel, review and integrate them, and pass
+   the complete managed and public dogfood gate.
+3. Return to the exact Mutation Foundation lifecycle-schema decision, then freeze
    and accept its callable contracts before implementing lock, lifecycle,
    revalidation, atomic-apply, receipt, recovery, and Git children in dependency
    order. Keep remotes unchanged.

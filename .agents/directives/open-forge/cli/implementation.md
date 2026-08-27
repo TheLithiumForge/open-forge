@@ -172,13 +172,18 @@ open-forge:
 
 - Use real `System.IO` and real owned temporary resources. Do not introduce a fake
   or virtual filesystem abstraction.
-- Keep lexical paths, normalized paths, physical identities, and link targets as
-  separate typed facts. Resolve physical paths one existing component at a time
-  and prove containment after every link resolution. Block the first external
-  transition even when a later target re-enters the root.
+- Keep lexical paths, normalized paths, resolved physical paths, and observed
+  link targets as separate typed facts. Resolve physical paths one existing
+  component at a time and prove containment after every link resolution. Block
+  the first external transition even when a later target re-enters the root.
+  Revalidate expected state immediately before effects and use ordinary managed
+  BCL file operations and atomic replacement. Apply the Architecture's stable-
+  workspace and cooperating-process threat boundary; do not claim adversarial
+  handle identity from path sampling.
 - Use managed BCL APIs first. Do not author C, C++, Rust, P/Invoke, native shims,
   helper executables, or platform production projects. Stop at Architecture if a
-  critical guarantee cannot be proved.
+  guarantee required by the accepted project boundary cannot be proved. Surface
+  that divergence to the maintainer before proposing exceptional machinery.
 - Read-only commands create no lock, lifecycle, cache, index, or recovery state.
   Mutation commands form a command-local plan, acquire the real lock when
   required, revalidate expected state, apply bounded effects, verify the result,

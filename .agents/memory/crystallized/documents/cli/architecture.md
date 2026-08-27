@@ -40,14 +40,41 @@ The implementation must:
   boundaries explicit and directly testable;
 - remain deterministic, source-visible, reflection-free in product behavior, and
   compatible with trimming and Native AOT;
-- use real operating-system filesystems and fail closed when required identity or
-  containment cannot be proved; and
+- use real operating-system filesystems and fail closed when the identity or
+  containment required by the accepted threat boundary cannot be established;
+  and
 - let bounded implementers execute closed Tasks without inventing architecture.
 
 The implementation must not add runtime plug-in discovery, dependency injection
 for shell composition, a service locator, a fake filesystem, a universal command
 result, a universal mutation engine, native interop, or a compatibility path to
 `open-forge-old`.
+
+### Project Criticality And Threat Boundary
+
+The CLI manages user-owned Markdown and supporting files in a local development
+workspace. It is not a security boundary, database, or mission-critical
+transaction processor. Its safety target is to avoid corrupting, partially
+writing, silently overwriting, or losing ordinary user work through an Open Forge
+operation and to leave practical recovery evidence when an operation cannot
+finish cleanly.
+
+The supported boundary includes malformed input, static links and reparse-point
+aliases observable through managed APIs, ordinary filesystem and process
+failures, interruption, stale plans, concurrent edits that expected-state checks
+observe, and concurrent Open Forge processes that cooperate through the
+workspace lock. Workspace directory mappings are expected to remain stable
+during one operation. A malicious same-user process that bypasses the lock or
+performs a transient namespace swap-and-restore is outside the supported threat
+model because it already has direct authority to modify the workspace. The CLI
+also does not claim inode or file-ID equivalence for hard links or mount
+boundaries that portable managed APIs do not expose as links.
+
+Use normal managed .NET and operating-system behavior within that boundary. Do
+not add native interop or recreate platform filesystem primitives to defend
+against an actor outside it. If a later product context requires a stronger
+threat model, return to Architecture and evaluate the platform, portability,
+Native AOT, maintenance, and evidence costs before implementation.
 
 ## Physical Workspace
 
@@ -474,11 +501,15 @@ selection method, normalizes identity once, and never invents a fallback fact.
 Terminal modes bypass workspace selection. Workspace-free commands preserve null
 workspace in concrete results.
 
-### Filesystem And Physical Identity
+### Filesystem And Resolved Path Identity
 
 Filesystem code uses real `System.IO` and typed outcomes. Path strings,
-normalized lexical paths, physical identities, and resolved link targets are
+normalized lexical paths, resolved physical paths, and observed link targets are
 separate facts.
+
+Within child contracts, `physical identity` names this resolved-path and
+observed-alias fact under the stable-workspace boundary. It does not mean an
+inode, file ID, or handle-bound object identity.
 
 `PhysicalPathResolver` walks one existing component at a time from a proven root.
 For every component it:
@@ -487,13 +518,21 @@ For every component it:
 2. classifies ordinary, missing, inaccessible, dangling, or reparse/link state;
 3. resolves one link target;
 4. proves containment immediately after that resolution;
-5. records physical identity for cycle and alias detection; and
+5. records the resolved path identity used for cycle and observable-link alias
+   detection; and
 6. continues only from the proven contained result.
 
 A path that leaves the root and later re-enters is blocked at the first external
-transition. Final-target containment is insufficient. If managed BCL evidence
-cannot prove the accepted guarantee on a target platform, implementation stops at
-Architecture rather than adding P/Invoke or weakening the contract.
+transition. Final-target containment is insufficient. The CLI resolves paths
+before access, revalidates expected state immediately before effects, and uses
+ordinary managed BCL file operations and atomic replacement. These checks reject
+static escapes and detected persistent changes; they do not claim adversarial
+handle-bound identity across a transient namespace swap.
+
+If managed BCL evidence cannot satisfy a guarantee that the accepted project
+boundary actually requires, implementation stops at Architecture rather than
+adding P/Invoke or silently weakening the requirement. A theoretical guarantee
+outside the accepted threat model does not justify exceptional machinery.
 
 Typed reads distinguish complete, missing, invalid encoding or syntax, access
 denied, and I/O failure. They preserve bounded direct causes without leaking
@@ -546,6 +585,27 @@ workspace locking, expected-state revalidation, Git or recovery primitives, and
 receipts. Each command owns its plan, effect ordering, rollback or compensation
 meaning, findings, and result. No generic engine decides product behavior.
 
+Git is the normal review and durable recovery boundary when it can recover every
+existing affected path. Gitless application, an explicit Git-check bypass, or an
+existing affected path that Git cannot recover preserves the old bytes through a
+collision-safe adjacent recovery artifact before replacement or deletion.
+New-file creation has no old bytes to back up. Recovery artifacts remain until
+the complete operation verifies or are retained when interruption or residual
+state still needs them.
+
+Each file replacement stages complete bytes beside its target and uses the
+strongest ordinary atomic replacement that the managed platform supports. A
+multi-file operation is not presented as one filesystem transaction. Handled
+failure stops new effects and reverses already applied effects only while their
+observed identity still matches; otherwise it preserves the unexpected edit and
+reports the residual state. A fresh invocation plans again from current facts.
+The CLI does not persist or replay a transaction plan or introduce a general
+recovery journal.
+
+The dedicated `cleanup` operation retains its accepted monotonic exception. It
+may delete a positively recognized eligible recovery artifact without staging a
+copy or creating another backup, and it does not reverse a verified deletion.
+
 Lifecycle state remains `.agents/open-forge.lifecycle.json`, schema version 1.
 The mutation lock remains `.agents/open-forge.lock`. Existing legacy lifecycle
 formats are ordinary untouched content.
@@ -577,8 +637,8 @@ The active test projects have distinct evidence boundaries:
   formation, renderers, serialization contracts, and directly callable shell
   stages without claiming real filesystem or process behavior.
 - Integration tests call production modules with owned real temporary filesystems
-  and cover source generation, physical identity, locking, Git, runtime, and
-  Native AOT internal boundaries.
+  and cover source generation, resolved-path containment and aliases, locking,
+  Git, runtime, and Native AOT internal boundaries.
 - End-to-end tests invoke the published executable and prove arguments, streams,
   statuses, exits, cancellation, unchanged bytes, and public scenarios.
 - TestSupport contains cohesive real-OS workspace and process fixtures shared by

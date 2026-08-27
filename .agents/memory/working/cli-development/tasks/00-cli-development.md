@@ -34,7 +34,12 @@ open-forge:
   accepted findings `CLI-EDGE-011`, `CLI-EDGE-012`, and `CLI-EDGE-015`. Final
   managed Unit `1031/1031`, Integration `411/411`, EndToEnd `120/120`, and
   portable `linux-x64` Native AOT Integration `411/411` and EndToEnd `120/120`
-  gates pass with zero skips. Local squash integration is not yet claimed.
+  gates pass with zero skips. Accepted feature candidate `deb3f14` is
+  squash-integrated at `bba84b6`.
+  [Proportional CLI Corrections](proportional-cli-corrections.md) is Active. Its
+  accepted record preserves the whole-CLI audit, integrates the proportionate
+  development and cooperative managed-filesystem boundary, and closes two
+  independent read-only correction lanes before Mutation Foundation resumes.
   Mutation Foundation now precedes public Index by accepted maintainer decision.
   The broader replacement CLI program remains Active.
 - Responsible role: Overseer.

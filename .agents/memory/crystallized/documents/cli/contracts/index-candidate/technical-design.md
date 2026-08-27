@@ -132,7 +132,7 @@ ordinary result.
 
 Application uses adjacent staged and backup artifacts with the accepted
 structured provenance identity envelope. The envelope carries the accepted workspace identity,
-operation identity, target logical and physical identity, artifact kind,
+operation identity, target logical and resolved physical path identity, artifact kind,
 expected before-and-after identity, and recovery state needed before recovery
 uses it. It is recovery evidence, not a second authority for workspace meaning.
 
@@ -156,7 +156,7 @@ creates no persistent transaction journal.
 Tests mirror the Interface, Behavior, and technical boundaries. Managed unit
 and integration test subjects mirror their production command or capability
 paths, while complete process tests remain in the separate system boundary.
-Direct tests cover typed request normalization, physical identity, topology-derived
+Direct tests cover typed request normalization, resolved-path and alias behavior, topology-derived
 projection, metadata admission, canonical output, byte ranges, marker
 ownership, ordering, result formation, and no-op behavior. Focused integration
 tests use real temporary rooted and detached source trees, Git and Gitless
