@@ -2,35 +2,12 @@ using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Filesystem;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
-using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.List.Shared.Filesystem;
 
 public sealed class RouteListInventoryReaderIntegrationTests
 {
-    [Fact(DisplayName = "Route-list directory enumeration sorts real entries by ordinal logical identity")]
-    [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
-    public void DirectoryEnumerationDoesNotTrustOperatingSystemOrder()
-    {
-        using var workspace = RouteListFilesystemIntegrationWorkspace.Create();
-        workspace.Write(".agents/order/z.md", "z");
-        workspace.Write(".agents/order/a.md", "a");
-        workspace.CreateDirectory(".agents/order/middle");
-
-        var result = new RouteListDirectoryEnumerator().Enumerate(
-            workspace.Absolute(".agents/order"),
-            ".agents/order",
-            TestContext.Current.CancellationToken);
-        var entries = Assert.IsAssignableFrom<IReadOnlyList<RouteListDirectoryEntry>>(result.Entries);
-
-        Assert.Equal(DirectoryEnumerationState.Complete, result.State);
-        Assert.Equal(["a.md", "middle", "z.md"], entries.Select(entry => entry.Name));
-        Assert.Equal(
-            [".agents/order/a.md", ".agents/order/middle", ".agents/order/z.md"],
-            entries.Select(entry => entry.CanonicalLogicalPath));
-    }
-
     [Fact(DisplayName = "Route-list inventory classifies authored source forms and ignores generated descendant authority")]
     [Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task InventoryClassifiesMetadataOverwriteAmbiguityAndReadFailures()

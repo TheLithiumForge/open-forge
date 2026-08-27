@@ -21,22 +21,6 @@ public sealed class RouteListFilesystemFindingPolicyTests
         { PhysicalPathState.InputOutputFailure, RouteListFindingCode.PhysicalBoundary, CliSemanticStatus.Blocked },
     };
 
-    public static TheoryData<object, object, object> DirectoryCases => new()
-    {
-        { DirectoryEnumerationState.Missing, RouteListFindingCode.ReadUnavailable, CliSemanticStatus.Incomplete },
-        { DirectoryEnumerationState.AccessDenied, RouteListFindingCode.ReadUnavailable, CliSemanticStatus.Incomplete },
-        { DirectoryEnumerationState.InputOutputFailure, RouteListFindingCode.ReadUnavailable, CliSemanticStatus.Incomplete },
-        { DirectoryEnumerationState.Cancelled, RouteListFindingCode.Interrupted, CliSemanticStatus.Interrupted },
-    };
-
-    public static TheoryData<object, object, object> FilesystemEntryCases => new()
-    {
-        { RouteListFilesystemEntryState.Missing, RouteListFindingCode.ReadUnavailable, CliSemanticStatus.Incomplete },
-        { RouteListFilesystemEntryState.Inaccessible, RouteListFindingCode.PhysicalBoundary, CliSemanticStatus.Blocked },
-        { RouteListFilesystemEntryState.Unsupported, RouteListFindingCode.PhysicalBoundary, CliSemanticStatus.Blocked },
-        { RouteListFilesystemEntryState.InputOutputFailure, RouteListFindingCode.PhysicalBoundary, CliSemanticStatus.Blocked },
-    };
-
     public static TheoryData<object, object, object> FileCases => new()
     {
         { FileReadState.Missing, RouteListFindingCode.ReadUnavailable, CliSemanticStatus.Incomplete },
@@ -66,44 +50,6 @@ public sealed class RouteListFilesystemFindingPolicyTests
         Assert.Equal(".agents/subject", finding.CanonicalLogicalSubject);
     }
 
-    [Theory(DisplayName = "Route-list finding policy maps every incomplete or cancelled directory state"),
-        MemberData(nameof(DirectoryCases))]
-    [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
-    public void DirectoryStatesHaveFiniteMappings(
-        object stateValue,
-        object expectedCodeValue,
-        object expectedStatusValue)
-    {
-        var state = Assert.IsType<DirectoryEnumerationState>(stateValue);
-        var expectedCode = Assert.IsType<RouteListFindingCode>(expectedCodeValue);
-        var expectedStatus = Assert.IsType<CliSemanticStatus>(expectedStatusValue);
-        var result = DirectoryResult(state);
-        var finding = RouteListFilesystemFindingPolicy.FromDirectory(result);
-
-        Assert.NotNull(finding);
-        Assert.Equal(expectedCode, finding.Code);
-        Assert.Equal(expectedStatus, finding.Status);
-    }
-
-    [Theory(DisplayName = "Route-list finding policy maps every unavailable filesystem entry state"),
-        MemberData(nameof(FilesystemEntryCases))]
-    [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
-    public void FilesystemEntryStatesHaveFiniteMappings(
-        object stateValue,
-        object expectedCodeValue,
-        object expectedStatusValue)
-    {
-        var state = Assert.IsType<RouteListFilesystemEntryState>(stateValue);
-        var expectedCode = Assert.IsType<RouteListFindingCode>(expectedCodeValue);
-        var expectedStatus = Assert.IsType<CliSemanticStatus>(expectedStatusValue);
-        var result = FilesystemEntry(state);
-        var finding = RouteListFilesystemFindingPolicy.FromEntry(result);
-
-        Assert.NotNull(finding);
-        Assert.Equal(expectedCode, finding.Code);
-        Assert.Equal(expectedStatus, finding.Status);
-    }
-
     [Theory(DisplayName = "Route-list finding policy maps every strict file-read outcome"),
         MemberData(nameof(FileCases))]
     [Trait("Feature", "route-list"), Trait("Evidence", "Unit")]
@@ -128,21 +74,9 @@ public sealed class RouteListFilesystemFindingPolicyTests
     public void CompleteFactsHaveNoFinding()
     {
         var physical = PhysicalPathResolution.Contained("logical", Physical("complete"));
-        var directory = new RouteListDirectoryEnumeration(
-            DirectoryEnumerationState.Complete,
-            ".agents",
-            [],
-            null);
         var file = FileReadResult<string>.Complete(".agents/file.md", "body");
 
         Assert.Null(RouteListFilesystemFindingPolicy.FromPhysical(".agents", physical));
-        Assert.Null(RouteListFilesystemFindingPolicy.FromDirectory(directory));
-        Assert.Null(RouteListFilesystemFindingPolicy.FromEntry(new RouteListFilesystemEntry(
-            RouteListFilesystemEntryState.File,
-            ".agents/file.md")));
-        Assert.Null(RouteListFilesystemFindingPolicy.FromEntry(new RouteListFilesystemEntry(
-            RouteListFilesystemEntryState.Directory,
-            ".agents/directory")));
         Assert.Null(RouteListFilesystemFindingPolicy.FromFile(file));
     }
 
@@ -230,21 +164,6 @@ public sealed class RouteListFilesystemFindingPolicyTests
         };
     }
 
-    private static RouteListDirectoryEnumeration DirectoryResult(DirectoryEnumerationState state)
-    {
-        var failure = state switch
-        {
-            DirectoryEnumerationState.AccessDenied => new FilesystemFailure(
-                FilesystemFailureKind.AccessDenied,
-                "Filesystem access was denied."),
-            DirectoryEnumerationState.InputOutputFailure => new FilesystemFailure(
-                FilesystemFailureKind.InputOutput,
-                "The filesystem operation failed."),
-            _ => null,
-        };
-        return new RouteListDirectoryEnumeration(state, ".agents", null, failure);
-    }
-
     private static FileReadResult<string> FileResult(FileReadState state)
     {
         return state switch
@@ -265,24 +184,6 @@ public sealed class RouteListFilesystemFindingPolicyTests
             FileReadState.Cancelled => FileReadResult<string>.Cancelled(".agents/file.md"),
             _ => throw new ArgumentOutOfRangeException(nameof(state), state, "The test state is not a mapped state."),
         };
-    }
-
-    private static RouteListFilesystemEntry FilesystemEntry(RouteListFilesystemEntryState state)
-    {
-        var failure = state switch
-        {
-            RouteListFilesystemEntryState.Inaccessible => new FilesystemFailure(
-                FilesystemFailureKind.AccessDenied,
-                "Filesystem access was denied."),
-            RouteListFilesystemEntryState.Unsupported => new FilesystemFailure(
-                FilesystemFailureKind.Unsupported,
-                "The operation is unsupported."),
-            RouteListFilesystemEntryState.InputOutputFailure => new FilesystemFailure(
-                FilesystemFailureKind.InputOutput,
-                "The filesystem operation failed."),
-            _ => null,
-        };
-        return new RouteListFilesystemEntry(state, ".agents/entry", failure);
     }
 
     private static string Physical(string name)

@@ -71,8 +71,7 @@ internal static class RouteListDiagnosticRenderer
 
     private static string Value(string value)
     {
-        var escaped = RouteListTextEscaping.Escape(value);
-        return RouteListTextEscaping.Clamp(escaped, MaximumDiagnosticValueLength);
+        return RouteListTextEscaping.Escape(value, MaximumDiagnosticValueLength);
     }
 
     private static string Depth(RouteListDepth? depth)

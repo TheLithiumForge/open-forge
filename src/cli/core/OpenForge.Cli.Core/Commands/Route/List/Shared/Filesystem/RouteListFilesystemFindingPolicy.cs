@@ -50,48 +50,6 @@ internal static class RouteListFilesystemFindingPolicy
         };
     }
 
-    internal static RouteListFilesystemFinding? FromDirectory(RouteListDirectoryEnumeration result)
-    {
-        ArgumentNullException.ThrowIfNull(result);
-        return result.State switch
-        {
-            DirectoryEnumerationState.Complete => null,
-            DirectoryEnumerationState.Missing => ReadUnavailable(
-                result.CanonicalLogicalPath,
-                "The directory is unavailable."),
-            DirectoryEnumerationState.AccessDenied => ReadUnavailable(
-                result.CanonicalLogicalPath,
-                ReadFailureCause(result.ReadFailure(), "Directory access was denied.")),
-            DirectoryEnumerationState.InputOutputFailure => ReadUnavailable(
-                result.CanonicalLogicalPath,
-                ReadFailureCause(result.ReadFailure(), "Directory enumeration failed.")),
-            DirectoryEnumerationState.Cancelled => Interrupted(result.CanonicalLogicalPath),
-            _ => throw new ArgumentOutOfRangeException(nameof(result), result.State, "The directory state is not defined."),
-        };
-    }
-
-    internal static RouteListFilesystemFinding? FromEntry(RouteListFilesystemEntry result)
-    {
-        ArgumentNullException.ThrowIfNull(result);
-        return result.State switch
-        {
-            RouteListFilesystemEntryState.File or RouteListFilesystemEntryState.Directory => null,
-            RouteListFilesystemEntryState.Missing => ReadUnavailable(
-                result.CanonicalLogicalPath,
-                "The filesystem candidate is unavailable."),
-            RouteListFilesystemEntryState.Inaccessible => PhysicalBoundary(
-                result.CanonicalLogicalPath,
-                ReadFailureCause(result.ReadFailure(), "Filesystem entry access was denied.")),
-            RouteListFilesystemEntryState.Unsupported => PhysicalBoundary(
-                result.CanonicalLogicalPath,
-                ReadFailureCause(result.ReadFailure(), "The filesystem entry is unsupported.")),
-            RouteListFilesystemEntryState.InputOutputFailure => PhysicalBoundary(
-                result.CanonicalLogicalPath,
-                ReadFailureCause(result.ReadFailure(), "Filesystem entry inspection failed.")),
-            _ => throw new ArgumentOutOfRangeException(nameof(result), result.State, "The filesystem entry state is not defined."),
-        };
-    }
-
     internal static RouteListFilesystemFinding? FromFile<T>(FileReadResult<T> result)
     {
         ArgumentNullException.ThrowIfNull(result);
