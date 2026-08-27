@@ -74,7 +74,7 @@ internal sealed class ContextLoadingClosureResolver
                      .Where(source => !source.IsEntrypoint && !source.IsLoader)
                      .OrderBy(source => source.CanonicalPath, StringComparer.Ordinal))
         {
-            if (source.Metadata.State != SourceOpenForgeMetadataState.Complete)
+            if (source.Metadata.State != SourceAuthoredMetadataState.Complete)
             {
                 if (source.RouteState != SourceRouteState.Unrouted)
                 {
@@ -322,7 +322,7 @@ internal sealed class ContextLoadingClosureResolver
             var keepInMind = generated.HasTag("KeepInMind");
             if (!parent.IsLoader && (loadNow || keepInMind))
             {
-                if (target.Metadata.State != SourceOpenForgeMetadataState.Complete)
+                if (target.Metadata.State != SourceAuthoredMetadataState.Complete)
                 {
                     AddClosureFinding(target.CanonicalPath, "A visible child source has unavailable loading metadata.");
                     continue;

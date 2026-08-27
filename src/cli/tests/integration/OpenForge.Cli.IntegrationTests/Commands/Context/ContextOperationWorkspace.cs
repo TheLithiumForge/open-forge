@@ -58,6 +58,33 @@ internal sealed class ContextOperationWorkspace : IDisposable
         return _temporary.MoveFile(sourceRelativePath, destinationRelativePath);
     }
 
+    internal void AddRoutedSkills(IReadOnlyDictionary<string, string> documents)
+    {
+        ArgumentNullException.ThrowIfNull(documents);
+        if (documents.Count == 0)
+        {
+            throw new ArgumentException("At least one routed Skill document is required.", nameof(documents));
+        }
+
+        ReplaceText(
+            ".agents/loader.md",
+            OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
+            {
+                Entries = "- [Docs](docs/_docs.md) - #LoadNow #Core\n"
+                    + "- [State](state/_state.md) - #Memory\n"
+                    + "- [Projects](projects/_projects.md) - #Project\n"
+                    + "- [Skills](skills/_skills.md) - #Skill",
+                Prefix = "# Loader",
+            }));
+        WriteText(
+            ".agents/skills/_skills.md",
+            OpenForgeDocumentSeed.SkillEntrypoint(documents.Keys));
+        foreach (var document in documents)
+        {
+            WriteText($".agents/skills/{document.Key}/SKILL.md", document.Value);
+        }
+    }
+
     internal static ContextOperationWorkspace Create(
         bool includeSelectedAncestorLoadNow = false,
         bool startupLinksToSelectedTarget = false)

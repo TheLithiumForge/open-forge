@@ -47,6 +47,12 @@ Unit `18/18`, focused real-filesystem Integration `3/3`, full managed Unit
 Integration `357/357`, with zero failures or skips. The final Sol/xhigh recheck is
 `ACCEPTED`; post-integration focused Unit `18/18` and Integration `3/3` pass.
 
+The constants/test-architecture audit is Complete and squash-integrated into
+local `develop` at `b6ce31f`. The integrated tree exactly matches its accepted
+feature tree and retains final managed Unit `1024/1024`, Integration `409/409`,
+EndToEnd `116/116`, and supported local `linux-x64` Native AOT Integration
+`409/409` evidence. No push or remote action occurred.
+
 Implemented boundaries:
 
 - Repository-root `OpenForge.Cli.slnx`, SDK, NuGet, and shared MSBuild files.
@@ -77,20 +83,26 @@ external publication, remote action, or push occurred.
 
 ## Current Step
 
-The [Test Architecture And Constants](../cli-development/tasks/test-architecture-and-constants.md)
-audit is Complete on its local branch from exact baseline `8a1cb86`. Symbolic
-ownership, composable document seeds, corrected evidence tiers, relational
-Extension catalogue evidence, and the no-snapshot decision are accepted. Final
-managed Unit `1024/1024`, Integration `409/409`, and EndToEnd `116/116` pass with
-zero skips; the republished supported `linux-x64` Native AOT Integration host is
-`409/409`. A separate Ideas entry records possible LithSnap-backed presentation
-snapshots only after an explicit Native-AOT-safe baseline contract exists.
+[Correct Read-Only CLI Dogfooding
+Defects](../cli-development/tasks/read-only-dogfooding-corrections.md) is Complete
+on accepted local feature candidate `deb3f14` from exact clean integrated
+baseline `b6ce31f`. It closes only
+`CLI-EDGE-011`, `CLI-EDGE-012`, and `CLI-EDGE-015`: consume the accepted
+form-aware metadata fact in Context, make compact Context and Find findings name
+known affected coordinates, and make Route Inspect help describe implemented
+Context truthfully. It must retain malformed Skill fail-closed behavior,
+structured results, statuses, no-write behavior, and managed/Native AOT parity.
+Final managed Unit `1031/1031`, Integration `411/411`, and EndToEnd `120/120`
+pass; freshly published portable `linux-x64` Native AOT Integration `411/411`
+and EndToEnd `120/120` pass. All suites have zero failures/skips. Repository
+dogfooding preserves the expected 65 Context and 66 Find metadata findings while
+naming every compact coordinate and no longer blaming the valid
+`experience-design/SKILL.md`.
 
-After local integration, return to Mutation Foundation at the exact persisted
-Framework lifecycle-schema decision. Generated Navigation and Extension Inspect
-are integrated and no longer active.
-
-Public Index remains sequential after Mutation Foundation acceptance. Do not
+Locally squash-integrate the accepted candidate when authorized, then resume
+Mutation Foundation at the exact persisted Framework lifecycle-schema decision.
+Public Index remains sequential after Mutation Foundation, followed by route
+mutation, lifecycle mutation, operations, delivery, and final acceptance. Do not
 create an Index-local mutation substitute. Do not push.
 
 ## Protected State
@@ -106,7 +118,7 @@ create an Index-local mutation substitute. Do not push.
 
 ## Next Actions
 
-1. Integrate the accepted constants/test-architecture branch locally without a
+1. Squash-integrate accepted local dogfooding candidate `deb3f14` without a
    remote action.
 2. Return to the exact Mutation Foundation lifecycle-schema decision, then freeze
    and accept its callable contracts before implementing lock, lifecycle,

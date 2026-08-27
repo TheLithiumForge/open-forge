@@ -34,7 +34,7 @@ internal sealed class ContextGraphSource
         SourceDocumentForm form,
         SourceRouteState routeState,
         string? route,
-        SourceOpenForgeMetadataFacts metadata,
+        SourceAuthoredMetadataFacts metadata,
         SourceGeneratedEntriesFacts generatedEntries,
         IEnumerable<ContextGraphLayer> layers)
     {
@@ -71,7 +71,7 @@ internal sealed class ContextGraphSource
 
     internal string? Route { get; }
 
-    internal SourceOpenForgeMetadataFacts Metadata { get; }
+    internal SourceAuthoredMetadataFacts Metadata { get; }
 
     internal SourceGeneratedEntriesFacts GeneratedEntries { get; }
 

@@ -4,6 +4,9 @@ namespace OpenForge.Cli.EndToEndTests;
 
 internal sealed class PublishedContextWorkspace : IDisposable
 {
+    internal const string ExperienceDesignSkillPath = ".agents/skills/experience-design/SKILL.md";
+    internal const string AccessibilitySkillPath = ".agents/skills/accessibility/SKILL.md";
+
     private readonly TemporaryWorkspace _workspace;
 
     private PublishedContextWorkspace(TemporaryWorkspace workspace)
@@ -18,6 +21,32 @@ internal sealed class PublishedContextWorkspace : IDisposable
     internal void WriteText(string relativePath, string content) => _workspace.WriteText(relativePath, content);
 
     internal void ReplaceText(string relativePath, string content) => File.WriteAllText(_workspace.Combine(relativePath), content);
+
+    internal void AddRoutedSkills(IReadOnlyDictionary<string, string> documents)
+    {
+        ArgumentNullException.ThrowIfNull(documents);
+        if (documents.Count == 0)
+        {
+            throw new ArgumentException("At least one routed Skill document is required.", nameof(documents));
+        }
+
+        _workspace.ReplaceText(
+            ".agents/loader.md",
+            OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
+            {
+                Entries = "- [Startup](startup/_startup.md) - #LoadNow #Core\n"
+                    + "- [Projects](projects/_projects.md) - #Project\n"
+                    + "- [Skills](skills/_skills.md) - #Skill",
+                Prefix = "# Loader",
+            }));
+        _workspace.WriteText(
+            ".agents/skills/_skills.md",
+            OpenForgeDocumentSeed.SkillEntrypoint(documents.Keys));
+        foreach (var document in documents)
+        {
+            _workspace.WriteText($".agents/skills/{document.Key}/SKILL.md", document.Value);
+        }
+    }
 
     internal IReadOnlyDictionary<string, string> SnapshotState() => _workspace.SnapshotHashes();
 

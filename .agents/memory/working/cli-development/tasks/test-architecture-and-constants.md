@@ -8,9 +8,11 @@ open-forge:
 
 ## Task State
 
-- State: Complete from exact clean `develop` baseline `8a1cb86`. Mutation
-  Foundation contract closure remains paused at its persisted Framework-schema
-  decision until this accepted branch is integrated.
+- State: Complete and squash-integrated into local `develop` at `b6ce31f` from
+  exact clean predecessor `8a1cb86`. The integrated tree exactly matches the
+  accepted feature tree. Mutation Foundation contract closure remains paused at
+  its persisted Framework-schema decision until the bounded read-only dogfooding
+  correction is locally integrated.
 - Responsible role: Mastermind.
 - Parent: [Complete The Replacement CLI](00-cli-development.md).
 - Task source: Maintainer direction recorded on 2026-08-27.

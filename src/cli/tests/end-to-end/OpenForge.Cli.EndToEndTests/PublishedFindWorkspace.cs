@@ -6,6 +6,9 @@ namespace OpenForge.Cli.EndToEndTests;
 
 internal sealed class PublishedFindWorkspace : IDisposable
 {
+    internal const string FirstUnavailableFrontmatterPath = ".agents/first-unavailable.md";
+    internal const string SecondUnavailableFrontmatterPath = ".agents/second-unavailable.md";
+
     private readonly TemporaryWorkspace _workspace;
     private readonly FileStream? _lockedFile;
     private readonly IReadOnlyDictionary<string, string>? _lockedSnapshot;
@@ -40,6 +43,13 @@ internal sealed class PublishedFindWorkspace : IDisposable
 
         _lockedFile?.Dispose();
         return SnapshotState(_workspace);
+    }
+
+    internal void AddUnavailableFrontmatterSources()
+    {
+        const string malformedDocument = "---\nopen-forge: [unterminated\n---\n# Unavailable\n";
+        _workspace.WriteText(FirstUnavailableFrontmatterPath, malformedDocument);
+        _workspace.WriteText(SecondUnavailableFrontmatterPath, malformedDocument);
     }
 
     internal static PublishedFindWorkspace CreateBare()

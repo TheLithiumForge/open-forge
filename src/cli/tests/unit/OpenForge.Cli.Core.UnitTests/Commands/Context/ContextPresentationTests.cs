@@ -70,6 +70,63 @@ public sealed class ContextPresentationTests
         Assert.Equal(expected, rendered);
     }
 
+    [Fact(DisplayName = "Context compact findings name distinct known source paths")]
+    [Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    public void CompactFindingsNameDistinctKnownSourcePaths()
+    {
+        const string firstPath = ".agents/skills/first/SKILL.md";
+        const string secondPath = ".agents/skills/second/SKILL.md";
+        var result = ContextPresentationTestData.Create(
+            ContextPresentationTestData.Content(ContextContentPartKind.Metadata),
+            findings:
+            [
+                ClosureFinding(firstPath),
+                ClosureFinding(secondPath),
+            ]);
+
+        var rendered = ContextHumanRenderer.Render(Presentation(result, CliView.Compact));
+
+        Assert.Contains(
+            $"context.closure-unavailable subject={firstPath}: Loading metadata is unavailable.",
+            rendered,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            $"context.closure-unavailable subject={secondPath}: Loading metadata is unavailable.",
+            rendered,
+            StringComparison.Ordinal);
+    }
+
+    [Fact(DisplayName = "Context compact finding subjects are escaped and bounded")]
+    [Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    public void CompactFindingSubjectsAreEscapedAndBounded()
+    {
+        var hostileSubject = $"line{Environment.NewLine}{new string('x', 300)}";
+        var finding = new ContextFinding(
+            code: ContextFindingCode.ClosureUnavailable,
+            subject: hostileSubject,
+            cause: "Loading metadata is unavailable.",
+            reference: null,
+            source: null,
+            layer: null,
+            path: null,
+            part: null,
+            location: null,
+            destinationLocation: null,
+            candidates: []);
+        var result = ContextPresentationTestData.Create(
+            ContextPresentationTestData.Content(ContextContentPartKind.Metadata),
+            findings: [finding]);
+
+        var rendered = ContextHumanRenderer.Render(Presentation(result, CliView.Compact));
+        var findingLine = Assert.Single(
+            rendered.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries),
+            line => line.StartsWith("context.closure-unavailable", StringComparison.Ordinal));
+
+        Assert.DoesNotContain(hostileSubject, findingLine, StringComparison.Ordinal);
+        Assert.Contains("subject=line\\u000a", findingLine, StringComparison.Ordinal);
+        Assert.EndsWith("...: Loading metadata is unavailable.", findingLine, StringComparison.Ordinal);
+    }
+
     [Fact(DisplayName = "Context JSON uses the frozen ordered schema from the same typed result")]
     [Trait("Feature", "context"), Trait("Evidence", "Unit")]
     public void JsonUsesFrozenOrderedSchema()
@@ -143,4 +200,18 @@ public sealed class ContextPresentationTests
 
     private static string LayerName(ContextSourceLayerKind kind)
         => kind == ContextSourceLayerKind.Base ? "base" : "overwrite";
+
+    private static ContextFinding ClosureFinding(string path)
+        => new(
+            code: ContextFindingCode.ClosureUnavailable,
+            subject: null,
+            cause: "Loading metadata is unavailable.",
+            reference: null,
+            source: new ContextSourceIdentity(id: path, path: path),
+            layer: null,
+            path: path,
+            part: null,
+            location: null,
+            destinationLocation: null,
+            candidates: []);
 }

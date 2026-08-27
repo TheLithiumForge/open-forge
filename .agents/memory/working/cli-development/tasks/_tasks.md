@@ -17,7 +17,8 @@ Read the [program Task](00-cli-development.md), [Architecture](../../../crystall
 - [x] [Modern C# Improvements](modern-csharp-improvements.md) — Complete; Preflight `55eb82e`, Framework `a90af59`, Shell/root `fe10525`, Route Inspect/family `62a1dd9`, Route List `273eb45`, Tests/support `6af5fb1`, and final managed, Native AOT, package, audit, and public no-write gates accepted in the commit containing this record — Implementer: Mastermind
 - [x] [Repository-root CLI developer workflow](repository-root-developer-workflow.md) — Complete and squash-integrated into local `develop` at `d9e0686` — Implementer: Mastermind
 - [ ] [Mutation Foundation](mutation-foundation/_mutation-foundation.md) — Ready; accepted to precede public Index — Implementer: Mutation Foundation Task Mastermind
-- [ ] [Test Architecture And Constants](test-architecture-and-constants.md) — Active from `8a1cb86` while Mutation Foundation contract closure awaits the Framework lifecycle-schema decision — Implementer: Overseer
+- [x] [Test Architecture And Constants](test-architecture-and-constants.md) — Complete and squash-integrated at `b6ce31f` — Implementer: Overseer
+- [x] [Read-Only CLI Dogfooding Corrections](read-only-dogfooding-corrections.md) — Complete on accepted local candidate `deb3f14`; local integration remains before Mutation Foundation resumes — Implementer: Overseer
 - [ ] [Route Mutation Commands](route-mutation/_route-mutation.md) — Planned — Implementer: Not assigned
 - [ ] [Lifecycle Commands](lifecycle/_lifecycle.md) — Planned — Implementer: Not assigned
 - [ ] [Operational Commands](operations/_operations.md) — Planned — Implementer: Not assigned
@@ -64,6 +65,7 @@ define execution state.
 - [Build and accept locking, lifecycle, planning, application, recovery, and Git foundations before mutations](mutation-foundation/_mutation-foundation.md) - #Memory #Working #CLI #Task #Mutation #Lifecycle #Recovery #Git #Contextual
 - [Implement aggregate status, diagnosis, repair, and cleanup after every state producer exists](operations/_operations.md) - #Memory #Working #CLI #Task #Status #Doctor #Repair #Cleanup #Contextual
 - [Implement retained read-only source, context, extension, and generated-navigation commands](read-only/_read-only.md) - #Memory #Working #CLI #Task #ReadOnly #Source #Extension #Index #Contextual
+- [Correct three bounded read-only CLI dogfooding defects before Mutation Foundation resumes](read-only-dogfooding-corrections.md) - #Memory #Working #CLI #Task #ReadOnly #Context #Find #RouteInspect #Dogfooding #Contextual #Complete
 - [Move replacement CLI tooling to the repository root and make ordinary test runs publish and discover the local development executable](repository-root-developer-workflow.md) - #Memory #Working #CLI #Task #DotNet #Testing #DeveloperExperience #Contextual #Complete
 - [Implement read-only route discovery, beginning with route list and then route inspect](route-discovery/_route-discovery.md) - #Memory #Working #CLI #Task #Route #Discovery #ReadOnly #Contextual #Complete
 - [Implement retained route mutation commands on the accepted mutation foundation](route-mutation/_route-mutation.md) - #Memory #Working #CLI #Task #Route #Mutation #Contextual

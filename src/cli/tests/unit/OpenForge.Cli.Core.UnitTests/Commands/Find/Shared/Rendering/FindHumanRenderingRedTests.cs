@@ -142,6 +142,25 @@ public sealed class FindHumanRenderingRedTests
         Assert.DoesNotContain("find.projection-missing", omitted, StringComparison.Ordinal);
     }
 
+    [Fact(DisplayName = "Find compact frontmatter findings name distinct known source paths")]
+    [Trait("Feature", "find-presentation"), Trait("Evidence", "Unit")]
+    public void CompactFrontmatterFindingsNameDistinctKnownSourcePaths()
+    {
+        var result = FindPresentationTestData.SourceSpecificFrontmatterFindingsResult();
+
+        var rendered = FindCompactRenderer.Render(result);
+
+        Assert.Contains(
+            "finding code=find.frontmatter-unavailable status=incomplete subject=.agents/first.md",
+            rendered,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "finding code=find.frontmatter-unavailable status=incomplete subject=.agents/second.md",
+            rendered,
+            StringComparison.Ordinal);
+        Assert.DoesNotContain("find.frontmatter-unavailable status=incomplete subject=none", rendered, StringComparison.Ordinal);
+    }
+
     [Theory(DisplayName = "Find expanded query and universe evidence distinguish default and filtered selections"),
         InlineData("default"),
         InlineData("filtered"),

@@ -71,6 +71,70 @@ public sealed class PublishedContextProcessTests
             "Path: .agents/startup/topic.md");
     }
 
+    [Theory(DisplayName = "Published Context distinguishes valid and malformed routed native Skill metadata")]
+    [Trait("Feature", "context"), Trait("Evidence", "EndToEnd")]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task PublishedContextUsesNativeSkillMetadata(bool malformed)
+    {
+        var target = PublishedExecutableTarget.Discover();
+        using var working = PublishedContextWorkspace.Create();
+        working.AddRoutedSkills(new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["experience-design"] = malformed
+                ? "---\nname: experience-design\n---\n# Skill\n"
+                : OpenForge.Cli.TestSupport.OpenForgeDocumentSeed.Skill(
+                    "experience-design",
+                    "Design user experiences."),
+        });
+
+        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
+            target,
+            working.Path,
+            working.SnapshotState,
+            ["context", "--workspace", working.Path, "--content=metadata", "--view=compact"]);
+
+        Assert.Equal(malformed ? 3 : 0, result.ExitCode);
+        Assert.Equal(string.Empty, result.StandardError);
+        Assert.StartsWith(malformed ? "context incomplete" : "context complete", result.StandardOutput, StringComparison.Ordinal);
+        if (malformed)
+        {
+            Assert.Contains(
+                $"context.closure-unavailable subject={PublishedContextWorkspace.ExperienceDesignSkillPath}",
+                result.StandardOutput,
+                StringComparison.Ordinal);
+        }
+        else
+        {
+            Assert.DoesNotContain(PublishedContextWorkspace.ExperienceDesignSkillPath, result.StandardOutput, StringComparison.Ordinal);
+        }
+    }
+
+    [Fact(DisplayName = "Published Context compact findings distinguish multiple malformed Skill paths")]
+    [Trait("Feature", "context"), Trait("Evidence", "EndToEnd")]
+    public async Task PublishedContextCompactFindingsDistinguishMalformedSkillPaths()
+    {
+        const string malformedSkill = "---\nname: incomplete\n---\n# Skill\n";
+        var target = PublishedExecutableTarget.Discover();
+        using var working = PublishedContextWorkspace.Create();
+        working.AddRoutedSkills(new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["accessibility"] = malformedSkill,
+            ["experience-design"] = malformedSkill,
+        });
+
+        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
+            target,
+            working.Path,
+            working.SnapshotState,
+            ["context", "--workspace", working.Path, "--content=metadata", "--view=compact"]);
+
+        Assert.Equal(3, result.ExitCode);
+        Assert.Equal(string.Empty, result.StandardError);
+        Assert.Contains(PublishedContextWorkspace.AccessibilitySkillPath, result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains(PublishedContextWorkspace.ExperienceDesignSkillPath, result.StandardOutput, StringComparison.Ordinal);
+    }
+
     [Fact(DisplayName = "Published Context JSON retains additions, layers, links, and outside Markdown in canonical order")]
     [Trait("Feature", "context"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedContextJsonRetainsExpandedGraph()

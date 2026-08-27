@@ -36,6 +36,10 @@ public sealed class PublishedRouteInspectHelpProcessTests
         Assert.Contains("--view", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("--verbose", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Related commands", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("context — available", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("open-forge context [source-reference...]", result.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("context — unavailable", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("doctor — unavailable", result.StandardOutput, StringComparison.Ordinal);
         Assert.False(Directory.Exists(missingWorkspace));
     }
 

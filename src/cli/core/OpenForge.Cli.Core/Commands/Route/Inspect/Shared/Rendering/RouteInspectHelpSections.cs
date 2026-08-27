@@ -33,7 +33,7 @@ internal static class RouteInspectHelpSections
             new CliHelpSection(
                 "Related commands",
                 "  route list — list routed sources and descendants.\n"
-                + "  context — unavailable; planned to read selected source content.\n"
+                + "  context — available; use open-forge context [source-reference...] to read selected source content.\n"
                 + "  doctor — unavailable; planned to diagnose workspace conditions."),
             new CliHelpSection(
                 "Notes",

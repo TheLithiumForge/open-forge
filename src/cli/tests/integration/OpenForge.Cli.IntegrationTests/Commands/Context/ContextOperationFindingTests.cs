@@ -101,6 +101,43 @@ public sealed class ContextOperationFindingTests
         Assert.DoesNotContain(result.Sources, source => source.Path == ".agents/unrouted.md");
     }
 
+    [Theory(DisplayName = "Context distinguishes valid and malformed routed native Skill metadata")]
+    [Trait("Feature", "context"), Trait("Evidence", "Integration")]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task RoutedNativeSkillMetadataUsesItsAuthoredForm(bool malformed)
+    {
+        const string skillPath = ".agents/skills/experience-design/SKILL.md";
+        using var workspace = ContextOperationWorkspace.Create();
+        workspace.AddRoutedSkills(new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["experience-design"] = malformed
+                ? "---\nname: experience-design\n---\n# Skill\n"
+                : OpenForge.Cli.TestSupport.OpenForgeDocumentSeed.Skill(
+                    "experience-design",
+                    "Design user experiences."),
+        });
+
+        var result = await ExecuteAsync(workspace, [], Content("metadata"));
+
+        Assert.Equal(
+            malformed ? CliSemanticStatus.Incomplete : CliSemanticStatus.Complete,
+            result.Status);
+        Assert.Equal(
+            malformed ? ContextCoverageState.Incomplete : ContextCoverageState.Complete,
+            result.Coverage.Selection);
+        if (malformed)
+        {
+            Assert.Contains(result.Findings, finding =>
+                finding.Code == ContextFindingCode.ClosureUnavailable
+                && finding.Path == skillPath);
+        }
+        else
+        {
+            Assert.DoesNotContain(result.Findings, finding => finding.Path == skillPath);
+        }
+    }
+
     [Fact(DisplayName = "Context reports an authored global continuity source whose route is broken"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task BrokenGlobalContinuityRouteIsIncomplete()
     {

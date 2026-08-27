@@ -20,10 +20,15 @@ internal static class ContextPresentationTestData
 
     internal static ContextResult Create(
         ContextContentSelection content,
-        ContextLinkExpansion? linkExpansion = null)
+        ContextLinkExpansion? linkExpansion = null,
+        IReadOnlyList<ContextFinding>? findings = null)
     {
         ArgumentNullException.ThrowIfNull(content);
         var effectiveLinkExpansion = linkExpansion ?? ContextLinkExpansion.None;
+        var effectiveFindings = findings ?? [];
+        var selectionCoverage = effectiveFindings.Count == 0
+            ? ContextCoverageState.Complete
+            : ContextCoverageState.Incomplete;
         var selectedReason = new ContextInclusionReason(
             kind: ContextInclusionReasonKind.SelectedSource,
             source: null,
@@ -132,8 +137,8 @@ internal static class ContextPresentationTestData
                 effectiveView: CliView.Expanded,
                 content: content),
             coverage: new ContextCoverage(
-                state: ContextCoverageState.Complete,
-                selection: ContextCoverageState.Complete,
+                state: selectionCoverage,
+                selection: selectionCoverage,
                 links: effectiveLinkExpansion.Mode == ContextLinkExpansionMode.None
                     ? ContextOptionalCoverageState.NotRequested
                     : ContextOptionalCoverageState.Complete,
@@ -141,8 +146,10 @@ internal static class ContextPresentationTestData
             paths: content.Effective is [{ Kind: ContextContentPartKind.Paths }] ? paths : [],
             links: Links(effectiveLinkExpansion),
             sources: sources,
-            findings: [],
-            status: CliSemanticStatus.Complete,
+            findings: effectiveFindings,
+            status: effectiveFindings.Count == 0
+                ? CliSemanticStatus.Complete
+                : CliSemanticStatus.Incomplete,
             next: null);
     }
 

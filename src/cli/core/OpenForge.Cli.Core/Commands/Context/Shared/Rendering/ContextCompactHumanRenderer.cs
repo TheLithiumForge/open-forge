@@ -8,6 +8,8 @@ namespace OpenForge.Cli.Core.Commands.Context.Shared.Rendering;
 
 internal static class ContextCompactHumanRenderer
 {
+    private const int MaximumFindingSubjectLength = 240;
+
     internal static string Render(ContextResult result)
     {
         var builder = new StringBuilder();
@@ -78,12 +80,21 @@ internal static class ContextCompactHumanRenderer
     {
         foreach (var finding in result.Findings)
         {
-            builder.AppendLine($"{ContextDefinitions.Read(finding.Code).Code}: {finding.Cause}");
+            builder.AppendLine(
+                $"{ContextDefinitions.Read(finding.Code).Code} subject={FindingSubject(finding)}: {finding.Cause}");
         }
 
         if (result.Next is { } next)
         {
             builder.AppendLine($"Next: {next.Command} — {next.Reason}");
         }
+    }
+
+    private static string FindingSubject(ContextFinding finding)
+    {
+        var coordinate = finding.Subject ?? finding.Source?.Path ?? finding.Path;
+        return coordinate is null
+            ? "none"
+            : ContextTextEscaping.Escape(coordinate, MaximumFindingSubjectLength);
     }
 }

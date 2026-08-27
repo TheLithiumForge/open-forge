@@ -91,6 +91,30 @@ public sealed class PublishedFindProcessRedTests
             NonEmptyLines(result.StandardOutput));
     }
 
+    [Fact(DisplayName = "Published Find compact findings distinguish unavailable frontmatter source paths")]
+    [Trait("Feature", "find-presentation"), Trait("Evidence", "EndToEnd")]
+    public async Task PublishedFindCompactFindingsNameUnavailableFrontmatterPaths()
+    {
+        var target = PublishedExecutableTarget.Discover();
+        using var working = PublishedFindWorkspace.CreateBare();
+        working.AddUnavailableFrontmatterSources();
+
+        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
+            target,
+            working.Path,
+            working.SnapshotState,
+            ["find", "--workspace", working.Path, "--view=compact", "--tag=Architecture"]);
+
+        Assert.Equal(3, result.ExitCode);
+        Assert.Equal(string.Empty, result.StandardError);
+        Assert.Contains(PublishedFindWorkspace.FirstUnavailableFrontmatterPath, result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains(PublishedFindWorkspace.SecondUnavailableFrontmatterPath, result.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain(
+            "find.frontmatter-unavailable status=incomplete subject=none",
+            result.StandardOutput,
+            StringComparison.Ordinal);
+    }
+
     [Fact(DisplayName = "Published Find JSON content projection is complete and JSON view is a no-op"), Trait("Feature", "find-presentation"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedFindJsonContentAndViewAreStable()
     {

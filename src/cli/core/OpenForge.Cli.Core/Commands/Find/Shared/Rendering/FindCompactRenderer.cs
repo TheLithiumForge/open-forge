@@ -8,6 +8,8 @@ namespace OpenForge.Cli.Core.Commands.Find.Shared.Rendering;
 
 internal static class FindCompactRenderer
 {
+    private const int MaximumFindingSubjectLength = 240;
+
     internal static string Render(FindResult result)
     {
         ArgumentNullException.ThrowIfNull(result);
@@ -54,9 +56,10 @@ internal static class FindCompactRenderer
     {
         foreach (var finding in result.Findings)
         {
-            var subject = finding.Subject is null
+            var coordinate = finding.Subject ?? finding.Source?.Path ?? finding.Path;
+            var subject = coordinate is null
                 ? "none"
-                : FindTextEscaping.Escape(finding.Subject);
+                : FindTextEscaping.Escape(coordinate, MaximumFindingSubjectLength);
             lines.Add(
                 $"finding code={FindDefinitions.ReadFindingCode(finding.Code)} "
                 + $"status={Status(finding.Status)} subject={subject} "

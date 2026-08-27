@@ -293,7 +293,14 @@ Use these current Task links when assigning or closing an item.
 
 - **Severity/category:** Material correctness; source-form metadata and Context
   closure.
-- **Current behavior and evidence:** Repository dogfooding reports routed
+- **Disposition:** Closed on accepted local candidate `deb3f14`. Context now
+  consumes the form-aware `SourceAuthoredMetadataFacts`; valid and malformed
+  routed Skill Integration is `2/2`, published process is `3/3` across the valid,
+  malformed, and distinct-path cases, and the full managed/Native AOT gates pass.
+  Repository dogfooding no longer reports the valid
+  `experience-design/SKILL.md` while retaining the 65 expected repository
+  metadata findings.
+- **Original behavior and evidence:** Repository dogfooding reported routed
   `.agents/skills/experience-design/SKILL.md` as
   `context.closure-unavailable` even though its native `name` and `description`
   frontmatter is valid. The shared authored-metadata capability recognizes
@@ -323,12 +330,17 @@ Use these current Task links when assigning or closing an item.
 
 - **Severity/category:** Material experience and agent-efficiency defect; human
   presentation.
-- **Current behavior and evidence:** Compact Context repeats only
+- **Disposition:** Closed on accepted local candidate `deb3f14`. Focused compact
+  Unit evidence is `3/3` for distinct Context/Find paths and Context escaping and
+  bounds; published Context and Find path evidence passes. Repository dogfooding
+  reports all 65 Context and 66 Find metadata findings with a source coordinate
+  and zero known-source `subject=none` rows.
+- **Original behavior and evidence:** Compact Context repeated only
   `context.closure-unavailable` and its cause even though each typed finding has a
-  subject and path. Compact Find prints `subject=none` for
+  subject and path. Compact Find printed `subject=none` for
   `find.frontmatter-unavailable` even though the same typed finding retains a
-  source identity and path. JSON preserves the paths, but ordinary compact output
-  does not satisfy the accepted requirement to name the affected source or
+  source identity and path. JSON preserved the paths, but ordinary compact output
+  did not satisfy the accepted requirement to name the affected source or
   boundary when known.
 - **Consequence:** Dozens of distinct findings appear identical, cannot be acted
   on without rerunning JSON or expanded output, and make correct fail-closed
@@ -417,7 +429,12 @@ Use these current Task links when assigning or closing an item.
 
 - **Severity/category:** Material help accuracy; cross-command public
   presentation.
-- **Current behavior and evidence:** Route Inspect help still says Context is
+- **Disposition:** Closed on accepted local candidate `deb3f14`. Unit and
+  published help evidence name available
+  `open-forge context [source-reference...]`, contain no unavailable Context
+  wording, retain unavailable Doctor, and pass under managed and Native AOT
+  EndToEnd execution.
+- **Original behavior and evidence:** Route Inspect help said Context was
   unavailable or planned even though Context is implemented, accepted, and
   registered in the same replacement executable.
 - **Consequence:** Help gives stale command-selection advice and understates the

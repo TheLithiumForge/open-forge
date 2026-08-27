@@ -21,7 +21,7 @@ namespace OpenForge.Cli.Core.Commands.Context.Shared.Graph;
 internal sealed class ContextGraphBuilder
 {
     private readonly MarkdownDocumentParser _markdownParser = new();
-    private readonly SourceOpenForgeMetadataParser _metadataParser = new();
+    private readonly SourceAuthoredMetadataParser _metadataParser = new();
 
     internal async ValueTask<ContextGraph> BuildAsync(
         CliWorkspace workspace,
@@ -60,8 +60,8 @@ internal sealed class ContextGraphBuilder
 
             var baseDocument = layers[0].Document;
             var metadata = baseDocument is null
-                ? SourceOpenForgeMetadataFacts.WithoutValues(SourceOpenForgeMetadataState.Malformed)
-                : _metadataParser.Parse(baseDocument);
+                ? SourceAuthoredMetadataFacts.WithoutValues(SourceAuthoredMetadataState.Malformed)
+                : _metadataParser.Parse(baseDocument, source.Base.Form);
             var generated = baseDocument is null
                 ? SourceGeneratedEntriesFacts.Unavailable("The source document is unavailable.")
                 : SourceGeneratedEntriesParser.Parse(baseDocument);
@@ -120,7 +120,7 @@ internal sealed class ContextGraphBuilder
             form: SourceDocumentForm.Markdown,
             routeState: SourceRouteState.Unrouted,
             route: null,
-            metadata: SourceOpenForgeMetadataFacts.WithoutValues(SourceOpenForgeMetadataState.Missing),
+            metadata: SourceAuthoredMetadataFacts.WithoutValues(SourceAuthoredMetadataState.Missing),
             generatedEntries: SourceGeneratedEntriesFacts.Absent,
             layers: [new ContextGraphLayer
             {

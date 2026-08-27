@@ -25,6 +25,16 @@ open-forge:
   feature `2b1e63d` is squash-integrated at `73b01be`; combined managed Unit
   `1054/1054`, Integration `378/378`, EndToEnd `116/116`, and portable
   `linux-x64` Native AOT Integration `378/378` and EndToEnd `116/116` pass.
+  The constants/test-architecture audit is Complete and squash-integrated at
+  `b6ce31f`, whose accepted final managed Unit `1024/1024`, Integration
+  `409/409`, EndToEnd `116/116`, and supported local `linux-x64` Native AOT
+  Integration `409/409` gates pass. [Read-Only CLI Dogfooding
+  Corrections](read-only-dogfooding-corrections.md) is Complete on accepted local
+  candidate `deb3f14` from that exact integrated baseline and closes only
+  accepted findings `CLI-EDGE-011`, `CLI-EDGE-012`, and `CLI-EDGE-015`. Final
+  managed Unit `1031/1031`, Integration `411/411`, EndToEnd `120/120`, and
+  portable `linux-x64` Native AOT Integration `411/411` and EndToEnd `120/120`
+  gates pass with zero skips. Local squash integration is not yet claimed.
   Mutation Foundation now precedes public Index by accepted maintainer decision.
   The broader replacement CLI program remains Active.
 - Responsible role: Overseer.

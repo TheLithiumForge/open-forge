@@ -11,6 +11,8 @@ public static class OpenForgeDocumentSeed
     private const string GeneratedRegionStart = "<!-- open-forge:generated-index:start -->";
     private const string GeneratedRegionEnd = "<!-- open-forge:generated-index:end -->";
     private const string DefaultSkillBody = "# Skill\n\n";
+    private const string SkillEntrypointTitle = "Skills";
+    private const string SkillTag = "Skill";
 
     /// <summary>
     /// Builds a document with valid Open Forge metadata and an exact caller-owned
@@ -82,6 +84,41 @@ public static class OpenForgeDocumentSeed
         ArgumentNullException.ThrowIfNull(body);
 
         return $"{SkillFrontmatter(name, description)}\n{body}";
+    }
+
+    /// <summary>
+    /// Builds the routed Skills entrypoint for a non-empty set of Skill package
+    /// names.
+    /// </summary>
+    public static string SkillEntrypoint(IEnumerable<string> skillNames)
+    {
+        ArgumentNullException.ThrowIfNull(skillNames);
+        var names = skillNames
+            .Select(name =>
+            {
+                ArgumentException.ThrowIfNullOrWhiteSpace(name);
+                return name;
+            })
+            .Order(StringComparer.Ordinal)
+            .ToArray();
+        if (names.Length == 0 || names.Distinct(StringComparer.Ordinal).Count() != names.Length)
+        {
+            throw new ArgumentException(
+                "Routed Skill fixture names must be non-empty and unique.",
+                nameof(skillNames));
+        }
+
+        var entries = string.Join(
+            '\n',
+            names.Select(name => $"- [{name}]({name}/SKILL.md) - #{SkillTag}"));
+        return Metadata(
+            description: SkillEntrypointTitle,
+            tags: [SkillTag],
+            body: $"\n{GeneratedEntries(new GeneratedEntriesSeed
+            {
+                Entries = entries,
+                Prefix = $"# {SkillEntrypointTitle}",
+            })}");
     }
 
     /// <summary>

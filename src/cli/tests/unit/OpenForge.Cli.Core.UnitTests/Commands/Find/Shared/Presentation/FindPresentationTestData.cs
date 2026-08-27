@@ -94,6 +94,28 @@ internal static class FindPresentationTestData
             null);
     }
 
+    internal static FindResult SourceSpecificFrontmatterFindingsResult()
+    {
+        SourceLogicalSource[] sources =
+        [
+            Source(".agents/first.md"),
+            Source(".agents/second.md"),
+        ];
+        return Build(
+            Workspace(),
+            new FindUniverseFilter([], []),
+            EmptyQuery(),
+            Presentation(OmittedContent(), CliView.Compact, CliView.Compact),
+            new FindUniverse(FindUniverseMode.Default, [], [], sources.Length, sources.Length, sources.Length),
+            [],
+            [],
+            sources.Select(FrontmatterUnavailableFinding),
+            new FindStageCompletion(
+                FindCoverageState.Incomplete,
+                FindProjectionCoverageState.NotRequested),
+            null);
+    }
+
     internal static FindResult IncompleteResult()
     {
         var source = Source();
@@ -1054,6 +1076,21 @@ internal static class FindPresentationTestData
             null,
             null,
             CollisionCandidates());
+
+    private static FindFinding FrontmatterUnavailableFinding(SourceLogicalSource source)
+        => new(
+            FindFindingCode.FrontmatterUnavailable,
+            CliSemanticStatus.Incomplete,
+            null,
+            "The semantic frontmatter facts are unavailable for the selected region.",
+            null,
+            null,
+            new FindSourceIdentity(source.Identity.AutomaticId, source.Identity.CanonicalBasePath),
+            SourceLayerKind.Base,
+            source.Base.CanonicalPath,
+            new FindRegion(FindRegionKind.Frontmatter, null, FindDefinitions.Frontmatter),
+            null,
+            []);
 
     private static FindFinding SelectorFinding(
         FindFindingCode code,

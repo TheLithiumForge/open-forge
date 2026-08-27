@@ -16,7 +16,7 @@ namespace OpenForge.Cli.Core.Commands.Context.Shared.Links;
 internal sealed class ContextLinkedSourceReader
 {
     private readonly MarkdownDocumentParser _markdownParser = new();
-    private readonly SourceOpenForgeMetadataParser _metadataParser = new();
+    private readonly SourceAuthoredMetadataParser _metadataParser = new();
 
     internal async ValueTask<ContextGraphSource?> ReadAsync(
         ContextGraph graph,
@@ -76,7 +76,7 @@ internal sealed class ContextLinkedSourceReader
             form: SourceDocumentForm.Markdown,
             routeState: SourceRouteState.Unrouted,
             route: null,
-            metadata: _metadataParser.Parse(document),
+            metadata: _metadataParser.Parse(document, SourceDocumentForm.Markdown),
             generatedEntries: SourceGeneratedEntriesParser.Parse(document),
             layers: [new ContextGraphLayer
             {
