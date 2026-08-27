@@ -21,6 +21,9 @@ public sealed class TemporaryWorkspace : IDisposable
 
     private const string OwnershipMarkerName = ".open-forge-test-workspace-owner";
     private const string WorkspaceNamePrefix = "open-forge-";
+    private const int OwnershipTokenByteLength = 32;
+    private const int WorkspacePurposeMaxLength = 48;
+    private const int FileBufferSize = 4096;
     private static readonly StringComparer PathComparer = OperatingSystem.IsWindows()
         ? StringComparer.OrdinalIgnoreCase
         : StringComparer.Ordinal;
@@ -52,7 +55,8 @@ public sealed class TemporaryWorkspace : IDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(purpose);
 
         var safePurpose = SanitizePurpose(purpose);
-        var ownershipToken = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+        var ownershipToken = Convert.ToHexString(
+            RandomNumberGenerator.GetBytes(OwnershipTokenByteLength));
         var path = Directory.CreateTempSubdirectory(
             $"{WorkspaceNamePrefix}{safePurpose}-").FullName;
         try
@@ -122,6 +126,19 @@ public sealed class TemporaryWorkspace : IDisposable
     }
 
     /// <summary>
+    /// Replaces an owned ordinary UTF-8 file without changing its ownership.
+    /// </summary>
+    public void ReplaceText(string relativePath, string contents)
+    {
+        ArgumentNullException.ThrowIfNull(contents);
+
+        var path = ReadOwnedFilePath(relativePath);
+        using var stream = OpenOwnedFileForReplacement(path);
+        using var writer = new StreamWriter(stream, StrictUtf8NoBom);
+        writer.Write(contents);
+    }
+
+    /// <summary>
     /// Writes a byte file.
     /// </summary>
     public void WriteBytes(string relativePath, byte[] contents)
@@ -131,6 +148,40 @@ public sealed class TemporaryWorkspace : IDisposable
         var path = PrepareFilePath(relativePath);
         using var stream = CreateOwnedFile(path);
         stream.Write(contents);
+    }
+
+    /// <summary>
+    /// Replaces an owned ordinary byte file without changing its ownership.
+    /// </summary>
+    public void ReplaceBytes(string relativePath, byte[] contents)
+    {
+        ArgumentNullException.ThrowIfNull(contents);
+
+        var path = ReadOwnedFilePath(relativePath);
+        using var stream = OpenOwnedFileForReplacement(path);
+        stream.Write(contents);
+    }
+
+    /// <summary>
+    /// Moves an owned ordinary file to one new contained path and transfers its
+    /// ownership record.
+    /// </summary>
+    public string MoveFile(string sourceRelativePath, string destinationRelativePath)
+    {
+        var sourcePath = ReadOwnedFilePath(sourceRelativePath);
+        var destinationPath = ResolveRelativePath([destinationRelativePath]);
+        if (_ownedEntries.ContainsKey(destinationPath) || EntryExists(destinationPath))
+        {
+            throw new InvalidOperationException("The temporary workspace destination already exists.");
+        }
+
+        var parent = System.IO.Path.GetDirectoryName(destinationPath)
+            ?? throw new InvalidOperationException("The temporary workspace destination has no parent directory.");
+        CreateOwnedDirectories(parent);
+        File.Move(sourcePath, destinationPath);
+        _ownedEntries.Remove(sourcePath);
+        _ownedEntries.Add(destinationPath, OwnedEntryKind.File);
+        return destinationPath;
     }
 
     /// <summary>
@@ -266,7 +317,7 @@ public sealed class TemporaryWorkspace : IDisposable
                 nameof(purpose));
         }
 
-        return safePurpose[..Math.Min(safePurpose.Length, 48)];
+        return safePurpose[..Math.Min(safePurpose.Length, WorkspacePurposeMaxLength)];
     }
 
     private static void CreateOwnershipMarker(string rootPath, string ownershipToken)
@@ -477,6 +528,36 @@ public sealed class TemporaryWorkspace : IDisposable
         return path;
     }
 
+    private string ReadOwnedFilePath(string relativePath)
+    {
+        var path = ResolveRelativePath([relativePath]);
+        if (!_ownedEntries.TryGetValue(path, out var kind)
+            || kind != OwnedEntryKind.File
+            || !EntryExists(path))
+        {
+            throw new InvalidOperationException("The temporary workspace path is not an owned ordinary file.");
+        }
+
+        var attributes = File.GetAttributes(path);
+        if ((attributes & (FileAttributes.Directory | FileAttributes.ReparsePoint | FileAttributes.Device)) != 0)
+        {
+            throw new InvalidOperationException("The owned temporary file was replaced.");
+        }
+
+        return path;
+    }
+
+    private static FileStream OpenOwnedFileForReplacement(string path)
+    {
+        return new FileStream(
+            path,
+            FileMode.Truncate,
+            FileAccess.Write,
+            FileShare.None,
+            bufferSize: FileBufferSize,
+            FileOptions.SequentialScan);
+    }
+
     private FileStream CreateOwnedFile(string path)
     {
         var stream = new FileStream(
@@ -484,7 +565,7 @@ public sealed class TemporaryWorkspace : IDisposable
             FileMode.CreateNew,
             FileAccess.Write,
             FileShare.None,
-            bufferSize: 4096,
+            bufferSize: FileBufferSize,
             FileOptions.SequentialScan);
         try
         {

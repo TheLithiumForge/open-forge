@@ -1,5 +1,5 @@
 using OpenForge.Cli.Core.Commands.Context.Shared.Links;
-using OpenForge.Cli.Core.UnitTests.Commands.Context;
+using OpenForge.Cli.IntegrationTests.Commands.Context;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
@@ -7,21 +7,20 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.References;
 
-namespace OpenForge.Cli.Core.UnitTests.Commands.Context.Shared.Links;
+namespace OpenForge.Cli.IntegrationTests.Commands.Context.Shared.Links;
 
 public sealed class ContextLinkCaseMismatchResolverTests
 {
-    [Theory(DisplayName = "Context detects exact target case mismatch after complete or missing neutral resolution"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [Theory(DisplayName = "Context detects exact target case mismatch after complete or missing neutral resolution"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     [InlineData((int)SourceLinkTargetResolution.Complete)]
     [InlineData((int)SourceLinkTargetResolution.Missing)]
     public async Task DetectsCaseMismatchAcrossNeutralResolutionStates(int initialResolutionValue)
     {
         var initialResolution = (SourceLinkTargetResolution)initialResolutionValue;
         using var workspace = ContextOperationWorkspace.Create();
-        var actualPath = Path.Combine(workspace.Root, ".agents/projects/Linked.md");
-        File.Move(
-            Path.Combine(workspace.Root, ".agents/projects/linked.md"),
-            actualPath);
+        var actualPath = workspace.MoveFile(
+            ".agents/projects/linked.md",
+            ".agents/projects/Linked.md");
         var catalogue = new SourceCatalogue(
             workspace: workspace.Workspace,
             candidates: [],

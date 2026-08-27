@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
@@ -67,12 +68,18 @@ internal static class RouteInspectResolutionSupport
                         issue.AttemptedCanonicalPath,
                         "The .agents source boundary could not be proved or read."),
                 SourceCatalogueIssueCode.CandidateUnsafe
-                    when string.Equals(issue.AttemptedCanonicalPath, ".agents/loader.md", StringComparison.Ordinal) => CreateIssue(
+                    when string.Equals(
+                        issue.AttemptedCanonicalPath,
+                        SourceLogicalPath.LoaderPath,
+                        StringComparison.Ordinal) => CreateIssue(
                         RouteInspectResolutionIssueCode.UnsafeSource,
                         issue.AttemptedCanonicalPath,
                         "The Loader source boundary could not be proved or read."),
                 SourceCatalogueIssueCode.CandidateUnavailable
-                    when string.Equals(issue.AttemptedCanonicalPath, ".agents/loader.md", StringComparison.Ordinal) => CreateIssue(
+                    when string.Equals(
+                        issue.AttemptedCanonicalPath,
+                        SourceLogicalPath.LoaderPath,
+                        StringComparison.Ordinal) => CreateIssue(
                         RouteInspectResolutionIssueCode.ReadUnavailable,
                         issue.AttemptedCanonicalPath,
                         "The Loader source boundary could not be proved or read."),

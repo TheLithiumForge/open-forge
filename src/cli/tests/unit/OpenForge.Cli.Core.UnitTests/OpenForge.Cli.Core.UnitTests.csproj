@@ -14,15 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../../../core/OpenForge.Cli.Core/OpenForge.Cli.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="../../../core/OpenForge.Cli.Core/Framework/Extensions/Embedded/EmbeddedExtensionCatalogueInventory.json"
-             Link="ExtensionCatalogue/inventory.json"
-             CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="../../../../extensions/development-toolkit/**/*"
-             Link="ExtensionCatalogue/development-toolkit/%(RecursiveDir)%(Filename)%(Extension)"
-             CopyToOutputDirectory="PreserveNewest" />
+    <ProjectReference Include="../../support/OpenForge.Cli.TestSupport/OpenForge.Cli.TestSupport.csproj" />
   </ItemGroup>
 
   <ItemGroup>

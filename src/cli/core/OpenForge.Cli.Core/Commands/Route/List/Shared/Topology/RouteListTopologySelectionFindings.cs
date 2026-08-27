@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Selection;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Shell.Definitions;
 
@@ -201,6 +202,6 @@ internal sealed class RouteListTopologySelectionFindings
     {
         return _input.Selection.Selection.AttemptedId
             ?? _input.Selection.Selection.AttemptedPath
-            ?? ".agents/loader.md";
+            ?? SourceLogicalPath.LoaderPath;
     }
 }

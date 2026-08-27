@@ -2,6 +2,7 @@ using System.Buffers;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Find.Models.Matching;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Locations;
@@ -10,9 +11,6 @@ namespace OpenForge.Cli.Core.Commands.Find.Shared.Matching;
 
 internal sealed class FindBodyTagScanner
 {
-    private const string GeneratedStart = "<!-- open-forge:generated-index:start -->";
-    private const string GeneratedEnd = "<!-- open-forge:generated-index:end -->";
-
     internal FindBodyTagFacts Scan(FindBodyTagInput input)
     {
         ArgumentNullException.ThrowIfNull(input);
@@ -89,8 +87,8 @@ internal sealed class FindBodyTagScanner
 
         return value switch
         {
-            GeneratedStart => GeneratedMarkerKind.Start,
-            GeneratedEnd => GeneratedMarkerKind.End,
+            MarkdownGeneratedRegionSyntax.StartMarker => GeneratedMarkerKind.Start,
+            MarkdownGeneratedRegionSyntax.EndMarker => GeneratedMarkerKind.End,
             _ => GeneratedMarkerKind.None,
         };
     }

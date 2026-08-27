@@ -1,11 +1,10 @@
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Routing;
 
 internal static class SourceLoaderEntriesParser
 {
-    private const string StartMarker = "<!-- open-forge:generated-index:start -->";
-    private const string EndMarker = "<!-- open-forge:generated-index:end -->";
     private const string EmptySentinel = "- none - No entries - #Empty";
 
     internal static SourceLoaderEntriesParseResult Parse(string loaderContents)
@@ -20,7 +19,7 @@ internal static class SourceLoaderEntriesParser
         var lines = normalized.Split('\n', StringSplitOptions.None);
         var entriesHeadings = lines
             .Select((line, index) => (line, index))
-            .Where(item => item.line == "## Entries")
+            .Where(item => item.line == MarkdownGeneratedRegionSyntax.EntriesHeadingLine)
             .Select(item => item.index)
             .ToArray();
         if (entriesHeadings.Length != 1)
@@ -36,12 +35,12 @@ internal static class SourceLoaderEntriesParser
 
         var startMarkers = lines
             .Select((line, index) => (line, index))
-            .Where(item => item.line == StartMarker)
+            .Where(item => item.line == MarkdownGeneratedRegionSyntax.StartMarker)
             .Select(item => item.index)
             .ToArray();
         var endMarkers = lines
             .Select((line, index) => (line, index))
-            .Where(item => item.line == EndMarker)
+            .Where(item => item.line == MarkdownGeneratedRegionSyntax.EndMarker)
             .Select(item => item.index)
             .ToArray();
         if (startMarkers.Length != 1

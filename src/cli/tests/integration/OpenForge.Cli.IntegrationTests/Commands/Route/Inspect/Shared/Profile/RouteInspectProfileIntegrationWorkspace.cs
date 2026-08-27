@@ -97,13 +97,10 @@ internal sealed class RouteInspectProfileIntegrationWorkspace : IDisposable
         string description,
         params string[] tags)
     {
-        return $"""
-            ---
-            open-forge:
-              description: {description}
-              tags: [{string.Join(", ", tags)}]
-            ---
-            """ + Environment.NewLine;
+        return OpenForgeDocumentSeed.Metadata(
+            description: description,
+            tags: tags,
+            body: string.Empty);
     }
 
     internal static string Entry(

@@ -85,7 +85,10 @@ internal sealed class PublishedContextWorkspace : IDisposable
     }
 
     private static string Document(string description, string tags, string body)
-        => $"---\nopen-forge:\n  description: {description}\n  tags: [{tags}]\n---\n\n{body}";
+        => OpenForgeDocumentSeed.Metadata(
+            description: description,
+            tags: tags.Split(", ", StringSplitOptions.None),
+            body: $"\n{body}");
 
     public void Dispose() => _workspace.Dispose();
 }

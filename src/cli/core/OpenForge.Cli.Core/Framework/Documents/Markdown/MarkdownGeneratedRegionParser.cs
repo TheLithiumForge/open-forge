@@ -4,9 +4,6 @@ namespace OpenForge.Cli.Core.Framework.Documents.Markdown;
 
 internal static class MarkdownGeneratedRegionParser
 {
-    private const string StartMarker = "<!-- open-forge:generated-index:start -->";
-    private const string EndMarker = "<!-- open-forge:generated-index:end -->";
-
     internal static MarkdownGeneratedRegionFact Parse(
         string source,
         MarkdownTextSpan bodySpan,
@@ -21,7 +18,10 @@ internal static class MarkdownGeneratedRegionParser
         var entriesHeadings = headings
             .Where(heading => heading.Level == 2
                 && heading.IsCanonical
-                && string.Equals(heading.VisibleText, "Entries", StringComparison.Ordinal))
+                && string.Equals(
+                    heading.VisibleText,
+                    MarkdownGeneratedRegionSyntax.EntriesHeadingText,
+                    StringComparison.Ordinal))
             .ToArray();
         var markers = opaqueSpans
             .Select(opaque => (opaque.Span, Kind: ReadMarkerKind(source, opaque.Span)))
@@ -90,8 +90,8 @@ internal static class MarkdownGeneratedRegionParser
 
         return value switch
         {
-            StartMarker => GeneratedMarkerKind.Start,
-            EndMarker => GeneratedMarkerKind.End,
+            MarkdownGeneratedRegionSyntax.StartMarker => GeneratedMarkerKind.Start,
+            MarkdownGeneratedRegionSyntax.EndMarker => GeneratedMarkerKind.End,
             _ => GeneratedMarkerKind.None,
         };
     }

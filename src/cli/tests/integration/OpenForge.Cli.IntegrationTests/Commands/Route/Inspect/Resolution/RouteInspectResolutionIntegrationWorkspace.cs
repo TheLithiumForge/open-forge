@@ -73,23 +73,16 @@ internal sealed class RouteInspectResolutionIntegrationWorkspace : IDisposable
 
     internal static string OpenForgeMetadata(string description, params string[] tags)
     {
-        return $"""
-            ---
-            open-forge:
-              description: {description}
-              tags: [{string.Join(", ", tags)}]
-            ---
-            """;
+        return OpenForgeDocumentSeed.MetadataFrontmatter(
+            description: description,
+            tags: tags);
     }
 
     internal static string SkillMetadata(string name, string description)
     {
-        return $"""
-            ---
-            name: {name}
-            description: {description}
-            ---
-            """;
+        return OpenForgeDocumentSeed.SkillFrontmatter(
+            name: name,
+            description: description);
     }
 
     public void Dispose()

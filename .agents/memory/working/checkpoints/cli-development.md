@@ -77,11 +77,18 @@ external publication, remote action, or push occurred.
 
 ## Current Step
 
-Begin the shared Mutation Foundation sequentially from its contract-closure
-child. The maintainer accepted the architecture recommendation to place shared
-locking, post-lock revalidation, atomic application, verification, recovery, and
-Git mechanics before public Index application. Generated Navigation and
-Extension Inspect are integrated and no longer active.
+The [Test Architecture And Constants](../cli-development/tasks/test-architecture-and-constants.md)
+audit is Complete on its local branch from exact baseline `8a1cb86`. Symbolic
+ownership, composable document seeds, corrected evidence tiers, relational
+Extension catalogue evidence, and the no-snapshot decision are accepted. Final
+managed Unit `1024/1024`, Integration `409/409`, and EndToEnd `116/116` pass with
+zero skips; the republished supported `linux-x64` Native AOT Integration host is
+`409/409`. A separate Ideas entry records possible LithSnap-backed presentation
+snapshots only after an explicit Native-AOT-safe baseline contract exists.
+
+After local integration, return to Mutation Foundation at the exact persisted
+Framework lifecycle-schema decision. Generated Navigation and Extension Inspect
+are integrated and no longer active.
 
 Public Index remains sequential after Mutation Foundation acceptance. Do not
 create an Index-local mutation substitute. Do not push.
@@ -99,10 +106,12 @@ create an Index-local mutation substitute. Do not push.
 
 ## Next Actions
 
-1. Freeze and independently accept the callable Mutation Foundation contracts.
-2. Implement its lock,
-   lifecycle, revalidation, atomic-apply, receipt, recovery, and Git children in
-   dependency order. Keep remotes unchanged.
+1. Integrate the accepted constants/test-architecture branch locally without a
+   remote action.
+2. Return to the exact Mutation Foundation lifecycle-schema decision, then freeze
+   and accept its callable contracts before implementing lock, lifecycle,
+   revalidation, atomic-apply, receipt, recovery, and Git children in dependency
+   order. Keep remotes unchanged.
 
 ## Current Sources
 

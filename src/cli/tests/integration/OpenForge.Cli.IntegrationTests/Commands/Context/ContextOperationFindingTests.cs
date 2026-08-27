@@ -4,11 +4,11 @@ using OpenForge.Cli.Core.Commands.Context.Models.Result;
 using OpenForge.Cli.Core.Commands.Context.Models.Selection;
 using OpenForge.Cli.Core.Shell.Definitions;
 
-namespace OpenForge.Cli.Core.UnitTests.Commands.Context;
+namespace OpenForge.Cli.IntegrationTests.Commands.Context;
 
 public sealed class ContextOperationFindingTests
 {
-    [Theory(DisplayName = "Context direct operation maps failure and interruption to exact terminal results"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [Theory(DisplayName = "Context direct operation maps failure and interruption to exact terminal results"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     [InlineData(false, (int)CliSemanticStatus.Failed, (int)ContextFindingCode.OperationFailed, (int)ContextCoverageState.Failed)]
     [InlineData(true, (int)CliSemanticStatus.Interrupted, (int)ContextFindingCode.Interrupted, (int)ContextCoverageState.Interrupted)]
     public async Task OperationEventsAreExactTerminalResults(
@@ -42,7 +42,7 @@ public sealed class ContextOperationFindingTests
     }
 
     [Fact(DisplayName = "Context invalid source selection stops before startup resolution")]
-    [Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task InvalidSourceStopsBeforeResolution()
     {
         using var workspace = ContextOperationWorkspace.Create();
@@ -56,20 +56,21 @@ public sealed class ContextOperationFindingTests
         Assert.Contains(result.Findings, finding => finding.Code == ContextFindingCode.InvalidSource);
     }
 
-    [Theory(DisplayName = "Context cannot report complete when global continuity membership metadata is malformed or unreadable"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [Theory(DisplayName = "Context cannot report complete when global continuity membership metadata is malformed or unreadable"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     [InlineData(false)]
     [InlineData(true)]
     public async Task UnavailableGlobalContinuityMetadataIsIncomplete(bool invalidEncoding)
     {
         using var workspace = ContextOperationWorkspace.Create();
-        var checkpoint = Path.Combine(workspace.Root, ".agents/state/checkpoint.md");
         if (invalidEncoding)
         {
-            File.WriteAllBytes(checkpoint, [0xFF, 0xFE, 0xFD]);
+            workspace.ReplaceBytes(".agents/state/checkpoint.md", [0xFF, 0xFE, 0xFD]);
         }
         else
         {
-            File.WriteAllText(checkpoint, "---\nopen-forge: [unterminated\n---\n# Checkpoint\n");
+            workspace.ReplaceText(
+                ".agents/state/checkpoint.md",
+                "---\nopen-forge: [unterminated\n---\n# Checkpoint\n");
         }
 
         var result = await ExecuteAsync(workspace, [], Content("metadata"));
@@ -84,12 +85,13 @@ public sealed class ContextOperationFindingTests
         Assert.NotNull(result.Next);
     }
 
-    [Fact(DisplayName = "Context ignores unavailable metadata on a definitively unrouted non-continuity source"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Context ignores unavailable metadata on a definitively unrouted non-continuity source"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task UnroutedUnavailableMetadataDoesNotInvalidateContinuityCoverage()
     {
         using var workspace = ContextOperationWorkspace.Create();
-        var unrelated = Path.Combine(workspace.Root, ".agents/unrouted.md");
-        File.WriteAllText(unrelated, "---\nopen-forge: [unterminated\n---\n# Unrouted\n");
+        workspace.WriteText(
+            ".agents/unrouted.md",
+            "---\nopen-forge: [unterminated\n---\n# Unrouted\n");
 
         var result = await ExecuteAsync(workspace, [], Content("metadata"));
 
@@ -99,19 +101,19 @@ public sealed class ContextOperationFindingTests
         Assert.DoesNotContain(result.Sources, source => source.Path == ".agents/unrouted.md");
     }
 
-    [Fact(DisplayName = "Context reports an authored global continuity source whose route is broken"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Context reports an authored global continuity source whose route is broken"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task BrokenGlobalContinuityRouteIsIncomplete()
     {
         using var workspace = ContextOperationWorkspace.Create();
-        Directory.CreateDirectory(Path.Combine(workspace.Root, ".agents/projects/ambiguous"));
-        File.WriteAllText(
-            Path.Combine(workspace.Root, ".agents/projects/ambiguous/_ambiguous.md"),
+        workspace.CreateDirectory(".agents/projects/ambiguous");
+        workspace.WriteText(
+            ".agents/projects/ambiguous/_ambiguous.md",
             "---\nopen-forge:\n  description: Canonical ambiguous\n  tags: [Project]\n---\n\n# Canonical\n");
-        File.WriteAllText(
-            Path.Combine(workspace.Root, ".agents/projects/ambiguous/index.md"),
+        workspace.WriteText(
+            ".agents/projects/ambiguous/index.md",
             "---\nopen-forge:\n  description: Compatibility ambiguous\n  tags: [Project]\n---\n\n# Compatibility\n");
-        File.WriteAllText(
-            Path.Combine(workspace.Root, ".agents/projects/ambiguous/continuity.md"),
+        workspace.WriteText(
+            ".agents/projects/ambiguous/continuity.md",
             "---\nopen-forge:\n  description: Ambiguous continuity\n  tags: [KeepInMind, Memory]\n---\n\n# Ambiguous continuity\n");
 
         var result = await ExecuteAsync(workspace, [], Content("metadata"));
@@ -126,12 +128,12 @@ public sealed class ContextOperationFindingTests
     }
 
     [Fact(DisplayName = "Context retains same-code link findings in breadth-first authored edge order")]
-    [Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task SameCodeLinkFindingsRetainAuthoredOrder()
     {
         using var workspace = ContextOperationWorkspace.Create();
-        File.WriteAllText(
-            Path.Combine(workspace.Root, ".agents/projects/guide.md"),
+        workspace.ReplaceText(
+            ".agents/projects/guide.md",
             $"{ContextOperationWorkspace.GuideFrontmatter}\n# Guide\n\n[Z](z-missing.md) [A](a-missing.md).\n");
         var result = await ExecuteAsync(
             workspace,
@@ -149,12 +151,12 @@ public sealed class ContextOperationFindingTests
     }
 
     [Fact(DisplayName = "Context treats an exact orphan overwrite reference as a blocked overwrite boundary")]
-    [Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task OrphanOverwriteReferenceIsBlocked()
     {
         using var workspace = ContextOperationWorkspace.Create();
-        File.WriteAllText(
-            Path.Combine(workspace.Root, ".agents/projects/orphan.overwrite.md"),
+        workspace.WriteText(
+            ".agents/projects/orphan.overwrite.md",
             "# Orphan overwrite\n");
         var result = await ExecuteAsync(
             workspace,
@@ -167,13 +169,13 @@ public sealed class ContextOperationFindingTests
     }
 
     [Fact(DisplayName = "Context exact-path selection retains a safe automatic-ID collision as attention")]
-    [Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task ExactPathIdentityCollisionIsAttention()
     {
         using var workspace = ContextOperationWorkspace.Create();
-        Directory.CreateDirectory(Path.Combine(workspace.Root, ".agents/projects/guide"));
-        File.WriteAllText(
-            Path.Combine(workspace.Root, ".agents/projects/guide/_guide.md"),
+        workspace.CreateDirectory(".agents/projects/guide");
+        workspace.WriteText(
+            ".agents/projects/guide/_guide.md",
             "# Colliding guide entrypoint\n");
         var result = await ExecuteAsync(
             workspace,
@@ -189,13 +191,13 @@ public sealed class ContextOperationFindingTests
     }
 
     [Fact(DisplayName = "Context resolves an exact local target case mismatch as safe attention")]
-    [Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task ExactTargetCaseMismatchIsAttention()
     {
         using var workspace = ContextOperationWorkspace.Create();
-        File.Move(
-            Path.Combine(workspace.Root, ".agents/projects/linked.md"),
-            Path.Combine(workspace.Root, ".agents/projects/Linked.md"));
+        workspace.MoveFile(
+            ".agents/projects/linked.md",
+            ".agents/projects/Linked.md");
         var result = await ExecuteAsync(
             workspace,
             ["projects/guide"],
@@ -212,12 +214,12 @@ public sealed class ContextOperationFindingTests
     }
 
     [Fact(DisplayName = "Context unavailable authored frontmatter forms an incomplete projection finding")]
-    [Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task UnavailableFrontmatterIsIncomplete()
     {
         using var workspace = ContextOperationWorkspace.Create();
-        File.WriteAllText(
-            Path.Combine(workspace.Root, ".agents/projects/guide.md"),
+        workspace.ReplaceText(
+            ".agents/projects/guide.md",
             "---\nopen-forge:\n  description: Unterminated\n# Guide\n");
         var result = await ExecuteAsync(
             workspace,

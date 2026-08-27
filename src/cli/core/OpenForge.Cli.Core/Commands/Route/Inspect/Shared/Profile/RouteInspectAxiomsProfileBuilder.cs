@@ -1,13 +1,13 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile;
 
 internal sealed partial class RouteInspectAxiomsProfileBuilder
 {
-    private const string LoaderPath = ".agents/loader.md";
     private const string InheritedSentinel = "- inherited - No local axioms; loaded ancestor axioms remain active.";
     private readonly RouteInspectGraph _graph;
     private readonly RouteInspectIdentity _identity;
@@ -62,7 +62,7 @@ internal sealed partial class RouteInspectAxiomsProfileBuilder
         }
 
         var sources = new List<string>();
-        var loader = _graph.ProjectionSet.FindByPath(LoaderPath);
+        var loader = _graph.ProjectionSet.FindByPath(SourceLogicalPath.LoaderPath);
         if (loader is null && _graph.RouteFacts.Topology.LoaderRootPaths.Count != 0)
         {
             return RouteInspectFact<RouteInspectAxiomsSources>.Unavailable(

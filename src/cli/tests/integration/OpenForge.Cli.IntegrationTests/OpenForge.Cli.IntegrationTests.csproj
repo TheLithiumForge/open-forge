@@ -22,6 +22,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="../../../core/OpenForge.Cli.Core/Framework/Extensions/Embedded/EmbeddedExtensionCatalogueInventory.json"
+             Link="ExtensionCatalogue/inventory.json"
+             CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../../../extensions/development-toolkit/**/*"
+             Link="ExtensionCatalogue/development-toolkit/%(RecursiveDir)%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 </Project>

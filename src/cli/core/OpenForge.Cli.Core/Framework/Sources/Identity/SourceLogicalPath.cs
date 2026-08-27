@@ -5,6 +5,7 @@ namespace OpenForge.Cli.Core.Framework.Sources.Identity;
 internal static class SourceLogicalPath
 {
     internal const string AgentsRoot = ".agents";
+    internal const string LoaderPath = AgentsRoot + "/loader.md";
 
     internal static bool IsCanonical([NotNullWhen(true)] string? path)
     {

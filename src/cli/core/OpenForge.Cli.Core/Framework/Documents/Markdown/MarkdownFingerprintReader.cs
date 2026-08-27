@@ -10,11 +10,7 @@ namespace OpenForge.Cli.Core.Framework.Documents.Markdown;
 /// </summary>
 internal sealed class MarkdownFingerprintReader
 {
-    internal const string Policy = "open-forge-markdown-v1";
-
-    private const string StartMarker = "<!-- open-forge:generated-index:start -->";
-    private const string EndMarker = "<!-- open-forge:generated-index:end -->";
-    private const string MarkerPrefix = "open-forge:generated-index:";
+    internal const string Policy = MarkdownFingerprintPolicy.Name;
 
     private static readonly UTF8Encoding StrictUtf8 = new(
         encoderShouldEmitUTF8Identifier: false,
@@ -126,18 +122,33 @@ internal sealed class MarkdownFingerprintReader
         foreach (var line in lines)
         {
             var content = source[line.Start..line.End];
-            if (string.Equals(content, StartMarker, StringComparison.Ordinal)
-                && ContainsOutsideCode(facts, source, line.Start, line.End, StartMarker))
+            if (string.Equals(content, MarkdownGeneratedRegionSyntax.StartMarker, StringComparison.Ordinal)
+                && ContainsOutsideCode(
+                    facts,
+                    source,
+                    line.Start,
+                    line.End,
+                    MarkdownGeneratedRegionSyntax.StartMarker))
             {
                 markerCandidates.Add(new MarkerCandidate(MarkerKind.Start, line));
             }
-            else if (string.Equals(content, EndMarker, StringComparison.Ordinal)
-                && ContainsOutsideCode(facts, source, line.Start, line.End, EndMarker))
+            else if (string.Equals(content, MarkdownGeneratedRegionSyntax.EndMarker, StringComparison.Ordinal)
+                && ContainsOutsideCode(
+                    facts,
+                    source,
+                    line.Start,
+                    line.End,
+                    MarkdownGeneratedRegionSyntax.EndMarker))
             {
                 markerCandidates.Add(new MarkerCandidate(MarkerKind.End, line));
             }
-            else if (content.Contains(MarkerPrefix, StringComparison.Ordinal)
-                && ContainsOutsideCode(facts, source, line.Start, line.End, MarkerPrefix))
+            else if (content.Contains(MarkdownGeneratedRegionSyntax.MarkerPrefix, StringComparison.Ordinal)
+                && ContainsOutsideCode(
+                    facts,
+                    source,
+                    line.Start,
+                    line.End,
+                    MarkdownGeneratedRegionSyntax.MarkerPrefix))
             {
                 malformedMarker = true;
             }
@@ -146,9 +157,15 @@ internal sealed class MarkdownFingerprintReader
         var entries = facts.Headings
             .Where(heading => heading.Level == 2
                 && heading.IsCanonical
-                && string.Equals(heading.VisibleText, "Entries", StringComparison.Ordinal)
+                && string.Equals(
+                    heading.VisibleText,
+                    MarkdownGeneratedRegionSyntax.EntriesHeadingText,
+                    StringComparison.Ordinal)
                 && lines.Any(line => line.Start == heading.Span.Start
-                    && string.Equals(source[line.Start..line.End], "## Entries", StringComparison.Ordinal)))
+                    && string.Equals(
+                        source[line.Start..line.End],
+                        MarkdownGeneratedRegionSyntax.EntriesHeadingLine,
+                        StringComparison.Ordinal)))
             .ToArray();
         if (malformedMarker)
         {
@@ -183,8 +200,8 @@ internal sealed class MarkdownFingerprintReader
         var endOffset = ByteCount(source, end.Start);
         return new MarkdownFingerprintRegion(
             MarkdownFingerprintRegionState.Valid,
-            StartMarker,
-            EndMarker,
+            MarkdownGeneratedRegionSyntax.StartMarker,
+            MarkdownGeneratedRegionSyntax.EndMarker,
             startOffset,
             endOffset,
             checked(endOffset - startOffset),

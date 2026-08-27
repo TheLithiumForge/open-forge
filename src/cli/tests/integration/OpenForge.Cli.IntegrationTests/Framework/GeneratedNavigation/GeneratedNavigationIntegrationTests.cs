@@ -11,6 +11,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.IntegrationTests.Framework.Sources.Shared;
+using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.GeneratedNavigation;
 
@@ -21,16 +22,30 @@ public sealed class GeneratedNavigationIntegrationTests
     public async Task RootedTreeProjectsLoaderAndEntrypointRegionsWithoutWrites()
     {
         using var workspace = SourceIntegrationWorkspace.Create("generated-navigation-rooted");
-        workspace.Write(".agents/loader.md", Document("stale", "\n", "# Loader\n"));
+        workspace.Write(
+            ".agents/loader.md",
+            OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
+            {
+                Entries = "stale",
+                Prefix = "# Loader",
+            }));
         workspace.Write(
             ".agents/root/_root.md",
-            MetadataNavigationDocument("Root", ["Root"], "stale"));
+            OpenForgeDocumentSeed.Metadata(
+                description: "Root",
+                tags: ["Root"],
+                body: OpenForgeDocumentSeed.GeneratedEntries(entries: "stale")));
         workspace.Write(
             ".agents/root/child.md",
-            MetadataDocument("Child", ["Docs"]));
+            OpenForgeDocumentSeed.Metadata(
+                description: "Child",
+                tags: ["Docs"],
+                body: "# Child\n"));
         workspace.Write(
             ".agents/root/tool/SKILL.md",
-            SkillDocument("tool", "Native tool"));
+            OpenForgeDocumentSeed.Skill(
+                name: "tool",
+                description: "Native tool"));
 
         var loader = Source(workspace, ".agents/loader.md", "loader", SourceDocumentForm.Loader);
         var root = Source(
@@ -95,16 +110,24 @@ public sealed class GeneratedNavigationIntegrationTests
         using var workspace = SourceIntegrationWorkspace.Create("generated-navigation-detached");
         workspace.Write(
             ".agents/detached/_detached.md",
-            Document(
-                "- [Alias](a.md) - #Alias\r\n- [Other](b.md) - #Other",
-                "\r\n",
-                "# Detached\r\n"));
+            OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
+            {
+                Entries = "- [Alias](a.md) - #Alias\r\n- [Other](b.md) - #Other",
+                LineEnding = "\r\n",
+                Prefix = "# Detached",
+            }));
         workspace.Write(
             "shared/child.md",
-            MetadataDocument("Alias", ["Alias"]));
+            OpenForgeDocumentSeed.Metadata(
+                description: "Alias",
+                tags: ["Alias"],
+                body: "# Child\n"));
         workspace.Write(
             ".agents/detached/b.md",
-            MetadataDocument("Other", ["Other"]));
+            OpenForgeDocumentSeed.Metadata(
+                description: "Other",
+                tags: ["Other"],
+                body: "# Child\n"));
         workspace.Write(".agents/detached/a.overwrite.md", "authored overwrite\r\n");
         Assert.True(
             workspace.TryCreateFileSymbolicLink(
@@ -308,58 +331,4 @@ public sealed class GeneratedNavigationIntegrationTests
             childPaths);
     }
 
-    private static string Document(
-        string body,
-        string lineEnding,
-        string prefix)
-    {
-        return prefix
-            + lineEnding
-            + "## Entries"
-            + lineEnding
-            + lineEnding
-            + "<!-- open-forge:generated-index:start -->"
-            + lineEnding
-            + body
-            + lineEnding
-            + "<!-- open-forge:generated-index:end -->"
-            + lineEnding;
-    }
-
-    private static string MetadataDocument(
-        string description,
-        IEnumerable<string> tags)
-    {
-        return "---\n"
-            + "open-forge:\n"
-            + $"  description: {description}\n"
-            + $"  tags: [{string.Join(", ", tags)}]\n"
-            + "---\n"
-            + "# Child\n";
-    }
-
-    private static string MetadataNavigationDocument(
-        string description,
-        IEnumerable<string> tags,
-        string body)
-    {
-        return "---\n"
-            + "open-forge:\n"
-            + $"  description: {description}\n"
-            + $"  tags: [{string.Join(", ", tags)}]\n"
-            + "---\n"
-            + Document(body, "\n", "# Root\n");
-    }
-
-    private static string SkillDocument(string name, string description)
-    {
-        return $"""
-            ---
-            name: {name}
-            description: {description}
-            ---
-            # Skill
-
-            """;
-    }
 }

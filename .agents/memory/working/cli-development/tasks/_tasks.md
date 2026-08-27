@@ -17,7 +17,7 @@ Read the [program Task](00-cli-development.md), [Architecture](../../../crystall
 - [x] [Modern C# Improvements](modern-csharp-improvements.md) — Complete; Preflight `55eb82e`, Framework `a90af59`, Shell/root `fe10525`, Route Inspect/family `62a1dd9`, Route List `273eb45`, Tests/support `6af5fb1`, and final managed, Native AOT, package, audit, and public no-write gates accepted in the commit containing this record — Implementer: Mastermind
 - [x] [Repository-root CLI developer workflow](repository-root-developer-workflow.md) — Complete and squash-integrated into local `develop` at `d9e0686` — Implementer: Mastermind
 - [ ] [Mutation Foundation](mutation-foundation/_mutation-foundation.md) — Ready; accepted to precede public Index — Implementer: Mutation Foundation Task Mastermind
-- [ ] [Test Architecture And Constants](test-architecture-and-constants.md) — Planned after the active Mutation Foundation contract slice is accepted and validated — Implementer: Not assigned
+- [ ] [Test Architecture And Constants](test-architecture-and-constants.md) — Active from `8a1cb86` while Mutation Foundation contract closure awaits the Framework lifecycle-schema decision — Implementer: Overseer
 - [ ] [Route Mutation Commands](route-mutation/_route-mutation.md) — Planned — Implementer: Not assigned
 - [ ] [Lifecycle Commands](lifecycle/_lifecycle.md) — Planned — Implementer: Not assigned
 - [ ] [Operational Commands](operations/_operations.md) — Planned — Implementer: Not assigned

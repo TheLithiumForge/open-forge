@@ -13,6 +13,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
+using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.GeneratedNavigation;
 
@@ -33,7 +34,7 @@ public sealed class GeneratedNavigationProjectorTests
         var request = Request(
             topology,
             [loader, root],
-            [Region(loader, Document("stale"))],
+            [Region(loader, OpenForgeDocumentSeed.GeneratedEntries(entries: "stale"))],
             [Metadata(root, "Root", ["Root", "Guide"])]);
 
         var projection = new GeneratedNavigationProjector().Project(request);
@@ -64,7 +65,7 @@ public sealed class GeneratedNavigationProjectorTests
         var request = Request(
             topology,
             [root],
-            [Region(root, Document("old"))],
+            [Region(root, OpenForgeDocumentSeed.GeneratedEntries(entries: "old"))],
             []);
 
         var region = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
@@ -94,7 +95,7 @@ public sealed class GeneratedNavigationProjectorTests
         var request = Request(
             topology,
             [parent, child],
-            [Region(parent, Document("stale"))],
+            [Region(parent, OpenForgeDocumentSeed.GeneratedEntries(entries: "stale"))],
             [Metadata(child, "Café", ["Docs"])]);
 
         var region = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
@@ -132,13 +133,14 @@ public sealed class GeneratedNavigationProjectorTests
         var request = Request(
             topology,
             [parent, child],
-            [Region(parent, Document("stale"))],
+            [Region(parent, OpenForgeDocumentSeed.GeneratedEntries(entries: "stale"))],
             [Metadata(child, "Parentheses", ["Docs"])]);
 
         var region = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
         var entry = Assert.Single(region.Entries);
         var parsed = SourceGeneratedEntriesParser.Parse(
-            new MarkdownDocumentParser().Parse(Document(entry.Line)));
+            new MarkdownDocumentParser().Parse(
+                OpenForgeDocumentSeed.GeneratedEntries(entries: entry.Line)));
 
         Assert.Equal("child%28paren%29.md", entry.Destination);
         Assert.Equal(
@@ -169,12 +171,13 @@ public sealed class GeneratedNavigationProjectorTests
         var request = Request(
             topology,
             [loader, child],
-            [Region(loader, Document("stale"))],
+            [Region(loader, OpenForgeDocumentSeed.GeneratedEntries(entries: "stale"))],
             [Metadata(child, "Root", ["Root"])]);
 
         var region = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
         var entry = Assert.Single(region.Entries);
-        var parsed = SourceLoaderEntriesParser.Parse(Document(entry.Line));
+        var parsed = SourceLoaderEntriesParser.Parse(
+            OpenForgeDocumentSeed.GeneratedEntries(entries: entry.Line));
         var destination = Assert.Single(parsed.Destinations);
 
         Assert.Equal("root%28paren%29/_root.md", entry.Destination);
@@ -208,7 +211,7 @@ public sealed class GeneratedNavigationProjectorTests
         var request = Request(
             topology,
             [parent, child],
-            [Region(parent, Document("stale"))],
+            [Region(parent, OpenForgeDocumentSeed.GeneratedEntries(entries: "stale"))],
             [Metadata(child, description, ["Docs"])]);
 
         var region = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
@@ -254,7 +257,7 @@ public sealed class GeneratedNavigationProjectorTests
         var request = Request(
             topology,
             [parent, secondAlias, other, firstAlias],
-            [Region(parent, Document("stale"))],
+            [Region(parent, OpenForgeDocumentSeed.GeneratedEntries(entries: "stale"))],
             [
                 Metadata(secondAlias, "Alias Z", ["Two"]),
                 Metadata(other, "Other", ["Three"]),
@@ -299,7 +302,7 @@ public sealed class GeneratedNavigationProjectorTests
         var request = Request(
             topology,
             [parent, child],
-            [Region(parent, Document("stale"))],
+            [Region(parent, OpenForgeDocumentSeed.GeneratedEntries(entries: "stale"))],
             []);
 
         var region = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
@@ -339,8 +342,12 @@ public sealed class GeneratedNavigationProjectorTests
             topology,
             [secondTarget, child, firstTarget],
             [
-                Region(secondTarget, Document("stale")),
-                Region(firstTarget, Document("stale")),
+                Region(
+                    secondTarget,
+                    OpenForgeDocumentSeed.GeneratedEntries(entries: "stale")),
+                Region(
+                    firstTarget,
+                    OpenForgeDocumentSeed.GeneratedEntries(entries: "stale")),
             ],
             [Metadata(child, "Child", ["Child"])]);
 
@@ -396,7 +403,12 @@ public sealed class GeneratedNavigationProjectorTests
                 Node(child, SourceRouteParentState.Resolved, [parent.Identity.CanonicalBasePath], []),
             ],
             []);
-        var source = Document("stale", "\r\n", "# Root 😀\r\nnotes\r\n");
+        var source = OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
+        {
+            Entries = "stale",
+            LineEnding = "\r\n",
+            Prefix = "# Root 😀\r\nnotes",
+        });
         var document = new MarkdownDocumentParser().Parse(source);
         var request = Request(
             topology,
@@ -441,10 +453,8 @@ public sealed class GeneratedNavigationProjectorTests
                 Node(child, SourceRouteParentState.Resolved, [parent.Identity.CanonicalBasePath], []),
             ],
             []);
-        var source = Document(
-            "- [Child](child.md) - #Docs",
-            "\n",
-            "# Root\n");
+        var source = OpenForgeDocumentSeed.GeneratedEntries(
+            entries: "- [Child](child.md) - #Docs");
         var document = new MarkdownDocumentParser().Parse(source);
         var request = Request(
             topology,
@@ -560,24 +570,6 @@ public sealed class GeneratedNavigationProjectorTests
             new SourceLogicalIdentity(automaticId, canonicalPath),
             baseLayer,
             overwrite);
-    }
-
-    private static string Document(
-        string body,
-        string lineEnding = "\n",
-        string prefix = "# Root\n")
-    {
-        return prefix
-            + lineEnding
-            + "## Entries"
-            + lineEnding
-            + lineEnding
-            + "<!-- open-forge:generated-index:start -->"
-            + lineEnding
-            + body
-            + lineEnding
-            + "<!-- open-forge:generated-index:end -->"
-            + lineEnding;
     }
 
     private static string Physical(string canonicalPath)

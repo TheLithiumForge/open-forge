@@ -5,11 +5,11 @@ using OpenForge.Cli.Core.Commands.Context.Models.Selection;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Definitions;
 
-namespace OpenForge.Cli.Core.UnitTests.Commands.Context;
+namespace OpenForge.Cli.IntegrationTests.Commands.Context;
 
 public sealed class ContextOperationRedTests
 {
-    [Fact(DisplayName = "Context resolves the startup-required closure in exact loading and continuity order"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Context resolves the startup-required closure in exact loading and continuity order"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task ResolvesStartupClosureInExactOrder()
     {
         using var workspace = ContextOperationWorkspace.Create();
@@ -38,7 +38,7 @@ public sealed class ContextOperationRedTests
         Assert.Null(result.Next);
     }
 
-    [Fact(DisplayName = "Context additions-only subtracts startup while retaining explicit closure order and overwrite layering"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Context additions-only subtracts startup while retaining explicit closure order and overwrite layering"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task AdditionsOnlySubtractsStartupAndRetainsLayers()
     {
         using var workspace = ContextOperationWorkspace.Create();
@@ -67,7 +67,7 @@ public sealed class ContextOperationRedTests
             guide.InclusionReasons.Select(reason => reason.Kind));
     }
 
-    [Fact(DisplayName = "Context traverses visible LoadNow from every entrypoint in a selected ancestor chain"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Context traverses visible LoadNow from every entrypoint in a selected ancestor chain"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task SelectedAncestorChainExposesLoadNowDescendants()
     {
         using var workspace = ContextOperationWorkspace.Create(includeSelectedAncestorLoadNow: true);
@@ -91,7 +91,7 @@ public sealed class ContextOperationRedTests
         Assert.Equal("projects/guide", reason.Reference);
     }
 
-    [Fact(DisplayName = "Context projects exact authored text and structural headings and sections in canonical layer order"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Context projects exact authored text and structural headings and sections in canonical layer order"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task ProjectsExactAuthoredContentInCanonicalOrder()
     {
         using var workspace = ContextOperationWorkspace.Create();
@@ -119,12 +119,12 @@ public sealed class ContextOperationRedTests
         Assert.All(baseLayer.Projections, projection => Assert.Equal(ContextProjectionState.Available, projection.State));
     }
 
-    [Fact(DisplayName = "Context preserves Setext heading form in structural projection"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Context preserves Setext heading form in structural projection"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task SetextHeadingsRetainExactForm()
     {
         using var workspace = ContextOperationWorkspace.Create();
-        File.WriteAllText(
-            Path.Combine(workspace.Root, ".agents/projects/guide.md"),
+        workspace.ReplaceText(
+            ".agents/projects/guide.md",
             $"{ContextOperationWorkspace.GuideFrontmatter}\nGuide\n=====\n\nRules\n-----\n\nSetext body.\n");
 
         var result = await ExecuteAsync(
@@ -139,7 +139,7 @@ public sealed class ContextOperationRedTests
             Assert.Single(layer.Projections).Headings.Select(heading => (heading.Text, heading.Level, heading.Form)));
     }
 
-    [Fact(DisplayName = "Context distinguishes duplicate ambiguous sections from matching base and overwrite sections"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Context distinguishes duplicate ambiguous sections from matching base and overwrite sections"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task SectionProjectionRetainsLayerMeaningAndDuplicateAmbiguity()
     {
         using var workspace = ContextOperationWorkspace.Create();
@@ -159,8 +159,8 @@ public sealed class ContextOperationRedTests
             Assert.Contains("## Rules", projection.Text, StringComparison.Ordinal);
         });
 
-        File.WriteAllText(
-            Path.Combine(workspace.Root, ".agents/projects/guide.md"),
+        workspace.ReplaceText(
+            ".agents/projects/guide.md",
             $"{ContextOperationWorkspace.GuideFrontmatter}\n# Guide\n\n## Rules\n\nFirst.\n\n## Rules\n\nSecond.\n");
         var ambiguous = await ExecuteAsync(
             workspace,
@@ -176,7 +176,7 @@ public sealed class ContextOperationRedTests
         Assert.Equal(ContextProjectionState.Ambiguous, Assert.Single(ambiguousBase.Projections).State);
     }
 
-    [Theory(DisplayName = "Context classifies section absence across each complete logical source"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [Theory(DisplayName = "Context classifies section absence across each complete logical source"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     [InlineData(true, false, 1, 1, false)]
     [InlineData(false, true, 1, 1, false)]
     [InlineData(true, true, 2, 0, false)]
@@ -189,24 +189,24 @@ public sealed class ContextOperationRedTests
         bool expectedFinding)
     {
         using var workspace = ContextOperationWorkspace.Create();
-        var projects = Path.Combine(workspace.Root, ".agents/projects/_projects.md");
-        File.WriteAllText(
+        const string projects = ".agents/projects/_projects.md";
+        workspace.ReplaceText(
             projects,
-            File.ReadAllText(projects).Replace(
+            workspace.ReadText(projects).Replace(
                 "\n## Entries",
                 "\n## Rules\n\nParent rule.\n\n## Entries",
                 StringComparison.Ordinal));
         var baseBody = baseContainsSection
             ? "\n## Rules\n\nBase rule.\n"
             : "\nBase body.\n";
-        File.WriteAllText(
-            Path.Combine(workspace.Root, ".agents/projects/guide.md"),
+        workspace.ReplaceText(
+            ".agents/projects/guide.md",
             $"{ContextOperationWorkspace.GuideFrontmatter}\n# Guide\n{baseBody}");
         var overwriteBody = overwriteContainsSection
             ? "\n## Rules\n\nOverwrite rule.\n"
             : "\nOverwrite body.\n";
-        File.WriteAllText(
-            Path.Combine(workspace.Root, ".agents/projects/guide.overwrite.md"),
+        workspace.ReplaceText(
+            ".agents/projects/guide.overwrite.md",
             $"---\nopen-forge:\n  description: Guide overwrite\n  tags: [Guide]\n---\n\n# Guide overwrite\n{overwriteBody}");
 
         var result = await ExecuteAsync(
@@ -230,7 +230,7 @@ public sealed class ContextOperationRedTests
                 && finding.Source?.Path == ".agents/projects/guide.md"));
     }
 
-    [Fact(DisplayName = "Context follows links breadth-first with cycles, external observations, and additions set subtraction"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Context follows links breadth-first with cycles, external observations, and additions set subtraction"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task FollowsLinksBreadthFirstWithoutFetchingOrRepeatingSources()
     {
         using var workspace = ContextOperationWorkspace.Create();
@@ -255,12 +255,12 @@ public sealed class ContextOperationRedTests
         Assert.Empty(result.Findings);
     }
 
-    [Fact(DisplayName = "Context reports a missing fragment without selecting the destination"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Context reports a missing fragment without selecting the destination"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task MissingFragmentIsIncompleteAndUnresolved()
     {
         using var workspace = ContextOperationWorkspace.Create();
-        File.WriteAllText(
-            Path.Combine(workspace.Root, ".agents/projects/guide.md"),
+        workspace.ReplaceText(
+            ".agents/projects/guide.md",
             $"{ContextOperationWorkspace.GuideFrontmatter}\n# Guide\n\n[Missing fragment](linked.md#absent).\n");
 
         var result = await ExecuteAsync(
@@ -278,20 +278,20 @@ public sealed class ContextOperationRedTests
         Assert.Contains(result.Findings, finding => finding.Code == ContextFindingCode.FragmentMissing);
     }
 
-    [Theory(DisplayName = "Context applies bounded breadth-first traversal at depth two and higher"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [Theory(DisplayName = "Context applies bounded breadth-first traversal at depth two and higher"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     [InlineData(2, 4)]
     [InlineData(3, 5)]
     public async Task BoundedTraversalHonorsDepthTwoAndHigher(int depth, int expectedSourceCount)
     {
         using var workspace = ContextOperationWorkspace.Create();
-        File.WriteAllText(
-            Path.Combine(workspace.Root, ".agents/projects/linked.md"),
+        workspace.ReplaceText(
+            ".agents/projects/linked.md",
             "---\nopen-forge:\n  description: Linked\n  tags: [Guide]\n---\n\n# Linked\n\n## Details\n\n[Deep](deep.md).\n");
-        File.WriteAllText(
-            Path.Combine(workspace.Root, ".agents/projects/deep.md"),
+        workspace.WriteText(
+            ".agents/projects/deep.md",
             "---\nopen-forge:\n  description: Deep\n  tags: [Guide]\n---\n\n# Deep\n\n[Deeper](deeper.md).\n");
-        File.WriteAllText(
-            Path.Combine(workspace.Root, ".agents/projects/deeper.md"),
+        workspace.WriteText(
+            ".agents/projects/deeper.md",
             "---\nopen-forge:\n  description: Deeper\n  tags: [Guide]\n---\n\n# Deeper\n");
 
         var result = await ExecuteAsync(
@@ -310,7 +310,7 @@ public sealed class ContextOperationRedTests
         Assert.All(result.Links, link => Assert.InRange(link.Depth, 1, depth));
     }
 
-    [Fact(DisplayName = "Context additions subtracts the startup closure after equal-depth link expansion"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Context additions subtracts the startup closure after equal-depth link expansion"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task AdditionsSubtractExpandedStartupSources()
     {
         using var workspace = ContextOperationWorkspace.Create(startupLinksToSelectedTarget: true);

@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models;
 using OpenForge.Cli.Core.Framework.Lifecycle.Serialization;
@@ -10,7 +11,7 @@ namespace OpenForge.Cli.Core.Framework.Lifecycle;
 internal sealed class LifecycleDocumentReader(PhysicalPathResolver physicalPathResolver)
 {
     internal const string RelativePath = ".agents/open-forge.lifecycle.json";
-    internal const string FingerprintPolicy = "open-forge-markdown-v1";
+    internal const string FingerprintPolicy = MarkdownFingerprintPolicy.Name;
 
     private static readonly UTF8Encoding StrictUtf8 = new(
         encoderShouldEmitUTF8Identifier: false,

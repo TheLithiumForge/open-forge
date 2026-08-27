@@ -13,16 +13,11 @@ public static class GeneratedLoaderDocumentBuilder
     /// <returns>The simple generated Open Forge Loader document.</returns>
     public static string Build(string entries)
     {
-        ArgumentNullException.ThrowIfNull(entries);
-
-        return $"""
-            # Open Forge Loader
-
-            ## Entries
-
-            <!-- open-forge:generated-index:start -->
-            {entries}
-            <!-- open-forge:generated-index:end -->
-            """;
+        return OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
+        {
+            Entries = entries,
+            Prefix = "# Open Forge Loader",
+            IncludeFinalLineEnding = false,
+        });
     }
 }

@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Commands.Context.Models.Operation;
 using OpenForge.Cli.Core.Commands.Context.Models.Result;
 using OpenForge.Cli.Core.Framework.Sources.Loading;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
@@ -53,7 +54,7 @@ internal sealed class ContextLoadingClosureResolver
         var loader = graph.Sources.SingleOrDefault(source => source.IsLoader);
         if (loader is null)
         {
-            AddClosureFinding(".agents/loader.md", "The canonical Loader source is unavailable.");
+            AddClosureFinding(SourceLogicalPath.LoaderPath, "The canonical Loader source is unavailable.");
             return;
         }
 

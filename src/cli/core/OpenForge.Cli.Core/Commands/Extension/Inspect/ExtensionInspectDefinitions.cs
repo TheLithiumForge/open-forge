@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Inspect;
@@ -7,7 +8,7 @@ internal static class ExtensionInspectDefinitions
 {
     internal const int SchemaVersion = 1;
     internal const string CommandIdentity = "extension inspect";
-    internal const string FingerprintPolicy = "open-forge-markdown-v1";
+    internal const string FingerprintPolicy = MarkdownFingerprintPolicy.Name;
 
     internal static readonly CliSyntaxDefinition InspectCommand = new(
         name: "inspect",

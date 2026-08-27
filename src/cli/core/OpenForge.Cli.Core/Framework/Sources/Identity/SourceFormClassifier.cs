@@ -4,7 +4,6 @@ namespace OpenForge.Cli.Core.Framework.Sources.Identity;
 
 internal static class SourceFormClassifier
 {
-    private const string LoaderPath = ".agents/loader.md";
     private const string OverwriteSuffix = ".overwrite.md";
 
     internal static bool TryClassify(string? canonicalPath, out SourceDocumentForm form)
@@ -15,7 +14,7 @@ internal static class SourceFormClassifier
             return false;
         }
 
-        if (string.Equals(canonicalPath, LoaderPath, StringComparison.Ordinal))
+        if (string.Equals(canonicalPath, SourceLogicalPath.LoaderPath, StringComparison.Ordinal))
         {
             form = SourceDocumentForm.Loader;
             return true;

@@ -1,12 +1,13 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile.Models;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile;
 
 internal sealed partial class RouteInspectLoadingFactsBuilder
 {
-    private const string LoaderPath = ".agents/loader.md";
+    private const string LoaderPath = SourceLogicalPath.LoaderPath;
     private readonly RouteInspectResolution _resolution;
     private readonly RouteInspectGraph _graph;
     private readonly RouteInspectIdentity _identity;

@@ -26,6 +26,10 @@ Use these current Task links when assigning or closing an item.
 - [Accept And Release The Complete CLI](tasks/delivery/04-release.md)
 - [Remediate Parser And Standard Behavior](tasks/generic-improvements/parser-remediation.md)
 - [Implement The Find Query Operation](tasks/read-only/find-query-operation.md)
+- [Implement Context](tasks/read-only/context.md)
+- [Accept Find Presentation And The Complete Command](tasks/read-only/find-presentation-acceptance.md)
+- [Implement Doctor](tasks/operations/doctor.md)
+- [Implement Repair](tasks/operations/repair.md)
 
 ## Deferred Items
 
@@ -284,3 +288,149 @@ Use these current Task links when assigning or closing an item.
   marker-like code cases. The separate [managed-region
   ideas](../../emerging/ideas/deferred-product-ideas.md#deferred-product-ideas)
   analyze whether marker comments can ever be removed safely.
+
+### CLI-EDGE-011 — Context rejects valid native Skill metadata
+
+- **Severity/category:** Material correctness; source-form metadata and Context
+  closure.
+- **Current behavior and evidence:** Repository dogfooding reports routed
+  `.agents/skills/experience-design/SKILL.md` as
+  `context.closure-unavailable` even though its native `name` and `description`
+  frontmatter is valid. The shared authored-metadata capability recognizes
+  `SourceDocumentForm.Skill`, but Context builds its graph through a parser that
+  accepts only Open Forge metadata. It then treats every routed non-entrypoint
+  source without complete Open Forge metadata as having unknown global-continuity
+  membership.
+- **Consequence:** A valid native Skill makes otherwise safe startup Context
+  coverage incomplete. This is a false positive and prevents trustworthy Context
+  dogfooding on a canonical workspace.
+- **Smallest credible correction:** Make Context consume the accepted form-aware
+  routed authored-metadata facts, preserving native Skill description and its
+  source-contract classification without inventing Open Forge tags. Add focused
+  Unit, real-workspace Integration, and published-process regression evidence for
+  a routed valid Skill and malformed Skill metadata.
+- **Earliest invalidated boundary:** Context graph metadata formation before
+  global-continuity selection.
+- **Owning Task(s):** [Implement Context](tasks/read-only/context.md) owns the
+  behavior. A proposed pre-Mutation-Foundation dogfooding correction slice should
+  reopen only this bounded boundary; final release owns any residual disposition.
+- **Closure condition:** A valid routed `SKILL.md` contributes its native authored
+  metadata without a closure finding, malformed required Skill metadata still
+  fails closed with exact source evidence, and complete Context behavior remains
+  unchanged for ordinary Open Forge Markdown.
+
+### CLI-EDGE-012 — Compact findings omit known affected sources
+
+- **Severity/category:** Material experience and agent-efficiency defect; human
+  presentation.
+- **Current behavior and evidence:** Compact Context repeats only
+  `context.closure-unavailable` and its cause even though each typed finding has a
+  subject and path. Compact Find prints `subject=none` for
+  `find.frontmatter-unavailable` even though the same typed finding retains a
+  source identity and path. JSON preserves the paths, but ordinary compact output
+  does not satisfy the accepted requirement to name the affected source or
+  boundary when known.
+- **Consequence:** Dozens of distinct findings appear identical, cannot be acted
+  on without rerunning JSON or expanded output, and make correct fail-closed
+  behavior look like an undifferentiated CLI failure.
+- **Smallest credible correction:** Keep policy local to each command renderer and
+  include one bounded escaped source coordinate selected from the finding's
+  existing typed subject, source, or path evidence. Do not change finding
+  formation, ordering, status, JSON, or diagnostics. Add focused compact-output
+  Unit and published-process evidence for several same-code findings on distinct
+  files.
+- **Earliest invalidated boundary:** Context and Find compact human rendering.
+- **Owning Task(s):** [Implement Context](tasks/read-only/context.md) and [Accept
+  Find Presentation And The Complete
+  Command](tasks/read-only/find-presentation-acceptance.md). A proposed
+  pre-Mutation-Foundation dogfooding correction slice should close both local
+  renderers together; final release owns any residual disposition.
+- **Closure condition:** Every compact finding names one known affected source or
+  boundary, distinct paths remain distinguishable, escaping and bounds remain
+  exact, and structured results and semantic statuses are unchanged.
+
+### CLI-EDGE-013 — Read-only next actions name an unavailable replacement Doctor
+
+- **Severity/category:** Transitional integration gap; next-action truthfulness.
+- **Current behavior and evidence:** Incomplete Context, Find, and Extension
+  results correctly form their contracted `open-forge doctor` next action, but
+  the replacement root does not yet register Doctor. The frozen CLI may expose a
+  legacy Doctor under the same command spelling, but it does not diagnose the
+  replacement semantic facts demonstrated by this dogfooding pass.
+- **Consequence:** The public advice is contractually final but not currently
+  executable against the replacement CLI, and the legacy command can return a
+  reassuring result without explaining the replacement finding.
+- **Smallest credible correction:** Do not add a temporary alias, legacy fallback,
+  partial Doctor, or alternate next command that would drift from the accepted
+  contracts. Treat the action as a known non-shipping program dependency, avoid
+  blindly executing it during interim dogfooding, and verify the exact advice
+  when complete Doctor lands.
+- **Earliest invalidated boundary:** Cross-command composition and current
+  executable command availability; individual result formation remains correct.
+- **Owning Task(s):** [Implement Doctor](tasks/operations/doctor.md), followed by
+  final release acceptance. [Implement Repair](tasks/operations/repair.md) owns
+  only admitted exact repair actions after Doctor and must not become a temporary
+  diagnostic substitute.
+- **Closure condition:** The replacement executable registers complete Doctor,
+  each producer's next action reaches a diagnosis that explains its unavailable
+  facts with useful source-specific advice, and published managed and Native AOT
+  journeys prove the cross-command path.
+
+### CLI-EDGE-014 — The repository contains live metadata migration evidence
+
+- **Severity/category:** Repository conformance debt and valuable Doctor
+  dogfooding evidence; not a false CLI status.
+- **Current behavior and evidence:** A default-universe tag Find reports 66
+  archived CLI-v2 files with unavailable semantic frontmatter. Their unquoted
+  `description` values contain a colon followed by a space and are malformed YAML.
+  Context reports 60 of those routed archived sources plus five routed historical
+  handoffs whose frontmatter still uses unsupported top-level `tags` and
+  `description`. Route List remains complete because its topology facts are
+  independently available. Default Extension List separately reports incomplete
+  installed coverage because `.agents/open-forge.lifecycle.json` is absent; an
+  available-only request remains complete, so that Extension result is expected.
+- **Consequence:** Find cannot prove complete tag matching and Context cannot prove
+  global `#KeepInMind` membership. Correct fail-closed results therefore keep the
+  replacement CLI from returning complete startup Context on its own repository.
+- **Smallest credible correction:** Preserve the exact occurrence set until its
+  diagnostic value is consumed if the maintainer chooses the Doctor-dogfooding
+  route. Doctor should identify each malformed or noncanonical source and provide
+  accurate manual advice without inventing authored values. Then perform one
+  separate reviewed repository-content migration: quote the intended archived
+  descriptions and move the five handoffs to canonical `open-forge` metadata,
+  followed by generated-navigation and Context/Find verification.
+- **Repair boundary:** The accepted Repair contract excludes authored metadata.
+  These occurrences are not eligible for `repair --automatic` without a separate
+  maintainer-approved contract change. Doctor may diagnose and advise; the
+  repository correction remains an explicit authored-content migration.
+- **Owning Task(s):** [Implement Doctor](tasks/operations/doctor.md) owns the
+  diagnosis and advice evidence. The replacement CLI program Task owns scheduling
+  the later manual repository migration, and final release owns complete
+  self-dogfood verification.
+- **Closure condition:** Doctor reports the exact live failures with correct
+  classification and useful non-fabricating advice; the subsequent reviewed
+  migration removes the malformed and unsupported metadata; generated navigation
+  is reconciled when needed; and the intended Context and Find requests complete
+  without weakening fail-closed behavior.
+
+### CLI-EDGE-015 — Route Inspect help describes implemented Context as planned
+
+- **Severity/category:** Material help accuracy; cross-command public
+  presentation.
+- **Current behavior and evidence:** Route Inspect help still says Context is
+  unavailable or planned even though Context is implemented, accepted, and
+  registered in the same replacement executable.
+- **Consequence:** Help gives stale command-selection advice and understates the
+  replacement CLI's current read-only capability.
+- **Smallest credible correction:** Update the Route Inspect help section to name
+  the available Context command using the accepted command grammar. Add focused
+  help and published root-composition regression evidence; do not change Route
+  Inspect or Context domain behavior.
+- **Earliest invalidated boundary:** Route Inspect product help.
+- **Owning Task(s):** Route Inspect presentation through the replacement CLI
+  program Task. A proposed pre-Mutation-Foundation dogfooding correction slice
+  should close this one-file truthfulness defect; final release owns any residual
+  disposition.
+- **Closure condition:** Managed and Native AOT help no longer calls implemented
+  Context planned or unavailable, and the named command is registered and
+  executable in the same artifact.

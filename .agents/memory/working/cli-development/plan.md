@@ -31,15 +31,23 @@ open-forge:
   [Improve The
   Repository-Root CLI Developer Workflow](tasks/repository-root-developer-workflow.md)
   is Complete and its accepted changes are included in that baseline.
-- Current task: [Mutation Foundation](tasks/mutation-foundation/_mutation-foundation.md)
-  contract closure. [Extension Inspect](tasks/read-only/extension-inspect.md) is
+- Current task: [Test Architecture And Constants](tasks/test-architecture-and-constants.md)
+  is Complete on its local branch from exact baseline `8a1cb86`. Mutation
+  Foundation contract closure is paused before implementation at the exact
+  persisted Framework lifecycle-schema decision until local integration.
+  [Extension Inspect](tasks/read-only/extension-inspect.md) is
   Complete and integrated at `73b01be`. The [pure Generated Navigation
   foundation](tasks/read-only/index-generated-navigation-foundation.md) is
   Complete and integrated at `21e5200`.
   [Routed Authored Metadata
   foundation](tasks/read-only/routed-authored-metadata-foundation.md) is Complete
   and integrated at `5924698`.
-- Current step: implement and accept Mutation Foundation before public Index.
+- Current step: locally integrate the completed constants/test-architecture
+  audit, then return to Mutation Foundation contract closure before public Index.
+  The final warning-free managed gates are Unit `1024/1024`, Integration
+  `409/409`, and EndToEnd `116/116`; supported `linux-x64` Native AOT Integration
+  is `409/409`. The snapshot slice remains a no-op, with possible LithSnap-backed
+  presentation candidates recorded only as a deferred Idea.
   The maintainer accepted that dependency correction; public Index must consume
   the shared accepted mechanics and must not create a local substitute.
   Standard SDK publication restored the exact portable
