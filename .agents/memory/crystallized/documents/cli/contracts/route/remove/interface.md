@@ -63,19 +63,17 @@ batch or saved-plan surface.
 The command is stateless and deterministic for unchanged workspace bytes and
 explicit input. A repeated remove is a verified no-op only when exact intended
 absence is independently established with complete trusted ownership, topology,
-recovery, and reference evidence, with no orphan companion, residual incoming
-reference, stale generated region, or recovery artifact. Otherwise a missing,
-invalid, incomplete, or blocked result is returned as applicable; absence alone
-does not prove that an earlier remove succeeded. The operation creates no
-receipt, tombstone, journal, saved plan, or history used to manufacture
-provenance.
+reference, and generated-projection evidence, with no orphan companion, residual
+incoming reference, or stale generated region. Otherwise a missing, invalid,
+incomplete, or blocked result is returned as applicable; absence alone does not
+prove that an earlier remove succeeded. The operation creates no receipt,
+tombstone, journal, saved plan, or history used to manufacture provenance.
 
 ## Syntax
 
 ```text
 open-forge route remove <source-reference>
   [--dry-run]
-  [--skip-git-check]
   [global flags]
 ```
 
@@ -84,10 +82,9 @@ reference. The shared [Global CLI Flags](../../shared/global-flags/interface.md)
 contract defines `--workspace`, `--json`, `--view`, `--verbose`, `--help`, and
 `--version`; all six apply under that contract.
 
-`--dry-run` is the only preview spelling. `--skip-git-check` is the only
-command-specific safety-policy exception, and it bypasses only affected-path Git
-cleanliness. Neither flag selects a subject, adds authority, or changes the
-operation.
+`--dry-run` is the only preview spelling. The command does not inspect or report
+repository state. It does not select a subject, add authority,
+or change the operation.
 
 The command has no `--force`, `--automatic`, `--yes`, `--apply`, `--all`,
 `--batch`, `--recursive`, root remove mode, alias, saved plan, receipt, or
@@ -107,9 +104,9 @@ automatic source ID. The CLI does not guess between the two forms. An ID that
 does not resolve to exactly one eligible subject is not repaired by ranking,
 basename matching, or route proximity.
 
-`--dry-run` and `--skip-git-check` are Boolean write-policy flags. Repeating
-either is accepted and idempotent. Repetition does not multiply preview,
-consent, Git bypass, recovery, or mutation authority. Shared global-flag
+`--dry-run` is a Boolean write-policy flag. Repeating it is accepted and
+idempotent. Repetition does not multiply preview, consent, recovery, or mutation
+authority. Shared global-flag
 repetition, ordering, terminal behavior, and composition remain defined only by
 the shared contract.
 
@@ -204,7 +201,7 @@ The following do not prove unmanaged status by themselves:
 - failing to find one receipt or looking in one lifecycle source;
 - a path, route placement, tag, generated entry, or familiar folder name;
 - matching bytes, matching fingerprints, or an apparently initial file; or
-- a previous command result, recommendation, Git state, or absence of a marker.
+- a previous command result, recommendation, or absence of a marker.
 
 Missing, malformed, conflicting, stale, or incomplete lifecycle-ownership
 inventory is a blocking authority condition. The command does not adopt content,
@@ -276,7 +273,7 @@ validated source
   -> one ordered complete mutation plan
   -> preflight
   -> dry-run or application
-  -> verification or identity-guarded recovery
+  -> verification and retained partial-state reporting
   -> one typed result
 ```
 
@@ -308,18 +305,48 @@ incoming-link detachments, and generated projections in the complete plan. It
 does not grant ownership, lifecycle, collision, containment, marker-repair, or
 recovery bypass authority.
 
-For an actual application, Git cleanliness is checked only for existing paths
-the complete plan may change or remove. Dirty affected paths block by default.
-`--skip-git-check` bypasses only that affected-path cleanliness check. It does
-not bypass any source, ownership, reference, generated-boundary, expected-state,
-verification, or recovery requirement.
+For an actual application, the complete plan checks every existing path it may
+change or remove through ordinary workspace facts. It does not inspect or report
+repository state.
+
+Before the first target effect, orchestration uses only
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.Create)` and its application-owned
+`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
+`HOME`, or custom-platform fallback; unavailable storage is a
+pre-effect `incomplete` result. When the operation has one or more existing-target
+effects (`Replace`, `ReplaceGeneratedRegion`, or `Delete`), it prepares exactly
+one immutable ZIP bundle outside the workspace. An operation containing only Create effects or
+no-ops creates no bundle. Its source-generated
+schema-v1 `manifest.json` and streamed ordinal payload entries record
+command/operation/workspace identity, ordered relative targets, change kinds,
+exact prior bytes/lengths/hashes, and intended final absence or length/hash.
+`Create` and semantic/byte no-op effects have no entry. A CreateNew draft is
+closed and reopened for semantic manifest, exact ordered entry, length, hash,
+and payload-byte validation, moved within the same directory to its deterministic
+final name, and reopened and verified. Only the valid final ZIP forms the opaque
+`RecoveryBundlePreparation`; the draft remains `Incomplete`.
+`FileChangeApplier` requires the matching preparation for every existing-target effect
+and performs one final effect per target. All preparation completes before the
+first target effect; unknown, malformed, mismatched, or colliding bundles block.
+
+After final verification, delete only the positively recognized bundle created
+by this operation. If deletion fails, effects remain successful and the result
+is `attention` with the exact residual path and cleanup guidance. Handled
+failure or cancellation reports the actual residual draft or final path; a
+valid final remains after preparation. A closed final ZIP may remain after
+abrupt process termination, without an executable crash or power-loss guarantee.
+Recovery provenance does not classify current target state, and no target is
+restored automatically. Cleanup owns exact named final and draft deletion under
+its separate lease-bound contract.
 
 ## Human Output
 
 Human output comes from one typed result. The default expanded view includes the
 workspace, selection method, selected subject kind, source identity, complete
 effect summary, affected paths, reference coverage and every detachment,
-generated projections, verification and recovery facts, and semantic status.
+generated projections, verification, bundle provenance, and retained partial-state
+facts, and semantic status.
 Compact view retains the identity, leaf/category kind, mode, status,
 completeness and safety, every affected path, every detachment, every generated
 effect, and at most one required `Next:` action.
@@ -373,14 +400,15 @@ No files changed (--dry-run).
 
 The exact examples use illustrative paths. A complete result has no required
 `Next:` action. Incomplete, invalid, and blocked results name the direct
-correction when it is known. Failed and interrupted results identify ordinary
-recovery or retry action without inventing provenance.
+correction when it is known. Failed and interrupted results identify retained
+bundle/partial-state or retry guidance without inventing provenance.
 
 ## Structured Output
 
 `--json` emits one complete structured result to stdout for every semantic status
 from the same typed result used by human output. It never prompts and never
-reruns resolution, planning, application, verification, or recovery. Human text
+reruns resolution, planning, application, verification, or retained-state
+reporting. Human text
 is not mixed into JSON stdout; bounded diagnostics use stderr.
 
 The structured result exposes the concrete command result under the exact shared
@@ -393,9 +421,10 @@ schema defined by the [CLI Architecture](../../../architecture.md):
 - reference catalogue coverage and every incoming detachment, including source
   location, original destination, visible label, and intended plain-text result;
 - generated-region selection, projection, and bounded effect evidence;
-- dry-run or application mode, completeness, safety, Git and backup facts;
-- expected-state, changed, unchanged, verified, reverted, and residual targets;
-- application, verification, and identity-guarded recovery facts; and
+- dry-run or application mode, completeness, safety, recovery-bundle facts;
+- expected-state, changed, unchanged, and verified effect facts, plus any actual
+  residual draft or final recovery path, without classifying current target state;
+- application, verification, bundle provenance, and retained partial-state facts; and
 - semantic status and at most one required `Next:` action.
 
 The structured result retains every detachment even when a compact human view is
@@ -411,8 +440,8 @@ reference effect that makes surrounding prose safe.
 | `incomplete`  | Safe identity and facts exist, but the complete supported-Markdown catalogue, reference pass, category inventory, or another required coverage boundary cannot be enumerated or inspected. No write begins.                                                                                                                           |
 | `invalid`     | Command input, operand cardinality, source kind, flag use, or exact source reference does not follow this interface. A missing source without independent absence proof is not a verified no-op.                                                                                                                                      |
 | `blocked`     | A valid request cannot establish one safe complete removal because ownership, lifecycle, route, identity, containment, collision, reference transformation, generated boundary, expected state, or recovery is unsafe or ambiguous. No write begins.                                                                                  |
-| `failed`      | An unexpected application, verification, or recovery failure occurs after a persistent effect begins. The result remains `failed` even when handled recovery succeeds.                                                                                                                                                                |
-| `interrupted` | The caller cancels before completion and no residual recovery failure remains. Residual recovery failure is `failed`.                                                                                                                                                                                                                 |
+| `failed`      | An unexpected application, verification, or bundle-handling failure occurs after a persistent effect begins. The result remains `failed` and is never converted into `attention`.                                                                                                                                            |
+| `interrupted` | The caller cancels before completion; an unexpected application or verification failure remains `failed`.                                                                                                                                                                                                                        |
 
 For ordinary conditions, status precedence is `blocked` > `incomplete` >
 `attention` > `complete`. Invalid input stops before operation resolution.
@@ -431,13 +460,11 @@ establishes all of the following for the exact requested subject:
 - current topology and affected generated projections establish the intended
   absence and contain no stale generated region;
 - the complete supported-workspace-Markdown reference pass establishes no
-  residual incoming reference to the absent subject; and
-- no recognized backup, residual, or other recovery artifact remains necessary or
-  ambiguous for the earlier operation.
+  residual incoming reference to the absent subject.
 
 The result is `complete` with verified no-op evidence only after all of those
 facts are complete. A missing or invalid source reference without this evidence
-is `invalid`; an orphan, ambiguous identity, unsafe ownership or recovery fact is
+is `invalid`; an orphan, ambiguous identity, or unsafe ownership fact is
 `blocked`; and unavailable required coverage is `incomplete`. The command never
 uses a receipt, tombstone, journal, or history record to claim that a previous
 remove caused the absence.
@@ -457,8 +484,8 @@ The command rejects or blocks:
   unsupported or ambiguous form, or would lose surrounding prose;
 - incomplete supported-Markdown enumeration or inspection;
 - an invalid or ambiguous generated boundary or required Index projection;
-- a dirty affected path without `--skip-git-check`;
-- missing or colliding recovery evidence where Git cannot recover; or
+- unavailable recovery-bundle storage (`incomplete`); an unverified, malformed,
+  mismatched, or colliding bundle (`blocked`); or
 - a changed expected source, reference, generated region, ownership fact, or
   category item before application.
 
@@ -516,7 +543,8 @@ leaf.
 - create a receipt, tombstone, journal, saved plan, session, or automatic
   recovery history;
 - create a Git commit; or
-- redefine the shared libraries, parser boundary, physical identity, backup,
+- redefine the shared libraries, parser boundary, physical identity, recovery
+  bundle,
   lock, concurrency, test, Native AOT, or C# source-layout choices accepted by
   the CLI Architecture.
 
@@ -552,9 +580,9 @@ Gate 5 executable proof must cover:
 - exact dry-run/application parity, explicit-subject consent, no persistent
   dry-run effect, every detachment in human and JSON results, and complete
   effect visibility;
-- affected-path Git checks, the narrow `--skip-git-check` bypass, backup readiness
-  when Git cannot recover, expected-state revalidation, all-effects verification,
-  identity-guarded reverse recovery, residual preservation, and fresh-plan rerun;
+- recovery-bundle storage/readiness and collision handling, expected-state
+  revalidation, all-effects verification, retained partial state without
+  restoration, residual preservation, and fresh-plan rerun;
 - complete verified no-op proof for exact intended absence and invalid,
   incomplete, or blocked results when that proof is unavailable;
 - `complete`, reserved `attention`, `incomplete`, `invalid`, `blocked`, `failed`,

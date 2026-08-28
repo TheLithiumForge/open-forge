@@ -82,13 +82,12 @@ The complete accepted command form is:
 ```text
 open-forge index [source-reference...]
   [--dry-run]
-  [--skip-git-check]
   [global flags]
 ```
 
-`source-reference...` is an optional positional sequence. The two
-command-specific flags are optional Boolean write-policy flags. Repeating
-either Boolean flag is accepted and idempotent. The shared global flags are
+`source-reference...` is an optional positional sequence. The one
+command-specific flag is an optional Boolean write-policy flag. Repeating it is
+accepted and idempotent. The shared global flags are
 optional when their shared contract permits them.
 
 The command has no `--all`, `--yes`, or `--force` flag, no directory operand, no
@@ -140,28 +139,6 @@ Value-bearing repetition rules are unchanged under their defining contract.
 `--dry-run` does not grant authority to repair markers, replace authored
 content, modify overwrites, escape the workspace, invent metadata, or perform
 another repair operation.
-
-### `--skip-git-check`
-
-`--skip-git-check` is an optional Boolean write-policy flag with no value. Its
-omission keeps the relevant-path Git cleanliness check. Its presence bypasses
-only that check for an actual update.
-
-Repeating `--skip-git-check` is accepted and idempotent. A second or later
-occurrence has no additional effect. Repetition bypasses only the relevant-path
-Git cleanliness check once; it does not multiply bypasses or grant another
-authority. This matches repeated Boolean global flags. Value-bearing repetition
-rules are unchanged under their defining contract.
-
-`--skip-git-check` does not bypass route, metadata, marker, containment,
-expected-state, verification, or recovery requirements. It does not grant
-permission to overwrite, delete, force an operation, or take ownership of a
-file.
-
-`--dry-run` and `--skip-git-check` are compatible write-policy choices. Their
-combination, including repeated occurrences of either flag, still stops before
-persistent effects, and the skip flag cannot bypass any requirement other than
-the relevant-path Git cleanliness check.
 
 ### Global flags
 
@@ -372,6 +349,36 @@ Every replacement preserves the marker tokens and all bytes outside the
 generated interior. `index` never formats the complete file or normalizes
 authored frontmatter, headings, prose, links, or whitespace outside that body.
 
+Before replacing an existing generated target, application preparation uses only
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.Create)` and its application-owned
+`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
+`HOME`, or custom-platform fallback; unavailable storage is a
+pre-effect `incomplete` result. When the operation has one or more existing
+targets to replace, it gets exactly one immutable ZIP bundle
+outside the workspace. An operation containing only Create effects or no-ops
+creates no bundle. Its source-generated
+schema-v1 `manifest.json` and streamed ordinal payload entries record
+command/operation/workspace identity, ordered relative targets, change kinds,
+exact prior bytes/lengths/hashes, and intended final absence or length/hash.
+`Create` and byte/semantic no-op effects add no bundle entry. A CreateNew draft is
+closed and reopened for semantic manifest, exact ordered entry, length, hash,
+and payload-byte validation, moved within the same directory to its deterministic
+final name, and reopened and verified. Only the valid final ZIP forms the opaque
+`RecoveryBundlePreparation`; the draft remains `Incomplete`. All preparation
+completes before the first target effect, and `FileChangeApplier` requires the
+matching preparation for every existing-target effect (`Replace`,
+`ReplaceGeneratedRegion`, or `Delete`). After final
+verification, only the positively recognized bundle created by this command is
+deleted; deletion failure leaves successful effects with `attention`, the exact
+residual path, and cleanup guidance. Handled failure or cancellation reports the
+actual residual draft or final path; a valid final remains after preparation.
+A closed final ZIP may remain after abrupt process termination, without an
+executable crash or power-loss guarantee. The command never restores a target
+automatically or derives current target state from recovery provenance. Cleanup
+owns exact named final and draft deletion under its separate lease-bound
+contract.
+
 ## Operation Modes And Observable Output
 
 ### Application authority
@@ -504,7 +511,8 @@ The structured result exposes:
 - Per-region containing-file ID and path, selection reasons, action, entry
   counts, bounded change evidence, and final effect state.
 - Preflight, application, verification, and recovery facts.
-- Changed, unchanged, reverted, and residual targets.
+- Changed and unchanged effects plus actual residual draft or final paths,
+  without recovery-derived current-target classification.
 - Findings, semantic status, and useful next actions.
 
 For an attention result, including a dry run with safely established planned
@@ -525,8 +533,8 @@ the source-generated serialization path without changing that shared authority.
 | `incomplete`  | Safe inspection facts are available, but complete target discovery or projection coverage could not finish. No mutation begins, and human facts and findings remain one result.                                                                                                        |
 | `invalid`     | Command input, a flag value, or a source reference does not follow the accepted interface.                                                                                                                                                                                             |
 | `blocked`     | A valid request cannot establish or apply one safe complete plan. No mutation begins.                                                                                                                                                                                                  |
-| `failed`      | Application, verification, or recovery failed to complete the selected operation.                                                                                                                                                                                                      |
-| `interrupted` | The caller cancelled or interrupted the operation before completion and no residual recovery failure remains.                                                                                                                                                                          |
+| `failed`      | Application, verification, or bundle handling failed to complete the selected operation.                                                                                                                                                                                               |
+| `interrupted` | The caller cancelled or interrupted the operation before completion and no unexpected application or verification failure changes the result.                                                                                                                                                |
 
 Changes and verified no-ops are ordinary `complete` results. They do not
 require `attention` merely because bytes changed or no effect was needed.
@@ -565,9 +573,9 @@ Missing or invalid required routing metadata blocks the complete plan.
 Missing, duplicate, misplaced, reversed, nested, or ambiguous generated
 markers block the complete plan.
 
-A dirty planned target path blocks unless `--skip-git-check` applies.
-
-An unavailable or colliding required backup blocks before the first write.
+A missing, unverified, or colliding required recovery bundle blocks before the
+first write. Unavailable or unsafe bundle storage is `incomplete` before the
+first write.
 
 A source or destination change detected after planning but before the first
 write blocks the plan. A change detected after application begins fails the
@@ -597,19 +605,20 @@ without enumerating every compatible combination.
 | A selected entrypoint has no direct routed children                                                                                                   | Its expected generated body is `- none - No entries - #Empty`.                                                                                                                                          |
 | A valid target has stale generated lines                                                                                                              | Application replaces only the bounded generated interior.                                                                                                                                               |
 | `open-forge index --dry-run` with changes and no non-blocking finding                                                                                 | The result is `complete`; human output shows exact bounded diffs and says no files changed, and structured output carries equivalent bounded before-and-after evidence.                                 |
-| `open-forge index --dry-run --dry-run --skip-git-check --skip-git-check` or an application with repeated `--skip-git-check` and dirty planned targets | Repeated Boolean occurrences are accepted with no additional effect. The relevant-path cleanliness check is bypassed only for application, while all other safety and recovery requirements remain.     |
+| `open-forge index --dry-run --dry-run`                                                                                                             | Repeated Boolean occurrences are accepted with no additional effect, and the preview still writes nothing.                                                                                             |
 | `open-forge index --workspace ../another-workspace`                                                                                                   | The exact supplied workspace is used; no parent or Git-root discovery occurs.                                                                                                                           |
 | `open-forge index --json`                                                                                                                             | One complete structured result for every semantic status is written to stdout, preserving the typed status. Separate bounded diagnostics use stderr; ordinary human text is not mixed into JSON stdout. |
 | `open-forge index --verbose`                                                                                                                          | Bounded diagnostics are added without changing operation behavior or status.                                                                                                                            |
 | `open-forge index --help`                                                                                                                             | Help for `index` is shown without workspace resolution or domain execution.                                                                                                                             |
 | `open-forge index --version`                                                                                                                          | The distributed CLI version is shown without workspace resolution or a domain operation.                                                                                                                |
-| A valid unchanged target set after a successful prior application                                                                                     | The result is `complete`, reports a verified no-op, and performs no write or Git cleanliness check.                                                                                                     |
+| A valid unchanged target set after a successful prior application                                                                                     | The result is `complete`, reports a verified no-op, and performs no write or bundle preparation.                                                                                                       |
 | A valid empty target projection                                                                                                                       | The result can be a complete update or verified no-op with the exact empty body, depending on current bytes.                                                                                            |
 | A dry run with safely established planned changes and a non-blocking finding                                                                          | The semantic result is `attention`; the complete plan and exact bounded diffs remain visible, human output says `requires attention`, and it says no files changed.                                     |
 | Safe facts exist but complete discovery or projection coverage cannot finish                                                                          | The result is `incomplete`, no mutation begins, and safe facts remain together with their findings in the primary human result.                                                                         |
 | An unknown source, invalid flag value, or conflicting terminal input                                                                                  | The result is `invalid`; the primary human error is on stderr and identifies the useful correction when one exists.                                                                                     |
-| Missing Loader, invalid metadata, unsafe boundary, dirty target without skip, or another unsafe complete-plan condition                               | The result is `blocked`, no mutation begins, and the primary human error is on stderr.                                                                                                                  |
-| Application, verification, or recovery cannot complete                                                                                                | The result is `failed` or `interrupted` according to the semantic-result definitions, the primary human error is on stderr, and residual recovery state is reported when present.                       |
+| Missing Loader, invalid metadata, unsafe boundary, missing/unverified/colliding recovery bundle, or another unsafe complete-plan condition       | The result is `blocked`, no mutation begins, and the primary human error is on stderr.                                                                                                                  |
+| Unavailable or unsafe recovery-bundle storage                                                                                                     | The result is `incomplete`, no mutation begins, and the primary human result retains the safe facts and storage limitation.                                                                                |
+| Application, verification, or bundle handling cannot complete                                                                                         | The result is `failed` or `interrupted` according to the semantic-result definitions, the primary human error is on stderr, and residual bundle state is reported when present.                          |
 | `open-forge index --view=compact`                                                                                                                     | Human output retains semantic result, effect counts, affected paths, safety findings, required next actions, and every dry-run diff while omitting optional explanation and provenance.                 |
 | `open-forge index --view=expanded` or omitted `--view`                                                                                                | Human output uses the default expanded examples and includes complete ordinary evidence and provenance.                                                                                                 |
 

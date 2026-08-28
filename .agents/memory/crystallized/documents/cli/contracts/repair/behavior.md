@@ -13,7 +13,7 @@ This file is the accepted current Crystallized Behavior Contract for
 `open-forge repair`. It defines deterministic request resolution, fresh
 diagnosis, selection authority, exact and guided proposal handling, complete
 planning, conflict checks, preflight, dry-run, application, verification,
-reverse recovery, post-diagnosis, result formation, and conformance without
+recovery-bundle retention, post-diagnosis, result formation, and conformance without
 choosing implementation technology. The command does not ship yet; implementation
 and executable proof remain pending Gate 5.
 
@@ -33,17 +33,17 @@ Every general Repair invocation follows one typed mutation flow:
 
 ```text
 validated request and selection authority
-  -> fresh six-domain diagnosis
+  -> fresh diagnosis and selected-edit relevant-domain gate
   -> selected safe-exact proposals and confirmed guided intent
   -> complete effect plan
   -> conflict check
-  -> preflight, including affected-path Git and recovery policy
+  -> preflight, including recovery-bundle readiness
   -> exact dry-run or final interactive confirmation
   -> fresh revalidation
   -> apply
   -> per-effect and semantic verification
-  -> reverse recovery when required
-  -> fresh six-domain diagnosis
+  -> retained recovery-bundle state when required
+  -> fresh relevant-domain diagnosis
   -> one typed result
 ```
 
@@ -67,8 +67,8 @@ CLI Flags contract:
 2. Reject positional operands, generic proposal references, choice tokens,
    finding text or codes, domain or kind modes, generic batch input, plugin
    fixer selectors, and every rejected alias or flag.
-3. Parse `--automatic`, `--dry-run`, and `--skip-git-check` as Boolean presence
-   and collapse repeated presence to one idempotent choice.
+3. Parse `--automatic` and `--dry-run` as Boolean presence and collapse repeated
+   presence to one idempotent choice. Unknown options are invalid.
 4. Parse each `--relink` occurrence as exactly three shell values in order.
 5. Deduplicate identical relink tuples and reject contradictory tuples for one
    source occurrence.
@@ -79,7 +79,7 @@ CLI Flags contract:
 
 Argument order does not select an effect. Compatible flags form one request;
 conflicting explicit inputs form `invalid`. Repeated Boolean flags do not
-multiply authority, preview, Git bypass, or recovery.
+multiply authority, preview, or recovery.
 
 `--help` and `--version` terminate before workspace selection and mutation
 resolution. They remain mutually exclusive. Other well-formed global flags may
@@ -104,7 +104,8 @@ The wizard then forms one plan, shows exact effects and safety facts, and reache
 the final confirmation boundary. The default answer is `No`. A `Yes` supplies
 the final interactive application confirmation only after the complete plan and
 preflight have succeeded. A `No` does not apply; it returns the accepted
-non-applied interruption result without residual recovery failure.
+non-applied interruption result without an unexpected application or
+verification failure.
 
 Interactive `repair --dry-run` uses the same diagnosis, selections, plan, and
 exact effect display, then stops without an application confirmation. Dry-run
@@ -113,8 +114,8 @@ saved.
 
 The same wizard is selected for any prompt-capable request with neither
 `--automatic` nor an explicit relink, including one that carries only
-`--workspace`, `--view`, `--verbose`, `--skip-git-check`, or `--dry-run`. Those
-inputs remain part of the same normalized request. JSON never enters this path;
+`--workspace`, `--view`, `--verbose`, or `--dry-run`. Those inputs remain part of
+the same normalized request. JSON never enters this path;
 help and version remain terminal before it.
 
 ### Automatic selection
@@ -162,24 +163,23 @@ Thus `--json --dry-run` without a selection is blocked, while
 `--automatic --dry-run --json` is an explicit automatic preview. The resolver
 never invents a guided choice to make a structured request complete.
 
-## Fresh Six-Domain Diagnosis Gate
+## Fresh Relevant-Domain Diagnosis Gate
 
-Before proposal selection, Repair runs all six Doctor domains in their fixed
-order and retains their complete reports, findings, limitations, and coverage.
-It does not use a prior Doctor result, rendered command output, saved report,
-or previous dry-run as current authority.
+Before proposal selection, Repair may run all Doctor domains for current display,
+but it separately forms the exact diagnosis dependency closure for each
+selectable local-reference edit. It does not use a prior Doctor result, rendered
+command output, saved report, or previous dry-run as current authority.
 
-General Repair writes require all six Doctor domains to have complete coverage.
-If any one of the six domains has incomplete or blocked coverage, all general
-Repair writes are blocked, including explicit relinks. The planner may retain
-partial facts and display safe findings, but it cannot apply an effect under the
-incomplete diagnosis gate. A targeted command can have its own contract and
-boundary; this operation does not invoke it.
+A selected edit requires complete current coverage only for the workspace/path
+containment, route/heading, and local-reference facts it actually consumes.
+Incomplete or blocked unrelated lifecycle, Extension, Framework, or recovery-
+observer coverage stays visible but does not block the edit. Recovery writer
+readiness for a real Replace is checked separately in mutation preflight. The
+planner never uses a partial required fact or invokes another command's authority.
 
-The diagnosis gate is checked again after application through fresh six-domain
-diagnosis. The second diagnosis reports repaired, remaining, new, manual,
-guided, and blocked findings without claiming that selected-scope completion is
-workspace health.
+After application, the operation freshly rechecks the same relevant-domain
+dependency closure. It reports repaired, remaining, new, manual, guided, and
+blocked findings in that closure without claiming workspace health.
 
 ## Proposal Formation
 
@@ -217,7 +217,7 @@ verification, and recovery.
 
 No other finding creates a general Repair proposal. A valid reference, an
 external URL, an image, a repeated or cyclic fact, generated drift, route intent,
-recovery artifact, Framework finding, Extension finding, authored decision, or
+recovery bundle or draft, Framework finding, Extension finding, authored decision, or
 ownership conflict remains information, a targeted action, a manual decision, or
 a blocked boundary.
 
@@ -306,55 +306,66 @@ occurrence; verification checks every intended destination and the complete
 resulting file.
 
 Contradictory tuples for one occurrence are invalid during request resolution.
-Stale state, dirty affected paths, missing authority, missing recovery,
-ambiguous identity or containment, and overlapping non-equivalent effects block
-the complete plan. No effect-order winner is chosen and no unrelated safe effect
-is applied as a partial batch.
+Stale state, missing authority, missing recovery-bundle preparation, ambiguous
+identity or containment, and overlapping non-equivalent effects block the
+complete plan. No effect-order winner is chosen and no unrelated safe effect is
+applied as a partial batch.
 
 The plan records selected and unselected findings, effects and no-ops, affected
 paths, expected and intended bytes, exact bounded diffs or equivalent evidence,
 verification, recovery, and next actions. A previous plan is never reused.
 
-## Preflight And Git Policy
+## Preflight And Recovery-Bundle Readiness
 
-Preflight checks the complete diagnosis gate, selected authority, effect
+Preflight checks the selected-edit relevant-domain gate, selected authority, effect
 boundaries, expected state, target and source identity, containment, overlap,
-affected paths, recovery readiness, and the applicable Git cleanliness policy.
-It completes before application authority is crossed.
+and recovery-bundle readiness. It completes before application authority is
+crossed. For a plan with existing-target effects (`Replace`,
+`ReplaceGeneratedRegion`, or `Delete`), readiness means exactly one immutable
+ZIP bundle has been finalized and independently
+verified outside the workspace under
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.Create)/OpenForge/recovery/v1`. No temporary,
+repository, `HOME`, or custom platform fallback is allowed; unavailable storage
+is `incomplete` before any write.
 
-For an actual update, Git cleanliness is checked only for existing affected paths.
-Dirty affected paths block by default. Read-only inputs that are not changed do
-not become dirty affected paths merely because they contributed to a proposal.
-
-The normalized presence of `--skip-git-check` bypasses only this affected-path
-cleanliness check. It activates the required adjacent backup recovery boundary.
-It does not bypass diagnosis completeness, expected-state checks, containment,
-identity, overlap, verification, recovery readiness, or ownership.
-
-A Gitless execution still requires safe adjacent recovery for each replacement.
-An unavailable, unknown, or colliding required backup boundary blocks the entire
-plan before the first write. A verified no-op has no affected mutation path and
-does not require a Git cleanliness check.
+The bundle uses the normalized physical workspace path key and operation ID.
+Its source-generated `manifest.json` and ordered ordinal payload entries record
+schema-v1, command/operation/workspace identity, every planned relative target and
+change kind, exact prior lengths/hashes/payloads, and intended final
+absence/length/hash. The draft is created with `CreateNew` under its exact name
+in the same external directory, closed and reopened for semantic manifest,
+exact ordered entry names and counts, lengths, hashes, and bytes, moved within
+the same directory to its deterministic final name, and reopened and verified
+again. Only the valid final ZIP forms the opaque `RecoveryBundlePreparation`;
+the draft remains `Incomplete`. Create and no-op effects have no entries, and
+every planned existing-target effect has exactly one matching entry. All preparation
+completes before the first effect; `FileChangeApplier` requires the matching
+preparation and performs one final effect per target. Before workspace mutation,
+hold the persistent reusable `.agents/open-forge.lock` with a `FileShare.None`
+handle only; preserve existing lock-file bytes and write no metadata, timestamp,
+or ownership record. The lock is concurrency safety, not lifecycle, history, or
+recovery evidence.
 
 ## Dry-Run Parity
 
-Dry-run and application use the same normalized request, fresh six-domain facts,
+Dry-run and application use the same normalized request, fresh relevant-domain facts,
 proposal set, selected intent, plan, conflict checks, and preflight. Dry-run
 forms the complete result and includes every selected automatic and explicit
 effect, exact affected paths, expected and intended evidence, bounded diffs or
 fingerprints, findings, conflicts, and required next actions.
 
-Dry-run stops before backup creation, temporary-file creation, replacement,
-formatting, receipt update, Git change, or any other persistent effect. It does
-not claim on-disk verification of bytes that were not written. Human output may
-say Preview, but `--dry-run` is the only preview spelling.
+Dry-run stops before recovery-bundle creation, temporary-file creation,
+replacement, formatting, receipt update, or any other persistent effect. It
+does not claim on-disk verification of bytes that were not written. Human output
+may say Preview, but `--dry-run` is the only preview spelling.
 
 ## Application, Verification, And Recovery
 
 When application authority is complete, the operation revalidates the complete
 plan against current source occurrences, old literals, targets, expected bytes,
-identity, containment, and recovery immediately before effects. A changed fact
-blocks before that effect can write.
+identity, containment, and recovery-bundle facts immediately before effects. A
+changed fact blocks before that effect can write.
 
 Each selected non-no-op effect writes only the computed destination literal in
 its addressed Markdown source. It preserves labels, authored metadata, route
@@ -363,32 +374,42 @@ replaces a divergent file or authors missing content.
 
 After each effect, the operation verifies the intended bytes and semantic local
 reference relationship. After all effects, it verifies the complete selected
-operation and its semantic postconditions. If application or verification fails,
-new effects stop and already applied effects are recovered in reverse effect
-order when their current identity still matches the applied state.
+operation and its semantic postconditions. If application or verification
+fails, or cancellation is handled, new effects stop and the actual residual
+draft or final path is reported; a valid final remains after preparation. Repair never
+restores, rolls back, compensates for an effect, or derives current target state
+from recovery provenance.
 
-Recovery never overwrites a concurrent or otherwise changed target. Such a
-target is preserved and reported as residual state. A failed operation remains
-`failed` even when handled recovery succeeds because the requested Repair did
-not complete. An interruption with incomplete recovery is `failed` and reports
-retained backups and residuals. An interruption before effects or after complete
-recovery is `interrupted`.
+A closed final ZIP may remain after abrupt process termination, without an
+executable crash or power-loss guarantee. A failed operation remains `failed`;
+cancellation with incomplete residual facts is also `failed`, while cancellation
+before effects without a stronger failure is `interrupted`. After final
+verification of whole-operation success, delete the bundle. If recognized
+deletion fails, effects remain successful and the
+result is `attention` with the exact residual path and cleanup guidance. No
+journal, progress receipt, or persisted plan is created. Explicit Cleanup owns
+exact named final and draft deletion under its separate lease-bound contract;
+unknown or differently named artifacts remain untouched.
 
-Backups are removed only after complete application and semantic verification.
-Repair does not delete pre-existing or unknown recovery artifacts.
+Recovery storage is ordinary current-user `LocalApplicationData` under the
+stable workspace and cooperating-client threat model. No special platform-
+permission or encryption behavior is promised. Recovery reads use semantic
+schema and exact ordered-entry validation and do not
+extract bundles or add a custom archive parser, reflection, native dependency,
+or package for this boundary.
 
 ## Fresh Post-Diagnosis
 
 After a successful application, verified no-op, handled failure, or interrupted
-boundary, Repair forms fresh six-domain diagnosis from current workspace facts.
+boundary, Repair forms fresh relevant-domain diagnosis from current workspace facts.
 It does not run until a fixpoint or treat the post-diagnosis as another
 application request. The post-diagnosis reports:
 
-- Effects selected, coalesced, applied, verified, reverted, or unchanged.
+- Effects selected, coalesced, applied, verified, retained, or unchanged.
 - Findings selected and unselected.
 - Findings repaired, remaining, new, manual, guided, and blocked.
 - Affected paths and residual or retained recovery state.
-- Per-domain coverage and aggregate status.
+- Relevant-domain coverage and selected-scope status.
 
 The result says `complete` only for the selected Repair scope when its required
 coverage and effect path completed. Remaining non-information findings produce
@@ -405,7 +426,7 @@ paths, exact bounded change evidence, preflight, application, verification,
 recovery, residuals, semantic status, and post-diagnosis coverage.
 
 Human and JSON renderers consume that result without rerunning diagnosis,
-planning, application, verification, or recovery. Compact and expanded views
+planning, application, verification, or retained-state reporting. Compact and expanded views
 change only framing and density. `--verbose` adds bounded diagnostics without
 changing behavior or status. JSON is complete and non-interactive.
 
@@ -421,13 +442,16 @@ Result formation preserves the Interface meanings:
 - Invalid grammar, malformed values, or contradictory explicit tuples form
   `invalid`.
 - Missing non-interactive selection authority, incomplete or blocked required
-  diagnosis, stale or conflicting facts, dirty affected paths, missing recovery,
-  ambiguous identity, or another unsafe complete-plan boundary forms `blocked`.
-- Safe facts without complete required diagnosis or post-diagnosis coverage form
+  relevant-domain diagnosis, stale or conflicting facts, malformed/colliding/mismatched
+  recovery-bundle facts, ambiguous identity, or another unsafe complete-plan
+  boundary forms `blocked`. Unavailable recovery storage or preparation coverage
+  is `incomplete` before effects.
+- Safe facts without complete required relevant-domain diagnosis or post-diagnosis coverage form
   `incomplete` when no stronger blocked boundary applies.
-- Application, verification, recovery, or post-condition failure forms `failed`.
-- Caller cancellation before completion forms `interrupted` unless recovery is
-  incomplete, which forms `failed`.
+- Application, verification, bundle-handling, or post-condition failure forms
+  `failed`.
+- Caller cancellation before completion forms `interrupted` unless bundle
+  handling is incomplete, which forms `failed`.
 - A selected scope that completes with remaining non-information findings forms
   `attention`.
 - A selected scope that completes, including a verified no-op or exact dry-run,
@@ -442,10 +466,10 @@ selected repair. `complete` does not mean every Doctor finding is gone.
 The diagnosis, candidate, and planning stages have no persistent effects. The
 application stage has authority only for selected admitted local-reference
 literal effects after the complete gate, preflight, confirmation where required,
-Git policy, and revalidation.
+verified recovery-bundle preparation, and revalidation.
 
 Repair never mutates generated navigation, route topology, route metadata,
-overwrites, recovery artifacts, Framework files, Extension files, receipts,
+overwrites, recovery bundles or drafts, Framework files, Extension files, receipts,
 manifests, ownership, or authored labels and prose. It never accepts a force,
 apply, yes, preview, suggestions, or all flag as an authority shortcut.
 
@@ -469,19 +493,19 @@ section. A conforming implementation must additionally prove:
   destination computation, label and unrelated-byte preservation, stale state,
   shifted occurrence, target change, identity ambiguity, containment, and
   candidate disappearance.
-- Fresh six-domain diagnosis as a strict complete-coverage write gate and fresh
-  post-diagnosis without a fixpoint loop.
+- Fresh relevant-domain diagnosis as the selected-edit write gate and fresh
+  post-diagnosis without a fixpoint loop; unrelated lifecycle and recovery-
+  observer unavailability remains non-blocking.
 - Safe-exact path, case, encoding, and unique-fragment effects; guided missing-
   target candidates from each admitted evidence basis; zero/one/several
   cardinality; and absence of external or semantic repair.
 - One atomic plan, equivalent-effect coalescing with origin retention,
-  contradictory and overlapping conflict blocking, stale and dirty state,
-  missing authority, missing recovery, Git and Gitless policy, and no partial
-  application.
-- Exact dry-run evidence and absence of backups, temporary files, writes, Git,
+  contradictory and overlapping conflict blocking, stale state, missing
+  authority, verified recovery-bundle preparation, and no partial application.
+- Exact dry-run evidence and absence of recovery bundles, temporary files, writes,
   lifecycle, receipt, and public-command effects.
-- Revalidation, per-effect verification, semantic verification, reverse
-  recovery, residual preservation, interruption, and rerun convergence.
+- Revalidation, per-effect verification, semantic verification, residual draft
+  or final paths, interruption, and rerun convergence.
 - Human compact and expanded, JSON, and verbose projections from one typed
   result, including effect and finding distinctions and the accepted stream
   policy without choosing exact schema or numeric exits.
@@ -489,9 +513,9 @@ section. A conforming implementation must additionally prove:
   meanings scoped to selected Repair work.
 
 Gate 5 executable proof should prove request, selection, candidate, plan, conflict,
-preflight, no-op, dry-run, verification, recovery, status, and post-diagnosis
-behavior. Focused integration tests should use real temporary Markdown sources,
-contained targets, changed bytes, Git and Gitless states, recovery artifacts,
+preflight, no-op, dry-run, recovery-bundle preparation, verification, status, and
+post-diagnosis behavior. Focused integration tests should use real isolated
+Markdown workspaces, contained targets, changed bytes, recovery-bundle residuals,
 interruption, and concurrent edits. The CLI Architecture defines the accepted
 parser, atomic replacement, filesystem identity, hashing, concurrency, structured
 schema, process-status, package, and Native AOT boundaries. Gate 5 provides the

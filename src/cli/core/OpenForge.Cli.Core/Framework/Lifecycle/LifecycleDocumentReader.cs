@@ -1,6 +1,5 @@
 using System.Text;
 using System.Text.Json;
-using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models;
 using OpenForge.Cli.Core.Framework.Lifecycle.Serialization;
@@ -10,9 +9,6 @@ namespace OpenForge.Cli.Core.Framework.Lifecycle;
 
 internal sealed class LifecycleDocumentReader(PhysicalPathResolver physicalPathResolver)
 {
-    internal const string RelativePath = ".agents/open-forge.lifecycle.json";
-    internal const string FingerprintPolicy = MarkdownFingerprintPolicy.Name;
-
     private static readonly UTF8Encoding StrictUtf8 = new(
         encoderShouldEmitUTF8Identifier: false,
         throwOnInvalidBytes: true);
@@ -27,7 +23,10 @@ internal sealed class LifecycleDocumentReader(PhysicalPathResolver physicalPathR
             return Cancelled();
         }
 
-        var path = Path.Combine(workspace.LexicalRoot, ".agents", "open-forge.lifecycle.json");
+        var path = Path.Combine(
+            workspace.LexicalRoot,
+            LifecycleSchema.DirectoryName,
+            LifecycleSchema.FileName);
         var resolution = _physicalPathResolver.ResolveCandidate(
             workspace.LexicalRoot,
             workspace.PhysicalRoot,
@@ -72,12 +71,16 @@ internal sealed class LifecycleDocumentReader(PhysicalPathResolver physicalPathR
         try
         {
             _ = StrictUtf8.GetString(bytes);
-            LifecycleJsonSyntaxValidator.ValidateNoDuplicateProperties(bytes);
-            var document = JsonSerializer.Deserialize(
+            LifecycleJsonSyntaxValidator.ValidateNoDuplicateProperties(bytes, LifecycleSection.Extensions);
+            var envelope = JsonSerializer.Deserialize(
                 bytes,
-                LifecycleJsonContext.Default.LifecycleDocumentV1)
+                LifecycleJsonContext.Default.LifecycleEnvelopeV1)
                 ?? throw new JsonException("The lifecycle document cannot be null.");
-            return LifecycleDocumentValidator.Validate(workspace, document);
+            var extensions = envelope.Extensions is { } extensionValue
+                ? extensionValue.Deserialize(LifecycleJsonContext.Default.ExtensionLifecycleState)
+                    ?? throw new JsonException("The lifecycle Extension section cannot be null.")
+                : null;
+            return LifecycleDocumentValidator.ValidateExtensions(workspace, envelope, extensions);
         }
         catch (Exception exception) when (exception is JsonException or DecoderFallbackException)
         {

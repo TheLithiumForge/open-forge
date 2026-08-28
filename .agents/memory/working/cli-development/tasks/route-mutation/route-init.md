@@ -43,9 +43,10 @@ verify the resulting chain, and form one concrete result.
 
 Cover full existing, partially missing, completely missing, invalid segments,
 collisions, physical aliases, dry run, lock race, generated navigation,
-idempotence, failure/recovery, human/JSON/help/diagnostics, unchanged unrelated
-bytes, process exits, and AOT. Add complete mode-specific evidence if the deferred
-decision expands behavior.
+idempotence, external bundle preparation/retention for any existing
+Replace/Delete, human/JSON/help/diagnostics, unchanged unrelated bytes, process
+exits, and AOT. Add complete mode-specific evidence if the deferred decision
+expands behavior.
 
 ## Stop Conditions
 

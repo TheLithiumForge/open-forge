@@ -33,7 +33,7 @@ validated input
   -> complete ordered mutation plan
   -> preflight
   -> dry-run or application
-  -> verification or recovery
+  -> verification and retained-recovery reporting
   -> one typed result
 ```
 
@@ -50,11 +50,10 @@ plan, and preflight have succeeded.
 
 ## Input Normalization And Target Closure
 
-Request normalization accepts repeated `--dry-run` and
-`--skip-git-check` occurrences and collapses each Boolean presence to one
-idempotent write-policy choice. A second or later occurrence has no additional
-effect, does not multiply application authority or Git-check bypasses, and does
-not alter value-bearing repetition rules. The selected workspace is the exact
+Request normalization accepts repeated `--dry-run` occurrences and collapses
+the Boolean presence to one idempotent write-policy choice. A second or later
+occurrence has no additional effect, does not multiply application authority,
+and does not alter value-bearing repetition rules. The selected workspace is the exact
 current working directory or exact `--workspace` value resolved by the shared
 [Global CLI Flags Behavior Contract](../shared/global-flags/behavior.md).
 Normalization follows the no-discovery rules in the [Workspace
@@ -191,7 +190,7 @@ mutation sequence before application or dry-run rendering.
 Dry-run and application use the same request, authoritative topology
 projection, current expected-state facts, planner, and preflight.
 
-Dry-run stops before backup or staging creation, temporary file creation,
+Dry-run stops before recovery-bundle or staging creation, temporary file creation,
 replacement, formatting, or any other persistent effect.
 
 Human dry-run output includes the exact bounded generated-region diff for every
@@ -208,7 +207,7 @@ established planned changes and a non-blocking finding forms `attention`. It
 exposes the complete plan and exact bounded diffs, states that no files changed,
 and does not claim on-disk verification of bytes that were not written.
 
-## Application Authority And Git Policy
+## Application Authority And Recovery
 
 Omitting `--dry-run` selects application. The explicit command invocation is
 confirmation to replace every changed body inside the selected machine-owned
@@ -220,25 +219,46 @@ not permit marker repair, authored-content replacement, whole-file formatting,
 overwrite mutation, path escape, metadata invention, or another repair
 operation.
 
-A verified no-op has no affected mutation path and therefore does not require a
-Git cleanliness check.
+A verified no-op has no affected mutation path and therefore does not create a
+bundle. For an actual update with one or more existing targets to replace,
+preparation uses only
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.Create)` and its application-owned
+`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
+`HOME`, or custom-platform fallback; unavailable storage is a pre-effect
+`incomplete` result. It prepares exactly one immutable ZIP bundle outside the
+workspace. An operation containing only
+Create effects or no-ops does not resolve recovery storage and creates no bundle.
+Its source-generated
+schema-v1 `manifest.json` and streamed ordinal payload entries identify
+the command/operation, normalized physical workspace, ordered relative
+targets, change kinds, exact prior bytes/lengths/hashes, and intended final
+absence or length/hash. `Create` and byte/semantic no-op effects add no bundle
+entry.
 
-An actual update checks only the files that the plan would replace. Dirty planned
-target paths block by default. Dirty read-only input paths do not block merely
-because their authored changes caused the expected generated result.
+The draft uses `CreateNew` under its exact name in the same external directory,
+is closed and reopened for semantic manifest, exact ordered entry, length,
+hash, and payload-byte validation, moved within that directory to the
+deterministic final name, and reopened and verified. Only the valid final ZIP
+forms the opaque `RecoveryBundlePreparation`; the draft remains `Incomplete`.
+Every planned existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or
+`Delete`) must match the preparation;
+`FileChangeApplier` performs one final
+effect per target. All bundle preparation is complete before the first target
+effect. A collision or verification failure blocks before effects.
 
-The normalized presence of one or more `--skip-git-check` occurrences bypasses
-only the relevant-path Git cleanliness check. Repeated occurrences do not create
-another bypass or authority. The flag does not bypass route, metadata, marker,
-containment, expected-state, verification, or recovery requirements.
-
-Gitless application and `--skip-git-check` application use the accepted
-adjacent staged/backup recovery policy. The operation proves readiness before
-writes, never overwrites an unknown adjacent artifact, and removes its recovery
-artifacts only after complete operation verification.
-
-An interrupted or incompletely recovered operation preserves and reports every
-backup still needed for recovery.
+After every target effect and the complete projection verify, delete only the
+positively recognized bundle created by this command. If deletion fails, target
+effects remain successful and the result is `attention` with the exact residual
+bundle path and cleanup guidance. Handled application, verification, or
+cancellation failure stops new effects and reports the actual residual draft or
+final path; a valid final remains after preparation. A closed final ZIP may
+remain after abrupt process termination, without an executable crash or
+power-loss guarantee. The command never restores a target automatically or
+derives current target state from recovery provenance. Cleanup owns exact named
+final and draft deletion under its separate lease-bound contract. A fresh
+invocation plans from current facts and never replays
+a saved plan or receipt.
 
 ## Application, Verification, And Recovery
 
@@ -256,23 +276,15 @@ The target bytes are verified after each replacement.
 After all effects complete, the operation rebuilds the selected authoritative
 projection and verifies that every selected generated body matches it.
 
-An application or verification failure stops new effects and restores already
-applied files in reverse effect order.
-
-Recovery changes only targets that still match the applied identity. An
-unexpected concurrent edit is preserved and reported as residual state rather
-than overwritten during recovery.
-
-A failed operation remains `failed` even when handled recovery succeeds because
-the requested index operation did not complete.
-
-An interruption remains `interrupted` when no effect began or complete recovery
-succeeded. Incomplete recovery is `failed` and identifies every residual target
-and retained backup.
-
-A hard process stop may leave complete old or new versions of individual target
-files and recognized backup evidence. The operation creates no persistent
-transaction journal.
+An application or verification failure stops new effects. The prepared recovery
+bundle remains available and the result identifies every residual target and bundle.
+A failed operation remains `failed` because the requested index operation did
+not complete. An interruption remains `interrupted` when no stronger failure
+remains. A hard process stop after closed/readback verification may leave
+complete old or new versions of individual target files and recognized bundle
+evidence; this does not promise power-loss, directory-entry, or storage
+durability. The operation creates no persistent transaction journal, plan,
+receipt, or undo instruction.
 
 Rerunning `index` computes a fresh plan from current facts and converges when the
 remaining state is safe. It never replays a saved plan.
@@ -328,8 +340,9 @@ Application orders generated effects after the authored facts they depend on,
 then verifies the complete parent operation.
 
 Generated planning failure blocks before the first parent write. Generated
-application or verification failure invokes recovery for the complete parent
-mutation.
+application or verification failure stops new effects, retains the verified
+recovery bundle, and reports the complete parent mutation's residual target
+states; it does not restore an earlier effect.
 
 The parent result contains generated-navigation results as typed postcondition
 evidence. Human output summarizes that evidence in ordinary language. JSON
@@ -365,8 +378,10 @@ no-ops are ordinary `complete` results.
 
 Target regions and generated entries use canonical ordinal ordering. Duplicate
 and overlapping selections do not create duplicate result entries or effects.
-Recovery proceeds in reverse effect order. Numeric process exits use the shared
-mapping defined by the accepted [Open Forge CLI Architecture](../../architecture.md#result-json-coordinates-and-process-status).
+Residual draft or final paths are reported without recovery-derived current
+target classification; no restoration or rollback is selected. Numeric process
+exits use the shared mapping defined by the accepted
+[Open Forge CLI Architecture](../../architecture.md#result-json-coordinates-and-process-status).
 
 ## Behavioral Conformance
 
@@ -388,13 +403,14 @@ concerns. Eventual implementation evidence must cover:
 - Complete planning, exact dry-run diffs, no persistent dry-run effects, dry-run
   preflight blockers, and `attention` formation for safely established planned
   changes with non-blocking findings.
-- Verified no-op behavior before Git mutation checks.
-- Clean Git, dirty affected paths, dirty read-only inputs, Gitless operation,
-  `--skip-git-check`, staging and backup readiness, and recovery-artifact cleanup
-  after verification.
+- Verified no-op behavior before bundle preparation.
+- Existing-target bundle preparation and readback verification, unknown and
+  colliding bundle protection, all-before-first-effect readiness, success-only
+  cleanup, failure retention/reporting, and support-artifact nonrecursive scope.
 - Expected-state changes before and during application.
-- Safe replacement, per-effect verification, complete semantic verification,
-  reverse recovery, residual preservation, interruption, and rerun convergence.
+- Safe replacement, matching preparation enforcement, per-effect verification,
+  complete semantic verification, residual preservation, interruption, and
+  rerun convergence without automatic restoration.
 - Automatic creation, metadata change, move, remove, Framework, and Extension
   plans against intended post-write state.
 - Parent dry-runs and results that include generated effects without recursive
@@ -403,8 +419,8 @@ concerns. Eventual implementation evidence must cover:
 
 Direct tests should prove the relevant selection, projection, ordering, marker,
 effect-planning, status, and no-op concerns. Focused integration tests should
-use real temporary rooted and detached source trees, Git and Gitless state,
-adjacent staging and backups, filesystem failures, concurrency changes, and
-parent mutations. A small built Native AOT process suite should prove parsing,
+use real temporary rooted and detached source trees, external recovery bundles
+and drafts, filesystem failures, concurrency changes, and parent mutations. A small built
+Native AOT process suite should prove parsing,
 exact dry-run output, human and structured results, exit behavior, and packaged
 execution. Gate 5 AOT evidence remains pending.

@@ -20,7 +20,7 @@ workspace or write lifecycle state.
   wizard/direct behavior, scaffold, output, statuses, errors, examples, and
   public conformance.
 - [`behavior.md`](behavior.md) defines deterministic catalogue-parent and
-  destination resolution, one scaffold plan, Git/recovery, verification, and
+  destination resolution, one scaffold plan, create-only verification, and
   conformance.
 - No Technical Design file exists. The accepted CLI Architecture defines the
   shared implementation boundary. Gate 5 must prove source-generated YamlDotNet
@@ -35,6 +35,6 @@ workspace or write lifecycle state.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Accepted technology-neutral behavior for Extension catalogue scaffold planning, application, verification, and recovery](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Create #Behavior #Catalogue #Mutation #Safety #Recovery #CurrentTruth
+- [Accepted technology-neutral behavior for Extension catalogue scaffold planning, application, and verification](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Create #Behavior #Catalogue #Mutation #Safety #CurrentTruth
 - [Accepted Interface for creating a local Extension scaffold in a catalogue without installing it](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Create #Interface #Catalogue #Mutation #CurrentTruth
 <!-- open-forge:generated-index:end -->

@@ -16,7 +16,8 @@ open-forge:
 
 Root `update` reconciles only lifecycle-managed Framework files and regions from
 their recorded identity to the accepted embedded payload while preserving
-workspace-owned content and producing exact recovery.
+workspace-owned content and producing one verified external recovery bundle
+covering every existing target it replaces or deletes.
 
 ## Architecture
 
@@ -31,8 +32,9 @@ workspace-owned content and producing exact recovery.
 
 Cover current/no-op, version change, managed drift, user-owned surrounding text,
 missing managed file, unexpected replacement, lifecycle missing/malformed/unknown,
-legacy ordinary files, dry run, lock race, Git, partial failure/recovery,
-generated navigation, idempotence, process, packaged payload, and AOT.
+legacy ordinary files, dry run, lock race, bundle preparation and retention on
+partial failure/cancellation, generated navigation, idempotence, process,
+packaged payload, and AOT.
 
 ## Stop Conditions
 

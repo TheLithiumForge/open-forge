@@ -14,17 +14,19 @@ under `extension` and has six actual operations:
 ```text
 open-forge extension list [--installed] [--available] [--source <package-or-catalogue-path>] [global flags]
 open-forge extension inspect <stable-id> [--source <package-or-catalogue-path>] [global flags]
-open-forge extension create [<stable-id>] [--path <catalogue-path>] [--automatic] [--dry-run] [--skip-git-check] [global flags]
-open-forge extension install [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--automatic] [--dry-run] [--skip-git-check] [global flags]
-open-forge extension update [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--prune] [--automatic] [--dry-run] [--skip-git-check] [global flags]
-open-forge extension remove [<stable-id>...] [--prune] [--automatic] [--dry-run] [--skip-git-check] [global flags]
+open-forge extension create [<stable-id>] [--path <catalogue-path>] [--automatic] [--dry-run] [global flags]
+open-forge extension install [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--automatic] [--dry-run] [global flags]
+open-forge extension update [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--prune] [--automatic] [--dry-run] [global flags]
+open-forge extension remove [<stable-id>...] [--prune] [--automatic] [--dry-run] [global flags]
 ```
 
 The bare group shows help and performs no operation or wizard. `list` and
 `inspect` are read-only. `create` writes only
 `<catalogue>/<id>/extension.json` and `payload/.agents/` under its catalogue
 destination. Its `--path` is not a package source, and the shared `--workspace`
-flag is a no-op for create.
+flag is a no-op for create. Create uses a separate exact-destination, collision,
+and revalidation path with no workspace lease, none of `Replace`,
+`ReplaceGeneratedRegion`, or `Delete`, and no recovery bundle.
 
 Install and update use one exact embedded or explicitly selected local package or
 catalogue source. An external source is read-only and must be lexically and
@@ -58,7 +60,17 @@ authority. Supported parseable kinds use syntax-aware semantic fingerprints,
 while exact bytes remain fresh operation-time facts. The replacement executes no
 formatter and persists no formatter state.
 
-The replacement does not read, recognize, migrate, alias, or fall back to an old
+All workspace-mutating Extension operations form one complete plan and prepare
+one immutable external final ZIP, semantically verified after a same-directory
+draft-to-final move, covering every existing-target effect (`Replace`,
+`ReplaceGeneratedRegion`, or `Delete`) before the first target effect. An
+operation containing only creates and no-ops creates none.
+Handled failure or cancellation
+reports the actual residual draft or final path without restoration, rollback,
+compensation, or recovery-derived current-target classification; successful
+effects remain successful if bundle deletion fails, with `attention` and exact
+cleanup guidance. The
+replacement does not read, recognize, migrate, alias, or fall back to an old
 lifecycle or Extension file, including `open-forge.extensions.json`. Old-format
 files remain ordinary untouched workspace content outside replacement authority.
 The accepted parser, serialization, filesystem, recovery, and Native AOT choices

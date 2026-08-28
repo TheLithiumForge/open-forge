@@ -8,15 +8,17 @@ open-forge:
 
 ## Task State
 
-- State: Split for safe execution. [Routed Authored
+- State: Ready and next, but not Active. [Routed Authored
   Metadata](routed-authored-metadata-foundation.md) is Complete at `5924698`, and
   the pure [Generated Navigation
   foundation](index-generated-navigation-foundation.md) is Complete and
-  squash-integrated at `21e5200`. Public Index binding, selection, application,
-  result, and presentation remain pending after the shared Mutation Foundation.
-  The maintainer accepted the dependency correction: workspace locking,
-  post-lock revalidation, atomic replacement, Git policy, verification, and
-  recovery are established and accepted before public Index consumes them.
+  squash-integrated at `21e5200`. Shared Mutation Foundation mechanics are
+  Complete at exact production candidate `e7d937f` under authority `01dd552`.
+  Public Index binding, selection, application, result, and presentation remain
+  unimplemented. Workspace locking, post-lock revalidation, atomic replacement,
+  verified external recovery-bundle preparation, and verification are ready for
+  Index to consume when the Task is explicitly selected as Active.
+- Last updated: 2026-08-29.
 - Parent: [Read-Only Commands](_read-only.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/index-candidate/interface.md), [Behavior](../../../../crystallized/documents/cli/contracts/index-candidate/behavior.md), and [Technical Design](../../../../crystallized/documents/cli/contracts/index-candidate/technical-design.md).
 
@@ -36,8 +38,10 @@ idempotence, dry-run, and exact failure evidence.
 - Separate observation, projection, diff/plan, application, verification, and
   result. Dry run stops before application.
 - Index is the first public write command and consumes accepted shared
-  lock/revalidation/application/recovery mechanics. It does not own an isolated
-  substitute for those mechanics.
+  lock/revalidation/application/recovery-bundle mechanics. It does not own an
+  isolated substitute for those mechanics. Every existing generated-region
+  replacement has one matching verified bundle prepared before the first effect;
+  a no-op has none, and Index never restores or compensates for an earlier effect.
 
 ## Requirements
 
@@ -53,8 +57,9 @@ idempotence.
   Inspect, and the [Generated Navigation
   foundation](index-generated-navigation-foundation.md) are Complete and
   integrated.
-- Public Index implementation starts only after Mutation Foundation acceptance.
-  Do not implement an Index-local substitute.
+- The prerequisites for public Index are accepted. Implementation starts only
+  after this Ready Task is explicitly selected as Active. Do not implement an
+  Index-local substitute.
 
 ## Evidence
 

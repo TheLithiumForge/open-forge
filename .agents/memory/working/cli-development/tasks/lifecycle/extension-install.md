@@ -16,7 +16,8 @@ open-forge:
 
 `extension install` applies one or more explicitly selected, reviewed Extension
 packages to a workspace, records isolated Extension lifecycle identity, preserves
-Framework lifecycle, and produces verified recovery.
+Framework lifecycle, and produces one verified external recovery bundle covering
+every existing target it replaces or deletes.
 
 ## Architecture
 
@@ -32,9 +33,9 @@ Framework lifecycle, and produces verified recovery.
 
 Cover exact and automatic selection, none/one/many packages, dependencies,
 collisions across packages and Framework, source review, malformed payload,
-unsupported compatibility, dry run, lock/source race, Git, partial failure at each
-package, recovery, lifecycle isolation, generated navigation, idempotence,
-process, packed packages, and AOT.
+unsupported compatibility, dry run, lock/source race, bundle preparation and
+retention after partial failure/cancellation at each package, lifecycle
+isolation, generated navigation, idempotence, process, packed packages, and AOT.
 
 ## Stop Conditions
 

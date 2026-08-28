@@ -24,10 +24,12 @@ shared meanings. The new CLI remains non-shipping.
 
 The only new-CLI lifecycle document is `.agents/open-forge.lifecycle.json`, schema
 v1. It has a common envelope and isolated `framework` and `extensions` sections.
-An update operation changes only `framework` and preserves the unrelated
-`extensions` section and common-envelope bytes and meaning. The document stores
-no plan, runtime history, journal, recovery evidence, or session. Files outside
-this exact path are ordinary workspace content, not lifecycle input.
+An update operation changes only `framework`; a selected semantic change
+preserves unrelated `extensions` and common-envelope meaning semantically while
+serializing one deterministic canonical whole document, and a semantic no-op
+writes nothing. The document stores no plan, runtime history, journal, recovery
+evidence, or session. Files outside this exact path are ordinary workspace
+content, not lifecycle input.
 
 The shared CLI Architecture defines the exact structured JSON result schema and
 numeric exit mapping. This Interface uses those shared definitions without
@@ -50,8 +52,8 @@ the authority for that exact class.
 `--force` widens only replacement or restoration of changed or missing current
 expected Framework content. `--prune` widens only deletion of eligible retired
 managed content. `--force --prune` composes those two independent boundaries.
-Neither flag adopts content, changes ownership, repairs markers, bypasses Git,
-or weakens verification and recovery.
+Neither flag adopts content, changes ownership, repairs markers, or weakens
+verification and recovery.
 
 `update` requires trusted existing Framework lifecycle state. It is not a fresh
 install, a package manager, a version-range solver, a restore alias, or a
@@ -62,7 +64,7 @@ generic filesystem update.
 The complete public command form is:
 
 ```text
-open-forge update [--force] [--prune] [--automatic] [--dry-run] [--skip-git-check] [global flags]
+open-forge update [--force] [--prune] [--automatic] [--dry-run] [global flags]
 ```
 
 `update` is a direct root command with no operands and no source argument. The
@@ -121,11 +123,18 @@ No update flag changes that trust boundary. A safely absent state belongs to
 The physical lifecycle document is `.agents/open-forge.lifecycle.json`, schema v1,
 with isolated `framework` and `extensions` sections in a common envelope. Update
 may publish Framework facts only after complete verification and must preserve
-the exact bytes and meaning of the unrelated `extensions` section and common
-envelope. The document is not a plan, history, journal, recovery record, or
-session. An absent document or section is not, by itself, proof of unmanaged
-state. Unsupported or ambiguous schema facts remain `incomplete` or `blocked`
-under the command's existing safety rules.
+the unrelated `extensions` section and common-envelope meaning semantically.
+When selected lifecycle meaning changes, it emits one deterministic canonical
+UTF-8 whole-document representation; lifecycle property order, whitespace, and
+line endings are not preserved. A semantic no-op writes nothing. Prior bytes for
+every existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or `Delete`)
+are retained only in the verified external recovery bundle described in
+[Recovery Boundary](#recovery-boundary); the CLI does not inspect or report
+repository state or claim history evidence. The document is not a plan, history,
+journal, recovery record, or session. An absent document or section is not, by
+itself, proof of unmanaged state. Unsupported or
+ambiguous schema facts remain
+`incomplete` or `blocked` under the command's existing safety rules.
 
 Workspace mutation uses the visible `.agents/open-forge.lock` path under the
 accepted CLI Architecture. File existence is not lock ownership: the operation
@@ -172,7 +181,6 @@ kinds use exact bytes and fail closed when equivalence cannot be proven.
 | `--prune`           | Retired-content deletion authority               | Boolean                        | Preserve retired content                             | Repeats idempotently. It never replaces or restores current expected content.                         |
 | `--automatic`       | Guided-input policy                              | Boolean                        | Human mode may review finite divergence choices      | Repeats idempotently. It selects only deterministic safe effects already authorized by update.        |
 | `--dry-run`         | Preview write policy                             | Boolean                        | Apply after the same preflight                       | Repeats idempotently. It writes nothing and cannot prove application or recovery.                     |
-| `--skip-git-check`  | Affected-path Git policy                         | Boolean                        | Keep affected-path cleanliness                       | Repeats idempotently. It bypasses only that check and activates bounded backup recovery where needed. |
 | Shared global flags | Workspace and presentation                       | Defined by the shared contract | Shared defaults                                      | Shared rules apply.                                                                                   |
 
 ### `--force`
@@ -181,15 +189,15 @@ Force may overwrite only a changed current expected file or valid managed region
 whose trusted baseline identifies that exact current Framework footprint, or
 restore only a missing current expected footprint. It never deletes retired
 content, repairs markers, adopts an unowned path, overrides a competing owner,
-or bypasses route, source, physical identity, containment, Git, expected-state,
-backup, verification, or recovery checks.
+or bypasses route, source, physical identity, containment, expected-state,
+bundle, verification, or recovery checks.
 
 ### `--prune`
 
 Prune may delete only an eligible retired managed path when the trusted baseline
 identifies the exact previously managed path, current source proves retirement,
 current semantic state and physical identity are safe, no owner, manager, route,
-or dependency blocks, and Git and recovery checks pass. It is not arbitrary
+or dependency blocks, and bundle and recovery checks pass. It is not arbitrary
 cleanup. It never deletes unknown, unowned, shared, unsafe, or current expected
 content and never restores or overwrites a path.
 
@@ -232,12 +240,54 @@ There is no root Framework remove or uninstall operation in this accepted
 surface. Manual guidance must never recommend deleting `.agents` wholesale. A
 future Framework uninstall requires a separate product and safety review.
 
+## Recovery Boundary
+
+When the operation has one or more existing-target effects (`Replace`,
+`ReplaceGeneratedRegion`, or `Delete`),
+update uses only
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.Create)` and its application-owned
+`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
+`HOME`, or custom-platform fallback; unavailable storage is
+pre-effect `incomplete`. The complete command operation gets exactly one
+immutable ZIP bundle outside the workspace under a deterministic
+normalized physical-workspace-path key and operation ID. A source-generated
+schema-v1 `manifest.json` records command/operation/workspace identity,
+ordered relative targets, change kinds, prior lengths/hashes/payload names, and
+intended final absence or length/hash. Streamed ordinal payload entries contain
+the exact prior bytes for every existing-target effect; fingerprints are
+provenance, not an evolving journal. `Create` and semantic/byte no-op effects
+create no bundle.
+
+The draft is created with `CreateNew` under its exact name in the same external
+directory, closed and reopened for semantic manifest, exact ordered entry,
+length, hash, and payload-byte validation, moved within that directory to its
+deterministic final name, and reopened and verified again. Only the valid final
+ZIP forms the opaque `RecoveryBundlePreparation`; the draft remains
+`Incomplete`. Every planned existing-target effect must match the preparation;
+`FileChangeApplier` performs one final effect per target. All bundle
+preparation completes before the first target effect.
+
+After final verification, whole-command success deletes only the positively
+recognized bundle it created. If deletion fails, effects remain successful and
+the result is `attention` with the exact residual path and cleanup guidance.
+Handled failure or cancellation stops new effects and reports the actual
+residual draft or final path; a valid final remains when failure occurs after
+preparation. A closed final ZIP may remain after abrupt process termination,
+without an executable crash or power-loss guarantee. The CLI never restores a
+target automatically, derives current target state from recovery provenance, or
+saves a journal, progress receipt, history, or replayable plan. Cleanup owns
+exact named final and draft deletion under its separate lease-bound contract.
+A workspace move is outside
+the automatic guarantee; Doctor/Cleanup may report orphaned original-root
+bundles but never auto-binds or restores them.
+
 ## Output, Streams, And Status
 
 Human output leads with exact workspace, source, normal/force/prune/automatic and
 apply/dry-run mode, baseline/current/intended facts, safe and preserved effects,
-generated projection, lifecycle publication or preservation, Git/backup/recovery
-facts, status, and at most one required `Next:` action. Compact output is a
+generated projection, lifecycle publication or preservation, bundle and
+recovery facts, status, and at most one required `Next:` action. Compact output is a
 density projection, not a weaker plan. JSON emits one complete typed result from
 the same operation result for every status.
 
@@ -252,9 +302,9 @@ attention`; structured output retains `attention`.
 | `attention`   | Complete safe coverage exists, but changed, missing, retired, or equivalent finite divergence remains because the selected authority did not resolve it. Planned changes, force/prune presence, and format-only observations do not create it alone. |
 | `incomplete`  | Safe required lifecycle, source, parser, or recovery coverage is unavailable. No write occurs.                                                                                                                                                       |
 | `invalid`     | Syntax, operand, flag value, repetition, or terminal-mode input is invalid.                                                                                                                                                                          |
-| `blocked`     | Unsafe, ambiguous, untrusted, colliding, unauthorized, dirty, retained-dependent, route-unsafe, or otherwise incomplete-to-mutate facts prevent one safe plan.                                                                                       |
-| `failed`      | Application, verification, lifecycle publication, or handled recovery fails unexpectedly or leaves an unsafe residual.                                                                                                                               |
-| `interrupted` | The caller interrupts before completion and no stronger recovery failure changes the result.                                                                                                                                                         |
+| `blocked`     | Unsafe, ambiguous, untrusted, colliding, unauthorized, retained-dependent, or route-unsafe facts prevent one safe plan.                                                                                                                          |
+| `failed`      | Application, verification, lifecycle publication, or bundle handling fails unexpectedly or leaves an unsafe residual after effects begin.                                                                                                           |
+| `interrupted` | The caller interrupts before completion and no unexpected application or verification failure changes the result.                                                                                                                                 |
 
 Ordinary precedence is `blocked` > `incomplete` > `attention` > `complete`.
 Invalid input stops before operation resolution. Failed and interrupted retain
@@ -269,9 +319,7 @@ fact, the cause, and at most one useful next action.
   invalid repetition, or terminal-mode conflict is `invalid`.
 - Missing or safely unavailable trusted lifecycle state is `incomplete`.
 - Malformed or ambiguous lifecycle, ownership, route, marker, containment,
-  expected-state, Git, or recovery facts are `blocked`.
-- A dirty affected existing path is `blocked` unless `--skip-git-check` is the
-  only missing condition and required backup recovery is ready.
+  expected-state, bundle, or recovery facts are `blocked`.
 - A missing embedded source fact is `incomplete`; force and prune cannot guess.
 
 ## Examples
@@ -297,7 +345,7 @@ open-forge update --prune --automatic --dry-run
 Apply both exact boundaries in one request:
 
 ```text
-open-forge update --force --prune --skip-git-check
+open-forge update --force --prune
 ```
 
 Normal update preserves unresolved divergence and reports `attention`. Repeating
@@ -325,7 +373,7 @@ advice only. It does not execute a formatter or persist formatter state.
 
 The accepted CLI Architecture owns exact document serialization, semantic
 canonicalization mechanics, parser libraries, filesystem identity, containment,
-locks, concurrency, backup and temporary artifact details, diagnostics, Native
+locks, concurrency, recovery-bundle and temporary artifact details, diagnostics, Native
 AOT architecture, package implementation, and tests. Gate 5 must prove those
 boundaries, the shared result schema and exit mapping, and the embedded
 deterministic inventory/hash evidence.
@@ -344,10 +392,12 @@ Future evidence must cover:
   deletion, and force/prune composition without cross-boundary authority;
 - automatic mode preserving divergence and never selecting force or prune;
 - exact authored-topology generated projection, bounded markers, ownership,
-  route, containment, Git, backup, expected-state, verification, and recovery
+  route, containment, bundle, expected-state, verification, and recovery
   behavior;
-- exact schema-v1 `framework`-section preservation, unrelated-section byte
-  preservation, and absence-not-unmanaged handling;
+- exact schema-v1 `framework`-section semantics, unrelated-section and
+  common-envelope semantic preservation, deterministic canonical whole-document
+  serialization on selected change, no write on semantic no-op, and
+  absence-not-unmanaged handling;
 - dry-run/application parity and no dry-run effects;
 - seven statuses, streams, one-result JSON, bounded diagnostics, next-action
   limits, and verified no-op repetition; and

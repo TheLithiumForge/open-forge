@@ -19,10 +19,12 @@ open-forge:
   and EndToEnd `116/116`.
   Routed Authored Metadata is Complete at `5924698`; Generated Navigation is
   Complete and squash-integrated at `21e5200`, with full managed Unit `1030/1030`,
-  Integration `357/357`, and Native AOT Integration `357/357`. Public Index
-  application remains sequential after accepted Mutation Foundation mechanics.
+  Integration `357/357`, and Native AOT Integration `357/357`. Mutation
+  Foundation is Complete at exact production candidate `e7d937f`. Public Index
+  is Ready and next, but its public implementation has not started and is not
+  Active.
 - Responsible role: Overseer.
-- Last updated: 2026-08-27.
+- Last updated: 2026-08-29.
 
 ## Historical Acceptance Record
 
@@ -120,7 +122,7 @@ scenario. Shared facts move only through a Mastermind integration increment.
 - [x] [Implement Extension catalogue and source listing without lifecycle inference](extension-list.md) — Complete; accepted rebased integration tip `5e6babf`, squash-integrated at `db0d39a` — Implementer: Extension Discovery Task Mastermind
 - [x] [Implement exact Extension package inspection without mutation or installation behavior](extension-inspect.md) — Complete; accepted rebased feature `2b1e63d`, squash-integrated at `73b01be`, with managed and portable `linux-x64` Native AOT acceptance — Implementer: Extension Inspect Task Mastermind and Overseer
 - [x] [Promote one neutral routed authored-metadata fact for Open Forge Markdown and native Skills](routed-authored-metadata-foundation.md) — Complete; accepted feature `8a29321`, squash-integrated at `5924698` with managed and native AOT evidence — Implementer: Routed Metadata Task Mastermind
-- [ ] [Implement deterministic generated Entries projection and idempotent index application](index-command.md) — Generated Navigation foundation is Complete and integrated at `21e5200`; public command/application waits for accepted Mutation Foundation mechanics — Implementer: Overseer for the sequential public boundary
+- [ ] [Implement deterministic generated Entries projection and idempotent index application](index-command.md) — Ready and next; Generated Navigation is integrated at `21e5200` and Mutation Foundation is Complete at exact production candidate `e7d937f`; no public implementation is Active — Implementer: Overseer for the sequential public boundary
 
 ## Historical Find Progress And Current Routing Condition
 
@@ -162,7 +164,9 @@ and included in the current baseline. References is Complete and integrated at
 Complete and integrated at `db0d39a`. Extension Inspect is Complete and
 integrated at `73b01be`. Routed Authored
 Metadata is Complete at `5924698`; Generated Navigation is Complete and
-integrated at `21e5200`.
+integrated at `21e5200`. Mutation Foundation is Complete at exact production
+candidate `e7d937f`; public Index is Ready and next without implementation or an
+Active assignment.
 
 The temporary compatibility-name correction renames the Working Index and
 References Task files and stages their command contracts under candidate route

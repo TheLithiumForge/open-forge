@@ -1,8 +1,8 @@
 ---
 open-forge:
-  description: Accepted technology-neutral behavior for Extension catalogue scaffold planning, application, verification, and recovery
+  description: Accepted technology-neutral behavior for Extension catalogue scaffold planning, application, and verification
   responsibility: Define create's exact destination resolution, one scaffold plan, workspace no-op, safety, and typed result
-  tags: [Memory, Crystallized, CLI, Release, Command, Contract, Extension, Create, Behavior, Catalogue, Mutation, Safety, Recovery, CurrentTruth]
+  tags: [Memory, Crystallized, CLI, Release, Command, Contract, Extension, Create, Behavior, Catalogue, Mutation, Safety, CurrentTruth]
 ---
 
 # extension create Behavior Contract
@@ -12,7 +12,7 @@ open-forge:
 This is the accepted current Crystallized Behavior Contract for
 `open-forge extension create`. It defines deterministic request resolution,
 catalogue-parent and package-destination facts, one scaffold plan, dry-run and
-application, Git and recovery policy, verification, result formation, and
+application, create-only safety policy, verification, result formation, and
 technology-neutral conformance. It does not define package schema, parser,
 storage, or workspace lifecycle authority.
 
@@ -24,7 +24,7 @@ validated ID and catalogue parent
   -> scaffold intended state
   -> one complete plan and preflight
   -> dry-run or application
-  -> verification or reverse guarded recovery
+  -> verification
   -> one typed result
 ```
 
@@ -41,8 +41,8 @@ does not acquire `.agents/open-forge.lock` or mutate workspace state.
    both after wizard/direct resolution; missing non-interactive semantic input is
    `invalid`.
 3. Reject source, package-selection, force, prune, and other mutation flags.
-4. Collapse repeated `--automatic`, `--dry-run`, and `--skip-git-check` presence
-   idempotently. Repeated stable ID or `--path` is invalid.
+4. Collapse repeated `--automatic` and `--dry-run` presence idempotently.
+   Repeated stable ID or `--path` is invalid. Unknown options are invalid.
 5. Accept `--workspace` as the shared no-op defined by the global contract.
 
 Argumentless prompt-capable human input enters the finite two-question wizard.
@@ -75,17 +75,17 @@ It has no hidden source or target workspace.
 If the exact scaffold already exists and matches the intended state, return a
 verified no-op. Do not create timestamps or synthetic changes.
 
-## Safety, Git, And Recovery
+## Create-Only Safety And Verification
 
 Preflight validates ID, destination, exact catalogue and destination physical
-identity, parent containment, existing-state collision, affected paths, affected-
-path Git cleanliness where applicable, backup readiness, expected state,
-verification, and complete staging, recovery, and collision guards. One unsafe,
-ambiguous, or unavailable selected fact blocks or incompletes the whole plan.
+identity, parent containment, existing-state collision, expected state, and
+verification. The standalone create path has no Replace or Delete effect, no
+workspace lease, and no recovery bundle. One unsafe, ambiguous, or unavailable
+selected fact blocks or incompletes the whole plan.
 
 Dry-run and application share the same request, facts, plan, and preflight.
-Dry-run writes no directory, scaffold file, backup, temporary artifact, or
-lifecycle state and cannot claim application verification. It forms the same
+Dry-run writes no directory, scaffold file, recovery bundle, temporary artifact,
+or lifecycle state and cannot claim application verification. It forms the same
 pre-effect planning status as application but never produces an apply-time
 `failed` or `interrupted` result because it performs no effects. A planning or
 read failure and caller cancellation before effects retain their own event
@@ -93,23 +93,22 @@ meaning.
 
 Application revalidates the exact parent and destination physical identities,
 containment, expected state, and complete destination condition immediately
-before effects. It creates the complete scaffold, verifies both scaffold results
-and the complete destination condition, and retains/reports recovery evidence on
-failure.
-`--skip-git-check` bypasses only affected-path cleanliness and never grants
-overwrite or adoption authority. If existing bytes require recovery, the
-accepted adjacent-backup rules apply; unknown or colliding artifacts block.
+before effects. It creates the complete scaffold through the separate create-only
+exact-destination path, performs no Replace or Delete, and verifies both
+scaffold results and the complete destination condition. It never overwrites or
+adopts existing package bytes and never acquires the workspace lease.
 
-On failure, stop new effects and reverse applied effects only while identity
-guards match. Preserve concurrent changes and residual recovery evidence. A
-recovery failure is `failed`; caller cancellation without stronger failure is
-`interrupted`. A later invocation forms a fresh plan.
+On failure, stop new effects and preserve any concurrent or partial state; do not
+restore, reverse, or compensate for an earlier create effect. A create or
+verification failure is `failed`; caller cancellation without a stronger
+failure is `interrupted`. A later invocation forms a fresh plan. The persistent
+workspace lock is deliberately not involved, and no recovery bundle is created.
 
 ## Results And Conformance
 
 Form one typed result containing exact catalogue/path, ID, mode, intended scaffold,
-effects or no-op, workspace-lifecycle unchanged fact, Git/recovery, verification,
-status, and at most one next action. Human and JSON renderers consume it once.
+effects or no-op, workspace-lifecycle unchanged fact, verification, status, and
+at most one next action. Human and JSON renderers consume it once.
 Use the shared seven statuses and streams; `attention` is currently unreachable
 for create.
 
@@ -118,10 +117,10 @@ navigation, or Framework file. It does not acquire `.agents/open-forge.lock`.
 Conformance must cover wizard and direct requests, automatic omission states,
 absent destinations, exact-scaffold no-op, divergent, partial, additional,
 unknown, and colliding occupants, exact catalogue and destination physical
-identity, workspace no-op, dry-run no-effects, affected-path Git where
-applicable, complete staging and recovery/collision guards, expected-state
-revalidation immediately before effects, verification, reverse recovery,
-repeated no-op, result parity, all statuses, and no implementation or shipping
-claim. The shared CLI Architecture defines the exact JSON result schema and exit
+identity, workspace no-op, dry-run no-effects, the separate create-only path
+with no Replace/Delete, no workspace lease, no recovery bundle,
+expected-state revalidation immediately before effects, verification, retained
+partial state without restoration, repeated no-op, result parity, all statuses,
+and no implementation or shipping claim. The shared CLI Architecture defines the exact JSON result schema and exit
 mapping. Gate 5 must prove source-generated serialization, fixed Markdig where
 used, real `System.IO`, Native AOT, isolated tests, and package journeys.

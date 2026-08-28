@@ -15,13 +15,21 @@ open-forge:
 ## Shared Boundary
 
 Lifecycle commands consume accepted package identities, catalogue facts,
-workspace state, lifecycle schema, locks, Git, recovery, source review, and
-generated-navigation primitives. Each command retains its selection, plan,
-effects, findings, and result.
+workspace state, lifecycle schema, locks, external recovery-bundle support,
+source review, and generated-navigation primitives. Each command retains its
+selection, plan, effects, findings, and result.
 
 No command recognizes legacy lifecycle files. Package wrappers do not implement
-lifecycle behavior. `extension create` has no workspace subject and uses exact
-destination identity and isolated Git/recovery instead of the workspace lock.
+lifecycle behavior. `extension create` has no workspace subject and uses a
+separate exact-destination, collision, and revalidation path with no workspace
+lease, no Replace/Delete, and no recovery bundle.
+
+Every other lifecycle mutation that replaces or deletes an existing ordinary
+target prepares one immutable, strictly verified external recovery bundle for
+the complete operation before its first target effect. Creates and no-ops create
+none; failures retain the bundle and report target state without restoration,
+rollback, or compensation. The persistent workspace lock preserves its bytes
+and is owned only through a `FileShare.None` handle.
 
 ## Child Tasks
 

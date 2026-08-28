@@ -36,7 +36,7 @@ another-manager-owned, or route-unsafe content.
 ## Syntax
 
 ```text
-open-forge extension remove [<stable-id>...] [--prune] [--automatic] [--dry-run] [--skip-git-check] [global flags]
+open-forge extension remove [<stable-id>...] [--prune] [--automatic] [--dry-run] [global flags]
 ```
 
 Explicit managed stable-ID operands are required for direct, JSON, and other
@@ -62,15 +62,68 @@ performs no managed mutation.
 
 Before a workspace effect, the implementation must hold the actual OS lock for
 the visible `.agents/open-forge.lock` path defined by the accepted CLI
-Architecture. File existence is not lock ownership. A crash releases the OS
-lock; an unlocked file is reusable and may be manually removed only when no
-process is active. The lock is concurrency safety, not lifecycle authority or
-history, and another process holding it blocks mutation.
+Architecture. The lock file is persistent and reusable: preserve existing
+bytes and write no metadata, timestamp, or ownership record. Hold a
+`FileShare.None` handle for the operation; file existence is not lock
+ownership. A crash releases the OS lock, and another process holding it blocks
+mutation. The lock is concurrency safety, not lifecycle authority, history, or
+recovery evidence.
 
 Missing package source bytes do not erase readable lifecycle ownership facts. A
 missing or untrusted lifecycle document or section is not treated as an empty
 installed set and cannot prove a prior remove. The lifecycle document stores no
 plan, runtime history, journal, recovery evidence, or session.
+
+### Recovery boundary
+
+Before the first target effect, application prepares and verifies exactly one
+immutable ZIP recovery bundle for the complete operation when the plan contains
+an existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or `Delete`). The bundle
+is outside the workspace under
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.Create)/OpenForge/recovery/v1`; no temporary,
+repository, `HOME`, or custom platform fallback is permitted. Unavailable
+storage makes the operation `incomplete` before any target effect.
+
+The final bundle name is deterministic from the normalized physical workspace
+path key and operation ID. A `CreateNew` draft in the same external directory
+is closed and reopened for semantic manifest, exact ordered entry, length,
+hash, and payload-byte validation, moved within that directory to the final
+name, and reopened and verified again. Only the valid final ZIP forms the opaque
+`RecoveryBundlePreparation`; the draft remains `Incomplete`. The
+source-generated `manifest.json` records schema-v1, command and operation
+identity, workspace identity, ordered relative targets, change kinds, exact
+prior byte lengths, hashes and payload names, and intended final absence or
+length/hash. Ordered ordinal payload entries contain the exact prior bytes for
+every existing-target effect. The bundle is immutable after preparation.
+
+Every planned existing-target effect must match one verified bundle entry; Create and
+no-op effects create no entry. All preparation completes before the first
+mutation. `FileChangeApplier` requires matching preparation for each
+existing-target effect and performs one final effect per target. On handled failure or
+cancellation, report the actual residual draft or final path; a valid final
+remains after preparation. A closed final ZIP may remain after abrupt process
+termination, without an executable crash or power-loss guarantee. The CLI never
+restores, rolls back, compensates for an effect, derives current target state
+from recovery provenance, or stores a journal, progress receipt, or history.
+
+After final verification of whole-operation success, delete the bundle. If
+recognized bundle deletion fails, effects remain successful and the result is
+`attention` with the exact residual path and cleanup guidance. Explicit Cleanup
+may delete only the exact selected-workspace final or draft candidate while
+holding the same-workspace lease and after immediate ordinary path, kind, and
+final semantic revalidation. Unknown names and unavailable, malformed, or
+mismatched candidates remain untouched. A workspace move is outside the
+automatic guarantee: deterministic rediscovery uses the same normalized
+physical path, while Doctor/Cleanup may report orphan bundles for the original
+root and never auto-bind or restore them.
+
+Recovery storage is ordinary current-user `LocalApplicationData` under the
+stable workspace and cooperating-client threat model. No special platform-
+permission or encryption behavior is promised. Recovery reads use semantic
+schema and exact ordered-entry validation; the
+implementation does not extract bundles or add a custom archive parser,
+reflection, native dependency, or package for this boundary.
 
 ## Selection And Flags
 
@@ -80,7 +133,6 @@ plan, runtime history, journal, recovery evidence, or session.
 | `--prune`          | Same-request deletion authority for changed final-owner paths | Boolean and idempotent. It selects Delete before planning; it cannot be added after ownership release.   |
 | `--automatic`      | Interaction policy                                            | Boolean and idempotent. It never selects IDs, Delete, or ownership authority.                            |
 | `--dry-run`        | Preview policy                                                | Boolean and idempotent. It writes nothing and uses the same plan and preflight as apply.                 |
-| `--skip-git-check` | Affected-path cleanliness exception                           | Boolean and idempotent. It bypasses only Git cleanliness and uses accepted backup recovery where needed. |
 
 ### Keep-as-unmanaged and Delete
 
@@ -89,7 +141,7 @@ For changed final-owner content, the operation has two bounded choices:
 - `Keep-as-unmanaged` releases selected ownership and preserves the current
   changed file as visible unmanaged content.
 - `Delete` deletes the changed final-owner file only when all identity,
-  containment, route, Git, backup, and verification checks pass. `Delete` is
+  containment, route, verification, and recovery-bundle checks pass. `Delete` is
   selected by explicit `--prune` in the same request as remove.
 
 The human wizard shows this choice before planning. Noninteractive normal mode
@@ -123,8 +175,8 @@ exact-byte facts. It validates:
 - current semantic fingerprint against persisted semantic baseline;
 - route-host and generated-navigation reachability;
 - Framework, user, unknown, and other-manager ownership; and
-- exact cross-section, containment, Git, backup, verification, and recovery
-  boundaries.
+  - exact cross-section, containment, verification, and recovery-bundle
+    boundaries.
 
 A retained dependent blocks removal of its dependency. A dependency that becomes
 an orphan remains recorded and installed; there is no automatic orphan prune. A
@@ -152,9 +204,14 @@ unchanged.
 
 The lifecycle document has isolated `framework` and `extensions` sections.
 Remove publishes the Extension ownership release only after complete verification
-and preserves unrelated sections and envelope bytes and meaning. Unsupported or
-ambiguous schema facts are `incomplete` or `blocked` under the existing safety
-rules; they never grant force, prune, or remove authority.
+and preserves unrelated sections and envelope meaning semantically. A selected
+semantic change emits one deterministic canonical UTF-8 whole-document
+representation; lifecycle property order, whitespace, and line endings are not
+preserved. A semantic no-op writes nothing. Exact prior bytes for every
+existing-target effect are captured in the verified operation recovery bundle.
+Unsupported or ambiguous schema facts are `incomplete` or `blocked`
+under the existing safety rules; they never grant force, prune, or remove
+authority.
 
 For supported parseable kinds, removal and prune classification compare the
 current `open-forge-markdown-v1` conservative parser/AST semantic fingerprint
@@ -171,7 +228,8 @@ formatter executes or produces persisted formatter state.
 Human output leads with exact workspace, selected IDs, retained dependents,
 shared/final owners, Keep-as-unmanaged or Delete choice, normal/automatic and
 apply/dry-run mode, released ownership, deleted/retained/preserved paths,
-generated projection, lifecycle publication, source unchanged, recovery facts,
+generated projection, lifecycle publication, source unchanged, recovery-bundle
+facts,
 status, and at most one next action. JSON emits one complete typed result from
 the same result for every status.
 
@@ -179,11 +237,11 @@ the same result for every status.
 | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `complete`    | Selected ownership release and all permitted effects or dry-run completed with complete coverage and no unresolved finite attention. A verified no-op requires trusted proof that the selected ID and selected ownership are already absent. |
 | `attention`   | Complete safe removal released ownership but preserved changed final-owner content as unmanaged or retained another finite non-blocking fact.                                                                                                |
-| `incomplete`  | Safe lifecycle, source-independent ownership, route, generated, parser, or recovery coverage is unavailable. No managed mutation occurs.                                                                                                     |
+| `incomplete`  | Safe lifecycle, source-independent ownership, route, generated, parser, or recovery-bundle coverage is unavailable. No managed mutation occurs.                                                                              |
 | `invalid`     | IDs, flags, repetition, missing semantic input, or terminal-mode input is invalid.                                                                                                                                                           |
-| `blocked`     | Unsafe, ambiguous, untrusted, colliding, retained-dependent, route-unsafe, dirty, unauthorized, or recovery facts prevent one complete plan.                                                                                                 |
-| `failed`      | Application, lifecycle publication, verification, or handled recovery fails unexpectedly.                                                                                                                                                    |
-| `interrupted` | The caller interrupts before completion and no stronger recovery failure remains.                                                                                                                                                            |
+| `blocked`     | Unsafe, ambiguous, untrusted, colliding, retained-dependent, route-unsafe, unauthorized, or recovery-bundle facts prevent one complete plan.                                                                                |
+| `failed`      | Application, lifecycle publication, verification, or bundle handling fails unexpectedly after effects begin.                                                                                                                                 |
+| `interrupted` | The caller interrupts before completion and no unexpected application or verification failure remains.                                                                                                                                       |
 
 Primary human complete/attention/incomplete results go to stdout. Primary human
 invalid/blocked/failed/interrupted results go to stderr. Bounded diagnostics use
@@ -242,7 +300,7 @@ source-unavailable facts, trusted/untrusted/absent states, retained dependents,
 orphan retention, shared owners, semantic current-versus-baseline classification,
 unchanged final-owner deletion, changed Keep/Delete and same-request prune,
 ownership release, later-prune refusal, route/generated safety, package-source
-preservation, complete plan, Git/backup/recovery, dry-run parity, no-op proof,
+preservation, complete plan, recovery-bundle behavior, dry-run parity, no-op proof,
 seven statuses/streams, JSON parity, and no Framework mutation. The shared CLI
 Architecture defines the exact JSON result schema and exit mapping. Gate 5 must
 prove source-generated serialization, fixed Markdig where used, real

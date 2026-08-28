@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
+using OpenForge.Cli.Core.Framework.Serialization;
 using OpenForge.Cli.Core.Framework.Extensions.Serialization;
 
 namespace OpenForge.Cli.Core.Framework.Extensions.Embedded;
@@ -16,7 +17,7 @@ internal static class EmbeddedExtensionCatalogueReader
         try
         {
             var inventoryBytes = EmbeddedExtensionCatalogueAssets.Read(InventoryAsset);
-            ExtensionJsonSyntaxValidator.ValidateNoDuplicateProperties(inventoryBytes.Span);
+            JsonDuplicatePropertyValidator.ValidateNoDuplicateProperties(inventoryBytes.Span);
             var inventory = JsonSerializer.Deserialize(
                 inventoryBytes.Span,
                 ExtensionPackageJsonContext.Default.EmbeddedExtensionInventoryDocument)

@@ -40,14 +40,20 @@ open-forge:
   Proportionate guidance `5f9f59e`, Route List correction `2cd525d`, and
   authoritative Markdown generated-region correction `0d88606` are
   squash-integrated. The complete managed `1053/411/120` and portable
-  `linux-x64` Native AOT `411/120` gates pass with zero skips, and final
-  Sol/xhigh review found no material issue. Mutation Foundation is Ready to
-  resume at its persisted lifecycle-schema decision.
-  Mutation Foundation now precedes public Index by accepted maintainer decision.
-  The broader replacement CLI program remains Active.
+  `linux-x64` Native AOT `411/120` gates pass with zero skips, and final review
+  found no material issue. Mutation Foundation is Complete at
+  exact production candidate `e7d937f` under current authority `01dd552`, while
+  preserving the exact historical child commits. Focused M1 Unit `43/43` and
+  Integration `47/47`, full managed Unit `1096/1096`, Integration `458/458`,
+  EndToEnd `120/120`, focused published `linux-x64` Recovery/source-generation
+  Native AOT `10/10`, and full Native AOT Integration `458/458` pass with zero
+  skips. The static replacement-product Git audit is zero and final independent
+  review is `ROBUST`, safe to commit, confidence `0.98`. Public Index is
+  Ready and next, but no Index implementation is Active. The broader replacement
+  CLI program remains Active.
 - Responsible role: Overseer.
 - Task source: This file.
-- Last updated: 2026-08-27.
+- Last updated: 2026-08-29.
 
 ## Problem Statement
 
@@ -61,9 +67,9 @@ boundaries.
 ## Expected Outcome
 
 One complete, deterministic, Native-AOT executable implements every retained
-command and ships through thin wrappers with six-RID, support-floor,
-supply-chain, documentation, and release evidence. Architecture and command
-behavior remain explicit, locally navigable, and safe to extend.
+command and ships through the thin accepted delivery tier: supported-RID build
+and smoke, packed install and invocation, and checksum evidence. Architecture
+and command behavior remain explicit, locally navigable, and safe to extend.
 
 ## Relationships And Backlinks
 
@@ -92,7 +98,8 @@ behavior remain explicit, locally navigable, and safe to extend.
 - The complete retained command tree and cross-command foundations.
 - Repository-root .NET controls and artifacts, plus `src/cli/` root, Core, active
   tests, and package source.
-- Native AOT, CI, packages, supply-chain evidence, documentation, and release.
+- Supported-RID Native AOT build and smoke, packed install and invocation,
+  checksums, and release acceptance.
 - Necessary current Architecture, Plan, Task, Checkpoint, Directive, Pattern, and
   dogfooding updates.
 
@@ -133,7 +140,7 @@ behavior remain explicit, locally navigable, and safe to extend.
 | Every child outcome is accepted | Task index with Complete or deliberate Cancelled state                       | Mastermind    |
 | Complete contract coverage      | Command-to-evidence matrices and public scenarios                            | Owning Tasks  |
 | Architecture remains coherent   | Dependency, source-locality, project, and whole-system review                | Mastermind    |
-| Native delivery is complete     | Six native RIDs, support floors, packed wrappers, and supply-chain artifacts | Delivery Task |
+| Native delivery is complete     | Supported-RID build/smoke, packed install/invocation, and checksums           | Delivery Task |
 | Release is explicit             | Maintainer acceptance and main-only release record                           | Maintainer    |
 
 ## Prerequisites And Dependencies
@@ -318,12 +325,19 @@ Find presentation`) over corrected Red `a865fd1`. It is the production/root-
   unchanged snapshots. Package, project/dependency/config/generated, static,
   changed-path, and integrated review audits pass; the detailed record preserves
   the exact graph, counts, frozen test injections, and `win-x64` limitation.
-- Find Child 3 and the Find parent are Complete and accepted in the commit
-  containing this record update. The final package, artifact, static, public
-  no-write, and protected-surface audits passed. The sole immediate continuation
-  is to freshly verify `develop`, squash-integrate the accepted `feature/cli-find`
-  tip into local `develop`, commit that one squash, prove exact tree equality, do
-  not push, and halt. `CLI-EDGE-001` remains non-product only.
+- Mutation Foundation result: all five children and M1 are Complete at exact
+  production candidate `e7d937f`. The accepted surface is neutral lock,
+  lifecycle, preflight/revalidation, one-change application, immutable external
+  recovery bundles, catalogue facts, and held-lease deletion mechanics. Actual
+  Status/Doctor behavior remains O1; actual Cleanup policy and orchestration
+  remains O2. Public Index is Ready and next. The Plan preserves the queued
+  binding proportionality/evidence Directive and checklist, Route Init
+  exact-chain decision/lane graph, thin D1, relevant-domain Repair, and
+  simplified O1/O2 split. Thin D1 requires only supported-RID build and smoke,
+  packed install and invocation, and checksums. Signing, SBOM, OIDC, provenance,
+  attestation, and support-floor matrices remain optional future explicit
+  maintainer decisions, not current evidence. `CLI-EDGE-001` remains non-product
+  only.
 
 ## Completion And Closeout
 

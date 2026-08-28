@@ -24,9 +24,15 @@ remain authoritative for the meaning of the files that this operation consumes.
 The only new-CLI lifecycle document is `.agents/open-forge.lifecycle.json`, schema
 v1. It has a common envelope and isolated `framework` and `extensions` sections.
 An install operation changes only `framework` and preserves the unrelated
-`extensions` section and common-envelope bytes and meaning. The document stores
-no plan, runtime history, journal, recovery evidence, or session. Files outside
-this exact path are ordinary workspace content, not lifecycle input.
+`extensions` section and common-envelope meaning. When selected lifecycle
+meaning changes, the writer emits one deterministic canonical UTF-8
+whole-document representation; lifecycle property order, whitespace, and line
+endings are not preserved. A semantic no-op writes nothing. When an existing
+target is replaced, its prior bytes are recoverable only through the verified
+external recovery bundle described below; the CLI does not inspect or report
+repository state or claim history evidence. The document stores no plan, runtime
+history, journal, recovery evidence, or session. Files outside this exact path
+are ordinary workspace content, not lifecycle input.
 
 The shared CLI Architecture defines the exact structured JSON result schema and
 numeric exit mapping. This Interface uses those shared definitions without
@@ -58,7 +64,7 @@ result, or interrupted result does not publish lifecycle state.
 The complete public command form is:
 
 ```text
-open-forge install [--force] [--automatic] [--dry-run] [--skip-git-check] [global flags]
+open-forge install [--force] [--automatic] [--dry-run] [global flags]
 ```
 
 `install` is a direct root command. It has no operands, child operations,
@@ -135,10 +141,9 @@ footprint mode.
 
 | Flag                | Role                          | Value                          | Omission                                                         | Repetition and composition                                                                                              |
 | ------------------- | ----------------------------- | ------------------------------ | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `--force`           | Initial replacement authority | Boolean                        | Selects ordinary management establishment or exact managed no-op | Repeats idempotently. It does not imply update, prune, Git bypass, adoption, or ownership.                              |
+| `--force`           | Initial replacement authority | Boolean                        | Selects ordinary management establishment or exact managed no-op | Repeats idempotently. It does not imply update, prune, adoption, or ownership.                                           |
 | `--automatic`       | Guided-input policy           | Boolean                        | Human input may use the compact inspection and confirmation flow | Repeats idempotently. It suppresses interaction and selects only deterministic safe defaults.                           |
 | `--dry-run`         | Preview write policy          | Boolean                        | Permits application after the same preflight                     | Repeats idempotently. It writes nothing and uses the same request, facts, plan, and status as apply.                    |
-| `--skip-git-check`  | Affected-path Git policy      | Boolean                        | Keeps the relevant cleanliness check                             | Repeats idempotently. It bypasses only that check and uses the accepted adjacent-backup recovery boundary where needed. |
 | Shared global flags | Workspace and presentation    | Defined by the shared contract | Shared defaults                                                  | Shared repetition and terminal rules apply.                                                                             |
 
 ### `--force`
@@ -162,7 +167,7 @@ Force does not:
   state;
 - adopt an unowned or another-manager-owned path;
 - bypass route, source, physical-identity, containment, ownership, marker,
-  expected-state, Git, backup, verification, or recovery checks;
+  expected-state, bundle, verification, or recovery checks;
 - repair malformed generated or managed markers;
 - delete retired content; or
 - replace bytes outside the exact current Framework footprint.
@@ -184,27 +189,57 @@ installation. For an exact managed state, it may verify the no-op. For an
 eligible initial occupant, it does not select `--force`; explicit force remains
 required. Repetition is idempotent.
 
-### `--dry-run` and `--skip-git-check`
+### `--dry-run`
 
 Dry-run resolves the same exact workspace, source, lifecycle facts, intended
 state, generated projection, complete plan, and preflight as application. It
 shows every selected effect and bounded diff, but writes no payload file,
-managed block, generated region, lifecycle fact, backup, temporary artifact, or
-other persistent state. It cannot claim application, verification, lifecycle
-publication, or recovery success.
+managed block, generated region, lifecycle fact, recovery bundle, temporary
+artifact, or other persistent state. It cannot claim application, verification,
+lifecycle publication, or bundle-handling success.
 
-`--skip-git-check` bypasses only affected-path cleanliness for an existing path
-the plan would change. It does not supply force authority. When Git is absent or
-skipped, the accepted adjacent `.bak` recovery boundary applies where an
-existing byte or bounded region must be replaced. Unknown or colliding recovery
-artifacts still block.
+For application with one or more existing-target effects (`Replace`,
+`ReplaceGeneratedRegion`, or `Delete`),
+orchestration uses only
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.Create)` and its application-owned
+`OpenForge/recovery/v1` subtree, with no temporary-directory, repository, `HOME`,
+or custom-platform fallback. An operation containing only `Create` effects or
+semantic or byte no-ops does not resolve recovery storage and creates no bundle.
+Otherwise it prepares exactly one immutable ZIP recovery bundle
+outside the workspace for the complete operation. Its deterministic external
+directory key and final name use the normalized physical workspace path and
+operation ID. The
+source-generated schema-v1 `manifest.json` and streamed ordinal payload
+entries identify the operation and normalized physical workspace, and record exact prior bytes,
+lengths, hashes, ordered relative targets, change kinds, and intended final
+absence or length/hash. A draft is CreateNew-written under its exact name,
+closed and reopened for semantic manifest, exact ordered entry, length, hash,
+and payload-byte verification, moved within the same directory to its
+deterministic final name, and verified again. Only the valid final ZIP forms the
+opaque `RecoveryBundlePreparation`; the draft remains `Incomplete`. Every
+planned existing-target effect must match the preparation; Create and no-op effects have
+none. All preparation is complete before the first effect. Unavailable storage
+is `incomplete` before effects; a collision or failed final verification is
+`blocked` before effects.
 
-Workspace mutation uses the visible `.agents/open-forge.lock` path under the
-accepted CLI Architecture. File existence is not lock ownership: the operation
-must hold the actual OS file lock. A crash releases that OS lock. An unlocked
-file is reusable and may be manually removed only when no process is active.
-This lock is concurrency safety, not lifecycle authority or history. An active
-lock held by another process blocks mutation.
+Workspace mutation uses the persistent, reusable `.agents/open-forge.lock` path
+under the accepted CLI Architecture. Existing bytes are preserved; the
+operation holds only a `FileShare.None` handle and never writes metadata,
+deletes, or truncates the lock file. File existence is not lock ownership. An
+active handle blocks mutation; lock behavior is concurrency safety, not
+lifecycle authority or recovery history.
+
+After final verification, whole-command success deletes only the positively
+recognized bundle it created. Deletion failure leaves effects successful and
+returns `attention` with the exact residual path and cleanup guidance. Handled
+failure or cancellation stops new effects and reports the actual residual draft
+or final path; a valid final remains when failure occurs after preparation. A
+closed final ZIP may remain after abrupt process termination, without an
+executable crash or power-loss guarantee. No target is automatically restored,
+no current target state is derived from recovery provenance, and no journal,
+progress receipt, history, or replayable plan is saved. Cleanup owns exact named
+final and draft deletion under its separate lease-bound contract.
 
 ## Management States
 
@@ -281,7 +316,7 @@ package source.
 The default human result leads with the operation and exact workspace. It reports
 normal or force mode, automatic and dry-run state, recognized footprint counts,
 created or replaced effects, preserved divergence, generated projections,
-lifecycle publication or preservation, Git and recovery facts, status, and at
+  lifecycle publication or preservation, recovery facts, status, and at
 most one required `Next:` action. Compact view retains identity, mode, key
 effects, safety facts, status, and the bounded next action. JSON carries one
 complete structured result from the same typed result for every status.
@@ -299,9 +334,9 @@ for the typed `attention` status; structured output retains `attention`.
 | `attention`   | No accepted finite install condition reaches this status. `attention` remains in the shared status vocabulary but is currently unreachable. Planned effects, `--force`, format-only observations, automatic mode, and managed divergence do not make it reachable; managed divergence is `blocked` and directs to `update`. |
 | `incomplete`  | Safe required source, lifecycle, absence, parser, or recovery coverage is unavailable. No write occurs.                                                                                                                                                                                                                     |
 | `invalid`     | Syntax, operand, flag, repetition, value, or terminal-mode input prevents request resolution.                                                                                                                                                                                                                               |
-| `blocked`     | An unsafe, ambiguous, colliding, untrusted, dirty, unauthorized, or managed-divergence boundary prevents one safe install plan.                                                                                                                                                                                             |
-| `failed`      | Application, verification, lifecycle publication, or handled recovery fails unexpectedly or leaves an unsafe residual.                                                                                                                                                                                                      |
-| `interrupted` | The caller interrupts before completion and no stronger recovery failure changes the result.                                                                                                                                                                                                                                |
+| `blocked`     | An unsafe, ambiguous, colliding, untrusted, unauthorized, or managed-divergence boundary prevents one safe install plan.                                                                                                                                                                                                     |
+| `failed`      | Application, verification, lifecycle publication, or bundle handling fails unexpectedly or leaves an unsafe residual after effects begin.                                                                                                                                                                       |
+| `interrupted` | The caller interrupts before completion and no unexpected application or verification failure changes the result.                                                                                                                                                                                             |
 
 Ordinary planning precedence remains `blocked` > `incomplete` > `attention` >
 `complete` for the shared status vocabulary. `attention` is currently
@@ -322,9 +357,10 @@ lifecycle fact when known, the cause, and at most one useful next action.
 - An unavailable required embedded payload or safe absence/trust fact is
   `incomplete`.
 - An occupied exact target, managed divergence, ownership or route collision,
-  ambiguous marker, unsafe containment, dirty affected path, or recovery
-  collision is `blocked` unless the named `--skip-git-check` condition alone
-  applies.
+  ambiguous marker, unsafe containment, recovery-bundle collision, or other
+  unsafe preservation condition is `blocked`.
+- Unavailable or unsafe recovery-bundle storage is `incomplete` before effects;
+  malformed or unverified bundle content is `blocked`.
 - Managed divergence uses one compact `Next: open-forge update` action. It does
   not suggest force as an install shortcut.
 
@@ -348,11 +384,10 @@ Replace one eligible exact initial occupant. This does not adopt its old bytes:
 open-forge install --force
 ```
 
-Preview the same bounded initial authority while skipping only the affected-path
-Git cleanliness check:
+Preview the same bounded initial authority:
 
 ```text
-open-forge install --force --automatic --dry-run --skip-git-check
+open-forge install --force --automatic --dry-run
 ```
 
 An exact managed installation is a verified no-op. A managed changed, missing,
@@ -382,7 +417,7 @@ formatter, execute it, change files, grant authority, make a formatting guess,
 or persist formatter state.
 
 The accepted CLI Architecture defines lifecycle serialization, filesystem
-identity, concurrency, backup names, temporary artifacts, diagnostics,
+identity, concurrency, recovery-bundle names, temporary artifacts, diagnostics,
 packaging, and implementation boundaries. Gate 5 must prove those boundaries and
 the embedded deterministic inventory/hash evidence. This Interface remains
 technology-neutral and does not claim that proof.
@@ -402,10 +437,13 @@ Future evidence must cover:
   parser-proven fingerprint boundaries, and fail-closed equivalence;
 - intended-topology generated projection, bounded markers, outside-byte
   preservation, and one complete lifecycle plan;
-- affected-path Git policy, adjacent backup readiness, expected-state
-  revalidation, per-effect and whole-operation verification, reverse recovery,
-  residual reporting, and fresh rerun behavior;
-- dry-run parity with no payload, lifecycle, backup, or temporary effects;
+- one verified immutable external schema-v1 ZIP bundle for the complete
+  operation, exact prior-byte and provenance facts, expected-state
+  revalidation, per-effect and whole-operation verification, success-only
+  removal, cleanup attention, failure retention/reporting, and fresh rerun
+  behavior;
+- dry-run parity with no payload, lifecycle, recovery bundle, or temporary
+  effects;
 - seven statuses, with `attention` currently unreachable, ordinary precedence,
   human streams, one-result JSON, bounded diagnostics, and one next action;
 - no formatter execution or persisted formatter state, and no runtime

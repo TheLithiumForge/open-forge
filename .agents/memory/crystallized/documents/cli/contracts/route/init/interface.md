@@ -61,12 +61,11 @@ open-forge route init <route-target>
   [--responsibility <text>]
   [--tag=<tag>]...
   [--dry-run]
-  [--skip-git-check]
   [global flags]
 ```
 
 `--description`, `--responsibility`, and `--tag` provide authored metadata for
-the final target only. `--dry-run` and `--skip-git-check` are write-policy flags.
+the final target only. `--dry-run` is the write-policy preview.
 The command has no `--template`, `--yes`, `--force`, `--no-responsibility`,
 Loader-creation mode, or alias.
 
@@ -131,15 +130,14 @@ contract. This command does not copy their complete definitions.
 | `--description <text>`    | Authored metadata | One description value                                          | The final target uses its draft description unless another rule supplies an explicit description | Singleton. Repetition is invalid, including repetition with an equal value.                                                            |
 | `--responsibility <text>` | Authored metadata | One responsibility value, including the exact empty value `""` | No responsibility field is added to a missing target                                             | A non-empty value adds the field and `""` omits it. The flag is singleton; any repetition is invalid, including an equal value.        |
 | `--tag=<tag>`             | Authored metadata | One tag without a `#` prefix                                   | The final target uses draft metadata and the `NeedsAuthoring` rule                               | Repeatable. Values retain argument order. Empty tags and duplicate exact tags are invalid.                                             |
-| `--dry-run`               | Write policy      | No value                                                       | Application is selected                                                                          | Repetition is accepted and idempotent. It composes with `--skip-git-check` as described under [Dry Run And Apply](#dry-run-and-apply). |
-| `--skip-git-check`        | Write policy      | No value                                                       | Relevant-path Git cleanliness is checked for an actual mutation                                  | Repetition is accepted and idempotent. It bypasses only the check described under [Dry Run And Apply](#dry-run-and-apply).             |
+| `--dry-run`               | Write policy      | No value                                                       | Application is selected                                                                          | Repetition is accepted and idempotent. It previews the same complete plan and preflight. |
 
 `--description`, `--responsibility`, and `--tag` are valid only as metadata for a
 missing final target. Repeating `--description` or `--responsibility` is invalid,
 even when the repeated values are equal. Repeated `--tag` values form one
 ordered list; there is no last-wins or other precedence rule. Repeated
-`--dry-run` and `--skip-git-check` occurrences collapse to their one idempotent
-Boolean choice and do not grant another operation or authority. Global flags
+Repeated `--dry-run` occurrences collapse to their one idempotent Boolean choice
+and do not grant another operation or authority. Global flags
 retain the shared contract's repetition, ordering, composition, and terminal
 rules.
 
@@ -300,7 +298,7 @@ validated route target and metadata
   -> complete ordered mutation plan
   -> preflight
   -> dry-run or application
-  -> verification or recovery
+  -> verification and retained partial-state reporting
   -> one typed result
 ```
 
@@ -309,9 +307,10 @@ updates to existing generated regions. One blocked or incomplete target prevents
 every effect. The command has no best-effort or partial-application mode.
 
 Directory creation is limited to the intended route chain. The command does not
-remove, rename, claim, or format existing user content. A newly created
-directory may be removed during handled recovery only when this operation created
-it and it is still empty.
+remove, rename, claim, or format existing user content. After an effect begins,
+the command never removes or otherwise compensates for a directory it created.
+If a later effect fails, that directory remains and is reported as residual
+state.
 
 ## Dry Run And Apply
 
@@ -327,24 +326,50 @@ Omitting `--dry-run` selects application. The explicit command and target confir
 creation of the missing route chain and replacement of only planned machine-owned
 generated interiors. The command does not prompt and does not accept `--yes`.
 
-A verified no-op has no affected mutation path and needs no Git cleanliness check.
-An actual mutation checks only planned existing paths and collisions at planned
-new paths. Dirty planned existing paths block by default.
+A verified no-op has no affected mutation path and needs no recovery bundle. An
+actual mutation checks planned existing paths and collisions at planned new
+paths. The command does not inspect or report repository state.
 
-`--skip-git-check` bypasses only relevant-path Git cleanliness. It does not bypass
-route ambiguity, existing-target, metadata, containment, generated boundary,
-expected-state, verification, or recovery requirements.
-
-Gitless application and `--skip-git-check` application use adjacent backups for
-planned replacements under the accepted recovery policy. New files do not
-overwrite existing paths and need no old-byte backup. Recovery removes an
-applied new file only when it still matches the operation's applied identity.
+When the plan contains an existing-target effect (`Replace`,
+`ReplaceGeneratedRegion`, or `Delete`), orchestration selects only
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.Create)` and its application-owned
+`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
+`HOME`, or custom-platform fallback; unavailable storage is a pre-effect
+`incomplete` result. It prepares exactly one immutable ZIP bundle outside
+the workspace. An operation containing only
+Create effects or no-ops creates no bundle. Its source-generated
+schema-v1 `manifest.json` and streamed ordinal payload entries record
+command/operation/workspace identity, ordered relative targets, change kinds,
+exact prior bytes/lengths/hashes, and intended final absence or length/hash.
+Create effects (directories and new entrypoints) and no-ops have no entry. A
+CreateNew draft is closed and reopened for semantic manifest, exact ordered
+entry, length, hash, and payload-byte validation, moved within the same
+directory to its deterministic final name, and reopened and verified. Only the
+valid final ZIP forms the opaque `RecoveryBundlePreparation`; the draft remains
+`Incomplete`. `FileChangeApplier` requires that preparation for every
+existing-target effect and performs one final effect per target.
+All preparation completes before the first target effect; unknown, malformed,
+mismatched, or colliding bundles block.
 
 Immediately before application, the command rechecks the complete source,
 destination, and collision facts. It applies complete planned bytes, verifies
 each effect, rebuilds the route projection, and verifies the final chain and
-generated navigation. A handled failure stops new effects and reverses applied
-effects in reverse order without overwriting an unexpected concurrent change.
+generated navigation. A handled failure stops new effects and never restores,
+rolls back, or compensates for an earlier effect. An unexpected concurrent
+change is preserved and reported as residual state.
+
+After final verification, delete only the positively recognized bundle created
+by this operation. If deletion fails, effects remain successful and the result
+is `attention` with the exact residual path and cleanup guidance. Handled
+failure or cancellation reports the actual residual draft or final path; a
+valid final remains after preparation. A closed final ZIP may remain after
+abrupt process termination, without an executable crash or power-loss guarantee.
+Recovery provenance does not classify current target state. Cleanup owns exact
+named final and draft deletion under its separate lease-bound contract. The persistent reusable
+`.agents/open-forge.lock` preserves existing bytes and is held with a
+`FileShare.None` handle only; it never receives metadata writes, deletion, or
+truncation.
 
 ## Human Output
 
@@ -436,8 +461,9 @@ The structured result exposes:
 - Draft and explicit metadata provenance for every created entrypoint.
 - Draft entrypoint paths.
 - Planned directories, files, and generated-region effects.
-- Dry-run, Git, backup, application, verification, and recovery facts.
-- Changed, unchanged, reverted, and residual targets.
+- Dry-run, recovery-bundle, application, verification, and recovery facts.
+- Changed and unchanged effects, verification facts, and any actual residual
+  draft or final recovery path, without classifying current target state.
 - Bounded observations, availability conditions, attention conditions, semantic
   status, and at most one required `Next:` action.
 
@@ -453,8 +479,8 @@ CLI Architecture.
 | `incomplete`  | Safe current facts are available, but required inspection or planning coverage cannot complete; no write begins.                                                                                       | Architecture-defined process status. |
 | `invalid`     | Command input, metadata, flag use, or target shape does not follow this interface; invalid input stops before operation resolution.                                                                    | Architecture-defined process status. |
 | `blocked`     | Unsafe or ambiguous authority or safety prevents one safe complete route plan; no mutation begins.                                                                                                     | Architecture-defined process status. |
-| `failed`      | An unexpected application, post-write, verification, or recovery failure prevents normal completion.                                                                                                   | Architecture-defined process status. |
-| `interrupted` | The caller cancelled or interrupted before completion and no residual recovery failure remains.                                                                                                        | Architecture-defined process status. |
+| `failed`      | An unexpected application, post-write, verification, or bundle-handling failure prevents normal completion.                                                                                             | Architecture-defined process status. |
+| `interrupted` | The caller cancelled or interrupted before completion and no unexpected application or verification failure changes the result.                                                                      | Architecture-defined process status. |
 
 The shared process-status mapping is defined by the CLI Architecture.
 
@@ -492,7 +518,8 @@ The command blocks or rejects:
 - Unsafe containment or an existing non-entrypoint at a planned target path.
 - Metadata that cannot produce canonical required fields.
 - An invalid generated ownership boundary in a planned existing parent.
-- A dirty planned existing path without the accepted Git bypass.
+- Unavailable or unsafe recovery-bundle storage is `incomplete`; an unverified
+  bundle is `blocked`.
 - A changed source or destination that invalidates the plan.
 
 When safe facts are available but required inspection or planning coverage cannot
@@ -526,7 +553,7 @@ of this Interface Contract:
   or additional operation-specific flag.
 - Singleton rejection for repeated `--description` and `--responsibility`,
   including equal values; ordered repeated `--tag` values with exact duplicate,
-  empty, and syntax validation; idempotent repetition of both Boolean
+  empty, and syntax validation; idempotent repetition of the Boolean
   write-policy flags; and shared global-flag repetition rules.
 - One missing target, several missing ancestors, and complete no-op chains.
 - Detached chains, valid Loader exposure, and proof that the Loader is never
@@ -548,10 +575,10 @@ of this Interface Contract:
   attention from planned changes alone or unchanged existing `NeedsAuthoring`.
 - Complete results when every new entrypoint has complete intended metadata and
   no exact `NeedsAuthoring` marker.
-- Verified no-op behavior before Git mutation checks.
+- Verified no-op behavior before recovery-bundle preparation.
 - Seven semantic results, including safe `incomplete` with no write, blocked
   unsafe or ambiguous safety, and failed post-write/application/verification/
-  recovery failures.
+  bundle-handling failures.
 - Compact retention of workspace and target identity, application or preview,
   status, completeness, safety, created and unchanged paths, generated effects,
   draft paths, and at most one required `Next:` line.
@@ -560,10 +587,10 @@ of this Interface Contract:
   result.
 
 The [Behavior Contract](behavior.md) records the required technology-neutral
-evidence for planning, projection, effects, Git and backup boundaries,
+evidence for planning, projection, effects, recovery-bundle boundaries,
 revalidation, verification, recovery, concurrency, and convergence. Exact
 schemas and JSON compatibility, numeric exits, parser and serialization,
-filesystem and identity implementation, backup names, concurrency mechanics,
+filesystem and identity implementation, recovery-bundle names, concurrency mechanics,
 and source boundaries are defined by the CLI Architecture. Those accepted
 technical choices do not weaken the accepted repetition, status, stream,
 attention, dry-run, compact, or verification rules above.

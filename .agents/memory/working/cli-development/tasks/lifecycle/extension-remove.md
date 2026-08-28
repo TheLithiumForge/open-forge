@@ -23,15 +23,15 @@ lifecycle state, and exposes exact recovery.
 - Observe package dependencies, managed identities, user divergence, shared
   files/regions, generated projections, and lifecycle before planning.
 - `ExtensionRemovePlan` names exact package order and file/region effects.
-- Reuse lifecycle, ownership, atomic, Git, and recovery primitives. Keep selection,
-  dependency refusal, removal policy, findings, and result local.
+- Reuse lifecycle, ownership, atomic, and external recovery-bundle primitives.
+  Keep selection, dependency refusal, removal policy, findings, and result local.
 
 ## Evidence
 
 Cover one/many packages, dependency blockers, shared targets, user-modified
-content, missing managed content, lifecycle errors, dry run, lock race, Git,
-partial failure/recovery, generated navigation, package isolation, second run,
-process, and AOT.
+content, missing managed content, lifecycle errors, dry run, lock race, bundle
+preparation and retention after partial failure/cancellation, generated
+navigation, package isolation, second run, process, and AOT.
 
 ## Stop Conditions
 

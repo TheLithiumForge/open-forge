@@ -15,14 +15,14 @@ open-forge:
 ## Expected Outcome
 
 `route remove` removes exactly the accepted route unit after proving dependency,
-reference, overwrite, descendant, lifecycle, generated-navigation, and recovery
-boundaries. It preserves unrelated and user-owned content.
+reference, overwrite, descendant, lifecycle, generated-navigation, and external
+recovery-bundle boundaries. It preserves unrelated and user-owned content.
 
 ## Architecture
 
 - Observation records exact physical source, route descendants, overwrite pair,
-  incoming references, generated projections, lifecycle ownership, and recovery
-  state.
+  incoming references, generated projections, lifecycle ownership, and recovery-
+  bundle state.
 - `RouteRemovePlan` explicitly names every file/region effect and its ordering.
 - Use shared route/reference facts and mutation primitives. Keep dependency policy,
   refusal reasons, and deletion order local.
@@ -32,7 +32,7 @@ boundaries. It preserves unrelated and user-owned content.
 Cover simple route, non-empty or dependent route, overwrite pair, incoming
 references, managed/unmanaged distinction, dry run, invalid confirmation/write
 policy, physical aliases, lock race, generated navigation, lifecycle update,
-partial failures and recovery, second run, preservation, human/JSON/help,
+partial failures and bundle retention, second run, preservation, human/JSON/help,
 process exits, and AOT.
 
 ## Stop Conditions

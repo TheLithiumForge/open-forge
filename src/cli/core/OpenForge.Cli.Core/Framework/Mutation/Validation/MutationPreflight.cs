@@ -1,0 +1,20 @@
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
+using OpenForge.Cli.Core.Framework.Workspace;
+
+namespace OpenForge.Cli.Core.Framework.Mutation.Validation;
+
+internal sealed class MutationPreflight(FileExpectationValidator validator)
+{
+    private readonly FileExpectationValidator _validator = validator;
+
+    internal ValueTask<MutationValidationResult> ValidateAsync(
+        CliWorkspace workspace,
+        IReadOnlyList<PlannedFileChange> changes,
+        CancellationToken cancellationToken)
+        => MutationValidationRunner.ValidateAsync(
+            _validator,
+            workspace,
+            changes,
+            cancellationToken);
+}

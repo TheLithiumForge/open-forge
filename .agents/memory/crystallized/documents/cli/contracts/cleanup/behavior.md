@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Accepted technology-neutral catalogue, deletion, safety, monotonic recovery, and conformance for cleanup
-  responsibility: Define how cleanup forms one recognized default-all plan, deletes only verified eligible cleanup artifacts, and reports partial results
+  responsibility: Define how cleanup forms one recognized default-all plan, deletes only verified eligible recovery bundles and drafts, and reports partial results
   tags: [Memory, Crystallized, CLI, Release, Command, Contract, Cleanup, Behavior, Mutation, Recovery, Safety, Determinism, CurrentTruth]
 ---
 
@@ -11,7 +11,7 @@ open-forge:
 
 This is the accepted current Crystallized Behavior Contract for the non-shipping
 root `open-forge cleanup` operation. It defines deterministic request and
-workspace resolution, recognized-artifact catalogue formation, complete planning,
+workspace resolution, recognized bundle/draft catalogue formation, complete planning,
 preflight, dry-run, deletion, verification, the cleanup-specific monotonic
 recovery exception, result formation, and technology-neutral conformance.
 
@@ -36,62 +36,70 @@ Cleanup follows one complete typed flow:
 
 ```text
 validated command input
-  -> exact selected workspace
-  -> complete current recognized-artifact catalogue
-  -> deterministic ordered deletion plan
+  -> exact selected workspace and external recovery root
+  -> complete current filtered exact-name candidate catalogue
+  -> deterministic ordered candidate plan
   -> preflight
-  -> dry-run or application
-  -> per-artifact revalidation and deletion
+  -> dry-run, empty no-op, or same-workspace lease acquisition
+  -> final under-lease catalogue and expected-state revalidation
+  -> per-bundle-or-draft revalidation and deletion
   -> per-effect verification and monotonic result formation
   -> one typed result
 ```
 
 The operation satisfies these invariants:
 
-- Bare `cleanup` resolves all currently eligible artifacts in the selected
-  workspace. It never converts the request into artifact selection, a wizard,
-  prompting, or a broad filesystem delete.
-- An eligible artifact has positive Open Forge provenance, a bounded workspace
-  association, physical containment, stable physical identity, inactive state,
-  and the expected current bytes or physical state needed for its deletion.
-- The catalogue includes recognized target-associated adjacent backups,
-  recognized operation temporary or staging files and directories, and
-  recognized residual recovery artifacts from incomplete or completed
-  operations. Known `.bak` compatibility forms require the same positive proof.
-- A suffix, age, extension, location, proximity, temporary-looking name, Git
-  state, path, or matching bytes alone never establishes provenance or authority.
-- Unknown, user-created, ambiguous, aliased, externally resolving, active,
-  in-use, and concurrently changing items are not eligible. Active-operation
-  artifacts remain preserved.
-- Repository `.temp/`, raw evidence and snapshots, source and managed content,
+- Bare `cleanup` catalogues all exact-name recovery final and draft candidates
+  associated with the selected workspace. It never converts the
+  request into artifact selection, a wizard, prompting, or a broad filesystem
+  delete.
+- An eligible item is either a verified final ordinary file or an ordinary
+  exact-name draft in the selected normalized workspace bucket and passes final
+  validation while Cleanup holds the same-workspace `WorkspaceLockLease`.
+- A final ZIP passes semantic source-generated schema-v1 manifest validation,
+  exact ordered entry names and counts, declared lengths and hashes, and exact
+  payload-byte checks. A draft is `Incomplete` support data and never
+  preparation.
+- A suffix, age, extension, location, proximity, temporary-looking name, path,
+  or matching bytes alone never establishes provenance or authority.
+- Malformed, unsupported, unavailable, non-ordinary, or unsafe exact-name
+  candidates are reported and preserved and block deletion. Unknown,
+  user-created, or differently named items remain outside the filtered catalogue
+  and its equality checks. If Cleanup cannot acquire the workspace lease because
+  of contention, it performs no deletion.
+- Workspace files, raw evidence and snapshots, source and managed content,
   lifecycle documents and receipts, generated navigation, build outputs,
-  package caches, logs that are not positively identified as one of the listed
-  cleanup artifact kinds, and arbitrary backups remain outside the catalogue.
+  package caches, logs, unknown support items, and arbitrary filesystem content
+  remain outside the catalogue. Cleanup never recursively removes a support
+  artifact tree.
 - The complete catalogue and deterministic ordered plan exist before the first
   effect. Dry-run and application use the same request, facts, plan, ordering,
   expected-state facts, and preflight.
-- No deletion begins until the plan, Git policy, and all preflight facts are
-  complete. A pre-effect unsafe or ambiguous selected item forms `blocked` and
-  produces no write.
+- An empty catalogue is a verified complete no-op without a lease. No deletion
+  begins until Cleanup acquires the same-workspace lease, re-enumerates the
+  selected bucket once, filters exact final and draft names, and compares that
+  candidate set and its relevant path, kind, and integrity facts with the planned
+  catalogue. A new, removed, or changed exact-name candidate or failure to acquire
+  the lease produces no deletion; unknown names remain outside the comparison.
 - Once deletion begins, verified deletion is monotonic. Cleanup does not create
-  a backup, staging copy, receipt, journal, or tombstone merely to delete an
-  eligible cleanup artifact and does not reverse a deletion it has verified.
+  a recovery bundle, staging copy, receipt, journal, or tombstone merely to delete
+  an eligible bundle or draft and does not reverse a deletion it has verified.
 
-The last invariant is a cleanup-only exception. Other CLI writes retain their
-accepted backup, reverse-recovery, and residual-preservation rules.
+The last invariant is a cleanup-only support-artifact exception. Other CLI
+writes retain their accepted immutable recovery-bundle and residual-preservation
+rules.
 
 ## Request And Workspace Resolution
 
 Request resolution:
 
-1. Accepts only direct root `cleanup` with `--dry-run`, `--skip-git-check`, and
-   shared global flags.
+1. Accepts only direct root `cleanup` with `--dry-run` and shared global flags.
 2. Rejects operands, artifact IDs and paths, selectors, profiles, age or glob
    expressions, aliases, unknown flags, and generic apply or delete forms.
 3. Resolves shared `--help` and `--version` before workspace selection or domain
    work. Command-specific input with either terminal mode is invalid.
-4. Collapses repeated `--dry-run` and `--skip-git-check` presence to one
-   idempotent Boolean choice. Shared flag repetition retains its own contract.
+4. Collapses repeated `--dry-run` presence to one idempotent Boolean choice.
+   Shared flag repetition retains its own contract.
 5. Selects exactly the process current working directory or the exact
    `--workspace <path>` value. It does not search parent directories, choose a
    Git or package root, follow a nested `.agents` directory, or infer a
@@ -102,120 +110,138 @@ domain request. No request mode prompts or supplies a missing selector because
 cleanup has no selector.
 
 The selected workspace must be a safely accessible directory when cleanup needs
-to inspect it. The operation reports the workspace and selection method in its
-typed result. It does not treat workspace selection as proof of installation,
-health, ownership, or artifact provenance.
+to inspect its association facts. Recovery storage is exactly
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.None)/OpenForge/recovery/v1`. This
+observer-only lookup never creates the OS application-data root or the Open Forge
+subtree. No temporary, workspace, `HOME`, or custom platform fallback is
+permitted. An absent application-data root or recovery store produces an empty
+catalogue and a verified complete no-op. An existing root or store that is
+unavailable or unsafe to inspect is `incomplete` and prevents deletion; access
+failure is not absence. The operation reports the workspace and selection method
+in its typed result. It does not
+treat workspace selection as proof of installation, health, ownership, or
+artifact provenance.
+
+Cleanup uses the existing `WorkspaceLockLease` for cooperating-process exclusion.
+The persistent reusable `.agents/open-forge.lock` is held with `FileShare.None`
+and preserves existing bytes. Cleanup writes no marker, PID, journal, or lock
+metadata and makes no activity inference.
 
 ## Current Facts And Catalogue Coverage
 
-The resolver establishes a complete current catalogue through the accepted
-artifact identity contract. The CLI Architecture defines the realization of
-artifact names, storage, schema, and physical identity; the observable facts
-below are fixed by this Behavior Contract.
+The resolver establishes a complete current catalogue by filtering exact
+selected-workspace final and draft names, then determining each candidate's kind
+and integrity. The CLI Architecture defines the realization of names, storage,
+and schema; the observable facts below are fixed by this Behavior Contract.
 
-For every candidate admitted to the catalogue, current facts include:
+For every exact-name candidate admitted to the catalogue, current facts include:
 
-- artifact kind and positive Open Forge provenance;
-- the associated operation or target when that kind requires one;
-- bounded association with the selected workspace;
-- lexical and physical containment without an external resolution or alias;
-- stable physical identity and exact current bytes or physical state;
-- inactive and not-in-use state, including whether an operation is still active;
-- expected-state facts and the deletion verification condition; and
-- affected-path Git classification when Git can classify the existing artifact.
+- final or draft kind and exact-name Open Forge provenance;
+- the associated operation and ordered target entries when the bundle requires
+  them;
+- exact association with the selected normalized physical workspace path;
+- exact direct-child path, deterministic name, and current file kind;
+- the deletion verification condition; and
+- `Verified`, `Malformed`, `Unsupported`, or `Unavailable` semantic integrity for
+  a final, or the exact `Incomplete` draft name and ordinary-kind fact for a
+  draft.
 
-The resolver considers:
+Strict final-bundle recognition may stream each ZIP payload entry through fixed
+bounded buffers solely to validate the exact declared length and lowercase
+SHA-256. Cleanup never extracts, discloses, renders, logs, returns, retains, or
+materializes payload bytes, and validation memory remains independent of payload
+size.
 
-1. target-associated adjacent backups, including a known `.bak` compatibility
-   form only when positive identity is provable;
-2. operation temporary and staging files or directories with positive operation
-   provenance; and
-3. residual recovery artifacts emitted by an incomplete or completed operation
-   with positive provenance and bounded association.
+The filtered candidate catalogue includes:
+
+1. every exact deterministic final name, with semantic validation producing
+   `Verified`, `Malformed`, `Unsupported`, or `Unavailable`; and
+2. every exact deterministic draft name in the selected workspace bucket, with
+   ordinary direct-child files treated as `Incomplete` support data.
 
 The resolver does not use age, extension, suffix, location, proximity,
-temporary-looking names, directory membership, or Git state as a substitute for
-positive provenance. It does not recursively classify arbitrary backup trees.
+temporary-looking names, directory membership, or matching bytes as a substitute
+for positive provenance. It does not recursively classify arbitrary support
+trees.
 
-Unknown or ambiguous material is preserved and excluded. If the required
-catalogue cannot be completely enumerated or a required identity fact is safely
-unavailable, result formation uses `incomplete`. If a candidate's identity,
-containment, active state, or expected state is unsafe or ambiguous, the
-candidate cannot enter a plan. A selected candidate that becomes unsafe or
-ambiguous is `blocked`.
+Unknown or differently named material is preserved and excluded from the
+catalogue and its equality checks. If the selected workspace bucket cannot be
+enumerated, result formation uses `incomplete`. A malformed, unsupported,
+unavailable, non-ordinary, or unsafe exact-name candidate remains in the
+catalogue, is excluded from the deletion plan, and blocks every deletion.
 
-Cleanup does not require a proof that a recognized backup is unnecessary for
-recovery, a proof that its bytes have been migrated, or an interpretation of
-user content. Positive provenance, bounded association and containment,
-inactive state, expected identity, and explicit command intent provide deletion
-authority. This does not make an active or unsafe artifact eligible.
+Cleanup does not require interpretation of user content. The exact selected
+workspace bucket, deterministic direct-child name, semantic final validation
+when applicable, explicit command intent, and held same-workspace lease provide
+deletion authority. Only verified final ordinary files and ordinary exact-name
+drafts are eligible.
 
 ## Selection And Plan Formation
 
-The planner selects every candidate that passes the complete eligibility facts.
-It does not select a subset to avoid a difficult item, rank artifacts by age or
-name, choose the newest or oldest backup, or treat a recommendation as input.
+The planner selects every verified final ordinary file and ordinary exact-name
+draft. It does not select a subset to avoid a blocking exact-name candidate, rank
+items by age or name, or treat a recommendation as input.
 
-It forms one deterministic ordered plan containing, for each selected artifact:
+It forms one deterministic ordered plan containing, for each selected bundle or
+draft:
 
-- the exact logical and physical identity and artifact kind;
-- provenance, operation or target association, and bounded containment;
-- expected bytes or physical state and inactive-state evidence;
-- the affected path and Git classification, when applicable;
+- the exact direct-child path, deterministic name, and bundle or draft kind;
+- the required same-workspace lease boundary and final integrity condition;
 - the deletion effect and exact ordering position; and
 - the immediate revalidation and post-deletion verification conditions.
 
-The plan contains no backup-creation effect, staging effect, lifecycle effect,
-receipt publication, journal, tombstone, or hidden command invocation. A
-recognized artifact directory is treated as one eligible deletion boundary only
-when its own contained physical boundary is safe and no unknown or user-created
-content would be removed by that boundary.
+The plan contains no recovery-bundle-creation effect, staging effect, lifecycle
+effect, receipt publication, journal, tombstone, or hidden command invocation.
+Each planned verified final or ordinary draft is one eligible deletion boundary
+only at its exact deterministic path; Cleanup never broadens that boundary to a
+containing directory, follows an entry or link, or removes unknown or
+user-created content.
 
-No selected item is silently omitted. An item that cannot satisfy its required
-identity or safety facts prevents its selection or blocks the selected plan as
-defined by the Interface status boundary. A catalogue coverage failure before
-effects is `incomplete` and has no write.
+No exact-name candidate is silently omitted. A malformed, unsupported,
+unavailable, non-ordinary, or unsafe candidate remains reported and preserved,
+is excluded from the deletion plan, and blocks all deletion. A catalogue coverage
+failure before effects is `incomplete` and has no write.
 
-## Preflight, Git, And Dry Run
+## Preflight And Dry Run
 
 Preflight validates the complete plan before the first deletion. It checks every
-selected identity, containment, inactive-state fact, expected byte or physical
-state, verification condition, and applicable Git condition.
+exact direct-child path and ordinary file kind, semantic final-ZIP validation
+where applicable, and deletion verification condition. Before lease acquisition,
+it does not claim final deletion eligibility.
 
-When Git can classify an existing affected artifact path, a tracked path that
-Git reports as dirty, or another unclean condition, blocks by default.
-`--skip-git-check` changes only that cleanliness decision. It does not establish
-provenance, inactive state, containment, expected identity, or deletion
-authority. Gitless operation is valid: unavailable Git classification
-does not block cleanup and does not require creation of a replacement backup.
-
-Dry-run consumes the exact application request, current catalogue, plan,
-ordering, expected-state facts, and preflight. It lists every exact selected
-artifact and deletion effect, then stops before deletion or any persistent
-effect. It does not create a backup, temporary file, staging copy, receipt,
-journal, tombstone, or residual marker. Its planned deletions do not form
-`attention`.
+Dry-run consumes the exact application request, current candidate catalogue,
+plan, ordering, and preflight. It lists every exact-name candidate, its integrity
+condition, and either its eligible deletion effect or its blocking preservation
+condition. Every planned effect remains contingent on application acquiring the
+same-workspace lease and passing final under-lease validation. Dry-run then stops
+before lease acquisition, deletion, or any persistent effect. It does not create
+a recovery bundle or draft, temporary file, staging copy, receipt, journal,
+tombstone, or residual marker. Its planned deletions do not form `attention`.
 
 ## Application, Revalidation, And Verification
 
 When application is selected:
 
-1. Revalidate the complete plan and all volatile workspace, identity,
-   containment, inactive-state, expected-state, and Git facts.
-2. Immediately before each deletion, revalidate that artifact's positive
-   provenance, bounded association, physical containment, inactive state,
-   expected bytes or physical identity, and deletion condition.
-3. If any selected item is unsafe, ambiguous, active, in use, or changed before
-   the first deletion, stop with `blocked` and no write. If the current item
-   reaches that state after an earlier deletion was verified, stop before that
-   item, preserve it, report the already verified effects, and return the
-   applicable blocked result.
-4. Delete only the current verified artifact boundary. Do not follow an alias
-   or external resolution and do not delete a replacement that is not the
-   current selected identity.
-5. Verify the intended absence and the deletion identity immediately after each
-   effect, then retain the exact deleted, remaining, preserved, and residual
-   facts in the typed result.
+1. If the current candidate catalogue is empty, return the verified complete
+   no-op without acquiring a lease.
+2. Acquire one live `WorkspaceLockLease` for the exact selected workspace and
+   hold it through all deletion and verification work. If acquisition fails or a
+   cooperating mutator owns the lease, perform no deletion.
+3. Under that lease, re-enumerate the selected workspace bucket once, filter the
+   same exact final and draft names, and compare the candidate set and its
+   relevant path, kind, and integrity facts with the planned catalogue. A new,
+   removed, or changed exact-name candidate blocks; unknown or differently named
+   items remain outside the comparison.
+4. Immediately before each deletion, repeat semantic validation for a final ZIP
+   or the exact path/name/kind check for a draft.
+5. If the filtered under-lease candidate set differs from the planned catalogue
+   or validation fails before the first deletion, stop with `blocked` and no
+   deletion. A later ordinary deletion or verification failure stops further
+   effects and reports prior verified deletions and remaining paths.
+6. Delete only the exact current path with ordinary `File.Delete`.
+7. Verify absence immediately after each effect, then retain the exact deleted,
+   remaining, preserved, and residual paths in the typed result.
 
 Cleanup does not reverse a verified deletion. An unexpected deletion or
 verification failure after effects begin stops further effects and forms
@@ -224,29 +250,31 @@ cancellation forms `interrupted` when no stronger unsafe residual condition
 applies, with every verified deletion and every remaining or preserved artifact
 reported. A later invocation never reuses this plan.
 
-The operation does not create a recovery artifact to justify or reverse its own
-eligible cleanup-artifact deletions. This is the only accepted monotonic recovery
-exception and does not alter the recovery behavior of other operations.
+The operation does not create a recovery bundle or draft to justify or reverse
+its own eligible bundle or draft deletions. This is the only accepted monotonic
+recovery exception and does not alter the recovery behavior of other operations.
 
 ## Idempotence And Fresh Repetition
 
-After successful application, a repeat resolves a fresh current catalogue. If
-no eligible artifact exists, it forms a complete verified no-op without
-prompting and without a mutation path. It does not use a receipt, tombstone,
-journal, saved plan, absence alone, or prior result to manufacture provenance.
+After successful application, a repeat resolves a fresh current filtered
+catalogue. If no exact-name candidate exists, it forms a complete verified no-op
+without prompting and without a mutation path. A blocking exact-name candidate
+is not an empty no-op merely because it is ineligible. Cleanup does not use a
+receipt, tombstone, journal, saved plan, absence alone, or prior result to
+manufacture provenance.
 
-A later user-created, unknown, ambiguous, aliased, externally resolving, or
-otherwise ineligible item at a former artifact path is excluded by the fresh
-catalogue and remains untouched. Only current positive artifact identity can
-admit a later item.
+Unknown, differently named, and otherwise ineligible content remains excluded by
+the fresh catalogue and untouched.
 
 ## Result Formation And Status
 
 One typed result records the selected workspace, normalized request, complete
-catalogue facts, deterministic plan, preflight, Git decision, every planned
-effect, every verified deletion, remaining and preserved items, residual facts,
-verification or cancellation events, and semantic status. The result does not
-claim that cleanup interpreted content or migration intent.
+filtered exact-name candidate-catalogue facts, deterministic eligible plan,
+preflight, lease acquisition and final under-lease candidate/fact comparison when
+application reaches deletion, every planned effect, every verified deletion,
+remaining and preserved items, residual facts, verification or cancellation
+events, and semantic status. The result does not claim that cleanup interpreted
+content or migration intent.
 
 Result formation follows the Interface meanings:
 
@@ -259,8 +287,10 @@ Result formation follows the Interface meanings:
 - Safe but incomplete required catalogue enumeration is `incomplete` before
   effects.
 - Invalid request input is `invalid` before catalogue work.
-- Unsafe or ambiguous selected identity, containment, active/in-use state,
-  changed expected item, or applicable dirty Git state is `blocked`.
+- Failure to acquire the required same-workspace lease; a malformed,
+  unsupported, unavailable, non-ordinary, or unsafe exact-name candidate; or a
+  new, removed, or changed exact-name candidate or relevant fact under lease is
+  `blocked` when safe classification is available.
 - An unexpected partial deletion or verification event is `failed`.
 - Cancellation without a stronger unsafe residual condition is `interrupted`.
 
@@ -289,19 +319,29 @@ A conforming implementation must demonstrate:
 
 - exact request normalization, no operands, no wizard or prompts, shared flag
   behavior, terminal modes, and exact workspace selection without discovery;
-- positive provenance and bounded association for every accepted artifact kind,
-  including known `.bak` compatibility forms and incomplete or completed
-  residuals;
-- physical containment and identity, expected bytes or state, inactive and
-  in-use classification, concurrent-change handling, and preservation of all
-  unknown, user-created, ambiguous, aliased, external, active, and excluded
-  content;
-- default-all catalogue formation, deterministic ordering, complete plan
-  formation, no arbitrary recursive backup cleanup, and no hidden command;
-- exact dry-run/application parity with no persistent dry-run effects;
-- affected-path Git behavior, the narrow skip check, Gitless operation without
-  replacement-backup creation, and no Git-based provenance inference;
-- per-deletion revalidation, verification, monotonic deletion, no reverse of
+- exact selected-workspace final and draft names, every exact candidate's current
+  kind and integrity, and incomplete or completed residual state;
+- exact direct-child current file kind, one under-lease re-enumeration, and
+  filtered equality of exact-name candidates and relevant path, kind, and
+  integrity facts, plus preservation and comparison exclusion of all unknown,
+  user-created, differently named, differently keyed, and excluded content;
+- representative payload validation with exact declared
+  lengths and hashes, bounded buffers and memory independent of entry size, and
+  no extraction, disclosure, retention, or materialization;
+- default-all filtered exact-name catalogue formation, deterministic ordering,
+  plan eligibility only for verified finals and ordinary drafts, blocking
+  preservation of all invalid exact-name candidates, no arbitrary recursive
+  support-artifact cleanup, and no hidden command;
+- exact dry-run/application candidate-plan parity and no persistent dry-run
+  effects;
+- unavailable external recovery storage, deterministic bundle identity, and no
+  workspace-local support-artifact scan;
+- no-lease empty no-op, one live same-workspace `WorkspaceLockLease` before every
+  deletion, one under-lease filtered-candidate and relevant-fact comparison, no
+  effect from unknown names, no deletion on lease contention, and no marker,
+  PID, journal, or lock-metadata write;
+- immediate final semantic validation, ordinary `File.Delete`, absence
+  verification, monotonic deletion, no reverse of
   verified effects, failure and interruption reporting, residual visibility, and
   fresh-catalogue rerun convergence;
 - complete no-op repetition without deleting a later replacement;
@@ -312,7 +352,7 @@ A conforming implementation must demonstrate:
   arbitrary filesystem, or Gate 6 documentation/history/release cleanup.
 
 Gate 5 executable proof should use real isolated workspaces and real filesystem
-identity and containment boundaries. The CLI Architecture defines the accepted
+identity, workspace association, and external-root boundaries. The CLI Architecture defines the accepted
 parser, filesystem, concurrency, artifact naming and schema, package, and source
 realization; this Behavior Contract does not select another implementation.
 

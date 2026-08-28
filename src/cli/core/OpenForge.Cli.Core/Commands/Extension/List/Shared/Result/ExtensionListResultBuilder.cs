@@ -123,7 +123,7 @@ internal static class ExtensionListResultBuilder
             findings.Add(new ExtensionListFinding(
                 code: ExtensionListFindingCode.Interrupted,
                 status: CliSemanticStatus.Interrupted,
-                subject: LifecycleDocumentReader.RelativePath,
+                subject: LifecycleSchema.RelativePath,
                 cause: lifecycle.Cause ?? "Lifecycle inspection was interrupted."));
             return;
         }
@@ -135,7 +135,7 @@ internal static class ExtensionListResultBuilder
             status: lifecycle.Trust == LifecycleExtensionTrust.Blocked
                 ? CliSemanticStatus.Blocked
                 : CliSemanticStatus.Incomplete,
-            subject: LifecycleDocumentReader.RelativePath,
+            subject: LifecycleSchema.RelativePath,
             cause: lifecycle.Cause ?? "Extension lifecycle coverage is unavailable."));
     }
 

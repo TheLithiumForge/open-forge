@@ -16,7 +16,8 @@ open-forge:
 
 `extension update` reconciles selected installed packages from recorded lifecycle
 identity to reviewed source packages while preserving user content, package
-isolation, Framework state, and recoverability.
+isolation, Framework state, and one verified external recovery bundle covering
+every existing target it replaces or deletes.
 
 ## Architecture
 
@@ -30,8 +31,9 @@ isolation, Framework state, and recoverability.
 
 Cover no-op, one/many updates, dependency order, missing/changed source, installed
 drift, user-owned text, package conflicts, lifecycle missing/malformed/unknown,
-dry run, lock/source race, Git, partial failure/recovery, generated navigation,
-second run, process, packed source, and AOT.
+dry run, lock/source race, bundle preparation and retention after partial
+failure/cancellation, generated navigation, second run, process, packed source,
+and AOT.
 
 ## Stop Conditions
 

@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Current accepted interface for workspace status, context-size comparison, root customization, managed Extensions, and recovery evidence
+  description: Current accepted interface for workspace status, context-size comparison, root customization, managed Extensions, and recognized recovery bundles
   responsibility: Define the new CLI `status` command without turning orientation into diagnosis or duplicating Architecture mechanics
   tags: [Memory, Crystallized, CLI, Release, Command, Contract, Status, Interface, Context, Measurement, Extension, Recovery, CurrentTruth]
 ---
@@ -19,7 +19,7 @@ The accepted CLI Architecture defines the exact shared JSON result schema and
 numeric exit mapping. Status uses those definitions without duplicating
 implementation mechanics. Gate 5 must prove source-generated YamlDotNet and STJ
 serialization, fixed Markdig where used, real `System.IO`, Native AOT, OS
-locking, isolated tests, and package journeys. Token estimation, recovery-file
+locking, isolated tests, and package journeys. Token estimation, recovery-bundle
 identity, and Status-specific source placement remain subordinate implementation
 details rather than new contract authority.
 
@@ -49,7 +49,9 @@ It answers:
   or lifecycle-coverage state do they report?
 - How many Extensions and managed files are recorded, including installed facts
   whose package source is unavailable?
-- Are recognized recovery files present?
+- Which exact-name recovery candidates are present, what path and integrity
+  condition does each have, and how many verified finals and incomplete drafts
+  are there?
 
 Given the same CLI payload, workspace bytes, and explicit input, `status` returns
 the same facts, ordering, measurements, and semantic result.
@@ -97,7 +99,11 @@ non-directory workspace is blocked.
 - The current `Loader`'s direct root categories.
 - The exact `.agents/open-forge.lifecycle.json` lifecycle document, schema v1,
   with isolated `framework` and `extensions` sections.
-- Recognized Open Forge CLI recovery files adjacent to known Open Forge targets.
+- The current user's external recovery store at
+  `Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+  Environment.SpecialFolderOption.None)/OpenForge/recovery/v1`, limited to
+  exact-name final and draft candidates for the selected normalized physical
+  workspace path.
 
 The command may enumerate and stream supported context files to measure their
 content. It does not build the complete context graph, parse ordinary links or
@@ -112,14 +118,14 @@ their authority. Framework source, target, and region facts remain separate from
 Extension package, dependency, ownership, and baseline facts. Status reports
 only facts it can read safely and never writes, rebaselines, repairs, or publishes
 a lifecycle section. The document stores no plan, runtime history, journal,
-recovery evidence, or session. Files outside this exact path are ordinary
+recovery-bundle evidence, or session. Files outside this exact path are ordinary
 workspace content, not lifecycle input.
 
 Each section retains its finite state:
 
 | State        | Status meaning                                                                                                                                                          |
 | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `absent`     | Complete inspection proves that no expected managed state, managed boundary, or recovery residual exists. It does not claim that unmanaged or idless content is absent. |
+| `absent`     | Complete inspection proves that no expected managed state, managed boundary, or recovery-bundle residual exists. It does not claim that unmanaged or idless content is absent. |
 | `trusted`    | Supported document and section facts bind the exact workspace and managed identities, preserve internal consistency, and provide complete verifiable coverage.          |
 | `untrusted`  | Some lifecycle facts are readable, but provenance, integrity, compatibility, identity, or coverage cannot establish current trust.                                      |
 | `incomplete` | Safe required lifecycle or source coverage is unavailable.                                                                                                              |
@@ -127,10 +133,11 @@ Each section retains its finite state:
 
 The absence of `.agents/open-forge.lifecycle.json` alone does not establish an
 unmanaged or empty workspace. `absent` requires complete inspection of the
-expected managed footprint, managed boundaries, and recognized recovery
-residuals. Unsupported or ambiguous schema facts are `incomplete` when safely
+expected managed footprint, managed boundaries, and exact-name recovery
+candidates. Unsupported or ambiguous schema facts are `incomplete` when safely
 unavailable and `blocked` when unsafe. The visible `.agents/open-forge.lock` file
-is not lifecycle authority or recovery evidence and does not affect these states.
+is not lifecycle authority or recovery-bundle evidence and does not affect these
+states.
 
 An invalid or unavailable package source does not erase independently readable
 installed Extension IDs, ownership, recorded paths, or lifecycle facts. Status
@@ -161,8 +168,8 @@ The inventory follows these rules:
   them.
 - Do not count ordinary local link targets outside `.agents` merely because
   another file links to them.
-- Do not count provider bridges, the lifecycle document, recovery files, or other
-  operational metadata as context.
+- Do not count provider bridges, the lifecycle document, recovery bundles,
+  drafts, or other operational metadata as context.
 - Do not count non-Markdown Skill resources or other support files as context.
 
 Malformed Markdown remains measurable when its UTF-8 bytes are readable, even
@@ -364,17 +371,51 @@ Framework and first-party Extension assets with deterministic inventory and hash
 proof; that proof is distributed-source identity, not evidence of a selected
 workspace's current installation or of a proven runtime implementation.
 
-### Recovery Files
+### Recovery Bundles
 
-`Recovery files` counts only artifacts the running CLI can identify as known Open
-Forge recovery evidence around exact Open Forge targets. Unknown adjacent files
-are not counted. The count does not claim that recovery is required, complete, or
-guaranteed to succeed.
+Recovery accounting considers only exact-name final and draft candidates in the
+current user's external
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.None)/OpenForge/recovery/v1` store. Status uses
+this observer-only lookup and never creates the OS application-data root or the
+Open Forge subtree. The store is keyed by the selected normalized physical
+workspace path, and Status never
+falls back to the workspace, a repository, a temporary directory, or a target's
+adjacent files. Unknown, lookalike, mismatched, or differently keyed items do not
+enter the candidate catalogue. A malformed exact-name final remains a reported
+candidate; it is not omitted merely because it is not verified.
 
-Status does not remove or inspect private recovery bytes. The accepted
-[cleanup contract](../cleanup/interface.md) owns recognized-artifact deletion;
-the accepted CLI Architecture defines exact artifact identity and implementation
-mechanics. Status does not treat the visible workspace lock as recovery evidence.
+If the application-data root or its `OpenForge/recovery/v1` store is absent,
+Status reports zero verified finals and zero incomplete drafts. If an existing
+root or selected workspace bucket cannot be read, the recovery fact is
+unavailable and Status forms its locally contracted `incomplete` result; it does
+not treat access failure as absence.
+
+Status enumerates only exact deterministic final and draft names directly under
+the selected workspace bucket. A final ZIP is `Verified` only when its
+source-generated schema-v1 manifest decodes semantically and its exact ordered
+entry names and counts, declared lengths and hashes, and exact payload bytes all
+validate. A malformed, unsupported, or unreadable exact named final is reported
+with its path and `Malformed`, `Unsupported`, or `Unavailable` condition instead
+of becoming verified or entering the verified-final count. An exact named draft
+is reported with its path as `Incomplete`, enters only the incomplete-draft
+count, and never forms a recovery preparation. Unknown names and target-adjacent
+files do not enter the result.
+
+For each exact-name candidate, Status exposes only its kind, path, and integrity
+condition. Its counts distinguish verified finals from incomplete drafts;
+malformed, unsupported, and unavailable finals remain reported issues and never
+inflate either count. It does not acquire the workspace lease, read live targets,
+derive a current-target classification, or infer activity. Payload validation
+uses fixed bounded buffers and never extracts, discloses, renders, logs, returns,
+retains, or materializes payload bytes. A bundle keyed to an original workspace
+path after a workspace move is not auto-bound to the newly selected path.
+
+Status does not remove, clean, restore, roll back, or otherwise mutate bundles or
+workspace targets. The accepted [cleanup contract](../cleanup/interface.md) owns
+lease-validated candidate deletion; the accepted CLI Architecture defines the
+exact bundle identity and storage mechanics. Status does not treat the visible
+workspace lock as a recovery bundle.
 
 ## Human Output
 
@@ -385,6 +426,11 @@ managed-state summaries, recovery counts, and required next actions while
 omitting optional explanation and largest-source detail. Both remain
 understandable without color. Zero values remain visible wherever omission would
 make absence ambiguous.
+
+Both views show separate verified-final and incomplete-draft counts and report
+every exact-name candidate's path and integrity condition. A malformed,
+unsupported, or unavailable final remains visible as an issue and is never folded
+into the verified-final count.
 
 Primary human rendering for `complete`, `attention`, and `incomplete` goes to
 stdout. Primary human rendering for `invalid`, `blocked`, `failed`, and
@@ -447,7 +493,8 @@ Workspace structure
   Removed categories: templates
   Extensions:         1
   Managed files:      9 current, 11 changed, 1 missing
-  Recovery files:     0
+  Verified recovery finals:  0
+  Incomplete recovery drafts: 0
 ```
 
 The values are illustrative. They do not claim to be a current measurement of
@@ -474,7 +521,9 @@ never fabricates zero for an unavailable or not-applicable fact.
 - Extension and managed-file states
 - Framework and Extension lifecycle trust, ownership, and source-
   availability observations
-- Recovery-file count
+- Separate verified-final and incomplete-draft counts, plus every exact-name
+  candidate's path, kind, and integrity condition; malformed, unsupported, and
+  unavailable finals remain issue items and are not counted as verified
 - Measurement availability and semantic result
 
 Numeric fields remain numeric. Signed differences remain derived from the two
@@ -508,11 +557,17 @@ attention`. Numeric process-exit mapping follows the shared Architecture.
   value, context guarantee, latency estimate, or provider count. The
   implementation and rounding details beyond the stated display rule follow the
   accepted Architecture.
-- **Recovery artifact identity and cleanup boundary.** Status counts only
-  recovery evidence the running CLI can identify around exact Open Forge targets
-  and does not remove or inspect private bytes. The separate [cleanup
-  contract](../cleanup/interface.md) owns recognized-artifact deletion. Exact
-  artifact names, storage, schema, and implementation follow the accepted
+- **Recovery-bundle identity and cleanup boundary.** Status reports every
+  exact-name final and draft candidate in the external
+  LocalApplicationData recovery store for the selected normalized physical
+  workspace path, with verified finals and incomplete drafts counted separately
+  and invalid finals retained as issue items. It does not read live targets or
+  infer activity, does not scan target-adjacent files, and validates payload
+  lengths and hashes only by bounded streaming without extracting, disclosing,
+  retaining, or materializing payload bytes. It does not acquire the workspace
+  lease or report or infer activity. The separate [cleanup
+  contract](../cleanup/interface.md) owns lease-validated candidate deletion.
+  Exact identity, storage, schema, and implementation follow the accepted
   Architecture.
 - **Diagnostics and redaction.** `--verbose` may add bounded diagnostic evidence
   without changing collection, ordering, semantic result, or exit behavior. Exact
@@ -528,8 +583,8 @@ attention`. Numeric process-exit mapping follows the shared Architecture.
 | Result        | Meaning                                                                                                                                                          | Process completion status       |
 | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
 | `complete`    | Every applicable status fact was measured and no attention condition exists                                                                                      | Shared CLI Architecture mapping |
-| `attention`   | Measurement completed, but trusted managed files are changed or missing, recognized recovery files are present, or a finite lifecycle/source observation remains | Shared CLI Architecture mapping |
-| `incomplete`  | Safe facts are available, but one or more applicable status measurements could not be completed                                                                  | Shared CLI Architecture mapping |
+| `attention`   | Measurement completed, but trusted managed files are changed or missing, a verified recovery final is present, or a finite lifecycle/source observation remains | Shared CLI Architecture mapping |
+| `incomplete`  | Safe facts are available, but one or more applicable measurements are unavailable or incomplete, including an incomplete draft or a safely reportable invalid final | Shared CLI Architecture mapping |
 | `invalid`     | Command input does not follow the accepted grammar                                                                                                               | Shared CLI Architecture mapping |
 | `blocked`     | The command cannot establish the selected workspace or a safe inspection boundary                                                                                | Shared CLI Architecture mapping |
 | `failed`      | An unexpected internal failure prevents normal completion                                                                                                        | Shared CLI Architecture mapping |
@@ -538,6 +593,12 @@ attention`. Numeric process-exit mapping follows the shared Architecture.
 An uninstalled workspace is a valid completed state when its absence can be
 established safely. Differences in context size and added or removed root
 categories do not produce `attention` by themselves.
+
+Recovery follows the same existing result precedence: an unavailable recovery
+fact, an exact-name draft, or a safely bounded malformed or unsupported final
+selects `incomplete`; an unsafe or ambiguous recovery inspection boundary selects
+`blocked`. Invalid input, unexpected failure, and interruption retain their
+existing precedence.
 
 ## Errors
 
@@ -578,7 +639,8 @@ open-forge status
 The command uses the exact current working directory and the default expanded
 human presentation. It returns the workspace, startup comparison, total and
 continuity measurements, root changes, Framework and Extension lifecycle trust
-and managed-file summary, recovery count, and the applicable semantic result.
+and managed-file summary, separate verified-final and incomplete-draft counts,
+every exact-name recovery candidate, and the applicable semantic result.
 
 ### Explicit workspace
 
@@ -629,12 +691,13 @@ applicable fact that cannot be measured is unavailable and makes the result
 
 ### Attention and incomplete states
 
-When measurement completes but trusted managed files are changed or
-missing, recognized recovery files are present, or a finite lifecycle/source
-observation remains, the semantic result is `attention` and human output uses
-`requires attention`. When safe facts remain but an applicable measurement or
-lifecycle fact cannot be completed, the semantic result is `incomplete`; the
-command does not replace the unavailable fact with a partial or trusted count.
+When measurement completes but trusted managed files are changed or missing, a
+verified recovery final is present, or a finite lifecycle/source observation
+remains, the semantic result is `attention` and human output uses `requires
+attention`. An incomplete draft, unavailable recovery fact, or safely reportable
+malformed or unsupported final selects `incomplete`; an unsafe or ambiguous
+recovery boundary selects `blocked`. The command does not replace an unavailable
+fact with a partial or trusted count.
 
 ### Invalid and blocked states
 
@@ -658,6 +721,9 @@ exists.
 - Claim that continuity content reloads on every request.
 - Use a model-specific tokenizer, billing calculation, or performance estimate.
 - Mutate, repair, clean, install, or restore anything.
+- Inspect target-adjacent files or report version-control facts.
+- Auto-bind a bundle from an original workspace path after the workspace moves.
+- Roll back or restore a target from a recovery bundle.
 
 Complete diagnosis and recommendations belong to `doctor`. Status never lists
 repair or lifecycle proposals and never runs cleanup. Exact repair and the
@@ -689,7 +755,15 @@ Implementation evidence must cover:
 - Installed Extension IDs, ownership, and recorded paths that remain readable
   when their package source is unavailable.
 - Current, changed, missing, and shared managed-file counts.
-- Zero, present, unknown, and unsafe recovery-file evidence.
+- Zero and present verified-final and incomplete-draft counts; every exact-name
+  candidate's path and integrity condition; malformed, unsupported, and
+  unavailable finals excluded from the verified count; and result precedence for
+  incomplete drafts, invalid finals, unavailable facts, and unsafe boundaries.
+- Empty, arbitrary binary, and large payload-entry validation with exact declared
+  lengths and hashes, bounded buffers and memory independent of entry size, and
+  no extraction, disclosure, retention, or materialization.
+- No live-target hashing, target-state classification, or activity inference
+  from bundle contents or the visible lock file.
 - Complete, attention, incomplete, invalid, blocked, failed, and interrupted
   outcomes.
 - Human and structured output from the same typed result.
@@ -706,8 +780,8 @@ embedded assets, the exact lifecycle document, and filesystem state. A small bui
 should prove parsing, output, exit behavior, and packaged payload comparison.
 
 The shared CLI Architecture defines the exact numeric exit values, structured
-schema and JSON value representation, diagnostic fields, redaction, recovery
-artifact identities and retention, and .NET source boundaries. Gate 5 must prove
+schema and JSON value representation, diagnostic fields, redaction, recovery-bundle
+identities and retention, and .NET source boundaries. Gate 5 must prove
 source-generated YamlDotNet and STJ serialization, fixed Markdig where used,
 real `System.IO`, Native AOT, OS locking, isolated tests, and package journeys.
 

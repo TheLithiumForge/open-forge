@@ -72,7 +72,6 @@ history used to manufacture provenance.
 ```text
 open-forge route move <source-reference> <destination-target>
   [--dry-run]
-  [--skip-git-check]
   [global flags]
 ```
 
@@ -81,10 +80,9 @@ reference and exactly one destination target. The shared [Global CLI Flags](../.
 contract defines `--workspace`, `--json`, `--view`, `--verbose`, `--help`, and
 `--version`; all six apply under that contract.
 
-`--dry-run` is the only preview spelling. `--skip-git-check` is the only
-command-specific safety-policy exception, and it bypasses only affected-path Git
-cleanliness. Neither flag selects a subject, adds authority, or changes the
-operation.
+`--dry-run` is the only preview spelling. The command does not inspect or report
+repository state. It does not select a subject, add authority,
+or change the operation.
 
 The command has no `--force`, `--automatic`, `--yes`, `--apply`, `--all`,
 `--batch`, `--recursive`, root move mode, alias, saved plan, receipt, or generic
@@ -113,9 +111,9 @@ workspace. The parser and physical-identity realization follow the accepted [CLI
 Architecture](../../../architecture.md); the exact subject and destination
 meaning remain this contract's public boundary.
 
-`--dry-run` and `--skip-git-check` are Boolean write-policy flags. Repeating
-either is accepted and idempotent. Repetition does not multiply preview,
-consent, Git bypass, recovery, or mutation authority. Shared global-flag
+`--dry-run` is a Boolean write-policy flag. Repeating it is accepted and
+idempotent. Repetition does not multiply preview, consent, recovery, or mutation
+authority. Shared global-flag
 repetition, ordering, terminal behavior, and composition remain defined only by
 the shared contract.
 
@@ -211,7 +209,7 @@ The following do not prove unmanaged status by themselves:
 - failing to find one receipt or looking in one lifecycle source;
 - a path, route placement, tag, generated entry, or familiar folder name;
 - matching bytes, matching fingerprints, or an apparently initial file; or
-- a previous command result, recommendation, Git state, or absence of a marker.
+- a previous command result, recommendation, or absence of a marker.
 
 Missing, malformed, conflicting, stale, or incomplete lifecycle-ownership
 inventory is a blocking authority condition. The command does not adopt content,
@@ -331,7 +329,7 @@ validated source and destination
   -> one ordered complete mutation plan
   -> preflight
   -> dry-run or application
-  -> verification or identity-guarded recovery
+  -> verification and retained partial-state reporting
   -> one typed result
 ```
 
@@ -365,19 +363,50 @@ exact destination, supported reference rewrites, and generated projections in
 the complete plan. It does not grant ownership, lifecycle, collision,
 containment, marker-repair, or recovery bypass authority.
 
-For an actual application, Git cleanliness is checked only for existing paths
-the complete plan may change or remove. Dirty affected paths block by default.
-`--skip-git-check` bypasses only that affected-path cleanliness check. It does
-not bypass any source, destination, ownership, reference, generated-boundary,
-expected-state, verification, or recovery requirement.
+For an actual application, the complete plan checks every existing path it may
+change or remove through ordinary workspace facts. It does not inspect or report
+repository state.
+
+When the operation has one or more existing-target effects (`Replace`,
+`ReplaceGeneratedRegion`, or `Delete`),
+orchestration uses only
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.Create)` and its application-owned
+`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
+`HOME`, or custom-platform fallback; unavailable storage is a
+pre-effect `incomplete` result. The complete move operation prepares exactly
+one immutable ZIP bundle outside the workspace. Its
+source-generated schema-v1 `manifest.json` and streamed ordinal payload
+entries record command/operation/workspace identity, ordered relative targets,
+change kinds, exact prior bytes/lengths/hashes, and intended final absence or
+length/hash. `Create` effects and semantic/byte no-ops have no entry. A CreateNew
+draft is closed and reopened for semantic manifest, exact ordered entry,
+length, hash, and payload-byte validation, moved within the same directory to
+its deterministic final name, and reopened and verified. Only the valid final
+ZIP forms the opaque `RecoveryBundlePreparation`; the draft remains
+`Incomplete`. `FileChangeApplier` requires the matching preparation for every
+existing-target effect and performs one final effect per target.
+All preparation completes before the first target effect; unknown, malformed,
+mismatched, or colliding bundles block.
+
+After all effects and final verification succeed, delete only the positively
+recognized bundle created by this operation. If deletion fails, effects remain
+successful and the result is `attention` with the exact residual path and
+cleanup guidance. Handled failure or cancellation stops new effects and reports
+the actual residual draft or final path; a valid final remains after preparation.
+A closed final ZIP may remain after abrupt process termination, without an
+executable crash or power-loss guarantee. Recovery provenance does not classify
+current target state. Cleanup owns exact named final and draft deletion under its
+separate lease-bound contract.
 
 ## Human Output
 
 Human output comes from one typed result. The default expanded view includes the
 workspace, selection method, selected subject kind, source and destination
 identity, complete effect summary, affected paths, reference coverage and
-rewrites, generated projections, verification and recovery facts, and semantic
-status. Compact view retains the identity, leaf/category kind, mode, status,
+rewrites, generated projections, verification, bundle provenance, and retained
+partial-state facts, and semantic status. Compact view retains the identity,
+leaf/category kind, mode, status,
 completeness and safety, every affected path, every reference effect, every
 generated effect, and at most one required `Next:` action.
 
@@ -425,14 +454,15 @@ No files changed (--dry-run).
 
 The exact examples use illustrative paths. A complete result has no required
 `Next:` action. Incomplete, invalid, and blocked results name the direct
-correction when it is known. Failed and interrupted results identify ordinary
-recovery or retry action without inventing provenance.
+correction when it is known. Failed and interrupted results identify retained
+bundle/partial-state or retry guidance without inventing provenance.
 
 ## Structured Output
 
 `--json` emits one complete structured result to stdout for every semantic status
 from the same typed result used by human output. It never prompts and never
-reruns resolution, planning, application, verification, or recovery. Human text
+reruns resolution, planning, application, verification, or retained-state
+reporting. Human text
 is not mixed into JSON stdout; bounded diagnostics use stderr.
 
 The structured result exposes the concrete command result under the exact shared
@@ -445,9 +475,10 @@ schema defined by the [CLI Architecture](../../../architecture.md):
 - reference catalogue coverage, every rewritten occurrence, and its old and new
   target meaning;
 - generated-region selection, projection, and bounded effect evidence;
-- dry-run or application mode, completeness, safety, Git and backup facts;
-- expected-state, changed, unchanged, verified, reverted, and residual targets;
-- application, verification, and identity-guarded recovery facts; and
+- dry-run or application mode, completeness, safety, recovery-bundle facts;
+- expected-state, changed, unchanged, and verified effect facts, plus any actual
+  residual draft or final recovery path, without classifying current target state;
+- application, verification, bundle provenance, and retained partial-state facts; and
 - semantic status and at most one required `Next:` action.
 
 The structured result keeps the exact source and destination subjects visible. It
@@ -463,8 +494,8 @@ the human compact view is selected.
 | `incomplete`  | Safe identity and facts exist, but the complete supported-Markdown catalogue, reference pass, category inventory, or another required coverage boundary cannot be enumerated or inspected. No write begins.                                                 |
 | `invalid`     | Command input, operand cardinality, source kind, destination shape, flag use, or exact source reference does not follow this interface. A repeated move using the consumed old source is the exact source-not-found `invalid` result, not a verified no-op. |
 | `blocked`     | A valid request cannot establish one safe complete move because ownership, lifecycle, route, identity, containment, collision, destination, generated boundary, expected state, or recovery is unsafe or ambiguous. No write begins.                        |
-| `failed`      | An unexpected application, verification, or recovery failure occurs after a persistent effect begins. The result remains `failed` even when handled recovery succeeds.                                                                                      |
-| `interrupted` | The caller cancels before completion and no residual recovery failure remains. Residual recovery failure is `failed`.                                                                                                                                       |
+| `failed`      | An unexpected application, verification, or bundle-handling failure occurs after a persistent effect begins. The result remains `failed` and is never converted into `attention`.                                                               |
+| `interrupted` | The caller cancels before completion; an unexpected application or verification failure remains `failed`.                                                                                                                                           |
 
 For ordinary conditions, status precedence is `blocked` > `incomplete` >
 `attention` > `complete`. Invalid input stops before operation resolution.
@@ -489,8 +520,8 @@ The command rejects or blocks:
 - incomplete supported-Markdown enumeration or inspection;
 - an unsupported or ambiguous potentially applicable move reference;
 - an invalid or ambiguous generated boundary or required Index projection;
-- a dirty affected path without `--skip-git-check`;
-- missing or colliding recovery evidence where Git cannot recover; or
+- unavailable or unsafe recovery-bundle storage (`incomplete`), an unverified
+  bundle, or a bundle collision (`blocked`); or
 - a changed expected source, destination, reference, generated region, ownership
   fact, or category item before application.
 
@@ -549,7 +580,8 @@ when the ID is colliding or the category/leaf shape is otherwise ambiguous.
 - create a receipt, tombstone, journal, saved plan, session, or automatic
   recovery history;
 - create a Git commit; or
-- redefine the shared libraries, parser boundary, physical identity, backup,
+- redefine the shared libraries, parser boundary, physical identity, recovery
+  bundle,
   lock, concurrency, test, Native AOT, or C# source-layout choices accepted by
   the CLI Architecture.
 
@@ -582,9 +614,9 @@ Gate 5 executable proof must cover:
   generated-boundary preservation, and no hidden `index` invocation;
 - one complete plan, no partial category application, exact dry-run parity, no
   persistent dry-run effects, and explicit-subject consent in every mode;
-- affected-path Git checks, the narrow `--skip-git-check` bypass, backup readiness
-  when Git cannot recover, expected-state revalidation, all-effects verification,
-  identity-guarded reverse recovery, residual preservation, and fresh-plan rerun;
+- recovery-bundle storage/readiness and collision handling, expected-state
+  revalidation, all-effects verification, retained partial state without
+  restoration, residual preservation, and fresh-plan rerun;
 - `complete`, reserved `attention`, `incomplete`, `invalid`, `blocked`, `failed`,
   and `interrupted` results, including consumed-source `invalid` repetition;
 - human stream allocation, compact retention, every planned dry-run effect,

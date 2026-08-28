@@ -36,7 +36,7 @@ validated command input
   -> dry-run or application
   -> expected-state revalidation
   -> per-effect and whole-operation verification
-  -> lifecycle publication or reverse guarded recovery
+  -> lifecycle publication and retained-recovery reporting
   -> one typed result
 ```
 
@@ -52,12 +52,12 @@ The resolver:
 1. Accepts direct root `update` with no operand and rejects source, package,
    Framework-group, root-init, remove, reinstall, and generic apply forms.
 2. Resolves shared help/version before workspace or lifecycle work.
-3. Collapses repeated Boolean `--force`, `--prune`, `--automatic`, `--dry-run`,
-   and `--skip-git-check` flags idempotently.
+3. Collapses repeated Boolean `--force`, `--prune`, `--automatic`, and
+   `--dry-run` flags idempotently.
 4. Selects exactly CWD or exactly `--workspace`, with no upward, Git-root,
    nested-root, marker, or nearby-source discovery.
 5. Keeps authority dimensions independent. Force never enables prune; prune never
-   enables force; automatic never enables either; skip-Git never enables either.
+   enables force; automatic never enables either.
 
 Workspace validation establishes lexical and physical containment and exact
 identity. Missing, unavailable, non-directory, escaping, or aliased identity is
@@ -71,8 +71,11 @@ identity, not workspace or runtime implementation evidence.
 
 The operation reads `.agents/open-forge.lifecycle.json`, schema v1, as a common
 envelope with isolated `framework` and `extensions` sections. It validates and
-preserves the unaffected section and common facts. It does not drop opaque
-malformed bytes, normalize unrelated state, or merge ownership. The document
+preserves the unaffected section and common-envelope meaning semantically. A
+selected semantic change emits one deterministic canonical UTF-8 whole-document
+representation; lifecycle formatting, property order, and line endings are not
+preserved, while a semantic no-op writes nothing. An invalid unrelated section
+blocks the write rather than being dropped, normalized, or merged. The document
 stores no plan, runtime history, journal, recovery evidence, or session. Files
 outside this exact path are ordinary workspace content, not lifecycle input.
 
@@ -107,8 +110,8 @@ fail closed on unknown equivalence.
 
 Persist only semantic baseline fingerprints for supported parseable kinds. Do not
 persist a new exact-byte baseline digest. Fresh exact bytes remain required for
-diff, expected-state checks, replacement or deletion, verification, and
-recovery.
+diff, expected-state checks, recovery-bundle payload, existing-target effect
+application, verification, and recovery.
 
 If current and baseline semantic identities are equal but exact bytes differ only
 by parser-proven formatting trivia, report a formatting-only observation and do
@@ -168,7 +171,7 @@ Force starts from the same facts and intended state. It admits only:
 
 Force does not admit retired deletion, unknown or unowned content, ownership or
 route collision, marker repair, containment escape, arbitrary path replacement,
-Git bypass, weaker verification, or weaker recovery. It never turns an absent
+weaker verification, or weaker recovery. It never turns an absent
 or untrusted lifecycle section into trusted management.
 
 Force has no attention merely because replacement was planned. It remains
@@ -185,7 +188,7 @@ Prune admits only a retired path when all of these facts are complete:
 - current physical identity and semantic state are known and safe;
 - no other owner, manager, shared owner, route descendant, or host dependency
   blocks deletion; and
-- affected-path Git and accepted recovery facts pass.
+- recovery-bundle and preservation facts pass.
 
 Prune deletes no current expected path, does not restore a missing path, does not
 infer ownership, and does not clean arbitrary artifacts. Unknown, unowned,
@@ -203,10 +206,10 @@ never deletes or replaces divergent content, and never bypasses safety.
 Dry-run consumes the same complete plan and preflight as application. It reports
 safe changes, force replacements/restorations, prune deletions, preserved facts,
 semantic comparisons, generated projections, lifecycle changes that would be
-published after verification, Git and backup requirements, and diagnostics. It
-writes no payload, generated region, lifecycle section, backup, temporary
+published after verification, recovery-bundle requirements, and diagnostics.
+It writes no payload, generated region, lifecycle section, recovery bundle, temporary
 artifact, or formatter output. It cannot claim application-time revalidation,
-verification, publication, or recovery success. It forms the same pre-effect
+verification, publication, or bundle-handling success. It forms the same pre-effect
 planning status as application but never produces an apply-time `failed` or
 `interrupted` result because it performs no effects. A planning or read failure
 and caller cancellation before effects retain their own event meaning.
@@ -215,35 +218,54 @@ and caller cancellation before effects retain their own event meaning.
 
 Preflight validates all selected target identities, source bytes, semantic
 comparisons, route and generated boundaries, ownership, containment, cross-
-section preservation, expected state, Git policy, backup readiness, and
-verification and recovery conditions. One failed condition blocks the complete
-plan.
-
-Dirty existing affected paths block unless `--skip-git-check` is present. That
-flag bypasses only the cleanliness check and activates accepted adjacent `.bak`
-recovery for an existing-byte replacement or eligible deletion where needed. It
-does not bypass ownership, collision, marker, containment, expected state,
-verification, or recovery readiness. Backups are proven safe before effects and
-retained until complete verification.
+section preservation, expected state, recovery-bundle readiness, and
+verification conditions. One failed condition blocks the complete plan. Before
+the first target effect, one immutable external schema-v1 ZIP
+bundle covers every existing-target effect (`Replace`, `ReplaceGeneratedRegion`,
+or `Delete`) in the complete operation.
+Its source-generated `manifest.json` and streamed ordinal payload
+entries contain command/operation/workspace identity, ordered relative targets,
+change kinds, exact prior bytes/lengths/hashes, payload names, and intended final
+absence or length/hash. `Create` and semantic/byte no-op effects have no entry
+and create no bundle. Preparation uses CreateNew under the exact draft name in
+the LocalApplicationData `OpenForge/recovery/v1` subtree only, closes and reopens
+for semantic manifest, exact ordered entry, length, hash, and payload-byte
+validation, moves within the same directory to the deterministic final name, and
+reopens and verifies it. Only the valid final ZIP forms the opaque
+`RecoveryBundlePreparation`; the draft remains `Incomplete`. Unavailable storage
+is `incomplete` before effects; malformed, mismatched, or colliding final facts
+are `blocked` before effects.
 
 Before the first workspace effect, the implementation obtains the actual OS lock
-for the visible `.agents/open-forge.lock` path defined by the accepted CLI
-Architecture. The file's existence alone is not ownership. An active lock held
-by another process blocks the plan. A crash releases the OS lock; an unlocked
-file is reusable and may be manually removed only when no process is active. The
-lock is not lifecycle authority, history, or recovery evidence.
+for the persistent, reusable `.agents/open-forge.lock` path defined by the
+accepted CLI Architecture. Existing bytes are preserved. It holds a
+`FileShare.None` handle only and never writes metadata, deletes, or truncates the
+lock file. An active handle blocks the plan; the lock is not lifecycle authority,
+history, or recovery evidence.
 
 Application revalidates the complete plan immediately before effects and each
-volatile target immediately before its effect. It applies complete planned bytes
-or bounded deletion effects, verifies each effect and the complete resulting
+volatile target immediately before its effect. The `FileChangeApplier` requires
+the matching verified bundle preparation for every existing-target effect and
+performs one final effect for each target. It applies complete planned bytes or
+bounded deletion effects, verifies each effect and the complete resulting
 Framework projection, then publishes refreshed Framework facts atomically while
-preserving the unrelated lifecycle section.
+preserving the unrelated lifecycle section semantically. A selected lifecycle
+semantic change is source-generated as one deterministic canonical UTF-8
+whole-document representation; formatting, ordering, and line-ending trivia may
+be normalized. A semantic no-op publishes no lifecycle write.
 
-On handled failure, new effects stop and applied effects reverse in reverse order
-only while identity guards match. Concurrent changes are preserved and reported
-as residuals. Recovery failure or an unsafe residual is `failed`; cancellation
-without a stronger failure is `interrupted`. A later request forms fresh facts
-and never replays a saved plan, journal, or operation history.
+After all target effects and final lifecycle verification succeed, the command
+deletes only the positively recognized bundle it created. If deletion fails, the
+effects remain successful and the result is `attention` with the exact bundle
+path and cleanup guidance. Handled application, verification, or cancellation
+failure stops new effects and reports the actual residual draft or final path; a
+valid final remains after preparation. A closed final ZIP may remain after
+abrupt process termination, without an executable crash or power-loss guarantee.
+The foundation never restores a target automatically or derives current target
+state from recovery provenance. Cleanup owns exact named final and draft deletion
+under its separate lease-bound contract.
+A later request forms fresh facts and never replays a saved plan, receipt,
+journal, history, or progress record.
 
 ## Formatter Boundary
 
@@ -257,8 +279,9 @@ equality is an observation, not a lifecycle mutation.
 
 One typed result records exact workspace and source, mode, trust and coverage,
 baseline/current/intended comparisons, safe and authority-selected effects,
-preserved divergence, generated projection, lifecycle publication, Git and
-recovery facts, verification, residuals, status, and at most one next action.
+preserved divergence, generated projection, lifecycle publication,
+recovery-bundle facts, verification, residuals, status, and at most one next
+action.
 Human and JSON renderers consume it once.
 
 Result formation uses `invalid` before operation work; then ordinary precedence
@@ -276,8 +299,10 @@ result on stdout for every status, and bounded diagnostics use stderr.
 Conformance must show:
 
 - exact parser and workspace resolution, shared global behavior, and independent
-  force, prune, automatic, dry-run, and skip-Git dimensions;
-- trusted-state requirement, exact schema-v1 section preservation,
+  force, prune, automatic, and dry-run dimensions;
+- trusted-state requirement, schema-v1 section semantic preservation,
+  deterministic canonical whole-document serialization on selected change, no
+  write on semantic no-op,
   absent/untrusted/unavailable handling, and unsupported or ambiguous schema
   behavior;
 - baseline/current/intended classifications for unchanged, new, changed,
@@ -286,9 +311,10 @@ Conformance must show:
 - normal preservation, force-only current replacement/restoration, prune-only
   retired deletion, and safe force/prune composition;
 - authored-topology generated projection and bounded marker behavior;
-- complete-plan blocking, affected-path Git, backup, expected-state,
-  verification, reverse recovery, residuals, interruption, fresh rerun, and
-  visible OS-lock ownership;
+- complete-plan blocking, one bundle covering each existing replacement or
+  deletion, exact-byte preservation, expected-state verification, success-only
+  bundle removal, failure retention/reporting, residuals, interruption, fresh rerun,
+  and visible OS-lock ownership;
 - dry-run parity without persistent effects;
 - one typed result, seven status meanings, stream assignment, JSON stdout,
   bounded diagnostics, and no more than one required next action; and

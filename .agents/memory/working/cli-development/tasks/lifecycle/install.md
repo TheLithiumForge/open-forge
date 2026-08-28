@@ -16,14 +16,17 @@ open-forge:
 
 Root `install` places the accepted Framework payload into one selected workspace,
 preserves user content, records exact Framework lifecycle identity, refreshes
-generated navigation, and provides verified recovery.
+generated navigation, and provides one verified external recovery bundle covering
+every existing target it replaces or deletes.
 
 ## Architecture
 
 - Observe workspace, existing Framework and legacy-ordinary content, collisions,
-  Git, generated navigation, and lifecycle state before planning.
+  generated navigation, and lifecycle state before planning. The replacement CLI
+  does not inspect or report repository state.
 - `InstallPlan` contains exact managed files/regions, bridge behavior, generated
-  projections, lifecycle write, Git/recovery prerequisites, and effect order.
+  projections, lifecycle write, external recovery-bundle readiness, and effect
+  order.
 - Use embedded canonical payload assets generated deterministically at build time.
   Runtime never reads repository source paths.
 - Keep install policy and managed-file ownership local; share payload identity and
@@ -33,9 +36,9 @@ generated navigation, and provides verified recovery.
 
 Cover empty/existing workspace, source and dogfood payload parity, user text
 preservation, canonical and bridge files, collisions, old-format files left
-ordinary, dry run, lock race, Git states, partial failure/recovery, generated
-navigation, lifecycle exactness, second-run behavior, process, packed-layout, and
-AOT.
+ordinary, dry run, lock race, bundle preparation and retention on partial
+failure/cancellation, generated navigation, lifecycle exactness, second-run
+behavior, process, packed-layout, and AOT.
 
 ## Stop Conditions
 

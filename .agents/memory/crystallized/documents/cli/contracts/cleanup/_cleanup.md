@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Route the accepted non-shipping root cleanup contracts for recognized Open Forge transient and recovery artifacts
-  responsibility: Route cleanup's public Interface and technology-neutral Behavior without adding artifact or implementation detail
+  description: Route the accepted non-shipping root cleanup contracts for lease-validated recovery-bundle and draft deletion
+  responsibility: Route cleanup's public Interface and technology-neutral Behavior without adding bundle policy or another activity mechanism
   tags: [Memory, Crystallized, CLI, Release, Command, Contract, Cleanup, Mutation, Recovery, Safety, CurrentTruth]
 ---
 
@@ -19,8 +19,8 @@ selection surface, or a Technical Design.
 This is the accepted current Crystallized contract set for the non-shipping root
 `cleanup` operation. The local Interface Contract defines what a caller may
 enter and observe. The local Behavior Contract defines deterministic catalogue
-formation, deletion, safety, recovery, and conformance. The new CLI does not
-ship yet; implementation and executable proof remain pending Gate 5.
+formation, deletion, safety, recovery-bundle handling, and conformance. The new
+CLI does not ship yet; implementation and executable proof remain pending Gate 5.
 
 ## Contract Roles
 
@@ -48,5 +48,5 @@ public and technology-neutral meanings.
 
 <!-- open-forge:generated-index:start -->
 - [Accepted technology-neutral catalogue, deletion, safety, monotonic recovery, and conformance for cleanup](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Cleanup #Behavior #Mutation #Recovery #Safety #Determinism #CurrentTruth
-- [Accepted non-shipping public interface for operand-free cleanup of recognized Open Forge transient and recovery artifacts](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Cleanup #Interface #Mutation #Recovery #Safety #CurrentTruth
+- [Accepted non-shipping public interface for operand-free, lease-validated cleanup of recognized recovery bundles and drafts](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Cleanup #Interface #Mutation #Recovery #Safety #CurrentTruth
 <!-- open-forge:generated-index:end -->

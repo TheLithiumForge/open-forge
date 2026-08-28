@@ -34,9 +34,17 @@ treats `--path` as a catalogue destination, not a source or workspace.
 
 The lifecycle document has a common envelope and isolated `framework` and
 `extensions` sections. An Extension operation changes only `extensions` and
-preserves the unrelated section and envelope bytes and meaning. It stores no
-plan, runtime history, journal, recovery evidence, or session. Files outside
-this exact document are ordinary workspace content, not lifecycle input.
+preserves the unrelated section and envelope meaning semantically. A selected
+semantic change emits one deterministic canonical UTF-8 whole-document
+representation, so lifecycle property order, whitespace, and line endings may
+be normalized. A semantic no-op writes nothing. For Extension install, update,
+and remove effects, prior bytes are retained only in the verified external
+recovery bundle defined by the shared CLI Architecture; the CLI does not inspect
+or report repository state or claim history evidence. Standalone Extension Create is
+the explicit create-only exception: it has no Replace/Delete, no recovery
+bundle, and no workspace lease. The lifecycle document stores no plan, runtime
+history, journal, recovery evidence, or session. Files outside this exact
+document are ordinary workspace content, not lifecycle input.
 
 The CLI distribution embeds Framework and first-party Extension assets with
 deterministic inventory and hash proof. That proof identifies distributed source

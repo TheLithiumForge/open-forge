@@ -38,7 +38,7 @@ an external package or catalogue source.
 ## Syntax
 
 ```text
-open-forge extension create [<stable-id>] [--path <catalogue-path>] [--automatic] [--dry-run] [--skip-git-check] [global flags]
+open-forge extension create [<stable-id>] [--path <catalogue-path>] [--automatic] [--dry-run] [global flags]
 ```
 
 The human wizard can obtain the stable ID and destination catalogue parent from
@@ -111,7 +111,7 @@ The package remains a separate authored source location.
 
 Human output leads with the exact catalogue and package destination, stable ID,
 scaffold files, dry-run/application mode, workspace-lifecycle unchanged fact,
-Git and recovery facts, status, and at most one next action. JSON emits one
+verification facts, status, and at most one next action. JSON emits one
 complete typed result from the same result as human output.
 
 Illustrative output:
@@ -135,11 +135,11 @@ stderr. JSON uses one result on stdout for every status.
 | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `complete`    | The scaffold was completely applied or previewed, or the exact intended scaffold is already present as a verified no-op.                           |
 | `attention`   | No current finite create attention condition is accepted. This status remains in the shared vocabulary but is not reached by the current contract. |
-| `incomplete`  | Safe catalogue, path, parser, or recovery coverage is unavailable. No scaffold write occurs.                                                       |
+| `incomplete`  | Safe catalogue, path, parser, or filesystem coverage is unavailable. No scaffold write occurs.                                                       |
 | `invalid`     | Required ID/path input, value, repetition, operand, or terminal-mode combination is invalid.                                                       |
-| `blocked`     | Catalogue shape, package destination, identity, containment, ownership, Git, backup, or recovery boundary is unsafe or colliding.                  |
-| `failed`      | Scaffold application, verification, or handled recovery fails unexpectedly.                                                                        |
-| `interrupted` | The caller interrupts before completion and no stronger recovery failure remains.                                                                  |
+| `blocked`     | Catalogue shape, package destination, identity, containment, ownership, or exact create-only collision boundary is unsafe or colliding.           |
+| `failed`      | Scaffold application or verification fails unexpectedly.                                                                                            |
+| `interrupted` | The caller interrupts before completion and no stronger failure remains.                                                                              |
 
 ## Errors And Examples
 
@@ -181,10 +181,10 @@ no-op and the absence of `.agents/open-forge.lock` acquisition, scaffold-only
 effects, an absent destination, an exact-scaffold no-op, and divergent, partial,
 additional, unknown, or colliding occupants blocking. It must also cover exact
 catalogue and destination physical identity, expected-state revalidation
-immediately before effects, affected-path Git where applicable, complete
-staging, recovery, and collision guards, dry-run parity, Git and backup
-recovery, all seven statuses and streams, JSON parity, and no workspace
-lifecycle effect. The shared CLI Architecture defines the exact JSON result
+immediately before effects, the separate create-only path with no Replace/Delete,
+no recovery bundle and no workspace lease, dry-run parity, all seven statuses
+and streams, JSON parity, and no workspace lifecycle effect. The shared CLI
+Architecture defines the exact JSON result
 schema and exit mapping. Gate 5 must prove source-generated serialization,
 fixed Markdig where used, real `System.IO`, Native AOT, isolated tests, and
 package journeys.

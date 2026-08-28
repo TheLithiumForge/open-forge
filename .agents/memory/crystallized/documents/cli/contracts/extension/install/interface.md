@@ -25,9 +25,15 @@ the runtime meaning of installed files.
 The only new-CLI lifecycle document is `.agents/open-forge.lifecycle.json`, schema
 v1. It has a common envelope and isolated `framework` and `extensions` sections.
 Install changes only `extensions` and preserves the unrelated `framework` section
-and common-envelope bytes and meaning. The document stores no plan, runtime
-history, journal, recovery evidence, or session. Files outside this exact path are
-ordinary workspace content, not lifecycle input.
+and common-envelope meaning. When selected lifecycle meaning changes, the writer
+emits one deterministic canonical UTF-8 whole-document representation; lifecycle
+property order, whitespace, and line endings are not preserved. A semantic
+no-op writes nothing. Prior bytes for every existing-target effect (`Replace`,
+`ReplaceGeneratedRegion`, or `Delete`) are retained only in the verified external
+recovery bundle described by the shared Architecture; the CLI does not inspect
+or report repository state or claim history evidence.
+The document stores no plan, runtime history, journal, recovery evidence, or session.
+Files outside this exact path are ordinary workspace content, not lifecycle input.
 
 The shared CLI Architecture defines the exact package serialization, structured
 JSON result schema, and numeric exit mapping. This Interface uses those shared
@@ -53,7 +59,7 @@ It never removes or rewrites the package source.
 ## Syntax
 
 ```text
-open-forge extension install [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--automatic] [--dry-run] [--skip-git-check] [global flags]
+open-forge extension install [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--automatic] [--dry-run] [global flags]
 ```
 
 IDs are positional primary subjects. The selected source and complete dependency
@@ -91,12 +97,12 @@ relationships, and cross-section preservation facts. A missing or unsafe anchor
 or route-host boundary is `incomplete` or `blocked`, and no managed mutation
 occurs.
 
-Before a workspace effect, the implementation must hold the actual OS lock for
-the visible `.agents/open-forge.lock` path defined by the accepted CLI
-Architecture. File existence is not lock ownership. A crash releases the OS
-lock; an unlocked file is reusable and may be manually removed only when no
-process is active. The lock is concurrency safety, not lifecycle authority or
-history, and another process holding it blocks mutation.
+Before a workspace effect, the implementation must hold the persistent reusable
+`.agents/open-forge.lock` path defined by the accepted CLI Architecture.
+Existing bytes are preserved. It holds a `FileShare.None` handle only and never
+writes metadata, deletes, or truncates the lock file. Another process holding
+the handle blocks mutation; the lock is concurrency safety, not lifecycle
+authority, recovery evidence, or history.
 
 ## Source Universe
 
@@ -137,13 +143,12 @@ request before writes.
 | `--force`          | Eligible initial-occupant replacement authority                               | Boolean and idempotent. It never updates managed divergence or adopts old bytes.                                                                    |
 | `--automatic`      | Guided-input policy                                                           | Boolean and idempotent. It suppresses interaction but never chooses among packages, broadens to `--all`, or adds force, prune, adoption, or bypass. |
 | `--dry-run`        | Preview policy                                                                | Boolean and idempotent. It shares the application plan and writes nothing.                                                                          |
-| `--skip-git-check` | Affected-path cleanliness exception                                           | Boolean and idempotent. It bypasses only Git cleanliness and requires accepted backup recovery where needed.                                        |
 
 ### Initial force
 
 Normal install may write an absent package footprint only when every target is
-safely absent and ownership, route, containment, marker, source, Git, and
-recovery facts are complete. An exact current source destination already
+safely absent and ownership, route, containment, marker, source, and recovery
+facts are complete. An exact current source destination already
 occupied before management is an eligible initial occupant only when no trusted
 owner or competing manager, route collision, marker ambiguity, containment risk,
 or recovery collision exists.
@@ -178,10 +183,15 @@ adoption, ownership, or safety bypass.
 The physical lifecycle document is `.agents/open-forge.lifecycle.json`, schema v1,
 with separate `framework` and `extensions` sections. Install writes only the
 `extensions` section after complete verification and preserves the common
-envelope and unrelated `framework` section bytes and meaning exactly. An absent
-document or section is not, by itself, proof of unmanaged state. Unsupported or
-ambiguous schema facts are `incomplete` or `blocked` under the existing safety
-rules.
+envelope and unrelated `framework` section meaning semantically. A selected
+semantic change emits one deterministic canonical UTF-8 whole-document
+representation, so lifecycle property order, whitespace, and line endings are
+not preserved. A semantic no-op writes nothing. Prior bytes for existing replaced
+or deleted targets are retained only in the verified external recovery bundle
+described below; the CLI does not inspect or report repository state or claim
+history evidence. An absent document or section is not, by itself,
+proof of unmanaged state. Unsupported or ambiguous schema facts are `incomplete`
+or `blocked` under the existing safety rules.
 
 Managed package identity is stable ID plus exact source, dependency, target-
 relative path, owner, and semantic baseline facts. Manual copying, idless
@@ -198,7 +208,7 @@ The plan projects affected generated `Entries` from intended authored topology
 and metadata using current Index rules. Generated interiors are derived
 navigation, not package-owned authored bytes. A missing, duplicate, reversed,
 nested, or ambiguous boundary blocks; force does not repair it. Extension payloads
-cannot target the lifecycle document, `.git`, recovery artifacts,
+cannot target the lifecycle document, repository metadata, recovery bundles or drafts,
 workspace overwrite companions, Framework blocks, or another manager's paths.
 
 ## Semantic Fingerprints
@@ -218,6 +228,43 @@ Formatting-only equal semantic identity is not managed divergence. The CLI does
 not execute a formatter or persist formatter state; it may give conservative
 advice only.
 
+## Recovery Boundary
+
+Before any existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or
+`Delete`), install uses only
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.Create)` and its application-owned
+`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
+`HOME`, or custom-platform fallback; unavailable storage is a pre-effect
+`incomplete` result. The operation prepares exactly one immutable ZIP bundle
+outside the workspace under a deterministic normalized
+physical workspace path key and operation ID when it contains one or more
+existing-target effects (`Replace`, `ReplaceGeneratedRegion`, or `Delete`). An
+operation containing only Create effects or
+no-ops creates no bundle. Its source-generated
+schema-v1 `manifest.json` and streamed ordinal payload entries record
+command/operation/workspace identity, ordered relative targets, change kinds,
+exact prior bytes/lengths/hashes, and intended final absence or length/hash.
+`Create` and semantic/byte no-op effects have no entry. A CreateNew draft is
+closed and reopened for semantic manifest, exact ordered entry, length, hash,
+and payload-byte validation, moved within the same directory to its deterministic
+final name, and reopened and verified. Only the valid final ZIP forms the opaque
+`RecoveryBundlePreparation`; the draft remains `Incomplete`.
+`FileChangeApplier` requires that preparation for every existing-target effect and
+performs one final effect per target;
+all preparation completes before the first target effect.
+
+After final verification, delete only the positively recognized bundle created
+by this operation. If deletion fails, effects remain successful and the result
+is `attention` with the exact residual path and cleanup guidance. Handled
+failure or cancellation reports the actual residual draft or final path; a
+valid final remains after preparation. A closed final ZIP may remain after
+abrupt process termination, without an executable crash or power-loss guarantee.
+No target is restored automatically, no current target state is derived from
+recovery provenance, and no journal, progress receipt, history, or replayable
+plan is saved. Cleanup owns exact named final and draft deletion under its
+separate lease-bound contract.
+
 ## Output And Results
 
 Human output reports exact workspace and source, selected roots and dependency
@@ -233,9 +280,9 @@ status.
 | `attention`   | Complete safe coverage preserves a finite lifecycle observation that install does not resolve, such as a non-selected safe fact; managed divergence itself is `blocked` and directs to update.                       |
 | `incomplete`  | Safe source, Framework-anchor, lifecycle, dependency, parser, route, or recovery coverage is unavailable. No write occurs.                                                                                           |
 | `invalid`     | IDs, source, `--all`, flags, operands, repetition, or terminal-mode input is invalid.                                                                                                                                |
-| `blocked`     | Unsafe, ambiguous, colliding, untrusted, dirty, unauthorized, retained, ownership, route, marker, or containment facts prevent one plan.                                                                             |
-| `failed`      | Application, lifecycle publication, verification, or handled recovery fails unexpectedly.                                                                                                                            |
-| `interrupted` | The caller interrupts before completion and no stronger recovery failure remains.                                                                                                                                    |
+| `blocked`     | Unsafe, ambiguous, colliding, untrusted, unauthorized, retained, ownership, route, marker, or containment facts prevent one plan.                                                                                |
+| `failed`      | Application, lifecycle publication, verification, or bundle handling fails unexpectedly after effects begin.                                                                                                         |
+| `interrupted` | The caller interrupts before completion and no unexpected application or verification failure remains.                                                                                                               |
 
 Primary human complete/attention/incomplete results go to stdout. Primary human
 invalid/blocked/failed/interrupted results go to stderr. Bounded diagnostics use
@@ -282,7 +329,8 @@ single-package inference, dependency-first closure and failures, Framework-ancho
 and route-host prerequisites, absent/no-op/divergent/initial-force states,
 automatic and wizard/direct behavior, trusted/untrusted/absent handling, shared owners,
 semantic fingerprints, generated navigation, reserved paths, complete planning,
-Git/backup/recovery, dry-run parity, seven statuses/streams, JSON, no mutation of
+external recovery-bundle storage and verification, cleanup attention, dry-run parity,
+seven statuses/streams, JSON, no mutation of
 sources, and no runtime or shipping claim. The shared CLI Architecture defines
 the exact JSON result schema and exit mapping. Gate 5 must prove source-generated
 serialization, fixed Markdig where used, real `System.IO`, Native AOT, OS

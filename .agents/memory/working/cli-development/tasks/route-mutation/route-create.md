@@ -23,7 +23,9 @@ a scope, copying route categories, or taking subtree lifecycle ownership.
 - Keep one concrete `RouteCreatePlan` with target identity, expected parent,
   intended bytes, generated-navigation change, and preconditions.
 - Use shared route-segment validation, source identity, parent topology, Template
-  reading, lock, atomic apply, verification, and recovery primitives.
+  reading, lock, atomic apply, verification, and external recovery-bundle
+  primitives. Prepare one verified bundle covering every existing Replace/Delete
+  before the first target effect; Create and no-op plans create none.
 - Keep Template choice, content formation, collision policy, result, and rendering
   local.
 
@@ -31,8 +33,9 @@ a scope, copying route categories, or taking subtree lifecycle ownership.
 
 Cover valid Unicode/case segments, invalid/reserved segments, missing or ambiguous
 parent, existing target, physical alias, Template absent/valid/malformed, dry run,
-lock race, generated navigation, exact bytes, idempotent refusal, failure/recovery,
-no unrelated changes, streams, exits, and AOT.
+lock race, generated navigation, exact bytes, idempotent refusal,
+bundle-preparation failure/retention, no unrelated changes, streams, exits, and
+AOT.
 
 ## Stop Conditions
 

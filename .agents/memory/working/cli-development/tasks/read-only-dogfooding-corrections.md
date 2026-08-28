@@ -8,9 +8,9 @@ open-forge:
 
 ## Task State
 
-- State: Complete on local feature candidate `deb3f14` from exact clean
-  integrated baseline `b6ce31f`; local squash integration remains a separate
-  Overseer gate.
+- State: Complete. Accepted feature tip `3b0592d` from exact clean baseline
+  `b6ce31f` is squash-integrated into local `develop` at `bba84b6`; the two
+  trees are exactly equal.
 - Responsible role: Overseer acting directly and sequentially.
 - Parent: [Complete The Replacement CLI](00-cli-development.md).
 - Task source: Maintainer direction and accepted findings `CLI-EDGE-011`,
@@ -129,8 +129,7 @@ execution have focused regressions.
 - Stop conditions: new public-contract choice, new parser/classifier, dependency
   or project change, mutation/lifecycle change, repository-content migration,
   network requirement, remote action, or push.
-- Next action: squash-integrate the accepted local candidate when authorized,
-  then resume Mutation Foundation at its persisted lifecycle-schema decision.
+- Next action: consume integrated baseline `bba84b6` from Mutation Foundation.
 
 ## Progress And Evidence
 
@@ -168,6 +167,10 @@ execution have focused regressions.
   configuration, JSON, diagnostics, mutation, lifecycle, repository authored
   content, and remotes did not change.
 - Blockers: None.
+- Integration evidence: local squash `bba84b6` has tree
+  `51a9941accad4b098c8ace7eba04e7add156d927`, exactly equal to accepted
+  feature tip `3b0592d`. The integration worktree is clean and no remote action
+  or push occurred.
 - Residual risk: local squash integration is intentionally not claimed. The
   preserved `CLI-EDGE-013` Doctor dependency and `CLI-EDGE-014` repository
   metadata migration evidence remain open for their recorded owners.

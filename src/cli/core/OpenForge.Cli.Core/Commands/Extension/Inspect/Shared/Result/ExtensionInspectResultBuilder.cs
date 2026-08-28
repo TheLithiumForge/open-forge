@@ -310,7 +310,7 @@ internal sealed partial class ExtensionInspectResultBuilder(ExtensionInspectComp
             },
             Lifecycle = new ExtensionInspectLifecycle
             {
-                DocumentPath = LifecycleDocumentReader.RelativePath,
+                DocumentPath = LifecycleSchema.RelativePath,
                 ReadState = ExtensionInspectLifecycleReadState.NotStarted,
                 Trust = ExtensionInspectLifecycleTrust.NotStarted,
                 Coverage = ExtensionInspectCoverageState.NotStarted,
@@ -471,7 +471,7 @@ internal sealed partial class ExtensionInspectResultBuilder(ExtensionInspectComp
     private static ExtensionInspectLifecycle ReadLifecycle(LifecycleReadResult lifecycle)
         => new()
         {
-            DocumentPath = LifecycleDocumentReader.RelativePath,
+            DocumentPath = LifecycleSchema.RelativePath,
             ReadState = ReadLifecycleState(lifecycle),
             Trust = ReadLifecycleTrust(lifecycle.Trust),
             Coverage = ReadCoverage(lifecycle.Coverage),
@@ -644,7 +644,7 @@ internal sealed partial class ExtensionInspectResultBuilder(ExtensionInspectComp
             AddFinding(findings, new ExtensionInspectFindingInput
             {
                 Code = ExtensionInspectFindingCode.Interrupted,
-                Subject = LifecycleDocumentReader.RelativePath,
+                Subject = LifecycleSchema.RelativePath,
                 Cause = lifecycle.Cause ?? "Lifecycle inspection was interrupted.",
             });
         }
@@ -653,7 +653,7 @@ internal sealed partial class ExtensionInspectResultBuilder(ExtensionInspectComp
             AddFinding(findings, new ExtensionInspectFindingInput
             {
                 Code = ExtensionInspectFindingCode.LifecycleBlocked,
-                Subject = LifecycleDocumentReader.RelativePath,
+                Subject = LifecycleSchema.RelativePath,
                 Cause = lifecycle.Cause ?? "Extension lifecycle evidence is blocked.",
             });
         }
@@ -662,7 +662,7 @@ internal sealed partial class ExtensionInspectResultBuilder(ExtensionInspectComp
             AddFinding(findings, new ExtensionInspectFindingInput
             {
                 Code = ExtensionInspectFindingCode.LifecycleUnavailable,
-                Subject = LifecycleDocumentReader.RelativePath,
+                Subject = LifecycleSchema.RelativePath,
                 Cause = lifecycle.Cause ?? "Extension lifecycle evidence is unavailable.",
             });
         }
@@ -671,7 +671,7 @@ internal sealed partial class ExtensionInspectResultBuilder(ExtensionInspectComp
             AddFinding(findings, new ExtensionInspectFindingInput
             {
                 Code = ExtensionInspectFindingCode.LifecycleInvalid,
-                Subject = LifecycleDocumentReader.RelativePath,
+                Subject = LifecycleSchema.RelativePath,
                 Cause = lifecycle.Cause ?? "Extension lifecycle evidence is invalid.",
             });
         }

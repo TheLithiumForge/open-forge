@@ -6,5 +6,7 @@ namespace OpenForge.Cli.Core.Framework.Lifecycle.Serialization;
 [JsonSourceGenerationOptions(
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
     GenerationMode = JsonSourceGenerationMode.Metadata)]
-[JsonSerializable(typeof(LifecycleDocumentV1))]
+[JsonSerializable(typeof(LifecycleEnvelopeV1))]
+[JsonSerializable(typeof(FrameworkLifecycleState))]
+[JsonSerializable(typeof(ExtensionLifecycleState))]
 internal sealed partial class LifecycleJsonContext : JsonSerializerContext;

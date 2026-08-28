@@ -74,8 +74,7 @@ route resolution:
   value equals the first occurrence.
 - `--tag` occurrences remain one ordered multi-value list. Empty values, exact
   duplicates, and invalid tag syntax remain invalid.
-- Repeated `--dry-run` and `--skip-git-check` occurrences collapse to one
-  idempotent Boolean choice.
+- Repeated `--dry-run` occurrences collapse to one idempotent Boolean choice.
 
 Shared global flags retain the repetition, ordering, composition, and terminal
 rules of their shared contract. No command-specific value uses precedence or
@@ -187,7 +186,7 @@ The complete current-fact set for one plan includes:
   and direct routed children that the intended topology may expose.
 - The metadata required to represent every existing direct child in each planned
   generated region.
-- The expected current source and destination facts needed for Git, collision,
+- The expected current source and destination facts needed for collision,
   revalidation, application, and recovery.
 
 Selection and projection do not treat current generated lines as an independent
@@ -226,14 +225,14 @@ The generated projection then includes, when applicable:
 
 Use the complete [Index Behavior Contract](../../index-candidate/behavior.md) projection for generated
 line shape, destination containment, ordering, marker ownership, and the
-verification and recovery relationship. The route-init operation owns the
+verification and retained-bundle relationship. The route-init operation owns the
 complete intended topology and its combined result; it does not start a hidden
 public `index` command or perform a second independent projection.
 
 Classify the complete intended state as changed or unchanged from current bytes.
 An unchanged complete chain is a verified no-op with no mutation path. A changed
 chain produces one typed result after dry-run preflight, application and final
-verification, or recovery. The semantic conditions for `complete`, `attention`,
+verification, or retained partial-state reporting. The semantic conditions for `complete`, `attention`,
 `incomplete`, `invalid`, `blocked`, `failed`, and `interrupted` are exactly those
 in the [Interface Contract](interface.md#semantic-results); this Behavior
 Contract does not add another result or choose numeric exits. A complete plan
@@ -260,7 +259,7 @@ validated route target and metadata
   -> complete ordered mutation plan
   -> preflight
   -> dry-run or application
-  -> verification or recovery
+  -> verification and retained partial-state reporting
   -> one typed result
 ```
 
@@ -274,9 +273,10 @@ the required inspection or planning coverage form `incomplete` and also prevent
 all effects. There is no partial or best-effort application.
 
 Limit directory creation to directories in the intended route chain. Do not
-remove, rename, claim, or format existing user content. A directory created by
-this operation may be removed during handled recovery only if it is still empty
-and the operation created it.
+remove, rename, claim, or format existing user content. After an effect begins,
+the operation never removes or otherwise compensates for a directory it created.
+If a later effect fails, that directory remains and is reported as residual
+state.
 
 Generated-navigation effects are part of this same parent plan. They use the
 complete [Index Behavior Contract](../../index-candidate/behavior.md) projection, ordering, generated
@@ -289,7 +289,7 @@ under that contract. The operation never invokes a hidden `index` subprocess.
 Dry-run and application use the same normalized request, current route and
 compatibility facts, intended entrypoint state and scaffold bytes, intended
 topology, generated projection, ordered plan, expected-state facts, preflight,
-and semantic status conditions. Dry-run stops before backup creation, directory
+and semantic status conditions. Dry-run stops before recovery-bundle creation, directory
 or file creation, replacement, formatting, or any other persistent effect. Its
 human and structured result exposes every new directory, new entrypoint,
 generated-navigation effect, and exact bounded existing-file change required for
@@ -305,9 +305,9 @@ only. Application does not prompt and does not accept `--yes`.
 
 Before the first effect, preflight checks every planned new-path collision,
 planned existing path, route relationship, metadata fact, generated boundary,
-containment fact, and expected-state condition required by the Interface
-Contract. A verified no-op has no affected mutation path and therefore does not
-need a Git cleanliness check.
+containment fact, expected-state condition, and recovery-bundle condition
+required by the Interface Contract. A verified no-op has no affected mutation
+path and therefore does not need a bundle.
 
 After preflight, the same finite attention rule applies to both modes: a dry-run
 with any new entrypoint with exact `NeedsAuthoring` in its intended tags forms
@@ -317,20 +317,29 @@ exact marker remains `complete` when no other status condition applies.
 
 ## Safety And Recovery
 
-### Git boundary
+### Recovery-bundle boundary
 
-For an actual mutation, check Git cleanliness only for planned existing paths.
-Dirty planned existing paths block by default. `--skip-git-check` bypasses only
-that relevant-path cleanliness check. It does not bypass route ambiguity,
-existing-target rules, metadata validation, containment, generated-boundary
-ownership, expected-state revalidation, verification, or recovery.
-
-Gitless application and application with `--skip-git-check` use adjacent backups
-for planned replacements under the accepted recovery policy. New files never
-overwrite existing paths and need no old-byte backup. The CLI Architecture
-defines backup identity and collision handling. Remove an adjacent backup
-only after complete operation verification. An interrupted or incompletely
-recovered operation retains and reports every backup still needed for recovery.
+The command does not inspect or report repository state. When the plan contains
+an existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or `Delete`),
+orchestration uses only
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.Create)` and its application-owned
+`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
+`HOME`, or custom-platform fallback; unavailable storage is a pre-effect
+`incomplete` result. It prepares exactly one immutable ZIP bundle outside
+the workspace. An operation containing only
+Create effects or no-ops creates no bundle. Its source-generated
+schema-v1 `manifest.json` and streamed ordinal payload entries record
+command/operation/workspace identity, ordered relative targets, change kinds,
+exact prior bytes/lengths/hashes, and intended final absence or length/hash.
+Create effects have no payload entry. A CreateNew draft is closed and reopened
+for semantic manifest, exact ordered entry, length, hash, and payload-byte
+validation, moved within the same directory to its deterministic final name,
+and reopened and verified. Only the valid final ZIP forms the opaque
+`RecoveryBundlePreparation`; the draft remains `Incomplete`. Every planned
+existing-target effect must match the preparation; `FileChangeApplier` performs
+one final effect per target. All preparation completes before the first target
+effect; unknown, malformed, mismatched, or colliding bundles block.
 
 ### Revalidation and bounded writes
 
@@ -350,34 +359,39 @@ successful initialization.
 
 ### Recovery and concurrency
 
-When application or verification fails, stop new effects and reverse applied
-effects in reverse order. Recovery removes a newly created file only while it
-still matches the operation's applied identity. It changes an existing target
-only while that target still matches the applied identity, and it never
-overwrites an unexpected concurrent edit. A concurrent edit that prevents safe
-recovery remains preserved and is reported as residual state.
+When application or verification fails, stop new effects; do not restore, reverse,
+or compensate for an earlier effect. A concurrent edit remains preserved and is
+reported as residual state.
 
-Recovery removes a newly created directory only when this operation created it
-and it remains empty. Retain and report any backup or residual target still
-needed for recovery. A rerun computes a fresh plan from current facts; it does
-not replay a saved plan. When the remaining state is safe, a rerun converges on
-the intended route state and then reports a verified no-op.
+After final verification, delete only the positively recognized bundle created
+by this operation. If deletion fails, effects remain
+successful and the result is `attention` with the exact residual path and
+cleanup guidance. Handled failure or cancellation reports the actual residual
+draft or final path; a valid final remains after preparation. A closed final ZIP
+may remain after abrupt process termination, without an executable crash or
+power-loss guarantee. Recovery provenance does not classify current target
+state. Cleanup owns exact named final and draft deletion under its separate
+lease-bound contract. A rerun computes a fresh plan from
+current facts and never replays a saved plan, receipt, journal, history, or
+progress record. When the remaining state is safe, it converges on the intended
+route state and reports a verified no-op.
 
-An unexpected application, post-write verification, or recovery failure remains
-`failed`, even when handled rollback succeeds. Caller cancellation or interruption
-is `interrupted` only when no residual recovery failure remains; residual
-recovery failure is `failed`. An `incomplete` or `blocked` result never begins a
-write.
+An unexpected application or post-write verification failure remains `failed`.
+Caller cancellation or interruption is `interrupted` only when no stronger
+failure remains. An `incomplete` or `blocked` result never begins a write.
 
 Expected-state revalidation and preservation of unexpected concurrent edits are
-current safety meaning. The workspace lock at `.agents/open-forge.lock`,
-BCL-first filesystem boundary, and accepted recovery identity model are defined
-by the CLI Architecture; they are not public command flags.
+current safety meaning. The persistent reusable workspace lock at
+`.agents/open-forge.lock` preserves existing bytes and is held with a
+`FileShare.None` handle only; it never receives metadata writes, deletion, or
+truncation. The BCL-first filesystem boundary and recovery-bundle identity model
+are defined by the CLI Architecture; they are not public command flags.
 
 ## Presentation Relationship
 
 Form one typed result after request validation, incomplete or blocked planning,
-dry-run preflight, application verification, or recovery. Human and structured renderers
+dry-run preflight, application verification, or retained partial-state reporting.
+Human and structured renderers
 consume that result and do not rerun planning, application, verification, or
 semantic interpretation.
 
@@ -433,15 +447,16 @@ in addition to the public checks in [Interface Verification](interface.md#verifi
   attention from planned changes alone or unchanged existing marker content.
 - Complete status when every new entrypoint has complete intended metadata and
   no exact `NeedsAuthoring` marker.
-- Verified no-op formation before Git mutation checks.
-- Clean Git, dirty planned paths, Gitless application, bypassed Git checks,
-  backup readiness and collisions, and backup cleanup only after verification.
+- Verified no-op formation before recovery-bundle preparation.
+- External bundle storage, semantic final-ZIP verification, collision handling,
+  cleanup attention, and exact named lease-bound Cleanup.
 - Expected-state changes before and during application, safe creation and
-  replacement, final route-projection verification, reverse recovery, residual
-  preservation, unexpected concurrent edits, and rerun convergence.
+  replacement, final route-projection verification, retained partial state
+  without restoration, residual preservation, unexpected concurrent edits, and
+  rerun convergence.
 - Seven semantic results, including safe `incomplete` with no write, blocked
   unsafe or ambiguous authority or safety, and failed application,
-  post-write-verification, or recovery failures.
+  post-write-verification, or bundle-handling failures.
 - Compact retention of workspace and target identity, application or preview,
   status, completeness, safety, created and unchanged paths, generated effects,
   draft paths, and at most one required `Next:` line.
@@ -451,7 +466,7 @@ in addition to the public checks in [Interface Verification](interface.md#verifi
 
 The CLI Architecture defines exact structured schemas and JSON compatibility,
 process-status mapping, parser and serialization, filesystem and identity
-implementation, backup identity, concurrency mechanics, and source boundaries.
+implementation, recovery-bundle identity, concurrency mechanics, and source boundaries.
 Gate 5 executable proof must cover those decisions without weakening the
 accepted repetition, status, stream, attention, dry-run, compact, safety, or
 recovery requirements.

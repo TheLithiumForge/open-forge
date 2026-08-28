@@ -45,7 +45,7 @@ The operation always uses these six diagnostic domains, in this order:
 | Order | Domain                                                   | Boundary                                                                                                                                                                                   |
 | ----- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 1     | `workspace and entry`                                    | Establish the selected workspace, `.agents` boundary, Loader, entrypoints, source identity, parsing, and reachable roots.                                                                  |
-| 2     | `recovery and residual state`                            | Inspect recognized backups, temporary files, residual effects, prior-operation evidence, and Git or Gitless recovery facts.                                                                |
+| 2     | `recovery and residual state`                            | Report exact named external final bundles and incomplete drafts, with one semantic final-ZIP integrity check and Cleanup guidance.                                                          |
 | 3     | `routes, metadata, overwrites, and generated navigation` | Compare authored topology and metadata with derived route relationships and generated `Entries`.                                                                                           |
 | 4     | `local references`                                       | Inspect supported authored local references, target and fragment resolution, containment, and bounded repair evidence.                                                                     |
 | 5     | `Framework lifecycle`                                    | Diagnose the installed or absent Framework payload, isolated Framework lifecycle section, managed files and regions, trust, ownership boundaries, and recovery evidence.                   |
@@ -186,7 +186,7 @@ Each finding reports all of the following concepts:
 - A domain-qualified stable kind from the finite catalogue below.
 - Severity independent of coverage, semantic status, and resolution.
 - A typed subject, such as the workspace, a path, route, generated region,
-  source occurrence, target, recovery artifact, managed file, Extension ID, or
+  source occurrence, target, recovery bundle or draft, managed file, Extension ID, or
   dependency.
 - Typed observed evidence, including the relevant authored value, current
   identity, location, expected relationship, or unavailable fact.
@@ -254,19 +254,38 @@ represented as an informational finding where that distinction helps the user.
 
 ### Recovery And Residual State
 
-| Kind                              | Detectable condition                                                                                                                                                  | Resolution or next action                                                                                                                                                       |
-| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `recovery.backup-recognized`      | A recognized backup is present beside a known Open Forge target; unresolved identity or state leaves recovery coverage `incomplete` or `blocked`.                     | `informational`; report it, and let the separate [cleanup operation](../cleanup/interface.md) own eligible deletion.                                                            |
-| `recovery.temporary-recognized`   | A recognized temporary artifact is present; unresolved identity or state leaves recovery coverage `incomplete` or `blocked`.                                          | `informational`; report it, and let the separate [cleanup operation](../cleanup/interface.md) own deletion.                                                                     |
-| `recovery.residual-recognized`    | A recognized residual from a prior operation remains.                                                                                                                 | `targeted-operation`; use the separate [cleanup operation](../cleanup/interface.md) for an eligible artifact.                                                                   |
-| `recovery.backup-collision`       | A required backup location is occupied by an unknown or incompatible artifact.                                                                                        | `blocked-repair`; never overwrite the collision.                                                                                                                                |
-| `recovery.target-mismatch`        | Recovery evidence names a target whose current identity or expected relationship differs.                                                                             | `blocked-repair`; preserve the evidence and do not restore by ranking.                                                                                                          |
-| `recovery.prior-state-incomplete` | Prior mutation evidence does not establish a complete old or new state.                                                                                               | `blocked-repair`; preserve the evidence and use the separate cleanup boundary only for eligible artifacts.                                                                      |
-| `recovery.prior-state-mixed`      | Related targets show a mixed state from a prior partial operation.                                                                                                    | `blocked-repair`; do not apply a partial recovery choice.                                                                                                                       |
-| `recovery.artifact-still-needed`  | Current evidence identifies a recognized artifact as active or unsafe for recovery use.                                                                               | `blocked-repair`; preserve it; cleanup does not select active or unsafe artifacts or require a separate recovery-irrelevance proof for an otherwise eligible inactive artifact. |
-| `recovery.artifact-unknown`       | An adjacent artifact cannot be identified as safe Open Forge recovery evidence.                                                                                       | `manual-decision`; never delete or replace it automatically.                                                                                                                    |
-| `recovery.git-evidence`           | Git state provides relevant affected-path, history, or recovery evidence.                                                                                             | `informational`; report the bounded evidence without dispatching an action.                                                                                                     |
-| `recovery.gitless-evidence`       | The relevant operation has no usable Git evidence and relies on bounded local recovery evidence; coverage is `blocked` when the required recovery boundary is absent. | `informational`; report the bounded evidence without falling back to unsafe writes.                                                                                             |
+Doctor inspects the current user's external recovery root at
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.None)/OpenForge/recovery/v1`. This
+observer-only lookup never creates the OS application-data root or the Open Forge
+subtree. If the application-data root or recovery store is absent, Doctor reports
+zero recovery bundles or drafts. If the selected workspace bucket cannot be
+read, Doctor reports recovery coverage as unavailable or incomplete; it does not
+treat access failure as absence or search the workspace recursively.
+
+Doctor enumerates only exact deterministic final and draft names directly under
+the selected workspace bucket. It performs at most one semantic integrity check
+for each exact named final ZIP: source-generated schema-v1 manifest decoding,
+exact ordered entry names and counts, declared lengths and hashes, and exact
+payload bytes. A valid final is `Verified`; an invalid or unreadable final is
+`Malformed`, `Unsupported`, or `Unavailable`. An exact named draft is always
+`Incomplete` and never preparation. Doctor never creates, renames, deletes,
+extracts, restores, rolls back, or rebinds a recovery item.
+
+Doctor reports only the item's exact path, kind, integrity condition, and the
+separate Cleanup action. It does not inspect live targets, classify target
+state, or infer activity. Payload validation uses fixed bounded buffers and never
+extracts, discloses, renders, logs, returns, retains, or materializes payload
+bytes. Cleanup owns deletion only after it acquires the same-workspace lease,
+re-enumerates the selected bucket, and repeats final ordinary path/kind and
+semantic validation.
+
+| Kind                              | Detectable condition                                                                                                                     | Resolution or next action                                                                                                                               |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `recovery.bundle-recognized`      | An exact named final ZIP is semantically verified under the selected workspace bucket.                                                   | `informational`; report its path and `Verified` integrity, then offer the separate [cleanup operation](../cleanup/interface.md).                           |
+| `recovery.draft-recognized`       | An exact named draft is present under the selected workspace bucket.                                                                      | `informational`; report its path as `Incomplete`; it is never a recovery preparation.                                                                    |
+| `recovery.bundle-collision`       | An exact deterministic final name contains malformed, unsupported, or unreadable content.                                                | `blocked-repair`; preserve it and report the exact integrity condition.                                                                                   |
+| `recovery.provenance-unavailable` | A final ZIP cannot provide complete semantic schema, exact ordered entries, prior payload, intended fingerprint, or operation provenance. | `blocked-repair`; preserve it; Cleanup cannot delete it without semantic validation and final under-lease revalidation.                                  |
 
 ### Routes, Metadata, Overwrites, And Generated Navigation
 
@@ -546,8 +565,8 @@ mutation authority.
 
 Doctor does not:
 
-- Mutate files, generated navigation, lifecycle state, recovery
-  artifacts, Git state, or temporary files.
+- Mutate files, generated navigation, lifecycle state, recovery bundles or
+  drafts, or temporary files.
 - Prompt, choose a candidate, accept a recommendation, or turn severity into
   repair authority.
 - Build a plan, save a plan or report, create a session, or invoke a
@@ -585,9 +604,12 @@ Conformance evidence must cover:
   provenance, candidates, proposals, and typed next actions.
 - Every workspace and entry kind, including Loader, entrypoint, compatibility,
   identity, path, metadata, parsing, root, and detached boundaries.
-- Every recovery and residual kind, including recognized artifacts, collision,
-  target mismatch, mixed state, still-needed and unknown evidence, Git, and
-  Gitless facts.
+- The four recovery kinds for verified finals, incomplete drafts, final-name
+  collisions, and unavailable provenance, with exact paths and no live-target or
+  activity inference.
+- Semantic representative payload validation with exact declared
+  lengths and hashes, bounded buffers and memory independent of entry size, and
+  no extraction, disclosure, retention, or materialization.
 - Every route, metadata, overwrite, generated-region, generated-entry, and
   compatibility kind.
 - Every local-reference kind, including valid and missing targets, fragments,
@@ -603,8 +625,8 @@ Conformance evidence must cover:
 - `complete`, `attention`, `incomplete`, `invalid`, `blocked`, `failed`, and
   `interrupted` meanings, including informational findings that do not create
   `attention`.
-- Read-only, stateless, repeatable behavior with no plan, backup, temporary,
-  Git, lifecycle, or public-command effect.
+- Read-only, stateless, repeatable behavior with no plan, recovery-bundle,
+  temporary, lifecycle, or public-command effect.
 
 ## Related Current Sources
 

@@ -45,7 +45,7 @@ choices:
 - Filesystem APIs, physical identity, symlink and junction behavior, case and
   Unicode rules, atomic replacement, containment implementation, and test seams
   must satisfy the Architecture's BCL-first and real-filesystem boundary.
-- The recovery policy and preservation goals are current; backup names,
+- The recovery policy and preservation goals are current; recovery-bundle names,
   collision-handling mechanics, and related realization details remain
   implementation details constrained by the Architecture's recovery boundary.
 - Expected-state revalidation and preservation of unexpected concurrent edits
@@ -79,7 +79,6 @@ open-forge route create <file-target>
   [--responsibility <text>]
   [--template <template-reference>]
   [--dry-run]
-  [--skip-git-check]
   [global flags]
 ```
 
@@ -88,8 +87,8 @@ The shared [Global CLI Flags](../../shared/global-flags/interface.md) contract d
 six apply to `route create` under that contract.
 
 `--description`, `--responsibility`, and `--tag` define destination metadata.
-`--template` selects optional starting body content. `--dry-run` and
-`--skip-git-check` are write-policy flags.
+`--template` selects optional starting body content. `--dry-run` is the write-
+policy preview.
 
 The command has no implicit Template, Template machine-name registry, stdin
 mode, content-value flag, `--yes`, `--force`, overwrite mode,
@@ -113,8 +112,6 @@ The command-specific flags have these public states and meanings:
   content from one existing routed Markdown Template.
 - `--dry-run` selects the write-policy preview described in [Dry Run And
   Apply](#dry-run-and-apply).
-- `--skip-git-check` selects the named Git-cleanliness bypass described in [Dry
-  Run And Apply](#dry-run-and-apply).
 - The six global flags are accepted with the meanings in the shared [Global CLI
   Flags](../../shared/global-flags/interface.md) contract.
 
@@ -122,8 +119,8 @@ The command-specific flags have these public states and meanings:
 exact empty, duplicate, and syntax rules are defined in [Destination Metadata](#destination-metadata).
 `--description`, `--responsibility`, and `--template` are singleton flags. Any
 repeated occurrence of one of them is invalid, even when the repeated value is
-identical; no last occurrence wins. Repeated `--dry-run` and
-`--skip-git-check` occurrences are accepted and idempotent. The shared global
+identical; no last occurrence wins. Repeated `--dry-run` occurrences are
+accepted and idempotent. The shared global
 flags keep their own repetition and composition rules, with no command-specific
 precedence or last-wins behavior.
 
@@ -299,7 +296,7 @@ validated target, metadata, and optional Template
   -> complete ordered mutation plan
   -> preflight
   -> dry-run or application
-  -> verification or recovery
+  -> verification and retained partial-state reporting
   -> one typed result
 ```
 
@@ -324,27 +321,42 @@ metadata, and optional Template confirm creation of the intended file and
 replacement of only planned machine-owned generated interiors. The command does
 not prompt and does not accept `--yes`.
 
-A verified no-op has no affected mutation path and needs no Git cleanliness
-check. An actual creation checks the planned new path for collision and checks
-only planned existing generated-region targets for Git cleanliness. Dirty
-planned existing paths block by default.
-
-`--skip-git-check` bypasses only relevant-path Git cleanliness. It does not
-bypass target existence, route ambiguity, metadata, Template identity,
-containment, generated boundary, expected-state, verification, or recovery
-requirements.
-
-Gitless application and `--skip-git-check` application use adjacent backups for
-planned existing-file replacements. The new destination never overwrites old
-bytes and needs no backup. Recovery removes it only when it still matches the
-applied identity.
+A verified no-op has no affected mutation path and creates no bundle. An actual
+creation checks the planned new path for collision and, when the plan contains
+an existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or `Delete`),
+uses only
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.Create)` and its application-owned
+`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
+`HOME`, or custom-platform fallback; unavailable storage is a pre-effect
+`incomplete` result. It prepares exactly one immutable ZIP bundle outside
+the workspace. An operation containing only
+Create effects or no-ops creates no bundle. Its source-generated
+schema-v1 `manifest.json` and streamed ordinal payload entries record
+command/operation/workspace identity, ordered relative targets, change
+kinds, exact prior bytes/lengths/hashes, and intended final absence or
+length/hash. `Create` effects (including the new destination) and no-ops have
+no entry. A CreateNew draft is closed/reopened for semantic manifest, exact
+ordered entry, length, hash, and payload-byte validation, moved within the same
+directory to its deterministic final name, and reopened and verified. Only the
+valid final ZIP forms the opaque `RecoveryBundlePreparation`; the draft remains
+`Incomplete`. `FileChangeApplier` requires the matching preparation for every
+existing-target effect and performs one final effect per
+target. All preparation completes before the first target effect.
 
 Immediately before application, the command rechecks every target, source,
 Template, route, and collision fact. It applies complete planned bytes, verifies
 each effect, then verifies destination identity, metadata, copied body, parent
-route exposure, and generated navigation. A handled failure stops new effects
-and reverses applied effects without overwriting an unexpected concurrent
-change.
+route exposure, and generated navigation. A handled failure or cancellation
+stops new effects and reports the actual residual draft or final path; a valid
+final remains when failure occurs after preparation. A closed final ZIP
+may remain after abrupt process termination, without an executable crash or
+power-loss guarantee. Recovery provenance does not classify current target
+state, and no target is restored automatically. After whole-command
+verification, delete only the positively recognized bundle created by this
+operation. A cleanup failure leaves effects successful and forms `attention`
+with the exact residual-bundle path and guidance. Cleanup owns exact named final
+and draft deletion under its separate lease-bound contract.
 
 ## Human Output
 
@@ -432,8 +444,9 @@ The structured result exposes:
 - Optional Template ID, path, classification, and body-copy evidence.
 - Application or dry-run mode, completeness, and safety state.
 - Intended destination and generated-region effects.
-- Dry-run, Git, backup, application, verification, and recovery facts.
-- Changed, unchanged, reverted, and residual targets.
+- Dry-run, recovery-bundle, application, verification, and recovery facts.
+- Changed and unchanged effects, verification facts, and any actual residual
+  draft or final recovery path, without classifying current target state.
 - Coverage observations, availability conditions, completeness and safety state,
   semantic status, and at most one required `Next:` action when applicable.
 
@@ -449,8 +462,8 @@ CLI Architecture.
 | `incomplete`  | Safe facts are available, but required inspection or planning coverage cannot complete; no mutation begins.                                                                                                                            |
 | `invalid`     | Command input, metadata, Template reference, flag use, or target shape does not follow this interface.                                                                                                                                 |
 | `blocked`     | A valid request cannot establish or apply one safe complete creation plan because safety or authority is unsafe or ambiguous; no mutation begins.                                                                                      |
-| `failed`      | An unexpected application, verification, or recovery failure occurs after a persistent effect begins; the result remains `failed` even when recovery succeeds.                                                                         |
-| `interrupted` | The caller cancelled before completion and no residual recovery failure remains.                                                                                                                                                       |
+| `failed`      | An unexpected application, verification, or bundle-handling failure occurs after a persistent effect begins; the result remains `failed` and is never converted into `attention`.                                                   |
+| `interrupted` | The caller cancelled before completion; an unexpected application or verification failure remains `failed`.                                                                                                                           |
 
 Route Create has no finite current `attention` condition. Planned changes do not
 create `attention`, and the command does not inspect Template placeholders or
@@ -489,7 +502,8 @@ The command blocks or rejects:
 - A Template reference that does not resolve to one valid routed Template.
 - An existing target whose bytes differ from the intended result.
 - An invalid generated ownership boundary or sibling projection.
-- A dirty planned existing path without the accepted Git bypass.
+- Unavailable or unsafe recovery-bundle storage is `incomplete`; an unverified
+  bundle is `blocked`.
 - A changed source or destination that invalidates the plan.
 
 If safe facts are available but required inspection or planning coverage cannot
@@ -541,7 +555,7 @@ Gate 5 executable proof must cover:
 - Dry-run and application parity for request, facts, intended bytes, generated
   projection, plan, preflight, and status, with planned changes remaining
   `complete`.
-- Verified no-op behavior before Git mutation checks.
+- Verified no-op behavior before mutation and recovery-bundle preparation.
 - All seven semantic statuses, including safe-coverage `incomplete`, blocked
   unsafe or ambiguous safety and authority, post-write `failed`, and the
   currently unreachable reserved `attention` status.
@@ -553,8 +567,8 @@ Gate 5 executable proof must cover:
 
 The [Behavior Contract](behavior.md) records the semantic, projection, effect,
 safety, recovery, and conformance evidence for the remaining verification
-obligations, including automatic parent effects, Git and backup behavior,
-expected-state changes, and rerun convergence.
+obligations, including automatic parent effects, recovery-bundle behavior,
+expected-state changes, cleanup attention, and rerun convergence.
 
 ## Related Current Sources
 

@@ -15,13 +15,16 @@ open-forge:
 ## Shared Boundary
 
 Each route command owns one concrete plan and result. Commands reuse accepted
-route facts, validation, lock, lifecycle, atomic file, and recovery primitives.
-They do not share a universal route mutation request or plan.
+route facts, validation, lock, lifecycle, atomic file, and external
+recovery-bundle primitives. They do not share a universal route mutation request
+or plan.
 
 Implement in order because later commands consume identity, collision, overwrite,
 and lifecycle facts established by earlier operations. Every command proves dry
 run where contracted, unchanged bytes on blocked paths, revalidation after lock,
-idempotence where promised, recovery, process streams, and Native AOT.
+idempotence where promised, one verified external recovery bundle covering every
+existing Replace/Delete prepared before the first target effect, retained partial state
+without restoration, process streams, and Native AOT.
 
 ## Child Tasks
 

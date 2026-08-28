@@ -23,8 +23,8 @@ descendants inherit them from their ancestors.
 The accepted Framework lifecycle has two direct root operations:
 
 ```text
-open-forge install [--force] [--automatic] [--dry-run] [--skip-git-check] [global flags]
-open-forge update [--force] [--prune] [--automatic] [--dry-run] [--skip-git-check] [global flags]
+open-forge install [--force] [--automatic] [--dry-run] [global flags]
+open-forge update [--force] [--prune] [--automatic] [--dry-run] [global flags]
 ```
 
 `install` establishes management in one exact workspace or verifies an exact
@@ -43,10 +43,16 @@ Automatic mode suppresses interaction but adds no package, replacement, deletion
 adoption, ownership, or safety authority.
 
 Both operations use one complete baseline/current/intended plan, current Index
-projection, affected-path Git policy, adjacent-backup recovery, expected-state
-revalidation, verification, seven statuses, and one typed result. There is no
-Framework group, root `init`, reinstall/replace/restore/recover alias, Framework
-uninstall/remove leaf, generic apply, saved plan, or semver source update.
+projection, and one external recovery bundle covering every existing-target
+effect (`Replace`, `ReplaceGeneratedRegion`, or `Delete`). An operation containing only creates and no-ops
+creates no bundle. Only a
+semantically verified final ZIP forms preparation, and all preparation completes
+before the first target effect. Handled failure or cancellation reports the
+actual residual draft or final path without restoration, rollback, compensation,
+or recovery-derived current-target classification. The persistent workspace lock
+preserves its bytes and is owned only by a `FileShare.None` handle. There is no Framework group, root
+`init`, reinstall/replace/restore/recover alias, Framework uninstall/remove
+leaf, generic apply, saved plan, or semver source update.
 
 The replacement's only lifecycle document is:
 
@@ -77,47 +83,42 @@ for the complete contracts.
 
 ## Cleanup
 
-The non-shipping root `cleanup` operation removes every currently eligible
-recognized Open Forge transient or recovery artifact in the selected workspace:
+The non-shipping root `cleanup` operation forms one operand-free, default-all
+catalogue of positively recognized Open Forge recovery bundles and drafts
+associated with the selected workspace:
 
 ```text
-open-forge cleanup [--dry-run] [--skip-git-check] [global flags]
+open-forge cleanup [--dry-run] [global flags]
 ```
 
 Bare `cleanup` has no operands, IDs, paths, selectors, wizard, prompt, or
-confirmation flow. It forms one current recognized-only catalogue and removes
-all eligible target-associated backups, known `.bak` compatibility forms with
-positive identity, operation temporary or staging artifacts, and residual
-recovery artifacts from incomplete or completed operations. A suffix, age,
-extension, location, proximity, or temporary-looking name is not proof of
-provenance. Eligibility instead requires positive Open Forge provenance, bounded
-workspace association, physical containment, an inactive state, and the expected
-current bytes or physical identity.
-Unknown, user-created, ambiguous, aliased, externally resolving,
-active, in-use, and concurrently changing items remain untouched. Repository
-`.temp/`, raw evidence and snapshots, source and managed content, lifecycle
-documents and receipts, generated navigation, build output, package caches, logs
-that are not positively identified as one of the listed cleanup artifact kinds,
-and arbitrary backups are also excluded.
+confirmation flow. It forms one current catalogue of exact deterministic final
+and draft names directly under the selected workspace bucket in the current
+user's `LocalApplicationData/OpenForge/recovery/v1` directory. A final ZIP must
+pass semantic manifest/schema, exact ordered entry, length, hash, and payload-
+byte validation; a draft is `Incomplete` support data. Unknown names and content
+outside that bucket remain untouched. The operation does not recursively scan
+the workspace, extract a bundle, restore a target, or create a replacement
+bundle for its own deletion.
 
-`--dry-run` uses the same catalogue, ordering, plan, expected-state facts, and
-preflight as application and writes nothing. Gitless workspaces are valid;
-affected-path Git cleanliness is checked by default when Git can classify an
-eligible path, and `--skip-git-check` bypasses only that check. The explicit
-command consents to discard every currently eligible artifact, including a
-backup the user no longer wants after manually preserving or migrating desired
-content. Cleanup does not interpret that content or migration intent and does
-not need to prove a backup unnecessary for recovery.
+`--dry-run` uses the same catalogue, ordering, plan, and preflight as application,
+writes nothing, and acquires no lease. Every proposed deletion remains contingent
+on application acquiring the persistent same-workspace `WorkspaceLockLease`
+through `FileShare.None`, re-enumerating the selected bucket once, and repeating
+exact path/kind and final semantic validation while holding that lease. Cleanup
+then uses ordinary file deletion and verifies absence. Lease contention causes
+no deletion.
 
-With no eligible artifact, cleanup returns a verified complete no-op without
-prompting. Each repeat forms a fresh catalogue and never deletes a later
-user-created or unknown replacement at a former artifact path. Once deletion
-begins, verified deletions remain valid effects: cleanup creates no replacement
-backup, staging copy, receipt, journal, or tombstone merely for this disposable
-deletion and does not reverse a verified deletion. Partial failure or
-interruption reports every deleted and remaining artifact so a later invocation
-can converge. Human and structured results use the shared seven statuses and
-streams; planned deletions do not create `attention`.
+With an empty catalogue, cleanup returns a verified complete no-op without
+acquiring a lease or prompting. It makes no activity inference and writes no
+marker, PID, journal, or lock metadata. Each repeat forms a fresh catalogue.
+Once deletion begins, verified deletions remain valid
+effects: cleanup creates no replacement bundle, receipt, journal, or tombstone
+merely for this support-artifact deletion. Partial failure or interruption
+reports every deleted and remaining artifact so a later invocation can converge.
+Human and structured results use the shared seven statuses and streams;
+recognized-artifact deletion failure is reported with exact residual state and
+guidance.
 
 See the [cleanup Interface](../.agents/memory/crystallized/documents/cli/contracts/cleanup/interface.md)
 and [cleanup Behavior](../.agents/memory/crystallized/documents/cli/contracts/cleanup/behavior.md)
@@ -131,16 +132,19 @@ operations:
 ```text
 open-forge extension list [--installed] [--available] [--source <package-or-catalogue-path>] [global flags]
 open-forge extension inspect <stable-id> [--source <package-or-catalogue-path>] [global flags]
-open-forge extension create [<stable-id>] [--path <catalogue-path>] [--automatic] [--dry-run] [--skip-git-check] [global flags]
-open-forge extension install [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--automatic] [--dry-run] [--skip-git-check] [global flags]
-open-forge extension update [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--prune] [--automatic] [--dry-run] [--skip-git-check] [global flags]
-open-forge extension remove [<stable-id>...] [--prune] [--automatic] [--dry-run] [--skip-git-check] [global flags]
+open-forge extension create [<stable-id>] [--path <catalogue-path>] [--automatic] [--dry-run] [global flags]
+open-forge extension install [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--automatic] [--dry-run] [global flags]
+open-forge extension update [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--prune] [--automatic] [--dry-run] [global flags]
+open-forge extension remove [<stable-id>...] [--prune] [--automatic] [--dry-run] [global flags]
 ```
 
 The bare group shows help and performs no operation or wizard. `list` and
 `inspect` are read-only. `create` writes only
 `<catalogue>/<id>/extension.json` and `payload/.agents/` under its distinct
-`--path` destination; `--workspace` is a no-op for create.
+`--path` destination; `--workspace` is a no-op for create. Create uses a
+separate exact-destination, collision, and revalidation path with no workspace
+lease, none of `Replace`, `ReplaceGeneratedRegion`, or `Delete`, and no recovery
+bundle.
 
 Install and update use the embedded catalogue or one exact external package or
 catalogue source. The source is read-only and must be lexically and physically
@@ -159,10 +163,16 @@ files, preserves changed final-owner files by default, and permits their deletio
 only with same-request `--prune`. It never removes the package source or
 Framework-owned content.
 
-All mutating Extension operations use one complete plan, dry-run parity,
-affected-path Git checks, adjacent-backup recovery, expected-state revalidation,
-verification, and reverse guarded recovery. The seven statuses and human/JSON
-stream rules are shared. No retained command is implemented or shipped yet.
+All workspace-mutating Extension operations use one complete plan, dry-run
+parity, and one external recovery bundle covering every existing-target effect
+(`Replace`, `ReplaceGeneratedRegion`, or `Delete`),
+plus expected-state revalidation and verification. All preparation completes before
+the first target effect; handled failure or cancellation reports the actual
+residual draft or final path without restoration, rollback, compensation, or
+current-target classification. Whole-command
+success removes the recognized bundle only after final verification; cleanup
+failure is `attention`. The seven statuses and human/JSON stream rules are
+shared. No retained command is implemented or shipped yet.
 
 See the [Extension documentation](extensions.md) and the
 [Extension contract group](../.agents/memory/crystallized/documents/cli/contracts/extension/_extension.md)
@@ -188,7 +198,7 @@ separate bounded diagnostics use stderr.
 It compares startup context from the Framework shipped in the running CLI with
 startup context from the current workspace. It also reports total available
 context, context that may load again at continuity boundaries, root-category
-customization, managed Extensions, and recognized recovery files.
+customization, managed Extensions, and recognized recovery bundles.
 
 ### Context Measurements
 
@@ -208,7 +218,7 @@ files.
 For this inventory, a context file is the ordinary UTF-8 `AGENTS.md` entry or an
 ordinary UTF-8 Markdown file below `.agents`. Overwrite companions count when
 their base exists. Provider bridges, files reached only through ordinary links,
-non-Markdown support files, receipts, and recovery files do not count as
+non-Markdown support files, receipts, and recovery bundles do not count as
 context.
 
 Continuity context is the part that may load again after a handoff, context
@@ -251,8 +261,8 @@ Installed IDs, ownership, and recorded paths remain reportable when package
 source bytes are unavailable, while source-dependent comparison is incomplete.
 Matching paths, bytes, or fingerprints never establish ownership. Managed files
 are counted once as current, changed, or missing relative to readable lifecycle
-facts. Recovery files include only artifacts recognized by the CLI around known
-Open Forge targets.
+facts. Recovery reporting includes exact named final ZIPs with semantic integrity
+conditions and exact named drafts as `Incomplete` support data.
 
 The expanded result shows at most three of the largest continuity sources, and
 compact omits that section. JSON carries every contribution in deterministic
@@ -291,12 +301,12 @@ Workspace structure
   Removed categories: templates
   Extensions:         1
   Managed files:      9 current, 11 changed, 1 missing
-  Recovery files:     0
+  Recovery bundles:   0
 ```
 
 The values are illustrative. A larger context or added or removed category does
 not produce `attention` by itself. Changed or missing managed files and
-recognized recovery files do. Human output renders this semantic status as
+recognized recovery bundles do. Human output renders this semantic status as
 `requires attention`; JSON keeps the value `attention`. Complete structural
 diagnosis and recommendations belong to `doctor` rather than `status`. Status
 does not list repair or lifecycle proposals.
@@ -602,16 +612,16 @@ ordinary routed Markdown files, and bounded updates. Running `open-forge route`
 shows help and performs no mutation.
 
 The `route init`, `route create`, and `route update` write operations support
-`--dry-run` and `--skip-git-check`. They use the exact current directory or
-`--workspace`, plan automatic generated `Entries` changes in the same mutation,
-and never run a hidden `index` subprocess.
+`--dry-run`. They use the exact current directory or `--workspace`, plan
+automatic generated `Entries` changes in the same mutation, and never run a
+hidden `index` subprocess.
 
 Those three metadata/scaffolding write commands use the same interface shape.
 Singleton one-value flags reject repetition, including equal values. Explicitly
 multi-value `--tag` flags keep each command's local order, replacement, and
 duplicate rules.
-Applicable `--dry-run` and `--skip-git-check` flags repeat idempotently and do not
-add authority. Each command uses `complete`, `attention`, `incomplete`,
+Applicable `--dry-run` flags repeat idempotently and do not add authority. Each
+command uses `complete`, `attention`, `incomplete`,
 `invalid`, `blocked`, `failed`, and `interrupted`; ordinary conditions use
 `blocked` > `incomplete` > `attention` > `complete`, invalid input stops before
 operation resolution, and failed or interrupted results retain their event
@@ -774,7 +784,6 @@ open-forge route init <route-target>
   [--responsibility <text>]
   [--tag=<tag>]...
   [--dry-run]
-  [--skip-git-check]
   [global flags]
 ```
 
@@ -825,7 +834,6 @@ open-forge route create <file-target>
   [--responsibility <text>]
   [--template <template-reference>]
   [--dry-run]
-  [--skip-git-check]
   [global flags]
 ```
 
@@ -883,7 +891,6 @@ open-forge route update <source-reference>
   [--tag=<tag>]...
   [--template <template-reference>]
   [--dry-run]
-  [--skip-git-check]
   [global flags]
 ```
 
@@ -927,9 +934,9 @@ released yet:
 
 ```text
 open-forge route move <source-reference> <destination-target>
-  [--dry-run] [--skip-git-check] [global flags]
+  [--dry-run] [global flags]
 open-forge route remove <source-reference>
-  [--dry-run] [--skip-git-check] [global flags]
+  [--dry-run] [global flags]
 ```
 
 Each command accepts exactly one eligible ordinary unmanaged logical leaf or one
@@ -973,18 +980,24 @@ the operation; a supported broken link is never silently left behind.
 
 Both commands form one complete plan, include the affected parent projections
 (old and new for move, old for remove) and the Loader when applicable, revalidate
-expected state, verify every effect, and use identity-guarded recovery. `--dry-run` is the only
-preview and shows every planned path, reference effect, and generated effect
-without writing. `--skip-git-check` bypasses only affected-path Git cleanliness.
-There is no `--force`, `--automatic`, `--yes`, `--apply`, root move/remove, or
-batch operand. Human results keep complete, attention, and incomplete results on
-stdout and invalid, blocked, failed, and interrupted results on stderr. JSON
-emits one complete structured result to stdout for every status.
+expected state, and verify every effect. One immutable, semantically verified
+external recovery bundle covers every existing-target effect (`Replace`,
+`ReplaceGeneratedRegion`, or `Delete`) and is prepared before the first target
+effect; creates and no-ops have none. `--dry-run`
+is the only preview and shows every planned path, reference effect, generated
+effect, and bundle disposition without writing. Handled failure or cancellation
+reports the actual residual draft or final path without restoration, rollback,
+compensation, or current-target classification. There is no `--force`,
+`--automatic`, `--yes`, `--apply`, root
+move/remove, or batch operand. Human results keep complete, attention, and
+incomplete results on stdout and invalid, blocked, failed, and interrupted
+results on stderr. JSON emits one complete structured result to stdout for every
+status.
 
 Repeating a move with its consumed old source is a non-mutating exact
 `source-not-found`/`invalid` result, not a claimed no-op. Repeating a remove is a
-verified no-op only when complete trusted ownership, topology, recovery, and
-reference evidence proves the exact intended absence.
+verified no-op only when complete trusted ownership, topology, and reference
+evidence proves the exact intended absence.
 
 See the [route move contract set](../.agents/memory/crystallized/documents/cli/contracts/route/move/_move.md)
 and [route remove contract set](../.agents/memory/crystallized/documents/cli/contracts/route/remove/_remove.md)
@@ -995,7 +1008,7 @@ for the complete current interfaces and behavior.
 Across `route init`, `route create`, and `route update`, singleton value flags
 reject repetition even when values match, explicitly multi-value `--tag` inputs
 retain their command-local ordering and duplicate rules, and repeated `--dry-run`
-or `--skip-git-check` flags are idempotent. These three commands use `complete`,
+flags are idempotent. These three commands use `complete`,
 `attention`, `incomplete`,
 `invalid`, `blocked`, `failed`, and `interrupted`, although a command emits
 `attention` only for its finite local condition.
@@ -1009,15 +1022,18 @@ Dry-run and application use the same intended state, generated projection,
 safety checks, and expected-state facts. Dry-run shows every complete new file
 and exact bounded existing-file diff, then writes nothing.
 
-Application checks Git cleanliness only for existing paths it plans to change.
-`--skip-git-check` bypasses only that check and activates adjacent backup
-recovery for replacements. It does not permit overwrite, ambiguous route
-selection, unsafe paths, invalid metadata, malformed generated boundaries, or
-authored-body replacement.
+Application prepares and verifies one external immutable recovery bundle covering
+the complete operation before any existing-target effect (`Replace`,
+`ReplaceGeneratedRegion`, or `Delete`). It does not permit overwrite, ambiguous
+route selection, unsafe paths, invalid metadata, malformed generated boundaries,
+or authored-body replacement. Creates and verified no-ops produce no bundle.
 
 The commands recheck facts immediately before writing, verify each effect and
-the complete route result, and reverse handled partial writes. They preserve
-unknown, user-owned, concurrently changed, and recovery-needed content.
+the complete route result, and preserve unknown, user-owned, concurrently
+changed, or otherwise divergent content. A handled partial failure stops new
+effects and reports the actual residual draft or final path; it never restores,
+compensates for an earlier effect, or classifies current target state from
+recovery provenance.
 
 Dry-run and application use the same request, current facts, intended state,
 generated projection, plan, preflight, and status conditions. Dry-run writes
@@ -1045,17 +1061,15 @@ and authored routing metadata:
 ```text
 open-forge index [source-reference...]
   [--dry-run]
-  [--skip-git-check]
   [global flags]
 ```
 
 The applicable global flags are `--workspace <path>`, `--json`,
 `--view=compact|expanded`, `--verbose`, `--help`, and `--version`.
 
-`--dry-run` and `--skip-git-check` are Boolean flags. Repeating either is
-accepted and idempotent: a second or later occurrence has no additional effect
-and does not multiply authority or bypasses. Value-bearing repetition follows
-the defining flag contract.
+`--dry-run` is a Boolean flag. Repeating it is accepted and idempotent: a second
+or later occurrence has no additional effect and does not multiply authority.
+Value-bearing repetition follows the defining flag contract.
 
 With no source operand, the command starts from the selected workspace's exact
 `.agents/loader.md` and regenerates every reachable entrypoint region. It does
@@ -1110,15 +1124,18 @@ and exact bounded diffs, says no files changed, and human output says
 `requires attention`.
 
 Omitting `--dry-run` selects application of the planned replacement inside the
-selected generated boundaries. The command does not prompt. It checks Git
-cleanliness only for files the plan would change. `--skip-git-check` bypasses
-only that check and activates adjacent backup recovery.
-
-Application rechecks source and destination state, writes complete planned
-bytes, verifies every changed file and the complete generated projection, and
-reverses handled partial writes after failure. Backups are removed only after
-complete verification. No persistent transaction journal or saved plan is
-created.
+selected generated boundaries. The command does not prompt. It prepares and
+verifies one immutable external recovery bundle covering every existing
+generated target that will be replaced before the first target effect; a no-op
+creates no bundle. Application rechecks source and destination state, writes complete
+planned bytes, verifies every changed file and the complete generated
+projection, and reports the actual residual draft or final path on handled
+failure or cancellation. A closed final ZIP may remain after abrupt process
+termination, without an executable crash or power-loss guarantee. It never
+restores or compensates for an earlier effect.
+After final verification, successful effects remain successful even if bundle
+deletion fails; the result is `attention` with the exact residual path and
+cleanup guidance. No persistent transaction journal or saved plan is created.
 
 ### Results
 
@@ -1200,7 +1217,8 @@ open-forge doctor [global flags]
 It accepts no operands or doctor-specific flags. The six shared global flags
 apply: `--workspace <path>`, `--json`, `--view=compact|expanded`, `--verbose`,
 `--help`, and `--version`. Doctor never prompts, writes a plan, creates a
-backup, changes Git or lifecycle state, or invokes Repair.
+recovery bundle, changes lifecycle state, or invokes Repair. It does not inspect
+or report repository state.
 
 Doctor checks these domains in order:
 
@@ -1244,13 +1262,13 @@ for the complete finite finding catalogue and output rules.
 reference repairs:
 
 ```text
-open-forge repair [--automatic] [--relink <source-location> <expected-destination> <target-path>]... [--dry-run] [--skip-git-check] [global flags]
+open-forge repair [--automatic] [--relink <source-location> <expected-destination> <target-path>]... [--dry-run] [global flags]
 ```
 
 It has no positional operands, generic proposal references, `--yes`, `--preview`,
 `--suggestions`, `--all`, `--force`, or `--apply`. The six global flags are the
-same six listed above. `--automatic`, `--dry-run`, and `--skip-git-check` are
-repeatable and idempotent. `--relink` repeats as exact triples; identical tuples
+same six listed above. `--automatic` and `--dry-run` are repeatable and
+idempotent. `--relink` repeats as exact triples; identical tuples
 deduplicate and contradictory tuples are invalid.
 
 The simplest human invocation opens a wizard. It reruns all six Doctor domains,
@@ -1285,7 +1303,7 @@ changed:
 Open Forge repair
 Selection: automatic
 Application: preview
-Diagnosis coverage: complete; 6 domains complete
+Diagnosis coverage: complete for selected edits
 Selected: 2 safe-exact effects
 Remaining: 1 guided candidate set
 No files changed (--dry-run).
@@ -1294,13 +1312,20 @@ Status: requires attention
 
 `--dry-run` is the only preview spelling and writes nothing. Every request uses
 fresh facts, one conflict-free plan, preflight, expected-state revalidation,
-verification, recovery, and fresh post-diagnosis. Any incomplete or blocked
-Doctor domain blocks general Repair writes: all six domains must have complete
-coverage, including for explicit relinks.
+one external recovery-bundle preparation covering every existing-target effect
+(`Replace`, `ReplaceGeneratedRegion`, or `Delete`),
+verification, and fresh relevant-domain post-diagnosis. All bundle preparation
+completes before the first target effect; handled failure or cancellation reports
+the actual residual draft or final path without restoration, rollback,
+compensation, or current-target classification. Only incomplete or blocked
+diagnosis facts actually required by the selected edits block Repair; unrelated
+lifecycle or recovery-observer unavailability remains visible but non-blocking.
 Repair never chooses external, fuzzy, semantic, authored, generated-navigation,
 route, recovery, Framework, or Extension changes. Generated drift belongs to
-`index`; known route intent belongs to route operations; recognized transient and
-recovery-artifact deletion belongs to the separate `cleanup` operation. See the
+`index`; known route intent belongs to route operations; lease-validated
+recognized recovery-bundle or draft deletion belongs to the separate `cleanup`
+operation.
+See the
 [Repair contract set](../.agents/memory/crystallized/documents/cli/contracts/repair/_repair.md)
 for the complete catalogue, wizard, direct modes, and result meanings.
 

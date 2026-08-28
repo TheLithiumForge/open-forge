@@ -32,20 +32,22 @@ validated managed IDs and same-request prune intent
   -> dry-run or application
   -> expected-state revalidation
   -> per-effect and whole-operation verification
-  -> Extension-section publication or reverse guarded recovery
+  -> Extension-section publication and recovery-bundle disposition
   -> one typed result
 ```
 
 Remove never applies a safe subset around a retained dependent, unsafe route,
-untrusted section, ambiguous owner, or unavailable recovery fact.
+untrusted section, ambiguous owner, or unavailable recovery coverage. Unavailable
+storage is `incomplete`; malformed, mismatched, or colliding bundle facts are
+`blocked`.
 
 ## Request And Workspace Resolution
 
 1. Resolve terminal help/version before lifecycle reads.
 2. Parse one or more exact stable-ID operands, reject duplicates and unknown
    selectors, and reject source, `--all`, force, package path, and other flags.
-3. Resolve `--prune`, `--automatic`, `--dry-run`, and `--skip-git-check` as
-   independent idempotent Booleans.
+3. Resolve `--prune`, `--automatic`, and `--dry-run` as independent idempotent
+   Booleans. Any unknown option is invalid.
 4. Select exactly CWD or exact `--workspace` with no discovery.
 5. In prompt-capable human mode, allow the finite managed-ID and
    Keep-as-unmanaged/Delete wizard. In JSON/noninteractive mode, missing IDs are
@@ -59,8 +61,13 @@ mode never adds that flag or selects Delete.
 ## Trust And Source-Independent Facts
 
 Read the `extensions` section of `.agents/open-forge.lifecycle.json`, schema v1,
-and preserve the `framework` section and common envelope bytes and meaning.
-Require trusted exact workspace binding, selected ID records, dependency
+and preserve the `framework` section and common-envelope meaning semantically.
+A selected semantic change emits one deterministic canonical UTF-8 whole-document
+representation, so lifecycle property order, whitespace, and line endings may be
+normalized. A semantic no-op writes nothing. Exact prior bytes for every
+existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or `Delete`) are
+captured in the verified operation recovery bundle. Require trusted exact
+workspace binding, selected ID records, dependency
 reciprocity, path/owner sets, semantic baseline fingerprints, route and generated
 coverage, and safe cross-section preservation. The document stores no plan,
 runtime history, journal, recovery evidence, or session. Files outside this exact
@@ -127,12 +134,12 @@ Framework-owned paths are Extension removal targets.
 The plan contains selected IDs, retained dependents, dependency edges, exact
 owner sets, path classifications, semantic/current bytes, Keep/Delete intent,
 ownership-release effects, file deletion effects, generated projection,
-lifecycle publication, expected-state guards, Git, backup, verification, and
-reverse recovery.
+lifecycle publication, expected-state guards, recovery-bundle readiness,
+verification, and final cleanup handling.
 
 `--prune` is resolved before planning and applies only to changed final-owner
 content that independently passes every identity, ownership, route,
-containment, Git, backup, verification, and recovery gate. It cannot be added
+containment, verification, and recovery-bundle gate. It cannot be added
 by a later invocation after ownership is released. Once a path is released as
 unmanaged, later prune has no authority to act on it.
 
@@ -140,36 +147,75 @@ unmanaged, later prune has no authority to act on it.
 
 Preflight validates lifecycle trust, IDs, dependencies, owner sets, current exact
 and semantic facts, route and generated boundaries, cross-section preservation,
-expected state, Git policy, backup readiness, deletion safety, verification, and
-recovery. One failed condition blocks all effects. Before the first workspace
-effect, obtain the actual OS lock for the visible `.agents/open-forge.lock` path
-defined by the accepted CLI Architecture. File existence is not lock ownership;
-another process holding the lock blocks mutation. A crash releases the OS lock,
-and an unlocked file is reusable and may be manually removed only when no
-process is active. The lock is not lifecycle authority, history, or recovery
-evidence.
+expected state, deletion safety, verification, and recovery-bundle readiness.
+One failed condition blocks all effects. Before the first workspace effect,
+obtain the actual OS lock for the visible `.agents/open-forge.lock` path defined
+by the accepted CLI Architecture. The lock file is persistent and reusable:
+preserve existing bytes and write no metadata, timestamp, or ownership record.
+Hold a `FileShare.None` handle; existence is not lock ownership, and another
+process holding the handle blocks mutation. A crash releases the OS lock. The
+lock is not lifecycle authority, history, or recovery evidence.
 
 Dry-run uses the same request, Keep/Delete intent, facts, plan, and preflight as
 application. It shows selected ownership release, shared retention, unchanged
 deletion, changed preservation or prune deletion, generated effects, lifecycle
-publication, and recovery requirements. It writes no file, lifecycle section,
-backup, temporary artifact, or package source and cannot claim application
+publication, and recovery-bundle requirements. It writes no file, lifecycle
+section, recovery bundle, temporary artifact, or package source and cannot claim application
 verification. It forms the same pre-effect planning status as application but
 never produces an apply-time `failed` or `interrupted` result because it performs
 no effects. A planning or read failure and caller cancellation before effects
 retain their own event meaning.
 
-Application revalidates all facts immediately before effects. Apply safe
-dependency/ownership transitions and file/generated effects under identity
-guards, verify each and the complete postcondition, then publish the Extension
-section atomically while preserving unrelated sections. Remove backups only after
-complete verification.
+Application first prepares exactly one immutable ZIP recovery bundle outside the
+workspace whenever the plan has an existing-target effect (`Replace`,
+`ReplaceGeneratedRegion`, or `Delete`). The storage root is
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.Create)/OpenForge/recovery/v1`; temporary,
+repository, `HOME`, and custom platform fallbacks are forbidden, and unavailable
+storage is `incomplete` before any target effect.
 
-On failure, stop new effects and reverse applied effects in reverse order only
-while identity guards match. Preserve unexpected concurrent edits and residual
-backups. Recovery failure is `failed`; caller cancellation without stronger
-failure is `interrupted`. A later remove forms a fresh plan and never replays a
-saved plan or assumes prior consumption.
+Use the normalized physical workspace path key and operation ID for the final
+bundle name. Stream a source-generated schema-v1 `manifest.json` and ordered
+ordinal payload entries into a `CreateNew` draft under its exact name in the same
+external directory. Close, reopen, and validate the semantic schema, exact
+ordered entry names and counts, lengths, hashes, and exact prior bytes; move the
+draft within the same directory to the deterministic final name and reopen/
+verify it again. The manifest records command/operation/workspace
+identity, ordered relative targets and change kinds, prior length/hash/payload,
+and intended final absence or length/hash. Only the valid final ZIP forms the
+opaque `RecoveryBundlePreparation`; the draft remains `Incomplete`. The bundle
+is immutable thereafter.
+
+Every planned existing-target effect has exactly one matching verified entry. Create and
+no-op effects have none, and all preparation completes before the first effect.
+`FileChangeApplier` requires matching preparation for each existing-target effect and
+performs one final effect per target. Application revalidates all volatile facts,
+applies safe dependency/ownership transitions and file/generated effects under
+identity guards, verifies each and the complete postcondition, then publishes
+the Extension section atomically while preserving unrelated sections
+semantically. A selected lifecycle semantic change is source-generated as one
+deterministic canonical UTF-8 whole-document representation; formatting,
+ordering, and line-ending trivia may be normalized. A semantic no-op publishes
+no lifecycle write.
+
+On handled failure or cancellation, stop new effects and report the actual
+residual draft or final path; a valid final remains after preparation. A closed
+final ZIP may remain after abrupt process termination, without an executable
+crash or power-loss guarantee. Never restore, roll back, compensate for an
+effect, derive current target state from recovery provenance, or create a
+journal, progress receipt, or persisted plan. After final verification of
+whole-operation success, delete the bundle. If recognized deletion fails,
+effects remain successful and the result is `attention` with the exact residual
+path and cleanup guidance.
+
+Explicit Cleanup owns exact named final and draft deletion under its separate
+lease-bound contract. Unknown or differently named artifacts remain untouched.
+Same-path normalized
+physical rediscovery is deterministic; a workspace move is outside the
+automatic guarantee, and Doctor/Cleanup may report orphan bundles for the
+original root without auto-binding or restoring them. Recovery reads use strict
+schema and exact-entry validation and do not extract bundles or add a custom
+archive parser.
 
 ## Repeated Remove And Result Formation
 
@@ -181,8 +227,8 @@ evidence is `incomplete` or `blocked`, never presumed success.
 Form one typed result with exact workspace, IDs, trust/coverage, retained
 dependents, owner/path classifications, Keep/Delete choice, releases, deletions,
 shared retention, preserved unmanaged paths, generated effects, lifecycle
-publication, verification, recovery, status, and one next action. Human and JSON
-renderers consume it once. Use the Interface status and stream rules.
+publication, verification, recovery-bundle status, and one next action. Human and
+JSON renderers consume it once. Use the Interface status and stream rules.
 
 ## Behavioral Conformance
 
@@ -191,8 +237,8 @@ choice, source independence, trusted/untrusted/absent lifecycle, no-op proof,
 dependency and route-host blocking, shared-owner release, unchanged final-owner
 deletion, changed Keep-as-unmanaged, same-request prune Delete, later-prune
 refusal, unknown/unowned/Framework preservation, semantic fingerprints,
-generated projection, complete plan, Git/backup/recovery, revalidation,
-verification, reverse recovery, dry-run no-effects, statuses/streams/JSON, and
+generated projection, complete plan, recovery-bundle behavior, revalidation,
+verification, dry-run no-effects, statuses/streams/JSON, and
 package-source preservation. The shared CLI Architecture defines the exact JSON
 result schema and exit mapping. Gate 5 must prove source-generated
 serialization, fixed Markdig where used, real `System.IO`, Native AOT, OS

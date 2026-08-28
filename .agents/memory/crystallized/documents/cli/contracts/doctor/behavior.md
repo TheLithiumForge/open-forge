@@ -246,36 +246,35 @@ entry repair proposal.
 
 ## Domain 2: Recovery And Residual State
 
-The recovery stage inspects only recognized Open Forge recovery evidence around
-known targets and the Git or Gitless facts admitted by the boundary. It does not
-delete, restore, rename, replace, or inspect arbitrary private artifacts. Unknown
-adjacent material remains visible as unknown evidence and is not treated as a
-cleanup candidate.
+The recovery stage resolves only the current user's external
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.None)/OpenForge/recovery/v1` root. This
+observer-only lookup never creates the OS application-data root or the Open Forge
+subtree. An absent root or store produces zero recovery items. An unreadable
+selected workspace bucket produces unavailable or incomplete recovery coverage;
+it is never absence. The stage does not recursively inspect the workspace or
+arbitrary private artifacts.
 
-The stage realizes the complete recovery catalogue:
+The stage enumerates exact deterministic final and draft names directly under
+the selected workspace bucket. It performs at most one semantic integrity check
+per exact named final ZIP: source-generated schema-v1 manifest decoding, exact
+ordered entry names and counts, declared lengths and hashes, and exact payload
+bytes. A valid final is `Verified`; an invalid or unreadable final is
+`Malformed`, `Unsupported`, or `Unavailable`. An exact named draft is
+`Incomplete` and never preparation. Payload validation uses fixed bounded
+buffers and never extracts, discloses, renders, logs, returns, retains, or
+materializes payload bytes.
 
-- `recovery.backup-recognized`, `recovery.temporary-recognized`, and
-  `recovery.residual-recognized` preserve recognized artifact identity,
-  relationship, and current state as informational or manual evidence.
-- `recovery.backup-collision` blocks any boundary that would overwrite an
-  unknown or incompatible backup location.
-- `recovery.target-mismatch` blocks recovery when the artifact's target identity
-  or expected relationship differs from current facts.
-- `recovery.prior-state-incomplete` and `recovery.prior-state-mixed` preserve
-  partial-operation evidence and prevent a best-effort recovery choice.
-- `recovery.artifact-still-needed` preserves current evidence that an artifact is
-  active or unsafe for recovery use. Cleanup preserves active or unsafe items,
-  but does not require a separate proof that an otherwise eligible inactive
-  artifact is unnecessary for recovery.
-- `recovery.artifact-unknown` retains an unclassified adjacent artifact as
-  manual evidence. It never authorizes deletion.
-- `recovery.git-evidence` and `recovery.gitless-evidence` report which bounded
-  evidence source was available. Gitless evidence is not treated as Git
-  evidence, and absent Git does not create an implicit fallback to unsafe writes.
+The stage reports the exact path, kind, integrity condition, and separate Cleanup
+guidance. It does not acquire `WorkspaceLockLease`, inspect live targets,
+classify target state, infer activity, or auto-bind another workspace bucket.
+The recovery catalogue contains only `recovery.bundle-recognized`,
+`recovery.draft-recognized`, `recovery.bundle-collision`, and
+`recovery.provenance-unavailable` under the Interface definitions.
 
 Recovery findings remain diagnosis, manual, blocked, or typed actions for the
 separate [cleanup operation](../cleanup/interface.md). The general Repair
-catalogue contains no recovery deletion or restoration, and Doctor never runs
+catalogue contains no recovery-bundle deletion or restoration, and Doctor never runs
 cleanup.
 
 ## Domain 3: Routes, Metadata, Overwrites, And Generated Navigation
@@ -499,11 +498,14 @@ to stdout for every semantic status; separate bounded diagnostics use stderr.
 ## Read-Only Safety
 
 Doctor performs no persistent effect. It does not write authored files,
-generated navigation, lifecycle sections, lifecycle records,
-backups, temporary files,
-reports, sessions, or caches. It does not remove or restore recovery artifacts,
-change Git state, invoke a public command, or acquire mutation authority through
-an interactive or structured renderer.
+generated navigation, lifecycle sections, lifecycle records, recovery bundles,
+temporary files, reports, sessions, or caches. It does not remove or restore
+recovery bundles or drafts, invoke a public command, or acquire mutation authority
+through an interactive or structured renderer.
+
+Bounded payload streaming serves only semantic length/hash validation. Doctor never
+extracts, discloses, retains, or materializes payload bytes and never turns the
+visible lock file into activity evidence.
 
 All facts and proposals are derived per invocation. A repeated unchanged
 invocation returns the same semantic result and does not create a synthetic
@@ -526,8 +528,12 @@ section. A conforming implementation must additionally prove:
   and next-action facts.
 - Workspace identity, Loader, entrypoint, path, source-ID, metadata, parsing,
   root, and detached boundaries from the complete catalogue.
-- Recognized recovery, collision, target mismatch, mixed-state, unknown,
-  still-needed, Git, and Gitless evidence without cleanup effects.
+- Verified final bundles, incomplete drafts, final-name collisions, and
+  unavailable provenance without Cleanup effects, live-target inspection, or
+  activity inference.
+- Representative payload entries with exact declared lengths
+  and hashes, bounded buffers and memory independent of entry size, and no
+  extraction, disclosure, retention, or materialization.
 - Authored route topology, generated navigation, metadata, overwrite, and
   compatibility evidence without route or index mutation.
 - Local-reference target, fragment, path, encoding, containment, alias, image,

@@ -39,7 +39,7 @@ current expected paths. `--prune` deletes eligible retired managed content.
 ## Syntax
 
 ```text
-open-forge extension update [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--prune] [--automatic] [--dry-run] [--skip-git-check] [global flags]
+open-forge extension update [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--prune] [--automatic] [--dry-run] [global flags]
 ```
 
 IDs are repeatable positional managed package subjects. `--all` explicitly
@@ -75,10 +75,12 @@ Update requires:
 
 Before a workspace effect, the implementation must hold the actual OS lock for
 the visible `.agents/open-forge.lock` path defined by the accepted CLI
-Architecture. File existence is not lock ownership. A crash releases the OS
-lock; an unlocked file is reusable and may be manually removed only when no
-process is active. The lock is concurrency safety, not lifecycle authority or
-history, and another process holding it blocks mutation.
+Architecture. The lock file is persistent and reusable: preserve any existing
+bytes and write no metadata, timestamp, or ownership record. Hold a
+`FileShare.None` handle for the operation; file existence is not lock
+ownership. A crash releases the OS lock, and another process holding it blocks
+mutation. The lock is concurrency safety, not lifecycle authority, history, or
+recovery evidence.
 
 Missing safe source or lifecycle coverage is `incomplete`. Malformed, ambiguous,
 colliding, unsafe, or untrusted mutation facts are `blocked`. Force and prune do
@@ -87,10 +89,65 @@ not promote untrusted state.
 The only new-CLI lifecycle document is `.agents/open-forge.lifecycle.json`, schema
 v1. It has a common envelope and isolated `framework` and `extensions` sections.
 Update changes only `extensions` and preserves the unrelated `framework` section
-and common-envelope bytes and meaning. The document stores no plan, runtime
-history, journal, recovery evidence, or session. An absent document or section is
-not, by itself, proof of unmanaged state. Unsupported or ambiguous schema facts
-are `incomplete` or `blocked` under the existing safety rules.
+and common-envelope meaning. When selected lifecycle meaning changes, the writer
+emits one deterministic canonical UTF-8 whole-document representation; lifecycle
+property order, whitespace, and line endings are not preserved. A semantic
+no-op writes nothing. The document stores no plan, runtime history, journal,
+recovery evidence, or session. An absent document or section is not, by itself,
+proof of unmanaged state. Unsupported or ambiguous schema facts are
+`incomplete` or `blocked` under the existing safety rules.
+
+### Recovery boundary
+
+Before the first target effect, application prepares and verifies exactly one
+immutable ZIP recovery bundle for the complete operation when the plan contains
+an existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or `Delete`). The bundle
+is outside the workspace under
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.Create)/OpenForge/recovery/v1`; no temporary,
+repository, `HOME`, or custom platform fallback is permitted. Unavailable
+storage makes the operation `incomplete` before any target effect.
+
+The final bundle name is deterministic from the normalized physical workspace
+path key and operation ID. A `CreateNew` draft in the same directory is closed
+and reopened for semantic manifest, exact ordered entry, length, hash, and
+payload-byte validation, moved within that directory to the final name, and
+reopened and verified again. Only the valid final ZIP forms the opaque
+`RecoveryBundlePreparation`; the draft remains `Incomplete`. The source-generated
+`manifest.json` records schema-v1, command and operation identity, workspace
+identity, ordered relative targets, change kinds, exact prior byte lengths,
+hashes and payload names, and each intended final absence or length and hash.
+Ordered ordinal payload entries contain the exact prior bytes for every
+existing-target effect. The bundle is immutable after preparation.
+
+Every planned existing-target effect must match one verified bundle entry; Create and
+no-op effects create no entry. All bundle preparation completes before the
+first mutation. `FileChangeApplier` requires that matching preparation for each
+existing-target effect and performs one final effect per target. On handled failure
+or cancellation, report the actual residual draft or final path;
+a valid final remains after preparation. A closed final ZIP may remain after
+abrupt process termination, without an executable crash or power-loss guarantee.
+The CLI never restores, rolls back, compensates for an effect, derives current
+target state from recovery provenance, or stores a journal, progress receipt, or
+history.
+
+After final verification of whole-operation success, delete the bundle. If
+recognized bundle deletion fails, effects remain successful and the result is
+`attention` with the exact residual path and cleanup guidance. Explicit Cleanup
+may delete only the exact selected-workspace final or draft candidate while
+holding the same-workspace lease and after immediate ordinary path, kind, and
+final semantic revalidation. Unknown names and unavailable, malformed, or
+mismatched candidates remain untouched. A workspace move is outside the
+automatic guarantee: deterministic rediscovery uses the same normalized
+physical path, while Doctor/Cleanup may report orphan bundles for the original
+root and never auto-bind or restore them.
+
+Recovery storage is ordinary current-user `LocalApplicationData` under the
+stable workspace and cooperating-client threat model. No special platform-
+permission or encryption behavior is promised. Recovery reads use semantic
+schema and exact ordered-entry validation; the
+implementation does not extract bundles or add a custom archive parser,
+reflection, native dependency, or package for this boundary.
 
 The shared CLI Architecture defines the exact package serialization, structured
 JSON result schema, and numeric exit mapping. This Interface uses those shared
@@ -132,10 +189,9 @@ automatic use. A multi-package source requires explicit IDs or `--all`.
 | `--prune`          | Retired-content deletion authority               | Delete eligible retired managed paths only.                                                                                         |
 | `--automatic`      | Guided-input policy                              | Suppress wizard and apply only safe effects authorized by explicit IDs, `--all`, or permitted single-package manifest-ID inference. |
 | `--dry-run`        | Preview policy                                   | Use the same plan and preflight, then write nothing.                                                                                |
-| `--skip-git-check` | Affected-path Git policy                         | Bypass only cleanliness and use accepted adjacent-backup recovery where needed.                                                     |
 
-All Boolean flags repeat idempotently. Force never implies prune or Git bypass.
-Prune never restores or overwrites. Skip-Git never grants either authority.
+All Boolean flags repeat idempotently. Force never implies prune. Prune never
+restores or overwrites.
 
 ### Normal update
 
@@ -150,7 +206,7 @@ complete safe coverage; planned effects alone do not.
 Force widens only current expected-footprint replacement: changed managed paths
 may be overwritten and missing current expected paths may be restored. It never
 deletes retired content, adopts an unowned path, overrides shared or competing
-owners, repairs markers, bypasses containment, or weakens Git, verification, or
+owners, repairs markers, bypasses containment, or weakens verification or
 recovery.
 
 ### `--prune`
@@ -158,7 +214,7 @@ recovery.
 Prune widens only retired managed-content deletion. A path is eligible only when
 trusted baseline identity names it, current source proves retirement, current
 semantic and physical identity are safe, no other owner/manager/route dependency
-blocks, and Git, backup, and recovery checks pass. Prune never deletes unknown,
+blocks, and verification and recovery checks pass. Prune never deletes unknown,
 unowned, shared, current expected, or unsafe content.
 
 ### `--automatic` and wizard
@@ -184,8 +240,13 @@ closure before writes.
 The `extensions` section records stable IDs, dependency facts,
 target-relative paths, shared-owner sets, and semantic baseline fingerprints.
 The schema-v1 document keeps `framework` and `extensions` logically isolated.
-Update preserves unrelated section bytes and meaning. Files outside the exact
-lifecycle document are not lifecycle inputs.
+Update preserves unrelated section meaning semantically. A selected semantic
+change emits one deterministic canonical UTF-8 whole-document representation;
+lifecycle property order, whitespace, and line endings are not preserved. A
+semantic no-op writes nothing. For an existing-target effect, exact prior bytes
+are captured in the verified operation recovery bundle;
+the lifecycle document itself stores no recovery evidence. Files outside the
+exact lifecycle document are not lifecycle inputs.
 
 Two explicit owners may share a physical path only with equal supported
 canonical semantic fingerprints and compatible path, route, and metadata facts.
@@ -197,7 +258,7 @@ The operation projects affected generated `Entries` from intended authored
 topology and metadata using current Index behavior. Generated interiors are
 derived navigation, not package-owned authored bytes. A malformed boundary
 blocks and is never repaired by force or prune. The lifecycle document, Framework,
-overwrite, Git, recovery, and other-manager paths are not package targets.
+overwrite, recovery, and other-manager paths are not package targets.
 
 ## Semantic Identity And Formatter Boundary
 
@@ -222,7 +283,7 @@ persist formatter state.
 Human output leads with workspace/source, selected IDs and closure, trust,
 normal/force/prune/automatic and apply/dry-run mode, baseline/current/intended
 counts, safe/planned/applied/preserved/restored/overwritten/deleted/shared
-effects, generated projection, lifecycle publication, Git/backup/recovery facts,
+effects, generated projection, lifecycle publication, recovery-bundle facts,
 status, and at most one next action. JSON emits one complete typed result from
 the same result for every status.
 
@@ -230,11 +291,11 @@ the same result for every status.
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `complete`    | The selected update, force, prune, composition, or dry-run has complete coverage and no unresolved finite divergence; a verified no-op is complete.     |
 | `attention`   | Complete safe coverage preserves changed, missing, retired, changed-final-owner, or equivalent finite divergence not covered by the selected authority. |
-| `incomplete`  | Safe source, lifecycle, Framework-anchor, dependency, parser, route, or recovery coverage is unavailable. No write occurs.                              |
+| `incomplete`  | Safe source, lifecycle, Framework-anchor, dependency, parser, route, or recovery-bundle coverage is unavailable. No write occurs.                |
 | `invalid`     | Selection, source, flags, operands, repetition, or terminal-mode input is invalid.                                                                      |
-| `blocked`     | Unsafe, ambiguous, untrusted, colliding, dirty, retained-dependent, route-unsafe, ownership, containment, or recovery facts prevent one complete plan.  |
-| `failed`      | Application, lifecycle publication, verification, or handled recovery fails unexpectedly.                                                               |
-| `interrupted` | The caller interrupts before completion and no stronger recovery failure remains.                                                                       |
+| `blocked`     | Unsafe, ambiguous, untrusted, colliding, retained-dependent, route-unsafe, ownership, containment, or recovery-bundle facts prevent one complete plan. |
+| `failed`      | Application, lifecycle publication, verification, or bundle handling fails unexpectedly after effects begin.                                            |
+| `interrupted` | The caller interrupts before completion and no unexpected application or verification failure remains.                                                  |
 
 Primary human complete/attention/incomplete results go to stdout. Primary human
 invalid/blocked/failed/interrupted results go to stderr. Bounded diagnostics use
@@ -273,7 +334,7 @@ open-forge extension update development-toolkit --prune --dry-run
 Compose both exact authority boundaries:
 
 ```text
-open-forge extension update development-toolkit --force --prune --skip-git-check
+open-forge extension update development-toolkit --force --prune
 ```
 
 ## Non-Goals And Public Conformance
@@ -288,7 +349,7 @@ Conformance must cover exact source universe, IDs/`--all`, dependency closure,
 trusted lifecycle and Framework-anchor gates, source-unavailable behavior,
 normal/force/prune/automatic semantics, shared ownership, retired/final path
 boundaries, semantic fingerprints, generated navigation, lifecycle-section
-preservation, complete planning, Git/backup/recovery, dry-run parity, statuses,
+preservation, complete planning, recovery-bundle behavior, dry-run parity, statuses,
 streams, JSON, deterministic no-op repetition, and no package-source mutation.
 The shared CLI Architecture defines the exact JSON result schema and exit
 mapping. Gate 5 must prove source-generated serialization, fixed Markdig where

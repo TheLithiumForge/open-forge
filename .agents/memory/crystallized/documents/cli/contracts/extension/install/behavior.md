@@ -33,13 +33,13 @@ validated command and package selection
   -> dry-run or application
   -> expected-state revalidation
   -> per-effect and whole-operation verification
-  -> Extension-section publication or reverse recovery
+  -> Extension-section publication and retained-recovery reporting
   -> one typed result
 ```
 
 No effect begins until all selected roots, dependencies, ownership sets, route
-hosts, generated boundaries, lifecycle sections, Git, backup, verification, and
-recovery facts pass. The operation does not apply a safe subset around a blocked
+hosts, generated boundaries, lifecycle sections, recovery-bundle, verification,
+and preservation facts pass. The operation does not apply a safe subset around a blocked
 dependency or path.
 
 ## Request, Workspace, And Source Resolution
@@ -47,7 +47,7 @@ dependency or path.
 The resolver rejects incompatible IDs and `--all`, duplicate positional IDs,
 repeated singleton source values, unknown flags, Framework-group forms, and
 terminal-mode conflicts. It collapses applicable Boolean flags idempotently and
-keeps automatic, force, dry-run, and skip-Git independent.
+keeps automatic, force, and dry-run independent; unknown options are invalid.
 
 It selects exactly CWD or exact `--workspace`; no parent, Git-root, nested-root,
 marker, or nearby source discovery is available. An external source must be
@@ -97,9 +97,15 @@ grants compatibility authority.
 
 Read `.agents/open-forge.lifecycle.json`, schema v1, as isolated `framework` and
 `extensions` sections. Validate and preserve the unrelated section and common
-envelope bytes and meaning. The document stores no plan, runtime history,
-journal, recovery evidence, or session. Files outside this exact path are
-ordinary workspace content, not lifecycle input.
+envelope meaning semantically. A selected semantic change emits one deterministic
+canonical UTF-8 whole-document representation, so lifecycle property order,
+whitespace, and line endings may be normalized. A semantic no-op writes nothing.
+Prior bytes for every existing-target effect (`Replace`,
+`ReplaceGeneratedRegion`, or `Delete`) remain only in the verified external
+recovery bundle described below; the CLI does not inspect or report repository
+state or claim history evidence. The document stores no plan, runtime history,
+journal, recovery evidence, or session. Files outside this exact path are ordinary
+workspace content, not lifecycle input.
 
 The `extensions` section is trusted only with exact workspace binding, stable IDs,
 dependency reciprocity, target-relative paths, shared owner sets, semantic
@@ -127,7 +133,7 @@ closed.
 
 Persist semantic baseline fingerprints, not exact-byte baseline digests. Capture
 current exact bytes freshly for plan, diff, expected-state, write, verification,
-and recovery. Formatting-only equal semantic identity is not divergence. No
+recovery-bundle payload, and recovery. Formatting-only equal semantic identity is not divergence. No
 formatter executes or produces persisted formatter state.
 
 When two explicit package owners target one physical path, share it only when
@@ -144,7 +150,7 @@ companions, Framework regions, and unrelated lifecycle facts. Project every
 affected generated region from that intended authored topology and metadata using
 the Index contract. Generated interiors are derived and not package-owned.
 
-Reject package paths targeting the lifecycle document, `.git`,
+Reject package paths targeting the lifecycle document, repository metadata,
 recovery or temporary artifacts, workspace-owned overwrite companions, Framework
 root/provider blocks, or another manager's path. Missing, duplicate, reversed,
 nested, misplaced, or ambiguous generated boundaries block; force never repairs
@@ -168,7 +174,7 @@ For each selected root and dependency:
   the new verified state; it does not adopt old bytes.
 
 Force never replaces managed divergence, deletes, adopts, changes ownership,
-overrides a shared owner, repairs markers, or bypasses Git, containment,
+overrides a shared owner, repairs markers, or bypasses containment,
 verification, or recovery. Automatic mode admits only safe absent/no-op effects
 already selected by explicit IDs, `--all`, or the permitted single-package
 manifest-ID inference; it never adds force or chooses among packages.
@@ -178,21 +184,36 @@ manifest-ID inference; it never adds force or chooses among packages.
 The complete plan contains package/dependency order, exact source and target
 identity, current bytes and semantic facts, intended bytes, shared owners,
 generated-region effects, Extension-section publication, expected-state guards,
-Git cleanliness, backup readiness, verification, and reverse recovery. A dirty
-planned existing path blocks unless `--skip-git-check`; that flag changes only
-cleanliness and activates bounded adjacent-backup recovery where needed. Before
-the first workspace effect, obtain the actual OS lock for the visible
-`.agents/open-forge.lock` path defined by the accepted CLI Architecture. File
-existence is not lock ownership. A lock held by another process blocks mutation;
-a crash releases the OS lock, and an unlocked file is reusable and may be
-manually removed only when no process is active. The lock is not lifecycle
-authority, history, or recovery evidence.
+recovery-bundle readiness, verification, and preservation. Before the first
+existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or `Delete`), use only
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.Create)` and its application-owned
+`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
+`HOME`, or custom-platform fallback; unavailable storage is a pre-effect
+`incomplete` result. It prepares exactly one immutable ZIP bundle outside the
+workspace. An operation containing only
+Create effects or no-ops does not resolve recovery storage and creates no bundle.
+Its source-generated
+schema-v1 `manifest.json` and streamed ordinal payload entries record
+command/operation/workspace identity, ordered relative targets, change kinds,
+exact prior bytes/lengths/hashes, and intended final absence or length/hash.
+`Create` and semantic/byte no-op effects have no entry. A CreateNew draft is
+closed and reopened for semantic manifest, exact ordered entry, length, hash,
+and payload-byte validation, moved within the same directory to its deterministic
+final name, and reopened and verified. Only the valid final ZIP forms the opaque
+`RecoveryBundlePreparation`; the draft remains `Incomplete`.
+`FileChangeApplier` requires the matching preparation for every existing-target effect
+and performs one final effect per target. All preparation completes before the
+first target effect; unknown, malformed, mismatched, or colliding bundles block.
+The persistent reusable `.agents/open-forge.lock` preserves existing bytes and
+is held with a `FileShare.None` handle only; it never receives metadata writes,
+deletion, or truncation.
 
 Dry-run uses the same request, facts, intended state, plan, and preflight as
 application. It shows the complete selected closure, effects, preserved and
 conflicting facts, generated projections, and lifecycle publication that would
 follow verified apply, then writes nothing, including no lifecycle section,
-backup, or temporary artifact.
+recovery bundle, or temporary artifact.
 
 Dry-run forms the same pre-effect planning status as application. Because it
 performs no effects, it never produces an apply-time `failed` or `interrupted`
@@ -203,13 +224,19 @@ Application revalidates every selected source, target, owner, route, marker,
 containment, expected-state, and recovery fact immediately before effects. Apply
 dependencies before dependents, verify each payload/generated/lifecycle effect,
 verify the complete operation, and publish Extension ownership only after the
-whole result is verified. Remove backups only after complete verification.
+whole result is verified. Delete only the positively recognized bundle created
+by this operation after final verification. If deletion fails, effects remain
+successful and the result is `attention` with the exact residual path and
+cleanup guidance.
 
-On failure, stop new effects and reverse applied effects in reverse order only
-while identity guards match. Preserve concurrent changes and residual recovery
-evidence. Recovery failure is `failed`; cancellation without stronger residual
-failure is `interrupted`. A later invocation makes a fresh plan and never
-replays a saved plan or journal.
+On failure, stop new effects and never restore, reverse, or compensate for an
+earlier effect. Preserve concurrent changes and report the actual residual draft
+or final path; a valid final remains after preparation. A closed final ZIP may
+remain after abrupt process termination, without an executable crash or
+power-loss guarantee. Recovery provenance does not classify current target
+state. Cleanup owns exact named final and draft deletion under its separate
+lease-bound contract.
+A later invocation makes a fresh plan and never replays a saved plan or journal.
 
 ## Result Formation And Conformance
 
@@ -223,9 +250,10 @@ Interface.
 Conformance must cover source and selection rules, dependency failures and
 ordering, Framework-anchor gating, trusted/untrusted/absent/unavailable state,
 initial force and managed-divergence block, shared owners, semantic fingerprints,
-generated navigation, reserved paths, complete planning, Git/backup/recovery,
-dry-run no-effects, revalidation, verification, reverse recovery, no-op
-repetition, JSON/human parity, and no package-source mutation. The shared CLI
+generated navigation, reserved paths, complete planning, external recovery-bundle
+storage and verification, cleanup attention, dry-run no-effects, revalidation,
+verification, retained partial state without restoration, no-op repetition,
+JSON/human parity, and no package-source mutation. The shared CLI
 Architecture defines the exact JSON result schema and exit mapping. Gate 5 must
 prove source-generated serialization, fixed Markdig where used, real
 `System.IO`, Native AOT, OS locking, isolated tests, and package journeys.

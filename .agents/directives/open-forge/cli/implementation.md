@@ -189,8 +189,9 @@ open-forge:
   required, revalidate expected state, apply bounded effects, verify the result,
   and record accepted lifecycle or recovery facts.
 - Shared mutation support provides primitives, not product decisions. Every
-  command retains its own plan, ordering, findings, compensation or rollback
-  meaning, and result.
+  command retains its command-local plan, policy, ordering, findings,
+  residual-state reporting, and result. The replacement CLI never automatically
+  restores a target, rolls back an effect, or compensates for target effects.
 
 ### Dependencies And Native AOT
 

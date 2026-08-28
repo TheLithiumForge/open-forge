@@ -95,7 +95,8 @@ Initial measurement remains measured when available, current startup, Difference
 startup percentage, continuity, and root-category facts are not-applicable, and
 the total physical context inventory remains numeric when safely measurable. An
 applicable fact that cannot be measured is unavailable and makes the result
-incomplete. Lifecycle and recovery facts retain their own accounting rules.
+incomplete. Lifecycle and recovery-bundle facts retain their own accounting
+rules.
 
 ## Inspection Boundary And Completeness
 
@@ -105,7 +106,8 @@ and [Context Inventory](interface.md#context-inventory): the canonical workspace
 entry and supported `.agents` Markdown, the embedded Framework payload, the
 route and loading facts needed for startup and continuity, direct Loader root
 categories, the exact `.agents/open-forge.lifecycle.json` document, schema v1,
-and identifiable recovery evidence around exact Open Forge targets.
+and the current user's external recovery store containing exact-name final and
+draft candidates for the selected normalized physical workspace path.
 
 Enumeration is closed. The ledger records each canonical workspace-relative path,
 its physical layer and logical-source relationship where applicable, its readable
@@ -138,8 +140,8 @@ common envelope with isolated `framework` and `extensions` sections. It never
 combines their authority or uses one section to reconstruct the other. It
 preserves independently readable facts from an unaffected section when the other
 section is malformed, while retaining the malformed section's coverage state.
-The document stores no plan, runtime history, journal, recovery evidence, or
-session. Files outside this exact path are ordinary workspace content, not
+The document stores no plan, runtime history, journal, recovery-bundle evidence,
+or session. Files outside this exact path are ordinary workspace content, not
 lifecycle input.
 
 The stage classifies each section as:
@@ -322,19 +324,47 @@ Compact human output may combine that state with Extension and managed-file
 summaries. If package source bytes are unavailable, installed facts remain
 reportable and source-dependent comparisons are unavailable or incomplete.
 
-### Recovery Evidence Accounting
+### Recovery-Bundle Accounting
 
-The recovery stage inspects only evidence the running CLI can identify as known
-Open Forge recovery artifacts around exact Open Forge targets. Unknown adjacent
-files are outside the count. The resulting count is evidence only; it does not
-claim that recovery is required, complete, or guaranteed to succeed.
+The recovery stage resolves only the current user's
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.None)/OpenForge/recovery/v1` store. This
+observer-only lookup never creates the OS application-data root or the Open Forge
+subtree. It uses the deterministic key for the selected normalized physical
+workspace path and reports every exact-name final and draft candidate. It never
+falls back to the workspace, a repository, a temporary directory, or a target's
+adjacent files. Unknown, lookalike, mismatched, and differently keyed items do
+not enter the candidate catalogue. A malformed exact-name final remains a
+reported candidate.
 
-The stage does not remove or inspect private recovery bytes. It does not invent
-artifact names, identity rules, cleanup, or discovery behavior. The separate
-[cleanup contract](../cleanup/interface.md) owns recognized-artifact deletion;
-Status's own recovery evidence boundary remains defined by [Interface Recovery
-Files](interface.md#recovery-files) and [Interface Architecture
-Boundary](interface.md#architecture-boundary).
+If the application-data root or recovery store is absent, the stage reports zero
+verified finals and zero incomplete drafts. If an existing root or selected
+workspace bucket cannot be read, it records the recovery fact as unavailable and
+forms the locally contracted `incomplete` result. It never treats access failure
+as absence.
+
+The stage enumerates only exact deterministic final and draft names directly
+under the selected workspace bucket. A final ZIP is `Verified` only after
+semantic source-generated manifest/schema validation and exact ordered entry
+names and counts, declared lengths and hashes, and exact payload-byte validation.
+An exact named final that cannot satisfy that check remains a reported
+`Malformed`, `Unsupported`, or `Unavailable` issue and never enters the
+verified-final count. An exact named draft is reported as `Incomplete`, enters
+only the incomplete-draft count, and never forms preparation. Every candidate
+item retains its path, kind, and integrity condition. Unknown names, locations
+elsewhere, and target proximity do not establish a result item.
+
+The stage does not acquire `WorkspaceLockLease`, inspect live targets, classify
+current target state, or infer activity. Payload validation uses fixed bounded
+buffers and never extracts, discloses, renders, logs, returns, retains, or
+materializes payload bytes. A bundle keyed to an original workspace path after a
+workspace move is not auto-bound to the newly selected path.
+
+The stage does not remove, clean, restore, roll back, or otherwise mutate a
+bundle or target. The separate [cleanup contract](../cleanup/interface.md) owns
+lease-validated candidate deletion. Status's boundary remains
+defined by [Interface Recovery Bundles](interface.md#recovery-bundles) and
+[Interface Architecture Boundary](interface.md#architecture-boundary).
 
 ## Result Formation And Presentation
 
@@ -345,8 +375,10 @@ containing the workspace and selection method, Framework installation state,
 Initial/current/Difference measurements, total and continuity measurements,
 ordered continuity-source contributions, root-category facts, Framework and
 Extension lifecycle trust and managed-file states, source-availability
-observations, recovery count, measurement availability, observations or
-attention conditions, and the public semantic result. The field meanings are
+observations, separate verified-final and incomplete-draft counts, every
+exact-name recovery candidate's path, kind, and integrity condition, measurement
+availability, observations or attention conditions, and the public semantic
+result. The field meanings are
 owned by [Interface Structured Output](interface.md#structured-output);
 this stage does not create a second schema.
 
@@ -362,13 +394,15 @@ The result selector uses only the seven public semantic states in
 - Invalid request input selects `invalid`.
 - Failure to establish the selected workspace or a safe inspection boundary
   selects `blocked`.
-- Safe facts with one or more incomplete applicable measurements select
-  `incomplete` rather than claiming complete coverage.
+- Safe facts with one or more unavailable or incomplete applicable measurements,
+  including an exact-name draft or safely bounded malformed or unsupported final,
+  select `incomplete` rather than claiming complete coverage.
+- An unsafe or ambiguous recovery inspection boundary selects `blocked` under
+  the existing inspection-boundary precedence.
 - An unexpected internal failure selects `failed`.
 - Cancellation or interruption before completion selects `interrupted`.
-- Complete measurement with changed or missing trusted managed files,
-  recognized recovery evidence, or a finite lifecycle/source observation selects
-  `attention`.
+- Complete measurement with changed or missing trusted managed files, a verified
+  recovery final, or a finite lifecycle/source observation selects `attention`.
 - Complete applicable measurement without an attention condition selects
   `complete`, including a safely established uninstalled workspace.
 
@@ -387,8 +421,9 @@ It renders the typed `attention` value as `requires attention` and does not
 reinterpret any measurement or ranking.
 
 Compact rendering retains the public status, workspace identity, startup and
-continuity totals, root changes, Extension and managed summaries, recovery count,
-and required next-action information. It emits at most one operation-level
+continuity totals, root changes, Extension and managed summaries, separate
+verified-final and incomplete-draft counts, recovery issue visibility, and
+required next-action information. It emits at most one operation-level
 `Next:` line, only under the rules in [Interface Human Output](interface.md#human-output):
 complete has none; attention uses `open-forge doctor`; incomplete uses Doctor
 unless a more direct safe correction is known; invalid uses `Next: correct the
@@ -433,11 +468,12 @@ guessed value to avoid reporting an error or incomplete boundary.
 ## Read-Only Effects And Safety
 
 Status performs no persistent mutation. It does not write workspace files,
-lifecycle sections, generated navigation, snapshots, recovery
-artifacts, or persistent diagnostics;
-it does not remove or inspect private recovery bytes; and it does not create an
-empty mutation plan. Read, comparison, ranking, and rendering stages cannot
-acquire write authority.
+lifecycle sections, generated navigation, snapshots, recovery bundles or drafts,
+or persistent diagnostics;
+it does not remove, extract, disclose, retain, or materialize private recovery
+bytes; and it does not create an empty mutation plan. Bounded payload streaming
+serves only strict length/hash validation. Read, comparison, ranking, and
+rendering stages cannot acquire write authority.
 
 The operation derives all facts per invocation from the selected workspace,
 embedded payload, and explicit input. Repeating it with unchanged inputs produces
@@ -468,7 +504,9 @@ tests, and package journeys.
 Behavioral conformance must also show that human and structured renderers consume
 one typed result, that Status does not parse ordinary links or named sections,
 build the complete context graph, inspect unrelated workspace files, or mutate
-anything, and that unsafe or incomplete facts are never silently discarded.
+anything, and that unsafe or incomplete facts are never silently discarded. It
+must prove bounded empty, binary, and large payload validation without extraction
+or materialization, and that Status neither inspects nor infers recovery activity.
 
 ## Related Current Sources
 

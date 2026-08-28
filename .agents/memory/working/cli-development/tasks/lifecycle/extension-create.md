@@ -21,17 +21,20 @@ catalogue destination without a workspace subject or workspace lock.
 
 - Keep exact package identity, manifest model, Template/payload selection,
   destination observation, `ExtensionCreatePlan`, result, and presentation local.
-- Reuse Extension manifest/source facts, strict path validation, atomic file
-  primitives, isolated Git checkpoint, and recovery provenance.
-- Replace workspace lock safeguards with exact catalogue destination identity,
-  expected-state revalidation, collision refusal, and owned recovery.
+- Reuse Extension manifest/source facts and strict path validation. Use a
+  separate create-only destination writer with exact collision and revalidation
+  checks; do not call the workspace `FileChangeApplier`, acquire a workspace
+  lease, or prepare a recovery bundle.
+- Replace workspace-lock and recovery safeguards with exact catalogue destination
+  identity, expected-state revalidation, and collision refusal. This command has
+  no workspace lease, no Replace/Delete, and no recovery bundle.
 
 ## Evidence
 
 Cover valid and invalid package IDs, exact destination, existing/colliding content,
 case/Unicode aliases, Template and payload formation, dry run, no workspace,
-revalidation race, Git clean/dirty/non-repository, partial failures, recovery,
-manifest/payload verification, second run, no unrelated changes, process, and AOT.
+revalidation race, create-only partial failures, manifest/payload verification,
+second run, no unrelated changes, process, and AOT.
 
 ## Stop Conditions
 

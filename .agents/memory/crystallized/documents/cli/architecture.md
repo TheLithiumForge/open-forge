@@ -564,7 +564,25 @@ authority.
 ### Lifecycle, Mutation, And Recovery
 
 Read-only commands never create locks, lifecycle files, caches, indexes, or
-recovery artifacts.
+recovery bundles or drafts.
+
+Recovery-store resolution has separate writer and observer modes. Only a
+mutation recovery-bundle writer may resolve
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.Create)` so it can create the application-owned
+`OpenForge/recovery/v1` subtree during pre-effect preparation. Status, Doctor,
+and Cleanup are observers: they resolve the same special folder with
+`Environment.SpecialFolderOption.None` and never create the OS application-data
+root or the Open Forge subtree. For those observers, an absent application-data
+root or recovery store means zero recognized bundles or drafts for Status and
+Doctor, or a verified Cleanup no-op. An existing selected workspace bucket that
+cannot be read remains unavailable or incomplete under the local command
+contract; a final ZIP that fails semantic validation keeps its exact malformed,
+unsupported, or unavailable condition. Neither condition is absence.
+
+Status and Doctor do not acquire the workspace lease, report activity, or infer
+activity from bundle contents, a filename, age, PID, marker, journal, or the
+visible persistent lock file.
 
 Mutation commands follow this visible shape:
 
@@ -574,41 +592,118 @@ resolve and inspect
   -> validate policy and collisions
   -> acquire the real workspace lock when applicable
   -> revalidate expected state
+  -> prepare and verify one external recovery bundle when existing targets require it
   -> apply bounded filesystem changes
   -> verify resulting identity and bytes
-  -> write accepted lifecycle or recovery state
+  -> write accepted lifecycle state
+  -> remove the command-owned recovery bundle only after whole-command success
   -> form one concrete result
 ```
 
 Shared mutation support provides file preconditions, atomic replacement,
-workspace locking, expected-state revalidation, Git or recovery primitives, and
-receipts. Each command owns its plan, effect ordering, rollback or compensation
-meaning, findings, and result. No generic engine decides product behavior.
+workspace locking, expected-state revalidation, external recovery-bundle
+preparation, bundle verification, and atomic replacement. Each command owns its
+plan, effect ordering, findings, and result. No generic engine decides product
+behavior or automatically restores, rolls back, or compensates for target
+effects.
 
-Git is the normal review and durable recovery boundary when it can recover every
-existing affected path. Gitless application, an explicit Git-check bypass, or an
-existing affected path that Git cannot recover preserves the old bytes through a
-collision-safe adjacent recovery artifact before replacement or deletion.
-New-file creation has no old bytes to back up. Recovery artifacts remain until
-the complete operation verifies or are retained when interruption or residual
-state still needs them.
+For each mutating command operation whose complete plan contains one or more
+existing-target effects (`Replace`, `ReplaceGeneratedRegion`, or `Delete`),
+orchestration resolves
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.Create)` and uses only its application-owned
+`OpenForge/recovery/v1` subtree. It never falls back to a temporary directory,
+the repository, `HOME`, or a custom platform directory. Unavailable storage is
+a pre-effect `incomplete` result. The operation then creates exactly one
+immutable ZIP bundle outside the workspace, under a
+deterministic key formed from the normalized physical workspace path and the
+operation ID. An operation containing only `Create` effects or semantic or byte
+no-ops does not resolve recovery storage and creates no bundle. The
+source-generated schema-v1 `manifest.json` records
+command and operation identity, workspace identity, and ordered relative target
+entries. Each entry for an existing-target effect (`Replace`,
+`ReplaceGeneratedRegion`, or `Delete`) records its change kind, prior length,
+hash, and streamed ordinal payload name, together with the intended final
+absence or length and hash. These fingerprints are provenance, not an evolving
+journal. The ordered payload entries contain the exact prior bytes for each such
+effect; `Create` targets and semantic or byte no-ops have no payload entry.
 
-Each file replacement stages complete bytes beside its target and uses the
-strongest ordinary atomic replacement that the managed platform supports. A
-multi-file operation is not presented as one filesystem transaction. Handled
-failure stops new effects and reverses already applied effects only while their
-observed identity still matches; otherwise it preserves the unexpected edit and
-reports the residual state. A fresh invocation plans again from current facts.
-The CLI does not persist or replay a transaction plan or introduce a general
-recovery journal.
+The writer may select the managed BCL's `CompressionLevel.NoCompression`, but
+compression method is not part of schema-v1 recognition or a promised output
+property. The format defines no ZIP entry timestamp, deterministic archive
+bytes, or whole-archive length or hash. Recognition decodes the source-generated
+manifest semantically and validates exact ordered entry names and counts,
+declared lengths and hashes, and the exact payload bytes without a raw ZIP
+parser.
+
+The draft is created with `CreateNew` under its exact deterministic draft name
+in that same external directory. The writer closes and reopens it, completes the
+semantic verification above, moves it within the same directory to its
+deterministic final name, and reopens and verifies the final bundle. Only a
+valid final ZIP may form the opaque `RecoveryBundlePreparation`; a draft remains
+`Draft`/`Incomplete` support data and never forms a preparation. The workspace
+`FileChangeApplier` requires the matching opaque final preparation for
+`Replace`, `Delete`, and `ReplaceGeneratedRegion`. `Create` must receive `null`;
+a non-null preparation for `Create` is rejected. The applier performs one final
+effect per target, and all required bundle preparation is complete before the
+first target effect.
+
+Status, Doctor, and Cleanup may stream each ZIP payload entry through fixed
+bounded buffers solely to validate its exact declared length and lowercase
+SHA-256. They never extract, disclose, render, log, return, retain, or materialize
+payload bytes. Payload size does not increase validation memory beyond the fixed
+buffer and hash state.
+
+Each file replacement stages complete intended bytes beside its target and uses
+the strongest ordinary atomic replacement that the managed platform supports. A
+multi-file operation is not presented as one filesystem transaction. On handled
+failure or cancellation, new effects stop and the actual residual draft or final
+bundle path is reported. A valid final bundle remains available when the failure
+occurs after preparation. The foundation never automatically restores a target,
+rolls back an effect, compensates for target effects, or classifies current
+target state from recovery provenance. A closed final ZIP may remain after an
+abrupt process termination, but the CLI makes no executable crash or power-loss
+durability guarantee. A fresh invocation plans again from current facts; the CLI
+does not persist a journal, progress receipt, history, or replayable plan.
+
+After the whole command verifies successfully, command orchestration deletes
+only the positively recognized bundle it created for that operation. If bundle
+deletion fails, the effects remain successful and the result is `attention`
+with the exact residual path and cleanup guidance. Unknown, lookalike, malformed,
+different-workspace, mismatched, or otherwise unowned support artifacts remain
+untouched. A workspace move is outside the automatic guarantee: rediscovery uses
+the same normalized physical workspace path, and Doctor or Cleanup may report
+orphaned original-root bundles but never auto-binds or restores them.
 
 The dedicated `cleanup` operation retains its accepted monotonic exception. It
-may delete a positively recognized eligible recovery artifact without staging a
-copy or creating another backup, and it does not reverse a verified deletion.
+may return a verified empty no-op without acquiring a lease. Before any
+deletion, Cleanup acquires the existing same-workspace `WorkspaceLockLease`
+through the persistent reusable lock file and `FileShare.None`, then performs one
+under-lease re-enumeration and immediate ordinary path/kind and final semantic
+revalidation. The
+held lease provides cooperating-process exclusion only. If Cleanup cannot
+acquire it, Cleanup performs no deletion. Cleanup mechanically deletes only exact named
+final or draft candidates for the selected workspace that remain ordinary files
+of the expected kind under that final revalidation, then verifies their absence.
+It writes no marker, PID, journal, lock metadata, or other lifecycle record and
+makes no activity inference.
+
+Cleanup creates no replacement bundle and does not reverse a verified deletion.
+Recovery bundles are not extracted by the CLI; recognition uses the semantic
+schema, exact ordered entry inventory, declared lengths and hashes, and exact
+payload bytes. The implementation uses ordinary managed BCL archive and file
+APIs, source-generated serialization, and no custom archive parser, reflection,
+native dependency, or extra package. Current-user LocalApplicationData is an
+ordinary application-owned storage boundary under the stable workspace and
+cooperating-client threat model; no special platform-permission or encryption
+promise is made.
 
 Lifecycle state remains `.agents/open-forge.lifecycle.json`, schema version 1.
-The mutation lock remains `.agents/open-forge.lock`. Existing legacy lifecycle
-formats are ordinary untouched content.
+The mutation lock remains `.agents/open-forge.lock`, is persistent and reusable,
+and preserves any existing bytes. A mutating operation only holds a
+`FileShare.None` handle; it never writes lock metadata and never deletes or
+truncates the lock file. Existing legacy lifecycle formats are ordinary
+untouched content.
 
 ## Serialization And Dependencies
 
@@ -638,7 +733,7 @@ The active test projects have distinct evidence boundaries:
   stages without claiming real filesystem or process behavior.
 - Integration tests call production modules with owned real temporary filesystems
   and cover source generation, resolved-path containment and aliases, locking,
-  Git, runtime, and Native AOT internal boundaries.
+  recovery, runtime, and Native AOT internal boundaries.
 - End-to-end tests invoke the published executable and prove arguments, streams,
   statuses, exits, cancellation, unchanged bytes, and public scenarios.
 - TestSupport contains cohesive real-OS workspace and process fixtures shared by
@@ -648,10 +743,10 @@ The active test projects have distinct evidence boundaries:
 Every test has an explicit display name, one durable feature trait, and one
 evidence trait. Traits refine selection and never replace project separation.
 
-Each test owns every mutable workspace, home, temporary directory, Git repository,
-cache, and process it can affect. Parallel tests share no mutable state. Snapshots
-cover stable projections only; safety, identity, effects, and status remain direct
-assertions.
+Each test owns every mutable workspace, home, temporary directory, cache, process,
+and support artifact it can affect. Parallel tests share no mutable state.
+Snapshots cover stable projections only; safety, identity, effects, and status
+remain direct assertions.
 
 Historical or removed tests are evidence only when a current Task maps their
 expectation to an accepted contract. Active evidence belongs in the matching
@@ -714,7 +809,7 @@ mutations and aggregate diagnosis:
 6. `find`, `references`, and `context` on shared source and document facts.
 7. `extension list` and `extension inspect` on shared extension-source facts.
 8. `index` after source, route, document, and generated-navigation facts exist.
-9. Shared mutation, lock, lifecycle, recovery, and Git foundations.
+9. Shared mutation, lock, lifecycle, and recovery foundations.
 10. `route init`, `route create`, `route update`, `route move`, and `route remove`.
 11. `extension create`, root `install`, root `update`, `extension install`,
     `extension update`, and `extension remove`.

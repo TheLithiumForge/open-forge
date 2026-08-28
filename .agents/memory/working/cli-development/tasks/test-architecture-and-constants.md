@@ -10,9 +10,9 @@ open-forge:
 
 - State: Complete and squash-integrated into local `develop` at `b6ce31f` from
   exact clean predecessor `8a1cb86`. The integrated tree exactly matches the
-  accepted feature tree. Mutation Foundation contract closure remains paused at
-  its persisted Framework-schema decision until the bounded read-only dogfooding
-  correction is locally integrated.
+  accepted feature tree. The bounded read-only dogfooding correction is now
+  integrated at `bba84b6`, so Mutation Foundation may consume the promoted
+  Markdown policy identity and shared test seeds.
 - Responsible role: Mastermind.
 - Parent: [Complete The Replacement CLI](00-cli-development.md).
 - Task source: Maintainer direction recorded on 2026-08-27.

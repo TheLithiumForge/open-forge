@@ -42,7 +42,7 @@ validated target, field patch, and optional Template
   -> complete ordered mutation plan
   -> preflight
   -> dry-run or application
-  -> verification or recovery
+  -> verification and retained partial-state reporting
   -> one typed result
 ```
 
@@ -76,8 +76,8 @@ Contract](interface.md#syntax). `--description`, `--responsibility`, and
 `--template` each accept one occurrence only. Any repetition is invalid, even
 when the value is equal. Repeated `--tag` values remain accepted and form one
 complete replacement list in argument order, subject to the existing empty,
-duplicate, and syntax validation. Repeated `--dry-run` and
-`--skip-git-check` collapse to idempotent Boolean choices. No command-specific
+duplicate, and syntax validation. Repeated `--dry-run` collapses to an idempotent
+Boolean choice. No command-specific
 flag uses last-wins or precedence behavior. Shared global flags retain their
 shared rules and are not reinterpreted here.
 
@@ -184,8 +184,8 @@ safe update and its dependency-minimal generated navigation:
   generated boundaries, sibling projections, route identities, and actual
   compatibility destinations needed by the [Index Behavior Contract](../../index-candidate/behavior.md)
   projection.
-- The expected current bytes, relevant-path Git state, backup readiness, and
-  volatile target facts needed for preflight and later revalidation.
+- The expected current bytes, recovery-bundle readiness, and volatile target
+  facts needed for preflight and later revalidation.
 
 Current generated entries are comparison input. Filesystem topology and authored
 source metadata remain authoritative for the generated projection. The operation
@@ -214,7 +214,7 @@ requirements in this contract:
 - Exact filesystem APIs, physical identity, symlink and junction behavior, case
   and Unicode rules, atomic replacement mechanics, containment implementation,
   and test seams.
-- Exact backup filenames, collision-handling mechanics, and related recovery
+- Exact recovery-bundle filenames, collision-handling mechanics, and related recovery
   implementation boundaries.
 - Lock scope, stale-lock handling, and broader cross-platform concurrency
   mechanics. Expected-state revalidation and preservation of unexpected
@@ -308,10 +308,10 @@ The status formation rules are deterministic:
   target-kind violations. `blocked` is formed for a valid request whose safe
   complete plan cannot be established because an unsafe or ambiguous boundary
   remains. Neither is converted to `attention`.
-- `failed` is formed when an application, verification, or recovery failure after
-  effects begin, or another unexpected failure after a write, prevents
-  completion. `interrupted` retains its cancellation meaning when no residual
-  recovery failure remains.
+- `failed` is formed when an application, verification, bundle-handling failure
+  after effects begin, or another unexpected failure after a write prevents
+  completion. `interrupted` retains its cancellation meaning when no unexpected
+  application or verification failure changes the result.
 
 For ordinary operation conditions, status precedence is `blocked` > `incomplete`
 
@@ -325,7 +325,7 @@ For ordinary operation conditions, status precedence is `blocked` > `incomplete`
 The operation resolves every target and dependency, establishes every expected
 fact, forms every intended byte sequence, and completes the ordered plan before
 the first persistent effect. A blocker in the destination, Template, route,
-generated projection, Git policy, backup readiness, containment, or expected
+generated projection, recovery-bundle readiness, containment, or expected
 state blocks the complete plan. Safe but unfinished inspection or planning
 coverage forms `incomplete` before any effect. There is no partial-application or
 best-effort mode.
@@ -340,7 +340,7 @@ competing writes.
 Dry-run and application use the same normalized request, target resolution,
 current facts, field patch, Template decision, intended bytes, generated
 projection, planner, expected-state facts, preflight, and semantic status.
-Dry-run stops before backup creation, temporary file creation, replacement,
+Dry-run stops before recovery-bundle creation, temporary file creation, replacement,
 formatting, or another persistent effect.
 
 Dry-run rendering exposes every exact intended destination and bounded generated
@@ -361,7 +361,8 @@ generated-region changes. The operation does not prompt and does not accept
 Generated effects are applied after the authored facts they depend on, then the
 complete parent operation is verified. A generated planning failure blocks
 before the first destination write. A generated application or verification
-failure invokes recovery for the complete update plan.
+failure retains the verified recovery bundle and reports the complete update
+plan's residual state; it does not restore earlier effects.
 
 Each replacement uses the complete planned file bytes through a safe
 same-directory replacement property. The operation does not edit the target in
@@ -381,25 +382,30 @@ same `attention` status because the explicit Template body was not applied.
 
 ## Safety And Recovery
 
-### Git policy and no-ops
+### Recovery-bundle boundary and no-ops
 
 A verified no-op has no affected mutation path and therefore does not require a
-Git cleanliness check. The protected-Template attention result may retain the
-same verified byte-level no-op facts and likewise does not require that check.
-An actual update checks only the paths the complete plan would replace. Dirty
-planned target paths block by default.
-
-`--skip-git-check` bypasses only relevant-path Git cleanliness. It does not
-bypass metadata validation, authored-body protection, Template identity,
-compatibility preservation, containment, generated boundaries, expected-state
-revalidation, verification, or recovery.
-
-Gitless application and application using `--skip-git-check` use adjacent
-backups under the accepted recovery policy. Backup readiness is established
-before the first write. The operation never overwrites an unknown adjacent
-artifact and removes its own backups only after complete operation verification.
-Backup names and collision mechanics remain implementation details constrained by
-the CLI Architecture and Gate 5 recovery proof.
+bundle. The command does not inspect or report repository state.
+When the plan contains an existing-target effect (`Replace`,
+`ReplaceGeneratedRegion`, or `Delete`), orchestration uses only
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.Create)` and its application-owned
+`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
+`HOME`, or custom-platform fallback; unavailable storage is a
+pre-effect `incomplete` result. It prepares exactly one immutable ZIP bundle
+outside the workspace. An operation containing only Create effects or
+no-ops creates no bundle. Its source-generated
+schema-v1 `manifest.json` and streamed ordinal payload entries record
+command/operation/workspace identity, ordered relative targets, change kinds,
+exact prior bytes/lengths/hashes, and intended final absence or length/hash.
+`Create` and semantic/byte no-op effects have no entry. A CreateNew draft is
+closed and reopened for semantic manifest, exact ordered entry, length, hash,
+and payload-byte validation, moved within the same directory to the deterministic
+final name, and reopened and verified. Only the valid final ZIP forms the opaque
+`RecoveryBundlePreparation`; the draft remains `Incomplete`.
+`FileChangeApplier` requires that preparation for every existing-target effect and
+performs one final effect per target. All preparation completes before the first
+target effect; unknown, malformed, mismatched, or colliding bundles block.
 
 ### Revalidation and verification
 
@@ -416,24 +422,26 @@ generated body.
 ### Failure, interruption, and rerun
 
 When application or verification fails, the operation stops new effects and
-restores applied effects in reverse order. Recovery changes only targets that
-still match the identity applied by this operation. An unexpected concurrent
-edit is preserved and reported as residual state rather than overwritten during
-recovery.
+reports the actual residual draft or final path; a valid final remains when
+failure occurs after preparation. It never restores, reverses, or compensates
+for an earlier effect. An unexpected concurrent edit is preserved and reported
+as residual state rather than overwritten.
 
-A failed operation remains `failed` even when handled recovery succeeds because
-the requested update did not complete. Any unexpected failure after a write,
-including application or verification failure, is `failed`, not `attention`. An
-interruption remains `interrupted` when no effect began or complete recovery
-succeeded. Incomplete recovery is `failed` and identifies every residual target
-and retained backup.
+A failed operation remains `failed` because the requested update did not
+complete. Any unexpected failure after a write, including application or
+verification failure, is `failed`, not `attention`. An interruption remains
+`interrupted` when no unexpected application or verification failure changes the
+result. The result reports ordinary effect facts and the actual residual draft
+or final path without a recovery-derived current-target classification.
 
 The operation does not replay a saved plan. It computes a fresh plan from current
-facts when rerun and converges when the remaining state is safe. A hard process
-stop may leave complete old or new versions of individual target files and
-recognized backup evidence; recovery evidence that remains needed is preserved
-and reported. The accepted recovery behavior does not create a persistent
-transaction journal.
+facts when rerun and converges when the remaining state is safe. A closed final
+ZIP may remain after abrupt process termination, without an executable crash or
+power-loss guarantee. Recovery provenance does not classify current target
+state. After final verification, effects remain successful if bundle deletion
+fails; the result is `attention` with the exact residual path and cleanup
+guidance. Cleanup owns exact named final and draft deletion under its separate
+lease-bound contract.
 
 ## Presentation Relationship
 
@@ -448,8 +456,8 @@ The [Interface Contract](interface.md) owns the exact human blocks, compact and
 expanded content, structured facts, accepted stream allocations, and semantic
 result meanings. Behavior supplies the result evidence for workspace, selection
 method, and target identity, field state, Template decision, preservation,
-completeness and safety, intended effects, exact preview effects, preflight, Git,
-backup, application, verification, recovery, residual targets, observations,
+completeness and safety, intended effects, exact preview effects, preflight,
+recovery-bundle, application, verification, recovery, residual targets, observations,
 availability conditions, and at most one required `Next:` action without defining
 another output shape. JSON uses the one complete stdout result and bounded stderr
 diagnostics required by the Interface.
@@ -458,7 +466,7 @@ diagnostics required by the Interface.
 
 The public obligations in [Interface Verification](interface.md#verification)
 remain in force. Behavioral evidence must prove the following without selecting
-one parser, filesystem API, backup filename, lock strategy, or source-module
+one parser, filesystem API, recovery-bundle filename, lock strategy, or source-module
 boundary:
 
 - Exact source-ID, base-path, and overwrite-path resolution, logical base-only
@@ -498,15 +506,15 @@ boundary:
   unsafe or ambiguous blocked boundaries, post-write failed behavior, ordinary
   complete changes and no-ops, and the sole protected-Template attention
   condition. Planned changes alone must not form `attention`.
-- Verified no-op behavior before Git checks; clean Git, dirty planned paths,
-  Gitless application, `--skip-git-check`, backup readiness, unknown-adjacent-
-  artifact protection, backup collision handling, and cleanup only after final
-  verification.
+- Verified no-op behavior before recovery-bundle preparation; external bundle
+  storage, semantic final-ZIP verification, unknown/mismatched artifact
+  protection, collision handling, cleanup attention, and exact named lease-bound
+  Cleanup.
 - Expected-state revalidation before application and before each replacement,
   safe same-directory replacement, no weaker fallback, per-effect verification,
-  complete semantic verification, reverse recovery, identity-guarded recovery,
-  concurrent-edit preservation, residual evidence, interruption, hard-stop
-  evidence, and fresh-plan rerun convergence.
+  complete semantic verification, retained partial state without restoration,
+  concurrent-edit preservation, residual evidence, interruption, and fresh-plan
+  rerun convergence.
 - Formation of one typed result and rendering of human and structured output
   from that result without a second operation run. Human complete, attention,
   and incomplete results use stdout; invalid, blocked, failed, and interrupted
@@ -521,7 +529,7 @@ authoritative generated projection, plan ordering, dry-run parity, effect
 boundaries, statuses, stream allocation, compact next-action limits, and
 recovery conditions. Focused integration tests should
 use real temporary routed workspaces, ordinary and compatibility entrypoints,
-overwrite pairs and orphans, Git and Gitless states, adjacent backup artifacts,
+overwrite pairs and orphans, external recovery bundles,
 filesystem failures, expected-state changes, concurrent edits, and generated
 parent effects. Gate 5 executable proof should prove command parsing, exact
 dry-run output, human and structured rendering from one result, the Architecture's

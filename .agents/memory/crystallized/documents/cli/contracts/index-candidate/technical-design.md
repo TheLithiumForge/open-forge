@@ -69,7 +69,7 @@ parsed input
   -> complete ordered plan
   -> preflight
   -> dry-run or application
-  -> verification or recovery
+  -> verification and retained partial-state reporting
   -> one typed result
   -> human or structured rendering
   -> process completion
@@ -125,31 +125,50 @@ diagnostics remain on stderr.
 
 The design keeps the Interface Contract's stream assignment, compact and
 expanded views, exact dry-run diffs, semantic statuses, and next-action rules.
-It does not expose private staging, backup, or recovery material through an
-ordinary result.
+It does not expose private staging, recovery-bundle payload, or other recovery
+material through an ordinary result.
 
 ## Safe Replacement And Recovery
 
-Application uses adjacent staged and backup artifacts with the accepted
-structured provenance identity envelope. The envelope carries the accepted workspace identity,
-operation identity, target logical and resolved physical path identity, artifact kind,
-expected before-and-after identity, and recovery state needed before recovery
-uses it. It is recovery evidence, not a second authority for workspace meaning.
+When an operation has one or more existing-target effects (`Replace`,
+`ReplaceGeneratedRegion`, or `Delete`), application
+uses one immutable ZIP recovery bundle for that complete
+operation, outside the workspace in the current user's
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.Create)/OpenForge/recovery/v1` subtree. No
+temporary, repository, `HOME`, or custom-platform fallback exists.
+The deterministic storage key combines the normalized physical workspace path
+and operation ID. A source-generated schema-v1 `manifest.json` carries
+command/operation/workspace identity, ordered relative targets, change kinds,
+prior lengths/hashes/payload names, and intended final absence or length/hash.
+Streamed ordinal payload entries contain the exact old bytes for every
+existing-target effect. This is recovery provenance, not an evolving journal or a second
+authority for workspace meaning.
 
-The operation proves staging and backup readiness before the first write and
-never overwrites an unknown adjacent artifact. Each changed target is replaced
-through the accepted same-directory safe-replacement property, never edited in
-place and never written through a weaker fallback after an identity or
-atomicity check fails. The target is verified after each replacement, and the
-complete selected projection is verified before recovery artifacts are removed.
+The draft is written with CreateNew under its exact name in the same external
+directory, closed and reopened for semantic manifest, exact ordered entry,
+length, hash, and payload-byte validation, moved within that directory to the
+deterministic final name, and reopened and verified again. Only the valid final
+ZIP forms the opaque `RecoveryBundlePreparation`; the draft remains
+`Incomplete`. `FileChangeApplier` requires that matching
+preparation for every existing-target effect; Create and no-op effects have none, and
+all preparation finishes before the first target effect. Each target uses the
+accepted same-directory safe-replacement property, never edits in place, and
+never falls back to a weaker write. The target and complete projection are
+verified after effects.
 
-An application or verification failure stops new effects and recovers already
-applied targets in reverse effect order. Recovery changes only targets that
-still match the applied identity. An unexpected concurrent edit is preserved
-and reported as residual state. Interrupted or incompletely recovered work
-retains and reports every backup still needed for recovery. A rerun computes a
-fresh plan from current facts rather than replaying a saved plan. The design
-creates no persistent transaction journal.
+After whole-command verification, delete only the positively recognized bundle
+created by that operation. Deletion failure leaves successful effects and
+returns `attention` with the exact residual path and cleanup guidance. An
+handled application, verification, or cancellation failure stops new effects
+and reports the actual residual draft or final path; a valid final remains after
+preparation. A closed final ZIP may remain after abrupt process termination,
+without an executable crash or power-loss guarantee. An unexpected concurrent
+edit is preserved and reported as residual state. The bundle is never extracted
+or used to restore a target, and current target state is not derived from its
+provenance. Cleanup owns exact named final and draft deletion under its separate
+lease-bound contract. A rerun computes fresh facts and never replays a
+saved plan, receipt, journal, history, or progress record.
 
 ## Test Design And Evidence
 
@@ -159,10 +178,10 @@ paths, while complete process tests remain in the separate system boundary.
 Direct tests cover typed request normalization, resolved-path and alias behavior, topology-derived
 projection, metadata admission, canonical output, byte ranges, marker
 ownership, ordering, result formation, and no-op behavior. Focused integration
-tests use real temporary rooted and detached source trees, Git and Gitless
-state, adjacent staging and backups, filesystem failures, expected-state
-changes, concurrency changes, safe replacement, verification, reverse
-recovery, residual preservation, interruption, and rerun convergence.
+tests use real temporary rooted and detached source trees, external recovery
+bundles, filesystem failures, expected-state changes, concurrency changes,
+safe replacement, verification, residual preservation, interruption, and rerun
+convergence.
 
 The process-boundary suite uses a built Native AOT process to prove command
 parsing, exact dry-run output, human and structured results, stream assignment,

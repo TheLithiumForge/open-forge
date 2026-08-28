@@ -24,7 +24,7 @@ navigation, lifecycle identity where applicable, and recoverability.
   destination parent, collisions, and lifecycle facts.
 - `RouteMovePlan` explicitly orders destination creation, content/reference
   changes, generated projections, source removal, lifecycle update, verification,
-  and recovery prerequisites.
+  and external recovery-bundle preparation.
 - Reuse shared route/reference facts and mutation primitives. Keep move policy,
   reference rewrite eligibility, and effect order local.
 
@@ -33,8 +33,9 @@ navigation, lifecycle identity where applicable, and recoverability.
 Cover leaf and subtree cases allowed by contract, same-parent and cross-scope
 destinations, case/Unicode aliases, source/destination physical links, collisions,
 overwrite pair, incoming/outgoing references, unchanged external/unmanaged
-references, dry run, lock race, partial failure at every effect boundary, recovery,
-idempotent rerun, generated navigation, lifecycle, streams, exits, and AOT.
+references, dry run, lock race, partial failure at every effect boundary, bundle
+retention, idempotent rerun, generated navigation, lifecycle, streams, exits, and
+AOT.
 
 ## Stop Conditions
 

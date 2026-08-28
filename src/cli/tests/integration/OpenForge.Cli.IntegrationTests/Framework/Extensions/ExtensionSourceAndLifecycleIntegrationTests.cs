@@ -91,7 +91,7 @@ public sealed class ExtensionSourceAndLifecycleIntegrationTests
     {
         using var trustedWorkspace = TemporaryWorkspace.Create("lifecycle-trusted");
         trustedWorkspace.WriteText(
-            LifecycleDocumentReader.RelativePath,
+            LifecycleSchema.RelativePath,
             Lifecycle(
                 trustedWorkspace.Path,
                 """
@@ -112,7 +112,7 @@ public sealed class ExtensionSourceAndLifecycleIntegrationTests
                 }]
                 """));
         using var absentWorkspace = TemporaryWorkspace.Create("lifecycle-absent");
-        absentWorkspace.WriteText(LifecycleDocumentReader.RelativePath, Lifecycle(absentWorkspace.Path, "[]", "[]"));
+        absentWorkspace.WriteText(LifecycleSchema.RelativePath, Lifecycle(absentWorkspace.Path, "[]", "[]"));
         var reader = LifecycleReader();
 
         var trusted = await reader.ReadExtensionsAsync(Workspace(trustedWorkspace), CancellationToken.None);
@@ -145,7 +145,7 @@ public sealed class ExtensionSourceAndLifecycleIntegrationTests
                 "\"framework\": null",
                 "\"framework\": { \"settings\": { \"enabled\": true, \"enabled\": false }, \"settings\": null }",
                 StringComparison.Ordinal);
-        workspace.WriteText(LifecycleDocumentReader.RelativePath, document);
+        workspace.WriteText(LifecycleSchema.RelativePath, document);
 
         var result = await LifecycleReader().ReadExtensionsAsync(
             Workspace(workspace),
@@ -179,7 +179,7 @@ public sealed class ExtensionSourceAndLifecycleIntegrationTests
               "fingerprintKind": "semantic"
             }]
             """).Replace("\"coverage\": \"complete\"", "\"coverage\": \"incomplete\"", StringComparison.Ordinal);
-        workspace.WriteText(LifecycleDocumentReader.RelativePath, document);
+        workspace.WriteText(LifecycleSchema.RelativePath, document);
 
         var result = await LifecycleReader().ReadExtensionsAsync(Workspace(workspace), CancellationToken.None);
 
@@ -317,7 +317,7 @@ public sealed class ExtensionSourceAndLifecycleIntegrationTests
                 """),
             _ => throw new ArgumentOutOfRangeException(nameof(scenario), scenario, "The lifecycle invalid scenario is not defined."),
         };
-        workspace.WriteText(LifecycleDocumentReader.RelativePath, document);
+        workspace.WriteText(LifecycleSchema.RelativePath, document);
 
         var result = await LifecycleReader().ReadExtensionsAsync(Workspace(workspace), CancellationToken.None);
 
@@ -353,7 +353,7 @@ public sealed class ExtensionSourceAndLifecycleIntegrationTests
         {
             _ = workspace.CreateDirectory(".agents");
             _ = workspace.CreateFileSymbolicLink(
-                LifecycleDocumentReader.RelativePath,
+                LifecycleSchema.RelativePath,
                 outside.Combine("open-forge.lifecycle.json"));
         }
 

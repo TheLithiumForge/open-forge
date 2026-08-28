@@ -58,7 +58,6 @@ open-forge route update <source-reference>
   [--tag=<tag>]...
   [--template <template-reference>]
   [--dry-run]
-  [--skip-git-check]
   [global flags]
 ```
 
@@ -71,8 +70,8 @@ the existing source and Template reference grammar, exact paths, quoting,
 collisions, and overwrite identity.
 
 `--description`, `--responsibility`, and `--tag` patch destination metadata.
-`--template` selects optional starting body content. `--dry-run` and
-`--skip-git-check` are write-policy flags.
+`--template` selects optional starting body content. `--dry-run` is the
+write-policy preview.
 
 At least one metadata flag or `--template` is required. The command has no
 whole-body value, implicit Template, Template machine-name registry, wizard,
@@ -102,8 +101,7 @@ collision, containment, and overwrite rules remain in [CLI Source References](..
 | `--responsibility <text>`         | Selection of destination metadata  | One responsibility value; whitespace-only is invalid; exact `""` removes the key               | The destination `responsibility` remains unchanged            | Singleton. Any repetition is invalid, even when the repeated value is equal. No last-wins behavior.                                          |
 | `--tag=<tag>`                     | Selection of destination metadata  | One canonical tag without the `#` prefix                                                       | The destination tag list remains unchanged                    | Repeatable. Supplied values replace the complete tag list in command-line order; duplicate exact tags and an empty supplied set are invalid. |
 | `--template <template-reference>` | Selection of starting body content | One automatic Template ID or exact `.agents/...` path for an existing routed Markdown Template | No Template body is selected                                  | Singleton. Any repetition is invalid, even when the repeated reference is equal. No last-wins behavior.                                      |
-| `--dry-run`                       | Write policy                       | Boolean flag with no value                                                                     | Application is selected                                       | Repetition is accepted and idempotent. Compatible with `--skip-git-check`; repetition does not add authority or precedence.                  |
-| `--skip-git-check`                | Write policy                       | Boolean flag with no value                                                                     | Relevant-path Git cleanliness is checked for an actual update | Repetition is accepted and idempotent. Compatible with `--dry-run`; it bypasses only relevant-path cleanliness and adds no precedence.       |
+| `--dry-run`                       | Write policy                       | Boolean flag with no value                                                                     | Application is selected                                       | Repetition is accepted and idempotent; it does not add authority or precedence. |
 
 All six [Global CLI Flags](../../shared/global-flags/interface.md) apply. Their complete spelling,
 values, defaults, repetition, composition, terminal behavior, errors, and
@@ -113,8 +111,8 @@ The command-specific repetition rules above are complete. `--description`,
 `--responsibility`, and `--template` are singleton inputs, and any second
 occurrence is invalid even when it repeats the same value. Repeated `--tag`
 values form one complete replacement list in argument order. Repeated
-`--dry-run` and `--skip-git-check` occurrences collapse to their one idempotent
-Boolean choice. No command-specific flag uses last-wins or precedence behavior.
+Repeated `--dry-run` occurrences collapse to their one idempotent Boolean choice.
+No command-specific flag uses last-wins or precedence behavior.
 The shared global flags keep their shared spelling, values, defaults, repetition,
 composition, terminal behavior, and errors; this command does not change those
 rules or add another global-flag precedence rule.
@@ -127,7 +125,7 @@ patch rules are defined in [Metadata Patch](#metadata-patch).
 ### Template and write-policy effects
 
 `--template` makes the body-completion decision in [Template Body Completion](#template-body-completion).
-`--dry-run` and `--skip-git-check` use the application boundaries in [Dry Run And Apply](#dry-run-and-apply).
+`--dry-run` uses the application boundaries in [Dry Run And Apply](#dry-run-and-apply).
 
 ## Target Source
 
@@ -240,7 +238,8 @@ and explains why the Template body was not applied, but its semantic status is
 `attention` because the explicit Template intent remains unapplied. Dry-run has
 the same status and observation. It is not a failure and does not claim that the
 existing body matches the Template. Invalid Template input, a Template overwrite
-companion, a malformed or unsafe target, a dirty affected path, or an invalid
+companion, a malformed or unsafe target, an unavailable or mismatched recovery
+bundle, or an invalid
 generated boundary keeps its existing `invalid`, `blocked`, or `failed` result;
 none becomes `attention`. Other successful changes and no-ops are `complete`.
 
@@ -309,7 +308,7 @@ validated target, field patch, and optional Template
   -> complete ordered mutation plan
   -> preflight
   -> dry-run or application
-  -> verification or recovery
+  -> verification and retained partial-state reporting
   -> one typed result
 ```
 
@@ -335,19 +334,30 @@ confirm only the described field changes, eligible Template body changes, and
 generated region changes. The command does not prompt and does not accept
 `--yes`.
 
-A verified no-op has no affected mutation path and needs no Git cleanliness
-check. An actual update checks only paths the complete plan would replace. Dirty
-planned target paths block by default.
+A verified no-op has no affected mutation path and needs no recovery bundle. An
+actual update checks only paths the complete plan would replace. The command does
+not inspect or report repository state.
 
-`--skip-git-check` bypasses only relevant-path Git cleanliness. It does not
-bypass metadata, authored-body protection, Template identity, compatibility,
-containment, generated boundary, expected-state, verification, or recovery
-requirements.
-
-Gitless application and `--skip-git-check` application use adjacent backups under
-the accepted recovery policy. The command proves backup readiness before writes,
-never overwrites an unknown adjacent artifact, and removes its backups only
-after complete operation verification.
+When the plan contains an existing-target effect (`Replace`,
+`ReplaceGeneratedRegion`, or `Delete`), orchestration selects only
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.Create)` and its application-owned
+`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
+`HOME`, or custom-platform fallback; unavailable storage is a
+pre-effect `incomplete` result. It prepares exactly one immutable ZIP bundle
+outside the workspace. An operation containing only Create effects or
+no-ops creates no bundle. Its source-generated
+schema-v1 `manifest.json` and streamed ordinal payload entries record
+command/operation/workspace identity, ordered relative targets, change kinds,
+exact prior bytes/lengths/hashes, and intended final absence or length/hash.
+`Create` and semantic/byte no-op effects have no entry. A CreateNew draft is
+closed and reopened for semantic manifest, exact ordered entry, length, hash,
+and payload-byte validation, moved within the same directory to the deterministic
+final name, and reopened and verified. Only the valid final ZIP forms the opaque
+`RecoveryBundlePreparation`; the draft remains `Incomplete`.
+`FileChangeApplier` requires that preparation for every existing-target effect and
+performs one final effect per target. All preparation completes before the first
+target effect; unknown, malformed, mismatched, or colliding bundles block.
 
 Immediately before application, the command rechecks every target, source,
 Template, route, and generated fact. It applies complete planned bytes through
@@ -358,12 +368,20 @@ generated navigation.
 When the one protected-Template attention condition applies, application still
 completes and verifies every requested metadata and generated-navigation effect.
 When no replacement effect is needed, it retains the verified byte-level no-op
-facts without running a Git cleanliness check. An unexpected failure after a
-write is `failed`, not `attention`.
+facts without preparing a bundle. An unexpected failure after a write is
+`failed`, not `attention`.
 
-A handled failure stops new effects and reverses applied effects in reverse
-order. Recovery changes only targets that still match the applied identity. An
-unexpected concurrent edit is preserved and reported rather than overwritten.
+A handled failure stops new effects and never restores, rolls back, or
+compensates for an earlier effect. An unexpected concurrent edit is preserved
+and reported rather than overwritten. After final verification, delete only the
+positively recognized bundle created by this operation. If deletion fails,
+effects remain successful and the result is `attention` with the exact residual
+path and cleanup guidance. Handled failure or cancellation reports the actual
+residual draft or final path; a valid final remains after preparation. A closed
+final ZIP may remain after abrupt process termination, without an executable
+crash or power-loss guarantee. Recovery provenance does not classify current
+target state. Cleanup owns exact named final and draft deletion under its
+separate lease-bound contract.
 
 ## Human Output
 
@@ -469,8 +487,8 @@ The structured result exposes:
 - Intended destination and generated-region effects.
 - Completeness and safety state, including bounded observations and availability
   conditions.
-- Dry-run, Git, backup, application, verification, and recovery facts.
-- Changed, unchanged, reverted, and residual targets.
+- Dry-run, application, verification, and recovery-bundle facts.
+- Changed, unchanged, retained, and residual targets.
 - Exact preview effects when dry-run is selected, semantic status, and at most
   one required `Next:` action when applicable.
 
@@ -486,8 +504,8 @@ CLI Architecture.
 | `incomplete`  | Safe facts are available, but required inspection or planning coverage cannot complete. No write begins.                                                                                                                                                                                                                                                                                                                                                   |
 | `invalid`     | Command input, field value, Template reference, flag repetition or use, or target kind does not follow this interface.                                                                                                                                                                                                                                                                                                                                     |
 | `blocked`     | A valid request cannot establish or apply one safe complete update plan because an unsafe or ambiguous boundary remains. No mutation begins.                                                                                                                                                                                                                                                                                                               |
-| `failed`      | A post-write unexpected failure, or an application, verification, or recovery failure after effects begin, prevents the update from completing.                                                                                                                                                                                                                                                                                                            |
-| `interrupted` | The caller cancelled before completion and no residual recovery failure remains.                                                                                                                                                                                                                                                                                                                                                                           |
+| `failed`      | A post-write unexpected failure, or an application, verification, or bundle-handling failure after effects begin, prevents the update from completing.                                                                                                                                                                                                                                                                                              |
+| `interrupted` | The caller cancelled before completion and no unexpected application or verification failure changes the result.                                                                                                                                                                                                                                                                                                                                      |
 
 The shared numeric process-status mapping is defined by the CLI Architecture.
 
@@ -511,7 +529,8 @@ The command blocks or rejects:
 - A Template with an overwrite companion.
 - A Template body that cannot produce a valid frontmatter-only target.
 - An invalid generated ownership boundary or sibling projection.
-- A dirty planned path without the accepted Git bypass.
+- Unavailable or unsafe recovery-bundle storage is `incomplete`; a malformed,
+  colliding, or mismatched recovery bundle is `blocked`.
 - A changed source or destination that invalidates the plan.
 
 Safe facts with unfinished required inspection or planning coverage form
@@ -591,8 +610,8 @@ Gate 5 executable proof must cover:
   addition, replacement, exact-empty removal, omitted fields, duplicates, and
   invalid values.
 - Singleton rejection for repeated `--description`, `--responsibility`, and
-  `--template` values, idempotent repetition of `--dry-run` and
-  `--skip-git-check`, complete tag-list replacement, and unchanged shared-global
+  `--template` values, idempotent repetition of `--dry-run`, complete tag-list
+  replacement, and unchanged shared-global
   repetition rules without last-wins or precedence behavior.
 - Preservation of unrelated frontmatter and blocking when safe preservation is
   impossible.
@@ -614,15 +633,15 @@ Gate 5 executable proof must cover:
 - Complete dry-run output and no persistent dry-run effects.
 - Dry-run and application parity for request, facts, intended bytes, generated
   projection, plan, preflight, status, full effects, and no-write behavior.
-- Verified no-op behavior before Git mutation checks.
+- Verified no-op behavior before recovery-bundle preparation.
 - All seven statuses, including safe-but-incomplete coverage with no writes,
   unsafe or ambiguous blocked boundaries, post-write failed behavior, and the
   sole protected-Template attention condition. Planned changes alone must remain
   `complete`.
-- Clean Git, dirty affected paths, Gitless operation, bypassed Git checks,
-  backup collisions, and backup cleanup after verification.
-- Expected-state changes, safe replacement, final semantic verification, reverse
-  recovery, residual preservation, and rerun convergence.
+- Recovery-bundle readiness, exact-entry validation, all-before-first-effect
+  preparation, success cleanup, cleanup-failure `attention`, expected-state
+  changes, safe replacement, final semantic verification, residual preservation,
+  and rerun convergence without restoration or rollback.
 - Human and structured results from one typed result, with complete/attention/
   incomplete human output on stdout, invalid/blocked/failed/interrupted human
   output on stderr, one JSON result for every status on stdout, bounded

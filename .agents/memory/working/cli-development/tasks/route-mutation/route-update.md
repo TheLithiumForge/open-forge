@@ -23,7 +23,9 @@ and generated navigation.
 - Separate `RouteUpdateObservation`, command-local `RouteUpdatePlan`, content
   transformation, generated projection, apply receipts, and result.
 - Reuse strict source reads, Markdown/frontmatter facts, exact route identity,
-  lock/revalidation, atomic replacement, and recovery.
+  lock/revalidation, atomic replacement, and external recovery-bundle support.
+  Prepare one verified bundle covering every existing Replace/Delete before the
+  first target effect; no-op plans create none.
 - Keep update-field policy and preservation rules command-local.
 
 ## Evidence
@@ -31,7 +33,7 @@ and generated navigation.
 Cover exact ID/path, ambiguity, detached/compatibility forms, no-op, dry run,
 accepted fields, unknown or repeated fields, invalid metadata, overwrite pair,
 line endings and preservation, identity race, generated navigation, read/write
-failures, recovery, no unrelated changes, presentation, process, and AOT.
+failures, bundle retention, no unrelated changes, presentation, process, and AOT.
 
 ## Stop Conditions
 

@@ -7,47 +7,29 @@ namespace OpenForge.Cli.Core.Framework.Lifecycle;
 
 internal static class LifecycleDocumentValidator
 {
-    internal static LifecycleReadResult Validate(
+    internal static LifecycleReadResult ValidateExtensions(
         CliWorkspace workspace,
-        LifecycleDocumentV1 document)
+        LifecycleEnvelopeV1 document,
+        ExtensionLifecycleState? extensions)
     {
-        if (document.SchemaVersion != 1)
+        var common = ValidateCommon(workspace, document);
+        if (common.State == LifecycleCommonValidationState.Invalid)
         {
-            return InvalidCoverage("The lifecycle schema version is unsupported.", LifecycleWorkspaceBinding.Unavailable, document.FingerprintPolicy);
+            return InvalidCoverage(
+                common.Cause ?? "The lifecycle common envelope is invalid.",
+                common.WorkspaceBinding,
+                document.FingerprintPolicy);
         }
 
-        if (!string.Equals(document.FingerprintPolicy, LifecycleDocumentReader.FingerprintPolicy, StringComparison.Ordinal))
+        if (common.State == LifecycleCommonValidationState.Blocked)
         {
-            return InvalidCoverage("The lifecycle fingerprint policy is unsupported.", LifecycleWorkspaceBinding.Unavailable, document.FingerprintPolicy);
+            return Blocked(
+                common.Cause ?? "The lifecycle common envelope is blocked.",
+                workspaceBinding: common.WorkspaceBinding,
+                fingerprintPolicy: document.FingerprintPolicy);
         }
 
-        if (string.IsNullOrWhiteSpace(document.WorkspacePath))
-        {
-            return Blocked("The lifecycle workspace binding is invalid.", workspaceBinding: LifecycleWorkspaceBinding.Unavailable, fingerprintPolicy: document.FingerprintPolicy);
-        }
-
-        string documentWorkspace;
-        try
-        {
-            if (!Path.IsPathFullyQualified(document.WorkspacePath))
-            {
-                return Blocked("The lifecycle workspace binding is not a canonical absolute path.", workspaceBinding: LifecycleWorkspaceBinding.Unavailable, fingerprintPolicy: document.FingerprintPolicy);
-            }
-
-            documentWorkspace = NormalizeRoot(document.WorkspacePath);
-        }
-        catch (Exception exception) when (exception is ArgumentException or NotSupportedException or PathTooLongException)
-        {
-            return Blocked("The lifecycle workspace binding is invalid.", workspaceBinding: LifecycleWorkspaceBinding.Unavailable, fingerprintPolicy: document.FingerprintPolicy);
-        }
-
-        if (!string.Equals(document.WorkspacePath, documentWorkspace, StringComparison.Ordinal)
-            || !string.Equals(documentWorkspace, NormalizeRoot(workspace.LexicalRoot), PathComparison()))
-        {
-            return Blocked("The lifecycle workspace binding does not match the selected workspace.", workspaceBinding: LifecycleWorkspaceBinding.Mismatched, fingerprintPolicy: document.FingerprintPolicy);
-        }
-
-        if (document.Extensions is null)
+        if (extensions is null)
         {
             return LifecycleReadResult.Create(
                 state: LifecycleReadState.Missing,
@@ -63,11 +45,71 @@ internal static class LifecycleDocumentValidator
                 });
         }
 
-        return ValidateExtensions(document.Extensions, document.FingerprintPolicy);
+        return ValidateExtensionState(extensions, document.FingerprintPolicy);
     }
 
-    private static LifecycleReadResult ValidateExtensions(
-        LifecycleExtensionsSectionV1 extensions,
+    internal static LifecycleCommonValidation ValidateCommon(
+        CliWorkspace workspace,
+        LifecycleEnvelopeV1 document)
+    {
+        ArgumentNullException.ThrowIfNull(workspace);
+        ArgumentNullException.ThrowIfNull(document);
+        if (document.SchemaVersion != LifecycleSchema.Version)
+        {
+            return LifecycleCommonValidation.Invalid(
+                "The lifecycle schema version is unsupported.");
+        }
+
+        if (!string.Equals(
+            document.FingerprintPolicy,
+            LifecycleSchema.FingerprintPolicy,
+            StringComparison.Ordinal))
+        {
+            return LifecycleCommonValidation.Invalid(
+                "The lifecycle fingerprint policy is unsupported.");
+        }
+
+        if (string.IsNullOrWhiteSpace(document.WorkspacePath))
+        {
+            return LifecycleCommonValidation.Blocked(
+                "The lifecycle workspace binding is invalid.",
+                LifecycleWorkspaceBinding.Unavailable);
+        }
+
+        string documentWorkspace;
+        try
+        {
+            if (!Path.IsPathFullyQualified(document.WorkspacePath))
+            {
+                return LifecycleCommonValidation.Blocked(
+                    "The lifecycle workspace binding is not a canonical absolute path.",
+                    LifecycleWorkspaceBinding.Unavailable);
+            }
+
+            documentWorkspace = NormalizeRoot(document.WorkspacePath);
+        }
+        catch (Exception exception) when (exception is ArgumentException
+            or NotSupportedException
+            or PathTooLongException)
+        {
+            return LifecycleCommonValidation.Blocked(
+                "The lifecycle workspace binding is invalid.",
+                LifecycleWorkspaceBinding.Unavailable);
+        }
+
+        return !string.Equals(document.WorkspacePath, documentWorkspace, StringComparison.Ordinal)
+            || !string.Equals(
+                documentWorkspace,
+                NormalizeRoot(workspace.LexicalRoot),
+                PathComparison())
+            ? LifecycleCommonValidation.Blocked(
+                "The lifecycle workspace binding does not match the selected workspace.",
+                LifecycleWorkspaceBinding.Mismatched)
+            : LifecycleCommonValidation.Valid();
+    }
+
+    private static LifecycleReadResult ValidateExtensionState(
+        ExtensionLifecycleState extensions,
         string fingerprintPolicy)
     {
         if (extensions.Packages is null || extensions.Paths is null)
@@ -127,7 +169,7 @@ internal static class LifecycleDocumentValidator
                 || !IsDistinctOrdered(path.Owners)
                 || string.IsNullOrWhiteSpace(path.BaselineFingerprint)
                 || !IsLowerHexSha256(path.BaselineFingerprint)
-                || path.FingerprintKind is not ("semantic" or "exact-bytes"))
+                || path.FingerprintKind is not (LifecycleSchema.SemanticFingerprintKind or LifecycleSchema.ExactBytesFingerprintKind))
             {
                 return Blocked("A lifecycle path identity or fingerprint is malformed.", packages, workspaceBinding: LifecycleWorkspaceBinding.Matched, fingerprintPolicy: fingerprintPolicy);
             }
@@ -169,7 +211,7 @@ internal static class LifecycleDocumentValidator
             return Blocked("The lifecycle package dependency graph contains a cycle.", packages, workspaceBinding: LifecycleWorkspaceBinding.Matched, fingerprintPolicy: fingerprintPolicy);
         }
 
-        if (!string.Equals(extensions.Coverage, "complete", StringComparison.Ordinal))
+        if (!string.Equals(extensions.Coverage, LifecycleSchema.CompleteCoverage, StringComparison.Ordinal))
         {
             return LifecycleReadResult.Create(
                 state: LifecycleReadState.Invalid,

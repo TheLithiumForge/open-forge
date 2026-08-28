@@ -127,7 +127,7 @@ the documented explicit inputs plus deterministic automatic selections and
 defaults for that operation. An unresolved semantic choice remains blocked.
 `--automatic` is not global. It never accepts a recommendation, replaces
 divergent content, adds replacement or deletion authority, adopts or takes
-ownership, bypasses safety, Git checks, or conflicts, or makes a fuzzy choice.
+ownership, bypasses safety checks or conflicts, or makes a fuzzy choice.
 It may execute ordinary safe effects already authorized by the explicit
 operation and subjects, including a safe unchanged final-owner deletion when
 that operation defines it. It never selects deletion of changed content on its
@@ -144,7 +144,7 @@ Classify each flag before adding it:
 | Selection    | Adds or narrows explicit input or results within the same operation                      | `--tag`, `--follow-links`, `--additions-only`                       |
 | Guided input | Uses explicit input plus documented deterministic automatic selections without prompting | `--automatic`                                                       |
 | Projection   | Chooses which parts of one result are shown                                              | `--content`                                                         |
-| Write policy | Controls preview or one named safety boundary                                            | `--dry-run`, `--skip-git-check`                                     |
+| Write policy | Controls preview                                                                           | `--dry-run`                                                        |
 | Authority    | Widens one explicitly named owned or replacement boundary within the same operation      | `--force` only where its local contract defines the complete effect |
 
 Flags in one role compose when their meanings do not conflict. Prefer one
@@ -179,10 +179,10 @@ recovery lifecycle remain the same while the flag widens exactly one explicit
 owned or replacement boundary. The command's local contract must define that
 boundary completely. `--force` is an example, not a generic meaning.
 
-An Authority flag must be idempotent. It must not imply Git bypass, deletion
+An Authority flag must be idempotent. It must not imply a safety bypass, deletion
 outside its exact boundary, adoption or ownership, conflict or identity bypass,
 containment or marker bypass, confirmation unrelated to its named authority, or
-weaker verification or recovery. If it changes the job, subject, validation,
+weaker verification or recovery-bundle handling. If it changes the job, subject, validation,
 effect family, result meaning, or recovery lifecycle, split it into another
 operation.
 
@@ -201,17 +201,6 @@ Omitted input may use one documented deterministic default. It must not be
 inferred from filesystem coincidence. Explicit workspace selection uses the
 exact current directory or exact `--workspace` value; it never searches for
 another root.
-
-### `--skip-git-check`
-
-When a mutating command exposes `--skip-git-check`, it is an optional Boolean
-write-policy flag. Omission keeps the relevant or affected-path Git cleanliness
-check. Presence bypasses only that check for actual application. Repetition is
-accepted and idempotent. It does not multiply a bypass or grant overwrite,
-delete, force, adoption, ownership, containment, marker, expected-state,
-verification, or recovery authority. The command's accepted recovery
-requirements remain in force. It composes with `--dry-run`; the combination
-still writes nothing. Read-only and unrelated commands reject it.
 
 ### `--dry-run`
 
@@ -236,9 +225,9 @@ Keep repetition rules structural and explicit:
 - An explicitly multi-value flag may repeat and combines under its command-local
   order, duplicate, and deduplication rules. Do not add last-wins behavior by
   convention.
-- An applicable command-specific Boolean such as `--dry-run` or
-  `--skip-git-check` may repeat idempotently. Repetition does not create another
-  operation, multiply authority, or widen a bypass.
+- An applicable command-specific Boolean such as `--dry-run` may repeat
+  idempotently. Repetition does not create another operation or multiply
+  authority.
 
 Use the same seven semantic statuses across operations:
 `complete`, `attention`, `incomplete`, `invalid`, `blocked`, `failed`, and
@@ -272,7 +261,7 @@ validated command input
   -> preflight when mutating
   -> preview or application consent
   -> revalidation and apply
-  -> verification or recovery
+  -> verification and retained-recovery reporting
   -> optional bounded post-processing
   -> typed operation result
   -> human or structured rendering
@@ -288,19 +277,119 @@ Handlers return typed values. They do not write streams, select presentation,
 or set process status. Human and JSON renderers consume the same result and do
 not rerun the operation.
 
-### Cleanup's Narrow Monotonic Exception
+### Recovery And Cleanup Boundaries
 
 The direct root [`cleanup` contract](contracts/cleanup/_cleanup.md) is a narrow
-exception to the normal reverse-recovery shape. Cleanup still forms one complete
-catalogue and plan, runs preflight, and revalidates each selected artifact
-immediately before deletion. It does not create an adjacent backup, staging
-copy, receipt, journal, or tombstone merely to delete eligible cleanup
+exception to the normal recovery shape. Other mutating operations prepare one
+external recovery bundle for the complete operation before effects as described
+below. Cleanup still forms one complete catalogue and plan, runs preflight, and
+revalidates each selected artifact immediately before deletion. It may return a
+verified empty no-op without a lease. Before any deletion, it acquires the
+existing same-workspace `WorkspaceLockLease` through the persistent reusable
+lock file and `FileShare.None`, then performs a final catalogue and expected-state
+revalidation while holding that lease. It does not create a replacement bundle,
+staging copy, receipt, journal, or tombstone merely to delete eligible cleanup
 artifacts, and it does not reverse a deletion that it has verified.
 
 Already verified deletions remain desired effects when a later deletion fails or
 the caller interrupts. Remaining and residual facts stay visible for a fresh
 plan. This exception applies only to cleanup. Other mutating operations retain
-their accepted backup, reverse-recovery, and residual-preservation rules.
+their accepted bundle-preparation, success-removal, and failure-retention
+rules.
+
+Recovery-store resolution has distinct writer and observer modes. Only the
+mutation bundle writer uses
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.Create)` so it may create the application-owned
+`OpenForge/recovery/v1` subtree during pre-effect preparation. Status, Doctor,
+and Cleanup use `Environment.SpecialFolderOption.None` for discovery and never
+create the OS application-data root or the Open Forge subtree. An absent root or
+store is zero recognized bundles or drafts for Status and Doctor and a verified
+Cleanup no-op. An existing selected workspace bucket that cannot be read remains
+the command's unavailable or incomplete result; a final ZIP that cannot be
+semantically validated remains malformed, unsupported, unavailable, incomplete,
+or blocked according to the command contract. Neither condition is absence.
+
+Status and Doctor do not acquire the workspace lease, report activity, or infer
+activity from bundle contents, a filename, age, PID, marker, journal, or the
+visible persistent lock file.
+
+Before applying an existing-target effect (`Replace`, `ReplaceGeneratedRegion`,
+or `Delete`), mutation orchestration
+uses `Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.Create)` and only the application-owned
+`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
+`HOME`, or custom-platform fallback; unavailable storage is a
+pre-effect `incomplete` result. If the plan contains one or more such
+existing-target effects, the complete operation gets exactly one
+immutable ZIP bundle outside the workspace under a deterministic
+key made from the normalized physical workspace path and operation ID. An
+operation containing only `Create` effects or no-ops creates no bundle. Its
+source-generated schema-v1 `manifest.json` records command/operation
+identity, workspace identity, ordered relative targets, change kinds, prior
+lengths/hashes/payload names, and intended final absence or length/hash. Streamed
+ordinal payload entries contain the exact prior bytes for every existing-target
+effect. Fingerprints are recovery provenance, not an evolving journal. `Create`
+targets and semantic or byte no-ops have no bundle entry.
+
+The writer may select the managed BCL's `CompressionLevel.NoCompression`, but
+compression method is not recognized or promised. Schema v1 defines no ZIP
+entry timestamp, deterministic archive bytes, or whole-archive length or hash.
+Verification semantically decodes the source-generated manifest and validates
+the exact ordered entry names and counts, declared lengths and hashes, and exact
+payload bytes without a raw ZIP parser.
+
+The draft uses `CreateNew` under its exact deterministic draft name in the same
+external directory, is closed and reopened for semantic schema, exact ordered
+entry inventory, length, hash, and payload-byte validation, moved within that
+directory to its deterministic final name, and reopened and verified again.
+`RecoveryBundlePreparation` has no freely initializable construction surface.
+Only the real store's successful final close/reopen semantic readback constructs
+the opaque preparation; neither a caller-created verification value nor a draft
+can construct it. `FileChangeApplier` requires that matching opaque final
+preparation for `Replace`, `Delete`, and `ReplaceGeneratedRegion`. `Create` must
+receive `null`, and a non-null preparation for `Create` is rejected. The applier
+performs one final effect per target, and all bundle preparation completes before
+the first target effect.
+
+After whole-command verification succeeds, the command deletes only its
+positively recognized bundle. If deletion fails, target effects remain
+successful and the result is `attention` with the exact residual path and
+cleanup guidance. Handled failure or cancellation stops new effects and reports
+the actual residual draft or final path; a valid final bundle remains when the
+failure occurs after preparation. A closed final ZIP may remain after an abrupt
+process termination, but the CLI provides no executable crash or power-loss
+durability guarantee. Shared support never
+automatically restores a target, rolls back an effect, or compensates for target
+effects, classifies current target state from recovery provenance, or saves a
+journal, progress receipt, history, or replayable plan. A fresh invocation plans
+from current facts.
+
+Bundles are immutable after preparation and are never extracted by the CLI.
+Status, Doctor, and Cleanup may stream ZIP payload entries through fixed bounded
+buffers solely to validate exact declared lengths and lowercase SHA-256 values.
+They never extract, disclose, render, log, return, retain, or materialize payload
+bytes, and payload size does not increase validation memory beyond the fixed
+buffer and hash state.
+
+Cleanup mechanically deletes only exact named final or draft candidates for the
+selected workspace after it acquires the same-workspace lease and repeats the
+complete catalogue and ordinary path/kind checks under that lease, then verifies
+absence. The held lease provides cooperating-process exclusion only. If Cleanup
+cannot acquire it, Cleanup performs no deletion. Unknown,
+malformed, mismatched, differently keyed, or lookalike artifacts remain
+untouched. Same-path normalized physical workspace identity is required for
+deterministic rediscovery; workspace moves are outside the automatic guarantee,
+though Doctor or Cleanup may report orphaned original-root bundles and never
+auto-binds or restores them. Cleanup writes no marker, PID, journal, lock
+metadata, or other lifecycle record and makes no activity inference.
+
+The mutation lock is a persistent reusable `.agents/open-forge.lock`. It
+preserves existing bytes and is held with a `FileShare.None` handle only; the
+CLI never writes metadata, deletes, or truncates the lock file. Standalone
+Extension Create uses a separate exact-destination, collision, and revalidation
+path with no workspace lease, none of `Replace`, `ReplaceGeneratedRegion`, or
+`Delete`, and no recovery bundle.
 
 Cleanup's operand-free catalogue is explicit command intent, not an automatic
 interaction policy. Invoking the dedicated command explicitly selects deletion
@@ -409,7 +498,7 @@ content on its own. Read-only `extension list` and `extension inspect` reject
   without hidden precedence; incompatible operations are separate commands.
 - An Authority flag widens exactly one explicit owned or replacement boundary
   without changing the subject, plan, safety, result, verification, or recovery
-  lifecycle. It is idempotent and does not imply a Git bypass or unrelated
+  lifecycle. It is idempotent and does not imply a safety bypass or unrelated
   authority.
 - Singleton and explicitly multi-value repetition rules are explicit, and
   applicable Boolean repetition is idempotent.
@@ -426,8 +515,37 @@ content on its own. Read-only `extension list` and `extension inspect` reject
 - `--dry-run` is the sole preview spelling and shares planning and preflight
   with application while writing nothing. It shares status conditions, and
   planned changes alone do not create `attention`.
-- `--skip-git-check` bypasses only the relevant or affected-path Git cleanliness
-  check and does not weaken other safety or recovery requirements.
+- One verified immutable external schema-v1 ZIP recovery bundle covers every
+  existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or `Delete`) in
+  the complete operation before the first target effect; creates and semantic or
+  byte no-ops receive none.
+- A draft is CreateNew-written under its exact name, closed and semantically
+  verified, moved within the same directory to its final deterministic name,
+  and verified again. Only the valid final ZIP forms the opaque
+  `RecoveryBundlePreparation`; a draft remains `Draft`/`Incomplete` support
+  data. Only the real store's final close/reopen semantic readback can construct
+  the opaque preparation; it has no freely initializable or caller-forgeable
+  verification surface. `FileChangeApplier` requires the matching preparation
+  for every Replace/ReplaceGeneratedRegion/Delete, requires `null` for Create,
+  rejects non-null preparation for Create, and makes one final effect per target.
+- Successful commands delete their command-owned bundle only after whole-command
+  verification; deletion failure leaves successful effects with `attention`
+  and exact cleanup guidance. Handled failure or cancellation reports the actual
+  residual draft or final path, and a closed final may remain after abrupt
+  process termination without a crash- or power-loss-durability guarantee. The
+  foundation never automatically
+  restores a target, rolls back an effect, or compensates for target effects,
+  and it does not save a journal, progress receipt, history, or replayable plan.
+- Cleanup deletes only exact named selected-workspace final bundles or drafts
+  under its nonrecursive support-artifact exception. Before deletion it
+  holds the same-workspace `FileShare.None` lease, re-enumerates the selected
+  bucket once, and repeats exact path/kind and final semantic validation;
+  contention prevents all deletion. Unknown,
+  malformed, mismatched, or differently keyed artifacts remain untouched. The
+  persistent lock preserves bytes and carries no activity metadata.
+- Status, Doctor, and Cleanup validate payload entry lengths and hashes only by
+  bounded streaming and never extract, disclose, retain, or materialize payload
+  bytes. Status and Doctor neither report nor infer activity.
 - Read-only and mutating authority remain separate.
 - Important stages return typed results and can be tested directly.
 - Human and structured output use one operation result. The seven statuses,

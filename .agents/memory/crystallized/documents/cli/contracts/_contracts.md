@@ -23,10 +23,12 @@ its Interface and Behavior contracts in the operation-local scope. These
 commands define intended behavior only; they do not ship yet.
 
 The direct root [`cleanup`](cleanup/_cleanup.md) command is retained as an
-operand-free operation over the current recognized Open Forge transient and
-recovery-artifact catalogue. Its local Interface and Behavior Contracts define
-the complete default-all deletion boundary; this entrypoint does not duplicate
-that meaning.
+operand-free operation over the current recognized external recovery-bundle and
+draft catalogue. An empty catalogue is a no-lease no-op. Before any deletion,
+Cleanup must acquire the existing same-workspace `WorkspaceLockLease` and repeat
+final catalogue and expected-state validation under that lease. Its local
+Interface and Behavior Contracts define the complete default-all deletion
+boundary; this entrypoint does not duplicate that meaning.
 
 The [CLI Architecture](../architecture.md) defines the accepted implementation
 structure and cross-command boundaries. The [frozen legacy CLI documentation](../_cli.md)
@@ -41,7 +43,7 @@ program records execution history but does not replace these current contracts.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Route the accepted non-shipping root cleanup contracts for recognized Open Forge transient and recovery artifacts](cleanup/_cleanup.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Cleanup #Mutation #Recovery #Safety #CurrentTruth
+- [Route the accepted non-shipping root cleanup contracts for lease-validated recovery-bundle and draft deletion](cleanup/_cleanup.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Cleanup #Mutation #Recovery #Safety #CurrentTruth
 - [Current Crystallized contract set for stateless ordered context resolution, projection, and explicit link expansion](context/_context.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Context #CurrentTruth
 - [Route the accepted current read-only Doctor Interface and Behavior contracts](doctor/_doctor.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Doctor #CurrentTruth
 - [Route the accepted non-shipping Extension list, inspect, create, install, update, and remove contracts](extension/_extension.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Lifecycle #CurrentTruth
@@ -52,6 +54,6 @@ program records execution history but does not replace these current contracts.
 - [Route the accepted current Repair Interface and Behavior contracts for exact and guided local repair](repair/_repair.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Repair #CurrentTruth
 - [Routing-only group entrypoint for the `route` command family](route/_route.md) - #Memory #Crystallized #CLI #Release #Command #Route #Contract #CurrentTruth
 - [Permanent route for accepted shared CLI contract sets](shared/_shared.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Shared #CurrentTruth
-- [Current Crystallized contract set for workspace status, context-size comparison, root customization, managed Extensions, and recovery evidence](status/_status.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Status #CurrentTruth
+- [Current Crystallized contract set for workspace status, context-size comparison, root customization, managed Extensions, and recognized recovery bundles](status/_status.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Status #CurrentTruth
 - [Route the accepted non-shipping root Framework update contracts for trusted managed reconciliation](update/_update.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Update #Framework #Lifecycle #CurrentTruth
 <!-- open-forge:generated-index:end -->

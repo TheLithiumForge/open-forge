@@ -188,7 +188,7 @@ executes package content, discovers a remote source, or reads a legacy receipt.
   Malformed, unsupported, unverifiable, or inconsistent evidence remains
   `untrusted`/`incomplete`, or `blocked` where ambiguity is unsafe.
 - This Task adds no writer, lock, plan, receipt publication, mutation application,
-  recovery, Git, or legacy lifecycle support.
+  recovery, or legacy lifecycle support.
 
 ## Behavior Matrix
 
@@ -235,7 +235,7 @@ forecast, not authority to change unrelated meaning.
 ### Protected Paths And Meaning
 
 - `Framework/Documents/Markdown/**`, `Framework/Sources/**`, Context, References,
-  Route, generated-navigation application, mutation, recovery, Git, lifecycle
+  Route, generated-navigation application, mutation, recovery, lifecycle
   writers, plans, receipts, locks, and all legacy CLI behavior
 - Shared Plan, Checkpoint, task indexes, parent Tasks, Architecture, Crystallized
   contracts, generated `Entries`, sealed Handoffs, and other worktrees
@@ -282,6 +282,6 @@ Return a project change request before changing accepted public/cross-task
 contracts, package or lifecycle authority, ownership/dependency direction,
 protected semantic authorities, another lane, or the mutation-foundation split.
 Stop before lifecycle inference, package download, dynamic plug-in loading,
-registry/cache/network discovery, legacy receipt support, mutation/recovery/Git
+registry/cache/network discovery, legacy receipt support, mutation/recovery
 behavior, reflection serialization, fake filesystems, or speculative shared
 frameworks.

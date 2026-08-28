@@ -49,7 +49,7 @@ report, saved plan, message, or display code as authority.
 The complete public command form is:
 
 ```text
-open-forge repair [--automatic] [--relink <source-location> <expected-destination> <target-path>]... [--dry-run] [--skip-git-check] [global flags]
+open-forge repair [--automatic] [--relink <source-location> <expected-destination> <target-path>]... [--dry-run] [global flags]
 ```
 
 The six and only six global flags are:
@@ -63,7 +63,7 @@ The six and only six global flags are:
 --version
 ```
 
-`--automatic`, `--relink`, `--dry-run`, and `--skip-git-check` are
+`--automatic`, `--relink`, and `--dry-run` are
 Repair-specific flags. `--automatic` is not global. All six global flags apply
 to Repair under the shared contract, including its exact workspace selection,
 human view, JSON, diagnostics, and terminal help and version behavior.
@@ -81,7 +81,6 @@ receipt, or second `fix` spelling.
 | `--automatic`                                                     | Automatic selection and non-wizard mode                       | Boolean; omission leaves selection to explicit relinks or the interactive wizard | Repeatable and idempotent. It selects every current safe-exact proposal and never selects a guided candidate. |
 | `--relink <source-location> <expected-destination> <target-path>` | Explicit local-reference selection and user intent            | Exactly three shell values per occurrence                                        | Repeatable. Identical triples deduplicate. Contradictory tuples for the same occurrence are invalid.          |
 | `--dry-run`                                                       | Sole preview policy                                           | Boolean; omission permits application when selection and authority are complete  | Repeatable and idempotent. It never creates persistent effects.                                               |
-| `--skip-git-check`                                                | One named Git cleanliness boundary                            | Boolean; omission keeps the affected-path Git check                              | Repeatable and idempotent. It bypasses only that check and activates required adjacent backup recovery.       |
 | global flags                                                      | Workspace, presentation, diagnostics, or terminal information | The six shared values                                                            | Shared defaults, repetition, terminal, and composition rules apply.                                           |
 
 Explicit inputs compose incrementally. `--automatic` adds all current safe-exact
@@ -90,9 +89,9 @@ its addressed occurrence and suppresses candidate selection for that occurrence.
 There is no hidden precedence, disjunctive mode, order winner, or fallback
 choice. An input that conflicts with another explicit input is invalid.
 
-Repeated Boolean presence does not multiply selection authority, preview, Git
-bypass, or recovery. A duplicate explicit tuple does not multiply an effect or
-change its provenance.
+Repeated Boolean presence does not multiply selection authority, preview, or
+recovery. A duplicate explicit tuple does not multiply an effect or change its
+provenance.
 
 `--help` and `--version` remain terminal informational modes under the shared
 global contract. They are mutually exclusive and do not run diagnosis or
@@ -198,7 +197,8 @@ open-forge repair
 
 It opens the Repair wizard. The wizard:
 
-1. Reruns all six Doctor domains in their fixed order.
+1. Reruns Doctor for display, then identifies the exact diagnosis domains and
+   facts required by each selectable local-reference edit.
 2. Shows every current safe-exact proposal.
 3. Presents finite guided candidates with their evidence and a
    recommendation-for-review when one exists. No uncertain guided candidate is
@@ -224,8 +224,8 @@ does not save the plan for later application.
 
 Any prompt-capable request with neither `--automatic` nor an explicit `--relink`
 enters this same wizard, including requests that supply only `--workspace`,
-`--view`, `--verbose`, `--skip-git-check`, or `--dry-run`. Those flags remain in
-the one request and keep their normal meanings. `--json`, `--help`, and
+`--view`, `--verbose`, or `--dry-run`. Those flags remain in the one request and
+keep their normal meanings. `--json`, `--help`, and
 `--version` retain their non-prompting or terminal boundaries.
 
 ### Automatic selection
@@ -312,27 +312,27 @@ recommendation ranking.
 
 The catalogue does not include external repairs, semantic or fuzzy target
 choices, authored prose or labels, generated navigation, route authoring or
-topology, route metadata, overwrite content, recovery deletion or restoration,
+topology, route metadata, overwrite content, recovery-bundle or draft cleanup or restoration,
 Framework mutation, Extension mutation, ownership adoption, or any effect that
 lacks complete verification and recovery.
 
 Generated navigation points to `index`. Known route intent points to an accepted
-route operation. Recovery-artifact deletion belongs to the separate accepted
+route operation. Recovery-bundle or draft deletion belongs to the separate accepted
 [`cleanup` operation](../cleanup/interface.md). Framework and Extension lifecycle
 findings point to their accepted lifecycle operation or manual instructions.
 Repair does not invoke any public command.
 
 ## Diagnosis And Completeness Gate
 
-Every Repair invocation reruns the complete six-domain Doctor diagnosis. General
-Repair writes require complete coverage for all six Doctor domains. If any one
-of the six domains has `incomplete` or `blocked` coverage, all general Repair
-writes are prevented, including an explicit relink. Partial facts, findings,
-candidates, and the reason for the gate remain visible in the result.
-
-This strict first-release gate is separate from the target operation's own
-boundary. A future targeted command may run under its own accepted contract, but
-Repair does not invoke it or borrow its authority.
+Every Repair invocation may retain the complete Doctor diagnosis for display,
+but a selected edit is gated only by the diagnosis dependency closure it
+actually uses: exact workspace and path containment, the route/heading facts
+needed by that target, and the local-reference occurrence and candidate facts.
+Every required domain must have complete coverage for the selected edit.
+Incomplete or blocked unrelated lifecycle, Extension, Framework, or recovery-
+observer coverage remains visible but does not block a safe local-reference
+repair. Recovery writer readiness for a real Replace is checked separately in
+mutation preflight. Repair never borrows mutation authority from another domain.
 
 ## Mutation Authority And Safety
 
@@ -342,19 +342,56 @@ or ownership grant. It never:
 - Accepts a recommendation or guided candidate.
 - Replaces divergent authored content.
 - Deletes, adopts, or takes ownership of a target.
-- Bypasses containment, identity, conflict, preflight, Git, verification, or
+- Bypasses containment, identity, conflict, preflight, verification, or
   recovery requirements.
 - Makes a fuzzy, semantic, or display-order choice.
 
-`--skip-git-check` bypasses only the Git cleanliness check for affected paths. It
-activates the required adjacent-backup recovery policy. It does not bypass the
-complete-diagnosis gate, expected-state revalidation, containment, identity,
-conflict, verification, recovery readiness, or ownership boundaries.
+For an applying plan with one or more existing-target effects (`Replace`,
+`ReplaceGeneratedRegion`, or `Delete`), the
+orchestrator prepares and verifies exactly one immutable ZIP
+recovery bundle before the first target effect. The root is
+`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
+Environment.SpecialFolderOption.Create)/OpenForge/recovery/v1`, outside the
+workspace, with no temporary, repository, `HOME`, or custom platform fallback.
+Unavailable storage is `incomplete` before any write. A verified
+no-op creates no bundle.
 
-Repair checks Git cleanliness only for existing paths the complete plan may
-change. A verified no-op has no affected mutation path. Dirty affected paths
-block by default. Gitless operation still requires the accepted adjacent backup
-recovery boundary; an unavailable or colliding required backup blocks.
+The deterministic final name uses the normalized physical workspace path key and
+operation ID. A `CreateNew` draft in that external directory is closed and
+reopened for semantic manifest, exact ordered entry, length, hash, and payload-
+byte validation, moved within the same directory to the final name, and reopened
+and verified again. Only the valid final ZIP forms the opaque
+`RecoveryBundlePreparation`; the draft remains `Incomplete`. The source-generated
+`manifest.json` records schema-v1, command/operation/workspace identity, ordered
+relative targets and change kinds, exact prior byte lengths/hashes/payload names,
+and intended final absence or length/hash. Ordered ordinal payload entries hold
+the exact prior bytes for each existing-target effect. The bundle is
+immutable after preparation.
+
+Every planned existing-target effect must match exactly one verified entry; Create and
+no-op effects have none. All preparation completes before the first effect.
+`FileChangeApplier` requires matching preparation for each existing-target effect and
+performs one final effect per target. Immediately before application, revalidate
+the source occurrence, old literal, target, expected bytes, intended bytes,
+identity, containment, and bundle facts.
+
+On handled failure or cancellation, report the actual residual draft or final
+path; a valid final remains after preparation. A closed final ZIP may remain
+after abrupt process termination, without an executable crash or power-loss
+guarantee. Repair never restores, rolls back, compensates for a target effect,
+derives current target state from recovery provenance, or stores a journal,
+progress receipt, or persisted plan. After final verification of whole-operation
+success, delete the bundle; if recognized deletion fails, effects remain successful and the result
+is `attention` with the exact residual path and cleanup guidance.
+
+Explicit Cleanup owns exact named final and draft deletion under its separate
+lease-bound contract. Unknown or differently named artifacts remain untouched.
+Recovery storage is ordinary current-user `LocalApplicationData` under the
+stable workspace and cooperating-client threat model. No special platform-
+permission or encryption behavior is promised. Recovery reads use semantic
+schema and exact ordered-entry validation and do not extract bundles or add a
+custom archive parser, reflection, native dependency, or package for this
+boundary.
 
 ## Fresh State And Conflict Rules
 
@@ -378,14 +415,15 @@ their addressed byte range, expected state, intended result, verification
 condition, and recovery requirement are identical. Automatic and explicit
 selection may therefore coalesce one effect while every selection origin,
 finding, and tuple remains visible as provenance. Contradictory tuples are
-invalid. Stale or dirty state, missing authority, missing recovery, overlapping
+invalid. Stale state, missing authority, missing recovery preparation, overlapping
 non-equivalent effects, and other plan conflicts block the entire plan. There is
 no order winner and no partial application.
 
 Distinct non-overlapping relinks in one source file compose against one common
 expected complete-file state. They produce one intended complete-file state and
-one replacement and recovery effect for that file while retaining each
-occurrence and selection origin. Overlapping byte ranges, different expected
+one replacement effect for that file, covered by the operation's one verified
+recovery-bundle preparation, while retaining each occurrence and selection
+origin. Overlapping byte ranges, different expected
 complete-file states, or any combination that cannot prove one deterministic
 resulting file block the complete plan.
 
@@ -396,7 +434,8 @@ Repair output has one hierarchy:
 1. Semantic status, selection source, application policy, and whether the
    request was interactive, automatic, explicit, or a combination.
 2. Exact workspace identity and selection method.
-3. Diagnosis and selection coverage, including the strict completeness gate.
+3. Diagnosis and selection coverage, including the relevant-domain gate for the
+   selected edits.
 4. An explicit application or Preview statement and the no-files-changed fact
    when dry-run is selected.
 5. Finding counts and effect counts, separated into selected, unselected,
@@ -404,7 +443,7 @@ Repair output has one hierarchy:
 6. Affected paths and exact bounded diffs or equivalent byte and fingerprint
    evidence where available.
 7. Preflight, application, verification, recovery, and residual state.
-8. Fresh post-repair six-domain diagnosis and its coverage.
+8. Fresh post-repair relevant-domain diagnosis and its coverage.
 
 The default human view is `expanded`. Compact output retains identity, status,
 mode, coverage, effect and finding counts, selected and remaining resolution
@@ -470,9 +509,9 @@ semantic status; separate bounded diagnostics use stderr.
 | `attention`   | The selected scope was safely processed, but unselected guided, manual, targeted, newly detected, or other non-information findings remain. Human output may say `requires attention`.                                                                                 |
 | `incomplete`  | Safe facts or partial results are available, but required diagnosis, proposal resolution, post-diagnosis, or another declared coverage boundary could not finish. No general Repair write begins.                                                                      |
 | `invalid`     | Command grammar, flag values, relink tuples, repetition, or explicit inputs are invalid.                                                                                                                                                                               |
-| `blocked`     | A valid request lacks required selection or authority, fails the strict completeness gate, is stale or conflicting, has dirty affected paths, lacks recovery, or cannot establish a safe exact effect. No write begins.                                                |
+| `blocked`     | A valid request lacks required selection or authority, has incomplete or blocked coverage in a domain required by the selected edit, is stale or conflicting, has malformed, colliding, or mismatched recovery facts, or cannot establish a safe exact effect. No write begins. |
 | `failed`      | Application, verification, recovery, or post-condition processing failed. Residual state and retained recovery evidence remain visible.                                                                                                                                |
-| `interrupted` | The caller cancels or interrupts before the selected operation completes, with residual recovery failure still classified as `failed`.                                                                                                                                 |
+| `interrupted` | The caller cancels or interrupts before the selected operation completes, unless an unexpected application or verification failure is classified as `failed`.                                                                                                               |
 
 `--dry-run` uses the same status conditions while stopping before persistent
 effects. It does not claim that intended bytes were written or verified on disk.
@@ -498,8 +537,8 @@ finite:
   path or fragment is `invalid`.
 - Repeated identical relink tuples deduplicate. Contradictory tuples for one
   occurrence are `invalid`; argument order does not choose a winner.
-- Repeated `--automatic`, `--dry-run`, and `--skip-git-check` are accepted and
-  idempotent. Shared global repetition follows the shared contract.
+- Repeated `--automatic` and `--dry-run` are accepted and idempotent. Shared
+  global repetition follows the shared contract. Unknown options are invalid.
 - An interactive bare `repair` opens the wizard. In a non-interactive or JSON
   request, no selection authority is `blocked`; the next action names
   `--automatic` or explicit `--relink`.
@@ -510,11 +549,12 @@ finite:
   fresh resolution is `blocked`.
 - An incomplete or blocked required Doctor domain is `incomplete` or `blocked`
   and prevents all general Repair writes, including explicit relinks.
-- Dirty affected paths, backup collision, missing recovery, overlap conflict,
-  missing authority, or any other unsafe plan condition is `blocked`.
-- An unexpected application, verification, recovery, or post-diagnosis failure
-  is `failed`. A caller interruption without residual recovery failure is
-  `interrupted`.
+- Unavailable recovery storage or preparation coverage is `incomplete`; malformed,
+  colliding, or mismatched recovery-bundle facts, overlap conflict, missing
+  authority, or any other unsafe plan condition is `blocked`.
+- An unexpected application, verification, bundle-handling, or post-diagnosis
+  failure is `failed`. A caller interruption without an unexpected application
+  or verification failure is `interrupted`.
 
 Every ordinary error names the `repair` operation, affected selection, occurrence,
 target, plan, or path when known, direct cause, and useful next action. It never
@@ -568,9 +608,9 @@ open-forge repair --json \
   ".agents/docs/new.md#New"
 ```
 
-This request does not prompt. It still requires complete six-domain diagnosis,
-fresh expected-state validation, Git policy, one conflict-free plan, verification,
-and recovery.
+This request does not prompt. It still requires complete relevant-domain diagnosis,
+fresh expected-state validation, one conflict-free plan, verified recovery-bundle
+preparation, and verification.
 
 ## Non-Goals And Targeted Boundary
 
@@ -586,17 +626,17 @@ Repair does not:
   another fallback.
 - Repair external references, absolute or query destinations, authored prose or
   labels, generated navigation, route authoring or topology, metadata,
-  overwrites, recovery deletion or restoration, Framework lifecycle, Extension
+  overwrites, recovery-bundle cleanup or restoration, Framework lifecycle, Extension
   lifecycle, or ownership.
 - Partially apply a plan, resolve a conflict by order, overwrite divergent
-  content, adopt a target, or bypass safety, Git, conflict, or recovery checks.
+  content, adopt a target, or bypass safety, conflict, or recovery checks.
 - Invoke `doctor`, `index`, a route operation, or a future lifecycle command as a
   public subprocess. Shared facts and planners may be reused without invoking a
   public command.
 
 `index` owns standalone generated-navigation drift. Accepted route operations own
 known route intent. The accepted [`cleanup` contract`](../cleanup/interface.md)
-owns recognized transient and recovery-artifact deletion. Accepted Framework and
+owns recognized transient and recovery-bundle/draft deletion. Accepted Framework and
 Extension lifecycle contracts or manual instructions own those mutations. These
 boundaries do not merge their operations or syntax.
 
@@ -607,8 +647,9 @@ Conformance evidence must cover:
 - Exact syntax, rejection of positional operands and every rejected alias or
   generic selection form, all six global flags, and the fact that `--automatic`
   is operation-specific rather than global.
-- Repetition and composition of `--automatic`, `--relink`, `--dry-run`,
-  `--skip-git-check`, shared flags, duplicate tuples, and contradictory tuples.
+- Repetition and composition of `--automatic`, `--relink`, `--dry-run`, shared
+  flags, duplicate tuples, and contradictory tuples, with unknown options
+  rejected.
 - Human wizard entry, six-domain rerun, safe-exact presentation, guided
   candidate evidence, no uncertain default, select/skip/back/cancel, one plan,
   exact effects, and final confirmation default No.
@@ -624,15 +665,17 @@ Conformance evidence must cover:
 - Every admitted safe-exact and guided catalogue member, candidate evidence
   basis, zero/one/several candidate cardinality, and no external or semantic
   repair.
-- Complete six-domain diagnosis as a strict write gate, with partial facts
-  visible and no general write under incomplete or blocked coverage.
+- Complete coverage for the exact diagnosis domains required by selected edits,
+  with unrelated incomplete lifecycle or recovery-observer facts visible but
+  non-blocking.
 - One atomic selection union, equivalent-effect coalescing, contradictory and
-  overlapping conflict blocking, dirty affected paths, missing authority, Git
-  and Gitless recovery, and no partial application.
+  overlapping conflict blocking, missing authority, verified recovery-bundle
+  preparation, and no partial application.
 - The complete mutation lifecycle: fresh diagnosis, selected intent, plan,
-  conflict check, preflight, exact dry-run, confirmation, affected-path Git
-  policy, revalidation, apply, per-effect and semantic verification, reverse
-  recovery, and fresh six-domain diagnosis, with no fixpoint loop.
+  conflict check, preflight, exact dry-run, confirmation, all-before-first-effect
+  recovery-bundle preparation, revalidation, apply, per-effect and semantic
+  verification, residual-path reporting, and fresh relevant-domain diagnosis,
+  with no fixpoint loop.
 - Human compact and expanded, JSON, and verbose projections from one typed
   result, including exact bounded effects and the accepted stdout and stderr
   policy under the shared schema and process-status mapping defined by the CLI

@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
+using OpenForge.Cli.Core.Framework.Serialization;
 using OpenForge.Cli.Core.Framework.Extensions.Serialization;
 
 namespace OpenForge.Cli.Core.Framework.Extensions;
@@ -15,7 +16,7 @@ internal static class ExtensionManifestReader
     internal static ExtensionPackageFact ReadManifestOnly(ReadOnlySpan<byte> bytes)
     {
         _ = StrictUtf8.GetString(bytes);
-        ExtensionJsonSyntaxValidator.ValidateNoDuplicateProperties(bytes);
+        JsonDuplicatePropertyValidator.ValidateNoDuplicateProperties(bytes);
         var manifest = JsonSerializer.Deserialize(
             bytes,
             ExtensionPackageJsonContext.Default.ExtensionManifestDocument)
@@ -30,7 +31,7 @@ internal static class ExtensionManifestReader
         IEnumerable<ExtensionPackageFileFact> payload)
     {
         _ = StrictUtf8.GetString(bytes);
-        ExtensionJsonSyntaxValidator.ValidateNoDuplicateProperties(bytes);
+        JsonDuplicatePropertyValidator.ValidateNoDuplicateProperties(bytes);
         var manifest = JsonSerializer.Deserialize(
             bytes,
             ExtensionPackageJsonContext.Default.ExtensionManifestDocument)

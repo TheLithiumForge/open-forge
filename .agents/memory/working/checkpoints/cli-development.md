@@ -12,17 +12,20 @@ Complete the replacement CLI from its accepted Architecture and command
 contracts, with safe local development, reproducible evidence, and no partial
 release.
 
+- Last updated: 2026-08-29.
+
 ## Current State
 
-Proportional CLI Corrections are Complete and squash-integrated through clean
-local `develop` commit `0d88606`. Proportionate guidance is `5f9f59e`; Route List
+Proportional CLI Corrections are Complete and squash-integrated through
+implementation `0d88606`, with clean local `develop` closeout `7abde56`.
+Proportionate guidance is `5f9f59e`; Route List
 bounded escaping and proved-dead support removal are `2cd525d`; the authoritative
 Markdown generated-region and fingerprint state flow is `0d88606`. The integrated
 Release build is warning-free; managed Unit `1053/1053`, Integration `411/411`,
 and EndToEnd `120/120` pass. Portable `linux-x64` Native AOT root publication and
 execution pass, with Native AOT Integration `411/411` and EndToEnd `120/120`.
 Native dogfood makes no writes, Doctor reports zero errors and the known C#
-`Axioms` warning, and final Sol/xhigh review is `ROBUST`. No push occurred.
+`Axioms` warning, and final review is `ROBUST`. No push occurred.
 
 Find, References, Context, Extension List, and Extension Inspect are Complete. Context is
 squash-integrated into local `develop` at `ca097a2`, and Extension List is
@@ -41,7 +44,7 @@ Its accepted rebased feature `2b1e63d` is squash-integrated at `73b01be`. The
 combined baseline passes warning-free Release build, managed Unit `1054/1054`,
 Integration `378/378`, EndToEnd `116/116`, and portable `linux-x64` Native AOT
 Integration `378/378` and EndToEnd `116/116`, all with zero failures or skips.
-The final Sol/xhigh correction recheck is `ACCEPTED`. No remote action or push
+The final correction recheck is `ACCEPTED`. No remote action or push
 occurred.
 
 Routed Authored Metadata is Complete and squash-integrated at `5924698`. Its
@@ -54,7 +57,7 @@ Generated Navigation is Complete. Accepted feature `5a882e8` is
 squash-integrated into local `develop` at `21e5200`. Final evidence passes focused
 Unit `18/18`, focused real-filesystem Integration `3/3`, full managed Unit
 `1030/1030`, Integration `357/357`, and republished local `linux-x64` Native AOT
-Integration `357/357`, with zero failures or skips. The final Sol/xhigh recheck is
+Integration `357/357`, with zero failures or skips. The final recheck is
 `ACCEPTED`; post-integration focused Unit `18/18` and Integration `3/3` pass.
 
 The constants/test-architecture audit is Complete and squash-integrated into
@@ -62,6 +65,28 @@ local `develop` at `b6ce31f`. The integrated tree exactly matches its accepted
 feature tree and retains final managed Unit `1024/1024`, Integration `409/409`,
 EndToEnd `116/116`, and supported local `linux-x64` Native AOT Integration
 `409/409` evidence. No push or remote action occurred.
+
+Mutation Foundation is Complete at exact production candidate `e7d937f` under
+current authority `01dd552`. It retains the historical contract, lock/lifecycle,
+and atomic-application commits while correcting their superseded recovery and
+lock decisions. The persistent reusable lock preserves existing bytes and is
+owned only through a held `FileShare.None` handle. Existing-target application
+requires one matching opaque final recovery preparation; Create requires none.
+The external ordinary-BCL LocalApplicationData bundle store, neutral catalogue,
+and lease-gated mechanical deletion guard are implemented without Git,
+restoration, rollback, compensation, journal, or command policy.
+
+Final acceptance passes focused M1 Unit `43/43` and Integration `47/47`; full
+managed Unit `1096/1096`, Integration `458/458`, and EndToEnd `120/120`; focused
+published `linux-x64` Recovery/source-generation Native AOT `10/10`; and the
+already-published full Native AOT Integration `458/458`, all with zero failures
+or skips. Locked restore, the warning-free Release build, whitespace-format and
+diff checks, source-generation/reflection-disabled execution, the static zero
+replacement-product Git audit, and final independent review (`ROBUST`, safe
+to commit, confidence `0.98`) pass. The complete solution-format command exits
+successfully with existing workspace reference-load warnings; the narrower
+whitespace oracle is clean. No executable process-crash, permission-manipulation,
+or fake OS-failure seam is claimed.
 
 Implemented boundaries:
 
@@ -94,11 +119,9 @@ external publication, remote action, or push occurred.
 ## Current Step
 
 [Mutation Foundation](../cli-development/tasks/mutation-foundation/_mutation-foundation.md)
-is the next Ready boundary. Reconcile its persisted lifecycle-schema decision and
-dirty feature worktree with the accepted cooperative stable-workspace threat
-model, proportional recovery policy, modern C# directives, and retained PCF-006
-and PCF-009 decisions before resuming implementation. Public Index remains
-sequential after Mutation Foundation. Do not push.
+is Complete. Public [Index](../cli-development/tasks/read-only/index-command.md)
+is Ready and next, but it has not been implemented or selected as Active.
+Preserve the post-M1 durable queue in the Plan before activation. Do not push.
 
 ## Protected State
 
@@ -107,18 +130,21 @@ sequential after Mutation Foundation. Do not push.
 - Do not change accepted Find, References, Context, Extension List, Route, Shell,
   or source-reference meaning during the wave.
 - Do not implement public Index selection, binding, application, locking,
-  recovery, Git policy, or result presentation in the Generated Navigation lane.
+  recovery, or result presentation in the Generated Navigation lane.
 - Do not download additional dependencies without exact authorization.
 - Do not contact remotes, publish, globally install, deploy, or push.
 
 ## Next Actions
 
-1. Return to the exact Mutation Foundation lifecycle-schema decision, then freeze
-   and accept its callable contracts before implementing lock, lifecycle,
-   revalidation, atomic-apply, receipt, recovery, and Git children in dependency
-   order. Keep remotes unchanged.
-2. Implement public Index only after Mutation Foundation is accepted; do not
-   create command-local mutation, lock, recovery, or Git substitutes.
+1. Preserve the queued binding CLI proportionality/evidence Directive and Plan
+   applicability check before I1 becomes Active.
+2. Keep the Route Init exact-chain decision and lane graph queued before M2;
+   retain thin D1, relevant-domain Repair, and the simplified O1/O2 split.
+3. Select public Index as Active only when its implementation boundary begins;
+   consume accepted M1 mechanics without a command-local substitute.
+4. Keep actual Status/Doctor implementation in O1 and actual Cleanup selection,
+   default, empty-no-lease policy, orchestration, guidance, aggregation, and E2E
+   in O2.
 
 ## Current Sources
 
