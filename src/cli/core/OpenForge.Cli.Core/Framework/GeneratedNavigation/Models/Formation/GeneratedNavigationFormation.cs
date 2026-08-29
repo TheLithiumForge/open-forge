@@ -16,9 +16,9 @@ internal sealed class GeneratedNavigationFormation
 
     internal SourceCatalogue Catalogue => _components.Catalogue;
 
-    internal IReadOnlyList<SourceLogicalSource> Sources => Catalogue.Sources;
+    internal IReadOnlyList<SourceLogicalSource> Sources => _components.Sources;
 
-    internal IReadOnlyList<SourceCatalogueIssue> Issues => Catalogue.Issues;
+    internal IReadOnlyList<SourceCatalogueIssue> Issues => _components.Issues;
 
     internal SourceRouteTopology Topology => _components.Topology;
 
@@ -26,10 +26,14 @@ internal sealed class GeneratedNavigationFormation
 
     internal IReadOnlyList<GeneratedNavigationPhysicalAliasGroup> PhysicalAliasGroups => _components.PhysicalAliasGroups;
 
+    internal IReadOnlyList<GeneratedNavigationIntendedTargetCollision> IntendedTargetCollisions =>
+        _components.IntendedTargetCollisions;
+
     internal IReadOnlyList<GeneratedNavigationFormationAmbiguity> Ambiguities => _components.Ambiguities;
 
     internal SourceLogicalSource? FindSource(string canonicalPath)
     {
-        return Catalogue.FindByPath(canonicalPath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(canonicalPath);
+        return _components.FindSource(canonicalPath);
     }
 }

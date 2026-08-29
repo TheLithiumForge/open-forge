@@ -56,6 +56,60 @@ internal static class GeneratedNavigationTestData
             physicalParentPath: physicalParentPath ?? ReadParent(physicalPath));
     }
 
+    internal static SourceCandidate UnrecognizedCandidate(
+        string canonicalPath,
+        string physicalPath,
+        string? physicalParentPath = null)
+    {
+        return new SourceCandidate(
+            canonicalPath: canonicalPath,
+            form: null,
+            automaticId: null,
+            physicalState: PhysicalPathState.Contained,
+            physicalPath: physicalPath,
+            physicalParentPath: physicalParentPath ?? ReadParent(physicalPath));
+    }
+
+    internal static SourceLogicalSource Source(
+        string canonicalPath,
+        SourceDocumentForm form,
+        string? physicalPath = null,
+        string? overwritePhysicalPath = null)
+    {
+        var baseLayer = new SourceLayer(
+            canonicalPath: canonicalPath,
+            physicalPath: physicalPath ?? Physical(canonicalPath),
+            form: form,
+            kind: SourceLayerKind.Base);
+        SourceLayer? overwrite = null;
+        if (overwritePhysicalPath is not null)
+        {
+            overwrite = new SourceLayer(
+                canonicalPath: canonicalPath[..^".md".Length] + ".overwrite.md",
+                physicalPath: overwritePhysicalPath,
+                form: SourceDocumentForm.OverwriteCompanion,
+                kind: SourceLayerKind.Overwrite);
+        }
+
+        return new SourceLogicalSource(
+            identity: new SourceLogicalIdentity(
+                SourceIdentity.DeriveId(canonicalPath)
+                    ?? throw new ArgumentException(
+                        "A generated navigation test source requires an automatic ID.",
+                        nameof(canonicalPath)),
+                canonicalPath),
+            @base: baseLayer,
+            overwrite: overwrite);
+    }
+
+    internal static string Physical(string relativePath)
+    {
+        return Path.GetFullPath(Path.Combine(
+            Path.GetTempPath(),
+            "generated-navigation-unit",
+            relativePath.Replace('/', Path.DirectorySeparatorChar)));
+    }
+
     private static IEnumerable<SourceCandidate> SourceCandidates(SourceLogicalSource source)
     {
         yield return Candidate(

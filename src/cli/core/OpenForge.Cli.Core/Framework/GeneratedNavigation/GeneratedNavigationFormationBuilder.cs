@@ -5,113 +5,150 @@ using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
-using OpenForge.Cli.Core.Framework.Sources.Routing;
 
 namespace OpenForge.Cli.Core.Framework.GeneratedNavigation;
 
-internal sealed class GeneratedNavigationFormationBuilder
+internal sealed partial class GeneratedNavigationFormationBuilder
 {
-    internal GeneratedNavigationFormation Build(SourceCatalogue catalogue)
+    internal GeneratedNavigationFormation Build(SourceCatalogue observedCatalogue)
     {
-        ArgumentNullException.ThrowIfNull(catalogue);
-        return new GeneratedNavigationFormation(new DerivedComponents(catalogue));
+        ArgumentNullException.ThrowIfNull(observedCatalogue);
+        return Build(observedCatalogue, observedCatalogue.Sources);
     }
 
-    private static IReadOnlyList<GeneratedNavigationPhysicalAliasGroup> BuildAliasGroups(
-        SourceCatalogue catalogue,
-        SourceRouteTopology topology)
+    internal GeneratedNavigationFormation Build(
+        SourceCatalogue observedCatalogue,
+        IReadOnlyList<SourceLogicalSource> intendedSources)
     {
-        return catalogue.Candidates
-            .Where(candidate => candidate.PhysicalState == PhysicalPathState.Contained
-                && candidate.PhysicalPath is not null)
-            .GroupBy(
-                candidate => candidate.PhysicalPath
-                    ?? throw new InvalidOperationException("A contained alias candidate must retain its physical path."),
-                PhysicalIdentityTracker.PathComparer)
-            .Where(group => group.Count() > 1)
-            .Select(group =>
+        ArgumentNullException.ThrowIfNull(observedCatalogue);
+        ArgumentNullException.ThrowIfNull(intendedSources);
+        return new GeneratedNavigationFormation(new DerivedComponents(observedCatalogue, intendedSources));
+    }
+
+    private static IReadOnlyList<SourceLogicalSource> MaterializeIntendedSources(
+        SourceCatalogue observedCatalogue,
+        IReadOnlyList<SourceLogicalSource> intendedSources)
+    {
+        var ordered = intendedSources
+            .Select(source => source ?? throw new ArgumentException(
+                "Intended generated navigation sources cannot contain null members.",
+                nameof(intendedSources)))
+            .OrderBy(source => source.Identity.AutomaticId, StringComparer.Ordinal)
+            .ThenBy(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal)
+            .ToArray();
+        if (ordered.Select(source => source.Identity.CanonicalBasePath)
+            .Distinct(StringComparer.Ordinal)
+            .Count() != ordered.Length)
+        {
+            throw new ArgumentException(
+                "Intended generated navigation sources require unique canonical base paths.",
+                nameof(intendedSources));
+        }
+
+        return ReferenceEquals(intendedSources, observedCatalogue.Sources)
+            ? observedCatalogue.Sources
+            : new ReadOnlyCollection<SourceLogicalSource>(ordered);
+    }
+
+    private static IReadOnlyList<GeneratedNavigationFormationAmbiguity> BuildAmbiguities(
+        SourceRouteTopology topology,
+        IReadOnlyDictionary<string, SourceLogicalSource> intendedByPath,
+        IReadOnlyDictionary<string, SourceCandidate> observedCandidatesByPath,
+        IReadOnlyDictionary<string, SourceLogicalSource> observedSourcesByCandidatePath,
+        IReadOnlyList<GeneratedNavigationPhysicalAliasGroup> aliasGroups)
+    {
+        var ambiguities = new List<GeneratedNavigationFormationAmbiguity>();
+        foreach (var node in topology.Nodes.Where(node => node.ParentState == SourceRouteParentState.Ambiguous))
+        {
+            var sources = node.ParentPaths.Select(path => intendedByPath[path]).ToArray();
+            ambiguities.Add(new GeneratedNavigationFormationAmbiguity(
+                kind: GeneratedNavigationFormationAmbiguityKind.RouteParent,
+                subject: node.Identity.CanonicalBasePath,
+                intendedSources: sources,
+                observedCandidates: ReadObservedBaseCandidates(sources, observedCandidatesByPath)));
+        }
+
+        foreach (var group in aliasGroups.Where(group =>
+                     group.Compatibility == GeneratedNavigationPhysicalAliasCompatibility.Incompatible))
+        {
+            var sources = group.Candidates
+                .Select(candidate => observedSourcesByCandidatePath.GetValueOrDefault(candidate.CanonicalPath))
+                .Where(source => source is not null)
+                .Cast<SourceLogicalSource>()
+                .DistinctBy(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal)
+                .ToArray();
+            ambiguities.Add(new GeneratedNavigationFormationAmbiguity(
+                kind: GeneratedNavigationFormationAmbiguityKind.PhysicalAlias,
+                subject: group.Candidates[0].CanonicalPath,
+                intendedSources: sources,
+                observedCandidates: group.Candidates));
+        }
+
+        return ambiguities;
+    }
+
+    private static IReadOnlyList<string> ReadStructuralRootPaths(
+        IReadOnlyList<SourceLogicalSource> intendedSources,
+        IReadOnlyDictionary<string, SourceCandidate> observedCandidatesByPath,
+        IReadOnlyList<GeneratedNavigationPhysicalAliasGroup> aliasGroups,
+        IReadOnlyList<GeneratedNavigationIntendedTargetCollision> intendedTargetCollisions,
+        ICollection<GeneratedNavigationFormationAmbiguity> ambiguities)
+    {
+        var eligible = new List<SourceLogicalSource>();
+        var rootCandidates = intendedSources
+            .Select(source => (Source: source, Folder: ReadRepresentedRootFolder(source)))
+            .Where(candidate => candidate.Folder is not null)
+            .Select(candidate => (
+                candidate.Source,
+                Folder: candidate.Folder
+                    ?? throw new InvalidOperationException("A structurally rooted entrypoint must retain its represented folder.")));
+        foreach (var rootGroup in rootCandidates
+                     .GroupBy(candidate => candidate.Folder, StringComparer.Ordinal)
+                     .OrderBy(group => group.Key, StringComparer.Ordinal))
+        {
+            var sources = rootGroup
+                .Select(candidate => candidate.Source)
+                .OrderBy(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal)
+                .ToArray();
+            if (sources.Length > 1)
             {
-                var candidates = group.OrderBy(candidate => candidate.CanonicalPath, StringComparer.Ordinal).ToArray();
-                var compatibility = candidates.Skip(1).All(candidate =>
-                    AreCompatible(candidates[0], candidate, catalogue, topology))
-                    ? GeneratedNavigationPhysicalAliasCompatibility.Compatible
-                    : GeneratedNavigationPhysicalAliasCompatibility.Incompatible;
-                return new GeneratedNavigationPhysicalAliasGroup(
-                    physicalPath: candidates[0].PhysicalPath
-                        ?? throw new InvalidOperationException("A contained alias candidate must retain its physical path."),
-                    candidates: candidates,
-                    compatibility: compatibility);
-            })
-            .OrderBy(group => group.Candidates[0].CanonicalPath, StringComparer.Ordinal)
+                ambiguities.Add(new GeneratedNavigationFormationAmbiguity(
+                    kind: GeneratedNavigationFormationAmbiguityKind.RootEntrypoint,
+                    subject: rootGroup.Key,
+                    intendedSources: sources,
+                    observedCandidates: ReadObservedBaseCandidates(sources, observedCandidatesByPath)));
+                continue;
+            }
+
+            eligible.Add(sources[0]);
+        }
+
+        var collidingTargetPaths = intendedTargetCollisions
+            .Select(collision => collision.TargetPath)
+            .ToHashSet(PhysicalIdentityTracker.PathComparer);
+        return eligible
+            .Where(source => !collidingTargetPaths.Contains(source.Base.PhysicalPath))
+            .GroupBy(source => source.Base.PhysicalPath, PhysicalIdentityTracker.PathComparer)
+            .Where(group => aliasGroups.All(alias =>
+                !PhysicalIdentityTracker.PathComparer.Equals(alias.PhysicalPath, group.Key)
+                || alias.Compatibility == GeneratedNavigationPhysicalAliasCompatibility.Compatible))
+            .Select(group => group
+                .OrderBy(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal)
+                .First()
+                .Identity.CanonicalBasePath)
+            .OrderBy(path => path, StringComparer.Ordinal)
             .ToArray();
     }
 
-    private static bool AreCompatible(
-        SourceCandidate left,
-        SourceCandidate right,
-        SourceCatalogue catalogue,
-        SourceRouteTopology topology)
+    private static IReadOnlyList<SourceCandidate> ReadObservedBaseCandidates(
+        IEnumerable<SourceLogicalSource> sources,
+        IReadOnlyDictionary<string, SourceCandidate> observedCandidatesByPath)
     {
-        if (left.Form is null
-            || left.Form != right.Form
-            || !PhysicalIdentityTracker.PathComparer.Equals(left.PhysicalParentPath, right.PhysicalParentPath))
-        {
-            return false;
-        }
-
-        var leftSource = catalogue.FindByPath(left.CanonicalPath);
-        var rightSource = catalogue.FindByPath(right.CanonicalPath);
-        if (leftSource is null
-            || rightSource is null
-            || leftSource.Base.Form != rightSource.Base.Form
-            || IsBaseCandidate(left, leftSource) != IsBaseCandidate(right, rightSource))
-        {
-            return false;
-        }
-
-        var leftNode = topology.FindByPath(leftSource.Identity.CanonicalBasePath);
-        var rightNode = topology.FindByPath(rightSource.Identity.CanonicalBasePath);
-        if ((leftNode is null) != (rightNode is null))
-        {
-            return false;
-        }
-
-        if (leftNode is null || rightNode is null)
-        {
-            return true;
-        }
-
-        return leftNode.ParentState == rightNode.ParentState
-            && PhysicalIdentitiesEqual(leftNode.ParentPaths, rightNode.ParentPaths, catalogue)
-            && PhysicalIdentitiesEqual(leftNode.ChildPaths, rightNode.ChildPaths, catalogue)
-            && string.Equals(ReadRepresentedRootFolder(leftSource), ReadRepresentedRootFolder(rightSource), StringComparison.Ordinal);
-    }
-
-    private static bool IsBaseCandidate(SourceCandidate candidate, SourceLogicalSource source)
-    {
-        return string.Equals(candidate.CanonicalPath, source.Base.CanonicalPath, StringComparison.Ordinal);
-    }
-
-    private static bool PhysicalIdentitiesEqual(
-        IReadOnlyList<string> leftPaths,
-        IReadOnlyList<string> rightPaths,
-        SourceCatalogue catalogue)
-    {
-        var left = ReadPhysicalIdentities(leftPaths, catalogue);
-        var right = ReadPhysicalIdentities(rightPaths, catalogue);
-        return left.Count == right.Count
-            && left.Zip(right).All(pair => PhysicalIdentityTracker.PathComparer.Equals(pair.First, pair.Second));
-    }
-
-    private static IReadOnlyList<string> ReadPhysicalIdentities(
-        IReadOnlyList<string> paths,
-        SourceCatalogue catalogue)
-    {
-        return paths
-            .Select(path => catalogue.FindByPath(path)?.Base.PhysicalPath
-                ?? throw new InvalidOperationException("A topology relationship must retain an exact catalogue source."))
-            .OrderBy(path => path, PhysicalIdentityTracker.PathComparer)
-            .ThenBy(path => path, StringComparer.Ordinal)
+        return sources
+            .Select(source => observedCandidatesByPath.GetValueOrDefault(source.Identity.CanonicalBasePath))
+            .Where(candidate => candidate is not null)
+            .Cast<SourceCandidate>()
+            .OrderBy(candidate => candidate.CanonicalPath, StringComparer.Ordinal)
             .ToArray();
     }
 
@@ -128,139 +165,4 @@ internal sealed class GeneratedNavigationFormationBuilder
             : null;
     }
 
-    private static IEnumerable<GeneratedNavigationFormationAmbiguity> BuildAmbiguities(
-        SourceCatalogue catalogue,
-        SourceRouteTopology topology,
-        IReadOnlyList<GeneratedNavigationPhysicalAliasGroup> aliasGroups)
-    {
-        foreach (var node in topology.Nodes.Where(node => node.ParentState == SourceRouteParentState.Ambiguous))
-        {
-            yield return new GeneratedNavigationFormationAmbiguity(
-                kind: GeneratedNavigationFormationAmbiguityKind.RouteParent,
-                subject: node.Identity.CanonicalBasePath,
-                candidates: node.ParentPaths.Select(path => RequireBaseCandidate(catalogue, path)));
-        }
-
-        foreach (var group in aliasGroups.Where(group =>
-                     group.Compatibility == GeneratedNavigationPhysicalAliasCompatibility.Incompatible))
-        {
-            yield return new GeneratedNavigationFormationAmbiguity(
-                kind: GeneratedNavigationFormationAmbiguityKind.PhysicalAlias,
-                subject: group.Candidates[0].CanonicalPath,
-                candidates: group.Candidates);
-        }
-    }
-
-    private static IReadOnlyList<string> ReadStructuralRootPaths(
-        SourceCatalogue catalogue,
-        IReadOnlyList<GeneratedNavigationPhysicalAliasGroup> aliasGroups,
-        ICollection<GeneratedNavigationFormationAmbiguity> ambiguities)
-    {
-        var eligible = new List<SourceLogicalSource>();
-        var rootCandidates = catalogue.Sources
-            .Select(source => (Source: source, Folder: ReadRepresentedRootFolder(source)))
-            .Where(candidate => candidate.Folder is not null)
-            .Select(candidate => (
-                candidate.Source,
-                Folder: candidate.Folder
-                    ?? throw new InvalidOperationException("A structurally rooted entrypoint must retain its represented folder.")));
-        foreach (var rootGroup in rootCandidates
-                     .GroupBy(candidate => candidate.Folder, StringComparer.Ordinal)
-                     .OrderBy(group => group.Key, StringComparer.Ordinal))
-        {
-            var candidates = rootGroup
-                .Select(candidate => RequireBaseCandidate(catalogue, candidate.Source.Identity.CanonicalBasePath))
-                .OrderBy(candidate => candidate.CanonicalPath, StringComparer.Ordinal)
-                .ToArray();
-            if (candidates.Length > 1)
-            {
-                ambiguities.Add(new GeneratedNavigationFormationAmbiguity(
-                    kind: GeneratedNavigationFormationAmbiguityKind.RootEntrypoint,
-                    subject: rootGroup.Key,
-                    candidates: candidates));
-                continue;
-            }
-
-            eligible.Add(rootGroup.Single().Source);
-        }
-
-        var roots = new List<string>();
-        foreach (var physicalGroup in eligible
-                     .GroupBy(source => source.Base.PhysicalPath, PhysicalIdentityTracker.PathComparer)
-                     .OrderBy(group => group.Min(source => source.Identity.CanonicalBasePath), StringComparer.Ordinal))
-        {
-            var aliasGroup = aliasGroups.FirstOrDefault(group =>
-                PhysicalIdentityTracker.PathComparer.Equals(group.PhysicalPath, physicalGroup.Key));
-            if (aliasGroup?.Compatibility == GeneratedNavigationPhysicalAliasCompatibility.Incompatible)
-            {
-                continue;
-            }
-
-            roots.Add(physicalGroup
-                .OrderBy(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal)
-                .First()
-                .Identity.CanonicalBasePath);
-        }
-
-        return roots.OrderBy(path => path, StringComparer.Ordinal).ToArray();
-    }
-
-    private static SourceCandidate RequireBaseCandidate(SourceCatalogue catalogue, string canonicalPath)
-    {
-        var candidate = catalogue.FindCandidateByPath(canonicalPath);
-        if (candidate is null)
-        {
-            throw new InvalidOperationException("A retained logical source must retain its exact base candidate.");
-        }
-
-        return candidate;
-    }
-
-    internal sealed class DerivedComponents
-    {
-        internal DerivedComponents(SourceCatalogue catalogue)
-        {
-            if (catalogue.IsCancelled)
-            {
-                throw new ArgumentException("Generated navigation formation rejects a cancelled source catalogue.", nameof(catalogue));
-            }
-
-            var topologyBuilder = new SourceRouteTopologyBuilder();
-            var unrootedTopology = topologyBuilder.Build(catalogue.Sources, []);
-            var aliasGroups = BuildAliasGroups(catalogue, unrootedTopology);
-            var ambiguities = BuildAmbiguities(catalogue, unrootedTopology, aliasGroups).ToList();
-            var loader = catalogue.FindByPath(SourceLogicalPath.LoaderPath);
-            if (loader is not null && loader.Base.Form != SourceDocumentForm.Loader)
-            {
-                loader = null;
-            }
-
-            var structuralRootPaths = ReadStructuralRootPaths(catalogue, aliasGroups, ambiguities);
-            var admittedRootPaths = loader is null
-                ? []
-                : structuralRootPaths;
-            Catalogue = catalogue;
-            Topology = topologyBuilder.Build(catalogue.Sources, admittedRootPaths);
-            Loader = loader;
-            PhysicalAliasGroups = new ReadOnlyCollection<GeneratedNavigationPhysicalAliasGroup>(
-                aliasGroups
-                    .OrderBy(group => group.Candidates[0].CanonicalPath, StringComparer.Ordinal)
-                    .ToArray());
-            Ambiguities = new ReadOnlyCollection<GeneratedNavigationFormationAmbiguity>(
-                ambiguities
-                    .OrderBy(ambiguity => ambiguity.Kind)
-                    .ThenBy(ambiguity => ambiguity.Subject, StringComparer.Ordinal)
-                    .ToArray());
-        }
-
-        internal SourceCatalogue Catalogue { get; }
-
-        internal SourceRouteTopology Topology { get; }
-
-        internal SourceLogicalSource? Loader { get; }
-
-        internal IReadOnlyList<GeneratedNavigationPhysicalAliasGroup> PhysicalAliasGroups { get; }
-
-        internal IReadOnlyList<GeneratedNavigationFormationAmbiguity> Ambiguities { get; }
-    }
 }
