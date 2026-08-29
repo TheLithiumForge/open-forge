@@ -33,7 +33,7 @@ validated command and package selection
   -> dry-run or application
   -> expected-state revalidation
   -> per-effect and whole-operation verification
-  -> Extension-section publication and retained-recovery reporting
+  -> Extension-section publication and recovery-disposition reporting
   -> one typed result
 ```
 
@@ -225,17 +225,23 @@ containment, expected-state, and recovery fact immediately before effects. Apply
 dependencies before dependents, verify each payload/generated/lifecycle effect,
 verify the complete operation, and publish Extension ownership only after the
 whole result is verified. Delete only the positively recognized bundle created
-by this operation after final verification. If deletion fails, effects remain
-successful and the result is `attention` with the exact residual path and
-cleanup guidance.
+by this operation after final verification. `Deleted`/`Removed` permits normal
+completion. `Failed`/positively observed `Retained` keeps target effects
+successful and produces `attention`, the exact
+residual path, and cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion
+result provides one.
+When `Failed`/positively observed `Retained` recovery attention coexists with a
+finite lifecycle observation, cleanup guidance owns the single next action; the
+lifecycle facts remain visible evidence.
 
-On failure, stop new effects and never restore, reverse, or compensate for an
-earlier effect. Preserve concurrent changes and report the actual residual draft
-or final path; a valid final remains after preparation. A closed final ZIP may
-remain after abrupt process termination, without an executable crash or
-power-loss guarantee. Recovery provenance does not classify current target
-state. Cleanup owns exact named final and draft deletion under its separate
-lease-bound contract.
+Before post-verification deletion begins, a handled application, verification,
+publication, or cancellation outcome stops new effects. Never restore, reverse,
+or compensate for an earlier effect. Preserve concurrent changes and report the
+actual residual draft or final path; a valid final remains when preparation
+completed. A closed final ZIP may remain after abrupt process termination,
+without an executable crash or power-loss guarantee. Recovery provenance does
+not classify current target state. Cleanup owns exact named final and draft
+deletion under its separate lease-bound contract.
 A later invocation makes a fresh plan and never replays a saved plan or journal.
 
 ## Result Formation And Conformance
@@ -251,7 +257,8 @@ Conformance must cover source and selection rules, dependency failures and
 ordering, Framework-anchor gating, trusted/untrusted/absent/unavailable state,
 initial force and managed-divergence block, shared owners, semantic fingerprints,
 generated navigation, reserved paths, complete planning, external recovery-bundle
-storage and verification, cleanup attention, dry-run no-effects, revalidation,
+storage and verification, typed post-verification deletion state/disposition facts,
+dry-run no-effects, revalidation,
 verification, retained partial state without restoration, no-op repetition,
 JSON/human parity, and no package-source mutation. The shared CLI
 Architecture defines the exact JSON result schema and exit mapping. Gate 5 must

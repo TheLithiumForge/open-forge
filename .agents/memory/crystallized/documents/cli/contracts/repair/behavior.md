@@ -42,7 +42,7 @@ validated request and selection authority
   -> fresh revalidation
   -> apply
   -> per-effect and semantic verification
-  -> retained recovery-bundle state when required
+  -> recovery-disposition state when required
   -> fresh relevant-domain diagnosis
   -> one typed result
 ```
@@ -374,20 +374,26 @@ replaces a divergent file or authors missing content.
 
 After each effect, the operation verifies the intended bytes and semantic local
 reference relationship. After all effects, it verifies the complete selected
-operation and its semantic postconditions. If application or verification
-fails, or cancellation is handled, new effects stop and the actual residual
-draft or final path is reported; a valid final remains after preparation. Repair never
-restores, rolls back, compensates for an effect, or derives current target state
-from recovery provenance.
+operation and its semantic postconditions. Before post-verification deletion
+begins, a handled application, verification, or cancellation outcome stops new
+effects and reports the actual residual draft or final path; a valid final
+remains when preparation completed. Repair never restores, rolls back,
+compensates for an effect, or derives current target state from recovery
+provenance.
 
 A closed final ZIP may remain after abrupt process termination, without an
 executable crash or power-loss guarantee. A failed operation remains `failed`;
 cancellation with incomplete residual facts is also `failed`, while cancellation
 before effects without a stronger failure is `interrupted`. After final
-verification of whole-operation success, delete the bundle. If recognized
-deletion fails, effects remain successful and the
-result is `attention` with the exact residual path and cleanup guidance. No
-journal, progress receipt, or persisted plan is created. Explicit Cleanup owns
+verification of whole-operation success, delete the bundle. `Deleted`/`Removed`
+permits normal completion.
+`Failed`/positively observed `Retained` keeps target effects successful and
+produces `attention`, the exact residual path, and
+cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
+provides one. When `Failed`/positively observed `Retained` recovery attention
+coexists with remaining non-information findings, cleanup guidance owns the
+single next action; those findings remain visible evidence. No journal, progress receipt, or persisted
+plan is created. Explicit Cleanup owns
 exact named final and draft deletion under its separate lease-bound contract;
 unknown or differently named artifacts remain untouched.
 
@@ -408,7 +414,7 @@ application request. The post-diagnosis reports:
 - Effects selected, coalesced, applied, verified, retained, or unchanged.
 - Findings selected and unselected.
 - Findings repaired, remaining, new, manual, guided, and blocked.
-- Affected paths and residual or retained recovery state.
+- Affected paths, typed recovery state and disposition, and any residual path.
 - Relevant-domain coverage and selected-scope status.
 
 The result says `complete` only for the selected Repair scope when its required
@@ -448,8 +454,13 @@ Result formation preserves the Interface meanings:
   is `incomplete` before effects.
 - Safe facts without complete required relevant-domain diagnosis or post-diagnosis coverage form
   `incomplete` when no stronger blocked boundary applies.
-- Application, verification, bundle-handling, or post-condition failure forms
-  `failed`.
+- Post-verification deletion `Failed` with positively observed disposition
+  `Retained` forms `attention` while preserving the exact residual path and
+  cleanup guidance.
+- Application, verification, or post-condition failure, or post-verification
+  deletion `Failed` with disposition `Unknown`, forms `failed`. That result
+  preserves typed observed or unknown recovery facts and includes an exact
+  expected path only when the recovery result provides one.
 - Caller cancellation before completion forms `interrupted` unless bundle
   handling is incomplete, which forms `failed`.
 - A selected scope that completes with remaining non-information findings forms

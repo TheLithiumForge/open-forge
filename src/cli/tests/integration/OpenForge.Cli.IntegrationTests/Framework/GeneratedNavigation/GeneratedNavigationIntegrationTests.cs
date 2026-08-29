@@ -3,12 +3,12 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
+using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models.Formation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
-using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
-using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.IntegrationTests.Framework.Sources.Shared;
 using OpenForge.Cli.TestSupport;
@@ -23,7 +23,7 @@ public sealed class GeneratedNavigationIntegrationTests
     {
         using var workspace = SourceIntegrationWorkspace.Create("generated-navigation-rooted");
         workspace.Write(
-            ".agents/loader.md",
+            SourceLogicalPath.LoaderPath,
             OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
             {
                 Entries = "stale",
@@ -47,29 +47,11 @@ public sealed class GeneratedNavigationIntegrationTests
                 name: "tool",
                 description: "Native tool"));
 
-        var loader = Source(workspace, ".agents/loader.md", "loader", SourceDocumentForm.Loader);
-        var root = Source(
-            workspace,
-            ".agents/root/_root.md",
-            "root",
-            SourceDocumentForm.CanonicalEntrypoint);
-        var child = Source(workspace, ".agents/root/child.md", "root/child");
-        var skill = Source(
-            workspace,
-            ".agents/root/tool/SKILL.md",
-            "root/tool",
-            SourceDocumentForm.Skill);
-        var topology = new SourceRouteTopology(
-            [
-                Node(
-                    root,
-                    SourceRouteParentState.None,
-                    [],
-                    [skill.Identity.CanonicalBasePath, child.Identity.CanonicalBasePath]),
-                Node(child, SourceRouteParentState.Resolved, [root.Identity.CanonicalBasePath], []),
-                Node(skill, SourceRouteParentState.Resolved, [root.Identity.CanonicalBasePath], []),
-            ],
-            [root.Identity.CanonicalBasePath]);
+        var formation = await ReadFormationAsync(workspace);
+        var loader = RequireSource(formation, SourceLogicalPath.LoaderPath);
+        var root = RequireSource(formation, ".agents/root/_root.md");
+        var child = RequireSource(formation, ".agents/root/child.md");
+        var skill = RequireSource(formation, ".agents/root/tool/SKILL.md");
         var reader = new SourceDocumentReader(workspace.Workspace);
         var loaderDocument = await ReadDocumentAsync(reader, loader);
         var rootDocument = await ReadDocumentAsync(reader, root);
@@ -77,8 +59,7 @@ public sealed class GeneratedNavigationIntegrationTests
         var childFacts = await ReadMetadataAsync(reader, child);
         var skillFacts = await ReadMetadataAsync(reader, skill);
         var request = new GeneratedNavigationProjectionRequest(
-            topology: topology,
-            sources: [loader, root, child, skill],
+            formation: formation,
             regions:
             [
                 new GeneratedNavigationRegionInput(loader, loaderDocument),
@@ -91,7 +72,7 @@ public sealed class GeneratedNavigationIntegrationTests
 
         Assert.True(projection.IsComplete);
         Assert.Equal(
-            [".agents/loader.md", ".agents/root/_root.md"],
+            [SourceLogicalPath.LoaderPath, ".agents/root/_root.md"],
             projection.Regions.Select(region => region.CanonicalPath));
         Assert.Equal(
             "\n- [Root](root/_root.md) - #Root\n",
@@ -142,47 +123,18 @@ public sealed class GeneratedNavigationIntegrationTests
                 out _),
             "This integration case requires real symbolic-link support.");
 
-        var parent = Source(
-            workspace,
-            ".agents/detached/_detached.md",
-            "detached",
-            SourceDocumentForm.CanonicalEntrypoint);
-        var firstAlias = Source(
-            workspace,
-            ".agents/detached/a.md",
-            "detached/a",
-            physicalPath: workspace.Absolute("shared/child.md"),
-            withOverwrite: true);
-        var secondAlias = Source(
-            workspace,
-            ".agents/detached/z.md",
-            "detached/z",
-            physicalPath: workspace.Absolute("shared/child.md"));
-        var other = Source(workspace, ".agents/detached/b.md", "detached/b");
-        var topology = new SourceRouteTopology(
-            [
-                Node(
-                    parent,
-                    SourceRouteParentState.None,
-                    [],
-                    [
-                        secondAlias.Identity.CanonicalBasePath,
-                        other.Identity.CanonicalBasePath,
-                        firstAlias.Identity.CanonicalBasePath,
-                    ]),
-                Node(firstAlias, SourceRouteParentState.Resolved, [parent.Identity.CanonicalBasePath], []),
-                Node(secondAlias, SourceRouteParentState.Resolved, [parent.Identity.CanonicalBasePath], []),
-                Node(other, SourceRouteParentState.Resolved, [parent.Identity.CanonicalBasePath], []),
-            ],
-            []);
+        var formation = await ReadFormationAsync(workspace);
+        var parent = RequireSource(formation, ".agents/detached/_detached.md");
+        var firstAlias = RequireSource(formation, ".agents/detached/a.md");
+        var secondAlias = RequireSource(formation, ".agents/detached/z.md");
+        var other = RequireSource(formation, ".agents/detached/b.md");
         var reader = new SourceDocumentReader(workspace.Workspace);
         var parentDocument = await ReadDocumentAsync(reader, parent);
         var firstFacts = await ReadMetadataAsync(reader, firstAlias);
         var secondFacts = await ReadMetadataAsync(reader, secondAlias);
         var otherFacts = await ReadMetadataAsync(reader, other);
         var request = new GeneratedNavigationProjectionRequest(
-            topology: topology,
-            sources: [parent, secondAlias, other, firstAlias],
+            formation: formation,
             regions: [new GeneratedNavigationRegionInput(parent, parentDocument)],
             metadata: [firstFacts, secondFacts, otherFacts]);
         var before = workspace.SnapshotHashes();
@@ -216,22 +168,9 @@ public sealed class GeneratedNavigationIntegrationTests
             + "<!-- open-forge:generated-index:end -->\n"
             + "<!-- open-forge:generated-index:end -->\n");
         workspace.Write(".agents/invalid/_invalid.md", [0xC3, 0x28]);
-        var malformed = Source(
-            workspace,
-            ".agents/malformed/_malformed.md",
-            "malformed",
-            SourceDocumentForm.CanonicalEntrypoint);
-        var invalid = Source(
-            workspace,
-            ".agents/invalid/_invalid.md",
-            "invalid",
-            SourceDocumentForm.CanonicalEntrypoint);
-        var topology = new SourceRouteTopology(
-            [
-                Node(malformed, SourceRouteParentState.None, [], []),
-                Node(invalid, SourceRouteParentState.None, [], []),
-            ],
-            []);
+        var formation = await ReadFormationAsync(workspace);
+        var malformed = RequireSource(formation, ".agents/malformed/_malformed.md");
+        var invalid = RequireSource(formation, ".agents/invalid/_invalid.md");
         var reader = new SourceDocumentReader(workspace.Workspace);
         var malformedDocument = await ReadDocumentAsync(reader, malformed);
         var invalidReadResult = await reader.ReadAsync(
@@ -240,8 +179,7 @@ public sealed class GeneratedNavigationIntegrationTests
         var invalidRead = Assert.IsType<FileReadResult<string>>(invalidReadResult.Read);
         Assert.Equal(FileReadState.InvalidEncoding, invalidRead.State);
         var request = new GeneratedNavigationProjectionRequest(
-            topology: topology,
-            sources: [malformed, invalid],
+            formation: formation,
             regions:
             [
                 new GeneratedNavigationRegionInput(malformed, malformedDocument),
@@ -291,44 +229,23 @@ public sealed class GeneratedNavigationIntegrationTests
         return new GeneratedNavigationMetadata(source, facts);
     }
 
-    private static SourceLogicalSource Source(
-        SourceIntegrationWorkspace workspace,
-        string canonicalPath,
-        string automaticId,
-        SourceDocumentForm form = SourceDocumentForm.Markdown,
-        string? physicalPath = null,
-        bool withOverwrite = false)
+    private static async Task<GeneratedNavigationFormation> ReadFormationAsync(
+        SourceIntegrationWorkspace workspace)
     {
-        var baseLayer = new SourceLayer(
-            canonicalPath,
-            physicalPath ?? workspace.Absolute(canonicalPath),
-            form,
-            SourceLayerKind.Base);
-        var overwritePath = canonicalPath[..^".md".Length] + ".overwrite.md";
-        var overwrite = withOverwrite
-            ? new SourceLayer(
-                overwritePath,
-                workspace.Absolute(overwritePath),
-                SourceDocumentForm.OverwriteCompanion,
-                SourceLayerKind.Overwrite)
-            : null;
-        return new SourceLogicalSource(
-            new SourceLogicalIdentity(automaticId, canonicalPath),
-            baseLayer,
-            overwrite);
+        var catalogue = await new SourceCatalogueReader().ReadAsync(
+            new SourceCatalogueRequest(workspace.Workspace, [SourceLogicalPath.AgentsRoot]),
+            TestContext.Current.CancellationToken);
+        Assert.False(catalogue.IsCancelled);
+        return new GeneratedNavigationFormationBuilder().Build(catalogue);
     }
 
-    private static SourceRouteNode Node(
-        SourceLogicalSource source,
-        SourceRouteParentState parentState,
-        IEnumerable<string> parentPaths,
-        IEnumerable<string> childPaths)
+    private static SourceLogicalSource RequireSource(
+        GeneratedNavigationFormation formation,
+        string canonicalPath)
     {
-        return new SourceRouteNode(
-            source.Identity,
-            parentState,
-            parentPaths,
-            childPaths);
+        var source = formation.FindSource(canonicalPath);
+        Assert.NotNull(source);
+        return source;
     }
 
 }

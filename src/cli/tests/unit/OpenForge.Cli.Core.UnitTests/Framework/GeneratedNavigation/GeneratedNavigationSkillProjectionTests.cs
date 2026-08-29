@@ -127,8 +127,7 @@ public sealed class GeneratedNavigationSkillProjectionTests
         IEnumerable<GeneratedNavigationMetadata> metadata)
     {
         return new GeneratedNavigationProjectionRequest(
-            topology: topology,
-            sources: sources,
+            formation: GeneratedNavigationTestData.Formation(topology, sources),
             regions: regions,
             metadata: metadata);
     }

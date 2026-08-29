@@ -95,13 +95,13 @@ collision, containment, and overwrite rules remain in [CLI Source References](..
 
 ## Flags
 
-| Flag                              | Role                               | Value                                                                                          | Omission                                                      | Repetition and composition                                                                                                                   |
-| --------------------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--description <text>`            | Selection of destination metadata  | One description value; empty or whitespace-only is invalid                                     | The destination `description` remains unchanged               | Singleton. Any repetition is invalid, even when the repeated value is equal. No last-wins behavior.                                          |
-| `--responsibility <text>`         | Selection of destination metadata  | One responsibility value; whitespace-only is invalid; exact `""` removes the key               | The destination `responsibility` remains unchanged            | Singleton. Any repetition is invalid, even when the repeated value is equal. No last-wins behavior.                                          |
-| `--tag=<tag>`                     | Selection of destination metadata  | One canonical tag without the `#` prefix                                                       | The destination tag list remains unchanged                    | Repeatable. Supplied values replace the complete tag list in command-line order; duplicate exact tags and an empty supplied set are invalid. |
-| `--template <template-reference>` | Selection of starting body content | One automatic Template ID or exact `.agents/...` path for an existing routed Markdown Template | No Template body is selected                                  | Singleton. Any repetition is invalid, even when the repeated reference is equal. No last-wins behavior.                                      |
-| `--dry-run`                       | Write policy                       | Boolean flag with no value                                                                     | Application is selected                                       | Repetition is accepted and idempotent; it does not add authority or precedence. |
+| Flag                              | Role                               | Value                                                                                          | Omission                                           | Repetition and composition                                                                                                                   |
+| --------------------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------- | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--description <text>`            | Selection of destination metadata  | One description value; empty or whitespace-only is invalid                                     | The destination `description` remains unchanged    | Singleton. Any repetition is invalid, even when the repeated value is equal. No last-wins behavior.                                          |
+| `--responsibility <text>`         | Selection of destination metadata  | One responsibility value; whitespace-only is invalid; exact `""` removes the key               | The destination `responsibility` remains unchanged | Singleton. Any repetition is invalid, even when the repeated value is equal. No last-wins behavior.                                          |
+| `--tag=<tag>`                     | Selection of destination metadata  | One canonical tag without the `#` prefix                                                       | The destination tag list remains unchanged         | Repeatable. Supplied values replace the complete tag list in command-line order; duplicate exact tags and an empty supplied set are invalid. |
+| `--template <template-reference>` | Selection of starting body content | One automatic Template ID or exact `.agents/...` path for an existing routed Markdown Template | No Template body is selected                       | Singleton. Any repetition is invalid, even when the repeated reference is equal. No last-wins behavior.                                      |
+| `--dry-run`                       | Write policy                       | Boolean flag with no value                                                                     | Application is selected                            | Repetition is accepted and idempotent; it does not add authority or precedence.                                                              |
 
 All six [Global CLI Flags](../../shared/global-flags/interface.md) apply. Their complete spelling,
 values, defaults, repetition, composition, terminal behavior, errors, and
@@ -374,12 +374,19 @@ facts without preparing a bundle. An unexpected failure after a write is
 A handled failure stops new effects and never restores, rolls back, or
 compensates for an earlier effect. An unexpected concurrent edit is preserved
 and reported rather than overwritten. After final verification, delete only the
-positively recognized bundle created by this operation. If deletion fails,
-effects remain successful and the result is `attention` with the exact residual
-path and cleanup guidance. Handled failure or cancellation reports the actual
-residual draft or final path; a valid final remains after preparation. A closed
-final ZIP may remain after abrupt process termination, without an executable
-crash or power-loss guarantee. Recovery provenance does not classify current
+positively recognized bundle created by this operation. `Deleted`/`Removed`
+permits normal completion. `Failed`/positively observed `Retained` keeps target
+effects successful and produces `attention`, the
+exact residual path, and cleanup guidance. `Failed`/`Unknown` produces `failed`
+and reports an exact expected path only when the
+deletion result provides one. When `Failed`/positively observed `Retained`
+recovery attention coexists with the protected-Template condition, cleanup
+guidance owns the single next action; the
+Template-protection facts remain visible evidence. Before post-verification
+deletion begins, a handled application, verification, or cancellation outcome
+reports the actual residual draft or final path; a valid final remains when
+preparation completed. A closed final ZIP may remain after abrupt process
+termination, without an executable crash or power-loss guarantee. Recovery provenance does not classify current
 target state. Cleanup owns exact named final and draft deletion under its
 separate lease-bound contract.
 
@@ -405,10 +412,12 @@ most one required `Next:` action as well. It omits optional explanation and
 provenance. Compact dry-run output still shows every exact planned effect and
 affected path.
 
-Complete results have no `Next:` line. The only attention next action is:
-`Next: review the authored body; the Template body was not applied.` Other
-statuses provide at most one direct correction or recovery action. No result
-proposes overwriting authored body content.
+Complete results have no `Next:` line. Protected-Template `attention` uses
+`Next: review the authored body; the Template body was not applied.`
+`Failed`/positively observed `Retained` recovery uses cleanup guidance. When both
+conditions apply, cleanup guidance owns the single `Next:` line and the
+Template-protection facts remain visible evidence. Other statuses provide at most one direct correction or
+recovery action. No result proposes overwriting authored body content.
 
 ### Verified No-Op
 
@@ -497,15 +506,15 @@ CLI Architecture.
 
 ## Semantic Results
 
-| Result        | Meaning                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | A dry-run established the complete safe plan, or application and final verification completed, including ordinary changes and verified no-ops, with no protected-Template `attention` condition. Planned changes alone do not create `attention`.                                                                                                                                                                                                          |
-| `attention`   | The caller explicitly supplied `--template`, the target has an authored non-whitespace body, all required facts and safety conditions are complete, and the Template body was intentionally not applied. Metadata or generated effects are safely previewed in dry-run, or applied and verified in application, when present. A Template-only byte-level no-op retains its verified facts but remains `attention`; human output says `requires attention`. |
-| `incomplete`  | Safe facts are available, but required inspection or planning coverage cannot complete. No write begins.                                                                                                                                                                                                                                                                                                                                                   |
-| `invalid`     | Command input, field value, Template reference, flag repetition or use, or target kind does not follow this interface.                                                                                                                                                                                                                                                                                                                                     |
-| `blocked`     | A valid request cannot establish or apply one safe complete update plan because an unsafe or ambiguous boundary remains. No mutation begins.                                                                                                                                                                                                                                                                                                               |
-| `failed`      | A post-write unexpected failure, or an application, verification, or bundle-handling failure after effects begin, prevents the update from completing.                                                                                                                                                                                                                                                                                              |
-| `interrupted` | The caller cancelled before completion and no unexpected application or verification failure changes the result.                                                                                                                                                                                                                                                                                                                                      |
+| Result        | Meaning                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `complete`    | A dry-run established the complete safe plan, or application and final verification completed, including ordinary changes and verified no-ops, with no protected-Template `attention` condition. Planned changes alone do not create `attention`.                                                                                                                                                          |
+| `attention`   | The complete protected-Template condition applies, or post-verification recovery deletion returns `Failed` with positively observed disposition `Retained`. The Template condition preserves its existing dry-run and application meaning. `Failed`/`Retained` recovery keeps target effects successful and reports the exact residual path with cleanup guidance. Human output says `requires attention`. |
+| `incomplete`  | Safe facts are available, but required inspection or planning coverage cannot complete. No write begins.                                                                                                                                                                                                                                                                                                   |
+| `invalid`     | Command input, field value, Template reference, flag repetition or use, or target kind does not follow this interface.                                                                                                                                                                                                                                                                                     |
+| `blocked`     | A valid request cannot establish or apply one safe complete update plan because an unsafe or ambiguous boundary remains. No mutation begins.                                                                                                                                                                                                                                                               |
+| `failed`      | A post-write unexpected failure, application or verification failure after effects begin, or post-verification recovery deletion `Failed`/`Unknown` prevents the update from completing.                                                                                                                                                                                                                   |
+| `interrupted` | The caller cancelled before completion and no unexpected application or verification failure changes the result.                                                                                                                                                                                                                                                                                           |
 
 The shared numeric process-status mapping is defined by the CLI Architecture.
 
@@ -635,13 +644,14 @@ Gate 5 executable proof must cover:
   projection, plan, preflight, status, full effects, and no-write behavior.
 - Verified no-op behavior before recovery-bundle preparation.
 - All seven statuses, including safe-but-incomplete coverage with no writes,
-  unsafe or ambiguous blocked boundaries, post-write failed behavior, and the
-  sole protected-Template attention condition. Planned changes alone must remain
-  `complete`.
+  unsafe or ambiguous blocked boundaries, post-write or `Failed`/`Unknown`
+  recovery failed behavior, and the protected-Template and
+  `Failed`/positively observed `Retained` recovery attention conditions. Planned
+  changes alone must remain `complete`.
 - Recovery-bundle readiness, exact-entry validation, all-before-first-effect
-  preparation, success cleanup, cleanup-failure `attention`, expected-state
-  changes, safe replacement, final semantic verification, residual preservation,
-  and rerun convergence without restoration or rollback.
+  preparation, typed post-verification deletion state/disposition facts,
+  expected-state changes, safe replacement, final semantic verification,
+  residual preservation, and rerun convergence without restoration or rollback.
 - Human and structured results from one typed result, with complete/attention/
   incomplete human output on stdout, invalid/blocked/failed/interrupted human
   output on stderr, one JSON result for every status on stdout, bounded

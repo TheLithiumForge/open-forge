@@ -13,7 +13,7 @@ Read the [program Task](00-cli-development.md), [Architecture](../../../crystall
 - [x] [CLI Foundation](foundation/_foundation.md) — Complete — Implementer: Mastermind
 - [x] [Route Discovery](route-discovery/_route-discovery.md) — Complete — Implementer: Mastermind
 - [x] [Generic CLI Improvements](generic-improvements/_generic-improvements.md) — Complete — Implementer: Mastermind
-- [ ] [Read-Only Commands](read-only/_read-only.md) — Active; Find, References, Context, Extension List, Extension Inspect, Routed Authored Metadata, and the Generated Navigation foundation are Complete; public Index is Ready and next but not Active — Implementer: Overseer
+- [x] [Read-Only Commands](read-only/_read-only.md) — Complete in exact feature candidate `4e89d945b38a2d1e24600dd22789b55e4395a534`; local squash integration into `develop` and exact tree-equality proof remain pending — Implementer: Overseer-managed bounded Index owner
 - [x] [Modern C# Improvements](modern-csharp-improvements.md) — Complete; Preflight `55eb82e`, Framework `a90af59`, Shell/root `fe10525`, Route Inspect/family `62a1dd9`, Route List `273eb45`, Tests/support `6af5fb1`, and final managed, Native AOT, package, audit, and public no-write gates accepted in the commit containing this record — Implementer: Mastermind
 - [x] [Repository-root CLI developer workflow](repository-root-developer-workflow.md) — Complete and squash-integrated into local `develop` at `d9e0686` — Implementer: Mastermind
 - [x] [Mutation Foundation](mutation-foundation/_mutation-foundation.md) — Complete at exact production candidate `e7d937f` under authority `01dd552`; final managed/native, static-absence, diff, and independent-review gates pass — Implementer: Overseer-managed Task Mastermind, sequential

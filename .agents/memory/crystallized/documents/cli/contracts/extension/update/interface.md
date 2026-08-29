@@ -123,17 +123,23 @@ existing-target effect. The bundle is immutable after preparation.
 Every planned existing-target effect must match one verified bundle entry; Create and
 no-op effects create no entry. All bundle preparation completes before the
 first mutation. `FileChangeApplier` requires that matching preparation for each
-existing-target effect and performs one final effect per target. On handled failure
-or cancellation, report the actual residual draft or final path;
-a valid final remains after preparation. A closed final ZIP may remain after
+existing-target effect and performs one final effect per target. Before
+post-verification deletion begins, a handled application, verification,
+publication, or cancellation outcome reports the actual residual draft or final
+path; a valid final remains when preparation completed. A closed final ZIP may remain after
 abrupt process termination, without an executable crash or power-loss guarantee.
 The CLI never restores, rolls back, compensates for an effect, derives current
 target state from recovery provenance, or stores a journal, progress receipt, or
 history.
 
 After final verification of whole-operation success, delete the bundle. If
-recognized bundle deletion fails, effects remain successful and the result is
-`attention` with the exact residual path and cleanup guidance. Explicit Cleanup
+the deletion result is `Deleted`/`Removed`, normal completion continues.
+`Failed`/positively observed `Retained` keeps target effects successful and
+produces `attention`, the exact residual path, and
+cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
+provides one. When `Failed`/positively observed `Retained` recovery attention
+coexists with finite divergence, cleanup guidance owns the single next action;
+divergence facts remain visible evidence. Explicit Cleanup
 may delete only the exact selected-workspace final or draft candidate while
 holding the same-workspace lease and after immediate ordinary path, kind, and
 final semantic revalidation. Unknown names and unavailable, malformed, or
@@ -183,12 +189,12 @@ automatic use. A multi-package source requires explicit IDs or `--all`.
 
 ## Lifecycle Flags
 
-| Flag               | Role                                             | Effect                                                                                                                              |
-| ------------------ | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `--force`          | Current expected-footprint replacement authority | Overwrite changed current expected paths and restore missing current expected paths only.                                           |
-| `--prune`          | Retired-content deletion authority               | Delete eligible retired managed paths only.                                                                                         |
-| `--automatic`      | Guided-input policy                              | Suppress wizard and apply only safe effects authorized by explicit IDs, `--all`, or permitted single-package manifest-ID inference. |
-| `--dry-run`        | Preview policy                                   | Use the same plan and preflight, then write nothing.                                                                                |
+| Flag          | Role                                             | Effect                                                                                                                              |
+| ------------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `--force`     | Current expected-footprint replacement authority | Overwrite changed current expected paths and restore missing current expected paths only.                                           |
+| `--prune`     | Retired-content deletion authority               | Delete eligible retired managed paths only.                                                                                         |
+| `--automatic` | Guided-input policy                              | Suppress wizard and apply only safe effects authorized by explicit IDs, `--all`, or permitted single-package manifest-ID inference. |
+| `--dry-run`   | Preview policy                                   | Use the same plan and preflight, then write nothing.                                                                                |
 
 All Boolean flags repeat idempotently. Force never implies prune. Prune never
 restores or overwrites.
@@ -287,15 +293,15 @@ effects, generated projection, lifecycle publication, recovery-bundle facts,
 status, and at most one next action. JSON emits one complete typed result from
 the same result for every status.
 
-| Result        | Meaning for `extension update`                                                                                                                          |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | The selected update, force, prune, composition, or dry-run has complete coverage and no unresolved finite divergence; a verified no-op is complete.     |
-| `attention`   | Complete safe coverage preserves changed, missing, retired, changed-final-owner, or equivalent finite divergence not covered by the selected authority. |
-| `incomplete`  | Safe source, lifecycle, Framework-anchor, dependency, parser, route, or recovery-bundle coverage is unavailable. No write occurs.                |
-| `invalid`     | Selection, source, flags, operands, repetition, or terminal-mode input is invalid.                                                                      |
-| `blocked`     | Unsafe, ambiguous, untrusted, colliding, retained-dependent, route-unsafe, ownership, containment, or recovery-bundle facts prevent one complete plan. |
-| `failed`      | Application, lifecycle publication, verification, or bundle handling fails unexpectedly after effects begin.                                            |
-| `interrupted` | The caller interrupts before completion and no unexpected application or verification failure remains.                                                  |
+| Result        | Meaning for `extension update`                                                                                                                                                                                                                                                                                             |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `complete`    | The selected update, force, prune, composition, or dry-run has complete coverage and no unresolved finite divergence; a verified no-op is complete.                                                                                                                                                                        |
+| `attention`   | Complete safe coverage preserves finite divergence not covered by the selected authority, or post-verification recovery deletion returns `Failed` with positively observed disposition `Retained`. `Failed`/`Retained` recovery keeps target effects successful and reports the exact residual path with cleanup guidance. |
+| `incomplete`  | Safe source, lifecycle, Framework-anchor, dependency, parser, route, or recovery-bundle coverage is unavailable. No write occurs.                                                                                                                                                                                          |
+| `invalid`     | Selection, source, flags, operands, repetition, or terminal-mode input is invalid.                                                                                                                                                                                                                                         |
+| `blocked`     | Unsafe, ambiguous, untrusted, colliding, retained-dependent, route-unsafe, ownership, containment, or recovery-bundle facts prevent one complete plan.                                                                                                                                                                     |
+| `failed`      | Application, lifecycle publication, or verification fails unexpectedly after effects begin, or post-verification recovery deletion returns `Failed`/`Unknown`.                                                                                                                                                             |
+| `interrupted` | The caller interrupts before completion and no unexpected application or verification failure remains.                                                                                                                                                                                                                     |
 
 Primary human complete/attention/incomplete results go to stdout. Primary human
 invalid/blocked/failed/interrupted results go to stderr. Bounded diagnostics use

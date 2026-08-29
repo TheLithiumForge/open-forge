@@ -1,42 +1,45 @@
 ---
 open-forge:
-  description: Produce checksums, signatures, SBOM, provenance, and OIDC attestation for exact release artifacts
+  description: Preserve future signatures, SBOM, provenance, and OIDC expansion behind explicit acceptance
   tags: [Memory, Working, CLI, Task, Distribution, SupplyChain, Security, Contextual]
 ---
 
-# Produce Supply-Chain Evidence
+# Future Supply-Chain Expansion
 
 ## Task State
 
-- State: Planned after six-RID artifacts and packed packages are final.
+- State: Deferred outside current D1. This record is not selected and creates no
+  present release requirement.
 - Parent: [CLI Delivery](_delivery.md).
 
 ## Expected Outcome
 
-Every native binary and package tarball has an exact checksum, signature,
-software bill of materials, build provenance, and OIDC-backed attestation tied to
-one source commit and CI run.
+Current D1 owns checksums in [Current Native CI](02-native-ci.md). Signatures,
+SBOM, provenance, OIDC attestation, and any expanded RID inventory require a
+later explicit maintainer decision before this Task may become Ready.
 
 ## Requirements
 
-- One deterministic manifest lists every release artifact, size, SHA-256, RID or
-  package identity, version, and media type.
-- Signatures and attestations reference manifest and artifact digests, not mutable
-  names alone.
-- SBOM includes resolved managed packages, SDK/runtime components required by the
-  artifact, package wrapper files, licenses, and build provenance.
-- Provenance identifies source commit, workflow, runner image, SDK, build command,
-  parameters, and artifact outputs without secrets or local identifiers.
-- Verification runs in a clean independent job before release authorization.
+Before future activation, the accepting decision must freeze:
+
+- the exact new artifact/RID inventory and threat or compliance requirement;
+- signature and identity provider, key or OIDC trust and rotation boundaries;
+- SBOM format, dependency/component scope, and license policy;
+- provenance schema, workflow/runner authority, and privacy boundary;
+- verification, tamper, independent-job, documentation, and maintenance evidence;
+  and
+- its interaction with the already accepted checksum manifest.
 
 ## Evidence
 
-Tamper tests prove checksum/signature/attestation rejection. Inventory comparison
-proves no unlisted artifact. Package and executable versions agree. Security and
-license audits have no unresolved release blocker.
+No signature, SBOM, provenance, OIDC, attestation, expanded-RID, or support-floor
+evidence is required or claimed by current D1. A future accepted expansion must
+define and then prove its own tamper, inventory, version, security, and license
+conditions.
 
 ## Stop Conditions
 
-Stop before using long-lived release secrets where OIDC is accepted, signing a
-mutable directory instead of exact artifacts, omitting a platform package, or
-publishing before independent verification.
+Stop before treating this deferred design sketch as accepted scope, introducing
+credentials or trust infrastructure, widening the supported RID matrix, or
+adding a shipping claim without the explicit decision and authority updates
+above.

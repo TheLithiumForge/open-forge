@@ -36,7 +36,7 @@ validated command input
   -> dry-run or application
   -> expected-state revalidation
   -> per-effect and whole-operation verification
-  -> lifecycle publication and retained-recovery reporting
+  -> lifecycle publication and recovery-disposition reporting
   -> one typed result
 ```
 
@@ -255,12 +255,18 @@ whole-document representation; formatting, ordering, and line-ending trivia may
 be normalized. A semantic no-op publishes no lifecycle write.
 
 After all target effects and final lifecycle verification succeed, the command
-deletes only the positively recognized bundle it created. If deletion fails, the
-effects remain successful and the result is `attention` with the exact bundle
-path and cleanup guidance. Handled application, verification, or cancellation
-failure stops new effects and reports the actual residual draft or final path; a
-valid final remains after preparation. A closed final ZIP may remain after
-abrupt process termination, without an executable crash or power-loss guarantee.
+deletes only the positively recognized bundle it created. `Deleted`/`Removed`
+permits normal completion. `Failed`/positively observed `Retained` keeps target
+effects successful and produces `attention`, the
+exact residual path, and cleanup guidance. `Failed`/`Unknown` produces `failed`
+and reports an exact expected path only when the
+deletion result provides one. When `Failed`/positively observed `Retained`
+recovery attention coexists with finite unresolved divergence, cleanup guidance
+owns the single next action; divergence facts remain visible evidence. Before post-verification deletion
+begins, a handled application, verification, or cancellation outcome stops new
+effects and reports the actual residual draft or final path; a valid final
+remains when preparation completed. A closed final ZIP may remain after abrupt
+process termination, without an executable crash or power-loss guarantee.
 The foundation never restores a target automatically or derives current target
 state from recovery provenance. Cleanup owns exact named final and draft deletion
 under its separate lease-bound contract.
@@ -312,9 +318,9 @@ Conformance must show:
   retired deletion, and safe force/prune composition;
 - authored-topology generated projection and bounded marker behavior;
 - complete-plan blocking, one bundle covering each existing replacement or
-  deletion, exact-byte preservation, expected-state verification, success-only
-  bundle removal, failure retention/reporting, residuals, interruption, fresh rerun,
-  and visible OS-lock ownership;
+  deletion, exact-byte preservation, expected-state verification, all three
+  post-verification deletion state/disposition facts, residual reporting, interruption,
+  fresh rerun, and visible OS-lock ownership;
 - dry-run parity without persistent effects;
 - one typed result, seven status meanings, stream assignment, JSON stdout,
   bounded diagnostics, and no more than one required next action; and

@@ -125,12 +125,12 @@ filename.
 The six global flags apply under the shared [Global CLI Flags](../../shared/global-flags/interface.md)
 contract. This command does not copy their complete definitions.
 
-| Flag                      | Role              | Value                                                          | Omission                                                                                         | Repetition, ordering, and composition                                                                                                  |
-| ------------------------- | ----------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `--description <text>`    | Authored metadata | One description value                                          | The final target uses its draft description unless another rule supplies an explicit description | Singleton. Repetition is invalid, including repetition with an equal value.                                                            |
-| `--responsibility <text>` | Authored metadata | One responsibility value, including the exact empty value `""` | No responsibility field is added to a missing target                                             | A non-empty value adds the field and `""` omits it. The flag is singleton; any repetition is invalid, including an equal value.        |
-| `--tag=<tag>`             | Authored metadata | One tag without a `#` prefix                                   | The final target uses draft metadata and the `NeedsAuthoring` rule                               | Repeatable. Values retain argument order. Empty tags and duplicate exact tags are invalid.                                             |
-| `--dry-run`               | Write policy      | No value                                                       | Application is selected                                                                          | Repetition is accepted and idempotent. It previews the same complete plan and preflight. |
+| Flag                      | Role              | Value                                                          | Omission                                                                                         | Repetition, ordering, and composition                                                                                           |
+| ------------------------- | ----------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| `--description <text>`    | Authored metadata | One description value                                          | The final target uses its draft description unless another rule supplies an explicit description | Singleton. Repetition is invalid, including repetition with an equal value.                                                     |
+| `--responsibility <text>` | Authored metadata | One responsibility value, including the exact empty value `""` | No responsibility field is added to a missing target                                             | A non-empty value adds the field and `""` omits it. The flag is singleton; any repetition is invalid, including an equal value. |
+| `--tag=<tag>`             | Authored metadata | One tag without a `#` prefix                                   | The final target uses draft metadata and the `NeedsAuthoring` rule                               | Repeatable. Values retain argument order. Empty tags and duplicate exact tags are invalid.                                      |
+| `--dry-run`               | Write policy      | No value                                                       | Application is selected                                                                          | Repetition is accepted and idempotent. It previews the same complete plan and preflight.                                        |
 
 `--description`, `--responsibility`, and `--tag` are valid only as metadata for a
 missing final target. Repeating `--description` or `--responsibility` is invalid,
@@ -360,11 +360,18 @@ rolls back, or compensates for an earlier effect. An unexpected concurrent
 change is preserved and reported as residual state.
 
 After final verification, delete only the positively recognized bundle created
-by this operation. If deletion fails, effects remain successful and the result
-is `attention` with the exact residual path and cleanup guidance. Handled
-failure or cancellation reports the actual residual draft or final path; a
-valid final remains after preparation. A closed final ZIP may remain after
-abrupt process termination, without an executable crash or power-loss guarantee.
+by this operation. `Deleted`/`Removed` permits normal completion.
+`Failed`/positively observed `Retained` keeps target effects successful and
+produces `attention`, the exact residual path, and
+cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
+provides one. When `Failed`/positively observed `Retained` recovery attention
+coexists with a new-entrypoint `NeedsAuthoring` condition, cleanup guidance owns
+the single next action; the
+`NeedsAuthoring` facts remain visible evidence. Before post-verification deletion
+begins, a handled application, verification, or cancellation outcome reports the
+actual residual draft or final path; a valid final remains when preparation
+completed. A closed final ZIP may remain after abrupt process termination,
+without an executable crash or power-loss guarantee.
 Recovery provenance does not classify current target state. Cleanup owns exact
 named final and draft deletion under its separate lease-bound contract. The persistent reusable
 `.agents/open-forge.lock` preserves existing bytes and is held with a
@@ -405,6 +412,10 @@ Path: .agents/memory/project-alpha/documents/_documents.md
 Status: requires attention
 Next: author each NeedsAuthoring entrypoint through route update before relying on its description or tags.
 ```
+
+If `Failed`/positively observed `Retained` recovery also applies, its exact
+cleanup guidance owns the single `Next:` line and the `NeedsAuthoring` condition
+remains visible as evidence.
 
 ### Successful Dry Run
 
@@ -462,8 +473,9 @@ The structured result exposes:
 - Draft entrypoint paths.
 - Planned directories, files, and generated-region effects.
 - Dry-run, recovery-bundle, application, verification, and recovery facts.
-- Changed and unchanged effects, verification facts, and any actual residual
-  draft or final recovery path, without classifying current target state.
+- Changed and unchanged effects, verification facts, and typed observed or
+  unknown recovery facts. An exact residual or expected path appears only when
+  the recovery result provides one, without classifying current target state.
 - Bounded observations, availability conditions, attention conditions, semantic
   status, and at most one required `Next:` action.
 
@@ -472,15 +484,15 @@ CLI Architecture.
 
 ## Semantic Results
 
-| Result        | Meaning                                                                                                                                                                                                | Process completion status            |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------ |
-| `complete`    | Dry-run established the complete safe plan without a finite attention condition, or application and final verification completed without one, including a verified no-op.                              | Architecture-defined process status. |
-| `attention`   | A safe complete dry-run preview or completed and verified application includes at least one new entrypoint whose intended tags contain exact `NeedsAuthoring`; human output says `requires attention`. | Architecture-defined process status. |
-| `incomplete`  | Safe current facts are available, but required inspection or planning coverage cannot complete; no write begins.                                                                                       | Architecture-defined process status. |
-| `invalid`     | Command input, metadata, flag use, or target shape does not follow this interface; invalid input stops before operation resolution.                                                                    | Architecture-defined process status. |
-| `blocked`     | Unsafe or ambiguous authority or safety prevents one safe complete route plan; no mutation begins.                                                                                                     | Architecture-defined process status. |
-| `failed`      | An unexpected application, post-write, verification, or bundle-handling failure prevents normal completion.                                                                                             | Architecture-defined process status. |
-| `interrupted` | The caller cancelled or interrupted before completion and no unexpected application or verification failure changes the result.                                                                      | Architecture-defined process status. |
+| Result        | Meaning                                                                                                                                                                                                                                                                                                         | Process completion status            |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| `complete`    | Dry-run established the complete safe plan without a finite attention condition, or application and final verification completed without one, including a verified no-op.                                                                                                                                       | Architecture-defined process status. |
+| `attention`   | A safe complete dry-run preview or completed and verified application includes at least one new entrypoint whose intended tags contain exact `NeedsAuthoring`, or post-verification recovery deletion returns `Failed` with positively observed disposition `Retained`; human output says `requires attention`. | Architecture-defined process status. |
+| `incomplete`  | Safe current facts are available, but required inspection or planning coverage cannot complete; no write begins.                                                                                                                                                                                                | Architecture-defined process status. |
+| `invalid`     | Command input, metadata, flag use, or target shape does not follow this interface; invalid input stops before operation resolution.                                                                                                                                                                             | Architecture-defined process status. |
+| `blocked`     | Unsafe or ambiguous authority or safety prevents one safe complete route plan; no mutation begins.                                                                                                                                                                                                              | Architecture-defined process status. |
+| `failed`      | An unexpected application, post-write, or verification failure, or post-verification recovery deletion `Failed`/`Unknown`, prevents normal completion.                                                                                                                                                          | Architecture-defined process status. |
+| `interrupted` | The caller cancelled or interrupted before completion and no unexpected application or verification failure changes the result.                                                                                                                                                                                 | Architecture-defined process status. |
 
 The shared process-status mapping is defined by the CLI Architecture.
 
@@ -577,8 +589,9 @@ of this Interface Contract:
   no exact `NeedsAuthoring` marker.
 - Verified no-op behavior before recovery-bundle preparation.
 - Seven semantic results, including safe `incomplete` with no write, blocked
-  unsafe or ambiguous safety, and failed post-write/application/verification/
-  bundle-handling failures.
+  unsafe or ambiguous safety, `Failed`/positively observed `Retained` recovery
+  `attention`, and failed post-write, application, verification, or
+  `Failed`/`Unknown` recovery outcomes.
 - Compact retention of workspace and target identity, application or preview,
   status, completeness, safety, created and unchanged paths, generated effects,
   draft paths, and at most one required `Next:` line.

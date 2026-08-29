@@ -88,6 +88,27 @@ successfully with existing workspace reference-load warnings; the narrower
 whitespace oracle is clean. No executable process-crash, permission-manipulation,
 or fake OS-failure seam is claimed.
 
+Public Index is Complete in exact feature candidate
+`4e89d945b38a2d1e24600dd22789b55e4395a534`. Operation orchestration is
+committed at `125b6a2a`; public composition and presentation are committed at
+`4e89d945`. The Release solution build is warning-free. Managed Unit
+`1206/1206`, Integration `480/480`, and EndToEnd `125/125` pass; portable
+`linux-x64` Native AOT Integration `480/480`, EndToEnd `125/125`, and root
+publish/version smoke pass. Every stated test run has zero failures and zero
+skips.
+
+Controlled public scenarios prove safe dry run, JSON, application, and second-run
+idempotence. Application changes one exact bounded generated interior, preserves
+unrelated tracked content, and returns the tracked aggregate hash to its baseline
+after the apply and idempotence sequence. Automatic whole-repository dogfood
+blocks on 14 archived metadata sources while known handoff-routing incompleteness
+remains visible; both are repository state rather than candidate failures. The
+persistent zero-byte `.agents/open-forge.lock` is the accepted reusable lock-file
+result. Verification used the existing cached and offline prepared dependency
+state. No fresh remote NuGet vulnerability audit, remote CI, push, deployment,
+release, or publication is claimed. Local squash integration into `develop` and
+exact tree-equality proof remain pending.
+
 Implemented boundaries:
 
 - Repository-root `OpenForge.Cli.slnx`, SDK, NuGet, and shared MSBuild files.
@@ -103,8 +124,9 @@ Implemented boundaries:
   classification.
 - Removal of the obsolete preserved route-list suite after its only unique
   empty-YAML expectation moved into active Integration evidence.
-- Temporary Index and References compatibility-name routes and Task filenames,
-  pending replacement Index validation of their final names.
+- Temporary Index and References compatibility-name routes and Task filenames
+  remain in place. Index has validated the compatibility-name identity behavior;
+  changing those route paths is outside this candidate closeout.
 
 The Ubuntu SDK installation exposes a distro-specific `ubuntu.24.04-x64` local
 AOT pack, while the accepted product RID remains portable `linux-x64`. With exact
@@ -120,8 +142,13 @@ external publication, remote action, or push occurred.
 
 [Mutation Foundation](../cli-development/tasks/mutation-foundation/_mutation-foundation.md)
 is Complete. Public [Index](../cli-development/tasks/read-only/index-command.md)
-is Ready and next, but it has not been implemented or selected as Active.
-Preserve the post-M1 durable queue in the Plan before activation. Do not push.
+is Complete in exact feature candidate
+`4e89d945b38a2d1e24600dd22789b55e4395a534`. Its mapping lists every named reason
+in one grouped switch and retains an undefined-value runtime guard because C#
+enums admit unnamed numeric values; no compiler-enforced exhaustiveness or
+warning suppression is claimed. The current step is to squash-integrate this
+accepted candidate into local `develop` and prove exact tree equality. Do not
+push. M2 remains Pending and becomes eligible only after that integration proof.
 
 ## Protected State
 
@@ -136,12 +163,17 @@ Preserve the post-M1 durable queue in the Plan before activation. Do not push.
 
 ## Next Actions
 
-1. Preserve the queued binding CLI proportionality/evidence Directive and Plan
-   applicability check before I1 becomes Active.
-2. Keep the Route Init exact-chain decision and lane graph queued before M2;
-   retain thin D1, relevant-domain Repair, and the simplified O1/O2 split.
-3. Select public Index as Active only when its implementation boundary begins;
-   consume accepted M1 mechanics without a command-local substitute.
+1. Squash-integrate accepted Index candidate
+   `4e89d945b38a2d1e24600dd22789b55e4395a534` into local `develop`, then prove
+   exact tree equality. Do not push.
+2. Only after that integration proof, keep the Route Init exact-chain decision
+   and lane graph queued before M2;
+   retain thin D1 as current `linux-x64` build/smoke, packed install/invocation,
+   and checksums; keep future RIDs, signatures, SBOM, provenance, OIDC, and
+   support floors behind a later explicit decision; retain relevant-domain
+   Repair and the simplified O1/O2 split.
+3. Keep M2 Pending until the accepted I1 candidate is present in local `develop`
+   with exact tree equality; do not mark it Active or Ready earlier.
 4. Keep actual Status/Doctor implementation in O1 and actual Cleanup selection,
    default, empty-no-lease policy, orchestration, guidance, aggregation, and E2E
    in O2.

@@ -88,18 +88,25 @@ deletion exception.
 ### Receipts and cleanup
 
 The existing finite `FileChangeReceipt` is retained. `NotStarted` carries the
-exact accepted before snapshot and a bounded cause when cancellation, stage
-creation/write/readback, or pre-effect revalidation fails before any target
-effect. After a successful synchronous Move/Delete, cancellation cannot be
+exact accepted before snapshot, bounded cause, and exactly one neutral reason:
+`Cancelled`, `TargetChanged`, `ApplicationFailed`, or `ContractRejected`.
+Cancellation maps to `Cancelled`; state or identity drift maps to
+`TargetChanged`; staging or ordinary application failure before a target effect
+maps to `ApplicationFailed`; and invalid lease, preparation, or callable
+contract maps to `ContractRejected`. After a successful synchronous Move/Delete,
+cancellation cannot be
 reinterpreted as `NotStarted`; the applier verifies resulting state and callers
 decide operation interruption.
 
 `Verified` carries the exact verified after snapshot. A successful effect whose
-verification observes a mismatch uses `VerificationFailed`. A thrown Move or
-Delete is post-observed: unchanged before state is `NotStarted`; any changed or
-unavailable/ambiguous state is `CompletionUnknown`, carrying the observed after
-snapshot when available. `CompletionUnknown` is never used for a known
-pre-effect failure. No receipt claims rollback, compensation, or recovery.
+verification observes a mismatch uses `VerificationFailed` and retains that
+observation. A successful effect whose verification is unavailable is
+`Applied`/`Failed` with no after snapshot. A thrown Move or Delete is
+post-observed: exact intended state is `Verified`; unchanged before state is
+`NotStarted`/`ApplicationFailed`; any other changed or unavailable state is
+`CompletionUnknown`, carrying the observed after snapshot when available.
+`CompletionUnknown` is never used for a known pre-effect failure. No receipt
+claims rollback, compensation, or recovery.
 
 Cleanup may delete only the exact stage path successfully created by this
 invocation. A failed `CreateNew` never cleans a pre-existing lookalike. Reparse,
@@ -114,12 +121,17 @@ than followed or broadly removed.
 | Matched Replace and matching verified recovery preparation | Verified with intended full bytes | One atomic Move, `overwrite: true` |
 | Matched ReplaceGeneratedRegion and matching verified recovery preparation | Verified with supplied full bytes | One atomic Move, `overwrite: true` |
 | Matched ordinary-file Delete and matching verified recovery preparation | Verified with Missing after | One File.Delete |
-| Replace/Delete without matching verified recovery preparation | NotStarted or contract rejection | None |
-| Cancellation, stage failure, or pre-effect revalidation mismatch | NotStarted with accepted before | None |
-| Move/Delete throws and before state remains | NotStarted with accepted before | No observed target change |
+| Replace/Delete without matching verified recovery preparation | NotStarted/ContractRejected | None |
+| Cancellation before effect | NotStarted/Cancelled with accepted before | None |
+| Pre-effect state or identity drift | NotStarted/TargetChanged with accepted before | None |
+| Stage or ordinary pre-effect application failure | NotStarted/ApplicationFailed with accepted before | None |
+| Invalid lease, preparation, or callable contract | NotStarted/ContractRejected with accepted before | None |
+| Move/Delete throws and intended state is observed | Verified with exact intended after | Effect completed despite the thrown call |
+| Move/Delete throws and before state remains | NotStarted/ApplicationFailed with accepted before | No observed target change |
 | Move/Delete throws and after is changed or unavailable | CompletionUnknown, observed after if available | May have happened; no claim |
 | Successful effect with observed intended mismatch | VerificationFailed | Effect applied; exact mismatch recorded |
-| Directory/link/device target or unsafe physical identity | NotStarted or contract rejection | None |
+| Successful effect with unavailable verification | Applied/Failed with no after snapshot | Effect applied; verification unavailable |
+| Directory/link/device target or unsafe physical identity | NotStarted/ContractRejected | None |
 
 ## Placement And Boundaries
 

@@ -18,17 +18,19 @@ mapping. This design is subordinate to those contracts and that Architecture.
 
 The design cannot add a public flag, weaken a safety invariant, change a
 semantic result, or make a private implementation artifact authoritative for
-user-authored meaning. It records the accepted realization and the evidence
-still required before implementation acceptance. The command has no
-implementation yet and does not ship.
+user-authored meaning. It records the accepted realization and accepted evidence
+at exact feature candidate
+`4e89d945b38a2d1e24600dd22789b55e4395a534`. Local squash integration into
+`develop` remains pending, and the command does not ship.
 
 ## Accepted Runtime Boundary
 
-The implementation direction is C# on .NET 10 or newer in the modern `.slnx`
-solution shape. Native AOT and trimming compatibility apply to every runtime
-feature, dependency, and serialization path. The required Gate 5 Native AOT
-publish evidence is pending; this design does not claim that implementation or
-evidence exists.
+The implementation is C# on .NET 10 or newer in the modern `.slnx` solution
+shape. Native AOT and trimming compatibility apply to every runtime feature,
+dependency, and serialization path. The accepted candidate passes the portable
+`linux-x64` Native AOT Integration and EndToEnd gates plus root publish and
+version smoke. This command-level evidence does not make the replacement CLI a
+shipping release.
 
 The command uses real BCL-first `System.IO` filesystem boundaries and real
 isolated temporary directories for filesystem tests. It does not introduce a
@@ -36,6 +38,16 @@ virtual filesystem, fake hierarchy, or filesystem abstraction only to make
 tests convenient. Physical identity, containment, expected-state revalidation,
 safe replacement, verification, concurrency, and recovery remain real
 filesystem concerns.
+
+GN1 remains Complete. I1 adds one neutral shared generated-navigation formation
+boundary before public Index composition. It consumes one complete
+`SourceCatalogue`, uses the existing `SourceRouteTopologyBuilder`, and returns
+one cohesive immutable formation containing intended sources, topology, the
+Loader fact, proven alias groups, ambiguities, and issues. It is body-free: it
+does not read Markdown bodies, discover generated lines, select Index targets,
+or own command policy. Existing `GeneratedNavigationProjectionRequest` is
+refined to consume that formation instead of separately accepting independently
+assembled topology and source collections.
 
 Mutating application coordinates through the workspace operation lock at
 `.agents/open-forge.lock`. The lock is held through the mutation planning,
@@ -64,7 +76,9 @@ The operation remains a directly testable typed flow:
 ```text
 parsed input
   -> complete request
-  -> current filesystem and routing facts
+  -> complete SourceCatalogue
+  -> neutral generated-navigation formation
+  -> normalized logical selection
   -> complete expected projection
   -> complete ordered plan
   -> preflight
@@ -80,6 +94,14 @@ renderers consume the same typed result and do not rerun the operation. The
 shared exact JSON schema and numeric exits come from the accepted [Open Forge CLI
 Architecture](../../architecture.md#result-json-coordinates-and-process-status); this command adds no
 private schema or exit mapping.
+
+Index owns binding, source-reference resolution, rooted/detached target closure,
+command planning, orchestration, result formation, and presentation. Formation
+and Generated Navigation return immutable facts only. M1 owns workspace locking,
+post-lock expected-state revalidation, recovery preparation, atomic one-change
+application, receipts, and verification mechanics. Index consumes those
+callables; it does not create command-local substitutes or turn Generated
+Navigation into an applier or universal coordinator.
 
 ## Markdown, YAML, And Byte Boundaries
 
@@ -109,11 +131,15 @@ endings, and marker tokens. Serialization emits stable accepted generated
 bytes, canonical containing-file-relative destinations, and no query strings or
 fragments.
 
-The recognized `_index.md` entrypoint shape is canonicalized by physical
-identity. If more than one traversal path exposes the same recognized physical
-entrypoint, the operation creates one target, one plan item, and at most one
-effect for that identity. This is conformance behavior, not migration or
-staging behavior.
+Formation admits Loader roots only from structurally valid, physically unique
+recognized entrypoints directly representing `.agents/<slug>` folders. Missing
+Loader means zero roots; missing intermediate entrypoints remain detached; and
+multiple recognized entrypoints representing one root folder are ambiguous.
+Only aliases proven on the current host collapse, and only when route and
+recognized document-form identity are compatible. Proven incompatible aliases
+remain blocking facts. The design adds no speculative portable case, Unicode,
+or device-name equivalence and does not change current-visible Route or Context
+facts.
 
 ## JSON And Presentation
 
@@ -127,6 +153,36 @@ The design keeps the Interface Contract's stream assignment, compact and
 expanded views, exact dry-run diffs, semantic statuses, and next-action rules.
 It does not expose private staging, recovery-bundle payload, or other recovery
 material through an ordinary result.
+
+The source-generated Index result graph preserves the exact top-level member
+order `mode`, `selection`, `regions`, `recovery`, `findings`, `counts`; normalized
+logical selection contains no raw operand. `IndexSelectionV1` preserves
+`origin`, `scope`, `sources`; `IndexLogicalSourceV1` preserves `id`, `path`,
+`scope`; `IndexRegionV1` preserves `source`, `action`, `beforeEntryCount`,
+`expectedEntryCount`, `change`, `outcome`; `IndexChangeV1` preserves
+`beforeBody`, `expectedBody`; `IndexRecoveryV1` preserves `state`,
+`residualPath`; `IndexFindingV1` preserves `code`, `status`, `sourceOccurrence`,
+`source`, `cause`, `candidates`; and `IndexCountsV1` preserves `regions`,
+`updates`, `unchanged`, `applied`, `verified`. All members are required.
+Nullable values serialize explicit `null`; `sources`, `regions`, `findings`, and
+`candidates` are never null. The finite sets, coherence, counts, exact 25
+finding-code/status mapping, finding ordering, status precedence,
+recovery/residual-path rules, and deterministic `next` matrix are implemented
+once from the Interface Contract and fail closed for undefined values.
+
+Projection delegates generated-interior interpretation only to
+`SourceGeneratedEntriesParser`. Each projected region retains a nullable
+command-local before count tied one-to-one to that region: the count exists only
+for a completely parsed bounded interior; a valid replaceable but unparseable
+interior retains `null`. Available projections always retain a non-null expected
+count. No second generated-entry parser or cause-string classification exists.
+
+Human dry-run presentation emits every exact generated-interior diff in compact
+and expanded views. It constructs the JSON-escaped header from typed source
+facts, tokenizes before and expected bodies with exact LF/CRLF retention, and
+does not truncate, elide, add context, or inspect bytes outside the generated
+interior. JSON retains the exact before and expected bodies rather than the
+textual diff.
 
 ## Safe Replacement And Recovery
 
@@ -155,20 +211,43 @@ preparation for every existing-target effect; Create and no-op effects have none
 all preparation finishes before the first target effect. Each target uses the
 accepted same-directory safe-replacement property, never edits in place, and
 never falls back to a weaker write. The target and complete projection are
-verified after effects.
+verified after effects. Successful preparation is Index's apply boundary;
+per-target drift after it maps to `index.target-changed-during-apply`, leaves
+that region `not-started`, retains the final bundle, and stops new effects.
 
 After whole-command verification, delete only the positively recognized bundle
-created by that operation. Deletion failure leaves successful effects and
-returns `attention` with the exact residual path and cleanup guidance. An
-handled application, verification, or cancellation failure stops new effects
-and reports the actual residual draft or final path; a valid final remains after
-preparation. A closed final ZIP may remain after abrupt process termination,
+created by that operation. `Deleted`/`Removed` maps to recovery `removed` and,
+absent another finding, `complete`. `Failed`/`Retained` requires positive
+remaining presence and maps to `attention`,
+`index.recovery-artifact-retained`, and the exact residual path.
+`Failed`/`Unknown` maps to `failed`, `index.recovery-failed`, and recovery
+`unknown`, carrying the exact expected path only when M1 returns it. `Blocked`
+and `Cancelled` remain neutral typed M1 facts until the operation maps its
+context. A handled application, verification, or cancellation failure after
+preparation but before post-verification deletion stops new effects and reports
+the exact final path; that positively verified final remains because deletion
+has not begun. A deletion result with disposition `Unknown` makes no retention
+claim. A closed final ZIP may remain after abrupt process termination,
 without an executable crash or power-loss guarantee. An unexpected concurrent
 edit is preserved and reported as residual state. The bundle is never extracted
 or used to restore a target, and current target state is not derived from its
 provenance. Cleanup owns exact named final and draft deletion under its separate
 lease-bound contract. A rerun computes fresh facts and never replays a
 saved plan, receipt, journal, history, or progress record.
+
+The result adapter maps M1 evidence without guessing: dry run, no-op, and no
+existing target are `not-required`; required-but-never-created is `not-created`;
+positive removal is `removed`; positive presence is `retained`; and unprovable
+disposition is `unknown`. An exact residual path is mandatory for `retained` and
+may accompany `unknown` only when M1 returns the exact observed or expected
+support path.
+
+Index consumes `WorkspaceLockResult` without inference: `Acquired` continues;
+`Failed` with `InvalidPath` maps to `index.workspace-unsafe`; `Failed` with
+`AccessDenied`, `InputOutput`, or `Unsupported` maps to
+`index.workspace-lock-unavailable`; and `Cancelled` maps to
+`index.interrupted`. No lock result is reclassified as contention, and no cause,
+exception, or HResult text is parsed.
 
 ## Test Design And Evidence
 
@@ -183,11 +262,26 @@ bundles, filesystem failures, expected-state changes, concurrency changes,
 safe replacement, verification, residual preservation, interruption, and rerun
 convergence.
 
-The process-boundary suite uses a built Native AOT process to prove command
-parsing, exact dry-run output, human and structured results, stream assignment,
-exit behavior, and packaged execution. These are required evidence shapes, not
-claims that the implementation or package already exists. Gate 5 AOT publish
-evidence remains pending.
+Focused evidence also freezes complete-catalogue formation, present/missing
+Loader behavior, unique root-folder representation, detached missing-
+intermediate topology, compatible/incompatible aliases, unchanged Route/Context
+facts, all finite result values and coherence rules, every one of the 25 finding
+mappings, finding/status/next ordering, recovery ambiguity, and exact non-
+truncating diff round trips.
+
+At exact candidate `4e89d945b38a2d1e24600dd22789b55e4395a534`, verification
+used the existing cached and offline prepared dependency state. The Release
+solution build is warning-free. Managed Unit `1206/1206`, Integration `480/480`,
+and EndToEnd `125/125` pass. Portable `linux-x64` Native AOT Integration
+`480/480`, EndToEnd `125/125`, and root publish/version smoke pass. Every stated
+test run has zero failures and zero skips.
+
+Controlled public scenarios prove safe dry run, JSON output, application, and
+second-run idempotence. Application changes one exact bounded generated interior,
+preserves unrelated tracked content, and returns the tracked aggregate hash to
+its baseline after the apply and idempotence sequence. This evidence claims no
+fresh remote NuGet vulnerability audit, remote CI, push, deployment, release,
+publication, or packed delivery.
 
 ## Related Current Sources
 

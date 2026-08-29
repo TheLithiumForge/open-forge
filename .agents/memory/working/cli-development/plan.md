@@ -14,7 +14,14 @@ open-forge:
   Overseer owns architecture, sequencing, Task decomposition, integration, and
   Plan maintenance within that direction.
 - Last updated: 2026-08-29.
-- Current accepted baseline: clean local `develop` commit `7abde56`. Context and Extension List are Complete and squash-integrated at
+- I1 proportional prerequisite: committed at exact `b25d76e`. I1 is Complete in
+  exact feature candidate `4e89d945b38a2d1e24600dd22789b55e4395a534`.
+  Operation orchestration is committed at `125b6a2a`; public composition and
+  presentation are committed at `4e89d945`. Local squash integration into
+  `develop` and exact tree-equality proof remain pending.
+- Current accepted baseline: clean local `develop` commit
+  `234199d5bca9c06e1a0ca83fcc676da86a808e52` (`Establish proportional mutation
+  foundation`). Context and Extension List are Complete and squash-integrated at
   `ca097a2` and `db0d39a`. Extension Inspect's exact public contract is
   squash-integrated at `92313a0`; accepted rebased feature `2b1e63d` is
   squash-integrated at `73b01be`. Routed Authored Metadata is Complete and squash-integrated at
@@ -44,8 +51,11 @@ open-forge:
   is Complete at exact production candidate `e7d937f` under authority
   `01dd552`. Its final managed, portable `linux-x64` Native AOT, static-absence,
   format, diff, and independent-review gates pass. Public
-  [Index](tasks/read-only/index-command.md) is Ready and is the next Task, but no
-  Index implementation is Active.
+  [Index](tasks/read-only/index-command.md) is Complete in exact feature
+  candidate `4e89d945b38a2d1e24600dd22789b55e4395a534`. Its warning-free Release
+  build, managed Unit `1206/1206`, Integration `480/480`, EndToEnd `125/125`,
+  portable `linux-x64` Native AOT Integration `480/480`, EndToEnd `125/125`,
+  and root publish/version smoke pass with zero failures or skips.
   [Test Architecture And
   Constants](tasks/test-architecture-and-constants.md) is Complete and its exact
   accepted tree is squash-integrated at `b6ce31f`.
@@ -56,10 +66,12 @@ open-forge:
   [Routed Authored Metadata
   foundation](tasks/read-only/routed-authored-metadata-foundation.md) is Complete
   and integrated at `5924698`.
-- Current step: preserve the post-M1 durable queue below, then begin public Index
-  only when it is explicitly selected as Active. Continue route mutation,
-  lifecycle mutation, operations, delivery, and final acceptance in the
-  persisted order.
+- Current step: squash-integrate the accepted Index candidate into local
+  `develop` and prove exact tree equality. Only after that accepted integration
+  may M2 become eligible for its route-mutation planning boundary. M2 remains
+  Pending and is not Active or Ready. Continue lifecycle mutation, operations,
+  delivery, and final acceptance in the persisted order after their accepted
+  predecessors.
   The snapshot slice remains a no-op, with possible LithSnap-backed
   presentation candidates recorded only as a deferred Idea.
   The maintainer accepted that dependency correction; public Index must consume
@@ -273,7 +285,7 @@ defines dependencies, order, integration gates, evidence, and resumption.
   package wrappers implement every retained command without importing or falling
   back to the frozen MVP.
 - Acceptance: Every command contract, cross-command invariant, filesystem and
-  mutation safety boundary, supported-RID build and smoke, packed install and
+  mutation safety boundary, current `linux-x64` build and smoke, packed install and
   invocation journey, checksum, and release gate has reproducible evidence and
   maintainer acceptance.
 - Find starting point: The exact integrated production/source tree is `063c59d`;
@@ -317,21 +329,24 @@ Complete the program top down:
    increment owned by the Mastermind.
 4. Close shared safety and Framework fact foundations before commands consume
    them.
-5. Implement read-only commands in dependency order. Establish neutral mechanical
+5. Implement read-only commands and the pure GN1 projection foundation in
+   dependency order. Establish neutral mechanical
    foundations at the nearest shared scope when several accepted program outcomes
    require them, even when implementation order exposes one consumer first;
    promote semantic facts only after consumers prove identical meaning. Find's
    source catalogue is sequential; no shared source mutation runs in parallel.
    References may begin only after the source and document facts it needs are
    accepted.
-6. Establish lock, lifecycle, mutation, and external recovery-bundle foundations
-   before the first mutating command.
-7. Implement mutations from narrow route operations to extension and root
+6. Establish M1 lock, lifecycle, mutation, and external recovery-bundle
+   foundations before the first mutating command.
+7. Implement public Index, including the I1-owned body-free formation expansion,
+   on accepted GN1 projection and M1 mechanics.
+8. Implement mutations from narrow route operations to extension and root
    lifecycle operations.
-8. Implement aggregate status, diagnosis, repair, and cleanup only after all state
+9. Implement aggregate status, diagnosis, repair, and cleanup only after all state
    producers exist.
-9. Complete supported-RID build and smoke, packed install and invocation, and
-   checksum evidence without partial publication.
+10. Complete the currently supported `linux-x64` build and smoke, packed install
+   and invocation, and checksum evidence without partial publication.
 
 Each step ends in one inspectable commit. Architecture and cross-cutting callable
 contracts stay with the Mastermind. A smaller implementer receives one closed
@@ -354,7 +369,7 @@ diff, parent requirements, and claimed evidence.
 | Resource                           | Purpose                                                | Availability or source | Needed by              | Responsible role |
 | ---------------------------------- | ------------------------------------------------------ | ---------------------- | ---------------------- | ---------------- |
 | Stable .NET 10 SDK                 | Build, test, format, publish, and AOT                  | Local and CI setup     | F1 onward              | Mastermind       |
-| Supported-RID native runner(s)     | Accepted build and invocation smoke evidence           | Local or CI            | D1                     | Release Task     |
+| Current `linux-x64` native runner  | Accepted build and invocation smoke evidence           | Local or CI            | D1                     | Release Task     |
 | Real OS temporary filesystems      | Identity, containment, mutation, and no-write evidence | TestSupport            | F4 and commands        | Owning Task      |
 | Recovery-bundle fixtures           | Mutation and interruption evidence                     | Isolated filesystems  | M1 onward              | Owning Task      |
 | Preserved test inventory           | Candidate expectations and fixtures                    | `src/cli/tests/`       | Relevant command Tasks | Task creator     |
@@ -387,31 +402,33 @@ diff, parent requirements, and claimed evidence.
 | GN1 | Complete | Pure Generated Navigation projection and bounded-region facts are accepted and squash-integrated at `21e5200`; full managed and local `linux-x64` Native AOT Integration evidence passes.                                                                                                                                                                                                                                           | Q1-Q3, R2, RM1                          | Read-only D | Generated navigation | Determinism, exact bytes, no-write, and affected regressions |
 | DGC1 | Complete | Correct form-aware Context Skill metadata, source-specific compact Context/Find findings, and stale Route Inspect Context help without changing structured command meaning; accepted feature candidate `deb3f14` is squash-integrated at `bba84b6`.                                                                                                                                                                                   | Q1-Q3, R2, RM1, GN1                     | Sequential  | Dogfooding correction | Managed `1031/411/120` and Native AOT `411/120` pass         |
 | PC1 | Complete | Proportionate guidance `5f9f59e`, Route List correction `2cd525d`, and Markdown correction `0d88606` are squash-integrated; PCF-001/002/003/007 are closed and all remaining dispositions are preserved. | DGC1 | Parallel correction | Proportional correctness | Release 0/0; managed `1053/411/120`; portable `linux-x64` Native AOT `411/120`; dogfood and Sol/xhigh review pass |
-| I1  | Ready    | Implement and accept public `index` from the accepted Generated Navigation and Mutation Foundation mechanics; do not create command-local locking, application, or recovery substitutes. No implementation is Active yet.                                                                                                                                                                                                        | GN1, M1                                 | Sequential  | Generated navigation | Idempotence and unchanged-authority evidence                |
 | M1  | Complete | Shared lock, lifecycle, revalidation, atomic application, receipt, neutral recovery catalogue, lease-gated deletion guard, and external recovery-bundle foundations are accepted at exact production candidate `e7d937f` under authority `01dd552`. Final managed `1096/458/120`, portable `linux-x64` Native AOT Integration `458/458`, focused M1 `43/47`, static Git-absence, format/diff, and independent review pass. | GN1, E1, DGC1, PC1                      | Sequential  | Mutation foundation  | Direct failure, interruption, residual, and AOT evidence pass |
-| M2  | Pending  | Implement route init/create/update/move/remove in dependency order                                                                                                                                                                                                                                                                                                                                                                | M1, R2, I1                              | Sequential  | Route mutation       | Per-command public and recovery evidence                    |
+| I1  | Complete | Public `index`, including the I1-owned body-free formation expansion and orchestration over accepted GN1 projection and M1 mechanics, is accepted at exact feature candidate `4e89d945b38a2d1e24600dd22789b55e4395a534`. The warning-free Release, complete managed, portable `linux-x64` Native AOT, and controlled public-process gates pass with zero failures or skips. Local squash integration and exact tree equality remain pending. | GN1, M1 | Sequential | Generated navigation | Exact contract, idempotence, unchanged-authority, recovery, managed `1206/480/125`, and portable `linux-x64` AOT `480/125` pass |
+| M2  | Pending  | Implement route init/create/update/move/remove in dependency order only after the accepted I1 candidate is squash-integrated into local `develop` and exact tree equality is proved.                                                                                                                                                                                                                                                                      | M1, R2, I1 integrated                  | Sequential  | Route mutation       | Per-command public and recovery evidence                    |
 | M3  | Pending  | Implement extension create and root install/update                                                                                                                                                                                                                                                                                                                                                                                | M1, E1, I1                              | Sequential  | Lifecycle mutation   | Package, lifecycle, and workspace evidence                  |
 | M4  | Pending  | Implement extension install/update/remove                                                                                                                                                                                                                                                                                                                                                                                         | M3                                      | Sequential  | Extension mutation   | Collision, recovery, and catalogue evidence                 |
 | O1  | Pending  | Implement the simplified Status and Doctor command layer from all produced neutral facts                                                                                                                                                                                                                                                                                                                                          | M2-M4                                   | Sequential  | Operations           | Complete aggregate and diagnostic evidence                  |
 | O2  | Pending  | Implement relevant-domain Repair and the simplified Cleanup command policy and orchestration                                                                                                                                                                                                                                                                                                                                      | O1                                      | Sequential  | Operations           | Plan/apply/recovery and idempotence evidence                |
-| D1  | Pending  | Prove the thin delivery tier: supported-RID build and smoke, packed install and invocation, and checksums                                                                                                                                                                                                                                                                                                                           | O2                                      | Delivery    | Distribution         | Supported-RID smoke, packed journey, and checksums          |
+| D1  | Pending  | Prove the thin delivery tier: current `linux-x64` build and smoke, packed install and invocation, and checksums                                                                                                                                                                                                                                                                                                                      | O2                                      | Delivery    | Distribution         | `linux-x64` smoke, packed journey, and checksums             |
 | A1  | Pending  | Run final whole-program acceptance and local integration                                                                                                                                                                                                                                                                                                                                                                          | D1                                      | Sequential  | Acceptance           | Maintainer acceptance; no partial release                   |
 
 ### Post-M1 Durable Queue
 
-Public Index is Ready, but it does not become Active merely because M1 is
-Complete. Preserve these accepted program items before or during the boundary
-that owns them:
+Public Index is Complete in exact feature candidate
+`4e89d945b38a2d1e24600dd22789b55e4395a534` after its authority boundary was
+explicitly selected following proportional prerequisite `b25d76e`. Preserve
+these accepted program items through local squash integration and the later
+boundaries that own them:
 
-- [ ] Author and accept the binding CLI proportionality and evidence Directive,
-  then add its per-Task applicability check to this Plan before I1 becomes
-  Active.
+- [x] Author and accept the binding CLI proportionality and evidence Directive,
+  and add its per-Task applicability check below before I1 Phase 0 activation;
+  satisfied at `b25d76e`.
 - [ ] Keep Route Init as exact-chain initialization. Resolve its deferred
   generic-versus-Framework decision and record the route-mutation lane graph
   before M2 behavior begins.
-- [ ] Keep D1 at the accepted thin tier: delivery surfaces consume accepted
+- [x] Keep D1 at the accepted thin tier: delivery surfaces consume accepted
   binaries and do not reproduce CLI behavior; required evidence is limited to
-  supported-RID build and smoke, packed install and invocation, and checksums.
+  current `linux-x64` build and smoke, packed install and invocation, and checksums.
   Signing, SBOM, OIDC, provenance, attestation, and support-floor matrices are
   optional future additions that require a separate explicit maintainer
   decision; none is current D1 evidence.
@@ -419,7 +436,31 @@ that owns them:
 - [x] Keep the simplified O1 Status/Doctor and O2 Repair/Cleanup split reflected
   in the work graph; M1 supplies only neutral facts and mechanics.
 
-This queue does not reopen M1, implement Index, or mark I1 Active.
+This queue does not reopen M1 or authorize M2 before the accepted I1 candidate is
+squash-integrated into local `develop` and exact tree equality is proved.
+
+### Per-Task Proportionality And Evidence Check
+
+Every CLI implementation Task records this check in its Execution Capsule before
+mutation. It selects evidence after the CLI scope is routed and does not create
+a second Directive or route-loading applicability gate.
+
+| Check | Required record |
+| ----- | --------------- |
+| Consequence, reversibility, and threat boundary | Affected users, data, and systems; practical recovery; ordinary failure modes; and the accepted cooperating-process boundary, including what a malicious same-user actor can defeat. |
+| Standard capability and platform sufficiency | The pinned runtime/BCL/platform path that proves the requirement, or the exact unmet accepted guarantee that must return to Architecture. |
+| Shared-foundation reuse | Accepted neutral capabilities and facts reused, local semantic policy, and any additional accepted consumer that justifies promotion. |
+| Exceptional machinery | `none` by default; otherwise the accepted requirement, bounded exception, maintainer decision, evidence, documentation impact, and removal or re-evaluation condition. |
+| Cheapest decisive evidence | The lowest Unit, Integration, EndToEnd, or PackageEndToEnd tier that proves each behavior, plus directly affected regressions and explicit contract/Architecture evidence. |
+| Complete managed/AOT gate trigger | First golden slice for an archetype, integration wave/shared promotion, or material public, composition, shared-capability, safety, serializer, dependency/runtime/toolchain, project/build/package, or release change. Record `none` when no trigger applies. |
+
+Focused leaf evidence is the default. Run one complete managed suite and
+supported Native AOT gate at the recorded golden-slice, integration-wave, or
+material trigger, not for every leaf by default. An explicit Architecture,
+contract, or Task requirement remains binding. An unchanged exact predecessor may
+supply the beginning baseline when its projects, executable, environment, counts,
+and result are recorded. Reassess the check if evidence changes consequence,
+reversibility, trust boundary, compatibility, or likely harm.
 
 ### Parallel Lanes
 
@@ -433,7 +474,7 @@ has non-overlapping production and test ownership.
 | References  | Q2                             | GI1 complete and the Q1 source/document facts it needs are accepted                                            | References command paths; no shared-source mutation  | Accepted neutral source/document facts            | Q2 acceptance     |
 | Read-only C | E1                             | G1 and GI1 complete; extension source contract frozen                                                          | Extension List/Inspect roots                         | Shell and filesystem foundation                   | M1                |
 | Read-only D | GN1                            | Q1-Q3 and R2 complete; pure-effect boundary frozen                                                             | New `Framework/GeneratedNavigation/**` and mirrors  | Accepted source/route/document facts               | GN1 acceptance    |
-| Delivery    | Supported-RID smoke, packed journey, checksums | O2 behavior complete; release contracts frozen                                                    | Separate workflow and package paths                  | Accepted command binaries                         | D1 acceptance     |
+| Delivery    | Current `linux-x64` smoke, packed journey, checksums | O2 behavior complete; release contracts frozen                                                | Separate workflow and package paths                  | Accepted command binaries                         | D1 acceptance     |
 
 No parallel implementation may change the same shared capability. Promotion or
 cross-lane contract changes return to a sequential Mastermind integration step.
@@ -509,7 +550,11 @@ passed. `CLI-EDGE-001` remains non-product only.
   beyond symbol/help entries explicitly required by current product help.
 - Promote a semantic unit only at the integration point where a second real
   consumer proves identical meaning.
-- End with managed, process, unchanged-state, AOT, diff, and architecture evidence.
+- End with focused managed, process, unchanged-state, diff, and architecture
+  evidence, plus directly affected regressions. Run the complete managed/AOT gate
+  at the golden slice, integration wave, or material trigger recorded by the
+  per-Task check, and whenever an accepted Architecture, contract, or Task
+  requirement calls for it.
 
 ### Mutation And Delivery Steps
 
@@ -518,7 +563,7 @@ passed. `CLI-EDGE-001` remains non-product only.
 - Recovery and lifecycle schemas are frozen by the Mastermind before command
   implementation.
 - Delivery Tasks consume accepted binaries and do not reproduce behavior. D1 is
-  limited to supported-RID build and smoke, packed install and invocation, and
+  limited to current `linux-x64` build and smoke, packed install and invocation, and
   checksums unless a later explicit maintainer decision expands it.
 
 ## Decision Points
@@ -550,9 +595,9 @@ passed. `CLI-EDGE-001` remains non-product only.
 | -------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- | ------------------------ |
 | VG0 Planning   | Architecture, Plan, Task hierarchy     | Link, hierarchy, dependency, scope, and stop-condition audit                                                  | Every implementation Task is closed or explicitly blocked             | Foundation authorized    |
 | VG1 Foundation | F1-F5                                  | Restore, format, build, unit, integration, end-to-end host, dependency audit, local AOT publish and execution | Clean route-free architecture with no probe or root C# clutter        | G1 accepted              |
-| VG2 Command    | One command and affected shared facts  | Focused managed tests, full regressions, public process scenario, unchanged-state check, local AOT            | Contract complete with no architectural debt deferred to next command | Next command authorized  |
-| VG3 Mutation   | M1 and one mutation command            | Failure matrix, lock/revalidation, planned effects, bundle retention/cleanup, idempotence, process and AOT    | No unverified partial state or hidden lifecycle behavior              | Next mutation authorized |
-| VG4 Delivery   | Complete commands and thin release surfaces | Supported-RID build and smoke, packed install and invocation, and checksums                               | Complete non-shipping candidate                                       | Final acceptance         |
+| VG2 Command    | One command and affected shared facts  | Focused managed tests, directly affected regressions, public process scenario, and unchanged-state check; complete managed/AOT gate at the recorded golden-slice, integration-wave, or material trigger | Contract complete with no architectural debt deferred to next command | Next command authorized  |
+| VG3 Mutation   | M1 and one mutation command            | Focused failure matrix, lock/revalidation, planned effects, bundle retention/cleanup, idempotence, and process evidence; complete managed/AOT gate at the recorded trigger | No unverified partial state or hidden lifecycle behavior              | Next mutation authorized |
+| VG4 Delivery   | Complete commands and thin release surfaces | Current `linux-x64` build and smoke, packed install and invocation, and checksums                         | Complete non-shipping candidate                                       | Final acceptance         |
 | VG5 Release    | VG4 and maintainer review              | Main-only release procedure and public smoke tests                                                            | Maintainer explicitly accepts shipping release                        | Release and closeout     |
 
 ## Coordination And Continuity

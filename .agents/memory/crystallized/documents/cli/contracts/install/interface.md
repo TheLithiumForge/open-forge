@@ -139,12 +139,12 @@ footprint mode.
 
 ## Flags
 
-| Flag                | Role                          | Value                          | Omission                                                         | Repetition and composition                                                                                              |
-| ------------------- | ----------------------------- | ------------------------------ | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `--force`           | Initial replacement authority | Boolean                        | Selects ordinary management establishment or exact managed no-op | Repeats idempotently. It does not imply update, prune, adoption, or ownership.                                           |
-| `--automatic`       | Guided-input policy           | Boolean                        | Human input may use the compact inspection and confirmation flow | Repeats idempotently. It suppresses interaction and selects only deterministic safe defaults.                           |
-| `--dry-run`         | Preview write policy          | Boolean                        | Permits application after the same preflight                     | Repeats idempotently. It writes nothing and uses the same request, facts, plan, and status as apply.                    |
-| Shared global flags | Workspace and presentation    | Defined by the shared contract | Shared defaults                                                  | Shared repetition and terminal rules apply.                                                                             |
+| Flag                | Role                          | Value                          | Omission                                                         | Repetition and composition                                                                           |
+| ------------------- | ----------------------------- | ------------------------------ | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `--force`           | Initial replacement authority | Boolean                        | Selects ordinary management establishment or exact managed no-op | Repeats idempotently. It does not imply update, prune, adoption, or ownership.                       |
+| `--automatic`       | Guided-input policy           | Boolean                        | Human input may use the compact inspection and confirmation flow | Repeats idempotently. It suppresses interaction and selects only deterministic safe defaults.        |
+| `--dry-run`         | Preview write policy          | Boolean                        | Permits application after the same preflight                     | Repeats idempotently. It writes nothing and uses the same request, facts, plan, and status as apply. |
+| Shared global flags | Workspace and presentation    | Defined by the shared contract | Shared defaults                                                  | Shared repetition and terminal rules apply.                                                          |
 
 ### `--force`
 
@@ -231,11 +231,14 @@ active handle blocks mutation; lock behavior is concurrency safety, not
 lifecycle authority or recovery history.
 
 After final verification, whole-command success deletes only the positively
-recognized bundle it created. Deletion failure leaves effects successful and
-returns `attention` with the exact residual path and cleanup guidance. Handled
-failure or cancellation stops new effects and reports the actual residual draft
-or final path; a valid final remains when failure occurs after preparation. A
-closed final ZIP may remain after abrupt process termination, without an
+recognized bundle it created. `Deleted`/`Removed` permits normal completion.
+`Failed`/positively observed `Retained` keeps target effects successful and
+produces `attention`, the exact residual path, and
+cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
+provides one. Before post-verification deletion begins, handled application,
+verification, or cancellation outcomes stop new effects and report the actual
+residual draft or final path; a valid final remains when preparation completed.
+A closed final ZIP may remain after abrupt process termination, without an
 executable crash or power-loss guarantee. No target is automatically restored,
 no current target state is derived from recovery provenance, and no journal,
 progress receipt, history, or replayable plan is saved. Cleanup owns exact named
@@ -316,7 +319,7 @@ package source.
 The default human result leads with the operation and exact workspace. It reports
 normal or force mode, automatic and dry-run state, recognized footprint counts,
 created or replaced effects, preserved divergence, generated projections,
-  lifecycle publication or preservation, recovery facts, status, and at
+lifecycle publication or preservation, recovery facts, status, and at
 most one required `Next:` action. Compact view retains identity, mode, key
 effects, safety facts, status, and the bounded next action. JSON carries one
 complete structured result from the same typed result for every status.
@@ -328,22 +331,23 @@ for the typed `attention` status; structured output retains `attention`.
 
 ## Semantic Results
 
-| Result        | Meaning for `install`                                                                                                                                                                                                                                                                                                       |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | Safe installation, eligible initial force, exact managed no-op, or complete pre-effect dry-run has complete coverage. The current contract has no finite condition that produces `attention`.                                                                                                                               |
-| `attention`   | No accepted finite install condition reaches this status. `attention` remains in the shared status vocabulary but is currently unreachable. Planned effects, `--force`, format-only observations, automatic mode, and managed divergence do not make it reachable; managed divergence is `blocked` and directs to `update`. |
-| `incomplete`  | Safe required source, lifecycle, absence, parser, or recovery coverage is unavailable. No write occurs.                                                                                                                                                                                                                     |
-| `invalid`     | Syntax, operand, flag, repetition, value, or terminal-mode input prevents request resolution.                                                                                                                                                                                                                               |
-| `blocked`     | An unsafe, ambiguous, colliding, untrusted, unauthorized, or managed-divergence boundary prevents one safe install plan.                                                                                                                                                                                                     |
-| `failed`      | Application, verification, lifecycle publication, or bundle handling fails unexpectedly or leaves an unsafe residual after effects begin.                                                                                                                                                                       |
-| `interrupted` | The caller interrupts before completion and no unexpected application or verification failure changes the result.                                                                                                                                                                                             |
+| Result        | Meaning for `install`                                                                                                                                                                                                                                                                                                                                             |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `complete`    | Safe installation, eligible initial force, exact managed no-op, or complete pre-effect dry-run has complete coverage. Applied recovery is removed when one was required.                                                                                                                                                                                          |
+| `attention`   | Post-verification recovery deletion returns `Failed` with positively observed disposition `Retained`; target effects remain successful with the exact residual path and cleanup guidance. Planned effects, `--force`, format-only observations, automatic mode, and managed divergence do not create it; managed divergence is `blocked` and directs to `update`. |
+| `incomplete`  | Safe required source, lifecycle, absence, parser, or recovery coverage is unavailable. No write occurs.                                                                                                                                                                                                                                                           |
+| `invalid`     | Syntax, operand, flag, repetition, value, or terminal-mode input prevents request resolution.                                                                                                                                                                                                                                                                     |
+| `blocked`     | An unsafe, ambiguous, colliding, untrusted, unauthorized, or managed-divergence boundary prevents one safe install plan.                                                                                                                                                                                                                                          |
+| `failed`      | Application, verification, or lifecycle publication fails unexpectedly, post-verification recovery deletion returns `Failed`/`Unknown`, or another unsafe residual remains after effects begin.                                                                                                                                                                   |
+| `interrupted` | The caller interrupts before completion and no unexpected application or verification failure changes the result.                                                                                                                                                                                                                                                 |
 
 Ordinary planning precedence remains `blocked` > `incomplete` > `attention` >
-`complete` for the shared status vocabulary. `attention` is currently
-unreachable: planned effects, force presence, format-only observations,
-automatic mode, and managed divergence do not produce it. JSON uses one result
-on stdout for every status; process exits use the exact shared CLI Architecture
-mapping.
+`complete` for the shared status vocabulary. Planned effects, force presence,
+format-only observations, automatic mode, and managed divergence do not produce
+`attention`. Post-verification recovery deletion `Failed` with positively
+observed disposition `Retained` is the only current install condition that does.
+JSON uses one result on stdout for every status; process exits use the exact
+shared CLI Architecture mapping.
 
 ## Errors And Next Actions
 
@@ -439,13 +443,15 @@ Future evidence must cover:
   preservation, and one complete lifecycle plan;
 - one verified immutable external schema-v1 ZIP bundle for the complete
   operation, exact prior-byte and provenance facts, expected-state
-  revalidation, per-effect and whole-operation verification, success-only
-  removal, cleanup attention, failure retention/reporting, and fresh rerun
+  revalidation, per-effect and whole-operation verification, all three
+  post-verification deletion state/disposition facts, residual reporting, and fresh rerun
   behavior;
 - dry-run parity with no payload, lifecycle, recovery bundle, or temporary
   effects;
-- seven statuses, with `attention` currently unreachable, ordinary precedence,
-  human streams, one-result JSON, bounded diagnostics, and one next action;
+- seven statuses, including `Failed`/positively observed `Retained` recovery
+  `attention` and `Failed`/`Unknown` recovery `failed`, ordinary precedence,
+  human streams, one-result
+  JSON, bounded diagnostics, and one next action;
 - no formatter execution or persisted formatter state, and no runtime
   implementation or shipping claim;
 - Gate 5 evidence for source-generated serialization, fixed Markdig where used,

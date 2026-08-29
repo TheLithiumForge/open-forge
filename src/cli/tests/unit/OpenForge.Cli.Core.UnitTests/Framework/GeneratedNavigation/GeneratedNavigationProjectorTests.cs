@@ -19,6 +19,8 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.GeneratedNavigation;
 
 public sealed class GeneratedNavigationProjectorTests
 {
+    private const string RootPath = ".agents/root/_root.md";
+
     [Fact(DisplayName = "Generated navigation projects Loader exposure from current direct topology and authored facts")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void LoaderProjectionUsesDirectChildrenAndAuthoredMetadata()
@@ -41,6 +43,7 @@ public sealed class GeneratedNavigationProjectorTests
 
         var region = Assert.Single(projection.Regions);
         Assert.Equal(GeneratedNavigationRegionState.Available, region.State);
+        Assert.Null(region.UnavailableReason);
         var entry = Assert.Single(region.Entries);
         Assert.Equal(root.Identity.CanonicalBasePath, entry.CanonicalPath);
         Assert.Equal("root/_root.md", entry.Destination);
@@ -308,6 +311,7 @@ public sealed class GeneratedNavigationProjectorTests
         var region = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
 
         Assert.Equal(GeneratedNavigationRegionState.Unavailable, region.State);
+        Assert.Equal(GeneratedNavigationRegionUnavailableReason.MetadataUnavailable, region.UnavailableReason);
         Assert.Empty(region.Entries);
         Assert.Null(region.Change);
         Assert.Contains("complete authored", region.Cause, StringComparison.Ordinal);
@@ -383,6 +387,7 @@ public sealed class GeneratedNavigationProjectorTests
         var region = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
 
         Assert.Equal(GeneratedNavigationRegionState.Unavailable, region.State);
+        Assert.Equal(GeneratedNavigationRegionUnavailableReason.GeneratedRegionInvalid, region.UnavailableReason);
         Assert.Empty(region.Entries);
         Assert.Null(region.Change);
         Assert.False(string.IsNullOrWhiteSpace(region.Cause));
@@ -493,8 +498,121 @@ public sealed class GeneratedNavigationProjectorTests
         var region = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
 
         Assert.Equal(GeneratedNavigationRegionState.Unavailable, region.State);
+        Assert.Equal(GeneratedNavigationRegionUnavailableReason.SourceDocumentUnavailable, region.UnavailableReason);
         Assert.Equal("The source read failed strict UTF-8 validation.", region.Cause);
         Assert.Null(region.Change);
+    }
+
+    [Fact(DisplayName = "Generated navigation distinguishes unsupported source and unsafe topology rejections")]
+    [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
+    public void SourceAndTopologyRejectionsAssignTypedReasons()
+    {
+        var ordinary = Source(".agents/ordinary.md", "ordinary");
+        var emptyTopology = new SourceRouteTopology([], []);
+        var validDocument = OpenForgeDocumentSeed.GeneratedEntries(entries: "stale");
+        Assert.Equal(
+            GeneratedNavigationRegionUnavailableReason.RegionSourceUnsupported,
+            ReadUnavailableReason(Request(
+                emptyTopology,
+                [ordinary],
+                [Region(ordinary, validDocument)],
+                [])));
+
+        var root = Source(RootPath, "root", SourceDocumentForm.CanonicalEntrypoint);
+        var aliasChild = Source(
+            ".agents/root/alias.md",
+            "root/alias",
+            physicalPath: root.Base.PhysicalPath);
+        var unsafeTopology = new SourceRouteTopology(
+            [
+                Node(root, SourceRouteParentState.None, [], [aliasChild.Identity.CanonicalBasePath]),
+                Node(aliasChild, SourceRouteParentState.Resolved, [root.Identity.CanonicalBasePath], []),
+            ],
+            []);
+        Assert.Equal(
+            GeneratedNavigationRegionUnavailableReason.TopologyUnsafe,
+            ReadUnavailableReason(Request(
+                unsafeTopology,
+                [root, aliasChild],
+                [Region(root, validDocument)],
+                [Metadata(aliasChild, "Alias", ["Docs"])])));
+    }
+
+    [Fact(DisplayName = "Generated navigation distinguishes missing, unavailable, and unsupported-line-ending regions")]
+    [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
+    public void RegionDocumentRejectionsAssignTypedReasons()
+    {
+        var root = Source(RootPath, "root", SourceDocumentForm.CanonicalEntrypoint);
+        var rootTopology = new SourceRouteTopology(
+            [Node(root, SourceRouteParentState.None, [], [])],
+            []);
+        Assert.Equal(
+            GeneratedNavigationRegionUnavailableReason.GeneratedRegionMissing,
+            ReadUnavailableReason(Request(rootTopology, [root], [Region(root, "# Root\n")], [])));
+        Assert.Equal(
+            GeneratedNavigationRegionUnavailableReason.GeneratedRegionUnavailable,
+            ReadUnavailableReason(Request(
+                rootTopology,
+                [root],
+                [Region(root, "---\nopen-forge:\n  tags: [Root]\n# Root\n")],
+                [])));
+        Assert.Equal(
+            GeneratedNavigationRegionUnavailableReason.GeneratedRegionLineEndingUnsupported,
+            ReadUnavailableReason(Request(
+                rootTopology,
+                [root],
+                [Region(root, OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
+                {
+                    Entries = "stale",
+                    LineEnding = "\r",
+                }))],
+                [])));
+    }
+
+    [Fact(DisplayName = "Generated navigation distinguishes invalid metadata and unsafe destinations")]
+    [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
+    public void MetadataAndDestinationRejectionsAssignTypedReasons()
+    {
+        var root = Source(RootPath, "root", SourceDocumentForm.CanonicalEntrypoint);
+        var validDocument = OpenForgeDocumentSeed.GeneratedEntries(entries: "stale");
+        var child = Source(".agents/root/child.md", "root/child");
+        var routedTopology = new SourceRouteTopology(
+            [
+                Node(root, SourceRouteParentState.None, [], [child.Identity.CanonicalBasePath]),
+                Node(child, SourceRouteParentState.Resolved, [root.Identity.CanonicalBasePath], []),
+            ],
+            []);
+        Assert.Equal(
+            GeneratedNavigationRegionUnavailableReason.MetadataInvalid,
+            ReadUnavailableReason(Request(
+                routedTopology,
+                [root, child],
+                [Region(root, validDocument)],
+                [new GeneratedNavigationMetadata(
+                    child,
+                    SourceAuthoredMetadataFacts.WithoutValues(SourceAuthoredMetadataState.Malformed))])));
+        Assert.Equal(
+            GeneratedNavigationRegionUnavailableReason.MetadataUnrepresentable,
+            ReadUnavailableReason(Request(
+                routedTopology,
+                [root, child],
+                [Region(root, validDocument)],
+                [Metadata(child, "[Unsafe]", ["Docs"])])));
+
+        var unsafeDestination = Source(".agents/root/unsafe?.md", "root/unsafe?");
+        var unsafeDestinationTopology = new SourceRouteTopology(
+            [
+                Node(root, SourceRouteParentState.None, [], [unsafeDestination.Identity.CanonicalBasePath]),
+                Node(unsafeDestination, SourceRouteParentState.Resolved, [root.Identity.CanonicalBasePath], []),
+            ],
+            []);
+        Assert.Equal(
+            GeneratedNavigationRegionUnavailableReason.DestinationUnsafe,
+            ReadUnavailableReason(Request(
+                unsafeDestinationTopology,
+                [root, unsafeDestination],
+                [Region(root, validDocument)],
+                [Metadata(unsafeDestination, "Unsafe destination", ["Docs"])])));
     }
 
     private static GeneratedNavigationProjectionRequest Request(
@@ -504,10 +622,16 @@ public sealed class GeneratedNavigationProjectorTests
         IEnumerable<GeneratedNavigationMetadata> metadata)
     {
         return new GeneratedNavigationProjectionRequest(
-            topology: topology,
-            sources: sources,
+            formation: GeneratedNavigationTestData.Formation(topology, sources),
             regions: regions,
             metadata: metadata);
+    }
+
+    private static GeneratedNavigationRegionUnavailableReason ReadUnavailableReason(
+        GeneratedNavigationProjectionRequest request)
+    {
+        var reason = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions).UnavailableReason;
+        return Assert.IsType<GeneratedNavigationRegionUnavailableReason>(reason);
     }
 
     private static GeneratedNavigationRegionInput Region(

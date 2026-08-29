@@ -100,16 +100,22 @@ every existing-target effect. The bundle is immutable after preparation.
 Every planned existing-target effect must match one verified bundle entry; Create and
 no-op effects create no entry. All preparation completes before the first
 mutation. `FileChangeApplier` requires matching preparation for each
-existing-target effect and performs one final effect per target. On handled failure or
-cancellation, report the actual residual draft or final path; a valid final
-remains after preparation. A closed final ZIP may remain after abrupt process
+existing-target effect and performs one final effect per target. Before
+post-verification deletion begins, a handled application, verification,
+publication, or cancellation outcome reports the actual residual draft or final
+path; a valid final remains when preparation completed. A closed final ZIP may remain after abrupt process
 termination, without an executable crash or power-loss guarantee. The CLI never
 restores, rolls back, compensates for an effect, derives current target state
 from recovery provenance, or stores a journal, progress receipt, or history.
 
 After final verification of whole-operation success, delete the bundle. If
-recognized bundle deletion fails, effects remain successful and the result is
-`attention` with the exact residual path and cleanup guidance. Explicit Cleanup
+the deletion result is `Deleted`/`Removed`, normal completion continues.
+`Failed`/positively observed `Retained` keeps target effects successful and
+produces `attention`, the exact residual path, and
+cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
+provides one. When `Failed`/positively observed `Retained` recovery attention
+coexists with a finite non-blocking fact, cleanup guidance owns the single next
+action; the other fact remains visible evidence. Explicit Cleanup
 may delete only the exact selected-workspace final or draft candidate while
 holding the same-workspace lease and after immediate ordinary path, kind, and
 final semantic revalidation. Unknown names and unavailable, malformed, or
@@ -127,12 +133,12 @@ reflection, native dependency, or package for this boundary.
 
 ## Selection And Flags
 
-| Input              | Role                                                          | Rule                                                                                                     |
-| ------------------ | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `<stable-id>...`   | Select explicit managed package IDs                           | Repeatable subjects. Duplicate IDs are invalid.                                                          |
-| `--prune`          | Same-request deletion authority for changed final-owner paths | Boolean and idempotent. It selects Delete before planning; it cannot be added after ownership release.   |
-| `--automatic`      | Interaction policy                                            | Boolean and idempotent. It never selects IDs, Delete, or ownership authority.                            |
-| `--dry-run`        | Preview policy                                                | Boolean and idempotent. It writes nothing and uses the same plan and preflight as apply.                 |
+| Input            | Role                                                          | Rule                                                                                                   |
+| ---------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `<stable-id>...` | Select explicit managed package IDs                           | Repeatable subjects. Duplicate IDs are invalid.                                                        |
+| `--prune`        | Same-request deletion authority for changed final-owner paths | Boolean and idempotent. It selects Delete before planning; it cannot be added after ownership release. |
+| `--automatic`    | Interaction policy                                            | Boolean and idempotent. It never selects IDs, Delete, or ownership authority.                          |
+| `--dry-run`      | Preview policy                                                | Boolean and idempotent. It writes nothing and uses the same plan and preflight as apply.               |
 
 ### Keep-as-unmanaged and Delete
 
@@ -233,15 +239,15 @@ facts,
 status, and at most one next action. JSON emits one complete typed result from
 the same result for every status.
 
-| Result        | Meaning for `extension remove`                                                                                                                                                                                                               |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | Selected ownership release and all permitted effects or dry-run completed with complete coverage and no unresolved finite attention. A verified no-op requires trusted proof that the selected ID and selected ownership are already absent. |
-| `attention`   | Complete safe removal released ownership but preserved changed final-owner content as unmanaged or retained another finite non-blocking fact.                                                                                                |
-| `incomplete`  | Safe lifecycle, source-independent ownership, route, generated, parser, or recovery-bundle coverage is unavailable. No managed mutation occurs.                                                                              |
-| `invalid`     | IDs, flags, repetition, missing semantic input, or terminal-mode input is invalid.                                                                                                                                                           |
-| `blocked`     | Unsafe, ambiguous, untrusted, colliding, retained-dependent, route-unsafe, unauthorized, or recovery-bundle facts prevent one complete plan.                                                                                |
-| `failed`      | Application, lifecycle publication, verification, or bundle handling fails unexpectedly after effects begin.                                                                                                                                 |
-| `interrupted` | The caller interrupts before completion and no unexpected application or verification failure remains.                                                                                                                                       |
+| Result        | Meaning for `extension remove`                                                                                                                                                                                                                                                               |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `complete`    | Selected ownership release and all permitted effects or dry-run completed with complete coverage and no unresolved finite attention. A verified no-op requires trusted proof that the selected ID and selected ownership are already absent.                                                 |
+| `attention`   | Complete safe removal preserves a finite non-blocking fact, or post-verification recovery deletion returns `Failed` with positively observed disposition `Retained`. `Failed`/`Retained` recovery keeps target effects successful and reports the exact residual path with cleanup guidance. |
+| `incomplete`  | Safe lifecycle, source-independent ownership, route, generated, parser, or recovery-bundle coverage is unavailable. No managed mutation occurs.                                                                                                                                              |
+| `invalid`     | IDs, flags, repetition, missing semantic input, or terminal-mode input is invalid.                                                                                                                                                                                                           |
+| `blocked`     | Unsafe, ambiguous, untrusted, colliding, retained-dependent, route-unsafe, unauthorized, or recovery-bundle facts prevent one complete plan.                                                                                                                                                 |
+| `failed`      | Application, lifecycle publication, or verification fails unexpectedly after effects begin, or post-verification recovery deletion returns `Failed`/`Unknown`.                                                                                                                               |
+| `interrupted` | The caller interrupts before completion and no unexpected application or verification failure remains.                                                                                                                                                                                       |
 
 Primary human complete/attention/incomplete results go to stdout. Primary human
 invalid/blocked/failed/interrupted results go to stderr. Bounded diagnostics use

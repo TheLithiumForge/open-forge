@@ -196,23 +196,28 @@ Use these current Task links when assigning or closing an item.
   operation-specific options, and unmatched input while accepting other well-formed
   globals as no-ops.
 
-### CLI-EDGE-006 — Six-RID parity
+### CLI-EDGE-006 — Native delivery scope beyond `linux-x64`
 
-- **Current behavior and evidence:** Local route-list evidence is `win-x64` only.
-  Six-RID proof remains owned by [Complete Native CI And Support Floors](tasks/delivery/02-native-ci.md)
-  and is not inferred from local results.
-- **Route-inspect local evidence:** The final corrected tree publishes and executes
-  the local `win-x64` Native AOT root with public EndToEnd `36/36`, the native
-  Integration runner `166/166`, and the native EndToEnd runner `36/36`. This is
-  explicitly one-RID evidence and does not change the delivery owner or closure
-  condition.
-- **Risk:** A local managed or `win-x64` Native AOT pass does not establish parity
-  on the other native RIDs or the declared support floors.
+- **Current accepted boundary:** D1 is thin. Current required native evidence is
+  `linux-x64` build and smoke, packed install and invocation, and checksums. Past
+  `win-x64` or other local results remain historical evidence and do not create a
+  current support claim.
+- **Deferred expansion:** Additional RIDs, signatures, SBOM, provenance, OIDC
+  attestation, and support-floor matrices require a later explicit maintainer
+  decision. They are not missing current D1 evidence and are not inferred from
+  managed or single-host results.
+- **Risk:** Documentation or release automation could revive the former six-RID
+  and support-floor promise without an accepted cost, runner, package, evidence,
+  and maintenance decision.
 - **Owning Task(s):** [Complete Native CI And Support Floors](tasks/delivery/02-native-ci.md)
-  and [Accept And Release The Complete CLI](tasks/delivery/04-release.md).
-- **Closure condition:** Native CI records reproducible evidence for all six native
-  RIDs and the support-floor environments. Release consumes that evidence and
-  records acceptance or an explicit residual risk before its gate completes.
+  and [Accept And Release The Complete CLI](tasks/delivery/04-release.md) preserve
+  the current thin boundary. A future program change owns any expansion.
+- **Closure condition:** Met for current D1 when reproducible `linux-x64` native
+  build/smoke, packed installation/invocation, and checksums pass and release
+  claims no broader RID, signature, SBOM, provenance, OIDC, attestation, or
+  support-floor coverage. Any broader claim reopens this item only through an
+  explicit maintainer decision and updated Architecture, Plan, Tasks, and
+  evidence.
 
 ### CLI-EDGE-008 — Find selector state completeness
 

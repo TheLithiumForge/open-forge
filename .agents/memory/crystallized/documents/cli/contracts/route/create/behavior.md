@@ -239,8 +239,8 @@ according to [Semantic Results](interface.md#semantic-results):
   application and final verification complete, including normal creation, valid
   Template instantiation, generated-navigation effects, and an identical-target
   no-op. A safe dry-run with planned changes is also `complete`.
-- `attention` is part of the uniform vocabulary but is currently unreachable:
-  Route Create has no accepted finite attention condition. Planned changes,
+- `attention` is formed only when post-verification recovery deletion returns
+  `Failed` with positively observed disposition `Retained`. Planned changes,
   valid Template prompts, generated-navigation effects, and authoring-quality
   questions do not form it.
 - `incomplete` is formed when safe facts are available but required inspection
@@ -250,9 +250,10 @@ according to [Semantic Results](interface.md#semantic-results):
 - `blocked` is formed when a valid request cannot establish or apply one safe
   complete creation plan because safety or authority is unsafe or ambiguous.
   No mutation begins.
-- `failed` is formed for an unexpected application, verification, or
-  bundle-handling failure after a persistent effect begins. It remains `failed`
-  and is never converted into `attention`.
+- `failed` is formed for an unexpected application or verification failure after
+  a persistent effect begins, or post-verification recovery deletion
+  `Failed`/`Unknown`. `Failed`/positively observed `Retained` is the distinct
+  recovery `attention` case.
 - `interrupted` is formed when the caller cancels before completion and no
   unexpected application or verification failure changes the result.
 
@@ -334,10 +335,10 @@ region is replaced only inside its established machine-owned boundary.
 Compatible changes to one physical generated target are one planned exact
 replacement, not competing writes. Generated effects depend on the authored
 destination facts and are applied as part of the same parent mutation. A
-generated planning failure blocks before the first parent write, and a
-generated application or verification failure stops new effects, reports
-ordinary effect facts and the actual residual draft or final path, and does not
-restore an earlier effect.
+generated planning failure blocks before the first parent write. Before
+post-verification deletion begins, a generated application or verification
+failure stops new effects, reports ordinary effect facts and the actual residual
+draft or final path, and does not restore an earlier effect.
 
 ## Safety And Recovery
 
@@ -384,11 +385,11 @@ safety or identity check fails.
 
 ### Failure, interruption, and concurrency
 
-A handled application or verification failure stops new effects and reports the
-actual residual draft or final path; it does not restore, reverse, or compensate
-for an earlier effect. A valid final remains when failure occurs after
-preparation. An unexpected concurrent edit is preserved and reported as residual
-state rather than overwritten.
+Before post-verification deletion begins, a handled application, verification,
+or cancellation outcome stops new effects and reports the actual residual draft
+or final path; it does not restore, reverse, or compensate for an earlier effect.
+A valid final remains when preparation completed. An unexpected concurrent edit
+is preserved and reported as residual state rather than overwritten.
 
 The requested creation remains `failed` when an unexpected application or
 verification failure occurs after a persistent effect begins, even when handled
@@ -396,9 +397,11 @@ residual reporting succeeds. Cancellation before completion is `interrupted`
 when no stronger failure remains. A closed final ZIP may remain after abrupt process
 termination, without an executable crash or power-loss guarantee. Recovery
 provenance does not classify current target state. After final verification,
-successful effects remain successful even if bundle deletion fails; the result is
-`attention` with the exact residual path and cleanup guidance. Cleanup owns exact
-named final and draft deletion under its separate lease-bound contract. Rerunning
+`Deleted`/`Removed` permits normal completion. `Failed`/positively observed
+`Retained` keeps target effects successful and produces `attention`, the exact residual path, and cleanup guidance.
+`Failed`/`Unknown` produces `failed` and reports
+an exact expected path only when the deletion result provides one. Cleanup owns
+exact named final and draft deletion under its separate lease-bound contract. Rerunning
 `route create` computes a fresh plan and never
 replays a saved plan, receipt, journal, history, or progress record.
 
@@ -463,12 +466,13 @@ obligations:
 - Safe incomplete coverage produces no write, while unsafe or ambiguous safety
   or authority produces `blocked` rather than `incomplete`.
 - Normal creation, valid Template instantiation, generated-navigation effects,
-  and verified identical-target no-ops are `complete`; `attention` remains
-  unreachable until a future accepted finite condition; Template placeholders
-  are not inspected and authoring quality is not inferred.
+  and verified identical-target no-ops are `complete`;
+  `Failed`/positively observed `Retained` recovery is `attention`; Template
+  placeholders are not inspected and authoring quality is not inferred.
 - Verified no-op behavior occurs before recovery-bundle preparation.
 - External bundle storage, semantic final-ZIP verification, collision handling,
-  success cleanup attention, and exact named lease-bound Cleanup are covered.
+  typed post-verification deletion state/disposition facts, and exact named
+  lease-bound Cleanup are covered.
 - Expected-state changes, safe creation and replacement, final route
   verification, retained partial state without restoration, residual
   preservation, and rerun convergence are covered.

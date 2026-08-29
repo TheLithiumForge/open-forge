@@ -6,6 +6,9 @@ using OpenForge.Cli.Core.Commands.Find;
 using OpenForge.Cli.Core.Commands.Find.Models.Binding;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Commands.Find.Shared.Rendering;
+using OpenForge.Cli.Core.Commands.Index;
+using OpenForge.Cli.Core.Commands.Index.Models.Result;
+using OpenForge.Cli.Core.Commands.Index.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Extension;
 using OpenForge.Cli.Core.Commands.Extension.List;
 using OpenForge.Cli.Core.Commands.Extension.List.Models.Binding;
@@ -89,6 +92,15 @@ internal static class CliCompositionRoot
                     FindJsonRenderer.Render),
                 DiagnosticRenderer = FindDiagnosticRenderer.Render,
             });
+        var indexSymbols = IndexBinding.CreateSymbols();
+        var indexBinding = IndexBinding.Close(
+            symbols: indexSymbols,
+            help: IndexHelpSections.Create(),
+            operation: IndexOperationFactory.Create().ExecuteAsync,
+            renderers: new CliRendererSet<IndexResult>(
+                IndexHumanRenderer.Render,
+                IndexJsonRenderer.Render),
+            diagnosticRenderer: IndexDiagnosticRenderer.Render);
         var referencesSymbols = ReferencesBinding.CreateSymbols();
         var referencesBinding = ReferencesBinding.Close(
             referencesSymbols,
@@ -150,10 +162,11 @@ internal static class CliCompositionRoot
                     ExtensionHelpSections.CreateGroup(),
                     []),
             ],
-            [listBinding, inspectBinding, findBinding, referencesBinding, extensionListBinding, extensionInspectBinding, contextBinding],
+            [listBinding, inspectBinding, findBinding, indexBinding, referencesBinding, extensionListBinding, extensionInspectBinding, contextBinding],
             rootLeaves:
             [
                 new CliRootLeaf(findSymbols.FindCommand, []),
+                new CliRootLeaf(indexSymbols.IndexCommand, []),
                 new CliRootLeaf(referencesSymbols.ReferencesCommand, []),
                 new CliRootLeaf(contextSymbols.ContextCommand, []),
             ]);

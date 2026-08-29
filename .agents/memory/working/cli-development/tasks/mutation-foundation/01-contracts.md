@@ -81,10 +81,17 @@ product policy to a generic engine.
   delete, and generated-region replacement require an existing ordinary-file
   expectation. Delete alone has no intended bytes.
 - `FileChangeReceipt` distinguishes a verified effect, an effect whose
-  verification failed, an effect that provably did not start, and an effect whose
-  completion is unknown. Its factories enforce the valid before/after snapshot,
-  verification, and cause combinations. A receipt reports mechanics only; it
-  never claims compensation, rollback, or command success.
+  verification failed, an effect for which this operation's target effect is
+  proved not applied, and an effect whose completion is unknown. Its factories
+  enforce the valid before/after snapshot,
+  verification, and cause combinations. `NotStarted` requires exactly one neutral
+  reason: `Cancelled`, `TargetChanged`, `ApplicationFailed`, or
+  `ContractRejected`. A successful effect with unavailable verification is
+  `Applied`/`Failed` with no after snapshot; an observed mismatch retains its
+  after snapshot. `CompletionUnknown` is exclusive to a thrown target effect
+  whose completion cannot be proved; exact intended observation remains
+  `Verified`. A receipt reports mechanics only; it never claims compensation,
+  rollback, or command success.
 
 ### Lock and recovery-bundle contracts
 
@@ -135,7 +142,8 @@ Create cohesive contracts under `Core/Framework/`:
 - `PlannedFileChange` captures create, replace, delete, or generated-region change
   plus expected state and intended bytes. It contains no command-specific reason.
 - `FileChangeReceipt` records exact observed before/after identity, bytes/hash,
-  effect state, and verification.
+  effect state, verification, and the required neutral not-started reason only
+  when this operation's target effect is proved not applied.
 - `LifecycleEnvelopeV1`, `FrameworkLifecycleState`, and
   `ExtensionLifecycleState` model only accepted persisted schema.
 - `RecoveryBundlePreparation` binds the workspace, command, operation ID,
@@ -163,7 +171,7 @@ Create cohesive contracts under `Core/Framework/`:
 | --- | --- | --- | --- |
 | MFC-001 | File expectation and observation states | Unit | Valid missing/file/directory facts; invalid path, physical identity, hash, and byte combinations |
 | MFC-002 | Planned changes | Unit | Every finite kind plus incompatible expectation and intended-byte rejection |
-| MFC-003 | Receipts | Unit | Verified, verification-failed, not-started, and unknown completion; every impossible state rejected |
+| MFC-003 | Receipts | Unit | Verified, observed verification mismatch, verification unavailable, all four named not-started reasons plus undefined rejection, and unknown completion; exact intended observation after a thrown effect remains Verified; every impossible state rejected |
 | MFC-004 | Lock request/result | Unit | Cohesive workspace identity, non-empty command/operation, lease-only acquisition, and typed failure/cancellation states |
 | MFC-005 | Lifecycle schema v1 | Unit and Integration | Exact property graph, independent selected-section decoding, duplicate/unknown selected fields, unknown version, and source-generated in-memory round trip |
 | MFC-006 | Framework schema | Unit and Integration | Exact source/target/generated-region fields, deterministic order prerequisites, semantic versus exact-byte fingerprint values, and no persisted trust/history |

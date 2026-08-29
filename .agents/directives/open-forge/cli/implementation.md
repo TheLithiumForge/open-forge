@@ -27,6 +27,57 @@ open-forge:
   public behavior, wire shape, filesystem guarantee, lifecycle meaning, or
   release boundary.
 
+### Per-Task Proportionality And Evidence Applicability
+
+- Before a Task mutates source or Task-owned evidence, record a compact
+  applicability check in its Execution Capsule. This check selects the
+  execution profile and evidence; it is not a second route-loading or
+  Directive-scope gate after the CLI scope has been selected.
+- Record the project's realistic consequence and reversibility boundary for the
+  Task: the users, data, and systems it can affect; practical recovery through
+  Git, backups, atomic operations, regeneration, reruns, or manual repair; and
+  the supported failure and threat boundary. Distinguish ordinary defects,
+  interruption, crashes, malformed input, dependency failure, accidental
+  concurrency, and cooperating Open Forge processes from a malicious same-user
+  process or other actor outside the accepted threat model.
+- Record whether the pinned runtime, BCL, platform, framework, library,
+  compiler, serializer, parser, and test platform provide the required
+  capability through their ordinary documented behavior. Use that standard
+  path when it is sufficient. If it cannot satisfy a guarantee required by the
+  accepted product boundary, stop at Architecture and return the decision to
+  the maintainer before adding a workaround or weakening the requirement.
+- Record which accepted shared foundations and facts the Task reuses and where
+  its semantics remain local. A new shared foundation is justified only by
+  accepted consumers that need identical neutral meaning; implementation order
+  or similar-looking code is not enough. Do not create a Task-local substitute
+  for an accepted shared capability.
+- Record the exceptional-machinery decision. The default is `none`. A
+  workaround, compatibility shim, custom parser, native bridge, reflection
+  path, unsafe code, or platform substitute may proceed only after the check
+  identifies an accepted requirement that standard behavior cannot meet and the
+  maintainer accepts the bounded exception. Record its unmet capability,
+  user-visible effect, scope, reason, evidence, documentation impact, and
+  removal or re-evaluation condition. Otherwise stop before relying on it.
+- Record the cheapest decisive evidence tier for each behavior class. Use the
+  lowest Unit, Integration, EndToEnd, or PackageEndToEnd boundary that proves
+  the contract, then add directly affected regressions and any explicit
+  Architecture or contract evidence. Do not select a broader tier merely from
+  file count or filesystem, concurrency, persistence, or security vocabulary.
+- Record whether a complete managed suite and supported Native AOT gate are
+  triggered. Trigger them at the first golden slice for an archetype, an
+  integration wave or shared-foundation promotion, or a material change to a
+  public/composition, shared capability, serializer, filesystem or mutation
+  safety, dependency/runtime/toolchain, project/build/package, or release
+  boundary. A focused leaf may otherwise use its cheapest decisive evidence
+  plus directly affected regressions. An explicit Architecture, contract, or
+  Task requirement remains binding even when this check selects focused
+  evidence. An unchanged exact predecessor may supply the beginning baseline
+  when its projects, executable, environment, counts, and result are recorded.
+- Re-run the check when evidence changes the affected data, trust boundary,
+  compatibility promise, reversibility, or likely harm. A changed profile or
+  trigger is an evidence or architecture decision, not an excuse to silently
+  reduce coverage.
+
 ### Physical Workspace And Projects
 
 - Keep replacement source, projects, and tests below `src/cli/`. Keep the
@@ -205,10 +256,15 @@ open-forge:
 
 ### Test Evidence
 
-- Run the complete CLI test suite once at the beginning of an implementation Task
-  and once at its final acceptance boundary. A complete suite from the exact
-  unchanged predecessor may serve as the beginning baseline when its projects,
-  executable, environment, counts, and result are recorded.
+- Apply the per-Task applicability check before choosing evidence. Focused leaf
+  tests and directly affected boundaries are the default during implementation
+  and acceptance. Run the complete managed suite and supported Native AOT gate
+  together at the golden-slice, integration-wave, or material trigger recorded
+  by the check, rather than once for every leaf by default.
+- A complete suite from the exact unchanged predecessor may supply the beginning
+  baseline when its projects, executable, environment, counts, and result are
+  recorded. This does not replace a complete managed/AOT gate when the current
+  Task reaches one of the recorded triggers.
 - During implementation, run the tests authored by the current Task plus every
   directly affected test boundary. Determine affected tests from changed behavior,
   shared types, consumers, composition, serialization, filesystem capabilities,
@@ -217,11 +273,12 @@ open-forge:
   or other expensive suite during inner-loop development. Run only the focused
   affected cases until final acceptance. Fast deterministic in-memory tests may run
   more often when they improve feedback speed.
-- Rerun the complete suite before acceptance after the final production, test,
-  fixture, composition, or configuration change. A later documentation-only state
-  update does not invalidate that executable result. If a correction follows the
-  final run, rerun the affected evidence and the complete suite only when the
-  correction can affect a broader boundary.
+- At a selected full-gate trigger, rerun the complete managed suite and supported
+  Native AOT gate after the final production, test, fixture, composition, or
+  configuration change. A later documentation-only state update does not
+  invalidate that executable result. If a correction follows the final run,
+  rerun affected evidence and the complete gate only when the correction can
+  affect a broader boundary or meets another recorded trigger.
 - Keep active Unit, Integration, EndToEnd, and TestSupport source under the exact
   `src/cli/tests/` boundaries in the Architecture.
 - Give every test a readable display name, one durable feature trait, and one
@@ -245,7 +302,9 @@ open-forge:
   in one coherent increment. Do not defer known structural debt into the next
   command.
 - Inspect the actual changed paths, dependency direction, namespaces, consumers,
-  tests, and generated artifacts. Verify focused behavior, affected regressions,
-  full project boundaries, and required Native AOT execution before acceptance.
+  tests, and generated artifacts. Verify focused behavior and affected
+  regressions before acceptance, and verify the complete managed/AOT boundary
+  only when the applicability check or accepted Architecture/contract requires
+  it.
 - Commit only accepted coherent boundaries. Keep remote actions, publication, and
   release outside a Task unless its exact delivery boundary authorizes them.

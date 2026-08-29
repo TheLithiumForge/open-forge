@@ -21,9 +21,9 @@ Its [reset record](../../../archived/cli-release/implementation-reset-2026-08-21
 summarizes useful ideas and rejected boundaries. Historical source may inform a
 Task, but it does not constrain class shape, source placement, or implementation.
 
-The replacement remains non-shipping until every retained command, Native AOT
-target, package, supply-chain control, support-floor journey, and release gate is
-implemented and accepted.
+The replacement remains non-shipping until every retained command, the current
+`linux-x64` Native AOT build and smoke, packed install and invocation, checksums,
+documentation, and release gate are implemented and accepted.
 
 ## Architectural Goals
 
@@ -561,6 +561,29 @@ models; command interpretation, policy, findings, and status remain local.
 Generated navigation remains a projection of routed sources, never an independent
 authority.
 
+Generated-navigation formation is the one neutral bridge from one complete
+`SourceCatalogue` to projection. It uses the existing
+`SourceRouteTopologyBuilder` and returns one cohesive immutable fact containing
+the intended logical sources, topology, Loader fact, proven physical-alias
+groups, ambiguities, and formation issues. The projection request consumes that
+fact instead of independently assembling sources and topology. Formation reads
+no document bodies, discovers no generated lines, and owns no command selection,
+finding, status, write-policy, or application meaning. This is an I1-owned shared
+expansion of the accepted GN1 capability; GN1 remains Complete.
+
+When a Loader is present, its intended roots are the structurally valid,
+physically unique recognized entrypoints that directly represent each
+`.agents/<slug>` folder. Generated `Entries` remain comparison input only. A
+missing Loader produces zero roots: operand-free Index selection blocks, while
+an explicit complete detached selection may still proceed. A missing
+intermediate entrypoint keeps the lower tree detached; no parent is invented.
+Multiple recognized entrypoints representing one root folder are ambiguous.
+Only physical aliases proven on the current host may collapse, and only when
+their route and document-form identities are compatible; proven incompatible
+aliases block. Broader portable case, Unicode, and device-name equivalence is
+deferred rather than guessed. These formation rules do not change the
+current-visible Route or Context facts.
+
 ### Lifecycle, Mutation, And Recovery
 
 Read-only commands never create locks, lifecycle files, caches, indexes, or
@@ -666,10 +689,23 @@ abrupt process termination, but the CLI makes no executable crash or power-loss
 durability guarantee. A fresh invocation plans again from current facts; the CLI
 does not persist a journal, progress receipt, history, or replayable plan.
 
+The mechanical `FileChangeReceipt` distinguishes `Verified`, observed
+`VerificationFailed`, verification-unavailable `Applied`/`Failed`,
+`NotStarted`, and `CompletionUnknown`. `NotStarted` carries exactly one neutral
+reason: `Cancelled`, `TargetChanged`, `ApplicationFailed`, or
+`ContractRejected`. `CompletionUnknown` is exclusive to a thrown target effect
+whose completion cannot be proved; if post-observation proves the exact intended
+state, the receipt is `Verified`.
+
 After the whole command verifies successfully, command orchestration deletes
-only the positively recognized bundle it created for that operation. If bundle
-deletion fails, the effects remain successful and the result is `attention`
-with the exact residual path and cleanup guidance. Unknown, lookalike, malformed,
+only the positively recognized bundle it created for that operation.
+`Deleted`/`Removed` permits command completion with recovery removed.
+`Failed`/`Retained` requires positive remaining presence and permits a
+command-specific attention result with the exact residual path.
+`Failed`/`Unknown` is a failed recovery outcome whose disposition remains
+unknown; an exact expected path is reported only when the guard returns one.
+`Blocked` and `Cancelled` remain neutral mechanical facts for command-owned
+mapping. Unknown, lookalike, malformed,
 different-workspace, mismatched, or otherwise unowned support artifacts remain
 untouched. A workspace move is outside the automatic guarantee: rediscovery uses
 the same normalized physical workspace path, and Doctor or Cleanup may report
@@ -687,6 +723,13 @@ final or draft candidates for the selected workspace that remain ordinary files
 of the expected kind under that final revalidation, then verifies their absence.
 It writes no marker, PID, journal, lock metadata, or other lifecycle record and
 makes no activity inference.
+
+The deletion guard returns a mechanical state (`Deleted`, `Failed`, `Blocked`,
+or `Cancelled`) and an orthogonal disposition (`Removed`, `Retained`, or
+`Unknown`). Only a positive current observation can establish `Retained`, which
+requires the exact residual path. Observation failure or an exception leaves
+disposition `Unknown`; successful deletion plus positive absence is
+`Deleted`/`Removed` with no residual.
 
 Cleanup creates no replacement bundle and does not reverse a verified deletion.
 Recovery bundles are not extracted by the CLI; recognition uses the semantic
@@ -752,6 +795,15 @@ Historical or removed tests are evidence only when a current Task maps their
 expectation to an accepted contract. Active evidence belongs in the matching
 active project. Do not restore old test plumbing or parallel preserved projects.
 
+Evidence is proportional to the changed boundary. Focused leaf evidence is the
+default. The first golden slice for an archetype, a recorded integration wave or
+shared promotion, and any material public, composition, shared-capability,
+safety, serializer, dependency, runtime/toolchain, project/build/package, or
+release change runs the complete managed suite and the currently supported
+Native AOT gate. A Task records which trigger applies before mutation. An exact
+unchanged predecessor may supply a beginning baseline when its projects,
+executable, environment, counts, and result are recorded.
+
 ## Build, Native AOT, CI, And Artifacts
 
 The CLI uses stable .NET 10 with C# 14, nullable analysis, warnings as errors,
@@ -769,24 +821,20 @@ also disables it when a build does not need the development artifact. `dotnet
 test --no-build` requires an existing development publication because it
 deliberately skips the build dependency.
 
-The six production RIDs remain:
+The currently supported native delivery RID is `linux-x64`. Foundation and
+command acceptance use focused managed evidence and the proportional complete
+managed/Native AOT policy above. D1 proves the accepted `linux-x64` native build
+and smoke, packed installation and invocation, and checksums.
 
-- `win-x64`
-- `win-arm64`
-- `linux-x64`
-- `linux-arm64`
-- `osx-x64`
-- `osx-arm64`
-
-Foundation acceptance requires managed build and tests plus at least local
-`win-x64` Native AOT publication and execution. Command Tasks repeat the affected
-managed and local Native AOT evidence. Final delivery runs all six RIDs on their
-native runners and support floors.
+Additional RIDs, signatures, SBOM, provenance, OIDC attestation, and operating-
+system support-floor matrices are future delivery expansions. They require a
+later explicit maintainer decision and are not implied by the current release
+boundary.
 
 The repository CI workflow may live under `.github/workflows/`. It invokes the
 root solution and configuration files while project paths remain below
-`src/cli/`. Native and release evidence compiles the EndToEnd project with one of
-the six explicit target RIDs and discovers
+`src/cli/`. Current native and release evidence compiles the EndToEnd project for
+the accepted `linux-x64` RID and discovers
 `artifacts/publish/<RID>/open-forge/OpenForge.Cli[.exe]` plus its
 `OpenForge.Cli.version` marker. Executable-path and expected-version environment
 overrides do not exist. CI uploads bounded artifacts; it does not make `.github/`
@@ -808,18 +856,25 @@ mutations and aggregate diagnosis:
    consumer.
 6. `find`, `references`, and `context` on shared source and document facts.
 7. `extension list` and `extension inspect` on shared extension-source facts.
-8. `index` after source, route, document, and generated-navigation facts exist.
-9. Shared mutation, lock, lifecycle, and recovery foundations.
-10. `route init`, `route create`, `route update`, `route move`, and `route remove`.
-11. `extension create`, root `install`, root `update`, `extension install`,
+8. Pure Generated Navigation projection and bounded-region facts after source,
+   route, and document facts exist (GN1).
+9. Shared mutation, lock, lifecycle, and recovery foundations (M1).
+10. Public `index`, including the shared body-free formation expansion and
+    command-local selection, orchestration, result, and presentation (I1).
+11. `route init`, `route create`, `route update`, `route move`, and `route remove`.
+12. `extension create`, root `install`, root `update`, `extension install`,
     `extension update`, and `extension remove`.
-12. `status`, `doctor`, `repair`, and `cleanup` after all producers and recovery
+13. `status`, `doctor`, `repair`, and `cleanup` after all producers and recovery
     states exist.
-13. Thin npm wrappers, package evidence, six-RID CI, supply-chain evidence,
-    support-floor execution, documentation, and release.
+14. Thin package wrappers, supported `linux-x64` build and smoke, packed install
+    and invocation, checksums, documentation, and release.
 
-Each command reaches complete contract, managed, process, unchanged-state, and
-Native AOT acceptance before the next command consumes or promotes its facts.
+Each command reaches complete contract and focused managed, process, and
+unchanged-state acceptance before the next command consumes its facts. Complete
+managed and currently supported Native AOT acceptance runs at the recorded first
+golden slice, integration wave or shared promotion, material trigger, or an
+explicit Architecture, contract, or Task requirement before dependent facts are
+accepted.
 
 ## Planning, Tasks, And Delegation
 
@@ -841,9 +896,11 @@ observable outcome.
 
 ## Release Boundary
 
-The final release publishes the canonical executable for six RIDs, checksums,
-signatures, SBOM, provenance, OIDC attestation, and thin package wrappers. Wrappers
-contain no behavior, download, postinstall compilation, or fallback runtime.
+The current final release publishes the canonical `linux-x64` executable,
+checksums, and thin package wrappers. Wrappers contain no behavior, download,
+postinstall compilation, or fallback runtime. Additional RIDs, signatures, SBOM,
+provenance, OIDC attestation, and support-floor claims remain unaccepted future
+work until the maintainer explicitly expands this boundary.
 
 No partial command publication is accepted. The replacement becomes shipping only
 after the maintainer accepts the complete retained command set, package graph,

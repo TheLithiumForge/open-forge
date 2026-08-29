@@ -38,7 +38,7 @@ validated command input
   -> dry-run or application
   -> expected-state revalidation
   -> per-effect and whole-operation verification
-  -> lifecycle publication and retained-recovery reporting
+  -> lifecycle publication and recovery-disposition reporting
   -> one typed result
   -> human or structured rendering
 ```
@@ -319,8 +319,11 @@ When application is selected:
    no lifecycle write. Prior bytes remain retained in the verified operation
    bundle.
 7. After final verification, delete only the positively recognized bundle
-   created for this operation. If deletion fails, retain successful effects and
-   return `attention` with the exact residual path and cleanup guidance.
+   created for this operation. `Deleted`/`Removed` permits normal completion.
+   `Failed`/positively observed `Retained` keeps target effects successful and
+   produces `attention`, the exact residual path,
+   and cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the
+   deletion result provides one.
 
 Install has no target deletion effect. Before any existing byte or bounded region
 is replaced, orchestration selects only
@@ -344,15 +347,16 @@ and reopened and verified again. Only the valid final ZIP forms the opaque
 existing-target effect must match the preparation; Create and no-op effects create
 no bundle. All preparation is complete before the first target effect.
 
-If application, verification, or lifecycle publication fails, new effects stop
-and the actual residual draft or final path is reported. A valid final remains
-when failure occurs after preparation. The foundation never restores a target
-automatically or derives current target state from recovery provenance. A closed
-final ZIP may remain after abrupt process termination, without an executable
-crash or power-loss guarantee. An unexpected concurrent edit is preserved and
-reported as residual state. An unsafe residual is `failed`; caller cancellation
-is `interrupted` only when no stronger failure remains. Cleanup owns exact named
-final and draft deletion under its separate lease-bound contract. A later
+Before post-verification deletion begins, an application, verification,
+lifecycle-publication, or cancellation outcome stops new effects and reports
+the actual residual draft or final path; a valid final remains when preparation
+completed. The foundation never restores a target automatically or derives
+current target state from recovery provenance. A closed final ZIP may remain
+after abrupt process termination, without an executable crash or power-loss
+guarantee. An unexpected concurrent edit is preserved and reported as residual
+state. An unsafe residual is `failed`; caller cancellation is `interrupted` only
+when no stronger failure remains. Cleanup owns exact named final and draft
+deletion under its separate lease-bound contract. A later
 invocation forms a fresh plan and never replays a saved plan, receipt, journal,
 history, or progress record.
 
@@ -373,10 +377,10 @@ Use the Interface status meanings and ordinary precedence `blocked` >
 `incomplete` > `attention` > `complete`. `complete` includes safe application,
 eligible force, dry-run, and exact no-op. Ordinary managed divergence is
 `blocked`, not `attention`, because install does not own update authority.
-`attention` remains in the shared status vocabulary but has no accepted finite
-install condition and is currently unreachable. Planned effects, format-only
-facts, force presence, automatic mode, and managed divergence do not make it
-reachable; managed divergence is `blocked` and directs the caller to `update`.
+Planned effects, format-only facts, force presence, automatic mode, and managed
+divergence do not form `attention`; managed divergence directs the caller to
+`update`. Post-verification recovery deletion `Failed` with positively observed
+disposition `Retained` is the only current install `attention` condition.
 
 Primary human `complete`, `attention`, and `incomplete` results go to stdout.
 Primary human `invalid`, `blocked`, `failed`, and `interrupted` results go to
@@ -403,11 +407,12 @@ A conforming implementation must demonstrate:
 - bounded generated and root/provider markers; no hidden subprocess;
 - complete preflight, external schema-v1 recovery-bundle preparation and verification,
   exact prior-byte preservation, expected-state revalidation, per-effect and
-  whole-operation verification, success-only bundle removal, failure
-  retention/reporting, and fresh rerun;
+  whole-operation verification, typed post-verification deletion
+  state/disposition facts, residual reporting, and fresh rerun;
 - dry-run/application parity with no persistent dry-run effects;
-- seven statuses, with `attention` currently unreachable, streams, one typed
-  result, JSON stdout, bounded diagnostics, and one next action;
+- seven statuses, including `Failed`/positively observed `Retained` recovery
+  `attention` and `Failed`/`Unknown` recovery `failed`, streams, one typed result,
+  JSON stdout, bounded diagnostics, and one next action;
 - no formatter execution or persisted formatter state;
 - Gate 5 proof of source-generated serialization, fixed Markdig where used, real
   `System.IO`, Native AOT, OS locking, isolated tests, and package journeys;

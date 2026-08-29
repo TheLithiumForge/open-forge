@@ -48,9 +48,13 @@ open-forge:
   EndToEnd `120/120`, focused published `linux-x64` Recovery/source-generation
   Native AOT `10/10`, and full Native AOT Integration `458/458` pass with zero
   skips. The static replacement-product Git audit is zero and final independent
-  review is `ROBUST`, safe to commit, confidence `0.98`. Public Index is
-  Ready and next, but no Index implementation is Active. The broader replacement
-  CLI program remains Active.
+  review is `ROBUST`, safe to commit, confidence `0.98`. Public Index is Complete
+  in exact feature candidate
+  `4e89d945b38a2d1e24600dd22789b55e4395a534`, with warning-free Release, managed
+  `1206/480/125`, portable `linux-x64` Native AOT `480/125`, root publish/version
+  smoke, and controlled public dry-run, JSON, apply, and idempotence evidence.
+  Local squash integration into `develop` and exact tree-equality proof remain
+  pending. The broader replacement CLI program remains Active.
 - Responsible role: Overseer.
 - Task source: This file.
 - Last updated: 2026-08-29.
@@ -67,9 +71,10 @@ boundaries.
 ## Expected Outcome
 
 One complete, deterministic, Native-AOT executable implements every retained
-command and ships through the thin accepted delivery tier: supported-RID build
-and smoke, packed install and invocation, and checksum evidence. Architecture
-and command behavior remain explicit, locally navigable, and safe to extend.
+command and ships through the thin accepted delivery tier: current `linux-x64`
+build and smoke, packed install and invocation, and checksum evidence.
+Architecture and command behavior remain explicit, locally navigable, and safe
+to extend.
 
 ## Relationships And Backlinks
 
@@ -98,7 +103,7 @@ and command behavior remain explicit, locally navigable, and safe to extend.
 - The complete retained command tree and cross-command foundations.
 - Repository-root .NET controls and artifacts, plus `src/cli/` root, Core, active
   tests, and package source.
-- Supported-RID Native AOT build and smoke, packed install and invocation,
+- Current `linux-x64` Native AOT build and smoke, packed install and invocation,
   checksums, and release acceptance.
 - Necessary current Architecture, Plan, Task, Checkpoint, Directive, Pattern, and
   dogfooding updates.
@@ -140,7 +145,7 @@ and command behavior remain explicit, locally navigable, and safe to extend.
 | Every child outcome is accepted | Task index with Complete or deliberate Cancelled state                       | Mastermind    |
 | Complete contract coverage      | Command-to-evidence matrices and public scenarios                            | Owning Tasks  |
 | Architecture remains coherent   | Dependency, source-locality, project, and whole-system review                | Mastermind    |
-| Native delivery is complete     | Supported-RID build/smoke, packed install/invocation, and checksums           | Delivery Task |
+| Native delivery is complete     | Current `linux-x64` build/smoke, packed install/invocation, and checksums     | Delivery Task |
 | Release is explicit             | Maintainer acceptance and main-only release record                           | Maintainer    |
 
 ## Prerequisites And Dependencies
@@ -330,10 +335,12 @@ Find presentation`) over corrected Red `a865fd1`. It is the production/root-
   lifecycle, preflight/revalidation, one-change application, immutable external
   recovery bundles, catalogue facts, and held-lease deletion mechanics. Actual
   Status/Doctor behavior remains O1; actual Cleanup policy and orchestration
-  remains O2. Public Index is Ready and next. The Plan preserves the queued
-  binding proportionality/evidence Directive and checklist, Route Init
+  remains O2. Public Index is Complete in exact feature candidate
+  `4e89d945b38a2d1e24600dd22789b55e4395a534`; local squash integration and exact
+  tree-equality proof remain pending. The Plan preserves the accepted binding
+  proportionality/evidence Directive and checklist, Route Init
   exact-chain decision/lane graph, thin D1, relevant-domain Repair, and
-  simplified O1/O2 split. Thin D1 requires only supported-RID build and smoke,
+  simplified O1/O2 split. Thin D1 requires only current `linux-x64` build and smoke,
   packed install and invocation, and checksums. Signing, SBOM, OIDC, provenance,
   attestation, and support-floor matrices remain optional future explicit
   maintainer decisions, not current evidence. `CLI-EDGE-001` remains non-product
@@ -345,3 +352,9 @@ Complete only after final delivery and maintainer release acceptance. Consolidat
 durable outcomes into current Architecture, contracts, Directives, Patterns, and
 public documentation. Archive or prune temporary Plan, Task, and Checkpoint detail
 that no longer earns its maintenance cost.
+
+The CLI route entrypoint at
+`.agents/memory/crystallized/documents/cli/_cli.md` retains stale pre-replacement
+acceptance wording. A dedicated coherent CLI Evergreen-alignment audit must
+correct that broader route; it is not an Index blocker and does not change the
+current Task order.

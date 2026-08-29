@@ -135,14 +135,14 @@ request before writes.
 
 ## Selection And Flags
 
-| Input              | Role                                                                          | Repetition and composition                                                                                                                          |
-| ------------------ | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `<stable-id>...`   | Explicit root package IDs                                                     | Repeatable positional subjects. Duplicate IDs are invalid rather than last-wins.                                                                    |
-| `--source <path>`  | One exact package or catalogue source                                         | Singleton; repetition is invalid.                                                                                                                   |
-| `--all`            | Select all applicable available package roots in the selected source universe | Boolean and idempotent. It conflicts with explicit IDs. It never means all files or all sources.                                                    |
-| `--force`          | Eligible initial-occupant replacement authority                               | Boolean and idempotent. It never updates managed divergence or adopts old bytes.                                                                    |
-| `--automatic`      | Guided-input policy                                                           | Boolean and idempotent. It suppresses interaction but never chooses among packages, broadens to `--all`, or adds force, prune, adoption, or bypass. |
-| `--dry-run`        | Preview policy                                                                | Boolean and idempotent. It shares the application plan and writes nothing.                                                                          |
+| Input             | Role                                                                          | Repetition and composition                                                                                                                          |
+| ----------------- | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `<stable-id>...`  | Explicit root package IDs                                                     | Repeatable positional subjects. Duplicate IDs are invalid rather than last-wins.                                                                    |
+| `--source <path>` | One exact package or catalogue source                                         | Singleton; repetition is invalid.                                                                                                                   |
+| `--all`           | Select all applicable available package roots in the selected source universe | Boolean and idempotent. It conflicts with explicit IDs. It never means all files or all sources.                                                    |
+| `--force`         | Eligible initial-occupant replacement authority                               | Boolean and idempotent. It never updates managed divergence or adopts old bytes.                                                                    |
+| `--automatic`     | Guided-input policy                                                           | Boolean and idempotent. It suppresses interaction but never chooses among packages, broadens to `--all`, or adds force, prune, adoption, or bypass. |
+| `--dry-run`       | Preview policy                                                                | Boolean and idempotent. It shares the application plan and writes nothing.                                                                          |
 
 ### Initial force
 
@@ -255,10 +255,17 @@ performs one final effect per target;
 all preparation completes before the first target effect.
 
 After final verification, delete only the positively recognized bundle created
-by this operation. If deletion fails, effects remain successful and the result
-is `attention` with the exact residual path and cleanup guidance. Handled
-failure or cancellation reports the actual residual draft or final path; a
-valid final remains after preparation. A closed final ZIP may remain after
+by this operation. `Deleted`/`Removed` permits normal completion.
+`Failed`/positively observed `Retained` keeps target effects successful and
+produces `attention`, the exact residual path, and
+cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
+provides one. When `Failed`/positively observed `Retained` recovery attention
+coexists with a finite lifecycle observation, cleanup guidance owns the single
+next action; the lifecycle facts remain visible evidence. Before
+post-verification deletion begins, a handled
+application, verification, publication, or cancellation outcome reports the
+actual residual draft or final path; a valid final remains when preparation
+completed. A closed final ZIP may remain after
 abrupt process termination, without an executable crash or power-loss guarantee.
 No target is restored automatically, no current target state is derived from
 recovery provenance, and no journal, progress receipt, history, or replayable
@@ -274,15 +281,15 @@ publication, recovery, preserved facts, status, and at most one next action.
 JSON emits one complete structured result from the same typed result for every
 status.
 
-| Result        | Meaning for `extension install`                                                                                                                                                                                      |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | Absent selected packages were fully installed and verified, an eligible initial force completed, an exact managed state was verified as a no-op, or a complete pre-effect dry-run finished without finite attention. |
-| `attention`   | Complete safe coverage preserves a finite lifecycle observation that install does not resolve, such as a non-selected safe fact; managed divergence itself is `blocked` and directs to update.                       |
-| `incomplete`  | Safe source, Framework-anchor, lifecycle, dependency, parser, route, or recovery coverage is unavailable. No write occurs.                                                                                           |
-| `invalid`     | IDs, source, `--all`, flags, operands, repetition, or terminal-mode input is invalid.                                                                                                                                |
-| `blocked`     | Unsafe, ambiguous, colliding, untrusted, unauthorized, retained, ownership, route, marker, or containment facts prevent one plan.                                                                                |
-| `failed`      | Application, lifecycle publication, verification, or bundle handling fails unexpectedly after effects begin.                                                                                                         |
-| `interrupted` | The caller interrupts before completion and no unexpected application or verification failure remains.                                                                                                               |
+| Result        | Meaning for `extension install`                                                                                                                                                                                                                                                                                                                                 |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `complete`    | Absent selected packages were fully installed and verified, an eligible initial force completed, an exact managed state was verified as a no-op, or a complete pre-effect dry-run finished without finite attention.                                                                                                                                            |
+| `attention`   | Complete safe coverage preserves a finite lifecycle observation, or post-verification recovery deletion returns `Failed` with positively observed disposition `Retained`. Managed divergence itself is `blocked` and directs to update. `Failed`/`Retained` recovery keeps target effects successful and reports the exact residual path with cleanup guidance. |
+| `incomplete`  | Safe source, Framework-anchor, lifecycle, dependency, parser, route, or recovery coverage is unavailable. No write occurs.                                                                                                                                                                                                                                      |
+| `invalid`     | IDs, source, `--all`, flags, operands, repetition, or terminal-mode input is invalid.                                                                                                                                                                                                                                                                           |
+| `blocked`     | Unsafe, ambiguous, colliding, untrusted, unauthorized, retained, ownership, route, marker, or containment facts prevent one plan.                                                                                                                                                                                                                               |
+| `failed`      | Application, lifecycle publication, or verification fails unexpectedly after effects begin, or post-verification recovery deletion returns `Failed`/`Unknown`.                                                                                                                                                                                                  |
+| `interrupted` | The caller interrupts before completion and no unexpected application or verification failure remains.                                                                                                                                                                                                                                                          |
 
 Primary human complete/attention/incomplete results go to stdout. Primary human
 invalid/blocked/failed/interrupted results go to stderr. Bounded diagnostics use
@@ -329,7 +336,8 @@ single-package inference, dependency-first closure and failures, Framework-ancho
 and route-host prerequisites, absent/no-op/divergent/initial-force states,
 automatic and wizard/direct behavior, trusted/untrusted/absent handling, shared owners,
 semantic fingerprints, generated navigation, reserved paths, complete planning,
-external recovery-bundle storage and verification, cleanup attention, dry-run parity,
+external recovery-bundle storage and verification, typed post-verification
+deletion state/disposition facts, dry-run parity,
 seven statuses/streams, JSON, no mutation of
 sources, and no runtime or shipping claim. The shared CLI Architecture defines
 the exact JSON result schema and exit mapping. Gate 5 must prove source-generated

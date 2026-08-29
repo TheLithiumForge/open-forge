@@ -10,29 +10,38 @@ internal enum GeneratedNavigationRegionState
     Unavailable,
 }
 
+internal enum GeneratedNavigationRegionUnavailableReason
+{
+    RegionSourceUnsupported,
+    SourceDocumentUnavailable,
+    GeneratedRegionMissing,
+    GeneratedRegionInvalid,
+    GeneratedRegionUnavailable,
+    GeneratedRegionLineEndingUnsupported,
+    TopologyUnavailable,
+    TopologyUnsafe,
+    MetadataUnavailable,
+    MetadataInvalid,
+    MetadataUnrepresentable,
+    DestinationUnsafe,
+    DestinationConflict,
+    ProjectionUnavailable,
+}
+
 internal sealed record GeneratedNavigationRegion
 {
     private GeneratedNavigationRegion(
         SourceLogicalSource source,
-        GeneratedNavigationRegionState state,
         IEnumerable<GeneratedNavigationEntry> entries,
-        GeneratedNavigationBoundedChange? change,
-        string? cause)
+        GeneratedNavigationBoundedChange change)
     {
-        if (!Enum.IsDefined(state))
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(state),
-                state,
-                "The generated navigation region state is not defined.");
-        }
-
-        var values = entries
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(entries);
+        ArgumentNullException.ThrowIfNull(change);
+        var ordered = entries
             .Select(entry => entry ?? throw new ArgumentException(
                 "Generated navigation entries cannot contain null members.",
                 nameof(entries)))
-            .ToArray();
-        var ordered = values
             .OrderBy(entry => entry.Destination, StringComparer.Ordinal)
             .ToArray();
         if (ordered.Select(entry => entry.PhysicalPath)
@@ -44,24 +53,32 @@ internal sealed record GeneratedNavigationRegion
                 nameof(entries));
         }
 
-        if (state == GeneratedNavigationRegionState.Available
-            && (change is null || cause is not null))
-        {
-            throw new ArgumentException(
-                "An available generated navigation region requires bounded change facts.");
-        }
-
-        if (state == GeneratedNavigationRegionState.Unavailable
-            && (ordered.Length != 0 || change is not null || string.IsNullOrWhiteSpace(cause)))
-        {
-            throw new ArgumentException(
-                "An unavailable generated navigation region cannot carry projection values.");
-        }
-
         Source = source;
-        State = state;
+        State = GeneratedNavigationRegionState.Available;
         Entries = new ReadOnlyCollection<GeneratedNavigationEntry>(ordered);
         Change = change;
+    }
+
+    private GeneratedNavigationRegion(
+        SourceLogicalSource source,
+        GeneratedNavigationRegionUnavailableReason unavailableReason,
+        string cause)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        if (!Enum.IsDefined(unavailableReason))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(unavailableReason),
+                unavailableReason,
+                "The generated navigation unavailable reason is not defined.");
+        }
+
+        ArgumentException.ThrowIfNullOrWhiteSpace(cause);
+
+        Source = source;
+        State = GeneratedNavigationRegionState.Unavailable;
+        Entries = Array.Empty<GeneratedNavigationEntry>();
+        UnavailableReason = unavailableReason;
         Cause = cause;
     }
 
@@ -77,6 +94,8 @@ internal sealed record GeneratedNavigationRegion
 
     internal GeneratedNavigationBoundedChange? Change { get; }
 
+    internal GeneratedNavigationRegionUnavailableReason? UnavailableReason { get; }
+
     internal string? Cause { get; }
 
     internal string? ExpectedBody => Change?.ExpectedBody;
@@ -85,10 +104,11 @@ internal sealed record GeneratedNavigationRegion
         SourceLogicalSource source,
         IEnumerable<GeneratedNavigationEntry> entries,
         GeneratedNavigationBoundedChange change)
-        => new(source, GeneratedNavigationRegionState.Available, entries, change, null);
+        => new(source, entries, change);
 
     internal static GeneratedNavigationRegion Unavailable(
         SourceLogicalSource source,
+        GeneratedNavigationRegionUnavailableReason reason,
         string cause)
-        => new(source, GeneratedNavigationRegionState.Unavailable, [], null, cause);
+        => new(source, reason, cause);
 }

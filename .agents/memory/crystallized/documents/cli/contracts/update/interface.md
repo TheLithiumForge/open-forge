@@ -175,13 +175,13 @@ kinds use exact bytes and fail closed when equivalence cannot be proven.
 
 ## Flags
 
-| Flag                | Role                                             | Value                          | Omission                                             | Repetition and composition                                                                            |
-| ------------------- | ------------------------------------------------ | ------------------------------ | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `--force`           | Current expected-footprint replacement authority | Boolean                        | Preserve changed or missing current expected content | Repeats idempotently. It never grants prune or another bypass.                                        |
-| `--prune`           | Retired-content deletion authority               | Boolean                        | Preserve retired content                             | Repeats idempotently. It never replaces or restores current expected content.                         |
-| `--automatic`       | Guided-input policy                              | Boolean                        | Human mode may review finite divergence choices      | Repeats idempotently. It selects only deterministic safe effects already authorized by update.        |
-| `--dry-run`         | Preview write policy                             | Boolean                        | Apply after the same preflight                       | Repeats idempotently. It writes nothing and cannot prove application or recovery.                     |
-| Shared global flags | Workspace and presentation                       | Defined by the shared contract | Shared defaults                                      | Shared rules apply.                                                                                   |
+| Flag                | Role                                             | Value                          | Omission                                             | Repetition and composition                                                                     |
+| ------------------- | ------------------------------------------------ | ------------------------------ | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `--force`           | Current expected-footprint replacement authority | Boolean                        | Preserve changed or missing current expected content | Repeats idempotently. It never grants prune or another bypass.                                 |
+| `--prune`           | Retired-content deletion authority               | Boolean                        | Preserve retired content                             | Repeats idempotently. It never replaces or restores current expected content.                  |
+| `--automatic`       | Guided-input policy                              | Boolean                        | Human mode may review finite divergence choices      | Repeats idempotently. It selects only deterministic safe effects already authorized by update. |
+| `--dry-run`         | Preview write policy                             | Boolean                        | Apply after the same preflight                       | Repeats idempotently. It writes nothing and cannot prove application or recovery.              |
+| Shared global flags | Workspace and presentation                       | Defined by the shared contract | Shared defaults                                      | Shared rules apply.                                                                            |
 
 ### `--force`
 
@@ -269,12 +269,18 @@ ZIP forms the opaque `RecoveryBundlePreparation`; the draft remains
 preparation completes before the first target effect.
 
 After final verification, whole-command success deletes only the positively
-recognized bundle it created. If deletion fails, effects remain successful and
-the result is `attention` with the exact residual path and cleanup guidance.
-Handled failure or cancellation stops new effects and reports the actual
-residual draft or final path; a valid final remains when failure occurs after
-preparation. A closed final ZIP may remain after abrupt process termination,
-without an executable crash or power-loss guarantee. The CLI never restores a
+recognized bundle it created. `Deleted`/`Removed` permits normal completion.
+`Failed`/positively observed `Retained` keeps target effects successful and
+produces `attention`, the exact residual path, and
+cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
+provides one.
+When `Failed`/positively observed `Retained` recovery attention coexists with
+finite unresolved divergence, cleanup guidance owns the single next action;
+divergence facts remain visible evidence. Before post-verification deletion begins, handled application,
+verification, or cancellation outcomes stop new effects and report the actual
+residual draft or final path; a valid final remains when preparation completed.
+A closed final ZIP may remain after abrupt process termination, without an
+executable crash or power-loss guarantee. The CLI never restores a
 target automatically, derives current target state from recovery provenance, or
 saves a journal, progress receipt, history, or replayable plan. Cleanup owns
 exact named final and draft deletion under its separate lease-bound contract.
@@ -296,15 +302,15 @@ Primary human `invalid`, `blocked`, `failed`, and `interrupted` results go to
 stderr. Bounded diagnostics use stderr. Human output may say `requires
 attention`; structured output retains `attention`.
 
-| Result        | Meaning for `update`                                                                                                                                                                                                                                 |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | A safe full apply or dry-run, eligible force/prune application, or verified no-op has complete coverage and no preserved finite divergence.                                                                                                          |
-| `attention`   | Complete safe coverage exists, but changed, missing, retired, or equivalent finite divergence remains because the selected authority did not resolve it. Planned changes, force/prune presence, and format-only observations do not create it alone. |
-| `incomplete`  | Safe required lifecycle, source, parser, or recovery coverage is unavailable. No write occurs.                                                                                                                                                       |
-| `invalid`     | Syntax, operand, flag value, repetition, or terminal-mode input is invalid.                                                                                                                                                                          |
-| `blocked`     | Unsafe, ambiguous, untrusted, colliding, unauthorized, retained-dependent, or route-unsafe facts prevent one safe plan.                                                                                                                          |
-| `failed`      | Application, verification, lifecycle publication, or bundle handling fails unexpectedly or leaves an unsafe residual after effects begin.                                                                                                           |
-| `interrupted` | The caller interrupts before completion and no unexpected application or verification failure changes the result.                                                                                                                                 |
+| Result        | Meaning for `update`                                                                                                                                                                                                                                                                                                                                                                     |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `complete`    | A safe full apply or dry-run, eligible force/prune application, or verified no-op has complete coverage and no preserved finite divergence.                                                                                                                                                                                                                                              |
+| `attention`   | Complete safe coverage leaves finite unresolved divergence, or post-verification recovery deletion returns `Failed` with positively observed disposition `Retained`. Planned changes, force/prune presence, and format-only observations do not create it alone. `Failed`/`Retained` recovery keeps target effects successful and reports the exact residual path with cleanup guidance. |
+| `incomplete`  | Safe required lifecycle, source, parser, or recovery coverage is unavailable. No write occurs.                                                                                                                                                                                                                                                                                           |
+| `invalid`     | Syntax, operand, flag value, repetition, or terminal-mode input is invalid.                                                                                                                                                                                                                                                                                                              |
+| `blocked`     | Unsafe, ambiguous, untrusted, colliding, unauthorized, retained-dependent, or route-unsafe facts prevent one safe plan.                                                                                                                                                                                                                                                                  |
+| `failed`      | Application, verification, or lifecycle publication fails unexpectedly, post-verification recovery deletion returns `Failed`/`Unknown`, or another unsafe residual remains after effects begin.                                                                                                                                                                                          |
+| `interrupted` | The caller interrupts before completion and no unexpected application or verification failure changes the result.                                                                                                                                                                                                                                                                        |
 
 Ordinary precedence is `blocked` > `incomplete` > `attention` > `complete`.
 Invalid input stops before operation resolution. Failed and interrupted retain

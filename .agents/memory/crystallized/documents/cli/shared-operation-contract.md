@@ -144,7 +144,7 @@ Classify each flag before adding it:
 | Selection    | Adds or narrows explicit input or results within the same operation                      | `--tag`, `--follow-links`, `--additions-only`                       |
 | Guided input | Uses explicit input plus documented deterministic automatic selections without prompting | `--automatic`                                                       |
 | Projection   | Chooses which parts of one result are shown                                              | `--content`                                                         |
-| Write policy | Controls preview                                                                           | `--dry-run`                                                        |
+| Write policy | Controls preview                                                                         | `--dry-run`                                                         |
 | Authority    | Widens one explicitly named owned or replacement boundary within the same operation      | `--force` only where its local contract defines the complete effect |
 
 Flags in one role compose when their meanings do not conflict. Prefer one
@@ -241,7 +241,9 @@ Primary human `invalid`, `blocked`, `failed`, and `interrupted` results go to
 stderr. JSON renders one complete result from the same typed result to stdout
 for every semantic status. Bounded diagnostics use stderr. Compact and
 structured results retain at most one required `Next:` action when one is
-needed.
+needed. When `Failed`/positively observed `Retained` recovery attention coexists
+with another command-local attention condition, exact recovery cleanup guidance
+owns that single action; the other attention facts remain visible evidence.
 
 The [Global CLI Flags contract](contracts/shared/global-flags/interface.md)
 remains the detailed owner for JSON, `--view`, and `--verbose`. Each command
@@ -261,7 +263,7 @@ validated command input
   -> preflight when mutating
   -> preview or application consent
   -> revalidation and apply
-  -> verification and retained-recovery reporting
+  -> verification and recovery-disposition reporting
   -> optional bounded post-processing
   -> typed operation result
   -> human or structured rendering
@@ -294,8 +296,7 @@ artifacts, and it does not reverse a deletion that it has verified.
 Already verified deletions remain desired effects when a later deletion fails or
 the caller interrupts. Remaining and residual facts stay visible for a fresh
 plan. This exception applies only to cleanup. Other mutating operations retain
-their accepted bundle-preparation, success-removal, and failure-retention
-rules.
+their accepted bundle-preparation and post-verification disposition rules.
 
 Recovery-store resolution has distinct writer and observer modes. Only the
 mutation bundle writer uses
@@ -352,14 +353,22 @@ receive `null`, and a non-null preparation for `Create` is rejected. The applier
 performs one final effect per target, and all bundle preparation completes before
 the first target effect.
 
+Before post-verification deletion begins, handled application, verification, or
+cancellation outcomes stop new effects and report the actual residual draft or
+final path; a valid final bundle remains when preparation completed.
+
 After whole-command verification succeeds, the command deletes only its
-positively recognized bundle. If deletion fails, target effects remain
-successful and the result is `attention` with the exact residual path and
-cleanup guidance. Handled failure or cancellation stops new effects and reports
-the actual residual draft or final path; a valid final bundle remains when the
-failure occurs after preparation. A closed final ZIP may remain after an abrupt
-process termination, but the CLI provides no executable crash or power-loss
-durability guarantee. Shared support never
+positively recognized bundle. `Deleted` with disposition `Removed` permits
+normal completion. `Failed` with positively observed disposition `Retained`
+keeps target effects successful and produces `attention` with the exact residual
+path and cleanup guidance. `Failed` with disposition `Unknown` produces `failed`
+and reports an exact expected path only when the deletion result provides one.
+`Blocked` and `Cancelled`, with either `Retained` or `Unknown`, remain neutral
+typed event facts for command-local mapping; disposition alone never selects a
+command status. A closed final ZIP may remain after an abrupt process
+termination, but the CLI provides no executable crash or power-loss durability
+guarantee.
+Shared support never
 automatically restores a target, rolls back an effect, or compensates for target
 effects, classifies current target state from recovery provenance, or saves a
 journal, progress receipt, history, or replayable plan. A fresh invocation plans
@@ -529,13 +538,19 @@ content on its own. Read-only `extension list` and `extension inspect` reject
   for every Replace/ReplaceGeneratedRegion/Delete, requires `null` for Create,
   rejects non-null preparation for Create, and makes one final effect per target.
 - Successful commands delete their command-owned bundle only after whole-command
-  verification; deletion failure leaves successful effects with `attention`
-  and exact cleanup guidance. Handled failure or cancellation reports the actual
-  residual draft or final path, and a closed final may remain after abrupt
-  process termination without a crash- or power-loss-durability guarantee. The
-  foundation never automatically
-  restores a target, rolls back an effect, or compensates for target effects,
-  and it does not save a journal, progress receipt, history, or replayable plan.
+  verification. `Deleted`/`Removed` permits normal completion;
+  `Failed`/positively observed `Retained` preserves successful target effects
+  with `attention`, the exact residual path, and cleanup guidance; and
+  `Failed`/`Unknown` produces `failed` and reports an exact path only when the
+  deletion result supplies one.
+  `Blocked` and `Cancelled`, with either `Retained` or `Unknown`, remain neutral
+  typed event facts for command-local mapping.
+  Before post-verification deletion, handled application, verification, or
+  cancellation outcomes report the actual residual draft or final path. A closed
+  final may remain after abrupt process termination without a crash- or
+  power-loss-durability guarantee. The foundation never automatically restores a
+  target, rolls back an effect, or compensates for target effects, and it does
+  not save a journal, progress receipt, history, or replayable plan.
 - Cleanup deletes only exact named selected-workspace final bundles or drafts
   under its nonrecursive support-artifact exception. Before deletion it
   holds the same-workspace `FileShare.None` lease, re-enumerates the selected

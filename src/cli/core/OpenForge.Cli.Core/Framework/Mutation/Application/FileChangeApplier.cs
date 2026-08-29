@@ -11,6 +11,9 @@ internal sealed partial class FileChangeApplier(
     MutationRevalidator revalidator,
     FileExpectationValidator validator)
 {
+    private const string CancellationBeforeEffectCause =
+        "File application was cancelled before its target effect.";
+
     private readonly MutationRevalidator _revalidator = revalidator;
     private readonly FileExpectationValidator _validator = validator;
 
@@ -39,6 +42,7 @@ internal sealed partial class FileChangeApplier(
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
+                FileChangeNotStartedReason.ContractRejected,
                 recoveryCause);
         }
 
@@ -47,6 +51,7 @@ internal sealed partial class FileChangeApplier(
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
+                FileChangeNotStartedReason.ContractRejected,
                 cause);
         }
 
@@ -55,7 +60,8 @@ internal sealed partial class FileChangeApplier(
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
-                "File application was cancelled before its target effect.");
+                FileChangeNotStartedReason.Cancelled,
+                CancellationBeforeEffectCause);
         }
 
         if (change.Kind != PlannedFileChangeKind.Delete)
@@ -91,7 +97,8 @@ internal sealed partial class FileChangeApplier(
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
-                "File application was cancelled before its target effect.");
+                FileChangeNotStartedReason.Cancelled,
+                CancellationBeforeEffectCause);
         }
 
         try
@@ -121,7 +128,8 @@ internal sealed partial class FileChangeApplier(
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
-                "File application was cancelled before its target effect.");
+                FileChangeNotStartedReason.Cancelled,
+                CancellationBeforeEffectCause);
         }
 
         MutationValidationResult result;
@@ -137,25 +145,36 @@ internal sealed partial class FileChangeApplier(
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
-                "File application was cancelled before its target effect.");
+                FileChangeNotStartedReason.Cancelled,
+                CancellationBeforeEffectCause);
         }
         catch (Exception exception) when (IsFilesystemException(exception))
         {
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
+                FileChangeNotStartedReason.ApplicationFailed,
                 FilesystemFailure.FromException(
                     FailureKind(exception),
                     exception).DirectCause);
         }
 
-        if (result.State != MutationValidationState.Valid
-            || result.Checks.Count != 1)
+        if (result.State != MutationValidationState.Valid)
         {
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
-                result.Cause ?? "The target changed before its file effect.");
+                ReadNotStartedReason(result.State),
+                ReadNotStartedCause(result));
+        }
+
+        if (result.Checks.Count != 1)
+        {
+            return FileChangeReceipt.NotStarted(
+                context.Change,
+                context.Before,
+                FileChangeNotStartedReason.ContractRejected,
+                "File application revalidation did not return its one expected target check.");
         }
 
         var current = result.Checks[0];
@@ -171,6 +190,7 @@ internal sealed partial class FileChangeApplier(
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
+                FileChangeNotStartedReason.TargetChanged,
                 "The target identity changed before its file effect.");
         }
 
@@ -179,10 +199,52 @@ internal sealed partial class FileChangeApplier(
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
-                "File application was cancelled before its target effect.");
+                FileChangeNotStartedReason.Cancelled,
+                CancellationBeforeEffectCause);
         }
 
         return null;
+    }
+
+    private static FileChangeNotStartedReason ReadNotStartedReason(MutationValidationState state)
+        => state switch
+        {
+            MutationValidationState.Mismatched => FileChangeNotStartedReason.TargetChanged,
+            MutationValidationState.Blocked => FileChangeNotStartedReason.ContractRejected,
+            MutationValidationState.Failed => FileChangeNotStartedReason.ApplicationFailed,
+            MutationValidationState.Cancelled => FileChangeNotStartedReason.Cancelled,
+            MutationValidationState.Valid => throw new ArgumentOutOfRangeException(
+                nameof(state),
+                state,
+                "A valid mutation revalidation has no not-started reason."),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(state),
+                state,
+                "The mutation validation state is not defined."),
+        };
+
+    private static string ReadNotStartedCause(MutationValidationResult result)
+    {
+        if (result.Cause is not null)
+        {
+            return result.Cause;
+        }
+
+        return result.State switch
+        {
+            MutationValidationState.Mismatched => "The target changed before its file effect.",
+            MutationValidationState.Blocked => "File application revalidation rejected the target safety or contract boundary.",
+            MutationValidationState.Failed => "The target state could not be revalidated before file application.",
+            MutationValidationState.Cancelled => "File application revalidation was cancelled before its target effect.",
+            MutationValidationState.Valid => throw new ArgumentOutOfRangeException(
+                nameof(result),
+                result.State,
+                "A valid mutation revalidation has no not-started cause."),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(result),
+                result.State,
+                "The mutation validation state is not defined."),
+        };
     }
 
     private sealed record ApplicationContext(

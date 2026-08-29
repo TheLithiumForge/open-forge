@@ -331,10 +331,13 @@ and performs one final effect per target. All preparation completes before the
 first target effect; unknown, malformed, mismatched, or colliding bundles block.
 
 After final verification, delete only the positively recognized bundle created
-by this operation. If deletion fails, effects remain successful and the result
-is `attention` with the exact residual path and cleanup guidance. Handled
-failure or cancellation reports the actual residual draft or final path; a
-valid final remains after preparation. A closed final ZIP may remain after
+by this operation. `Deleted`/`Removed` permits normal completion.
+`Failed`/positively observed `Retained` keeps target effects successful and
+produces `attention`, the exact residual path, and
+cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
+provides one. Before post-verification deletion begins, a handled application,
+verification, or cancellation outcome reports the actual residual draft or
+final path; a valid final remains when preparation completed. A closed final ZIP may remain after
 abrupt process termination, without an executable crash or power-loss guarantee.
 Recovery provenance does not classify current target state, and no target is
 restored automatically. Cleanup owns exact named final and draft deletion under
@@ -436,12 +439,12 @@ reference effect that makes surrounding prose safe.
 | Result        | Meaning                                                                                                                                                                                                                                                                                                                               |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `complete`    | A complete safe dry-run plan was established, or application and final verification completed, for a leaf or category removal. This includes every complete incoming-link detachment and generated effect. It also includes a verified no-op only when exact intended absence is independently proven with complete trusted evidence. |
-| `attention`   | Reserved in the shared seven-status vocabulary. `route remove` has no accepted finite attention condition; planned deletions and link detachments do not create it.                                                                                                                                                                   |
+| `attention`   | Post-verification recovery deletion returns `Failed` with positively observed disposition `Retained`; target effects remain successful with the exact residual path and cleanup guidance. Planned deletions and link detachments do not create it.                                                                                    |
 | `incomplete`  | Safe identity and facts exist, but the complete supported-Markdown catalogue, reference pass, category inventory, or another required coverage boundary cannot be enumerated or inspected. No write begins.                                                                                                                           |
 | `invalid`     | Command input, operand cardinality, source kind, flag use, or exact source reference does not follow this interface. A missing source without independent absence proof is not a verified no-op.                                                                                                                                      |
 | `blocked`     | A valid request cannot establish one safe complete removal because ownership, lifecycle, route, identity, containment, collision, reference transformation, generated boundary, expected state, or recovery is unsafe or ambiguous. No write begins.                                                                                  |
-| `failed`      | An unexpected application, verification, or bundle-handling failure occurs after a persistent effect begins. The result remains `failed` and is never converted into `attention`.                                                                                                                                            |
-| `interrupted` | The caller cancels before completion; an unexpected application or verification failure remains `failed`.                                                                                                                                                                                                                        |
+| `failed`      | An unexpected application or verification failure occurs after a persistent effect begins, or recovery deletion returns `Failed`/`Unknown`; `Failed`/positively observed `Retained` recovery is the distinct `attention` case.                                                                                                        |
+| `interrupted` | The caller cancels before completion; an unexpected application or verification failure remains `failed`.                                                                                                                                                                                                                             |
 
 For ordinary conditions, status precedence is `blocked` > `incomplete` >
 `attention` > `complete`. Invalid input stops before operation resolution.

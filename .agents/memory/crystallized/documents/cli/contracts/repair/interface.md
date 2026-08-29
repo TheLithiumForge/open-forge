@@ -375,14 +375,21 @@ performs one final effect per target. Immediately before application, revalidate
 the source occurrence, old literal, target, expected bytes, intended bytes,
 identity, containment, and bundle facts.
 
-On handled failure or cancellation, report the actual residual draft or final
-path; a valid final remains after preparation. A closed final ZIP may remain
-after abrupt process termination, without an executable crash or power-loss
-guarantee. Repair never restores, rolls back, compensates for a target effect,
+Before post-verification deletion begins, a handled application, verification,
+or cancellation outcome reports the actual residual draft or final path; a valid
+final remains when preparation completed. A closed final ZIP may remain after
+abrupt process termination, without an executable crash or power-loss guarantee.
+Repair never restores, rolls back, compensates for a target effect,
 derives current target state from recovery provenance, or stores a journal,
 progress receipt, or persisted plan. After final verification of whole-operation
-success, delete the bundle; if recognized deletion fails, effects remain successful and the result
-is `attention` with the exact residual path and cleanup guidance.
+success, delete the bundle. `Deleted`/`Removed` permits normal completion.
+`Failed`/positively observed `Retained` keeps target effects successful and
+produces `attention`, the exact residual path, and
+cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
+provides one.
+When `Failed`/positively observed `Retained` recovery attention coexists with
+remaining non-information findings, cleanup guidance owns the single next
+action; those findings remain visible evidence.
 
 Explicit Cleanup owns exact named final and draft deletion under its separate
 lease-bound contract. Unknown or differently named artifacts remain untouched.
@@ -503,15 +510,15 @@ semantic status; separate bounded diagnostics use stderr.
 
 ## Semantic Results
 
-| Result        | Meaning                                                                                                                                                                                                                                                                |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | The selected Repair scope completed its dry-run or application path, including a verified no-op, with complete required diagnosis and no remaining non-information finding that requires attention in that scope. It does not claim that all Doctor findings are gone. |
-| `attention`   | The selected scope was safely processed, but unselected guided, manual, targeted, newly detected, or other non-information findings remain. Human output may say `requires attention`.                                                                                 |
-| `incomplete`  | Safe facts or partial results are available, but required diagnosis, proposal resolution, post-diagnosis, or another declared coverage boundary could not finish. No general Repair write begins.                                                                      |
-| `invalid`     | Command grammar, flag values, relink tuples, repetition, or explicit inputs are invalid.                                                                                                                                                                               |
-| `blocked`     | A valid request lacks required selection or authority, has incomplete or blocked coverage in a domain required by the selected edit, is stale or conflicting, has malformed, colliding, or mismatched recovery facts, or cannot establish a safe exact effect. No write begins. |
-| `failed`      | Application, verification, recovery, or post-condition processing failed. Residual state and retained recovery evidence remain visible.                                                                                                                                |
-| `interrupted` | The caller cancels or interrupts before the selected operation completes, unless an unexpected application or verification failure is classified as `failed`.                                                                                                               |
+| Result        | Meaning                                                                                                                                                                                                                                                                                                                                                         |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `complete`    | The selected Repair scope completed its dry-run or application path, including a verified no-op, with complete required diagnosis and no remaining non-information finding that requires attention in that scope. It does not claim that all Doctor findings are gone.                                                                                          |
+| `attention`   | The selected scope was safely processed but finite non-information findings remain, or post-verification recovery deletion returns `Failed` with positively observed disposition `Retained`. `Failed`/`Retained` recovery keeps target effects successful and reports the exact residual path with cleanup guidance. Human output may say `requires attention`. |
+| `incomplete`  | Safe facts or partial results are available, but required diagnosis, proposal resolution, post-diagnosis, or another declared coverage boundary could not finish. No general Repair write begins.                                                                                                                                                               |
+| `invalid`     | Command grammar, flag values, relink tuples, repetition, or explicit inputs are invalid.                                                                                                                                                                                                                                                                        |
+| `blocked`     | A valid request lacks required selection or authority, has incomplete or blocked coverage in a domain required by the selected edit, is stale or conflicting, has malformed, colliding, or mismatched recovery facts, or cannot establish a safe exact effect. No write begins.                                                                                 |
+| `failed`      | Application, verification, or post-condition processing fails, or post-verification deletion returns `Failed` with disposition `Unknown`. Typed observed or unknown recovery facts remain visible; an exact expected path appears only when the recovery result provides one.                                                                                   |
+| `interrupted` | The caller cancels or interrupts before the selected operation completes, unless an unexpected application or verification failure is classified as `failed`.                                                                                                                                                                                                   |
 
 `--dry-run` uses the same status conditions while stopping before persistent
 effects. It does not claim that intended bytes were written or verified on disk.
@@ -552,9 +559,10 @@ finite:
 - Unavailable recovery storage or preparation coverage is `incomplete`; malformed,
   colliding, or mismatched recovery-bundle facts, overlap conflict, missing
   authority, or any other unsafe plan condition is `blocked`.
-- An unexpected application, verification, bundle-handling, or post-diagnosis
-  failure is `failed`. A caller interruption without an unexpected application
-  or verification failure is `interrupted`.
+- An unexpected application, verification, or post-diagnosis failure, or
+  post-verification recovery deletion `Failed`/`Unknown`, is `failed`. A caller
+  interruption without an unexpected application or verification failure is
+  `interrupted`.
 
 Every ordinary error names the `repair` operation, affected selection, occurrence,
 target, plan, or path when known, direct cause, and useful next action. It never

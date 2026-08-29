@@ -225,7 +225,7 @@ The generated projection then includes, when applicable:
 
 Use the complete [Index Behavior Contract](../../index-candidate/behavior.md) projection for generated
 line shape, destination containment, ordering, marker ownership, and the
-verification and retained-bundle relationship. The route-init operation owns the
+verification and recovery-disposition relationship. The route-init operation owns the
 complete intended topology and its combined result; it does not start a hidden
 public `index` command or perform a second independent projection.
 
@@ -237,10 +237,13 @@ verification, or retained partial-state reporting. The semantic conditions for `
 in the [Interface Contract](interface.md#semantic-results); this Behavior
 Contract does not add another result or choose numeric exits. A complete plan
 with any new exact `NeedsAuthoring` tag forms `attention` for a safe preview or a
-completed and verified application. A complete plan without that marker is
-`complete` when no other status condition applies. Existing unchanged marker
-content and planned changes alone do not change the no-op or successful result to
-`attention`; an unexpected application or verification failure remains `failed`.
+completed and verified application. Post-verification recovery deletion
+`Failed`/positively observed `Retained` also forms `attention`;
+`Failed`/`Unknown` forms `failed`. A complete plan without that marker is
+`complete` when no other status
+condition applies. Existing unchanged marker content and planned changes alone
+do not change the no-op or successful result to `attention`; an unexpected
+application or verification failure remains `failed`.
 
 For ordinary operation conditions, status precedence is `blocked` > `incomplete`
 
@@ -364,12 +367,18 @@ or compensate for an earlier effect. A concurrent edit remains preserved and is
 reported as residual state.
 
 After final verification, delete only the positively recognized bundle created
-by this operation. If deletion fails, effects remain
-successful and the result is `attention` with the exact residual path and
-cleanup guidance. Handled failure or cancellation reports the actual residual
-draft or final path; a valid final remains after preparation. A closed final ZIP
-may remain after abrupt process termination, without an executable crash or
-power-loss guarantee. Recovery provenance does not classify current target
+by this operation. `Deleted`/`Removed` permits normal completion.
+`Failed`/positively observed `Retained` keeps target effects successful and
+produces `attention`, the exact residual path, and
+cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
+provides one. When `Failed`/positively observed `Retained` recovery attention
+coexists with a new-entrypoint `NeedsAuthoring` condition, cleanup guidance owns
+the single next action; the
+`NeedsAuthoring` facts remain visible evidence. Before post-verification deletion
+begins, a handled application, verification, or cancellation outcome reports the
+actual residual draft or final path; a valid final remains when preparation
+completed. A closed final ZIP may remain after abrupt process termination,
+without an executable crash or power-loss guarantee. Recovery provenance does not classify current target
 state. Cleanup owns exact named final and draft deletion under its separate
 lease-bound contract. A rerun computes a fresh plan from
 current facts and never replays a saved plan, receipt, journal, history, or
@@ -443,20 +452,23 @@ in addition to the public checks in [Interface Verification](interface.md#verifi
   generated projection, ordered plan, preflight, and semantic status conditions;
   complete effects and exact bounded diffs in dry-run with no persistent effects.
 - Finite `attention` formation for draft ancestors, a draft final target,
-  automatically supplied or explicitly retained `NeedsAuthoring`, and no
-  attention from planned changes alone or unchanged existing marker content.
+  automatically supplied or explicitly retained `NeedsAuthoring`, or
+  `Failed`/positively observed `Retained` recovery, and no attention from planned
+  changes alone or unchanged existing marker content.
 - Complete status when every new entrypoint has complete intended metadata and
   no exact `NeedsAuthoring` marker.
 - Verified no-op formation before recovery-bundle preparation.
 - External bundle storage, semantic final-ZIP verification, collision handling,
-  cleanup attention, and exact named lease-bound Cleanup.
+  typed post-verification deletion state/disposition facts, and exact named
+  lease-bound Cleanup.
 - Expected-state changes before and during application, safe creation and
   replacement, final route-projection verification, retained partial state
   without restoration, residual preservation, unexpected concurrent edits, and
   rerun convergence.
 - Seven semantic results, including safe `incomplete` with no write, blocked
-  unsafe or ambiguous authority or safety, and failed application,
-  post-write-verification, or bundle-handling failures.
+  unsafe or ambiguous authority or safety, `Failed`/positively observed
+  `Retained` recovery `attention`, and failed application,
+  post-write-verification, or `Failed`/`Unknown` recovery outcomes.
 - Compact retention of workspace and target identity, application or preview,
   status, completeness, safety, created and unchanged paths, generated effects,
   draft paths, and at most one required `Next:` line.

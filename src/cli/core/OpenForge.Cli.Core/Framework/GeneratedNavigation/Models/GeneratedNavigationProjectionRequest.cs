@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models.Formation;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
@@ -8,50 +9,23 @@ namespace OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 
 internal sealed class GeneratedNavigationProjectionRequest
 {
-    private readonly IReadOnlyDictionary<string, SourceLogicalSource> _sourcesByPath;
     private readonly IReadOnlyDictionary<string, SourceAuthoredMetadataFacts> _metadataByPath;
     private readonly IReadOnlyDictionary<string, SourceAuthoredMetadataFacts> _metadataByPhysical;
 
     internal GeneratedNavigationProjectionRequest(
-        SourceRouteTopology topology,
-        IEnumerable<SourceLogicalSource> sources,
+        GeneratedNavigationFormation formation,
         IEnumerable<GeneratedNavigationRegionInput> regions,
         IEnumerable<GeneratedNavigationMetadata> metadata)
     {
-        var orderedSources = sources
-            .Select(source => source ?? throw new ArgumentException(
-                "Generated navigation sources cannot contain null members.",
-                nameof(sources)))
-            .OrderBy(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal)
-            .ToArray();
-        if (orderedSources.Select(source => source.Identity.CanonicalBasePath)
-            .Distinct(StringComparer.Ordinal)
-            .Count() != orderedSources.Length)
-        {
-            throw new ArgumentException(
-                "Generated navigation sources require unique canonical paths.",
-                nameof(sources));
-        }
-
-        var sourceMap = orderedSources.ToDictionary(
-            source => source.Identity.CanonicalBasePath,
-            StringComparer.Ordinal);
-        if (topology.Nodes.Any(node => !sourceMap.ContainsKey(node.Identity.CanonicalBasePath))
-            || topology.LoaderRootPaths.Any(path => !sourceMap.ContainsKey(path)))
-        {
-            throw new ArgumentException(
-                "Generated navigation topology must retain source members for every node and Loader root.",
-                nameof(topology));
-        }
+        ArgumentNullException.ThrowIfNull(formation);
 
         var materializedRegions = regions
             .Select(region => region ?? throw new ArgumentException(
                 "Generated navigation regions cannot contain null members.",
                 nameof(regions)))
             .ToArray();
-        if (materializedRegions.Any(region => !sourceMap.TryGetValue(
-                region.Source.Identity.CanonicalBasePath,
-                out var source)
+        if (materializedRegions.Any(region => formation.FindSource(
+                region.Source.Identity.CanonicalBasePath) is not { } source
             || !ReferenceEquals(source, region.Source)))
         {
             throw new ArgumentException(
@@ -65,9 +39,8 @@ internal sealed class GeneratedNavigationProjectionRequest
                 nameof(metadata)))
             .OrderBy(value => value.Source.Identity.CanonicalBasePath, StringComparer.Ordinal)
             .ToArray();
-        if (materializedMetadata.Any(value => !sourceMap.TryGetValue(
-                value.Source.Identity.CanonicalBasePath,
-                out var source)
+        if (materializedMetadata.Any(value => formation.FindSource(
+                value.Source.Identity.CanonicalBasePath) is not { } source
             || !ReferenceEquals(source, value.Source)))
         {
             throw new ArgumentException(
@@ -84,11 +57,9 @@ internal sealed class GeneratedNavigationProjectionRequest
                 nameof(metadata));
         }
 
-        Topology = topology;
-        Sources = new ReadOnlyCollection<SourceLogicalSource>(orderedSources);
+        Formation = formation;
         Regions = new ReadOnlyCollection<GeneratedNavigationRegionInput>(materializedRegions);
         Metadata = new ReadOnlyCollection<GeneratedNavigationMetadata>(materializedMetadata);
-        _sourcesByPath = new ReadOnlyDictionary<string, SourceLogicalSource>(sourceMap);
         _metadataByPath = new ReadOnlyDictionary<string, SourceAuthoredMetadataFacts>(
             materializedMetadata.ToDictionary(
                 value => value.Source.Identity.CanonicalBasePath,
@@ -108,9 +79,11 @@ internal sealed class GeneratedNavigationProjectionRequest
                     PhysicalIdentityTracker.PathComparer));
     }
 
-    internal SourceRouteTopology Topology { get; }
+    internal GeneratedNavigationFormation Formation { get; }
 
-    internal IReadOnlyList<SourceLogicalSource> Sources { get; }
+    internal SourceRouteTopology Topology => Formation.Topology;
+
+    internal IReadOnlyList<SourceLogicalSource> Sources => Formation.Sources;
 
     internal IReadOnlyList<GeneratedNavigationRegionInput> Regions { get; }
 
@@ -118,9 +91,7 @@ internal sealed class GeneratedNavigationProjectionRequest
 
     internal SourceLogicalSource? FindSource(string canonicalPath)
     {
-        return _sourcesByPath.TryGetValue(canonicalPath, out var source)
-            ? source
-            : null;
+        return Formation.FindSource(canonicalPath);
     }
 
     internal SourceAuthoredMetadataFacts? FindMetadata(SourceLogicalSource source)

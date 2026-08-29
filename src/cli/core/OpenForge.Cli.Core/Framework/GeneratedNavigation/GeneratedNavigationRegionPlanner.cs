@@ -25,6 +25,7 @@ internal sealed class GeneratedNavigationRegionPlanner
         {
             return GeneratedNavigationRegion.Unavailable(
                 input.Source,
+                GeneratedNavigationRegionUnavailableReason.RegionSourceUnsupported,
                 "Generated navigation can only target the Loader or a recognized entrypoint.");
         }
 
@@ -32,6 +33,7 @@ internal sealed class GeneratedNavigationRegionPlanner
         {
             return GeneratedNavigationRegion.Unavailable(
                 input.Source,
+                GeneratedNavigationRegionUnavailableReason.SourceDocumentUnavailable,
                 input.UnavailableCause
                     ?? "The generated navigation source document is unavailable.");
         }
@@ -41,6 +43,7 @@ internal sealed class GeneratedNavigationRegionPlanner
         {
             return GeneratedNavigationRegion.Unavailable(
                 input.Source,
+                ReadGeneratedRegionReason(document.GeneratedRegion.State),
                 document.GeneratedRegion.Cause
                     ?? "The document does not contain one complete final generated Entries region.");
         }
@@ -50,26 +53,31 @@ internal sealed class GeneratedNavigationRegionPlanner
         {
             return GeneratedNavigationRegion.Unavailable(
                 input.Source,
+                GeneratedNavigationRegionUnavailableReason.GeneratedRegionLineEndingUnsupported,
                 "The generated Entries section uses an unsupported line ending.");
         }
 
-        if (!TryReadChildren(request, input.Source, out var children, out var cause))
+        var childProjection = ReadChildren(request, input.Source);
+        if (!childProjection.IsComplete)
         {
-            return GeneratedNavigationRegion.Unavailable(input.Source, cause);
+            return GeneratedNavigationRegion.Unavailable(
+                input.Source,
+                childProjection.ReadUnavailableReason(),
+                childProjection.ReadCause());
         }
 
-        if (!TryBuildEntries(
-                request,
-                input.Source,
-                children,
-                out var entries,
-                out cause))
+        var entryProjection = BuildEntries(request, input.Source, childProjection.ReadValue());
+        if (!entryProjection.IsComplete)
         {
-            return GeneratedNavigationRegion.Unavailable(input.Source, cause);
+            return GeneratedNavigationRegion.Unavailable(
+                input.Source,
+                entryProjection.ReadUnavailableReason(),
+                entryProjection.ReadCause());
         }
 
         try
         {
+            var entries = entryProjection.ReadValue();
             var expectedBody = BuildExpectedBody(document.Source, contentSpan, entries);
             var change = BuildChange(document, contentSpan, expectedBody);
             return GeneratedNavigationRegion.Available(input.Source, entries, change);
@@ -78,6 +86,7 @@ internal sealed class GeneratedNavigationRegionPlanner
         {
             return GeneratedNavigationRegion.Unavailable(
                 input.Source,
+                GeneratedNavigationRegionUnavailableReason.ProjectionUnavailable,
                 exception.Message);
         }
     }
@@ -88,20 +97,18 @@ internal sealed class GeneratedNavigationRegionPlanner
             || SourceFormClassifier.IsEntrypoint(source.Base.Form);
     }
 
-    private static bool TryReadChildren(
+    private static GeneratedNavigationProjectionStage<IReadOnlyList<SourceLogicalSource>> ReadChildren(
         GeneratedNavigationProjectionRequest request,
-        SourceLogicalSource parent,
-        out IReadOnlyList<SourceLogicalSource> children,
-        out string cause)
+        SourceLogicalSource parent)
     {
         IReadOnlyList<string>? childPaths = parent.Base.Form == SourceDocumentForm.Loader
             ? request.Topology.LoaderRootPaths
             : request.Topology.FindByPath(parent.Identity.CanonicalBasePath)?.ChildPaths;
         if (childPaths is null)
         {
-            children = [];
-            cause = "The generated navigation parent is not present in the accepted route topology.";
-            return false;
+            return GeneratedNavigationProjectionStage<IReadOnlyList<SourceLogicalSource>>.Unavailable(
+                GeneratedNavigationRegionUnavailableReason.TopologyUnavailable,
+                "The generated navigation parent is not present in the accepted route topology.");
         }
 
         var selected = new List<SourceLogicalSource>();
@@ -111,9 +118,9 @@ internal sealed class GeneratedNavigationRegionPlanner
             var child = request.FindSource(childPath);
             if (child is null)
             {
-                children = [];
-                cause = "The accepted route topology identifies a source unavailable to generated navigation.";
-                return false;
+                return GeneratedNavigationProjectionStage<IReadOnlyList<SourceLogicalSource>>.Unavailable(
+                    GeneratedNavigationRegionUnavailableReason.TopologyUnavailable,
+                    "The accepted route topology identifies a source unavailable to generated navigation.");
             }
 
             if (child.Base.Form == SourceDocumentForm.OverwriteCompanion)
@@ -125,9 +132,9 @@ internal sealed class GeneratedNavigationRegionPlanner
                     child.Base.PhysicalPath,
                     parent.Base.PhysicalPath))
             {
-                children = [];
-                cause = "A direct routed child aliases its containing generated navigation region.";
-                return false;
+                return GeneratedNavigationProjectionStage<IReadOnlyList<SourceLogicalSource>>.Unavailable(
+                    GeneratedNavigationRegionUnavailableReason.TopologyUnsafe,
+                    "A direct routed child aliases its containing generated navigation region.");
             }
 
             if (physicalPaths.Add(child.Base.PhysicalPath))
@@ -136,49 +143,60 @@ internal sealed class GeneratedNavigationRegionPlanner
             }
         }
 
-        children = selected;
-        cause = string.Empty;
-        return true;
+        return GeneratedNavigationProjectionStage<IReadOnlyList<SourceLogicalSource>>.Complete(selected);
     }
 
-    private static bool TryBuildEntries(
+    private static GeneratedNavigationProjectionStage<IReadOnlyList<GeneratedNavigationEntry>> BuildEntries(
         GeneratedNavigationProjectionRequest request,
         SourceLogicalSource parent,
-        IReadOnlyList<SourceLogicalSource> children,
-        out IReadOnlyList<GeneratedNavigationEntry> entries,
-        out string cause)
+        IReadOnlyList<SourceLogicalSource> children)
     {
         var projected = new List<GeneratedNavigationEntry>();
         var destinations = new HashSet<string>(StringComparer.Ordinal);
         foreach (var child in children)
         {
             var metadata = request.FindMetadata(child);
-            if (metadata is null || metadata.State != SourceAuthoredMetadataState.Complete)
+            if (metadata is null
+                || metadata.State is SourceAuthoredMetadataState.Missing or SourceAuthoredMetadataState.NotApplicable)
             {
-                entries = [];
-                cause = "Every direct routed child requires complete authored source metadata.";
-                return false;
+                return GeneratedNavigationProjectionStage<IReadOnlyList<GeneratedNavigationEntry>>.Unavailable(
+                    GeneratedNavigationRegionUnavailableReason.MetadataUnavailable,
+                    "Every direct routed child requires complete authored source metadata.");
+            }
+
+            if (metadata.State == SourceAuthoredMetadataState.Malformed)
+            {
+                return GeneratedNavigationProjectionStage<IReadOnlyList<GeneratedNavigationEntry>>.Unavailable(
+                    GeneratedNavigationRegionUnavailableReason.MetadataInvalid,
+                    "Every direct routed child requires complete authored source metadata.");
             }
 
             if (metadata.Description is not { } description)
             {
-                entries = [];
-                cause = "Every complete source metadata fact requires an authored description.";
-                return false;
+                return GeneratedNavigationProjectionStage<IReadOnlyList<GeneratedNavigationEntry>>.Unavailable(
+                    GeneratedNavigationRegionUnavailableReason.MetadataInvalid,
+                    "Every complete source metadata fact requires an authored description.");
             }
 
-            if (!TryReadDestination(parent, child, out var destination, out cause)
-                || !IsSafeDescription(description, out cause))
+            if (!TryReadDestination(parent, child, out var destination, out var cause))
             {
-                entries = [];
-                return false;
+                return GeneratedNavigationProjectionStage<IReadOnlyList<GeneratedNavigationEntry>>.Unavailable(
+                    GeneratedNavigationRegionUnavailableReason.DestinationUnsafe,
+                    cause);
+            }
+
+            if (!IsSafeDescription(description, out cause))
+            {
+                return GeneratedNavigationProjectionStage<IReadOnlyList<GeneratedNavigationEntry>>.Unavailable(
+                    GeneratedNavigationRegionUnavailableReason.MetadataUnrepresentable,
+                    cause);
             }
 
             if (!destinations.Add(destination))
             {
-                entries = [];
-                cause = "Direct routed children produce a duplicate generated navigation destination.";
-                return false;
+                return GeneratedNavigationProjectionStage<IReadOnlyList<GeneratedNavigationEntry>>.Unavailable(
+                    GeneratedNavigationRegionUnavailableReason.DestinationConflict,
+                    "Direct routed children produce a duplicate generated navigation destination.");
             }
 
             var tags = child.Base.Form == SourceDocumentForm.Skill
@@ -194,13 +212,23 @@ internal sealed class GeneratedNavigationRegionPlanner
                 line: line));
         }
 
-        entries = projected
+        var entries = projected
             .OrderBy(entry => entry.Destination, StringComparer.Ordinal)
             .ThenBy(entry => entry.CanonicalPath, StringComparer.Ordinal)
             .ToArray();
-        cause = string.Empty;
-        return true;
+        return GeneratedNavigationProjectionStage<IReadOnlyList<GeneratedNavigationEntry>>.Complete(entries);
     }
+
+    private static GeneratedNavigationRegionUnavailableReason ReadGeneratedRegionReason(
+        MarkdownGeneratedRegionState state)
+        => state switch
+        {
+            MarkdownGeneratedRegionState.Absent => GeneratedNavigationRegionUnavailableReason.GeneratedRegionMissing,
+            MarkdownGeneratedRegionState.Invalid => GeneratedNavigationRegionUnavailableReason.GeneratedRegionInvalid,
+            MarkdownGeneratedRegionState.Unavailable => GeneratedNavigationRegionUnavailableReason.GeneratedRegionUnavailable,
+            MarkdownGeneratedRegionState.Complete => GeneratedNavigationRegionUnavailableReason.ProjectionUnavailable,
+            _ => throw new ArgumentOutOfRangeException(nameof(state), state, "The generated region state is not defined."),
+        };
 
     private static bool IsSafeDescription(
         string? description,
@@ -375,5 +403,58 @@ internal sealed class GeneratedNavigationRegionPlanner
                 Prefix = prefix,
                 Suffix = suffix,
             });
+    }
+
+    private sealed record GeneratedNavigationProjectionStage<T>
+        where T : class
+    {
+        private GeneratedNavigationProjectionStage(
+            T? value,
+            GeneratedNavigationRegionUnavailableReason? unavailableReason,
+            string? cause)
+        {
+            Value = value;
+            UnavailableReason = unavailableReason;
+            Cause = cause;
+        }
+
+        internal bool IsComplete => UnavailableReason is null;
+
+        private T? Value { get; }
+
+        private GeneratedNavigationRegionUnavailableReason? UnavailableReason { get; }
+
+        private string? Cause { get; }
+
+        internal T ReadValue()
+            => Value
+                ?? throw new InvalidOperationException("A complete generated navigation stage requires its value.");
+
+        internal GeneratedNavigationRegionUnavailableReason ReadUnavailableReason()
+            => UnavailableReason
+                ?? throw new InvalidOperationException("An unavailable generated navigation stage requires a typed reason.");
+
+        internal string ReadCause()
+            => Cause
+                ?? throw new InvalidOperationException("An unavailable generated navigation stage requires a cause.");
+
+        internal static GeneratedNavigationProjectionStage<T> Complete(T value)
+        {
+            ArgumentNullException.ThrowIfNull(value);
+            return new(value, null, null);
+        }
+
+        internal static GeneratedNavigationProjectionStage<T> Unavailable(
+            GeneratedNavigationRegionUnavailableReason reason,
+            string cause)
+        {
+            if (!Enum.IsDefined(reason))
+            {
+                throw new ArgumentOutOfRangeException(nameof(reason), reason, "The unavailable reason is not defined.");
+            }
+
+            ArgumentException.ThrowIfNullOrWhiteSpace(cause);
+            return new(null, reason, cause);
+        }
     }
 }

@@ -1,4 +1,5 @@
 using System.Text;
+using OpenForge.Cli.Core.Framework.Filesystem;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models;
@@ -229,6 +230,98 @@ public sealed class RecoveryBundleContractTests
         Assert.Equal(
             path,
             RecoveryBundlePreparationResult.Incomplete("storage failed", path).ResidualPath);
+    }
+
+    [Fact(DisplayName = "Recovery deletion results retain every valid state and disposition shape"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void DeletionResultsPreserveValidStateAndDispositionShapes()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"operation-{Guid.NewGuid():N}.zip");
+        var failure = new FilesystemFailure(
+            FilesystemFailureKind.InputOutput,
+            "The deletion boundary failed.");
+        var results = new[]
+        {
+            RecoveryBundleDeletionResult.Deleted(),
+            RecoveryBundleDeletionResult.FailedRetained(path, "Deletion failed.", failure),
+            RecoveryBundleDeletionResult.FailedUnknown(path, "Deletion outcome is unknown.", failure),
+            RecoveryBundleDeletionResult.BlockedRetained(path, "Deletion was blocked."),
+            RecoveryBundleDeletionResult.BlockedUnknown("Deletion was blocked."),
+            RecoveryBundleDeletionResult.CancelledRetained(path),
+            RecoveryBundleDeletionResult.CancelledUnknown(),
+        };
+
+        Assert.Equal(
+            [
+                (RecoveryBundleDeletionState.Deleted, RecoveryBundleDisposition.Removed),
+                (RecoveryBundleDeletionState.Failed, RecoveryBundleDisposition.Retained),
+                (RecoveryBundleDeletionState.Failed, RecoveryBundleDisposition.Unknown),
+                (RecoveryBundleDeletionState.Blocked, RecoveryBundleDisposition.Retained),
+                (RecoveryBundleDeletionState.Blocked, RecoveryBundleDisposition.Unknown),
+                (RecoveryBundleDeletionState.Cancelled, RecoveryBundleDisposition.Retained),
+                (RecoveryBundleDeletionState.Cancelled, RecoveryBundleDisposition.Unknown),
+            ],
+            results.Select(result => (result.State, result.Disposition)));
+        Assert.Equal(path, results[1].ResidualPath);
+        Assert.Equal(path, results[2].ResidualPath);
+        Assert.Null(results[0].ResidualPath);
+        Assert.Null(results[4].ResidualPath);
+        Assert.Null(results[6].ResidualPath);
+    }
+
+    [Fact(DisplayName = "Recovery deletion results reject impossible state and disposition shapes"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void DeletionResultsRejectImpossibleStateAndDispositionShapes()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"operation-{Guid.NewGuid():N}.zip");
+        (RecoveryBundleDeletionState State, RecoveryBundleDisposition Disposition)[] impossible =
+        [
+            (RecoveryBundleDeletionState.Deleted, RecoveryBundleDisposition.Retained),
+            (RecoveryBundleDeletionState.Deleted, RecoveryBundleDisposition.Unknown),
+            (RecoveryBundleDeletionState.Failed, RecoveryBundleDisposition.Removed),
+            (RecoveryBundleDeletionState.Blocked, RecoveryBundleDisposition.Removed),
+            (RecoveryBundleDeletionState.Cancelled, RecoveryBundleDisposition.Removed),
+        ];
+
+        foreach (var value in impossible)
+        {
+            var cause = value.State is RecoveryBundleDeletionState.Failed
+                or RecoveryBundleDeletionState.Blocked
+                    ? "Deletion did not complete."
+                    : null;
+            var residualPath = value.Disposition == RecoveryBundleDisposition.Retained
+                ? path
+                : null;
+            Assert.Throws<ArgumentException>(() => new RecoveryBundleDeletionResult(
+                state: value.State,
+                disposition: value.Disposition,
+                residualPath: residualPath,
+                failure: null,
+                cause: cause));
+        }
+
+        Assert.Throws<ArgumentException>(() => new RecoveryBundleDeletionResult(
+            state: RecoveryBundleDeletionState.Failed,
+            disposition: RecoveryBundleDisposition.Retained,
+            residualPath: null,
+            failure: null,
+            cause: "Deletion failed."));
+        Assert.Throws<ArgumentException>(() => new RecoveryBundleDeletionResult(
+            state: RecoveryBundleDeletionState.Deleted,
+            disposition: RecoveryBundleDisposition.Removed,
+            residualPath: path,
+            failure: null,
+            cause: null));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new RecoveryBundleDeletionResult(
+            state: (RecoveryBundleDeletionState)int.MaxValue,
+            disposition: RecoveryBundleDisposition.Unknown,
+            residualPath: null,
+            failure: null,
+            cause: null));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new RecoveryBundleDeletionResult(
+            state: RecoveryBundleDeletionState.Blocked,
+            disposition: (RecoveryBundleDisposition)int.MaxValue,
+            residualPath: null,
+            failure: null,
+            cause: "Deletion was blocked."));
     }
 
     private static (RecoveryBundleInput Input, RecoveryBundleEntry Entry) ManifestInput()

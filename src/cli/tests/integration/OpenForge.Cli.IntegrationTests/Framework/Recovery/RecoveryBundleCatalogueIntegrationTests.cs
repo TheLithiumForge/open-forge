@@ -172,6 +172,10 @@ public sealed class RecoveryBundleCatalogueIntegrationTests
 
             Assert.Equal(RecoveryBundleDeletionState.Deleted, finalDeletion.State);
             Assert.Equal(RecoveryBundleDeletionState.Deleted, draftDeletion.State);
+            Assert.Equal(RecoveryBundleDisposition.Removed, finalDeletion.Disposition);
+            Assert.Equal(RecoveryBundleDisposition.Removed, draftDeletion.Disposition);
+            Assert.Null(finalDeletion.ResidualPath);
+            Assert.Null(draftDeletion.ResidualPath);
             Assert.False(File.Exists(preparation.BundlePath));
             Assert.False(File.Exists(draftPath));
         }
@@ -220,6 +224,8 @@ public sealed class RecoveryBundleCatalogueIntegrationTests
                 candidate,
                 TestContext.Current.CancellationToken);
             Assert.Equal(RecoveryBundleDeletionState.Blocked, disposed.State);
+            Assert.Equal(RecoveryBundleDisposition.Unknown, disposed.Disposition);
+            Assert.Null(disposed.ResidualPath);
 
             using (var archive = ZipFile.Open(preparation.BundlePath, ZipArchiveMode.Update))
             {
@@ -239,6 +245,8 @@ public sealed class RecoveryBundleCatalogueIntegrationTests
                 TestContext.Current.CancellationToken);
 
             Assert.Equal(RecoveryBundleDeletionState.Blocked, changed.State);
+            Assert.Equal(RecoveryBundleDisposition.Unknown, changed.Disposition);
+            Assert.Equal(preparation.BundlePath, changed.ResidualPath);
             Assert.True(File.Exists(preparation.BundlePath));
         }
         finally

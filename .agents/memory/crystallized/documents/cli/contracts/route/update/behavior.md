@@ -297,21 +297,22 @@ The status formation rules are deterministic:
   verified application, including ordinary changes and all other verified
   no-ops, when the protected-Template `attention` condition does not apply.
   Planned changes alone do not create `attention`.
-- `attention` is formed only for the complete protected-Template condition above.
-  In apply mode, requested metadata and generated effects complete and verify
-  when present. In dry-run, the same condition and effect evidence are reported
-  without writes. A Template-only request may have no replacement effect and
-  still forms `attention`.
+- `attention` is formed for the complete protected-Template condition above or
+  post-verification recovery deletion `Failed`/positively observed `Retained`
+  after verified target effects. In apply mode, requested metadata and generated effects complete and verify when
+  present. In dry-run, only the protected-Template condition can form
+  `attention`, because recovery deletion does not run. A Template-only request
+  may have no replacement effect and still forms `attention`.
 - `incomplete` is formed when safe facts are available but required inspection or
   planning coverage cannot finish. No mutation begins.
 - `invalid` is formed for input, field, Template-reference, repetition, or
   target-kind violations. `blocked` is formed for a valid request whose safe
   complete plan cannot be established because an unsafe or ambiguous boundary
   remains. Neither is converted to `attention`.
-- `failed` is formed when an application, verification, bundle-handling failure
-  after effects begin, or another unexpected failure after a write prevents
-  completion. `interrupted` retains its cancellation meaning when no unexpected
-  application or verification failure changes the result.
+- `failed` is formed when an application or verification failure after effects
+  begin, post-verification recovery deletion `Failed`/`Unknown`, or another
+  unexpected failure after a write prevents completion. `interrupted` retains its cancellation meaning when
+  no unexpected application or verification failure changes the result.
 
 For ordinary operation conditions, status precedence is `blocked` > `incomplete`
 
@@ -421,27 +422,32 @@ generated body.
 
 ### Failure, interruption, and rerun
 
-When application or verification fails, the operation stops new effects and
-reports the actual residual draft or final path; a valid final remains when
-failure occurs after preparation. It never restores, reverses, or compensates
-for an earlier effect. An unexpected concurrent edit is preserved and reported
-as residual state rather than overwritten.
+Before post-verification deletion begins, an application, verification, or
+cancellation outcome stops new effects and reports the actual residual draft or
+final path; a valid final remains when preparation completed. It never restores,
+reverses, or compensates for an earlier effect. An unexpected concurrent edit is
+preserved and reported as residual state rather than overwritten.
 
 A failed operation remains `failed` because the requested update did not
 complete. Any unexpected failure after a write, including application or
 verification failure, is `failed`, not `attention`. An interruption remains
 `interrupted` when no unexpected application or verification failure changes the
-result. The result reports ordinary effect facts and the actual residual draft
-or final path without a recovery-derived current-target classification.
+result. For these pre-deletion outcomes, the result reports ordinary effect
+facts and the actual residual draft or final path without a recovery-derived
+current-target classification.
 
 The operation does not replay a saved plan. It computes a fresh plan from current
 facts when rerun and converges when the remaining state is safe. A closed final
 ZIP may remain after abrupt process termination, without an executable crash or
 power-loss guarantee. Recovery provenance does not classify current target
-state. After final verification, effects remain successful if bundle deletion
-fails; the result is `attention` with the exact residual path and cleanup
-guidance. Cleanup owns exact named final and draft deletion under its separate
-lease-bound contract.
+state. After final verification, `Deleted`/`Removed` permits normal completion.
+`Failed`/positively observed `Retained` keeps target effects successful and
+produces `attention`, the exact residual path, and
+cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
+provides one. When `Failed`/positively observed `Retained` recovery attention
+coexists with the protected-Template condition, cleanup guidance owns the single
+next action; the Template-protection facts remain visible evidence. Cleanup owns exact named
+final and draft deletion under its separate lease-bound contract.
 
 ## Presentation Relationship
 
@@ -503,13 +509,14 @@ boundary:
   intended bytes, generated projection, plan, preflight, status, and full effect
   evidence, while dry-run writes nothing.
 - All seven statuses, including safe-but-incomplete coverage with no writes,
-  unsafe or ambiguous blocked boundaries, post-write failed behavior, ordinary
-  complete changes and no-ops, and the sole protected-Template attention
-  condition. Planned changes alone must not form `attention`.
+  unsafe or ambiguous blocked boundaries, post-write or `Failed`/`Unknown`
+  recovery failed behavior, ordinary complete changes and no-ops, and the
+  protected-Template and `Failed`/positively observed `Retained` recovery
+  attention conditions. Planned changes alone must not form `attention`.
 - Verified no-op behavior before recovery-bundle preparation; external bundle
   storage, semantic final-ZIP verification, unknown/mismatched artifact
-  protection, collision handling, cleanup attention, and exact named lease-bound
-  Cleanup.
+  protection, collision handling, typed post-verification deletion
+  state/disposition facts, and exact named lease-bound Cleanup.
 - Expected-state revalidation before application and before each replacement,
   safe same-directory replacement, no weaker fallback, per-effect verification,
   complete semantic verification, retained partial state without restoration,

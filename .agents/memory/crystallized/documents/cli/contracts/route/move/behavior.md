@@ -316,15 +316,17 @@ The status selector applies the Interface meanings:
 
 - A complete safe plan in dry-run is `complete` unless a stronger condition
   applies. Planned effects do not create `attention`.
-- A complete and verified application is `complete`.
-- `attention` is currently unreachable for `route move`.
+- A complete and verified application with recovery `Deleted`/`Removed` is
+  `complete`.
+- Post-verification recovery deletion `Failed`/positively observed `Retained`
+  after verified effects is `attention`.
 - Safe but unfinished catalogue or reference coverage is `incomplete` and has no
   effects.
 - Invalid operands and consumed-source exact source-not-found are `invalid`.
 - Unsafe or ambiguous ownership, identity, route, destination, generated,
   expected-state, or recovery boundaries are `blocked`.
-- An unexpected post-effect application, verification, or bundle-handling failure is
-  `failed`.
+- An unexpected post-effect application or verification failure, or
+  post-verification recovery deletion `Failed`/`Unknown`, is `failed`.
 - Cancellation without an unexpected application or verification failure is
   `interrupted`.
 
@@ -419,14 +421,17 @@ post-move workspace and verifies the subject's destination, relative category
 layout, absence of the old subject, every intended reference meaning, and every
 affected generated projection.
 
-If application or verification fails after an effect begins, no new effect is
-started and no earlier effect is restored, reversed, or compensated. The actual
-residual draft or final path is reported; a valid final remains after
-preparation. Recovery provenance does not classify current target state. An
+Before post-verification deletion begins, if application or verification fails
+after an effect begins, no new effect is started and no earlier effect is
+restored, reversed, or compensated. The actual residual draft or final path is
+reported; a valid final remains when preparation completed. Recovery provenance does not classify current target state. An
 unexpected concurrent edit is preserved and reported as residual state. After
 all effects and final verification, delete only the positively recognized bundle
-created by this operation. If deletion fails, effects remain successful and the
-result is `attention` with the exact residual path and cleanup guidance.
+created by this operation. `Deleted`/`Removed` permits normal completion.
+`Failed`/positively observed `Retained` keeps target effects successful and
+produces `attention`, the exact residual path, and
+cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
+provides one.
 
 Cancellation is `interrupted` when no stronger failure remains. A closed final
 ZIP may remain after abrupt process termination, without an executable crash or
@@ -488,8 +493,9 @@ A conforming implementation must additionally prove:
   revalidation, per-effect verification, complete postcondition verification,
   retained partial state without restoration, residual preservation, and
   fresh-plan rerun;
-- all seven semantic statuses, including reserved unreachable `attention` and
-  consumed-source exact source-not-found `invalid`; and
+- all seven semantic statuses, including `Failed`/positively observed `Retained`
+  recovery `attention`, `Failed`/`Unknown` recovery `failed`, and consumed-source
+  exact source-not-found `invalid`; and
 - human/JSON parity, stream assignment, compact retention, structured
   detachment/effect evidence, and one-result rendering without rerunning work.
 

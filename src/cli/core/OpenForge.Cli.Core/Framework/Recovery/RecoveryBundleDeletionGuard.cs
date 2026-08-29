@@ -20,33 +20,33 @@ internal sealed class RecoveryBundleDeletionGuard(
         ArgumentNullException.ThrowIfNull(candidate);
         if (!lease.IsHeld)
         {
-            return RecoveryBundleDeletionResult.Blocked(
+            return RecoveryBundleDeletionResult.BlockedUnknown(
                 "Recovery deletion requires a held workspace lock lease.");
         }
 
         if (!BelongsToWorkspace(candidate, lease))
         {
-            return RecoveryBundleDeletionResult.Blocked(
+            return RecoveryBundleDeletionResult.BlockedUnknown(
                 "Recovery deletion requires an exact candidate from the held lease workspace.");
         }
 
         if (candidate.Kind == RecoveryBundleCandidateKind.Final
             && candidate.Integrity != RecoveryBundleIntegrity.Verified)
         {
-            return RecoveryBundleDeletionResult.Blocked(
+            return RecoveryBundleDeletionResult.BlockedUnknown(
                 "Recovery deletion requires semantic validation for a final bundle.");
         }
 
         if (candidate.Kind == RecoveryBundleCandidateKind.Draft
             && candidate.Integrity != RecoveryBundleIntegrity.Incomplete)
         {
-            return RecoveryBundleDeletionResult.Blocked(
+            return RecoveryBundleDeletionResult.BlockedUnknown(
                 "Recovery deletion requires an exact path-only incomplete draft.");
         }
 
         if (cancellationToken.IsCancellationRequested)
         {
-            return RecoveryBundleDeletionResult.Cancelled();
+            return RecoveryBundleDeletionResult.CancelledUnknown();
         }
 
         var catalogue = await _catalogue.ReadAsync(
@@ -54,12 +54,12 @@ internal sealed class RecoveryBundleDeletionGuard(
             cancellationToken).ConfigureAwait(false);
         if (catalogue.State == RecoveryBundleCatalogueState.Cancelled)
         {
-            return RecoveryBundleDeletionResult.Cancelled();
+            return RecoveryBundleDeletionResult.CancelledUnknown();
         }
 
         if (catalogue.State != RecoveryBundleCatalogueState.Available)
         {
-            return RecoveryBundleDeletionResult.Blocked(
+            return RecoveryBundleDeletionResult.BlockedUnknown(
                 catalogue.Cause ?? "The recovery catalogue could not be re-enumerated under the lease.");
         }
 
@@ -67,10 +67,17 @@ internal sealed class RecoveryBundleDeletionGuard(
             item.Path,
             candidate.Path,
             PathComparison()));
-        if (current is null || !MatchesExactSnapshot(candidate, current))
+        if (current is null)
         {
-            return RecoveryBundleDeletionResult.Blocked(
+            return RecoveryBundleDeletionResult.BlockedUnknown(
                 "The selected recovery candidate changed before deletion.");
+        }
+
+        if (!MatchesExactSnapshot(candidate, current))
+        {
+            return RecoveryBundleDeletionResult.BlockedUnknown(
+                "The selected recovery candidate changed before deletion.",
+                candidate.Path);
         }
 
         if (candidate.Kind == RecoveryBundleCandidateKind.Final)
@@ -81,7 +88,7 @@ internal sealed class RecoveryBundleDeletionGuard(
                 cancellationToken).ConfigureAwait(false);
             if (finalRead.State == RecoveryBundleReadState.Cancelled)
             {
-                return RecoveryBundleDeletionResult.Cancelled();
+                return RecoveryBundleDeletionResult.CancelledRetained(candidate.Path);
             }
 
             if (finalRead.State != RecoveryBundleReadState.Valid
@@ -90,14 +97,15 @@ internal sealed class RecoveryBundleDeletionGuard(
                     candidate,
                     RecoveryBundleCandidateSnapshot.VerifiedFinal(verified)))
             {
-                return RecoveryBundleDeletionResult.Blocked(
-                    finalRead.Cause ?? "The selected final bundle failed semantic revalidation.");
+                return RecoveryBundleDeletionResult.BlockedUnknown(
+                    finalRead.Cause ?? "The selected final bundle failed semantic revalidation.",
+                    candidate.Path);
             }
         }
 
         if (cancellationToken.IsCancellationRequested)
         {
-            return RecoveryBundleDeletionResult.Cancelled();
+            return RecoveryBundleDeletionResult.CancelledRetained(candidate.Path);
         }
 
         try
@@ -112,7 +120,7 @@ internal sealed class RecoveryBundleDeletionGuard(
                 var failure = observationFailure
                     ?? throw new InvalidOperationException(
                         "An unavailable recovery deletion observation requires a typed failure.");
-                return RecoveryBundleDeletionResult.Attention(
+                return RecoveryBundleDeletionResult.FailedUnknown(
                     candidate.Path,
                     $"The recovery candidate absence could not be confirmed: {failure.DirectCause}",
                     failure);
@@ -123,7 +131,7 @@ internal sealed class RecoveryBundleDeletionGuard(
                 var failure = new FilesystemFailure(
                     FilesystemFailureKind.InputOutput,
                     "The recovery candidate remains after its delete operation.");
-                return RecoveryBundleDeletionResult.Attention(
+                return RecoveryBundleDeletionResult.FailedRetained(
                     candidate.Path,
                     failure.DirectCause,
                     failure);
@@ -133,19 +141,19 @@ internal sealed class RecoveryBundleDeletionGuard(
         }
         catch (UnauthorizedAccessException exception)
         {
-            return Attention(candidate.Path, FilesystemFailureKind.AccessDenied, exception);
+            return FailedUnknown(candidate.Path, FilesystemFailureKind.AccessDenied, exception);
         }
         catch (Exception exception) when (exception is ArgumentException or PathTooLongException)
         {
-            return Attention(candidate.Path, FilesystemFailureKind.InvalidPath, exception);
+            return FailedUnknown(candidate.Path, FilesystemFailureKind.InvalidPath, exception);
         }
         catch (Exception exception) when (exception is NotSupportedException or PlatformNotSupportedException)
         {
-            return Attention(candidate.Path, FilesystemFailureKind.Unsupported, exception);
+            return FailedUnknown(candidate.Path, FilesystemFailureKind.Unsupported, exception);
         }
         catch (IOException exception)
         {
-            return Attention(candidate.Path, FilesystemFailureKind.InputOutput, exception);
+            return FailedUnknown(candidate.Path, FilesystemFailureKind.InputOutput, exception);
         }
     }
 
@@ -192,15 +200,15 @@ internal sealed class RecoveryBundleDeletionGuard(
             && expectedVerified.Entries.SequenceEqual(actualVerified.Entries);
     }
 
-    private static RecoveryBundleDeletionResult Attention(
+    private static RecoveryBundleDeletionResult FailedUnknown(
         string residualPath,
         FilesystemFailureKind kind,
         Exception exception)
     {
         var failure = FilesystemFailure.FromException(kind, exception);
-        return RecoveryBundleDeletionResult.Attention(
+        return RecoveryBundleDeletionResult.FailedUnknown(
             residualPath,
-            $"The recovery candidate remains at '{residualPath}': {failure.DirectCause}",
+            $"The recovery candidate disposition is unknown after deletion failed: {failure.DirectCause}",
             failure);
     }
 

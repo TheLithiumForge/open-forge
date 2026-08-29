@@ -27,8 +27,9 @@ The operation follows one complete typed flow:
 
 ```text
 validated input
-  -> resolved sources and target closure
-  -> authoritative topology and metadata facts
+  -> one complete SourceCatalogue
+  -> neutral generated-navigation formation
+  -> normalized logical selection and target closure
   -> complete expected generated bodies
   -> complete ordered mutation plan
   -> preflight
@@ -48,6 +49,12 @@ Read and selection facts do not acquire mutation authority. Persistent effects
 begin only after the complete selected target set, expected projection, ordered
 plan, and preflight have succeeded.
 
+The neutral formation step is an I1-owned shared expansion of the accepted GN1
+capability. GN1 remains Complete. Index owns command selection, plan
+orchestration, status, findings, presentation, and its use of M1 mechanics. It
+does not turn Generated Navigation into an applier or universal mutation
+coordinator.
+
 ## Input Normalization And Target Closure
 
 Request normalization accepts repeated `--dry-run` occurrences and collapses
@@ -64,18 +71,31 @@ Workspace validation applies the blocked condition in the [Workspace
 contract](interface.md#workspace) before route resolution. It does not infer a
 Loader or routed topology from a selected directory.
 
-After request normalization, the resolver derives current routed topology from
-current filesystem and source facts rather than generated lines. This satisfies
+After request normalization, one complete `SourceCatalogue` is required before
+generated-navigation formation. The body-free formation uses the existing
+`SourceRouteTopologyBuilder` and returns one cohesive immutable fact containing
+the intended sources, topology, Loader fact, proven physical-alias groups,
+ambiguities, and issues. It does not read document bodies, discover generated
+lines, select command targets, form command findings or status, or choose write
+policy. Projection consumes this single formation fact rather than assembling a
+second source/topology view.
+
+Formation derives current routed topology from current filesystem and source
+facts rather than generated lines. This satisfies
 the rooted-selection and authoritative-projection boundaries in the [Rooted
 selection](interface.md#rooted-selection) and [Authoritative
 Projection](interface.md#authoritative-projection) sections.
 
 Operand-free resolution applies the [Rooted selection](interface.md#rooted-selection)
-rules. The resolver establishes the selected Loader and reachable entrypoint
-regions from current topology before projection.
+rules. When the Loader is present, intended roots are the structurally valid,
+physically unique recognized entrypoints that directly represent
+`.agents/<slug>` folders. The resolver establishes the selected Loader and
+reachable entrypoint regions from that topology before projection. Multiple
+recognized entrypoints representing one root folder are ambiguous and block.
 
-If the rooted-selection preconditions cannot be established, resolution blocks
-without an alternate root or detached-tree fallback.
+When the Loader is missing, formation returns zero intended roots. Operand-free
+resolution blocks without an alternate root or detached-tree fallback. An
+explicit selection whose detached closure is complete may proceed.
 
 Explicit entrypoint resolution applies the [Entrypoint selection](interface.md#entrypoint-selection)
 closure and parent rules. It computes that closure from direct routed
@@ -90,7 +110,8 @@ when the public target precondition cannot be established.
 
 Detached resolution accepts only the conditions in [Detached entrypoint
 selection](interface.md#detached-entrypoint-selection); it never creates absent
-routing context.
+routing context. A missing intermediate entrypoint keeps a lower complete
+topology detached; resolution never bridges the gap or invents a parent.
 
 An overwrite reference is normalized to the base logical source under the
 shared [CLI Source References Behavior Contract](../shared/source-references/behavior.md).
@@ -102,11 +123,19 @@ identity is established. Overwrite content never becomes a generated entry and
 the operation never modifies an overwrite companion.
 
 The resolver unions operand closures and deduplicates target identities before
-planning. Recognized `_index.md` entrypoints are canonicalized by physical
-identity during this deduplication. If traversal reaches the same recognized
-physical entrypoint through more than one path, it produces one target region,
-one plan item, and at most one effect. Processing each recognized physical
-entrypoint once is conformance behavior, not staging or migration behavior.
+planning. It collapses only aliases proven on the current host and only when
+their route and recognized document-form identities are compatible. A proven
+incompatible alias blocks. Broader portable case, Unicode, and device-name
+equivalence remains deferred rather than inferred. Compatible traversal paths
+to one physical entrypoint produce one normalized logical selection, one target
+region, one plan item, and at most one effect.
+
+The result selection contains safe normalized logical sources only. Automatic
+selection contains the Loader; explicit selection contains resolved operands;
+overwrites normalize to their bases; ordering is canonical path then ID using
+ordinal comparison; and raw operands are discarded. Selection origin and scope
+use only the finite values fixed by the Interface Contract. These rules do not
+change current-visible Route or Context facts.
 
 Canonical target ordering is computed after deduplication using canonical
 workspace-relative containing-file paths and ordinal comparison. Discovery
@@ -195,17 +224,20 @@ replacement, formatting, or any other persistent effect.
 
 Human dry-run output includes the exact bounded generated-region diff for every
 planned update. Structured output includes the exact expected generated change
-through typed before-and-after entries or equivalent bounded diff evidence. When
-a non-blocking finding is present, the same complete plan and exact diffs remain
-in the result, which states that no files changed. Neither presentation exposes
-unrelated authored bytes or private recovery material.
+through typed before-and-after generated-interior bodies. Human diff formation
+uses the exact JSON-escaped header and non-truncating token rules in the
+[Interface Contract](interface.md#dry-run): before tokens first with `- `,
+expected tokens second with `+`, newline-preserving LF/CRLF tokenization, one
+tail token, and one `""` token for an empty body. It emits no context, authored
+prefix/suffix, whole-file bytes, heuristic, elision, limit, or truncation. The
+result states that no files changed. Neither presentation exposes unrelated
+authored bytes or private recovery material.
 
-A dry run with changes and no non-blocking finding is `complete` when the
-complete plan and application preconditions were established safely. It reports
-that regions would be updated and that no files changed. A dry run with safely
-established planned changes and a non-blocking finding forms `attention`. It
-exposes the complete plan and exact bounded diffs, states that no files changed,
-and does not claim on-disk verification of bytes that were not written.
+A dry run with changes is `complete` when the complete plan and application
+preconditions were established safely. It reports that regions would be updated
+and that no files changed, and does not claim on-disk verification of bytes that
+were not written. Dry run cannot retain a recovery artifact, so no current dry-
+run condition produces `attention`.
 
 ## Application Authority And Recovery
 
@@ -245,20 +277,39 @@ Every planned existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or
 `Delete`) must match the preparation;
 `FileChangeApplier` performs one final
 effect per target. All bundle preparation is complete before the first target
-effect. A collision or verification failure blocks before effects.
+effect. A collision or verification failure blocks before effects. Successful
+preparation begins the apply phase: later per-target drift fails as
+`index.target-changed-during-apply`, leaves that region `not-started`, retains
+the final bundle, and stops new effects.
 
 After every target effect and the complete projection verify, delete only the
-positively recognized bundle created by this command. If deletion fails, target
-effects remain successful and the result is `attention` with the exact residual
-bundle path and cleanup guidance. Handled application, verification, or
-cancellation failure stops new effects and reports the actual residual draft or
-final path; a valid final remains after preparation. A closed final ZIP may
+positively recognized bundle created by this command. `Deleted`/`Removed`
+produces recovery `removed` and, absent another finding, `complete`.
+`Failed`/`Retained` follows only positive remaining presence and produces
+`attention`, `index.recovery-artifact-retained`, the exact residual path, and
+cleanup guidance. `Failed`/`Unknown` produces `failed`,
+`index.recovery-failed`, and recovery `unknown`, with an exact expected path only
+when M1 returns one. `Blocked` and `Cancelled` retain their neutral M1 facts for
+later operation mapping. A handled application, verification, or cancellation
+failure after preparation but before post-verification deletion stops new
+effects and reports the exact final path; that positively verified final remains
+because deletion has not begun. A deletion result with disposition `Unknown`
+makes no retention claim. A closed final ZIP may
 remain after abrupt process termination, without an executable crash or
 power-loss guarantee. The command never restores a target automatically or
 derives current target state from recovery provenance. Cleanup owns exact named
 final and draft deletion under its separate lease-bound contract. A fresh
 invocation plans from current facts and never replays
 a saved plan or receipt.
+
+Recovery result formation uses only the fixed states in the Interface Contract.
+Dry run, no-op, and plans without an existing target are `not-required`. Required
+recovery that never positively created an artifact is `not-created`. A
+positively removed verified operation artifact is `removed`; `retained` requires
+positive presence; and an unprovable disposition is `unknown`. The residual path
+is exact and required for `retained`. It may accompany `unknown` only when M1
+truthfully reports one exact observed or expected support path; otherwise it is
+null. Recovery provenance never classifies current target bytes.
 
 ## Application, Verification, And Recovery
 
@@ -289,12 +340,15 @@ receipt, or undo instruction.
 Rerunning `index` computes a fresh plan from current facts and converges when the
 remaining state is safe. It never replays a saved plan.
 
-## Automatic Maintenance
+## Shared Projection Consumption
 
-Every CLI write that can change routing or indexed metadata uses the same
-authoritative projection, planner, effect, verification, and recovery behavior
-as `index`. Automatic maintenance does not start a hidden subprocess or invoke
-the public parser recursively.
+Every later CLI write that can change routing or indexed metadata consumes the
+same neutral formation and Generated Navigation projection facts. It does not
+start a hidden subprocess or invoke the public parser recursively. The owning
+mutation command supplies its intended post-write sources and owns its selection,
+complete parent plan, ordering, command result, and orchestration through M1.
+Index is not a universal coordinator, and Generated Navigation is never an
+applier.
 
 ### Intended post-write state
 
@@ -310,8 +364,9 @@ operations consider both current and intended topology so each affected
 exposing parent is included: move includes its old and new parents, while remove
 includes its old parent. A Loader projection is included when the selected
 subject is a Loader-exposed category. These route operations own their subject,
-ownership, reference, and complete mutation plans; `index` supplies only the
-generated-navigation projection and does not perform their mutation.
+ownership, reference, and complete mutation plans. Index supplies only the
+public orchestration for its own command. The neutral formation and
+generated-navigation projection supply shared facts and perform no mutation.
 
 When either route operation selects a category, its category plan may contain
 many physically contained entrypoints and resources, but the generated
@@ -383,15 +438,47 @@ target classification; no restoration or rollback is selected. Numeric process
 exits use the shared mapping defined by the accepted
 [Open Forge CLI Architecture](../../architecture.md#result-json-coordinates-and-process-status).
 
+The command-owned structured result uses exactly this top-level order:
+`mode`, `selection`, `regions`, `recovery`, `findings`, `counts`. It retains no
+raw operand. Each region uses exactly `source`, `action`, optional
+`beforeEntryCount`, optional `expectedEntryCount`, optional `change`, and
+`outcome`, in that order. The complete finite sets and coherence rules are those
+in [Structured output](interface.md#structured-output).
+
+A region with action `not-established` has no counts or change and outcome
+`not-established`; `unchanged` has both counts, no change, and
+`already-current`; `update` has a non-null expected count and a change. Its
+before count is the sole generated-Entries parser's count when the entire
+bounded interior parses, and is null for a valid replaceable but unparseable
+interior; human output renders that fact as `unknown`, never `0`. Dry-run updates are
+`not-requested`; an apply stopped before a target is `not-started`; known applied
+but unverified is `applied`; known applied and verified is `verified`; and
+unprovable disposition is `unknown`. Counts are exactly `regions`, `updates`,
+`unchanged`, `applied`, `verified`; applied counts update outcomes `applied` and
+`verified`, verified counts `already-current` and `verified`, and
+`updates + unchanged <= regions`.
+
+Every user-condition finding uses the exact 25-code order and fixed code/status
+mapping in the Interface Contract. Equal-code ordering delegates to the exact
+Interface rule: `sourceOccurrence` is `null` first and then positive integers in
+numeric ascending order, followed by `source.path`, `source.id`, and `cause`
+using ordinal comparison. Result
+status precedence is `failed` > `interrupted` > `invalid` > `blocked` >
+`incomplete` > `attention` > `complete`. Every finding status matches its code;
+`complete` has no findings; and the only current `attention` producer is a
+retained recovery artifact. `next` is formed from the exact status/first-finding
+matrix and literal commands and reasons in the Interface Contract and never
+interpolates operands.
+
 ## Behavioral Conformance
 
 The behavioral concerns allocated to this contract are mandatory evidence
 concerns. Eventual implementation evidence must cover:
 
-- Rooted, entrypoint, leaf, detached, overwrite, repeated Boolean write-policy,
-  duplicate, overlapping, and recognized `_index.md` physical-identity
-  selection behavior. A recognized `_index.md` entrypoint is processed exactly
-  once by physical identity.
+- Complete-catalogue, present/missing Loader, intended-root uniqueness, missing-
+  intermediate detached, entrypoint, leaf, overwrite, repeated Boolean write-
+  policy, duplicate, overlapping, compatible-alias collapse, incompatible-alias
+  blocking, and deferred portable-equivalence behavior.
 - Filesystem-derived direct children independent of current generated lines.
 - Required metadata, native source metadata, missing values, malformed values,
   and the absence of invented fallback meaning.
@@ -401,8 +488,8 @@ concerns. Eventual implementation evidence must cover:
   heading or marker boundary.
 - Byte preservation outside generated interiors.
 - Complete planning, exact dry-run diffs, no persistent dry-run effects, dry-run
-  preflight blockers, and `attention` formation for safely established planned
-  changes with non-blocking findings.
+  preflight blockers, and proof that dry run cannot form the current retained-
+  artifact `attention` condition.
 - Verified no-op behavior before bundle preparation.
 - Existing-target bundle preparation and readback verification, unknown and
   colliding bundle protection, all-before-first-effect readiness, success-only
@@ -414,8 +501,12 @@ concerns. Eventual implementation evidence must cover:
 - Automatic creation, metadata change, move, remove, Framework, and Extension
   plans against intended post-write state.
 - Parent dry-runs and results that include generated effects without recursive
-  command invocation, while preserving one typed result and the accepted human
-  and structured stream behavior.
+  command invocation, while preserving the owning command's one typed result and
+  keeping Index orchestration and Generated Navigation facts in their accepted
+  boundaries.
+- Exact 25 finding-code/status mappings and order, status precedence, next-action
+  matrix, reduced JSON order, region/recovery finite-state coherence, counts, and
+  non-truncating generated-interior diff identity.
 
 Direct tests should prove the relevant selection, projection, ordering, marker,
 effect-planning, status, and no-op concerns. Focused integration tests should

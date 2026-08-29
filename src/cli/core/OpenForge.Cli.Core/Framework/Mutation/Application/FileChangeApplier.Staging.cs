@@ -34,6 +34,7 @@ internal sealed partial class FileChangeApplier
                 return FileChangeReceipt.NotStarted(
                     context.Change,
                     context.Before,
+                    FileChangeNotStartedReason.ApplicationFailed,
                     "The staged bytes did not match the intended file bytes.");
             }
 
@@ -50,7 +51,8 @@ internal sealed partial class FileChangeApplier
                 return FileChangeReceipt.NotStarted(
                     context.Change,
                     context.Before,
-                    "File application was cancelled before its target effect.");
+                    FileChangeNotStartedReason.Cancelled,
+                    CancellationBeforeEffectCause);
             }
 
             var overwrite = context.Change.Kind is PlannedFileChangeKind.Replace
@@ -77,13 +79,15 @@ internal sealed partial class FileChangeApplier
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
-                "File application was cancelled before its target effect.");
+                FileChangeNotStartedReason.Cancelled,
+                CancellationBeforeEffectCause);
         }
         catch (Exception exception) when (IsFilesystemException(exception))
         {
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
+                FileChangeNotStartedReason.ApplicationFailed,
                 FilesystemFailure.FromException(
                     FailureKind(exception),
                     exception).DirectCause);

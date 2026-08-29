@@ -8,7 +8,8 @@ open-forge:
 
 ## Task State
 
-- State: Active. Context is Complete and
+- State: Complete in exact feature candidate
+  `4e89d945b38a2d1e24600dd22789b55e4395a534`. Context is Complete and
   squash-integrated at `ca097a2`; Extension List is Complete and
   squash-integrated at `db0d39a`. The combined managed Unit `978/978`,
   Integration `354/354`, EndToEnd `111/111`, Native AOT Integration `354/354`,
@@ -21,8 +22,9 @@ open-forge:
   Complete and squash-integrated at `21e5200`, with full managed Unit `1030/1030`,
   Integration `357/357`, and Native AOT Integration `357/357`. Mutation
   Foundation is Complete at exact production candidate `e7d937f`. Public Index
-  is Ready and next, but its public implementation has not started and is not
-  Active.
+  is Complete in this feature candidate after operation commit `125b6a2a` and
+  public composition and presentation commit `4e89d945`. Local squash
+  integration into `develop` and exact tree-equality proof remain pending.
 - Responsible role: Overseer.
 - Last updated: 2026-08-29.
 
@@ -109,7 +111,9 @@ presentation/acceptance children. No shared source capability may be mutated in
 parallel. References may begin only after the source and document facts it needs
 are accepted. Context waits for accepted Find and References facts. Extension
 discovery may proceed independently on its accepted source-catalogue boundary.
-Index waits for routing, document, source, and reference facts.
+Index consumes the accepted routing, document, source, reference, GN1, and M1
+facts. Completed I1 adds only its body-free formation expansion and public
+command orchestration; it does not reopen those predecessors.
 
 Every child owns its request, result, findings, presentation, help, and public
 scenario. Shared facts move only through a Mastermind integration increment.
@@ -122,7 +126,7 @@ scenario. Shared facts move only through a Mastermind integration increment.
 - [x] [Implement Extension catalogue and source listing without lifecycle inference](extension-list.md) — Complete; accepted rebased integration tip `5e6babf`, squash-integrated at `db0d39a` — Implementer: Extension Discovery Task Mastermind
 - [x] [Implement exact Extension package inspection without mutation or installation behavior](extension-inspect.md) — Complete; accepted rebased feature `2b1e63d`, squash-integrated at `73b01be`, with managed and portable `linux-x64` Native AOT acceptance — Implementer: Extension Inspect Task Mastermind and Overseer
 - [x] [Promote one neutral routed authored-metadata fact for Open Forge Markdown and native Skills](routed-authored-metadata-foundation.md) — Complete; accepted feature `8a29321`, squash-integrated at `5924698` with managed and native AOT evidence — Implementer: Routed Metadata Task Mastermind
-- [ ] [Implement deterministic generated Entries projection and idempotent index application](index-command.md) — Ready and next; Generated Navigation is integrated at `21e5200` and Mutation Foundation is Complete at exact production candidate `e7d937f`; no public implementation is Active — Implementer: Overseer for the sequential public boundary
+- [x] [Implement deterministic generated Entries projection and idempotent index application](index-command.md) — Complete in exact feature candidate `4e89d945b38a2d1e24600dd22789b55e4395a534`; local squash integration into `develop` and exact tree-equality proof remain pending — Implementer: Overseer-managed bounded Index owner
 
 ## Historical Find Progress And Current Routing Condition
 
@@ -165,8 +169,9 @@ Complete and integrated at `db0d39a`. Extension Inspect is Complete and
 integrated at `73b01be`. Routed Authored
 Metadata is Complete at `5924698`; Generated Navigation is Complete and
 integrated at `21e5200`. Mutation Foundation is Complete at exact production
-candidate `e7d937f`; public Index is Ready and next without implementation or an
-Active assignment.
+candidate `e7d937f`; public Index is Complete in exact feature candidate
+`4e89d945b38a2d1e24600dd22789b55e4395a534`. Local squash integration and exact
+tree-equality proof remain pending.
 
 The temporary compatibility-name correction renames the Working Index and
 References Task files and stages their command contracts under candidate route

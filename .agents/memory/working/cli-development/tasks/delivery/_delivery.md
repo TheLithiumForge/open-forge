@@ -14,33 +14,34 @@ open-forge:
 
 ## Expected Outcome
 
-The canonical executable publishes for six RIDs, thin npm wrappers invoke the
-matching binary without behavior or install-time compilation, all packages pass
-packed journeys, supply-chain artifacts are produced, support floors execute,
-public documentation matches the product, and the maintainer accepts one complete
-main-only release.
+The canonical `linux-x64` executable and thin package wrapper pass native build
+and smoke, packed install and invocation, and checksum evidence. Public
+documentation matches that exact product boundary, and the maintainer accepts
+one complete main-only release.
 
 ## Delivery Invariants
 
 - No command subset or partial package release.
 - No wrapper download, postinstall compilation, behavior, or fallback runtime.
-- Checksums, signatures, SBOM, provenance, and OIDC attestation bind exact native
-  artifacts.
+- Checksums bind the exact accepted native and packed artifacts.
 - Release credentials and remote publication remain outside local Tasks until the
   explicit release Task authorizes them.
+- Additional RIDs, signatures, SBOM, provenance, OIDC attestation, and support-
+  floor matrices are future expansions that require a later explicit maintainer
+  decision. They are not current D1 evidence.
 
 ## Child Tasks
 
-- [ ] [Create and prove the thin launcher package and six platform packages from accepted native artifacts](01-npm-packages.md) — Planned — Implementer: Not assigned
-- [ ] [Complete six-RID native CI, support-floor execution, and reproducible artifact collection](02-native-ci.md) — Planned — Implementer: Not assigned
-- [ ] [Produce checksums, signatures, SBOM, provenance, and OIDC attestation for exact release artifacts](03-supply-chain.md) — Planned — Implementer: Not assigned
+- [ ] [Create and prove the thin launcher and `linux-x64` platform package from the accepted native artifact](01-npm-packages.md) — Planned — Implementer: Not assigned
+- [ ] [Complete current `linux-x64` native CI and reproducible artifact collection](02-native-ci.md) — Planned — Implementer: Not assigned
+- [ ] [Preserve future supply-chain expansion behind an explicit decision](03-supply-chain.md) — Deferred outside current D1 — Implementer: Not assigned
 - [ ] [Align public documentation, run complete acceptance, publish from main, and close the program](04-release.md) — Planned — Implementer: Not assigned
 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Create and prove the thin launcher package and six platform packages from accepted native artifacts](01-npm-packages.md) - #Memory #Working #CLI #Task #Distribution #Npm #Package #Contextual
-- [Complete six-RID native CI, support-floor execution, and reproducible artifact collection](02-native-ci.md) - #Memory #Working #CLI #Task #Distribution #NativeAOT #CI #Contextual
-- [Produce checksums, signatures, SBOM, provenance, and OIDC attestation for exact release artifacts](03-supply-chain.md) - #Memory #Working #CLI #Task #Distribution #SupplyChain #Security #Contextual
+- [Create and prove the thin launcher and linux-x64 platform package from accepted native artifacts](01-npm-packages.md) - #Memory #Working #CLI #Task #Distribution #Npm #Package #Contextual
+- [Complete current linux-x64 native CI and reproducible artifact collection](02-native-ci.md) - #Memory #Working #CLI #Task #Distribution #NativeAOT #CI #Contextual
+- [Preserve future signatures, SBOM, provenance, and OIDC expansion behind explicit acceptance](03-supply-chain.md) - #Memory #Working #CLI #Task #Distribution #SupplyChain #Security #Contextual
 - [Align public documentation, run complete acceptance, publish from main, and close the program](04-release.md) - #Memory #Working #CLI #Task #Distribution #Documentation #Release #Contextual
 <!-- open-forge:generated-index:end -->

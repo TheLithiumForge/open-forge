@@ -35,10 +35,9 @@ internal sealed partial class FileChangeApplier
         }
         catch (Exception exception) when (IsFilesystemException(exception))
         {
-            return FileChangeReceipt.CompletionUnknown(
+            return FileChangeReceipt.VerificationUnavailable(
                 context.Change,
                 context.Before,
-                after: null,
                 FilesystemFailure.FromException(
                     FailureKind(exception),
                     exception).DirectCause);
@@ -59,10 +58,9 @@ internal sealed partial class FileChangeApplier
                 result.Cause ?? "The applied file state did not match the intended state.");
         }
 
-        return FileChangeReceipt.CompletionUnknown(
+        return FileChangeReceipt.VerificationUnavailable(
             context.Change,
             context.Before,
-            after: null,
             result.Cause
                 ?? result.Failure?.DirectCause
                 ?? "The applied file state could not be observed.");
@@ -74,6 +72,15 @@ internal sealed partial class FileChangeApplier
         Exception effectException)
     {
         var result = await ObserveAfterAsync(context, physicalPath).ConfigureAwait(false);
+        if (result.State == FileExpectationValidationState.Matched
+            && result.Actual is { } intended)
+        {
+            return FileChangeReceipt.Verified(
+                context.Change,
+                context.Before,
+                intended);
+        }
+
         if (result.Actual is { } observed)
         {
             if (observed.Expectation == context.Before.Expectation)
@@ -81,6 +88,7 @@ internal sealed partial class FileChangeApplier
                 return FileChangeReceipt.NotStarted(
                     context.Change,
                     context.Before,
+                    FileChangeNotStartedReason.ApplicationFailed,
                     FilesystemFailure.FromException(
                         FailureKind(effectException),
                         effectException).DirectCause);

@@ -347,16 +347,20 @@ target. All preparation completes before the first target effect.
 Immediately before application, the command rechecks every target, source,
 Template, route, and collision fact. It applies complete planned bytes, verifies
 each effect, then verifies destination identity, metadata, copied body, parent
-route exposure, and generated navigation. A handled failure or cancellation
-stops new effects and reports the actual residual draft or final path; a valid
-final remains when failure occurs after preparation. A closed final ZIP
+route exposure, and generated navigation. Before post-verification deletion
+begins, a handled application, verification, or cancellation outcome stops new
+effects and reports the actual residual draft or final path; a valid final
+remains when preparation completed. A closed final ZIP
 may remain after abrupt process termination, without an executable crash or
 power-loss guarantee. Recovery provenance does not classify current target
 state, and no target is restored automatically. After whole-command
 verification, delete only the positively recognized bundle created by this
-operation. A cleanup failure leaves effects successful and forms `attention`
-with the exact residual-bundle path and guidance. Cleanup owns exact named final
-and draft deletion under its separate lease-bound contract.
+operation. `Deleted`/`Removed` permits normal completion.
+`Failed`/positively observed `Retained` keeps target effects successful and
+produces `attention`, the exact residual path, and
+cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
+provides one. Cleanup owns exact named final and draft deletion under its
+separate lease-bound contract.
 
 ## Human Output
 
@@ -445,8 +449,9 @@ The structured result exposes:
 - Application or dry-run mode, completeness, and safety state.
 - Intended destination and generated-region effects.
 - Dry-run, recovery-bundle, application, verification, and recovery facts.
-- Changed and unchanged effects, verification facts, and any actual residual
-  draft or final recovery path, without classifying current target state.
+- Changed and unchanged effects, verification facts, and typed observed or
+  unknown recovery facts. An exact residual or expected path appears only when
+  the recovery result provides one, without classifying current target state.
 - Coverage observations, availability conditions, completeness and safety state,
   semantic status, and at most one required `Next:` action when applicable.
 
@@ -455,21 +460,20 @@ CLI Architecture.
 
 ## Semantic Results
 
-| Result        | Meaning                                                                                                                                                                                                                                |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | Normal creation, valid Template instantiation, a safe dry-run with planned changes, generated-navigation effects, or application and final verification completed, including a verified identical-target no-op.                        |
-| `attention`   | Uniform result vocabulary reserved for a future accepted finite condition. Route Create currently has no such condition, so this status is unreachable. Human output would say `requires attention` if a future condition is accepted. |
-| `incomplete`  | Safe facts are available, but required inspection or planning coverage cannot complete; no mutation begins.                                                                                                                            |
-| `invalid`     | Command input, metadata, Template reference, flag use, or target shape does not follow this interface.                                                                                                                                 |
-| `blocked`     | A valid request cannot establish or apply one safe complete creation plan because safety or authority is unsafe or ambiguous; no mutation begins.                                                                                      |
-| `failed`      | An unexpected application, verification, or bundle-handling failure occurs after a persistent effect begins; the result remains `failed` and is never converted into `attention`.                                                   |
+| Result        | Meaning                                                                                                                                                                                                                               |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `complete`    | Normal creation, valid Template instantiation, a safe dry-run with planned changes, generated-navigation effects, or application and final verification completed, including a verified identical-target no-op.                       |
+| `attention`   | Post-verification recovery deletion returns `Failed` with positively observed disposition `Retained`; target effects remain successful, and human output says `requires attention` with the exact residual path and cleanup guidance. |
+| `incomplete`  | Safe facts are available, but required inspection or planning coverage cannot complete; no mutation begins.                                                                                                                           |
+| `invalid`     | Command input, metadata, Template reference, flag use, or target shape does not follow this interface.                                                                                                                                |
+| `blocked`     | A valid request cannot establish or apply one safe complete creation plan because safety or authority is unsafe or ambiguous; no mutation begins.                                                                                     |
+| `failed`      | An unexpected application or verification failure occurs after a persistent effect begins, or recovery deletion returns `Failed`/`Unknown`; `Failed`/positively observed `Retained` recovery is the distinct `attention` case.        |
 | `interrupted` | The caller cancelled before completion; an unexpected application or verification failure remains `failed`.                                                                                                                           |
 
-Route Create has no finite current `attention` condition. Planned changes do not
-create `attention`, and the command does not inspect Template placeholders or
-infer authoring quality to manufacture one. The status remains part of the
-uniform seven-status vocabulary and is reserved until a future accepted finite
-condition exists.
+Planned changes do not create `attention`. Only `Failed`/positively observed
+`Retained` recovery after verified target effects creates it. The command does not inspect
+Template placeholders or infer authoring quality to manufacture another
+condition.
 
 For ordinary operation conditions, status precedence is `blocked` > `incomplete`
 
@@ -557,8 +561,9 @@ Gate 5 executable proof must cover:
   `complete`.
 - Verified no-op behavior before mutation and recovery-bundle preparation.
 - All seven semantic statuses, including safe-coverage `incomplete`, blocked
-  unsafe or ambiguous safety and authority, post-write `failed`, and the
-  currently unreachable reserved `attention` status.
+  unsafe or ambiguous safety and authority, post-write or `Failed`/`Unknown`
+  recovery `failed`, and `Failed`/positively observed `Retained` recovery
+  `attention`.
 - Human stream allocation, one JSON result on stdout for every status, bounded
   diagnostics on stderr, compact retention and at-most-one `Next:` behavior,
   and no mixed human text in JSON output.
@@ -568,7 +573,8 @@ Gate 5 executable proof must cover:
 The [Behavior Contract](behavior.md) records the semantic, projection, effect,
 safety, recovery, and conformance evidence for the remaining verification
 obligations, including automatic parent effects, recovery-bundle behavior,
-expected-state changes, cleanup attention, and rerun convergence.
+expected-state changes, post-verification deletion state/disposition facts, and rerun
+convergence.
 
 ## Related Current Sources
 

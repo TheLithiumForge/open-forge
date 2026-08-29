@@ -198,15 +198,22 @@ deterministic canonical UTF-8 whole-document representation; formatting,
 ordering, and line-ending trivia may be normalized. A semantic no-op publishes
 no lifecycle write.
 
-On handled failure or cancellation, stop new effects and report the actual
-residual draft or final path; a valid final remains after preparation. A closed
-final ZIP may remain after abrupt process termination, without an executable
-crash or power-loss guarantee. Never restore, roll back, compensate for an
-effect, derive current target state from recovery provenance, or create a
+Before post-verification deletion begins, a handled application, verification,
+publication, or cancellation outcome stops new effects and reports the actual
+residual draft or final path; a valid final remains when preparation completed.
+A closed final ZIP may remain after abrupt process termination, without an
+executable crash or power-loss guarantee. Never restore, roll back, compensate
+for an effect, derive current target state from recovery provenance, or create a
 journal, progress receipt, or persisted plan. After final verification of
-whole-operation success, delete the bundle. If recognized deletion fails,
-effects remain successful and the result is `attention` with the exact residual
-path and cleanup guidance.
+whole-operation success, delete the bundle. `Deleted`/`Removed` permits normal
+completion. `Failed`/positively observed `Retained` keeps target effects
+successful and produces `attention`, the exact residual path, and cleanup
+guidance.
+`Failed`/`Unknown` produces `failed` and reports
+an exact expected path only when the deletion result provides one.
+When `Failed`/positively observed `Retained` recovery attention coexists with a
+finite non-blocking fact, cleanup guidance owns the single next action; the
+other fact remains visible evidence.
 
 Explicit Cleanup owns exact named final and draft deletion under its separate
 lease-bound contract. Unknown or differently named artifacts remain untouched.

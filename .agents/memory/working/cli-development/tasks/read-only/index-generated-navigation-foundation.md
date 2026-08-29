@@ -12,6 +12,11 @@ open-forge:
   `develop` at `21e5200`. The foundation consumes `SourceAuthoredMetadataFacts`
   while retaining `SourceDocumentForm`, including form-derived native Skill
   classification, and exposes no command or effect surface.
+- I1 dependency note: GN1 remains Complete and is not reopened. Active I1 owns a
+  shared expansion that forms one cohesive immutable Generated Navigation input
+  from one complete `SourceCatalogue` through the existing
+  `SourceRouteTopologyBuilder`. Projection will consume that formation; GN1
+  still owns pure projection and bounded-region facts only.
 - Parent: [Implement Index](index-command.md).
 - Responsible role: bounded Generated Navigation Task Mastermind.
 - Profile: Assured shared foundation because later Index, route mutation, Doctor,
@@ -26,6 +31,13 @@ already selected valid generated region, forms canonical direct-child `Entries`
 bytes including the empty projection, deduplicates by physical identity, retains
 deterministic ordinal order, and returns immutable expected-region and bounded
 change facts. It performs no filesystem effect.
+
+The accepted projection does not itself define how a command assembles a
+complete catalogue, intended Loader roots, detached topology, or physical-alias
+groups. Active I1 owns that missing body-free formation boundary as a shared
+expansion. It must not read document bodies, discover generated lines, add
+command policy, apply an effect, or change current-visible Route or Context
+facts.
 
 ## Architecture And Ownership
 
@@ -46,6 +58,10 @@ Protected paths are every `Commands/**` path, root composition,
 projects, packages, configuration, and generated Markdown. The lane does not add
 Index symbols, flags, request/result types, renderers, JSON, application,
 temporary/backup artifacts, or public-process evidence.
+
+Those protected surfaces describe the completed GN1 lane. I1 has separate
+authority for its frozen command and formation paths; this historical GN1 record
+does not grant GN1 ownership over I1 orchestration or M1 mechanics.
 
 ## Behavioral Matrix
 

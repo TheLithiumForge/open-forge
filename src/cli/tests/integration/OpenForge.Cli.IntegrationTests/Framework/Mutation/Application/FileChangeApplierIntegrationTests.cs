@@ -171,6 +171,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
 
         Assert.Equal(FileChangeEffectState.NotStarted, receipt.EffectState);
         Assert.Equal(FileChangeVerificationState.NotStarted, receipt.VerificationState);
+        Assert.Equal(FileChangeNotStartedReason.TargetChanged, receipt.NotStartedReason);
         Assert.Equal("changed after planning", await File.ReadAllTextAsync(
             path,
             TestContext.Current.CancellationToken));
@@ -208,6 +209,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
 
         Assert.Equal(FileChangeEffectState.NotStarted, receipt.EffectState);
         Assert.Equal(FileChangeVerificationState.NotStarted, receipt.VerificationState);
+        Assert.Equal(FileChangeNotStartedReason.Cancelled, receipt.NotStartedReason);
         Assert.Equal("before", await File.ReadAllTextAsync(
             path,
             TestContext.Current.CancellationToken));
@@ -246,6 +248,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             preparation,
             TestContext.Current.CancellationToken);
         Assert.Equal(FileChangeEffectState.NotStarted, disposed.EffectState);
+        Assert.Equal(FileChangeNotStartedReason.ContractRejected, disposed.NotStartedReason);
 
         using var foreign = TemporaryWorkspace.Create("mutation-apply-foreign");
         foreign.CreateFile(WorkspaceLockRequest.RelativePath, "stale-lock");
@@ -258,6 +261,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             TestContext.Current.CancellationToken);
 
         Assert.Equal(FileChangeEffectState.NotStarted, foreignResult.EffectState);
+        Assert.Equal(FileChangeNotStartedReason.ContractRejected, foreignResult.NotStartedReason);
         Assert.Equal("before", await File.ReadAllTextAsync(
             path,
             TestContext.Current.CancellationToken));
@@ -295,6 +299,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             TestContext.Current.CancellationToken);
 
         Assert.Equal(FileChangeEffectState.NotStarted, receipt.EffectState);
+        Assert.Equal(FileChangeNotStartedReason.TargetChanged, receipt.NotStartedReason);
         Assert.Equal(change.Expectation, receipt.Before.Expectation);
         Assert.Equal("racing file", await File.ReadAllTextAsync(
             path,
@@ -335,6 +340,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             TestContext.Current.CancellationToken);
 
         Assert.Equal(FileChangeEffectState.NotStarted, receipt.EffectState);
+        Assert.Equal(FileChangeNotStartedReason.TargetChanged, receipt.NotStartedReason);
         Assert.True(Directory.Exists(path));
         Assert.Empty(Stages(temporary));
     }
@@ -371,6 +377,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             TestContext.Current.CancellationToken);
 
         Assert.Equal(FileChangeEffectState.NotStarted, receipt.EffectState);
+        Assert.Equal(FileChangeNotStartedReason.TargetChanged, receipt.NotStartedReason);
         Assert.Equal("replacement", await File.ReadAllTextAsync(
             path,
             TestContext.Current.CancellationToken));
@@ -421,6 +428,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             TestContext.Current.CancellationToken);
 
         Assert.Equal(FileChangeEffectState.NotStarted, receipt.EffectState);
+        Assert.Equal(FileChangeNotStartedReason.TargetChanged, receipt.NotStartedReason);
         Assert.Equal("first", await File.ReadAllTextAsync(
             first,
             TestContext.Current.CancellationToken));
@@ -505,6 +513,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             TestContext.Current.CancellationToken);
 
         Assert.Equal(FileChangeEffectState.NotStarted, receipt.EffectState);
+        Assert.Equal(FileChangeNotStartedReason.TargetChanged, receipt.NotStartedReason);
         Assert.False(File.Exists(path));
         Assert.False(File.Exists(forgedPhysicalPath));
         Assert.Equal("preserve me", await File.ReadAllTextAsync(

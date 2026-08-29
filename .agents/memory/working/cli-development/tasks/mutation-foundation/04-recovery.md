@@ -141,12 +141,17 @@ unchanged.
   choose an empty-no-lease default, acquire or arbitrate the lease, orchestrate
   multiple deletions, define Cleanup results, observe operation success, or
   decide deletion timing.
-- For one caller-selected eligible candidate, the guard records ordinary
-  deletion and positive absence. A typed `Attention` result for deletion or
-  positive-absence failure is structurally audited without manufacturing a
-  failure seam. Whole-operation verification, timing and removal policy,
-  cleanup guidance, result aggregation, and deletion-failure orchestration
-  belong to O2.
+- For one caller-selected eligible candidate, the guard records one finite state
+  (`Deleted`, `Failed`, `Blocked`, or `Cancelled`) and one orthogonal disposition
+  (`Removed`, `Retained`, or `Unknown`). `Deleted` requires `Removed` and no
+  residual. `Retained` requires an exact residual path and only follows a
+  positive current observation. Delete failure followed by positive presence is
+  `Failed`/`Retained`; an observation failure or exception is
+  `Failed`/`Unknown` with the exact expected path allowed. `Blocked` and
+  `Cancelled` are `Retained` only after an exact current positive observation;
+  otherwise they are `Unknown`. Whole-operation verification, timing and
+  removal policy, cleanup guidance, result aggregation, and deletion-failure
+  orchestration belong to O2.
 - Unknown, lookalike, malformed, mismatched, differently keyed, or otherwise
   unowned items remain untouched. The catalogue and deletion guard never
   extract, bind, restore, roll back, or compensate for a target effect.
@@ -173,7 +178,7 @@ native dependency, extra package, or platform-specific archive path is accepted.
 | MFR-003 | Create and no-op | Integration | Create-only store input returns `NotNeeded`, and the observer proves no storage is created; future command-planning no-op policy is not claimed here |
 | MFR-004 | Rejected preparation | Unit and Integration | Missing, foreign, mismatched, or corrupt preparation blocks `Replace`/`ReplaceGeneratedRegion`/`Delete` before effect; a draft is non-preparation and cannot authorize an effect; Create requires null and rejects non-null preparation |
 | MFR-005 | Representative residuals | Integration and code audit | Pre-cancellation creates no artifact and returns a null residual; a deterministic final-name collision retains and reports the existing final; code audit proves later write/move failures track the owned draft or final path without a manufactured failure seam |
-| MFR-006 | Eligible-candidate guarded deletion | Integration and code audit | Given an existing held same-workspace lease and one caller-selected eligible candidate—a `Verified` final or ordinary exact-name `Incomplete` draft—guarded ordinary deletion and positive absence are proved; the typed `Attention` path is structurally audited without claiming whole-operation ordering or a manufactured failure |
+| MFR-006 | Eligible-candidate guarded deletion | Unit, Integration, and code audit | Given an existing held same-workspace lease and one caller-selected eligible candidate—a `Verified` final or ordinary exact-name `Incomplete` draft—guarded ordinary deletion and positive absence prove `Deleted`/`Removed`; contract evidence covers every valid and impossible state/disposition shape; audit proves only a positive current observation can produce `Retained`, without claiming whole-operation ordering or manufacturing a failure |
 | MFR-007 | Catalogue, deletion guard, and lock | Integration | Persistent lock bytes survive contention; with the same-workspace lease already held, the guard re-enumerates once and re-establishes exact path/name/kind, semantically rereads a final or repeats exact path/name/kind revalidation for a draft immediately before ordinary deletion, verifies absence, and leaves unknown names untouched |
 | MFR-008 | Native AOT smoke | Published Integration | Focused ZIP/source-generation create, verify, retain, catalogue, and delete evidence executes with reflection disabled on `linux-x64` |
 | MFR-009 | Zero Git capability | Static and managed | No `Framework/Git/**`, Git model/inspector/process capability, related tests, static references, or replacement-CLI Git inspection/recovery-check/bypass flag or option remains |
@@ -215,9 +220,9 @@ all with zero failures or skips. Static replacement-CLI Git audit is zero.
 Eligible-candidate guarded deletion and positive absence are executable evidence
 for a caller-selected `Verified` final and ordinary exact-name `Incomplete`
 draft, with their respective immediate semantic or path/name/kind revalidation.
-The typed `Attention` path is structurally audited, but no permission
-manipulation or fake failure seam was introduced to manufacture an operating-
-system deletion failure. Pre-cancellation creates no artifact and returns a
+The state/disposition invariant and positive-observation rule are structurally
+audited, but no permission manipulation or fake failure seam was introduced to
+manufacture an operating-system deletion failure. Pre-cancellation creates no artifact and returns a
 null residual; deterministic collision retains and reports the existing final;
 later write/move residual tracking is code-audited. Final independent review
 returned `ROBUST`, safe to commit, confidence `0.98`. Public

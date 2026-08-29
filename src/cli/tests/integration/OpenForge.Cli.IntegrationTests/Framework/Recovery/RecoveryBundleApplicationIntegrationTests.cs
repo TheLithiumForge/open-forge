@@ -102,6 +102,7 @@ public sealed class RecoveryBundleApplicationIntegrationTests
                 preparation,
                 TestContext.Current.CancellationToken);
             Assert.Equal(FileChangeEffectState.NotStarted, rejectedCreate.EffectState);
+            Assert.Equal(FileChangeNotStartedReason.ContractRejected, rejectedCreate.NotStartedReason);
             Assert.False(File.Exists(createPath));
 
             var appliedCreate = await applier.ApplyAsync(
@@ -198,6 +199,7 @@ public sealed class RecoveryBundleApplicationIntegrationTests
             })
             {
                 Assert.Equal(FileChangeEffectState.NotStarted, attempted.EffectState);
+                Assert.Equal(FileChangeNotStartedReason.ContractRejected, attempted.NotStartedReason);
             }
 
             using (var archive = ZipFile.Open(preparation.BundlePath, ZipArchiveMode.Update))
@@ -222,6 +224,7 @@ public sealed class RecoveryBundleApplicationIntegrationTests
                 corruptRead.Preparation,
                 TestContext.Current.CancellationToken);
             Assert.Equal(FileChangeEffectState.NotStarted, corruptAttempt.EffectState);
+            Assert.Equal(FileChangeNotStartedReason.ContractRejected, corruptAttempt.NotStartedReason);
 
             draftPath = RecoveryBundlePathIdentity.DraftPath(
                 RecoveryBundlePathIdentity.ResolveStoreRoot(Environment.SpecialFolderOption.None)
@@ -248,6 +251,7 @@ public sealed class RecoveryBundleApplicationIntegrationTests
                 TestContext.Current.CancellationToken);
 
             Assert.Equal(FileChangeEffectState.NotStarted, draftAttempt.EffectState);
+            Assert.Equal(FileChangeNotStartedReason.ContractRejected, draftAttempt.NotStartedReason);
             Assert.Equal("first", await File.ReadAllTextAsync(
                 firstPath,
                 TestContext.Current.CancellationToken));

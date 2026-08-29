@@ -287,16 +287,18 @@ The status selector applies the Interface meanings:
 
 - A complete safe plan in dry-run is `complete` unless a stronger condition
   applies. Planned effects do not create `attention`.
-- A complete and verified application is `complete`.
-- `attention` is currently unreachable for `route remove`.
+- A complete and verified application with recovery `Deleted`/`Removed` is
+  `complete`.
+- Post-verification recovery deletion `Failed`/positively observed `Retained`
+  after verified effects is `attention`.
 - Safe but unfinished catalogue or reference coverage is `incomplete` and has no
   effects.
 - Invalid operands or missing source without independent absence proof are
   `invalid`.
 - Unsafe or ambiguous ownership, identity, route, reference transformation,
   generated, expected-state, or recovery boundaries are `blocked`.
-- An unexpected post-effect application, verification, or bundle-handling failure is
-  `failed`.
+- An unexpected post-effect application or verification failure, or
+  post-verification recovery deletion `Failed`/`Unknown`, is `failed`.
 - Cancellation without an unexpected application or verification failure is
   `interrupted`.
 
@@ -377,11 +379,11 @@ proves the exact intended absence and checks the complete current boundaries:
    absence and contain no stale generated region exposing the subject.
 4. The complete supported-workspace-Markdown reference pass finds no residual
    incoming reference to the absent subject.
-When every fact is complete and safe, result formation produces `complete` with
-verified no-op evidence and no mutation path. If the source is missing but one of these
-proofs is unavailable, invalid, incomplete, or blocked, result formation keeps
-that applicable status. It never uses a receipt, tombstone, journal, or history
-record to claim that a previous remove caused the absence.
+   When every fact is complete and safe, result formation produces `complete` with
+   verified no-op evidence and no mutation path. If the source is missing but one of these
+   proofs is unavailable, invalid, incomplete, or blocked, result formation keeps
+   that applicable status. It never uses a receipt, tombstone, journal, or history
+   record to claim that a previous remove caused the absence.
 
 ## Revalidation, Verification, And Recovery
 
@@ -397,14 +399,17 @@ route, reference, and generated facts from the post-remove workspace and verifie
 the subject's exact absence, no residual supported incoming reference, every
 detachment's visible-label result, and every affected generated projection.
 
-If application or verification fails after an effect begins, no new effect is
-started and no earlier effect is restored, reversed, or compensated. The actual
-residual draft or final path is reported; a valid final remains after
-preparation. Recovery provenance does not classify current target state. An
+Before post-verification deletion begins, if application or verification fails
+after an effect begins, no new effect is started and no earlier effect is
+restored, reversed, or compensated. The actual residual draft or final path is
+reported; a valid final remains when preparation completed. Recovery provenance does not classify current target state. An
 unexpected concurrent edit is preserved and reported as residual state. After
 all effects and final verification, delete only the positively recognized bundle
-created by this operation. If deletion fails, effects remain successful and the
-result is `attention` with the exact residual path and cleanup guidance.
+created by this operation. `Deleted`/`Removed` permits normal completion.
+`Failed`/positively observed `Retained` keeps target effects successful and
+produces `attention`, the exact residual path, and
+cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion result
+provides one.
 
 An unexpected application or verification failure remains `failed`. Cancellation
 before effects is `interrupted` when no stronger failure remains. A closed final
@@ -465,7 +470,8 @@ A conforming implementation must additionally prove:
   and fresh-plan rerun;
 - exact intended-absence proof for verified no-op repeats and invalid,
   incomplete, or blocked results when that proof is unavailable;
-- all seven semantic statuses, including reserved unreachable `attention`; and
+- all seven semantic statuses, including `Failed`/positively observed `Retained`
+  recovery `attention` and `Failed`/`Unknown` recovery `failed`; and
 - human/JSON parity, stream assignment, compact retention, structured
   detachment/effect evidence, and one-result rendering without rerunning work.
 
@@ -475,7 +481,7 @@ dry-run parity, status, absence proof, and recovery. Focused integration tests
 should use real temporary workspaces with leaf and category trees, overwrite
 pairs and orphans, native and ordinary resources, contained Markdown outside
 `.agents`, generated parent effects, external recovery-bundle residuals,
-  expected-state changes, link prose preservation, and concurrent edits. Gate 5 executable proof
+expected-state changes, link prose preservation, and concurrent edits. Gate 5 executable proof
 must exercise the accepted parser, filesystem, physical-identity, lock, recovery,
 library, Native AOT, test, and source-layout boundaries; source inspection or a
 managed build alone is insufficient.

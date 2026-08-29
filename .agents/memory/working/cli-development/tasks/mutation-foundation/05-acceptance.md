@@ -82,8 +82,10 @@ success, or deletion timing.
 - Given an existing held same-workspace lease and one caller-selected eligible
   candidate—a `Verified` final or ordinary exact-name `Incomplete` draft—the
   deletion guard applies the kind-specific immediate revalidation, uses ordinary
-  deletion, and verifies positive absence. Its typed `Attention` path is
-  structurally audited without a fake failure seam. Pre-cancellation creates no
+  deletion, and verifies positive absence as `Deleted`/`Removed`. Its finite
+  state/disposition invariants and the rule that only positive current
+  observation creates `Retained` are structurally audited without a fake
+  failure seam. Pre-cancellation creates no
   artifact and returns a null residual; deterministic collision retains and
   reports the existing final; later write/move residual tracking is code-audited.
   M1 claims no candidate selection, whole-operation verification ordering,
@@ -119,7 +121,8 @@ or `Active`.
   from any future command-planning no-op.
 - MFR-006 records caller-selected eligible-candidate guarded deletion and
   positive absence for a `Verified` final or ordinary exact-name `Incomplete`
-  draft, plus the structurally audited typed `Attention` code path; it does not
+  draft, plus the structurally audited state/disposition and positive-observation
+  rules; it does not
   claim candidate selection, whole-operation ordering, a manufactured deletion
   failure, or whole-command policy.
 - MFR-007 records neutral catalogue, held-lease deletion-guard, and persistent
