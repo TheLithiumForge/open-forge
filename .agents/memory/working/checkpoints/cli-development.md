@@ -106,8 +106,10 @@ remains visible; both are repository state rather than candidate failures. The
 persistent zero-byte `.agents/open-forge.lock` is the accepted reusable lock-file
 result. Verification used the existing cached and offline prepared dependency
 state. No fresh remote NuGet vulnerability audit, remote CI, push, deployment,
-release, or publication is claimed. Local squash integration into `develop` and
-exact tree-equality proof remain pending.
+release, or publication is claimed. Final Index closeout tip
+`2b353c48978ee88e53345be8037776181612222c` is locally squash-integrated into
+`develop` at `09aa03eddb97831ff544afe1eac54ad9af501f5c`; both commits have exact
+tree `2dcfca18020980a9cafbc429a72930af3368df5f`.
 
 Implemented boundaries:
 
@@ -146,9 +148,11 @@ is Complete in exact feature candidate
 `4e89d945b38a2d1e24600dd22789b55e4395a534`. Its mapping lists every named reason
 in one grouped switch and retains an undefined-value runtime guard because C#
 enums admit unnamed numeric values; no compiler-enforced exhaustiveness or
-warning suppression is claimed. The current step is to squash-integrate this
-accepted candidate into local `develop` and prove exact tree equality. Do not
-push. M2 remains Pending and becomes eligible only after that integration proof.
+warning suppression is claimed. Final closeout tip
+`2b353c48978ee88e53345be8037776181612222c` is locally integrated at
+`09aa03eddb97831ff544afe1eac54ad9af501f5c` with exact tree equality. No later
+implementation lane is selected in this ledger. M2 remains Pending and is not
+Active or Ready.
 
 ## Protected State
 
@@ -163,17 +167,14 @@ push. M2 remains Pending and becomes eligible only after that integration proof.
 
 ## Next Actions
 
-1. Squash-integrate accepted Index candidate
-   `4e89d945b38a2d1e24600dd22789b55e4395a534` into local `develop`, then prove
-   exact tree equality. Do not push.
-2. Only after that integration proof, keep the Route Init exact-chain decision
-   and lane graph queued before M2;
-   retain thin D1 as current `linux-x64` build/smoke, packed install/invocation,
-   and checksums; keep future RIDs, signatures, SBOM, provenance, OIDC, and
-   support floors behind a later explicit decision; retain relevant-domain
-   Repair and the simplified O1/O2 split.
-3. Keep M2 Pending until the accepted I1 candidate is present in local `develop`
-   with exact tree equality; do not mark it Active or Ready earlier.
+1. Resume from the active Plan and select the next accepted Pending boundary.
+   Before M2 becomes Ready, resolve the Route Init exact-chain decision and
+   record the route-mutation lane graph.
+2. Retain thin D1 as current `linux-x64` build/smoke, packed
+   install/invocation, and checksums. Keep future RIDs, signatures, SBOM,
+   provenance, OIDC, and support floors behind a later explicit decision.
+3. Keep M2 Pending until that planning boundary selects it; do not infer a new
+   Active or Ready state from completed Index integration alone.
 4. Keep actual Status/Doctor implementation in O1 and actual Cleanup selection,
    default, empty-no-lease policy, orchestration, guidance, aggregation, and E2E
    in O2.

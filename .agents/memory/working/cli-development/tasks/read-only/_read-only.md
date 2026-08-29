@@ -8,8 +8,11 @@ open-forge:
 
 ## Task State
 
-- State: Complete in exact feature candidate
-  `4e89d945b38a2d1e24600dd22789b55e4395a534`. Context is Complete and
+- State: Complete and integrated. Public Index implementation candidate
+  `4e89d945b38a2d1e24600dd22789b55e4395a534` is included in final closeout tip
+  `2b353c48978ee88e53345be8037776181612222c`, which is locally
+  squash-integrated at `09aa03eddb97831ff544afe1eac54ad9af501f5c` with exact
+  tree equality at `2dcfca18020980a9cafbc429a72930af3368df5f`. Context is Complete and
   squash-integrated at `ca097a2`; Extension List is Complete and
   squash-integrated at `db0d39a`. The combined managed Unit `978/978`,
   Integration `354/354`, EndToEnd `111/111`, Native AOT Integration `354/354`,
@@ -23,8 +26,7 @@ open-forge:
   Integration `357/357`, and Native AOT Integration `357/357`. Mutation
   Foundation is Complete at exact production candidate `e7d937f`. Public Index
   is Complete in this feature candidate after operation commit `125b6a2a` and
-  public composition and presentation commit `4e89d945`. Local squash
-  integration into `develop` and exact tree-equality proof remain pending.
+  public composition and presentation commit `4e89d945`.
 - Responsible role: Overseer.
 - Last updated: 2026-08-29.
 
@@ -126,7 +128,7 @@ scenario. Shared facts move only through a Mastermind integration increment.
 - [x] [Implement Extension catalogue and source listing without lifecycle inference](extension-list.md) — Complete; accepted rebased integration tip `5e6babf`, squash-integrated at `db0d39a` — Implementer: Extension Discovery Task Mastermind
 - [x] [Implement exact Extension package inspection without mutation or installation behavior](extension-inspect.md) — Complete; accepted rebased feature `2b1e63d`, squash-integrated at `73b01be`, with managed and portable `linux-x64` Native AOT acceptance — Implementer: Extension Inspect Task Mastermind and Overseer
 - [x] [Promote one neutral routed authored-metadata fact for Open Forge Markdown and native Skills](routed-authored-metadata-foundation.md) — Complete; accepted feature `8a29321`, squash-integrated at `5924698` with managed and native AOT evidence — Implementer: Routed Metadata Task Mastermind
-- [x] [Implement deterministic generated Entries projection and idempotent index application](index-command.md) — Complete in exact feature candidate `4e89d945b38a2d1e24600dd22789b55e4395a534`; local squash integration into `develop` and exact tree-equality proof remain pending — Implementer: Overseer-managed bounded Index owner
+- [x] [Implement deterministic generated Entries projection and idempotent index application](index-command.md) — Complete in exact feature candidate `4e89d945b38a2d1e24600dd22789b55e4395a534`; final closeout tip `2b353c48978ee88e53345be8037776181612222c` is locally squash-integrated at `09aa03eddb97831ff544afe1eac54ad9af501f5c` with exact tree equality — Implementer: Overseer-managed bounded Index owner
 
 ## Historical Find Progress And Current Routing Condition
 
@@ -170,15 +172,18 @@ integrated at `73b01be`. Routed Authored
 Metadata is Complete at `5924698`; Generated Navigation is Complete and
 integrated at `21e5200`. Mutation Foundation is Complete at exact production
 candidate `e7d937f`; public Index is Complete in exact feature candidate
-`4e89d945b38a2d1e24600dd22789b55e4395a534`. Local squash integration and exact
-tree-equality proof remain pending.
+`4e89d945b38a2d1e24600dd22789b55e4395a534`, with final closeout tip
+`2b353c48978ee88e53345be8037776181612222c` locally squash-integrated at
+`09aa03eddb97831ff544afe1eac54ad9af501f5c` and exact tree equality proved.
 
 The temporary compatibility-name correction renames the Working Index and
 References Task files and stages their command contracts under candidate route
-names until the replacement Index command proves final physical-identity
-handling. The repository index manager refreshed generated Entries after the
-renames. These explicit parent-before-children links retain phase state and
-history that generated navigation does not define:
+names. The replacement Index command has proved final compatibility-entrypoint
+physical-identity and exactly-once handling. Candidate staging remains until a
+separate route migration is explicitly accepted. The repository index manager
+refreshed generated Entries after the renames. These explicit
+parent-before-children links retain phase state and history that generated
+navigation does not define:
 
 1. [Implement Find](find.md)
 2. [Establish The Neutral Find Source Catalogue](find-source-catalogue.md) — Complete

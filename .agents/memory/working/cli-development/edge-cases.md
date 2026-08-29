@@ -40,19 +40,25 @@ Use these current Task links when assigning or closing an item.
   classify ordinary Task files or the same compatibility entrypoint more than
   once. The Working Tasks now use `index-command.md` and
   `references-command.md`. The current contracts remain staged under
-  `index-candidate/` and `references-candidate/` until the replacement `index`
-  command validates their final compatibility-name paths.
-- **Risk:** The temporary names preserve legacy routing assistance, but the final
-  compatibility-name regression remains unproved by the replacement command.
-- **Owning Task(s):** [Implement Index](tasks/read-only/index-command.md), with [Complete
-  Native CI And Support Floors](tasks/delivery/02-native-ci.md) and [Accept And
-  Release The Complete CLI](tasks/delivery/04-release.md) handling delivery and
-  release validation as appropriate.
-- **Closure condition:** The replacement Index Task validates each final
-  compatibility entrypoint by physical identity before the candidate contracts
-  move to `contracts/index/_index.md` and
-  `contracts/references/_references.md`. The applicable delivery or release gate
-  records any remaining limitation without claiming unproved compatibility.
+  `index-candidate/` and `references-candidate/`. Accepted Index evidence proves
+  that each final compatibility entrypoint is canonicalized by physical identity
+  and processed exactly once. Moving the contracts to their final
+  compatibility-name paths remains a separate route migration that has not been
+  accepted or completed.
+- **Risk:** Candidate route names remain a temporary topology. Moving them without
+  one accepted coherent migration could break routing or duplicate a logical
+  source even though the required physical-identity behavior is proved.
+- **Owning Task(s):** No implementation Task is assigned to the route migration.
+  [Complete Native CI And Support Floors](tasks/delivery/02-native-ci.md) and
+  [Accept And Release The Complete CLI](tasks/delivery/04-release.md) retain
+  applicable regression verification after a separate migration is accepted and
+  performed; they do not authorize the migration.
+- **Closure condition:** Explicitly accept and complete one route migration from
+  the candidate contract routes to `contracts/index/_index.md` and
+  `contracts/references/_references.md`, refresh generated navigation, and prove
+  the final routed topology while retaining the accepted physical-identity and
+  exactly-once regression. Delivery or release evidence records any remaining
+  limitation without presenting the migration as complete earlier.
 
 ### CLI-EDGE-002 — Workspace failure classification
 

@@ -17,12 +17,13 @@ and conformance. This entrypoint does not create another command contract and
 no command-local Technical Design file exists for this operation.
 
 The public command identity is `references`, and the candidate contract set is
-located under `contracts/references-candidate/`. Candidate staging remains until
-the replacement `index` command can validate the final compatibility-name path
-`contracts/references/_references.md`. Recognizing the compatibility entrypoint
-`_references.md` must not create a second logical source: the same physical
-entrypoint is canonicalized by identity and processed once. Gate 5 executable
-proof must preserve this physical-identity regression.
+located under `contracts/references-candidate/`. The replacement `index` command
+has proved the required physical-identity behavior for the final
+compatibility-name path `contracts/references/_references.md`: recognizing
+`_references.md` does not create a second logical source because the same
+physical entrypoint is canonicalized by identity and processed once. Candidate
+staging remains until a separate accepted route migration moves the contracts;
+the proved conformance behavior does not authorize that migration.
 
 The command does not ship yet. It is stateless, read-only, and non-shipping: it
 reports direct reference facts without modifying the workspace, loading target

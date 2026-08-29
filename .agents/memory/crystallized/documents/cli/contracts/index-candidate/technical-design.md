@@ -20,8 +20,10 @@ The design cannot add a public flag, weaken a safety invariant, change a
 semantic result, or make a private implementation artifact authoritative for
 user-authored meaning. It records the accepted realization and accepted evidence
 at exact feature candidate
-`4e89d945b38a2d1e24600dd22789b55e4395a534`. Local squash integration into
-`develop` remains pending, and the command does not ship.
+`4e89d945b38a2d1e24600dd22789b55e4395a534`. Local squash integration is proved
+at `09aa03eddb97831ff544afe1eac54ad9af501f5c`: its tree
+`2dcfca18020980a9cafbc429a72930af3368df5f` exactly equals final Index closeout
+tip `2b353c48978ee88e53345be8037776181612222c`. The command does not ship.
 
 ## Accepted Runtime Boundary
 
@@ -67,9 +69,9 @@ boundary. It does not own `index` selection, projection, mutation, verification,
 or recovery meaning.
 
 The accepted Architecture selects System.CommandLine 2.0.11, Markdig 1.3.2,
-and YamlDotNet 18.1.0. Those versions and their Native AOT evidence remain
-Architecture-owned inputs to this design; this file does not claim that the
-dependencies are restored or running.
+and YamlDotNet 18.1.0. The Architecture remains authoritative for those versions.
+The accepted candidate evidence recorded below exercised those dependencies in
+managed and Native AOT execution; this design does not independently repin them.
 
 The operation remains a directly testable typed flow:
 

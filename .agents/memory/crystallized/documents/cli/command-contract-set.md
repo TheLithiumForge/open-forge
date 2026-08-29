@@ -11,8 +11,11 @@ This accepted Crystallized Document is the single concise `#Evergreen` overview
 of the replacement CLI command-contract set. It defines the contract roles,
 topology, and authority boundaries, and links to the detailed command-local
 contracts. It is a Document, not a Pattern, and it does not replace the detailed
-contracts it links. The replacement does not ship yet; Gate 5 implementation and
-evidence remain pending.
+contracts it links. The replacement does not ship yet. Accepted implementation
+and evidence exist for several foundations and commands, including public
+`index`, while the broader retained command set and delivery remain incomplete.
+The active [CLI Development](../../../working/cli-development/_cli-development.md)
+route records exact execution state.
 
 ## Interface Contract
 
@@ -55,8 +58,9 @@ dependency direction, cross-cutting boundaries, physical source and test
 organization, libraries, serialization, filesystem, recovery, testing, Native
 AOT, and distribution. Local Technical Designs remain subordinate to that
 Architecture and may not reopen or override it. A local design may identify
-evidence that Gate 5 must produce, but it does not claim that source, projects,
-dependencies, or Native AOT behavior already exist.
+required evidence and may record accepted implementation evidence when that
+context belongs with the design. The active CLI Development route remains the
+source for program-wide execution state.
 
 ### Current local Technical Designs
 
@@ -101,12 +105,13 @@ The public `index` command files are currently staged under
 [`contracts/index-candidate/`](contracts/index-candidate/_index-candidate.md).
 The public `references` command files are currently staged under
 [`contracts/references-candidate/`](contracts/references-candidate/_references-candidate.md).
-Candidate staging remains until the replacement `index` command can validate the
-final compatibility-name paths `contracts/index/_index.md` and
-`contracts/references/_references.md`. The replacement identifies recognized
-compatibility entrypoints by physical identity and processes each one once.
-Frozen `open-forge-old` compatibility does not change either command's public
-identity or the replacement's logical contract topology.
+The replacement `index` command has proved that recognized compatibility
+entrypoints are identified by physical identity and processed once. Candidate
+staging remains in place until a separate accepted route migration moves these
+contracts to `contracts/index/_index.md` and
+`contracts/references/_references.md`. That migration is not implied by the
+proved identity behavior. Frozen `open-forge-old` compatibility does not change
+either command's public identity or the replacement's logical contract topology.
 
 The grouped `route` command is routing-only. Each operation has its own local
 Interface and Behavior files:
@@ -139,14 +144,14 @@ The grouped [`extension`](contracts/extension/_extension.md) route has six actua
 leaf operations. Each leaf keeps its Interface and Behavior in its own local
 scope:
 
-| Operation           | Interface                                                       | Behavior                                                      | Technical Design                                                      |
-| ------------------- | --------------------------------------------------------------- | ------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `extension list`    | [`list Interface`](contracts/extension/list/interface.md)       | [`list Behavior`](contracts/extension/list/behavior.md)       | None; no Technical Design exists; implementation evidence is pending. |
-| `extension inspect` | [`inspect Interface`](contracts/extension/inspect/interface.md) | [`inspect Behavior`](contracts/extension/inspect/behavior.md) | None; no Technical Design exists; implementation evidence is pending. |
-| `extension create`  | [`create Interface`](contracts/extension/create/interface.md)   | [`create Behavior`](contracts/extension/create/behavior.md)   | None; no Technical Design exists; implementation evidence is pending. |
-| `extension install` | [`install Interface`](contracts/extension/install/interface.md) | [`install Behavior`](contracts/extension/install/behavior.md) | None; no Technical Design exists; implementation evidence is pending. |
-| `extension update`  | [`update Interface`](contracts/extension/update/interface.md)   | [`update Behavior`](contracts/extension/update/behavior.md)   | None; no Technical Design exists; implementation evidence is pending. |
-| `extension remove`  | [`remove Interface`](contracts/extension/remove/interface.md)   | [`remove Behavior`](contracts/extension/remove/behavior.md)   | None; no Technical Design exists; implementation evidence is pending. |
+| Operation           | Interface                                                       | Behavior                                                      | Technical Design                   |
+| ------------------- | --------------------------------------------------------------- | ------------------------------------------------------------- | ---------------------------------- |
+| `extension list`    | [`list Interface`](contracts/extension/list/interface.md)       | [`list Behavior`](contracts/extension/list/behavior.md)       | None; no Technical Design exists. |
+| `extension inspect` | [`inspect Interface`](contracts/extension/inspect/interface.md) | [`inspect Behavior`](contracts/extension/inspect/behavior.md) | None; no Technical Design exists. |
+| `extension create`  | [`create Interface`](contracts/extension/create/interface.md)   | [`create Behavior`](contracts/extension/create/behavior.md)   | None; no Technical Design exists. |
+| `extension install` | [`install Interface`](contracts/extension/install/interface.md) | [`install Behavior`](contracts/extension/install/behavior.md) | None; no Technical Design exists. |
+| `extension update`  | [`update Interface`](contracts/extension/update/interface.md)   | [`update Behavior`](contracts/extension/update/behavior.md)   | None; no Technical Design exists. |
+| `extension remove`  | [`remove Interface`](contracts/extension/remove/interface.md)   | [`remove Behavior`](contracts/extension/remove/behavior.md)   | None; no Technical Design exists. |
 
 The `extension` group performs no operation or wizard. Its six leaves share the
 accepted lifecycle facts and safety shape while keeping Framework and Extension

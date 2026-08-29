@@ -11,8 +11,10 @@ open-forge:
 - State: Complete in exact feature candidate
   `4e89d945b38a2d1e24600dd22789b55e4395a534`. Operation orchestration is
   committed at `125b6a2a`, and public composition and presentation are committed
-  at `4e89d945`. Local squash integration into `develop` and exact tree-equality
-  proof remain pending.
+  at `4e89d945`. Final closeout tip
+  `2b353c48978ee88e53345be8037776181612222c` is locally squash-integrated into
+  `develop` at `09aa03eddb97831ff544afe1eac54ad9af501f5c`; both commits have exact
+  tree `2dcfca18020980a9cafbc429a72930af3368df5f`.
 - Profile: Assured. Index is the first public mutation command and crosses a
   public structured-result, physical-identity, bounded-write, lock,
   revalidation, recovery, and verification boundary.
@@ -210,6 +212,11 @@ the known handoff-routing incompleteness remains visible. Both are repository
 state exposed by the command rather than candidate failures. This acceptance
 claims no fresh remote NuGet vulnerability audit, remote CI, push, deployment,
 release, publication, or other remote action.
+
+The final closeout tip `2b353c48978ee88e53345be8037776181612222c`
+is locally squash-integrated at
+`09aa03eddb97831ff544afe1eac54ad9af501f5c`. Their trees are exactly equal at
+`2dcfca18020980a9cafbc429a72930af3368df5f`.
 
 ## Review And Correction Result
 

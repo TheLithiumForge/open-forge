@@ -17,12 +17,14 @@ open-forge:
 - I1 proportional prerequisite: committed at exact `b25d76e`. I1 is Complete in
   exact feature candidate `4e89d945b38a2d1e24600dd22789b55e4395a534`.
   Operation orchestration is committed at `125b6a2a`; public composition and
-  presentation are committed at `4e89d945`. Local squash integration into
-  `develop` and exact tree-equality proof remain pending.
+  presentation are committed at `4e89d945`. Final closeout tip
+  `2b353c48978ee88e53345be8037776181612222c` is locally squash-integrated at
+  `09aa03eddb97831ff544afe1eac54ad9af501f5c`; both commits have exact tree
+  `2dcfca18020980a9cafbc429a72930af3368df5f`.
 - Current accepted baseline: clean local `develop` commit
-  `234199d5bca9c06e1a0ca83fcc676da86a808e52` (`Establish proportional mutation
-  foundation`). Context and Extension List are Complete and squash-integrated at
-  `ca097a2` and `db0d39a`. Extension Inspect's exact public contract is
+  `09aa03eddb97831ff544afe1eac54ad9af501f5c` (`Implement and accept the public
+  Index command`). Context and Extension List are Complete and squash-integrated
+  at `ca097a2` and `db0d39a`. Extension Inspect's exact public contract is
   squash-integrated at `92313a0`; accepted rebased feature `2b1e63d` is
   squash-integrated at `73b01be`. Routed Authored Metadata is Complete and squash-integrated at
   `5924698`. Generated Navigation is Complete and squash-integrated at `21e5200`;
@@ -55,7 +57,9 @@ open-forge:
   candidate `4e89d945b38a2d1e24600dd22789b55e4395a534`. Its warning-free Release
   build, managed Unit `1206/1206`, Integration `480/480`, EndToEnd `125/125`,
   portable `linux-x64` Native AOT Integration `480/480`, EndToEnd `125/125`,
-  and root publish/version smoke pass with zero failures or skips.
+  and root publish/version smoke pass with zero failures or skips. Final closeout
+  tip `2b353c48978ee88e53345be8037776181612222c` is locally integrated at
+  `09aa03eddb97831ff544afe1eac54ad9af501f5c` with exact tree equality.
   [Test Architecture And
   Constants](tasks/test-architecture-and-constants.md) is Complete and its exact
   accepted tree is squash-integrated at `b6ce31f`.
@@ -66,12 +70,12 @@ open-forge:
   [Routed Authored Metadata
   foundation](tasks/read-only/routed-authored-metadata-foundation.md) is Complete
   and integrated at `5924698`.
-- Current step: squash-integrate the accepted Index candidate into local
-  `develop` and prove exact tree equality. Only after that accepted integration
-  may M2 become eligible for its route-mutation planning boundary. M2 remains
-  Pending and is not Active or Ready. Continue lifecycle mutation, operations,
-  delivery, and final acceptance in the persisted order after their accepted
-  predecessors.
+- Current step: the Index integration prerequisite is complete. No later
+  implementation lane is selected in this ledger. M2 remains Pending and is not
+  Active or Ready; before it can begin, resolve the deferred Route Init decision
+  and record its route-mutation lane graph. Continue lifecycle mutation,
+  operations, delivery, and final acceptance in the persisted order after their
+  accepted predecessors.
   The snapshot slice remains a no-op, with possible LithSnap-backed
   presentation candidates recorded only as a deferred Idea.
   The maintainer accepted that dependency correction; public Index must consume
@@ -403,8 +407,8 @@ diff, parent requirements, and claimed evidence.
 | DGC1 | Complete | Correct form-aware Context Skill metadata, source-specific compact Context/Find findings, and stale Route Inspect Context help without changing structured command meaning; accepted feature candidate `deb3f14` is squash-integrated at `bba84b6`.                                                                                                                                                                                   | Q1-Q3, R2, RM1, GN1                     | Sequential  | Dogfooding correction | Managed `1031/411/120` and Native AOT `411/120` pass         |
 | PC1 | Complete | Proportionate guidance `5f9f59e`, Route List correction `2cd525d`, and Markdown correction `0d88606` are squash-integrated; PCF-001/002/003/007 are closed and all remaining dispositions are preserved. | DGC1 | Parallel correction | Proportional correctness | Release 0/0; managed `1053/411/120`; portable `linux-x64` Native AOT `411/120`; dogfood and Sol/xhigh review pass |
 | M1  | Complete | Shared lock, lifecycle, revalidation, atomic application, receipt, neutral recovery catalogue, lease-gated deletion guard, and external recovery-bundle foundations are accepted at exact production candidate `e7d937f` under authority `01dd552`. Final managed `1096/458/120`, portable `linux-x64` Native AOT Integration `458/458`, focused M1 `43/47`, static Git-absence, format/diff, and independent review pass. | GN1, E1, DGC1, PC1                      | Sequential  | Mutation foundation  | Direct failure, interruption, residual, and AOT evidence pass |
-| I1  | Complete | Public `index`, including the I1-owned body-free formation expansion and orchestration over accepted GN1 projection and M1 mechanics, is accepted at exact feature candidate `4e89d945b38a2d1e24600dd22789b55e4395a534`. The warning-free Release, complete managed, portable `linux-x64` Native AOT, and controlled public-process gates pass with zero failures or skips. Local squash integration and exact tree equality remain pending. | GN1, M1 | Sequential | Generated navigation | Exact contract, idempotence, unchanged-authority, recovery, managed `1206/480/125`, and portable `linux-x64` AOT `480/125` pass |
-| M2  | Pending  | Implement route init/create/update/move/remove in dependency order only after the accepted I1 candidate is squash-integrated into local `develop` and exact tree equality is proved.                                                                                                                                                                                                                                                                      | M1, R2, I1 integrated                  | Sequential  | Route mutation       | Per-command public and recovery evidence                    |
+| I1  | Complete | Public `index`, including the I1-owned body-free formation expansion and orchestration over accepted GN1 projection and M1 mechanics, is accepted at exact feature candidate `4e89d945b38a2d1e24600dd22789b55e4395a534`. The warning-free Release, complete managed, portable `linux-x64` Native AOT, and controlled public-process gates pass with zero failures or skips. Final closeout tip `2b353c48978ee88e53345be8037776181612222c` is locally squash-integrated at `09aa03eddb97831ff544afe1eac54ad9af501f5c` with exact tree equality. | GN1, M1 | Sequential | Generated navigation | Exact contract, idempotence, unchanged-authority, recovery, managed `1206/480/125`, and portable `linux-x64` AOT `480/125` pass |
+| M2  | Pending  | Implement route init/create/update/move/remove in dependency order after the next accepted route-mutation planning boundary resolves the deferred Route Init decision and records the lane graph.                                                                                                                                                                                                                                                           | M1, R2, I1                             | Sequential  | Route mutation       | Per-command public and recovery evidence                    |
 | M3  | Pending  | Implement extension create and root install/update                                                                                                                                                                                                                                                                                                                                                                                | M1, E1, I1                              | Sequential  | Lifecycle mutation   | Package, lifecycle, and workspace evidence                  |
 | M4  | Pending  | Implement extension install/update/remove                                                                                                                                                                                                                                                                                                                                                                                         | M3                                      | Sequential  | Extension mutation   | Collision, recovery, and catalogue evidence                 |
 | O1  | Pending  | Implement the simplified Status and Doctor command layer from all produced neutral facts                                                                                                                                                                                                                                                                                                                                          | M2-M4                                   | Sequential  | Operations           | Complete aggregate and diagnostic evidence                  |
@@ -416,9 +420,9 @@ diff, parent requirements, and claimed evidence.
 
 Public Index is Complete in exact feature candidate
 `4e89d945b38a2d1e24600dd22789b55e4395a534` after its authority boundary was
-explicitly selected following proportional prerequisite `b25d76e`. Preserve
-these accepted program items through local squash integration and the later
-boundaries that own them:
+explicitly selected following proportional prerequisite `b25d76e`. Its final
+closeout is locally integrated with exact tree equality. Preserve these accepted
+program items through the later boundaries that own them:
 
 - [x] Author and accept the binding CLI proportionality and evidence Directive,
   and add its per-Task applicability check below before I1 Phase 0 activation;
@@ -436,8 +440,8 @@ boundaries that own them:
 - [x] Keep the simplified O1 Status/Doctor and O2 Repair/Cleanup split reflected
   in the work graph; M1 supplies only neutral facts and mechanics.
 
-This queue does not reopen M1 or authorize M2 before the accepted I1 candidate is
-squash-integrated into local `develop` and exact tree equality is proved.
+This queue does not reopen M1 or by itself authorize M2. M2 remains Pending
+until the next accepted planning boundary selects it.
 
 ### Per-Task Proportionality And Evidence Check
 

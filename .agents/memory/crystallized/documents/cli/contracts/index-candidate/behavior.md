@@ -473,7 +473,7 @@ interpolates operands.
 ## Behavioral Conformance
 
 The behavioral concerns allocated to this contract are mandatory evidence
-concerns. Eventual implementation evidence must cover:
+concerns. Conforming implementation evidence must cover:
 
 - Complete-catalogue, present/missing Loader, intended-root uniqueness, missing-
   intermediate detached, entrypoint, leaf, overwrite, repeated Boolean write-
@@ -511,7 +511,8 @@ concerns. Eventual implementation evidence must cover:
 Direct tests should prove the relevant selection, projection, ordering, marker,
 effect-planning, status, and no-op concerns. Focused integration tests should
 use real temporary rooted and detached source trees, external recovery bundles
-and drafts, filesystem failures, concurrency changes, and parent mutations. A small built
-Native AOT process suite should prove parsing,
-exact dry-run output, human and structured results, exit behavior, and packaged
-execution. Gate 5 AOT evidence remains pending.
+and drafts, filesystem failures, concurrency changes, and parent mutations. A
+small suite that runs the built Native AOT process must prove parsing, exact
+dry-run output, human and structured results, exit behavior, and packaged
+execution. Current implementation evidence is recorded in Working Memory rather
+than duplicated in this normative contract.

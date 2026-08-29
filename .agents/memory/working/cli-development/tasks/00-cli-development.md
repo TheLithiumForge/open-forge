@@ -53,8 +53,11 @@ open-forge:
   `4e89d945b38a2d1e24600dd22789b55e4395a534`, with warning-free Release, managed
   `1206/480/125`, portable `linux-x64` Native AOT `480/125`, root publish/version
   smoke, and controlled public dry-run, JSON, apply, and idempotence evidence.
-  Local squash integration into `develop` and exact tree-equality proof remain
-  pending. The broader replacement CLI program remains Active.
+  Final closeout tip `2b353c48978ee88e53345be8037776181612222c` is locally
+  squash-integrated into `develop` at
+  `09aa03eddb97831ff544afe1eac54ad9af501f5c`; both commits have exact tree
+  `2dcfca18020980a9cafbc429a72930af3368df5f`. The broader replacement CLI
+  program remains Active.
 - Responsible role: Overseer.
 - Task source: This file.
 - Last updated: 2026-08-29.
@@ -62,11 +65,11 @@ open-forge:
 ## Problem Statement
 
 Open Forge has accepted command contracts, a complete top-down C# Architecture,
-and active replacement source for the foundation, Route List, Route Inspect, and
-Find. Remaining commands and delivery surfaces still require implementation and
-acceptance. The removed first implementation remains evidence that command-first
-delegation can create incompatible local architecture and miss system safety
-boundaries.
+and accepted replacement source for its foundations and completed commands,
+including public Index. Remaining retained commands, delivery surfaces, and
+release acceptance still require work. The removed first implementation remains
+evidence that command-first delegation can create incompatible local architecture
+and miss system safety boundaries.
 
 ## Expected Outcome
 
@@ -336,9 +339,10 @@ Find presentation`) over corrected Red `a865fd1`. It is the production/root-
   recovery bundles, catalogue facts, and held-lease deletion mechanics. Actual
   Status/Doctor behavior remains O1; actual Cleanup policy and orchestration
   remains O2. Public Index is Complete in exact feature candidate
-  `4e89d945b38a2d1e24600dd22789b55e4395a534`; local squash integration and exact
-  tree-equality proof remain pending. The Plan preserves the accepted binding
-  proportionality/evidence Directive and checklist, Route Init
+  `4e89d945b38a2d1e24600dd22789b55e4395a534`; final closeout tip
+  `2b353c48978ee88e53345be8037776181612222c` is locally squash-integrated at
+  `09aa03eddb97831ff544afe1eac54ad9af501f5c` with exact tree equality. The Plan
+  preserves the accepted binding proportionality/evidence Directive and checklist, Route Init
   exact-chain decision/lane graph, thin D1, relevant-domain Repair, and
   simplified O1/O2 split. Thin D1 requires only current `linux-x64` build and smoke,
   packed install and invocation, and checksums. Signing, SBOM, OIDC, provenance,
@@ -353,8 +357,5 @@ durable outcomes into current Architecture, contracts, Directives, Patterns, and
 public documentation. Archive or prune temporary Plan, Task, and Checkpoint detail
 that no longer earns its maintenance cost.
 
-The CLI route entrypoint at
-`.agents/memory/crystallized/documents/cli/_cli.md` retains stale pre-replacement
-acceptance wording. A dedicated coherent CLI Evergreen-alignment audit must
-correct that broader route; it is not an Index blocker and does not change the
-current Task order.
+Keep the CLI route and directly linked contract overviews aligned with accepted
+implementation state without duplicating volatile Task evidence there.

@@ -9,9 +9,13 @@ open-forge:
 
 This route contains the detailed command contracts for the accepted replacement
 CLI. Gate 2 command definition, Gate 3 Architecture, and current-source
-reconciliation are complete. The contracts define intended behavior, not
-current executable behavior. The replacement remains non-shipping while Gate 5
-implementation and complete evidence are pending.
+reconciliation are complete. These contracts define accepted behavior and do
+not duplicate current executable state. The replacement remains non-shipping.
+Accepted implementation and evidence exist for several commands, including
+public `index`, while the broader retained command set, complete delivery, and
+release remain unfinished. The active [CLI
+Development](../../../../working/cli-development/_cli-development.md) route
+records exact execution state.
 
 Shared interfaces such as global flags live beside command contracts so every
 command can link to one accepted definition.

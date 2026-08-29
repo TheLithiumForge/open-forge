@@ -8,11 +8,16 @@ open-forge:
 # CLI
 
 This route keeps two CLI implementations distinct. The replacement command
-contracts and top-down C# Architecture are current. No replacement source,
-retained command, or shipping executable is accepted yet. The frozen TypeScript
-MVP remains the only established executable CLI reference and is exposed as
-`open-forge-old` for its existing repository routing assistance. Replacement
-work must not change, build, or test the frozen MVP as if it were the new CLI.
+contracts and top-down C# Architecture are current. Accepted non-shipping
+replacement source and executable command slices exist under `src/cli/`,
+including the public `index` command, which is locally integrated at
+`09aa03eddb97831ff544afe1eac54ad9af501f5c`. The broader retained command set,
+delivery, final acceptance, and release remain incomplete. The active [CLI
+Development](../../../working/cli-development/_cli-development.md) route records
+exact implementation and evidence state. The frozen TypeScript MVP remains
+exposed as `open-forge-old` for its existing repository routing assistance.
+Replacement work must not change, build, or test the frozen MVP as if it were the
+new CLI.
 
 ## Authority Map
 
