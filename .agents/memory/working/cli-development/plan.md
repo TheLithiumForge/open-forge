@@ -13,7 +13,7 @@ open-forge:
 - Planning authority: The maintainer accepts consequential decisions. The
   Overseer owns architecture, sequencing, Task decomposition, integration, and
   Plan maintenance within that direction.
-- Last updated: 2026-08-29.
+- Last updated: 2026-08-30.
 - I1 proportional prerequisite: committed at exact `b25d76e`. I1 is Complete in
   exact feature candidate `4e89d945b38a2d1e24600dd22789b55e4395a534`.
   Operation orchestration is committed at `125b6a2a`; public composition and
@@ -22,9 +22,18 @@ open-forge:
   `09aa03eddb97831ff544afe1eac54ad9af501f5c`; both commits have exact tree
   `2dcfca18020980a9cafbc429a72930af3368df5f`.
 - Current accepted baseline: clean local `develop` commit
-  `09aa03eddb97831ff544afe1eac54ad9af501f5c` (`Implement and accept the public
-  Index command`). Context and Extension List are Complete and squash-integrated
-  at `ca097a2` and `db0d39a`. Extension Inspect's exact public contract is
+  `cc35c853fd7b55d31e3fb2c9a454d9ab61c1884e`, exact tree
+  `867be79ebee4ba60f2116a83857edadb8a5dbf0a`. It squash-integrates accepted
+  Generated Navigation formation feature
+  `f82c2b168657baf2fac50c76e2ff2cc0ed3776d7` after public Index. Its Release
+  build passes with 0 warnings and 0 errors. Managed Unit `1227/1227`,
+  Integration `481/481`, and EndToEnd `125/125` pass. Portable `linux-x64`
+  Native AOT Integration `481/481` and EndToEnd `125/125` pass. Every accepted
+  final test run has zero failures and zero skips. Real-workspace projection
+  proves zero writes, and independent Sol/xhigh review is `ROBUST` with 99%
+  confidence. Context and
+  Extension List are Complete and squash-integrated at `ca097a2` and `db0d39a`.
+  Extension Inspect's exact public contract is
   squash-integrated at `92313a0`; accepted rebased feature `2b1e63d` is
   squash-integrated at `73b01be`. Routed Authored Metadata is Complete and squash-integrated at
   `5924698`. Generated Navigation is Complete and squash-integrated at `21e5200`;
@@ -32,7 +41,7 @@ open-forge:
   Native AOT Integration `357/357` gates pass. The last complete public baseline
   passes managed Unit `978/978`, Integration `354/354`, EndToEnd `111/111`,
   Native AOT Integration `354/354`, and Native AOT EndToEnd `111/111`, all with
-  zero skips. The current combined baseline passes managed Unit `1054/1054`,
+  zero skips. The earlier combined read-only baseline passed managed Unit `1054/1054`,
   Integration `378/378`, EndToEnd `116/116`, and `linux-x64` Native AOT
   Integration `378/378` and EndToEnd `116/116`.
   The routed-metadata acceptance gate separately passes full managed Unit
@@ -49,7 +58,13 @@ open-forge:
   corrections at `0d88606`. The integrated Release build, managed
   `1053/411/120`, and portable `linux-x64` Native AOT `411/120` gates pass with
   zero skips; final Sol/xhigh review is `ROBUST`.
-- Current result: [Mutation Foundation](tasks/mutation-foundation/_mutation-foundation.md)
+- Current result: the accepted Generated Navigation formation expansion adds
+  `Build(SourceCatalogue observedCatalogue, IReadOnlyList<SourceLogicalSource> intendedSources)`
+  while preserving exact current-state `Build(SourceCatalogue)` behavior. It
+  separates observed catalogue evidence from intended membership and derived
+  topology facts without creating a prospective catalogue/source framework,
+  virtual filesystem, temporary checkout, or hidden Index.
+  [Mutation Foundation](tasks/mutation-foundation/_mutation-foundation.md)
   is Complete at exact production candidate `e7d937f` under authority
   `01dd552`. Its final managed, portable `linux-x64` Native AOT, static-absence,
   format, diff, and independent-review gates pass. Public
@@ -70,12 +85,18 @@ open-forge:
   [Routed Authored Metadata
   foundation](tasks/read-only/routed-authored-metadata-foundation.md) is Complete
   and integrated at `5924698`.
-- Current step: the Index integration prerequisite is complete. No later
-  implementation lane is selected in this ledger. M2 remains Pending and is not
-  Active or Ready; before it can begin, resolve the deferred Route Init decision
-  and record its route-mutation lane graph. Continue lifecycle mutation,
-  operations, delivery, and final acceptance in the persisted order after their
-  accepted predecessors.
+- Current step: the intended-membership formation prerequisite is integrated.
+  No later implementation lane is selected in this ledger. It applies only to
+  Route Init, Route Create, Route Move, Route Remove, and root Install/Update;
+  Route Update and Extension Create are independent of it. M2 remains Pending
+  and is not Active or Ready. Route Init remains Blocked until the maintainer
+  accepts generic exact-chain behavior or a Framework mode, after which the
+  route-mutation lane graph can be recorded. M3 also remains Pending. Extension
+  Create remains Planned but must not begin until the maintainer accepts
+  deterministic manifest defaults and host-owned decisions for interactive input
+  and asynchronous request resolution. Root Install/Update consume the formation
+  expansion only when their later Tasks begin. Continue operations, delivery,
+  and final acceptance in the persisted order after their accepted predecessors.
   The snapshot slice remains a no-op, with possible LithSnap-backed
   presentation candidates recorded only as a deferred Idea.
   The maintainer accepted that dependency correction; public Index must consume
@@ -408,8 +429,8 @@ diff, parent requirements, and claimed evidence.
 | PC1 | Complete | Proportionate guidance `5f9f59e`, Route List correction `2cd525d`, and Markdown correction `0d88606` are squash-integrated; PCF-001/002/003/007 are closed and all remaining dispositions are preserved. | DGC1 | Parallel correction | Proportional correctness | Release 0/0; managed `1053/411/120`; portable `linux-x64` Native AOT `411/120`; dogfood and Sol/xhigh review pass |
 | M1  | Complete | Shared lock, lifecycle, revalidation, atomic application, receipt, neutral recovery catalogue, lease-gated deletion guard, and external recovery-bundle foundations are accepted at exact production candidate `e7d937f` under authority `01dd552`. Final managed `1096/458/120`, portable `linux-x64` Native AOT Integration `458/458`, focused M1 `43/47`, static Git-absence, format/diff, and independent review pass. | GN1, E1, DGC1, PC1                      | Sequential  | Mutation foundation  | Direct failure, interruption, residual, and AOT evidence pass |
 | I1  | Complete | Public `index`, including the I1-owned body-free formation expansion and orchestration over accepted GN1 projection and M1 mechanics, is accepted at exact feature candidate `4e89d945b38a2d1e24600dd22789b55e4395a534`. The warning-free Release, complete managed, portable `linux-x64` Native AOT, and controlled public-process gates pass with zero failures or skips. Final closeout tip `2b353c48978ee88e53345be8037776181612222c` is locally squash-integrated at `09aa03eddb97831ff544afe1eac54ad9af501f5c` with exact tree equality. | GN1, M1 | Sequential | Generated navigation | Exact contract, idempotence, unchanged-authority, recovery, managed `1206/480/125`, and portable `linux-x64` AOT `480/125` pass |
-| M2  | Pending  | Implement route init/create/update/move/remove in dependency order after the next accepted route-mutation planning boundary resolves the deferred Route Init decision and records the lane graph.                                                                                                                                                                                                                                                           | M1, R2, I1                             | Sequential  | Route mutation       | Per-command public and recovery evidence                    |
-| M3  | Pending  | Implement extension create and root install/update                                                                                                                                                                                                                                                                                                                                                                                | M1, E1, I1                              | Sequential  | Lifecycle mutation   | Package, lifecycle, and workspace evidence                  |
+| M2  | Pending  | Keep Route Init Blocked until the maintainer accepts generic exact-chain behavior or a Framework mode, then record the route-mutation lane graph before any command becomes Active or Ready. The integrated intended-membership formation prerequisite applies to Init/Create/Move/Remove; Update is independent of it. | M1, R2, I1 | Sequential | Route mutation | Per-command public and recovery evidence |
+| M3  | Pending  | Extension Create remains Planned but must not begin until deterministic manifest defaults and host-owned decisions for interactive input and asynchronous request resolution are accepted. Root Install/Update consume the integrated intended-membership formation later; Extension Create is independent of it. | M1, E1, I1 | Sequential | Lifecycle mutation | Package, lifecycle, and workspace evidence |
 | M4  | Pending  | Implement extension install/update/remove                                                                                                                                                                                                                                                                                                                                                                                         | M3                                      | Sequential  | Extension mutation   | Collision, recovery, and catalogue evidence                 |
 | O1  | Pending  | Implement the simplified Status and Doctor command layer from all produced neutral facts                                                                                                                                                                                                                                                                                                                                          | M2-M4                                   | Sequential  | Operations           | Complete aggregate and diagnostic evidence                  |
 | O2  | Pending  | Implement relevant-domain Repair and the simplified Cleanup command policy and orchestration                                                                                                                                                                                                                                                                                                                                      | O1                                      | Sequential  | Operations           | Plan/apply/recovery and idempotence evidence                |
@@ -430,6 +451,19 @@ program items through the later boundaries that own them:
 - [ ] Keep Route Init as exact-chain initialization. Resolve its deferred
   generic-versus-Framework decision and record the route-mutation lane graph
   before M2 behavior begins.
+- [x] Accept and integrate the existing Generated Navigation formation expansion
+  at feature `f82c2b168657baf2fac50c76e2ff2cc0ed3776d7`, squash commit
+  `cc35c853fd7b55d31e3fb2c9a454d9ab61c1884e`, and exact tree
+  `867be79ebee4ba60f2116a83857edadb8a5dbf0a`. It is a prerequisite only for
+  Route Init/Create/Move/Remove and root Install/Update. Route Update and
+  Extension Create remain independent of it.
+- [ ] Keep Route Move and Route Remove behind separate command-local reference
+  and lifecycle proportionality gates. The shared formation does not settle
+  those future decisions or make either command Active or Ready.
+- [ ] Keep Extension Create Planned but do not begin it until the maintainer
+  accepts deterministic manifest defaults and the host-owned boundaries for
+  interactive input and asynchronous request resolution. Do not infer product
+  acceptance from the completed shared foundation.
 - [x] Keep D1 at the accepted thin tier: delivery surfaces consume accepted
   binaries and do not reproduce CLI behavior; required evidence is limited to
   current `linux-x64` build and smoke, packed install and invocation, and checksums.

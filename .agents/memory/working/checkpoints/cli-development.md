@@ -12,7 +12,7 @@ Complete the replacement CLI from its accepted Architecture and command
 contracts, with safe local development, reproducible evidence, and no partial
 release.
 
-- Last updated: 2026-08-29.
+- Last updated: 2026-08-30.
 
 ## Current State
 
@@ -111,6 +111,26 @@ release, or publication is claimed. Final Index closeout tip
 `develop` at `09aa03eddb97831ff544afe1eac54ad9af501f5c`; both commits have exact
 tree `2dcfca18020980a9cafbc429a72930af3368df5f`.
 
+The existing Generated Navigation formation is now extended by accepted feature
+`f82c2b168657baf2fac50c76e2ff2cc0ed3776d7`, squash-integrated into local
+`develop` at `cc35c853fd7b55d31e3fb2c9a454d9ab61c1884e`, with exact tree
+`867be79ebee4ba60f2116a83857edadb8a5dbf0a`. The overload
+`Build(SourceCatalogue observedCatalogue, IReadOnlyList<SourceLogicalSource> intendedSources)`
+separates observed catalogue evidence from intended membership, lookup, topology,
+Loader, roots, ambiguities, and target-collision facts. Existing
+`Build(SourceCatalogue)` behavior is unchanged and delegates to that overload.
+This is not a prospective catalogue/source framework and adds no virtual
+filesystem, temporary checkout, or hidden Index.
+
+Final formation evidence passes a Release build with 0 warnings and 0 errors;
+managed Unit `1227/1227`, Integration `481/481`, and EndToEnd `125/125`; and
+portable `linux-x64` Native AOT Integration `481/481` and EndToEnd `125/125`.
+Real-workspace projection proves zero writes. Independent Sol/xhigh review is
+`ROBUST` with 99% confidence. The first managed EndToEnd invocation preceded its
+required published-root version marker and failed at harness discovery. After the
+canonical root publish step satisfied that sequencing precondition, EndToEnd
+passed `125/125`; no implementation correction was required.
+
 Implemented boundaries:
 
 - Repository-root `OpenForge.Cli.slnx`, SDK, NuGet, and shared MSBuild files.
@@ -151,8 +171,16 @@ enums admit unnamed numeric values; no compiler-enforced exhaustiveness or
 warning suppression is claimed. Final closeout tip
 `2b353c48978ee88e53345be8037776181612222c` is locally integrated at
 `09aa03eddb97831ff544afe1eac54ad9af501f5c` with exact tree equality. No later
-implementation lane is selected in this ledger. M2 remains Pending and is not
-Active or Ready.
+implementation lane is selected in this ledger. The intended-membership formation
+prerequisite is integrated, but it applies only to Route Init, Route Create,
+Route Move, Route Remove, and root Install/Update. Route Update and Extension
+Create are independent of it. M2 remains Pending and is not Active or Ready.
+Route Init remains Blocked until the maintainer accepts generic exact-chain
+behavior or a Framework mode. M3 remains Pending. Extension Create remains
+Planned but must not begin until the maintainer accepts deterministic manifest
+defaults and host-owned decisions for interactive input and asynchronous request
+resolution. Root Install/Update consume the formation expansion only when their
+later Tasks begin.
 
 ## Protected State
 
@@ -168,14 +196,20 @@ Active or Ready.
 ## Next Actions
 
 1. Resume from the active Plan and select the next accepted Pending boundary.
-   Before M2 becomes Ready, resolve the Route Init exact-chain decision and
-   record the route-mutation lane graph.
-2. Retain thin D1 as current `linux-x64` build/smoke, packed
+   Before M2 becomes Ready, obtain maintainer acceptance for generic exact-chain
+   Route Init or a Framework mode, then record the route-mutation lane graph.
+2. Preserve separate future Route Move and Route Remove gates for proportional
+   reference and lifecycle behavior. The shared formation does not resolve them.
+3. Keep M3 Pending. Extension Create must not begin until deterministic manifest
+   defaults and the host-owned boundaries for interactive input and asynchronous
+   request resolution are accepted. Root Install/Update consume the integrated
+   formation later.
+4. Retain thin D1 as current `linux-x64` build/smoke, packed
    install/invocation, and checksums. Keep future RIDs, signatures, SBOM,
    provenance, OIDC, and support floors behind a later explicit decision.
-3. Keep M2 Pending until that planning boundary selects it; do not infer a new
+5. Keep M2 Pending until that planning boundary selects it; do not infer a new
    Active or Ready state from completed Index integration alone.
-4. Keep actual Status/Doctor implementation in O1 and actual Cleanup selection,
+6. Keep actual Status/Doctor implementation in O1 and actual Cleanup selection,
    default, empty-no-lease policy, orchestration, guidance, aggregation, and E2E
    in O2.
 

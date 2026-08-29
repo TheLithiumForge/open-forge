@@ -8,9 +8,14 @@ open-forge:
 
 ## Task State
 
-- State: Planned.
+- State: Planned. No command behavior is Active or Ready.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
-- Prerequisites: Route discovery, `index`, and Mutation Foundation.
+- Common prerequisites: Route discovery, `index`, and Mutation Foundation.
+- Intended-membership formation prerequisite: accepted feature
+  `f82c2b168657baf2fac50c76e2ff2cc0ed3776d7`, squash-integrated at
+  `cc35c853fd7b55d31e3fb2c9a454d9ab61c1884e`, exact tree
+  `867be79ebee4ba60f2116a83857edadb8a5dbf0a`. It applies only to Route Init,
+  Route Create, Route Move, and Route Remove. Route Update is independent of it.
 
 ## Shared Boundary
 
@@ -19,12 +24,27 @@ route facts, validation, lock, lifecycle, atomic file, and external
 recovery-bundle primitives. They do not share a universal route mutation request
 or plan.
 
+Init, Create, Move, and Remove consume the accepted
+`Build(SourceCatalogue observedCatalogue, IReadOnlyList<SourceLogicalSource> intendedSources)`
+overload to project their complete post-operation Generated Navigation graph from
+real observed evidence. The overload extends existing formation only. It does not
+create a prospective catalogue/source framework, virtual filesystem, temporary
+checkout, or hidden Index. Existing `Build(SourceCatalogue)` remains unchanged
+current-state behavior and delegates to the overload.
+
 Implement in order because later commands consume identity, collision, overwrite,
 and lifecycle facts established by earlier operations. Every command proves dry
 run where contracted, unchanged bytes on blocked paths, revalidation after lock,
 idempotence where promised, one verified external recovery bundle covering every
 existing Replace/Delete prepared before the first target effect, retained partial state
 without restoration, process streams, and Native AOT.
+
+Route Init remains Blocked until the maintainer accepts generic exact-chain
+behavior or a Framework mode. Do not infer product acceptance from the completed
+shared prerequisite. Route Move and Route Remove also retain separate future
+reference and lifecycle proportionality gates. Resolve those command-local gates
+before their behavior lanes begin; the shared formation does not make either
+command Active or Ready.
 
 ## Child Tasks
 

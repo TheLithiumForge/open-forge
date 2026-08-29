@@ -561,15 +561,35 @@ models; command interpretation, policy, findings, and status remain local.
 Generated navigation remains a projection of routed sources, never an independent
 authority.
 
-Generated-navigation formation is the one neutral bridge from one complete
-`SourceCatalogue` to projection. It uses the existing
-`SourceRouteTopologyBuilder` and returns one cohesive immutable fact containing
-the intended logical sources, topology, Loader fact, proven physical-alias
-groups, ambiguities, and formation issues. The projection request consumes that
-fact instead of independently assembling sources and topology. Formation reads
-no document bodies, discovers no generated lines, and owns no command selection,
-finding, status, write-policy, or application meaning. This is an I1-owned shared
-expansion of the accepted GN1 capability; GN1 remains Complete.
+Generated-navigation formation is the neutral bridge from observed catalogue
+evidence and intended logical-source membership to projection. Its intended-source
+overload is exactly
+`Build(SourceCatalogue observedCatalogue, IReadOnlyList<SourceLogicalSource> intendedSources)`.
+This extends the existing Generated Navigation formation. It does not add a
+prospective catalogue or source framework. The existing `Build(SourceCatalogue)`
+path preserves exact current-state behavior and member identity by delegating
+with the observed catalogue's current sources. Formation continues to use the
+existing `SourceRouteTopologyBuilder`.
+
+The formation retains the observed `SourceCatalogue` as catalogue evidence.
+Intended sources separately define membership, lookup, topology, Loader presence,
+Loader roots, and intended target collisions. Root-entrypoint and route-parent
+ambiguities derive from intended sources; physical-alias ambiguities derive only
+from retained observed candidates. Target collisions compare intended base and
+overwrite layers with one another and with remaining observed occupants while
+excluding removed-layer evidence. An unobserved intended source never fabricates
+a candidate, catalogue issue, or physical alias.
+
+The projection request consumes the resulting cohesive immutable fact instead of
+independently assembling sources and topology. Formation reads no document bodies,
+discovers no generated lines, and owns no command selection, finding, status,
+write policy, or application meaning. It uses real current catalogue evidence and
+does not create a virtual filesystem, temporary checkout, or hidden Index. This
+preserves I1's current-state formation while extending the accepted Generated
+Navigation capability for later topology-changing consumers; GN1 and I1 remain
+Complete. Accepted feature `f82c2b168657baf2fac50c76e2ff2cc0ed3776d7` is
+squash-integrated at `cc35c853fd7b55d31e3fb2c9a454d9ab61c1884e`, with exact
+tree `867be79ebee4ba60f2116a83857edadb8a5dbf0a`.
 
 When a Loader is present, its intended roots are the structurally valid,
 physically unique recognized entrypoints that directly represent each

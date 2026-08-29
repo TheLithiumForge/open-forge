@@ -8,9 +8,15 @@ open-forge:
 
 ## Task State
 
-- State: Planned.
+- State: Planned. No command behavior is Active or Ready.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
-- Prerequisites: Extension discovery, `index`, and Mutation Foundation.
+- Common prerequisites: Extension discovery and `index`; workspace mutations also
+  consume Mutation Foundation.
+- Intended-membership formation prerequisite: accepted feature
+  `f82c2b168657baf2fac50c76e2ff2cc0ed3776d7`, squash-integrated at
+  `cc35c853fd7b55d31e3fb2c9a454d9ab61c1884e`, exact tree
+  `867be79ebee4ba60f2116a83857edadb8a5dbf0a`. It applies only to root Install
+  and root Update in this group. Extension Create is independent of it.
 
 ## Shared Boundary
 
@@ -23,6 +29,16 @@ No command recognizes legacy lifecycle files. Package wrappers do not implement
 lifecycle behavior. `extension create` has no workspace subject and uses a
 separate exact-destination, collision, and revalidation path with no workspace
 lease, no Replace/Delete, and no recovery bundle.
+
+Root Install and root Update later consume
+`Build(SourceCatalogue observedCatalogue, IReadOnlyList<SourceLogicalSource> intendedSources)`
+to project their complete post-operation Generated Navigation graph from real
+observed evidence. This shared formation adds no prospective catalogue/source
+framework, virtual filesystem, temporary checkout, or hidden Index. Extension
+Create does not consume it. That Planned Task must not begin until the maintainer
+accepts deterministic manifest defaults plus the host-owned boundaries for
+interactive input and asynchronous request resolution. Do not infer those
+product decisions from the completed shared prerequisite.
 
 Every other lifecycle mutation that replaces or deletes an existing ordinary
 target prepares one immutable, strictly verified external recovery bundle for
