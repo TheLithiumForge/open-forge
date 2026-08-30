@@ -21,7 +21,8 @@ internal sealed partial class WorkspaceLockManager(PhysicalPathResolver physical
         var directoryPath = Path.GetDirectoryName(request.LogicalPath)
             ?? throw new InvalidOperationException("The workspace lock path requires a directory.");
         var directory = Resolve(request, directoryPath);
-        if (directory.State == PhysicalPathState.Missing)
+        var materializationAttempted = directory.State == PhysicalPathState.Missing;
+        if (materializationAttempted)
         {
             if (cancellationToken.IsCancellationRequested)
             {
@@ -58,22 +59,30 @@ internal sealed partial class WorkspaceLockManager(PhysicalPathResolver physical
             return Completed(directoryFailure);
         }
 
+        var bootstrapOutcome = materializationAttempted
+            ? WorkspaceLockBootstrapOutcome.Materialized
+            : WorkspaceLockBootstrapOutcome.Existing;
+
         if (cancellationToken.IsCancellationRequested)
         {
-            return Completed(WorkspaceLockResult.Cancelled());
+            return Completed(WorkspaceLockResult.Cancelled(bootstrapOutcome));
         }
 
         var lockResolution = Resolve(request, request.LogicalPath);
         if (lockResolution.State is not (PhysicalPathState.Missing or PhysicalPathState.Contained))
         {
-            return Completed(FromResolution(lockResolution, "The workspace lock path is unsafe or unavailable."));
+            return Completed(FromResolution(
+                lockResolution,
+                "The workspace lock path is unsafe or unavailable.",
+                bootstrapOutcome));
         }
 
         if (lockResolution.State == PhysicalPathState.Contained)
         {
             var targetFailure = ValidateLockTarget(
                 request.LogicalPath,
-                lockResolution.GetContainedPhysicalPath());
+                lockResolution.GetContainedPhysicalPath(),
+                bootstrapOutcome);
             if (targetFailure is not null)
             {
                 return Completed(targetFailure);
@@ -103,22 +112,34 @@ internal sealed partial class WorkspaceLockManager(PhysicalPathResolver physical
         catch (UnauthorizedAccessException exception)
         {
             handle?.Dispose();
-            return Completed(Failed(FilesystemFailureKind.AccessDenied, exception));
+            return Completed(Failed(
+                FilesystemFailureKind.AccessDenied,
+                exception,
+                bootstrapOutcome));
         }
         catch (Exception exception) when (exception is ArgumentException or PathTooLongException)
         {
             handle?.Dispose();
-            return Completed(Failed(FilesystemFailureKind.InvalidPath, exception));
+            return Completed(Failed(
+                FilesystemFailureKind.InvalidPath,
+                exception,
+                bootstrapOutcome));
         }
         catch (NotSupportedException exception)
         {
             handle?.Dispose();
-            return Completed(Failed(FilesystemFailureKind.Unsupported, exception));
+            return Completed(Failed(
+                FilesystemFailureKind.Unsupported,
+                exception,
+                bootstrapOutcome));
         }
         catch (IOException exception)
         {
             handle?.Dispose();
-            return Completed(Failed(FilesystemFailureKind.InputOutput, exception));
+            return Completed(Failed(
+                FilesystemFailureKind.InputOutput,
+                exception,
+                bootstrapOutcome));
         }
         var confirmedLock = Resolve(request, request.LogicalPath);
         if (confirmedLock.State != PhysicalPathState.Contained
@@ -134,15 +155,18 @@ internal sealed partial class WorkspaceLockManager(PhysicalPathResolver physical
                 ? WorkspaceLockResult.Failed(
                     new FilesystemFailure(
                         FilesystemFailureKind.InvalidPath,
-                        "The workspace lock changed its resolved physical path during acquisition."))
+                        "The workspace lock changed its resolved physical path during acquisition."),
+                    bootstrapOutcome)
                 : FromResolution(
                     confirmedLock,
-                    "The workspace lock path became unsafe during acquisition."));
+                    "The workspace lock path became unsafe during acquisition.",
+                    bootstrapOutcome));
         }
 
         var confirmedTargetFailure = ValidateLockTarget(
             request.LogicalPath,
-            confirmedLock.GetContainedPhysicalPath());
+            confirmedLock.GetContainedPhysicalPath(),
+            bootstrapOutcome);
         if (confirmedTargetFailure is not null)
         {
             handle.Dispose();
@@ -152,15 +176,16 @@ internal sealed partial class WorkspaceLockManager(PhysicalPathResolver physical
         if (cancellationToken.IsCancellationRequested)
         {
             handle.Dispose();
-            return Completed(WorkspaceLockResult.Cancelled());
+            return Completed(WorkspaceLockResult.Cancelled(bootstrapOutcome));
         }
 
         return Completed(WorkspaceLockResult.Acquired(
-            new WorkspaceLockLease(
+            lease: new WorkspaceLockLease(
                 request,
                 logicalPath: request.LogicalPath,
                 physicalPath: physicalPath,
-                handle: handle)));
+                handle: handle),
+            bootstrapOutcome: bootstrapOutcome));
     }
 
     private static ValueTask<WorkspaceLockResult> Completed(WorkspaceLockResult result)

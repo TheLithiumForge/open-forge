@@ -40,14 +40,65 @@ public sealed class WorkspaceLockContractTests
         var failure = new FilesystemFailure(FilesystemFailureKind.AccessDenied, "Access was denied.");
         var failed = WorkspaceLockResult.Failed(failure);
         var cancelled = WorkspaceLockResult.Cancelled();
+        var failedAfterBootstrap = WorkspaceLockResult.Failed(
+            failure,
+            WorkspaceLockBootstrapOutcome.Existing);
+        var cancelledAfterBootstrap = WorkspaceLockResult.Cancelled(
+            WorkspaceLockBootstrapOutcome.Materialized);
 
         Assert.Equal(WorkspaceLockState.Failed, failed.State);
         Assert.Same(failure, failed.Failure);
         Assert.Null(failed.Lease);
+        Assert.Null(failed.BootstrapOutcome);
         Assert.Equal(WorkspaceLockState.Cancelled, cancelled.State);
         Assert.Null(cancelled.Lease);
         Assert.Null(cancelled.Failure);
-        Assert.Throws<ArgumentNullException>(() => WorkspaceLockResult.Acquired(null));
+        Assert.Null(cancelled.BootstrapOutcome);
+        Assert.Equal(
+            WorkspaceLockBootstrapOutcome.Existing,
+            failedAfterBootstrap.BootstrapOutcome);
+        Assert.Equal(
+            WorkspaceLockBootstrapOutcome.Materialized,
+            cancelledAfterBootstrap.BootstrapOutcome);
+        Assert.Throws<ArgumentNullException>(() => WorkspaceLockResult.Acquired(
+            lease: null,
+            bootstrapOutcome: WorkspaceLockBootstrapOutcome.Existing));
+    }
+
+    [Fact(DisplayName = "Workspace lock results require a defined bootstrap outcome for acquired ownership"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void WorkspaceLockAcquiredResultRequiresDefinedBootstrapOutcome()
+    {
+        using var temporary = TemporaryWorkspace.Create("lock-result-bootstrap-outcome");
+        var lockPath = temporary.CreateFile(WorkspaceLockRequest.RelativePath, "lock");
+        var workspace = new CliWorkspace(
+            temporary.Path,
+            temporary.Path,
+            CliWorkspaceSelectionMethod.ExplicitWorkspace);
+        var request = new WorkspaceLockRequest(workspace, "index", Guid.NewGuid());
+        using var lease = new WorkspaceLockLease(
+            request,
+            logicalPath: request.LogicalPath,
+            physicalPath: lockPath,
+            handle: Open(lockPath));
+        var result = WorkspaceLockResult.Acquired(
+            lease,
+            WorkspaceLockBootstrapOutcome.Existing);
+        var undefined = (WorkspaceLockBootstrapOutcome)int.MaxValue;
+
+        Assert.Equal(
+            [WorkspaceLockBootstrapOutcome.Existing, WorkspaceLockBootstrapOutcome.Materialized],
+            Enum.GetValues<WorkspaceLockBootstrapOutcome>());
+        Assert.Equal(WorkspaceLockState.Acquired, result.State);
+        Assert.Same(lease, result.Lease);
+        Assert.Equal(WorkspaceLockBootstrapOutcome.Existing, result.BootstrapOutcome);
+        Assert.Throws<ArgumentOutOfRangeException>(() => WorkspaceLockResult.Acquired(
+            lease,
+            undefined));
+        Assert.Throws<ArgumentOutOfRangeException>(() => WorkspaceLockResult.Failed(
+            new FilesystemFailure(FilesystemFailureKind.InputOutput, "Failed."),
+            undefined));
+        Assert.Throws<ArgumentOutOfRangeException>(() => WorkspaceLockResult.Cancelled(
+            undefined));
     }
 
     [Fact(DisplayName = "Workspace lock leases reject forged logical, physical, and handle identities"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]

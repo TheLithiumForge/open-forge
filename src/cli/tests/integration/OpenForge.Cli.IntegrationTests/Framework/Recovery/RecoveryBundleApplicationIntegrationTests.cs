@@ -90,8 +90,8 @@ public sealed class RecoveryBundleApplicationIntegrationTests
                     await CheckAsync(lease, change, validator, resolver),
                     preparation,
                     TestContext.Current.CancellationToken);
-                Assert.Equal(FileChangeEffectState.Applied, receipt.EffectState);
-                Assert.Equal(FileChangeVerificationState.Verified, receipt.VerificationState);
+                Assert.Equal(FilesystemEffectState.Applied, receipt.EffectState);
+                Assert.Equal(FilesystemVerificationState.Verified, receipt.VerificationState);
             }
 
             var createCheck = await CheckAsync(lease, create, validator, resolver);
@@ -101,8 +101,8 @@ public sealed class RecoveryBundleApplicationIntegrationTests
                 createCheck,
                 preparation,
                 TestContext.Current.CancellationToken);
-            Assert.Equal(FileChangeEffectState.NotStarted, rejectedCreate.EffectState);
-            Assert.Equal(FileChangeNotStartedReason.ContractRejected, rejectedCreate.NotStartedReason);
+            Assert.Equal(FilesystemEffectState.NotStarted, rejectedCreate.EffectState);
+            Assert.Equal(FilesystemNotStartedReason.ContractRejected, rejectedCreate.NotStartedReason);
             Assert.False(File.Exists(createPath));
 
             var appliedCreate = await applier.ApplyAsync(
@@ -112,7 +112,7 @@ public sealed class RecoveryBundleApplicationIntegrationTests
                 recoveryPreparation: null,
                 TestContext.Current.CancellationToken);
 
-            Assert.Equal(FileChangeVerificationState.Verified, appliedCreate.VerificationState);
+            Assert.Equal(FilesystemVerificationState.Verified, appliedCreate.VerificationState);
             Assert.Equal(new byte[] { 9, 0, 8 }, await File.ReadAllBytesAsync(
                 replacePath,
                 TestContext.Current.CancellationToken));
@@ -198,8 +198,8 @@ public sealed class RecoveryBundleApplicationIntegrationTests
                     TestContext.Current.CancellationToken),
             })
             {
-                Assert.Equal(FileChangeEffectState.NotStarted, attempted.EffectState);
-                Assert.Equal(FileChangeNotStartedReason.ContractRejected, attempted.NotStartedReason);
+                Assert.Equal(FilesystemEffectState.NotStarted, attempted.EffectState);
+                Assert.Equal(FilesystemNotStartedReason.ContractRejected, attempted.NotStartedReason);
             }
 
             using (var archive = ZipFile.Open(preparation.BundlePath, ZipArchiveMode.Update))
@@ -223,8 +223,8 @@ public sealed class RecoveryBundleApplicationIntegrationTests
                 firstCheck,
                 corruptRead.Preparation,
                 TestContext.Current.CancellationToken);
-            Assert.Equal(FileChangeEffectState.NotStarted, corruptAttempt.EffectState);
-            Assert.Equal(FileChangeNotStartedReason.ContractRejected, corruptAttempt.NotStartedReason);
+            Assert.Equal(FilesystemEffectState.NotStarted, corruptAttempt.EffectState);
+            Assert.Equal(FilesystemNotStartedReason.ContractRejected, corruptAttempt.NotStartedReason);
 
             draftPath = RecoveryBundlePathIdentity.DraftPath(
                 RecoveryBundlePathIdentity.ResolveStoreRoot(Environment.SpecialFolderOption.None)
@@ -250,8 +250,8 @@ public sealed class RecoveryBundleApplicationIntegrationTests
                 draftRead.Preparation,
                 TestContext.Current.CancellationToken);
 
-            Assert.Equal(FileChangeEffectState.NotStarted, draftAttempt.EffectState);
-            Assert.Equal(FileChangeNotStartedReason.ContractRejected, draftAttempt.NotStartedReason);
+            Assert.Equal(FilesystemEffectState.NotStarted, draftAttempt.EffectState);
+            Assert.Equal(FilesystemNotStartedReason.ContractRejected, draftAttempt.NotStartedReason);
             Assert.Equal("first", await File.ReadAllTextAsync(
                 firstPath,
                 TestContext.Current.CancellationToken));

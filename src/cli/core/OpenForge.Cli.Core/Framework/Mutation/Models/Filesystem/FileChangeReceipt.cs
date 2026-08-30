@@ -2,28 +2,6 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 
 namespace OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 
-internal enum FileChangeEffectState
-{
-    NotStarted,
-    Applied,
-    Unknown,
-}
-
-internal enum FileChangeVerificationState
-{
-    NotStarted,
-    Verified,
-    Failed,
-}
-
-internal enum FileChangeNotStartedReason
-{
-    Cancelled,
-    TargetChanged,
-    ApplicationFailed,
-    ContractRejected,
-}
-
 internal sealed record FileChangeReceipt
 {
     private const int MaximumCauseLength = 256;
@@ -38,8 +16,8 @@ internal sealed record FileChangeReceipt
         Change = change;
         Before = before;
         After = after;
-        EffectState = FileChangeEffectState.Applied;
-        VerificationState = FileChangeVerificationState.Verified;
+        EffectState = FilesystemEffectState.Applied;
+        VerificationState = FilesystemVerificationState.Verified;
     }
 
     private FileChangeReceipt(
@@ -65,11 +43,11 @@ internal sealed record FileChangeReceipt
 
     internal FileStateSnapshot? After { get; }
 
-    internal FileChangeEffectState EffectState { get; }
+    internal FilesystemEffectState EffectState { get; }
 
-    internal FileChangeVerificationState VerificationState { get; }
+    internal FilesystemVerificationState VerificationState { get; }
 
-    internal FileChangeNotStartedReason? NotStartedReason { get; }
+    internal FilesystemNotStartedReason? NotStartedReason { get; }
 
     internal string? Cause { get; }
 
@@ -113,15 +91,15 @@ internal sealed record FileChangeReceipt
     internal static FileChangeReceipt NotStarted(
         PlannedFileChange change,
         FileStateSnapshot before,
-        FileChangeNotStartedReason reason,
+        FilesystemNotStartedReason reason,
         string cause)
     {
         _ = reason switch
         {
-            FileChangeNotStartedReason.Cancelled
-                or FileChangeNotStartedReason.TargetChanged
-                or FileChangeNotStartedReason.ApplicationFailed
-                or FileChangeNotStartedReason.ContractRejected => true,
+            FilesystemNotStartedReason.Cancelled
+                or FilesystemNotStartedReason.TargetChanged
+                or FilesystemNotStartedReason.ApplicationFailed
+                or FilesystemNotStartedReason.ContractRejected => true,
             _ => throw new ArgumentOutOfRangeException(
                 nameof(reason),
                 reason,
@@ -282,35 +260,35 @@ internal sealed record FileChangeReceipt
     private sealed record FileChangeReceiptState
     {
         private FileChangeReceiptState(
-            FileChangeEffectState effectState,
-            FileChangeVerificationState verificationState,
-            FileChangeNotStartedReason? notStartedReason)
+            FilesystemEffectState effectState,
+            FilesystemVerificationState verificationState,
+            FilesystemNotStartedReason? notStartedReason)
         {
             EffectState = effectState;
             VerificationState = verificationState;
             NotStartedReason = notStartedReason;
         }
 
-        public FileChangeEffectState EffectState { get; }
+        public FilesystemEffectState EffectState { get; }
 
-        public FileChangeVerificationState VerificationState { get; }
+        public FilesystemVerificationState VerificationState { get; }
 
-        public FileChangeNotStartedReason? NotStartedReason { get; }
+        public FilesystemNotStartedReason? NotStartedReason { get; }
 
         public static FileChangeReceiptState VerificationFailed { get; } = new(
-            FileChangeEffectState.Applied,
-            FileChangeVerificationState.Failed,
+            FilesystemEffectState.Applied,
+            FilesystemVerificationState.Failed,
             notStartedReason: null);
 
         public static FileChangeReceiptState CompletionUnknown { get; } = new(
-            FileChangeEffectState.Unknown,
-            FileChangeVerificationState.NotStarted,
+            FilesystemEffectState.Unknown,
+            FilesystemVerificationState.NotStarted,
             notStartedReason: null);
 
-        public static FileChangeReceiptState NotStarted(FileChangeNotStartedReason reason)
+        public static FileChangeReceiptState NotStarted(FilesystemNotStartedReason reason)
             => new(
-                FileChangeEffectState.NotStarted,
-                FileChangeVerificationState.NotStarted,
+                FilesystemEffectState.NotStarted,
+                FilesystemVerificationState.NotStarted,
                 reason);
     }
 }

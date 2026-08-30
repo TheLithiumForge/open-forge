@@ -17,4 +17,16 @@ internal sealed class MutationPreflight(FileExpectationValidator validator)
             workspace,
             changes,
             cancellationToken);
+
+    internal ValueTask<MutationValidationResult> ValidateAsync(
+        CliWorkspace workspace,
+        IReadOnlyList<PlannedDirectoryCreation> directoryCreations,
+        IReadOnlyList<PlannedFileChange> fileChanges,
+        CancellationToken cancellationToken)
+        => MutationValidationRunner.ValidateAsync(
+            _validator,
+            workspace,
+            directoryCreations,
+            fileChanges,
+            cancellationToken);
 }

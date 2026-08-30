@@ -44,8 +44,8 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             recoveryPreparation: null,
             TestContext.Current.CancellationToken);
 
-        Assert.Equal(FileChangeEffectState.Applied, receipt.EffectState);
-        Assert.Equal(FileChangeVerificationState.Verified, receipt.VerificationState);
+        Assert.Equal(FilesystemEffectState.Applied, receipt.EffectState);
+        Assert.Equal(FilesystemVerificationState.Verified, receipt.VerificationState);
         Assert.Equal("created bytes\n"u8.ToArray(), await File.ReadAllBytesAsync(
             path,
             TestContext.Current.CancellationToken));
@@ -82,7 +82,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             replaceCheck,
             await PreparationAsync(lease, replace, replaceCheck),
             TestContext.Current.CancellationToken);
-        Assert.Equal(FileChangeVerificationState.Verified, replaced.VerificationState);
+        Assert.Equal(FilesystemVerificationState.Verified, replaced.VerificationState);
         Assert.Equal("replace bytes\n"u8.ToArray(), await File.ReadAllBytesAsync(
             path,
             TestContext.Current.CancellationToken));
@@ -98,7 +98,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             generatedCheck,
             await PreparationAsync(lease, generated, generatedCheck),
             TestContext.Current.CancellationToken);
-        Assert.Equal(FileChangeVerificationState.Verified, generatedReceipt.VerificationState);
+        Assert.Equal(FilesystemVerificationState.Verified, generatedReceipt.VerificationState);
         Assert.Equal("generated full document\n"u8.ToArray(), await File.ReadAllBytesAsync(
             path,
             TestContext.Current.CancellationToken));
@@ -132,7 +132,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             await PreparationAsync(lease, change, check),
             TestContext.Current.CancellationToken);
 
-        Assert.Equal(FileChangeVerificationState.Verified, receipt.VerificationState);
+        Assert.Equal(FilesystemVerificationState.Verified, receipt.VerificationState);
         Assert.Equal(FileExpectationKind.Missing, receipt.After?.Kind);
         Assert.False(File.Exists(path));
         Assert.True(Directory.Exists(directory));
@@ -169,9 +169,9 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             await PreparationAsync(lease, change, plannedCheck),
             TestContext.Current.CancellationToken);
 
-        Assert.Equal(FileChangeEffectState.NotStarted, receipt.EffectState);
-        Assert.Equal(FileChangeVerificationState.NotStarted, receipt.VerificationState);
-        Assert.Equal(FileChangeNotStartedReason.TargetChanged, receipt.NotStartedReason);
+        Assert.Equal(FilesystemEffectState.NotStarted, receipt.EffectState);
+        Assert.Equal(FilesystemVerificationState.NotStarted, receipt.VerificationState);
+        Assert.Equal(FilesystemNotStartedReason.TargetChanged, receipt.NotStartedReason);
         Assert.Equal("changed after planning", await File.ReadAllTextAsync(
             path,
             TestContext.Current.CancellationToken));
@@ -207,9 +207,9 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             await PreparationAsync(lease, change, check),
             cancellation.Token);
 
-        Assert.Equal(FileChangeEffectState.NotStarted, receipt.EffectState);
-        Assert.Equal(FileChangeVerificationState.NotStarted, receipt.VerificationState);
-        Assert.Equal(FileChangeNotStartedReason.Cancelled, receipt.NotStartedReason);
+        Assert.Equal(FilesystemEffectState.NotStarted, receipt.EffectState);
+        Assert.Equal(FilesystemVerificationState.NotStarted, receipt.VerificationState);
+        Assert.Equal(FilesystemNotStartedReason.Cancelled, receipt.NotStartedReason);
         Assert.Equal("before", await File.ReadAllTextAsync(
             path,
             TestContext.Current.CancellationToken));
@@ -247,8 +247,8 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             check,
             preparation,
             TestContext.Current.CancellationToken);
-        Assert.Equal(FileChangeEffectState.NotStarted, disposed.EffectState);
-        Assert.Equal(FileChangeNotStartedReason.ContractRejected, disposed.NotStartedReason);
+        Assert.Equal(FilesystemEffectState.NotStarted, disposed.EffectState);
+        Assert.Equal(FilesystemNotStartedReason.ContractRejected, disposed.NotStartedReason);
 
         using var foreign = TemporaryWorkspace.Create("mutation-apply-foreign");
         foreign.CreateFile(WorkspaceLockRequest.RelativePath, "stale-lock");
@@ -260,8 +260,8 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             preparation,
             TestContext.Current.CancellationToken);
 
-        Assert.Equal(FileChangeEffectState.NotStarted, foreignResult.EffectState);
-        Assert.Equal(FileChangeNotStartedReason.ContractRejected, foreignResult.NotStartedReason);
+        Assert.Equal(FilesystemEffectState.NotStarted, foreignResult.EffectState);
+        Assert.Equal(FilesystemNotStartedReason.ContractRejected, foreignResult.NotStartedReason);
         Assert.Equal("before", await File.ReadAllTextAsync(
             path,
             TestContext.Current.CancellationToken));
@@ -298,8 +298,8 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             recoveryPreparation: null,
             TestContext.Current.CancellationToken);
 
-        Assert.Equal(FileChangeEffectState.NotStarted, receipt.EffectState);
-        Assert.Equal(FileChangeNotStartedReason.TargetChanged, receipt.NotStartedReason);
+        Assert.Equal(FilesystemEffectState.NotStarted, receipt.EffectState);
+        Assert.Equal(FilesystemNotStartedReason.TargetChanged, receipt.NotStartedReason);
         Assert.Equal(change.Expectation, receipt.Before.Expectation);
         Assert.Equal("racing file", await File.ReadAllTextAsync(
             path,
@@ -339,8 +339,8 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             await PreparationAsync(lease, change, check),
             TestContext.Current.CancellationToken);
 
-        Assert.Equal(FileChangeEffectState.NotStarted, receipt.EffectState);
-        Assert.Equal(FileChangeNotStartedReason.TargetChanged, receipt.NotStartedReason);
+        Assert.Equal(FilesystemEffectState.NotStarted, receipt.EffectState);
+        Assert.Equal(FilesystemNotStartedReason.TargetChanged, receipt.NotStartedReason);
         Assert.True(Directory.Exists(path));
         Assert.Empty(Stages(temporary));
     }
@@ -376,8 +376,8 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             await PreparationAsync(lease, change, check),
             TestContext.Current.CancellationToken);
 
-        Assert.Equal(FileChangeEffectState.NotStarted, receipt.EffectState);
-        Assert.Equal(FileChangeNotStartedReason.TargetChanged, receipt.NotStartedReason);
+        Assert.Equal(FilesystemEffectState.NotStarted, receipt.EffectState);
+        Assert.Equal(FilesystemNotStartedReason.TargetChanged, receipt.NotStartedReason);
         Assert.Equal("replacement", await File.ReadAllTextAsync(
             path,
             TestContext.Current.CancellationToken));
@@ -427,8 +427,8 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             await PreparationAsync(lease, change, check),
             TestContext.Current.CancellationToken);
 
-        Assert.Equal(FileChangeEffectState.NotStarted, receipt.EffectState);
-        Assert.Equal(FileChangeNotStartedReason.TargetChanged, receipt.NotStartedReason);
+        Assert.Equal(FilesystemEffectState.NotStarted, receipt.EffectState);
+        Assert.Equal(FilesystemNotStartedReason.TargetChanged, receipt.NotStartedReason);
         Assert.Equal("first", await File.ReadAllTextAsync(
             first,
             TestContext.Current.CancellationToken));
@@ -512,8 +512,8 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             recoveryPreparation: null,
             TestContext.Current.CancellationToken);
 
-        Assert.Equal(FileChangeEffectState.NotStarted, receipt.EffectState);
-        Assert.Equal(FileChangeNotStartedReason.TargetChanged, receipt.NotStartedReason);
+        Assert.Equal(FilesystemEffectState.NotStarted, receipt.EffectState);
+        Assert.Equal(FilesystemNotStartedReason.TargetChanged, receipt.NotStartedReason);
         Assert.False(File.Exists(path));
         Assert.False(File.Exists(forgedPhysicalPath));
         Assert.Equal("preserve me", await File.ReadAllTextAsync(

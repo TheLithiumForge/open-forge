@@ -6,7 +6,7 @@ using OpenForge.Cli.Core.Framework.Workspace;
 
 namespace OpenForge.Cli.Core.Framework.Mutation.Validation;
 
-internal static class MutationValidationRunner
+internal static partial class MutationValidationRunner
 {
     internal static async ValueTask<MutationValidationResult> ValidateAsync(
         FileExpectationValidator validator,

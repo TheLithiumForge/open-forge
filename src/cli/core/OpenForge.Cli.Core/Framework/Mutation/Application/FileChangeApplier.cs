@@ -42,7 +42,7 @@ internal sealed partial class FileChangeApplier(
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
-                FileChangeNotStartedReason.ContractRejected,
+                FilesystemNotStartedReason.ContractRejected,
                 recoveryCause);
         }
 
@@ -51,7 +51,7 @@ internal sealed partial class FileChangeApplier(
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
-                FileChangeNotStartedReason.ContractRejected,
+                FilesystemNotStartedReason.ContractRejected,
                 cause);
         }
 
@@ -60,7 +60,7 @@ internal sealed partial class FileChangeApplier(
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
-                FileChangeNotStartedReason.Cancelled,
+                FilesystemNotStartedReason.Cancelled,
                 CancellationBeforeEffectCause);
         }
 
@@ -97,7 +97,7 @@ internal sealed partial class FileChangeApplier(
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
-                FileChangeNotStartedReason.Cancelled,
+                FilesystemNotStartedReason.Cancelled,
                 CancellationBeforeEffectCause);
         }
 
@@ -128,7 +128,7 @@ internal sealed partial class FileChangeApplier(
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
-                FileChangeNotStartedReason.Cancelled,
+                FilesystemNotStartedReason.Cancelled,
                 CancellationBeforeEffectCause);
         }
 
@@ -145,7 +145,7 @@ internal sealed partial class FileChangeApplier(
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
-                FileChangeNotStartedReason.Cancelled,
+                FilesystemNotStartedReason.Cancelled,
                 CancellationBeforeEffectCause);
         }
         catch (Exception exception) when (IsFilesystemException(exception))
@@ -153,7 +153,7 @@ internal sealed partial class FileChangeApplier(
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
-                FileChangeNotStartedReason.ApplicationFailed,
+                FilesystemNotStartedReason.ApplicationFailed,
                 FilesystemFailure.FromException(
                     FailureKind(exception),
                     exception).DirectCause);
@@ -173,7 +173,7 @@ internal sealed partial class FileChangeApplier(
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
-                FileChangeNotStartedReason.ContractRejected,
+                FilesystemNotStartedReason.ContractRejected,
                 "File application revalidation did not return its one expected target check.");
         }
 
@@ -190,7 +190,7 @@ internal sealed partial class FileChangeApplier(
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
-                FileChangeNotStartedReason.TargetChanged,
+                FilesystemNotStartedReason.TargetChanged,
                 "The target identity changed before its file effect.");
         }
 
@@ -199,20 +199,20 @@ internal sealed partial class FileChangeApplier(
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
-                FileChangeNotStartedReason.Cancelled,
+                FilesystemNotStartedReason.Cancelled,
                 CancellationBeforeEffectCause);
         }
 
         return null;
     }
 
-    private static FileChangeNotStartedReason ReadNotStartedReason(MutationValidationState state)
+    private static FilesystemNotStartedReason ReadNotStartedReason(MutationValidationState state)
         => state switch
         {
-            MutationValidationState.Mismatched => FileChangeNotStartedReason.TargetChanged,
-            MutationValidationState.Blocked => FileChangeNotStartedReason.ContractRejected,
-            MutationValidationState.Failed => FileChangeNotStartedReason.ApplicationFailed,
-            MutationValidationState.Cancelled => FileChangeNotStartedReason.Cancelled,
+            MutationValidationState.Mismatched => FilesystemNotStartedReason.TargetChanged,
+            MutationValidationState.Blocked => FilesystemNotStartedReason.ContractRejected,
+            MutationValidationState.Failed => FilesystemNotStartedReason.ApplicationFailed,
+            MutationValidationState.Cancelled => FilesystemNotStartedReason.Cancelled,
             MutationValidationState.Valid => throw new ArgumentOutOfRangeException(
                 nameof(state),
                 state,

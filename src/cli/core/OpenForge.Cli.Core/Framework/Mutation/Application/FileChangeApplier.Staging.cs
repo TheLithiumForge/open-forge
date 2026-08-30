@@ -34,7 +34,7 @@ internal sealed partial class FileChangeApplier
                 return FileChangeReceipt.NotStarted(
                     context.Change,
                     context.Before,
-                    FileChangeNotStartedReason.ApplicationFailed,
+                    FilesystemNotStartedReason.ApplicationFailed,
                     "The staged bytes did not match the intended file bytes.");
             }
 
@@ -51,7 +51,7 @@ internal sealed partial class FileChangeApplier
                 return FileChangeReceipt.NotStarted(
                     context.Change,
                     context.Before,
-                    FileChangeNotStartedReason.Cancelled,
+                    FilesystemNotStartedReason.Cancelled,
                     CancellationBeforeEffectCause);
             }
 
@@ -79,7 +79,7 @@ internal sealed partial class FileChangeApplier
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
-                FileChangeNotStartedReason.Cancelled,
+                FilesystemNotStartedReason.Cancelled,
                 CancellationBeforeEffectCause);
         }
         catch (Exception exception) when (IsFilesystemException(exception))
@@ -87,7 +87,7 @@ internal sealed partial class FileChangeApplier
             return FileChangeReceipt.NotStarted(
                 context.Change,
                 context.Before,
-                FileChangeNotStartedReason.ApplicationFailed,
+                FilesystemNotStartedReason.ApplicationFailed,
                 FilesystemFailure.FromException(
                     FailureKind(exception),
                     exception).DirectCause);

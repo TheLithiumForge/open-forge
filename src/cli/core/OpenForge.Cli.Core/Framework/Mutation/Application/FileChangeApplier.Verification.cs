@@ -88,7 +88,7 @@ internal sealed partial class FileChangeApplier
                 return FileChangeReceipt.NotStarted(
                     context.Change,
                     context.Before,
-                    FileChangeNotStartedReason.ApplicationFailed,
+                    FilesystemNotStartedReason.ApplicationFailed,
                     FilesystemFailure.FromException(
                         FailureKind(effectException),
                         effectException).DirectCause);

@@ -58,7 +58,8 @@ internal sealed partial class WorkspaceLockManager
 
     private static WorkspaceLockResult? ValidateLockTarget(
         string logicalPath,
-        string physicalPath)
+        string physicalPath,
+        WorkspaceLockBootstrapOutcome bootstrapOutcome)
     {
         try
         {
@@ -72,33 +73,47 @@ internal sealed partial class WorkspaceLockManager
                 : WorkspaceLockResult.Failed(
                     new FilesystemFailure(
                         FilesystemFailureKind.InvalidPath,
-                        "The workspace lock path is not an ordinary file."));
+                        "The workspace lock path is not an ordinary file."),
+                    bootstrapOutcome);
         }
         catch (UnauthorizedAccessException exception)
         {
-            return Failed(FilesystemFailureKind.AccessDenied, exception);
+            return Failed(
+                FilesystemFailureKind.AccessDenied,
+                exception,
+                bootstrapOutcome);
         }
         catch (IOException exception)
         {
-            return Failed(FilesystemFailureKind.InputOutput, exception);
+            return Failed(
+                FilesystemFailureKind.InputOutput,
+                exception,
+                bootstrapOutcome);
         }
     }
 
     private static WorkspaceLockResult FromResolution(
         PhysicalPathResolution resolution,
-        string cause)
+        string cause,
+        WorkspaceLockBootstrapOutcome? bootstrapOutcome = null)
     {
         if (resolution.Failure is not null)
         {
-            return WorkspaceLockResult.Failed(resolution.Failure);
+            return WorkspaceLockResult.Failed(
+                resolution.Failure,
+                bootstrapOutcome);
         }
 
         return WorkspaceLockResult.Failed(
-            new FilesystemFailure(FilesystemFailureKind.InvalidPath, cause));
+            new FilesystemFailure(FilesystemFailureKind.InvalidPath, cause),
+            bootstrapOutcome);
     }
 
     private static WorkspaceLockResult Failed(
         FilesystemFailureKind kind,
-        Exception exception)
-        => WorkspaceLockResult.Failed(FilesystemFailure.FromException(kind, exception));
+        Exception exception,
+        WorkspaceLockBootstrapOutcome? bootstrapOutcome = null)
+        => WorkspaceLockResult.Failed(
+            FilesystemFailure.FromException(kind, exception),
+            bootstrapOutcome);
 }

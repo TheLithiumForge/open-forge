@@ -55,6 +55,9 @@ public sealed class WorkspaceLockManagerIntegrationTests
             TestContext.Current.CancellationToken);
         Assert.Equal(WorkspaceLockState.Acquired, reused.State);
         await Assert.IsType<WorkspaceLockLease>(reused.Lease).DisposeAsync();
+        Assert.Equal(WorkspaceLockBootstrapOutcome.Existing, first.BootstrapOutcome);
+        Assert.Equal(WorkspaceLockBootstrapOutcome.Existing, contended.BootstrapOutcome);
+        Assert.Equal(WorkspaceLockBootstrapOutcome.Existing, reused.BootstrapOutcome);
     }
 
     [Fact(DisplayName = "Workspace lock bootstraps a missing contained lock directory")]
@@ -80,6 +83,7 @@ public sealed class WorkspaceLockManagerIntegrationTests
         var lockDirectory = Path.GetDirectoryName(request.LogicalPath)
             ?? throw new InvalidOperationException("The workspace lock path requires a directory.");
         Directory.Delete(lockDirectory);
+        Assert.Equal(WorkspaceLockBootstrapOutcome.Materialized, result.BootstrapOutcome);
     }
 
     [Fact(DisplayName = "Workspace lock cancellation creates no lock artifacts")]
@@ -95,6 +99,7 @@ public sealed class WorkspaceLockManagerIntegrationTests
             .AcquireAsync(request, cancellation.Token);
 
         Assert.Equal(WorkspaceLockState.Cancelled, result.State);
+        Assert.Null(result.BootstrapOutcome);
         Assert.False(Directory.Exists(Path.GetDirectoryName(request.LogicalPath)));
         Assert.False(File.Exists(request.LogicalPath));
     }

@@ -114,30 +114,30 @@ internal static class IndexMutationMapper
     {
         return (receipt.EffectState, receipt.VerificationState, receipt.NotStartedReason) switch
         {
-            (FileChangeEffectState.Applied, FileChangeVerificationState.Verified, null) => new IndexReceiptMapping(
+            (FilesystemEffectState.Applied, FilesystemVerificationState.Verified, null) => new IndexReceiptMapping(
                 outcome: IndexRegionOutcome.Verified,
                 findingCode: null,
                 shouldContinue: true),
-            (FileChangeEffectState.NotStarted, FileChangeVerificationState.NotStarted,
-                FileChangeNotStartedReason.TargetChanged) => RejectedReceipt(
+            (FilesystemEffectState.NotStarted, FilesystemVerificationState.NotStarted,
+                FilesystemNotStartedReason.TargetChanged) => RejectedReceipt(
                     IndexRegionOutcome.NotStarted,
                     IndexFindingCode.TargetChangedDuringApply),
-            (FileChangeEffectState.NotStarted, FileChangeVerificationState.NotStarted,
-                FileChangeNotStartedReason.Cancelled) => RejectedReceipt(
+            (FilesystemEffectState.NotStarted, FilesystemVerificationState.NotStarted,
+                FilesystemNotStartedReason.Cancelled) => RejectedReceipt(
                     IndexRegionOutcome.NotStarted,
                     IndexFindingCode.Interrupted),
-            (FileChangeEffectState.NotStarted, FileChangeVerificationState.NotStarted,
-                FileChangeNotStartedReason.ApplicationFailed) => RejectedReceipt(
+            (FilesystemEffectState.NotStarted, FilesystemVerificationState.NotStarted,
+                FilesystemNotStartedReason.ApplicationFailed) => RejectedReceipt(
                     IndexRegionOutcome.NotStarted,
                     IndexFindingCode.WriteFailed),
-            (FileChangeEffectState.NotStarted, FileChangeVerificationState.NotStarted,
-                FileChangeNotStartedReason.ContractRejected) => RejectedReceipt(
+            (FilesystemEffectState.NotStarted, FilesystemVerificationState.NotStarted,
+                FilesystemNotStartedReason.ContractRejected) => RejectedReceipt(
                     IndexRegionOutcome.NotStarted,
                     IndexFindingCode.OperationFailed),
-            (FileChangeEffectState.Applied, FileChangeVerificationState.Failed, null) => RejectedReceipt(
+            (FilesystemEffectState.Applied, FilesystemVerificationState.Failed, null) => RejectedReceipt(
                 IndexRegionOutcome.Applied,
                 IndexFindingCode.VerificationFailed),
-            (FileChangeEffectState.Unknown, FileChangeVerificationState.NotStarted, null) => RejectedReceipt(
+            (FilesystemEffectState.Unknown, FilesystemVerificationState.NotStarted, null) => RejectedReceipt(
                 IndexRegionOutcome.Unknown,
                 IndexFindingCode.WriteFailed),
             _ => throw new InvalidOperationException(

@@ -295,7 +295,7 @@ public sealed class IndexMutationMapperTests
                 Receipt: FileChangeReceipt.NotStarted(
                     change: target.Change,
                     before: target.Before,
-                    reason: FileChangeNotStartedReason.TargetChanged,
+                    reason: FilesystemNotStartedReason.TargetChanged,
                     cause: "Changed."),
                 Outcome: IndexRegionOutcome.NotStarted,
                 Finding: (IndexFindingCode?)IndexFindingCode.TargetChangedDuringApply,
@@ -304,7 +304,7 @@ public sealed class IndexMutationMapperTests
                 Receipt: FileChangeReceipt.NotStarted(
                     change: target.Change,
                     before: target.Before,
-                    reason: FileChangeNotStartedReason.Cancelled,
+                    reason: FilesystemNotStartedReason.Cancelled,
                     cause: "Cancelled."),
                 Outcome: IndexRegionOutcome.NotStarted,
                 Finding: (IndexFindingCode?)IndexFindingCode.Interrupted,
@@ -313,7 +313,7 @@ public sealed class IndexMutationMapperTests
                 Receipt: FileChangeReceipt.NotStarted(
                     change: target.Change,
                     before: target.Before,
-                    reason: FileChangeNotStartedReason.ApplicationFailed,
+                    reason: FilesystemNotStartedReason.ApplicationFailed,
                     cause: "Unavailable."),
                 Outcome: IndexRegionOutcome.NotStarted,
                 Finding: (IndexFindingCode?)IndexFindingCode.WriteFailed,
@@ -322,7 +322,7 @@ public sealed class IndexMutationMapperTests
                 Receipt: FileChangeReceipt.NotStarted(
                     change: target.Change,
                     before: target.Before,
-                    reason: FileChangeNotStartedReason.ContractRejected,
+                    reason: FilesystemNotStartedReason.ContractRejected,
                     cause: "Rejected."),
                 Outcome: IndexRegionOutcome.NotStarted,
                 Finding: (IndexFindingCode?)IndexFindingCode.OperationFailed,

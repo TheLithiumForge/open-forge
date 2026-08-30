@@ -108,7 +108,7 @@ public sealed class FileMutationContractTests
         var notStarted = FileChangeReceipt.NotStarted(
             change,
             before,
-            FileChangeNotStartedReason.TargetChanged,
+            FilesystemNotStartedReason.TargetChanged,
             "The expectation changed.");
         var unknown = FileChangeReceipt.CompletionUnknown(change, before, after: null, "The process ended.");
         var unknownObserved = FileChangeReceipt.CompletionUnknown(
@@ -117,25 +117,25 @@ public sealed class FileMutationContractTests
             different,
             "The process ended after an observed effect.");
 
-        Assert.Equal(FileChangeEffectState.Applied, verified.EffectState);
-        Assert.Equal(FileChangeVerificationState.Verified, verified.VerificationState);
+        Assert.Equal(FilesystemEffectState.Applied, verified.EffectState);
+        Assert.Equal(FilesystemVerificationState.Verified, verified.VerificationState);
         Assert.Null(verified.Cause);
-        Assert.Equal(FileChangeEffectState.Applied, failed.EffectState);
-        Assert.Equal(FileChangeVerificationState.Failed, failed.VerificationState);
+        Assert.Equal(FilesystemEffectState.Applied, failed.EffectState);
+        Assert.Equal(FilesystemVerificationState.Failed, failed.VerificationState);
         Assert.Same(before, failed.After);
         Assert.Null(failed.NotStartedReason);
-        Assert.Equal(FileChangeEffectState.Applied, unavailable.EffectState);
-        Assert.Equal(FileChangeVerificationState.Failed, unavailable.VerificationState);
+        Assert.Equal(FilesystemEffectState.Applied, unavailable.EffectState);
+        Assert.Equal(FilesystemVerificationState.Failed, unavailable.VerificationState);
         Assert.Null(unavailable.After);
         Assert.Null(unavailable.NotStartedReason);
-        Assert.Equal(FileChangeEffectState.NotStarted, notStarted.EffectState);
+        Assert.Equal(FilesystemEffectState.NotStarted, notStarted.EffectState);
         Assert.Null(notStarted.After);
-        Assert.Equal(FileChangeNotStartedReason.TargetChanged, notStarted.NotStartedReason);
-        Assert.Equal(FileChangeEffectState.Unknown, unknown.EffectState);
-        Assert.Equal(FileChangeVerificationState.NotStarted, unknown.VerificationState);
+        Assert.Equal(FilesystemNotStartedReason.TargetChanged, notStarted.NotStartedReason);
+        Assert.Equal(FilesystemEffectState.Unknown, unknown.EffectState);
+        Assert.Equal(FilesystemVerificationState.NotStarted, unknown.VerificationState);
         Assert.Null(unknown.NotStartedReason);
-        Assert.Equal(FileChangeEffectState.Unknown, unknownObserved.EffectState);
-        Assert.Equal(FileChangeVerificationState.NotStarted, unknownObserved.VerificationState);
+        Assert.Equal(FilesystemEffectState.Unknown, unknownObserved.EffectState);
+        Assert.Equal(FilesystemVerificationState.NotStarted, unknownObserved.VerificationState);
         Assert.Same(different, unknownObserved.After);
     }
 
@@ -145,20 +145,20 @@ public sealed class FileMutationContractTests
         var paths = Paths();
         var before = FileStateSnapshot.File(paths.Logical, paths.Physical, BeforeBytes);
         var change = PlannedFileChange.Replace(before.Expectation, AfterBytes);
-        FileChangeNotStartedReason[] reasons =
+        FilesystemNotStartedReason[] reasons =
         [
-            FileChangeNotStartedReason.Cancelled,
-            FileChangeNotStartedReason.TargetChanged,
-            FileChangeNotStartedReason.ApplicationFailed,
-            FileChangeNotStartedReason.ContractRejected,
+            FilesystemNotStartedReason.Cancelled,
+            FilesystemNotStartedReason.TargetChanged,
+            FilesystemNotStartedReason.ApplicationFailed,
+            FilesystemNotStartedReason.ContractRejected,
         ];
 
         foreach (var reason in reasons)
         {
             var receipt = FileChangeReceipt.NotStarted(change, before, reason, "The effect did not start.");
 
-            Assert.Equal(FileChangeEffectState.NotStarted, receipt.EffectState);
-            Assert.Equal(FileChangeVerificationState.NotStarted, receipt.VerificationState);
+            Assert.Equal(FilesystemEffectState.NotStarted, receipt.EffectState);
+            Assert.Equal(FilesystemVerificationState.NotStarted, receipt.VerificationState);
             Assert.Equal(reason, receipt.NotStartedReason);
             Assert.Null(receipt.After);
         }
@@ -189,12 +189,12 @@ public sealed class FileMutationContractTests
         Assert.Throws<ArgumentException>(() => FileChangeReceipt.NotStarted(
             change,
             before,
-            FileChangeNotStartedReason.ApplicationFailed,
+            FilesystemNotStartedReason.ApplicationFailed,
             ""));
         Assert.Throws<ArgumentOutOfRangeException>(() => FileChangeReceipt.NotStarted(
             change,
             before,
-            (FileChangeNotStartedReason)int.MaxValue,
+            (FilesystemNotStartedReason)int.MaxValue,
             "The effect did not start."));
     }
 
@@ -210,7 +210,7 @@ public sealed class FileMutationContractTests
             before,
             FileStateSnapshot.Missing(paths.Logical));
 
-        Assert.Equal(FileChangeVerificationState.Verified, receipt.VerificationState);
+        Assert.Equal(FilesystemVerificationState.Verified, receipt.VerificationState);
         Assert.Equal(FileExpectationKind.Missing, receipt.After?.Kind);
         Assert.Throws<ArgumentException>(() => FileChangeReceipt.Verified(change, before, before));
         var intended = FileStateSnapshot.Missing(paths.Logical);
