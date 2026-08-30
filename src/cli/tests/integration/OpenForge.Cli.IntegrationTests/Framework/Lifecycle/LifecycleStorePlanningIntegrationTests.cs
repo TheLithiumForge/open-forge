@@ -81,8 +81,14 @@ public sealed class LifecycleStorePlanningIntegrationTests
             ?? throw new InvalidOperationException("The original lifecycle document requires Extensions.");
         var plannedExtensions = planned.Extensions
             ?? throw new InvalidOperationException("The planned lifecycle document requires Extensions.");
+        var plannedFramework = planned.Framework?.Deserialize(
+            LifecycleJsonContext.Default.FrameworkLifecycleState)
+            ?? throw new InvalidOperationException("The planned lifecycle document requires Framework.");
         Assert.Equal(LifecycleWritePlanState.Planned, result.State);
         Assert.Equal(PlannedFileChangeKind.Replace, change.Kind);
+        Assert.Equal(
+            LifecycleStoreIntegrationDocuments.FrameworkPath,
+            Assert.Single(plannedFramework.Targets).SourceAssetPath);
         Assert.True(JsonElement.DeepEquals(
             originalExtensions,
             plannedExtensions));
@@ -224,6 +230,41 @@ public sealed class LifecycleStorePlanningIntegrationTests
             plannedFramework));
     }
 
+    [Fact(DisplayName = "Lifecycle store blocks Extension planning when Framework omits required source provenance")]
+    [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
+    public async Task PlanExtensionUpdateBlocksFrameworkWithoutRequiredSourceProvenance()
+    {
+        using var temporary = TemporaryWorkspace.Create("lifecycle-plan-extension-invalid-framework");
+        var originalBytes = System.Text.Encoding.UTF8.GetBytes(
+            LifecycleStoreIntegrationDocuments.RawDocument(
+                temporary.Path,
+                LifecycleStoreIntegrationDocuments.FrameworkWithoutSourceProvenanceJson(),
+                NonCanonicalExtensionsJson(LifecycleStoreIntegrationDocuments.Extensions())));
+        temporary.WriteBytes(LifecycleSchema.RelativePath, originalBytes);
+        var store = new LifecycleStore(new PhysicalPathResolver());
+        var current = await store.ReadAsync(
+            LifecycleStoreIntegrationDocuments.Workspace(temporary),
+            LifecycleSection.Extensions,
+            TestContext.Current.CancellationToken);
+
+        Assert.Equal(LifecycleStoreReadState.Available, current.State);
+        Assert.Equal(
+            LifecycleStoreIntegrationDocuments.ExtensionPath,
+            current.Extensions?.Paths[0].Path);
+
+        var result = store.PlanExtensionUpdate(
+            current,
+            LifecycleStoreIntegrationDocuments.Extensions(".agents/updated-toolkit.md"));
+
+        Assert.Equal(LifecycleWritePlanState.Blocked, result.State);
+        Assert.Null(result.Change);
+        Assert.Equal(
+            originalBytes,
+            await File.ReadAllBytesAsync(
+                temporary.Combine(LifecycleSchema.RelativePath),
+                TestContext.Current.CancellationToken));
+    }
+
     [Fact(DisplayName = "Lifecycle store Extension semantic no-op preserves original bytes without writing")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task PlanExtensionUpdateDoesNotManufactureARewrite()
@@ -267,6 +308,7 @@ public sealed class LifecycleStorePlanningIntegrationTests
                  "fingerprintKind": "{{framework.Targets[0].FingerprintKind}}",
                  "baselineFingerprint": "{{framework.Targets[0].BaselineFingerprint}}",
                  "region": null,
+                 "sourceAssetPath": "{{framework.Targets[0].SourceAssetPath}}",
                  "path": "{{framework.Targets[0].Path}}"
                }
              ],

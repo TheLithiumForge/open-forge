@@ -81,7 +81,36 @@ public sealed class LifecycleStoreReadIntegrationTests
 
         Assert.Equal(LifecycleStoreReadState.Available, frameworkRead.State);
         Assert.Equal(LifecycleStoreIntegrationDocuments.FrameworkPath, frameworkRead.Framework?.Targets[0].Path);
+        Assert.Equal(LifecycleStoreIntegrationDocuments.FrameworkPath, frameworkRead.Framework?.Targets[0].SourceAssetPath);
         Assert.Equal(LifecycleStoreReadState.Invalid, extensionRead.State);
+    }
+
+    [Fact(DisplayName = "Lifecycle store isolates missing required Framework source provenance from the selected Extension section")]
+    [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
+    public async Task ReadValidExtensionsWithoutAcceptingMissingFrameworkSourceProvenance()
+    {
+        using var temporary = TemporaryWorkspace.Create("lifecycle-store-source-provenance-isolation");
+        temporary.WriteText(
+            LifecycleSchema.RelativePath,
+            LifecycleStoreIntegrationDocuments.RawDocument(
+                temporary.Path,
+                LifecycleStoreIntegrationDocuments.FrameworkWithoutSourceProvenanceJson(),
+                ExtensionsJson(LifecycleStoreIntegrationDocuments.Extensions())));
+        var workspace = LifecycleStoreIntegrationDocuments.Workspace(temporary);
+        var store = new LifecycleStore(new PhysicalPathResolver());
+
+        var extensionRead = await store.ReadAsync(
+            workspace,
+            LifecycleSection.Extensions,
+            TestContext.Current.CancellationToken);
+        var frameworkRead = await store.ReadAsync(
+            workspace,
+            LifecycleSection.Framework,
+            TestContext.Current.CancellationToken);
+
+        Assert.Equal(LifecycleStoreReadState.Available, extensionRead.State);
+        Assert.Equal(LifecycleStoreIntegrationDocuments.ExtensionPath, extensionRead.Extensions?.Paths[0].Path);
+        Assert.Equal(LifecycleStoreReadState.Invalid, frameworkRead.State);
     }
 
     [Theory(DisplayName = "Lifecycle store rejects invalid selected Framework facts")]
@@ -158,6 +187,7 @@ public sealed class LifecycleStoreReadIntegrationTests
                 new FrameworkLifecycleTarget
                 {
                     Path = "z.md",
+                    SourceAssetPath = LifecycleStoreIntegrationDocuments.FrameworkPath,
                     Region = null,
                     BaselineFingerprint = LifecycleStoreIntegrationDocuments.FingerprintA,
                     FingerprintKind = LifecycleSchema.SemanticFingerprintKind,
@@ -167,4 +197,11 @@ public sealed class LifecycleStoreReadIntegrationTests
             GeneratedRegions = [],
         };
     }
+
+    private static string ExtensionsJson(ExtensionLifecycleState extensions)
+        => System.Text.Encoding.UTF8.GetString(
+            System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(
+                extensions,
+                LifecycleJsonContext.Default.ExtensionLifecycleState));
+
 }

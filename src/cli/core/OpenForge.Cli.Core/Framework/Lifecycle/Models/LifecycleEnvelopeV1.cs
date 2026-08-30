@@ -44,6 +44,8 @@ internal sealed class FrameworkLifecycleTarget
 {
     public required string Path { get; init; }
 
+    public required string? SourceAssetPath { get; init; }
+
     public required string? Region { get; init; }
 
     public required string BaselineFingerprint { get; init; }

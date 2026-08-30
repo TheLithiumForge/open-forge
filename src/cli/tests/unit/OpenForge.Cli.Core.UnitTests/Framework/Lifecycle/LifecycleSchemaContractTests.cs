@@ -35,12 +35,15 @@ public sealed class LifecycleSchemaContractTests
         using var document = JsonDocument.Parse(json);
         var root = document.RootElement;
         var serializedFramework = root.GetProperty("framework");
+        var serializedTargets = serializedFramework.GetProperty("targets");
 
         Assert.Equal(LifecycleSchema.Version, root.GetProperty("schemaVersion").GetInt32());
         Assert.Equal(LifecycleSchema.FingerprintPolicy, root.GetProperty("fingerprintPolicy").GetString());
         Assert.Equal(workspace.LexicalRoot, root.GetProperty("workspacePath").GetString());
         Assert.Equal("embedded-framework", serializedFramework.GetProperty("source").GetProperty("id").GetString());
-        Assert.Equal(".agents/loader.md", serializedFramework.GetProperty("targets")[0].GetProperty("path").GetString());
+        Assert.Equal(".agents/loader.md", serializedTargets[0].GetProperty("path").GetString());
+        Assert.Equal(JsonValueKind.Null, serializedTargets[0].GetProperty("sourceAssetPath").ValueKind);
+        Assert.Equal("AGENTS.md", serializedTargets[1].GetProperty("sourceAssetPath").GetString());
         Assert.False(serializedFramework.TryGetProperty("trust", out _));
         Assert.False(root.TryGetProperty("plan", out _));
         Assert.False(root.TryGetProperty("recovery", out _));
@@ -78,6 +81,34 @@ public sealed class LifecycleSchemaContractTests
               "targets": [],
               "generatedRegions": [],
               "unknown": true
+            }
+            """;
+
+        Assert.Throws<JsonException>(() => JsonSerializer.Deserialize(
+            json,
+            LifecycleJsonContext.Default.FrameworkLifecycleState));
+    }
+
+    [Fact(DisplayName = "Lifecycle Framework schema rejects a target that omits required nullable source provenance"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void FrameworkSchemaRejectsTargetWithoutSourceProvenance()
+    {
+        var json = $$"""
+            {
+              "coverage": "complete",
+              "source": {
+                "id": "embedded-framework",
+                "version": null,
+                "inventoryFingerprint": "{{Fingerprint}}"
+              },
+              "targets": [
+                {
+                  "path": "AGENTS.md",
+                  "region": null,
+                  "baselineFingerprint": "{{Fingerprint}}",
+                  "fingerprintKind": "semantic"
+                }
+              ],
+              "generatedRegions": []
             }
             """;
 
@@ -130,9 +161,15 @@ public sealed class LifecycleSchemaContractTests
         Assert.Equal(expected.Source.Version, actual.Source.Version);
         Assert.Equal(expected.Source.InventoryFingerprint, actual.Source.InventoryFingerprint);
         Assert.Equal(expected.Targets[0].Path, actual.Targets[0].Path);
+        Assert.Equal(expected.Targets[0].SourceAssetPath, actual.Targets[0].SourceAssetPath);
         Assert.Equal(expected.Targets[0].Region, actual.Targets[0].Region);
         Assert.Equal(expected.Targets[0].BaselineFingerprint, actual.Targets[0].BaselineFingerprint);
         Assert.Equal(expected.Targets[0].FingerprintKind, actual.Targets[0].FingerprintKind);
+        Assert.Equal(expected.Targets[1].Path, actual.Targets[1].Path);
+        Assert.Equal(expected.Targets[1].SourceAssetPath, actual.Targets[1].SourceAssetPath);
+        Assert.Equal(expected.Targets[1].Region, actual.Targets[1].Region);
+        Assert.Equal(expected.Targets[1].BaselineFingerprint, actual.Targets[1].BaselineFingerprint);
+        Assert.Equal(expected.Targets[1].FingerprintKind, actual.Targets[1].FingerprintKind);
         Assert.Equal(expected.GeneratedRegions[0].Path, actual.GeneratedRegions[0].Path);
         Assert.Equal(expected.GeneratedRegions[0].Region, actual.GeneratedRegions[0].Region);
     }
@@ -378,9 +415,18 @@ public sealed class LifecycleSchemaContractTests
                 new FrameworkLifecycleTarget
                 {
                     Path = ".agents/loader.md",
+                    SourceAssetPath = null,
                     Region = "entries",
                     BaselineFingerprint = Fingerprint,
                     FingerprintKind = LifecycleSchema.SemanticFingerprintKind,
+                },
+                new FrameworkLifecycleTarget
+                {
+                    Path = "AGENTS.md",
+                    SourceAssetPath = "AGENTS.md",
+                    Region = null,
+                    BaselineFingerprint = Fingerprint,
+                    FingerprintKind = LifecycleSchema.ExactBytesFingerprintKind,
                 },
             ],
             GeneratedRegions =
@@ -402,12 +448,14 @@ public sealed class LifecycleSchemaContractTests
             Source = framework.Source,
             Targets =
             [
+                framework.Targets[0],
                 new FrameworkLifecycleTarget
                 {
                     Path = path,
-                    Region = framework.Targets[0].Region,
-                    BaselineFingerprint = framework.Targets[0].BaselineFingerprint,
-                    FingerprintKind = framework.Targets[0].FingerprintKind,
+                    SourceAssetPath = framework.Targets[1].SourceAssetPath,
+                    Region = framework.Targets[1].Region,
+                    BaselineFingerprint = framework.Targets[1].BaselineFingerprint,
+                    FingerprintKind = framework.Targets[1].FingerprintKind,
                 },
             ],
             GeneratedRegions = framework.GeneratedRegions,

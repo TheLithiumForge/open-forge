@@ -54,6 +54,17 @@ internal static class LifecycleFrameworkValidator
                     "A lifecycle Framework target identity is malformed.");
             }
 
+            if (target.SourceAssetPath is { } sourceAssetPath
+                && (!TryNormalizePath(sourceAssetPath, out var normalizedSourceAssetPath)
+                    || !string.Equals(
+                        normalizedSourceAssetPath,
+                        sourceAssetPath,
+                        StringComparison.Ordinal)))
+            {
+                return LifecycleSectionValidation.Blocked(
+                    "A lifecycle Framework source-asset path is malformed.");
+            }
+
             var key = (path, target.Region);
             if (previousTarget is { } previous && Compare(previous, key) >= 0
                 || !targetKeys.Add(key)
@@ -95,6 +106,16 @@ internal static class LifecycleFrameworkValidator
             }
 
             previousGenerated = key;
+        }
+
+        foreach (var target in framework.Targets)
+        {
+            var isGeneratedTarget = generatedKeys.Contains((target.Path, target.Region));
+            if (isGeneratedTarget != (target.SourceAssetPath is null))
+            {
+                return LifecycleSectionValidation.Blocked(
+                    "Lifecycle Framework generated targets require null source provenance, and all other managed targets require source provenance.");
+            }
         }
 
         return LifecycleSectionValidation.Valid();

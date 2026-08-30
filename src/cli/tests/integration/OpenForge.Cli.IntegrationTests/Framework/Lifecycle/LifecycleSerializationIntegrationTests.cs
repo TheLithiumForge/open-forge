@@ -27,9 +27,18 @@ public sealed class LifecycleSerializationIntegrationTests
                 new FrameworkLifecycleTarget
                 {
                     Path = ".agents/loader.md",
-                    Region = null,
+                    SourceAssetPath = null,
+                    Region = "entries",
                     BaselineFingerprint = Fingerprint,
                     FingerprintKind = LifecycleSchema.SemanticFingerprintKind,
+                },
+                new FrameworkLifecycleTarget
+                {
+                    Path = "AGENTS.md",
+                    SourceAssetPath = "AGENTS.md",
+                    Region = null,
+                    BaselineFingerprint = Fingerprint,
+                    FingerprintKind = LifecycleSchema.ExactBytesFingerprintKind,
                 },
             ],
             GeneratedRegions =
@@ -94,7 +103,20 @@ public sealed class LifecycleSerializationIntegrationTests
         Assert.NotNull(actualFramework);
         Assert.NotNull(actualExtensions);
         Assert.Equal("embedded-framework", actualFramework.Source.Id);
-        Assert.Equal(".agents/loader.md", Assert.Single(actualFramework.Targets).Path);
+        Assert.Collection(
+            actualFramework.Targets,
+            generatedTarget =>
+            {
+                Assert.Equal(".agents/loader.md", generatedTarget.Path);
+                Assert.Equal("entries", generatedTarget.Region);
+                Assert.Null(generatedTarget.SourceAssetPath);
+            },
+            sourceBackedTarget =>
+            {
+                Assert.Equal("AGENTS.md", sourceBackedTarget.Path);
+                Assert.Null(sourceBackedTarget.Region);
+                Assert.Equal("AGENTS.md", sourceBackedTarget.SourceAssetPath);
+            });
         Assert.Equal("toolkit", Assert.Single(actualExtensions.Packages).Id);
         Assert.Equal(".agents/toolkit.md", Assert.Single(actualExtensions.Paths).Path);
     }

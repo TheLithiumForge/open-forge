@@ -17,6 +17,133 @@ public sealed class LifecycleFrameworkValidatorTests
         Assert.Null(result.Cause);
     }
 
+    [Fact(DisplayName = "Framework lifecycle validation accepts a derived generated target with null source provenance")]
+    [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void ValidateAcceptsGeneratedTargetWithoutSourceProvenance()
+    {
+        const string path = ".agents/loader.md";
+        const string region = "entries";
+        var framework = Framework(
+            [GeneratedTarget(path: path, region: region)],
+            [new FrameworkGeneratedRegion { Path = path, Region = region }]);
+
+        var result = LifecycleFrameworkValidator.Validate(framework);
+
+        Assert.Equal(LifecycleSectionValidationState.Valid, result.State);
+        Assert.Null(result.Cause);
+    }
+
+    [Fact(DisplayName = "Framework lifecycle validation accepts a source-backed managed block without generated-region identity")]
+    [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void ValidateAcceptsSourceBackedManagedBlock()
+    {
+        const string path = ".agents/loader.md";
+        const string region = "managed";
+        var framework = Framework(
+            [
+                SourceBackedTarget(
+                    path: path,
+                    sourceAssetPath: path,
+                    region: region),
+            ],
+            generatedRegions: []);
+
+        var result = LifecycleFrameworkValidator.Validate(framework);
+
+        Assert.Equal(LifecycleSectionValidationState.Valid, result.State);
+        Assert.Null(result.Cause);
+    }
+
+    [Fact(DisplayName = "Framework lifecycle validation accepts normalized historical source provenance absent from the current payload")]
+    [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void ValidateAcceptsHistoricalSourceProvenance()
+    {
+        var framework = Framework(
+            [
+                SourceBackedTarget(
+                    path: "AGENTS.md",
+                    sourceAssetPath: ".agents/retired/legacy-loader.md"),
+            ],
+            generatedRegions: []);
+
+        var result = LifecycleFrameworkValidator.Validate(framework);
+
+        Assert.Equal(LifecycleSectionValidationState.Valid, result.State);
+        Assert.Null(result.Cause);
+    }
+
+    [Fact(DisplayName = "Framework lifecycle validation accepts repeated exact source provenance")]
+    [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void ValidateAcceptsRepeatedSourceProvenance()
+    {
+        var framework = Framework(
+            [
+                SourceBackedTarget(path: "AGENTS.md", sourceAssetPath: ".agents/loader.md"),
+                SourceBackedTarget(path: "CLAUDE.md", sourceAssetPath: ".agents/loader.md"),
+                SourceBackedTarget(path: "GEMINI.md", sourceAssetPath: ".agents/loader.md"),
+            ],
+            generatedRegions: []);
+
+        var result = LifecycleFrameworkValidator.Validate(framework);
+
+        Assert.Equal(LifecycleSectionValidationState.Valid, result.State);
+        Assert.Null(result.Cause);
+    }
+
+    [Theory(DisplayName = "Framework lifecycle validation blocks malformed source provenance")]
+    [InlineData("/absolute/source.md")]
+    [InlineData(".agents\\source.md")]
+    [InlineData("../source.md")]
+    [InlineData(".agents//source.md")]
+    [InlineData(".agents/e\u0301.md")]
+    [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void ValidateBlocksMalformedSourceProvenance(string sourceAssetPath)
+    {
+        var framework = Framework(
+            [SourceBackedTarget(path: "AGENTS.md", sourceAssetPath: sourceAssetPath)],
+            generatedRegions: []);
+
+        var result = LifecycleFrameworkValidator.Validate(framework);
+
+        Assert.Equal(LifecycleSectionValidationState.Blocked, result.State);
+        Assert.Contains("source-asset", result.Cause, StringComparison.Ordinal);
+    }
+
+    [Fact(DisplayName = "Framework lifecycle validation blocks null source provenance on a non-generated target")]
+    [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void ValidateBlocksNullSourceProvenanceOnNonGeneratedTarget()
+    {
+        var framework = Framework(
+            [UnprovenancedTarget("AGENTS.md")],
+            generatedRegions: []);
+
+        var result = LifecycleFrameworkValidator.Validate(framework);
+
+        Assert.Equal(LifecycleSectionValidationState.Blocked, result.State);
+        Assert.Contains("source provenance", result.Cause, StringComparison.Ordinal);
+    }
+
+    [Fact(DisplayName = "Framework lifecycle validation blocks source provenance on a generated target")]
+    [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void ValidateBlocksSourceProvenanceOnGeneratedTarget()
+    {
+        const string path = ".agents/loader.md";
+        const string region = "entries";
+        var framework = Framework(
+            [
+                SourceBackedTarget(
+                    path: path,
+                    sourceAssetPath: ".agents/loader.md",
+                    region: region),
+            ],
+            [new FrameworkGeneratedRegion { Path = path, Region = region }]);
+
+        var result = LifecycleFrameworkValidator.Validate(framework);
+
+        Assert.Equal(LifecycleSectionValidationState.Blocked, result.State);
+        Assert.Contains("source provenance", result.Cause, StringComparison.Ordinal);
+    }
+
     [Theory(DisplayName = "Framework lifecycle validation blocks contradictory identity")]
     [InlineData("unordered")]
     [InlineData("path-case-alias")]
@@ -29,13 +156,13 @@ public sealed class LifecycleFrameworkValidatorTests
         framework = scenario switch
         {
             "unordered" => Framework(
-                [Target("z.md"), Target("a.md")],
+                [SourceBackedTarget("z.md"), SourceBackedTarget("a.md")],
                 generatedRegions: []),
             "path-case-alias" => Framework(
-                [Target("AGENTS.md"), Target("agents.md")],
+                [SourceBackedTarget("AGENTS.md"), SourceBackedTarget("agents.md")],
                 generatedRegions: []),
             "orphan-region" => Framework(
-                [Target("AGENTS.md", region: null)],
+                [SourceBackedTarget("AGENTS.md")],
                 [new FrameworkGeneratedRegion { Path = "AGENTS.md", Region = "managed" }]),
             "invalid-hash" => new FrameworkLifecycleState
             {
@@ -97,7 +224,7 @@ public sealed class LifecycleFrameworkValidatorTests
 
     private static FrameworkLifecycleState Framework()
         => Framework(
-            [Target(".agents/loader.md")],
+            [SourceBackedTarget(".agents/loader.md")],
             generatedRegions: []);
 
     private static FrameworkLifecycleState Framework(
@@ -116,13 +243,42 @@ public sealed class LifecycleFrameworkValidatorTests
             GeneratedRegions = generatedRegions,
         };
 
-    private static FrameworkLifecycleTarget Target(
+    private static FrameworkLifecycleTarget SourceBackedTarget(string path)
+        => SourceBackedTarget(
+            path: path,
+            sourceAssetPath: ".agents/loader.md");
+
+    private static FrameworkLifecycleTarget SourceBackedTarget(
         string path,
+        string sourceAssetPath,
         string? region = null)
         => new()
         {
             Path = path,
+            SourceAssetPath = sourceAssetPath,
             Region = region,
+            BaselineFingerprint = Fingerprint,
+            FingerprintKind = LifecycleSchema.SemanticFingerprintKind,
+        };
+
+    private static FrameworkLifecycleTarget GeneratedTarget(
+        string path,
+        string region)
+        => new()
+        {
+            Path = path,
+            SourceAssetPath = null,
+            Region = region,
+            BaselineFingerprint = Fingerprint,
+            FingerprintKind = LifecycleSchema.SemanticFingerprintKind,
+        };
+
+    private static FrameworkLifecycleTarget UnprovenancedTarget(string path)
+        => new()
+        {
+            Path = path,
+            SourceAssetPath = null,
+            Region = null,
             BaselineFingerprint = Fingerprint,
             FingerprintKind = LifecycleSchema.SemanticFingerprintKind,
         };

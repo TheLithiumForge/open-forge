@@ -36,6 +36,7 @@ internal static class LifecycleStoreIntegrationDocuments
                 new FrameworkLifecycleTarget
                 {
                     Path = path,
+                    SourceAssetPath = FrameworkPath,
                     Region = null,
                     BaselineFingerprint = FingerprintA,
                     FingerprintKind = LifecycleSchema.SemanticFingerprintKind,
@@ -108,6 +109,27 @@ internal static class LifecycleStoreIntegrationDocuments
              "workspacePath": "{{JsonEncodedText.Encode(Path.TrimEndingDirectorySeparator(Path.GetFullPath(workspacePath)))}}",
              "framework": {{framework}},
              "extensions": {{extensions}}
+           }
+           """;
+
+    internal static string FrameworkWithoutSourceProvenanceJson()
+        => $$"""
+           {
+             "coverage": "{{LifecycleSchema.CompleteCoverage}}",
+             "source": {
+               "id": "open-forge",
+               "version": "1.0.0",
+               "inventoryFingerprint": "{{FingerprintA}}"
+             },
+             "targets": [
+               {
+                 "path": "{{FrameworkPath}}",
+                 "region": null,
+                 "baselineFingerprint": "{{FingerprintA}}",
+                 "fingerprintKind": "{{LifecycleSchema.SemanticFingerprintKind}}"
+               }
+             ],
+             "generatedRegions": []
            }
            """;
 }
