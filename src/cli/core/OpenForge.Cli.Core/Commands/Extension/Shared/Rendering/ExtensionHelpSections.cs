@@ -12,7 +12,7 @@ internal static class ExtensionHelpSections
                 body: """
                   list     Report separate Installed and Available package facts.
                   inspect  Inspect one exact stable package ID.
-                  create   Planned; create a local catalogue scaffold.
+                  create   Create one local catalogue scaffold without installing it.
                   install  Planned; establish managed Extension ownership.
                   update   Planned; reconcile trusted managed packages.
                   remove   Planned; release trusted managed ownership.

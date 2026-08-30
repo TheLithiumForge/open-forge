@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using OpenForge.Cli.Core.Commands.Context.Models.Presentation;
+using OpenForge.Cli.Core.Commands.Extension.Create.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Extension.List.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Find.Models.Presentation;
@@ -17,6 +18,7 @@ namespace OpenForge.Cli.Core.Shell.Serialization;
     GenerationMode = JsonSourceGenerationMode.Serialization)]
 [JsonSerializable(typeof(CliProcessCompletion))]
 [JsonSerializable(typeof(ContextJsonDocument))]
+[JsonSerializable(typeof(ExtensionCreateJsonDocument))]
 [JsonSerializable(typeof(ExtensionListJsonDocument))]
 [JsonSerializable(typeof(ExtensionInspectJsonDocument))]
 [JsonSerializable(typeof(FindJsonDocument))]

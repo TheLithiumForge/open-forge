@@ -10,6 +10,10 @@ using OpenForge.Cli.Core.Commands.Index;
 using OpenForge.Cli.Core.Commands.Index.Models.Result;
 using OpenForge.Cli.Core.Commands.Index.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Extension;
+using OpenForge.Cli.Core.Commands.Extension.Create;
+using OpenForge.Cli.Core.Commands.Extension.Create.Models.Binding;
+using OpenForge.Cli.Core.Commands.Extension.Create.Models.Result;
+using OpenForge.Cli.Core.Commands.Extension.Create.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Extension.List;
 using OpenForge.Cli.Core.Commands.Extension.List.Models.Binding;
 using OpenForge.Cli.Core.Commands.Extension.List.Models.Result;
@@ -73,7 +77,14 @@ internal static class CliCompositionRoot
                 $"  Open Forge CLI (`{CliSyntaxDefinitions.ExecutableName}`)."),
             new CliHelpSection(
                 "Discovery",
-                $"  route list     List routed sources and descendants at a structural depth.{Environment.NewLine}  route inspect  Explain one source's route behavior without returning authored content.{Environment.NewLine}  find           Find Markdown sources by authored tags and structural headings.{Environment.NewLine}  extension list  List installed and available Extension packages.{Environment.NewLine}  extension inspect  Inspect one installed or available Extension package."),
+                """
+                  route list        List routed sources and descendants at a structural depth.
+                  route inspect     Explain one source's route behavior without returning authored content.
+                  find              Find Markdown sources by authored tags and structural headings.
+                  extension list    List installed and available Extension packages.
+                  extension inspect Inspect one installed or available Extension package.
+                  extension create  Create one local Extension package scaffold.
+                """),
         ]);
         var routeGroup = RouteBinding.CreateGroup();
         var listSymbols = RouteListBinding.CreateSymbols(routeGroup);
@@ -170,6 +181,18 @@ internal static class CliCompositionRoot
                     ExtensionInspectJsonRenderer.Render),
                 DiagnosticRenderer = ExtensionInspectDiagnosticRenderer.Render,
             });
+        var extensionCreateSymbols = ExtensionCreateBinding.CreateSymbols(extensionGroup);
+        var extensionCreateBinding = ExtensionCreateBinding.Close(
+            extensionCreateSymbols,
+            new ExtensionCreateBindingComponents
+            {
+                Help = ExtensionCreateHelpSections.Create(),
+                Operation = ExtensionCreateOperationFactory.Create(interactiveSession),
+                Renderers = new CliRendererSet<ExtensionCreateResult>(
+                    ExtensionCreateHumanRenderer.Render,
+                    ExtensionCreateJsonRenderer.Render),
+                DiagnosticRenderer = ExtensionCreateDiagnosticRenderer.Render,
+            });
         var tree = CliCommandTree.Create(
             rootHelp,
             [
@@ -182,7 +205,7 @@ internal static class CliCompositionRoot
                     ExtensionHelpSections.CreateGroup(),
                     []),
             ],
-            [listBinding, inspectBinding, findBinding, indexBinding, referencesBinding, extensionListBinding, extensionInspectBinding, contextBinding],
+            [listBinding, inspectBinding, findBinding, indexBinding, referencesBinding, extensionListBinding, extensionInspectBinding, extensionCreateBinding, contextBinding],
             rootLeaves:
             [
                 new CliRootLeaf(findSymbols.FindCommand, []),
