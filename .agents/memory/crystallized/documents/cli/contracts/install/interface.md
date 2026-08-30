@@ -224,8 +224,8 @@ write is `invalid` unless `--automatic` is explicit; its single next action is t
 rerun the same command with `--automatic`. Automatic adds no force or safety
 authority.
 
-For application with one or more existing-target effects (`Replace`,
-`ReplaceGeneratedRegion`, or `Delete`),
+For application with one or more existing-target effects (`Replace` or
+`ReplaceGeneratedRegion`),
 orchestration uses only
 `Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
 Environment.SpecialFolderOption.Create)` and its application-owned
@@ -249,7 +249,7 @@ none. All preparation is complete before the first effect. Unavailable storage
 is `incomplete` before effects; a collision or failed final verification is
 `blocked` before effects.
 
-Directory creation is a separate effect from file Create/Replace/Delete. If the
+Directory creation is a separate effect from file Create/Replace. If the
 fully preflighted plan starts without `.agents`, that exact path is the one
 visible planned and reported lock-bootstrap directory. Immediately before
 opening `.agents/open-forge.lock`, `WorkspaceLockManager` confirms it is missing,
@@ -378,6 +378,88 @@ lifecycle publication or preservation, recovery facts, status, and at
 most one required `Next:` action. Compact view retains identity, mode, key
 effects, safety facts, status, and the bounded next action. JSON carries one
 complete structured result from the same typed result for every status.
+
+The command-local JSON `result` uses camel-case properties in exactly this
+order. Every property is present for every semantic status:
+
+1. `mode`: `apply` or `dry-run`;
+2. `force`: Boolean;
+3. `automatic`: Boolean;
+4. `source`: either `null` or one atomic object whose members are
+   `inventoryFingerprint` and `assetCount`, in that order;
+5. `classification`: `safe-absence`, `trusted-exact`,
+   `managed-divergence`, `eligible-initial-occupant`, or `null` when no safe
+   classification was reached;
+6. `footprint`: either `null` or one atomic object whose members are
+   `payloadFiles`, `managedRegions`, and `generatedRegions`, in that order;
+7. `effects`: a non-null ordered array whose members are `path`, `kind`,
+   `action`, `sourceAssetPath`, `outcome`, and `residual`, in that order;
+8. `lifecycle`: one object whose members are `action` and `outcome`, in that
+   order;
+9. `recovery`: one object whose members are `state` and `residualPath`, in that
+   order;
+10. `verification`;
+11. `findings`: a non-null ordered array whose members are `code`, `target`, and
+    `cause`, in that order.
+
+`source` and `footprint` are atomic nullable facts: their members are never
+independently nullable. Counts are nonnegative integers. Effect `path` values
+are canonical workspace-relative paths. A non-null `sourceAssetPath` is instead
+the canonical embedded-asset-relative provenance identity defined by the
+Framework lifecycle contract.
+`kind` is `directory`, `file`, `managed-region`, or `generated-region`.
+Valid `action` values are `create` for a directory, `create` or `replace` for a
+file, and `append` or `replace` for a managed or generated region. Install has
+no delete action. Effect `outcome` is `planned`, `not-started`, `verified`,
+`verification-failed`, or `completion-unknown`. Effect `residual` is the typed
+value `none`, `retained`, or `unknown`; it is never a Boolean.
+
+Lifecycle `action` is `none`, `preserve`, or `publish`. Lifecycle `outcome` is
+`not-requested`, `planned`, `already-current`, `not-started`, `verified`,
+`verification-failed`, or `completion-unknown`. Recovery `state` is
+`not-required`, `not-created`, `removed`, `retained`, or `unknown`;
+`residualPath` is the exact absolute external recovery path only when one is
+known, and otherwise `null`. Top-level `verification` is `not-requested`,
+`verified`, `failed`, or `unknown`. Findings retain command-owned finite `code`
+values, an exact nullable `target`, and an exact non-empty `cause`.
+
+Finding `code` uses exactly the following finite vocabulary and status mapping,
+in this declaration and primary ordering sequence:
+
+| Code | Status | Meaning |
+| --- | --- | --- |
+| `install.invalid-input` | `invalid` | Command syntax or normalized input is invalid. |
+| `install.confirmation-required` | `invalid` | A non-prompt-capable human write request requires `--automatic`. |
+| `install.workspace-unavailable` | `blocked` | The exact workspace cannot be selected as a safe Install subject. |
+| `install.workspace-unsafe` | `blocked` | Workspace identity, containment, or lock acquisition is unsafe. |
+| `install.managed-divergence` | `blocked` | Trusted managed state differs from its accepted baseline and requires Update. |
+| `install.target-occupied` | `blocked` | A selected destination has an ineligible existing occupant. |
+| `install.ownership-conflict` | `blocked` | Another owner or lifecycle section conflicts with the selected effect. |
+| `install.target-unsafe` | `blocked` | A selected target cannot be resolved, revalidated, or mutated safely. |
+| `install.generated-region-unsafe` | `blocked` | A required generated-region boundary is missing, malformed, or ambiguous. |
+| `install.lifecycle-blocked` | `blocked` | Lifecycle facts are present but invalid, untrusted, or conflicting. |
+| `install.recovery-conflict` | `blocked` | A recognized recovery candidate or destination conflicts with this operation. |
+| `install.payload-unavailable` | `incomplete` | The embedded Framework payload cannot be read completely. |
+| `install.payload-invalid` | `blocked` | Embedded payload identity or content is structurally invalid. |
+| `install.lifecycle-unavailable` | `incomplete` | Required lifecycle facts cannot be read completely. |
+| `install.projection-unavailable` | `incomplete` | Intended topology or generated projection cannot be formed completely. |
+| `install.recovery-unavailable` | `incomplete` | Required external recovery storage or evidence is unavailable before effects. |
+| `install.recovery-artifact-retained` | `attention` | Verified target effects succeeded but a positively retained recovery artifact remains. |
+| `install.write-failed` | `failed` | A planned target effect failed or could not be verified. |
+| `install.verification-failed` | `failed` | Whole-target or whole-operation verification failed. |
+| `install.lifecycle-publication-failed` | `failed` | Framework lifecycle publication failed or could not be verified. |
+| `install.recovery-failed` | `failed` | Recovery preparation or cleanup failed with unsafe or unknown completion. |
+| `install.operation-failed` | `failed` | Another unexpected Install operation failure occurred. |
+| `install.interrupted` | `interrupted` | Caller cancellation or refusal stopped the operation without a stronger failure. |
+
+Findings order first by this code order. For equal codes, a `null` target comes
+before every non-null target; non-null targets then use ordinal comparison.
+Equal code and target facts order by `cause` using ordinal comparison.
+
+The shared schema-v1 envelope already owns command, status, workspace, and
+next-action coordinates; none is duplicated inside this result. A breaking
+change to these required fields, their order, JSON types, nullability, or finite
+values is a command-local schema-v1 compatibility change.
 
 Primary human `complete`, `attention`, and `incomplete` results go to stdout.
 Primary human `invalid`, `blocked`, `failed`, and `interrupted` results go to

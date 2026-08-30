@@ -293,8 +293,8 @@ The one ordered plan records, for every effect:
 
 Preflight validates all source, target, route, ownership, containment, marker,
 cross-section, expected-state, recovery-bundle, verification, and preservation
-facts. Every planned existing-target effect (`Replace`,
-`ReplaceGeneratedRegion`, or `Delete`) must be covered by one
+facts. Every planned existing-target effect (`Replace` or
+`ReplaceGeneratedRegion`) must be covered by one
 verified bundle preparation; a `Create` or semantic/byte no-op has none. A
 verified no-op has no mutation path and needs no bundle.
 
@@ -397,7 +397,7 @@ and reopened and verified again. Only the valid final ZIP forms the opaque
 existing-target effect must match the preparation; Create and no-op effects create
 no bundle. All preparation is complete before the first target effect.
 
-Directory creation remains a distinct effect from file Create/Replace/Delete
+Directory creation remains a distinct effect from file Create/Replace
 and has no recovery entry. The missing `.agents` bootstrap is the sole pre-lease
 directory effect and never enters the descendant applier. A directory created or
 bootstrapped by this operation is retained and reported as residual state after
@@ -425,6 +425,16 @@ history, or progress record.
 The operation forms one typed result after invalid input, classification,
 preflight, dry-run, verified application, interruption, or recovery. Human and
 JSON renderers consume that result and do not rerun lifecycle work.
+
+The typed result forms exactly the ordered command-local JSON graph frozen by
+the Interface: mode, force, automatic, atomic nullable embedded-source identity,
+atomic nullable destination classification, atomic nullable managed-footprint
+counts, exact ordered effects, lifecycle, recovery, verification, and ordered
+findings. All top-level properties are present for every status, arrays are
+non-null, and the shared envelope's command, status, workspace, and next action
+are not duplicated. Effect residual state remains the typed value `none`,
+`retained`, or `unknown`, so dry-run, retained state, partial failure, and
+uncertain completion cannot be collapsed into a Boolean.
 
 The result retains exact workspace and selection method, normalized flags, source
 identity, recognized footprint, trust and management classification, semantic

@@ -73,14 +73,15 @@ open-forge:
   `e782090`, `680915a`, `0989356`, and `33913df`. The combined reviewed
   baseline has Release `0` warnings and `0` errors, managed Unit `1284/1284`,
   Integration `500/500`, EndToEnd `125/125`, Native AOT Integration `500/500`,
-  Native AOT EndToEnd `125/125`, and zero skips. Extension Create and Route
-  Inspect interaction correction are now active in isolated command worktrees;
-  root Install is ready for command-local/module work. C1, C2, and C3
+  Native AOT EndToEnd `125/125`, and zero skips. Extension Create and root
+  Install are active in isolated command worktrees; Route Inspect interaction is
+  squash-integrated at `fa3db1ee` with exact tree equality to final reviewed
+  candidate `37c9360`. C1 and C2
   command-local work may proceed independently; overlapping root composition,
   serialization, help, and process seams are integration-owned and sequential,
   with no C1/C3 behavior dependency. C2's exact public Install JSON result
-  schema, including residual values `none`, `retained`, and `unknown`, remains a
-  maintainer decision frontier before protected serialization integration.
+  schema is accepted and frozen, including typed residual values `none`,
+  `retained`, and `unknown`.
 - Responsible role: Overseer.
 - Task source: This file.
 - Last updated: 2026-08-30.

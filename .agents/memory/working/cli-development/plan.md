@@ -22,10 +22,12 @@ open-forge:
   `09aa03eddb97831ff544afe1eac54ad9af501f5c`; both commits have exact tree
   `2dcfca18020980a9cafbc429a72930af3368df5f`.
 - Current accepted baseline: clean local `develop` commit
-  `33913dfe7f8f80598ca4765c516d308ed179c3ab`, exact tree
-  `a56f3c201013b5999841414e1df469713f08cdfe`. It includes the accepted
-  intended-source formation integration after public Index and the integrated
-  D0/SF1-SF4 next-wave baseline recorded below. The pre-foundation baseline was
+  `fa3db1ee1dbfb687715b5b90b35f6104cbc45c6c`, exact tree
+  `605620d990622e093b12e85e50c6e40083896a18`. It includes the accepted
+  intended-source formation integration after public Index, integrated D0/SF1-SF4
+  foundations, M2 preparation, and Route Inspect interaction correction. The
+  shared-foundation baseline was `33913dfe7f8f80598ca4765c516d308ed179c3ab`,
+  exact tree `a56f3c201013b5999841414e1df469713f08cdfe`. The pre-foundation baseline was
   `18f2acff31cfd6600a16430ac5d689d05482e297`, exact tree
   `39f0a8c4e6d3695cfbe7407dfd6043dc5ec9680a`. Its Release
   build passes with 0 warnings and 0 errors. Managed Unit `1227/1227`,
@@ -94,14 +96,14 @@ open-forge:
   The combined reviewed baseline has Release `0` warnings and `0` errors,
   managed Unit `1284/1284`, Integration `500/500`, EndToEnd `125/125`, Native
   AOT Integration `500/500`, Native AOT EndToEnd `125/125`, and zero skips.
-  C1 Extension Create remains active, C2 root Install is ready for
-  command-local/module work in parallel, and C3 Route Inspect interaction is
-  complete in reviewed integration candidate `d9f1f350`. C3's Root-owned
+  C1 Extension Create and C2 root Install are active in parallel command-local
+  work, and C3 Route Inspect interaction is squash-integrated at `fa3db1ee` with
+  exact tree equality to final reviewed candidate `37c9360`. C3's Root-owned
   terminal composition and process seams are closed; C1/C2 overlapping root
   composition, serialization, help, and process seams remain integration-owned
-  and sequential. C2's exact public Install JSON result schema, including residual
-  values `none`, `retained`, and `unknown`, remains a maintainer decision
-  frontier before protected serialization integration. Generic and Framework-aware
+  and sequential. C2's exact fully present ordered public Install JSON result is
+  accepted and frozen, including typed residual values `none`, `retained`, and
+  `unknown`. Generic and Framework-aware
   Route Init follows accepted Install integration because it consumes the
   installed root topology, embedded payload, and trusted lifecycle state. Route
   Create, Route Update, Route Move, and Route Remove remain later command-local
@@ -110,10 +112,8 @@ open-forge:
   Gray/Red readiness, and worktree preparation may overlap earlier work;
   dependent command behavior may not. The localized C1/C2/C3 interaction,
   defaults, catalogue, and directory-effect decisions are frozen below;
-  Extension Create's JSON is frozen, while C2's exact public Install JSON result
-  schema, including residual values `none`, `retained`, and `unknown`, remains a
-  maintainer decision frontier. Implementation may not silently broaden either
-  boundary.
+  Extension Create's and root Install's exact command-local JSON results are
+  frozen. Implementation may not silently broaden either boundary.
   Continue operations, delivery, and final acceptance in the persisted order
   after their accepted predecessors.
   The snapshot slice remains a no-op, with possible LithSnap-backed
@@ -148,14 +148,13 @@ the resulting directory was validated. A reached outcome is retained across
 acquired, failed, and cancelled results, and acquisition requires a non-null
 outcome. This is not a hostile same-user creator-identity guarantee.
 
-C1 Extension Create remains active and C2 root Install is ready for
-command-local/module work in parallel. C3 Route Inspect interaction is complete
-in reviewed integration candidate `d9f1f350`; local `develop` integration remains
-with the Overseer. C1/C2 overlapping root composition, serialization, help, and
-process seams remain integration-owned and sequential. C2's exact
-public Install JSON result schema, including residual values `none`, `retained`,
-and `unknown`, remains a maintainer decision frontier before protected
-serialization integration. C4 Route Init remains after integrated Install, and
+C1 Extension Create and C2 root Install are active in parallel command-local
+work. C3 Route Inspect interaction is squash-integrated at `fa3db1ee` with exact
+tree equality to final reviewed candidate `37c9360`. C1/C2
+overlapping root composition, serialization, help, and process seams remain
+integration-owned and sequential. C2's exact public Install JSON result schema
+is accepted and frozen, including typed residual values `none`, `retained`, and
+`unknown`. C4 Route Init remains after integrated Install, and
 M3 root Update remains after the complete M2 Route Mutation lane.
 - Previous accepted Find history: Find Child 2 original Preflight through Blue history is accepted
   through exact commit `685e2dd`. During original Purple, top-down review found
@@ -483,8 +482,8 @@ diff, parent requirements, and claimed evidence.
 | SF3 | Complete at `0989356` | Add required nullable per-target `sourceAssetPath` provenance to Framework lifecycle schema v1 without adding instance collections or migration machinery. | D0, M1 | Parallel foundation | Framework lifecycle | Source-generated JSON, structural validation, lifecycle and Native AOT regressions |
 | SF4 | Complete at `33913df` | Add one lease-bound ordinary-BCL descendant-directory effect for Install and Route Init, preserving the visible planned/reported missing-`.agents` lock bootstrap as the sole pre-lease exception. | D0, M1 | Parallel foundation | Mutation directory effect | Bootstrap, real filesystem races, residuals, file/recovery non-regression, Native AOT proof |
 | C1  | Active in isolated `codex/extension-create` worktree | Implement Extension Create with accepted manifest defaults/options, catalogue boundary, ordered JSON result, and a command-local wizard for missing required facts. | SF1, M1, E1 | Parallel command | Lifecycle mutation | Package-destination, prompt/direct, manifest, process, and AOT evidence |
-| C2  | Ready for command-local work; Install JSON wire schema is a maintainer frontier; overlapping seams integrate sequentially | Implement the non-wire root Install slice over the closed embedded base Framework subset while preserving trusted dynamically added scoped lifecycle targets; resolve the exact public JSON result, including residual values `none`, `retained`, and `unknown`, before protected serialization integration. | SF1-SF4, M1, I1 | Parallel command | Framework lifecycle | Payload, lifecycle, recovery, workspace, process, and AOT evidence |
-| C3  | Complete in reviewed integration candidate `d9f1f350`; pending local `develop` integration | Correct Route Inspect's accepted one-answer interactive collision selection without changing its non-interactive contract or result model. | SF1, R2 | Parallel command plus sequential protected integration | Route discovery correction | Focused `131/8/82/32`, full managed `1284/511/125`, Native AOT `511/125`, no-write dogfood, and review pass |
+| C2  | Active command-local Green; exact Install JSON wire schema is frozen; overlapping seams integrate sequentially | Implement root Install over the closed embedded base Framework subset while preserving trusted dynamically added scoped lifecycle targets and forming the accepted exact public JSON result, including typed residual values `none`, `retained`, and `unknown`. | SF1-SF4, M1, I1 | Parallel command | Framework lifecycle | Payload, lifecycle, recovery, workspace, process, and AOT evidence |
+| C3  | Complete and squash-integrated at `fa3db1ee` with exact tree equality to final reviewed candidate `37c9360` | Correct Route Inspect's accepted one-answer interactive collision selection without changing its non-interactive contract or result model. | SF1, R2 | Parallel command plus sequential protected integration | Route discovery correction | Focused `131/8/82/32`, full managed `1284/511/125`, Native AOT `511/125`, no-write dogfood, and review pass |
 | M2  | Preparation complete; behavior planned after C2 integration | Implement generic and Framework-aware Route Init, then Route Create, Route Update, Route Move, and current positive-unmanaged-only Route Remove through separate command-local gates. Each leaf Task records accepted preparation decisions and remaining maintainer-authority frontiers; preparation created no implementation commit. | C2, M1, R2, I1 | Sequential route mutation | Route mutation | Per-command public, recovery, lifecycle, and AOT evidence |
 | M3  | Planned after M2 integration | Implement root Update only after the complete Route Mutation lane, preserving its independent lifecycle reconciliation boundary. Independent preparation may begin earlier without implementing dependent behavior. | M2, C2, M1, I1 | Sequential lifecycle mutation | Lifecycle mutation | Payload, lifecycle, recovery, workspace, and AOT evidence |
 | M4  | Pending  | Implement extension install/update/remove                                                                                                                                                                                                                                                                                                                                                                                         | M3                                      | Sequential  | Extension mutation   | Collision, recovery, and catalogue evidence                 |
@@ -547,14 +546,13 @@ program items through the later boundaries that own them:
   in the work graph; M1 supplies only neutral facts and mechanics.
 
 This queue does not reopen M1. D0 and SF1-SF4 are complete at the integrated
-baseline recorded above. C1 is active, C2 is ready for command-local/module
-work, and C3 is complete in reviewed integration candidate `d9f1f350` pending
-local `develop` integration. C1/C2 overlapping root composition, serialization,
-help, and process seams remain integration-owned and sequential. C2's exact
-public Install JSON result schema, including
-residual values `none`, `retained`, and `unknown`, remains a maintainer decision
-frontier before protected serialization integration. Each command still waits
-for its listed predecessors and any named decision frontier.
+baseline recorded above. C1 and C2 are active in separate command-local work,
+and C3 is complete and squash-integrated at `fa3db1ee` with exact tree equality
+to final reviewed candidate `37c9360`. C1/C2 overlapping root composition,
+serialization, help, and process seams remain integration-owned and sequential. C2's exact
+fully present ordered public Install JSON result is accepted and frozen,
+including typed residual values `none`, `retained`, and `unknown`. Each command
+still waits for its listed predecessors and any named decision frontier.
 
 ### Per-Task Proportionality And Evidence Check
 
@@ -592,7 +590,7 @@ has non-overlapping production and test ownership.
 | Read-only C | E1                             | G1 and GI1 complete; extension source contract frozen                                                          | Extension List/Inspect roots                         | Shell and filesystem foundation                   | M1                |
 | Read-only D | GN1                            | Q1-Q3 and R2 complete; pure-effect boundary frozen                                                             | New `Framework/GeneratedNavigation/**` and mirrors  | Accepted source/route/document facts               | GN1 acceptance    |
 | Next foundation | SF1, SF2, SF3, SF4         | Complete at integrated D0/SF1-SF4 baseline; combined managed and Native AOT evidence recorded above             | Separate Shell interaction, Framework distribution, lifecycle-provenance, and directory-effect paths | M1 and accepted root project graph | Complete; protected surfaces remain integration-owned |
-| Next commands | C1, C2, C3                  | C3 complete at reviewed candidate `d9f1f350`; C1 active; C2 ready for independent command-local/module work after all foundations; exact Install JSON wire schema is a maintainer frontier and remaining overlapping seams integrate sequentially | Separate Extension Create, Install, and Route Inspect paths | Root composition, serialization, help, and process evidence | Integrate C3 locally; continue C1/C2, then Route Init after Install |
+| Next commands | C1, C2, C3                  | C3 complete and integrated at `fa3db1ee`; C1 active; C2 active in independent command-local Green after all foundations; exact Install JSON wire schema is frozen and remaining overlapping seams integrate sequentially | Separate Extension Create, Install, and Route Inspect paths | Root composition, serialization, help, and process evidence | Continue C1/C2, then Route Init after Install |
 | Delivery    | Current `linux-x64` smoke, packed journey, checksums | O2 behavior complete; release contracts frozen                                                | Separate workflow and package paths                  | Accepted command binaries                         | D1 acceptance     |
 
 No parallel implementation may change the same shared capability. Promotion or
@@ -703,7 +701,7 @@ passed. `CLI-EDGE-001` remains non-product only.
 | D12 | How does Extension Create gather and correct missing required human input?             | Accepted: ask only missing stable-ID/catalogue facts; local correction without attempt limit; EOF invalid, cancellation interrupted; no generic retry framework | Maintainer | C1 | Reopen wizard contract and focused evidence |
 | D13 | How does a missing `.agents` container compose with the workspace lock and SF4?         | Accepted: visible planned/reported bootstrap before acquisition; SF4 handles descendants after lease; nullable lock results preserve reached `Existing`/`Materialized` outcome | Maintainer | SF4, C2, M2 | Reopen lock location, result contract, mutation sequencing, and residual evidence |
 | D14 | May root Update M3 behavior begin alongside Route Mutation M2 after Install?             | Accepted: no; full M2 behavior precedes M3, while independent preparation may run earlier | Maintainer | M2, M3 | Reopen program sequencing and lane ownership |
-| D15 | What exact public Root Install JSON result shape and residual vocabulary closes C2?      | Maintainer decision frontier: resolve the wire schema, including residual values `none`, `retained`, and `unknown`, before protected serialization integration | Maintainer | C2 | Reopen result model, serialization, help, process evidence, and command acceptance |
+| D15 | What exact public Root Install JSON result shape and residual vocabulary closes C2?      | Accepted: one fully present ordered result with mode, force, automatic, atomic nullable source/classification/footprint, exact effects, lifecycle, recovery, verification, findings, and typed residual values `none`, `retained`, `unknown` | Maintainer | C2 | Reopen result model, serialization, help, process evidence, and command acceptance |
 
 ## Risks, Recovery, And Stop Conditions
 

@@ -8,11 +8,10 @@ open-forge:
 
 ## Task State
 
-- State: Active. The next-wave shared foundations are integrated; Extension
-  Create and Route Inspect correction are active, and root Install is ready for
-  command-local work. C1, C2, and C3 command-local work may proceed
-  independently; overlapping root composition, serialization, help, and process
-  seams are integration-owned and sequential, with no C1/C3 behavior dependency.
+- State: Active. The next-wave shared foundations and Route Inspect correction
+  are integrated; Extension Create and root Install are active on separate
+  command-local paths. Their overlapping root composition, serialization, help,
+  and process seams are integration-owned and sequential.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Common prerequisites: Extension discovery and `index`; workspace mutations also
   consume Mutation Foundation.
@@ -45,10 +44,10 @@ Create does not consume it. The maintainer accepted explicit `--name`,
 command-local wizard that asks only for missing stable ID and catalogue facts.
 Exact name/description defaults, catalogue-parent and sibling eligibility, local
 invalid-input correction, EOF/cancellation semantics, and the command-local JSON
-result are accepted and frozen in its contracts. Root Install's non-wire
-command-local/module work is ready; its exact public JSON result schema,
-including residual values `none`, `retained`, and `unknown`, remains a maintainer
-decision frontier before protected serialization integration.
+result are accepted and frozen in its contracts. Root Install's exact fully
+present ordered public JSON result is also accepted and frozen, including typed
+residual values `none`, `retained`, and `unknown`; command-local result and
+presentation work may proceed against it.
 Extension Create depends only on the native interaction foundation. Root Install
 depends on interaction, embedded Framework distribution, lifecycle
 `sourceAssetPath` provenance, the shared directory-create foundation, and

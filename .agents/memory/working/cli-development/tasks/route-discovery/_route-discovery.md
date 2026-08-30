@@ -10,9 +10,9 @@ open-forge:
 
 - State: Complete after accepted Route List and Route Inspect slices.
 - Post-completion correction: Route Inspect's accepted interactive collision
-  selection is Complete in reviewed integration candidate `d9f1f350`; local
-  `develop` integration remains with the Overseer, and completed discovery
-  meaning remains otherwise closed.
+  selection is Complete and squash-integrated at `fa3db1ee` with exact tree
+  equality to final reviewed candidate `37c9360`; completed discovery meaning
+  remains otherwise closed.
 - Implementer: Mastermind.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Prerequisite: Accepted [Foundation](../foundation/_foundation.md).
@@ -52,15 +52,17 @@ private support.
   - [x] [Form the route-inspect profile](route-inspect-profile.md) — Complete at `c407e24`; link-safe routing deferred — Implementer: Mastermind
   - [x] [Present route inspect through the CLI](route-inspect-presentation.md) — Complete at production commit `51c0960` plus final managed acceptance — Implementer: Mastermind
   - [x] [Accept route inspect and close Route Discovery](route-inspect-acceptance.md) — Complete — integrated managed/native and closeout gates — Implementer: Mastermind
-- [x] [Complete the accepted Route Inspect interactive source-collision selection](route-inspect-interaction-correction.md) — Complete in reviewed integration candidate `d9f1f350`; pending local `develop` integration
+- [x] [Complete the accepted Route Inspect interactive source-collision selection](route-inspect-interaction-correction.md) — Complete and squash-integrated at `fa3db1ee` with exact tree equality to final reviewed candidate `37c9360`
 
 ## Closeout And Routing Waiver
 
 Route List is integrated at `edca509`; Route Inspect is accepted from final
 correction `9c690b4` with complete managed and local `win-x64` Native AOT evidence.
-The later native-interaction conformance correction is complete at reviewed
-`linux-x64` integration candidate `d9f1f350`, with focused managed/process,
-complete managed/Native AOT, no-write dogfood, and independent review evidence.
+The later native-interaction conformance correction is complete at final reviewed
+`linux-x64` integration candidate `37c9360`; its protected Root integration
+commit is `d9f1f350`. Focused managed/process, complete managed/Native AOT,
+no-write dogfood, and independent review evidence pass. The final candidate is
+squash-integrated locally at `fa3db1ee` with exact tree equality.
 Actual terminal-process PTY proof is explicitly outside this accepted evidence
 scope; no PTY, native, or platform-specific harness was added.
 `CLI-EDGE-001` remains the generated-index/routing refresh blocker: its legacy

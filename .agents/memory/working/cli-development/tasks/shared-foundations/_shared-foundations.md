@@ -65,9 +65,9 @@ SF4 Directory Create ────── Root Install ── Route Init
 Extension Create and the Route Inspect correction depend only on SF1. Root
 Install depends on SF1-SF4 plus the accepted intended-membership formation. Its
 non-wire command-local/module work may proceed independently alongside C1 and
-C3. The exact public Install JSON result schema, including residual values
-`none`, `retained`, and `unknown`, remains a maintainer decision frontier before
-protected serialization integration. Root composition, shared JSON
+C3. The exact public Install JSON result schema is accepted and frozen,
+including typed residual values `none`, `retained`, and `unknown`. Root
+composition, shared JSON
 registration, public help/process evidence, and program ledgers remain
 sequential integration-owned surfaces; this does not imply a C1/C3 behavior
 dependency.

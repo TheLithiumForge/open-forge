@@ -8,12 +8,12 @@ open-forge:
 
 ## Task State
 
-- State: Ready after integrated D0 and SF1-SF4. Its command-local/module slice
-  may develop in parallel with C1 and C3 on branch `codex/root-install`.
-  The non-wire command-local/module work is ready, but the exact public Install
-  JSON result schema, including residual values `none`, `retained`, and
-  `unknown`, remains a current maintainer decision frontier before protected
-  serialization integration.
+- State: Active after integrated D0 and SF1-SF4. Its command-local/module slice
+  is developing in parallel with C1 on branch `codex/root-install`; C3 is
+  already integrated.
+  The exact public Install JSON result schema is accepted and frozen in the
+  Interface. Command-local result and presentation work may proceed against it,
+  including the typed residual values `none`, `retained`, and `unknown`.
   Protected root composition, shared serialization, help, process evidence,
   and final integration are integration-owned sequential seams; this does not
   create a behavior dependency between C1, C2, and C3, and Install remains
@@ -26,7 +26,7 @@ open-forge:
 Root `install` places the accepted Framework payload into one selected workspace,
 preserves user content, records exact Framework lifecycle identity, refreshes
 generated navigation, and provides one verified external recovery bundle covering
-every existing target it replaces or deletes.
+every existing target it replaces.
 
 ## Architecture
 
@@ -54,6 +54,10 @@ every existing target it replaces or deletes.
   failure, or interruption.
 - Keep install policy and managed-file ownership local; share payload identity and
   lifecycle facts with Update.
+- Form the exact fully present ordered Interface result graph. Keep embedded
+  source and managed-footprint objects atomically nullable, findings/effects
+  non-null, residual state typed, and shared envelope coordinates outside the
+  command-local result.
 
 ## Evidence
 

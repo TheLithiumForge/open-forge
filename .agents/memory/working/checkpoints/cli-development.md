@@ -16,9 +16,10 @@ release.
 
 ## Current State
 
-The current local `develop` baseline is `33913dfe7f8f80598ca4765c516d308ed179c3ab`
-with exact tree `a56f3c201013b5999841414e1df469713f08cdfe`. It includes the
-integrated D0 contract freeze and SF1-SF4 shared foundations described below.
+The current local `develop` baseline is `fa3db1ee1dbfb687715b5b90b35f6104cbc45c6c`
+with exact tree `605620d990622e093b12e85e50c6e40083896a18`. It includes the
+integrated D0 contract freeze, SF1-SF4 shared foundations, M2 preparation
+record, and Route Inspect interaction correction described below.
 
 Proportional CLI Corrections are Complete and squash-integrated through
 implementation `0d88606`, with clean local `develop` closeout `7abde56`.
@@ -161,14 +162,14 @@ the known archived metadata and handoff-routing gaps remain; the changed-
 Markdown link check, stale-status check, commit-presence check, and
 `git diff --check` pass.
 
-Extension Create remains active, C2 root Install is ready for command-local
-work, and C3 Route Inspect interaction is complete in reviewed integration
-candidate `d9f1f350`. C3's Root-owned terminal composition and published
+Extension Create and C2 root Install are active in parallel command-local work,
+and C3 Route Inspect interaction is squash-integrated at `fa3db1ee` with exact
+tree equality to final reviewed candidate `37c9360`. C3's Root-owned terminal composition and published
 redirected/JSON process seams are closed; remaining C1/C2 overlapping seams stay
-integration-owned and sequential. C2's non-wire command-local/module
-work is ready, while the exact public Install JSON result schema, including
-residual values `none`, `retained`, and `unknown`, remains a maintainer decision
-frontier before protected serialization integration. Route Init remains after
+integration-owned and sequential. C2's exact fully present ordered public
+Install JSON result is accepted and frozen, including typed residual values
+`none`, `retained`, and `unknown`; command-local result and presentation work
+may proceed against it. Route Init remains after
 integrated Install; root Update remains after the complete Route Mutation M2
 lane.
 
@@ -219,14 +220,13 @@ Its integration closeout is the pre-foundation commit
 `39f0a8c4e6d3695cfbe7407dfd6043dc5ec9680a`.
 
 D0 and SF1-SF4 are now complete at the integrated baseline recorded above. C1
-Extension Create remains active and C2 root Install is ready for
-command-local/module work in parallel. C3 Route Inspect interaction is complete
-in reviewed integration candidate `d9f1f350`, pending local `develop`
-integration. C1/C2 overlapping root composition, serialization, help, and
-process seams remain integration-owned and sequential. C2's exact public Install
-JSON result schema, including residual values `none`, `retained`, and `unknown`,
-remains a maintainer decision frontier before protected serialization
-integration. Generic and Framework-aware Route Init follows root Install
+Extension Create and C2 root Install are active in parallel command-local work.
+C3 Route Inspect interaction is squash-integrated at `fa3db1ee` with exact tree
+equality to final reviewed candidate `37c9360`. C1/C2
+overlapping root composition, serialization, help, and process seams remain
+integration-owned and sequential. C2's exact public Install JSON result schema
+is accepted and frozen, including typed residual values `none`, `retained`, and
+`unknown`. Generic and Framework-aware Route Init follows root Install
 integration. Its Framework mode accepts one concrete
 uniquely aligned route, slugs only ID-form inserted scope labels, creates one
 sparse chain, keeps scope entrypoints user-owned, and lifecycle-manages only
@@ -276,13 +276,13 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Squash-integrate reviewed C3 candidate `d9f1f350` into local `develop`; do not
-   push. Continue C1 Extension Create in its isolated command worktree.
-2. C2 root Install is ready for command-local/module work in parallel. Integrate
+1. Continue C1 Extension Create in its isolated command worktree and close its
+   independent review corrections; do not push.
+2. Continue C2 root Install command-local/module work in parallel. Integrate
    the overlapping root composition, serialization, help, process evidence, and
    final command surfaces sequentially; this is an integration boundary, not a
-   C1/C3 behavior dependency. Resolve the exact public Install JSON result
-   schema, including residual values `none`, `retained`, and `unknown`, before
+   C1/C3 behavior dependency. Implement its accepted exact public result graph,
+   including typed residual values `none`, `retained`, and `unknown`, before
    protected serialization integration.
 3. Implement generic and Framework-aware Route Init only after root Install is
    integrated and proves the trusted installed root and embedded topology it

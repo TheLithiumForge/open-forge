@@ -8,10 +8,12 @@ open-forge:
 
 ## Task State
 
-- State: Complete in reviewed integration candidate
-  `d9f1f350426642410bcee734c6ba90e1221b5f54` over exact local baseline
-  `c3642df16a1de073ddd81f0daac3a59c47018f1c`; local `develop` integration
-  remains with the Overseer.
+- State: Complete in final reviewed integration candidate
+  `37c9360a94ae8ceab9f17221c95697f5082b236d` over exact local baseline
+  `c3642df16a1de073ddd81f0daac3a59c47018f1c`; its protected Root integration
+  commit is `d9f1f350426642410bcee734c6ba90e1221b5f54`. It is squash-integrated
+  locally at `fa3db1ee1dbfb687715b5b90b35f6104cbc45c6c` with exact final-candidate
+  tree equality.
 - Parent: [Route Discovery](_route-discovery.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/route/inspect/interface.md)
   and [Behavior](../../../../crystallized/documents/cli/contracts/route/inspect/behavior.md).
@@ -30,7 +32,7 @@ open-forge:
   composition, published redirected/JSON evidence, full managed and local
   `linux-x64` Native AOT evidence, safe dogfood, and independent integration
   review plus recheck.
-- Next boundary: Overseer integration into local `develop`.
+- Next boundary: none; local `develop` integration is complete.
 
 ## Execution Capsule
 
