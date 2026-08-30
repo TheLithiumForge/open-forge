@@ -432,7 +432,7 @@ public sealed class PublishedRouteInspectStatusProcessTests
         Assert.DoesNotContain("Next:", result.StandardOutput, StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Published Route Inspect blocked collision uses stderr and the exact public next wording")]
+    [Fact(DisplayName = "Published redirected Route Inspect blocks a human collision without prompting")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
     public async Task BlockedCollisionUsesExactNextWording()
     {
@@ -446,6 +446,8 @@ public sealed class PublishedRouteInspectStatusProcessTests
 
         Assert.Equal(5, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardOutput);
+        Assert.DoesNotContain("matches more than one source", result.StandardError, StringComparison.Ordinal);
+        Assert.DoesNotContain("Choose a source by number or exact path", result.StandardError, StringComparison.Ordinal);
         Assert.Contains("Status: blocked", result.StandardError, StringComparison.Ordinal);
         Assert.Contains("Next: rerun with one of the listed exact paths.", result.StandardError, StringComparison.Ordinal);
     }
@@ -464,6 +466,8 @@ public sealed class PublishedRouteInspectStatusProcessTests
 
         Assert.Equal(5, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
+        Assert.DoesNotContain("matches more than one source", result.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("Choose a source by number or exact path", result.StandardOutput, StringComparison.Ordinal);
         using var document = JsonDocument.Parse(result.StandardOutput);
         Assert.Equal("blocked", document.RootElement.GetProperty("status").GetString());
         Assert.Equal(

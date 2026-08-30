@@ -39,10 +39,11 @@ The accepted dependency order is:
 
 1. The D0 contract freeze and all four shared foundations are integrated and
    accepted at the current local baseline.
-2. Implement Extension Create, root Install, and the already-contracted Route
-   Inspect interactive selection correction in parallel on their isolated command
-   paths; integrate shared root composition, serialization, help, and executable
-   evidence sequentially.
+2. Continue Extension Create and root Install on their isolated command paths.
+   Route Inspect interactive selection is complete in reviewed integration
+   candidate `d9f1f350`; integrate it locally before dependent use. Keep remaining
+   shared root composition, serialization, help, and executable evidence
+   sequential.
 3. Implement Framework-aware Route Init after root Install establishes the
    trusted base lifecycle, then complete the remaining Route Mutation M2 leaves.
 4. Implement root Update M3 only after full M2 is complete. Preparation that is
@@ -67,7 +68,7 @@ or a general template/scaffold system.
 | F4 | Shared planned directory-creation mutation effect | Integrated at `33913df` after review |
 | C1 | Extension Create | Active on branch `codex/extension-create` |
 | C2 | Root Install | Ready for command-local work on branch `codex/root-install`; its overlapping root-composition, serialization, help, and process seams are integration-owned and sequential |
-| C3 | Route Inspect interactive correction | Active on branch `codex/route-inspect-interactive` |
+| C3 | Route Inspect interactive correction | Complete in reviewed `codex/c3-integration` candidate `d9f1f350`; pending local `develop` integration |
 | C4 | Generic and Framework-aware Route Init | Waiting for integrated Install |
 | M2 preparation | Init/Create/Update/Move/Remove readiness | Complete on clean no-op branches from `33913dfe`; leaf Tasks retain accepted preparation decisions and remaining authority gates; no implementation commit exists |
 
@@ -83,6 +84,15 @@ Checkpoint are integration-owned unless a Task packet explicitly says otherwise.
   errors; managed Unit `1284/1284`, Integration `500/500`, and EndToEnd
   `125/125`; Native AOT Integration `500/500` and EndToEnd `125/125`; and zero
   skips in every stated run.
+- C3 Route Inspect interaction is complete at reviewed integration candidate
+  `d9f1f350` over `c3642df1`. Root owns Console and redirection facts; Core owns
+  the interaction transport and Route Inspect policy. Focused Unit
+  `131/131` plus Shell interaction `8/8`, Integration `82/82`, published
+  EndToEnd `32/32`, full managed `1284/511/125`, and local `linux-x64` Native
+  AOT `511/125` pass with zero skips. Independent review and docs-only rebase
+  recheck pass. Direct composition proves interactive behavior; published
+  redirected-human and JSON flows prove no prompt. Actual PTY process proof is
+  explicitly outside the accepted evidence scope, and no workaround was added.
 - The accepted lock bootstrap outcome is nullable. `null` means no bootstrap
   directory outcome was successfully observed; `Existing` means the existing
   `.agents` directory was validated; `Materialized` means its absence was

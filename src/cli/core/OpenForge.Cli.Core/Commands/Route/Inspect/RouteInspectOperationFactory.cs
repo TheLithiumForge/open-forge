@@ -2,11 +2,13 @@ using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Interaction;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Result;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Interaction;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect;
 
@@ -14,7 +16,18 @@ internal static class RouteInspectOperationFactory
 {
     internal static RouteInspectOperation Create()
     {
-        var resolver = new RouteInspectResolver();
+        return CreateCore(interactiveSession: null);
+    }
+
+    internal static RouteInspectOperation Create(CliInteractiveSession interactiveSession)
+    {
+        return CreateCore(interactiveSession);
+    }
+
+    private static RouteInspectOperation CreateCore(CliInteractiveSession? interactiveSession)
+    {
+        var resolver = new RouteInspectResolver(
+            new RouteInspectInteractiveSourceSelector(interactiveSession));
         var profileBuilder = new RouteInspectProfileBuilder();
         var resultBuilder = new RouteInspectResultBuilder();
         return new RouteInspectOperationCoordinator(resolver, profileBuilder, resultBuilder).ExecuteAsync;

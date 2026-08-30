@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
+using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Interaction;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
@@ -9,92 +10,28 @@ namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Resolution;
 internal sealed partial class RouteInspectSourceSelectionResolver
 {
     private readonly RouteInspectSourceFactsResolver _sourceFactsResolver;
+    private readonly RouteInspectInteractiveSourceSelector _interactiveSourceSelector;
 
-    internal RouteInspectSourceSelectionResolver(RouteInspectSourceFactsResolver sourceFactsResolver)
+    internal RouteInspectSourceSelectionResolver(
+        RouteInspectSourceFactsResolver sourceFactsResolver,
+        RouteInspectInteractiveSourceSelector interactiveSourceSelector)
     {
         _sourceFactsResolver = sourceFactsResolver;
+        _interactiveSourceSelector = interactiveSourceSelector;
     }
 
-    internal RouteInspectResolution Resolve(
+    internal ValueTask<RouteInspectResolution> ResolveAsync(
         RouteInspectResolutionInput input,
         CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
         {
-            return Interrupted(input);
+            return ValueTask.FromResult(Interrupted(input));
         }
 
         return input.Parsed.Kind == SourceReferenceKind.SourceId
-            ? ResolveId(input, cancellationToken)
-            : ResolvePath(input, cancellationToken);
-    }
-
-    private RouteInspectResolution ResolveId(
-        RouteInspectResolutionInput input,
-        CancellationToken cancellationToken)
-    {
-        var requestedId = input.Parsed.AttemptedId
-            ?? throw new InvalidOperationException("A source-ID selection requires its attempted ID.");
-        var candidates = input.Catalogue.FindAllCandidatesById(requestedId);
-        var candidatePaths = candidates
-            .Select(candidate => candidate.CanonicalPath)
-            .Distinct(StringComparer.Ordinal)
-            .OrderBy(path => path, StringComparer.Ordinal)
-            .ToArray();
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return Interrupted(input);
-        }
-
-        if (candidatePaths.Length == 0)
-        {
-            return RouteInspectResolution.Create(
-                RouteInspectResolutionState.Invalid,
-                input.UnresolvedSelection,
-                null,
-                null,
-                [RouteInspectResolutionSupport.CreateIssue(
-                    RouteInspectResolutionIssueCode.UnknownSource,
-                    requestedId,
-                    "The source ID does not identify a current source.")]);
-        }
-
-        if (candidatePaths.Length > 1)
-        {
-            return RouteInspectResolution.Create(
-                RouteInspectResolutionState.Blocked,
-                new RouteInspectSelection(
-                    RouteInspectReferenceKind.SourceId,
-                    RouteInspectSelectionMethod.Unresolved,
-                    requestedId,
-                    candidatePaths),
-                null,
-                null,
-                [RouteInspectResolutionSupport.CreateIssue(
-                    RouteInspectResolutionIssueCode.AmbiguousSource,
-                    requestedId,
-                    "The source ID identifies more than one current source.",
-                    candidatePaths)]);
-        }
-
-        var candidate = candidates.Single();
-        if (candidate.PhysicalState != PhysicalPathState.Contained)
-        {
-            return Unsafe(input.UnresolvedSelection, requestedId);
-        }
-
-        var logicalSource = input.Catalogue.FindAllById(requestedId).SingleOrDefault();
-        if (logicalSource is null)
-        {
-            return Unsafe(input.UnresolvedSelection, requestedId);
-        }
-
-        var selection = new RouteInspectSelection(
-            RouteInspectReferenceKind.SourceId,
-            RouteInspectSelectionMethod.AutomaticId,
-            requestedId,
-            []);
-        return ResolveSource(input, selection, logicalSource, logicalSource.Identity.CanonicalBasePath, cancellationToken);
+            ? ResolveIdAsync(input, cancellationToken)
+            : ValueTask.FromResult(ResolvePath(input, cancellationToken));
     }
 
     private RouteInspectResolution ResolvePath(

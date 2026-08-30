@@ -59,7 +59,10 @@ internal sealed class RouteInspectProfileIntegrationWorkspace : IDisposable
         CancellationToken cancellationToken)
     {
         return RouteInspectOperationFactory.Create()(
-            new RouteInspectRequest(Workspace, reference),
+            new RouteInspectRequest(
+                Workspace,
+                reference,
+                allowInteractiveSourceSelection: false),
             cancellationToken);
     }
 

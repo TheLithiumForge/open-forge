@@ -1,4 +1,5 @@
 using OpenForge.Cli.Composition;
+using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Invocation;
 using OpenForge.Cli.Core.Shell.Pipeline;
@@ -11,26 +12,44 @@ internal static class CliHost
         string[] arguments,
         CancellationToken cancellationToken = default)
     {
-        return RunAsync(
-            arguments,
-            Environment.CurrentDirectory,
-            new CliOutputWriters(Console.Out, Console.Error),
-            cancellationToken);
+        var writers = new CliOutputWriters(Console.Out, Console.Error);
+        return RunApplicationAsync(
+            arguments: arguments,
+            currentDirectory: Environment.CurrentDirectory,
+            writers: writers,
+            application: CliCompositionRoot.Create(
+                CreateProcessIdentity(),
+                Console.In,
+                writers.StandardError,
+                Console.IsInputRedirected,
+                Console.IsErrorRedirected),
+            cancellationToken: cancellationToken);
     }
 
-    internal static async ValueTask<int> RunAsync(
+    internal static ValueTask<int> RunAsync(
         string[] arguments,
         string currentDirectory,
         CliOutputWriters writers,
         CancellationToken cancellationToken = default)
     {
+        return RunApplicationAsync(
+            arguments: arguments,
+            currentDirectory: currentDirectory,
+            writers: writers,
+            application: CliCompositionRoot.Create(CreateProcessIdentity()),
+            cancellationToken: cancellationToken);
+    }
+
+    private static async ValueTask<int> RunApplicationAsync(
+        string[] arguments,
+        string currentDirectory,
+        CliOutputWriters writers,
+        CliCoreApplication application,
+        CancellationToken cancellationToken)
+    {
         ArgumentNullException.ThrowIfNull(arguments);
         ArgumentException.ThrowIfNullOrWhiteSpace(currentDirectory);
         ArgumentNullException.ThrowIfNull(writers);
-        var process = new CliProcessIdentity(
-            CliSyntaxDefinitions.ExecutableName,
-            CliBuildVersion.InformationalVersion);
-        var application = CliCompositionRoot.Create(process);
         var completion = await application
             .RunAsync(
                 arguments,
@@ -39,5 +58,12 @@ internal static class CliHost
                 cancellationToken)
             .ConfigureAwait(false);
         return completion.ExitCode;
+    }
+
+    private static CliProcessIdentity CreateProcessIdentity()
+    {
+        return new CliProcessIdentity(
+            CliSyntaxDefinitions.ExecutableName,
+            CliBuildVersion.InformationalVersion);
     }
 }

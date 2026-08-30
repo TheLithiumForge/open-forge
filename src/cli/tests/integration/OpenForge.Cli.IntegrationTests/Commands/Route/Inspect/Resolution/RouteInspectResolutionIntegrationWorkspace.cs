@@ -62,7 +62,10 @@ internal sealed class RouteInspectResolutionIntegrationWorkspace : IDisposable
         CancellationToken cancellationToken)
     {
         return new RouteInspectResolver().ResolveAsync(
-            new RouteInspectRequest(Workspace, reference),
+            new RouteInspectRequest(
+                Workspace,
+                reference,
+                allowInteractiveSourceSelection: false),
             cancellationToken);
     }
 

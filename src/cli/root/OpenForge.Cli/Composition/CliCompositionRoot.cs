@@ -36,6 +36,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Interaction;
 using OpenForge.Cli.Core.Shell.Parsing;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Presentation;
@@ -46,6 +47,25 @@ internal static class CliCompositionRoot
 {
     internal static CliCoreApplication Create(CliProcessIdentity process)
     {
+        return Create(
+            process,
+            TextReader.Null,
+            TextWriter.Null,
+            standardInputRedirected: true,
+            promptOutputRedirected: true);
+    }
+
+    internal static CliCoreApplication Create(
+        CliProcessIdentity process,
+        TextReader standardInput,
+        TextWriter promptOutput,
+        bool standardInputRedirected,
+        bool promptOutputRedirected)
+    {
+        var interactiveSession = new CliInteractiveSession(
+            standardInput,
+            promptOutput,
+            canPrompt: !standardInputRedirected && !promptOutputRedirected);
         var rootHelp = new CliHelpContent(
         [
             new CliHelpSection(
@@ -74,7 +94,7 @@ internal static class CliCompositionRoot
             new RouteInspectBindingComponents
             {
                 Help = RouteInspectHelpSections.CreateInspect(),
-                Operation = RouteInspectOperationFactory.Create(),
+                Operation = RouteInspectOperationFactory.Create(interactiveSession),
                 Renderers = new CliRendererSet<RouteInspectResult>(
                     RouteInspectHumanRenderer.Render,
                     RouteInspectJsonRenderer.Render),

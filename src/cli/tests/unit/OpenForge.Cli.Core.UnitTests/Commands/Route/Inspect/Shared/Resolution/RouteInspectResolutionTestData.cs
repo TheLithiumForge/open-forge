@@ -162,7 +162,10 @@ internal static class RouteInspectResolutionTestData
 
     internal static RouteInspectRequest Request(string sourceReference)
     {
-        return new RouteInspectRequest(Workspace(), sourceReference);
+        return new RouteInspectRequest(
+            Workspace(),
+            sourceReference,
+            allowInteractiveSourceSelection: false);
     }
 
     internal static CliWorkspace Workspace()

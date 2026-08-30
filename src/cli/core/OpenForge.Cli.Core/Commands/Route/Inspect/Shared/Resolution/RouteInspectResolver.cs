@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
+using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Interaction;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
@@ -17,8 +18,19 @@ internal sealed partial class RouteInspectResolver
     private readonly SourceCatalogueReader _catalogueReader = new();
     private readonly RouteInspectSourceProjectionBuilder _projectionBuilder = new();
     private readonly SourceRouteFactsResolver _routeFactsResolver = new();
-    private readonly RouteInspectSourceSelectionResolver _sourceSelectionResolver =
-        new(new RouteInspectSourceFactsResolver());
+    private readonly RouteInspectSourceSelectionResolver _sourceSelectionResolver;
+
+    internal RouteInspectResolver()
+        : this(new RouteInspectInteractiveSourceSelector(session: null))
+    {
+    }
+
+    internal RouteInspectResolver(RouteInspectInteractiveSourceSelector interactiveSourceSelector)
+    {
+        _sourceSelectionResolver = new RouteInspectSourceSelectionResolver(
+            new RouteInspectSourceFactsResolver(),
+            interactiveSourceSelector);
+    }
 
     internal async ValueTask<RouteInspectResolution> ResolveAsync(
         RouteInspectRequest request,
@@ -128,7 +140,9 @@ internal sealed partial class RouteInspectResolver
                     ReadAttemptedReference(parsed));
             }
 
-            return _sourceSelectionResolver.Resolve(input, cancellationToken);
+            return await _sourceSelectionResolver
+                .ResolveAsync(input, cancellationToken)
+                .ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {

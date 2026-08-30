@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Composition.Models;
+using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Invocation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect;
@@ -61,7 +62,10 @@ internal static class RouteInspectBinding
         var workspace = invocation.Workspace
             ?? throw new InvalidOperationException("The route-inspect binding requires a selected workspace.");
         return CliBindResult<RouteInspectRequest, RouteInspectResult>.Bound(
-            new RouteInspectRequest(workspace, sourceReferences[0]));
+            new RouteInspectRequest(
+                workspace,
+                sourceReferences[0],
+                allowInteractiveSourceSelection: invocation.Presentation.Format == CliOutputFormat.Human));
     }
 
     internal static CliCommandBinding<RouteInspectRequest, RouteInspectResult> Close(

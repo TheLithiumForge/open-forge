@@ -80,6 +80,14 @@ public sealed class RouteInspectBindingAndCompositionTests
         var request = Assert.IsType<OpenForge.Cli.Core.Commands.Route.Inspect.Models.Operation.RouteInspectRequest>(one.Request);
         Assert.Null(one.InvalidResult);
         Assert.Equal("one", request.SourceReference);
+        Assert.True(request.AllowInteractiveSourceSelection);
+
+        var json = RouteInspectBinding.Bind(
+            route.Parse(["inspect", "one"]),
+            Invocation(RouteInspectPresentationTestDataWorkspace(), CliOutputFormat.Json),
+            symbols);
+        var jsonRequest = Assert.IsType<RouteInspectRequest>(json.Request);
+        Assert.False(jsonRequest.AllowInteractiveSourceSelection);
 
         var optionLike = RouteInspectBinding.Bind(
             route.Parse(["inspect", "--", "--view"]),
@@ -435,11 +443,13 @@ public sealed class RouteInspectBindingAndCompositionTests
             new CliWorkspaceSelector(new PhysicalPathResolver()));
     }
 
-    private static CliInvocation Invocation(CliWorkspace workspace)
+    private static CliInvocation Invocation(
+        CliWorkspace workspace,
+        CliOutputFormat outputFormat = CliOutputFormat.Human)
     {
         return new CliInvocation(
             new CliProcessIdentity("open-forge", "test"),
-            new CliPresentation(CliOutputFormat.Human, CliView.Expanded, CliVerbosity.Normal),
+            new CliPresentation(outputFormat, CliView.Expanded, CliVerbosity.Normal),
             CliTerminalMode.None,
             new CliWorkspaceRequest(workspace.LexicalRoot, workspace.LexicalRoot),
             workspace);
