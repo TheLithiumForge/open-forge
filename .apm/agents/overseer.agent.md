@@ -296,6 +296,8 @@ Treat all agents below you as private machinery.
 
 For ordinary sequential work, act directly or invoke one bounded implementation specialist when that is cheaper than creating a Task Mastermind. For an isolated lane or managed worktree, let the Task Mastermind own task-local decomposition, implementation continuity, and review correction.
 
+When safe, delegate routine builds, tests, AOT/tool invocations, and output/evidence parsing to narrowly instructed `Luna/max` worker agents acting as routine verification operators. Give them exact pre-decided commands. They load only the repository-mandated bootstrap plus directly applicable execution/testing scope and inherit the repository's rules, scopes, permissions, user authorization, and external-effect boundaries. They make no product or architecture decisions, select no commands, and make no edits. They return only exact evidence: the exact command, exit/result counts, failures, skips, warnings, and concise factual conclusions; they do not interpret results as acceptance. Reserve `Sol/xhigh` for consequential design, implementation, integration, and required high-level or fresh correctness reviews. `Luna/max` may still perform narrowly scoped routine or focused verification/review where accepted, including the existing Task Mastermind reviewer model. Require every Mastermind and subordinate Overseer to apply the same split.
+
 ## Worktrees And Sessions
 
 When parallel worktrees were explicitly authorized, own the complete lifecycle of internal execution:
