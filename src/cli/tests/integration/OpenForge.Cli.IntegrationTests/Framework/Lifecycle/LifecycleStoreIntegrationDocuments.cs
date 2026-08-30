@@ -72,6 +72,14 @@ internal static class LifecycleStoreIntegrationDocuments
             ],
         };
 
+    internal static ExtensionLifecycleState EmptyExtensions()
+        => new()
+        {
+            Coverage = LifecycleSchema.CompleteCoverage,
+            Packages = [],
+            Paths = [],
+        };
+
     internal static LifecycleEnvelopeV1 Envelope(
         TemporaryWorkspace temporary,
         FrameworkLifecycleState? framework,
@@ -111,6 +119,36 @@ internal static class LifecycleStoreIntegrationDocuments
              "extensions": {{extensions}}
            }
            """;
+
+    internal static string RawDocumentWithSectionPresence(
+        string workspacePath,
+        string? framework,
+        string? extensions,
+        bool includeFramework,
+        bool includeExtensions)
+    {
+        var properties = new List<string>
+        {
+            $"\"schemaVersion\": {LifecycleSchema.Version}",
+            $"\"fingerprintPolicy\": \"{LifecycleSchema.FingerprintPolicy}\"",
+            $"\"workspacePath\": \"{JsonEncodedText.Encode(Path.TrimEndingDirectorySeparator(Path.GetFullPath(workspacePath)))}\"",
+        };
+        if (includeFramework)
+        {
+            properties.Add($"\"framework\": {framework ?? "null"}");
+        }
+
+        if (includeExtensions)
+        {
+            properties.Add($"\"extensions\": {extensions ?? "null"}");
+        }
+
+        return $$"""
+               {
+                 {{string.Join(",\n  ", properties)}}
+               }
+               """;
+    }
 
     internal static string FrameworkWithoutSourceProvenanceJson()
         => $$"""

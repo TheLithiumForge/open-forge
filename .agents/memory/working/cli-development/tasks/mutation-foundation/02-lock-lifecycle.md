@@ -82,10 +82,16 @@ before the first effect.
   not its individual members. A plan requires the existing common envelope and
   every present section to be valid, rejects cross-section path ownership
   collisions, rebuilds the selected state and semantically retains any unrelated
-  state. A missing document starts the canonical envelope with a null unrelated
-  section. When selected meaning changes, serialization emits one deterministic
-  canonical UTF-8 whole-document representation; formatting, ordering, and
-  line-ending trivia are not preserved. A semantic no-op emits no write plan.
+  state. A newly created document emits the ordered root keys
+  `schemaVersion`, `fingerprintPolicy`, `workspacePath`, `framework`, and
+  `extensions`; Framework creation uses a complete empty `ExtensionLifecycleState`
+  (`coverage: "complete"`, `packages: []`, `paths: []`) for that section. An
+  existing section-missing, explicit-null, malformed, or incomplete selected or
+  unrelated section is untrusted: both update-plan methods return `Blocked` with
+  no change and never repair it. When selected meaning changes, serialization
+  emits one deterministic canonical UTF-8 whole-document representation;
+  formatting, ordering, and line-ending trivia are not preserved. A semantic
+  no-op emits no write plan.
   Serialization uses only `LifecycleJsonContext` and no reflection or legacy
   fallback.
 - The store never applies its plan and never publishes lifecycle bytes for a

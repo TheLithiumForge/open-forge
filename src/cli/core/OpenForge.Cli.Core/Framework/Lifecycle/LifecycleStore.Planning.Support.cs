@@ -20,19 +20,11 @@ internal sealed partial class LifecycleStore
             basis = new LifecyclePlanBasis(
                 file.Expectation,
                 file,
-                new LifecycleEnvelopeV1
-                {
-                    SchemaVersion = LifecycleSchema.Version,
-                    FingerprintPolicy = LifecycleSchema.FingerprintPolicy,
-                    WorkspacePath = NormalizeRoot(current.Workspace.LexicalRoot),
-                    Framework = null,
-                    Extensions = null,
-                });
+                CreateFreshEnvelope(current));
             return true;
         }
 
-        if ((current.State is LifecycleStoreReadState.Available
-                or LifecycleStoreReadState.SectionMissing)
+        if (current.State == LifecycleStoreReadState.Available
             && current.File is { } existingFile
             && current.Envelope is { } existingEnvelope)
         {
@@ -44,8 +36,35 @@ internal sealed partial class LifecycleStore
         }
 
         basis = null;
-        cause = "Lifecycle update planning requires an available, section-missing, or document-missing read.";
+        cause = "Lifecycle update planning requires an available or document-missing read.";
         return false;
+    }
+
+    private static LifecycleEnvelopeV1 CreateFreshEnvelope(
+        LifecycleStoreReadResult current)
+    {
+        var extensions = current.SelectedSection switch
+        {
+            LifecycleSection.Framework => new ExtensionLifecycleState
+            {
+                Coverage = LifecycleSchema.CompleteCoverage,
+                Packages = [],
+                Paths = [],
+            },
+            LifecycleSection.Extensions => null,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(current.SelectedSection),
+                current.SelectedSection,
+                "The lifecycle section is not defined."),
+        };
+        return new LifecycleEnvelopeV1
+        {
+            SchemaVersion = LifecycleSchema.Version,
+            FingerprintPolicy = LifecycleSchema.FingerprintPolicy,
+            WorkspacePath = NormalizeRoot(current.Workspace.LexicalRoot),
+            Framework = null,
+            Extensions = CanonicalizeExtensionsForWrite(extensions),
+        };
     }
 
     private static FrameworkLifecycleState? ReadFrameworkForWrite(
@@ -55,7 +74,13 @@ internal sealed partial class LifecycleStore
         ValidateOtherSectionDuplicates(current, LifecycleSection.Framework);
         if (envelope.Framework is not { } element || element.ValueKind == JsonValueKind.Null)
         {
-            return null;
+            if (current.State == LifecycleStoreReadState.DocumentMissing)
+            {
+                return null;
+            }
+
+            throw new JsonException(
+                "An existing lifecycle document requires a Framework section.");
         }
 
         var framework = element.Deserialize(LifecycleJsonContext.Default.FrameworkLifecycleState)
@@ -82,7 +107,13 @@ internal sealed partial class LifecycleStore
         ValidateOtherSectionDuplicates(current, LifecycleSection.Extensions);
         if (envelope.Extensions is not { } element || element.ValueKind == JsonValueKind.Null)
         {
-            return null;
+            if (current.State == LifecycleStoreReadState.DocumentMissing)
+            {
+                return null;
+            }
+
+            throw new JsonException(
+                "An existing lifecycle document requires an Extension section.");
         }
 
         var extensions = element.Deserialize(LifecycleJsonContext.Default.ExtensionLifecycleState)

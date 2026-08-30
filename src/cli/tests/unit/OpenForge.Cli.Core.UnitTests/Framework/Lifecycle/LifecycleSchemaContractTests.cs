@@ -223,6 +223,82 @@ public sealed class LifecycleSchemaContractTests
         Assert.Equal(LifecycleStoreReadState.Cancelled, cancelled.State);
     }
 
+    [Fact(DisplayName = "Lifecycle Framework planning creates a canonical envelope with a complete empty Extension section"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void PlanFrameworkUpdateCreatesCanonicalEnvelopeWithEmptyExtensions()
+    {
+        var workspace = Workspace();
+        var current = LifecycleStoreReadResult.DocumentMissing(
+            workspace,
+            LifecycleSection.Framework,
+            FileStateSnapshot.Missing(LifecyclePath(workspace)));
+        var result = new LifecycleStore(new PhysicalPathResolver()).PlanFrameworkUpdate(
+            current,
+            FrameworkState());
+
+        var change = Assert.IsType<PlannedFileChange>(result.Change);
+        using var document = JsonDocument.Parse(change.IntendedBytes.ToArray());
+        var root = document.RootElement;
+
+        Assert.Equal(LifecycleWritePlanState.Planned, result.State);
+        Assert.Equal(PlannedFileChangeKind.Create, change.Kind);
+        Assert.Equal(
+            new[] { "schemaVersion", "fingerprintPolicy", "workspacePath", "framework", "extensions" },
+            root.EnumerateObject().Select(property => property.Name));
+        Assert.Equal(1, root.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal("open-forge-markdown-v1", root.GetProperty("fingerprintPolicy").GetString());
+
+        var extensions = root.GetProperty("extensions");
+        Assert.Equal("complete", extensions.GetProperty("coverage").GetString());
+        Assert.Empty(extensions.GetProperty("packages").EnumerateArray());
+        Assert.Empty(extensions.GetProperty("paths").EnumerateArray());
+    }
+
+    [Fact(DisplayName = "Lifecycle Framework planning does not repair an existing missing Extension section"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void PlanFrameworkUpdateBlocksExistingMissingExtensions()
+    {
+        var workspace = Workspace();
+        var framework = FrameworkState();
+        var originalBytes = Serialize(Envelope(workspace, framework, extensions: null));
+        var current = LifecycleStoreReadResult.Available(
+            workspace,
+            LifecycleSection.Framework,
+            FileSnapshot(workspace, originalBytes),
+            Envelope(workspace, framework, extensions: null),
+            framework,
+            extensions: null);
+
+        var result = new LifecycleStore(new PhysicalPathResolver()).PlanFrameworkUpdate(
+            current,
+            FrameworkStateWithVersion("2.0.0"));
+
+        Assert.Equal(LifecycleWritePlanState.Blocked, result.State);
+        Assert.Null(result.Change);
+        Assert.Equal(originalBytes, current.File?.Bytes.ToArray());
+    }
+
+    [Fact(DisplayName = "Lifecycle Extension planning does not repair an existing missing Framework section"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void PlanExtensionUpdateBlocksExistingMissingFramework()
+    {
+        var workspace = Workspace();
+        var extensions = ExtensionsState(".agents/toolkit.md");
+        var originalBytes = Serialize(Envelope(workspace, framework: null, extensions: extensions));
+        var current = LifecycleStoreReadResult.Available(
+            workspace,
+            LifecycleSection.Extensions,
+            FileSnapshot(workspace, originalBytes),
+            Envelope(workspace, framework: null, extensions: extensions),
+            framework: null,
+            extensions: extensions);
+
+        var result = new LifecycleStore(new PhysicalPathResolver()).PlanExtensionUpdate(
+            current,
+            ExtensionsState(".agents/updated-toolkit.md"));
+
+        Assert.Equal(LifecycleWritePlanState.Blocked, result.State);
+        Assert.Null(result.Change);
+        Assert.Equal(originalBytes, current.File?.Bytes.ToArray());
+    }
+
     [Fact(DisplayName = "Lifecycle read factories reject forged path, selected presence, common mismatch, and typed/raw mismatch facts"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void LifecycleReadFactoriesRejectContradictoryFacts()
     {

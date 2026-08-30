@@ -33,13 +33,21 @@ product policy to a generic engine.
   version `1`. Reuse the existing source-generated lifecycle serialization
   boundary. Do not add a second lifecycle format, legacy reader, migration shape,
   serializer context, or reflection fallback.
-- The common envelope contains only `schemaVersion`, `fingerprintPolicy`,
-  `workspacePath`, optional `framework`, and optional `extensions`. It contains no
+- The canonical common envelope has exactly five ordered root keys:
+  `schemaVersion`, `fingerprintPolicy`, `workspacePath`, `framework`, and
+  `extensions`. A newly created document emits both section keys. Framework
+  creation sets `extensions` to a complete empty `ExtensionLifecycleState` with
+  `coverage: "complete"`, `packages: []`, and `paths: []`. Framework creation
+  never emits a null or omitted `Extensions` section. The envelope contains no
   plan, receipt, comparison, recovery, Git, session, or command history.
 - Parse the two logical sections independently. The common envelope exposes each
   section as an isolated JSON value. A Framework reader validates only the
   Framework value and an Extension reader validates only the Extension value.
-  Invalid unrelated-section meaning cannot erase valid selected-section facts.
+  Invalid unrelated-section meaning cannot erase valid selected-section facts
+  during reads, but an existing missing, explicit-null, malformed, or incomplete
+  selected or unrelated section is untrusted for planning. `PlanFrameworkUpdate`
+  and `PlanExtensionUpdate` return blocked with no change for those documents;
+  update has no repair authority and never silently repairs them.
 - The Framework section contains exact `coverage`, one embedded-source identity,
   ordered managed target identities, and ordered generated-region identities.
   Source identity is `id`, optional descriptive `version`, and one lowercase

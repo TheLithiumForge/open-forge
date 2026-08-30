@@ -34,13 +34,22 @@ public sealed class LifecycleStorePlanningIntegrationTests
                 LifecycleStoreIntegrationDocuments.Envelope(
                     temporary,
                     LifecycleStoreIntegrationDocuments.Framework(),
-                    extensions: null)),
+                    LifecycleStoreIntegrationDocuments.EmptyExtensions())),
             change.IntendedBytes.ToArray());
         var envelope = JsonSerializer.Deserialize(
             change.IntendedBytes.AsSpan(),
             LifecycleJsonContext.Default.LifecycleEnvelopeV1);
         Assert.NotNull(envelope?.Framework);
-        Assert.Null(envelope?.Extensions);
+        Assert.NotNull(envelope?.Extensions);
+
+        using var document = JsonDocument.Parse(change.IntendedBytes.ToArray());
+        Assert.Equal(
+            new[] { "schemaVersion", "fingerprintPolicy", "workspacePath", "framework", "extensions" },
+            document.RootElement.EnumerateObject().Select(property => property.Name));
+        var extensions = document.RootElement.GetProperty("extensions");
+        Assert.Equal("complete", extensions.GetProperty("coverage").GetString());
+        Assert.Empty(extensions.GetProperty("packages").EnumerateArray());
+        Assert.Empty(extensions.GetProperty("paths").EnumerateArray());
     }
 
     [Fact(DisplayName = "Lifecycle store canonicalizes a selected change and preserves Extension meaning")]
@@ -185,6 +194,67 @@ public sealed class LifecycleStorePlanningIntegrationTests
         Assert.Equal(LifecycleWritePlanState.Blocked, collision.State);
     }
 
+    [Theory(DisplayName = "Lifecycle Framework planning blocks existing untrusted sections without writing")]
+    [InlineData("selected-section-missing")]
+    [InlineData("selected-explicit-null")]
+    [InlineData("selected-malformed")]
+    [InlineData("selected-incomplete")]
+    [InlineData("unrelated-section-missing")]
+    [InlineData("unrelated-explicit-null")]
+    [InlineData("unrelated-malformed")]
+    [InlineData("unrelated-incomplete")]
+    [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
+    public async Task PlanFrameworkUpdateBlocksExistingUntrustedSections(string scenario)
+    {
+        using var temporary = TemporaryWorkspace.Create($"lifecycle-plan-framework-untrusted-{scenario}");
+        var framework = LifecycleStoreIntegrationDocuments.Framework();
+        var extensions = LifecycleStoreIntegrationDocuments.EmptyExtensions();
+        var frameworkJson = scenario switch
+        {
+            "selected-section-missing" => null,
+            "selected-explicit-null" => "null",
+            "selected-malformed" => "{\"coverage\":\"complete\"}",
+            "selected-incomplete" => FrameworkJson(framework)
+                .Replace("\"coverage\":\"complete\"", "\"coverage\":\"incomplete\"", StringComparison.Ordinal),
+            _ => FrameworkJson(framework),
+        };
+        var extensionsJson = scenario switch
+        {
+            "unrelated-section-missing" => null,
+            "unrelated-explicit-null" => "null",
+            "unrelated-malformed" => "{\"coverage\":\"complete\",\"packages\":[]}",
+            "unrelated-incomplete" => ExtensionsJson(extensions)
+                .Replace("\"coverage\":\"complete\"", "\"coverage\":\"incomplete\"", StringComparison.Ordinal),
+            _ => ExtensionsJson(extensions),
+        };
+        var originalBytes = System.Text.Encoding.UTF8.GetBytes(
+            LifecycleStoreIntegrationDocuments.RawDocumentWithSectionPresence(
+                temporary.Path,
+                frameworkJson,
+                extensionsJson,
+                includeFramework: scenario != "selected-section-missing",
+                includeExtensions: scenario != "unrelated-section-missing"));
+        temporary.WriteBytes(LifecycleSchema.RelativePath, originalBytes);
+
+        var store = new LifecycleStore(new PhysicalPathResolver());
+        var current = await store.ReadAsync(
+            LifecycleStoreIntegrationDocuments.Workspace(temporary),
+            LifecycleSection.Framework,
+            TestContext.Current.CancellationToken);
+        var result = store.PlanFrameworkUpdate(
+            current,
+            LifecycleStoreIntegrationDocuments.Framework(
+                LifecycleStoreIntegrationDocuments.UpdatedFrameworkPath));
+
+        Assert.Equal(LifecycleWritePlanState.Blocked, result.State);
+        Assert.Null(result.Change);
+        Assert.Equal(
+            originalBytes,
+            await File.ReadAllBytesAsync(
+                temporary.Combine(LifecycleSchema.RelativePath),
+                TestContext.Current.CancellationToken));
+    }
+
     [Fact(DisplayName = "Lifecycle store Extension plan preserves valid Framework value")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task PlanExtensionUpdatePreservesFrameworkValue()
@@ -228,6 +298,67 @@ public sealed class LifecycleStorePlanningIntegrationTests
         Assert.True(JsonElement.DeepEquals(
             originalFramework,
             plannedFramework));
+    }
+
+    [Theory(DisplayName = "Lifecycle Extension planning blocks existing untrusted sections without writing")]
+    [InlineData("selected-section-missing")]
+    [InlineData("selected-explicit-null")]
+    [InlineData("selected-malformed")]
+    [InlineData("selected-incomplete")]
+    [InlineData("unrelated-section-missing")]
+    [InlineData("unrelated-explicit-null")]
+    [InlineData("unrelated-malformed")]
+    [InlineData("unrelated-incomplete")]
+    [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
+    public async Task PlanExtensionUpdateBlocksExistingUntrustedSections(string scenario)
+    {
+        using var temporary = TemporaryWorkspace.Create($"lifecycle-plan-extension-untrusted-{scenario}");
+        var framework = LifecycleStoreIntegrationDocuments.Framework();
+        var extensions = LifecycleStoreIntegrationDocuments.EmptyExtensions();
+        var frameworkJson = scenario switch
+        {
+            "unrelated-section-missing" => null,
+            "unrelated-explicit-null" => "null",
+            "unrelated-malformed" => "{\"coverage\":\"complete\"}",
+            "unrelated-incomplete" => FrameworkJson(framework)
+                .Replace("\"coverage\":\"complete\"", "\"coverage\":\"incomplete\"", StringComparison.Ordinal),
+            _ => FrameworkJson(framework),
+        };
+        var extensionsJson = scenario switch
+        {
+            "selected-section-missing" => null,
+            "selected-explicit-null" => "null",
+            "selected-malformed" => "{\"coverage\":\"complete\"}",
+            "selected-incomplete" => ExtensionsJson(extensions)
+                .Replace("\"coverage\":\"complete\"", "\"coverage\":\"incomplete\"", StringComparison.Ordinal),
+            _ => ExtensionsJson(extensions),
+        };
+        var originalBytes = System.Text.Encoding.UTF8.GetBytes(
+            LifecycleStoreIntegrationDocuments.RawDocumentWithSectionPresence(
+                temporary.Path,
+                frameworkJson,
+                extensionsJson,
+                includeFramework: scenario != "unrelated-section-missing",
+                includeExtensions: scenario != "selected-section-missing"));
+        temporary.WriteBytes(LifecycleSchema.RelativePath, originalBytes);
+
+        var store = new LifecycleStore(new PhysicalPathResolver());
+        var current = await store.ReadAsync(
+            LifecycleStoreIntegrationDocuments.Workspace(temporary),
+            LifecycleSection.Extensions,
+            TestContext.Current.CancellationToken);
+        var result = store.PlanExtensionUpdate(
+            current,
+            LifecycleStoreIntegrationDocuments.Extensions(
+                ".agents/updated-toolkit.md"));
+
+        Assert.Equal(LifecycleWritePlanState.Blocked, result.State);
+        Assert.Null(result.Change);
+        Assert.Equal(
+            originalBytes,
+            await File.ReadAllBytesAsync(
+                temporary.Combine(LifecycleSchema.RelativePath),
+                TestContext.Current.CancellationToken));
     }
 
     [Fact(DisplayName = "Lifecycle store blocks Extension planning when Framework omits required source provenance")]
@@ -299,6 +430,12 @@ public sealed class LifecycleStorePlanningIntegrationTests
             JsonSerializer.SerializeToUtf8Bytes(
                 framework,
                 LifecycleJsonContext.Default.FrameworkLifecycleState));
+
+    private static string ExtensionsJson(ExtensionLifecycleState extensions)
+        => System.Text.Encoding.UTF8.GetString(
+            JsonSerializer.SerializeToUtf8Bytes(
+                extensions,
+                LifecycleJsonContext.Default.ExtensionLifecycleState));
 
     private static string NonCanonicalFrameworkJson(FrameworkLifecycleState framework)
         => $$"""
