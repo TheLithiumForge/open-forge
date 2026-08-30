@@ -8,7 +8,8 @@ open-forge:
 
 ## Task State
 
-- State: Ready after contract-freeze integration.
+- State: Complete at integrated commit `680915a` after source-parity,
+  isolated-published-binary, Native AOT, and independent review evidence.
 - Parent: [Next-Wave Shared Foundations](_shared-foundations.md).
 - Consumers: root Install, root Update, and Framework-aware Route Init.
 
@@ -37,6 +38,15 @@ Compute source/payload set and byte parity from `src/open-forge/`; do not mainta
 a second literal hash inventory. Cover path validation, order, hashes, aggregate
 fingerprint, and no checkout access. Publish `linux-x64`, move the binary to an
 isolated directory, and prove every resource remains readable under Native AOT.
+
+The payload reader was reviewed and integrated at `680915a`. The combined
+post-foundation gate passes Release with `0` warnings and `0` errors, managed
+Unit `1284/1284`, Integration `500/500`, and EndToEnd `125/125`, Native AOT
+Integration `500/500` and EndToEnd `125/125`, with zero skips.
+
+Decisive focused evidence is Unit `25/25`, dynamic-parity Integration `2/2`,
+and isolated published Native AOT reader `1/1`, with an independent review
+pass.
 
 ## Stop Conditions
 

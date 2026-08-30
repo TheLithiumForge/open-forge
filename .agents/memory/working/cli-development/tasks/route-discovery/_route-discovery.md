@@ -10,8 +10,9 @@ open-forge:
 
 - State: Complete after accepted Route List and Route Inspect slices.
 - Post-completion correction: Route Inspect's accepted interactive collision
-  selection is Planned after the native interaction foundation; its exact prompt
-  decision is closed and completed discovery meaning remains otherwise closed.
+  selection is Active after the integrated native interaction foundation in
+  branch `codex/route-inspect-interactive`; its exact prompt decision is closed
+  and completed discovery meaning remains otherwise closed.
 - Implementer: Mastermind.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Prerequisite: Accepted [Foundation](../foundation/_foundation.md).
@@ -51,7 +52,7 @@ private support.
   - [x] [Form the route-inspect profile](route-inspect-profile.md) — Complete at `c407e24`; link-safe routing deferred — Implementer: Mastermind
   - [x] [Present route inspect through the CLI](route-inspect-presentation.md) — Complete at production commit `51c0960` plus final managed acceptance — Implementer: Mastermind
   - [x] [Accept route inspect and close Route Discovery](route-inspect-acceptance.md) — Complete — integrated managed/native and closeout gates — Implementer: Mastermind
-- [ ] [Complete the accepted Route Inspect interactive source-collision selection](route-inspect-interaction-correction.md) — Planned after native interaction — Implementer: Not assigned
+- [ ] [Complete the accepted Route Inspect interactive source-collision selection](route-inspect-interaction-correction.md) — Active in isolated `codex/route-inspect-interactive` worktree
 
 ## Closeout And Routing Waiver
 

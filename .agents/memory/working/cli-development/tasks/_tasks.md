@@ -20,9 +20,9 @@ Read the [program Task](00-cli-development.md), [Architecture](../../../crystall
 - [x] [Test Architecture And Constants](test-architecture-and-constants.md) — Complete and squash-integrated at `b6ce31f` — Implementer: Overseer
 - [x] [Read-Only CLI Dogfooding Corrections](read-only-dogfooding-corrections.md) — Complete and squash-integrated at `bba84b6` — Implementer: Overseer
 - [x] [Proportional CLI Corrections](proportional-cli-corrections.md) — Complete and squash-integrated through `0d88606`; Mutation Foundation may resume — Implementer: Overseer with bounded Task Masterminds
-- [ ] [Next-Wave Shared Foundations](shared-foundations/_shared-foundations.md) — Ready after contract-freeze integration; SF1 interaction, SF2 payload, SF3 lifecycle provenance, and SF4 directory creation may execute in parallel — Implementer: Overseer-managed bounded Task Masterminds
+- [x] [Next-Wave Shared Foundations](shared-foundations/_shared-foundations.md) — Complete at integrated D0/SF1-SF4 baseline — Implementer: Overseer-managed bounded Task Masterminds
 - [ ] [Route Mutation Commands](route-mutation/_route-mutation.md) — Planned — Implementer: Not assigned
-- [ ] [Lifecycle Commands](lifecycle/_lifecycle.md) — Planned — Implementer: Not assigned
+- [ ] [Lifecycle Commands](lifecycle/_lifecycle.md) — Active: Extension Create; root Install ready for command-local work; Install JSON wire schema remains a maintainer frontier — Implementer: Overseer-managed command lanes
 - [ ] [Operational Commands](operations/_operations.md) — Planned — Implementer: Not assigned
 - [ ] [CLI Delivery](delivery/_delivery.md) — Planned — Implementer: Not assigned
 

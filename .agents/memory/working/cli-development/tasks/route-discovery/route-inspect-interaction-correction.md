@@ -8,8 +8,9 @@ open-forge:
 
 ## Task State
 
-- State: Planned after the native interactive-session foundation; all
-  command-local prompt decisions are closed.
+- State: Active after integrated D0 and SF1. The command-local lane is isolated
+  on branch `codex/route-inspect-interactive`; all command-local prompt
+  decisions are closed.
 - Parent: [Route Discovery](_route-discovery.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/route/inspect/interface.md)
   and [Behavior](../../../../crystallized/documents/cli/contracts/route/inspect/behavior.md).

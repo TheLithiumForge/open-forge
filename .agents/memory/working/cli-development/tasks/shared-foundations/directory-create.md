@@ -8,7 +8,8 @@ open-forge:
 
 ## Task State
 
-- State: Ready after contract-freeze integration.
+- State: Complete at integrated commit `33913df` after the focused mutation
+  review and combined managed/Native AOT acceptance gate.
 - Parent: [Next-Wave Shared Foundations](_shared-foundations.md).
 - Consumers: root Install and Route Init.
 
@@ -54,6 +55,22 @@ residual without passing `.agents` through the lease-bound applier. Cover the
 nullable `WorkspaceLockResult` outcome matrix for acquired, failed, and cancelled
 results, including outcome retention. Run directly affected managed and
 published `linux-x64` Native AOT evidence.
+
+The directory mutation foundation was reviewed and integrated at `33913df`.
+The combined post-foundation gate passes Release with `0` warnings and `0`
+errors, managed Unit `1284/1284`, Integration `500/500`, and EndToEnd
+`125/125`, Native AOT Integration `500/500` and EndToEnd `125/125`, with zero
+skips. Its lock-bootstrap result is the nullable `WorkspaceLockResult`
+`BootstrapOutcome`: `null` means no outcome was observed, `Existing` means the
+pre-existing `.agents` directory was validated, and `Materialized` means its
+absence was observed, BCL creation ran, and the resulting directory was
+validated. Reached outcomes are retained across acquired, failed, and
+cancelled results; acquisition requires a non-null outcome.
+
+Decisive focused evidence is original mutation Unit `58/58` and Integration
+`62/62`, plus integrated-baseline mutation conflict filters Unit `70/70` and
+Integration `64/64`; accepted R1-R4/bootstrap closure and an independent
+recheck pass are recorded in the completion packet.
 
 ## Stop Conditions
 

@@ -58,7 +58,7 @@ open-forge:
   `09aa03eddb97831ff544afe1eac54ad9af501f5c`; both commits have exact tree
   `2dcfca18020980a9cafbc429a72930af3368df5f`. The broader replacement CLI
   program remains Active. Intended-source formation closeout is integrated at
-  current baseline `18f2acff31cfd6600a16430ac5d689d05482e297`, exact tree
+  pre-foundation commit `18f2acff31cfd6600a16430ac5d689d05482e297`, exact tree
   `39f0a8c4e6d3695cfbe7407dfd6043dc5ec9680a`. The D0 contract freeze
   records the accepted next-wave foundations and command graph before production:
   native interaction, embedded Framework distribution, lifecycle provenance, and
@@ -68,6 +68,19 @@ open-forge:
   Route Mutation M2 leaves before root Update M3. Independent preparation may
   overlap earlier work, but dependent command behavior does not. Every localized
   D0 command/effect choice is accepted and frozen in its owning contract and Task.
+  D0 is integrated at `38e1498`; SF1 interaction, SF2 embedded payload, SF3
+  lifecycle provenance, and SF4 directory mutation are integrated at
+  `e782090`, `680915a`, `0989356`, and `33913df`. The combined reviewed
+  baseline has Release `0` warnings and `0` errors, managed Unit `1284/1284`,
+  Integration `500/500`, EndToEnd `125/125`, Native AOT Integration `500/500`,
+  Native AOT EndToEnd `125/125`, and zero skips. Extension Create and Route
+  Inspect interaction correction are now active in isolated command worktrees;
+  root Install is ready for command-local/module work. C1, C2, and C3
+  command-local work may proceed independently; overlapping root composition,
+  serialization, help, and process seams are integration-owned and sequential,
+  with no C1/C3 behavior dependency. C2's exact public Install JSON result
+  schema, including residual values `none`, `retained`, and `unknown`, remains a
+  maintainer decision frontier before protected serialization integration.
 - Responsible role: Overseer.
 - Task source: This file.
 - Last updated: 2026-08-30.

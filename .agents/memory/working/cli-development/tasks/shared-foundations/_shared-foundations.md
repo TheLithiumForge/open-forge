@@ -8,12 +8,46 @@ open-forge:
 
 ## Task State
 
-- State: Ready after this contract freeze is integrated.
+- State: Complete. D0 and all four foundations are integrated in local
+  `develop`; the combined acceptance gate passes as recorded below.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Profile: Assured because these four foundations cross public interaction,
   Native AOT distribution, persisted lifecycle, and filesystem mutation
   boundaries.
-- Baseline: the exact integration commit containing this contract freeze.
+- Baseline: `33913dfe7f8f80598ca4765c516d308ed179c3ab`, exact tree
+  `a56f3c201013b5999841414e1df469713f08cdfe`.
+
+## Integrated Acceptance
+
+The accepted candidates are squash-integrated in dependency order with exact
+tree equality:
+
+- D0 contract freeze: commit `38e1498de19a40f82d830a43dd0c419fd651bbc8`,
+  tree `5dc4abc3deb658dba7d0dc5236db362fe79446dd`.
+- SF1 interaction: commit `e782090cfd58d8bd7b9de2c92aaa43c977eb989f`,
+  tree `001ac3c00772ed30086e5481aecb9d26346a822b`.
+- SF2 embedded payload: commit `680915ab36fdcfd0eabe631cde47f83fc6cc9951`,
+  tree `88b742a27f6a5630ae73c5e9c34afae99d61df19`.
+- SF3 lifecycle provenance: commit
+  `098935695abbee62bd960937e228eb53ad25a2c8`, tree
+  `72b44bc13013125e5bb5f9f2751f19ed2ef9a054`.
+- SF4 directory mutation: commit
+  `33913dfe7f8f80598ca4765c516d308ed179c3ab`, tree
+  `a56f3c201013b5999841414e1df469713f08cdfe`.
+
+The reviewed combined baseline has a Release build with `0` warnings and `0`
+errors; managed Unit `1284/1284`, Integration `500/500`, and EndToEnd `125/125`;
+Native AOT Integration `500/500` and EndToEnd `125/125`; and zero skips in every
+stated run.
+
+The lock bootstrap contract is also integrated: `WorkspaceLockResult` carries a
+nullable `BootstrapOutcome`. `null` means no bootstrap directory outcome was
+successfully observed; `Existing` means the pre-existing `.agents` directory
+was validated; and `Materialized` means absence was observed, ordinary BCL
+creation ran, and the resulting directory was validated. Any reached outcome is
+retained across acquired, failed, and cancelled results, and acquisition
+requires a non-null outcome. The result does not claim hostile same-user
+creator identity.
 
 ## Outcome And Dependency Graph
 
@@ -29,9 +63,14 @@ SF4 Directory Create ────── Root Install ── Route Init
 ```
 
 Extension Create and the Route Inspect correction depend only on SF1. Root
-Install depends on SF1-SF4 plus the accepted intended-membership formation. Root
-composition, shared JSON registration, public help/process evidence, and program
-ledgers remain sequential integration-owned surfaces.
+Install depends on SF1-SF4 plus the accepted intended-membership formation. Its
+non-wire command-local/module work may proceed independently alongside C1 and
+C3. The exact public Install JSON result schema, including residual values
+`none`, `retained`, and `unknown`, remains a maintainer decision frontier before
+protected serialization integration. Root composition, shared JSON
+registration, public help/process evidence, and program ledgers remain
+sequential integration-owned surfaces; this does not imply a C1/C3 behavior
+dependency.
 
 ## Shared Boundaries
 
@@ -73,10 +112,10 @@ Native AOT publication/execution, and exact changed-path/dependency audits.
 
 ## Child Tasks
 
-- [ ] [Add one native Shell question-and-answer transport](interactive-session.md) — Ready after contract-freeze integration.
-- [ ] [Embed and read the canonical Framework payload](framework-payload.md) — Ready after contract-freeze integration.
-- [ ] [Add per-target Framework source-asset provenance](lifecycle-provenance.md) — Ready after contract-freeze integration.
-- [ ] [Add one lease-bound ordinary-BCL directory-create effect](directory-create.md) — Ready after contract-freeze integration.
+- [x] [Add one native Shell question-and-answer transport](interactive-session.md) — Complete at integrated `e782090`.
+- [x] [Embed and read the canonical Framework payload](framework-payload.md) — Complete at integrated `680915a`.
+- [x] [Add per-target Framework source-asset provenance](lifecycle-provenance.md) — Complete at integrated `0989356`.
+- [x] [Add one lease-bound ordinary-BCL directory-create effect](directory-create.md) — Complete at integrated `33913df`.
 
 ## Entries
 

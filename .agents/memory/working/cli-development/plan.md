@@ -22,9 +22,12 @@ open-forge:
   `09aa03eddb97831ff544afe1eac54ad9af501f5c`; both commits have exact tree
   `2dcfca18020980a9cafbc429a72930af3368df5f`.
 - Current accepted baseline: clean local `develop` commit
+  `33913dfe7f8f80598ca4765c516d308ed179c3ab`, exact tree
+  `a56f3c201013b5999841414e1df469713f08cdfe`. It includes the accepted
+  intended-source formation integration after public Index and the integrated
+  D0/SF1-SF4 next-wave baseline recorded below. The pre-foundation baseline was
   `18f2acff31cfd6600a16430ac5d689d05482e297`, exact tree
-  `39f0a8c4e6d3695cfbe7407dfd6043dc5ec9680a`. It closes the accepted
-  intended-source formation integration after public Index. Its Release
+  `39f0a8c4e6d3695cfbe7407dfd6043dc5ec9680a`. Its Release
   build passes with 0 warnings and 0 errors. Managed Unit `1227/1227`,
   Integration `481/481`, and EndToEnd `125/125` pass. Portable `linux-x64`
   Native AOT Integration `481/481` and EndToEnd `125/125` pass. Every accepted
@@ -84,24 +87,33 @@ open-forge:
   [Routed Authored Metadata
   foundation](tasks/read-only/routed-authored-metadata-foundation.md) is Complete
   and integrated at `5924698`.
-- Current step: the next-wave architecture directions are accepted and this D0
-  contract freeze records their command contracts, Task graph, checkpoint,
-  and public documentation before production work. SF1 native interaction, SF2
-  embedded Framework distribution, SF3 lifecycle source-asset provenance, and
-  SF4 lease-bound directory creation become parallel-ready only after this freeze
-  integrates. C1 Extension Create,
-  C2 root Install, and C3 the Route Inspect interaction correction follow their
-  foundations on non-overlapping command paths; protected root composition,
-  shared serialization, help, process evidence, and program ledgers integrate
-  sequentially. Generic and Framework-aware Route Init follows accepted Install
-  integration because it consumes the installed root topology, embedded payload,
-  and trusted lifecycle state. Route Create, Route Update, Route Move, and Route
-  Remove remain later command-local Tasks, and the complete Route Mutation M2
-  lane precedes root Update M3. Independent scope/contract/ownership discovery,
-  callable-surface analysis, Gray/Red readiness, and worktree preparation may
-  overlap earlier work; dependent command behavior may not. The localized C1/C2/C3 interaction,
-  defaults, catalogue, JSON, and directory-effect decisions are frozen below;
-  implementation may not silently broaden them.
+- Current step: D0 and the four next-wave shared foundations are integrated and
+  accepted. D0 is integrated at `38e1498`; SF1 native interaction at `e782090`,
+  SF2 embedded Framework distribution at `680915a`, SF3 lifecycle source-asset
+  provenance at `0989356`, and SF4 lease-bound directory creation at `33913df`.
+  The combined reviewed baseline has Release `0` warnings and `0` errors,
+  managed Unit `1284/1284`, Integration `500/500`, EndToEnd `125/125`, Native
+  AOT Integration `500/500`, Native AOT EndToEnd `125/125`, and zero skips.
+  C1 Extension Create and C3 Route Inspect interaction correction are active in
+  isolated command worktrees. C2 root Install is ready for command-local/module
+  work in parallel. C1, C2, and C3 command-local work may proceed independently;
+  their overlapping root composition, serialization, help, and process seams are
+  integration-owned and must be integrated sequentially, with no C1/C3 behavior
+  dependency. C2's exact public Install JSON result schema, including residual
+  values `none`, `retained`, and `unknown`, remains a maintainer decision
+  frontier before protected serialization integration. Generic and Framework-aware
+  Route Init follows accepted Install integration because it consumes the
+  installed root topology, embedded payload, and trusted lifecycle state. Route
+  Create, Route Update, Route Move, and Route Remove remain later command-local
+  Tasks, and the complete Route Mutation M2 lane precedes root Update M3.
+  Independent scope/contract/ownership discovery, callable-surface analysis,
+  Gray/Red readiness, and worktree preparation may overlap earlier work;
+  dependent command behavior may not. The localized C1/C2/C3 interaction,
+  defaults, catalogue, and directory-effect decisions are frozen below;
+  Extension Create's JSON is frozen, while C2's exact public Install JSON result
+  schema, including residual values `none`, `retained`, and `unknown`, remains a
+  maintainer decision frontier. Implementation may not silently broaden either
+  boundary.
   Continue operations, delivery, and final acceptance in the persisted order
   after their accepted predecessors.
   The snapshot slice remains a no-op, with possible LithSnap-backed
@@ -116,6 +128,35 @@ open-forge:
   zero skips. Root tooling, automatic managed `open-forge-dev` publication,
   build-selected native EndToEnd discovery, temporary compatibility-name routing,
   WSL portability, and obsolete preserved-test removal remain implemented.
+
+### Next-Wave Foundation Integration
+
+D0's accepted contract freeze is integrated at `38e1498`. The reviewed shared
+foundations are integrated at `e782090` (SF1 native interaction), `680915a`
+(SF2 embedded Framework payload), `0989356` (SF3 lifecycle source-asset
+provenance), and `33913df` (SF4 directory mutation). The combined reviewed
+baseline has a Release build with `0` warnings and `0` errors; managed Unit
+`1284/1284`, Integration `500/500`, and EndToEnd `125/125`; Native AOT
+Integration `500/500` and EndToEnd `125/125`; and zero skips in every stated
+run.
+
+The accepted bootstrap result is `WorkspaceLockResult.BootstrapOutcome?`:
+`null` means no bootstrap directory outcome was successfully observed,
+`Existing` means the pre-existing `.agents` directory was validated, and
+`Materialized` means its absence was observed, ordinary BCL creation ran, and
+the resulting directory was validated. A reached outcome is retained across
+acquired, failed, and cancelled results, and acquisition requires a non-null
+outcome. This is not a hostile same-user creator-identity guarantee.
+
+C1 Extension Create and C3 Route Inspect interaction correction are active in
+isolated command worktrees. C2 root Install is ready for command-local/module
+work in parallel. C1, C2, and C3 command-local work is independent; their
+overlapping root composition, serialization, help, and process seams are
+integration-owned and sequential, with no C1/C3 behavior dependency. C2's exact
+public Install JSON result schema, including residual values `none`, `retained`,
+and `unknown`, remains a maintainer decision frontier before protected
+serialization integration. C4 Route Init remains after integrated Install, and
+M3 root Update remains after the complete M2 Route Mutation lane.
 - Previous accepted Find history: Find Child 2 original Preflight through Blue history is accepted
   through exact commit `685e2dd`. During original Purple, top-down review found
   generic YAML event parsing inside Find and duplicate Markdown-frontmatter
@@ -436,14 +477,14 @@ diff, parent requirements, and claimed evidence.
 | PC1 | Complete | Proportionate guidance `5f9f59e`, Route List correction `2cd525d`, and Markdown correction `0d88606` are squash-integrated; PCF-001/002/003/007 are closed and all remaining dispositions are preserved. | DGC1 | Parallel correction | Proportional correctness | Release 0/0; managed `1053/411/120`; portable `linux-x64` Native AOT `411/120`; dogfood and Sol/xhigh review pass |
 | M1  | Complete | Shared lock, lifecycle, revalidation, atomic application, receipt, neutral recovery catalogue, lease-gated deletion guard, and external recovery-bundle foundations are accepted at exact production candidate `e7d937f` under authority `01dd552`. Final managed `1096/458/120`, portable `linux-x64` Native AOT Integration `458/458`, focused M1 `43/47`, static Git-absence, format/diff, and independent review pass. | GN1, E1, DGC1, PC1                      | Sequential  | Mutation foundation  | Direct failure, interruption, residual, and AOT evidence pass |
 | I1  | Complete | Public `index`, including the I1-owned body-free formation expansion and orchestration over accepted GN1 projection and M1 mechanics, is accepted at exact feature candidate `4e89d945b38a2d1e24600dd22789b55e4395a534`. The warning-free Release, complete managed, portable `linux-x64` Native AOT, and controlled public-process gates pass with zero failures or skips. Final closeout tip `2b353c48978ee88e53345be8037776181612222c` is locally squash-integrated at `09aa03eddb97831ff544afe1eac54ad9af501f5c` with exact tree equality. | GN1, M1 | Sequential | Generated navigation | Exact contract, idempotence, unchanged-authority, recovery, managed `1206/480/125`, and portable `linux-x64` AOT `480/125` pass |
-| D0  | Complete in the commit containing this record | Freeze the accepted next-wave Architecture, command contracts, shared-foundation Tasks, command sequencing, checkpoint, and public docs before production mutation. | I1, M1, maintainer decisions | Sequential | Program contract | Link/frontmatter/stale-claim checks, dogfood load/doctor, independent Sol/xhigh review |
-| SF1 | Ready after D0 integration | Add one BCL-only Shell interaction transport. Protected command integration later injects it only into prompt-capable operation factories; requests retain only command-local interaction-policy Booleans. | D0, F2-F3 | Parallel foundation | Shell interaction | Focused transport Unit; injected host and redirected-process proof with prompt-capable command integration |
-| SF2 | Ready after D0 integration | Embed the canonical Framework payload and expose exact ordered asset bytes, paths, hashes, and inventory identity through a neutral BCL reader. | D0, F1 | Parallel foundation | Framework distribution | Source parity, isolated published binary, Native AOT resource proof |
-| SF3 | Ready after D0 integration | Add required nullable per-target `sourceAssetPath` provenance to Framework lifecycle schema v1 without adding instance collections or migration machinery. | D0, M1 | Parallel foundation | Framework lifecycle | Source-generated JSON, structural validation, lifecycle and Native AOT regressions |
-| SF4 | Ready after D0 integration | Add one lease-bound ordinary-BCL descendant-directory effect for Install and Route Init, preserving the visible planned/reported missing-`.agents` lock bootstrap as the sole pre-lease exception. | D0, M1 | Parallel foundation | Mutation directory effect | Bootstrap, real filesystem races, residuals, file/recovery non-regression, Native AOT proof |
-| C1  | Planned after SF1 | Implement Extension Create with accepted manifest defaults/options, catalogue boundary, ordered JSON result, and a command-local wizard for missing required facts. | SF1, M1, E1 | Parallel command | Lifecycle mutation | Package-destination, prompt/direct, manifest, process, and AOT evidence |
-| C2  | Planned after SF1-SF4 | Implement root Install over the closed embedded base Framework subset while preserving trusted dynamically added scoped lifecycle targets. | SF1-SF4, M1, I1 | Parallel command | Framework lifecycle | Payload, lifecycle, recovery, workspace, process, and AOT evidence |
-| C3  | Planned after SF1 | Correct Route Inspect's accepted one-answer interactive collision selection without changing its non-interactive contract or result model. | SF1, R2 | Parallel command | Route discovery correction | Focused Unit/Integration and redirected public-process evidence |
+| D0  | Complete at `38e1498` | Freeze the accepted next-wave Architecture, command contracts, shared-foundation Tasks, command sequencing, checkpoint, and public docs before production mutation. | I1, M1, maintainer decisions | Sequential | Program contract | Link/frontmatter/stale-claim checks, dogfood load/doctor, independent Sol/xhigh review |
+| SF1 | Complete at `e782090` | Add one BCL-only Shell interaction transport. Protected command integration later injects it only into prompt-capable operation factories; requests retain only command-local interaction-policy Booleans. | D0, F2-F3 | Parallel foundation | Shell interaction | Focused transport Unit; injected host and redirected-process proof with prompt-capable command integration |
+| SF2 | Complete at `680915a` | Embed the canonical Framework payload and expose exact ordered asset bytes, paths, hashes, and inventory identity through a neutral BCL reader. | D0, F1 | Parallel foundation | Framework distribution | Source parity, isolated published binary, Native AOT resource proof |
+| SF3 | Complete at `0989356` | Add required nullable per-target `sourceAssetPath` provenance to Framework lifecycle schema v1 without adding instance collections or migration machinery. | D0, M1 | Parallel foundation | Framework lifecycle | Source-generated JSON, structural validation, lifecycle and Native AOT regressions |
+| SF4 | Complete at `33913df` | Add one lease-bound ordinary-BCL descendant-directory effect for Install and Route Init, preserving the visible planned/reported missing-`.agents` lock bootstrap as the sole pre-lease exception. | D0, M1 | Parallel foundation | Mutation directory effect | Bootstrap, real filesystem races, residuals, file/recovery non-regression, Native AOT proof |
+| C1  | Active in isolated `codex/extension-create` worktree | Implement Extension Create with accepted manifest defaults/options, catalogue boundary, ordered JSON result, and a command-local wizard for missing required facts. | SF1, M1, E1 | Parallel command | Lifecycle mutation | Package-destination, prompt/direct, manifest, process, and AOT evidence |
+| C2  | Ready for command-local work; Install JSON wire schema is a maintainer frontier; overlapping seams integrate sequentially | Implement the non-wire root Install slice over the closed embedded base Framework subset while preserving trusted dynamically added scoped lifecycle targets; resolve the exact public JSON result, including residual values `none`, `retained`, and `unknown`, before protected serialization integration. | SF1-SF4, M1, I1 | Parallel command | Framework lifecycle | Payload, lifecycle, recovery, workspace, process, and AOT evidence |
+| C3  | Active in isolated `codex/route-inspect-interactive` worktree | Correct Route Inspect's accepted one-answer interactive collision selection without changing its non-interactive contract or result model. | SF1, R2 | Parallel command | Route discovery correction | Focused Unit/Integration and redirected public-process evidence |
 | M2  | Planned after C2 integration | Implement generic and Framework-aware Route Init, then Route Create, Route Update, Route Move, and current positive-unmanaged-only Route Remove through separate command-local gates. | C2, M1, R2, I1 | Sequential route mutation | Route mutation | Per-command public, recovery, lifecycle, and AOT evidence |
 | M3  | Planned after M2 integration | Implement root Update only after the complete Route Mutation lane, preserving its independent lifecycle reconciliation boundary. Independent preparation may begin earlier without implementing dependent behavior. | M2, C2, M1, I1 | Sequential lifecycle mutation | Lifecycle mutation | Payload, lifecycle, recovery, workspace, and AOT evidence |
 | M4  | Pending  | Implement extension install/update/remove                                                                                                                                                                                                                                                                                                                                                                                         | M3                                      | Sequential  | Extension mutation   | Collision, recovery, and catalogue evidence                 |
@@ -505,9 +546,15 @@ program items through the later boundaries that own them:
 - [x] Keep the simplified O1 Status/Doctor and O2 Repair/Cleanup split reflected
   in the work graph; M1 supplies only neutral facts and mechanics.
 
-This queue does not reopen M1. It authorizes only the explicitly Ready
-foundations after D0 integration; each command still waits for its listed
-predecessors and any named decision frontier.
+This queue does not reopen M1. D0 and SF1-SF4 are complete at the integrated
+baseline recorded above. C1 and C3 are active in isolated command worktrees;
+C2 is ready for command-local/module work. C1, C2, and C3 command-local work
+may proceed independently; their overlapping root composition, serialization,
+help, and process seams are integration-owned and sequential, with no C1/C3
+behavior dependency. C2's exact public Install JSON result schema, including
+residual values `none`, `retained`, and `unknown`, remains a maintainer decision
+frontier before protected serialization integration. Each command still waits
+for its listed predecessors and any named decision frontier.
 
 ### Per-Task Proportionality And Evidence Check
 
@@ -544,8 +591,8 @@ has non-overlapping production and test ownership.
 | References  | Q2                             | GI1 complete and the Q1 source/document facts it needs are accepted                                            | References command paths; no shared-source mutation  | Accepted neutral source/document facts            | Q2 acceptance     |
 | Read-only C | E1                             | G1 and GI1 complete; extension source contract frozen                                                          | Extension List/Inspect roots                         | Shell and filesystem foundation                   | M1                |
 | Read-only D | GN1                            | Q1-Q3 and R2 complete; pure-effect boundary frozen                                                             | New `Framework/GeneratedNavigation/**` and mirrors  | Accepted source/route/document facts               | GN1 acceptance    |
-| Next foundation | SF1, SF2, SF3, SF4         | D0 contract freeze integrated                                                                                   | Separate Shell interaction, Framework distribution, lifecycle-provenance, and directory-effect paths | M1 and accepted root project graph | Sequential protected-surface integration |
-| Next commands | C1, C2, C3                  | Each listed foundation is integrated and every named prompt/effect frontier is accepted                         | Separate Extension Create, Install, and Route Inspect paths | Root composition, serialization, help, and process evidence | Sequential integration, then Route Init |
+| Next foundation | SF1, SF2, SF3, SF4         | Complete at integrated D0/SF1-SF4 baseline; combined managed and Native AOT evidence recorded above             | Separate Shell interaction, Framework distribution, lifecycle-provenance, and directory-effect paths | M1 and accepted root project graph | Complete; protected surfaces remain integration-owned |
+| Next commands | C1, C2, C3                  | C1/C3 active; C2 ready for independent command-local/module work after all foundations; exact Install JSON wire schema is a maintainer frontier and overlapping seams integrate sequentially | Separate Extension Create, Install, and Route Inspect paths | Root composition, serialization, help, and process evidence | Sequential protected integration, then Route Init |
 | Delivery    | Current `linux-x64` smoke, packed journey, checksums | O2 behavior complete; release contracts frozen                                                | Separate workflow and package paths                  | Accepted command binaries                         | D1 acceptance     |
 
 No parallel implementation may change the same shared capability. Promotion or
@@ -656,6 +703,7 @@ passed. `CLI-EDGE-001` remains non-product only.
 | D12 | How does Extension Create gather and correct missing required human input?             | Accepted: ask only missing stable-ID/catalogue facts; local correction without attempt limit; EOF invalid, cancellation interrupted; no generic retry framework | Maintainer | C1 | Reopen wizard contract and focused evidence |
 | D13 | How does a missing `.agents` container compose with the workspace lock and SF4?         | Accepted: visible planned/reported bootstrap before acquisition; SF4 handles descendants after lease; nullable lock results preserve reached `Existing`/`Materialized` outcome | Maintainer | SF4, C2, M2 | Reopen lock location, result contract, mutation sequencing, and residual evidence |
 | D14 | May root Update M3 behavior begin alongside Route Mutation M2 after Install?             | Accepted: no; full M2 behavior precedes M3, while independent preparation may run earlier | Maintainer | M2, M3 | Reopen program sequencing and lane ownership |
+| D15 | What exact public Root Install JSON result shape and residual vocabulary closes C2?      | Maintainer decision frontier: resolve the wire schema, including residual values `none`, `retained`, and `unknown`, before protected serialization integration | Maintainer | C2 | Reopen result model, serialization, help, process evidence, and command acceptance |
 
 ## Risks, Recovery, And Stop Conditions
 

@@ -28,25 +28,24 @@ that the Overseer must carry across parallel lanes.
 - Questions and status discussions do not pause the program. Continue every
   unaffected lane until the maintainer explicitly requests a halt; pause only
   the exact boundary that requires an unresolved maintainer decision.
-- Create every new worktree beneath
-  `/home/tedy/dev/open-forge-worktree/<task-name>`. Existing registered
-  worktrees retain their current paths unless a separate safe migration is
-  deliberately accepted.
+- Create every new worktree in the designated `open-forge-worktree` directory
+  and record its feature-branch name. Existing registered worktrees retain
+  their current paths unless a separate safe migration is deliberately
+  accepted.
 
 ## Current Horizon
 
 The accepted dependency order is:
 
-1. Freeze Route Init, Extension Create, Shell interaction, embedded Framework
-   payload, lifecycle source-provenance, and shared directory-create contracts.
-2. Implement the Shell interaction, embedded payload, lifecycle provenance, and
-   directory-create foundations in parallel.
-3. Implement Extension Create, root Install, and the already-contracted Route
-   Inspect interactive selection correction in parallel; integrate shared root
-   composition and executable evidence sequentially.
-4. Implement Framework-aware Route Init after root Install establishes the
+1. The D0 contract freeze and all four shared foundations are integrated and
+   accepted at the current local baseline.
+2. Implement Extension Create, root Install, and the already-contracted Route
+   Inspect interactive selection correction in parallel on their isolated command
+   paths; integrate shared root composition, serialization, help, and executable
+   evidence sequentially.
+3. Implement Framework-aware Route Init after root Install establishes the
    trusted base lifecycle, then complete the remaining Route Mutation M2 leaves.
-5. Implement root Update M3 only after full M2 is complete. Preparation that is
+4. Implement root Update M3 only after full M2 is complete. Preparation that is
    independent of unfinished behavior may proceed earlier in isolated lanes:
    scope discovery, contract and ownership audits, callable-surface analysis,
    Gray/Red readiness, and worktree preparation. Parallelize those processes;
@@ -61,14 +60,14 @@ or a general template/scaffold system.
 
 | Lane | Responsibility | State |
 | --- | --- | --- |
-| D0 | Contract, architecture, Plan, Task, checkpoint, and public-doc freeze | Complete in the commit containing this record |
-| F1 | Native Shell question/answer transport and invocation capability | Transport candidate reviewed in `codex/interactive-shell`; command integration pending |
-| F2 | Embedded Framework payload reader and deterministic inventory | Reviewed candidate in `codex/framework-payload`; awaiting integration |
-| F3 | Framework lifecycle `sourceAssetPath` provenance | Reviewed candidate in `codex/lifecycle-provenance`; awaiting integration |
-| F4 | Shared planned directory-creation mutation effect | Active in `codex/directory-mutation-foundation` |
-| C1 | Extension Create | Waiting for D0 and F1 |
-| C2 | Root Install | Waiting for D0, F1, F2, F3, and F4 |
-| C3 | Route Inspect interactive correction | Waiting for D0 and F1 |
+| D0 | Contract, architecture, Plan, Task, checkpoint, and public-doc freeze | Integrated at `38e1498` |
+| F1 | Native Shell question/answer transport and invocation capability | Integrated at `e782090` after review |
+| F2 | Embedded Framework payload reader and deterministic inventory | Integrated at `680915a` after review |
+| F3 | Framework lifecycle `sourceAssetPath` provenance | Integrated at `0989356` after review |
+| F4 | Shared planned directory-creation mutation effect | Integrated at `33913df` after review |
+| C1 | Extension Create | Active on branch `codex/extension-create` |
+| C2 | Root Install | Ready for command-local work on branch `codex/root-install`; its overlapping root-composition, serialization, help, and process seams are integration-owned and sequential |
+| C3 | Route Inspect interactive correction | Active on branch `codex/route-inspect-interactive` |
 | C4 | Generic and Framework-aware Route Init | Waiting for integrated Install |
 
 Each mutating lane owns a distinct worktree and feature branch. Shared root
@@ -76,6 +75,20 @@ composition, serializer registration, public help, process evidence, Plan, and
 Checkpoint are integration-owned unless a Task packet explicitly says otherwise.
 
 ## Accepted Observations
+
+- The D0 contract freeze is integrated at `38e1498`. F1, F2, F3, and F4 are
+  integrated at `e782090`, `680915a`, `0989356`, and `33913df`, respectively.
+  The combined reviewed baseline has a Release build with `0` warnings and `0`
+  errors; managed Unit `1284/1284`, Integration `500/500`, and EndToEnd
+  `125/125`; Native AOT Integration `500/500` and EndToEnd `125/125`; and zero
+  skips in every stated run.
+- The accepted lock bootstrap outcome is nullable. `null` means no bootstrap
+  directory outcome was successfully observed; `Existing` means the existing
+  `.agents` directory was validated; `Materialized` means its absence was
+  observed, ordinary BCL creation ran, and the resulting directory was
+  validated. A reached outcome is retained across acquired, failed, and
+  cancelled results, and acquisition requires a non-null outcome. This makes
+  no hostile same-user creator-identity claim.
 
 - A switch that names every declared enum member is not closed over unnamed
   runtime numeric values. The direct modern-C# pattern is a clear switch
@@ -97,9 +110,12 @@ Checkpoint are integration-owned unless a Task packet explicitly says otherwise.
 
 ## Open Decision Frontier
 
-No currently surfaced decision blocks the shared foundations. New architecture
-or product questions must still be returned to the maintainer before changing
-accepted meaning.
+No currently surfaced decision blocks the shared foundations. C2 command-local
+non-wire work is ready, but the exact public Root Install JSON result schema,
+including residual values `none`, `retained`, and `unknown`, remains a current
+maintainer decision frontier before its protected serialization integration.
+New architecture or product questions must still be returned to the maintainer
+before changing accepted meaning.
 
 ## Accepted Interaction Placement
 

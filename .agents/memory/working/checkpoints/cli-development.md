@@ -16,6 +16,10 @@ release.
 
 ## Current State
 
+The current local `develop` baseline is `33913dfe7f8f80598ca4765c516d308ed179c3ab`
+with exact tree `a56f3c201013b5999841414e1df469713f08cdfe`. It includes the
+integrated D0 contract freeze and SF1-SF4 shared foundations described below.
+
 Proportional CLI Corrections are Complete and squash-integrated through
 implementation `0d88606`, with clean local `develop` closeout `7abde56`.
 Proportionate guidance is `5f9f59e`; Route List
@@ -113,8 +117,8 @@ tree `2dcfca18020980a9cafbc429a72930af3368df5f`.
 
 The existing Generated Navigation formation is now extended by accepted feature
 `f82c2b168657baf2fac50c76e2ff2cc0ed3776d7`, squash-integrated into local
-`develop` at `cc35c853fd7b55d31e3fb2c9a454d9ab61c1884e` and closed at current
-`develop` commit `18f2acff31cfd6600a16430ac5d689d05482e297`, exact tree
+`develop` at `cc35c853fd7b55d31e3fb2c9a454d9ab61c1884e` and closed at the
+pre-foundation commit `18f2acff31cfd6600a16430ac5d689d05482e297`, exact tree
 `39f0a8c4e6d3695cfbe7407dfd6043dc5ec9680a`. The overload
 `Build(SourceCatalogue observedCatalogue, IReadOnlyList<SourceLogicalSource> intendedSources)`
 separates observed catalogue evidence from intended membership, lookup, topology,
@@ -131,6 +135,42 @@ Real-workspace projection proves zero writes. Independent Sol/xhigh review is
 required published-root version marker and failed at harness discovery. After the
 canonical root publish step satisfied that sequencing precondition, EndToEnd
 passed `125/125`; no implementation correction was required.
+
+The next-wave contract freeze D0 is integrated at `38e1498`. The reviewed shared
+foundations are integrated at `e782090` (SF1 native interaction), `680915a`
+(SF2 embedded Framework payload), `0989356` (SF3 lifecycle source-asset
+provenance), and `33913df` (SF4 directory mutation). The combined reviewed
+baseline has a Release build with `0` warnings and `0` errors; managed Unit
+`1284/1284`, Integration `500/500`, and EndToEnd `125/125`; Native AOT
+Integration `500/500` and EndToEnd `125/125`; and zero skips in every stated run.
+
+The accepted lock bootstrap outcome is nullable. `null` means no bootstrap
+directory outcome was successfully observed; `Existing` means the pre-existing
+`.agents` directory was validated; and `Materialized` means its absence was
+observed, ordinary BCL creation ran, and the resulting directory was validated.
+Any reached outcome is retained across acquired, failed, and cancelled results,
+and acquisition requires a non-null outcome. No hostile same-user creator-
+identity guarantee is claimed.
+
+Closeout checks are read-only and scoped to this record update:
+`open-forge load --bodies` and the selected memory `chain` both exit
+successfully; the legacy
+`open-forge doctor` reports `0` errors and one pre-existing C# metadata warning;
+the replacement `index --dry-run` reports exit `5` with no files changed because
+the known archived metadata and handoff-routing gaps remain; the changed-
+Markdown link check, stale-status check, commit-presence check, and
+`git diff --check` pass.
+
+Extension Create and the Route Inspect interaction correction are active in
+isolated command worktrees. C1, C2, and C3 command-local work may proceed
+independently. Their overlapping root composition, serialization, help, and
+process seams are integration-owned and must be integrated sequentially; this
+does not imply a C1/C3 behavior dependency. C2's non-wire command-local/module
+work is ready, while the exact public Install JSON result schema, including
+residual values `none`, `retained`, and `unknown`, remains a maintainer decision
+frontier before protected serialization integration. Route Init remains after
+integrated Install; root Update remains after the complete Route Mutation M2
+lane.
 
 Implemented boundaries:
 
@@ -173,21 +213,21 @@ warning suppression is claimed. Final closeout tip
 `2b353c48978ee88e53345be8037776181612222c` is locally integrated at
 `09aa03eddb97831ff544afe1eac54ad9af501f5c` with exact tree equality. The
 intended-membership formation prerequisite is integrated, but it applies only to
-Route Init, Route Create,
-Route Move, Route Remove, and root Install/Update. Its integration closeout is
-current `develop` commit `18f2acff31cfd6600a16430ac5d689d05482e297`,
-exact tree `39f0a8c4e6d3695cfbe7407dfd6043dc5ec9680a`. Route Update and Extension
-Create are independent of it.
+Route Init, Route Create, Route Move, Route Remove, and root Install/Update.
+Its integration closeout is the pre-foundation commit
+`18f2acff31cfd6600a16430ac5d689d05482e297`, exact tree
+`39f0a8c4e6d3695cfbe7407dfd6043dc5ec9680a`.
 
-The next-wave architecture directions are accepted and this D0 contract pack freezes
-their exact command contracts before production mutation. After D0 integration,
-SF1 native interaction, SF2 embedded Framework distribution, SF3 lifecycle
-`sourceAssetPath` provenance, and SF4 lease-bound directory creation may run in
-parallel. Extension Create, root Install, and the Route Inspect
-interaction correction follow their required foundations in separate command
-lanes; protected root composition, serialization, help, process evidence, and
-program ledgers integrate sequentially. Generic and Framework-aware Route Init
-follows root Install integration. Its Framework mode accepts one concrete
+D0 and SF1-SF4 are now complete at the integrated baseline recorded above. C1
+Extension Create and C3 Route Inspect interaction correction are active in
+isolated command worktrees. C2 root Install is ready for command-local/module
+work in parallel. C1, C2, and C3 command-local work is independent; overlapping
+root composition, serialization, help, and process seams are integration-owned
+and sequential, with no C1/C3 behavior dependency. C2's exact public Install
+JSON result schema, including residual values `none`, `retained`, and `unknown`,
+remains a maintainer decision frontier before protected serialization
+integration. Generic and Framework-aware Route Init follows root Install
+integration. Its Framework mode accepts one concrete
 uniquely aligned route, slugs only ID-form inserted scope labels, creates one
 sparse chain, keeps scope entrypoints user-owned, and lifecycle-manages only
 copied canonical assets and derived generated regions.
@@ -229,12 +269,15 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Integrate D0, then start SF1 native interaction, SF2 embedded Framework
-   distribution, SF3 lifecycle provenance, and SF4 directory creation in
-   parallel isolated lanes.
-2. After foundations, implement Extension Create, root Install, and the Route
-   Inspect correction on separate command paths. Integrate protected root and
-   executable surfaces sequentially.
+1. Continue C1 Extension Create and C3 Route Inspect interaction correction in
+   their isolated command worktrees; both are active after the integrated D0 and
+   SF1-SF4 baseline.
+2. C2 root Install is ready for command-local/module work in parallel. Integrate
+   the overlapping root composition, serialization, help, process evidence, and
+   final command surfaces sequentially; this is an integration boundary, not a
+   C1/C3 behavior dependency. Resolve the exact public Install JSON result
+   schema, including residual values `none`, `retained`, and `unknown`, before
+   protected serialization integration.
 3. Implement generic and Framework-aware Route Init only after root Install is
    integrated and proves the trusted installed root and embedded topology it
    consumes.

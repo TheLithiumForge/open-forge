@@ -8,8 +8,8 @@ open-forge:
 
 ## Task State
 
-- State: Planned after the native interaction foundation; all product decisions
-  are closed.
+- State: Active after integrated D0 and SF1. The command-local lane is isolated
+  on branch `codex/extension-create`; all product decisions are closed.
 - Parent: [Lifecycle Commands](_lifecycle.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/extension/create/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/extension/create/behavior.md).
 

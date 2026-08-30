@@ -8,7 +8,8 @@ open-forge:
 
 ## Task State
 
-- State: Ready after contract-freeze integration.
+- State: Complete at integrated commit `e782090` after focused review and the
+  combined managed/Native AOT acceptance gate.
 - Parent: [Next-Wave Shared Foundations](_shared-foundations.md).
 - Consumers: Extension Create, root Install, and the Route Inspect interaction
   correction.
@@ -44,6 +45,14 @@ prompt output, supplied-stream ownership, and no ambient `Console` use. The firs
 prompt-capable command integrations own root construction, proof that unrelated
 commands retain their invocation path, directly injected host interaction, and
 redirected published-process noninteraction.
+
+The neutral transport was reviewed and integrated at `e782090`. The combined
+post-foundation gate passes Release with `0` warnings and `0` errors, managed
+Unit `1284/1284`, Integration `500/500`, and EndToEnd `125/125`, Native AOT
+Integration `500/500` and EndToEnd `125/125`, with zero skips.
+
+Decisive focused evidence is transport Unit `8/8`, with an independent review
+pass.
 
 ## Stop Conditions
 

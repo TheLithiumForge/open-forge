@@ -8,9 +8,16 @@ open-forge:
 
 ## Task State
 
-- State: Planned after the native interaction, embedded Framework payload,
-  lifecycle provenance, and shared directory-create foundations. Its product
-  decisions are closed, and it is independent of Extension Create.
+- State: Ready after integrated D0 and SF1-SF4. Its command-local/module slice
+  may develop in parallel with C1 and C3 on branch `codex/root-install`.
+  The non-wire command-local/module work is ready, but the exact public Install
+  JSON result schema, including residual values `none`, `retained`, and
+  `unknown`, remains a current maintainer decision frontier before protected
+  serialization integration.
+  Protected root composition, shared serialization, help, process evidence,
+  and final integration are integration-owned sequential seams; this does not
+  create a behavior dependency between C1, C2, and C3, and Install remains
+  independent of Extension Create.
 - Parent: [Lifecycle Commands](_lifecycle.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/install/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/install/behavior.md).
 

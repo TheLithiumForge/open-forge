@@ -8,8 +8,11 @@ open-forge:
 
 ## Task State
 
-- State: Planned after the next-wave shared foundations. The localized product
-  decisions recorded in the child Tasks are closed.
+- State: Active. The next-wave shared foundations are integrated; Extension
+  Create and Route Inspect correction are active, and root Install is ready for
+  command-local work. C1, C2, and C3 command-local work may proceed
+  independently; overlapping root composition, serialization, help, and process
+  seams are integration-owned and sequential, with no C1/C3 behavior dependency.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Common prerequisites: Extension discovery and `index`; workspace mutations also
   consume Mutation Foundation.
@@ -42,7 +45,10 @@ Create does not consume it. The maintainer accepted explicit `--name`,
 command-local wizard that asks only for missing stable ID and catalogue facts.
 Exact name/description defaults, catalogue-parent and sibling eligibility, local
 invalid-input correction, EOF/cancellation semantics, and the command-local JSON
-result are accepted and frozen in its contracts.
+result are accepted and frozen in its contracts. Root Install's non-wire
+command-local/module work is ready; its exact public JSON result schema,
+including residual values `none`, `retained`, and `unknown`, remains a maintainer
+decision frontier before protected serialization integration.
 Extension Create depends only on the native interaction foundation. Root Install
 depends on interaction, embedded Framework distribution, lifecycle
 `sourceAssetPath` provenance, the shared directory-create foundation, and
@@ -64,8 +70,8 @@ and is owned only through a `FileShare.None` handle.
 
 ## Child Tasks
 
-- [ ] [Implement creation of one reviewable Extension package outside a workspace](extension-create.md) — Planned after native interaction — Implementer: Not assigned
-- [ ] [Implement root Framework installation into a selected workspace](install.md) — Planned after SF1-SF4 — Implementer: Not assigned
+- [ ] [Implement creation of one reviewable Extension package outside a workspace](extension-create.md) — Active in isolated `codex/extension-create` worktree
+- [ ] [Implement root Framework installation into a selected workspace](install.md) — Ready for command-local work; overlapping protected seams integrate sequentially
 - [ ] [Implement root Framework update from accepted lifecycle identity](update.md) — Planned after full Route Mutation M2 — Implementer: Not assigned
 - [ ] [Implement Extension installation from exact reviewed package identity](extension-install.md) — Planned — Implementer: Not assigned
 - [ ] [Implement Extension update with source review, ownership, and recovery integrity](extension-update.md) — Planned — Implementer: Not assigned
