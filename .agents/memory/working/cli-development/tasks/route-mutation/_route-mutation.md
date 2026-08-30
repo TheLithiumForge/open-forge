@@ -61,9 +61,12 @@ command Active or Ready.
 
 ## Preparation Closeout
 
-Read-only preparation completed for every M2 leaf on clean no-op branches from
-exact base `33913dfe7f8f80598ca4765c516d308ed179c3ab`. No branch contains a
-preparation commit, Gray, Red, or Green change:
+Initial read-only preparation completed for every M2 leaf on clean no-op branches
+from exact base `33913dfe7f8f80598ca4765c516d308ed179c3ab`. It produced no
+preparation commit, Gray, Red, or Green change. Two later shared prerequisites
+are now integrated into local `develop`: canonical lifecycle creation at
+`1d404c5cef3f5fd464ca771fc132a657f792f533` and the neutral Markdown link-label
+projection at `89a35a7876f39123d9538bca24126ff7197b9459`.
 
 | Command | Preparation branch | Readiness |
 | --- | --- | --- |
@@ -71,7 +74,7 @@ preparation commit, Gray, Red, or Green change:
 | Route Create | `codex/route-create` | Waiting for Route Init; its accepted contract correction is integrated at `cd01b8a` |
 | Route Update | `codex/route-update` | Waiting for Route Create and a closed callable/public-result boundary |
 | Route Move | `codex/route-move` | Waiting for Route Update, its remaining proportionality/wire gate, and the accepted neutral-reference correction |
-| Route Remove | `codex/route-remove` | Waiting for Route Move, the accepted parser projection, and the shared facts it must first prove or promote |
+| Route Remove | `codex/route-remove` | Waiting for Route Move and its command-local result freeze; its parser and canonical lifecycle prerequisites are integrated |
 
 The required behavior and integration order is root Install, Route Init, Route
 Create, Route Update, Route Move, Route Remove, then root Update M3. Independent
@@ -79,7 +82,9 @@ preparation may overlap; dependent command behavior may not. Each leaf Task owns
 its expected paths, protected integration neighborhood, evidence boundary, and
 accepted preparation decisions or remaining maintainer-authority questions.
 Preparation state alone is not authorization to implement an unresolved public
-or shared surface.
+or shared surface. The integrated prerequisites add no Route Remove command,
+public wire, or shared mutation behavior. Route Remove remains Planned after
+Route Move.
 
 Modern C# and the existing BCL-first foundations are sufficient for the prepared
 work. No workaround, second Markdown parser, duplicate reference resolver, or

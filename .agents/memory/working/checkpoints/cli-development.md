@@ -16,11 +16,15 @@ release.
 
 ## Current State
 
-The current local `develop` baseline is `c60fcb98a57e9ec80769b9cb1d399ce13a227863`
-with exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed`. It includes the
+The current local `develop` baseline is `89a35a7876f39123d9538bca24126ff7197b9459`
+with exact tree `7e093f3ace06bec27d0e0312f9003fc295cc780b`. It includes the
 integrated D0 contract freeze, SF1-SF4 shared foundations, M2 preparation
 record, Route Inspect interaction correction, and protected Extension Create and
-root Install public integrations described below. The preceding C1 baseline was
+root Install public integrations described below. It also includes canonical
+lifecycle creation at `1d404c5` and the neutral Markdown link-label projection at
+`89a35a7`. The preceding C2 baseline was
+`c60fcb98a57e9ec80769b9cb1d399ce13a227863`, exact tree
+`464a4a6b6ef6447209edffbf53df7348c70691ed`. The preceding C1 baseline was
 `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5`, exact tree
 `fa29bd9572df39b2d5457c35bb8a0bd6ba5a9945`. The preceding C3 baseline was
 `fa3db1ee1dbfb687715b5b90b35f6104cbc45c6c` with exact tree
@@ -97,6 +101,13 @@ to commit, confidence `0.98`) pass. The complete solution-format command exits
 successfully with existing workspace reference-load warnings; the narrower
 whitespace oracle is clean. No executable process-crash, permission-manipulation,
 or fake OS-failure seam is claimed.
+
+The later lifecycle correction is integrated at
+`1d404c5cef3f5fd464ca771fc132a657f792f533`. New documents emit all five
+ordered root keys. Framework-created documents use complete empty Extensions.
+Existing missing, null, malformed, or incomplete Framework or Extensions state
+remains untrusted and blocks planning without repair. Focused and full managed,
+Native AOT dogfood, diff, and independent review gates pass.
 
 Public Index is Complete in exact feature candidate
 `4e89d945b38a2d1e24600dd22789b55e4395a534`. Operation orchestration is
@@ -191,6 +202,14 @@ Install JSON result is accepted and frozen, including typed residual values
 `none`, `retained`, and `unknown`. Generic and Framework-aware Route Init is now
 unblocked; root Update remains after the complete Route Mutation M2 lane.
 
+The neutral Markdown link-label projection is integrated at
+`89a35a7876f39123d9538bca24126ff7197b9459`. It derives typed `Supported` or
+`Unsupported` labels only from the pinned Markdig AST and fails unhandled or
+incomplete labels closed. Release is `0` warnings and `0` errors; parser
+`31/31`, Unit `1410/1410`, and Integration `614/614` pass with zero skips; fresh
+independent Sol/xhigh review is `ROBUST PASS`. This adds no Route Remove command,
+public wire, or shared mutation behavior.
+
 Implemented boundaries:
 
 - Repository-root `OpenForge.Cli.slnx`, SDK, NuGet, and shared MSBuild files.
@@ -256,12 +275,14 @@ may still run early in isolated lanes—scope discovery, contract and ownership
 audits, callable-surface analysis, Gray/Red readiness, and worktree setup—but
 dependent Update behavior waits for M2 completion.
 
-That read-only M2 preparation is complete on five clean no-op branches from
-`33913dfe7f8f80598ca4765c516d308ed179c3ab`. No Gray, Red, Green, or preparation
-commit exists. The Route Mutation parent and leaf Tasks now retain each accepted
-preparation decision or remaining maintainer-authority frontier,
-expected/protected path boundary, and evidence scope. Behavior remains ordered
-Install → Init → Create → Update → Move → Remove → M3.
+Initial read-only M2 preparation completed on five clean no-op branches from
+`33913dfe7f8f80598ca4765c516d308ed179c3ab` without a preparation commit, Gray,
+Red, or Green change. The later lifecycle and parser prerequisites above are now
+integrated. The Route Mutation parent and leaf Tasks retain each accepted
+preparation decision or remaining maintainer-authority frontier, expected and
+protected path boundary, and evidence scope. Route Remove remains Planned after
+Route Move and its result freeze. Behavior remains ordered Install → Init →
+Create → Update → Move → Remove → M3.
 
 The root composition boundary and all localized D0 choices are closed. Route
 Inspect accepts one answer by one-based number or exact displayed path only when

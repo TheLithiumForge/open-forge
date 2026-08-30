@@ -11,8 +11,8 @@ open-forge:
 - State: Complete at exact production candidate `e7d937f` under current authority
   `01dd552`. The exact historical child commits remain recorded in their Tasks.
   Final managed, portable `linux-x64` Native AOT, static-absence, format, diff,
-  and independent-review gates pass. Public Index is Ready and next, but not
-  Active.
+  and independent-review gates pass. The later canonical lifecycle correction is
+  integrated at `1d404c5cef3f5fd464ca771fc132a657f792f533`.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Prerequisites: Accepted read-only facts, Extension Inspect, and the pure
   Generated Navigation foundation. Public `index` is a consumer, not a
@@ -60,6 +60,13 @@ neutral catalogue facts and a held-lease mechanical deletion guard only. Public
 Status and Doctor remain O1. Cleanup selection, default and empty-no-lease
 policy, whole-command deletion orchestration, guidance, result aggregation, and
 E2E remain O2.
+
+The integrated lifecycle correction makes every newly created document emit all
+five ordered root keys. Framework-created documents use a complete empty
+Extensions section. Existing missing, null, malformed, or incomplete Framework
+or Extensions state remains untrusted and blocks update planning without a repair
+write. Its focused and full managed, Native AOT dogfood, diff, and independent
+review gates pass.
 
 ## Final Evidence
 
