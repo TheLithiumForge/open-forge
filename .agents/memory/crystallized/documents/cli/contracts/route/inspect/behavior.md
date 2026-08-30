@@ -85,6 +85,16 @@ An unresolved source-ID collision retains every candidate path. Non-interactive
 and JSON requests do not prompt and direct the caller to rerun with one listed
 exact path. Resolution never chooses by kind, order, depth, or likely intent.
 
+A human collision request may use the host-supplied native interactive session
+only when its prompt-capable fact is true. Present the ordinally ordered exact
+candidate paths on stderr and ask once. Accept either a one-based displayed
+candidate number or one exact displayed path. A valid answer selects that exact
+physical source and records interactive selection. There is no default, retry,
+or inferred choice. An invalid answer or end of input retains the existing
+blocked collision and exact-path guidance; caller cancellation forms
+`interrupted`. Each retains the known collision facts. JSON and redirected
+requests never call the session, and no prompt text is written to stdout.
+
 ### One route and loading graph
 
 After workspace and source-reference validation, the operation constructs at
@@ -438,6 +448,11 @@ Implementation evidence must cover:
 - Safe non-unique automatic IDs selected by exact path and interactive choice,
   including the interactive exact-path next operation and the no-action
   exact-path observation.
+- Host-supplied prompt capability, ordinal candidate presentation on stderr,
+  one-based candidate-number and exact displayed-path responses, blocked invalid
+  response/end of input, interrupted cancellation, and proof that JSON and
+  redirected requests never call the interactive session or write prompt text to
+  stdout.
 - Unresolved non-interactive ID collisions that retain every candidate path and
   require rerunning with one listed exact path.
 - Task-start membership independent of the inspection operand.

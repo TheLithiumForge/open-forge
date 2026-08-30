@@ -301,6 +301,19 @@ current Framework needs rather than inherit deleted CLI-v2 contracts.
 
 Users receive the installable Framework from [`src/open-forge/`](../../../../../src/open-forge/). The installed Framework is its complete operational contract. Every definition, authority boundary, loading rule, and routing instruction required to navigate or use it must appear in an installed file. When required meaning is intentionally separated, the installed file that depends on it directs the reader to the installed route containing that meaning.
 
+The replacement CLI embeds this complete canonical source tree through ordinary
+.NET project resources under one fixed logical-name prefix. Root `install` owns
+the closed base Framework installation. Framework-aware `route init` is a later
+scoping operation: after a trusted current root installation exists, it reuses
+the same embedded payload and canonical topology to copy selected managed
+entrypoints into one explicit concrete scoped route. There is no separate
+`install --route`, runtime source-checkout dependency, blueprint catalogue, or
+general Template renderer.
+
+Inserted scope entrypoints remain user-owned. Copied canonical Framework assets
+and bounded generated regions may be lifecycle-managed only through their exact
+concrete target identity and recorded canonical source-asset provenance.
+
 Repository Maintenance, source history, public documentation, and unpublished design context cannot be hidden runtime dependencies. Public documentation may explain the Framework and provide examples, but it cannot replace instructions needed during normal agent work. Installed wording uses ordinary language and terms defined by the installed Framework rather than relying on repository-only vocabulary.
 
 The [system dependency direction](../architecture.md#authority-and-dependency-direction) applies within the Framework: Core contracts stand alone, Memory may depend on Core, and Extensions or tools may depend on Core or Memory. A Core or Memory contract cannot require optional Extensions, CLI behavior, packaging, or future modules to explain its meaning.

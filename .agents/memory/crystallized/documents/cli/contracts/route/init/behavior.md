@@ -50,10 +50,12 @@ details and remains technology-neutral.
 - Existing entrypoints are read-only authored inputs. Only bounded generated
   `Entries` effects required by the intended topology may affect an existing
   entrypoint.
-- The fixed scaffold is command behavior, not a Template instantiation. The
-  operation does not create the Loader or infer route meaning from folder names.
+- The generic draft scaffold is command behavior, not a Template instantiation.
+  Framework mode copies canonical embedded entrypoint assets through the neutral
+  distribution capability. Neither mode creates the Loader or infers route
+  meaning from folder names.
 - Request resolution remains explicit and non-wizard. The operation has no
-  `--automatic` mode, alias, or additional operation-specific flag.
+  `--automatic` mode, alias, or inferred current-scope mode.
 
 ## Request Resolution
 
@@ -65,15 +67,17 @@ contract. Do not add parent, Git-root, marker, nearby-`.agents`, or route-based
 workspace discovery. Terminal `--help` and `--version` handling remains in that
 shared contract and does not run this operation.
 
-Validate the command path, one required route-target operand, command-specific
-metadata flags, write-policy flags, and global flags against the public [Syntax](interface.md#syntax)
+Validate the command path, one required route-target operand, Framework mode,
+command-specific metadata flags, write-policy flags, and global flags against the public [Syntax](interface.md#syntax)
 and [Flags](interface.md#flags). Normalize command-specific repetition before
 route resolution:
 
 - A second `--description` or `--responsibility` is invalid, including when its
   value equals the first occurrence.
+- Metadata flags combined with `--framework` are invalid.
 - `--tag` occurrences remain one ordered multi-value list. Empty values, exact
   duplicates, and invalid tag syntax remain invalid.
+- Repeated `--framework` occurrences collapse to one idempotent Boolean choice.
 - Repeated `--dry-run` occurrences collapse to one idempotent Boolean choice.
 
 Shared global flags retain the repetition, ordering, composition, and terminal
@@ -83,7 +87,7 @@ last-wins behavior. Invalid input stops before route resolution.
 ### Target normalization
 
 The resolver uses the shared source-reference interpretation for an automatic ID
-or an exact `.agents/...` path, then applies the `route init` target mapping in
+or an exact `.agents/...` path, then applies the selected `route init` target mapping in
 [Route Target](interface.md#route-target):
 
 - An ID resolves to the intended folder ID below `.agents` and its final
@@ -102,6 +106,38 @@ missing-target form. The shared [CLI Source References](../../shared/source-refe
 contract supplies exact path detection, quoting, identity, and collision
 boundaries; this command does not guess another target shape from filesystem
 coincidence.
+
+### Framework alignment and scope labels
+
+When `--framework` is selected, resolve the complete embedded Framework payload
+and canonical topology through the neutral distribution capability. Require a
+trusted current root Install lifecycle whose source inventory matches the
+running CLI. A missing or untrusted installation blocks; a trusted installation
+from another inventory directs the caller to root Update before scoped
+initialization.
+
+For either operand form, derive the ordered concrete folder chain and require its
+first segment to be an exact installed root route. Align exact case-sensitive
+non-root canonical Framework segments in their canonical order and treat
+inserted segments as scope positions. Require exactly one alignment and a
+canonical non-root Framework final segment. A trailing user-only scope belongs
+to generic mode. Reject nested root recreation and reordered managed segments.
+
+For ID-form input, convert each inserted scope label by iterating Unicode runes, lowercasing letters
+invariantly, preserving digits, collapsing whitespace plus ASCII `_` and `-` to
+one `-`, and trimming that separator. Reject other punctuation, control
+characters, path separators, empty output, `.` and `..`. Then apply ordinary
+portable collision, physical-identity, and containment checks. Exact
+`.agents/...` input is already concrete and is never slugged, but its concrete
+segments must pass the same unique topology alignment.
+
+The intended Framework chain contains only the requested sparse path. Missing
+aligned segments use exact embedded canonical entrypoint assets; missing
+inserted scope segments use the generic draft scaffold. Inserted scope
+entrypoints remain user-owned. Copied Framework entrypoints and derived generated
+regions are the only new Framework lifecycle targets. Each copied target records
+its normalized canonical embedded `sourceAssetPath`; a derived generated-region
+target records `null`. The operation adds no lifecycle instance grouping.
 
 ### Chain selection
 
@@ -176,6 +212,9 @@ resolver does not score health or semantic quality.
 The complete current-fact set for one plan includes:
 
 - The selected workspace and the normalized target identity and canonical path.
+- The selected generic or Framework mode and, for Framework mode, exact embedded
+  inventory, canonical topology alignment, trusted root Install lifecycle, and
+  source-asset provenance.
 - Every folder in the target chain and its canonical or recognized
   compatibility entrypoint state.
 - Ordinary routed files and physical identities that could collide with intended
@@ -213,9 +252,12 @@ public canonical scaffold and generated-region behavior.
 ## Selection And Result Formation
 
 Resolve the chain in first-to-final order and form one intended post-write route
-topology before planning effects. Each missing folder contributes one canonical
-entrypoint with its fixed scaffold and a valid empty generated region. Each
-existing folder contributes its preserved entrypoint and current authored facts.
+topology before planning effects. In generic mode, each missing folder contributes
+one canonical entrypoint with its fixed scaffold and a valid empty generated
+region. In Framework mode, each missing scope contributes that same draft shape,
+while each missing aligned Framework segment contributes its canonical embedded
+asset with a destination-local generated region. Each existing folder contributes
+its preserved entrypoint and current authored facts.
 
 The generated projection then includes, when applicable:
 
@@ -245,17 +287,17 @@ condition applies. Existing unchanged marker content and planned changes alone
 do not change the no-op or successful result to `attention`; an unexpected
 application or verification failure remains `failed`.
 
-For ordinary operation conditions, status precedence is `blocked` > `incomplete`
-
-> `attention` > `complete`. Invalid input stops before operation resolution and
-> forms `invalid`. Failed and interrupted results retain their event meaning.
+For ordinary operation conditions, status precedence is
+`blocked` > `incomplete` > `attention` > `complete`. Invalid input stops before
+operation resolution and forms `invalid`. Failed and interrupted results retain
+their event meaning.
 
 ## Effects
 
 The operation follows this complete typed flow:
 
 ```text
-validated route target and metadata
+validated route target, mode, and applicable metadata
   -> current chain and compatibility facts
   -> complete intended entrypoint chain
   -> generated-navigation projection
@@ -275,11 +317,28 @@ target or projection fact prevents all effects. Safe facts that do not provide
 the required inspection or planning coverage form `incomplete` and also prevent
 all effects. There is no partial or best-effort application.
 
-Limit directory creation to directories in the intended route chain. Do not
-remove, rename, claim, or format existing user content. After an effect begins,
-the operation never removes or otherwise compensates for a directory it created.
-If a later effect fails, that directory remains and is reported as residual
-state.
+Keep directory creation separate from file Create/Replace/Delete and limit it
+to directories in the intended route chain. A generic plan that starts without
+`.agents` exposes that exact path as the one lock-bootstrap effect. Immediately
+before acquiring `.agents/open-forge.lock`, `WorkspaceLockManager` confirms the
+path is missing, creates and verifies it, and reports its actual residual state.
+Cancellation before bootstrap creates nothing. Framework mode requires an
+existing trusted Install state and therefore never bootstraps absent `.agents`.
+
+While holding the workspace lease, apply every other explicitly planned missing
+directory parent-first through the shared capability. Each is a descendant below
+`.agents`: immediately revalidate the missing target and its exact contained
+physical parent, call ordinary `Directory.CreateDirectory`, then verify the
+resulting contained ordinary directory. Do not remove, rename, claim, or format
+existing user content. A directory has no recovery entry; after contention,
+later failure, or interruption, it remains and is reported as residual state.
+The operation never rolls it back, compensates for it, or removes it.
+
+Every `WorkspaceLockResult` preserves the nullable bootstrap outcome already
+reached. `Existing` records a validated pre-existing `.agents`, `Materialized`
+records observed absence followed by attempted BCL creation and validation, and
+`null` means neither outcome was successfully observed. Acquisition requires a
+non-null outcome; later failure or cancellation does not erase one.
 
 Generated-navigation effects are part of this same parent plan. They use the
 complete [Index Behavior Contract](../../index-candidate/behavior.md) projection, ordering, generated
@@ -312,6 +371,15 @@ containment fact, expected-state condition, and recovery-bundle condition
 required by the Interface Contract. A verified no-op has no affected mutation
 path and therefore does not need a bundle.
 
+Application first exposes and applies the missing-`.agents` lock bootstrap when
+the generic plan requires it, then holds the persistent workspace lease. It
+immediately revalidates the complete plan, prepares and verifies the complete
+external recovery bundle when an existing-target effect requires one, applies
+and verifies the separate parent-first descendant directory effects, and only
+then begins the planned file and bounded-region effects with their own immediate
+target revalidation. Bundle preparation completes before every post-lease
+workspace effect; the accepted lock bootstrap necessarily precedes the lease.
+
 After preflight, the same finite attention rule applies to both modes: a dry-run
 with any new entrypoint with exact `NeedsAuthoring` in its intended tags forms
 `attention`, and an application that creates and verifies such an entrypoint
@@ -335,7 +403,8 @@ Create effects or no-ops creates no bundle. Its source-generated
 schema-v1 `manifest.json` and streamed ordinal payload entries record
 command/operation/workspace identity, ordered relative targets, change kinds,
 exact prior bytes/lengths/hashes, and intended final absence or length/hash.
-Create effects have no payload entry. A CreateNew draft is closed and reopened
+Directory-create effects, file Create effects, and no-ops have no recovery
+entry. A CreateNew draft is closed and reopened
 for semantic manifest, exact ordered entry, length, hash, and payload-byte
 validation, moved within the same directory to its deterministic final name,
 and reopened and verified. Only the valid final ZIP forms the opaque
@@ -426,7 +495,20 @@ in addition to the public checks in [Interface Verification](interface.md#verifi
 - ID and exact canonical-path target resolution, including spaces, Unicode, and
   unsafe segments.
 - Exact required-target parsing without a wizard, `--automatic`, alias, or an
-  additional operation-specific flag.
+  inferred current-scope mode.
+- Generic and Framework mode selection, invalid metadata combinations, and
+  idempotent repeated `--framework`.
+- Unique embedded canonical-topology alignment for both ID-form and exact-path
+  input, with zero, one, multiple, and consecutive scopes; scopes before and
+  between managed segments; reordered segment, nested-root, ambiguous-alignment,
+  and trailing-user-scope handling.
+- Scope-label casing, digits, Unicode letters, separator collapse, invalid
+  punctuation and path separators, empty output, exact-path non-slugging, and
+  post-conversion collision checks.
+- Trusted current root Install and embedded-inventory matching, sparse-chain-only
+  creation, exact managed asset bytes, draft user scope bytes,
+  destination-local generated navigation, per-target `sourceAssetPath`, and no
+  Framework lifecycle claim for a scope entrypoint.
 - Singleton rejection for repeated `--description` and `--responsibility`,
   including equal values; ordered repeated `--tag` values with exact duplicate,
   empty, and syntax validation; idempotent repeated Boolean write-policy flags;
@@ -458,6 +540,16 @@ in addition to the public checks in [Interface Verification](interface.md#verifi
 - Complete status when every new entrypoint has complete intended metadata and
   no exact `NeedsAuthoring` marker.
 - Verified no-op formation before recovery-bundle preparation.
+- Separate parent-first directory effects under the held workspace lease, with
+  immediate missing-target and physical-parent revalidation, ordinary BCL
+  creation, post-verification, retained residuals, and no rollback,
+  compensation, removal, recovery protocol, P/Invoke, or hostile same-user
+  creator-identity guarantee.
+- Generic-mode missing-`.agents` bootstrap planning/reporting, immediate
+  verification before lock acquisition, cancellation/contention/residual
+  behavior, exclusion from the descendant applier, nullable lock-result outcome
+  retention across acquired/failed/cancelled states, and Framework-mode refusal
+  to bootstrap absent trusted Install state.
 - External bundle storage, semantic final-ZIP verification, collision handling,
   typed post-verification deletion state/disposition facts, and exact named
   lease-bound Cleanup.

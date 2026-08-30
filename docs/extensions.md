@@ -14,7 +14,7 @@ under `extension` and has six actual operations:
 ```text
 open-forge extension list [--installed] [--available] [--source <package-or-catalogue-path>] [global flags]
 open-forge extension inspect <stable-id> [--source <package-or-catalogue-path>] [global flags]
-open-forge extension create [<stable-id>] [--path <catalogue-path>] [--automatic] [--dry-run] [global flags]
+open-forge extension create [<stable-id>] [--path <catalogue-path>] [--name <text>] [--description <text>] [--package-version <text>] [--dependency <stable-id>]... [--automatic] [--dry-run] [global flags]
 open-forge extension install [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--automatic] [--dry-run] [global flags]
 open-forge extension update [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--prune] [--automatic] [--dry-run] [global flags]
 open-forge extension remove [<stable-id>...] [--prune] [--automatic] [--dry-run] [global flags]
@@ -27,6 +27,26 @@ destination. Its `--path` is not a package source, and the shared `--workspace`
 flag is a no-op for create. Create uses a separate exact-destination, collision,
 and revalidation path with no workspace lease, none of `Replace`,
 `ReplaceGeneratedRegion`, or `Delete`, and no recovery bundle.
+
+Prompt-capable human Create asks only for a missing stable ID or destination
+catalogue parent. Blank or invalid answers may be explained and asked again
+locally without an attempt limit. End of input is no-write `invalid` and
+cancellation is no-write `interrupted`. JSON, automatic, and redirected use must
+provide both.
+Omitted manifest values resolve deterministically: split the stable ID on
+hyphens, uppercase the first ASCII letter of each segment, and join the segments
+with spaces for the display name; use `Open Forge Extension package
+<stable-id>.`, version `0.1.0`, and no dependencies.
+`--name`, `--description`, and `--package-version` replace their respective
+defaults. Repeatable `--dependency` values must be valid unique non-self IDs and
+serialize in ordinal ID order; Create records them without resolving availability.
+
+Any existing safely resolved directory is an eligible catalogue parent, including
+an empty marker-free directory. Create does not create the parent or inspect
+unrelated siblings; it classifies only `<catalogue>/<id>`. Its command-local JSON
+result orders catalogue, destination, ID, manifest, mode, intended/applied
+effects, verification, and `workspaceLifecycleChanged: false`, without repeating
+the shared envelope.
 
 Install and update use one exact embedded or explicitly selected local package or
 catalogue source. An external source is read-only and must be lexically and

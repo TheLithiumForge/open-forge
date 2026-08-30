@@ -133,6 +133,24 @@ Selecting a valid overwrite reference inspects the base and overwrite as one
 logical source. The overwrite inherits the base route, reading behavior, and
 scope. It is never reported as an independent route.
 
+### Interactive collision selection
+
+When a human request supplies a non-unique automatic ID and the host reports
+that both standard input and the stderr prompt stream are terminal-capable,
+Inspect lists every candidate in canonical-path order on stderr and asks one
+question. The one answer must be either the one-based displayed candidate number
+or one exact displayed path. There is no implicit default, fuzzy choice, retry,
+or selection by kind, depth, enumeration order, or likely intent. A valid
+response selects that exact physical source and records `interactive` as the
+selection method.
+
+JSON and redirected requests never prompt. They retain every candidate and the
+existing blocked exact-path guidance. An invalid answer or end of input retains
+that same blocked collision; caller cancellation forms `interrupted`. The prompt
+never writes to stdout. Interactive selection does not repair an ambiguous route,
+grant mutation authority, or change the accepted `attention` observation and
+exact-path next action.
+
 ## Source-State Classification
 
 The command uses this finite source-state classification after input resolution.
@@ -948,6 +966,10 @@ Gate 5 executable proof must cover:
 - Exact CWD and `--workspace` selection without discovery.
 - IDs, exact paths, quoting, collisions, and disambiguation from the shared
   source-reference contract.
+- Prompt-capable human collision selection through one stderr question, one-based
+  candidate-number and exact displayed-path validation, blocked invalid/end-of-
+  input, and interrupted cancellation, plus proof that JSON and redirected
+  requests never prompt or write prompt text to stdout.
 - Routed entrypoints, routed leaves, native routed sources, canonical and each
   compatibility entrypoint filename, detached entrypoints, known unrouted
   sources, and unsupported source kinds.

@@ -22,10 +22,9 @@ open-forge:
   `09aa03eddb97831ff544afe1eac54ad9af501f5c`; both commits have exact tree
   `2dcfca18020980a9cafbc429a72930af3368df5f`.
 - Current accepted baseline: clean local `develop` commit
-  `cc35c853fd7b55d31e3fb2c9a454d9ab61c1884e`, exact tree
-  `867be79ebee4ba60f2116a83857edadb8a5dbf0a`. It squash-integrates accepted
-  Generated Navigation formation feature
-  `f82c2b168657baf2fac50c76e2ff2cc0ed3776d7` after public Index. Its Release
+  `18f2acff31cfd6600a16430ac5d689d05482e297`, exact tree
+  `39f0a8c4e6d3695cfbe7407dfd6043dc5ec9680a`. It closes the accepted
+  intended-source formation integration after public Index. Its Release
   build passes with 0 warnings and 0 errors. Managed Unit `1227/1227`,
   Integration `481/481`, and EndToEnd `125/125` pass. Portable `linux-x64`
   Native AOT Integration `481/481` and EndToEnd `125/125` pass. Every accepted
@@ -85,18 +84,26 @@ open-forge:
   [Routed Authored Metadata
   foundation](tasks/read-only/routed-authored-metadata-foundation.md) is Complete
   and integrated at `5924698`.
-- Current step: the intended-membership formation prerequisite is integrated.
-  No later implementation lane is selected in this ledger. It applies only to
-  Route Init, Route Create, Route Move, Route Remove, and root Install/Update;
-  Route Update and Extension Create are independent of it. M2 remains Pending
-  and is not Active or Ready. Route Init remains Blocked until the maintainer
-  accepts generic exact-chain behavior or a Framework mode, after which the
-  route-mutation lane graph can be recorded. M3 also remains Pending. Extension
-  Create remains Planned but must not begin until the maintainer accepts
-  deterministic manifest defaults and host-owned decisions for interactive input
-  and asynchronous request resolution. Root Install/Update consume the formation
-  expansion only when their later Tasks begin. Continue operations, delivery,
-  and final acceptance in the persisted order after their accepted predecessors.
+- Current step: the next-wave architecture directions are accepted and this D0
+  contract freeze records their command contracts, Task graph, checkpoint,
+  and public documentation before production work. SF1 native interaction, SF2
+  embedded Framework distribution, SF3 lifecycle source-asset provenance, and
+  SF4 lease-bound directory creation become parallel-ready only after this freeze
+  integrates. C1 Extension Create,
+  C2 root Install, and C3 the Route Inspect interaction correction follow their
+  foundations on non-overlapping command paths; protected root composition,
+  shared serialization, help, process evidence, and program ledgers integrate
+  sequentially. Generic and Framework-aware Route Init follows accepted Install
+  integration because it consumes the installed root topology, embedded payload,
+  and trusted lifecycle state. Route Create, Route Update, Route Move, and Route
+  Remove remain later command-local Tasks, and the complete Route Mutation M2
+  lane precedes root Update M3. Independent scope/contract/ownership discovery,
+  callable-surface analysis, Gray/Red readiness, and worktree preparation may
+  overlap earlier work; dependent command behavior may not. The localized C1/C2/C3 interaction,
+  defaults, catalogue, JSON, and directory-effect decisions are frozen below;
+  implementation may not silently broaden them.
+  Continue operations, delivery, and final acceptance in the persisted order
+  after their accepted predecessors.
   The snapshot slice remains a no-op, with possible LithSnap-backed
   presentation candidates recorded only as a deferred Idea.
   The maintainer accepted that dependency correction; public Index must consume
@@ -429,8 +436,16 @@ diff, parent requirements, and claimed evidence.
 | PC1 | Complete | Proportionate guidance `5f9f59e`, Route List correction `2cd525d`, and Markdown correction `0d88606` are squash-integrated; PCF-001/002/003/007 are closed and all remaining dispositions are preserved. | DGC1 | Parallel correction | Proportional correctness | Release 0/0; managed `1053/411/120`; portable `linux-x64` Native AOT `411/120`; dogfood and Sol/xhigh review pass |
 | M1  | Complete | Shared lock, lifecycle, revalidation, atomic application, receipt, neutral recovery catalogue, lease-gated deletion guard, and external recovery-bundle foundations are accepted at exact production candidate `e7d937f` under authority `01dd552`. Final managed `1096/458/120`, portable `linux-x64` Native AOT Integration `458/458`, focused M1 `43/47`, static Git-absence, format/diff, and independent review pass. | GN1, E1, DGC1, PC1                      | Sequential  | Mutation foundation  | Direct failure, interruption, residual, and AOT evidence pass |
 | I1  | Complete | Public `index`, including the I1-owned body-free formation expansion and orchestration over accepted GN1 projection and M1 mechanics, is accepted at exact feature candidate `4e89d945b38a2d1e24600dd22789b55e4395a534`. The warning-free Release, complete managed, portable `linux-x64` Native AOT, and controlled public-process gates pass with zero failures or skips. Final closeout tip `2b353c48978ee88e53345be8037776181612222c` is locally squash-integrated at `09aa03eddb97831ff544afe1eac54ad9af501f5c` with exact tree equality. | GN1, M1 | Sequential | Generated navigation | Exact contract, idempotence, unchanged-authority, recovery, managed `1206/480/125`, and portable `linux-x64` AOT `480/125` pass |
-| M2  | Pending  | Keep Route Init Blocked until the maintainer accepts generic exact-chain behavior or a Framework mode, then record the route-mutation lane graph before any command becomes Active or Ready. The integrated intended-membership formation prerequisite applies to Init/Create/Move/Remove; Update is independent of it. | M1, R2, I1 | Sequential | Route mutation | Per-command public and recovery evidence |
-| M3  | Pending  | Extension Create remains Planned but must not begin until deterministic manifest defaults and host-owned decisions for interactive input and asynchronous request resolution are accepted. Root Install/Update consume the integrated intended-membership formation later; Extension Create is independent of it. | M1, E1, I1 | Sequential | Lifecycle mutation | Package, lifecycle, and workspace evidence |
+| D0  | Complete in the commit containing this record | Freeze the accepted next-wave Architecture, command contracts, shared-foundation Tasks, command sequencing, checkpoint, and public docs before production mutation. | I1, M1, maintainer decisions | Sequential | Program contract | Link/frontmatter/stale-claim checks, dogfood load/doctor, independent Sol/xhigh review |
+| SF1 | Ready after D0 integration | Add one BCL-only Shell interaction transport. Protected command integration later injects it only into prompt-capable operation factories; requests retain only command-local interaction-policy Booleans. | D0, F2-F3 | Parallel foundation | Shell interaction | Focused transport Unit; injected host and redirected-process proof with prompt-capable command integration |
+| SF2 | Ready after D0 integration | Embed the canonical Framework payload and expose exact ordered asset bytes, paths, hashes, and inventory identity through a neutral BCL reader. | D0, F1 | Parallel foundation | Framework distribution | Source parity, isolated published binary, Native AOT resource proof |
+| SF3 | Ready after D0 integration | Add required nullable per-target `sourceAssetPath` provenance to Framework lifecycle schema v1 without adding instance collections or migration machinery. | D0, M1 | Parallel foundation | Framework lifecycle | Source-generated JSON, structural validation, lifecycle and Native AOT regressions |
+| SF4 | Ready after D0 integration | Add one lease-bound ordinary-BCL descendant-directory effect for Install and Route Init, preserving the visible planned/reported missing-`.agents` lock bootstrap as the sole pre-lease exception. | D0, M1 | Parallel foundation | Mutation directory effect | Bootstrap, real filesystem races, residuals, file/recovery non-regression, Native AOT proof |
+| C1  | Planned after SF1 | Implement Extension Create with accepted manifest defaults/options, catalogue boundary, ordered JSON result, and a command-local wizard for missing required facts. | SF1, M1, E1 | Parallel command | Lifecycle mutation | Package-destination, prompt/direct, manifest, process, and AOT evidence |
+| C2  | Planned after SF1-SF4 | Implement root Install over the closed embedded base Framework subset while preserving trusted dynamically added scoped lifecycle targets. | SF1-SF4, M1, I1 | Parallel command | Framework lifecycle | Payload, lifecycle, recovery, workspace, process, and AOT evidence |
+| C3  | Planned after SF1 | Correct Route Inspect's accepted one-answer interactive collision selection without changing its non-interactive contract or result model. | SF1, R2 | Parallel command | Route discovery correction | Focused Unit/Integration and redirected public-process evidence |
+| M2  | Planned after C2 integration | Implement generic and Framework-aware Route Init, then Route Create, Route Update, Route Move, and current positive-unmanaged-only Route Remove through separate command-local gates. | C2, M1, R2, I1 | Sequential route mutation | Route mutation | Per-command public, recovery, lifecycle, and AOT evidence |
+| M3  | Planned after M2 integration | Implement root Update only after the complete Route Mutation lane, preserving its independent lifecycle reconciliation boundary. Independent preparation may begin earlier without implementing dependent behavior. | M2, C2, M1, I1 | Sequential lifecycle mutation | Lifecycle mutation | Payload, lifecycle, recovery, workspace, and AOT evidence |
 | M4  | Pending  | Implement extension install/update/remove                                                                                                                                                                                                                                                                                                                                                                                         | M3                                      | Sequential  | Extension mutation   | Collision, recovery, and catalogue evidence                 |
 | O1  | Pending  | Implement the simplified Status and Doctor command layer from all produced neutral facts                                                                                                                                                                                                                                                                                                                                          | M2-M4                                   | Sequential  | Operations           | Complete aggregate and diagnostic evidence                  |
 | O2  | Pending  | Implement relevant-domain Repair and the simplified Cleanup command policy and orchestration                                                                                                                                                                                                                                                                                                                                      | O1                                      | Sequential  | Operations           | Plan/apply/recovery and idempotence evidence                |
@@ -448,22 +463,38 @@ program items through the later boundaries that own them:
 - [x] Author and accept the binding CLI proportionality and evidence Directive,
   and add its per-Task applicability check below before I1 Phase 0 activation;
   satisfied at `b25d76e`.
-- [ ] Keep Route Init as exact-chain initialization. Resolve its deferred
-  generic-versus-Framework decision and record the route-mutation lane graph
-  before M2 behavior begins.
+- [x] Keep generic Route Init as exact-chain initialization and add the accepted
+  Framework-aware concrete-route mode after root Install. The accepted mode
+  uniquely aligns canonical Framework segments, deterministically slugs only
+  ID-form inserted scopes, creates one sparse chain, and keeps scope entrypoints
+  user-owned.
 - [x] Accept and integrate the existing Generated Navigation formation expansion
   at feature `f82c2b168657baf2fac50c76e2ff2cc0ed3776d7`, squash commit
-  `cc35c853fd7b55d31e3fb2c9a454d9ab61c1884e`, and exact tree
-  `867be79ebee4ba60f2116a83857edadb8a5dbf0a`. It is a prerequisite only for
+  `cc35c853fd7b55d31e3fb2c9a454d9ab61c1884e`, with closeout integrated at
+  `18f2acff31cfd6600a16430ac5d689d05482e297`, exact tree
+  `39f0a8c4e6d3695cfbe7407dfd6043dc5ec9680a`. It is a prerequisite only for
   Route Init/Create/Move/Remove and root Install/Update. Route Update and
   Extension Create remain independent of it.
 - [ ] Keep Route Move and Route Remove behind separate command-local reference
   and lifecycle proportionality gates. The shared formation does not settle
   those future decisions or make either command Active or Ready.
-- [ ] Keep Extension Create Planned but do not begin it until the maintainer
-  accepts deterministic manifest defaults and the host-owned boundaries for
-  interactive input and asynchronous request resolution. Do not infer product
-  acceptance from the completed shared foundation.
+- [x] Accept Extension Create's manifest options and command-local missing-fact
+  wizard. Invalid input may be corrected locally without an attempt limit; EOF
+  is invalid and cancellation interrupted, both without writes. C1 remains
+  sequenced after SF1 and does not gain workspace or dependency-resolution
+  behavior.
+- [x] Freeze Extension Create's exact defaults, catalogue-parent and sibling
+  eligibility, and command-local JSON result shape/order.
+- [x] Freeze C3's one-answer prompt grammar, Install's one-confirmation
+  interaction, and the shared lease-bound ordinary-BCL directory-create effect.
+- [x] Freeze missing `.agents` as the single visible planned/reported bootstrap
+  directory created and verified by `WorkspaceLockManager` before lock
+  acquisition; SF4 owns descendants only and `LocalApplicationData` remains
+  recovery storage rather than a lock location.
+- [x] Preserve Architecture order: complete Route Mutation M2 before root Update
+  M3. Parallelize only independent preparation such as scope discovery,
+  contract/ownership audits, callable-surface analysis, Gray/Red readiness, and
+  worktree setup; do not implement dependent behavior early.
 - [x] Keep D1 at the accepted thin tier: delivery surfaces consume accepted
   binaries and do not reproduce CLI behavior; required evidence is limited to
   current `linux-x64` build and smoke, packed install and invocation, and checksums.
@@ -474,8 +505,9 @@ program items through the later boundaries that own them:
 - [x] Keep the simplified O1 Status/Doctor and O2 Repair/Cleanup split reflected
   in the work graph; M1 supplies only neutral facts and mechanics.
 
-This queue does not reopen M1 or by itself authorize M2. M2 remains Pending
-until the next accepted planning boundary selects it.
+This queue does not reopen M1. It authorizes only the explicitly Ready
+foundations after D0 integration; each command still waits for its listed
+predecessors and any named decision frontier.
 
 ### Per-Task Proportionality And Evidence Check
 
@@ -512,6 +544,8 @@ has non-overlapping production and test ownership.
 | References  | Q2                             | GI1 complete and the Q1 source/document facts it needs are accepted                                            | References command paths; no shared-source mutation  | Accepted neutral source/document facts            | Q2 acceptance     |
 | Read-only C | E1                             | G1 and GI1 complete; extension source contract frozen                                                          | Extension List/Inspect roots                         | Shell and filesystem foundation                   | M1                |
 | Read-only D | GN1                            | Q1-Q3 and R2 complete; pure-effect boundary frozen                                                             | New `Framework/GeneratedNavigation/**` and mirrors  | Accepted source/route/document facts               | GN1 acceptance    |
+| Next foundation | SF1, SF2, SF3, SF4         | D0 contract freeze integrated                                                                                   | Separate Shell interaction, Framework distribution, lifecycle-provenance, and directory-effect paths | M1 and accepted root project graph | Sequential protected-surface integration |
+| Next commands | C1, C2, C3                  | Each listed foundation is integrated and every named prompt/effect frontier is accepted                         | Separate Extension Create, Install, and Route Inspect paths | Root composition, serialization, help, and process evidence | Sequential integration, then Route Init |
 | Delivery    | Current `linux-x64` smoke, packed journey, checksums | O2 behavior complete; release contracts frozen                                                | Separate workflow and package paths                  | Accepted command binaries                         | D1 acceptance     |
 
 No parallel implementation may change the same shared capability. Promotion or
@@ -609,9 +643,19 @@ passed. `CLI-EDGE-001` remains non-product only.
 | ID  | Decision                                                                             | Current direction                                           | Decision-maker                       | Needed before                | Result if reopened                                 |
 | --- | ------------------------------------------------------------------------------------ | ----------------------------------------------------------- | ------------------------------------ | ---------------------------- | -------------------------------------------------- |
 | D1  | Can the managed BCL prove required component-wise physical identity on every target? | Prove with real OS and AOT evidence; no interop             | Maintainer after Mastermind evidence | F4 acceptance                | Narrow Architecture return                         |
-| D2  | Does `route init` gain a Framework-shape mode?                                       | Deferred; current command contract remains authoritative    | Maintainer                           | M2 route-init Task           | Update contract, architecture, Tasks, and evidence |
+| D2  | Does `route init` gain a Framework-shape mode?                                       | Accepted: concrete uniquely aligned sparse scoped chain after root Install | Maintainer | D0 contract freeze | Reopen contracts, lifecycle ownership, sequencing, and evidence |
 | D3  | Does a dependency version need replacement?                                          | Keep accepted exact versions until evidence requires change | Maintainer                           | Owning foundation/command    | Focused dependency decision and full AOT proof     |
 | D4  | Do perspectives, Tasks, or Plans become Framework primitives?                        | No; continue local trial                                    | Maintainer                           | After several complete Tasks | Separate Framework proposal, not CLI scope         |
+| D5  | Where does native interaction cross generic Shell boundaries?                        | Root composition injects only prompt-capable factories; requests carry only local policy Booleans | Maintainer | SF1 | Reopen Shell/root callable architecture and affected tests |
+| D6  | What exact prompt grammar and capability rule closes Route Inspect's collision gap?  | Accepted: terminal-capable stdin/stderr, one answer by one-based number or exact path; invalid/EOF blocked, cancellation interrupted | Maintainer | C3 | Reopen command contract and focused evidence |
+| D7  | What minimal BCL directory-create effect is shared by Install and Route Init?         | Accepted: lease, immediate missing/physical-parent revalidation, BCL create, post-verification, retained residual | Maintainer | SF4 | Reopen mutation contract, reuse, and failure evidence |
+| D8  | What exact name and description defaults does Extension Create write?                 | Accepted: hyphen-split first-ASCII-uppercase name and `Open Forge Extension package <stable-id>.` | Maintainer | C1 | Reopen manifest contract and exact evidence |
+| D9  | Which catalogue-parent states are eligible and how do sibling packages affect Create? | Accepted: any existing safely resolved directory; no marker; empty/siblings allowed; inspect only exact ID destination | Maintainer | C1 | Reopen destination classification and collision evidence |
+| D10 | What exact command-local JSON result shape and property order does Extension Create expose? | Accepted ordered catalogue, destination, ID, manifest, mode, effects, verification, and unchanged-workspace fact | Maintainer | C1 | Reopen source-generated schema and renderer evidence |
+| D11 | How does Install confirm, refuse, handle EOF/cancellation, and avoid prompting?        | Accepted: prompt once only for prompt-capable human writes after preflight; refusal/EOF/cancel interrupted; other modes never prompt | Maintainer | C2 | Reopen command-local interaction contract and evidence |
+| D12 | How does Extension Create gather and correct missing required human input?             | Accepted: ask only missing stable-ID/catalogue facts; local correction without attempt limit; EOF invalid, cancellation interrupted; no generic retry framework | Maintainer | C1 | Reopen wizard contract and focused evidence |
+| D13 | How does a missing `.agents` container compose with the workspace lock and SF4?         | Accepted: visible planned/reported bootstrap before acquisition; SF4 handles descendants after lease; nullable lock results preserve reached `Existing`/`Materialized` outcome | Maintainer | SF4, C2, M2 | Reopen lock location, result contract, mutation sequencing, and residual evidence |
+| D14 | May root Update M3 behavior begin alongside Route Mutation M2 after Install?             | Accepted: no; full M2 behavior precedes M3, while independent preparation may run earlier | Maintainer | M2, M3 | Reopen program sequencing and lane ownership |
 
 ## Risks, Recovery, And Stop Conditions
 
@@ -640,6 +684,9 @@ passed. `CLI-EDGE-001` remains non-product only.
 
 ## Coordination And Continuity
 
+- Agents may surface architectural alternatives and supporting evidence, but may
+  not accept a product feature addition or removal. Only explicit maintainer
+  direction changes accepted product scope.
 - Child Tasks: The `tasks/` hierarchy created in S2.
 - Checkpoint: [CLI Development Checkpoint](../checkpoints/cli-development.md).
 - Handoffs: [CLI Find Accepted Handoff](../handoffs/2026-08-25_cli-find-accepted.md)

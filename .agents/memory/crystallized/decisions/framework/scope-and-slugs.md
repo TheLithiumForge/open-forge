@@ -28,6 +28,14 @@ A `managed route` is an ordinary `route` whose identified files Open Forge, an E
 
 Installed paths use concrete `slugs`. Placeholders remain authoring notation before a `route` exists. Open Forge imposes no fixed projects, domains, teams, or repositories taxonomy.
 
+The accepted Framework-aware Route Init mode expresses scope positions directly
+in one desired concrete route. It aligns canonical non-root Framework segments
+against the embedded canonical topology and treats inserted segments as scope
+labels. Its ID-form input deterministically converts those labels to concrete
+slugs; an exact `.agents/...` path is already concrete and is never slugged. This
+is command-local authoring assistance, not a universal runtime placeholder or
+slug service.
+
 Users may edit, replace, move, or remove installed `routes` and expose additional roots through the loader. Missing defaults remain absent unless a requested lifecycle operation explicitly restores or replaces them.
 
 ## Rationale
@@ -55,6 +63,9 @@ Recursive freedom requires every scope `slug` to have an `entrypoint` that makes
 - The segments of a `managed route` retain the order declared by their manager
 - The `root routes` compose through links instead of implicit physical nesting
 - Tools operate on concrete `route` identities even when help and Templates explain parameterized shapes
+- Framework-aware Route Init may help form those concrete identities from scope
+  labels only when canonical topology alignment is unique; ambiguity, reordering,
+  root recreation, and identity collision block
 - Open Forge, Extensions, and future managers may support the same generic scoping rule through their own explicit lifecycle contracts
 - Moving or renaming a `managed route` may end automatic reconciliation without changing its readable runtime meaning
 - A `route`'s placement, `description`, tags, and inherited content jointly communicate scope

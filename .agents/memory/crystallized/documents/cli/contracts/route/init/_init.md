@@ -25,6 +25,10 @@ This entrypoint does not duplicate their detail.
   copied in full.
 - The linked Framework routing and Markdown sources remain authoritative for
   Framework meaning. This set does not replace those sources.
+- Root Install owns the closed base Framework installation. The accepted
+  `--framework` mode follows that operation and reuses its embedded payload,
+  canonical topology, and trusted lifecycle provenance for one sparse scoped
+  route. Generic mode remains available independently.
 
 This set contains no command-local Technical Design file. The two sibling
 contracts define the accepted current command contract without selecting

@@ -8,14 +8,16 @@ open-forge:
 
 ## Task State
 
-- State: Planned. No command behavior is Active or Ready.
+- State: Planned after the next-wave shared foundations. The localized product
+  decisions recorded in the child Tasks are closed.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Common prerequisites: Extension discovery and `index`; workspace mutations also
   consume Mutation Foundation.
 - Intended-membership formation prerequisite: accepted feature
   `f82c2b168657baf2fac50c76e2ff2cc0ed3776d7`, squash-integrated at
-  `cc35c853fd7b55d31e3fb2c9a454d9ab61c1884e`, exact tree
-  `867be79ebee4ba60f2116a83857edadb8a5dbf0a`. It applies only to root Install
+  `cc35c853fd7b55d31e3fb2c9a454d9ab61c1884e`, with closeout integrated at
+  `18f2acff31cfd6600a16430ac5d689d05482e297`, exact tree
+  `39f0a8c4e6d3695cfbe7407dfd6043dc5ec9680a`. It applies only to root Install
   and root Update in this group. Extension Create is independent of it.
 
 ## Shared Boundary
@@ -35,10 +37,23 @@ Root Install and root Update later consume
 to project their complete post-operation Generated Navigation graph from real
 observed evidence. This shared formation adds no prospective catalogue/source
 framework, virtual filesystem, temporary checkout, or hidden Index. Extension
-Create does not consume it. That Planned Task must not begin until the maintainer
-accepts deterministic manifest defaults plus the host-owned boundaries for
-interactive input and asynchronous request resolution. Do not infer those
-product decisions from the completed shared prerequisite.
+Create does not consume it. The maintainer accepted explicit `--name`,
+`--description`, `--package-version`, repeatable `--dependency` overrides, and a
+command-local wizard that asks only for missing stable ID and catalogue facts.
+Exact name/description defaults, catalogue-parent and sibling eligibility, local
+invalid-input correction, EOF/cancellation semantics, and the command-local JSON
+result are accepted and frozen in its contracts.
+Extension Create depends only on the native interaction foundation. Root Install
+depends on interaction, embedded Framework distribution, lifecycle
+`sourceAssetPath` provenance, the shared directory-create foundation, and
+intended-membership formation. Its exact command-local interaction is accepted.
+The Extension Create and root Install command lanes may execute in parallel after
+their prerequisites; root composition and executable acceptance integrate
+sequentially.
+Root Update remains sequenced after the complete Route Mutation M2 lane. Only
+independent preparation such as scope discovery, contract and ownership audits,
+callable-surface analysis, Gray/Red readiness, and worktree setup may proceed
+earlier; dependent Update behavior does not overlap unfinished M2 behavior.
 
 Every other lifecycle mutation that replaces or deletes an existing ordinary
 target prepares one immutable, strictly verified external recovery bundle for
@@ -49,9 +64,9 @@ and is owned only through a `FileShare.None` handle.
 
 ## Child Tasks
 
-- [ ] [Implement creation of one reviewable Extension package outside a workspace](extension-create.md) — Planned — Implementer: Not assigned
-- [ ] [Implement root Framework installation into a selected workspace](install.md) — Planned — Implementer: Not assigned
-- [ ] [Implement root Framework update from accepted lifecycle identity](update.md) — Planned — Implementer: Not assigned
+- [ ] [Implement creation of one reviewable Extension package outside a workspace](extension-create.md) — Planned after native interaction — Implementer: Not assigned
+- [ ] [Implement root Framework installation into a selected workspace](install.md) — Planned after SF1-SF4 — Implementer: Not assigned
+- [ ] [Implement root Framework update from accepted lifecycle identity](update.md) — Planned after full Route Mutation M2 — Implementer: Not assigned
 - [ ] [Implement Extension installation from exact reviewed package identity](extension-install.md) — Planned — Implementer: Not assigned
 - [ ] [Implement Extension update with source review, ownership, and recovery integrity](extension-update.md) — Planned — Implementer: Not assigned
 - [ ] [Implement Extension removal with preserved user content and recovery integrity](extension-remove.md) — Planned — Implementer: Not assigned

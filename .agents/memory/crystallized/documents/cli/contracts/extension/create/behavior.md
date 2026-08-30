@@ -19,7 +19,8 @@ storage, or workspace lifecycle authority.
 ## Typed Flow
 
 ```text
-validated ID and catalogue parent
+validated ID, catalogue parent, and manifest options
+  -> deterministic manifest
   -> exact catalogue and destination facts
   -> scaffold intended state
   -> one complete plan and preflight
@@ -40,20 +41,43 @@ does not acquire `.agents/open-forge.lock` or mutate workspace state.
 2. Accept zero or one stable-ID operand and zero or one `--path` value. Require
    both after wizard/direct resolution; missing non-interactive semantic input is
    `invalid`.
-3. Reject source, package-selection, force, prune, and other mutation flags.
-4. Collapse repeated `--automatic` and `--dry-run` presence idempotently.
+3. Accept zero or one nonblank `--name`, `--description`, and
+   `--package-version` value plus repeated `--dependency` values. Reject repeated
+   singleton metadata, preserve accepted override text exactly, and keep package
+   version descriptive rather than imposing SemVer or compatibility semantics.
+   Reject invalid dependency IDs, the package ID as its own dependency, and
+   duplicate dependency IDs. Sort accepted dependencies by ordinal stable ID for
+   serialization; do not resolve their availability.
+4. Reject source, package-selection, force, prune, and other mutation flags.
+5. Collapse repeated `--automatic` and `--dry-run` presence idempotently.
    Repeated stable ID or `--path` is invalid. Unknown options are invalid.
-5. Accept `--workspace` as the shared no-op defined by the global contract.
+6. Accept `--workspace` as the shared no-op defined by the global contract.
 
-Argumentless prompt-capable human input enters the finite two-question wizard.
-Explicit inputs populate the same request. Automatic mode suppresses interaction
-only when ID and path are already explicit. No recommendation, current folder,
-workspace, or source resemblance fills a missing value.
+A prompt-capable human request enters the command-local wizard only for required
+facts not supplied explicitly. The argumentless form asks for stable ID and
+catalogue parent, a partial explicit request asks only for the missing fact, and
+a complete explicit request asks none. Blank or invalid input may be explained
+and asked again while input remains available. There is no arbitrary attempt
+limit or shared retry abstraction. End of input leaves the request `invalid` and
+writes nothing; caller cancellation is `interrupted` and writes nothing.
+Automatic mode suppresses interaction only when ID and path are already explicit.
+No recommendation, current folder, workspace, or source resemblance fills a
+missing value.
+
+After the two required inputs resolve, form the manifest deterministically. The
+ID is exact. The default name splits the ID at hyphens, uppercases the first
+ASCII letter of each segment, and joins with one space. The default description
+is `Open Forge Extension package <stable-id>.`; the default version is `0.1.0`;
+and the default dependency set is empty. Explicit nonblank metadata overrides
+replace only their fields. Optional metadata adds no wizard question; the
+resolved defaults and overrides appear in the plan.
 
 ## Destination Facts And Plan
 
 Resolve the exact catalogue parent from `--path` and prove its lexical and
-physical identity and safe catalogue shape. No marker file is required. Resolve
+physical identity. Any existing safely resolved ordinary directory is eligible,
+including an empty directory. Do not require a marker or create the parent.
+Ignore and preserve unrelated sibling files and package directories; inspect only
 the exact `<catalogue>/<id>/` package destination and retain its exact physical
 identity when it exists. Prove that it is contained by the catalogue parent and
 that it is either absent or contains the exact intended scaffold. An exact
@@ -71,6 +95,11 @@ The intended scaffold has exactly these effects:
 The plan does not include README, payload source files, dependency closure,
 workspace files, generated navigation, or lifecycle-document effects.
 It has no hidden source or target workspace.
+
+The manifest contains exactly `id`, `name`, `description`, `version`, and
+ordinally sorted `dependencies` in that property order. All are present. Create
+validates declaration syntax only and performs no dependency source or closure
+lookup.
 
 If the exact scaffold already exists and matches the intended state, return a
 verified no-op. Do not create timestamps or synthetic changes.
@@ -106,17 +135,34 @@ workspace lock is deliberately not involved, and no recovery bundle is created.
 
 ## Results And Conformance
 
-Form one typed result containing exact catalogue/path, ID, mode, intended scaffold,
-effects or no-op, workspace-lifecycle unchanged fact, verification, status, and
-at most one next action. Human and JSON renderers consume it once.
+Form one typed result containing exact catalogue/path, ID, resolved manifest,
+mode, intended scaffold, effects or no-op, workspace-lifecycle unchanged fact,
+verification, status, and at most one next action. Human and JSON renderers
+consume it once.
+
+The source-generated command-local JSON result emits `catalogue`, `destination`,
+`id`, `manifest`, `mode`, `intendedEffects`, `appliedEffects`, `verification`,
+and `workspaceLifecycleChanged` in that order. The manifest emits `name`,
+`description`, `version`, and `dependencies` in that order. The final Boolean is
+always `false`. Do not duplicate the shared envelope's command, status,
+workspace, or next-action members.
 Use the shared seven statuses and streams; `attention` is currently unreachable
 for create.
 
 Create never mutates a workspace, package source, lifecycle document, generated
 navigation, or Framework file. It does not acquire `.agents/open-forge.lock`.
-Conformance must cover wizard and direct requests, automatic omission states,
+Conformance must cover zero, one, and all currently missing required human facts, local
+blank/invalid correction without an attempt limit, invalid end of input,
+interrupted cancellation, direct requests, automatic omission states,
+deterministic manifest defaults, singleton metadata
+overrides and repetition rejection, every accepted native option-value form,
+dependency ordering and duplicate/self/invalid rejection, exact manifest
+property order, exact command-local JSON property order and no envelope
+duplication, and no dependency availability resolution,
 absent destinations, exact-scaffold no-op, divergent, partial, additional,
-unknown, and colliding occupants, exact catalogue and destination physical
+unknown, and colliding occupants, empty/populated marker-free parents, unrelated
+sibling preservation, exact-destination-only inspection, missing-parent refusal,
+exact catalogue and destination physical
 identity, workspace no-op, dry-run no-effects, the separate create-only path
 with no Replace/Delete, no workspace lease, no recovery bundle,
 expected-state revalidation immediately before effects, verification, retained

@@ -40,8 +40,10 @@ compact-result rules below are accepted current behavior.
 ## Purpose
 
 `route init` makes one target folder routable by creating every missing
-entrypoint in its route chain. It uses one fixed entrypoint scaffold. It does
-not instantiate a Template, create the Loader, or infer semantic meaning from a
+entrypoint in its route chain. Generic mode uses one fixed draft entrypoint
+scaffold. Framework mode reuses embedded canonical Framework entrypoints while
+creating user-owned draft entrypoints for inserted scopes. Neither mode
+instantiates a Template, creates the Loader, or infers semantic meaning from a
 folder name.
 
 Given the same workspace bytes and explicit input, the command selects the same
@@ -57,6 +59,7 @@ meaning.
 
 ```text
 open-forge route init <route-target>
+  [--framework]
   [--description <text>]
   [--responsibility <text>]
   [--tag=<tag>]...
@@ -64,10 +67,11 @@ open-forge route init <route-target>
   [global flags]
 ```
 
-`--description`, `--responsibility`, and `--tag` provide authored metadata for
-the final target only. `--dry-run` is the write-policy preview.
-The command has no `--template`, `--yes`, `--force`, `--no-responsibility`,
-Loader-creation mode, or alias.
+In generic mode, `--description`, `--responsibility`, and `--tag` provide
+authored metadata for the final target only. `--framework` selects the embedded
+Framework topology and asset mode. `--dry-run` is the write-policy preview.
+The command has no `--template`, `--scope`, `--scaffold-from`, `--yes`, `--force`,
+`--no-responsibility`, Loader-creation mode, or alias.
 
 The `route` group performs no domain operation by itself. It shows help for its
 accepted child operations. The [route group entrypoint](../_route.md)
@@ -77,7 +81,7 @@ description is not a second command contract. Group help does not resolve a
 workspace or run a domain operation.
 
 `route init` is an explicit, non-wizard leaf. It has no wizard mode,
-`--automatic` mode, alias, or additional operation-specific flag.
+`--automatic` mode, alias, or inferred current-scope mode.
 
 ## Operands
 
@@ -99,8 +103,12 @@ entrypoint when only missing ancestors need initialization:
 ./.agents/<folders>/<existing-compatibility-filename>
 ```
 
-An ID is the intended folder ID under `.agents`. The representative invocation
-and its canonical path mapping appear under [Scenarios](#scenarios).
+In generic mode, an ID is the intended folder ID under `.agents`. In Framework
+mode, the ID-form operand is the desired concrete route chain: exact
+case-sensitive canonical Framework segments identify managed topology, while
+inserted segments are scope labels converted to deterministic concrete slugs.
+The representative invocations and canonical path mappings appear under
+[Scenarios](#scenarios).
 
 An exact path for a missing target must name its canonical entrypoint file. A
 directory path, ordinary Markdown filename, Loader path, overwrite path,
@@ -112,8 +120,9 @@ that filename. It never creates a new compatibility filename.
 
 The shared [CLI Source References](../../shared/source-references/interface.md) contract defines
 ID segments, exact `.agents/...` path detection, quoting, containment, and result
-identity. `route init` adds only the deterministic missing-target mapping above.
-It does not guess another target shape from filesystem coincidence.
+identity. `route init` adds the deterministic generic missing-target mapping and
+the Framework alignment and scope-label policy below. It does not guess another
+target shape from filesystem coincidence.
 
 The target is invalid when it is empty, identifies `loader`, contains `.` or `..`
 as an ID segment, cannot be represented as a safe contained entrypoint path, or
@@ -127,17 +136,20 @@ contract. This command does not copy their complete definitions.
 
 | Flag                      | Role              | Value                                                          | Omission                                                                                         | Repetition, ordering, and composition                                                                                           |
 | ------------------------- | ----------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| `--framework`             | Scaffold mode     | No value                                                       | Generic exact-chain initialization is selected                                                    | Repetition is accepted and idempotent. It selects embedded canonical Framework topology and assets.                            |
 | `--description <text>`    | Authored metadata | One description value                                          | The final target uses its draft description unless another rule supplies an explicit description | Singleton. Repetition is invalid, including repetition with an equal value.                                                     |
 | `--responsibility <text>` | Authored metadata | One responsibility value, including the exact empty value `""` | No responsibility field is added to a missing target                                             | A non-empty value adds the field and `""` omits it. The flag is singleton; any repetition is invalid, including an equal value. |
 | `--tag=<tag>`             | Authored metadata | One tag without a `#` prefix                                   | The final target uses draft metadata and the `NeedsAuthoring` rule                               | Repeatable. Values retain argument order. Empty tags and duplicate exact tags are invalid.                                      |
 | `--dry-run`               | Write policy      | No value                                                       | Application is selected                                                                          | Repetition is accepted and idempotent. It previews the same complete plan and preflight.                                        |
 
-`--description`, `--responsibility`, and `--tag` are valid only as metadata for a
-missing final target. Repeating `--description` or `--responsibility` is invalid,
+`--description`, `--responsibility`, and `--tag` are valid only in generic mode
+as metadata for a missing final target. They are invalid with `--framework`
+because caller metadata cannot rewrite embedded managed content. Repeating
+`--description` or `--responsibility` is invalid,
 even when the repeated values are equal. Repeated `--tag` values form one
 ordered list; there is no last-wins or other precedence rule. Repeated
-Repeated `--dry-run` occurrences collapse to their one idempotent Boolean choice
-and do not grant another operation or authority. Global flags
+`--framework` and `--dry-run` occurrences collapse to their idempotent Boolean
+choices and do not grant another operation or authority. Global flags
 retain the shared contract's repetition, ordering, composition, and terminal
 rules.
 
@@ -170,7 +182,53 @@ Existing entrypoints are read-only authored inputs except for bounded generated
 flags when the final target entrypoint already exists is invalid. Use `route
 update` to change an existing source.
 
-## Fixed Entrypoint Scaffold
+## Framework Mode
+
+`--framework` initializes one sparse scoped chain from the same canonical
+Framework payload embedded for root Install. Root Install remains the producer
+of the trusted base Framework state; there is no `install --route` spelling.
+
+For either operand form, the first concrete route segment must be an exact
+installed root route. Exact case-sensitive non-root Framework segments align
+against the embedded canonical topology, in canonical order. Inserted segments
+occupy scope positions. Exactly one alignment is required, and the final segment
+must be a canonical non-root Framework route. A trailing user-only scope belongs
+to generic Route Init.
+
+For an ID-form target, each inserted segment is a scope label and becomes one
+concrete slug by this local rule:
+
+1. Iterate Unicode runes and lowercase letters invariantly.
+2. Preserve digits.
+3. Collapse a run of whitespace, ASCII `_`, or ASCII `-` to one `-`.
+4. Trim the resulting separator.
+5. Reject every other punctuation, control character, and path separator, plus
+   empty output, `.` and `..`.
+6. Apply the ordinary portable collision, physical-identity, and containment
+   checks to the resulting concrete path.
+
+An exact `.agents/...` target path is already concrete and is never slugged, but
+its concrete folder segments must satisfy the same unique canonical-topology
+alignment. Ambiguous alignment, reordered managed segments, nested root
+recreation, source-inventory mismatch, or a post-slug identity collision blocks
+before any write. A trusted current root Install lifecycle matching the running
+CLI's embedded inventory is required; otherwise the result directs the caller
+to `open-forge install` or `open-forge update`.
+
+The plan creates only the requested sparse chain. It copies exact embedded
+canonical entrypoint bytes for aligned missing Framework segments, then projects
+their destination-local generated `Entries`. It creates the existing generic
+draft scaffold for missing inserted scope segments. Scope entrypoints remain
+user-owned; copied Framework entrypoints and derived generated regions are the
+only new Framework lifecycle targets. Each copied target records its canonical
+embedded `sourceAssetPath`; a derived generated-region target records `null`.
+
+A verified repeat is a no-op. Creating any draft scope retains the existing
+finite `NeedsAuthoring` attention condition. Framework mode adds no blueprint,
+Template selection, general scaffold engine, `--scope` placeholder language, or
+caller metadata override.
+
+## Generic Fixed Entrypoint Scaffold
 
 Every missing folder receives the same canonical structure. The following is the
 exact scaffold example for the final target from the route-target mapping above:
@@ -266,8 +324,10 @@ semantic quality.
 ## Intended Topology And Generated Entries
 
 The command plans generated navigation against the complete intended route chain
-before any persistent effect begins. Each new entrypoint initially has a valid
-empty generated region. Automatic generated-navigation effects then add:
+before any persistent effect begins. Each new generic or scope entrypoint
+initially has a valid empty generated region. Each copied Framework entrypoint
+uses its embedded authored bytes while its generated interior is derived for the
+concrete destination. Automatic generated-navigation effects then add:
 
 - Every new direct child entrypoint to its intended parent entrypoint.
 - The first new entrypoint in the chain to a valid exposing Loader when
@@ -291,7 +351,7 @@ creation succeed.
 The operation follows the accepted typed mutation flow:
 
 ```text
-validated route target and metadata
+validated route target, mode, and applicable metadata
   -> current chain and compatibility facts
   -> complete intended entrypoint chain
   -> generated-navigation projection
@@ -306,11 +366,23 @@ The complete plan includes new directories, new entrypoint files, and bounded
 updates to existing generated regions. One blocked or incomplete target prevents
 every effect. The command has no best-effort or partial-application mode.
 
-Directory creation is limited to the intended route chain. The command does not
-remove, rename, claim, or format existing user content. After an effect begins,
-the command never removes or otherwise compensates for a directory it created.
-If a later effect fails, that directory remains and is reported as residual
-state.
+Directory creation is a separate effect from file Create/Replace/Delete and is
+limited to the intended route chain. In generic mode, when a fully preflighted
+plan starts without `.agents`, that exact container is the one visible planned
+and reported lock-bootstrap directory. `WorkspaceLockManager` confirms it is
+missing, creates and verifies it immediately before opening
+`.agents/open-forge.lock`, and leaves it as reported residual state on later
+contention, failure, or interruption. Cancellation before bootstrap creates
+nothing. Framework mode requires a trusted Install and therefore cannot use an
+absent `.agents` bootstrap.
+
+While holding the workspace lease, the command applies every other explicitly
+planned missing directory parent-first through the shared capability. Each is a
+descendant below `.agents`: immediately revalidate the missing target and its
+exact contained physical parent, call ordinary `Directory.CreateDirectory`, then
+verify the resulting contained ordinary directory. It does not remove, rename,
+claim, or format existing user content. A directory has no recovery entry and is
+never rolled back, compensated for, or removed.
 
 ## Dry Run And Apply
 
@@ -342,7 +414,8 @@ Create effects or no-ops creates no bundle. Its source-generated
 schema-v1 `manifest.json` and streamed ordinal payload entries record
 command/operation/workspace identity, ordered relative targets, change kinds,
 exact prior bytes/lengths/hashes, and intended final absence or length/hash.
-Create effects (directories and new entrypoints) and no-ops have no entry. A
+Directory-create effects, file Create effects for new entrypoints, and no-ops
+have no recovery entry. A
 CreateNew draft is closed and reopened for semantic manifest, exact ordered
 entry, length, hash, and payload-byte validation, moved within the same
 directory to its deterministic final name, and reopened and verified. Only the
@@ -466,10 +539,14 @@ rendering text is never mixed into JSON stdout.
 The structured result exposes:
 
 - Workspace and selection method.
+- Generic or Framework mode, resolved concrete route, and Framework alignment
+  when applicable.
 - Requested target and resolved target ID and canonical path.
 - Application or dry-run mode, completeness, and safety.
 - Existing, compatibility, missing, and created entrypoints in chain order.
 - Draft and explicit metadata provenance for every created entrypoint.
+- User-owned scope entrypoints, copied managed Framework entrypoints,
+  source-asset provenance, and lifecycle effects when applicable.
 - Draft entrypoint paths.
 - Planned directories, files, and generated-region effects.
 - Dry-run, recovery-bundle, application, verification, and recovery facts.
@@ -496,10 +573,10 @@ CLI Architecture.
 
 The shared process-status mapping is defined by the CLI Architecture.
 
-For ordinary operation conditions, status precedence is `blocked` > `incomplete`
-
-> `attention` > `complete`. Invalid input stops before operation resolution and
-> forms `invalid`. Failed and interrupted results retain their event meaning.
+For ordinary operation conditions, status precedence is
+`blocked` > `incomplete` > `attention` > `complete`. Invalid input stops before
+operation resolution and forms `invalid`. Failed and interrupted results retain
+their event meaning.
 
 ## Scenarios
 
@@ -513,6 +590,16 @@ open-forge route init memory/project-alpha/documents
 .agents/memory/project-alpha/documents/_documents.md
 ```
 
+The representative Framework target:
+
+```text
+open-forge route init "memory/Mobile App/crystallized/documents" --framework
+```
+
+resolves to the concrete route `memory/mobile-app/crystallized/documents` and
+creates only that missing sparse chain. `mobile-app` is a user-owned scope;
+`crystallized` and `documents` retain their canonical managed segment meaning.
+
 The exact human result examples for verified no-op, successful application, and
 successful dry run are under [Human Output](#human-output). They are the public
 result examples and are not replaced by internal stage names.
@@ -524,6 +611,11 @@ The command blocks or rejects:
 - A missing-target path that is not canonical.
 - Repeated `--description` or `--responsibility`, including equal repeated
   values.
+- Metadata flags combined with `--framework`.
+- Missing, untrusted, or source-outdated root Framework lifecycle in Framework
+  mode.
+- Ambiguous Framework alignment, managed-segment reordering, root recreation,
+  invalid scope labels, or post-slug identity collision.
 - A Loader target or request to create a Loader.
 - Several recognized entrypoints in one folder.
 - An ordinary-file or physical-identity route collision.
@@ -545,9 +637,13 @@ safety facts remain `blocked` rather than `incomplete`.
 
 - Create an ordinary routed Markdown file.
 - Instantiate or update from a Template.
+- Discover a blueprint, render a general scaffold, or accept a `--scope`
+  placeholder grammar.
 - Update authored content in an existing entrypoint.
 - Rename compatibility filenames to canonical filenames.
-- Invent a route's purpose, loading behavior, scope, authority, or useful tags.
+- Invent a route's purpose, loading behavior, authority, or useful tags. In
+  Framework mode, inserted path segments express caller-supplied scope placement;
+  the command does not infer that placement from workspace content.
 - Repair malformed existing entrypoints or generated markers.
 - Create, install, or repair the Framework Loader.
 - Create a Git commit.
@@ -562,7 +658,21 @@ of this Interface Contract:
 
 - ID and exact canonical-path targets, spaces, Unicode, and unsafe segments.
 - The exact required-target command shape, with no wizard, `--automatic`, alias,
-  or additional operation-specific flag.
+  or inferred current-scope mode.
+- Generic mode and Framework mode selection, including invalid metadata
+  combinations and idempotent repeated `--framework`.
+- Framework routes with zero, one, multiple, and consecutive inserted scopes;
+  scope positions before and between managed segments; and sparse-chain-only
+  effects.
+- Scope-label casing, digits, Unicode letters, separator collapse, rejected
+  punctuation and separators, empty output, exact-path non-slugging, and
+  post-conversion collisions.
+- Unique and ambiguous canonical alignment, managed-segment reordering, nested
+  root recreation, trailing user scope, and missing, untrusted, or outdated root
+  Install lifecycle.
+- Exact embedded bytes for managed entrypoints, draft bytes for user-owned scope
+  entrypoints, destination-local generated navigation, `sourceAssetPath`
+  publication, and the exclusion of scope files from Framework ownership.
 - Singleton rejection for repeated `--description` and `--responsibility`,
   including equal values; ordered repeated `--tag` values with exact duplicate,
   empty, and syntax validation; idempotent repetition of the Boolean
@@ -588,6 +698,14 @@ of this Interface Contract:
 - Complete results when every new entrypoint has complete intended metadata and
   no exact `NeedsAuthoring` marker.
 - Verified no-op behavior before recovery-bundle preparation.
+- Separate parent-first directory effects under the held workspace lease, with
+  immediate missing-target and physical-parent revalidation, ordinary BCL
+  creation, post-verification, retained residuals, and no rollback,
+  compensation, removal, or recovery entry.
+- Generic-mode missing-`.agents` bootstrap planning/reporting, immediate
+  verification before lock acquisition, cancellation/contention/residual
+  behavior, exclusion from the descendant applier, and proof that Framework
+  mode requires existing trusted Install state instead.
 - Seven semantic results, including safe `incomplete` with no write, blocked
   unsafe or ambiguous safety, `Failed`/positively observed `Retained` recovery
   `attention`, and failed post-write, application, verification, or

@@ -109,6 +109,11 @@ deterministic inventory and hash proof. That proof identifies distributed source
 assets; it is not evidence of a selected workspace's current installation or of
 a proven runtime implementation.
 
+The root command consumes the neutral Framework distribution reader defined by
+the CLI Architecture. The Core project embeds the canonical `src/open-forge/`
+tree through ordinary .NET `EmbeddedResource` items, and runtime uses exact-prefix
+BCL manifest-resource access. Install never reads the development checkout.
+
 ## Recognized Framework Footprint
 
 The recognized footprint is closed. It contains only:
@@ -130,6 +135,13 @@ Install never expands this footprint from filename resemblance, tags, route
 names, byte equality, globs, arbitrary provider files, the lifecycle document,
 an Extension-owned path, an overwrite companion, a retired-only target, or an
 operand. Bytes outside valid root/provider blocks remain workspace content.
+
+This closed footprint is the base subset selected by root Install, not the
+complete set of targets that may already exist in one trusted Framework lifecycle
+section. Scoped managed targets and generated regions previously added by
+Framework-aware Route Init remain outside Install's selected effects and must be
+preserved exactly. Their presence alone is not divergence and does not prevent an
+otherwise exact root no-op.
 
 ## Operands
 
@@ -198,6 +210,20 @@ managed block, generated region, lifecycle fact, recovery bundle, temporary
 artifact, or other persistent state. It cannot claim application, verification,
 lifecycle publication, or bundle-handling success.
 
+### Human Confirmation
+
+After the complete plan and preflight succeed, a prompt-capable human apply that
+would write asks exactly once for confirmation before acquiring the workspace
+lease or beginning any effect. Confirmation continues with the already formed
+plan. Refusal, end of input, or caller cancellation returns `interrupted` and
+writes nothing. The exact decorative prompt sentence is not contract meaning.
+
+Dry-run, verified no-op, `--automatic`, JSON, and any request without terminal-
+capable stdin and stderr never prompt. A non-prompt-capable human apply that would
+write is `invalid` unless `--automatic` is explicit; its single next action is to
+rerun the same command with `--automatic`. Automatic adds no force or safety
+authority.
+
 For application with one or more existing-target effects (`Replace`,
 `ReplaceGeneratedRegion`, or `Delete`),
 orchestration uses only
@@ -223,12 +249,29 @@ none. All preparation is complete before the first effect. Unavailable storage
 is `incomplete` before effects; a collision or failed final verification is
 `blocked` before effects.
 
+Directory creation is a separate effect from file Create/Replace/Delete. If the
+fully preflighted plan starts without `.agents`, that exact path is the one
+visible planned and reported lock-bootstrap directory. Immediately before
+opening `.agents/open-forge.lock`, `WorkspaceLockManager` confirms it is missing,
+creates it through ordinary `Directory.CreateDirectory`, re-resolves and verifies
+it, then acquires the lock. Cancellation before bootstrap creates nothing.
+
+While holding the workspace lease, Install applies every other explicitly
+planned missing directory parent-first through the shared capability. Each is a
+descendant below `.agents`: immediately revalidate the missing target and exact
+contained physical parent, call ordinary `Directory.CreateDirectory`, then verify
+the resulting contained ordinary directory. A created or bootstrapped directory
+remains and is reported as residual state if lock acquisition or a later effect
+fails or is interrupted. Directories have no recovery entry and are never rolled
+back, compensated for, or removed by Install.
+
 Workspace mutation uses the persistent, reusable `.agents/open-forge.lock` path
 under the accepted CLI Architecture. Existing bytes are preserved; the
 operation holds only a `FileShare.None` handle and never writes metadata,
 deletes, or truncates the lock file. File existence is not lock ownership. An
 active handle blocks mutation; lock behavior is concurrency safety, not
-lifecycle authority or recovery history.
+lifecycle authority or recovery history. `LocalApplicationData` stores recovery
+bundles only; it is not a lock location.
 
 After final verification, whole-command success deletes only the positively
 recognized bundle it created. `Deleted`/`Removed` permits normal completion.
@@ -266,9 +309,16 @@ status condition by themselves.
 ## Lifecycle Identity And Trust
 
 The `framework` section records source identity, exact target and managed-region
-identity, generated relationships, semantic baseline fingerprints, and
-coverage/trust. Its common envelope and `extensions` section do not grant
+identity, generated relationships, semantic baseline fingerprints, per-target
+source-asset provenance, and coverage/trust. Its common envelope and `extensions` section do not grant
 Framework authority merely because they share a physical document.
+
+Every Framework lifecycle target has required nullable `sourceAssetPath`. A
+payload file or managed root/provider block records the normalized canonical
+embedded asset-relative path that produced it. A derived generated-region target
+records `null`. Publication verifies every new non-null value against the exact
+embedded inventory. User-owned scope entrypoints are not Framework targets.
+Schema v1 gains no instance collection, section split, or migration engine.
 
 For supported Markdown and frontmatter kinds, `open-forge-markdown-v1` is the
 conservative semantic fingerprint policy. It preserves Unicode, semantic text,
@@ -297,6 +347,11 @@ parseable kinds, not a persistent exact-byte baseline digest. Install captures
 exact current bytes only for operation-time planning, expected-state checks,
 verification, and recovery. A format-only difference with equal semantic
 identity is informational and is not managed divergence.
+
+For root Install, exactness and divergence compare only the closed base subset
+selected by this command. The operation preserves other structurally trusted
+Framework targets and generated regions, including scoped targets with historical
+source asset paths, without adopting, refreshing, or releasing them.
 
 ## Generated Navigation And Ownership
 
@@ -433,10 +488,15 @@ Future evidence must cover:
 - exact root syntax, no operands, shared flags, terminal modes, and idempotent
   Boolean repetition;
 - exact CWD and `--workspace` selection without discovery;
+- ordinary embedded-resource inventory/byte parity and published Native AOT
+  access after the binary is moved away from the checkout;
 - safe absence's four facts, exact managed no-op, eligible initial occupant,
   managed divergence directing to update, and `--automatic` not supplying force;
 - trusted, absent, untrusted, missing, unavailable, malformed, unsupported, and
   ambiguous lifecycle facts without inferred ownership;
+- required nullable `sourceAssetPath`, publication against the recorded
+  inventory, generated-region `null`, user-owned scope exclusion, and exact
+  preservation of trusted scoped targets outside the base Install subset;
 - semantic equality for format-only differences, exact-byte operation facts,
   parser-proven fingerprint boundaries, and fail-closed equivalence;
 - intended-topology generated projection, bounded markers, outside-byte
@@ -448,6 +508,18 @@ Future evidence must cover:
   behavior;
 - dry-run parity with no payload, lifecycle, recovery bundle, or temporary
   effects;
+- the exact confirmation matrix: one post-preflight/pre-lease prompt only for a
+  prompt-capable human application that would write; no prompt for dry-run,
+  no-op, automatic, JSON, or non-prompt-capable requests; no-write
+  `interrupted` refusal, end-of-input, and cancellation; and direct
+  `--automatic` rerun guidance for a non-prompt-capable human write request;
+- parent-first directory effects kept separate from file effects, with a held
+  workspace lease, immediate missing-target and physical-parent revalidation,
+  ordinary BCL creation, post-verification, and retained residual reporting
+  without rollback, compensation, removal, or recovery provenance;
+- the single visible planned/reported missing-`.agents` lock bootstrap before
+  lease acquisition, its verification and retained residual behavior, and
+  exclusion of `.agents` itself from the lease-bound descendant applier;
 - seven statuses, including `Failed`/positively observed `Retained` recovery
   `attention` and `Failed`/`Unknown` recovery `failed`, ordinary precedence,
   human streams, one-result

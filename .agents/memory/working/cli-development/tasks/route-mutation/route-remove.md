@@ -31,12 +31,32 @@ recovery-bundle boundaries. It preserves unrelated and user-owned content.
 
 Cover simple route, non-empty or dependent route, overwrite pair, incoming
 references, managed/unmanaged distinction, dry run, invalid confirmation/write
-policy, physical aliases, lock race, generated navigation, lifecycle update,
-partial failures and bundle retention, second run, preservation, human/JSON/help,
-process exits, and AOT.
+policy, physical aliases, lock race, generated navigation, proof that no lifecycle
+write or ownership release occurs, partial failures and bundle retention, second
+run, preservation, human/JSON/help, process exits, and AOT.
+
+Current Remove is positive-unmanaged-only. Framework-aware Route Init targets or
+generated regions are trusted claims and block selection, including when they
+sit below a user-owned scope entrypoint. `sourceAssetPath` is provenance and does
+not grant release authority.
+
+## Deferred Managed-Release Decision
+
+Any later expansion to managed scoped routes requires explicit maintainer
+acceptance of:
+
+1. whether the release unit is one target, one managed chain, or one physical
+   category;
+2. preservation of user-owned scope entrypoints, descendants, and shared
+   generated regions;
+3. lifecycle publication order and post-remove verification; and
+4. repeat and no-op semantics.
+
+Do not infer those decisions from a path prefix or `sourceAssetPath`.
 
 ## Stop Conditions
 
 Stop before recursive deletion not explicitly planned, removal of unowned
 content, ignored references, unsafe alias traversal, or cleanup of recovery facts
-before verified completion.
+before verified completion. Stop before releasing or deleting any managed scoped
+target under the current contract.

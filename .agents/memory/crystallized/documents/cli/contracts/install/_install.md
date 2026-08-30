@@ -23,6 +23,11 @@ not install work and directs to root `update`. Its sibling Interface and
 Behavior files are the detailed authorities for the public surface and the
 technology-neutral operation behind it. The new CLI does not ship yet.
 
+Install owns the closed base Framework subset and consumes the neutral embedded
+Framework distribution. It preserves trusted scoped Framework targets created by
+later Route Init operations; it neither treats them as base divergence nor
+reconciles them.
+
 The accepted CLI Architecture defines the shared implementation boundary. Gate 5
 must prove source-generated YamlDotNet and STJ serialization, fixed Markdig where
 used, real `System.IO`, Native AOT, OS locking, isolated tests, and package

@@ -9,6 +9,9 @@ open-forge:
 ## Task State
 
 - State: Complete after accepted Route List and Route Inspect slices.
+- Post-completion correction: Route Inspect's accepted interactive collision
+  selection is Planned after the native interaction foundation; its exact prompt
+  decision is closed and completed discovery meaning remains otherwise closed.
 - Implementer: Mastermind.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Prerequisite: Accepted [Foundation](../foundation/_foundation.md).
@@ -48,6 +51,7 @@ private support.
   - [x] [Form the route-inspect profile](route-inspect-profile.md) — Complete at `c407e24`; link-safe routing deferred — Implementer: Mastermind
   - [x] [Present route inspect through the CLI](route-inspect-presentation.md) — Complete at production commit `51c0960` plus final managed acceptance — Implementer: Mastermind
   - [x] [Accept route inspect and close Route Discovery](route-inspect-acceptance.md) — Complete — integrated managed/native and closeout gates — Implementer: Mastermind
+- [ ] [Complete the accepted Route Inspect interactive source-collision selection](route-inspect-interaction-correction.md) — Planned after native interaction — Implementer: Not assigned
 
 ## Closeout And Routing Waiver
 
@@ -67,6 +71,7 @@ waiver. No routing-tool success or generated-index refresh is claimed.
 - [Implement and accept route inspect, then promote only route facts proved identical by both commands](route-inspect.md) - #Memory #Working #CLI #Task #Route #Inspect #Promotion #Contextual #Complete
 - [Run integrated route-inspect acceptance, promotion closeout, edge dispositions, and delivery-boundary audits](route-inspect-acceptance.md) - #Memory #Working #CLI #Task #Route #Inspect #Acceptance #NativeAOT #Contextual #Complete
 - [Freeze route-inspect callable contracts and map every guarantee to evidence before behavior](route-inspect-contracts.md) - #Memory #Working #CLI #Task #Route #Inspect #Contract #Evidence #Contextual #Complete
+- [Complete the already-accepted Route Inspect interactive source-collision selection](route-inspect-interaction-correction.md) - #Memory #Working #CLI #Task #Route #Inspect #Interaction #Correction #Contextual
 - [Bind, execute, and present route inspect once through compact, expanded, JSON, diagnostics, and help surfaces](route-inspect-presentation.md) - #Memory #Working #CLI #Task #Route #Inspect #Presentation #Contextual #Complete
 - [Form the inspect-local route profile from one accepted graph and fact set without adding diagnosis or mutation](route-inspect-profile.md) - #Memory #Working #CLI #Task #Route #Inspect #Profile #Contextual #Complete
 <!-- open-forge:generated-index:end -->

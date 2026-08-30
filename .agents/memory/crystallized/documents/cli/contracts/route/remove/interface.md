@@ -208,6 +208,18 @@ inventory is a blocking authority condition. The command does not adopt content,
 release ownership, repair lifecycle records, migrate receipts, or continue on a
 partial inventory.
 
+A target or generated region recorded by Framework-aware Route Init is a trusted
+Framework lifecycle claim and remains ineligible for the current Route Remove
+contract. An inserted scope entrypoint is user-owned, but selecting its complete
+category still blocks when any contained scoped Framework target or generated
+region is managed. Remove does not skip the claimed item or remove an unmanaged
+subset.
+
+The lifecycle target's `sourceAssetPath` records which canonical embedded asset
+produced one concrete managed target. It is provenance only: it does not prove
+permission, select a release unit, or weaken positive-unmanaged proof. Current
+Remove never edits the Framework lifecycle section or releases ownership.
+
 ## Complete Reference Pass And Detachment
 
 Remove performs one complete physically contained pass over the supported

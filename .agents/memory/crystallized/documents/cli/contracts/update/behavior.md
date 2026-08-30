@@ -67,6 +67,10 @@ source identity. The CLI distribution embeds Framework and first-party Extension
 assets with deterministic inventory and hash proof; this is distributed source
 identity, not workspace or runtime implementation evidence.
 
+Resolve that inventory through the neutral Framework distribution capability
+over ordinary .NET embedded resources. Runtime never reads the repository source
+tree.
+
 ## Trusted Lifecycle Resolution
 
 The operation reads `.agents/open-forge.lifecycle.json`, schema v1, as a common
@@ -91,11 +95,19 @@ Safe unavailable coverage forms `incomplete`; unsafe or ambiguous identity,
 cross-section collision, malformed marker, or ownership fact forms `blocked`.
 Force and prune never promote an untrusted section.
 
+Every Framework target record has required nullable `sourceAssetPath`. Validate
+non-null paths as normalized canonical embedded asset-relative identities even
+when a historical asset is absent from the current inventory. Require non-null
+provenance for payload files and managed root/provider blocks and `null` only for
+derived generated-region targets. Verify every newly published non-null path
+against the current inventory. User-owned inserted scope entrypoints never enter
+the Framework target set.
+
 ## Semantic Comparison
 
-For every recognized current target and bounded root/provider region, collect
+For every recorded current target and bounded root/provider region, collect
 fresh current exact bytes and semantic facts and compare them with the trusted
-baseline and embedded source. The comparison records baseline, current, and
+baseline, recorded source provenance, and embedded or derived source. The comparison records baseline, current, and
 intended semantic fingerprints, exact bytes, target identity, ownership, route
 and marker facts, and source availability.
 
@@ -184,7 +196,11 @@ remains, force is `complete`.
 Prune admits only a retired path when all of these facts are complete:
 
 - the trusted baseline names that exact previously managed path;
-- the current embedded source proves that the path is retired;
+- a payload file or managed block has a non-null `sourceAssetPath` naming the
+  exact previously embedded asset and the current inventory proves that asset is
+  retired, or a derived generated-region target has `null` and the current
+  intended topology proves that its recorded relationship no longer produces the
+  region;
 - current physical identity and semantic state are known and safe;
 - no other owner, manager, shared owner, route descendant, or host dependency
   blocks deletion; and
@@ -311,6 +327,9 @@ Conformance must show:
   write on semantic no-op,
   absent/untrusted/unavailable handling, and unsupported or ambiguous schema
   behavior;
+- required nullable per-target `sourceAssetPath`, current and historical asset
+  validation, generated-region `null`, publication against the current embedded
+  inventory, and exclusion of user-owned scope entrypoints;
 - baseline/current/intended classifications for unchanged, new, changed,
   missing, retired, and format-only content;
 - semantic fingerprint preservation and fail-closed unsupported equivalence;

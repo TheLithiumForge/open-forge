@@ -59,13 +59,28 @@ Here `mobile-app` narrows every following `route`. By contrast, `memory/crystall
 
 Management is a lifecycle relationship, not another runtime `route` type. Open Forge, an Extension, or another declared manager may install or reconcile an `entrypoint` or other identified files without changing what those files mean after loading.
 
-A manager declares the `route` shapes it can recognize. Scopes may appear before, between, or after its non-root `route` segments without changing their order. The current Open Forge CLI, for example, can reconcile the managed `entrypoints` in:
+A manager declares the `route` shapes it can recognize. Scopes may appear before, between, or after its non-root `route` segments without changing their order. The accepted Open Forge CLI contract, for example, can reconcile the managed `entrypoints` in:
 
 ```text
 memory/{scope}/crystallized/{scope}/documents/
 ```
 
 An additional scope after `documents` is valid but remains a user-owned descendant rather than another managed Documents `entrypoint`. The CLI does not recognize `memory/documents/crystallized/` as the same `managed route` because the managed `crystallized/documents` sequence was reordered. Generic routing can still navigate any valid `entrypoint` chain a workspace deliberately defines.
+
+Framework-aware Route Init accepts the desired concrete chain rather than a
+placeholder grammar. Exact case-sensitive canonical non-root Framework segments
+must align uniquely with the embedded canonical topology; the segments inserted
+between them are scope labels. ID-form scope labels are deterministically
+converted to concrete slugs by that command, while exact `.agents/...` paths are
+already concrete and are never rewritten. Ambiguous alignment, reordered managed
+segments, root recreation, or a post-conversion identity collision blocks before
+writes.
+
+Only copied canonical Framework entrypoints and their bounded generated regions
+receive Framework lifecycle claims. The command-created entrypoint for an
+inserted scope remains user-owned. A trusted current root Framework installation
+is required before the CLI adds scoped managed targets; generic routing itself
+does not depend on installation or lifecycle state.
 
 Management applies only to files a manager explicitly owns or safely identifies. Tags such as #Core, #Memory, and #Extension do not declare management. Moving or renaming a `managed route` may end automatic reconciliation without changing its readable runtime meaning.
 

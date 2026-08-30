@@ -22,9 +22,10 @@ defines group routing only. No Technical Design exists.
 ## Purpose And Boundary
 
 `create` gives an author a stable local package boundary. It writes a scaffold
-under a catalogue parent and does not install files into a workspace, resolve or
-write dependencies, update generated navigation, write the lifecycle document,
-or publish Framework or Extension lifecycle state.
+and deterministic manifest under a catalogue parent. It may record explicit
+dependency IDs but does not resolve their availability or install them. It does
+not install files into a workspace, update generated navigation, write the
+lifecycle document, or publish Framework or Extension lifecycle state.
 
 `extension create` is the accepted no-workspace mutation exception. The catalogue
 destination is the sole operation subject. Because `--workspace` is a no-op for
@@ -38,14 +39,31 @@ an external package or catalogue source.
 ## Syntax
 
 ```text
-open-forge extension create [<stable-id>] [--path <catalogue-path>] [--automatic] [--dry-run] [global flags]
+open-forge extension create [<stable-id>]
+  [--path <catalogue-path>]
+  [--name <text>]
+  [--description <text>]
+  [--package-version <text>]
+  [--dependency <stable-id>]...
+  [--automatic]
+  [--dry-run]
+  [global flags]
 ```
 
-The human wizard can obtain the stable ID and destination catalogue parent from
-the argumentless form. Direct, JSON, and other non-interactive use must provide
-both semantic inputs. `--path` is a singleton value and repeated values are
-invalid. A stable ID is one exact package identity and repeated positional IDs
-are invalid.
+The command-local human wizard can obtain whichever required facts are missing:
+the stable ID and destination catalogue parent. A prompt-capable request may
+supply neither, either, or both explicitly; the wizard asks only for missing
+facts. JSON, `--automatic`, and non-prompt-capable use must provide both. `--path`
+is a singleton value and repeated values are invalid. A stable ID is one exact
+package identity and repeated positional IDs are invalid.
+
+`--name`, `--description`, and `--package-version` are singleton nonblank
+manifest overrides. `--package-version` remains distinct from the global
+terminal `--version`. Accepted override text is preserved exactly after nonblank
+validation; the descriptive package version does not gain a SemVer parser or
+compatibility policy. `--dependency` is repeatable. Each value must be a valid
+stable ID, must not equal the new package ID, and must not repeat. Accepted
+dependencies serialize in ordinal stable-ID order, independent of option order.
 
 The shared flags are:
 
@@ -69,10 +87,31 @@ selection, dependency installation, or workspace operand.
 
 ## Wizard, Direct, And Automatic Behavior
 
-Argumentless human `create` opens a finite wizard for exactly two questions:
-stable ID and destination catalogue parent. Explicit operands and `--path`
-answer those same questions in one typed request. Conflicting or repeated
-explicit inputs are invalid.
+A prompt-capable human `create` asks for each missing required fact: stable ID
+and destination catalogue parent. The argumentless form asks for both, a partial
+explicit request asks only for the missing fact, and a complete explicit request
+asks none. Each question gives clear local guidance. A blank or invalid answer
+may be explained and asked again while input remains available; the command has
+no arbitrary attempt limit or shared retry abstraction. End of input leaves a
+required fact missing and returns `invalid` without writes. Caller cancellation
+returns `interrupted` without writes. Explicit operands and `--path` answer the
+same questions in one typed request. Conflicting or repeated explicit inputs are
+invalid.
+
+After those two required inputs resolve, omitted manifest fields use these exact
+deterministic defaults:
+
+| Field | Default |
+| --- | --- |
+| `id` | The exact resolved stable ID. |
+| `name` | Split the ID on `-`, uppercase the first ASCII letter of each segment, and join segments with one space. |
+| `description` | `Open Forge Extension package <stable-id>.` |
+| `version` | `0.1.0` |
+| `dependencies` | An empty array. |
+
+Explicit manifest options replace only their corresponding defaults. Optional
+manifest metadata never adds a wizard question. Human planning shows the
+resolved manifest before application.
 
 JSON and other non-interactive modes never prompt. Missing ID or destination is
 `invalid`. `--automatic` suppresses the wizard only after both semantic inputs
@@ -86,9 +125,11 @@ confirmation operation.
 
 ## Catalogue Destination And Scaffold
 
-`--path` names one exact catalogue parent. The parent is recognized from its
-structural catalogue shape; it needs no persistent catalogue marker. The package
-destination is `<catalogue>/<id>/`. It may be absent or contain the exact
+`--path` names one exact catalogue parent. Any existing safely resolved ordinary
+directory is eligible, including an empty directory; it needs no catalogue
+marker. Create never creates the parent. Unrelated sibling files or package
+directories neither validate nor invalidate it and are not inspected. Create
+inspects only the exact package destination `<catalogue>/<id>/`. It may be absent or contain the exact
 intended scaffold below. An absent destination is eligible for creation, and an
 exact matching scaffold is a verified no-op. Any divergent, partial, additional,
 unknown, or colliding occupant blocks. The catalogue parent and destination must
@@ -107,12 +148,33 @@ It does not install a README, payload content, Framework files, Extension files,
 generated `Entries`, a lifecycle section, or a dependency closure.
 The package remains a separate authored source location.
 
+`extension.json` contains exactly `id`, `name`, `description`, `version`, and
+`dependencies` in that order. All five are present. The command validates the
+accepted manifest shape but performs no source lookup or dependency closure.
+
 ## Output And Results
 
 Human output leads with the exact catalogue and package destination, stable ID,
+resolved manifest metadata and dependency IDs,
 scaffold files, dry-run/application mode, workspace-lifecycle unchanged fact,
 verification facts, status, and at most one next action. JSON emits one
 complete typed result from the same result as human output.
+
+The command-local JSON `result` uses camel-case properties in exactly this order:
+
+1. `catalogue`;
+2. `destination`;
+3. `id`;
+4. `manifest`, whose members are `name`, `description`, `version`, and
+   `dependencies` in that order;
+5. `mode`;
+6. `intendedEffects`;
+7. `appliedEffects`;
+8. `verification`; and
+9. `workspaceLifecycleChanged`, always `false`.
+
+The shared envelope already owns command, status, workspace, and next-action
+coordinates; none is duplicated inside this result.
 
 Illustrative output:
 
@@ -147,8 +209,8 @@ Every error names `extension create`, the stable ID or catalogue path when
 known, the cause, and at most one useful next action. A divergent, partial,
 additional, unknown, or colliding package destination blocks; create never
 overwrites or adopts it. An exact intended scaffold is a verified no-op. A
-missing or malformed catalogue parent is invalid, incomplete, or blocked
-according to the established fact.
+missing or non-directory catalogue parent is invalid. Safely unavailable parent
+coverage is incomplete; unsafe or ambiguous identity is blocked.
 
 Wizard form:
 
@@ -160,6 +222,12 @@ Direct scaffold preview:
 
 ```text
 open-forge extension create development-toolkit --path D:/packages/open-forge --automatic --dry-run
+```
+
+Direct manifest overrides:
+
+```text
+open-forge extension create development-toolkit --path D:/packages/open-forge --name "Development Toolkit" --description "Adds development workflows" --package-version 0.2.0 --dependency shared-prompts
 ```
 
 The accepted global no-op remains explicit:
@@ -175,14 +243,24 @@ install or update an Extension, resolve dependencies, mutate a target workspace,
 write lifecycle state, project generated navigation, adopt an existing package,
 run a formatter, or remove the package source.
 
-Conformance must cover wizard/direct/JSON/automatic omission states, exact ID
-and catalogue-parent validation, catalogue destination distinction, workspace
+Conformance must cover zero, one, and all currently missing required human facts;
+command-local correction of blank/invalid input without an attempt limit;
+no-write invalid end of input and interrupted cancellation; direct, JSON,
+automatic, and redirected omission states; exact ID
+and catalogue-parent validation, empty and populated marker-free parents,
+unrelated sibling preservation, exact-destination-only inspection, refusal to
+create a missing parent, catalogue destination distinction, workspace
 no-op and the absence of `.agents/open-forge.lock` acquisition, scaffold-only
 effects, an absent destination, an exact-scaffold no-op, and divergent, partial,
 additional, unknown, or colliding occupants blocking. It must also cover exact
 catalogue and destination physical identity, expected-state revalidation
 immediately before effects, the separate create-only path with no Replace/Delete,
-no recovery bundle and no workspace lease, dry-run parity, all seven statuses
+no recovery bundle and no workspace lease, dry-run parity, all five deterministic
+manifest defaults, every singleton override and native option-value form,
+repeatable dependency ordering, duplicate/self/invalid dependency rejection,
+exact manifest property order, no dependency availability resolution, no
+optional-metadata wizard questions, exact command-local JSON result/property order without
+shared-envelope duplication, all seven statuses
 and streams, JSON parity, and no workspace lifecycle effect. The shared CLI
 Architecture defines the exact JSON result
 schema and exit mapping. Gate 5 must prove source-generated serialization,

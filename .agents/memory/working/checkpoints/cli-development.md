@@ -113,8 +113,9 @@ tree `2dcfca18020980a9cafbc429a72930af3368df5f`.
 
 The existing Generated Navigation formation is now extended by accepted feature
 `f82c2b168657baf2fac50c76e2ff2cc0ed3776d7`, squash-integrated into local
-`develop` at `cc35c853fd7b55d31e3fb2c9a454d9ab61c1884e`, with exact tree
-`867be79ebee4ba60f2116a83857edadb8a5dbf0a`. The overload
+`develop` at `cc35c853fd7b55d31e3fb2c9a454d9ab61c1884e` and closed at current
+`develop` commit `18f2acff31cfd6600a16430ac5d689d05482e297`, exact tree
+`39f0a8c4e6d3695cfbe7407dfd6043dc5ec9680a`. The overload
 `Build(SourceCatalogue observedCatalogue, IReadOnlyList<SourceLogicalSource> intendedSources)`
 separates observed catalogue evidence from intended membership, lookup, topology,
 Loader, roots, ambiguities, and target-collision facts. Existing
@@ -170,17 +171,50 @@ in one grouped switch and retains an undefined-value runtime guard because C#
 enums admit unnamed numeric values; no compiler-enforced exhaustiveness or
 warning suppression is claimed. Final closeout tip
 `2b353c48978ee88e53345be8037776181612222c` is locally integrated at
-`09aa03eddb97831ff544afe1eac54ad9af501f5c` with exact tree equality. No later
-implementation lane is selected in this ledger. The intended-membership formation
-prerequisite is integrated, but it applies only to Route Init, Route Create,
-Route Move, Route Remove, and root Install/Update. Route Update and Extension
-Create are independent of it. M2 remains Pending and is not Active or Ready.
-Route Init remains Blocked until the maintainer accepts generic exact-chain
-behavior or a Framework mode. M3 remains Pending. Extension Create remains
-Planned but must not begin until the maintainer accepts deterministic manifest
-defaults and host-owned decisions for interactive input and asynchronous request
-resolution. Root Install/Update consume the formation expansion only when their
-later Tasks begin.
+`09aa03eddb97831ff544afe1eac54ad9af501f5c` with exact tree equality. The
+intended-membership formation prerequisite is integrated, but it applies only to
+Route Init, Route Create,
+Route Move, Route Remove, and root Install/Update. Its integration closeout is
+current `develop` commit `18f2acff31cfd6600a16430ac5d689d05482e297`,
+exact tree `39f0a8c4e6d3695cfbe7407dfd6043dc5ec9680a`. Route Update and Extension
+Create are independent of it.
+
+The next-wave architecture directions are accepted and this D0 contract pack freezes
+their exact command contracts before production mutation. After D0 integration,
+SF1 native interaction, SF2 embedded Framework distribution, SF3 lifecycle
+`sourceAssetPath` provenance, and SF4 lease-bound directory creation may run in
+parallel. Extension Create, root Install, and the Route Inspect
+interaction correction follow their required foundations in separate command
+lanes; protected root composition, serialization, help, process evidence, and
+program ledgers integrate sequentially. Generic and Framework-aware Route Init
+follows root Install integration. Its Framework mode accepts one concrete
+uniquely aligned route, slugs only ID-form inserted scope labels, creates one
+sparse chain, keeps scope entrypoints user-owned, and lifecycle-manages only
+copied canonical assets and derived generated regions.
+
+The full Route Mutation M2 lane precedes root Update M3. Independent preparation
+may still run early in isolated lanes—scope discovery, contract and ownership
+audits, callable-surface analysis, Gray/Red readiness, and worktree setup—but
+dependent Update behavior waits for M2 completion.
+
+The root composition boundary and all localized D0 choices are closed. Route
+Inspect accepts one answer by one-based number or exact displayed path only when
+stdin and stderr are terminal-capable. The shared directory effect holds the
+workspace lease for descendants below `.agents`, revalidates the missing target
+and physical parent, uses ordinary BCL creation, verifies, and retains residuals
+without recovery or rollback. A missing `.agents` is the sole visible
+planned/reported bootstrap directory created and verified by the lock manager
+before acquisition; it remains on later failure and the lock never moves to
+`LocalApplicationData`. Nullable `WorkspaceLockResult.BootstrapOutcome` retains
+`Existing` or `Materialized` across later acquired, failed, and cancelled states;
+`null` means no directory outcome was successfully observed. Extension Create has exact defaults, an existing safely
+resolved marker-free catalogue-parent boundary, exact-destination-only collision
+inspection, one ordered command-local JSON result, and a missing-fact wizard
+with local invalid correction, EOF-invalid, and cancellation-interrupted
+semantics. Install prompts once only
+for a prompt-capable human apply that would write after preflight; refusal, EOF,
+or cancellation is a no-write interruption, while dry-run, no-op, automatic,
+JSON, and redirected flows never prompt.
 
 ## Protected State
 
@@ -195,20 +229,21 @@ later Tasks begin.
 
 ## Next Actions
 
-1. Resume from the active Plan and select the next accepted Pending boundary.
-   Before M2 becomes Ready, obtain maintainer acceptance for generic exact-chain
-   Route Init or a Framework mode, then record the route-mutation lane graph.
-2. Preserve separate future Route Move and Route Remove gates for proportional
-   reference and lifecycle behavior. The shared formation does not resolve them.
-3. Keep M3 Pending. Extension Create must not begin until deterministic manifest
-   defaults and the host-owned boundaries for interactive input and asynchronous
-   request resolution are accepted. Root Install/Update consume the integrated
-   formation later.
-4. Retain thin D1 as current `linux-x64` build/smoke, packed
+1. Integrate D0, then start SF1 native interaction, SF2 embedded Framework
+   distribution, SF3 lifecycle provenance, and SF4 directory creation in
+   parallel isolated lanes.
+2. After foundations, implement Extension Create, root Install, and the Route
+   Inspect correction on separate command paths. Integrate protected root and
+   executable surfaces sequentially.
+3. Implement generic and Framework-aware Route Init only after root Install is
+   integrated and proves the trusted installed root and embedded topology it
+   consumes.
+4. Complete the remaining Route Mutation M2 leaves through their separate
+   command-local gates, then implement root Update M3. Parallelize only
+   independent preparation before those behavior dependencies are satisfied.
+5. Retain thin D1 as current `linux-x64` build/smoke, packed
    install/invocation, and checksums. Keep future RIDs, signatures, SBOM,
    provenance, OIDC, and support floors behind a later explicit decision.
-5. Keep M2 Pending until that planning boundary selects it; do not infer a new
-   Active or Ready state from completed Index integration alone.
 6. Keep actual Status/Doctor implementation in O1 and actual Cleanup selection,
    default, empty-no-lease policy, orchestration, guidance, aggregation, and E2E
    in O2.

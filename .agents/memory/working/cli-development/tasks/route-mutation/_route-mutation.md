@@ -13,8 +13,9 @@ open-forge:
 - Common prerequisites: Route discovery, `index`, and Mutation Foundation.
 - Intended-membership formation prerequisite: accepted feature
   `f82c2b168657baf2fac50c76e2ff2cc0ed3776d7`, squash-integrated at
-  `cc35c853fd7b55d31e3fb2c9a454d9ab61c1884e`, exact tree
-  `867be79ebee4ba60f2116a83857edadb8a5dbf0a`. It applies only to Route Init,
+  `cc35c853fd7b55d31e3fb2c9a454d9ab61c1884e`, with closeout integrated at
+  `18f2acff31cfd6600a16430ac5d689d05482e297`, exact tree
+  `39f0a8c4e6d3695cfbe7407dfd6043dc5ec9680a`. It applies only to Route Init,
   Route Create, Route Move, and Route Remove. Route Update is independent of it.
 
 ## Shared Boundary
@@ -39,16 +40,17 @@ idempotence where promised, one verified external recovery bundle covering every
 existing Replace/Delete prepared before the first target effect, retained partial state
 without restoration, process streams, and Native AOT.
 
-Route Init remains Blocked until the maintainer accepts generic exact-chain
-behavior or a Framework mode. Do not infer product acceptance from the completed
-shared prerequisite. Route Move and Route Remove also retain separate future
+The maintainer accepted both generic exact-chain behavior and explicit
+`route init --framework`. Framework mode is sequenced after root Install because
+it reuses the neutral embedded payload/topology and requires trusted current base
+lifecycle state. Route Move and Route Remove retain separate future
 reference and lifecycle proportionality gates. Resolve those command-local gates
 before their behavior lanes begin; the shared formation does not make either
 command Active or Ready.
 
 ## Child Tasks
 
-- [ ] [Implement exact-chain route initialization and resolve the deferred Framework-shape decision before behavior starts](route-init.md) — Blocked — Implementer: Not assigned
+- [ ] [Implement generic and Framework-aware sparse route initialization after root Install](route-init.md) — Planned after Install and the shared directory-create foundation — Implementer: Not assigned
 - [ ] [Implement one-file route creation below an existing routable parent](route-create.md) — Planned — Implementer: Not assigned
 - [ ] [Implement bounded route content and metadata update without identity drift](route-update.md) — Planned — Implementer: Not assigned
 - [ ] [Implement route move with reference, overwrite, generated-navigation, and recovery integrity](route-move.md) — Planned — Implementer: Not assigned
@@ -58,7 +60,7 @@ command Active or Ready.
 
 <!-- open-forge:generated-index:start -->
 - [Implement one-file route creation below an existing routable parent](route-create.md) - #Memory #Working #CLI #Task #Route #Create #Mutation #Contextual
-- [Implement exact-chain route initialization and resolve the deferred Framework-shape decision before behavior starts](route-init.md) - #Memory #Working #CLI #Task #Route #Init #Mutation #Contextual
+- [Implement generic and Framework-aware sparse route initialization after root Install](route-init.md) - #Memory #Working #CLI #Task #Route #Init #Mutation #Contextual
 - [Implement route move with reference, overwrite, generated-navigation, and recovery integrity](route-move.md) - #Memory #Working #CLI #Task #Route #Move #Mutation #Contextual
 - [Implement route removal with dependency, reference, generated-navigation, and recovery integrity](route-remove.md) - #Memory #Working #CLI #Task #Route #Remove #Mutation #Contextual
 - [Implement bounded route content and metadata update without identity drift](route-update.md) - #Memory #Working #CLI #Task #Route #Update #Mutation #Contextual

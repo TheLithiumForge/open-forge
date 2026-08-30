@@ -2,9 +2,10 @@
 
 The accepted replacement Open Forge CLI design specifies one future production
 executable for an optional, stateless, deterministic, and idempotent native tool
-for the human-readable Framework. Its active foundation skeleton has no retained
-command or accepted shipping executable, and the replacement is not released. This
-document summarizes its accepted command interface. The accepted shared
+for the human-readable Framework. Its development implementation contains the
+accepted foundations and completed read-only command slices, but it has no
+accepted shipping executable and is not released. This document summarizes its
+accepted command interface. The accepted shared
 implementation choices are defined in the [CLI Architecture](../.agents/memory/crystallized/documents/cli/architecture.md);
 the linked command contracts define exact public behavior.
 
@@ -33,6 +34,31 @@ missing, retired, or source-divergent managed state is `blocked` and directs the
 caller to `open-forge update`. Initial `--force` may replace only an eligible
 exact current occupant before management is established. It does not adopt the
 occupant's old bytes, bypass ownership, or become update authority.
+
+The running CLI carries the closed canonical `src/open-forge/` distribution as
+ordinary .NET embedded resources. Root Install reads that neutral exact-byte
+inventory; it never reads the development checkout. Install owns the closed base
+Framework subset. A trusted lifecycle section may also contain dynamically added
+scoped Framework targets from `route init --framework`; Install validates and
+preserves those records but does not select them as root effects or treat their
+presence as root divergence.
+
+A prompt-capable human Install that would write asks once after complete
+preflight and before the workspace lease or any effect. Refusal, end of input,
+or cancellation is a no-write `interrupted` result. Dry-run, verified no-op,
+`--automatic`, JSON, and redirected invocations never prompt. A redirected human
+application that would write is `invalid` unless `--automatic` is explicit.
+Automatic adds no force or safety authority.
+
+Install plans missing directories separately from file effects. If `.agents` is
+missing, that exact container is the one visible planned/reported lock bootstrap:
+the workspace lock manager creates and verifies it immediately before opening
+`.agents/open-forge.lock`. Under the held lease, Install revalidates and creates
+only missing descendants parent-first with ordinary .NET filesystem APIs, then
+verifies them. A created or bootstrapped directory remains as reported residual
+state after contention or a later failure; it has no recovery entry and is not
+rolled back, compensated for, or removed. `LocalApplicationData` stores recovery
+bundles, never the workspace lock.
 
 `update` requires trusted existing Framework lifecycle state. Normal mode applies
 baseline-unchanged and genuinely new safe content and preserves changed, missing,
@@ -65,7 +91,10 @@ It uses schema version 1 with one common envelope and isolated `framework` and
 section while preserving the common envelope and unrelated section. Supported
 parseable kinds use the accepted syntax-aware semantic fingerprint; exact bytes
 remain fresh operation-time facts. The replacement does not execute a formatter
-or persist formatter state.
+or persist formatter state. Every Framework target has required nullable
+`sourceAssetPath`: payload files and managed root/provider blocks identify their
+canonical embedded source asset, while derived generated regions use `null`.
+Schema v1 gains no instance collection or migration engine.
 
 The replacement does not read, recognize, migrate, alias, or fall back to an old
 lifecycle or Extension file, including `open-forge.extensions.json`. Old-format
@@ -132,7 +161,7 @@ operations:
 ```text
 open-forge extension list [--installed] [--available] [--source <package-or-catalogue-path>] [global flags]
 open-forge extension inspect <stable-id> [--source <package-or-catalogue-path>] [global flags]
-open-forge extension create [<stable-id>] [--path <catalogue-path>] [--automatic] [--dry-run] [global flags]
+open-forge extension create [<stable-id>] [--path <catalogue-path>] [--name <text>] [--description <text>] [--package-version <text>] [--dependency <stable-id>]... [--automatic] [--dry-run] [global flags]
 open-forge extension install [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--automatic] [--dry-run] [global flags]
 open-forge extension update [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--prune] [--automatic] [--dry-run] [global flags]
 open-forge extension remove [<stable-id>...] [--prune] [--automatic] [--dry-run] [global flags]
@@ -145,6 +174,25 @@ The bare group shows help and performs no operation or wizard. `list` and
 separate exact-destination, collision, and revalidation path with no workspace
 lease, none of `Replace`, `ReplaceGeneratedRegion`, or `Delete`, and no recovery
 bundle.
+
+Prompt-capable human Create asks only for required facts not supplied explicitly:
+stable ID and destination catalogue parent. Blank or invalid input may be
+explained and asked again locally without an attempt limit. End of input is a
+no-write `invalid` result; cancellation is no-write `interrupted`. JSON,
+automatic, and redirected invocations never prompt and must provide both inputs.
+Omitted manifest values are deterministic: the name is the
+hyphen-split ID with each segment's first ASCII letter uppercased, description is
+`Open Forge Extension package <stable-id>.`, version is `0.1.0`, and dependencies
+are empty. The four manifest options override only those values; dependencies
+are validated, reject duplicates and self-reference, and serialize in ordinal ID
+order without availability resolution.
+
+The catalogue parent may be any existing safely resolved directory, including an
+empty marker-free directory. Create never creates that parent and does not inspect
+or classify unrelated siblings; only `<catalogue>/<id>` determines the package
+collision/no-op result. Its command-local JSON result orders catalogue,
+destination, ID, manifest, mode, intended/applied effects, verification, and
+`workspaceLifecycleChanged: false` without repeating shared envelope fields.
 
 Install and update use the embedded catalogue or one exact external package or
 catalogue source. The source is read-only and must be lexically and physically
@@ -694,6 +742,12 @@ route mutation, health, content-placement, or diagnostic recommendations.
 An unresolved non-interactive ID collision is blocked, retains every candidate
 path, and tells the caller to rerun with one listed exact path.
 
+When both standard input and stderr are terminal-capable, a human ID collision
+lists the canonical candidate paths on stderr and asks once. The answer may be
+the one-based displayed number or one exact displayed path. An invalid answer or
+end of input retains the same blocked collision; cancellation is interrupted.
+JSON and redirected invocations never prompt.
+
 Human output explains reading events in ordinary language. It does not replace
 them with labels such as `target-sensitive` or `continuity boundary`:
 
@@ -780,6 +834,7 @@ for the complete interface and behavior.
 
 ```text
 open-forge route init <route-target>
+  [--framework]
   [--description <text>]
   [--responsibility <text>]
   [--tag=<tag>]...
@@ -818,6 +873,32 @@ entrypoints always use the canonical filename.
 
 If the complete chain already exists, the command succeeds without writing.
 Supplying metadata for an existing final target is invalid; use `route update`.
+
+`--framework` instead treats the operand as one desired concrete Framework route
+and reuses the embedded topology owned by root Install. The first segment is an
+installed root route; exact case-sensitive canonical Framework segments must
+align uniquely and remain in canonical order, while inserted ID-form segments
+are scope labels converted to deterministic lowercase hyphenated slugs. Exact
+`.agents/...` target paths are already concrete and are never slugged. The final
+segment must be a canonical non-root Framework route, and root recreation,
+reordering, ambiguous alignment, unsafe collisions, or absent/outdated trusted
+Install state blocks before any write.
+
+Framework mode creates only the requested sparse chain. Missing canonical
+Framework entrypoints copy their exact embedded assets, missing inserted scope
+entrypoints use the generic draft scaffold, and generated `Entries` are projected
+for their concrete destinations. Scope entrypoints remain user-owned; only copied
+canonical assets and derived generated regions enter Framework lifecycle. There
+is no `install --route`, `--scope`, blueprint, or general Template engine, and
+generic metadata flags are invalid with `--framework`.
+
+In either mode, missing directories are separate effects. A generic plan may
+report missing `.agents` as the single lock bootstrap created and verified before
+lease acquisition; Framework mode requires an existing trusted Install. Under
+the lease, only descendants are created parent-first with immediate parent and
+target revalidation. A created or bootstrapped directory remains as reported
+residual state after contention or a later failure; it has no recovery entry and
+is not rolled back or removed.
 See the
 [route init contract set](../.agents/memory/crystallized/documents/cli/contracts/route/init/_init.md)
 for the complete target, scaffold, collision, and recovery behavior.

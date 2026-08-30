@@ -8,7 +8,9 @@ open-forge:
 
 ## Task State
 
-- State: Planned after Install.
+- State: Planned after the complete Route Mutation M2 lane, which itself follows
+  Install. Independent scope, contract, ownership, Gray/Red-readiness, and
+  worktree preparation may occur earlier; dependent command behavior may not.
 - Parent: [Lifecycle Commands](_lifecycle.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/update/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/update/behavior.md).
 
@@ -23,6 +25,10 @@ covering every existing target it replaces or deletes.
 
 - Share payload identity, managed-file facts, lifecycle parsing, and ownership
   comparison with Install under the nearest root lifecycle capability.
+- Use each target's concrete path, nullable `sourceAssetPath`, region/generated
+  identity, and baseline fingerprint. Accept structurally valid historical source
+  paths so current inventory absence can prove retirement; validate newly
+  published non-null paths against the current inventory.
 - Keep update selection, drift classification, conflict policy, plan, ordering,
   findings, result, and renderers local.
 - Separate observed current bytes, expected prior managed identity, intended new
@@ -32,7 +38,8 @@ covering every existing target it replaces or deletes.
 
 Cover current/no-op, version change, managed drift, user-owned surrounding text,
 missing managed file, unexpected replacement, lifecycle missing/malformed/unknown,
-legacy ordinary files, dry run, lock race, bundle preparation and retention on
+historical retired source assets, generated-region `null`, legacy ordinary files,
+dry run, lock race, bundle preparation and retention on
 partial failure/cancellation, generated navigation, idempotence, process,
 packaged payload, and AOT.
 

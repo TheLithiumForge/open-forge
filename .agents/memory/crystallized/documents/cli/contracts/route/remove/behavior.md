@@ -175,6 +175,14 @@ malformed, conflicting, stale, or incomplete inventory forms the public blocked
 ownership boundary. A path, route, tag, generated line, matching bytes, missing
 receipt, or prior result cannot complete this proof.
 
+Framework-aware Route Init targets and generated regions are positive Framework
+claims and therefore block current Route Remove. A user-owned inserted scope
+entrypoint remains unmanaged, but its category is ineligible when the contained
+inventory includes any managed scoped target or region. The operation never skips
+that item or removes a subset. `sourceAssetPath` is canonical asset provenance,
+not release authority; this operation neither edits the Framework lifecycle
+section nor releases ownership.
+
 ### Reference coverage
 
 The reference resolver enumerates every supported Markdown source physically

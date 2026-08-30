@@ -70,10 +70,18 @@ The resolver:
 5. Preserves independent dimensions: automatic does not set force, and dry-run
    does not remove authority from the plan it previews.
 
-The request may use a compact human inspection and confirmation flow when it is
-prompt-capable and no automatic mode is selected. `--automatic`, JSON, and other
-non-interactive modes never prompt. A recommendation or displayed choice never
-supplies force authority.
+A human application that would write may continue without `--automatic` only
+when standard input and the prompt stream on standard error are both terminal-
+capable. After the complete plan and preflight succeed, it asks exactly once
+before acquiring the workspace lease or beginning an effect. Confirmation
+continues the already formed plan. Refusal, end of input, or caller cancellation
+returns `interrupted` and writes nothing.
+
+Dry-run, verified no-op, `--automatic`, JSON, and non-prompt-capable requests
+never prompt. A non-prompt-capable human application that would write is
+`invalid` unless `--automatic` is explicit and directs the caller to rerun that
+same command with `--automatic`. Automatic never supplies force or bypasses a
+safety boundary. Decorative prompt wording is not contract meaning.
 
 ## Exact Workspace And Payload
 
@@ -93,6 +101,10 @@ The CLI distribution embeds Framework and first-party Extension assets with
 deterministic inventory and hash proof. That proof establishes distributed source
 identity only; it is not workspace or runtime implementation evidence.
 
+Resolve that inventory through the CLI Architecture's neutral Framework
+distribution capability over ordinary .NET embedded resources. Runtime never
+reads the repository source tree.
+
 The closed current-fact universe includes:
 
 - exact current payload destinations below `.agents`;
@@ -107,6 +119,12 @@ The closed current-fact universe includes:
 It excludes arbitrary providers, package sources, Extension payloads, overwrite
 companions as Framework targets, retired-only paths, files outside the exact
 lifecycle document, and the repository `.temp/` directory.
+
+The selected fact universe is the closed base Install subset. The trusted
+Framework lifecycle section may additionally contain scoped managed targets and
+generated regions from Framework-aware Route Init. Install validates and
+preserves those records and their current identities but does not select them as
+root effects or classify their mere presence as root divergence.
 
 ## Lifecycle Document And Trust
 
@@ -143,6 +161,14 @@ fingerprint, source, or `--force`.
 Safe unavailable lifecycle coverage is `incomplete`; unsafe or ambiguous
 lifecycle identity is `blocked`. Neither state grants management or replacement
 authority.
+
+Every target record contains required nullable `sourceAssetPath`. Validate a
+non-null value as a normalized canonical embedded asset-relative path even when
+the current inventory no longer contains that historical asset. Require
+non-null provenance for payload files and managed root/provider blocks and
+`null` only for derived generated-region targets. When publishing a new or
+refreshed target, verify every non-null value against the exact inventory being
+recorded. User-owned scope entrypoints never enter the Framework target set.
 
 ## Semantic Fingerprints And Current Bytes
 
@@ -197,9 +223,11 @@ content do not alone defeat this state. An unavailable absence fact is
 ### Trusted exact managed state
 
 The section's trusted Framework identity, current semantic fingerprints, and
-current source are exact. Install forms a verified no-op. It does not invent a
-write to normalize timestamps, formatting, or unrelated bytes. `--force` and
-`--automatic` do not change the no-op.
+current source are exact for the closed base Install subset. Install forms a
+verified no-op and preserves every other trusted scoped target and generated
+region. It does not invent a write to normalize timestamps, formatting,
+provenance, or unrelated bytes. `--force` and `--automatic` do not change the
+no-op.
 
 ### Managed divergence
 
@@ -302,28 +330,50 @@ meaning.
 
 When application is selected:
 
-1. Revalidate the complete plan and all volatile source, target, ownership,
+1. If this is a prompt-capable human application that would write, ask the one
+   confirmation after complete preflight. A refusal, end of input, or caller
+   cancellation stops with no effects.
+2. Acquire the persistent workspace lease. If the accepted plan starts without
+   `.agents`, expose that exact directory as the one planned lock-bootstrap
+   effect; immediately confirm it is missing, create and verify it through
+   `WorkspaceLockManager`, then open `.agents/open-forge.lock`. Cancellation
+   before bootstrap creates nothing.
+3. Revalidate the complete plan and all volatile source, target, ownership,
    containment, marker, section, and expected-state facts.
-2. Revalidate each target immediately before its effect.
-3. Apply complete planned file or bounded-region bytes through the accepted safe
+4. Prepare and verify the one complete external recovery bundle when the plan
+   contains an existing-target effect. Complete preparation before any workspace
+   effect.
+5. Apply every other explicitly planned missing directory parent-first through
+   the shared directory capability. Each is a descendant below `.agents`.
+   Immediately revalidate each missing target and its exact contained physical
+   parent, call ordinary `Directory.CreateDirectory`, then verify the exact
+   resulting contained ordinary directory.
+6. Revalidate each file or bounded-region target immediately before its effect.
+7. Apply complete planned file or bounded-region bytes through the accepted safe
    replacement property. Do not edit in place or weaken the property after a
    check fails.
-4. Verify each payload, root/provider, generated-region, and lifecycle effect.
-5. Rebuild and verify the complete recognized Framework result and preservation
+8. Verify each payload, root/provider, generated-region, and lifecycle effect.
+9. Rebuild and verify the complete recognized Framework result and preservation
    boundaries as one operation.
-6. Publish or refresh only the Framework lifecycle facts established by the
+10. Publish or refresh only the Framework lifecycle facts established by the
    complete verified result, preserving the unrelated lifecycle section
    semantically. A selected lifecycle semantic change is source-generated as one
    deterministic canonical UTF-8 whole-document representation; formatting,
    ordering, and line-ending trivia may be normalized. A semantic no-op publishes
    no lifecycle write. Prior bytes remain retained in the verified operation
    bundle.
-7. After final verification, delete only the positively recognized bundle
+11. After final verification, delete only the positively recognized bundle
    created for this operation. `Deleted`/`Removed` permits normal completion.
    `Failed`/positively observed `Retained` keeps target effects successful and
    produces `attention`, the exact residual path,
    and cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the
    deletion result provides one.
+
+Every `WorkspaceLockResult` preserves the nullable bootstrap outcome already
+reached. `Existing` records a validated pre-existing `.agents`, `Materialized`
+records observed absence followed by attempted BCL creation and validation, and
+`null` means neither outcome was successfully observed. Acquisition requires a
+non-null outcome; later failure or cancellation does not erase one.
 
 Install has no target deletion effect. Before any existing byte or bounded region
 is replaced, orchestration selects only
@@ -346,6 +396,16 @@ and reopened and verified again. Only the valid final ZIP forms the opaque
 `RecoveryBundlePreparation`; the draft remains `Incomplete`. Every planned
 existing-target effect must match the preparation; Create and no-op effects create
 no bundle. All preparation is complete before the first target effect.
+
+Directory creation remains a distinct effect from file Create/Replace/Delete
+and has no recovery entry. The missing `.agents` bootstrap is the sole pre-lease
+directory effect and never enters the descendant applier. A directory created or
+bootstrapped by this operation is retained and reported as residual state after
+lock contention, later failure, or interruption. Install never rolls it back,
+compensates for it, or removes it. The shared capability uses ordinary BCL
+filesystem behavior; it adds no P/Invoke, recovery protocol, or hostile same-user
+creator-identity guarantee. `LocalApplicationData` remains recovery-bundle
+storage and is never used for the workspace lock.
 
 Before post-verification deletion begins, an application, verification,
 lifecycle-publication, or cancellation outcome stops new effects and reports
@@ -396,11 +456,16 @@ A conforming implementation must demonstrate:
   selection without discovery;
 - closed embedded-payload footprint and rejection of arbitrary providers,
   operands, route coincidence, tags, and matching-byte ownership inference;
+- source/payload set and byte parity plus published Native AOT resource access
+  away from the checkout;
 - all four safe-absence facts, trusted exact no-op, managed-divergence block with
   `update` next action, eligible initial occupant, and force-only initial
   replacement;
 - exact schema-v1 lifecycle-document isolation, absent, untrusted, and missing
   states, source-unavailable facts, and unsupported or ambiguous schema handling;
+- required nullable per-target `sourceAssetPath`, current-inventory publication
+  validation, generated-region `null`, and preservation of trusted scoped targets
+  outside the base Install subset;
 - syntax-aware semantic fingerprints, exact operation-time bytes, format-only
   observations, generated-interior exclusion, and fail-closed equivalence;
 - one intended topology and current Index projection;
@@ -409,6 +474,18 @@ A conforming implementation must demonstrate:
   exact prior-byte preservation, expected-state revalidation, per-effect and
   whole-operation verification, typed post-verification deletion
   state/disposition facts, residual reporting, and fresh rerun;
+- the exact one-prompt matrix, no-write refusal/end-of-input/cancellation,
+  direct automatic rerun guidance for non-prompt-capable human writes, and no
+  prompt in dry-run, no-op, automatic, JSON, or redirected modes;
+- separate parent-first directory effects under the held workspace lease, with
+  immediate missing-target and physical-parent revalidation, ordinary BCL
+  creation, post-verification, retained residuals, and no rollback,
+  compensation, removal, or recovery entry;
+- the exact visible missing-`.agents` bootstrap before lease acquisition,
+  including planning/reporting, immediate verification, pre-bootstrap
+  cancellation, post-bootstrap contention, retained residuals, and exclusion
+  from the descendant applier; plus nullable `WorkspaceLockResult` outcome
+  retention for acquired, failed, and cancelled results;
 - dry-run/application parity with no persistent dry-run effects;
 - seven statuses, including `Failed`/positively observed `Retained` recovery
   `attention` and `Failed`/`Unknown` recovery `failed`, streams, one typed result,

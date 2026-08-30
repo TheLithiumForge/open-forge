@@ -16,9 +16,9 @@ workspace or write lifecycle state.
 
 ## Contract Roles
 
-- [`interface.md`](interface.md) defines exact ID, `--path`, global no-op,
-  wizard/direct behavior, scaffold, output, statuses, errors, examples, and
-  public conformance.
+- [`interface.md`](interface.md) defines exact ID, destination and manifest
+  authoring flags, deterministic defaults, global no-op, wizard/direct behavior,
+  scaffold, output, statuses, errors, examples, and public conformance.
 - [`behavior.md`](behavior.md) defines deterministic catalogue-parent and
   destination resolution, one scaffold plan, create-only verification, and
   conformance.

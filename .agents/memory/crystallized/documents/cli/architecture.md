@@ -38,8 +38,8 @@ The implementation must:
   discoverable;
 - make parser, filesystem, serialization, mutation, recovery, output, and process
   boundaries explicit and directly testable;
-- remain deterministic, source-visible, reflection-free in product behavior, and
-  compatible with trimming and Native AOT;
+- remain deterministic, source-visible, free of reflective type or behavior
+  discovery, and compatible with trimming and Native AOT;
 - use real operating-system filesystems and fail closed when the identity or
   containment required by the accepted threat boundary cannot be established;
   and
@@ -169,8 +169,8 @@ visibility is an implementation necessity, not a compatibility promise.
 
 The root project owns only process and composition concerns:
 
-- process arguments, environment, current directory, standard streams, and
-  cancellation hookup;
+- process arguments, environment, current directory, standard streams, prompt
+  capability, and cancellation hookup;
 - the explicit ordered command tree and concrete binding registration;
 - construction of immutable shell services and command capabilities;
 - invocation of one Core host boundary; and
@@ -182,8 +182,10 @@ group, and leaf in stable order. Adding a command changes this composition sourc
 and the command's local source; it does not change a string dispatcher or runtime
 registry.
 
-The root host passes writers, environment facts, and cancellation explicitly. It
-does not cache ambient console state in Core.
+The root host passes standard input, writers, prompt capability, environment
+facts, and cancellation explicitly. It constructs the native interactive
+session from `Console.In`, `Console.Error`, `Console.IsInputRedirected`, and
+`Console.IsErrorRedirected`; Core never caches ambient console state.
 
 ## Core Source Organization
 
@@ -194,6 +196,7 @@ OpenForge.Cli.Core/
   Shell/
     Composition/
     Definitions/
+    Interaction/
     Invocation/
     Parsing/
     Pipeline/
@@ -202,6 +205,7 @@ OpenForge.Cli.Core/
     Serialization/
 
   Framework/
+    Distribution/
     Workspace/
     Filesystem/
     Sources/
@@ -321,6 +325,29 @@ never strings.
 
 No command binding locates services. The composition root supplies its complete
 immutable dependencies through direct construction or small capability records.
+
+### Native Interaction
+
+`Shell/Interaction/` owns one small native question-and-answer transport. A
+`CliInteractiveSession` receives a `TextReader`, a prompt `TextWriter`, and one
+explicit prompt-capable fact. Its asynchronous `AskAsync` operation returns an
+answered or end-of-input response and observes caller cancellation.
+
+Prompt capability requires both standard input and the stderr prompt stream to
+be terminal-capable, derived by the root from ordinary .NET redirection facts.
+There is no terminal framework, PTY abstraction, native probe, or P/Invoke.
+
+Prompts go to stderr so stdout remains either one human result or one JSON
+document. The session owns no command questions, candidate lists, defaults,
+validation, retry policy, confirmation meaning, or semantic result. Those remain
+local to Extension Create, Install, Route Inspect, or another command that later
+earns interaction. JSON, `--automatic`, or redirected operation never prompts.
+The root composition layer injects the session only into prompt-capable command
+operation factories. Command binding records only the command-local explicit
+interaction-policy Boolean in a complete immutable request. `CliInvocation`,
+generic binding and operation contracts, unrelated operation factories, and
+unrelated command requests remain unchanged and do not gain interaction or
+stream parameters.
 
 ## Parsing And Invocation
 
@@ -604,6 +631,26 @@ aliases block. Broader portable case, Unicode, and device-name equivalence is
 deferred rather than guessed. These formation rules do not change the
 current-visible Route or Context facts.
 
+### Embedded Framework Distribution
+
+`Framework/Distribution/` owns one neutral embedded Framework payload reader and
+its immutable asset and inventory facts. The Core project embeds the complete
+canonical `src/open-forge/` tree through ordinary C# project
+`EmbeddedResource` items under one fixed logical-name prefix. Runtime code uses
+the BCL manifest-resource APIs only for that exact prefix. Bounded resource-name
+enumeration and exact resource access are permitted; reflective assembly/type
+discovery, plug-in registration, and behavioral dispatch remain forbidden.
+
+The reader derives canonical `/`-separated relative paths, rejects empty,
+unsafe, duplicate, or noncanonical identities, reads exact bytes, orders assets
+ordinally, and computes per-asset SHA-256 values plus one deterministic inventory
+fingerprint. It never reads repository source paths at runtime. Root Install and
+Update consume the complete inventory. Framework-aware Route Init consumes the
+canonical route entrypoint assets and topology from the same payload. Source-tree
+parity tests compute the source set and differences instead of preserving a
+second hand-authored hash catalogue; Native AOT evidence moves the published
+binary away from the checkout before reading every resource.
+
 ### Lifecycle, Mutation, And Recovery
 
 Read-only commands never create locks, lifecycle files, caches, indexes, or
@@ -649,6 +696,42 @@ preparation, bundle verification, and atomic replacement. Each command owns its
 plan, effect ordering, findings, and result. No generic engine decides product
 behavior or automatically restores, rolls back, or compensates for target
 effects.
+
+The lock has one explicit bootstrap boundary. When a fully preflighted Install
+or generic Route Init plan requires a missing `.agents` container, that exact
+directory is a visible planned and reported support effect. Immediately before
+taking `.agents/open-forge.lock`, `WorkspaceLockManager` confirms the missing
+contained path, creates it with ordinary `Directory.CreateDirectory`, re-resolves
+and verifies it as the expected contained ordinary directory, then opens the
+lock. Cancellation before bootstrap creates nothing. The directory remains and
+is reported as residual state after later contention, failure, or interruption;
+the CLI never removes or compensates for it. This is the sole pre-lease directory
+effect and the sole directory excluded from the shared lease-bound applier.
+
+`WorkspaceLockResult.BootstrapOutcome` is nullable in acquired, failed, and
+cancelled results. `null` means no directory outcome was successfully observed.
+`Existing` means the pre-existing `.agents` directory was validated.
+`Materialized` means the manager observed absence, attempted ordinary BCL
+creation, and validated the resulting directory. Preserve any reached outcome
+when acquisition later fails or is cancelled; an acquired result requires a
+non-null outcome. `Materialized` makes no hostile-process creator-identity claim.
+
+Directory creation is one separate shared native effect, not a
+`PlannedFileChangeKind` and not an expansion of file replacement. A command plan
+names each missing descendant below `.agents` explicitly and orders parent before
+child. While holding the workspace lease, the directory applier immediately
+revalidates that the target is still missing and that its physical parent is the
+exact expected contained ordinary directory, calls ordinary
+`Directory.CreateDirectory`, and then verifies the target as the expected
+contained ordinary directory.
+
+A verified created directory remains if a later effect fails or the operation is
+interrupted. The capability reports it as residual state and never rolls it back,
+compensates for it, removes it, or prepares recovery data for it. It uses no
+P/Invoke and makes no creator-identity guarantee against a hostile process under
+the same user account. Install and Route Init share these exact mechanics when
+their directory effects have identical meaning; their plan selection, ordering
+among other effects, findings, and result semantics remain command-local.
 
 For each mutating command operation whose complete plan contains one or more
 existing-target effects (`Replace`, `ReplaceGeneratedRegion`, or `Delete`),
@@ -762,11 +845,31 @@ cooperating-client threat model; no special platform-permission or encryption
 promise is made.
 
 Lifecycle state remains `.agents/open-forge.lifecycle.json`, schema version 1.
+Every Framework lifecycle target has one required nullable `sourceAssetPath`.
+For a payload file or managed root/provider block, this is the normalized
+canonical embedded asset-relative path that produced the target. It is `null`
+only for a derived generated-region target. Structural validation accepts a
+normalized historical source path even when a later embedded inventory no
+longer contains it, while publication verifies every new non-null path against
+the exact inventory being recorded. User-owned scope entrypoints are not
+Framework lifecycle targets. Exact concrete target path, source asset path,
+managed region, generated-region identity, and baseline fingerprint provide the
+per-effect provenance; schema v1 needs no lifecycle-instance collection or
+migration engine.
+
+Root Install owns only the closed base Framework footprint. Its exact no-op and
+divergence checks compare that root subset while preserving any other trusted
+scoped Framework targets and generated regions in the same Framework lifecycle
+section. Update may reconcile recorded targets independently. Route Init may
+append scoped targets only after it verifies a trusted current root Install from
+the running binary's embedded inventory.
+
 The mutation lock remains `.agents/open-forge.lock`, is persistent and reusable,
 and preserves any existing bytes. A mutating operation only holds a
 `FileShare.None` handle; it never writes lock metadata and never deletes or
-truncates the lock file. Existing legacy lifecycle formats are ordinary
-untouched content.
+truncates the lock file. `LocalApplicationData` is only the external
+recovery-bundle location; it is never the workspace lock location. Existing
+legacy lifecycle formats are ordinary untouched content.
 
 ## Serialization And Dependencies
 
@@ -881,12 +984,19 @@ mutations and aggregate diagnosis:
 9. Shared mutation, lock, lifecycle, and recovery foundations (M1).
 10. Public `index`, including the shared body-free formation expansion and
     command-local selection, orchestration, result, and presentation (I1).
-11. `route init`, `route create`, `route update`, `route move`, and `route remove`.
-12. `extension create`, root `install`, root `update`, `extension install`,
-    `extension update`, and `extension remove`.
-13. `status`, `doctor`, `repair`, and `cleanup` after all producers and recovery
+11. Add the native interaction session, embedded Framework distribution,
+    lifecycle `sourceAssetPath` provenance, and lease-bound directory-create
+    effect as parallel foundations.
+12. Implement Extension Create, root Install, and the Route Inspect interaction
+    correction in parallel after their required foundations; integrate root
+    composition and executable evidence sequentially.
+13. Implement generic and Framework-aware `route init` after root Install,
+    followed by `route create`, `route update`, `route move`, and `route remove`.
+14. Implement root `update`, `extension install`, `extension update`, and
+    `extension remove` from their accepted predecessors.
+15. Implement `status`, `doctor`, `repair`, and `cleanup` after all producers and recovery
     states exist.
-14. Thin package wrappers, supported `linux-x64` build and smoke, packed install
+16. Thin package wrappers, supported `linux-x64` build and smoke, packed install
     and invocation, checksums, documentation, and release.
 
 Each command reaches complete contract and focused managed, process, and

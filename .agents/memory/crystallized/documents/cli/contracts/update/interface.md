@@ -105,6 +105,9 @@ deterministic inventory and hash proof. That proof identifies distributed source
 assets; it is not evidence of a selected workspace's current installation or of
 a proven runtime implementation.
 
+Update consumes the same neutral BCL embedded-resource inventory as Install and
+Framework-aware Route Init. Runtime never reads the development checkout.
+
 ## Required Managed State
 
 Update starts only when a trusted Framework lifecycle section exists for the
@@ -136,6 +139,16 @@ itself, proof of unmanaged state. Unsupported or
 ambiguous schema facts remain
 `incomplete` or `blocked` under the command's existing safety rules.
 
+Every Framework target record has one required nullable `sourceAssetPath`.
+Payload files and managed root/provider blocks record the normalized canonical
+embedded asset-relative path that produced them; derived generated-region
+targets record `null`. A trusted historical non-null path remains structurally
+valid when the current inventory no longer contains it. That absence is the
+retirement comparison fact. Every newly published non-null value must exist in
+the exact current inventory. User-owned inserted scope entrypoints are not
+Framework targets. Schema v1 adds no lifecycle-instance collection or migration
+engine.
+
 Workspace mutation uses the visible `.agents/open-forge.lock` path under the
 accepted CLI Architecture. File existence is not lock ownership: the operation
 must hold the actual OS file lock. A crash releases that OS lock. An unlocked
@@ -150,7 +163,9 @@ compares:
 
 - the trusted baseline semantic fingerprint;
 - the current semantic fingerprint and freshly captured exact bytes; and
-- the intended current embedded source and its semantic fingerprint.
+- the recorded source provenance and intended current embedded source or derived
+  generated relationship, plus its semantic fingerprint when source content is
+  present.
 
 The comparison distinguishes:
 
@@ -195,7 +210,11 @@ bundle, verification, or recovery checks.
 ### `--prune`
 
 Prune may delete only an eligible retired managed path when the trusted baseline
-identifies the exact previously managed path, current source proves retirement,
+identifies the exact previously managed path and recorded provenance. For a
+payload file or managed block, its non-null `sourceAssetPath` and the current
+inventory prove that exact asset is retired. For a derived generated-region
+target, `sourceAssetPath` is `null` and the current intended topology proves that
+the recorded relationship no longer produces the region. In both cases,
 current semantic state and physical identity are safe, no owner, manager, route,
 or dependency blocks, and bundle and recovery checks pass. It is not arbitrary
 cleanup. It never deletes unknown, unowned, shared, unsafe, or current expected
@@ -392,6 +411,9 @@ Future evidence must cover:
   shared flags;
 - trusted, absent, unavailable, malformed, unsupported, and ambiguous lifecycle
   facts;
+- required nullable per-target `sourceAssetPath`, historical retired-asset
+  recognition, current-inventory publication validation, derived-region `null`,
+  and no lifecycle instance collection;
 - baseline/current/intended semantic comparison for unchanged, new, changed,
   missing, retired, and format-only states;
 - normal preservation and `attention`, force replacement/restoration, prune

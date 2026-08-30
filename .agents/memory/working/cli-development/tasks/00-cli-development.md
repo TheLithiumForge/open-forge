@@ -57,10 +57,20 @@ open-forge:
   squash-integrated into `develop` at
   `09aa03eddb97831ff544afe1eac54ad9af501f5c`; both commits have exact tree
   `2dcfca18020980a9cafbc429a72930af3368df5f`. The broader replacement CLI
-  program remains Active.
+  program remains Active. Intended-source formation closeout is integrated at
+  current baseline `18f2acff31cfd6600a16430ac5d689d05482e297`, exact tree
+  `39f0a8c4e6d3695cfbe7407dfd6043dc5ec9680a`. The D0 contract freeze
+  records the accepted next-wave foundations and command graph before production:
+  native interaction, embedded Framework distribution, lifecycle provenance, and
+  lease-bound directory creation in parallel; then Extension Create, root Install, and the Route Inspect
+  correction on separate command paths with sequential protected-surface
+  integration; then Framework-aware Route Init after Install and the remaining
+  Route Mutation M2 leaves before root Update M3. Independent preparation may
+  overlap earlier work, but dependent command behavior does not. Every localized
+  D0 command/effect choice is accepted and frozen in its owning contract and Task.
 - Responsible role: Overseer.
 - Task source: This file.
-- Last updated: 2026-08-29.
+- Last updated: 2026-08-30.
 
 ## Problem Statement
 
