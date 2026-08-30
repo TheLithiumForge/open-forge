@@ -313,7 +313,7 @@ or blocked according to the command contract. Neither condition is absence.
 
 Status and Doctor do not acquire the workspace lease, report activity, or infer
 activity from bundle contents, a filename, age, PID, marker, journal, or the
-visible persistent lock file.
+persistent external lock file.
 
 Before applying an existing-target effect (`Replace`, `ReplaceGeneratedRegion`,
 or `Delete`), mutation orchestration
@@ -393,12 +393,19 @@ though Doctor or Cleanup may report orphaned original-root bundles and never
 auto-binds or restores them. Cleanup writes no marker, PID, journal, lock
 metadata, or other lifecycle record and makes no activity inference.
 
-The mutation lock is a persistent reusable `.agents/open-forge.lock`. It
-preserves existing bytes and is held with a `FileShare.None` handle only; the
-CLI never writes metadata, deletes, or truncates the lock file. Standalone
-Extension Create uses a separate exact-destination, collision, and revalidation
-path with no workspace lease, none of `Replace`, `ReplaceGeneratedRegion`, or
-`Delete`, and no recovery bundle.
+The mutation lock is a persistent reusable zero-byte ordinary file under
+`LocalApplicationData/OpenForge/locks/v1`, named
+`<friendly-workspace-name>-<full-sha256-workspace-key>.lock`. The full SHA-256 of
+the normalized physical workspace path is authoritative; the bounded sanitized
+friendly prefix is display only. The CLI holds one read/write `FileShare.None`
+handle and never writes metadata, truncates, or deletes the file. Persistent
+reuse prevents unlink/recreate from splitting coordination across open handles.
+Current-user lock-store resolution is deferred until acquisition after the
+initial cancellation boundary. Composition and terminal no-effect flows do not
+create the application-data root or lock infrastructure.
+Standalone Extension Create uses a separate exact-destination, collision, and
+revalidation path with no workspace lease, none of `Replace`,
+`ReplaceGeneratedRegion`, or `Delete`, and no recovery bundle.
 
 Cleanup's operand-free catalogue is explicit command intent, not an automatic
 interaction policy. Invoking the dedicated command explicitly selects deletion
@@ -557,7 +564,7 @@ content on its own. Read-only `extension list` and `extension inspect` reject
   bucket once, and repeats exact path/kind and final semantic validation;
   contention prevents all deletion. Unknown,
   malformed, mismatched, or differently keyed artifacts remain untouched. The
-  persistent lock preserves bytes and carries no activity metadata.
+  persistent external lock remains zero bytes and carries no activity metadata.
 - Status, Doctor, and Cleanup validate payload entry lengths and hashes only by
   bounded streaming and never extract, disclose, retain, or materialize payload
   bytes. Status and Doctor neither report nor infer activity.

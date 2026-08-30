@@ -1,5 +1,5 @@
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Workspace;
 
 namespace OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 
@@ -10,72 +10,67 @@ internal sealed class WorkspaceLockLease : IDisposable, IAsyncDisposable
 
     internal WorkspaceLockLease(
         WorkspaceLockRequest request,
-        string logicalPath,
-        string physicalPath,
+        WorkspaceLockStoreRoot storeRoot,
+        string lockPath,
         FileStream handle)
     {
-        ArgumentNullException.ThrowIfNull(request);
-        ArgumentNullException.ThrowIfNull(handle);
-        if (!handle.CanWrite || handle.SafeFileHandle.IsInvalid || handle.SafeFileHandle.IsClosed)
+        if (!handle.CanWrite
+            || handle.SafeFileHandle.IsInvalid
+            || handle.SafeFileHandle.IsClosed
+            || handle.Length != 0)
         {
             throw new ArgumentException(
-                "A workspace lock lease requires one open writable OS handle.",
+                "A workspace lock lease requires one open writable zero-byte OS handle.",
                 nameof(handle));
         }
 
-        var normalizedLogicalPath = FileExpectation.NormalizeAbsolutePath(
-            logicalPath,
-            nameof(logicalPath));
-        if (!string.Equals(
-                normalizedLogicalPath,
-                request.LogicalPath,
-                PathComparison()))
+        var normalizedLockPath = FileExpectation.NormalizeAbsolutePath(
+            lockPath,
+            nameof(lockPath));
+        var expectedLockPath = WorkspaceLockPathIdentity.LockPath(storeRoot, request.Workspace);
+        if (!string.Equals(normalizedLockPath, expectedLockPath, PathComparison()))
         {
             throw new ArgumentException(
-                "A workspace lock lease logical path must match its request.",
-                nameof(logicalPath));
+                "A workspace lock lease path must match its request and store root.",
+                nameof(lockPath));
         }
 
-        var normalizedPhysicalPath = FileExpectation.NormalizeAbsolutePath(
-            physicalPath,
-            nameof(physicalPath));
-        if (!PhysicalContainment.Contains(
-                request.Workspace.PhysicalRoot,
-                normalizedPhysicalPath))
+        var openedLockPath = FileExpectation.NormalizeAbsolutePath(handle.Name, nameof(handle));
+        if (!string.Equals(normalizedLockPath, openedLockPath, PathComparison()))
         {
             throw new ArgumentException(
-                "A workspace lock lease physical path must be contained by its workspace.",
-                nameof(physicalPath));
-        }
-
-        var openedPhysicalPath = FileExpectation.NormalizeAbsolutePath(
-            handle.Name,
-            nameof(handle));
-        if (!string.Equals(
-                normalizedPhysicalPath,
-                openedPhysicalPath,
-                PathComparison()))
-        {
-            throw new ArgumentException(
-                "A workspace lock lease physical path must match its open handle.",
-                nameof(physicalPath));
+                "A workspace lock lease path must match its open handle.",
+                nameof(lockPath));
         }
 
         Request = request;
-        LogicalPath = normalizedLogicalPath;
-        PhysicalPath = normalizedPhysicalPath;
+        StoreRoot = storeRoot;
+        LockPath = normalizedLockPath;
         _handle = handle;
     }
 
     internal WorkspaceLockRequest Request { get; }
 
-    internal string LogicalPath { get; }
+    internal WorkspaceLockStoreRoot StoreRoot { get; }
 
-    internal string PhysicalPath { get; }
+    internal string LockPath { get; }
 
     internal bool IsHeld => Volatile.Read(ref _disposed) == 0
         && !_handle.SafeFileHandle.IsClosed
         && !_handle.SafeFileHandle.IsInvalid;
+
+    internal bool IsHeldFor(CliWorkspace workspace)
+    {
+        return IsHeld
+            && string.Equals(
+                WorkspaceIdentity.Key(Request.Workspace.PhysicalRoot),
+                WorkspaceIdentity.Key(workspace.PhysicalRoot),
+                StringComparison.Ordinal)
+            && string.Equals(
+                LockPath,
+                WorkspaceLockPathIdentity.LockPath(StoreRoot, workspace),
+                PathComparison());
+    }
 
     public void Dispose()
     {
@@ -94,5 +89,7 @@ internal sealed class WorkspaceLockLease : IDisposable, IAsyncDisposable
     }
 
     private static StringComparison PathComparison()
-        => OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+        => OperatingSystem.IsWindows()
+            ? StringComparison.OrdinalIgnoreCase
+            : StringComparison.Ordinal;
 }

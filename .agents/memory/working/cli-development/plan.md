@@ -152,13 +152,12 @@ baseline has a Release build with `0` warnings and `0` errors; managed Unit
 Integration `500/500` and EndToEnd `125/125`; and zero skips in every stated
 run.
 
-The accepted bootstrap result is `WorkspaceLockResult.BootstrapOutcome?`:
-`null` means no bootstrap directory outcome was successfully observed,
-`Existing` means the pre-existing `.agents` directory was validated, and
-`Materialized` means its absence was observed, ordinary BCL creation ran, and
-the resulting directory was validated. A reached outcome is retained across
-acquired, failed, and cancelled results, and acquisition requires a non-null
-outcome. This is not a hostile same-user creator-identity guarantee.
+The accepted lock-location correction replaces the workspace-contained lock and
+bootstrap result with one persistent external zero-byte ordinary file under
+`LocalApplicationData/OpenForge/locks/v1`. Its filename combines a bounded
+display-only workspace name with the authoritative full SHA-256 key of the
+normalized physical workspace path. Missing `.agents` is an ordinary
+lease-bound directory-create effect.
 
 C1 Extension Create is Complete at protected public integration
 `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5`, with exact final candidate
@@ -502,7 +501,7 @@ diff, parent requirements, and claimed evidence.
 | SF1 | Complete at `e782090` | Add one BCL-only Shell interaction transport. Protected command integration later injects it only into prompt-capable operation factories; requests retain only command-local interaction-policy Booleans. | D0, F2-F3 | Parallel foundation | Shell interaction | Focused transport Unit; injected host and redirected-process proof with prompt-capable command integration |
 | SF2 | Complete at `680915a` | Embed the canonical Framework payload and expose exact ordered asset bytes, paths, hashes, and inventory identity through a neutral BCL reader. | D0, F1 | Parallel foundation | Framework distribution | Source parity, isolated published binary, Native AOT resource proof |
 | SF3 | Complete at `0989356` | Add required nullable per-target `sourceAssetPath` provenance to Framework lifecycle schema v1 without adding instance collections or migration machinery. | D0, M1 | Parallel foundation | Framework lifecycle | Source-generated JSON, structural validation, lifecycle and Native AOT regressions |
-| SF4 | Complete at `33913df` | Add one lease-bound ordinary-BCL descendant-directory effect for Install and Route Init, preserving the visible planned/reported missing-`.agents` lock bootstrap as the sole pre-lease exception. | D0, M1 | Parallel foundation | Mutation directory effect | Bootstrap, real filesystem races, residuals, file/recovery non-regression, Native AOT proof |
+| SF4 | Complete at `33913df`; lock-location correction active in C2 | Add one lease-bound ordinary-BCL directory effect for Install and Route Init; the later shared correction makes missing `.agents` an ordinary first effect after external lease acquisition. | D0, M1 | Parallel foundation | Mutation directory effect | Real filesystem races, residuals, file/recovery non-regression, Native AOT proof |
 | C1  | Complete at protected public integration `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5`; exact candidate `789cc917f2d0cb38c5229cc2dc7fee013218d341`, tree `fa29bd9572df39b2d5457c35bb8a0bd6ba5a9945` | Implement Extension Create with accepted manifest defaults/options, catalogue boundary, ordered JSON result, and a command-local wizard for missing required facts. | SF1, M1, E1 | Parallel command | Lifecycle mutation | Managed `1356/575/132`; `linux-x64` Native AOT root/version/ELF and `575/132`; dogfood and Sol/xhigh review pass |
 | C2  | Active command-local Green; exact Install JSON wire schema is frozen; overlapping seams integrate sequentially | Implement root Install over the closed embedded base Framework subset while preserving trusted dynamically added scoped lifecycle targets and forming the accepted exact public JSON result, including typed residual values `none`, `retained`, and `unknown`. | SF1-SF4, M1, I1 | Parallel command | Framework lifecycle | Payload, lifecycle, recovery, workspace, process, and AOT evidence |
 | C3  | Complete and squash-integrated at `fa3db1ee` with exact tree equality to final reviewed candidate `37c9360` | Correct Route Inspect's accepted one-answer interactive collision selection without changing its non-interactive contract or result model. | SF1, R2 | Parallel command plus sequential protected integration | Route discovery correction | Focused `131/8/82/32`, full managed `1284/511/125`, Native AOT `511/125`, no-write dogfood, and review pass |
@@ -548,10 +547,10 @@ program items through the later boundaries that own them:
   eligibility, and command-local JSON result shape/order.
 - [x] Freeze C3's one-answer prompt grammar, Install's one-confirmation
   interaction, and the shared lease-bound ordinary-BCL directory-create effect.
-- [x] Freeze missing `.agents` as the single visible planned/reported bootstrap
-  directory created and verified by `WorkspaceLockManager` before lock
-  acquisition; SF4 owns descendants only and `LocalApplicationData` remains
-  recovery storage rather than a lock location.
+- [x] Supersede the earlier bootstrap boundary: acquire the persistent external
+  zero-byte lock under `LocalApplicationData/OpenForge/locks/v1`, then apply
+  missing `.agents` as the first ordinary visible planned/reported lease-bound
+  directory effect. Lock and recovery use separate versioned subtrees.
 - [x] Preserve Architecture order: complete Route Mutation M2 before root Update
   M3. Parallelize only independent preparation such as scope discovery,
   contract/ownership audits, callable-surface analysis, Gray/Red readiness, and
@@ -722,7 +721,7 @@ passed. `CLI-EDGE-001` remains non-product only.
 | D10 | What exact command-local JSON result shape and property order does Extension Create expose? | Accepted ordered catalogue, destination, ID, manifest, mode, effects, verification, and unchanged-workspace fact | Maintainer | C1 | Reopen source-generated schema and renderer evidence |
 | D11 | How does Install confirm, refuse, handle EOF/cancellation, and avoid prompting?        | Accepted: prompt once only for prompt-capable human writes after preflight; refusal/EOF/cancel interrupted; other modes never prompt | Maintainer | C2 | Reopen command-local interaction contract and evidence |
 | D12 | How does Extension Create gather and correct missing required human input?             | Accepted: ask only missing stable-ID/catalogue facts; local correction without attempt limit; EOF invalid, cancellation interrupted; no generic retry framework | Maintainer | C1 | Reopen wizard contract and focused evidence |
-| D13 | How does a missing `.agents` container compose with the workspace lock and SF4?         | Accepted: visible planned/reported bootstrap before acquisition; SF4 handles descendants after lease; nullable lock results preserve reached `Existing`/`Materialized` outcome | Maintainer | SF4, C2, M2 | Reopen lock location, result contract, mutation sequencing, and residual evidence |
+| D13 | How does a missing `.agents` container compose with the workspace lock and SF4?         | Superseded by accepted external-lock correction: acquire the persistent external lock first, then apply `.agents` as the first ordinary planned/reported lease-bound directory effect; no bootstrap result remains | Maintainer | SF4, C2, M2 | Reopen lock location, result contract, mutation sequencing, and residual evidence |
 | D14 | May root Update M3 behavior begin alongside Route Mutation M2 after Install?             | Accepted: no; full M2 behavior precedes M3, while independent preparation may run earlier | Maintainer | M2, M3 | Reopen program sequencing and lane ownership |
 | D15 | What exact public Root Install JSON result shape and residual vocabulary closes C2?      | Accepted: one fully present ordered result with mode, force, automatic, atomic nullable source/classification/footprint, exact effects, lifecycle, recovery, verification, findings, and typed residual values `none`, `retained`, `unknown` | Maintainer | C2 | Reopen result model, serialization, help, process evidence, and command acceptance |
 

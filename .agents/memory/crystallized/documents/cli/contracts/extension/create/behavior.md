@@ -33,7 +33,7 @@ The operation never forms a workspace lifecycle plan. Its `--workspace` value
 may be parsed and reported as an accepted global no-op, but it does not affect
 the catalogue destination. Create is the accepted no-workspace mutation
 exception: the catalogue destination is the sole operation subject, so create
-does not acquire `.agents/open-forge.lock` or mutate workspace state.
+does not acquire the external workspace mutation lock or mutate workspace state.
 
 ## Request Resolution
 
@@ -150,7 +150,7 @@ Use the shared seven statuses and streams; `attention` is currently unreachable
 for create.
 
 Create never mutates a workspace, package source, lifecycle document, generated
-navigation, or Framework file. It does not acquire `.agents/open-forge.lock`.
+navigation, or Framework file. It does not acquire the external workspace lock.
 Conformance must cover zero, one, and all currently missing required human facts, local
 blank/invalid correction without an attempt limit, invalid end of input,
 interrupted cancellation, direct requests, automatic omission states,

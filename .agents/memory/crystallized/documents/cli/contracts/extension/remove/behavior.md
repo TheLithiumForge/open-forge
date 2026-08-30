@@ -149,9 +149,10 @@ Preflight validates lifecycle trust, IDs, dependencies, owner sets, current exac
 and semantic facts, route and generated boundaries, cross-section preservation,
 expected state, deletion safety, verification, and recovery-bundle readiness.
 One failed condition blocks all effects. Before the first workspace effect,
-obtain the actual OS lock for the visible `.agents/open-forge.lock` path defined
-by the accepted CLI Architecture. The lock file is persistent and reusable:
-preserve existing bytes and write no metadata, timestamp, or ownership record.
+obtain the actual OS lock for the persistent external zero-byte path under
+`LocalApplicationData/OpenForge/locks/v1` defined by the accepted CLI
+Architecture. The lock file is persistent and reusable: write no metadata,
+timestamp, or ownership record.
 Hold a `FileShare.None` handle; existence is not lock ownership, and another
 process holding the handle blocks mutation. A crash releases the OS lock. The
 lock is not lifecycle authority, history, or recovery evidence.

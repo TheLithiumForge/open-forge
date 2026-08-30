@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models;
 using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Mutation.Application;
@@ -15,6 +16,8 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Mutation.Application;
 public sealed class FileChangeApplierIntegrationTests : IDisposable
 {
     private readonly List<string> recoveryBundlePaths = [];
+    private readonly WorkspaceLockTestStore lockStore = WorkspaceLockTestStore.Create(
+        "file-change-applier-lock-store");
 
     [Fact(DisplayName = "File change applier creates exact bytes and leaves no stage")]
     [Trait("Feature", "mutation-foundation")]
@@ -22,7 +25,6 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
     public async Task CreatesExactBytesWithVerifiedReceipt()
     {
         using var temporary = TemporaryWorkspace.Create("mutation-apply-create");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "stale-lock");
         var lookalike = temporary.CreateFile(".open-forge-stage-lookalike", "preserve me");
         var path = temporary.Combine("created.md");
         var workspace = Workspace(temporary);
@@ -31,11 +33,11 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
         var change = PlannedFileChange.Create(
             FileExpectation.Missing(path),
             "created bytes\n"u8);
-        await using var lease = await AcquireAsync(workspace, resolver);
+        await using var lease = await AcquireAsync(workspace);
         var check = await RevalidateAsync(lease, change, validator, resolver);
 
         var receipt = await new FileChangeApplier(
-                new MutationRevalidator(validator, resolver),
+                new MutationRevalidator(validator),
                 validator)
             .ApplyAsync(
             lease,
@@ -62,15 +64,14 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
     public async Task ReplacesFullDocumentForBothReplacementKinds()
     {
         using var temporary = TemporaryWorkspace.Create("mutation-apply-replace");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "stale-lock");
         var path = temporary.CreateFile("document.md", "before\n");
         var workspace = Workspace(temporary);
         var resolver = new PhysicalPathResolver();
         var validator = new FileExpectationValidator(resolver);
         var applier = new FileChangeApplier(
-            new MutationRevalidator(validator, resolver),
+            new MutationRevalidator(validator),
             validator);
-        await using var lease = await AcquireAsync(workspace, resolver);
+        await using var lease = await AcquireAsync(workspace);
 
         var replace = PlannedFileChange.Replace(
             FileExpectation.File(path, path, FileExpectation.Hash("before\n"u8)),
@@ -111,7 +112,6 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
     public async Task DeletesOrdinaryFileButNeverDirectory()
     {
         using var temporary = TemporaryWorkspace.Create("mutation-apply-delete");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "stale-lock");
         var path = temporary.CreateFile("document.md", "remove me");
         var directory = temporary.CreateDirectory("retained");
         var workspace = Workspace(temporary);
@@ -119,11 +119,11 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
         var validator = new FileExpectationValidator(resolver);
         var change = PlannedFileChange.Delete(
             FileExpectation.File(path, path, FileExpectation.Hash("remove me"u8)));
-        await using var lease = await AcquireAsync(workspace, resolver);
+        await using var lease = await AcquireAsync(workspace);
         var check = await RevalidateAsync(lease, change, validator, resolver);
 
         var receipt = await new FileChangeApplier(
-                new MutationRevalidator(validator, resolver),
+                new MutationRevalidator(validator),
                 validator)
             .ApplyAsync(
             lease,
@@ -144,7 +144,6 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
     public async Task RejectsStaleReplayAndPreservesCurrentBytes()
     {
         using var temporary = TemporaryWorkspace.Create("mutation-apply-stale");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "stale-lock");
         var path = temporary.CreateFile("document.md", "before");
         var workspace = Workspace(temporary);
         var resolver = new PhysicalPathResolver();
@@ -157,10 +156,10 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             change.Expectation,
             TestContext.Current.CancellationToken);
         temporary.ReplaceText("document.md", "changed after planning");
-        await using var lease = await AcquireAsync(workspace, resolver);
+        await using var lease = await AcquireAsync(workspace);
 
         var receipt = await new FileChangeApplier(
-                new MutationRevalidator(validator, resolver),
+                new MutationRevalidator(validator),
                 validator)
             .ApplyAsync(
             lease,
@@ -184,7 +183,6 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
     public async Task CancellationBeforeApplicationReturnsNotStarted()
     {
         using var temporary = TemporaryWorkspace.Create("mutation-apply-cancel");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "stale-lock");
         var path = temporary.CreateFile("document.md", "before");
         var workspace = Workspace(temporary);
         var resolver = new PhysicalPathResolver();
@@ -192,13 +190,13 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
         var change = PlannedFileChange.Replace(
             FileExpectation.File(path, path, FileExpectation.Hash("before"u8)),
             "intended"u8);
-        await using var lease = await AcquireAsync(workspace, resolver);
+        await using var lease = await AcquireAsync(workspace);
         var check = await RevalidateAsync(lease, change, validator, resolver);
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
 
         var receipt = await new FileChangeApplier(
-                new MutationRevalidator(validator, resolver),
+                new MutationRevalidator(validator),
                 validator)
             .ApplyAsync(
             lease,
@@ -222,7 +220,6 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
     public async Task RequiresLiveLeaseForTheSelectedWorkspace()
     {
         using var temporary = TemporaryWorkspace.Create("mutation-apply-lease");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "stale-lock");
         var path = temporary.CreateFile("document.md", "before");
         var workspace = Workspace(temporary);
         var resolver = new PhysicalPathResolver();
@@ -234,12 +231,12 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             workspace,
             change.Expectation,
             TestContext.Current.CancellationToken);
-        await using var disposedLease = await AcquireAsync(workspace, resolver);
+        await using var disposedLease = await AcquireAsync(workspace);
         var preparation = await PreparationAsync(disposedLease, change, check);
         await disposedLease.DisposeAsync();
 
         var applier = new FileChangeApplier(
-            new MutationRevalidator(validator, resolver),
+            new MutationRevalidator(validator),
             validator);
         var disposed = await applier.ApplyAsync(
             disposedLease,
@@ -251,8 +248,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
         Assert.Equal(FilesystemNotStartedReason.ContractRejected, disposed.NotStartedReason);
 
         using var foreign = TemporaryWorkspace.Create("mutation-apply-foreign");
-        foreign.CreateFile(WorkspaceLockRequest.RelativePath, "stale-lock");
-        await using var foreignLease = await AcquireAsync(Workspace(foreign), resolver);
+        await using var foreignLease = await AcquireAsync(Workspace(foreign));
         var foreignResult = await applier.ApplyAsync(
             foreignLease,
             change,
@@ -273,7 +269,6 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
     public async Task CreateCollisionReturnsNotStartedAndPreservesRacingFile()
     {
         using var temporary = TemporaryWorkspace.Create("mutation-apply-create-collision");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "stale-lock");
         var path = temporary.Combine("created.md");
         var workspace = Workspace(temporary);
         var resolver = new PhysicalPathResolver();
@@ -286,10 +281,10 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             change.Expectation,
             TestContext.Current.CancellationToken);
         temporary.CreateFile("created.md", "racing file");
-        await using var lease = await AcquireAsync(workspace, resolver);
+        await using var lease = await AcquireAsync(workspace);
 
         var receipt = await new FileChangeApplier(
-                new MutationRevalidator(validator, resolver),
+                new MutationRevalidator(validator),
                 validator)
             .ApplyAsync(
             lease,
@@ -313,7 +308,6 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
     public async Task ReplacementDirectoryRaceReturnsNotStartedAndPreservesDirectory()
     {
         using var temporary = TemporaryWorkspace.Create("mutation-apply-replacement-directory");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "stale-lock");
         var path = temporary.CreateFile("document.md", "before");
         var workspace = Workspace(temporary);
         var resolver = new PhysicalPathResolver();
@@ -327,10 +321,10 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             TestContext.Current.CancellationToken);
         temporary.MoveFile("document.md", "document-before.md");
         temporary.CreateDirectory("document.md");
-        await using var lease = await AcquireAsync(workspace, resolver);
+        await using var lease = await AcquireAsync(workspace);
 
         var receipt = await new FileChangeApplier(
-                new MutationRevalidator(validator, resolver),
+                new MutationRevalidator(validator),
                 validator)
             .ApplyAsync(
             lease,
@@ -351,7 +345,6 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
     public async Task DeleteReplacementRaceReturnsNotStartedAndPreservesCurrentFile()
     {
         using var temporary = TemporaryWorkspace.Create("mutation-apply-delete-race");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "stale-lock");
         var path = temporary.CreateFile("document.md", "before");
         var workspace = Workspace(temporary);
         var resolver = new PhysicalPathResolver();
@@ -364,10 +357,10 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             TestContext.Current.CancellationToken);
         temporary.MoveFile("document.md", "document-before.md");
         temporary.CreateFile("document.md", "replacement");
-        await using var lease = await AcquireAsync(workspace, resolver);
+        await using var lease = await AcquireAsync(workspace);
 
         var receipt = await new FileChangeApplier(
-                new MutationRevalidator(validator, resolver),
+                new MutationRevalidator(validator),
                 validator)
             .ApplyAsync(
             lease,
@@ -390,7 +383,6 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
     public async Task ResolvedIdentityRaceReturnsNotStartedWithoutTouchingEitherTarget()
     {
         using var temporary = TemporaryWorkspace.Create("mutation-apply-identity-race");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "stale-lock");
         var first = temporary.CreateFile("first/document.md", "first");
         var second = temporary.CreateFile("second/document.md", "second");
         var alias = temporary.CreateDirectorySymbolicLink("alias", temporary.Combine("first"));
@@ -415,10 +407,10 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
         }
 
         Directory.CreateSymbolicLink(alias, temporary.Combine("second"));
-        await using var lease = await AcquireAsync(workspace, resolver);
+        await using var lease = await AcquireAsync(workspace);
 
         var receipt = await new FileChangeApplier(
-                new MutationRevalidator(validator, resolver),
+                new MutationRevalidator(validator),
                 validator)
             .ApplyAsync(
             lease,
@@ -444,7 +436,6 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
     public async Task MismatchedCheckAndChangeAreRejectedWithoutEffects()
     {
         using var temporary = TemporaryWorkspace.Create("mutation-apply-check-coherence");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "stale-lock");
         var first = temporary.CreateFile("first.md", "first");
         var second = temporary.CreateFile("second.md", "second");
         var workspace = Workspace(temporary);
@@ -460,9 +451,9 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             workspace,
             firstChange.Expectation,
             TestContext.Current.CancellationToken);
-        await using var lease = await AcquireAsync(workspace, resolver);
+        await using var lease = await AcquireAsync(workspace);
         var applier = new FileChangeApplier(
-            new MutationRevalidator(validator, resolver),
+            new MutationRevalidator(validator),
             validator);
 
         await Assert.ThrowsAsync<ArgumentException>(async () => await applier.ApplyAsync(
@@ -485,7 +476,6 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
     public async Task ForgedMissingPhysicalTargetIsRejectedBeforeStaging()
     {
         using var temporary = TemporaryWorkspace.Create("mutation-apply-forged-missing");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "stale-lock");
         var path = temporary.Combine("created.md");
         var otherDirectory = temporary.CreateDirectory("other");
         var forgedPhysicalPath = Path.Combine(otherDirectory, "forged.md");
@@ -500,9 +490,9 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
             change.Expectation,
             FileStateSnapshot.Missing(path),
             forgedPhysicalPath);
-        await using var lease = await AcquireAsync(workspace, resolver);
+        await using var lease = await AcquireAsync(workspace);
         var applier = new FileChangeApplier(
-            new MutationRevalidator(validator, resolver),
+            new MutationRevalidator(validator),
             validator);
 
         var receipt = await applier.ApplyAsync(
@@ -522,11 +512,9 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
         Assert.Empty(Stages(temporary));
     }
 
-    private static async ValueTask<WorkspaceLockLease> AcquireAsync(
-        CliWorkspace workspace,
-        PhysicalPathResolver resolver)
+    private async ValueTask<WorkspaceLockLease> AcquireAsync(CliWorkspace workspace)
     {
-        var result = await new WorkspaceLockManager(resolver).AcquireAsync(
+        var result = await lockStore.AcquireAsync(
             new WorkspaceLockRequest(workspace, "test apply", Guid.NewGuid()),
             TestContext.Current.CancellationToken);
         return Assert.IsType<WorkspaceLockLease>(result.Lease);
@@ -538,7 +526,7 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
         FileExpectationValidator validator,
         PhysicalPathResolver resolver)
     {
-        var result = await new MutationRevalidator(validator, resolver).ValidateAsync(
+        var result = await new MutationRevalidator(validator).ValidateAsync(
             lease,
             [change],
             TestContext.Current.CancellationToken);
@@ -552,6 +540,8 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
         {
             DeleteRecoveryBundle(path);
         }
+
+        lockStore.Dispose();
     }
 
     private async ValueTask<RecoveryBundlePreparation> PreparationAsync(

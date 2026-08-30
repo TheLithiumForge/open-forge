@@ -66,8 +66,8 @@ Every other lifecycle mutation that replaces or deletes an existing ordinary
 target prepares one immutable, strictly verified external recovery bundle for
 the complete operation before its first target effect. Creates and no-ops create
 none; failures retain the bundle and report target state without restoration,
-rollback, or compensation. The persistent workspace lock preserves its bytes
-and is owned only through a `FileShare.None` handle.
+rollback, or compensation. The persistent external workspace lock remains zero
+bytes and is owned only through a read/write `FileShare.None` handle.
 
 ## Child Tasks
 

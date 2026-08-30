@@ -98,9 +98,9 @@ or route-host boundary is `incomplete` or `blocked`, and no managed mutation
 occurs.
 
 Before a workspace effect, the implementation must hold the persistent reusable
-`.agents/open-forge.lock` path defined by the accepted CLI Architecture.
-Existing bytes are preserved. It holds a `FileShare.None` handle only and never
-writes metadata, deletes, or truncates the lock file. Another process holding
+zero-byte external lock under `LocalApplicationData/OpenForge/locks/v1` defined
+by the accepted CLI Architecture. It holds one read/write `FileShare.None`
+handle and never writes metadata, deletes, or truncates the lock file. Another process holding
 the handle blocks mutation; the lock is concurrency safety, not lifecycle
 authority, recovery evidence, or history.
 

@@ -505,7 +505,7 @@ through an interactive or structured renderer.
 
 Bounded payload streaming serves only semantic length/hash validation. Doctor never
 extracts, discloses, retains, or materializes payload bytes and never turns the
-visible lock file into activity evidence.
+persistent external lock file into activity evidence.
 
 All facts and proposals are derived per invocation. A repeated unchanged
 invocation returns the same semantic result and does not create a synthetic

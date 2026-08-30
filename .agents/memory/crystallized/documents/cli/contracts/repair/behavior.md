@@ -342,9 +342,9 @@ the draft remains `Incomplete`. Create and no-op effects have no entries, and
 every planned existing-target effect has exactly one matching entry. All preparation
 completes before the first effect; `FileChangeApplier` requires the matching
 preparation and performs one final effect per target. Before workspace mutation,
-hold the persistent reusable `.agents/open-forge.lock` with a `FileShare.None`
-handle only; preserve existing lock-file bytes and write no metadata, timestamp,
-or ownership record. The lock is concurrency safety, not lifecycle, history, or
+hold the persistent external zero-byte workspace lock with one read/write
+`FileShare.None` handle; write no metadata, timestamp, or ownership record and
+never truncate or delete it. The lock is concurrency safety, not lifecycle, history, or
 recovery evidence.
 
 ## Dry-Run Parity

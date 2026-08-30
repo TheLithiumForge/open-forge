@@ -1,5 +1,4 @@
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
@@ -9,7 +8,7 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Mutation.Validation;
 
 public sealed class MutationPreflightTests
 {
-    [Fact(DisplayName = "Mutation preflight accepts no-op and blocks duplicate and lock-target sets")]
+    [Fact(DisplayName = "Mutation preflight accepts no-op and blocks duplicate target sets")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public async Task PreflightBlocksStructurallyInvalidChangeSetsBeforeObservation()
     {
@@ -23,17 +22,8 @@ public sealed class MutationPreflightTests
             workspace,
             [change, change],
             CancellationToken.None);
-        var lockTarget = await preflight.ValidateAsync(
-            workspace,
-            [PlannedFileChange.Create(
-                FileExpectation.Missing(
-                    Path.Combine(workspace.LexicalRoot, WorkspaceLockRequest.RelativePath)),
-                "lock"u8)],
-            CancellationToken.None);
-
         Assert.Equal(MutationValidationState.Valid, empty.State);
         Assert.Equal(MutationValidationState.Blocked, duplicate.State);
-        Assert.Equal(MutationValidationState.Blocked, lockTarget.State);
     }
 
     [Fact(DisplayName = "Mutation preflight blocks duplicate expected physical identities")]

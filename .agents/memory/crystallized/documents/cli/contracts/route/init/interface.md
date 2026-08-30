@@ -369,14 +369,14 @@ every effect. The command has no best-effort or partial-application mode.
 Directory creation is a separate effect from file Create/Replace/Delete and is
 limited to the intended route chain. In generic mode, when a fully preflighted
 plan starts without `.agents`, that exact container is the one visible planned
-and reported lock-bootstrap directory. `WorkspaceLockManager` confirms it is
-missing, creates and verifies it immediately before opening
-`.agents/open-forge.lock`, and leaves it as reported residual state on later
-contention, failure, or interruption. Cancellation before bootstrap creates
-nothing. Framework mode requires a trusted Install and therefore cannot use an
-absent `.agents` bootstrap.
+and reported ordinary directory-create effect after the external workspace
+lease is acquired. The shared applier confirms it is missing, creates and
+verifies it, and leaves it as reported residual state on later failure or
+interruption. Cancellation or lock contention before acquisition creates
+nothing. Framework mode requires a trusted Install and therefore cannot start
+from an absent `.agents` directory.
 
-While holding the workspace lease, the command applies every other explicitly
+While holding the workspace lease, the command applies every explicitly
 planned missing directory parent-first through the shared capability. Each is a
 descendant below `.agents`: immediately revalidate the missing target and its
 exact contained physical parent, call ordinary `Directory.CreateDirectory`, then
@@ -446,9 +446,10 @@ actual residual draft or final path; a valid final remains when preparation
 completed. A closed final ZIP may remain after abrupt process termination,
 without an executable crash or power-loss guarantee.
 Recovery provenance does not classify current target state. Cleanup owns exact
-named final and draft deletion under its separate lease-bound contract. The persistent reusable
-`.agents/open-forge.lock` preserves existing bytes and is held with a
-`FileShare.None` handle only; it never receives metadata writes, deletion, or
+named final and draft deletion under its separate lease-bound contract. The
+persistent reusable zero-byte external workspace lock below
+`LocalApplicationData/OpenForge/locks/v1` is held with one read/write
+`FileShare.None` handle; it never receives metadata writes, deletion, or
 truncation.
 
 ## Human Output
@@ -702,10 +703,10 @@ of this Interface Contract:
   immediate missing-target and physical-parent revalidation, ordinary BCL
   creation, post-verification, retained residuals, and no rollback,
   compensation, removal, or recovery entry.
-- Generic-mode missing-`.agents` bootstrap planning/reporting, immediate
-  verification before lock acquisition, cancellation/contention/residual
-  behavior, exclusion from the descendant applier, and proof that Framework
-  mode requires existing trusted Install state instead.
+- Generic-mode missing-`.agents` planning/reporting as the first ordinary
+  lease-bound directory effect, cancellation/contention before workspace
+  effects, later residual behavior, and proof that Framework mode requires
+  existing trusted Install state instead.
 - Seven semantic results, including safe `incomplete` with no write, blocked
   unsafe or ambiguous safety, `Failed`/positively observed `Retained` recovery
   `attention`, and failed post-write, application, verification, or

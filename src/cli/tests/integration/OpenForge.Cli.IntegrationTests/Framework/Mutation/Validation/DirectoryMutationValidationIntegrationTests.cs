@@ -5,12 +5,16 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Mutation.Validation;
 
-public sealed class DirectoryMutationValidationIntegrationTests
+public sealed class DirectoryMutationValidationIntegrationTests : IDisposable
 {
+    private readonly WorkspaceLockTestStore lockStore = WorkspaceLockTestStore.Create(
+        "directory-validation-lock-store");
+
     [Fact(DisplayName = "Combined preflight preserves explicit parent-first directory and file order")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task CombinedPreflightAcceptsExplicitParentFirstClosure()
@@ -105,11 +109,12 @@ public sealed class DirectoryMutationValidationIntegrationTests
         Assert.False(Directory.Exists(temporary.Combine("missing")));
     }
 
-    [Fact(DisplayName = "Combined preflight permits only descendants of the lock bootstrap directory")]
+    [Fact(DisplayName = "Combined preflight requires .agents as an ordinary parent-first directory effect")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
-    public async Task CombinedPreflightAllowsExactAgentsBootstrapParentException()
+    public async Task CombinedPreflightRequiresExactAgentsParentClosure()
     {
         using var temporary = TemporaryWorkspace.Create("directory-validation-agents-bootstrap");
+        var agentsPath = temporary.Combine(".agents");
         var routesPath = temporary.Combine(".agents/routes");
         var nestedPath = temporary.Combine(".agents/routes/child");
         var workspace = Workspace(temporary);
@@ -117,18 +122,19 @@ public sealed class DirectoryMutationValidationIntegrationTests
 
         var descendant = await preflight.ValidateAsync(
             workspace,
-            directoryCreations: [Creation(routesPath)],
+            directoryCreations: [Creation(agentsPath), Creation(routesPath)],
             fileChanges: [],
             TestContext.Current.CancellationToken);
         var omittedIntermediate = await preflight.ValidateAsync(
             workspace,
-            directoryCreations: [Creation(nestedPath)],
+            directoryCreations: [Creation(agentsPath), Creation(nestedPath)],
             fileChanges: [],
             TestContext.Current.CancellationToken);
 
         Assert.Equal(MutationValidationState.Valid, descendant.State);
-        Assert.Single(descendant.Checks);
-        Assert.Equal(routesPath, descendant.Checks[0].PhysicalPath);
+        Assert.Equal(2, descendant.Checks.Count);
+        Assert.Equal(agentsPath, descendant.Checks[0].PhysicalPath);
+        Assert.Equal(routesPath, descendant.Checks[1].PhysicalPath);
         Assert.Equal(MutationValidationState.Blocked, omittedIntermediate.State);
         Assert.False(Directory.Exists(temporary.Combine(".agents")));
     }
@@ -184,13 +190,12 @@ public sealed class DirectoryMutationValidationIntegrationTests
     public async Task CombinedRevalidationRequiresLiveLeaseAndNonemptyPlan()
     {
         using var temporary = TemporaryWorkspace.Create("directory-revalidation-lease");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "persistent-lock");
         var workspace = Workspace(temporary);
         var resolver = new PhysicalPathResolver();
         var validator = new FileExpectationValidator(resolver);
-        var revalidator = new MutationRevalidator(validator, resolver);
+        var revalidator = new MutationRevalidator(validator);
         var creation = Creation(temporary.Combine("route"));
-        await using var lease = await AcquireAsync(workspace, resolver);
+        await using var lease = await AcquireAsync(workspace);
 
         var valid = await revalidator.ValidateAsync(
             lease,
@@ -222,11 +227,9 @@ public sealed class DirectoryMutationValidationIntegrationTests
     private static MutationPreflight Preflight()
         => new(new FileExpectationValidator(new PhysicalPathResolver()));
 
-    private static async ValueTask<WorkspaceLockLease> AcquireAsync(
-        CliWorkspace workspace,
-        PhysicalPathResolver resolver)
+    private async ValueTask<WorkspaceLockLease> AcquireAsync(CliWorkspace workspace)
     {
-        var result = await new WorkspaceLockManager(resolver).AcquireAsync(
+        var result = await lockStore.AcquireAsync(
             new WorkspaceLockRequest(workspace, "directory validation", Guid.NewGuid()),
             TestContext.Current.CancellationToken);
         return Assert.IsType<WorkspaceLockLease>(result.Lease);
@@ -237,4 +240,6 @@ public sealed class DirectoryMutationValidationIntegrationTests
             lexicalRoot: temporary.Path,
             physicalRoot: temporary.Path,
             selectedBy: CliWorkspaceSelectionMethod.ExplicitWorkspace);
+
+    public void Dispose() => lockStore.Dispose();
 }

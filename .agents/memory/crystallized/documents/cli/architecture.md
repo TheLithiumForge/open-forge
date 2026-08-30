@@ -672,7 +672,7 @@ unsupported, or unavailable condition. Neither condition is absence.
 
 Status and Doctor do not acquire the workspace lease, report activity, or infer
 activity from bundle contents, a filename, age, PID, marker, journal, or the
-visible persistent lock file.
+persistent external lock file.
 
 Mutation commands follow this visible shape:
 
@@ -697,24 +697,28 @@ plan, effect ordering, findings, and result. No generic engine decides product
 behavior or automatically restores, rolls back, or compensates for target
 effects.
 
-The lock has one explicit bootstrap boundary. When a fully preflighted Install
-or generic Route Init plan requires a missing `.agents` container, that exact
-directory is a visible planned and reported support effect. Immediately before
-taking `.agents/open-forge.lock`, `WorkspaceLockManager` confirms the missing
-contained path, creates it with ordinary `Directory.CreateDirectory`, re-resolves
-and verifies it as the expected contained ordinary directory, then opens the
-lock. Cancellation before bootstrap creates nothing. The directory remains and
-is reported as residual state after later contention, failure, or interruption;
-the CLI never removes or compensates for it. This is the sole pre-lease directory
-effect and the sole directory excluded from the shared lease-bound applier.
+The workspace lock is outside the workspace under the BCL local application-data
+directory at
+`OpenForge/locks/v1/<friendly-workspace-name>-<full-sha256-workspace-key>.lock`.
+The full lowercase SHA-256 key of the normalized physical workspace path is the
+identity authority. The bounded filename-safe friendly prefix derives from the
+final normalized workspace directory name, falls back to `workspace`, and is
+display only. Managed and native Integration tests inject an isolated lock-store
+root. Published process tests redirect an initially absent application-data root
+on non-Windows. On Windows they exercise the real BCL Known Folder with a unique
+temporary workspace, require its exact full-hash lock path to be absent before
+execution, and remove only the proven ordinary zero-byte test lock plus empty
+lock-catalogue ancestors that the test observed absent before execution.
 
-`WorkspaceLockResult.BootstrapOutcome` is nullable in acquired, failed, and
-cancelled results. `null` means no directory outcome was successfully observed.
-`Existing` means the pre-existing `.agents` directory was validated.
-`Materialized` means the manager observed absence, attempted ordinary BCL
-creation, and validated the resulting directory. Preserve any reached outcome
-when acquisition later fails or is cancelled; an acquired result requires a
-non-null outcome. `Materialized` makes no hostile-process creator-identity claim.
+The lock is a persistent reusable zero-byte ordinary file. The operation holds
+one read/write `FileShare.None` handle and never writes metadata, truncates, or
+deletes the file. Persistence is normal infrastructure: unlinking and recreating
+the pathname while another process retains an open handle could split
+coordination. File existence is not lock ownership, activity, lifecycle
+authority, or recovery history. Cancellation before acquisition creates no
+workspace effect. Current-user lock-store resolution is deferred until
+acquisition after the initial cancellation boundary; composition, help, dry-run,
+verified no-op, and prompt refusal do not create lock infrastructure.
 
 Directory creation is one separate shared native effect, not a
 `PlannedFileChangeKind` and not an expansion of file replacement. A command plan
@@ -864,12 +868,11 @@ section. Update may reconcile recorded targets independently. Route Init may
 append scoped targets only after it verifies a trusted current root Install from
 the running binary's embedded inventory.
 
-The mutation lock remains `.agents/open-forge.lock`, is persistent and reusable,
-and preserves any existing bytes. A mutating operation only holds a
-`FileShare.None` handle; it never writes lock metadata and never deletes or
-truncates the lock file. `LocalApplicationData` is only the external
-recovery-bundle location; it is never the workspace lock location. Existing
-legacy lifecycle formats are ordinary untouched content.
+The external mutation lock and recovery catalogue occupy separate
+application-owned versioned subtrees under `LocalApplicationData`. A mutating
+operation never treats the persistent zero-byte lock as recovery content or a
+cleanup candidate. Existing legacy lifecycle formats are ordinary untouched
+content.
 
 ## Serialization And Dependencies
 

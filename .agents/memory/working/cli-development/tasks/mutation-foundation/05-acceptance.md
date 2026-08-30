@@ -23,8 +23,8 @@ hidden restoration/rollback/compensation, legacy lifecycle recognition, or
 unlocked workspace effect.
 
 Confirm the current authority, rather than historical child closeouts, is
-implemented: the persistent lock preserves its existing bytes and is owned only
-through a `FileShare.None` handle; `FileChangeApplier` requires a matching
+implemented: the persistent external lock remains zero bytes and is owned only
+through one read/write `FileShare.None` handle; `FileChangeApplier` requires a matching
 verified `RecoveryBundlePreparation` for every existing-target effect
 (`Replace`, `ReplaceGeneratedRegion`, or `Delete`) and none for Create;
 standalone Extension Create remains create-only and bundle-free. Future command

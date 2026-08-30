@@ -121,10 +121,10 @@ public sealed class RecoveryBundleContractTests
         var root = RecoveryBundlePathIdentity.ResolveStoreRoot(
             Environment.SpecialFolderOption.None)
             ?? throw new InvalidOperationException("LocalApplicationData must be observable for path evidence.");
-        var key = RecoveryBundlePathIdentity.WorkspaceKey(workspace.PhysicalRoot);
+        var key = WorkspaceIdentity.Key(workspace.PhysicalRoot);
 
         Assert.Equal(RecoveryBundleFormatV1.Sha256HexLength, key.Length);
-        Assert.Equal(key, RecoveryBundlePathIdentity.WorkspaceKey(
+        Assert.Equal(key, WorkspaceIdentity.Key(
             Path.Combine(workspace.PhysicalRoot, ".")));
         Assert.Equal(
             Path.Combine(root, key, $"operation-{operationId:N}.zip"),

@@ -9,12 +9,12 @@ open-forge:
 ## Task State
 
 - State: Complete. Historical implementation remains recorded at `5b926e7` from
-  exact accepted contract record `3967534`. Exact production candidate
-  `e7d937f` removes lock metadata writes, preserves existing lock bytes, and
-  closes the current authority correction with final integrated evidence.
+  exact accepted contract record `3967534`; `e7d937f` later removed metadata
+  writes. The accepted C2-era correction relocates the lock externally, requires
+  persistent zero-byte identity, and removes workspace bootstrap state.
 - Responsible role: Overseer-managed Task Mastermind, sequential.
 - Parent: [Mutation Foundation](_mutation-foundation.md).
-- Last updated: 2026-08-29.
+- Last updated: 2026-08-30.
 
 ## Expected Outcome
 
@@ -24,10 +24,11 @@ before the first effect.
 
 ## Components
 
-- `WorkspaceLockManager` acquires the persistent `.agents/open-forge.lock` with a
-  real exclusive OS handle, cancellation, and typed failure states. Disposal
-  releases the handle; stale file existence is not ownership. Existing bytes
-  are preserved and the manager writes no metadata.
+- `WorkspaceLockManager` acquires one persistent external zero-byte lock below
+  `LocalApplicationData/OpenForge/locks/v1` with a real exclusive OS handle,
+  cancellation, and typed failure states. Disposal releases the handle; stale
+  file existence is not ownership. The manager writes no metadata and never
+  truncates or deletes the persistent file.
 - `LifecycleStore` strictly reads and source-generates schema version 1, rejects
   malformed/unknown/legacy content, and writes only through atomic application.
 - `FileExpectationValidator` checks existence, kind, resolved physical path, and hash
@@ -45,24 +46,24 @@ before the first effect.
   byte-range lock, platform branch, `WriteThrough` option, or forced-durability
   flush. `WorkspaceLockLease` owns that exact handle; file existence is not
   acquisition.
-- Acquisition resolves the lock path through `PhysicalPathResolver` before use.
-  An existing `.agents` container must be an ordinary physically contained
-  directory. An absent container may be created only as lock-acquisition
-  bootstrap after the final pre-open cancellation check; it is immediately
-  re-resolved before the lock file is opened. That empty container is never
-  deleted on contention or failure because another actor may already own or use
-  it. No planned target, lifecycle, or recovery-bundle effect occurs before the
-  acquired result.
+- Acquisition uses the normalized physical workspace path and authoritative full
+  lowercase SHA-256 key. The filename is
+  `<friendly-workspace-name>-<full-sha256-workspace-key>.lock`; the bounded
+  filename-safe friendly prefix is display only and has deterministic
+  `workspace` fallback. No planned workspace, lifecycle, or recovery-bundle
+  effect occurs before the acquired result.
 - After ownership, the manager does not write lock metadata, timestamps, command,
-  operation, process, workspace, or recovery facts. Existing lock bytes remain
-  unchanged. The held `FileShare.None` handle alone establishes ownership.
+  operation, process, workspace, or recovery facts. The file remains exactly
+  zero bytes. The held read/write `FileShare.None` handle alone establishes
+  ownership.
 - An unlocked existing file is opened and reused. The managed BCL does not expose
   a portable sharing-violation type, so an ambiguous pre-effect open `IOException`
   is reported as a typed input/output failure rather than inferred contention;
   the manager does not delete, truncate, replace, or inspect another actor's
   metadata. Cancellation before ownership yields `Cancelled`. Path, access,
   unsupported, and I/O failures remain typed. Disposal alone releases ownership;
-  the visible unlocked file may remain.
+  the external unlocked file intentionally remains because unlink/recreate could
+  split coordination across open handles.
 
 ### Lifecycle store
 
@@ -127,8 +128,9 @@ use real isolated files, handles, links, and cancellation.
 ## Required Behavior
 
 No workspace effect occurs before lock ownership and successful revalidation.
-Cancellation before effects leaves bytes unchanged. Lock contention never deletes
-or replaces another actor's lock file, and acquisition never changes its bytes.
+Cancellation before effects leaves workspace bytes unchanged. Lock contention
+never deletes or replaces another actor's lock file, and acquisition requires
+the persistent file to remain zero bytes.
 Workspace-free `extension create` cannot call the workspace lock manager.
 For existing-target mutations, the subsequent recovery child supplies one
 verified external bundle before the first Replace/Delete effect; this child does
@@ -152,8 +154,8 @@ AOT Integration runs the same lock and lifecycle path.
 | --- | --- | --- | --- |
 | MFL-001 | Lock acquisition and disposal | Integration | One exclusive `FileShare.None` handle is held until disposal; unlocked file is reusable |
 | MFL-002 | Contention and stale file | Integration | Second handle returns a truthful typed pre-effect I/O result without truncation/deletion; stale unlocked file acquires |
-| MFL-003 | Lock path safety and cancellation | Integration | Missing container bootstrap, internal/external links, non-directory container, access/I/O classification, and pre-acquire cancellation |
-| MFL-004 | Persistent lock bytes and ownership | Integration | Existing bytes survive acquisition and disposal; only a held `FileShare.None` handle establishes ownership, with no metadata write, truncation, or deletion |
+| MFL-003 | Lock path safety and cancellation | Integration | Isolated external store, ordinary zero-byte target, directory/link/nonzero rejection, access/I/O classification, and pre-acquire cancellation |
+| MFL-004 | Persistent lock identity and ownership | Unit and Integration | Friendly bounded filename plus full normalized-workspace SHA-256 authority; only a held `FileShare.None` handle establishes ownership; persistent zero-byte reuse has no metadata write, truncation, or deletion |
 | MFL-005 | File expectation observation | Integration | Missing/file/directory, exact bytes/hash, resolved physical path, unsafe link, type mismatch, replacement race, and cancellation |
 | MFL-006 | Preflight | Unit and Integration | Stable ordered valid set and empty no-op; duplicate logical target, present or prospective physical alias, stale, unsafe, failed, and cancelled sets |
 | MFL-007 | Under-lock revalidation | Integration | Live same-workspace lease required and an after-plan change blocks before any effect |
@@ -208,11 +210,12 @@ filesystem, a new dependency, or command-policy promotion.
   focused and full test evidence remains historical evidence for that revision.
   The historical review and evidence must not be read as proof of the current
   no-metadata authority.
-- Current result: acquisition preserves persistent lock bytes and writes no
-  metadata. Final M1 focused Unit `43/43`, Integration `47/47`, full managed
+- Current result: acquisition maintains persistent zero-byte lock identity and
+  writes no metadata. Final M1 focused Unit `43/43`, Integration `47/47`, full managed
   `1096/458/120`, focused published `linux-x64` Recovery/source-generation
   Native AOT `10/10`, and full Native AOT Integration `458/458` pass with zero
-  skips. The direct lock evidence proves one exclusive held handle, contention,
-  reuse, bootstrap, cancellation, unsafe targets, and unchanged existing bytes.
+  skips. The later accepted correction adds direct evidence for one external
+  exclusive held handle, full normalized-workspace hash identity, persistent
+  zero-byte reuse, contention, cancellation, and unsafe targets.
 - Blockers: none within this child. Child 03 and Child 04 are independently
   Complete.

@@ -223,7 +223,7 @@ second run, no unrelated changes, process, and AOT.
 
 ## Stop Conditions
 
-Stop before inferring a workspace, acquiring `.agents/open-forge.lock`, registering
+Stop before inferring a workspace, acquiring the external workspace lock, registering
 the package automatically, resolving dependency availability, installing it,
 adding optional-metadata questions, an attempt limit or generic retry framework,
 or using a generic package generator.

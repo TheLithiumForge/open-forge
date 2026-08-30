@@ -176,10 +176,10 @@ facts, baseline/current/intended fingerprints, current exact bytes, owner sets,
 route and generated effects, lifecycle publication, expected-state guards,
 affected paths, recovery-bundle readiness, per-effect verification, and final
 cleanup handling. One failed selected condition blocks all effects. Before the
-first workspace effect, obtain the actual OS lock for the visible
-`.agents/open-forge.lock` path defined by the accepted CLI Architecture. The
-lock file is persistent and reusable: preserve existing bytes and write no
-metadata, timestamp, or ownership record. Hold a `FileShare.None` handle;
+first workspace effect, obtain the actual OS lock for the persistent external
+zero-byte path under `LocalApplicationData/OpenForge/locks/v1` defined by the
+accepted CLI Architecture. The lock file is persistent and reusable: write no
+metadata, timestamp, or ownership record. Hold one read/write `FileShare.None` handle;
 existence is not lock ownership, and another process holding the handle blocks
 mutation. A crash releases the OS lock. The lock is not lifecycle authority,
 history, or recovery evidence.

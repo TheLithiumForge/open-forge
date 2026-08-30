@@ -319,13 +319,14 @@ all effects. There is no partial or best-effort application.
 
 Keep directory creation separate from file Create/Replace/Delete and limit it
 to directories in the intended route chain. A generic plan that starts without
-`.agents` exposes that exact path as the one lock-bootstrap effect. Immediately
-before acquiring `.agents/open-forge.lock`, `WorkspaceLockManager` confirms the
+`.agents` exposes that exact path as its first ordinary directory-create effect.
+After acquiring the external workspace lease, the shared applier confirms the
 path is missing, creates and verifies it, and reports its actual residual state.
-Cancellation before bootstrap creates nothing. Framework mode requires an
-existing trusted Install state and therefore never bootstraps absent `.agents`.
+Cancellation or lock contention before acquisition creates nothing. Framework
+mode requires an existing trusted Install state and therefore never creates an
+absent `.agents` root.
 
-While holding the workspace lease, apply every other explicitly planned missing
+While holding the workspace lease, apply every explicitly planned missing
 directory parent-first through the shared capability. Each is a descendant below
 `.agents`: immediately revalidate the missing target and its exact contained
 physical parent, call ordinary `Directory.CreateDirectory`, then verify the
@@ -333,12 +334,6 @@ resulting contained ordinary directory. Do not remove, rename, claim, or format
 existing user content. A directory has no recovery entry; after contention,
 later failure, or interruption, it remains and is reported as residual state.
 The operation never rolls it back, compensates for it, or removes it.
-
-Every `WorkspaceLockResult` preserves the nullable bootstrap outcome already
-reached. `Existing` records a validated pre-existing `.agents`, `Materialized`
-records observed absence followed by attempted BCL creation and validation, and
-`null` means neither outcome was successfully observed. Acquisition requires a
-non-null outcome; later failure or cancellation does not erase one.
 
 Generated-navigation effects are part of this same parent plan. They use the
 complete [Index Behavior Contract](../../index-candidate/behavior.md) projection, ordering, generated
@@ -371,14 +366,13 @@ containment fact, expected-state condition, and recovery-bundle condition
 required by the Interface Contract. A verified no-op has no affected mutation
 path and therefore does not need a bundle.
 
-Application first exposes and applies the missing-`.agents` lock bootstrap when
-the generic plan requires it, then holds the persistent workspace lease. It
-immediately revalidates the complete plan, prepares and verifies the complete
-external recovery bundle when an existing-target effect requires one, applies
-and verifies the separate parent-first descendant directory effects, and only
-then begins the planned file and bounded-region effects with their own immediate
-target revalidation. Bundle preparation completes before every post-lease
-workspace effect; the accepted lock bootstrap necessarily precedes the lease.
+Application first acquires the persistent external workspace lease, then
+immediately revalidates the complete plan and prepares and verifies the complete
+external recovery bundle when an existing-target effect requires one. It applies
+and verifies the separate parent-first directory effects, beginning with missing
+`.agents` in generic mode, and only then begins the planned file and
+bounded-region effects with their own immediate target revalidation. Bundle
+preparation completes before every workspace effect.
 
 After preflight, the same finite attention rule applies to both modes: a dry-run
 with any new entrypoint with exact `NeedsAuthoring` in its intended tags forms
@@ -459,9 +453,9 @@ Caller cancellation or interruption is `interrupted` only when no stronger
 failure remains. An `incomplete` or `blocked` result never begins a write.
 
 Expected-state revalidation and preservation of unexpected concurrent edits are
-current safety meaning. The persistent reusable workspace lock at
-`.agents/open-forge.lock` preserves existing bytes and is held with a
-`FileShare.None` handle only; it never receives metadata writes, deletion, or
+current safety meaning. The persistent reusable zero-byte external workspace
+lock below `LocalApplicationData/OpenForge/locks/v1` is held with one read/write
+`FileShare.None` handle; it never receives metadata writes, deletion, or
 truncation. The BCL-first filesystem boundary and recovery-bundle identity model
 are defined by the CLI Architecture; they are not public command flags.
 
@@ -545,11 +539,10 @@ in addition to the public checks in [Interface Verification](interface.md#verifi
   creation, post-verification, retained residuals, and no rollback,
   compensation, removal, recovery protocol, P/Invoke, or hostile same-user
   creator-identity guarantee.
-- Generic-mode missing-`.agents` bootstrap planning/reporting, immediate
-  verification before lock acquisition, cancellation/contention/residual
-  behavior, exclusion from the descendant applier, nullable lock-result outcome
-  retention across acquired/failed/cancelled states, and Framework-mode refusal
-  to bootstrap absent trusted Install state.
+- Generic-mode missing-`.agents` planning/reporting as the first ordinary
+  lease-bound directory effect, cancellation/contention before workspace
+  effects, later residual behavior, and Framework-mode refusal when trusted
+  Install state is absent.
 - External bundle storage, semantic final-ZIP verification, collision handling,
   typed post-verification deletion state/disposition facts, and exact named
   lease-bound Cleanup.

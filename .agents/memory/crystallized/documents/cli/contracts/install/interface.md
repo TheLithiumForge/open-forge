@@ -249,29 +249,25 @@ none. All preparation is complete before the first effect. Unavailable storage
 is `incomplete` before effects; a collision or failed final verification is
 `blocked` before effects.
 
-Directory creation is a separate effect from file Create/Replace. If the
-fully preflighted plan starts without `.agents`, that exact path is the one
-visible planned and reported lock-bootstrap directory. Immediately before
-opening `.agents/open-forge.lock`, `WorkspaceLockManager` confirms it is missing,
-creates it through ordinary `Directory.CreateDirectory`, re-resolves and verifies
-it, then acquires the lock. Cancellation before bootstrap creates nothing.
-
-While holding the workspace lease, Install applies every other explicitly
-planned missing directory parent-first through the shared capability. Each is a
-descendant below `.agents`: immediately revalidate the missing target and exact
-contained physical parent, call ordinary `Directory.CreateDirectory`, then verify
-the resulting contained ordinary directory. A created or bootstrapped directory
-remains and is reported as residual state if lock acquisition or a later effect
+Directory creation is a separate effect from file Create/Replace. If the fully
+preflighted plan starts without `.agents`, that exact path is the first ordinary
+visible planned and reported directory-create effect. Install first acquires the
+external workspace lease, then immediately revalidates the missing target and
+exact contained physical parent, calls ordinary `Directory.CreateDirectory`, and
+verifies the resulting contained ordinary directory. Every later missing
+directory is applied parent-first through the same shared capability. A verified
+created directory remains and is reported as residual state if a later effect
 fails or is interrupted. Directories have no recovery entry and are never rolled
 back, compensated for, or removed by Install.
 
-Workspace mutation uses the persistent, reusable `.agents/open-forge.lock` path
-under the accepted CLI Architecture. Existing bytes are preserved; the
-operation holds only a `FileShare.None` handle and never writes metadata,
-deletes, or truncates the lock file. File existence is not lock ownership. An
-active handle blocks mutation; lock behavior is concurrency safety, not
-lifecycle authority or recovery history. `LocalApplicationData` stores recovery
-bundles only; it is not a lock location.
+Workspace mutation uses the persistent reusable zero-byte external lock under
+`LocalApplicationData/OpenForge/locks/v1`, named with a display-only friendly
+workspace prefix and the authoritative full SHA-256 key of the normalized
+physical workspace path. The operation holds one read/write `FileShare.None`
+handle and never writes metadata, truncates, or deletes the lock file. File
+existence is not lock ownership. An active handle blocks mutation; lock behavior
+is concurrency safety, not lifecycle authority or recovery history. The
+application-owned lock and recovery subtrees are separate.
 
 After final verification, whole-command success deletes only the positively
 recognized bundle it created. `Deleted`/`Removed` permits normal completion.
@@ -599,9 +595,8 @@ Future evidence must cover:
   workspace lease, immediate missing-target and physical-parent revalidation,
   ordinary BCL creation, post-verification, and retained residual reporting
   without rollback, compensation, removal, or recovery provenance;
-- the single visible planned/reported missing-`.agents` lock bootstrap before
-  lease acquisition, its verification and retained residual behavior, and
-  exclusion of `.agents` itself from the lease-bound descendant applier;
+- missing `.agents` as the first ordinary visible planned/reported lease-bound
+  directory-create effect, with verification and retained residual behavior;
 - seven statuses, including `Failed`/positively observed `Retained` recovery
   `attention` and `Failed`/`Unknown` recovery `failed`, ordinary precedence,
   human streams, one-result

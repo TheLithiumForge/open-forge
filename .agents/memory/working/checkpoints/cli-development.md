@@ -111,8 +111,8 @@ unrelated tracked content, and returns the tracked aggregate hash to its baselin
 after the apply and idempotence sequence. Automatic whole-repository dogfood
 blocks on 14 archived metadata sources while known handoff-routing incompleteness
 remains visible; both are repository state rather than candidate failures. The
-persistent zero-byte `.agents/open-forge.lock` is the accepted reusable lock-file
-result. Verification used the existing cached and offline prepared dependency
+later accepted shared correction relocates the reusable zero-byte lock to the
+external application-owned lock catalogue. Verification used the existing cached and offline prepared dependency
 state. No fresh remote NuGet vulnerability audit, remote CI, push, deployment,
 release, or publication is claimed. Final Index closeout tip
 `2b353c48978ee88e53345be8037776181612222c` is locally squash-integrated into
@@ -148,13 +148,9 @@ baseline has a Release build with `0` warnings and `0` errors; managed Unit
 `1284/1284`, Integration `500/500`, and EndToEnd `125/125`; Native AOT
 Integration `500/500` and EndToEnd `125/125`; and zero skips in every stated run.
 
-The accepted lock bootstrap outcome is nullable. `null` means no bootstrap
-directory outcome was successfully observed; `Existing` means the pre-existing
-`.agents` directory was validated; and `Materialized` means its absence was
-observed, ordinary BCL creation ran, and the resulting directory was validated.
-Any reached outcome is retained across acquired, failed, and cancelled results,
-and acquisition requires a non-null outcome. No hostile same-user creator-
-identity guarantee is claimed.
+The accepted shared correction removes lock bootstrap state. The persistent
+zero-byte lock is external under `LocalApplicationData/OpenForge/locks/v1`, and
+missing `.agents` is an ordinary lease-bound directory-create effect.
 
 Closeout checks are read-only and scoped to this record update:
 `open-forge load --bodies` and the selected memory `chain` both exit
@@ -266,14 +262,12 @@ Install → Init → Create → Update → Move → Remove → M3.
 The root composition boundary and all localized D0 choices are closed. Route
 Inspect accepts one answer by one-based number or exact displayed path only when
 stdin and stderr are terminal-capable. The shared directory effect holds the
-workspace lease for descendants below `.agents`, revalidates the missing target
-and physical parent, uses ordinary BCL creation, verifies, and retains residuals
-without recovery or rollback. A missing `.agents` is the sole visible
-planned/reported bootstrap directory created and verified by the lock manager
-before acquisition; it remains on later failure and the lock never moves to
-`LocalApplicationData`. Nullable `WorkspaceLockResult.BootstrapOutcome` retains
-`Existing` or `Materialized` across later acquired, failed, and cancelled states;
-`null` means no directory outcome was successfully observed. Extension Create has exact defaults, an existing safely
+workspace lease, revalidates the missing target and physical parent, uses
+ordinary BCL creation, verifies, and retains residuals without recovery or
+rollback. A missing `.agents` is the first ordinary visible planned/reported
+lease-bound directory effect. The persistent external zero-byte lock uses the
+full normalized-workspace SHA-256 key under the application-owned lock catalogue;
+bootstrap result state no longer exists. Extension Create has exact defaults, an existing safely
 resolved marker-free catalogue-parent boundary, exact-destination-only collision
 inspection, one ordered command-local JSON result, and a missing-fact wizard
 with local invalid correction, EOF-invalid, and cancellation-interrupted

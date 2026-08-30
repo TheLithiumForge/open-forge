@@ -9,6 +9,9 @@ using OpenForge.Cli.Core.Commands.Find.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Index;
 using OpenForge.Cli.Core.Commands.Index.Models.Result;
 using OpenForge.Cli.Core.Commands.Index.Shared.Rendering;
+using OpenForge.Cli.Core.Commands.Install;
+using OpenForge.Cli.Core.Commands.Install.Models.Result;
+using OpenForge.Cli.Core.Commands.Install.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Extension;
 using OpenForge.Cli.Core.Commands.Extension.Create;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Binding;
@@ -37,6 +40,7 @@ using OpenForge.Cli.Core.Commands.Route.List.Models.Binding;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Route.Shared.Rendering;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -53,23 +57,23 @@ internal static class CliCompositionRoot
     {
         return Create(
             process,
-            TextReader.Null,
-            TextWriter.Null,
-            standardInputRedirected: true,
-            promptOutputRedirected: true);
+            new CliCompositionInputs
+            {
+                StandardInput = TextReader.Null,
+                PromptOutput = TextWriter.Null,
+                StandardInputRedirected = true,
+                PromptOutputRedirected = true,
+            });
     }
 
     internal static CliCoreApplication Create(
         CliProcessIdentity process,
-        TextReader standardInput,
-        TextWriter promptOutput,
-        bool standardInputRedirected,
-        bool promptOutputRedirected)
+        CliCompositionInputs inputs)
     {
         var interactiveSession = new CliInteractiveSession(
-            standardInput,
-            promptOutput,
-            canPrompt: !standardInputRedirected && !promptOutputRedirected);
+            standardInput: inputs.StandardInput,
+            promptOutput: inputs.PromptOutput,
+            canPrompt: !inputs.StandardInputRedirected && !inputs.PromptOutputRedirected);
         var rootHelp = new CliHelpContent(
         [
             new CliHelpSection(
@@ -85,6 +89,9 @@ internal static class CliCompositionRoot
                   extension inspect Inspect one installed or available Extension package.
                   extension create  Create one local Extension package scaffold.
                 """),
+            new CliHelpSection(
+                heading: "Lifecycle",
+                body: "  Framework management is established or verified by install without reconciling managed divergence."),
         ]);
         var routeGroup = RouteBinding.CreateGroup();
         var listSymbols = RouteListBinding.CreateSymbols(routeGroup);
@@ -127,11 +134,20 @@ internal static class CliCompositionRoot
         var indexBinding = IndexBinding.Close(
             symbols: indexSymbols,
             help: IndexHelpSections.Create(),
-            operation: IndexOperationFactory.Create().ExecuteAsync,
+            operation: IndexOperationFactory.Create(inputs.LockStoreRoot).ExecuteAsync,
             renderers: new CliRendererSet<IndexResult>(
                 IndexHumanRenderer.Render,
                 IndexJsonRenderer.Render),
             diagnosticRenderer: IndexDiagnosticRenderer.Render);
+        var installSymbols = InstallBinding.CreateSymbols();
+        var installBinding = InstallBinding.Close(
+            symbols: installSymbols,
+            help: InstallHelpSections.Create(),
+            operation: InstallOperationFactory.Create(interactiveSession, inputs.LockStoreRoot).ExecuteAsync,
+            renderers: new CliRendererSet<InstallResult>(
+                InstallHumanRenderer.Render,
+                InstallJsonRenderer.Render),
+            diagnosticRenderer: InstallDiagnosticRenderer.Render);
         var referencesSymbols = ReferencesBinding.CreateSymbols();
         var referencesBinding = ReferencesBinding.Close(
             referencesSymbols,
@@ -205,15 +221,29 @@ internal static class CliCompositionRoot
                     ExtensionHelpSections.CreateGroup(),
                     []),
             ],
-            [listBinding, inspectBinding, findBinding, indexBinding, referencesBinding, extensionListBinding, extensionInspectBinding, extensionCreateBinding, contextBinding],
+            [listBinding, inspectBinding, findBinding, indexBinding, installBinding, referencesBinding, extensionListBinding, extensionInspectBinding, extensionCreateBinding, contextBinding],
             rootLeaves:
             [
                 new CliRootLeaf(findSymbols.FindCommand, []),
                 new CliRootLeaf(indexSymbols.IndexCommand, []),
+                new CliRootLeaf(installSymbols.InstallCommand, []),
                 new CliRootLeaf(referencesSymbols.ReferencesCommand, []),
                 new CliRootLeaf(contextSymbols.ContextCommand, []),
             ]);
         var workspaceSelector = new CliWorkspaceSelector(new PhysicalPathResolver());
         return new CliCoreApplication(process, tree, workspaceSelector);
     }
+}
+
+internal sealed record CliCompositionInputs
+{
+    public required TextReader StandardInput { get; init; }
+
+    public required TextWriter PromptOutput { get; init; }
+
+    public required bool StandardInputRedirected { get; init; }
+
+    public required bool PromptOutputRedirected { get; init; }
+
+    public WorkspaceLockStoreRoot? LockStoreRoot { get; init; }
 }

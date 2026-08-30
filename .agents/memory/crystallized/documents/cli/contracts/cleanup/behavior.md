@@ -124,9 +124,10 @@ treat workspace selection as proof of installation, health, ownership, or
 artifact provenance.
 
 Cleanup uses the existing `WorkspaceLockLease` for cooperating-process exclusion.
-The persistent reusable `.agents/open-forge.lock` is held with `FileShare.None`
-and preserves existing bytes. Cleanup writes no marker, PID, journal, or lock
-metadata and makes no activity inference.
+The persistent external zero-byte lock below
+`LocalApplicationData/OpenForge/locks/v1` is held with one read/write
+`FileShare.None` handle. Cleanup writes no marker, PID, journal, or lock metadata,
+never deletes the lock file, and makes no activity inference.
 
 ## Current Facts And Catalogue Coverage
 

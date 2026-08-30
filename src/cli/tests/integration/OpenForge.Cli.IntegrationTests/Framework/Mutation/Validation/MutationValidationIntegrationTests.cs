@@ -7,12 +7,16 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Mutation.Validation;
 
-public sealed class MutationValidationIntegrationTests
+public sealed class MutationValidationIntegrationTests : IDisposable
 {
+    private readonly WorkspaceLockTestStore lockStore = WorkspaceLockTestStore.Create(
+        "mutation-validation-lock-store");
+
     [Fact(DisplayName = "File expectation validation observes exact real filesystem states")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task ValidatorObservesMissingFileDirectoryMismatchAndCancellation()
@@ -168,15 +172,14 @@ public sealed class MutationValidationIntegrationTests
         var change = PlannedFileChange.Replace(
             FileExpectation.File(path, path, FileExpectation.Hash("before"u8)),
             "intended"u8);
-        var lockResult = await new WorkspaceLockManager(resolver)
-            .AcquireAsync(
-                new WorkspaceLockRequest(workspace, "route update", Guid.NewGuid()),
-                TestContext.Current.CancellationToken);
+        var lockResult = await lockStore.AcquireAsync(
+            new WorkspaceLockRequest(workspace, "route update", Guid.NewGuid()),
+            TestContext.Current.CancellationToken);
         var lease = Assert.IsType<WorkspaceLockLease>(lockResult.Lease);
 
         temporary.MoveFile("document.md", "document-old.md");
         temporary.CreateFile("document.md", "changed-after-entry-replacement");
-        var result = await new MutationRevalidator(validator, resolver).ValidateAsync(
+        var result = await new MutationRevalidator(validator).ValidateAsync(
             lease,
             [change],
             TestContext.Current.CancellationToken);
@@ -186,113 +189,48 @@ public sealed class MutationValidationIntegrationTests
             path,
             TestContext.Current.CancellationToken));
         await lease.DisposeAsync();
-        var lockPath = Path.Combine(workspace.LexicalRoot, WorkspaceLockRequest.RelativePath);
-        File.Delete(lockPath);
-        var lockDirectory = Path.GetDirectoryName(lockPath)
-            ?? throw new InvalidOperationException("The workspace lock path requires a directory.");
-        Directory.Delete(lockDirectory);
+        Assert.True(File.Exists(lockStore.Track(workspace)));
     }
 
-    [Fact(DisplayName = "Mutation revalidation rejects a persistent lock-path retarget"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
-    public async Task RevalidatorRejectsPersistentLockPathRetarget()
+    [Fact(DisplayName = "Mutation revalidation holds external coordination independently of workspace .agents changes"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
+    public async Task RevalidatorUsesExternalLeaseWhenAgentsDirectoryAppears()
     {
-        var root = Directory.CreateTempSubdirectory("open-forge-mutation-revalidation-lock-retarget-").FullName;
-        WorkspaceLockLease? lease = null;
-        try
-        {
-            var lockDirectory = Path.Combine(root, WorkspaceLockRequest.DirectoryName);
-            var firstLockDirectory = Path.Combine(root, "lock-container-a");
-            var secondLockDirectory = Path.Combine(root, "lock-container-b");
-            Directory.CreateDirectory(firstLockDirectory);
-            Directory.CreateDirectory(secondLockDirectory);
-            Directory.CreateSymbolicLink(lockDirectory, firstLockDirectory);
-            var lockPath = Path.Combine(firstLockDirectory, WorkspaceLockRequest.FileName);
-            await File.WriteAllTextAsync(
-                lockPath,
-                "stale-lock",
-                TestContext.Current.CancellationToken);
-            var documentPath = Path.Combine(root, "document.md");
-            await File.WriteAllTextAsync(
-                documentPath,
-                "before",
-                TestContext.Current.CancellationToken);
-            var workspace = new CliWorkspace(
-                root,
-                root,
-                CliWorkspaceSelectionMethod.ExplicitWorkspace);
-            var resolver = new PhysicalPathResolver();
-            var validator = new FileExpectationValidator(resolver);
-            var change = PlannedFileChange.Replace(
-                FileExpectation.File(
-                    documentPath,
-                    documentPath,
-                    FileExpectation.Hash("before"u8)),
-                "intended"u8);
-            var lockResult = await new WorkspaceLockManager(resolver)
-                .AcquireAsync(
-                    new WorkspaceLockRequest(workspace, "route update", Guid.NewGuid()),
-                    TestContext.Current.CancellationToken);
-            lease = Assert.IsType<WorkspaceLockLease>(lockResult.Lease);
-            var revalidator = new MutationRevalidator(validator, resolver);
-            if (OperatingSystem.IsWindows())
-            {
-                Directory.Delete(lockDirectory);
-            }
-            else
-            {
-                File.Delete(lockDirectory);
-            }
-
-            Directory.CreateSymbolicLink(lockDirectory, secondLockDirectory);
-            var retargetedLockPath = Path.Combine(secondLockDirectory, WorkspaceLockRequest.FileName);
-            await File.WriteAllTextAsync(
-                retargetedLockPath,
-                "retargeted-lock",
-                TestContext.Current.CancellationToken);
-            var result = await revalidator.ValidateAsync(
-                lease,
-                [change],
-                TestContext.Current.CancellationToken);
-
-            Assert.Equal(MutationValidationState.Blocked, result.State);
-        }
-        finally
-        {
-            if (lease is not null)
-            {
-                await lease.DisposeAsync();
-            }
-
-            if (Directory.Exists(root))
-            {
-                var lockAlias = Path.Combine(root, WorkspaceLockRequest.DirectoryName);
-                if (Directory.Exists(lockAlias))
-                {
-                    if (OperatingSystem.IsWindows())
-                    {
-                        Directory.Delete(lockAlias);
-                    }
-                    else
-                    {
-                        File.Delete(lockAlias);
-                    }
-                }
-
-                Directory.Delete(root, recursive: true);
-            }
-        }
-    }
-
-    [Fact(DisplayName = "Mutation preflight blocks a contained alias of the reserved lock file before effect"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
-    public async Task PreflightBlocksContainedReservedLockAlias()
-    {
-        using var temporary = TemporaryWorkspace.Create("mutation-validation-lock-alias");
-        var lockPath = temporary.CreateFile(WorkspaceLockRequest.RelativePath, "lock-bytes");
-        var alias = temporary.CreateFileSymbolicLink("lock-alias.md", lockPath);
+        using var temporary = TemporaryWorkspace.Create("mutation-revalidation-agents-appearance");
+        var documentPath = temporary.CreateFile("document.md", "before");
         var workspace = Workspace(temporary);
+        var validator = new FileExpectationValidator(new PhysicalPathResolver());
         var change = PlannedFileChange.Replace(
-            FileExpectation.File(alias, alias, FileExpectation.Hash("lock-bytes"u8)),
-            "must-not-write"u8);
+            FileExpectation.File(
+                documentPath,
+                documentPath,
+                FileExpectation.Hash("before"u8)),
+            "intended"u8);
+        var lockResult = await lockStore.AcquireAsync(
+            new WorkspaceLockRequest(workspace, "route update", Guid.NewGuid()),
+            TestContext.Current.CancellationToken);
+        await using var lease = Assert.IsType<WorkspaceLockLease>(lockResult.Lease);
+        temporary.CreateDirectory(".agents");
+
+        var result = await new MutationRevalidator(validator).ValidateAsync(
+            lease,
+            [change],
+            TestContext.Current.CancellationToken);
+
+        Assert.Equal(MutationValidationState.Valid, result.State);
+        Assert.True(lease.IsHeldFor(workspace));
+        Assert.True(Directory.Exists(temporary.Combine(".agents")));
+    }
+
+    [Fact(DisplayName = "Mutation preflight no longer reserves the former workspace lock path"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
+    public async Task PreflightTreatsFormerWorkspaceLockPathAsOrdinaryTarget()
+    {
+        using var temporary = TemporaryWorkspace.Create("mutation-validation-former-lock-path");
+        temporary.CreateDirectory(".agents");
+        var formerLockPath = temporary.Combine(".agents/open-forge.lock");
+        var workspace = Workspace(temporary);
+        var change = PlannedFileChange.Create(
+            FileExpectation.Missing(formerLockPath),
+            "ordinary-target"u8);
 
         var result = await new MutationPreflight(
                 new FileExpectationValidator(new PhysicalPathResolver()))
@@ -301,11 +239,9 @@ public sealed class MutationValidationIntegrationTests
                 [change],
                 TestContext.Current.CancellationToken);
 
-        Assert.Equal(MutationValidationState.Blocked, result.State);
-        Assert.Empty(result.Checks);
-        Assert.Equal("lock-bytes", await File.ReadAllTextAsync(
-            lockPath,
-            TestContext.Current.CancellationToken));
+        Assert.Equal(MutationValidationState.Valid, result.State);
+        Assert.Single(result.Checks);
+        Assert.False(File.Exists(formerLockPath));
     }
 
     [Fact(DisplayName = "Mutation revalidation detects a stale expectation under the live lock")]
@@ -313,7 +249,6 @@ public sealed class MutationValidationIntegrationTests
     public async Task RevalidatorRequiresLiveLeaseAndDetectsAfterPlanChangeWithoutEffects()
     {
         using var temporary = TemporaryWorkspace.Create("mutation-revalidation-stale");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "stale-lock");
         var path = temporary.CreateFile("document.md", "before");
         var workspace = Workspace(temporary);
         var resolver = new PhysicalPathResolver();
@@ -326,12 +261,11 @@ public sealed class MutationValidationIntegrationTests
             workspace,
             changes,
             TestContext.Current.CancellationToken);
-        var lockResult = await new WorkspaceLockManager(resolver)
-            .AcquireAsync(
-                new WorkspaceLockRequest(workspace, "route update", Guid.NewGuid()),
-                TestContext.Current.CancellationToken);
+        var lockResult = await lockStore.AcquireAsync(
+            new WorkspaceLockRequest(workspace, "route update", Guid.NewGuid()),
+            TestContext.Current.CancellationToken);
         var lease = Assert.IsType<WorkspaceLockLease>(lockResult.Lease);
-        var revalidator = new MutationRevalidator(validator, resolver);
+        var revalidator = new MutationRevalidator(validator);
         var empty = await revalidator.ValidateAsync(
             lease,
             [],
@@ -363,4 +297,6 @@ public sealed class MutationValidationIntegrationTests
             lexicalRoot: temporary.Path,
             physicalRoot: temporary.Path,
             selectedBy: CliWorkspaceSelectionMethod.ExplicitWorkspace);
+
+    public void Dispose() => lockStore.Dispose();
 }

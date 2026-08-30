@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Serialization;
 using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Recovery;
@@ -130,7 +131,7 @@ public sealed class RecoveryBundleCatalogueIntegrationTests
     public async Task DeletionGuardDeletesExactFinalAndDraftUnderHeldLease()
     {
         using var temporary = TemporaryWorkspace.Create("recovery-deletion-success");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "retained-lock");
+        using var lockStore = WorkspaceLockTestStore.Create("recovery-deletion-success-lock-store");
         var workspace = RecoveryBundleStoreIntegrationTests.Workspace(temporary);
         var input = RecoveryBundleStoreIntegrationTests.DeleteInput(
             temporary,
@@ -155,7 +156,7 @@ public sealed class RecoveryBundleCatalogueIntegrationTests
             var initial = await catalogue.ReadAsync(workspace, TestContext.Current.CancellationToken);
             var finalCandidate = Candidate(initial, preparation.BundlePath);
             var draftCandidate = Candidate(initial, draftPath);
-            var lockResult = await new WorkspaceLockManager(new PhysicalPathResolver()).AcquireAsync(
+            var lockResult = await lockStore.AcquireAsync(
                 new WorkspaceLockRequest(workspace, input.Command, input.OperationId),
                 TestContext.Current.CancellationToken);
             await using var lease = Assert.IsType<WorkspaceLockLease>(lockResult.Lease);
@@ -191,7 +192,7 @@ public sealed class RecoveryBundleCatalogueIntegrationTests
     public async Task DeletionGuardBlocksWithoutStableHeldLeaseSnapshot()
     {
         using var temporary = TemporaryWorkspace.Create("recovery-deletion-blocked");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "retained-lock");
+        using var lockStore = WorkspaceLockTestStore.Create("recovery-deletion-blocked-lock-store");
         var workspace = RecoveryBundleStoreIntegrationTests.Workspace(temporary);
         var input = RecoveryBundleStoreIntegrationTests.DeleteInput(
             temporary,
@@ -207,12 +208,11 @@ public sealed class RecoveryBundleCatalogueIntegrationTests
             var catalogue = new RecoveryBundleCatalogue(reader);
             var initial = await catalogue.ReadAsync(workspace, TestContext.Current.CancellationToken);
             var candidate = Candidate(initial, preparation.BundlePath);
-            var manager = new WorkspaceLockManager(new PhysicalPathResolver());
-            var first = await manager.AcquireAsync(
+            var first = await lockStore.AcquireAsync(
                 new WorkspaceLockRequest(workspace, input.Command, input.OperationId),
                 TestContext.Current.CancellationToken);
             var lease = Assert.IsType<WorkspaceLockLease>(first.Lease);
-            var contended = await manager.AcquireAsync(
+            var contended = await lockStore.AcquireAsync(
                 new WorkspaceLockRequest(workspace, "cleanup", Guid.NewGuid()),
                 TestContext.Current.CancellationToken);
             Assert.Equal(WorkspaceLockState.Failed, contended.State);
@@ -235,7 +235,7 @@ public sealed class RecoveryBundleCatalogueIntegrationTests
                     TestContext.Current.CancellationToken);
             }
 
-            var reacquired = await manager.AcquireAsync(
+            var reacquired = await lockStore.AcquireAsync(
                 new WorkspaceLockRequest(workspace, "cleanup", Guid.NewGuid()),
                 TestContext.Current.CancellationToken);
             await using var held = Assert.IsType<WorkspaceLockLease>(reacquired.Lease);
@@ -286,8 +286,8 @@ public sealed class RecoveryBundleCatalogueIntegrationTests
             SchemaVersion = RecoveryBundleFormatV1.SchemaVersion + 1,
             Command = "future",
             OperationId = operationId.ToString(RecoveryBundleFormatV1.OperationIdFormat),
-            WorkspacePath = RecoveryBundlePathIdentity.NormalizeWorkspacePath(workspace.PhysicalRoot),
-            WorkspaceKey = RecoveryBundlePathIdentity.WorkspaceKey(workspace.PhysicalRoot),
+            WorkspacePath = WorkspaceIdentity.NormalizePhysicalPath(workspace.PhysicalRoot),
+            WorkspaceKey = WorkspaceIdentity.Key(workspace.PhysicalRoot),
             Entries = [],
         };
         await using var file = new FileStream(path, FileMode.CreateNew, FileAccess.Write, FileShare.None);

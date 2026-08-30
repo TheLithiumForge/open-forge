@@ -19,7 +19,7 @@ public sealed class IndexOperationIntegrationTests
         missing.ReplaceRootText("# Root\n");
         var missingBefore = missing.SnapshotHashes();
 
-        var missingResult = await IndexOperationFactory.Create().ExecuteAsync(
+        var missingResult = await IndexOperationFactory.Create(missing.LockStoreRoot).ExecuteAsync(
             missing.Request(IndexMode.Apply),
             TestContext.Current.CancellationToken);
 
@@ -33,7 +33,7 @@ public sealed class IndexOperationIntegrationTests
         unsafeTarget.ReplaceRootBytes([0xC3, 0x28]);
         var unsafeBefore = unsafeTarget.SnapshotHashes();
 
-        var unsafeResult = await IndexOperationFactory.Create().ExecuteAsync(
+        var unsafeResult = await IndexOperationFactory.Create(unsafeTarget.LockStoreRoot).ExecuteAsync(
             unsafeTarget.Request(IndexMode.Apply),
             TestContext.Current.CancellationToken);
 
@@ -50,7 +50,7 @@ public sealed class IndexOperationIntegrationTests
         using var workspace = IndexOperationWorkspace.Create("index-operation-dry-run");
         var before = workspace.SnapshotHashes();
 
-        var result = await IndexOperationFactory.Create().ExecuteAsync(
+        var result = await IndexOperationFactory.Create(workspace.LockStoreRoot).ExecuteAsync(
             workspace.Request(IndexMode.DryRun),
             TestContext.Current.CancellationToken);
 
@@ -70,7 +70,7 @@ public sealed class IndexOperationIntegrationTests
     public async Task ApplyPreservesUnrelatedBytesRemovesRecoveryAndSecondRunIsNoOp()
     {
         using var workspace = IndexOperationWorkspace.Create("index-operation-apply");
-        var operation = IndexOperationFactory.Create();
+        var operation = IndexOperationFactory.Create(workspace.LockStoreRoot);
 
         var first = await operation.ExecuteAsync(
             workspace.Request(IndexMode.Apply),
@@ -114,7 +114,7 @@ public sealed class IndexOperationIntegrationTests
     public async Task MultiTargetApplyPreservesExactBytesRemovesRecoveryAndSecondRunIsNoOp()
     {
         using var workspace = IndexOperationWorkspace.CreateMultiTarget("index-operation-multi-target");
-        var operation = IndexOperationFactory.Create();
+        var operation = IndexOperationFactory.Create(workspace.LockStoreRoot);
 
         var first = await operation.ExecuteAsync(
             workspace.MultiTargetRequest(IndexMode.Apply),
@@ -192,7 +192,7 @@ public sealed class IndexOperationIntegrationTests
         IndexResult result;
         await using (var held = workspace.HoldLock())
         {
-            result = await IndexOperationFactory.Create().ExecuteAsync(
+            result = await IndexOperationFactory.Create(workspace.LockStoreRoot).ExecuteAsync(
                 workspace.Request(IndexMode.Apply),
                 TestContext.Current.CancellationToken);
         }
@@ -219,7 +219,7 @@ public sealed class IndexOperationIntegrationTests
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
 
-        var result = await IndexOperationFactory.Create().ExecuteAsync(
+        var result = await IndexOperationFactory.Create(workspace.LockStoreRoot).ExecuteAsync(
             workspace.Request(IndexMode.Apply),
             cancellation.Token);
 

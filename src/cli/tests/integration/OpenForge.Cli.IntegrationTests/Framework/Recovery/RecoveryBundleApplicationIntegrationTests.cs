@@ -9,6 +9,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models;
 using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Recovery;
@@ -20,7 +21,7 @@ public sealed class RecoveryBundleApplicationIntegrationTests
     public async Task OneRealPreparationAuthorizesItsExactMultiTargetApplication()
     {
         using var temporary = TemporaryWorkspace.Create("recovery-application");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "retained-lock");
+        using var lockStore = WorkspaceLockTestStore.Create("recovery-application-lock-store");
         var replacePath = temporary.CreateFile("replace.bin", []);
         var deletePath = temporary.CreateFile("delete.bin", new byte[] { 0, 255, 1, 128 });
         var generatedPath = temporary.CreateFile("generated.md", "before\n"u8.ToArray());
@@ -71,7 +72,11 @@ public sealed class RecoveryBundleApplicationIntegrationTests
         RecoveryBundlePreparation? preparation = null;
         try
         {
-            await using var lease = await AcquireAsync(workspace, command, operationId);
+            await using var lease = await AcquireAsync(
+                lockStore,
+                workspace,
+                command,
+                operationId);
             var result = await RecoveryBundleStoreIntegrationTests.Store().PrepareAsync(
                 input,
                 TestContext.Current.CancellationToken);
@@ -79,7 +84,7 @@ public sealed class RecoveryBundleApplicationIntegrationTests
             var resolver = new PhysicalPathResolver();
             var validator = new FileExpectationValidator(resolver);
             var applier = new FileChangeApplier(
-                new MutationRevalidator(validator, resolver),
+                new MutationRevalidator(validator),
                 validator);
 
             foreach (var change in new[] { replace, delete, generated })
@@ -140,7 +145,7 @@ public sealed class RecoveryBundleApplicationIntegrationTests
     public async Task ExistingTargetEffectsRequireTheirMatchingRealFinalPreparation()
     {
         using var temporary = TemporaryWorkspace.Create("recovery-application-blocked");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "retained-lock");
+        using var lockStore = WorkspaceLockTestStore.Create("recovery-application-blocked-lock-store");
         var firstPath = temporary.CreateFile("first.md", "first"u8.ToArray());
         var secondPath = temporary.CreateFile("second.md", "second"u8.ToArray());
         var workspace = RecoveryBundleStoreIntegrationTests.Workspace(temporary);
@@ -159,7 +164,11 @@ public sealed class RecoveryBundleApplicationIntegrationTests
         string? draftPath = null;
         try
         {
-            await using var lease = await AcquireAsync(workspace, command, operationId);
+            await using var lease = await AcquireAsync(
+                lockStore,
+                workspace,
+                command,
+                operationId);
             preparation = Assert.IsType<RecoveryBundlePreparation>(
                 (await RecoveryBundleStoreIntegrationTests.Store().PrepareAsync(
                     input,
@@ -171,7 +180,7 @@ public sealed class RecoveryBundleApplicationIntegrationTests
             var resolver = new PhysicalPathResolver();
             var validator = new FileExpectationValidator(resolver);
             var applier = new FileChangeApplier(
-                new MutationRevalidator(validator, resolver),
+                new MutationRevalidator(validator),
                 validator);
             var firstCheck = await CheckAsync(lease, first, validator, resolver);
             var secondCheck = await CheckAsync(lease, second, validator, resolver);
@@ -282,11 +291,12 @@ public sealed class RecoveryBundleApplicationIntegrationTests
                 FileStateSnapshot.File(change.LogicalPath, change.LogicalPath, before))]);
 
     private static async ValueTask<WorkspaceLockLease> AcquireAsync(
+        WorkspaceLockTestStore lockStore,
         CliWorkspace workspace,
         string command,
         Guid operationId)
     {
-        var result = await new WorkspaceLockManager(new PhysicalPathResolver()).AcquireAsync(
+        var result = await lockStore.AcquireAsync(
             new WorkspaceLockRequest(workspace, command, operationId),
             TestContext.Current.CancellationToken);
         return Assert.IsType<WorkspaceLockLease>(result.Lease);
@@ -298,7 +308,7 @@ public sealed class RecoveryBundleApplicationIntegrationTests
         FileExpectationValidator validator,
         PhysicalPathResolver resolver)
     {
-        var result = await new MutationRevalidator(validator, resolver).ValidateAsync(
+        var result = await new MutationRevalidator(validator).ValidateAsync(
             lease,
             [change],
             TestContext.Current.CancellationToken);

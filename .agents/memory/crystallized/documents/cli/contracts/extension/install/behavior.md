@@ -205,9 +205,9 @@ final name, and reopened and verified. Only the valid final ZIP forms the opaque
 `FileChangeApplier` requires the matching preparation for every existing-target effect
 and performs one final effect per target. All preparation completes before the
 first target effect; unknown, malformed, mismatched, or colliding bundles block.
-The persistent reusable `.agents/open-forge.lock` preserves existing bytes and
-is held with a `FileShare.None` handle only; it never receives metadata writes,
-deletion, or truncation.
+The persistent reusable zero-byte external workspace lock is held with one
+read/write `FileShare.None` handle; it never receives metadata writes, deletion,
+or truncation.
 
 Dry-run uses the same request, facts, intended state, plan, and preflight as
 application. It shows the complete selected closure, effects, preserved and

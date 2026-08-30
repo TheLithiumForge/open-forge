@@ -18,10 +18,13 @@ public sealed class RouteInspectInteractionApplicationIntegrationTests
         using var standardError = new StringWriter();
         var application = CliCompositionRoot.Create(
             new CliProcessIdentity("open-forge", "test"),
-            standardInput,
-            standardError,
-            standardInputRedirected: false,
-            promptOutputRedirected: false);
+            new CliCompositionInputs
+            {
+                StandardInput = standardInput,
+                PromptOutput = standardError,
+                StandardInputRedirected = false,
+                PromptOutputRedirected = false,
+            });
 
         var completion = await application.RunAsync(
             ["route", "inspect", CollisionId, "--workspace", workspace.Path, "--view=compact"],

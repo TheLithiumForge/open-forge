@@ -6,25 +6,28 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Mutation.Application;
 
-public sealed class DirectoryCreationApplierIntegrationTests
+public sealed class DirectoryCreationApplierIntegrationTests : IDisposable
 {
+    private readonly WorkspaceLockTestStore lockStore = WorkspaceLockTestStore.Create(
+        "directory-creation-applier-lock-store");
+
     [Fact(DisplayName = "Directory creation applier creates and exactly verifies one target without support artifacts")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
     public async Task CreatesOneExactDirectoryWithoutRecoveryOrLifecycleArtifacts()
     {
         using var temporary = TemporaryWorkspace.Create("directory-apply-one");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "persistent-lock");
         var target = temporary.Combine("route");
         var workspace = Workspace(temporary);
         var resolver = new PhysicalPathResolver();
         var validator = new FileExpectationValidator(resolver);
         var creation = Creation(target);
         var check = await CheckAsync(workspace, creation, validator);
-        await using var lease = await AcquireAsync(workspace, resolver);
+        await using var lease = await AcquireAsync(workspace);
 
         try
         {
@@ -60,7 +63,6 @@ public sealed class DirectoryCreationApplierIntegrationTests
     public async Task NestedCreationRetainsFirstResidualWhenLaterTargetStops()
     {
         using var temporary = TemporaryWorkspace.Create("directory-apply-nested-residual");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "persistent-lock");
         var parentPath = temporary.Combine("routes");
         var childPath = temporary.Combine("routes/child");
         var workspace = Workspace(temporary);
@@ -70,7 +72,7 @@ public sealed class DirectoryCreationApplierIntegrationTests
         var child = Creation(childPath);
         var parentCheck = await CheckAsync(workspace, parent, validator);
         var childCheck = await CheckAsync(workspace, child, validator);
-        await using var lease = await AcquireAsync(workspace, resolver);
+        await using var lease = await AcquireAsync(workspace);
 
         try
         {
@@ -117,7 +119,6 @@ public sealed class DirectoryCreationApplierIntegrationTests
     public async Task CreatesNestedDirectoriesOneAtATime()
     {
         using var temporary = TemporaryWorkspace.Create("directory-apply-nested");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "persistent-lock");
         var parentPath = temporary.Combine("routes");
         var childPath = temporary.Combine("routes/child");
         var workspace = Workspace(temporary);
@@ -127,7 +128,7 @@ public sealed class DirectoryCreationApplierIntegrationTests
         var child = Creation(childPath);
         var parentCheck = await CheckAsync(workspace, parent, validator);
         var childCheck = await CheckAsync(workspace, child, validator);
-        await using var lease = await AcquireAsync(workspace, resolver);
+        await using var lease = await AcquireAsync(workspace);
 
         try
         {
@@ -170,18 +171,16 @@ public sealed class DirectoryCreationApplierIntegrationTests
     public async Task RequiresLiveLeaseForTheSelectedWorkspace()
     {
         using var temporary = TemporaryWorkspace.Create("directory-apply-lease");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "persistent-lock");
         using var foreign = TemporaryWorkspace.Create("directory-apply-foreign-lease");
-        foreign.CreateFile(WorkspaceLockRequest.RelativePath, "persistent-lock");
         var target = temporary.Combine("route");
         var workspace = Workspace(temporary);
         var resolver = new PhysicalPathResolver();
         var validator = new FileExpectationValidator(resolver);
         var creation = Creation(target);
         var check = await CheckAsync(workspace, creation, validator);
-        await using var disposedLease = await AcquireAsync(workspace, resolver);
+        await using var disposedLease = await AcquireAsync(workspace);
         await disposedLease.DisposeAsync();
-        await using var foreignLease = await AcquireAsync(Workspace(foreign), resolver);
+        await using var foreignLease = await AcquireAsync(Workspace(foreign));
         var applier = Applier(validator, resolver);
 
         var disposed = await applier.ApplyAsync(
@@ -207,14 +206,13 @@ public sealed class DirectoryCreationApplierIntegrationTests
     public async Task PreCancellationReturnsNotStartedWithoutCreation()
     {
         using var temporary = TemporaryWorkspace.Create("directory-apply-cancel");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "persistent-lock");
         var target = temporary.Combine("route");
         var workspace = Workspace(temporary);
         var resolver = new PhysicalPathResolver();
         var validator = new FileExpectationValidator(resolver);
         var creation = Creation(target);
         var check = await CheckAsync(workspace, creation, validator);
-        await using var lease = await AcquireAsync(workspace, resolver);
+        await using var lease = await AcquireAsync(workspace);
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
 
@@ -235,7 +233,6 @@ public sealed class DirectoryCreationApplierIntegrationTests
     public async Task CollisionAfterPlanningReturnsNotStartedAndPreservesOccupant()
     {
         using var temporary = TemporaryWorkspace.Create("directory-apply-collision");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "persistent-lock");
         var target = temporary.Combine("route");
         var workspace = Workspace(temporary);
         var resolver = new PhysicalPathResolver();
@@ -246,7 +243,7 @@ public sealed class DirectoryCreationApplierIntegrationTests
             target,
             "racing file",
             TestContext.Current.CancellationToken);
-        await using var lease = await AcquireAsync(workspace, resolver);
+        await using var lease = await AcquireAsync(workspace);
 
         try
         {
@@ -276,7 +273,6 @@ public sealed class DirectoryCreationApplierIntegrationTests
     public async Task ParentAliasIdentityChangeReturnsNotStartedWithoutCreation()
     {
         using var temporary = TemporaryWorkspace.Create("directory-apply-identity-change");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "persistent-lock");
         var first = temporary.CreateDirectory("first");
         var second = temporary.CreateDirectory("second");
         var alias = temporary.CreateDirectorySymbolicLink("alias", first);
@@ -286,7 +282,7 @@ public sealed class DirectoryCreationApplierIntegrationTests
         var validator = new FileExpectationValidator(resolver);
         var creation = Creation(target);
         var check = await CheckAsync(workspace, creation, validator);
-        await using var lease = await AcquireAsync(workspace, resolver);
+        await using var lease = await AcquireAsync(workspace);
         DeleteDirectoryLink(alias);
         Directory.CreateSymbolicLink(alias, second);
 
@@ -307,7 +303,6 @@ public sealed class DirectoryCreationApplierIntegrationTests
     public async Task ForgedMissingPhysicalTargetIsRejectedWithoutEffects()
     {
         using var temporary = TemporaryWorkspace.Create("directory-apply-forged-check");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "persistent-lock");
         var other = temporary.CreateDirectory("other");
         var target = temporary.Combine("route");
         var forgedTarget = Path.Combine(other, "forged");
@@ -319,7 +314,7 @@ public sealed class DirectoryCreationApplierIntegrationTests
             creation.Expectation,
             FileStateSnapshot.Missing(target),
             forgedTarget);
-        await using var lease = await AcquireAsync(workspace, resolver);
+        await using var lease = await AcquireAsync(workspace);
 
         var receipt = await Applier(validator, resolver).ApplyAsync(
             lease,
@@ -338,14 +333,13 @@ public sealed class DirectoryCreationApplierIntegrationTests
     public async Task MismatchedCheckAndCreationAreRejectedWithoutEffects()
     {
         using var temporary = TemporaryWorkspace.Create("directory-apply-check-coherence");
-        temporary.CreateFile(WorkspaceLockRequest.RelativePath, "persistent-lock");
         var first = Creation(temporary.Combine("first"));
         var second = Creation(temporary.Combine("second"));
         var workspace = Workspace(temporary);
         var resolver = new PhysicalPathResolver();
         var validator = new FileExpectationValidator(resolver);
         var firstCheck = await CheckAsync(workspace, first, validator);
-        await using var lease = await AcquireAsync(workspace, resolver);
+        await using var lease = await AcquireAsync(workspace);
 
         await Assert.ThrowsAsync<ArgumentException>(async () =>
             await Applier(validator, resolver).ApplyAsync(
@@ -361,7 +355,7 @@ public sealed class DirectoryCreationApplierIntegrationTests
         FileExpectationValidator validator,
         PhysicalPathResolver resolver)
         => new(
-            new MutationRevalidator(validator, resolver),
+            new MutationRevalidator(validator),
             validator);
 
     private static PlannedDirectoryCreation Creation(string path)
@@ -380,11 +374,9 @@ public sealed class DirectoryCreationApplierIntegrationTests
         return check;
     }
 
-    private static async ValueTask<WorkspaceLockLease> AcquireAsync(
-        CliWorkspace workspace,
-        PhysicalPathResolver resolver)
+    private async ValueTask<WorkspaceLockLease> AcquireAsync(CliWorkspace workspace)
     {
-        var result = await new WorkspaceLockManager(resolver).AcquireAsync(
+        var result = await lockStore.AcquireAsync(
             new WorkspaceLockRequest(workspace, "directory apply", Guid.NewGuid()),
             TestContext.Current.CancellationToken);
         return Assert.IsType<WorkspaceLockLease>(result.Lease);
@@ -407,4 +399,6 @@ public sealed class DirectoryCreationApplierIntegrationTests
             lexicalRoot: temporary.Path,
             physicalRoot: temporary.Path,
             selectedBy: CliWorkspaceSelectionMethod.ExplicitWorkspace);
+
+    public void Dispose() => lockStore.Dispose();
 }

@@ -137,10 +137,13 @@ public sealed class ExtensionCreateCompositionIntegrationTests
         using var standardError = new StringWriter();
         var application = CliCompositionRoot.Create(
             new CliProcessIdentity("open-forge", "test"),
-            input,
-            standardError,
-            standardInputRedirected,
-            promptOutputRedirected);
+            new CliCompositionInputs
+            {
+                StandardInput = input,
+                PromptOutput = standardError,
+                StandardInputRedirected = standardInputRedirected,
+                PromptOutputRedirected = promptOutputRedirected,
+            });
         var completion = await application.RunAsync(
             arguments,
             new CliProcessEnvironment(currentDirectory),

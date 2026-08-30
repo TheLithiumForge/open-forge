@@ -135,9 +135,9 @@ The absence of `.agents/open-forge.lifecycle.json` alone does not establish an
 unmanaged or empty workspace. `absent` requires complete inspection of the
 expected managed footprint, managed boundaries, and exact-name recovery
 candidates. Unsupported or ambiguous schema facts are `incomplete` when safely
-unavailable and `blocked` when unsafe. The visible `.agents/open-forge.lock` file
-is not lifecycle authority or recovery-bundle evidence and does not affect these
-states.
+unavailable and `blocked` when unsafe. The persistent external workspace-lock
+file is not lifecycle authority or recovery-bundle evidence and does not affect
+these states.
 
 An invalid or unavailable package source does not erase independently readable
 installed Extension IDs, ownership, recorded paths, or lifecycle facts. Status
@@ -763,7 +763,7 @@ Implementation evidence must cover:
   lengths and hashes, bounded buffers and memory independent of entry size, and
   no extraction, disclosure, retention, or materialization.
 - No live-target hashing, target-state classification, or activity inference
-  from bundle contents or the visible lock file.
+  from bundle contents or the persistent external lock file.
 - Complete, attention, incomplete, invalid, blocked, failed, and interrupted
   outcomes.
 - Human and structured output from the same typed result.

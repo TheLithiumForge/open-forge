@@ -299,11 +299,11 @@ verified bundle preparation; a `Create` or semantic/byte no-op has none. A
 verified no-op has no mutation path and needs no bundle.
 
 Before the first workspace effect, the implementation obtains the actual OS lock
-for the persistent, reusable `.agents/open-forge.lock` path defined by the
-accepted CLI Architecture. Existing bytes are preserved. The operation holds a
-`FileShare.None` handle only and never writes metadata, deletes, or truncates the
-lock file. An active handle blocks the plan; lock state is not lifecycle
-authority, history, or recovery evidence.
+for the persistent reusable zero-byte external path defined by the accepted CLI
+Architecture. The operation holds one read/write `FileShare.None` handle and
+never writes metadata, truncates, or deletes the lock file. An active handle
+blocks the plan; lock state is not lifecycle authority, history, or recovery
+evidence.
 
 `--automatic` admits only safe absent creation or exact no-op effects already
 selected by the explicit operation. It cannot admit an eligible initial occupant
@@ -333,18 +333,19 @@ When application is selected:
 1. If this is a prompt-capable human application that would write, ask the one
    confirmation after complete preflight. A refusal, end of input, or caller
    cancellation stops with no effects.
-2. Acquire the persistent workspace lease. If the accepted plan starts without
-   `.agents`, expose that exact directory as the one planned lock-bootstrap
-   effect; immediately confirm it is missing, create and verify it through
-   `WorkspaceLockManager`, then open `.agents/open-forge.lock`. Cancellation
-   before bootstrap creates nothing.
+2. Acquire the persistent external workspace lease. The zero-byte ordinary lock
+   lives under `LocalApplicationData/OpenForge/locks/v1`, with a display-only
+   friendly workspace prefix and the authoritative full SHA-256 key of the
+   normalized physical workspace path. Cancellation before acquisition creates
+   no workspace effect.
 3. Revalidate the complete plan and all volatile source, target, ownership,
    containment, marker, section, and expected-state facts.
 4. Prepare and verify the one complete external recovery bundle when the plan
    contains an existing-target effect. Complete preparation before any workspace
    effect.
-5. Apply every other explicitly planned missing directory parent-first through
-   the shared directory capability. Each is a descendant below `.agents`.
+5. Apply every explicitly planned missing directory parent-first through the
+   shared directory capability. Missing `.agents` is the first ordinary
+   directory-create effect; its later planned directories are descendants.
    Immediately revalidate each missing target and its exact contained physical
    parent, call ordinary `Directory.CreateDirectory`, then verify the exact
    resulting contained ordinary directory.
@@ -369,12 +370,6 @@ When application is selected:
    and cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the
    deletion result provides one.
 
-Every `WorkspaceLockResult` preserves the nullable bootstrap outcome already
-reached. `Existing` records a validated pre-existing `.agents`, `Materialized`
-records observed absence followed by attempted BCL creation and validation, and
-`null` means neither outcome was successfully observed. Acquisition requires a
-non-null outcome; later failure or cancellation does not erase one.
-
 Install has no target deletion effect. Before any existing byte or bounded region
 is replaced, orchestration selects only
 `Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
@@ -397,15 +392,14 @@ and reopened and verified again. Only the valid final ZIP forms the opaque
 existing-target effect must match the preparation; Create and no-op effects create
 no bundle. All preparation is complete before the first target effect.
 
-Directory creation remains a distinct effect from file Create/Replace
-and has no recovery entry. The missing `.agents` bootstrap is the sole pre-lease
-directory effect and never enters the descendant applier. A directory created or
-bootstrapped by this operation is retained and reported as residual state after
-lock contention, later failure, or interruption. Install never rolls it back,
+Directory creation remains a distinct effect from file Create/Replace and has no
+recovery entry. Missing `.agents` is the first ordinary lease-bound directory
+effect. A directory created by this operation is retained and reported as
+residual state after later failure or interruption. Install never rolls it back,
 compensates for it, or removes it. The shared capability uses ordinary BCL
 filesystem behavior; it adds no P/Invoke, recovery protocol, or hostile same-user
-creator-identity guarantee. `LocalApplicationData` remains recovery-bundle
-storage and is never used for the workspace lock.
+creator-identity guarantee. Lock and recovery data use separate
+application-owned versioned subtrees under `LocalApplicationData`.
 
 Before post-verification deletion begins, an application, verification,
 lifecycle-publication, or cancellation outcome stops new effects and reports
@@ -491,11 +485,10 @@ A conforming implementation must demonstrate:
   immediate missing-target and physical-parent revalidation, ordinary BCL
   creation, post-verification, retained residuals, and no rollback,
   compensation, removal, or recovery entry;
-- the exact visible missing-`.agents` bootstrap before lease acquisition,
-  including planning/reporting, immediate verification, pre-bootstrap
-  cancellation, post-bootstrap contention, retained residuals, and exclusion
-  from the descendant applier; plus nullable `WorkspaceLockResult` outcome
-  retention for acquired, failed, and cancelled results;
+- the exact visible missing-`.agents` first ordinary directory effect after
+  external lease acquisition, including planning/reporting, immediate
+  revalidation and verification, pre-effect cancellation/contention, and
+  retained residuals after later failure;
 - dry-run/application parity with no persistent dry-run effects;
 - seven statuses, including `Failed`/positively observed `Retained` recovery
   `attention` and `Failed`/`Unknown` recovery `failed`, streams, one typed result,

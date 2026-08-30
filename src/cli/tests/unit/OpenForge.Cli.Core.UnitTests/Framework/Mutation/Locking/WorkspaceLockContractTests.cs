@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Framework.Filesystem;
+using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.TestSupport;
@@ -21,15 +22,13 @@ public sealed class WorkspaceLockContractTests
         Assert.Same(workspace, request.Workspace);
         Assert.Equal("index", request.Command);
         Assert.Equal(operationId, request.OperationId);
-        Assert.Equal(Path.Combine(workspace.LexicalRoot, WorkspaceLockRequest.RelativePath), request.LogicalPath);
     }
 
-    [Fact(DisplayName = "Workspace lock requests reject missing identity and invalid operation state"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Workspace lock requests reject invalid command and operation state"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public void WorkspaceLockRequestRejectsInvalidState()
     {
         var workspace = Workspace();
 
-        Assert.Throws<ArgumentNullException>(() => new WorkspaceLockRequest(null, "index", Guid.NewGuid()));
         Assert.Throws<ArgumentException>(() => new WorkspaceLockRequest(workspace, "", Guid.NewGuid()));
         Assert.Throws<ArgumentException>(() => new WorkspaceLockRequest(workspace, "index", Guid.Empty));
     }
@@ -40,130 +39,149 @@ public sealed class WorkspaceLockContractTests
         var failure = new FilesystemFailure(FilesystemFailureKind.AccessDenied, "Access was denied.");
         var failed = WorkspaceLockResult.Failed(failure);
         var cancelled = WorkspaceLockResult.Cancelled();
-        var failedAfterBootstrap = WorkspaceLockResult.Failed(
-            failure,
-            WorkspaceLockBootstrapOutcome.Existing);
-        var cancelledAfterBootstrap = WorkspaceLockResult.Cancelled(
-            WorkspaceLockBootstrapOutcome.Materialized);
 
         Assert.Equal(WorkspaceLockState.Failed, failed.State);
         Assert.Same(failure, failed.Failure);
         Assert.Null(failed.Lease);
-        Assert.Null(failed.BootstrapOutcome);
         Assert.Equal(WorkspaceLockState.Cancelled, cancelled.State);
         Assert.Null(cancelled.Lease);
         Assert.Null(cancelled.Failure);
-        Assert.Null(cancelled.BootstrapOutcome);
-        Assert.Equal(
-            WorkspaceLockBootstrapOutcome.Existing,
-            failedAfterBootstrap.BootstrapOutcome);
-        Assert.Equal(
-            WorkspaceLockBootstrapOutcome.Materialized,
-            cancelledAfterBootstrap.BootstrapOutcome);
-        Assert.Throws<ArgumentNullException>(() => WorkspaceLockResult.Acquired(
-            lease: null,
-            bootstrapOutcome: WorkspaceLockBootstrapOutcome.Existing));
     }
 
-    [Fact(DisplayName = "Workspace lock results require a defined bootstrap outcome for acquired ownership"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
-    public void WorkspaceLockAcquiredResultRequiresDefinedBootstrapOutcome()
+    [Theory(DisplayName = "Workspace lock filenames combine a bounded display prefix with the full authoritative key"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    [InlineData("open-forge", "open-forge")]
+    [InlineData("Open Forge!", "open-forge")]
+    [InlineData("---", WorkspaceLockPathIdentity.FallbackFriendlyName)]
+    public void WorkspaceLockPathUsesFriendlyPrefixAndFullKey(
+        string directoryName,
+        string expectedFriendlyName)
     {
-        using var temporary = TemporaryWorkspace.Create("lock-result-bootstrap-outcome");
-        var lockPath = temporary.CreateFile(WorkspaceLockRequest.RelativePath, "lock");
+        var physicalRoot = Path.GetFullPath(Path.Combine(Path.GetTempPath(), directoryName));
         var workspace = new CliWorkspace(
-            temporary.Path,
-            temporary.Path,
-            CliWorkspaceSelectionMethod.ExplicitWorkspace);
-        var request = new WorkspaceLockRequest(workspace, "index", Guid.NewGuid());
-        using var lease = new WorkspaceLockLease(
-            request,
-            logicalPath: request.LogicalPath,
-            physicalPath: lockPath,
-            handle: Open(lockPath));
-        var result = WorkspaceLockResult.Acquired(
-            lease,
-            WorkspaceLockBootstrapOutcome.Existing);
-        var undefined = (WorkspaceLockBootstrapOutcome)int.MaxValue;
+            lexicalRoot: physicalRoot,
+            physicalRoot: physicalRoot,
+            selectedBy: CliWorkspaceSelectionMethod.ExplicitWorkspace);
+        var storeRoot = WorkspaceLockStoreRoot.FromAbsolutePath(
+            Path.GetFullPath(Path.Combine(Path.GetTempPath(), "open-forge-lock-store-contract")));
+        var key = WorkspaceIdentity.Key(physicalRoot);
 
+        var lockPath = WorkspaceLockPathIdentity.LockPath(storeRoot, workspace);
+
+        Assert.Equal(64, key.Length);
         Assert.Equal(
-            [WorkspaceLockBootstrapOutcome.Existing, WorkspaceLockBootstrapOutcome.Materialized],
-            Enum.GetValues<WorkspaceLockBootstrapOutcome>());
-        Assert.Equal(WorkspaceLockState.Acquired, result.State);
-        Assert.Same(lease, result.Lease);
-        Assert.Equal(WorkspaceLockBootstrapOutcome.Existing, result.BootstrapOutcome);
-        Assert.Throws<ArgumentOutOfRangeException>(() => WorkspaceLockResult.Acquired(
-            lease,
-            undefined));
-        Assert.Throws<ArgumentOutOfRangeException>(() => WorkspaceLockResult.Failed(
-            new FilesystemFailure(FilesystemFailureKind.InputOutput, "Failed."),
-            undefined));
-        Assert.Throws<ArgumentOutOfRangeException>(() => WorkspaceLockResult.Cancelled(
-            undefined));
+            $"{expectedFriendlyName}-{key}.lock",
+            Path.GetFileName(lockPath));
+        Assert.Equal(
+            WorkspaceLockPathIdentity.StoreDirectory(storeRoot),
+            Path.GetDirectoryName(lockPath));
+        Assert.DoesNotContain(physicalRoot, Path.GetFileName(lockPath), StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Workspace lock leases reject forged logical, physical, and handle identities"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
-    public void WorkspaceLockLeaseRejectsForgedIdentity()
+    [Fact(DisplayName = "Workspace lock friendly names are bounded"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void WorkspaceLockFriendlyNameIsBounded()
     {
-        using var temporary = TemporaryWorkspace.Create("lock-lease-invariants");
-        var lockPath = temporary.CreateFile(WorkspaceLockRequest.RelativePath, "lock");
-        var otherPath = temporary.CreateFile("other.lock", "other");
+        var directoryName = new string('a', WorkspaceLockPathIdentity.MaximumFriendlyNameLength + 16);
+        var physicalRoot = Path.GetFullPath(Path.Combine(Path.GetTempPath(), directoryName));
+
+        var friendlyName = WorkspaceLockPathIdentity.FriendlyName(physicalRoot);
+
+        Assert.Equal(WorkspaceLockPathIdentity.MaximumFriendlyNameLength, friendlyName.Length);
+        Assert.All(friendlyName, character => Assert.Equal('a', character));
+    }
+
+    [Fact(DisplayName = "Workspace identity normalizes trailing separators before hashing"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void WorkspaceIdentityNormalizesBeforeHashing()
+    {
+        var physicalRoot = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "open-forge-identity"));
+
+        Assert.Equal(
+            WorkspaceIdentity.Key(physicalRoot),
+            WorkspaceIdentity.Key(physicalRoot + Path.DirectorySeparatorChar));
+        Assert.Equal(
+            WorkspaceIdentity.NormalizePhysicalPath(physicalRoot),
+            WorkspaceIdentity.NormalizePhysicalPath(physicalRoot + Path.DirectorySeparatorChar));
+    }
+
+    [Fact(DisplayName = "Workspace lock leases require one exact zero-byte external handle"), Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
+    public void WorkspaceLockLeaseRequiresExactExternalHandle()
+    {
+        using var workspaceDirectory = TemporaryWorkspace.Create("lock-lease-workspace");
+        using var storeDirectory = TemporaryWorkspace.Create("lock-lease-store");
+        using var otherStoreDirectory = TemporaryWorkspace.Create("lock-lease-other-store");
         var workspace = new CliWorkspace(
-            temporary.Path,
-            temporary.Path,
+            workspaceDirectory.Path,
+            workspaceDirectory.Path,
             CliWorkspaceSelectionMethod.ExplicitWorkspace);
         var request = new WorkspaceLockRequest(workspace, "index", Guid.NewGuid());
+        var storeRoot = WorkspaceLockStoreRoot.FromAbsolutePath(storeDirectory.Path);
+        var otherStoreRoot = WorkspaceLockStoreRoot.FromAbsolutePath(otherStoreDirectory.Path);
+        var lockPath = CreateLockFile(storeDirectory, storeRoot, workspace, []);
+        var otherPath = CreateLockFile(otherStoreDirectory, otherStoreRoot, workspace, []);
 
         using (var handle = Open(lockPath))
         {
             Assert.Throws<ArgumentException>(() => new WorkspaceLockLease(
-                request,
-                logicalPath: otherPath,
-                physicalPath: lockPath,
-                handle: handle));
-        }
-
-        using (var handle = Open(lockPath))
-        {
-            Assert.Throws<ArgumentException>(() => new WorkspaceLockLease(
-                request,
-                logicalPath: request.LogicalPath,
-                physicalPath: otherPath,
-                handle: handle));
-        }
-
-        using (var handle = Open(lockPath))
-        {
-            Assert.Throws<ArgumentException>(() => new WorkspaceLockLease(
-                request,
-                logicalPath: request.LogicalPath,
-                physicalPath: Path.Combine(Path.GetTempPath(), "open-forge-foreign-lock.lock"),
+                request: request,
+                storeRoot: otherStoreRoot,
+                lockPath: lockPath,
                 handle: handle));
         }
 
         using (var handle = Open(otherPath))
         {
             Assert.Throws<ArgumentException>(() => new WorkspaceLockLease(
-                request,
-                logicalPath: request.LogicalPath,
-                physicalPath: lockPath,
+                request: request,
+                storeRoot: storeRoot,
+                lockPath: lockPath,
                 handle: handle));
         }
 
-        using (var handle = new FileStream(
-                   lockPath,
-                   new FileStreamOptions
-                   {
-                       Mode = FileMode.Open,
-                       Access = FileAccess.Read,
-                       Share = FileShare.Read,
-                   }))
+        var nonzeroPath = CreateLockFile(
+            storeDirectory,
+            storeRoot,
+            new CliWorkspace(
+                Path.Combine(workspaceDirectory.Path, "other"),
+                Path.Combine(workspaceDirectory.Path, "other"),
+                CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            "not-zero"u8.ToArray());
+        using (var handle = Open(nonzeroPath))
         {
             Assert.Throws<ArgumentException>(() => new WorkspaceLockLease(
-                request,
-                logicalPath: request.LogicalPath,
-                physicalPath: lockPath,
+                request: new WorkspaceLockRequest(
+                    new CliWorkspace(
+                        Path.Combine(workspaceDirectory.Path, "other"),
+                        Path.Combine(workspaceDirectory.Path, "other"),
+                        CliWorkspaceSelectionMethod.ExplicitWorkspace),
+                    "index",
+                    Guid.NewGuid()),
+                storeRoot: storeRoot,
+                lockPath: nonzeroPath,
                 handle: handle));
         }
+
+        using var lease = new WorkspaceLockLease(
+            request: request,
+            storeRoot: storeRoot,
+            lockPath: lockPath,
+            handle: Open(lockPath));
+        Assert.True(lease.IsHeldFor(workspace));
+        Assert.False(lease.IsHeldFor(new CliWorkspace(
+            Path.Combine(workspaceDirectory.Path, "foreign"),
+            Path.Combine(workspaceDirectory.Path, "foreign"),
+            CliWorkspaceSelectionMethod.ExplicitWorkspace)));
+        lease.Dispose();
+        Assert.False(lease.IsHeldFor(workspace));
+    }
+
+    private static string CreateLockFile(
+        TemporaryWorkspace temporary,
+        WorkspaceLockStoreRoot storeRoot,
+        CliWorkspace workspace,
+        byte[] contents)
+    {
+        var lockPath = WorkspaceLockPathIdentity.LockPath(storeRoot, workspace);
+        var relativePath = Path.GetRelativePath(temporary.Path, lockPath);
+        return temporary.CreateFile(relativePath, contents);
     }
 
     private static CliWorkspace Workspace()

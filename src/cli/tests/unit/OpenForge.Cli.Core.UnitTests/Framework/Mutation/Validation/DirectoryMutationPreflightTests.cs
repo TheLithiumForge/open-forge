@@ -1,5 +1,4 @@
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
-using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
@@ -64,55 +63,20 @@ public sealed class DirectoryMutationPreflightTests
         Assert.Empty(result.Checks);
     }
 
-    [Fact(DisplayName = "Combined mutation preflight reserves workspace root and lock bootstrap directory")]
+    [Fact(DisplayName = "Combined mutation preflight reserves the workspace root")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
     public async Task CombinedPreflightBlocksReservedDirectoryEffects()
     {
         var workspace = Workspace();
         var rootCreation = PlannedDirectoryCreation.Create(
             FileExpectation.Missing(workspace.LexicalRoot));
-        var bootstrapCreation = PlannedDirectoryCreation.Create(
-            FileExpectation.Missing(Path.Combine(
-                workspace.LexicalRoot,
-                WorkspaceLockRequest.DirectoryName)));
-
         var rootResult = await Preflight().ValidateAsync(
             workspace,
             directoryCreations: [rootCreation],
             fileChanges: [],
             TestContext.Current.CancellationToken);
-        var bootstrapResult = await Preflight().ValidateAsync(
-            workspace,
-            directoryCreations: [bootstrapCreation],
-            fileChanges: [],
-            TestContext.Current.CancellationToken);
-
         Assert.Equal(MutationValidationState.Blocked, rootResult.State);
-        Assert.Equal(MutationValidationState.Blocked, bootstrapResult.State);
         Assert.Empty(rootResult.Checks);
-        Assert.Empty(bootstrapResult.Checks);
-    }
-
-    [Fact(DisplayName = "Combined mutation preflight reserves the lock bootstrap directory from file effects")]
-    [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Unit")]
-    public async Task CombinedPreflightBlocksReservedFileEffect()
-    {
-        var workspace = Workspace();
-        var bootstrapPath = Path.Combine(
-            workspace.LexicalRoot,
-            WorkspaceLockRequest.DirectoryName);
-        var fileChange = PlannedFileChange.Create(
-            FileExpectation.Missing(bootstrapPath),
-            "content"u8);
-
-        var result = await Preflight().ValidateAsync(
-            workspace,
-            directoryCreations: [],
-            fileChanges: [fileChange],
-            TestContext.Current.CancellationToken);
-
-        Assert.Equal(MutationValidationState.Blocked, result.State);
-        Assert.Empty(result.Checks);
     }
 
     [Fact(DisplayName = "Combined mutation preflight observes cancellation before any target")]

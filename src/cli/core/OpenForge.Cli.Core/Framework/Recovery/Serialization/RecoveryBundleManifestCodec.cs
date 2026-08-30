@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 using OpenForge.Cli.Core.Framework.Recovery.Models;
+using OpenForge.Cli.Core.Framework.Workspace;
 
 namespace OpenForge.Cli.Core.Framework.Recovery.Serialization;
 
@@ -124,7 +125,7 @@ internal static class RecoveryBundleManifestCodec
             };
         }
 
-        var workspacePath = RecoveryBundlePathIdentity.NormalizeWorkspacePath(
+        var workspacePath = WorkspaceIdentity.NormalizePhysicalPath(
             input.Workspace.PhysicalRoot);
         return new RecoveryBundleManifestV1
         {
@@ -132,7 +133,7 @@ internal static class RecoveryBundleManifestCodec
             Command = input.Command,
             OperationId = input.OperationId.ToString(RecoveryBundleFormatV1.OperationIdFormat),
             WorkspacePath = workspacePath,
-            WorkspaceKey = RecoveryBundlePathIdentity.WorkspaceKey(workspacePath),
+            WorkspaceKey = WorkspaceIdentity.Key(workspacePath),
             Entries = serializedEntries,
         };
     }
@@ -162,11 +163,11 @@ internal static class RecoveryBundleManifestCodec
             return Malformed("The recovery manifest operation or workspace identity is invalid.");
         }
 
-        var normalizedWorkspace = RecoveryBundlePathIdentity.NormalizeWorkspacePath(
+        var normalizedWorkspace = WorkspaceIdentity.NormalizePhysicalPath(
             document.WorkspacePath);
         if (!string.Equals(normalizedWorkspace, document.WorkspacePath, PathComparison())
             || !string.Equals(
-                RecoveryBundlePathIdentity.WorkspaceKey(normalizedWorkspace),
+                WorkspaceIdentity.Key(normalizedWorkspace),
                 document.WorkspaceKey,
                 StringComparison.Ordinal))
         {

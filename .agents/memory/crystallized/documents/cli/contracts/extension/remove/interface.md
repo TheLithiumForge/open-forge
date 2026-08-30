@@ -61,9 +61,10 @@ cross-section preservation facts. Otherwise it is `incomplete` or `blocked` and
 performs no managed mutation.
 
 Before a workspace effect, the implementation must hold the actual OS lock for
-the visible `.agents/open-forge.lock` path defined by the accepted CLI
-Architecture. The lock file is persistent and reusable: preserve existing
-bytes and write no metadata, timestamp, or ownership record. Hold a
+the persistent external zero-byte path under
+`LocalApplicationData/OpenForge/locks/v1` defined by the accepted CLI
+Architecture. The lock file is persistent and reusable: write no metadata,
+timestamp, or ownership record. Hold a
 `FileShare.None` handle for the operation; file existence is not lock
 ownership. A crash releases the OS lock, and another process holding it blocks
 mutation. The lock is concurrency safety, not lifecycle authority, history, or

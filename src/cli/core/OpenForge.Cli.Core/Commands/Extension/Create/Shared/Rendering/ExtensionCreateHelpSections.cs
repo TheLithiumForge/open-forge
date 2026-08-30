@@ -57,7 +57,7 @@ internal static class ExtensionCreateHelpSections
             new CliHelpSection(
                 "Workspace and recovery boundary",
                 """
-                  Extension Create never installs the package, mutates a workspace, writes lifecycle or generated-navigation state, acquires .agents/open-forge.lock, or creates a recovery bundle.
+                  Extension Create never installs the package, mutates a workspace, writes lifecycle or generated-navigation state, acquires a workspace mutation lock, or creates a recovery bundle.
                   It uses a separate create-only destination path with no Replace or Delete and never restores, rolls back, or compensates for retained partial state.
                 """),
         ]);

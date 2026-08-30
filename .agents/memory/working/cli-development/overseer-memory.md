@@ -93,13 +93,10 @@ Checkpoint are integration-owned unless a Task packet explicitly says otherwise.
   recheck pass. Direct composition proves interactive behavior; published
   redirected-human and JSON flows prove no prompt. Actual PTY process proof is
   explicitly outside the accepted evidence scope, and no workaround was added.
-- The accepted lock bootstrap outcome is nullable. `null` means no bootstrap
-  directory outcome was successfully observed; `Existing` means the existing
-  `.agents` directory was validated; `Materialized` means its absence was
-  observed, ordinary BCL creation ran, and the resulting directory was
-  validated. A reached outcome is retained across acquired, failed, and
-  cancelled results, and acquisition requires a non-null outcome. This makes
-  no hostile same-user creator-identity claim.
+- The accepted lock-location correction removes bootstrap state. The persistent
+  zero-byte lock is external under `LocalApplicationData/OpenForge/locks/v1`,
+  keyed by the full SHA-256 of normalized physical workspace identity. Missing
+  `.agents` is an ordinary lease-bound directory effect.
 
 - A switch that names every declared enum member is not closed over unnamed
   runtime numeric values. The direct modern-C# pattern is a clear switch
@@ -164,20 +161,12 @@ binding, unrelated operations, and unrelated requests remain unchanged.
   directories remain after later failure; there is no rollback, compensation,
   recovery bundle, P/Invoke, or hostile same-user creator-identity guarantee.
   Keep the effect separate from byte-bearing file changes.
-- `.agents` is the single explicit lock-bootstrap directory. An applicable
-  Install or generic Route Init plan includes it visibly; `WorkspaceLockManager`
-  creates and verifies it immediately before acquiring
-  `.agents/open-forge.lock`; shared directory effects create only descendants
-  after the lease. Retain and report `.agents` as residual state after a later
-  failure. Keep Local Application Data for recovery bundles, not workspace lock
-  identity; do not move or duplicate the lock.
-- `WorkspaceLockResult.BootstrapOutcome` is nullable across every result state.
-  `null` means no directory outcome was successfully observed; `Existing` means
-  the pre-existing `.agents` directory was validated; `Materialized` means the
-  manager observed absence, attempted ordinary BCL creation, and validated the
-  resulting directory. Preserve any reached outcome across acquired, failed,
-  and cancelled results; acquired requires a non-null outcome. `Materialized`
-  makes no hostile-process creator-identity claim.
+- An applicable Install or generic Route Init plan includes missing `.agents`
+  visibly as its first ordinary directory-create effect after acquiring the
+  external workspace lease. Retain and report a verified created `.agents` as
+  residual state after a later failure. Lock and recovery catalogues occupy
+  separate versioned application-owned subtrees; do not move or duplicate the
+  authoritative shared lock identity.
 - When two consumers require the same semantics and evidence, promote the
   smallest honest shared capability at their nearest common scope. Similarity
   alone does not justify a generic engine; duplicated identical ownership does

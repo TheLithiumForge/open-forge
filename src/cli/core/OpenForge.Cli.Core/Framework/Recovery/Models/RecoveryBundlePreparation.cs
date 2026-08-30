@@ -35,11 +35,11 @@ internal sealed record RecoveryBundlePreparation
     {
         ArgumentNullException.ThrowIfNull(workspace);
         return string.Equals(
-                RecoveryBundlePathIdentity.NormalizeWorkspacePath(workspace.PhysicalRoot),
+                WorkspaceIdentity.NormalizePhysicalPath(workspace.PhysicalRoot),
                 WorkspacePhysicalPath,
                 PathComparison())
             && string.Equals(
-                RecoveryBundlePathIdentity.WorkspaceKey(workspace.PhysicalRoot),
+                WorkspaceIdentity.Key(workspace.PhysicalRoot),
                 WorkspaceKey,
                 StringComparison.Ordinal);
     }

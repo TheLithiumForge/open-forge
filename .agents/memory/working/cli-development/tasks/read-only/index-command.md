@@ -203,9 +203,10 @@ run had zero failures and zero skips.
 Controlled public scenarios proved safe dry run, JSON output, application, and a
 second-run verified no-op. Application changed exactly one bounded generated
 interior, preserved unrelated tracked content, and returned the tracked aggregate
-hash to its baseline after the apply and idempotence sequence. The persistent
-zero-byte `.agents/open-forge.lock` is the accepted reusable lock-file result, not
-a transient-artifact defect.
+hash to its baseline after the apply and idempotence sequence. The later accepted
+shared correction places the persistent reusable zero-byte lock in the external
+application-owned lock catalogue; persistence is normal infrastructure, not a
+transient-artifact defect.
 
 Automatic whole-repository dogfood blocks on 14 archived metadata sources while
 the known handoff-routing incompleteness remains visible. Both are repository

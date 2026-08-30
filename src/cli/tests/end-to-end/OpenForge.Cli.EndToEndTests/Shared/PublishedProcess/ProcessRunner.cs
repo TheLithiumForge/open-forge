@@ -62,6 +62,12 @@ internal sealed class ProcessRunRequest
     /// </summary>
     public Action<int>? ProcessStarted { get; }
 
+    /// <summary>
+    /// Gets explicit environment overrides for the child process.
+    /// </summary>
+    public IReadOnlyDictionary<string, string> EnvironmentVariables { get; init; } =
+        new ReadOnlyDictionary<string, string>(new Dictionary<string, string>());
+
     private static void ValidateTimeout(TimeSpan? timeout)
     {
         if (timeout is null
@@ -192,6 +198,11 @@ internal static class ProcessRunner
         foreach (var argument in request.Arguments)
         {
             startInfo.ArgumentList.Add(argument);
+        }
+
+        foreach (var variable in request.EnvironmentVariables)
+        {
+            startInfo.Environment[variable.Key] = variable.Value;
         }
 
         return startInfo;

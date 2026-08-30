@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Commands.Extension.List.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Find.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Index.Models.Presentation;
+using OpenForge.Cli.Core.Commands.Install.Models.Presentation;
 using OpenForge.Cli.Core.Commands.References.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Rendering;
@@ -23,6 +24,7 @@ namespace OpenForge.Cli.Core.Shell.Serialization;
 [JsonSerializable(typeof(ExtensionInspectJsonDocument))]
 [JsonSerializable(typeof(FindJsonDocument))]
 [JsonSerializable(typeof(IndexJsonDocument))]
+[JsonSerializable(typeof(InstallJsonDocument))]
 [JsonSerializable(typeof(ReferencesJsonDocument))]
 [JsonSerializable(typeof(RouteListJsonDocument))]
 [JsonSerializable(typeof(RouteInspectJsonDocument))]

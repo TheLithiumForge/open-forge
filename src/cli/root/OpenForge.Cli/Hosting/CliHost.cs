@@ -19,10 +19,13 @@ internal static class CliHost
             writers: writers,
             application: CliCompositionRoot.Create(
                 CreateProcessIdentity(),
-                Console.In,
-                writers.StandardError,
-                Console.IsInputRedirected,
-                Console.IsErrorRedirected),
+                new CliCompositionInputs
+                {
+                    StandardInput = Console.In,
+                    PromptOutput = writers.StandardError,
+                    StandardInputRedirected = Console.IsInputRedirected,
+                    PromptOutputRedirected = Console.IsErrorRedirected,
+                }),
             cancellationToken: cancellationToken);
     }
 

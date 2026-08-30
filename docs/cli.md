@@ -50,15 +50,16 @@ or cancellation is a no-write `interrupted` result. Dry-run, verified no-op,
 application that would write is `invalid` unless `--automatic` is explicit.
 Automatic adds no force or safety authority.
 
-Install plans missing directories separately from file effects. If `.agents` is
-missing, that exact container is the one visible planned/reported lock bootstrap:
-the workspace lock manager creates and verifies it immediately before opening
-`.agents/open-forge.lock`. Under the held lease, Install revalidates and creates
-only missing descendants parent-first with ordinary .NET filesystem APIs, then
-verifies them. A created or bootstrapped directory remains as reported residual
-state after contention or a later failure; it has no recovery entry and is not
-rolled back, compensated for, or removed. `LocalApplicationData` stores recovery
-bundles, never the workspace lock.
+Install plans missing directories separately from file effects. The workspace
+lease uses a persistent zero-byte file in the current user's application-owned
+`LocalApplicationData/OpenForge/locks/v1` catalogue; it does not require or
+create workspace content. Under the held lease, Install revalidates and creates
+`.agents` as the first ordinary planned directory effect when it is missing,
+then creates only missing descendants parent-first with ordinary .NET filesystem
+APIs and verifies them. A created directory remains as reported residual state
+after contention or a later failure; it has no recovery entry and is not rolled
+back, compensated for, or removed. Recovery bundles use the separate
+`LocalApplicationData/OpenForge/recovery/v1` catalogue.
 
 `update` requires trusted existing Framework lifecycle state. Normal mode applies
 baseline-unchanged and genuinely new safe content and preserves changed, missing,
@@ -892,13 +893,13 @@ canonical assets and derived generated regions enter Framework lifecycle. There
 is no `install --route`, `--scope`, blueprint, or general Template engine, and
 generic metadata flags are invalid with `--framework`.
 
-In either mode, missing directories are separate effects. A generic plan may
-report missing `.agents` as the single lock bootstrap created and verified before
-lease acquisition; Framework mode requires an existing trusted Install. Under
-the lease, only descendants are created parent-first with immediate parent and
-target revalidation. A created or bootstrapped directory remains as reported
-residual state after contention or a later failure; it has no recovery entry and
-is not rolled back or removed.
+In either mode, missing directories are separate effects. The external workspace
+lease is acquired before any workspace effect. A generic plan reports and creates
+missing `.agents` as its first ordinary directory effect; Framework mode requires
+an existing trusted Install. Under the lease, remaining descendants are created
+parent-first with immediate parent and target revalidation. A created directory
+remains as reported residual state after contention or a later failure; it has no
+recovery entry and is not rolled back or removed.
 See the
 [route init contract set](../.agents/memory/crystallized/documents/cli/contracts/route/init/_init.md)
 for the complete target, scaffold, collision, and recovery behavior.

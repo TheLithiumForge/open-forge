@@ -16,12 +16,14 @@ public sealed class PublishedIndexProcessTests
             target,
             workspace.Path,
             workspace.SnapshotState,
-            ["--help"]);
+            ["--help"],
+            workspace.ProcessEnvironment);
         var help = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             target,
             workspace.Path,
             workspace.SnapshotState,
-            ["index", "--help", "--workspace", Path.Combine(workspace.Path, "missing")]);
+            ["index", "--help", "--workspace", Path.Combine(workspace.Path, "missing")],
+            workspace.ProcessEnvironment);
 
         Assert.Equal(0, root.ExitCode);
         Assert.Equal(string.Empty, root.StandardError);
@@ -32,6 +34,7 @@ public sealed class PublishedIndexProcessTests
         Assert.Equal(string.Empty, help.StandardError);
         Assert.Contains("open-forge index [source-reference...] [--dry-run]", help.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("--view <compact|expanded>", help.StandardOutput, StringComparison.Ordinal);
+        workspace.AssertNoLockInfrastructure();
     }
 
     [Fact(DisplayName = "Published Index repeated dry-run emits one exact complete diff and makes no changes"),
@@ -45,7 +48,8 @@ public sealed class PublishedIndexProcessTests
             target,
             workspace.Path,
             workspace.SnapshotState,
-            ["index", PublishedIndexWorkspace.RootPath, "--dry-run", "--dry-run", "--view", "compact"]);
+            ["index", PublishedIndexWorkspace.RootPath, "--dry-run", "--dry-run", "--view", "compact"],
+            workspace.ProcessEnvironment);
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
@@ -57,6 +61,7 @@ public sealed class PublishedIndexProcessTests
         Assert.Contains("- stale", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains($"+ {PublishedIndexWorkspace.ExpectedEntry}", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("No files changed (--dry-run).", result.StandardOutput, StringComparison.Ordinal);
+        workspace.AssertNoLockInfrastructure();
     }
 
     [Fact(DisplayName = "Published Index JSON is view-neutral and verbose diagnostics stay on bounded stderr"),
@@ -70,17 +75,20 @@ public sealed class PublishedIndexProcessTests
             target,
             workspace.Path,
             workspace.SnapshotState,
-            [.. common, "--view", "compact"]);
+            [.. common, "--view", "compact"],
+            workspace.ProcessEnvironment);
         var expanded = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             target,
             workspace.Path,
             workspace.SnapshotState,
-            [.. common, "--view", "expanded"]);
+            [.. common, "--view", "expanded"],
+            workspace.ProcessEnvironment);
         var verbose = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             target,
             workspace.Path,
             workspace.SnapshotState,
-            [.. common, "--view", "compact", "--verbose"]);
+            [.. common, "--view", "compact", "--verbose"],
+            workspace.ProcessEnvironment);
 
         Assert.Equal(0, compact.ExitCode);
         Assert.Equal(compact.ExitCode, expanded.ExitCode);
@@ -93,6 +101,7 @@ public sealed class PublishedIndexProcessTests
         using var document = JsonDocument.Parse(compact.StandardOutput);
         Assert.Equal("index", document.RootElement.GetProperty("command").GetString());
         Assert.Equal("complete", document.RootElement.GetProperty("status").GetString());
+        workspace.AssertNoLockInfrastructure();
     }
 
     [Fact(DisplayName = "Published Index applies one bounded change and the next process run is a verified no-op"),
@@ -105,7 +114,8 @@ public sealed class PublishedIndexProcessTests
         var first = await PublishedProcessTestSupport.RunAsync(
             target,
             workspace.Path,
-            ["index", PublishedIndexWorkspace.RootPath]);
+            ["index", PublishedIndexWorkspace.RootPath],
+            workspace.ProcessEnvironment);
 
         Assert.Equal(0, first.ExitCode);
         Assert.Equal(string.Empty, first.StandardError);
@@ -117,12 +127,14 @@ public sealed class PublishedIndexProcessTests
                 Prefix = PublishedIndexWorkspace.RootPrefix,
             }),
             await workspace.ReadRootAsync(TestContext.Current.CancellationToken));
+        workspace.AssertPersistentExternalLock();
 
         var second = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             target,
             workspace.Path,
             workspace.SnapshotState,
-            ["index", PublishedIndexWorkspace.RootPath]);
+            ["index", PublishedIndexWorkspace.RootPath],
+            workspace.ProcessEnvironment);
 
         Assert.Equal(0, second.ExitCode);
         Assert.Equal(string.Empty, second.StandardError);
@@ -140,7 +152,8 @@ public sealed class PublishedIndexProcessTests
             target,
             workspace.Path,
             workspace.SnapshotState,
-            ["index", ".agents/../private.md", "--json"]);
+            ["index", ".agents/../private.md", "--json"],
+            workspace.ProcessEnvironment);
 
         Assert.Equal(4, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
@@ -150,5 +163,6 @@ public sealed class PublishedIndexProcessTests
         Assert.Equal(
             "index.invalid-source",
             document.RootElement.GetProperty("result").GetProperty("findings")[0].GetProperty("code").GetString());
+        workspace.AssertNoLockInfrastructure();
     }
 }

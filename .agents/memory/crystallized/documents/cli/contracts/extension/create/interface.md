@@ -29,8 +29,8 @@ lifecycle document, or publish Framework or Extension lifecycle state.
 
 `extension create` is the accepted no-workspace mutation exception. The catalogue
 destination is the sole operation subject. Because `--workspace` is a no-op for
-this operation, create does not acquire `.agents/open-forge.lock` or mutate
-workspace state.
+this operation, create does not acquire the external workspace mutation lock or
+mutate workspace state.
 
 The create destination is distinct from package source selection used by other
 Extension operations. `--path` names the destination catalogue parent; it is not
@@ -78,7 +78,7 @@ The shared flags are:
 
 `--workspace` is accepted as a global flag but is a no-op for create. The
 catalogue destination, not the workspace, is the operation subject, and create
-does not acquire `.agents/open-forge.lock`. Other global grammar, repetition,
+does not acquire the external workspace mutation lock. Other global grammar, repetition,
 terminal, and presentation rules remain in [Global CLI
 Flags](../../shared/global-flags/interface.md).
 
@@ -250,7 +250,7 @@ automatic, and redirected omission states; exact ID
 and catalogue-parent validation, empty and populated marker-free parents,
 unrelated sibling preservation, exact-destination-only inspection, refusal to
 create a missing parent, catalogue destination distinction, workspace
-no-op and the absence of `.agents/open-forge.lock` acquisition, scaffold-only
+no-op and the absence of workspace-lock acquisition, scaffold-only
 effects, an absent destination, an exact-scaffold no-op, and divergent, partial,
 additional, unknown, or colliding occupants blocking. It must also cover exact
 catalogue and destination physical identity, expected-state revalidation

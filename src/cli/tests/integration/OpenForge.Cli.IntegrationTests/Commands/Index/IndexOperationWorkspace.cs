@@ -3,13 +3,13 @@ using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models;
 using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Index;
 
 internal sealed class IndexOperationWorkspace : IDisposable
 {
-    private const string AvailableLockContent = "available";
     private const string StaleEntries = "stale";
 
     internal const string RootPath = ".agents/root/_root.md";
@@ -26,17 +26,24 @@ internal sealed class IndexOperationWorkspace : IDisposable
     internal const string BetaPrefix = "# Beta\n\nBeta unrelated prose.";
 
     private readonly TemporaryWorkspace _temporary;
+    private readonly WorkspaceLockTestStore _lockStore;
 
-    private IndexOperationWorkspace(TemporaryWorkspace temporary)
+    private IndexOperationWorkspace(
+        TemporaryWorkspace temporary,
+        WorkspaceLockTestStore lockStore)
     {
         _temporary = temporary;
+        _lockStore = lockStore;
         Workspace = new CliWorkspace(
             lexicalRoot: temporary.Path,
             physicalRoot: temporary.Path,
             selectedBy: CliWorkspaceSelectionMethod.ExplicitWorkspace);
+        _ = _lockStore.Track(Workspace);
     }
 
     internal CliWorkspace Workspace { get; }
+
+    internal WorkspaceLockStoreRoot LockStoreRoot => _lockStore.StoreRoot;
 
     internal string RootPhysicalPath => _temporary.Combine(RootPath);
 
@@ -45,9 +52,9 @@ internal sealed class IndexOperationWorkspace : IDisposable
         string generatedEntries = StaleEntries)
     {
         var temporary = TemporaryWorkspace.Create(purpose);
+        var lockStore = WorkspaceLockTestStore.Create($"{purpose}-lock-store");
         try
         {
-            temporary.WriteText(WorkspaceLockRequest.RelativePath, AvailableLockContent);
             temporary.WriteText(
                 RootPath,
                 OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
@@ -61,10 +68,11 @@ internal sealed class IndexOperationWorkspace : IDisposable
                     description: "Child",
                     tags: ["Docs"],
                     body: "# Child\n"));
-            return new IndexOperationWorkspace(temporary);
+            return new IndexOperationWorkspace(temporary, lockStore);
         }
         catch
         {
+            lockStore.Dispose();
             temporary.Dispose();
             throw;
         }
@@ -73,9 +81,9 @@ internal sealed class IndexOperationWorkspace : IDisposable
     internal static IndexOperationWorkspace CreateMultiTarget(string purpose)
     {
         var temporary = TemporaryWorkspace.Create(purpose);
+        var lockStore = WorkspaceLockTestStore.Create($"{purpose}-lock-store");
         try
         {
-            temporary.WriteText(WorkspaceLockRequest.RelativePath, AvailableLockContent);
             WriteTarget(
                 temporary: temporary,
                 seed: new TargetSeed
@@ -96,10 +104,11 @@ internal sealed class IndexOperationWorkspace : IDisposable
                     Description = "Beta Child",
                     Tag = "Beta",
                 });
-            return new IndexOperationWorkspace(temporary);
+            return new IndexOperationWorkspace(temporary, lockStore);
         }
         catch
         {
+            lockStore.Dispose();
             temporary.Dispose();
             throw;
         }
@@ -127,15 +136,7 @@ internal sealed class IndexOperationWorkspace : IDisposable
         => _temporary.ReplaceText(RootPath, text);
 
     internal FileStream HoldLock()
-        => new(
-            _temporary.Combine(WorkspaceLockRequest.RelativePath),
-            new FileStreamOptions
-            {
-                Mode = FileMode.Open,
-                Access = FileAccess.ReadWrite,
-                Share = FileShare.None,
-                Options = FileOptions.Asynchronous,
-            });
+        => _lockStore.OpenExclusive(Workspace);
 
     internal Task<string> ReadRootAsync(CancellationToken cancellationToken)
         => File.ReadAllTextAsync(RootPhysicalPath, cancellationToken);
@@ -167,6 +168,7 @@ internal sealed class IndexOperationWorkspace : IDisposable
     public void Dispose()
     {
         DeleteRecoveryArtifacts();
+        _lockStore.Dispose();
         _temporary.Dispose();
     }
 

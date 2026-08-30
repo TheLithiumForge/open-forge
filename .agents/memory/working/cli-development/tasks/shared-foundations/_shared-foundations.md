@@ -40,14 +40,10 @@ errors; managed Unit `1284/1284`, Integration `500/500`, and EndToEnd `125/125`;
 Native AOT Integration `500/500` and EndToEnd `125/125`; and zero skips in every
 stated run.
 
-The lock bootstrap contract is also integrated: `WorkspaceLockResult` carries a
-nullable `BootstrapOutcome`. `null` means no bootstrap directory outcome was
-successfully observed; `Existing` means the pre-existing `.agents` directory
-was validated; and `Materialized` means absence was observed, ordinary BCL
-creation ran, and the resulting directory was validated. Any reached outcome is
-retained across acquired, failed, and cancelled results, and acquisition
-requires a non-null outcome. The result does not claim hostile same-user
-creator identity.
+The later accepted lock-location correction removes lock bootstrap state from
+`WorkspaceLockResult`. The lock is a persistent external zero-byte ordinary file
+under `LocalApplicationData/OpenForge/locks/v1`; missing `.agents` is an ordinary
+lease-bound directory-create effect owned by the command plan.
 
 ## Outcome And Dependency Graph
 
@@ -84,10 +80,10 @@ dependency.
 - `Framework/Lifecycle` owns transparent persisted provenance only. It does not
   gain an instance registry, migration engine, or command policy.
 - The shared directory capability owns only lease-bound missing-directory
-  revalidation, ordinary BCL creation, verification, and neutral residual facts
-  for descendants below `.agents`. The existing lock manager owns and reports
-  the one visible missing-`.agents` bootstrap immediately before lease
-  acquisition. Directory selection and command results remain local.
+  revalidation, ordinary BCL creation, verification, and neutral residual facts.
+  Commands plan `.agents` and its descendants in parent-first order after the
+  external lease is acquired. Directory selection and command results remain
+  local.
 - Do not change product behavior, add or remove features, or choose an
   architectural alternative without maintainer acceptance. Agents may surface
   alternatives and evidence upward.

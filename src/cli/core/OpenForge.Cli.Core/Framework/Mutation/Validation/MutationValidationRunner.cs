@@ -1,7 +1,5 @@
-using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Workspace;
 
 namespace OpenForge.Cli.Core.Framework.Mutation.Validation;
@@ -30,13 +28,6 @@ internal static partial class MutationValidationRunner
         var pathComparer = OperatingSystem.IsWindows()
             ? StringComparer.OrdinalIgnoreCase
             : StringComparer.Ordinal;
-        var lockLogicalPath = Path.Combine(
-            workspace.LexicalRoot,
-            WorkspaceLockRequest.RelativePath);
-        var lockResolution = validator.ResolvePath(workspace, lockLogicalPath);
-        var reservedLockPhysicalPath = lockResolution.State == PhysicalPathState.Contained
-            ? lockResolution.GetContainedPhysicalPath()
-            : null;
         var logicalPaths = new HashSet<string>(pathComparer);
         var expectedPhysicalPaths = new HashSet<string>(pathComparer);
         foreach (var change in changes)
@@ -51,21 +42,6 @@ internal static partial class MutationValidationRunner
             {
                 return MutationValidationResult.Blocked(
                     "Mutation changes cannot repeat a logical target.");
-            }
-
-            if (pathComparer.Equals(change.LogicalPath, lockLogicalPath)
-                || change.Expectation.PhysicalPath is { } expectedPhysicalPath
-                    && reservedLockPhysicalPath is { } lockPhysicalPath
-                    && pathComparer.Equals(expectedPhysicalPath, lockPhysicalPath)
-                || IsReservedLockPhysicalPath(
-                    validator,
-                    workspace,
-                    change.LogicalPath,
-                    reservedLockPhysicalPath,
-                    pathComparer))
-            {
-                return MutationValidationResult.Blocked(
-                    "A mutation plan cannot target its workspace lock file.");
             }
 
             if (change.Expectation.PhysicalPath is { } physicalPath
@@ -99,24 +75,5 @@ internal static partial class MutationValidationRunner
         }
 
         return MutationValidationResult.FromChecks(checks);
-    }
-
-    private static bool IsReservedLockPhysicalPath(
-        FileExpectationValidator validator,
-        CliWorkspace workspace,
-        string logicalPath,
-        string? reservedPhysicalPath,
-        StringComparer pathComparer)
-    {
-        if (reservedPhysicalPath is null)
-        {
-            return false;
-        }
-
-        var resolution = validator.ResolvePath(workspace, logicalPath);
-        return resolution.State == PhysicalPathState.Contained
-            && pathComparer.Equals(
-                resolution.GetContainedPhysicalPath(),
-                reservedPhysicalPath);
     }
 }

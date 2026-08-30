@@ -253,9 +253,10 @@ is `incomplete` before effects; malformed, mismatched, or colliding final facts
 are `blocked` before effects.
 
 Before the first workspace effect, the implementation obtains the actual OS lock
-for the persistent, reusable `.agents/open-forge.lock` path defined by the
-accepted CLI Architecture. Existing bytes are preserved. It holds a
-`FileShare.None` handle only and never writes metadata, deletes, or truncates the
+for the persistent reusable zero-byte external path under
+`LocalApplicationData/OpenForge/locks/v1` defined by the accepted CLI
+Architecture. It holds one read/write `FileShare.None` handle and never writes
+metadata, deletes, or truncates the
 lock file. An active handle blocks the plan; the lock is not lifecycle authority,
 history, or recovery evidence.
 

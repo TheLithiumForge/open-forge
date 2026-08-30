@@ -51,9 +51,10 @@ or own command policy. Existing `GeneratedNavigationProjectionRequest` is
 refined to consume that formation instead of separately accepting independently
 assembled topology and source collections.
 
-Mutating application coordinates through the workspace operation lock at
-`.agents/open-forge.lock`. The lock is held through the mutation planning,
-application, verification, and recovery boundary. It does not become route
+Mutating application coordinates through the persistent external zero-byte
+workspace operation lock below `LocalApplicationData/OpenForge/locks/v1`. The
+lock is held through the mutation planning, application, verification, and
+recovery boundary. It does not become route
 content or a source of workspace meaning, and it does not replace
 expected-state checks. Dry-run and read-only inspection do not acquire mutation
 authority merely to inspect. Lock lifecycle and platform mechanics follow the

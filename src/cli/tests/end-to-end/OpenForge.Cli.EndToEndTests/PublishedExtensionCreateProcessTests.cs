@@ -99,6 +99,8 @@ public sealed class PublishedExtensionCreateProcessTests
     {
         var target = PublishedExecutableTarget.Discover();
         using var working = PublishedExtensionCreateWorkspace.Create();
+        using var lockStore = PublishedWorkspaceLockStore.Create("e2e-extension-create-lock-store");
+        _ = lockStore.Track(working.WorkspacePath);
         var beforeWorkspace = working.SnapshotWorkspace();
         var arguments = new[]
         {
@@ -112,7 +114,8 @@ public sealed class PublishedExtensionCreateProcessTests
         var applied = await PublishedProcessTestSupport.RunAsync(
             target,
             working.WorkspacePath,
-            arguments);
+            arguments,
+            lockStore.EnvironmentVariables);
 
         Assert.Equal(0, applied.ExitCode);
         Assert.Equal(string.Empty, applied.StandardError);
@@ -132,14 +135,15 @@ public sealed class PublishedExtensionCreateProcessTests
         var noOp = await PublishedProcessTestSupport.RunAsync(
             target,
             working.WorkspacePath,
-            arguments);
+            arguments,
+            lockStore.EnvironmentVariables);
 
         Assert.Equal(0, noOp.ExitCode);
         Assert.Equal(string.Empty, noOp.StandardError);
         Assert.Contains("intended=2; applied=0", noOp.StandardOutput, StringComparison.Ordinal);
         Assert.Equal(afterApply, working.SnapshotCatalogue());
         Assert.Equal(beforeWorkspace, working.SnapshotWorkspace());
-        Assert.False(File.Exists(Path.Combine(working.WorkspacePath, ".agents", "open-forge.lock")));
+        lockStore.AssertNoInfrastructure();
         Assert.Equal("preserve lifecycle", await File.ReadAllTextAsync(
             Path.Combine(working.WorkspacePath, ".agents", "open-forge.lifecycle.json"),
             TestContext.Current.CancellationToken));

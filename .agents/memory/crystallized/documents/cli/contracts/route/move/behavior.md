@@ -508,10 +508,10 @@ Markdown outside `.agents`, generated parent effects, external recovery bundles,
 expected-state changes, and concurrent edits. Gate 5 executable proof must
 exercise the accepted parser, filesystem, physical-identity, lock, recovery,
 library, Native AOT, test, and source-layout boundaries; source inspection or a
-managed build alone is insufficient. The persistent reusable workspace lock at
-`.agents/open-forge.lock` preserves existing bytes and is held with a
-`FileShare.None` handle only; it never receives metadata writes, deletion, or
-truncation.
+managed build alone is insufficient. The persistent reusable zero-byte external
+workspace lock below `LocalApplicationData/OpenForge/locks/v1` is held with one
+read/write `FileShare.None` handle; it never receives metadata writes, deletion,
+or truncation.
 
 ## Related Current Sources
 

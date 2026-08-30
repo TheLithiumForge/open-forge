@@ -111,7 +111,7 @@ public sealed class ExtensionCreateInteractionIntegrationTests
         Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
         Assert.Equal(beforeCatalogue, catalogue.SnapshotHashes());
         Assert.Equal(beforeWorkspace, workspace.SnapshotHashes());
-        Assert.False(File.Exists(workspace.Combine(".agents", "open-forge.lock")));
+        Assert.False(Directory.Exists(workspace.Combine(".agents")));
     }
 
     [Fact(DisplayName = "Extension Create keeps the workspace path irrelevant and never creates lock or lifecycle state"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
@@ -128,7 +128,7 @@ public sealed class ExtensionCreateInteractionIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Null(result.Workspace);
         Assert.Equal(beforeWorkspace, workspace.SnapshotHashes());
-        Assert.False(File.Exists(workspace.Combine(".agents", "open-forge.lock")));
+        Assert.False(Directory.Exists(workspace.Combine(".agents")));
         Assert.False(File.Exists(workspace.Combine(".agents", "open-forge.lifecycle.json")));
     }
 

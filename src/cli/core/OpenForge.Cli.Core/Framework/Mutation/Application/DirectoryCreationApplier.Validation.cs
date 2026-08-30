@@ -32,35 +32,10 @@ internal sealed partial class DirectoryCreationApplier
         out string cause)
     {
         cause = string.Empty;
-        if (!context.Lease.IsHeld)
-        {
-            cause = "Directory creation requires a live workspace lock lease.";
-            return false;
-        }
-
         var workspace = context.Lease.Request.Workspace;
-        var expectedLockPath = Path.Combine(
-            workspace.LexicalRoot,
-            WorkspaceLockRequest.RelativePath);
-        if (!string.Equals(
-            context.Lease.LogicalPath,
-            expectedLockPath,
-            PathComparison()))
+        if (!context.Lease.IsHeldFor(workspace))
         {
             cause = "The workspace lock lease identity does not match its selected workspace.";
-            return false;
-        }
-
-        var lockResolution = _validator.ResolvePath(
-            workspace,
-            context.Lease.LogicalPath);
-        if (lockResolution.State != PhysicalPathState.Contained
-            || !string.Equals(
-                lockResolution.GetContainedPhysicalPath(),
-                context.Lease.PhysicalPath,
-                PathComparison()))
-        {
-            cause = "The workspace lock path changed before directory creation.";
             return false;
         }
 

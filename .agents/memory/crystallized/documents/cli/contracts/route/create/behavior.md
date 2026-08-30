@@ -408,9 +408,9 @@ exact named final and draft deletion under its separate lease-bound contract. Re
 replays a saved plan, receipt, journal, history, or progress record.
 
 Expected-state revalidation and preservation of unexpected concurrent edits are
-required safety properties. The persistent reusable workspace lock at
-`.agents/open-forge.lock` preserves existing bytes and is held with a
-`FileShare.None` handle only; it never receives metadata writes, deletion, or
+required safety properties. The persistent reusable zero-byte external workspace
+lock below `LocalApplicationData/OpenForge/locks/v1` is held with one read/write
+`FileShare.None` handle; it never receives metadata writes, deletion, or
 truncation. The BCL-first filesystem boundary and recovery-bundle identity model
 are defined by the CLI Architecture; they are not public command flags.
 

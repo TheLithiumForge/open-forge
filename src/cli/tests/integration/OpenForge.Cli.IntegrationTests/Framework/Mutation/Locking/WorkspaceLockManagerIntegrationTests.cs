@@ -1,28 +1,32 @@
 using OpenForge.Cli.Core.Framework.Filesystem;
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Mutation.Locking;
 
 public sealed class WorkspaceLockManagerIntegrationTests
 {
-    [Fact(DisplayName = "Workspace lock owns one exclusive OS handle until disposal")]
+    [Fact(DisplayName = "Workspace lock owns one external exclusive OS handle and persists its zero-byte file")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
-    public async Task AcquireOwnsExclusiveHandleAndPreservesContendedBytes()
+    public async Task AcquireOwnsExternalHandleAndPersistsReusableFile()
     {
         using var temporary = TemporaryWorkspace.Create("mutation-lock-ownership");
-        var lockPath = temporary.CreateFile(WorkspaceLockRequest.RelativePath, "stale");
+        using var lockStore = WorkspaceLockTestStore.Create("mutation-lock-store");
         var workspace = Workspace(temporary);
-        var manager = new WorkspaceLockManager(new PhysicalPathResolver());
+        var lockPath = lockStore.Track(workspace);
         var firstRequest = Request(workspace, "route create");
 
-        var first = await manager.AcquireAsync(firstRequest, TestContext.Current.CancellationToken);
+        var first = await lockStore.AcquireAsync(
+            firstRequest,
+            TestContext.Current.CancellationToken);
         var lease = Assert.IsType<WorkspaceLockLease>(first.Lease);
         Assert.Equal(WorkspaceLockState.Acquired, first.State);
-        Assert.True(lease.IsHeld);
+        Assert.True(lease.IsHeldFor(workspace));
+        Assert.Equal(lockPath, lease.LockPath);
+        Assert.DoesNotContain(workspace.PhysicalRoot, lockPath, StringComparison.Ordinal);
         await Assert.ThrowsAsync<IOException>(async () =>
         {
             await using var ignored = new FileStream(
@@ -36,7 +40,7 @@ public sealed class WorkspaceLockManagerIntegrationTests
                 });
         });
 
-        var contended = await manager.AcquireAsync(
+        var contended = await lockStore.AcquireAsync(
             Request(workspace, "index"),
             TestContext.Current.CancellationToken);
 
@@ -46,137 +50,98 @@ public sealed class WorkspaceLockManagerIntegrationTests
 
         await lease.DisposeAsync();
         Assert.False(lease.IsHeld);
-        Assert.Equal(
-            "stale"u8.ToArray(),
-            await File.ReadAllBytesAsync(lockPath, TestContext.Current.CancellationToken));
+        Assert.True(File.Exists(lockPath));
+        Assert.Equal(0, new FileInfo(lockPath).Length);
 
-        var reused = await manager.AcquireAsync(
+        var reused = await lockStore.AcquireAsync(
             Request(workspace, "extension install"),
             TestContext.Current.CancellationToken);
         Assert.Equal(WorkspaceLockState.Acquired, reused.State);
         await Assert.IsType<WorkspaceLockLease>(reused.Lease).DisposeAsync();
-        Assert.Equal(WorkspaceLockBootstrapOutcome.Existing, first.BootstrapOutcome);
-        Assert.Equal(WorkspaceLockBootstrapOutcome.Existing, contended.BootstrapOutcome);
-        Assert.Equal(WorkspaceLockBootstrapOutcome.Existing, reused.BootstrapOutcome);
+        Assert.True(File.Exists(lockPath));
+        Assert.False(Directory.Exists(temporary.Combine(".agents")));
     }
 
-    [Fact(DisplayName = "Workspace lock bootstraps a missing contained lock directory")]
+    [Fact(DisplayName = "Workspace lock cancellation before acquisition creates no external lock infrastructure")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
-    public async Task AcquireBootstrapsMissingContainedDirectory()
-    {
-        using var temporary = TemporaryWorkspace.Create("mutation-lock-bootstrap");
-        var workspace = Workspace(temporary);
-        var request = Request(workspace, "install");
-        var manager = new WorkspaceLockManager(new PhysicalPathResolver());
-
-        var result = await manager.AcquireAsync(request, TestContext.Current.CancellationToken);
-
-        var lease = Assert.IsType<WorkspaceLockLease>(result.Lease);
-        Assert.Equal(WorkspaceLockState.Acquired, result.State);
-        Assert.True(lease.IsHeld);
-        await lease.DisposeAsync();
-        Assert.Empty(await File.ReadAllBytesAsync(
-            request.LogicalPath,
-            TestContext.Current.CancellationToken));
-
-        File.Delete(request.LogicalPath);
-        var lockDirectory = Path.GetDirectoryName(request.LogicalPath)
-            ?? throw new InvalidOperationException("The workspace lock path requires a directory.");
-        Directory.Delete(lockDirectory);
-        Assert.Equal(WorkspaceLockBootstrapOutcome.Materialized, result.BootstrapOutcome);
-    }
-
-    [Fact(DisplayName = "Workspace lock cancellation creates no lock artifacts")]
-    [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
-    public async Task AcquireCancelledBeforeBootstrapCreatesNothing()
+    public async Task AcquireCancelledBeforeStoreCreationCreatesNothing()
     {
         using var temporary = TemporaryWorkspace.Create("mutation-lock-cancelled");
-        var request = Request(Workspace(temporary), "install");
+        using var lockStore = WorkspaceLockTestStore.Create("mutation-lock-cancelled-store");
+        var workspace = Workspace(temporary);
+        var lockPath = lockStore.Track(workspace);
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
 
-        var result = await new WorkspaceLockManager(new PhysicalPathResolver())
-            .AcquireAsync(request, cancellation.Token);
+        var result = await lockStore.AcquireAsync(
+            Request(workspace, "install"),
+            cancellation.Token);
 
         Assert.Equal(WorkspaceLockState.Cancelled, result.State);
-        Assert.Null(result.BootstrapOutcome);
-        Assert.False(Directory.Exists(Path.GetDirectoryName(request.LogicalPath)));
-        Assert.False(File.Exists(request.LogicalPath));
+        Assert.Null(result.Lease);
+        Assert.False(File.Exists(lockPath));
+        Assert.False(Directory.Exists(WorkspaceLockPathIdentity.StoreDirectory(lockStore.StoreRoot)));
+        Assert.False(Directory.Exists(temporary.Combine(".agents")));
     }
 
-    [Fact(DisplayName = "Workspace lock blocks unsafe and non-directory containers")]
+    [Fact(DisplayName = "Workspace lock rejects and preserves nonzero persistent content")]
     [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
-    public async Task AcquireBlocksExternalAliasAndNonDirectoryContainer()
+    public async Task AcquireRejectsAndPreservesNonzeroFile()
+    {
+        using var temporary = TemporaryWorkspace.Create("mutation-lock-nonzero");
+        using var lockStore = WorkspaceLockTestStore.Create("mutation-lock-nonzero-store");
+        var workspace = Workspace(temporary);
+        var lockPath = lockStore.Track(workspace);
+        Directory.CreateDirectory(Path.GetDirectoryName(lockPath)
+            ?? throw new InvalidOperationException("The external lock path requires a directory."));
+        await File.WriteAllTextAsync(
+            lockPath,
+            "foreign-content",
+            TestContext.Current.CancellationToken);
+
+        var result = await lockStore.AcquireAsync(
+            Request(workspace, "install"),
+            TestContext.Current.CancellationToken);
+
+        Assert.Equal(WorkspaceLockState.Failed, result.State);
+        Assert.Equal(FilesystemFailureKind.InvalidPath, result.Failure?.Kind);
+        Assert.Equal(
+            "foreign-content",
+            await File.ReadAllTextAsync(lockPath, TestContext.Current.CancellationToken));
+    }
+
+    [Fact(DisplayName = "Workspace lock rejects directory and symbolic-link targets without following them")]
+    [Trait("Feature", "mutation-foundation"), Trait("Evidence", "Integration")]
+    public async Task AcquireRejectsNonordinaryExternalTargets()
     {
         using var outside = TemporaryWorkspace.Create("mutation-lock-outside");
-        var outsideLock = outside.CreateFile("outside.lock", "outside");
-        using var aliasWorkspace = TemporaryWorkspace.Create("mutation-lock-alias");
-        aliasWorkspace.CreateDirectorySymbolicLink(".agents", outside.Path);
-        using var fileAliasWorkspace = TemporaryWorkspace.Create("mutation-lock-file-alias");
-        fileAliasWorkspace.CreateDirectory(".agents");
-        fileAliasWorkspace.CreateFileSymbolicLink(
-            WorkspaceLockRequest.RelativePath,
-            outsideLock);
-        using var internalAliasWorkspace = TemporaryWorkspace.Create("mutation-lock-internal-alias");
-        var internalTarget = internalAliasWorkspace.CreateFile("retained.txt", "retained");
-        internalAliasWorkspace.CreateDirectorySymbolicLink(
-            ".agents",
-            internalAliasWorkspace.CreateDirectory("lock-container"));
-        using var internalFileAliasWorkspace = TemporaryWorkspace.Create("mutation-lock-internal-file-alias");
-        var internalFileTarget = internalFileAliasWorkspace.CreateFile("retained.txt", "retained");
-        internalFileAliasWorkspace.CreateDirectory(".agents");
-        internalFileAliasWorkspace.CreateFileSymbolicLink(
-            WorkspaceLockRequest.RelativePath,
-            internalFileTarget);
-        using var fileWorkspace = TemporaryWorkspace.Create("mutation-lock-file");
-        fileWorkspace.CreateFile(".agents", "not-a-directory");
-        using var directoryTargetWorkspace = TemporaryWorkspace.Create("mutation-lock-directory-target");
-        directoryTargetWorkspace.CreateDirectory(WorkspaceLockRequest.RelativePath);
-        var manager = new WorkspaceLockManager(new PhysicalPathResolver());
+        var outsideFile = outside.CreateFile("outside.lock", "outside");
+        using var directoryWorkspace = TemporaryWorkspace.Create("mutation-lock-directory-target");
+        using var aliasWorkspace = TemporaryWorkspace.Create("mutation-lock-alias-target");
+        using var lockStore = WorkspaceLockTestStore.Create("mutation-lock-unsafe-store");
+        var directorySubject = Workspace(directoryWorkspace);
+        var aliasSubject = Workspace(aliasWorkspace);
+        var directoryPath = lockStore.Track(directorySubject);
+        var aliasPath = lockStore.Track(aliasSubject);
+        Directory.CreateDirectory(directoryPath);
+        Directory.CreateDirectory(Path.GetDirectoryName(aliasPath)
+            ?? throw new InvalidOperationException("The external lock path requires a directory."));
+        File.CreateSymbolicLink(aliasPath, outsideFile);
 
-        var alias = await manager.AcquireAsync(
-            Request(Workspace(aliasWorkspace), "index"),
+        var directoryResult = await lockStore.AcquireAsync(
+            Request(directorySubject, "index"),
             TestContext.Current.CancellationToken);
-        var file = await manager.AcquireAsync(
-            Request(Workspace(fileWorkspace), "index"),
-            TestContext.Current.CancellationToken);
-        var fileAlias = await manager.AcquireAsync(
-            Request(Workspace(fileAliasWorkspace), "index"),
-            TestContext.Current.CancellationToken);
-        var internalAlias = await manager.AcquireAsync(
-            Request(Workspace(internalAliasWorkspace), "index"),
-            TestContext.Current.CancellationToken);
-        var internalFileAlias = await manager.AcquireAsync(
-            Request(Workspace(internalFileAliasWorkspace), "index"),
-            TestContext.Current.CancellationToken);
-        var directoryTarget = await manager.AcquireAsync(
-            Request(Workspace(directoryTargetWorkspace), "index"),
+        var aliasResult = await lockStore.AcquireAsync(
+            Request(aliasSubject, "index"),
             TestContext.Current.CancellationToken);
 
-        Assert.Equal(WorkspaceLockState.Failed, alias.State);
-        Assert.Equal(FilesystemFailureKind.InvalidPath, alias.Failure?.Kind);
-        Assert.Equal(WorkspaceLockState.Failed, file.State);
-        Assert.Equal(FilesystemFailureKind.InvalidPath, file.Failure?.Kind);
-        Assert.Equal(WorkspaceLockState.Failed, fileAlias.State);
-        Assert.Equal(FilesystemFailureKind.InvalidPath, fileAlias.Failure?.Kind);
-        var internalAliasLease = Assert.IsType<WorkspaceLockLease>(internalAlias.Lease);
-        Assert.Equal(WorkspaceLockState.Acquired, internalAlias.State);
-        Assert.Equal(WorkspaceLockState.Failed, internalFileAlias.State);
-        Assert.Equal(FilesystemFailureKind.InvalidPath, internalFileAlias.Failure?.Kind);
-        Assert.Equal(WorkspaceLockState.Failed, directoryTarget.State);
-        Assert.Equal(FilesystemFailureKind.InvalidPath, directoryTarget.Failure?.Kind);
-        Assert.False(File.Exists(outside.Combine("open-forge.lock")));
-        Assert.Equal("retained", await File.ReadAllTextAsync(
-            internalTarget,
-            TestContext.Current.CancellationToken));
-        Assert.Equal("retained", await File.ReadAllTextAsync(
-            internalFileTarget,
-            TestContext.Current.CancellationToken));
-        Assert.Equal("outside", await File.ReadAllTextAsync(
-            outsideLock,
-            TestContext.Current.CancellationToken));
-        await internalAliasLease.DisposeAsync();
-        File.Delete(internalAliasWorkspace.Combine("lock-container/open-forge.lock"));
+        Assert.Equal(WorkspaceLockState.Failed, directoryResult.State);
+        Assert.Equal(FilesystemFailureKind.InvalidPath, directoryResult.Failure?.Kind);
+        Assert.Equal(WorkspaceLockState.Failed, aliasResult.State);
+        Assert.Equal(FilesystemFailureKind.InvalidPath, aliasResult.Failure?.Kind);
+        Assert.Equal(
+            "outside",
+            await File.ReadAllTextAsync(outsideFile, TestContext.Current.CancellationToken));
     }
 
     private static CliWorkspace Workspace(TemporaryWorkspace temporary)
@@ -189,5 +154,4 @@ public sealed class WorkspaceLockManagerIntegrationTests
         CliWorkspace workspace,
         string command)
         => new(workspace, command, Guid.NewGuid());
-
 }

@@ -42,12 +42,11 @@ verify the resulting chain, and form one concrete result.
   canonical Framework assets and derived generated regions, with exact
   `sourceAssetPath` provenance.
 - Reuse the shared parent-first ordinary-BCL directory capability while holding
-  the workspace lease for descendants below `.agents`. Generic mode reports a
-  missing `.agents` as the one bootstrap directory created and verified by
-  `WorkspaceLockManager` immediately before lease acquisition; Framework mode
-  requires an existing trusted Install. Keep directory effects separate from
-  file effects and retain verified created or bootstrapped directories as
-  reported residuals after contention, later failure, or interruption.
+  the external workspace lease. Generic mode reports missing `.agents` as the
+  first ordinary directory-create effect after lease acquisition; Framework
+  mode requires an existing trusted Install. Keep directory effects separate
+  from file effects and retain verified created directories as reported
+  residuals after later failure or interruption.
 - Model inspect, plan, apply, verify, and lifecycle effects separately.
 
 ## Evidence
@@ -62,10 +61,10 @@ reordering, root recreation, trusted/outdated Install state, exact embedded
 bytes, sparse creation, and lifecycle ownership exclusion for scope files.
 Prove the shared directory capability through missing-parent races,
 post-verification, retained residuals, and file/recovery non-regression.
-Cover generic missing-`.agents` bootstrap planning, cancellation, contention,
-residual reporting, nullable lock bootstrap outcomes across
-acquired/failed/cancelled results, and exclusion from the descendant applier;
-plus Framework-mode refusal when trusted Install state is absent.
+Cover generic missing-`.agents` planning as the first ordinary lease-bound
+directory effect, cancellation and contention before workspace effects, later
+residual reporting, and Framework-mode refusal when trusted Install state is
+absent.
 
 ## Preparation Closeout
 
@@ -105,6 +104,6 @@ Stop on ambiguous route alignment, managed-segment reordering, root recreation,
 broad subtree ownership, general slug/template machinery, missing trusted root
 Install state, lifecycle meaning not defined by accepted contracts, a
 command-local directory mechanism, directory rollback or recovery, or behavior
-that weakens the accepted bootstrap, lease, revalidation, and retained-residual
-boundary. Do not move or duplicate the workspace lock or use
-`LocalApplicationData` for it.
+that weakens the accepted external-lease, revalidation, and retained-residual
+boundary. Do not move or duplicate the shared external lock identity or merge
+its versioned subtree with recovery.

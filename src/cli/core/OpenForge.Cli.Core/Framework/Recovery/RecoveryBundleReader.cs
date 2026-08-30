@@ -182,7 +182,7 @@ internal sealed class RecoveryBundleReader
             return RecoveryBundleReadResult.Valid(new RecoveryBundleVerifiedRead
             {
                 BundlePath = normalizedPath,
-                WorkspacePhysicalPath = RecoveryBundlePathIdentity.NormalizeWorkspacePath(
+                WorkspacePhysicalPath = WorkspaceIdentity.NormalizePhysicalPath(
                     document.WorkspacePath),
                 WorkspaceKey = document.WorkspaceKey,
                 Command = document.Command,
@@ -225,8 +225,8 @@ internal sealed class RecoveryBundleReader
         RecoveryBundleInput? expectedInput,
         RecoveryBundleCandidateKind kind)
     {
-        var workspacePath = RecoveryBundlePathIdentity.NormalizeWorkspacePath(workspace.PhysicalRoot);
-        var workspaceKey = RecoveryBundlePathIdentity.WorkspaceKey(workspacePath);
+        var workspacePath = WorkspaceIdentity.NormalizePhysicalPath(workspace.PhysicalRoot);
+        var workspaceKey = WorkspaceIdentity.Key(workspacePath);
         if (!string.Equals(document.WorkspacePath, workspacePath, PathComparison())
             || !string.Equals(document.WorkspaceKey, workspaceKey, StringComparison.Ordinal)
             || !RecoveryBundleManifestCodec.TryParseOperationId(document, out var operationId))

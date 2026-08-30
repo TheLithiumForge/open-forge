@@ -149,9 +149,10 @@ the exact current inventory. User-owned inserted scope entrypoints are not
 Framework targets. Schema v1 adds no lifecycle-instance collection or migration
 engine.
 
-Workspace mutation uses the visible `.agents/open-forge.lock` path under the
-accepted CLI Architecture. File existence is not lock ownership: the operation
-must hold the actual OS file lock. A crash releases that OS lock. An unlocked
+Workspace mutation uses the persistent external zero-byte path under the
+application-owned `LocalApplicationData/OpenForge/locks/v1` catalogue defined by
+the accepted CLI Architecture. File existence is not lock ownership: the
+operation must hold the actual OS file lock. A crash releases that OS lock. An unlocked
 file is reusable and may be manually removed only when no process is active.
 This lock is concurrency safety, not lifecycle authority or history. An active
 lock held by another process blocks mutation.
