@@ -8,8 +8,9 @@ open-forge:
 
 ## Task State
 
-- State: Planned after root Install integration and the shared directory-create
-  foundation; all route-mode and directory-effect decisions are closed.
+- State: Ready for the accepted post-Install contract freeze, then Gray. Root
+  Install and the shared directory-create foundation are integrated; all
+  route-mode and directory-effect decisions are closed.
 - Parent: [Route Mutation Commands](_route-mutation.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/route/init/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/route/init/behavior.md).
 
@@ -70,8 +71,8 @@ absent.
 
 Read-only preparation on clean no-op branch `codex/route-init` at exact base
 `33913dfe7f8f80598ca4765c516d308ed179c3ab` produced no commit, Gray, Red, or
-Green change. Route Init is not ready: integrated root Install and the pending
-post-Install freeze boundary below must close first.
+Green change. Integrated root Install is now available; the accepted
+post-Install freeze boundary below remains the first step before Gray.
 
 - Expected implementation paths are
   `src/cli/core/OpenForge.Cli.Core/Commands/Route/Init/**`,

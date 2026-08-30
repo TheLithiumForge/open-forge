@@ -39,13 +39,13 @@ The accepted dependency order is:
 
 1. The D0 contract freeze and all four shared foundations are integrated and
    accepted at the current local baseline.
-2. Continue Extension Create and root Install on their isolated command paths.
-   Route Inspect interactive selection is squash-integrated at `fa3db1ee` with
-   exact tree equality to final reviewed candidate `37c9360`. Keep remaining
-   shared root composition, serialization, help, and executable evidence
-   sequential.
-3. Implement Framework-aware Route Init after root Install establishes the
-   trusted base lifecycle, then complete the remaining Route Mutation M2 leaves.
+2. Extension Create is complete at `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5`.
+   Root Install is complete at `c60fcb98a57e9ec80769b9cb1d399ce13a227863`,
+   exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed`. Route Inspect interactive
+   selection is squash-integrated at `fa3db1ee` with exact tree equality to final
+   reviewed candidate `37c9360`.
+3. Begin Framework-aware Route Init from the trusted installed base lifecycle,
+   then complete the remaining Route Mutation M2 leaves.
 4. Implement root Update M3 only after full M2 is complete. Preparation that is
    independent of unfinished behavior may proceed earlier in isolated lanes:
    scope discovery, contract and ownership audits, callable-surface analysis,
@@ -66,11 +66,11 @@ or a general template/scaffold system.
 | F2 | Embedded Framework payload reader and deterministic inventory | Integrated at `680915a` after review |
 | F3 | Framework lifecycle `sourceAssetPath` provenance | Integrated at `0989356` after review |
 | F4 | Shared planned directory-creation mutation effect | Integrated at `33913df` after review |
-| C1 | Extension Create | Active on branch `codex/extension-create` |
-| C2 | Root Install | Active command-local Green on branch `codex/root-install`; exact public JSON is frozen; overlapping root-composition, serialization, help, and process seams are integration-owned and sequential |
+| C1 | Extension Create | Complete at protected public integration `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5` |
+| C2 | Root Install | Complete at local integration `c60fcb98a57e9ec80769b9cb1d399ce13a227863`; final candidate `11994e4d21ddc807b7480afc39ae3612e5a69a56`, exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed` |
 | C3 | Route Inspect interactive correction | Complete and squash-integrated at `fa3db1ee` with exact tree equality to final reviewed candidate `37c9360` |
-| C4 | Generic and Framework-aware Route Init | Waiting for integrated Install |
-| M2 preparation | Init/Create/Update/Move/Remove readiness | Complete on clean no-op branches from `33913dfe`; leaf Tasks retain accepted preparation decisions and remaining authority gates; no implementation commit exists |
+| C4 | Generic and Framework-aware Route Init | Ready as the next M2 behavior boundary after integrated Install |
+| M2 preparation | Init/Create/Update/Move/Remove readiness | Complete on clean no-op branches from `33913dfe`; begin with Route Init, then continue in accepted sequence; leaf Tasks retain accepted preparation decisions and remaining authority gates |
 
 Each mutating lane owns a distinct worktree and feature branch. Shared root
 composition, serializer registration, public help, process evidence, Plan, and
@@ -97,6 +97,13 @@ Checkpoint are integration-owned unless a Task packet explicitly says otherwise.
   zero-byte lock is external under `LocalApplicationData/OpenForge/locks/v1`,
   keyed by the full SHA-256 of normalized physical workspace identity. Missing
   `.agents` is an ordinary lease-bound directory effect.
+- C2 root Install is Complete at `c60fcb98a57e9ec80769b9cb1d399ce13a227863`,
+  exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed`, from final candidate
+  `11994e4d21ddc807b7480afc39ae3612e5a69a56`. Final managed
+  `1390/598/136`, supported `linux-x64` Native AOT `598/136`, focused post-rebase,
+  and two independent Sol/xhigh review gates pass. Native dry-run dogfood safely
+  blocks on the repository's existing generated-region state without effects,
+  workspace changes, lifecycle publication, or a new external lock.
 
 - A switch that names every declared enum member is not closed over unnamed
   runtime numeric values. The direct modern-C# pattern is a clear switch
@@ -118,12 +125,11 @@ Checkpoint are integration-owned unless a Task packet explicitly says otherwise.
 
 ## Open Decision Frontier
 
-No currently surfaced decision blocks the shared foundations or C2
-command-local Green. The exact public Root Install JSON result schema is
-accepted and frozen, including fully present ordered facts and typed residual
-values `none`, `retained`, and `unknown`; protected serialization remains an
-integration-owned seam rather than an architecture frontier.
-M2 preparation also surfaced command-local result/callable frontiers retained in
+No currently surfaced decision blocks beginning Route Init from integrated C2.
+The exact public Root Install JSON result schema is accepted, implemented, and
+frozen, including fully present ordered facts and typed residual values `none`,
+`retained`, and `unknown`.
+M2 preparation surfaced command-local result and callable frontiers retained in
 the Route Mutation Tasks. The maintainer accepted the recorded Create correction,
 Init/Update freeze timing, Move lifecycle and neutral-resolver corrections, Init
 neutral Framework-layer reuse, and Remove parser projection. Remaining exact

@@ -8,7 +8,10 @@ open-forge:
 
 ## Task State
 
-- State: Planned. No command behavior is Active or Ready.
+- State: Ready to begin with Route Init. Root Install and the shared foundations
+  are integrated; Route Init's accepted post-Install contract freeze remains the
+  first boundary before Gray. Later Route Mutation commands remain Planned in
+  the accepted sequence.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Common prerequisites: Route discovery, `index`, and Mutation Foundation.
 - Intended-membership formation prerequisite: accepted feature
@@ -50,7 +53,7 @@ command Active or Ready.
 
 ## Child Tasks
 
-- [ ] [Implement generic and Framework-aware sparse route initialization after root Install](route-init.md) — Planned after Install and the shared directory-create foundation — Implementer: Not assigned
+- [ ] [Implement generic and Framework-aware sparse route initialization after root Install](route-init.md) — Ready for its accepted post-Install contract freeze, then Gray — Implementer: Not assigned
 - [ ] [Implement one-file route creation below an existing routable parent](route-create.md) — Planned — Implementer: Not assigned
 - [ ] [Implement bounded route content and metadata update without identity drift](route-update.md) — Planned — Implementer: Not assigned
 - [ ] [Implement route move with reference, overwrite, generated-navigation, and recovery integrity](route-move.md) — Planned — Implementer: Not assigned
@@ -64,7 +67,7 @@ preparation commit, Gray, Red, or Green change:
 
 | Command | Preparation branch | Readiness |
 | --- | --- | --- |
-| Route Init | `codex/route-init` | Waiting for integrated Install and its accepted post-Install freeze/reuse boundary |
+| Route Init | `codex/route-init` | Ready for its accepted post-Install freeze/reuse boundary, then Gray |
 | Route Create | `codex/route-create` | Waiting for Route Init; its accepted contract correction is integrated at `cd01b8a` |
 | Route Update | `codex/route-update` | Waiting for Route Create and a closed callable/public-result boundary |
 | Route Move | `codex/route-move` | Waiting for Route Update, its remaining proportionality/wire gate, and the accepted neutral-reference correction |

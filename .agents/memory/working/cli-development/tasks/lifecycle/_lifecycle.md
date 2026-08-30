@@ -8,11 +8,11 @@ open-forge:
 
 ## Task State
 
-- State: Active. The next-wave shared foundations and Route Inspect correction
-  are integrated. Extension Create is complete through its protected public
-  integration at `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5`; root Install remains
-  active on its separate command-local path. Its overlapping root composition,
-  serialization, help, and process seams are integration-owned and sequential.
+- State: Active. The next-wave shared foundations, Route Inspect correction,
+  Extension Create, and root Install are integrated. Root Install is complete at
+  `c60fcb98a57e9ec80769b9cb1d399ce13a227863`, exact tree
+  `464a4a6b6ef6447209edffbf53df7348c70691ed`. Generic and Framework-aware Route
+  Init is the next lifecycle boundary in the accepted Route Mutation sequence.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Common prerequisites: Extension discovery and `index`; workspace mutations also
   consume Mutation Foundation.
@@ -54,9 +54,8 @@ depends on interaction, embedded Framework distribution, lifecycle
 `sourceAssetPath` provenance, the shared directory-create foundation, and
 intended-membership formation. Its exact command-local interaction is accepted.
 The Extension Create and root Install command lanes executed in parallel after
-their prerequisites. Extension Create's protected root composition and executable
-acceptance are complete; root Install's corresponding seams still integrate
-sequentially.
+their prerequisites. Both commands' protected root composition and executable
+acceptance seams are complete.
 Root Update remains sequenced after the complete Route Mutation M2 lane. Only
 independent preparation such as scope discovery, contract and ownership audits,
 callable-surface analysis, Gray/Red readiness, and worktree setup may proceed
@@ -72,7 +71,7 @@ bytes and is owned only through a read/write `FileShare.None` handle.
 ## Child Tasks
 
 - [x] [Implement creation of one reviewable Extension package outside a workspace](extension-create.md) — Complete; command-local squash `3ef81227ba50fba869f0129b958eabc6d0c29fbc`, protected public integration `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5`
-- [ ] [Implement root Framework installation into a selected workspace](install.md) — Active command-local work; its second rebase onto public C1 develop `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5` is complete, and protected integration is active/continuing with overlapping seams integrating sequentially
+- [x] [Implement root Framework installation into a selected workspace](install.md) — Complete; final candidate `11994e4d21ddc807b7480afc39ae3612e5a69a56` is squash-integrated at `c60fcb98a57e9ec80769b9cb1d399ce13a227863`, exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed`
 - [ ] [Implement root Framework update from accepted lifecycle identity](update.md) — Planned after full Route Mutation M2 — Implementer: Not assigned
 - [ ] [Implement Extension installation from exact reviewed package identity](extension-install.md) — Planned — Implementer: Not assigned
 - [ ] [Implement Extension update with source review, ownership, and recovery integrity](extension-update.md) — Planned — Implementer: Not assigned

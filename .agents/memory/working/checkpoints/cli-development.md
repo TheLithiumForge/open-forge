@@ -16,11 +16,13 @@ release.
 
 ## Current State
 
-The current local `develop` baseline is `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5`
-with exact tree `fa29bd9572df39b2d5457c35bb8a0bd6ba5a9945`. It includes the
+The current local `develop` baseline is `c60fcb98a57e9ec80769b9cb1d399ce13a227863`
+with exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed`. It includes the
 integrated D0 contract freeze, SF1-SF4 shared foundations, M2 preparation
-record, Route Inspect interaction correction, and protected Extension Create
-public integration described below. The preceding C3 baseline was
+record, Route Inspect interaction correction, and protected Extension Create and
+root Install public integrations described below. The preceding C1 baseline was
+`4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5`, exact tree
+`fa29bd9572df39b2d5457c35bb8a0bd6ba5a9945`. The preceding C3 baseline was
 `fa3db1ee1dbfb687715b5b90b35f6104cbc45c6c` with exact tree
 `605620d990622e093b12e85e50c6e40083896a18`.
 
@@ -152,14 +154,19 @@ The accepted shared correction removes lock bootstrap state. The persistent
 zero-byte lock is external under `LocalApplicationData/OpenForge/locks/v1`, and
 missing `.agents` is an ordinary lease-bound directory-create effect.
 
-Closeout checks are read-only and scoped to this record update:
-`open-forge load --bodies` and the selected memory `chain` both exit
-successfully; the legacy
+The earlier shared-foundation closeout checks were read-only and scoped to that
+record update: `open-forge load --bodies` and the selected memory `chain` both
+exited successfully; the legacy
 `open-forge doctor` reports `0` errors and one pre-existing C# metadata warning;
 the replacement `index --dry-run` reports exit `5` with no files changed because
 the known archived metadata and handoff-routing gaps remain; the changed-
 Markdown link check, stale-status check, commit-presence check, and
 `git diff --check` pass.
+
+For this C2 closeout, `open-forge load --bodies` exits successfully;
+`open-forge doctor --json` reports `0` errors and the same one pre-existing C#
+metadata warning; `git diff --check` and worktree cleanliness pass. No index ran
+because no routing metadata changed.
 
 Extension Create is Complete at protected public integration
 `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5`, with command-local squash
@@ -170,18 +177,19 @@ Extension Create is Complete at protected public integration
 Native AOT root version/ELF, Integration `575/575`, and EndToEnd `132/132`
 evidence pass with zero failures and zero skips. Native dogfood makes no writes;
 the final independent Sol/xhigh review is `PASS — ROBUST` at `0.98` confidence,
-with direct PTY process proof deferred. C2 root Install remains active in
-parallel command-local work; its second rebase onto public C1 develop
-`4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5` is complete, and protected
-integration is active/continuing. C3 Route Inspect interaction is squash-integrated at `fa3db1ee` with exact
-tree equality to final reviewed candidate `37c9360`. C3's Root-owned terminal composition and published
-redirected/JSON process seams are closed; remaining C2 overlapping seams stay
-integration-owned and sequential. C2's exact fully present ordered public
+with direct PTY process proof deferred. C2 root Install is Complete. Final
+reviewed candidate `11994e4d21ddc807b7480afc39ae3612e5a69a56` is
+squash-integrated at `c60fcb98a57e9ec80769b9cb1d399ce13a227863`; both have
+exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed`. Final managed
+`1390/598/136`, supported `linux-x64` Native AOT `598/136`, post-rebase focused,
+and two independent Sol/xhigh review gates pass. Native dry-run dogfood safely
+blocks on the repository's existing generated-region state without effects,
+workspace changes, lifecycle publication, or a new external lock. C3 Route
+Inspect interaction is squash-integrated at `fa3db1ee` with exact tree equality
+to final reviewed candidate `37c9360`. C2's exact fully present ordered public
 Install JSON result is accepted and frozen, including typed residual values
-`none`, `retained`, and `unknown`; command-local result and presentation work
-may proceed against it. Route Init remains after
-integrated Install; root Update remains after the complete Route Mutation M2
-lane.
+`none`, `retained`, and `unknown`. Generic and Framework-aware Route Init is now
+unblocked; root Update remains after the complete Route Mutation M2 lane.
 
 Implemented boundaries:
 
@@ -233,16 +241,12 @@ D0 and SF1-SF4 are now complete at the integrated baseline recorded above. C1
 Extension Create is Complete at protected public integration
 `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5`, with exact final candidate
 `789cc917f2d0cb38c5229cc2dc7fee013218d341` and tree
-`fa29bd9572df39b2d5457c35bb8a0bd6ba5a9945`. C2 root Install remains active in
-parallel command-local work; its second rebase onto public C1 develop
-`4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5` is complete, and protected
-integration is active/continuing. C3 Route Inspect interaction is squash-integrated at `fa3db1ee`
-with exact tree equality to final reviewed candidate `37c9360`. C2's
-overlapping root composition, serialization, help, and process seams remain
-integration-owned and sequential. C2's exact public Install JSON result schema
-is accepted and frozen, including typed residual values `none`, `retained`, and
-`unknown`. Generic and Framework-aware Route Init follows root Install
-integration. Its Framework mode accepts one concrete
+`fa29bd9572df39b2d5457c35bb8a0bd6ba5a9945`. C2 root Install is Complete at
+local integration `c60fcb98a57e9ec80769b9cb1d399ce13a227863`, exact tree
+`464a4a6b6ef6447209edffbf53df7348c70691ed`. Its exact public Install JSON
+result schema is accepted and frozen, including typed residual values `none`,
+`retained`, and `unknown`. Generic and Framework-aware Route Init is now the
+unblocked next M2 boundary. Its Framework mode accepts one concrete
 uniquely aligned route, slugs only ID-form inserted scope labels, creates one
 sparse chain, keeps scope entrypoints user-owned, and lifecycle-manages only
 copied canonical assets and derived generated regions.
@@ -289,26 +293,17 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Continue C2 root Install command-local/module work and its active protected
-   integration. Its second rebase onto public C1 develop
-   `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5` is complete; do not push.
-2. Integrate C2's overlapping root composition, serialization, help, process
-   evidence, and final command surfaces sequentially; this is an integration
-   boundary, not a C1/C3 behavior dependency. Implement its accepted exact
-   public result graph,
-   including typed residual values `none`, `retained`, and `unknown`, before
-   protected serialization integration.
-3. Implement generic and Framework-aware Route Init only after root Install is
-   integrated and proves the trusted installed root and embedded topology it
-   consumes.
-4. Integrate accepted prerequisites and close the remaining maintainer-authority
+1. Begin generic and Framework-aware Route Init from the integrated root Install
+   baseline. Preserve its accepted exact-chain and concrete Framework-route
+   boundaries; do not push.
+2. Integrate accepted prerequisites and close the remaining maintainer-authority
    gates recorded in each prepared Route Mutation leaf immediately before its
    sequential behavior lane, then implement Init → Create → Update → Move →
    Remove and only afterward root Update M3.
-5. Retain thin D1 as current `linux-x64` build/smoke, packed
+3. Retain thin D1 as current `linux-x64` build/smoke, packed
    install/invocation, and checksums. Keep future RIDs, signatures, SBOM,
    provenance, OIDC, and support floors behind a later explicit decision.
-6. Keep actual Status/Doctor implementation in O1 and actual Cleanup selection,
+4. Keep actual Status/Doctor implementation in O1 and actual Cleanup selection,
    default, empty-no-lease policy, orchestration, guidance, aggregation, and E2E
    in O2.
 
