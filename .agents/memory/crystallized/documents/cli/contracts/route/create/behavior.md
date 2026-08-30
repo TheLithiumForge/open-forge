@@ -52,7 +52,9 @@ concurrency, and source boundaries.
   best-effort mode. See [Planning And Effects](interface.md#planning-and-effects).
 - A normal creation, valid Template instantiation, safe dry-run with planned
   changes, generated-navigation effect, or verified identical-target no-op is
-  `complete`. Route Create has no current finite condition for `attention`.
+  `complete`. `attention` is formed only after successful final verification
+  when recovery deletion returns `Failed` and the recovery artifact is
+  positively observed as `Retained`.
 
 ## Request Resolution
 
@@ -267,10 +269,10 @@ applicable. It does not contain a diagnosis or recommendation. Human and
 structured renderers consume this one result and do not rerun resolution,
 planning, application, or verification.
 
-For ordinary operation conditions, status precedence is `blocked` > `incomplete`
-
-> `attention` > `complete`. Invalid input stops before operation resolution and
-> forms `invalid`. Failed and interrupted results retain their event meaning.
+For ordinary operation conditions, status precedence is
+`blocked` > `incomplete` > `attention` > `complete`. Invalid input stops before
+operation resolution and forms `invalid`. Failed and interrupted results retain
+their event meaning.
 
 ## Effects
 
@@ -432,7 +434,7 @@ compatibility rules are defined by the CLI Architecture.
 The human renderer does not name successful internal stages by default.
 `--verbose` and structured output may expose planning and preflight evidence
 under the shared output contract. Human rendering uses `requires attention` for
-the reserved `attention` semantic status while structured output retains the
+the `attention` semantic status while structured output retains the
 status value `attention`. Primary human `complete`, `attention`, and
 `incomplete` results go to stdout; primary human `invalid`, `blocked`, `failed`,
 and `interrupted` results go to stderr. Each typed result stays together on its

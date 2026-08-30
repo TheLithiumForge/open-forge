@@ -435,7 +435,7 @@ placeholder completion.
 `--json` returns the complete typed result used by human rendering. It never
 prompts and never reruns planning, application, or verification.
 It writes one complete structured result to stdout for every semantic status,
-including `incomplete` and the currently reserved `attention` status. Bounded
+including `incomplete` and `attention`. Bounded
 diagnostics use stderr, and ordinary human text is never mixed into structured
 JSON stdout.
 
@@ -475,10 +475,10 @@ Planned changes do not create `attention`. Only `Failed`/positively observed
 Template placeholders or infer authoring quality to manufacture another
 condition.
 
-For ordinary operation conditions, status precedence is `blocked` > `incomplete`
-
-> `attention` > `complete`. Invalid input stops before operation resolution and
-> forms `invalid`. Failed and interrupted results retain their event meaning.
+For ordinary operation conditions, status precedence is
+`blocked` > `incomplete` > `attention` > `complete`. Invalid input stops before
+operation resolution and forms `invalid`. Failed and interrupted results retain
+their event meaning.
 
 The shared process-status mapping is defined by the CLI Architecture.
 
