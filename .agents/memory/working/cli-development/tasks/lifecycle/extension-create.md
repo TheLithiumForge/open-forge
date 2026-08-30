@@ -8,13 +8,15 @@ open-forge:
 
 ## Task State
 
-- State: Candidate Complete in the Assured profile; the command-local/core and
-  mirrored Unit/Integration boundary is ready for protected sequential
-  integration, and all product decisions remain closed.
+- State: Complete in the Assured profile. The command-local/core and mirrored
+  Unit/Integration boundary and its protected public integration are complete;
+  all product decisions remain closed.
 - Parent: [Lifecycle Commands](_lifecycle.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/extension/create/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/extension/create/behavior.md).
-- Rebased baseline: `e823f846ae1f7cd13a668346b3fc0ecd2a64956d` on
-  `codex/extension-create` in the isolated Extension Create worktree.
+- Command-local squash: `3ef81227ba50fba869f0129b958eabc6d0c29fbc`.
+- Protected public integration squash: `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5`.
+- Final command candidate: `789cc917f2d0cb38c5229cc2dc7fee013218d341`;
+  exact final tree: `fa29bd9572df39b2d5457c35bb8a0bd6ba5a9945`.
 
 ## Expected Outcome
 
@@ -80,9 +82,10 @@ second run, no unrelated changes, process, and AOT.
   fake filesystem, workspace lease, recovery bundle, or shared retry framework.
 - Ownership: this task owns `Commands/Extension/Create/**`, its one-to-one Unit
   and Integration mirrors, directly required Extension manifest serialization
-  support, and this task record. Shared root composition, `CliJsonContext`, group
-  and root help, process and EndToEnd evidence, and unrelated commands remain
-  protected for sequential integration.
+  support, and this task record. The protected sequential integration of root
+  composition, `CliJsonContext`, group and root help, process and EndToEnd
+  evidence completed at `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5`; those
+  surfaces remain outside command-local ownership, as do unrelated commands.
 - Direct neighborhood: Extension group binding and definitions, Shell binding
   and interaction contracts, Framework Extension identity and manifest readers,
   physical-path resolution, and temporary-workspace test support.
@@ -90,17 +93,19 @@ second run, no unrelated changes, process, and AOT.
   wizard policy, typed result, human output, and JSON projection. Integration
   proves real catalogue identity, exact-destination inspection, dry-run, create,
   verified no-op, collisions, revalidation, retained partial state, cancellation,
-  and absence of workspace, lock, recovery, and unrelated effects. The task also
-  runs the complete managed suites and direct supported `linux-x64` Native AOT
-  module evidence. Registered process, shared serialization, help, and dogfood
-  evidence wait for the protected sequential integration task.
+  and absence of workspace, lock, recovery, and unrelated effects. The protected
+  integration also proves registered process, shared serialization, help, and
+  dogfood behavior. Final managed Unit `1356/1356`, Integration `575/575`, and
+  EndToEnd `132/132` evidence passes; the `linux-x64` Native AOT root version and
+  ELF smoke pass, followed by Native AOT Integration `575/575` and EndToEnd
+  `132/132`. Every stated run has zero failures and zero skips.
 - Budgets consumed: zero council passes; two independent whole-task reviews
   (`C1-REVIEW-01`, `C1-REVIEW-02`); one grouped correction cycle
   (`C1-CORRECTION-01`) and its bounded same-reviewer recheck.
-- Current owner: Extension Create Task Mastermind. Gray, Red, Green, correction,
-  exact-tip evidence, and independent review are complete. The next owner is the
-  sequential integration owner for the protected composition, serialization,
-  help, process, and dogfood boundary.
+- Current owner: None. The Extension Create Task Mastermind completed Gray, Red,
+  Green, correction, exact-tip evidence, and command-local review; the sequential
+  integration owner completed the protected composition, serialization, help,
+  process, and dogfood boundary at `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5`.
 
 ## Behavior And Acceptance Matrix
 
@@ -112,7 +117,7 @@ second run, no unrelated changes, process, and AOT.
 | Planning | Dry-run and apply share one manifest and exact two-path scaffold plan; dry-run writes nothing. | Unit plus Integration |
 | Application | Revalidate immediately before create-only effects; never replace, delete, lease, bundle, restore, roll back, or compensate. | Integration |
 | Verification | Absent destinations become exact scaffolds, exact scaffolds are verified no-ops, and divergent, partial, additional, unknown, or colliding occupants block. | Integration |
-| Result | One typed workspace-free result drives human and JSON projections with the accepted field order and all seven status mappings; `attention` remains unreachable. | Unit; shared serialization waits for integration |
+| Result | One typed workspace-free result drives human and JSON projections with the accepted field order and all seven status mappings; `attention` remains unreachable. | Unit plus protected serialization and process Integration |
 | Isolation | Unrelated siblings and workspace, lifecycle, lock, recovery, generated navigation, and package-source state remain unchanged. | Integration |
 
 ## Progress, Findings, And Corrections
@@ -183,22 +188,35 @@ second run, no unrelated changes, process, and AOT.
   evidence, not a registered public Create claim.
 - Direct `linux-x64` Native AOT publication of the Integration executable from
   that same source passes all 54 Extension Create cases and the full 565-case
-  Integration suite with zero failures or skips. Registered Create process,
-  shared JSON serialization, help, and dogfood remain intentionally deferred to
-  the protected sequential integration owner.
+  Integration suite with zero failures or skips. At this command-local boundary,
+  registered Create process, shared JSON serialization, help, and dogfood were
+  intentionally deferred pending protected sequential integration.
+- The protected public integration is complete at `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5`,
+  with final candidate `789cc917f2d0cb38c5229cc2dc7fee013218d341` and exact tree
+  `fa29bd9572df39b2d5457c35bb8a0bd6ba5a9945`. Its managed Unit `1356/1356`,
+  Integration `575/575`, and EndToEnd `132/132` suites pass. The `linux-x64`
+  Native AOT root version and ELF smoke pass, as do Native AOT Integration
+  `575/575` and EndToEnd `132/132`, with zero failures and zero skips. Native
+  dogfood makes no writes. The final independent Sol/xhigh review is
+  `PASS — ROBUST` at `0.98` confidence. Direct PTY process proof remains
+  deferred; redirected-human, JSON, and injected-session evidence covers the
+  accepted boundary.
 - No exceptional machinery is justified. Ordinary .NET 10, System.CommandLine
   2.0.11, source-generated JSON, and real BCL filesystem behavior cover the
   accepted task boundary.
 
 ## Completion And Integration Handoff
 
-- The isolated command-local/core candidate is complete. No root Extension
-  composition, shared `CliJsonContext`, group/root help, process harness, or
-  EndToEnd Create path changed in this lane.
-- Sequential integration must register the command and source-generated JSON
-  projection, compose `CliInteractiveSession` only for prompt-capable human
-  flows, add truthful group/root help, and prove registered managed and Native
-  AOT process/redirected/JSON/dogfood behavior before program acceptance.
+- The isolated command-local/core candidate and protected public integration are
+  complete. The sequential integration registered the command and its
+  source-generated JSON projection, composed `CliInteractiveSession` only for
+  prompt-capable human flows, added truthful group/root help, and proved the
+  registered managed and Native AOT process, redirected, JSON, and dogfood
+  behavior.
+- Final evidence is managed Unit `1356/1356`, Integration `575/575`, and
+  EndToEnd `132/132`; `linux-x64` Native AOT root version/ELF smoke, Integration
+  `575/575`, and EndToEnd `132/132`; all with zero failures and zero skips.
+  Native dogfood makes no writes. Direct PTY process proof remains deferred.
 - Preserve the accepted one-workspace-free create-only operation: no workspace
   inference, lease, recovery bundle, rollback, dependency availability lookup,
   installation, or implicit registration.
