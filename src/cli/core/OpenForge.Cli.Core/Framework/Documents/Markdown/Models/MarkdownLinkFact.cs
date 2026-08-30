@@ -13,7 +13,8 @@ internal sealed record MarkdownLinkFact
         MarkdownLinkForm form,
         string rawDestination,
         MarkdownTextSpan span,
-        MarkdownTextSpan? destinationSpan)
+        MarkdownTextSpan? destinationSpan,
+        MarkdownLinkLabelFact label)
     {
         if (!Enum.IsDefined(form))
         {
@@ -22,6 +23,7 @@ internal sealed record MarkdownLinkFact
 
         ArgumentNullException.ThrowIfNull(rawDestination);
         ArgumentNullException.ThrowIfNull(span);
+        ArgumentNullException.ThrowIfNull(label);
         if (form == MarkdownLinkForm.Autolink && destinationSpan is not null)
         {
             throw new ArgumentException("An explicit Markdown autolink has no independent destination span.", nameof(destinationSpan));
@@ -31,6 +33,7 @@ internal sealed record MarkdownLinkFact
         RawDestination = rawDestination;
         Span = span;
         DestinationSpan = destinationSpan;
+        Label = label;
     }
 
     internal MarkdownLinkForm Form { get; }
@@ -40,4 +43,6 @@ internal sealed record MarkdownLinkFact
     internal MarkdownTextSpan Span { get; }
 
     internal MarkdownTextSpan? DestinationSpan { get; }
+
+    internal MarkdownLinkLabelFact Label { get; }
 }

@@ -203,6 +203,165 @@ public sealed class MarkdownDocumentParserRedTests
         Assert.Null(facts.Links[2].DestinationSpan);
     }
 
+    [Fact(DisplayName = "Markdown inline link labels project literal content")]
+    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
+    public void InlineLinkLabelProjectsLiteralContent()
+    {
+        var link = ReadSingleLink("[literal label](inline.md)");
+
+        Assert.Equal(MarkdownLinkForm.Inline, link.Form);
+        AssertSupportedLabel(link, "literal label");
+    }
+
+    [Fact(DisplayName = "Markdown inline link labels decode HTML entities")]
+    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
+    public void InlineLinkLabelDecodesEntities()
+    {
+        var link = ReadSingleLink("[entity &amp; text](entity.md)");
+
+        AssertSupportedLabel(link, "entity & text");
+    }
+
+    [Fact(DisplayName = "Markdown inline link labels project code content")]
+    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
+    public void InlineLinkLabelProjectsCodeContent()
+    {
+        var link = ReadSingleLink("[`code value`](code.md)");
+
+        AssertSupportedLabel(link, "code value");
+    }
+
+    [Fact(DisplayName = "Markdown inline link labels recurse through nested supported formatting")]
+    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
+    public void InlineLinkLabelProjectsNestedFormattingContainers()
+    {
+        var link = ReadSingleLink("[**strong _nested emphasis_**](format.md)");
+
+        AssertSupportedLabel(link, "strong nested emphasis");
+    }
+
+    [Fact(DisplayName = "Markdown inline link labels collapse soft line breaks to one space")]
+    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
+    public void InlineLinkLabelCollapsesSoftLineBreak()
+    {
+        var link = ReadSingleLink("[soft\nbreak](soft.md)");
+
+        AssertSupportedLabel(link, "soft break");
+    }
+
+    [Fact(DisplayName = "Markdown inline link labels collapse hard line breaks to one space")]
+    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
+    public void InlineLinkLabelCollapsesHardLineBreak()
+    {
+        var link = ReadSingleLink("[hard  \nbreak](hard.md)");
+
+        AssertSupportedLabel(link, "hard break");
+    }
+
+    [Fact(DisplayName = "Markdown reference link labels project their child AST")]
+    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
+    public void ReferenceLinkLabelProjectsChildAst()
+    {
+        var link = ReadSingleLink("[reference **label**][ref]\n\n[ref]: reference.md\n");
+
+        Assert.Equal(MarkdownLinkForm.Reference, link.Form);
+        AssertSupportedLabel(link, "reference label");
+    }
+
+    [Fact(DisplayName = "Markdown URL autolinks expose their URL as visible label text")]
+    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
+    public void UrlAutolinkLabelUsesUrl()
+    {
+        var link = ReadSingleLink("<https://example.invalid/path>");
+
+        Assert.Equal(MarkdownLinkForm.Autolink, link.Form);
+        AssertSupportedLabel(link, "https://example.invalid/path");
+    }
+
+    [Fact(DisplayName = "Markdown email autolinks expose their address as visible label text")]
+    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
+    public void EmailAutolinkLabelUsesEmailAddress()
+    {
+        var link = ReadSingleLink("<person@example.invalid>");
+
+        Assert.Equal(MarkdownLinkForm.Autolink, link.Form);
+        AssertSupportedLabel(link, "person@example.invalid");
+    }
+
+    [Fact(DisplayName = "Markdown unresolved emphasis delimiters remain literal label content")]
+    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
+    public void UnresolvedDelimiterRemainsLiteralLabelContent()
+    {
+        var link = ReadSingleLink("[unclosed *delimiter](delimiter.md)");
+
+        AssertSupportedLabel(link, "unclosed *delimiter");
+    }
+
+    // The fixed Markdig pipeline normalizes unresolved delimiters to LiteralInline and
+    // does not expose an unknown or nested ordinary LinkInline child from source text.
+    // No synthetic AST fixture is added for those unreachable states.
+
+    [Theory(DisplayName = "Markdown link labels fail closed for absent and whitespace-only child content"),
+        InlineData("[](empty.md)", "empty.md"),
+        InlineData("[   ](spaces.md)", "spaces.md"),
+        InlineData("[\t](tab.md)", "tab.md")]
+    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
+    public void EmptyAndWhitespaceLinkLabelsRemainUnsupported(string source, string destination)
+    {
+        AssertUnsupportedLabel(ReadSingleLink(source, destination));
+    }
+
+    [Fact(DisplayName = "Markdown link labels fail closed when raw HTML is present")]
+    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
+    public void RawHtmlLinkLabelRemainsUnsupported()
+    {
+        AssertUnsupportedLabel(ReadSingleLink("[before <span>raw</span> after](raw.md)"));
+    }
+
+    [Fact(DisplayName = "Markdown link labels fail closed when formatted content contains raw HTML")]
+    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
+    public void FormattedRawHtmlLinkLabelRemainsUnsupported()
+    {
+        AssertUnsupportedLabel(ReadSingleLink("[**before <span>raw</span> after**](formatted-raw.md)"));
+    }
+
+    [Fact(DisplayName = "Markdown link labels fail closed when an image is nested in the child AST")]
+    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
+    public void ImageChildMakesOuterLinkLabelUnsupported()
+    {
+        AssertUnsupportedLabel(
+            ReadSingleLink("[before ![alt](image.md) after](outer.md)", "outer.md"));
+    }
+
+    [Fact(DisplayName = "Standalone Markdown images remain excluded from link facts")]
+    [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
+    public void StandaloneImagesRemainExcludedFromLinks()
+    {
+        Assert.Empty(new MarkdownDocumentParser().Parse("![alt](image.md)").Links);
+    }
+
+    private static MarkdownLinkFact ReadSingleLink(string source, string? destination = null)
+    {
+        var links = new MarkdownDocumentParser().Parse(source).Links;
+        return Assert.Single(
+            destination is null
+                ? links
+                : links.Where(candidate => candidate.RawDestination == destination));
+    }
+
+    private static void AssertUnsupportedLabel(MarkdownLinkFact link)
+    {
+        Assert.Equal(MarkdownLinkLabelState.Unsupported, link.Label.State);
+        Assert.Null(link.Label.Text);
+    }
+
+    private static void AssertSupportedLabel(MarkdownLinkFact link, string expectedText)
+    {
+        Assert.Equal(MarkdownLinkLabelState.Supported, link.Label.State);
+        Assert.Equal(expectedText, link.Label.Text);
+        Assert.False(string.IsNullOrWhiteSpace(link.Label.Text));
+    }
+
     [Fact(DisplayName = "Markdown generated-region facts require one final Entries section and ordered marker pair")]
     [Trait("Feature", "markdown-documents"), Trait("Evidence", "Unit")]
     public void GeneratedRegionRequiresStrictFinalEntriesBoundary()

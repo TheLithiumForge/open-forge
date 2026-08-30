@@ -199,7 +199,12 @@ internal sealed class MarkdownDocumentParser
             ? ToDocumentSpan(sourceSpan, bodyStart)
             : null;
         var rawDestination = link.Url ?? string.Empty;
-        links.Add(new MarkdownLinkFact(form, rawDestination, span, destinationSpan));
+        links.Add(new MarkdownLinkFact(
+            form: form,
+            rawDestination: rawDestination,
+            span: span,
+            destinationSpan: destinationSpan,
+            label: ReadLinkLabel(link)));
     }
 
     private static void AddAutolinkFact(
@@ -210,11 +215,74 @@ internal sealed class MarkdownDocumentParser
         if (ToDocumentSpan(autolink.Span, bodyStart) is { } span)
         {
             links.Add(new MarkdownLinkFact(
-                MarkdownLinkForm.Autolink,
-                autolink.Url,
-                span,
-                null));
+                form: MarkdownLinkForm.Autolink,
+                rawDestination: autolink.Url,
+                span: span,
+                destinationSpan: null,
+                label: ReadAutolinkLabel(autolink.Url)));
         }
+    }
+
+    private static MarkdownLinkLabelFact ReadLinkLabel(LinkInline link)
+    {
+        if (link.FirstChild is null)
+        {
+            return MarkdownLinkLabelFact.Unsupported();
+        }
+
+        var text = new StringBuilder();
+        if (!TryAppendLinkLabelText(link.FirstChild, text))
+        {
+            return MarkdownLinkLabelFact.Unsupported();
+        }
+
+        return CreateLinkLabel(text);
+    }
+
+    private static MarkdownLinkLabelFact ReadAutolinkLabel(string visibleText)
+        => CreateLinkLabel(new StringBuilder(visibleText));
+
+    private static MarkdownLinkLabelFact CreateLinkLabel(StringBuilder text)
+    {
+        var collapsedText = CollapseWhitespace(text);
+        return string.IsNullOrWhiteSpace(collapsedText)
+            ? MarkdownLinkLabelFact.Unsupported()
+            : MarkdownLinkLabelFact.Supported(collapsedText);
+    }
+
+    private static bool TryAppendLinkLabelText(Inline inline, StringBuilder text)
+    {
+        for (var current = inline; current is not null; current = current.NextSibling)
+        {
+            switch (current)
+            {
+                case LiteralInline literal:
+                    text.Append(literal.Content.ToString());
+                    break;
+                case HtmlEntityInline entity:
+                    text.Append(entity.Transcoded);
+                    break;
+                case CodeInline code:
+                    text.Append(code.Content.ToString());
+                    break;
+                case LineBreakInline:
+                    text.Append(' ');
+                    break;
+                case EmphasisInline { FirstChild: not null } emphasis:
+                    if (!TryAppendLinkLabelText(emphasis.FirstChild, text))
+                    {
+                        return false;
+                    }
+
+                    break;
+                case EmphasisInline:
+                    return false;
+                default:
+                    return false;
+            }
+        }
+
+        return true;
     }
 
     private static bool HasSupportedHeadingText(ContainerInline? inline)
