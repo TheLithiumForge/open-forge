@@ -56,6 +56,33 @@ command Active or Ready.
 - [ ] [Implement route move with reference, overwrite, generated-navigation, and recovery integrity](route-move.md) — Planned — Implementer: Not assigned
 - [ ] [Implement route removal with dependency, reference, generated-navigation, and recovery integrity](route-remove.md) — Planned — Implementer: Not assigned
 
+## Preparation Closeout
+
+Read-only preparation completed for every M2 leaf on clean no-op branches from
+exact base `33913dfe7f8f80598ca4765c516d308ed179c3ab`. No branch contains a
+preparation commit, Gray, Red, or Green change:
+
+| Command | Preparation branch | Readiness |
+| --- | --- | --- |
+| Route Init | `codex/route-init` | Waiting for integrated Install and its accepted post-Install freeze/reuse boundary |
+| Route Create | `codex/route-create` | Waiting for Route Init; its accepted contract correction is integrated at `cd01b8a` |
+| Route Update | `codex/route-update` | Waiting for Route Create and a closed callable/public-result boundary |
+| Route Move | `codex/route-move` | Waiting for Route Update, its remaining proportionality/wire gate, and the accepted neutral-reference correction |
+| Route Remove | `codex/route-remove` | Waiting for Route Move, the accepted parser projection, and the shared facts it must first prove or promote |
+
+The required behavior and integration order is root Install, Route Init, Route
+Create, Route Update, Route Move, Route Remove, then root Update M3. Independent
+preparation may overlap; dependent command behavior may not. Each leaf Task owns
+its expected paths, protected integration neighborhood, evidence boundary, and
+accepted preparation decisions or remaining maintainer-authority questions.
+Preparation state alone is not authorization to implement an unresolved public
+or shared surface.
+
+Modern C# and the existing BCL-first foundations are sufficient for the prepared
+work. No workaround, second Markdown parser, duplicate reference resolver, or
+general route-mutation engine is justified. Route Create crossed its no-restore
+verification boundary; the leaf Task retains that process/evidence limitation.
+
 ## Entries
 
 <!-- open-forge:generated-index:start -->

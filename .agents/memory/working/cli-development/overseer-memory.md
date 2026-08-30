@@ -69,6 +69,7 @@ or a general template/scaffold system.
 | C2 | Root Install | Ready for command-local work on branch `codex/root-install`; its overlapping root-composition, serialization, help, and process seams are integration-owned and sequential |
 | C3 | Route Inspect interactive correction | Active on branch `codex/route-inspect-interactive` |
 | C4 | Generic and Framework-aware Route Init | Waiting for integrated Install |
+| M2 preparation | Init/Create/Update/Move/Remove readiness | Complete on clean no-op branches from `33913dfe`; leaf Tasks retain accepted preparation decisions and remaining authority gates; no implementation commit exists |
 
 Each mutating lane owns a distinct worktree and feature branch. Shared root
 composition, serializer registration, public help, process evidence, Plan, and
@@ -114,6 +115,14 @@ No currently surfaced decision blocks the shared foundations. C2 command-local
 non-wire work is ready, but the exact public Root Install JSON result schema,
 including residual values `none`, `retained`, and `unknown`, remains a current
 maintainer decision frontier before its protected serialization integration.
+M2 preparation also surfaced command-local result/callable frontiers retained in
+the Route Mutation Tasks. The maintainer accepted the recorded Create correction,
+Init/Update freeze timing, Move lifecycle and neutral-resolver corrections, Init
+neutral Framework-layer reuse, and Remove parser projection. Remaining exact
+wire/proportionality/ownership/effect choices stay open and must close at the
+recorded sequential boundary. The Route Create contract correction is integrated
+at `cd01b8a71cec399a17409428835d18f589335623`; its behavior still waits for
+Route Init.
 New architecture or product questions must still be returned to the maintainer
 before changing accepted meaning.
 

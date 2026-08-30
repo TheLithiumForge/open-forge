@@ -40,6 +40,44 @@ generated regions are trusted claims and block selection, including when they
 sit below a user-owned scope entrypoint. `sourceAssetPath` is provenance and does
 not grant release authority.
 
+## Preparation Closeout
+
+Read-only preparation on clean no-op branch `codex/route-remove` at exact base
+`33913dfe7f8f80598ca4765c516d308ed179c3ab` produced no commit, Gray, Red, or
+Green change. Route Remove is not ready before integrated Route Move and the
+accepted parser prerequisite plus remaining authority gates below.
+
+- Expected implementation paths are
+  `src/cli/core/OpenForge.Cli.Core/Commands/Route/Remove/**`,
+  `src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Route/Remove/**`, and
+  `src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Route/Remove/**`.
+- `src/cli/core/OpenForge.Cli.Core/Framework/**`, Route shared surfaces,
+  `src/cli/root/OpenForge.Cli/Composition/CliCompositionRoot.cs`,
+  `src/cli/core/OpenForge.Cli.Core/Shell/Serialization/CliJsonContext.cs`,
+  `src/cli/core/OpenForge.Cli.Core/Commands/Route/Shared/Rendering/RouteHelpSections.cs`,
+  EndToEnd/Native AOT evidence, preceding commands, and program ledgers remain
+  protected unless a later packet assigns one exact neutral promotion.
+- Decisive evidence must cover binding, leaf/category inventory, positive
+  ownership proof, complete workspace references and label-preserving
+  detachments, intended topology, dry-run/revalidation, file and directory
+  effects, recovery and residual state, typed presentation, process behavior,
+  and Native AOT.
+
+### Accepted Parser Prerequisite
+
+Before Remove, add the smallest neutral Markdig-bound typed projection that
+associates a link with its visible label or an unsupported-label state. Do not
+parse raw Markdown again.
+
+### Remaining Maintainer Authority
+
+- Freeze the exact command-local JSON result graph, findings, finite values, and
+  `next` content.
+- Establish the complete Framework-plus-Extensions ownership inventory and
+  verified directory-removal mechanics, preferably by consuming or promoting
+  meaning first proven by Route Move. Do not create a general filesystem or
+  route-mutation engine.
+
 ## Deferred Managed-Release Decision
 
 Any later expansion to managed scoped routes requires explicit maintainer

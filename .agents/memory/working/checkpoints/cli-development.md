@@ -237,6 +237,13 @@ may still run early in isolated lanes—scope discovery, contract and ownership
 audits, callable-surface analysis, Gray/Red readiness, and worktree setup—but
 dependent Update behavior waits for M2 completion.
 
+That read-only M2 preparation is complete on five clean no-op branches from
+`33913dfe7f8f80598ca4765c516d308ed179c3ab`. No Gray, Red, Green, or preparation
+commit exists. The Route Mutation parent and leaf Tasks now retain each accepted
+preparation decision or remaining maintainer-authority frontier,
+expected/protected path boundary, and evidence scope. Behavior remains ordered
+Install → Init → Create → Update → Move → Remove → M3.
+
 The root composition boundary and all localized D0 choices are closed. Route
 Inspect accepts one answer by one-based number or exact displayed path only when
 stdin and stderr are terminal-capable. The shared directory effect holds the
@@ -281,9 +288,10 @@ JSON, and redirected flows never prompt.
 3. Implement generic and Framework-aware Route Init only after root Install is
    integrated and proves the trusted installed root and embedded topology it
    consumes.
-4. Complete the remaining Route Mutation M2 leaves through their separate
-   command-local gates, then implement root Update M3. Parallelize only
-   independent preparation before those behavior dependencies are satisfied.
+4. Integrate accepted prerequisites and close the remaining maintainer-authority
+   gates recorded in each prepared Route Mutation leaf immediately before its
+   sequential behavior lane, then implement Init → Create → Update → Move →
+   Remove and only afterward root Update M3.
 5. Retain thin D1 as current `linux-x64` build/smoke, packed
    install/invocation, and checksums. Keep future RIDs, signatures, SBOM,
    provenance, OIDC, and support floors behind a later explicit decision.

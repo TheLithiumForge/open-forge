@@ -67,6 +67,38 @@ residual reporting, nullable lock bootstrap outcomes across
 acquired/failed/cancelled results, and exclusion from the descendant applier;
 plus Framework-mode refusal when trusted Install state is absent.
 
+## Preparation Closeout
+
+Read-only preparation on clean no-op branch `codex/route-init` at exact base
+`33913dfe7f8f80598ca4765c516d308ed179c3ab` produced no commit, Gray, Red, or
+Green change. Route Init is not ready: integrated root Install and the pending
+post-Install freeze boundary below must close first.
+
+- Expected implementation paths are
+  `src/cli/core/OpenForge.Cli.Core/Commands/Route/Init/**`,
+  `src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Route/Init/**`, and
+  `src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Route/Init/**`.
+- `src/cli/root/OpenForge.Cli/Composition/CliCompositionRoot.cs`,
+  `src/cli/core/OpenForge.Cli.Core/Shell/Serialization/CliJsonContext.cs`,
+  `src/cli/core/OpenForge.Cli.Core/Shell/Serialization/CliYamlContext.cs`,
+  `src/cli/core/OpenForge.Cli.Core/Commands/Route/Shared/Rendering/RouteHelpSections.cs`,
+  `src/cli/core/OpenForge.Cli.Core/Framework/**`,
+  `src/cli/core/OpenForge.Cli.Core/Commands/Install/**`, EndToEnd/Native AOT
+  evidence, other Route commands, and shared program ledgers remain protected
+  integration or predecessor surfaces.
+- Decisive evidence must cover binding, generic and Framework planning,
+  intended-topology projection, mutation and lock races, recovery and lifecycle,
+  typed presentation, public process behavior, and supported Native AOT.
+
+### Accepted Sequencing And Freeze Boundary
+
+- After Install and before Gray, architecture authority will freeze the exact
+  command-local result graph, finding vocabulary, finite values, and `next`
+  command/reason content. Those exact wire details are not frozen yet.
+- Route Init may consume embedded assets and trusted facts only through neutral
+  Framework-layer backing functions, never through `Commands/Install/**`. Promote
+  only the smallest actual shared function proven necessary after Install.
+
 ## Stop Conditions
 
 Stop on ambiguous route alignment, managed-segment reordering, root recreation,
