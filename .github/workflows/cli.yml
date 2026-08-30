@@ -10,6 +10,7 @@ on:
       - "NuGet.Config"
       - "OpenForge.Cli.slnx"
       - "src/cli/**"
+      - "src/open-forge/**"
   workflow_dispatch:
 
 permissions:

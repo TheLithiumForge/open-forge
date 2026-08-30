@@ -28,6 +28,9 @@
     <Content Include="../../../../extensions/development-toolkit/**/*"
              Link="ExtensionCatalogue/development-toolkit/%(RecursiveDir)%(Filename)%(Extension)"
              CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../../../open-forge/**/*"
+             Link="FrameworkPayloadSource/%(RecursiveDir)%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
