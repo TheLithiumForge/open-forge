@@ -10,8 +10,9 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized authority for the caller-visible
-Interface Contract for `route create`. The command does not ship yet;
-implementation and executable proof remain pending Gate 5.
+Interface Contract for `route create`. The command does not ship yet. Its local
+implementation and complete executable proof are squash-integrated at
+`19412d2`; replacement-CLI delivery remains pending.
 
 The [CLI Architecture](../../../architecture.md) defines the accepted shared
 result schema, process-status mapping, System.CommandLine binding, fixed Markdig

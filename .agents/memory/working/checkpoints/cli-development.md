@@ -17,9 +17,11 @@ release.
 ## Current State
 
 The current local `develop` product integration baseline is
-`cc5085ce51ca624d07c347b014e036b8c3b7e1b4` with exact tree
-`a1810c4b247bf4997146baebf8a7ca3cf7f794c9`. Route Init is Complete and
-squash-integrated there from reviewed closeout
+`19412d2a562ae66d1b4642256d854438df75366f` with exact tree
+`2bbba7e216e75809e99213e0ccd155bffe720d1f`. Route Create is Complete and
+squash-integrated there from reviewed candidate
+`392114a03a3c1329eb3ce9410795dcd36419815c`, with exact tree equality. Route Init
+is Complete and squash-integrated at `cc5085ce` from reviewed closeout
 `c5801494ac6426add2c64e32cafbba6f0162561a`, with exact tree equality. Its
 executable evidence candidate remains `cb62b19f73afcace163371af9093d877821fa800`,
 tree `be93900d0dc102fcf2d5a351651c0b0134de39a0`. The develop baseline includes the
@@ -205,13 +207,10 @@ Inspect interaction is squash-integrated at `fa3db1ee` with exact tree equality
 to final reviewed candidate `37c9360`. C2's exact fully present ordered public
 Install JSON result is accepted and frozen, including typed residual values
 `none`, `retained`, and `unknown`. Generic and Framework-aware Route Init is
-Complete and squash-integrated at `cc5085ce`; Route Create has a final-reviewed
-acceptance candidate pending coherent local commit and integration. Its
-candidate owns the `RouteCreateJsonContext` predecessor slice, with no legacy
-JSON-context migration, and the Route-help predecessor slice. The separate CLI
-Quality Remediation Task remains Planned
-immediately after Route Create integration and before Route Update; it consumes
-and revalidates those slices. Root Update remains after the complete Route
+Complete at `cc5085ce`; Route Create is Complete at `19412d2`, exact tree
+`2bbba7e`, and supplies the `RouteCreateJsonContext` and Route-help predecessor
+slices. The separate CLI Quality Remediation Task is Active before Route Update;
+it consumes and revalidates those slices. Root Update remains after the complete Route
 Mutation M2 lane.
 
 Route Init candidate `cb62b19`, tree `be93900`, has a warning-free Release
@@ -264,10 +263,9 @@ References EndToEnd passed `12/12`; Native AOT Integration passed `308/308`; and
 Native AOT EndToEnd passed `82/82`, all with zero skips. No global installation,
 external publication, remote action, or push occurred.
 
-Route Create now has a final-reviewed acceptance candidate on
-`codex/route-create`, based on
-`a7fc99fc9675d4020eb864a37098bb84c64d33f5`, pending its coherent local commit
-and integration. The maintainer-approved final model makes each result and JSON
+Route Create is Complete and squash-integrated at `19412d2`, exact tree
+`2bbba7e`, from reviewed candidate `392114a` on `codex/route-create`. The
+maintainer-approved final model makes each result and JSON
 effect `Change` required while keeping `Change.Before` nullable. Restored locked
 offline restore and format verification pass; the warning-free managed gate is
 Unit `1507/1507`, Integration `720/720`, and EndToEnd `146/146`. Supported
@@ -277,8 +275,8 @@ native root `146/146`, native Integration `720/720`, and native EndToEnd
 apply, verified hashes, persistent zero-byte lock, and repeat no-op dogfood pass
 without an authored repository mutation. Fresh Sol/xhigh `RC-R2` returns `PASS`
 at `0.91` confidence with no material finding. The command-local serializer and
-Route-help predecessor slices are present for the next CLI Quality Remediation
-Task to consume and revalidate after integration.
+Route-help predecessor slices are present for the active CLI Quality Remediation
+Task to consume and revalidate.
 
 ## Current Step
 
@@ -305,14 +303,11 @@ Extension Create is Complete at protected public integration
 local integration `c60fcb98a57e9ec80769b9cb1d399ce13a227863`, exact tree
 `464a4a6b6ef6447209edffbf53df7348c70691ed`. Its exact public Install JSON
 result schema is accepted and frozen, including typed residual values `none`,
-`retained`, and `unknown`. Generic and Framework-aware Route Init is Complete and
-squash-integrated at `cc5085ce`, and Route Create has a final-reviewed
-acceptance candidate pending coherent local commit and integration. Its
-candidate owns the `RouteCreateJsonContext` predecessor slice, with no legacy
-JSON-context migration, and the Route-help predecessor slice.
-The separate CLI Quality Remediation Task remains Planned
-immediately after Route Create integration and before Route Update, then
-consumes and revalidates those slices. Its Framework mode accepts one concrete
+`retained`, and `unknown`. Generic and Framework-aware Route Init is Complete at
+`cc5085ce`, and Route Create is Complete at `19412d2`, exact tree `2bbba7e`. It
+supplies the `RouteCreateJsonContext` and Route-help predecessor slices. The
+separate CLI Quality Remediation Task is Active before Route Update and now
+consumes and revalidates those slices. Route Init's Framework mode accepts one concrete
 uniquely aligned route, slugs only ID-form inserted scope labels, creates one
 sparse chain, keeps scope entrypoints user-owned, and lifecycle-manages only
 copied canonical assets and derived generated regions.
@@ -362,10 +357,8 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Inspect, commit, and integrate the final-reviewed Route Create acceptance
-   candidate, including its `RouteCreateJsonContext` and Route-help predecessor
-   slices. Then execute the separate CLI Quality Remediation Task,
-   consume/revalidate those slices, and complete the residual serializer/help
+1. Execute the active CLI Quality Remediation Task, consume and revalidate Route
+   Create's two predecessor slices, and complete the residual serializer/help
    work and batches 3–9 before Route Update. Continue Move → Remove and only
    afterward root Update M3.
 2. Retain thin D1 as current `linux-x64` build/smoke, packed

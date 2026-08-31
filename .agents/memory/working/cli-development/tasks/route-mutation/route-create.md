@@ -8,11 +8,11 @@ open-forge:
 
 ## Task State
 
-- State: Active after Route Init and Mutation Foundation. Preflight began from
-  clean isolated branch `codex/route-create` at exact integrated baseline
-  `a7fc99fc9675d4020eb864a37098bb84c64d33f5`, tree
-  `9c2f357526756dd962c7a531a115a5c89d377498`. The complete reviewed acceptance
-  candidate is pending its coherent local commit and integration.
+- State: Complete and squash-integrated at
+  `19412d2a562ae66d1b4642256d854438df75366f`, exact tree
+  `2bbba7e216e75809e99213e0ccd155bffe720d1f`, from reviewed candidate
+  `392114a03a3c1329eb3ce9410795dcd36419815c` on `codex/route-create`. Preflight
+  began from exact baseline `a7fc99fc9675d4020eb864a37098bb84c64d33f5`.
 - Parent: [Route Mutation Commands](_route-mutation.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/route/create/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/route/create/behavior.md).
 
@@ -301,11 +301,12 @@ remained clean, and its warning-free Release build plus focused 695 Unit and 229
 Integration passes remain useful evidence, but they are not final acceptance
 evidence for this preparation closeout.
 
-## Acceptance Candidate
+## Acceptance
 
 Route Create Green, protected integration, the command-local
 `RouteCreateJsonContext` predecessor slice, and the Route-help predecessor slice
-form one reviewed candidate on `codex/route-create`. The final correction makes
+are squash-integrated at `19412d2` from exact reviewed candidate `392114a`, with
+tree equality at `2bbba7e`. The final correction makes
 `RouteCreateEffect.Change` and `RouteCreateJsonEffect.Change` required while
 keeping `Before` nullable. Focused post-correction Unit `24/24` and Integration
 `23/23` pass, and the affected Core, Unit, and Integration Release builds have
@@ -327,9 +328,10 @@ Isolated native dogfood proves Route/Create help, JSON dry-run with no fixture o
 data mutation, apply, verified destination and parent hashes, persistent
 zero-byte external lock, and repeat no-op with unchanged hashes. The final
 independent Sol/xhigh `RC-R2` review returns `PASS` at `0.91` confidence with no
-material finding. `git diff --check` is clean. This Task remains Active until
-the reviewed candidate and acceptance ledger are committed and integrated; the
-separate CLI Quality Remediation Task remains Planned until then.
+material finding. Post-integration Release build is warning-free; focused Unit
+`27/27`, Integration `48/48`, and published EndToEnd `30/30` pass. The separate
+CLI Quality Remediation Task is Active next and consumes the two accepted
+predecessor slices before Route Update.
 
 ## Stop Conditions
 

@@ -10,10 +10,11 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized entrypoint for `route create`. The
-command does not ship yet; implementation and executable proof remain pending
-Gate 5. Its sibling Interface and Behavior Contracts define command meaning.
-This entrypoint does not duplicate their detail. No Route Technical Design is
-needed.
+command does not ship yet. Its local implementation and complete managed,
+published-process, Native AOT, dogfood, and independent-review proof are
+squash-integrated at `19412d2`; replacement-CLI delivery remains pending. Its
+sibling Interface and Behavior Contracts define command meaning. This
+entrypoint does not duplicate their detail. No Route Technical Design is needed.
 
 ## Contract Roles
 

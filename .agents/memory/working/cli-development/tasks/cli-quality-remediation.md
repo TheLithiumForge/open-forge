@@ -8,22 +8,22 @@ open-forge:
 
 ## Task State
 
-- State: Planned next immediately after Route Create integration and before
-  Route Update. It is a separate root Task.
+- State: Active immediately after Route Create integration
+  `19412d2a562ae66d1b4642256d854438df75366f`, exact tree
+  `2bbba7e216e75809e99213e0ccd155bffe720d1f`, and before Route Update. It is a
+  separate root Task; no remediation implementation has begun.
 - Responsible role: Overseer-managed Task Mastermind.
 - Task source: Maintainer-accepted synthesis of the strategic first-pass PR-style audit of the replacement CLI `development` branch.
 - Last updated: 2026-08-31.
 
-Route Create remains the active/current command task in the dedicated
-`codex/route-create` worktree. It is not complete or integrated. Its protected
-integration lane owns two command-local predecessor slices: the
-`RouteCreateJsonContext` slice, with no legacy JSON-context migration, and the
-Route half of group-help cleanup. The separate remediation Task remains
-Planned until Route Create integrates; it owns the residual eleven command-local
-contexts/Shell aggregate removal, the Extension help half, and findings
+Route Create is Complete and squash-integrated at `19412d2`. It supplies two
+command-local predecessor slices: the `RouteCreateJsonContext` slice, with no
+legacy JSON-context migration, and the Route half of group-help cleanup. This
+Task is now Active; it owns the residual eleven command-local contexts/Shell
+aggregate removal, the Extension help half, and findings
 `CLI-DESIGN-003` through `CLI-TEST-013`. It consumes and revalidates those
 predecessor slices rather than duplicating their correction. Nothing here
-changes Route Create's current worktree or sealed handoff.
+changes the sealed Route Create handoff.
 
 ## Problem And Expected Outcome
 
@@ -51,8 +51,8 @@ changes Route Create's current worktree or sealed handoff.
 | Relationship | Link | Relevance |
 | --- | --- | --- |
 | Parent program | [Complete The Replacement CLI](00-cli-development.md) | Provides the accepted CLI outcome and project authority. |
-| Current predecessor | [Route Mutation Commands](route-mutation/_route-mutation.md) and active [Route Create](route-mutation/route-create.md) | Route Create remains active/current; its protected integration may supply the `RouteCreateJsonContext` and Route-help predecessor slices. This separate Task remains Planned until integration, then consumes/revalidates that evidence and owns the residual serializer/help work. |
-| Next command | [Route Update](route-mutation/route-update.md) | The remediation task is planned immediately before Route Update behavior. |
+| Completed predecessor | [Route Mutation Commands](route-mutation/_route-mutation.md) and [Route Create](route-mutation/route-create.md) | Route Create is Complete at `19412d2` and supplies the `RouteCreateJsonContext` and Route-help predecessor slices. This Task consumes/revalidates that evidence and owns the residual serializer/help work. |
+| Next command | [Route Update](route-mutation/route-update.md) | This Task must complete before Route Update behavior. |
 | Plan | [Development Plan](../plan.md) | Records the program sequence and gates. |
 | Checkpoint | [CLI Development Checkpoint](../../checkpoints/cli-development.md) | Records resumable program state. |
 | Overseer continuity | [CLI Overseer Memory](../overseer-memory.md) | Records the live orchestration horizon. |
@@ -75,7 +75,7 @@ line drift would otherwise make a future recheck brittle.
 | [Source Locality](../../../../directives/source-locality.md) | When does behavior remain local or move to a nearest shared scope? | Binding workspace directive | No. |
 | [CLI Implementation](../../../../directives/open-forge/cli/implementation.md) | Which replacement CLI, AOT, mutation, and test rules apply? | Binding CLI directive | No. |
 | [Test Evidence Integrity](../../../../directives/open-forge/testing/evidence-integrity.md) | Which evidence tier and test-isolation rules apply? | Binding testing directive | No. |
-| [Route Create Green Handoff](../../handoffs/2026-08-31_cli-route-create-green.md) | What active Route Create work must be preserved? | Sealed contextual handoff | No; it is protected and must not be edited. |
+| [Route Create Green Handoff](../../handoffs/2026-08-31_cli-route-create-green.md) | What accepted and sealed Route Create Green boundary must be preserved? | Sealed contextual handoff | No; it is protected and must not be edited. |
 | [Development Plan](../plan.md) | What is the accepted order and full-gate policy? | Active working plan | Only its minimal sequencing language may be updated by the responsible Overseer. |
 | [CLI Development Checkpoint](../../checkpoints/cli-development.md) | What is the current route-mutation state? | Active working checkpoint | Only its minimal sequencing language may be updated by the responsible Overseer. |
 
@@ -87,18 +87,17 @@ line drift would otherwise make a future recheck brittle.
   dependency direction, or the shared Architecture.
 - Route order remains Route Create, then this separate quality-remediation
   Task, then Route Update, followed by Route Move, Route Remove, and root
-  Update M3. Route Create remains active/current until its integration is
-  accepted; this record does not claim that acceptance.
-- `CLI-ARCH-001` and `CLI-ARCH-002` are blocking Route Create integration
-  findings. The protected Route Create lane owns only the accepted
+  Update M3. Route Create integration is accepted at `19412d2`; this Task is
+  Active next.
+- `CLI-ARCH-001` and `CLI-ARCH-002` required Route Create predecessor slices
+  before this Task could start. Route Create owns the accepted
   `RouteCreateJsonContext` predecessor slice (with no legacy JSON-context
   migration) and the Route half of group-help cleanup. After Route Create
   integrates, this Task owns the residual eleven command-local
   contexts/Shell aggregate removal and Extension help half, then the remaining
   findings. It consumes and revalidates predecessor evidence rather than
   duplicating correction. Exact protected serializer/help decisions remain
-  with the responsible integration owner, and this Task does not authorize
-  edits to those protected surfaces before that boundary.
+  with the responsible integration owner.
 - Command-local JSON contexts and symbol-graph help ownership are the smallest
   stated correction directions. They do not authorize a new serializer
   framework, a second command catalogue, or a change to public output.
@@ -217,13 +216,10 @@ The implementation owner must report any directly required neighboring path.
 
 ### Protected Paths And Authorities
 
-- The active uncommitted Route Create source and tests under
-  `src/cli/core/OpenForge.Cli.Core/Commands/Route/Create/**` and the current
-  Route Create integration boundary remain protected until Route Create's own
-  accepted integration. The protected predecessor slices are owned by the
-  Route Create lane: `RouteCreateJsonContext` and the Route half of group-help
-  cleanup. This Task consumes their accepted evidence; it does not authorize
-  edits to those surfaces before integration.
+- Integrated Route Create source and tests remain outside remediation ownership
+  except for direct revalidation of the accepted `RouteCreateJsonContext` and
+  Route-help predecessor slices. This Task consumes their accepted evidence
+  without reopening Route Create behavior.
 - The sealed `.agents/memory/working/handoffs/2026-08-31_cli-route-create-green.md`
   must not change.
 - Accepted Architecture, command contracts, shared operation contracts,
@@ -243,7 +239,7 @@ The implementation owner must report any directly required neighboring path.
 
 | ID | Kind | Claim, required state, resource, or risk | Validation, availability, or signal | Owner or source | Response if false or triggered |
 | --- | --- | --- | --- | --- | --- |
-| A1 | Prerequisite | Route Create must reach its accepted command-local Green/focused evidence and protected integration boundary before this separate Task starts. Its lane may close only the `RouteCreateJsonContext` predecessor slice and Route half of group-help cleanup; this Task then consumes/revalidates that evidence and owns the residual serializer/help work plus findings `CLI-DESIGN-003` through `CLI-TEST-013`. | Route Create Task, Checkpoint, and Git state show accepted integration; no “complete” claim is inferred from the current WIP. | Route Create owner and Overseer | Keep this Task Planned and preserve the Route Create boundary. |
+| A1 | Prerequisite | Route Create must reach its accepted command-local Green/focused evidence and protected integration boundary before this separate Task starts. | Satisfied at integration `19412d2`, exact tree `2bbba7e`; Route Create supplies the `RouteCreateJsonContext` and Route-help predecessor slices. | Route Create Task, Checkpoint, and Git state | Reopen only if exact baseline inspection contradicts the recorded integration. |
 | A2 | Prerequisite | The current Architecture, contracts, mutation foundation, and project graph remain accepted. | Read the linked current sources and inspect the actual baseline before mutation. | Overseer and Task Mastermind | Return a project change request before changing shared meaning. |
 | A3 | Boundary | The audit is a strategic first-pass PR-style audit, not exhaustive deep scrubbing. | Finding scope and no-findings caveat below remain visible. | Accepted audit synthesis | Do not expand the task into a general codebase cleanup. |
 | A4 | Resource | Every C# implementer and reviewer can independently read the complete three C# directive files. | The future packet names all three exact paths and requires acknowledgement before work. | Task Mastermind | Stop that C# boundary and return a task gap if the rules cannot be loaded. |
@@ -272,13 +268,13 @@ stated scope. “Candidate improvement” does not establish a defect.
   serialization boundary; integration-owned correction with command-local graph
   ownership. Do not add reflection, a custom JSON writer, or a second global
   serializer framework.
-- Order and dependency: First residual serialization batch after Route Create
-  integrates. The protected Route Create lane owns only the
-  `RouteCreateJsonContext` predecessor slice, with no legacy JSON-context
+- Order and dependency: First active residual serialization batch on integrated
+  baseline `19412d2`. Route Create supplied only the `RouteCreateJsonContext`
+  predecessor slice, with no legacy JSON-context
   migration. This Task owns the residual eleven command-local contexts/Shell
   aggregate removal, consumes and revalidates the predecessor evidence, and
-  does not duplicate its correction. The exact protected integration decision
-  remains with Route Create's owner.
+  does not duplicate its correction. The accepted Route Create integration
+  decision remains unchanged.
 - Recheck: Source dependency direction, source-generated registration, concrete
   serialization, managed process JSON, and supported Native AOT execution.
 
@@ -297,9 +293,9 @@ stated scope. “Candidate improvement” does not establish a defect.
 - Local/shared and ownership classification: Shared command-group help and
   exact symbol-graph ownership; integration-owned Route and Extension help
   surfaces. Root Discovery remains outside scope.
-- Order and dependency: Second residual group-help batch after Route Create
-  integrates. The protected Route Create lane owns only the Route half of the
-  cleanup; this Task owns the Extension help half, consumes and revalidates
+- Order and dependency: Second active residual group-help batch on integrated
+  baseline `19412d2`. Route Create supplied only the Route half of the cleanup;
+  this Task owns the Extension help half, consumes and revalidates
   the Route predecessor evidence, and preserves the exact composed child
   graph.
 - Recheck: Composed standard help, bounded custom sections, Route/Extension
@@ -540,20 +536,18 @@ contracts.
 
 ## Accepted Order And Sub-Batches
 
-The separate remediation Task remains Planned until Route Create integrates.
-Before that integration, the protected Route Create lane may close only the
-`RouteCreateJsonContext` predecessor slice and the Route half of group-help
-cleanup. Those are accepted predecessor progress/evidence, not remediation
-batches activated by this Task. After integration, this Task consumes and
-revalidates those slices, owns the residual serializer/help corrections, and
-then executes the remaining batches before Route Update. Execute the
+The separate remediation Task is Active after Route Create integration. Route
+Create supplied the accepted `RouteCreateJsonContext` predecessor slice and the
+Route half of group-help cleanup. This Task now consumes and revalidates those
+slices, owns the residual serializer/help corrections, and then executes the
+remaining batches before Route Update. Execute the
 remediation in this order, preserving the distinction between actual defects
 and candidates:
 
 | Order | Sub-batch | Finding IDs | Dependency and completion boundary |
 | --- | --- | --- | --- |
-| 1 | Serialization | `CLI-ARCH-001` | After Route Create integration, remove the residual eleven command-local contexts/Shell aggregate; consume and revalidate the protected `RouteCreateJsonContext` predecessor slice without duplicating correction. |
-| 2 | Group help | `CLI-ARCH-002` | After Route Create integration, correct the residual Extension help half; consume and revalidate the protected Route half, preserve the exact child symbol graph, and exclude Root Discovery/`CLI-D076`. |
+| 1 | Serialization | `CLI-ARCH-001` | On integrated baseline `19412d2`, remove the residual eleven command-local contexts/Shell aggregate; consume and revalidate the supplied `RouteCreateJsonContext` predecessor slice without duplicating correction. |
+| 2 | Group help | `CLI-ARCH-002` | On integrated baseline `19412d2`, correct the residual Extension help half; consume and revalidate the supplied Route half, preserve the exact child symbol graph, and exclude Root Discovery/`CLI-D076`. |
 | 3 | Test evidence tiers | `CLI-TEST-010` | Correct Unit versus Integration claims before later evidence is accepted. |
 | 4 | Route Init planner | `CLI-DESIGN-004`, affected `CLI-DESIGN-007`, `CLI-AUTH-008` | Split local planner responsibilities, remove affected conformance defects, and consume canonical lifecycle authority. |
 | 5 | Install planner | `CLI-DESIGN-004` | Split the Install planner locally; do not attribute Route Init/Framework Markdown conformance or lifecycle authority work to Install. |
@@ -594,10 +588,8 @@ No current document-only authoring action claims any executable evidence.
 
 ## Execution Capsule
 
-- Current owner: Future Overseer-managed Task Mastermind after Route Create
-  integration. The current writer owns only this prose pack and continuity
-  records.
-- Current boundary: Planned task authoring; no production or test mutation has
+- Current owner: Overseer pending assignment to one dedicated Task Mastermind.
+- Current boundary: Active task preflight; no production or test mutation has
   started.
 - Dependencies: Accepted Route Create integration after its protected lane has
   supplied the `RouteCreateJsonContext` and Route-help predecessor slices;
@@ -624,8 +616,8 @@ No current document-only authoring action claims any executable evidence.
   stronger hostile-process guarantee; inability to prove a test tier; a
   destructive/remote/publishing action; or exhaustion of distinct correction
   strategies.
-- Next action: After Route Create is accepted and integrated, independently
-  inspect the exact baseline and worktree, read all three C# directive files,
+- Next action: Independently inspect the exact integrated baseline and assigned
+  worktree, read all three C# directive files,
   consume and revalidate the two protected predecessor slices, and issue one
   closed packet for the residual serializer/help work followed by each
   sequential sub-batch. The Task Mastermind supervises any delegated
@@ -635,17 +627,14 @@ No current document-only authoring action claims any executable evidence.
 
 ## Progress And Evidence
 
-- Current result: The accepted thirteen-finding audit has been captured as one
-  Planned remediation Task. No production or test source changed for this
-  document action.
-- Evidence: The finding identities, scopes, consequences, corrections,
+- Current result: The accepted thirteen-finding audit is now one Active
+  remediation Task. No remediation production or test source has changed.
+- Evidence: Route Create is integrated at `19412d2`, exact tree `2bbba7e`. The
+  finding identities, scopes, consequences, corrections,
   ownership, caveats, order, and acceptance ladder above preserve the accepted
-  audit synthesis. The current Route Create WIP and sealed handoff remain
-  untouched.
-- Blockers: None for authoring this Planned record. Route Create integration
-  remains the execution prerequisite for this separate Task; the current
-  Route Create lane may supply accepted predecessor evidence, but no quality
-  remediation batch is activated by this record before integration.
+  audit synthesis. The sealed Route Create handoff remains untouched.
+- Blockers: None currently. Route Update remains gated on this Task's accepted
+  completion.
 - Residual risk: The actual findings remain unresolved until the future
   remediation Task is executed and accepted. Candidate findings may be closed
   without code after fresh proof.

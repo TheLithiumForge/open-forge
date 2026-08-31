@@ -10,8 +10,9 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized authority for the technology-neutral
-Behavior Contract behind `route create`. The command does not ship yet;
-implementation and executable proof remain pending Gate 5.
+Behavior Contract behind `route create`. The command does not ship yet. Its
+local implementation and complete executable proof are squash-integrated at
+`19412d2`; replacement-CLI delivery remains pending.
 
 The [Interface Contract](interface.md) defines the complete public
 surface. This file defines only the deterministic, technology-neutral semantics,

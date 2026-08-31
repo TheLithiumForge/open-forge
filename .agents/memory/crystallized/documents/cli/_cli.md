@@ -12,7 +12,9 @@ contracts and top-down C# Architecture are current. Accepted non-shipping
 replacement source and executable command slices exist under `src/cli/`,
 including the public `index` command, which is locally integrated at
 `09aa03eddb97831ff544afe1eac54ad9af501f5c`, and Route Init, which is locally
-squash-integrated at `cc5085ce51ca624d07c347b014e036b8c3b7e1b4`. The broader retained command set,
+squash-integrated at `cc5085ce51ca624d07c347b014e036b8c3b7e1b4`, and Route
+Create, which is locally squash-integrated at
+`19412d2a562ae66d1b4642256d854438df75366f`. The broader retained command set,
 delivery, final acceptance, and release remain incomplete. The active [CLI
 Development](../../../working/cli-development/_cli-development.md) route records
 exact implementation and evidence state. The frozen TypeScript MVP remains

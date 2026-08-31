@@ -9,16 +9,14 @@ open-forge:
 ## Task State
 
 - State: Active. Route Init is Complete and squash-integrated at
-  `cc5085ce51ca624d07c347b014e036b8c3b7e1b4`, exact tree
-  `a1810c4b247bf4997146baebf8a7ca3cf7f794c9`. Route Create has a complete,
-  final-reviewed acceptance candidate pending its coherent local commit and
-  integration. Its protected integration lane owns the
-  `RouteCreateJsonContext` predecessor slice (with no legacy JSON-context
-  migration) and the Route half of group-help cleanup. The separate
-  [CLI Quality Remediation](../cli-quality-remediation.md) root Task remains
-  Planned after Route Create integration and before Route Update; it consumes
-  and revalidates those slices. Later Route Mutation commands remain Planned
-  in the accepted sequence.
+  `cc5085ce51ca624d07c347b014e036b8c3b7e1b4`. Route Create is Complete and
+  squash-integrated at `19412d2a562ae66d1b4642256d854438df75366f`, exact tree
+  `2bbba7e216e75809e99213e0ccd155bffe720d1f`, from reviewed candidate
+  `392114a03a3c1329eb3ce9410795dcd36419815c`. The separate [CLI Quality
+  Remediation](../cli-quality-remediation.md) root Task is Active next; it
+  consumes and revalidates Route Create's `RouteCreateJsonContext` and Route-help
+  predecessor slices before Route Update. Later Route Mutation commands remain
+  Planned in the accepted sequence.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Common prerequisites: Route discovery, `index`, and Mutation Foundation.
 - Intended-membership formation prerequisite: accepted feature
@@ -61,7 +59,7 @@ command Active or Ready.
 ## Child Tasks
 
 - [x] [Implement generic and Framework-aware sparse route initialization after root Install](route-init.md) — Complete and squash-integrated at `cc5085ce` — Implementer: Overseer-managed Task Mastermind
-- [ ] [Implement one-file route creation below an existing routable parent](route-create.md) — Active; final-reviewed acceptance candidate pending commit and integration — Implementer: Overseer-managed Route Create Task Mastermind
+- [x] [Implement one-file route creation below an existing routable parent](route-create.md) — Complete and squash-integrated at `19412d2` — Implementer: Overseer-managed Route Create Task Mastermind
 - [ ] [Implement bounded route content and metadata update without identity drift](route-update.md) — Planned — Implementer: Not assigned
 - [ ] [Implement route move with reference, overwrite, generated-navigation, and recovery integrity](route-move.md) — Planned — Implementer: Not assigned
 - [ ] [Implement route removal with dependency, reference, generated-navigation, and recovery integrity](route-remove.md) — Planned — Implementer: Not assigned
@@ -84,8 +82,8 @@ projection at `89a35a7876f39123d9538bca24126ff7197b9459`.
 | Command | Preparation branch | Readiness |
 | --- | --- | --- |
 | Route Init | `codex/route-init` | Complete and squash-integrated at `cc5085ce`; reviewed closeout `c580149`, tree `a1810c4` |
-| Route Create | `codex/route-create` | Final-reviewed acceptance candidate pending coherent local commit and integration; it includes the `RouteCreateJsonContext` and Route-help predecessor slices plus the maintainer-approved required effect-change correction |
-| Route Update | `codex/route-update` | Waiting for Route Create integration, separate CLI Quality Remediation completion, and a closed callable/public-result boundary |
+| Route Create | `codex/route-create` | Complete and squash-integrated at `19412d2`; reviewed candidate `392114a`, tree `2bbba7e`; it supplies the `RouteCreateJsonContext` and Route-help predecessor slices plus the maintainer-approved required effect-change correction |
+| Route Update | `codex/route-update` | Waiting for active CLI Quality Remediation completion and a closed callable/public-result boundary |
 | Route Move | `codex/route-move` | Waiting for Route Update, its remaining proportionality/wire gate, and the accepted neutral-reference correction |
 | Route Remove | `codex/route-remove` | Waiting for Route Move and its command-local result freeze; its parser and canonical lifecycle prerequisites are integrated |
 

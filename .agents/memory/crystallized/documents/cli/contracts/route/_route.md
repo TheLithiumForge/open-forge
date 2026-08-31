@@ -12,8 +12,9 @@ open-forge:
 This is the accepted current Crystallized routing-only entrypoint for the
 `route` command family. The new CLI does not ship yet. Route Init has a local
 implementation, complete executable proof, and squash integration at
-`cc5085ce`; the remaining mutation leaves and replacement-CLI delivery remain
-unfinished. This entrypoint defines group routing and help only. The child
+`cc5085ce`. Route Create has the same accepted boundary at `19412d2`; the
+remaining mutation leaves and replacement-CLI delivery remain unfinished. This
+entrypoint defines group routing and help only. The child
 Interface and Behavior Contracts define detailed command meaning. No Route
 Technical Design is needed.
 
