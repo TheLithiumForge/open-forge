@@ -16,12 +16,13 @@ release.
 
 ## Current State
 
-The current local `develop` integration baseline is
-`6217a34dcf5fb92cfd4fec53c7ccdc61b4053566` with exact tree
-`16a0ad762ec065435b9ef169e50141978578dbdf`. Route Init is Complete in exact
-reviewed feature candidate `cb62b19f73afcace163371af9093d877821fa800`,
-tree `be93900d0dc102fcf2d5a351651c0b0134de39a0`, pending protected
-integration. The develop baseline includes the
+The current local `develop` product integration baseline is
+`cc5085ce51ca624d07c347b014e036b8c3b7e1b4` with exact tree
+`a1810c4b247bf4997146baebf8a7ca3cf7f794c9`. Route Init is Complete and
+squash-integrated there from reviewed closeout
+`c5801494ac6426add2c64e32cafbba6f0162561a`, with exact tree equality. Its
+executable evidence candidate remains `cb62b19f73afcace163371af9093d877821fa800`,
+tree `be93900d0dc102fcf2d5a351651c0b0134de39a0`. The develop baseline includes the
 integrated D0 contract freeze, SF1-SF4 shared foundations, M2 preparation
 record, Route Inspect interaction correction, and protected Extension Create and
 root Install public integrations described below. It also includes canonical
@@ -204,8 +205,8 @@ Inspect interaction is squash-integrated at `fa3db1ee` with exact tree equality
 to final reviewed candidate `37c9360`. C2's exact fully present ordered public
 Install JSON result is accepted and frozen, including typed residual values
 `none`, `retained`, and `unknown`. Generic and Framework-aware Route Init is
-Complete at exact candidate `cb62b19`, pending protected integration; Route
-Create is next. Root Update remains after the complete Route Mutation M2 lane.
+Complete and squash-integrated at `cc5085ce`; Route Create is next. Root Update
+remains after the complete Route Mutation M2 lane.
 
 Route Init candidate `cb62b19`, tree `be93900`, has a warning-free Release
 build; managed Unit `1481/1481`, Integration `695/695`, generated serialization
@@ -282,9 +283,8 @@ Extension Create is Complete at protected public integration
 local integration `c60fcb98a57e9ec80769b9cb1d399ce13a227863`, exact tree
 `464a4a6b6ef6447209edffbf53df7348c70691ed`. Its exact public Install JSON
 result schema is accepted and frozen, including typed residual values `none`,
-`retained`, and `unknown`. Generic and Framework-aware Route Init is Complete at
-exact candidate `cb62b19`, pending protected integration, and Route Create is
-next. Its Framework mode accepts one concrete
+`retained`, and `unknown`. Generic and Framework-aware Route Init is Complete and
+squash-integrated at `cc5085ce`, and Route Create is next. Its Framework mode accepts one concrete
 uniquely aligned route, slugs only ID-form inserted scope labels, creates one
 sparse chain, keeps scope entrypoints user-owned, and lifecycle-manages only
 copied canonical assets and derived generated regions.
@@ -333,16 +333,14 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Accept and protectively integrate exact reviewed Route Init candidate
-   `cb62b19`; do not push.
-2. Begin Route Create, then close the remaining maintainer-authority
+1. Begin Route Create, then close the remaining maintainer-authority
    gates recorded in each prepared Route Mutation leaf immediately before its
    sequential behavior lane. Continue Create → Update → Move → Remove and only
    afterward root Update M3.
-3. Retain thin D1 as current `linux-x64` build/smoke, packed
+2. Retain thin D1 as current `linux-x64` build/smoke, packed
    install/invocation, and checksums. Keep future RIDs, signatures, SBOM,
    provenance, OIDC, and support floors behind a later explicit decision.
-4. Keep actual Status/Doctor implementation in O1 and actual Cleanup selection,
+3. Keep actual Status/Doctor implementation in O1 and actual Cleanup selection,
    default, empty-no-lease policy, orchestration, guidance, aggregation, and E2E
    in O2.
 

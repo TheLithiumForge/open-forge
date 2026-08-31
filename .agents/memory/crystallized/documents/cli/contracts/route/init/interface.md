@@ -11,9 +11,8 @@ open-forge:
 
 This is the accepted current Crystallized authority for the caller-visible
 Interface Contract for `route init`. The command does not ship yet. Its local
-implementation and complete executable proof are closed in exact feature
-candidate `cb62b19`; protected integration and replacement-CLI delivery remain
-pending.
+implementation and complete executable proof are squash-integrated at
+`cc5085ce`; replacement-CLI delivery remains pending.
 
 The current [Routed Markdown Representation](../../../../framework/markdown/routes.md)
 defines canonical entrypoint syntax. The [Routing Model](../../../../framework/routing/model.md)

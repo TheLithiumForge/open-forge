@@ -8,9 +8,12 @@ open-forge:
 
 ## Task State
 
-- State: Complete in exact reviewed feature candidate
-  `cb62b19f73afcace163371af9093d877821fa800`, tree
-  `be93900d0dc102fcf2d5a351651c0b0134de39a0`, pending protected integration.
+- State: Complete and squash-integrated at
+  `cc5085ce51ca624d07c347b014e036b8c3b7e1b4`, exact tree
+  `a1810c4b247bf4997146baebf8a7ca3cf7f794c9`, from reviewed closeout
+  `c5801494ac6426add2c64e32cafbba6f0162561a`. The executable evidence candidate
+  remains `cb62b19f73afcace163371af9093d877821fa800`, tree
+  `be93900d0dc102fcf2d5a351651c0b0134de39a0`.
   Root Install and the required shared foundations are integrated. The complete
   Generic and Framework-aware command, public surface, managed and Native AOT
   evidence, isolated dogfood, and independent review are closed.

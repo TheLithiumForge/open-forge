@@ -11,9 +11,8 @@ open-forge:
 
 This is the accepted current Crystallized authority for the technology-neutral
 Behavior Contract for `route init`. The command does not ship yet. Its local
-implementation and complete executable proof are closed in exact feature
-candidate `cb62b19`; protected integration and replacement-CLI delivery remain
-pending.
+implementation and complete executable proof are squash-integrated at
+`cc5085ce`; replacement-CLI delivery remains pending.
 
 This contract defines only the deterministic, technology-neutral operation behind
 the [Interface Contract](interface.md). The Interface Contract owns the complete

@@ -12,7 +12,7 @@ CLI. Gate 2 command definition, Gate 3 Architecture, and current-source
 reconciliation are complete. These contracts define accepted behavior and do
 not duplicate current executable state. The replacement remains non-shipping.
 Accepted implementation and evidence exist for several commands, including
-public `index` and Route Init exact feature candidate `cb62b19`, while the
+public `index` and Route Init local integration `cc5085ce`, while the
 broader retained command set, complete delivery, and release remain unfinished.
 The active [CLI
 Development](../../../../working/cli-development/_cli-development.md) route

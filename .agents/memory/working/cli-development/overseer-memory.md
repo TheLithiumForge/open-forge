@@ -44,8 +44,8 @@ The accepted dependency order is:
    exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed`. Route Inspect interactive
    selection is squash-integrated at `fa3db1ee` with exact tree equality to final
    reviewed candidate `37c9360`.
-3. Protectively integrate exact reviewed Route Init candidate `cb62b19`, then
-   begin Route Create and complete the remaining Route Mutation M2 leaves.
+3. Route Init is squash-integrated at `cc5085ce`; begin Route Create and complete
+   the remaining Route Mutation M2 leaves.
 4. Implement root Update M3 only after full M2 is complete. Preparation that is
    independent of unfinished behavior may proceed earlier in isolated lanes:
    scope discovery, contract and ownership audits, callable-surface analysis,
@@ -69,8 +69,8 @@ or a general template/scaffold system.
 | C1 | Extension Create | Complete at protected public integration `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5` |
 | C2 | Root Install | Complete at local integration `c60fcb98a57e9ec80769b9cb1d399ce13a227863`; final candidate `11994e4d21ddc807b7480afc39ae3612e5a69a56`, exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed` |
 | C3 | Route Inspect interactive correction | Complete and squash-integrated at `fa3db1ee` with exact tree equality to final reviewed candidate `37c9360` |
-| C4 | Generic and Framework-aware Route Init | Complete at exact reviewed candidate `cb62b19`, tree `be93900`; pending protected integration |
-| M2 preparation | Init/Create/Update/Move/Remove readiness | Complete on clean no-op branches from `33913dfe`; Route Create is next after Route Init integration, then continue in accepted sequence; leaf Tasks retain accepted preparation decisions and remaining authority gates |
+| C4 | Generic and Framework-aware Route Init | Complete and squash-integrated at `cc5085ce`; reviewed closeout `c580149`, tree `a1810c4` |
+| M2 preparation | Init/Create/Update/Move/Remove readiness | Complete on clean no-op branches from `33913dfe`; Route Create is next, then continue in accepted sequence; leaf Tasks retain accepted preparation decisions and remaining authority gates |
 
 Each mutating lane owns a distinct worktree and feature branch. Shared root
 composition, serializer registration, public help, process evidence, Plan, and
@@ -104,9 +104,12 @@ Checkpoint are integration-owned unless a Task packet explicitly says otherwise.
   and two independent Sol/xhigh review gates pass. Native dry-run dogfood safely
   blocks on the repository's existing generated-region state without effects,
   workspace changes, lifecycle publication, or a new external lock.
-- C4 Route Init is Complete at exact reviewed feature candidate
-  `cb62b19f73afcace163371af9093d877821fa800`, tree
-  `be93900d0dc102fcf2d5a351651c0b0134de39a0`, pending protected integration.
+- C4 Route Init is Complete and squash-integrated at
+  `cc5085ce51ca624d07c347b014e036b8c3b7e1b4`, exact tree
+  `a1810c4b247bf4997146baebf8a7ca3cf7f794c9`, from reviewed closeout
+  `c5801494ac6426add2c64e32cafbba6f0162561a`. Its executable evidence candidate
+  remains `cb62b19f73afcace163371af9093d877821fa800`, tree
+  `be93900d0dc102fcf2d5a351651c0b0134de39a0`.
   Release is warning-free; managed Unit `1481/1481`, Integration `695/695`,
   generated serialization `18/18`, and published Find/Index/Route Init `14/5/6`
   pass. Supported `linux-x64` Native AOT serialization `18/18`, full Integration
@@ -136,8 +139,7 @@ Checkpoint are integration-owned unless a Task packet explicitly says otherwise.
 
 ## Open Decision Frontier
 
-No currently surfaced product decision blocks protected Route Init integration
-or beginning Route Create afterward.
+No currently surfaced product decision blocks beginning Route Create.
 The exact public Root Install JSON result schema is accepted, implemented, and
 frozen, including fully present ordered facts and typed residual values `none`,
 `retained`, and `unknown`.
@@ -147,8 +149,8 @@ Init/Update freeze timing, Move lifecycle and neutral-resolver corrections, Init
 neutral Framework-layer reuse, and Remove parser projection. Remaining exact
 wire/proportionality/ownership/effect choices stay open and must close at the
 recorded sequential boundary. The Route Create contract correction is integrated
-at `cd01b8a71cec399a17409428835d18f589335623`; its behavior still waits for
-Route Init.
+at `cd01b8a71cec399a17409428835d18f589335623`; its behavior may now begin from
+the integrated Route Init baseline.
 New architecture or product questions must still be returned to the maintainer
 before changing accepted meaning.
 
