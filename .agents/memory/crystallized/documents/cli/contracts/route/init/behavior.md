@@ -10,8 +10,10 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized authority for the technology-neutral
-Behavior Contract for `route init`. The command does not ship yet;
-implementation and executable proof remain pending Gate 5.
+Behavior Contract for `route init`. The command does not ship yet. Its local
+implementation and complete executable proof are closed in exact feature
+candidate `cb62b19`; protected integration and replacement-CLI delivery remain
+pending.
 
 This contract defines only the deterministic, technology-neutral operation behind
 the [Interface Contract](interface.md). The Interface Contract owns the complete
@@ -116,6 +118,24 @@ running CLI. A missing or untrusted installation blocks; a trusted installation
 from another inventory directs the caller to root Update before scoped
 initialization.
 
+Trust is physical currentness, not merely a structurally valid persisted
+lifecycle record. One neutral Framework currentness reader consumes a validated
+Framework lifecycle state, the running embedded payload, and current contained
+target reads. It returns typed `current`, `source-mismatch`, `changed`,
+`missing`, `unavailable`, `blocked`, or `cancelled` facts. It applies the accepted
+fingerprint policy to source-backed semantic or exact targets, bounded generated
+`entries` interiors, and root `AGENTS.md` and `CLAUDE.md` managed blocks, while
+validating each current `sourceAssetPath` against the running inventory. It has
+no mutation, Update, Install, diagnosis, or command-result policy. Route Init
+maps those neutral facts to its own findings and next actions.
+
+One separate neutral embedded-source adapter projects only recognized
+`.agents/...` payload assets into canonical base sources for the supplied
+workspace. Shared source and topology builders consume those facts. Framework
+alignment, scope insertion, scaffold selection, and sparse-chain policy remain
+Route Init-local; the adapter is not a general topology, Template, slug, or
+mutation engine.
+
 For either operand form, derive the ordered concrete folder chain and require its
 first segment to be an exact installed root route. Align exact case-sensitive
 non-root canonical Framework segments in their canonical order and treat
@@ -199,6 +219,13 @@ The resolver records draft versus explicit metadata provenance for each created
 entrypoint. It does not obtain metadata from a Template, filename meaning, or
 folder semantics, and it does not invent a fallback.
 
+Canonical emission and reading recognize exactly one Open Forge metadata root,
+`open-forge`, with supported children `description`, `tags`, and optional
+`responsibility`. A `rune` root and every other unrelated YAML root are opaque:
+they supply no Open Forge metadata and bounded generated-region editing preserves
+their bytes. When `open-forge` and `rune` coexist, the reader uses exactly
+`open-forge` and ignores the meaning of `rune` without deleting or rewriting it.
+
 The resolver records the intended tag list for every new entrypoint. After a safe
 complete plan and preflight, any new entrypoint whose intended tags contain the
 exact `NeedsAuthoring` tag forms `attention`, whether the marker came from the
@@ -227,6 +254,18 @@ The complete current-fact set for one plan includes:
   generated region.
 - The expected current source and destination facts needed for collision,
   revalidation, application, and recovery.
+
+Framework-mode current facts include one canonical complete schema-v1 lifecycle
+envelope at `.agents/open-forge.lifecycle.json`. Its standard root keys are
+`schemaVersion`, `fingerprintPolicy`, `workspacePath`, `framework`, and
+`extensions`, in canonical order. An installation with no Extensions still has
+the complete empty section
+`{ coverage: "complete", packages: [], paths: [] }`. A missing, `null`,
+malformed, unsupported, or incomplete standard section is not assigned implicit
+meaning and produces no Route Init write; Update or Doctor owns repair. Route
+Init never creates the lifecycle document and publishes scoped Framework facts
+only after the common envelope and both standard sections are complete and
+trusted.
 
 Selection and projection do not treat current generated lines as an independent
 route inventory or metadata fallback. The complete [Index Behavior Contract](../../index-candidate/behavior.md)
@@ -287,10 +326,10 @@ condition applies. Existing unchanged marker content and planned changes alone
 do not change the no-op or successful result to `attention`; an unexpected
 application or verification failure remains `failed`.
 
-For ordinary operation conditions, status precedence is
-`blocked` > `incomplete` > `attention` > `complete`. Invalid input stops before
-operation resolution and forms `invalid`. Failed and interrupted results retain
-their event meaning.
+Aggregate status precedence is `failed`, `interrupted`, `invalid`, `blocked`,
+`incomplete`, `attention`, then `complete`. Invalid input still stops before
+operation resolution; the complete precedence governs one formed result when
+several retained conditions coexist.
 
 ## Effects
 
@@ -467,6 +506,13 @@ Human and structured renderers
 consume that result and do not rerun planning, application, verification, or
 semantic interpretation.
 
+The result builder preserves the Interface-owned property order, chain order,
+effect execution order, tag argument order, unique ordinal unchanged paths, and
+finding code/target/cause order. It derives the envelope status and at most one
+next action once from that ordered finding set. It never broadens nullable
+coordinates, exposes unrelated lifecycle bytes, or reconstructs target
+operand-form provenance.
+
 The [Interface Contract](interface.md) owns the exact human examples, compact and
 expanded presentation requirements, structured facts, semantic statuses, error
 meaning, and stream allocation. Compact rendering retains workspace, selection
@@ -503,6 +549,9 @@ in addition to the public checks in [Interface Verification](interface.md#verifi
   creation, exact managed asset bytes, draft user scope bytes,
   destination-local generated navigation, per-target `sourceAssetPath`, and no
   Framework lifecycle claim for a scope entrypoint.
+- Canonical complete lifecycle root keys, complete empty Extensions, physical
+  target currentness, and rejection without writes for missing, `null`,
+  malformed, unsupported, or incomplete standard sections.
 - Singleton rejection for repeated `--description` and `--responsibility`,
   including equal values; ordered repeated `--tag` values with exact duplicate,
   empty, and syntax validation; idempotent repeated Boolean write-policy flags;
@@ -520,6 +569,8 @@ in addition to the public checks in [Interface Verification](interface.md#verifi
 - Final description, responsibility addition and omission, tag replacement and
   ordering, partial metadata, duplicate and invalid field values, and metadata
   provenance for every created entrypoint.
+- Canonical `open-forge` authoring and reading only, opaque `rune` preservation,
+  and `open-forge` selection when unrelated sibling YAML is present.
 - Existing direct children in a newly routable folder and blocking when child
   metadata needed by the intended generated region is missing.
 - Automatic generated effects formed against the complete intended topology and
@@ -561,12 +612,13 @@ in addition to the public checks in [Interface Verification](interface.md#verifi
   status, bounded diagnostics on stderr, and no human text in JSON stdout, all
   from one typed result.
 
-The CLI Architecture defines exact structured schemas and JSON compatibility,
-process-status mapping, parser and serialization, filesystem and identity
-implementation, recovery-bundle identity, concurrency mechanics, and source boundaries.
-Gate 5 executable proof must cover those decisions without weakening the
-accepted repetition, status, stream, attention, dry-run, compact, safety, or
-recovery requirements.
+The Interface defines the exact Route Init result graph. The CLI Architecture
+defines the shared envelope and JSON compatibility, process-status mapping,
+parser and serialization, filesystem and identity implementation,
+recovery-bundle identity, concurrency mechanics, and source boundaries. Gate 5
+executable proof must cover those decisions without weakening the accepted
+repetition, status, stream, attention, dry-run, compact, safety, or recovery
+requirements.
 
 ## Related Current Sources
 

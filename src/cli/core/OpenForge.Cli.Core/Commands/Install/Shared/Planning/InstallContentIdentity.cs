@@ -1,11 +1,8 @@
 using System.Text;
 using OpenForge.Cli.Core.Commands.Install.Models.Planning;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
-using OpenForge.Cli.Core.Framework.Documents.Markdown;
-using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Lifecycle;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models;
-using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Planning;
 
@@ -13,15 +10,11 @@ internal sealed class InstallContentIdentity
 {
     internal const string GeneratedRegionIdentity = "entries";
 
-    private const string ManagedStart = "<!-- open-forge:start -->";
-    private const string ManagedEnd = "<!-- open-forge:end -->";
-
     private static readonly UTF8Encoding StrictUtf8 = new(
         encoderShouldEmitUTF8Identifier: false,
         throwOnInvalidBytes: true);
 
-    private readonly MarkdownFingerprintReader _fingerprintReader = new();
-    private readonly MarkdownDocumentParser _documentParser = new();
+    private readonly FrameworkContentIdentity _contentIdentity = new();
 
     internal FrameworkLifecycleState CreateLifecycle(
         FrameworkPayload payload,
@@ -143,39 +136,30 @@ internal sealed class InstallContentIdentity
                 $"The managed host is not valid UTF-8: {exception.Message}");
         }
 
-        var start = current.IndexOf(ManagedStart, StringComparison.Ordinal);
-        var lastStart = current.LastIndexOf(ManagedStart, StringComparison.Ordinal);
-        var end = current.IndexOf(ManagedEnd, StringComparison.Ordinal);
-        var lastEnd = current.LastIndexOf(ManagedEnd, StringComparison.Ordinal);
-        if (start < 0 && end < 0)
+        var recognition = _contentIdentity.ReadManagedBlock(current);
+        if (recognition.State == FrameworkManagedBlockState.Absent)
         {
             var separator = ReadManagedBlockSeparator(current);
             return ManagedBlockResolution.Absent(
                 StrictUtf8.GetBytes(current + separator + block));
         }
 
-        if (start < 0
-            || end < 0
-            || start != lastStart
-            || end != lastEnd
-            || end < start)
+        if (recognition.State == FrameworkManagedBlockState.Blocked)
         {
             return ManagedBlockResolution.Blocked(
-                "The managed host contains an incomplete, duplicate, or reversed Open Forge marker boundary.");
+                recognition.Cause
+                    ?? "The managed host contains an unsupported Open Forge marker boundary.");
         }
 
-        var endExclusive = checked(end + ManagedEnd.Length);
-        if (endExclusive < current.Length && current[endExclusive] == '\r')
-        {
-            endExclusive++;
-        }
-
-        if (endExclusive < current.Length && current[endExclusive] == '\n')
-        {
-            endExclusive++;
-        }
-
-        var existingBlock = StrictUtf8.GetBytes(current[start..endExclusive]);
+        var start = recognition.Start
+            ?? throw new InvalidOperationException(
+                "A present managed block must establish its start.");
+        var endExclusive = recognition.EndExclusive
+            ?? throw new InvalidOperationException(
+                "A present managed block must establish its end.");
+        var existingBlock = recognition.ExistingBlockBytes
+            ?? throw new InvalidOperationException(
+                "A present managed block must retain its exact bytes.");
         var expectedDocument = StrictUtf8.GetBytes(string.Concat(
             current.AsSpan(0, start),
             block,
@@ -184,88 +168,43 @@ internal sealed class InstallContentIdentity
     }
 
     internal string ReadGeneratedFingerprint(ReadOnlySpan<byte> bytes)
-    {
-        var document = _documentParser.Parse(StrictUtf8.GetString(bytes));
-        if (document.GeneratedRegion.State != MarkdownGeneratedRegionState.Complete
-            || document.GeneratedRegion.ContentSpan is not { } content)
-        {
-            throw new InvalidDataException(
-                "A generated lifecycle target requires one complete Entries region.");
-        }
-
-        return FileExpectation.Hash(StrictUtf8.GetBytes(
-            document.Source[content.Start..content.End]));
-    }
+        => _contentIdentity.ReadGeneratedEntriesFingerprint(bytes);
 
     internal string ReadPersistedGeneratedFingerprint(
         ReadOnlySpan<byte> bytes,
         string fingerprintKind)
     {
-        if (!string.Equals(
-                fingerprintKind,
-                LifecycleSchema.ExactBytesFingerprintKind,
-                StringComparison.Ordinal))
-        {
-            throw new InvalidDataException(
-                "A derived Entries target requires exact-bytes fingerprint identity.");
-        }
-
-        return ReadGeneratedFingerprint(bytes);
+        return _contentIdentity.ReadGeneratedEntriesFingerprint(bytes, fingerprintKind);
     }
 
     internal string ReadPersistedSourceFingerprint(
         ReadOnlySpan<byte> bytes,
         string fingerprintKind)
     {
-        if (string.Equals(
-                fingerprintKind,
-                LifecycleSchema.ExactBytesFingerprintKind,
-                StringComparison.Ordinal))
-        {
-            return FileExpectation.Hash(bytes);
-        }
-
-        if (!string.Equals(
-                fingerprintKind,
-                LifecycleSchema.SemanticFingerprintKind,
-                StringComparison.Ordinal))
-        {
-            throw new InvalidDataException(
-                "The persisted Framework fingerprint kind is unsupported.");
-        }
-
-        var facts = _fingerprintReader.Read(bytes);
-        if (!facts.IsSemantic || facts.Sha256 is null)
-        {
-            throw new InvalidDataException(
-                facts.Cause
-                    ?? "A semantic Framework target is no longer safely parseable.");
-        }
-
-        return facts.Sha256;
+        return _contentIdentity.ReadSourceFingerprint(bytes, fingerprintKind);
     }
 
     internal string ReadPersistedManagedBlockFingerprint(
         ReadOnlySpan<byte> bytes,
         string fingerprintKind)
     {
-        var resolution = ResolveManagedBlock(bytes, ReadOnlySpan<byte>.Empty);
-        if (resolution.State != ManagedBlockState.Present
-            || resolution.ExistingBlockBytes is null)
+        var recognition = _contentIdentity.ReadManagedBlock(bytes);
+        if (recognition.State != FrameworkManagedBlockState.Present
+            || recognition.ExistingBlockBytes is null)
         {
             throw new InvalidDataException(
-                resolution.Cause
+                recognition.Cause
                     ?? "A persisted managed-block target requires one complete Open Forge boundary.");
         }
 
         return ReadPersistedSourceFingerprint(
-            resolution.ExistingBlockBytes,
+            recognition.ExistingBlockBytes,
             fingerprintKind);
     }
 
     internal string ReadSourceFingerprint(ReadOnlySpan<byte> bytes)
     {
-        var facts = _fingerprintReader.Read(bytes);
+        var facts = _contentIdentity.ReadSourceFingerprint(bytes);
         return facts.Sha256
             ?? throw new InvalidDataException(
                 "A Framework source target requires a readable fingerprint.");
@@ -276,7 +215,7 @@ internal sealed class InstallContentIdentity
         string sourceAssetPath,
         ReadOnlySpan<byte> bytes)
     {
-        var fingerprint = _fingerprintReader.Read(bytes);
+        var fingerprint = _contentIdentity.ReadSourceFingerprint(bytes);
         return new FrameworkLifecycleTarget
         {
             Path = path,

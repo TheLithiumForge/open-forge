@@ -10,9 +10,11 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized entrypoint for `route init`. The
-command does not ship yet; implementation and executable proof remain pending
-Gate 5. Its sibling Interface and Behavior Contracts define command meaning.
-This entrypoint does not duplicate their detail.
+command does not ship yet. Its local implementation and complete managed,
+published-process, Native AOT, dogfood, and independent-review proof are closed
+in exact feature candidate `cb62b19`; protected integration and replacement-CLI
+delivery remain pending. Its sibling Interface and Behavior Contracts define
+command meaning. This entrypoint does not duplicate their detail.
 
 ## Contract Roles
 

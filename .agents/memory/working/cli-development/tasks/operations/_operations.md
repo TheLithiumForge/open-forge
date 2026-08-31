@@ -32,6 +32,12 @@ They do not discover, report, execute, or mutate repository state. Recovery
 catalogues recognize only the strict external bundle schema and never restore or
 rebind a target.
 
+Each operational aggregate domain contributes one explicit typed contributor in
+deterministic order, registered directly through composition. Do not use
+reflection, a service locator, or a dynamic plug-in engine. This freezes the
+composition mechanism only and does not select or change the accepted child
+command order.
+
 ## Child Tasks
 
 - [ ] [Implement complete workspace, lifecycle, managed-source, generated, and recovery-bundle status facts](status.md) — Planned — Implementer: Not assigned

@@ -26,6 +26,35 @@ public sealed class SourceAuthoredMetadataParserTests
         Assert.Equal(["Route-List", "Évidence2", "工作"], facts.Tags);
     }
 
+    [Fact(DisplayName = "Authored metadata ignores Rune as unrelated YAML")]
+    [Trait("Feature", "source-metadata"), Trait("Evidence", "Unit")]
+    public void RuneRootHasNoOpenForgeMetadataMeaning()
+    {
+        var facts = Parse(
+            "---\nrune:\n  description: Legacy route\n  tags: [Legacy, 工作2]\n  responsibility: Ignored by source facts\n---\n",
+            SourceDocumentForm.Markdown);
+
+        Assert.Equal(SourceAuthoredMetadataState.Missing, facts.State);
+        Assert.Null(facts.Description);
+        Assert.Empty(facts.Tags);
+    }
+
+    [Fact(DisplayName = "Authored metadata reads Open Forge and ignores a sibling Rune root")]
+    [Trait("Feature", "source-metadata"), Trait("Evidence", "Unit")]
+    public void OpenForgeRemainsAuthoritativeAlongsideRune()
+    {
+        var facts = Parse(
+            "---\n"
+                + "open-forge:\n  description: Canonical\n  tags: [Canonical]\n"
+                + "rune:\n  description: Legacy\n  tags: [Legacy]\n"
+                + "---\n",
+            SourceDocumentForm.Markdown);
+
+        Assert.Equal(SourceAuthoredMetadataState.Complete, facts.State);
+        Assert.Equal("Canonical", facts.Description);
+        Assert.Equal(["Canonical"], facts.Tags);
+    }
+
     [Theory(DisplayName = "Authored metadata keeps the accepted Open Forge missing and malformed classifications")]
     [InlineData("# body\n", nameof(SourceAuthoredMetadataState.Missing))]
     [InlineData("---\nopen-forge:\n  description: Value\n  tags: [Tag]\n", nameof(SourceAuthoredMetadataState.Malformed))]

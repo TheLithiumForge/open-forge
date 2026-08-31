@@ -11,7 +11,8 @@ This route keeps two CLI implementations distinct. The replacement command
 contracts and top-down C# Architecture are current. Accepted non-shipping
 replacement source and executable command slices exist under `src/cli/`,
 including the public `index` command, which is locally integrated at
-`09aa03eddb97831ff544afe1eac54ad9af501f5c`. The broader retained command set,
+`09aa03eddb97831ff544afe1eac54ad9af501f5c`, and Route Init, which is fully
+proved in exact feature candidate `cb62b19`. The broader retained command set,
 delivery, final acceptance, and release remain incomplete. The active [CLI
 Development](../../../working/cli-development/_cli-development.md) route records
 exact implementation and evidence state. The frozen TypeScript MVP remains

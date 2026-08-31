@@ -10,8 +10,10 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized authority for the caller-visible
-Interface Contract for `route init`. The command does not ship yet;
-implementation and executable proof remain pending Gate 5.
+Interface Contract for `route init`. The command does not ship yet. Its local
+implementation and complete executable proof are closed in exact feature
+candidate `cb62b19`; protected integration and replacement-CLI delivery remain
+pending.
 
 The current [Routed Markdown Representation](../../../../framework/markdown/routes.md)
 defines canonical entrypoint syntax. The [Routing Model](../../../../framework/routing/model.md)
@@ -30,10 +32,11 @@ The [Index Interface Contract](../../index-candidate/interface.md) defines the g
 navigation projection, ordering, generated boundary, verification, and recovery
 behavior consumed by this command.
 
-The [CLI Architecture](../../../architecture.md) defines the accepted shared
-structured schema, process-status mapping, source structure, package and runtime
-boundaries, BCL-first filesystem boundary, workspace lock, and recovery identity
-model. This Interface Contract does not choose those details. The
+The [CLI Architecture](../../../architecture.md) defines the shared structured
+envelope and compatibility policy, process-status mapping, source structure,
+package and runtime boundaries, BCL-first filesystem boundary, workspace lock,
+and recovery identity model. This Interface Contract owns the Route Init result
+graph inside that envelope, without changing those shared details. The
 command-specific repetition, seven-status, stream, finite-attention, and
 compact-result rules below are accepted current behavior.
 
@@ -215,6 +218,16 @@ before any write. A trusted current root Install lifecycle matching the running
 CLI's embedded inventory is required; otherwise the result directs the caller
 to `open-forge install` or `open-forge update`.
 
+The trusted lifecycle path is exactly `.agents/open-forge.lifecycle.json`. Its
+schema-v1 root contains every standard key in canonical order:
+`schemaVersion`, `fingerprintPolicy`, `workspacePath`, `framework`, and
+`extensions`. The empty Extension state is the complete value
+`{ coverage: "complete", packages: [], paths: [] }`; it is never `null` or
+omitted. Route Init does not create the lifecycle document. A missing, `null`,
+malformed, unsupported, or incomplete standard section blocks or leaves the
+required fact unavailable without a write; explicit Update or Doctor work owns
+repair.
+
 The plan creates only the requested sparse chain. It copies exact embedded
 canonical entrypoint bytes for aligned missing Framework segments, then projects
 their destination-local generated `Entries`. It creates the existing generic
@@ -251,16 +264,16 @@ Draft route for memory/project-alpha/documents; replace this description before 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
 - none - No entries - #Empty
-
 <!-- open-forge:generated-index:end -->
 ```
 
 The example route ID and literal final slug vary by target. The scaffold always
 contains:
 
-1. Canonical scoped frontmatter.
+1. Canonical scoped frontmatter with exactly one Open Forge metadata root key,
+   `open-forge`, containing `description`, `tags`, and optional
+   `responsibility` only.
 2. A non-empty route description and at least one tag.
 3. One level-1 title whose visible text is the literal folder slug.
 4. The same honest route description appears in the body.
@@ -274,6 +287,13 @@ slug.
 The fixed scaffold is command behavior, not a Template instance. Later changes
 to a Template never affect it, and `route init` does not search the Templates
 route for a default.
+
+Open Forge metadata recognizes only the `open-forge` root. A `rune` root or any
+other YAML is unrelated opaque content: it supplies no Open Forge description,
+tags, or responsibility and is preserved by bounded source edits. When both
+`open-forge` and `rune` occur, Route Init reads exactly `open-forge`, ignores the
+meaning of `rune`, and preserves the unrelated YAML bytes. Route Init never
+authors `rune` or another metadata root.
 
 ## Draft Metadata
 
@@ -537,28 +557,134 @@ the same typed result used by human rendering. It never prompts and never reruns
 planning, application, or verification. Bounded diagnostics use stderr. Human
 rendering text is never mixed into JSON stdout.
 
-The structured result exposes:
+The shared schema-v1 envelope remains exactly
+`{ schemaVersion, command, status, workspace, result, next }`. The Route Init
+`result` object is fully present in this property order:
 
-- Workspace and selection method.
-- Generic or Framework mode, resolved concrete route, and Framework alignment
-  when applicable.
-- Requested target and resolved target ID and canonical path.
-- Application or dry-run mode, completeness, and safety.
-- Existing, compatibility, missing, and created entrypoints in chain order.
-- Draft and explicit metadata provenance for every created entrypoint.
-- User-owned scope entrypoints, copied managed Framework entrypoints,
-  source-asset provenance, and lifecycle effects when applicable.
-- Draft entrypoint paths.
-- Planned directories, files, and generated-region effects.
-- Dry-run, recovery-bundle, application, verification, and recovery facts.
-- Changed and unchanged effects, verification facts, and typed observed or
-  unknown recovery facts. An exact residual or expected path appears only when
-  the recovery result provides one, without classifying current target state.
-- Bounded observations, availability conditions, attention conditions, semantic
-  status, and at most one required `Next:` action.
+```text
+result {
+  mode
+  scaffold
+  target { requested id path }
+  plan { completeness safety }
+  framework {
+    inventoryFingerprint
+    segments[] { path role sourceAssetPath }
+  } | null
+  entrypoints[] {
+    id
+    path
+    form
+    current
+    ownership
+    metadata {
+      description
+      descriptionSource
+      responsibility
+      responsibilitySource
+      tags[]
+      tagsSource
+    } | null
+    sourceAssetPath
+    outcome
+  }
+  effects[] {
+    path
+    kind
+    action
+    sourceAssetPath
+    change { before expected } | null
+    outcome
+    residual
+  }
+  unchangedPaths[]
+  lifecycle { action outcome }
+  recovery { state residualPath }
+  verification
+  findings[] { code status target cause }
+}
+```
 
-Exact field names, schema versioning, and compatibility rules are defined by the
-CLI Architecture.
+`status` and `next` are derived once from the ordered findings and are not
+duplicated inside `result`. Collections are immutable and never `null`.
+Entrypoints and Framework segments retain first-to-final chain order; effects
+retain execution order; tags retain argument order; unchanged paths are unique
+and ordinally ordered. Findings use the fixed code order below, then nullable
+target and cause in ordinal order.
+
+The target intentionally exposes only `requested`, resolved `id`, and resolved
+canonical `path`. It has no redundant operand-form or `selectedBy` provenance.
+Nullable members are limited to unresolved target coordinates, `framework`,
+existing-entrypoint `metadata`, metadata `responsibility`, `sourceAssetPath`,
+directory `change`, create-change `before`, recovery `residualPath`, finding
+`target`, envelope `workspace`, and envelope `next`.
+
+Lifecycle evidence is bounded to Route Init-owned facts. `effects` contains only
+`directory`, `entrypoint`, and `generated-region` effects. `lifecycle` reports
+only the command's action and outcome; neither the result nor a dry-run change
+exposes the whole lifecycle document, preserved Extension state, root Install
+targets, or other unrelated lifecycle bytes. An entrypoint create change
+contains that new entrypoint's complete UTF-8 text. A generated-region change
+contains only its bounded interior. Directory changes are `null`.
+
+The finite machine values are:
+
+| Coordinate | Values |
+| --- | --- |
+| `mode` | `apply`, `dry-run` |
+| `scaffold` | `generic`, `framework` |
+| `plan.completeness` | `not-established`, `incomplete`, `complete` |
+| `plan.safety` | `not-established`, `safe`, `blocked` |
+| Framework segment `role` | `installed-root`, `managed`, `scope` |
+| Entrypoint `form` | `canonical`, `compatibility` |
+| Entrypoint `current` | `existing`, `missing` |
+| Entrypoint `ownership` | `user`, `framework` |
+| `descriptionSource` | `draft`, `explicit`, `embedded` |
+| `responsibilitySource` | `default-omitted`, `explicit-omitted`, `explicit`, `embedded` |
+| `tagsSource` | `draft`, `explicit`, `mixed`, `embedded` |
+| Entrypoint `outcome` | `unchanged`, `planned`, `not-started`, `created`, `verification-failed`, `completion-unknown` |
+| Effect `kind` | `directory`, `entrypoint`, `generated-region` |
+| Effect `action` | `create`, `replace` |
+| Effect `outcome` | `planned`, `not-started`, `verified`, `verification-failed`, `completion-unknown` |
+| Effect `residual` | `none`, `retained`, `unknown` |
+| Lifecycle `action` | `none`, `preserve`, `publish` |
+| Lifecycle `outcome` | `not-requested`, `planned`, `already-current`, `not-started`, `verified`, `verification-failed`, `completion-unknown` |
+| Recovery `state` | `not-required`, `not-created`, `removed`, `retained`, `unknown` |
+| `verification` | `not-requested`, `verified`, `failed`, `unknown` |
+
+Every finding is exactly `{ code, status, target, cause }`. `complete` has no
+finding. Within each status, finding codes use this exact order:
+
+| Status | Finding codes in order |
+| --- | --- |
+| `invalid` | `route-init.invalid-input`, `route-init.invalid-target`, `route-init.invalid-metadata` |
+| `blocked` | `route-init.workspace-unavailable`, `route-init.workspace-unsafe`, `route-init.target-unsafe`, `route-init.route-ambiguous`, `route-init.identity-collision`, `route-init.loader-unsafe`, `route-init.framework-payload-invalid`, `route-init.framework-install-required`, `route-init.framework-update-required`, `route-init.framework-alignment-blocked`, `route-init.metadata-unsafe`, `route-init.generated-region-unsafe`, `route-init.lifecycle-blocked`, `route-init.workspace-lock-unavailable`, `route-init.target-changed`, `route-init.recovery-conflict` |
+| `incomplete` | `route-init.framework-payload-unavailable`, `route-init.inspection-incomplete`, `route-init.metadata-incomplete`, `route-init.projection-incomplete`, `route-init.lifecycle-unavailable`, `route-init.recovery-unavailable` |
+| `attention` | `route-init.needs-authoring`, `route-init.recovery-artifact-retained` |
+| `failed` | `route-init.target-changed-during-apply`, `route-init.write-failed`, `route-init.verification-failed`, `route-init.lifecycle-publication-failed`, `route-init.recovery-failed`, `route-init.operation-failed` |
+| `interrupted` | `route-init.interrupted` |
+
+Aggregate precedence is `failed`, `interrupted`, `invalid`, `blocked`,
+`incomplete`, `attention`, then `complete`.
+
+The one structured `next` action uses this exact first-applicable policy:
+
+| Condition | `next.command` | `next.reason` |
+| --- | --- | --- |
+| `complete` | `null` | `null` |
+| `invalid` | `open-forge route init --help` | `Correct the named Route Init input, then rerun the request.` |
+| `route-init.framework-install-required` | `open-forge install` | `Establish a trusted current Framework installation before rerunning Route Init in Framework mode.` |
+| `route-init.framework-update-required` | `open-forge update` | `Update the installed Framework state to the running CLI's embedded inventory before rerunning Route Init.` |
+| Workspace lock unavailable or target changed | `open-forge route init` | `Wait for the blocking condition or inspect the changed target, then rerun Route Init from a fresh plan.` |
+| Other `blocked` | `open-forge doctor` | `Inspect the blocked workspace, route, identity, lifecycle, generated-region, or recovery boundary before rerunning Route Init.` |
+| `incomplete` | `open-forge doctor` | `Inspect the unavailable route, metadata, projection, lifecycle, or recovery facts before relying on this Route Init result.` |
+| Retained recovery artifact | `open-forge cleanup` | `Review and remove the reported recovery artifact after confirming the verified Route Init result.` |
+| NeedsAuthoring attention | `open-forge route update` | `Author each reported NeedsAuthoring entrypoint before relying on its description or tags.` |
+| `failed` | `open-forge route init --verbose` | `Report the failure and retry the same Route Init request with bounded diagnostics.` |
+| `interrupted` | `open-forge route init` | `Rerun the same Route Init request.` |
+
+Recovery cleanup wins when both attention findings coexist. Exact schema
+versioning and compatibility rules remain defined by the CLI Architecture.
 
 ## Semantic Results
 
@@ -574,10 +700,10 @@ CLI Architecture.
 
 The shared process-status mapping is defined by the CLI Architecture.
 
-For ordinary operation conditions, status precedence is
-`blocked` > `incomplete` > `attention` > `complete`. Invalid input stops before
-operation resolution and forms `invalid`. Failed and interrupted results retain
-their event meaning.
+Aggregate status precedence is `failed`, `interrupted`, `invalid`, `blocked`,
+`incomplete`, `attention`, then `complete`. Invalid input still stops before
+operation resolution; the complete precedence governs one formed result when
+several retained conditions coexist.
 
 ## Scenarios
 
@@ -671,6 +797,9 @@ of this Interface Contract:
 - Unique and ambiguous canonical alignment, managed-segment reordering, nested
   root recreation, trailing user scope, and missing, untrusted, or outdated root
   Install lifecycle.
+- Canonical complete lifecycle root keys, complete empty Extensions, physical
+  currentness, and rejection without writes for missing, `null`, malformed,
+  unsupported, or incomplete standard sections.
 - Exact embedded bytes for managed entrypoints, draft bytes for user-owned scope
   entrypoints, destination-local generated navigation, `sourceAssetPath`
   publication, and the exclusion of scope files from Framework ownership.
@@ -688,6 +817,8 @@ of this Interface Contract:
   `NeedsAuthoring`, inherited Axioms, and valid generated regions.
 - Final description, responsibility addition and omission, tag replacement,
   partial metadata, and invalid field values.
+- Canonical `open-forge` authoring and reading only, opaque `rune` preservation,
+  and `open-forge` selection when unrelated sibling YAML is present.
 - Existing children in a newly routable folder and missing child metadata.
 - Automatic generated effects against intended topology.
 - Dry-run and application parity for request, facts, intended state, generated
@@ -720,12 +851,13 @@ of this Interface Contract:
 
 The [Behavior Contract](behavior.md) records the required technology-neutral
 evidence for planning, projection, effects, recovery-bundle boundaries,
-revalidation, verification, recovery, concurrency, and convergence. Exact
-schemas and JSON compatibility, numeric exits, parser and serialization,
-filesystem and identity implementation, recovery-bundle names, concurrency mechanics,
-and source boundaries are defined by the CLI Architecture. Those accepted
-technical choices do not weaken the accepted repetition, status, stream,
-attention, dry-run, compact, or verification rules above.
+revalidation, verification, recovery, concurrency, and convergence. This
+Interface owns the exact command-local schema while shared JSON compatibility,
+numeric exits, parser and serialization, filesystem and identity implementation,
+recovery-bundle names, concurrency mechanics, and source boundaries remain
+defined by the CLI Architecture. Those accepted technical choices do not weaken
+the repetition, status, stream, attention, dry-run, compact, or verification
+rules above.
 
 ## Related Current Sources
 

@@ -32,7 +32,7 @@ public sealed class FindDocumentInspectionIntegrationRedTests
               description: Base description
               tags:
                 - "Caf\u00E9"
-                - "Base😀"
+                - "Base2"
             ---
             # Base 😀 Heading
             Visible text #BaseTag and [linked #Label](https://example.invalid/#destination) plus `#code`.
@@ -161,8 +161,8 @@ public sealed class FindDocumentInspectionIntegrationRedTests
             baseFrontmatter,
             baseSource,
             "Base description",
-            ["Café"],
-            ["\"Caf\\u00E9\""]);
+            ["Café", "Base2"],
+            ["\"Caf\\u00E9\"", "\"Base2\""]);
         AssertFrontmatterFacts(
             overwriteFrontmatter,
             overwriteSource,

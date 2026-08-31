@@ -35,13 +35,14 @@ public sealed class FindFrontmatterReaderRedTests
             [("Second", 4, 10), ("First", 4, 18)]);
     }
 
-    [Fact(DisplayName = "Find frontmatter filters invalid quoted Unicode between valid scalar spans")]
+    [Fact(DisplayName = "Find frontmatter preserves valid quoted Unicode scalar spans")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
-    public void QuotedEscapedUnicodeTagsFilterInvalidValuesAndPreserveValidScalarSpans()
+    public void QuotedEscapedUnicodeTagsPreserveScalarSpans()
     {
         const string source = "---\n"
             + "open-forge:\n"
-            + "  tags: [\"Caf\\u00E9\", \"😀\", \"工作\"]\n"
+            + "  description: Example\n"
+            + "  tags: [\"Caf\\u00E9\", \"工作\"]\n"
             + "---\n";
 
         var result = Read(source);
@@ -53,11 +54,32 @@ public sealed class FindFrontmatterReaderRedTests
         Assert.Equal(FindFrontmatterAvailability.Complete, result.Availability);
         Assert.Equal(["Café", "工作"], result.Tags.Select(tag => tag.Authored));
         Assert.Equal(
-            ExpectedLocation(source, firstStart, firstToken.Length, 3, 10),
+            ExpectedLocation(source, firstStart, firstToken.Length, 4, 10),
             result.Tags[0].Location);
         Assert.Equal(
-            ExpectedLocation(source, secondStart, secondToken.Length, 3, 28),
+            ExpectedLocation(source, secondStart, secondToken.Length, 4, 23),
             result.Tags[1].Location);
+    }
+
+    [Fact(DisplayName = "Find ignores Rune and reads Open Forge when both roots are present")]
+    [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
+    public void RuneIsOpaqueAndOpenForgeRemainsSoleMetadataAuthority()
+    {
+        AssertCompleteWithoutTags(
+            "---\nrune:\n  description: Legacy\n  tags: [Legacy]\n---\n",
+            null,
+            SourceDocumentForm.Markdown,
+            ".agents/example.md");
+        AssertTagSequence(
+            "---\n"
+                + "open-forge:\n"
+                + "  description: Example\n"
+                + "  tags: [First, Second]\n"
+                + "rune:\n"
+                + "  description: &legacy Legacy\n"
+                + "  tags: [*legacy]\n"
+                + "---\n",
+            [("First", 4, 10), ("Second", 4, 17)]);
     }
 
     [Fact(DisplayName = "Find frontmatter keeps missing, empty, commented, unknown, and skill metadata complete")]
@@ -87,8 +109,7 @@ public sealed class FindFrontmatterReaderRedTests
             ".agents/example.md");
         AssertCompleteWithoutTags(
             "---\n"
-                + "open-forge:\n"
-                + "  tags: ['', ' ', 1Invalid, Invalid--Tag]\n"
+                + "open-forge: null\n"
                 + "---\n"
                 + "Body\n",
             null,
@@ -103,7 +124,7 @@ public sealed class FindFrontmatterReaderRedTests
                 + "  responsibility: Ignored\n"
                 + "---\n"
                 + "Body\n",
-            "Known",
+            null,
             SourceDocumentForm.Markdown,
             ".agents/example.md");
         AssertCompleteWithoutTags(
@@ -131,12 +152,15 @@ public sealed class FindFrontmatterReaderRedTests
         AssertUnavailable(
             "---\n"
                 + "open-forge:\n"
+                + "  description: Example\n"
                 + "  tags: { value: One }\n"
                 + "---\n"
                 + "Body\n");
         AssertUnavailable(
             "---\n"
-                + "open-forge: null\n"
+                + "open-forge:\n"
+                + "  description: Example\n"
+                + "  tags: ['', ' ', 1Invalid, Invalid--Tag]\n"
                 + "---\n"
                 + "Body\n");
         AssertUnavailable(

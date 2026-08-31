@@ -8,10 +8,10 @@ open-forge:
 
 ## Task State
 
-- State: Ready to begin with Route Init. Root Install and the shared foundations
-  are integrated; Route Init's accepted post-Install contract freeze remains the
-  first boundary before Gray. Later Route Mutation commands remain Planned in
-  the accepted sequence.
+- State: Active. Route Init is Complete in exact reviewed feature candidate
+  `cb62b19f73afcace163371af9093d877821fa800`, pending protected integration.
+  Route Create is next after that integration; later Route Mutation commands
+  remain Planned in the accepted sequence.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Common prerequisites: Route discovery, `index`, and Mutation Foundation.
 - Intended-membership formation prerequisite: accepted feature
@@ -53,7 +53,7 @@ command Active or Ready.
 
 ## Child Tasks
 
-- [ ] [Implement generic and Framework-aware sparse route initialization after root Install](route-init.md) — Ready for its accepted post-Install contract freeze, then Gray — Implementer: Not assigned
+- [x] [Implement generic and Framework-aware sparse route initialization after root Install](route-init.md) — Complete at exact candidate `cb62b19`; pending protected integration — Implementer: Overseer-managed Task Mastermind
 - [ ] [Implement one-file route creation below an existing routable parent](route-create.md) — Planned — Implementer: Not assigned
 - [ ] [Implement bounded route content and metadata update without identity drift](route-update.md) — Planned — Implementer: Not assigned
 - [ ] [Implement route move with reference, overwrite, generated-navigation, and recovery integrity](route-move.md) — Planned — Implementer: Not assigned
@@ -70,8 +70,8 @@ projection at `89a35a7876f39123d9538bca24126ff7197b9459`.
 
 | Command | Preparation branch | Readiness |
 | --- | --- | --- |
-| Route Init | `codex/route-init` | Ready for its accepted post-Install freeze/reuse boundary, then Gray |
-| Route Create | `codex/route-create` | Waiting for Route Init; its accepted contract correction is integrated at `cd01b8a` |
+| Route Init | `codex/route-init` | Complete at exact candidate `cb62b19`; pending protected integration |
+| Route Create | `codex/route-create` | Next after Route Init integration; its accepted contract correction is integrated at `cd01b8a` |
 | Route Update | `codex/route-update` | Waiting for Route Create and a closed callable/public-result boundary |
 | Route Move | `codex/route-move` | Waiting for Route Update, its remaining proportionality/wire gate, and the accepted neutral-reference correction |
 | Route Remove | `codex/route-remove` | Waiting for Route Move and its command-local result freeze; its parser and canonical lifecycle prerequisites are integrated |

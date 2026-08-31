@@ -12,7 +12,7 @@ internal static class RouteHelpSections
                 "Operations",
                 "  list     available — list routed sources and descendants.\n"
                 + "  inspect  available — inspect one source's route behavior.\n"
-                + "  init     unavailable — planned route initialization.\n"
+                + "  init     available — initialize every missing entrypoint in one exact route chain.\n"
                 + "  create   unavailable — planned route creation.\n"
                 + "  update   unavailable — planned route update.\n"
                 + "  move     unavailable — planned route move.\n"

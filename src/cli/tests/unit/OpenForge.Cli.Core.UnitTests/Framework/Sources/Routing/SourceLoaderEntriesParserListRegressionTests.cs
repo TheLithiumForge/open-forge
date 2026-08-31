@@ -23,6 +23,35 @@ public sealed class SourceLoaderEntriesParserListRegressionTests
         Assert.Null(result.Cause);
     }
 
+    [Theory(DisplayName = "Loader Entries parser consumes the shared Markdown boundary for LF and CRLF")]
+    [InlineData("\n")]
+    [InlineData("\r\n")]
+    [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
+    public void EntriesParserPreservesDestinationsAcrossSupportedLineEndings(string lineEnding)
+    {
+        var loader = LoaderContents("- [Root](root/_root.md) - #Root")
+            .Replace("\n", lineEnding, StringComparison.Ordinal);
+
+        var result = SourceLoaderEntriesParser.Parse(loader);
+
+        Assert.Equal(SourceLoaderEntriesParseState.Valid, result.State);
+        Assert.Equal(".agents/root/_root.md", Assert.Single(result.Destinations).CanonicalPath);
+    }
+
+    [Fact(DisplayName = "Loader Entries parser ignores fenced marker text through the shared Markdown boundary")]
+    [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
+    public void EntriesParserIgnoresOpaqueMarkdownBeforeTheFinalRegion()
+    {
+        var loader = LoaderContents(
+            "- [Root](root/_root.md) - #Root",
+            "```markdown\n## Entries\n<!-- open-forge:generated-index:start -->\n```\n\n");
+
+        var result = SourceLoaderEntriesParser.Parse(loader);
+
+        Assert.Equal(SourceLoaderEntriesParseState.Valid, result.State);
+        Assert.Equal(".agents/root/_root.md", Assert.Single(result.Destinations).CanonicalPath);
+    }
+
     [Theory(DisplayName = "Loader Entries parser accepts both valid empty forms as zero destinations"),
         InlineData(""),
         InlineData("- none - No entries - #Empty")]
@@ -55,6 +84,7 @@ public sealed class SourceLoaderEntriesParserListRegressionTests
         InlineData("# Loader\n\n## Entries\n\n## Entries\n"),
         InlineData("# Loader\n\n## Entries\n\n<!-- open-forge:generated-index:end -->\n<!-- open-forge:generated-index:start -->\n"),
         InlineData("# Loader\n\n## Entries\n\n<!-- open-forge:generated-index:start -->\n<!-- open-forge:generated-index:start -->\n<!-- open-forge:generated-index:end -->\n"),
+        InlineData("# Loader\n\n## Entries\nAuthored prose\n<!-- open-forge:generated-index:start -->\n- none - No entries - #Empty\n<!-- open-forge:generated-index:end -->\n"),
         InlineData("# Loader\n\n## Entries\n\n<!-- open-forge:generated-index:start -->\nAuthored prose\n<!-- open-forge:generated-index:end -->\n"),
         InlineData("# Loader\n\n## Entries\n\n<!-- open-forge:generated-index:start -->\n- [Root](root/\n_root.md) - #Root\n<!-- open-forge:generated-index:end -->\n"),
         InlineData("# Loader\n\n## Entries\n\n<!-- open-forge:generated-index:start -->\n- none - No entries - #Empty\n- [Root](root/_root.md) - #Root\n<!-- open-forge:generated-index:end -->\n"),

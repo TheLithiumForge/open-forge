@@ -10,10 +10,12 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized routing-only entrypoint for the
-`route` command family. The new CLI does not ship yet; implementation and
-executable proof remain pending Gate 5. This entrypoint defines group routing
-and help only. The child Interface and Behavior Contracts define detailed
-command meaning. No Route Technical Design is needed.
+`route` command family. The new CLI does not ship yet. Route Init has a local
+implementation and complete executable proof in exact feature candidate
+`cb62b19`; the remaining mutation leaves and replacement-CLI delivery remain
+unfinished. This entrypoint defines group routing and help only. The child
+Interface and Behavior Contracts define detailed command meaning. No Route
+Technical Design is needed.
 
 ## Routing And Help
 

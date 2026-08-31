@@ -40,7 +40,7 @@ public sealed class RouteInspectBindingAndCompositionTests
         var text = string.Join(Environment.NewLine, help.Sections.Select(section => section.Body));
         Assert.Contains("list     available", text, StringComparison.Ordinal);
         Assert.Contains("inspect  available", text, StringComparison.Ordinal);
-        Assert.Contains("init     unavailable", text, StringComparison.Ordinal);
+        Assert.Contains("init     available", text, StringComparison.Ordinal);
         Assert.Contains("remove   unavailable", text, StringComparison.Ordinal);
     }
 

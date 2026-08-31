@@ -12,12 +12,16 @@ Complete the replacement CLI from its accepted Architecture and command
 contracts, with safe local development, reproducible evidence, and no partial
 release.
 
-- Last updated: 2026-08-30.
+- Last updated: 2026-08-31.
 
 ## Current State
 
-The current local `develop` baseline is `89a35a7876f39123d9538bca24126ff7197b9459`
-with exact tree `7e093f3ace06bec27d0e0312f9003fc295cc780b`. It includes the
+The current local `develop` integration baseline is
+`6217a34dcf5fb92cfd4fec53c7ccdc61b4053566` with exact tree
+`16a0ad762ec065435b9ef169e50141978578dbdf`. Route Init is Complete in exact
+reviewed feature candidate `cb62b19f73afcace163371af9093d877821fa800`,
+tree `be93900d0dc102fcf2d5a351651c0b0134de39a0`, pending protected
+integration. The develop baseline includes the
 integrated D0 contract freeze, SF1-SF4 shared foundations, M2 preparation
 record, Route Inspect interaction correction, and protected Extension Create and
 root Install public integrations described below. It also includes canonical
@@ -199,8 +203,22 @@ workspace changes, lifecycle publication, or a new external lock. C3 Route
 Inspect interaction is squash-integrated at `fa3db1ee` with exact tree equality
 to final reviewed candidate `37c9360`. C2's exact fully present ordered public
 Install JSON result is accepted and frozen, including typed residual values
-`none`, `retained`, and `unknown`. Generic and Framework-aware Route Init is now
-unblocked; root Update remains after the complete Route Mutation M2 lane.
+`none`, `retained`, and `unknown`. Generic and Framework-aware Route Init is
+Complete at exact candidate `cb62b19`, pending protected integration; Route
+Create is next. Root Update remains after the complete Route Mutation M2 lane.
+
+Route Init candidate `cb62b19`, tree `be93900`, has a warning-free Release
+build; managed Unit `1481/1481`, Integration `695/695`, generated serialization
+`18/18`, and published Find/Index/Route Init `14/5/6`; supported `linux-x64`
+Native AOT serialization `18/18`, full Integration `695/695`, and the same
+published `14/5/6` process suites. Every stated run has zero failures and skips.
+Detached exact-tip Generic apply/Find/Index/no-op dogfood proves canonical flow
+tags, unchanged post-application hashes, zero-byte external locks, and clean
+worktree cleanup. Fresh independent YAML/Markdown-boundary and whole-task
+Sol/xhigh reviews return `PASS` at `0.98` confidence. Open Forge metadata uses
+only root `open-forge`; one shared Framework YAML boundary combines a typed
+flow/block reader with a source-generated writer that emits canonical flow tags,
+and one shared Markdown third-party boundary serves bounded typed consumers.
 
 The neutral Markdown link-label projection is integrated at
 `89a35a7876f39123d9538bca24126ff7197b9459`. It derives typed `Supported` or
@@ -264,8 +282,9 @@ Extension Create is Complete at protected public integration
 local integration `c60fcb98a57e9ec80769b9cb1d399ce13a227863`, exact tree
 `464a4a6b6ef6447209edffbf53df7348c70691ed`. Its exact public Install JSON
 result schema is accepted and frozen, including typed residual values `none`,
-`retained`, and `unknown`. Generic and Framework-aware Route Init is now the
-unblocked next M2 boundary. Its Framework mode accepts one concrete
+`retained`, and `unknown`. Generic and Framework-aware Route Init is Complete at
+exact candidate `cb62b19`, pending protected integration, and Route Create is
+next. Its Framework mode accepts one concrete
 uniquely aligned route, slugs only ID-form inserted scope labels, creates one
 sparse chain, keeps scope entrypoints user-owned, and lifecycle-manages only
 copied canonical assets and derived generated regions.
@@ -314,13 +333,12 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Begin generic and Framework-aware Route Init from the integrated root Install
-   baseline. Preserve its accepted exact-chain and concrete Framework-route
-   boundaries; do not push.
-2. Integrate accepted prerequisites and close the remaining maintainer-authority
+1. Accept and protectively integrate exact reviewed Route Init candidate
+   `cb62b19`; do not push.
+2. Begin Route Create, then close the remaining maintainer-authority
    gates recorded in each prepared Route Mutation leaf immediately before its
-   sequential behavior lane, then implement Init → Create → Update → Move →
-   Remove and only afterward root Update M3.
+   sequential behavior lane. Continue Create → Update → Move → Remove and only
+   afterward root Update M3.
 3. Retain thin D1 as current `linux-x64` build/smoke, packed
    install/invocation, and checksums. Keep future RIDs, signatures, SBOM,
    provenance, OIDC, and support floors behind a later explicit decision.
