@@ -44,8 +44,15 @@ The accepted dependency order is:
    exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed`. Route Inspect interactive
    selection is squash-integrated at `fa3db1ee` with exact tree equality to final
    reviewed candidate `37c9360`.
-3. Route Init is squash-integrated at `cc5085ce`; begin Route Create and complete
-   the remaining Route Mutation M2 leaves.
+3. Route Init is squash-integrated at `cc5085ce`; Route Create has a
+   final-reviewed acceptance candidate pending coherent local commit and
+   integration. Its candidate owns the `RouteCreateJsonContext` predecessor
+   slice, with no legacy JSON-context migration, and the Route-help predecessor
+   slice. The separate [CLI Quality Remediation](tasks/cli-quality-remediation.md)
+   Task remains Planned immediately after Route Create integration and before
+   Route Update; it consumes/revalidates those slices, owns the residual
+   serializer/help work, and then completes before Route Update and the
+   remaining Route Mutation M2 leaves.
 4. Implement root Update M3 only after full M2 is complete. Preparation that is
    independent of unfinished behavior may proceed earlier in isolated lanes:
    scope discovery, contract and ownership audits, callable-surface analysis,
@@ -70,7 +77,8 @@ or a general template/scaffold system.
 | C2 | Root Install | Complete at local integration `c60fcb98a57e9ec80769b9cb1d399ce13a227863`; final candidate `11994e4d21ddc807b7480afc39ae3612e5a69a56`, exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed` |
 | C3 | Route Inspect interactive correction | Complete and squash-integrated at `fa3db1ee` with exact tree equality to final reviewed candidate `37c9360` |
 | C4 | Generic and Framework-aware Route Init | Complete and squash-integrated at `cc5085ce`; reviewed closeout `c580149`, tree `a1810c4` |
-| M2 preparation | Init/Create/Update/Move/Remove readiness | Complete on clean no-op branches from `33913dfe`; Route Create is next, then continue in accepted sequence; leaf Tasks retain accepted preparation decisions and remaining authority gates |
+| M2 preparation | Init/Create/Update/Move/Remove readiness | Complete on clean no-op branches from `33913dfe`; Route Create has a final-reviewed acceptance candidate pending coherent local commit and integration, including the `RouteCreateJsonContext` and Route-help predecessor slices; the separate QR1 Task remains Planned after Route Create integration and before Route Update; leaf Tasks retain accepted preparation decisions and remaining authority gates |
+| Quality remediation | Accepted first-pass CLI architecture, design, authority, and test-evidence findings | Separate root Task, Planned immediately after Route Create integration and before Route Update; it consumes/revalidates the two predecessor slices and owns the residual serializer/help work plus findings 003–013 under the future Task Mastermind boundary |
 
 Each mutating lane owns a distinct worktree and feature branch. Shared root
 composition, serializer registration, public help, process evidence, Plan, and
@@ -139,7 +147,9 @@ Checkpoint are integration-owned unless a Task packet explicitly says otherwise.
 
 ## Open Decision Frontier
 
-No currently surfaced product decision blocks beginning Route Create.
+No currently surfaced product decision blocks Route Create closeout. Its only
+remaining boundary is final candidate inspection, coherent local commit, and
+integration authorization.
 The exact public Root Install JSON result schema is accepted, implemented, and
 frozen, including fully present ordered facts and typed residual values `none`,
 `retained`, and `unknown`.
@@ -149,8 +159,17 @@ Init/Update freeze timing, Move lifecycle and neutral-resolver corrections, Init
 neutral Framework-layer reuse, and Remove parser projection. Remaining exact
 wire/proportionality/ownership/effect choices stay open and must close at the
 recorded sequential boundary. The Route Create contract correction is integrated
-at `cd01b8a71cec399a17409428835d18f589335623`; its behavior may now begin from
-the integrated Route Init baseline.
+at `cd01b8a71cec399a17409428835d18f589335623`; the complete behavior now has a
+final-reviewed acceptance candidate in the dedicated Route Create worktree. The
+maintainer-approved final result model makes each result and JSON effect
+`Change` required while preserving nullable `Change.Before` and schema-v1 wire
+compatibility. The candidate owns the `RouteCreateJsonContext` predecessor
+slice, with no legacy JSON-context migration, and the Route-help predecessor
+slice. Restored format, managed `1507/720/146`, portable `linux-x64` Native AOT
+root plus `720/146`, isolated dogfood, and Sol/xhigh `RC-R2` evidence pass. The
+separate CLI
+Quality Remediation Task remains Planned until Route Create integrates, then
+consumes/revalidates those slices and precedes Route Update.
 New architecture or product questions must still be returned to the maintainer
 before changing accepted meaning.
 

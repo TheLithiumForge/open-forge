@@ -37,7 +37,12 @@ public sealed class PublishedRouteInitHelpProcessTests
             Assert.Equal(string.Empty, result.StandardError);
         });
         Assert.Contains("route init", root.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("init     available", group.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("init     available", group.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("The route group performs no operation.", group.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains(
+            "Planned but unavailable operations: update, move, and remove.",
+            group.StandardOutput,
+            StringComparison.Ordinal);
         Assert.Contains(
             "open-forge route init <route-target> [--framework] [--description <text>] [--responsibility <text>] [--tag=<tag>]... [--dry-run] [global flags]",
             leaf.StandardOutput,

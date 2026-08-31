@@ -25,8 +25,21 @@ public sealed class RouteListApplicationIntegrationTests
         Assert.Equal(string.Empty, group.Error);
         Assert.Equal(string.Empty, leaf.Error);
         Assert.Contains("route list", root.Output, StringComparison.Ordinal);
-        Assert.Contains("list", group.Output, StringComparison.Ordinal);
-        Assert.Contains("inspect  available", group.Output, StringComparison.Ordinal);
+        var groupCommands = group.Output
+            .Split(Environment.NewLine, StringSplitOptions.None)
+            .SkipWhile(line => !line.Equals("Commands:", StringComparison.Ordinal))
+            .Skip(1)
+            .TakeWhile(line => !line.Equals("Notes:", StringComparison.Ordinal))
+            .Where(line => line.StartsWith("  ", StringComparison.Ordinal)
+                && !string.IsNullOrWhiteSpace(line))
+            .Select(line => line.TrimStart().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries)[0]);
+        Assert.Equal(["list", "inspect", "init", "create"], groupCommands);
+        Assert.Contains(
+            "Planned but unavailable operations: update, move, and remove.",
+            group.Output,
+            StringComparison.Ordinal);
+        Assert.DoesNotContain("Operations:", group.Output, StringComparison.Ordinal);
+        Assert.DoesNotContain("available —", group.Output, StringComparison.Ordinal);
         Assert.Contains("open-forge route list [source-reference]", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("route inspect — available", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("The default depth is 1", leaf.Output, StringComparison.Ordinal);

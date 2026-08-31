@@ -31,6 +31,10 @@ using OpenForge.Cli.Core.Commands.References.Models.Binding;
 using OpenForge.Cli.Core.Commands.References.Models.Result;
 using OpenForge.Cli.Core.Commands.References.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Route;
+using OpenForge.Cli.Core.Commands.Route.Create;
+using OpenForge.Cli.Core.Commands.Route.Create.Models.Binding;
+using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Create.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Route.Init;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Binding;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
@@ -102,10 +106,13 @@ internal static class CliCompositionRoot
         var listSymbols = RouteListBinding.CreateSymbols(routeGroup);
         var inspectSymbols = RouteInspectBinding.CreateSymbols(routeGroup);
         var initSymbols = RouteInitBinding.CreateSymbols(routeGroup);
+        var createSymbols = RouteCreateBinding.CreateSymbols(routeGroup);
         IReadOnlyList<CliDelimiterPolicy> routeDelimiterPolicies =
         [
-            .. listSymbols.DelimiterPolicies,
-            .. initSymbols.DelimiterPolicies,
+            .. listSymbols.DelimiterPolicies
+                .Concat(initSymbols.DelimiterPolicies)
+                .Concat(createSymbols.DelimiterPolicies)
+                .Distinct(),
         ];
         var listBinding = RouteListBinding.Close(
             listSymbols,
@@ -139,6 +146,17 @@ internal static class CliCompositionRoot
                     RouteInitHumanRenderer.Render,
                     RouteInitJsonRenderer.Render),
                 DiagnosticRenderer = RouteInitDiagnosticRenderer.Render,
+            });
+        var createBinding = RouteCreateBinding.Close(
+            createSymbols,
+            new RouteCreateBindingComponents
+            {
+                Help = RouteCreateHelpSections.Create(),
+                Operation = RouteCreateOperationFactory.Create(inputs.LockStoreRoot),
+                Renderers = new CliRendererSet<RouteCreateResult>(
+                    RouteCreateHumanRenderer.Render,
+                    RouteCreateJsonRenderer.Render),
+                DiagnosticRenderer = RouteCreateDiagnosticRenderer.Render,
             });
         var findSymbols = FindBinding.CreateSymbols();
         var findBinding = FindBinding.Close(
@@ -243,7 +261,7 @@ internal static class CliCompositionRoot
                     ExtensionHelpSections.CreateGroup(),
                     []),
             ],
-            [listBinding, inspectBinding, initBinding, findBinding, indexBinding, installBinding, referencesBinding, extensionListBinding, extensionInspectBinding, extensionCreateBinding, contextBinding],
+            [listBinding, inspectBinding, initBinding, createBinding, findBinding, indexBinding, installBinding, referencesBinding, extensionListBinding, extensionInspectBinding, extensionCreateBinding, contextBinding],
             rootLeaves:
             [
                 new CliRootLeaf(findSymbols.FindCommand, []),

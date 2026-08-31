@@ -23,6 +23,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
+using OpenForge.Cli.Core.Framework.Sources.Reading;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
 
@@ -39,7 +40,7 @@ internal sealed class RouteInitPlanBuilder
     private readonly RouteInitProspectiveTopologyPlanner _topologyPlanner = new();
     private readonly RouteInitMetadataResolver _metadataResolver = new();
     private readonly RouteInitScaffoldComposer _scaffoldComposer = new();
-    private readonly RouteInitExactSourceSnapshotReader _snapshotReader = new();
+    private readonly SourceDocumentSnapshotReader _snapshotReader = new();
     private readonly MarkdownDocumentParser _markdownParser = new();
     private readonly SourceAuthoredMetadataParser _metadataParser = new();
     private readonly FrameworkDocumentMetadataParser _frameworkMetadataParser = new();
@@ -427,7 +428,7 @@ internal sealed class RouteInitPlanBuilder
             if (chain.Existing is { } existing)
             {
                 var read = current.Reads.Single(item => ReferenceEquals(item.Source, existing));
-                var before = await _snapshotReader.ReadAsync(
+                var before = await ReadSourceSnapshotAsync(
                         request,
                         read.Base,
                         cancellationToken)
@@ -553,7 +554,7 @@ internal sealed class RouteInitPlanBuilder
             read.Source.Identity.CanonicalBasePath,
             loader.Identity.CanonicalBasePath,
             StringComparison.Ordinal));
-        var before = await _snapshotReader.ReadAsync(
+        var before = await ReadSourceSnapshotAsync(
                 request,
                 currentLoader.Base,
                 cancellationToken)
@@ -565,6 +566,46 @@ internal sealed class RouteInitPlanBuilder
             sourceAssetPath: null,
             ownsGeneratedEntries: false));
         return sources;
+    }
+
+    private async ValueTask<FileStateSnapshot> ReadSourceSnapshotAsync(
+        RouteInitRequest request,
+        SourceDocumentReadResult read,
+        CancellationToken cancellationToken)
+    {
+        if (read.Verification.State != SourceLayerVerificationState.Verified
+            || read.Verification.CurrentPhysicalPath is null)
+        {
+            throw new RouteInitPlanningException(
+                RouteInitFindingCode.InspectionIncomplete,
+                "The exact current source snapshot is unavailable.",
+                incomplete: true);
+        }
+
+        try
+        {
+            return await _snapshotReader.ReadAsync(
+                    request.Workspace,
+                    read,
+                    cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw new RouteInitPlanningException(
+                RouteInitFindingCode.Interrupted,
+                "Route Init source snapshotting was cancelled.",
+                incomplete: true);
+        }
+        catch (Exception exception) when (exception is UnauthorizedAccessException
+            or IOException
+            or DecoderFallbackException)
+        {
+            throw new RouteInitPlanningException(
+                RouteInitFindingCode.InspectionIncomplete,
+                exception.Message,
+                incomplete: true);
+        }
     }
 
     private ProjectionInputs BuildProjectionInputs(

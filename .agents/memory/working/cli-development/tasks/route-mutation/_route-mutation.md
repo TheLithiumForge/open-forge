@@ -10,8 +10,15 @@ open-forge:
 
 - State: Active. Route Init is Complete and squash-integrated at
   `cc5085ce51ca624d07c347b014e036b8c3b7e1b4`, exact tree
-  `a1810c4b247bf4997146baebf8a7ca3cf7f794c9`. Route Create is next; later Route Mutation commands
-  remain Planned in the accepted sequence.
+  `a1810c4b247bf4997146baebf8a7ca3cf7f794c9`. Route Create has a complete,
+  final-reviewed acceptance candidate pending its coherent local commit and
+  integration. Its protected integration lane owns the
+  `RouteCreateJsonContext` predecessor slice (with no legacy JSON-context
+  migration) and the Route half of group-help cleanup. The separate
+  [CLI Quality Remediation](../cli-quality-remediation.md) root Task remains
+  Planned after Route Create integration and before Route Update; it consumes
+  and revalidates those slices. Later Route Mutation commands remain Planned
+  in the accepted sequence.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Common prerequisites: Route discovery, `index`, and Mutation Foundation.
 - Intended-membership formation prerequisite: accepted feature
@@ -54,10 +61,16 @@ command Active or Ready.
 ## Child Tasks
 
 - [x] [Implement generic and Framework-aware sparse route initialization after root Install](route-init.md) — Complete and squash-integrated at `cc5085ce` — Implementer: Overseer-managed Task Mastermind
-- [ ] [Implement one-file route creation below an existing routable parent](route-create.md) — Planned — Implementer: Not assigned
+- [ ] [Implement one-file route creation below an existing routable parent](route-create.md) — Active; final-reviewed acceptance candidate pending commit and integration — Implementer: Overseer-managed Route Create Task Mastermind
 - [ ] [Implement bounded route content and metadata update without identity drift](route-update.md) — Planned — Implementer: Not assigned
 - [ ] [Implement route move with reference, overwrite, generated-navigation, and recovery integrity](route-move.md) — Planned — Implementer: Not assigned
 - [ ] [Implement route removal with dependency, reference, generated-navigation, and recovery integrity](route-remove.md) — Planned — Implementer: Not assigned
+
+CLI Quality Remediation is a separate root Task, not a child of Route Mutation.
+Route Create's protected integration owns its two predecessor slices; after
+Route Create integrates, the separate remediation Task consumes/revalidates
+those slices and completes its residual serializer/help work and batches 3–9
+before Route Update begins.
 
 ## Preparation Closeout
 
@@ -71,14 +84,16 @@ projection at `89a35a7876f39123d9538bca24126ff7197b9459`.
 | Command | Preparation branch | Readiness |
 | --- | --- | --- |
 | Route Init | `codex/route-init` | Complete and squash-integrated at `cc5085ce`; reviewed closeout `c580149`, tree `a1810c4` |
-| Route Create | `codex/route-create` | Next; its accepted contract correction is integrated at `cd01b8a` |
-| Route Update | `codex/route-update` | Waiting for Route Create and a closed callable/public-result boundary |
+| Route Create | `codex/route-create` | Final-reviewed acceptance candidate pending coherent local commit and integration; it includes the `RouteCreateJsonContext` and Route-help predecessor slices plus the maintainer-approved required effect-change correction |
+| Route Update | `codex/route-update` | Waiting for Route Create integration, separate CLI Quality Remediation completion, and a closed callable/public-result boundary |
 | Route Move | `codex/route-move` | Waiting for Route Update, its remaining proportionality/wire gate, and the accepted neutral-reference correction |
 | Route Remove | `codex/route-remove` | Waiting for Route Move and its command-local result freeze; its parser and canonical lifecycle prerequisites are integrated |
 
 The required behavior and integration order is root Install, Route Init, Route
-Create, Route Update, Route Move, Route Remove, then root Update M3. Independent
-preparation may overlap; dependent command behavior may not. Each leaf Task owns
+Create, Route Create protected integration with its two predecessor slices,
+separate CLI Quality Remediation completion, Route Update, Route Move, Route
+Remove, then root Update M3. Independent preparation may overlap; dependent
+command behavior may not. Each leaf Task owns
 its expected paths, protected integration neighborhood, evidence boundary, and
 accepted preparation decisions or remaining maintainer-authority questions.
 Preparation state alone is not authorization to implement an unresolved public

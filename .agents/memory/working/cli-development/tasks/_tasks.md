@@ -21,7 +21,8 @@ Read the [program Task](00-cli-development.md), [Architecture](../../../crystall
 - [x] [Read-Only CLI Dogfooding Corrections](read-only-dogfooding-corrections.md) — Complete and squash-integrated at `bba84b6` — Implementer: Overseer
 - [x] [Proportional CLI Corrections](proportional-cli-corrections.md) — Complete and squash-integrated through `0d88606`; Mutation Foundation may resume — Implementer: Overseer with bounded Task Masterminds
 - [x] [Next-Wave Shared Foundations](shared-foundations/_shared-foundations.md) — Complete at integrated D0/SF1-SF4 baseline — Implementer: Overseer-managed bounded Task Masterminds
-- [ ] [Route Mutation Commands](route-mutation/_route-mutation.md) — Active: Route Init is Complete and squash-integrated at `cc5085ce`; Route Create is next — Implementer: Overseer-managed command lanes
+- [ ] [Route Mutation Commands](route-mutation/_route-mutation.md) — Active: Route Init is Complete and squash-integrated at `cc5085ce`; Route Create has a final-reviewed acceptance candidate pending coherent local commit and integration, including the `RouteCreateJsonContext` and Route-help predecessor slices; separate [CLI Quality Remediation](cli-quality-remediation.md) remains Planned immediately after Route Create integration and before Route Update — Implementer: Overseer-managed command lanes
+- [ ] [CLI Quality Remediation](cli-quality-remediation.md) — Planned immediately after Route Create and before Route Update; the separate root Task consumes/revalidates Route Create's predecessor slices, then owns the residual serializer/help work and eleven actual defects plus two candidates from the accepted strategic first-pass PR-style audit — Implementer: Overseer-managed Task Mastermind
 - [ ] [Lifecycle Commands](lifecycle/_lifecycle.md) — Active: Extension Create and root Install are Complete; root Update remains planned after M2, with later Extension lifecycle commands still Planned — Implementer: Overseer-managed command lanes
 - [ ] [Operational Commands](operations/_operations.md) — Planned — Implementer: Not assigned
 - [ ] [CLI Delivery](delivery/_delivery.md) — Planned — Implementer: Not assigned
@@ -59,6 +60,7 @@ define execution state.
 
 <!-- open-forge:generated-index:start -->
 - [Parent outcome, scope, authority, and acceptance for the complete replacement CLI program](00-cli-development.md) - #Memory #Working #CLI #Task #Program #Architecture #Development #Contextual #Active
+- [Remediate the accepted first-pass CLI architecture, C# design, authority, and test-evidence findings after Route Create and before Route Update](cli-quality-remediation.md) - #Memory #Working #CLI #Task #Audit #Architecture #Refactoring #Testing #Review #Contextual
 - [Package, prove, document, and release the complete native CLI without partial publication](delivery/_delivery.md) - #Memory #Working #CLI #Task #Distribution #NativeAOT #SupplyChain #Release #Contextual
 - [Build and accept the actual command-free C# workspace, Core, host, safety, tests, and Native AOT foundation](foundation/_foundation.md) - #Memory #Working #CLI #Task #Foundation #Architecture #DotNet #NativeAOT #Contextual #Complete
 - [Improve cross-cutting CLI parser, test, callable, and project structure without changing accepted command meaning](generic-improvements/_generic-improvements.md) - #Memory #Working #CLI #Task #Generic #Parser #Testing #Architecture #Contextual #Complete

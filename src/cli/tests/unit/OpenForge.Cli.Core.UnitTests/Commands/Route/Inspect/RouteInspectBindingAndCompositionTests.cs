@@ -22,7 +22,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect;
 
 public sealed class RouteInspectBindingAndCompositionTests
 {
-    [Fact(DisplayName = "Route family composes one group with exact List and Inspect children and shared help")]
+    [Fact(DisplayName = "Route family composes exact List and Inspect children with bounded group notes")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void RouteFamilyComposesOneGroupWithExactChildren()
     {
@@ -37,11 +37,16 @@ public sealed class RouteInspectBindingAndCompositionTests
         Assert.Same(inspect.InspectCommand, route.Subcommands[1]);
 
         var help = RouteHelpSections.CreateGroup();
+        var section = Assert.Single(help.Sections);
+        Assert.Equal("Notes", section.Heading);
         var text = string.Join(Environment.NewLine, help.Sections.Select(section => section.Body));
-        Assert.Contains("list     available", text, StringComparison.Ordinal);
-        Assert.Contains("inspect  available", text, StringComparison.Ordinal);
-        Assert.Contains("init     available", text, StringComparison.Ordinal);
-        Assert.Contains("remove   unavailable", text, StringComparison.Ordinal);
+        Assert.DoesNotContain(" available", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("list", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("inspect", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("init", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("create", text, StringComparison.Ordinal);
+        Assert.Contains("performs no operation", text, StringComparison.Ordinal);
+        Assert.Contains("update, move, and remove", text, StringComparison.Ordinal);
     }
 
     [Fact(DisplayName = "Route Inspect owns one parser argument with omission and typed semantic cardinality")]

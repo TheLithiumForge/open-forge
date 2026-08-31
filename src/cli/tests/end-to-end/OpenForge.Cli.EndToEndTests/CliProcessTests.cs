@@ -33,7 +33,7 @@ public sealed class CliProcessTests
         Assert.Equal(otherBefore, other.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Published root and route-family help expose available List and Inspect commands")]
+    [Fact(DisplayName = "Published root and Route help expose standard children and List and Inspect leaves")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedRootAndRouteFamilyHelpExposeAvailableCommands()
     {
@@ -64,8 +64,17 @@ public sealed class CliProcessTests
         Assert.Contains("Discovery:", root.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("route list", root.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("route inspect", root.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("list     available", group.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("inspect  available", group.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Commands:", group.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("list <source-reference>", group.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("inspect <source-reference>", group.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("init <route-target>", group.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("create <file-target>", group.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains(
+            "Planned but unavailable operations: update, move, and remove.",
+            group.StandardOutput,
+            StringComparison.Ordinal);
+        Assert.DoesNotContain("Operations:", group.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("available —", group.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(
             "open-forge route list [source-reference] [--depth=<non-negative-integer|all>]",
             leaf.StandardOutput,

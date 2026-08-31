@@ -4,11 +4,7 @@ using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Init.Shared.Application;
 using OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
-using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
-using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
-using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
-using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.TestSupport;
 
@@ -16,40 +12,6 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Init;
 
 public sealed class RouteInitApplicationIntegrityTests
 {
-    [Fact(DisplayName = "Exact source snapshot bytes supersede an earlier cached source read"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
-    public async Task ExactSourceSnapshotFeedsExpectationAndContentFromOneRead()
-    {
-        using var owned = TemporaryWorkspace.Create("route-init-source-snapshot");
-        var workspace = Workspace(owned);
-        const string canonicalPath = ".agents/memory/_memory.md";
-        const string exactText = "exact current source bytes";
-        var physicalPath = owned.CreateFile(canonicalPath, exactText);
-        var layer = new SourceLayer(
-            canonicalPath,
-            physicalPath,
-            SourceDocumentForm.CanonicalEntrypoint,
-            SourceLayerKind.Base);
-        var read = new SourceDocumentReadResult(
-            layer,
-            new SourceLayerVerification(
-                layer,
-                SourceLayerVerificationState.Verified,
-                physicalPath,
-                failure: null),
-            FileReadResult<string>.Complete(canonicalPath, "earlier cached source text"));
-
-        var snapshot = await new RouteInitExactSourceSnapshotReader().ReadAsync(
-            RouteInitRedTestData.Request(workspace),
-            read,
-            TestContext.Current.CancellationToken);
-
-        Assert.Equal(exactText, System.Text.Encoding.UTF8.GetString(snapshot.Bytes.AsSpan()));
-        Assert.Equal(FileExpectation.Hash(snapshot.Bytes.AsSpan()), snapshot.ContentHash);
-        Assert.NotEqual(
-            FileExpectation.Hash("earlier cached source text"u8),
-            snapshot.ContentHash);
-    }
-
     [Fact(DisplayName = "An escaped directory attempt is the only effect reported with unknown completion"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public async Task EscapedDirectoryAttemptIsReportedAsUnknown()
     {
