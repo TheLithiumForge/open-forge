@@ -30,13 +30,13 @@ internal sealed class FindUniverseResolver
         ArgumentNullException.ThrowIfNull(input);
 
         var request = input.Request;
-        var catalogue = input.SourceContext.Catalogue;
+        var catalogue = input.SourceSession.Catalogue;
         var occurrences = CreateOccurrences(
             request.UniverseFilter.Include,
             request.UniverseFilter.Exclude);
         var resolution = _filterResolver.Resolve(new SourceUniverseFilterRequest(
             catalogue,
-            input.SourceContext.DefaultSelectionScope,
+            input.SourceSession.DefaultSelectionScope,
             occurrences));
         var selectors = resolution.Selectors
             .Select(selector => ProjectSelector(selector, catalogue))
@@ -163,19 +163,33 @@ internal sealed class FindUniverseResolver
         if (reference.Form == SourceReferenceKind.SourcePath
             && reference.CanonicalPath is { } path)
         {
-            return reference.State switch
-            {
-                SourceReferenceResolutionState.Unsupported => "The exact path is not an admitted logical Find source.",
-                SourceReferenceResolutionState.Unknown when catalogue.FindCandidateByPath(path) is not null
-                    => "The exact source path is no longer present.",
-                SourceReferenceResolutionState.Unknown => "The exact source path does not exist.",
-                SourceReferenceResolutionState.Unsafe => "The exact source path is outside an established safe physical boundary.",
-                _ => reference.Cause,
-            };
+            return ReadExactPathCause(
+                reference.State,
+                catalogue.FindCandidateByPath(path) is not null,
+                reference.Cause);
         }
 
         return reference.Cause;
     }
+
+    internal static string? ReadExactPathCause(
+        SourceReferenceResolutionState state,
+        bool candidateExists,
+        string? cause)
+        => state switch
+        {
+            SourceReferenceResolutionState.Resolved => cause,
+            SourceReferenceResolutionState.Invalid => cause,
+            SourceReferenceResolutionState.Unknown when candidateExists => "The exact source path is no longer present.",
+            SourceReferenceResolutionState.Unknown => "The exact source path does not exist.",
+            SourceReferenceResolutionState.Unsupported => "The exact path is not an admitted logical Find source.",
+            SourceReferenceResolutionState.Ambiguous => cause,
+            SourceReferenceResolutionState.Unsafe => "The exact source path is outside an established safe physical boundary.",
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(state),
+                state,
+                "The source-reference resolution state is not defined."),
+        };
 
     private static int? ReadCandidateCount(
         SourceCatalogue catalogue,
@@ -323,13 +337,22 @@ internal sealed class FindUniverseResolver
     private static FindSourceIdentity CreateIdentity(SourceLogicalSource source)
         => new(source.Identity.AutomaticId, source.Identity.CanonicalBasePath);
 
-    private static FindSourceKind ReadSourceKind(SourceDocumentForm form)
+    internal static FindSourceKind ReadSourceKind(SourceDocumentForm form)
         => form switch
         {
             SourceDocumentForm.Loader => FindSourceKind.Loader,
+            SourceDocumentForm.CanonicalEntrypoint => FindSourceKind.Entrypoint,
+            SourceDocumentForm.IndexEntrypoint => FindSourceKind.Entrypoint,
+            SourceDocumentForm.UnderscoreIndexEntrypoint => FindSourceKind.Entrypoint,
+            SourceDocumentForm.ReferencesEntrypoint => FindSourceKind.Entrypoint,
+            SourceDocumentForm.UnderscoreReferencesEntrypoint => FindSourceKind.Entrypoint,
             SourceDocumentForm.Skill => FindSourceKind.Skill,
-            _ when SourceFormClassifier.IsEntrypoint(form) => FindSourceKind.Entrypoint,
-            _ => FindSourceKind.Ordinary,
+            SourceDocumentForm.Markdown => FindSourceKind.Ordinary,
+            SourceDocumentForm.OverwriteCompanion => FindSourceKind.Ordinary,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(form),
+                form,
+                "The source document form is not defined."),
         };
 
     private static IReadOnlyList<FindFinding> OrderFindings(IEnumerable<FindFinding> findings)

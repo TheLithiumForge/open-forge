@@ -1,7 +1,7 @@
 using OpenForge.Cli.Core.Commands.References.Models.Inspection;
 using OpenForge.Cli.Core.Commands.References.Models.Occurrence;
-using OpenForge.Cli.Core.Commands.References.Models.Operation;
 using OpenForge.Cli.Core.Commands.References.Models.Request;
+using OpenForge.Cli.Core.Commands.References.Models.Resolution;
 using OpenForge.Cli.Core.Commands.References.Models.Result;
 using OpenForge.Cli.Core.Commands.References.Models.Selection;
 using OpenForge.Cli.Core.Commands.References.Models.Source;
@@ -12,6 +12,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Selection;
 using OpenForge.Cli.Core.Framework.Workspace;
 using static OpenForge.Cli.Core.Commands.References.Shared.Result.ReferencesFindingFactory;
@@ -20,19 +21,25 @@ namespace OpenForge.Cli.Core.Commands.References;
 
 internal sealed class ReferencesOperation
 {
-    private readonly ReferencesOperationComponents _components;
+    private readonly ReferencesSourceResolver _sourceResolver;
     private readonly ReferencesLayerInspector _layerInspector;
     private readonly ReferencesDestinationResolver _destinationResolver;
+    private readonly ReferencesResultBuilder _resultBuilder;
 
-    internal ReferencesOperation(ReferencesOperationComponents components)
+    internal ReferencesOperation(
+        ReferencesSourceResolver sourceResolver,
+        ReferencesLayerInspector layerInspector,
+        ReferencesDestinationResolver destinationResolver,
+        ReferencesResultBuilder resultBuilder)
     {
-        ArgumentNullException.ThrowIfNull(components);
-        _components = components;
-        _layerInspector = new ReferencesLayerInspector(components);
-        _destinationResolver = new ReferencesDestinationResolver(
-            components.PhysicalPathResolver,
-            components.StrictUtf8Reader,
-            components.MarkdownParser);
+        ArgumentNullException.ThrowIfNull(sourceResolver);
+        ArgumentNullException.ThrowIfNull(layerInspector);
+        ArgumentNullException.ThrowIfNull(destinationResolver);
+        ArgumentNullException.ThrowIfNull(resultBuilder);
+        _sourceResolver = sourceResolver;
+        _layerInspector = layerInspector;
+        _destinationResolver = destinationResolver;
+        _resultBuilder = resultBuilder;
     }
 
     internal ValueTask<ReferencesResult> ExecuteAsync(
@@ -53,7 +60,7 @@ internal sealed class ReferencesOperation
         var outgoingCoverage = request.RequestsOutgoing ? ReferencesCoverage.Incomplete : ReferencesCoverage.Complete;
         ReferencesSource? selectedSource = null;
         ReferencesIncomingSelection? incomingSelection = null;
-        ReferencesSourceReadContext? sourceContext = null;
+        SourceReadSession? sourceSession = null;
         SourceLogicalSource? logicalSource = null;
         SourceUniverseFilterResolution? filterResolution = null;
         var interrupted = false;
@@ -62,15 +69,15 @@ internal sealed class ReferencesOperation
         try
         {
             cancellationToken.ThrowIfCancellationRequested();
-            sourceContext = await _components
-                .SourceBoundaryReader(request.Workspace, cancellationToken)
+            sourceSession = await _sourceResolver
+                .ReadAsync(request.Workspace, cancellationToken)
                 .ConfigureAwait(false);
-            if (sourceContext.Catalogue.IsCancelled)
+            if (sourceSession.Catalogue.IsCancelled)
             {
                 AddEvent(findings, ReferencesFindingCode.Interrupted, null);
                 interrupted = true;
             }
-            ReferencesSourceFindingMapper.AddRootIssues(findings, sourceContext.Catalogue.SelectAll().RootIssues);
+            ReferencesSourceFindingMapper.AddRootIssues(findings, sourceSession.Catalogue.SelectAll().RootIssues);
         }
         catch (OperationCanceledException)
         {
@@ -83,13 +90,13 @@ internal sealed class ReferencesOperation
             failed = true;
         }
 
-        if (sourceContext is not null && !interrupted && !failed)
+        if (sourceSession is not null && !interrupted && !failed)
         {
             try
             {
-                var resolution = _components.SourceReferenceResolver.Resolve(
+                var resolution = _sourceResolver.ResolveReference(
                     request.SourceReference,
-                    sourceContext.Catalogue);
+                    sourceSession);
                 if (resolution.State == SourceReferenceResolutionState.Resolved
                     && resolution.Source is { } source)
                 {
@@ -97,7 +104,7 @@ internal sealed class ReferencesOperation
                     selectedSource = ToSource(source);
                     ReferencesSourceFindingMapper.AddSourceCatalogueIssues(
                         findings,
-                        sourceContext.Catalogue,
+                        sourceSession.Catalogue,
                         ToSourceIdentity(source),
                         ReadSourcePaths(source),
                         null);
@@ -114,15 +121,13 @@ internal sealed class ReferencesOperation
             }
         }
 
-        if (sourceContext is not null && request.RequestsIncoming && !interrupted && !failed)
+        if (sourceSession is not null && request.RequestsIncoming && !interrupted && !failed)
         {
             try
             {
-                filterResolution = _components.UniverseFilterResolver.Resolve(
-                    new SourceUniverseFilterRequest(
-                        sourceContext.Catalogue,
-                        sourceContext.DefaultSelectionScope,
-                        request.SelectorOccurrences));
+                filterResolution = _sourceResolver.ResolveUniverse(
+                    sourceSession,
+                    request.SelectorOccurrences);
                 incomingSelection = CreateIncomingSelection(
                     filterResolution,
                     request.SelectorOccurrences.Count == 0
@@ -131,7 +136,7 @@ internal sealed class ReferencesOperation
                 ReferencesSourceFindingMapper.AddSelectorFindings(findings, filterResolution);
                 ReferencesSourceFindingMapper.AddSourceCatalogueIssues(
                     findings,
-                    sourceContext.Catalogue,
+                    sourceSession.Catalogue,
                     null,
                     null,
                     filterResolution.IsResolved ? filterResolution.Selection : null,
@@ -153,14 +158,15 @@ internal sealed class ReferencesOperation
             }
         }
 
-        if (sourceContext is not null && request.RequestsOutgoing && logicalSource is not null && !interrupted && !failed)
+        if (sourceSession is not null && request.RequestsOutgoing && logicalSource is not null && !interrupted && !failed)
         {
             var inspection = await InspectLayersAsync(
-                sourceContext,
-                logicalSource,
-                ReferencesDirection.Out,
-                ReferencesProvenance.SelectedSource,
-                sourceContext.Catalogue,
+                new ReferencesLayerScanInput(
+                    sourceSession,
+                    logicalSource,
+                    ReferencesDirection.Out,
+                    ReferencesProvenance.SelectedSource,
+                    sourceSession.Catalogue),
                 outgoingOccurrences,
                 findings,
                 cancellationToken).ConfigureAwait(false);
@@ -173,7 +179,7 @@ internal sealed class ReferencesOperation
             outgoingCoverage = ReferencesCoverage.Blocked;
         }
 
-        if (sourceContext is not null
+        if (sourceSession is not null
             && request.RequestsIncoming
             && logicalSource is not null
             && filterResolution is { IsResolved: true }
@@ -197,13 +203,14 @@ internal sealed class ReferencesOperation
                     }
 
                     var inspection = await _layerInspector.InspectAsync(
-                        sourceContext,
-                        source,
-                        layer,
-                        ReferencesDirection.In,
-                        mode == ReferencesSelectionMode.Default
-                            ? ReferencesProvenance.DefaultIncomingScan
-                            : ReferencesProvenance.FilteredIncomingScan,
+                        new ReferencesLayerInspectionInput(
+                            sourceSession,
+                            source,
+                            layer,
+                            ReferencesDirection.In,
+                            mode == ReferencesSelectionMode.Default
+                                ? ReferencesProvenance.DefaultIncomingScan
+                                : ReferencesProvenance.FilteredIncomingScan),
                         findings,
                         cancellationToken).ConfigureAwait(false);
                     if (!inspection.Established)
@@ -229,7 +236,7 @@ internal sealed class ReferencesOperation
                             try
                             {
                                 targetFacts = await ResolveAsync(
-                                    sourceContext.Catalogue,
+                                    sourceSession.Catalogue,
                                     source,
                                     layer,
                                     authored,
@@ -325,7 +332,7 @@ internal sealed class ReferencesOperation
                 []);
         }
 
-        return _components.ResultBuilder.Build(new ReferencesResultInput
+        return _resultBuilder.Build(new ReferencesResultInput
         {
             Request = echo,
             Source = selectedSource,
@@ -339,15 +346,16 @@ internal sealed class ReferencesOperation
     }
 
     private async ValueTask<LayerInspectionResult> InspectLayersAsync(
-        ReferencesSourceReadContext context,
-        SourceLogicalSource source,
-        ReferencesDirection direction,
-        ReferencesProvenance provenance,
-        SourceCatalogue catalogue,
+        ReferencesLayerScanInput input,
         ICollection<ReferencesOccurrence> occurrences,
         ICollection<ReferencesFinding> findings,
         CancellationToken cancellationToken)
     {
+        var session = input.Session;
+        var source = input.Source;
+        var direction = input.Direction;
+        var provenance = input.Provenance;
+        var catalogue = input.Catalogue;
         var coverage = ReferencesCoverage.Complete;
         var interrupted = false;
         var failed = false;
@@ -360,11 +368,12 @@ internal sealed class ReferencesOperation
             }
 
             var inspection = await _layerInspector.InspectAsync(
-                context,
-                source,
-                layer,
-                direction,
-                provenance,
+                new ReferencesLayerInspectionInput(
+                    session,
+                    source,
+                    layer,
+                    direction,
+                    provenance),
                 findings,
                 cancellationToken).ConfigureAwait(false);
             if (!inspection.Established)
@@ -442,15 +451,16 @@ internal sealed class ReferencesOperation
         {
             AddFinding(
                 findings,
-                finding.Code,
-                authored.Direction,
-                ToSourceIdentity(authored.Source),
-                authored.Layer,
-                authored.CanonicalPath,
-                authored.Location,
-                authored.DestinationLocation,
-                finding.Cause,
-                finding.Candidates);
+                new ReferencesFindingInput(finding.Code, finding.Cause)
+                {
+                    Direction = authored.Direction,
+                    Source = ToSourceIdentity(authored.Source),
+                    Layer = authored.Layer,
+                    Path = authored.CanonicalPath,
+                    Location = authored.Location,
+                    DestinationLocation = authored.DestinationLocation,
+                    Candidates = finding.Candidates,
+                });
         }
 
         return target;

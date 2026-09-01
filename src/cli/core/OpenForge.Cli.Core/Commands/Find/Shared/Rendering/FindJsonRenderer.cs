@@ -1,8 +1,9 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using OpenForge.Cli.Core.Commands.Find.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Core.Shell.Serialization;
 
 namespace OpenForge.Cli.Core.Commands.Find.Shared.Rendering;
 
@@ -16,6 +17,13 @@ internal static class FindJsonRenderer
         var document = FindJsonProjection.Create(presentation.Result);
         return JsonSerializer.Serialize(
             document,
-            CliJsonContext.Default.FindJsonDocument);
+            FindJsonContext.Default.FindJsonDocument);
     }
 }
+
+[JsonSourceGenerationOptions(
+    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
+    WriteIndented = true,
+    GenerationMode = JsonSourceGenerationMode.Serialization)]
+[JsonSerializable(typeof(FindJsonDocument))]
+internal sealed partial class FindJsonContext : JsonSerializerContext;

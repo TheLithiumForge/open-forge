@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Extension.List.Models.Result;
+using OpenForge.Cli.Core.Commands.Extension.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 
@@ -146,5 +147,5 @@ internal static class ExtensionListHumanRenderer
             ? "requires attention"
             : CliStatusDefinitions.Read(status).MachineName;
 
-    private static string Escape(string value) => ExtensionListTextEscaping.Escape(value);
+    private static string Escape(string value) => ExtensionTextEscaping.Escape(value);
 }

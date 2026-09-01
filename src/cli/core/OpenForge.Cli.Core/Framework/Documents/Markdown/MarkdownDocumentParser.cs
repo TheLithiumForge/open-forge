@@ -52,9 +52,9 @@ internal sealed class MarkdownDocumentParser
                 continue;
             }
 
-            if (block is LeafBlock { Inline: not null } leaf)
+            if (block is LeafBlock { Inline: { } inline })
             {
-                CollectInlineFacts(leaf.Inline!, bodyStart, visibleText, opaqueSpans, links);
+                CollectInlineFacts(inline, bodyStart, visibleText, opaqueSpans, links);
             }
         }
 

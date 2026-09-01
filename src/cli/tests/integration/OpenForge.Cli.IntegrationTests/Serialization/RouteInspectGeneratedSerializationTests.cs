@@ -1,7 +1,7 @@
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Presentation;
+using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Serialization;
 
 namespace OpenForge.Cli.IntegrationTests.Serialization;
 
@@ -179,7 +179,7 @@ public sealed class RouteInspectGeneratedSerializationTests
             },
         };
 
-        var metadata = CliJsonContext.Default.RouteInspectJsonDocument;
+        var metadata = RouteInspectJsonContext.Default.RouteInspectJsonDocument;
         Assert.Equal(typeof(RouteInspectJsonDocument), metadata.Type);
         var json = JsonSerializer.Serialize(document, metadata);
 

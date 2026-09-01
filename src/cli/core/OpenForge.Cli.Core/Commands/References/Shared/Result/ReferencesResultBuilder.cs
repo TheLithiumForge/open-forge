@@ -11,25 +11,6 @@ using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.References.Shared.Result;
 
-internal sealed class ReferencesResultInput
-{
-    internal required ReferencesRequestEcho Request { get; init; }
-
-    internal required ReferencesSource? Source { get; init; }
-
-    internal required ReferencesIncomingSelection? IncomingSelection { get; init; }
-
-    internal required IEnumerable<ReferencesOccurrence> IncomingOccurrences { get; init; }
-
-    internal required IEnumerable<ReferencesOccurrence> OutgoingOccurrences { get; init; }
-
-    internal required ReferencesCoverage IncomingCoverage { get; init; }
-
-    internal required ReferencesCoverage OutgoingCoverage { get; init; }
-
-    internal required IEnumerable<ReferencesFinding> Findings { get; init; }
-}
-
 internal sealed class ReferencesResultBuilder
 {
     internal ReferencesResult Build(ReferencesResultInput input)
@@ -241,11 +222,15 @@ internal sealed class ReferencesResultBuilder
         return finding.Direction == ReferencesDirection.In ? 2 : 3;
     }
 
-    private static int ReadLayerRank(SourceLayerKind? layer)
+    internal static int ReadLayerRank(SourceLayerKind? layer)
         => layer switch
         {
             SourceLayerKind.Base => 0,
             SourceLayerKind.Overwrite => 1,
-            _ => 2,
+            null => 2,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(layer),
+                layer,
+                "The source layer kind is not defined."),
         };
 }

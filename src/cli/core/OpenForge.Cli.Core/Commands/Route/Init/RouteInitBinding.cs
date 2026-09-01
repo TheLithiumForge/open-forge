@@ -91,7 +91,7 @@ internal static class RouteInitBinding
         ArgumentNullException.ThrowIfNull(invocation);
         ArgumentNullException.ThrowIfNull(symbols);
         var routeTarget = parseResult.GetValue(symbols.RouteTarget);
-        if (!IsValidTarget(routeTarget))
+        if (routeTarget is not { } requestedTarget || !IsValidTarget(requestedTarget))
         {
             return Invalid(
                 invocation.Workspace,
@@ -133,7 +133,7 @@ internal static class RouteInitBinding
         return CliBindResult<RouteInitRequest, RouteInitResult>.Bound(
             new RouteInitRequest(
                 workspace,
-                routeTarget!,
+                requestedTarget,
                 scaffold,
                 mode,
                 new RouteInitMetadataInput(

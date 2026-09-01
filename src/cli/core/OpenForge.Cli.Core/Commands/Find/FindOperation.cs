@@ -1,33 +1,35 @@
-using OpenForge.Cli.Core.Commands.Find.Models.Operation;
 using OpenForge.Cli.Core.Commands.Find.Models.Matching;
+using OpenForge.Cli.Core.Commands.Find.Models.Operation;
 using OpenForge.Cli.Core.Commands.Find.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Find.Models.Projection;
 using OpenForge.Cli.Core.Commands.Find.Models.Request;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Commands.Find.Models.Documents;
 using OpenForge.Cli.Core.Commands.Find.Models.Selection;
+using OpenForge.Cli.Core.Commands.Find.Shared.Application;
 using OpenForge.Cli.Core.Commands.Find.Shared.Documents;
 using OpenForge.Cli.Core.Commands.Find.Shared.Matching;
 using OpenForge.Cli.Core.Commands.Find.Shared.Projection;
 using OpenForge.Cli.Core.Commands.Find.Shared.Selection;
-using OpenForge.Cli.Core.Framework.Sources.Identity;
-using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Commands.Find.Shared.Result;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 
 namespace OpenForge.Cli.Core.Commands.Find;
 
-internal sealed class FindOperation(FindOperationComponents components)
+internal sealed class FindOperation(
+    FindSourceResolver sourceResolver,
+    FindLayerInspector layerInspector,
+    FindMatcher matcher,
+    FindProjectionBuilder projectionBuilder,
+    FindResultBuilder resultBuilder)
 {
-    private readonly FindOperationComponents _components = components;
-    private readonly FindUniverseResolver _universeResolver = new(components.UniverseFilterResolver);
-    private readonly FindLayerInspector _layerInspector = new(
-        components.SelectedLayerReader,
-        components.MarkdownDocumentReader,
-        components.FrontmatterFactsReader,
-        new FindBodyTagScanner());
-    private readonly FindMatcher _matcher = new();
-    private readonly FindProjectionBuilder _projectionBuilder = new();
+    private readonly FindSourceResolver _sourceResolver = sourceResolver;
+    private readonly FindLayerInspector _layerInspector = layerInspector;
+    private readonly FindMatcher _matcher = matcher;
+    private readonly FindProjectionBuilder _projectionBuilder = projectionBuilder;
+    private readonly FindResultBuilder _resultBuilder = resultBuilder;
 
     internal ValueTask<FindResult> ExecuteAsync(
         FindRequest request,
@@ -54,7 +56,7 @@ internal sealed class FindOperation(FindOperationComponents components)
         var projectionCoverage = projectionRequested
             ? FindProjectionCoverageState.NotStarted
             : FindProjectionCoverageState.NotRequested;
-        FindSourceReadContext? sourceContext = null;
+        SourceReadSession? sourceSession = null;
         FindUniverseResolution? universeResolution = null;
         FindUniverse? universe = null;
         FindMatchingFacts? matchingFacts = null;
@@ -64,8 +66,8 @@ internal sealed class FindOperation(FindOperationComponents components)
         try
         {
             cancellationToken.ThrowIfCancellationRequested();
-            sourceContext = await _components
-                .SourceBoundaryReader(request.Workspace, cancellationToken)
+            sourceSession = await _sourceResolver
+                .ReadAsync(request.Workspace, cancellationToken)
                 .ConfigureAwait(false);
         }
         catch (OperationCanceledException)
@@ -81,7 +83,7 @@ internal sealed class FindOperation(FindOperationComponents components)
 
         if (terminalEvent is null)
         {
-            if (sourceContext is null)
+            if (sourceSession is null)
             {
                 terminalEvent = CreateFailedEvent();
                 matchingCoverage = FindCoverageState.Failed;
@@ -91,13 +93,13 @@ internal sealed class FindOperation(FindOperationComponents components)
                 try
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    ProbePairedOverwritePaths(request, sourceContext, cancellationToken);
-                    universeResolution = _universeResolver.Resolve(
-                        new FindUniverseInput(request, sourceContext));
+                    _sourceResolver.ProbePairedOverwritePaths(request, sourceSession, cancellationToken);
+                    universeResolution = _sourceResolver.ResolveUniverse(
+                        new FindUniverseInput(request, sourceSession));
                     universe = universeResolution.Universe;
                     findings.AddRange(universeResolution.Findings);
 
-                    if (sourceContext.Catalogue.IsCancelled
+                    if (sourceSession.Catalogue.IsCancelled
                         || universeResolution.Findings.Any(
                             finding => finding.Code == FindFindingCode.Interrupted))
                     {
@@ -128,7 +130,7 @@ internal sealed class FindOperation(FindOperationComponents components)
                 request,
                 universeResolution
                     ?? throw new InvalidOperationException("A Find universe resolution is required for selected-layer inspection."),
-                sourceContext
+                sourceSession
                     ?? throw new InvalidOperationException("A Find source context is required for selected-layer inspection."),
                 inspections,
                 cancellationToken);
@@ -182,17 +184,16 @@ internal sealed class FindOperation(FindOperationComponents components)
             {
                 try
                 {
-                    var establishedSourceContext = sourceContext
+                    var establishedSourceSession = sourceSession
                         ?? throw new InvalidOperationException("A Find source context is required for route facts.");
                     var establishedSelection = universeResolution
                         ?.Selection
                         ?? throw new InvalidOperationException("A Find universe selection is required for route facts.");
-                    routeFacts = await _components
-                        .RouteFactsReader(
-                            new SourceRouteFactsRequest(
-                                establishedSourceContext.Catalogue,
+                    routeFacts = await _sourceResolver
+                        .ReadRouteFactsAsync(
+                            new FindRouteFactsInput(
+                                establishedSourceSession,
                                 establishedSelection),
-                            establishedSourceContext.DocumentReader,
                             cancellationToken)
                         .ConfigureAwait(false);
                     if (routeFacts?.IsCancelled == true)
@@ -249,13 +250,13 @@ internal sealed class FindOperation(FindOperationComponents components)
             findings,
             new FindStageCompletion(matchingCoverage, projectionCoverage),
             terminalEvent);
-        return _components.ResultBuilder.Build(resultInput);
+        return _resultBuilder.Build(resultInput);
     }
 
     private async ValueTask<FindTerminalEvent?> InspectSelectedLayers(
         FindRequest request,
         FindUniverseResolution universeResolution,
-        FindSourceReadContext sourceContext,
+        SourceReadSession sourceSession,
         ICollection<FindLayerInspectionFacts> inspections,
         CancellationToken cancellationToken)
     {
@@ -274,7 +275,7 @@ internal sealed class FindOperation(FindOperationComponents components)
                         .InspectAsync(
                             new FindLayerInspectionInput(
                                 source,
-                                sourceContext.DocumentReader,
+                                sourceSession.DocumentReader,
                                 layer),
                             cancellationToken)
                         .ConfigureAwait(false);
@@ -299,35 +300,6 @@ internal sealed class FindOperation(FindOperationComponents components)
         }
 
         return null;
-    }
-
-    private void ProbePairedOverwritePaths(
-        FindRequest request,
-        FindSourceReadContext sourceContext,
-        CancellationToken cancellationToken)
-    {
-        var probedPaths = new HashSet<string>(StringComparer.Ordinal);
-        foreach (var value in request.UniverseFilter.Include.Concat(request.UniverseFilter.Exclude))
-        {
-            var parsed = SourceReferenceParser.Parse(value);
-            if (parsed.State != SourceReferenceParseState.Valid
-                || parsed.Kind != SourceReferenceKind.SourcePath
-                || parsed.AttemptedPath is not { } path
-                || !probedPaths.Add(path))
-            {
-                continue;
-            }
-
-            var source = sourceContext.Catalogue.FindByPath(path);
-            if (source?.Overwrite is not { CanonicalPath: var overwritePath }
-                || !string.Equals(overwritePath, path, StringComparison.Ordinal))
-            {
-                continue;
-            }
-
-            cancellationToken.ThrowIfCancellationRequested();
-            _components.PhysicalPathResolver(request.Workspace, path);
-        }
     }
 
     private static IEnumerable<SourceLayer> ReadLayers(SourceLogicalSource source)

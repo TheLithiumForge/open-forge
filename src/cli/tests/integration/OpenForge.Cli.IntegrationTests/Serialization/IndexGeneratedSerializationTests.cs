@@ -1,5 +1,5 @@
 using System.Text.Json;
-using OpenForge.Cli.Core.Shell.Serialization;
+using OpenForge.Cli.Core.Commands.Index.Shared.Rendering;
 using OpenForge.Cli.IntegrationTests.Commands.Index;
 using OpenForge.Cli.IntegrationTests.Hosting;
 
@@ -11,7 +11,7 @@ public sealed class IndexGeneratedSerializationTests
      Trait("Feature", "index-command"), Trait("Evidence", "Integration")]
     public async Task IndexDocumentUsesGeneratedMetadataAndFrozenOrder()
     {
-        var metadata = CliJsonContext.Default.IndexJsonDocument;
+        var metadata = IndexJsonContext.Default.IndexJsonDocument;
         Assert.False(JsonSerializer.IsReflectionEnabledByDefault);
         Assert.Equal("IndexJsonDocument", metadata.Type.Name);
         using var workspace = IndexOperationWorkspace.Create("index-serialization");

@@ -1,8 +1,9 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using OpenForge.Cli.Core.Commands.Index.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Index.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Core.Shell.Serialization;
 
 namespace OpenForge.Cli.Core.Commands.Index.Shared.Rendering;
 
@@ -14,6 +15,13 @@ internal static class IndexJsonRenderer
         CliPresentationDefinitions.Validate(presentation.Presentation);
         return JsonSerializer.Serialize(
             IndexJsonProjection.Create(presentation.Result),
-            CliJsonContext.Default.IndexJsonDocument);
+            IndexJsonContext.Default.IndexJsonDocument);
     }
 }
+
+[JsonSourceGenerationOptions(
+    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
+    WriteIndented = true,
+    GenerationMode = JsonSourceGenerationMode.Serialization)]
+[JsonSerializable(typeof(IndexJsonDocument))]
+internal sealed partial class IndexJsonContext : JsonSerializerContext;

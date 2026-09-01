@@ -35,54 +35,11 @@ internal sealed partial record FindResult
             throw new ArgumentException("Find projection coverage must reflect whether content was requested.", nameof(coverage));
         }
 
-        var stageStatesAgree = status switch
-        {
-            CliSemanticStatus.Complete or CliSemanticStatus.Attention =>
-                coverage.Matching == FindCoverageState.Complete
-                    && coverage.Projection is FindProjectionCoverageState.Complete or FindProjectionCoverageState.NotRequested,
-            CliSemanticStatus.Incomplete =>
-                coverage.Matching == FindCoverageState.Incomplete
-                    && coverage.Projection is (FindProjectionCoverageState.Complete
-                        or FindProjectionCoverageState.Incomplete
-                        or FindProjectionCoverageState.NotRequested)
-                    || coverage.Matching == FindCoverageState.Complete
-                        && coverage.Projection == FindProjectionCoverageState.Incomplete,
-            CliSemanticStatus.Invalid =>
-                coverage.Matching == FindCoverageState.NotStarted
-                    && coverage.Projection == (contentRequested
-                        ? FindProjectionCoverageState.NotStarted
-                        : FindProjectionCoverageState.NotRequested),
-            CliSemanticStatus.Blocked =>
-                coverage.Matching == FindCoverageState.Blocked
-                    && coverage.Projection == (contentRequested
-                        ? FindProjectionCoverageState.Blocked
-                        : FindProjectionCoverageState.NotRequested),
-            CliSemanticStatus.Failed =>
-                coverage.Matching == FindCoverageState.Failed
-                    && coverage.Projection == (contentRequested
-                        ? FindProjectionCoverageState.Failed
-                        : FindProjectionCoverageState.NotRequested)
-                    || (coverage.Matching is FindCoverageState.Complete or FindCoverageState.Incomplete)
-                        && coverage.Projection is (FindProjectionCoverageState.Complete
-                            or FindProjectionCoverageState.Incomplete
-                            or FindProjectionCoverageState.Failed)
-                    || (!contentRequested
-                        && coverage.Matching is (FindCoverageState.Complete or FindCoverageState.Incomplete)
-                        && coverage.Projection == FindProjectionCoverageState.NotRequested),
-            CliSemanticStatus.Interrupted =>
-                coverage.Matching == FindCoverageState.Interrupted
-                    && coverage.Projection == (contentRequested
-                        ? FindProjectionCoverageState.Interrupted
-                        : FindProjectionCoverageState.NotRequested)
-                    || (coverage.Matching is FindCoverageState.Complete or FindCoverageState.Incomplete)
-                        && coverage.Projection is (FindProjectionCoverageState.Complete
-                            or FindProjectionCoverageState.Incomplete
-                            or FindProjectionCoverageState.Interrupted)
-                    || (!contentRequested
-                        && coverage.Matching is (FindCoverageState.Complete or FindCoverageState.Incomplete)
-                        && coverage.Projection == FindProjectionCoverageState.NotRequested),
-            _ => false,
-        };
+        var stageStatesAgree = StageStatesAgree(
+            status,
+            coverage.Matching,
+            coverage.Projection,
+            contentRequested);
         if (!stageStatesAgree)
         {
             throw new ArgumentException("The Find stage coverage does not support the aggregate result status.", nameof(coverage));
@@ -96,18 +53,79 @@ internal sealed partial record FindResult
         }
     }
 
-    private static bool IsAllowedFindingStatus(
+    internal static bool StageStatesAgree(
+        CliSemanticStatus status,
+        FindCoverageState matching,
+        FindProjectionCoverageState projection,
+        bool contentRequested)
+        => status switch
+        {
+            CliSemanticStatus.Complete or CliSemanticStatus.Attention =>
+                matching == FindCoverageState.Complete
+                    && projection is FindProjectionCoverageState.Complete or FindProjectionCoverageState.NotRequested,
+            CliSemanticStatus.Incomplete =>
+                matching == FindCoverageState.Incomplete
+                    && projection is (FindProjectionCoverageState.Complete
+                        or FindProjectionCoverageState.Incomplete
+                        or FindProjectionCoverageState.NotRequested)
+                    || matching == FindCoverageState.Complete
+                        && projection == FindProjectionCoverageState.Incomplete,
+            CliSemanticStatus.Invalid =>
+                matching == FindCoverageState.NotStarted
+                    && projection == (contentRequested
+                        ? FindProjectionCoverageState.NotStarted
+                        : FindProjectionCoverageState.NotRequested),
+            CliSemanticStatus.Blocked =>
+                matching == FindCoverageState.Blocked
+                    && projection == (contentRequested
+                        ? FindProjectionCoverageState.Blocked
+                        : FindProjectionCoverageState.NotRequested),
+            CliSemanticStatus.Failed =>
+                matching == FindCoverageState.Failed
+                    && projection == (contentRequested
+                        ? FindProjectionCoverageState.Failed
+                        : FindProjectionCoverageState.NotRequested)
+                    || (matching is FindCoverageState.Complete or FindCoverageState.Incomplete)
+                        && projection is (FindProjectionCoverageState.Complete
+                            or FindProjectionCoverageState.Incomplete
+                            or FindProjectionCoverageState.Failed)
+                    || (!contentRequested
+                        && matching is (FindCoverageState.Complete or FindCoverageState.Incomplete)
+                        && projection == FindProjectionCoverageState.NotRequested),
+            CliSemanticStatus.Interrupted =>
+                matching == FindCoverageState.Interrupted
+                    && projection == (contentRequested
+                        ? FindProjectionCoverageState.Interrupted
+                        : FindProjectionCoverageState.NotRequested)
+                    || (matching is FindCoverageState.Complete or FindCoverageState.Incomplete)
+                        && projection is (FindProjectionCoverageState.Complete
+                            or FindProjectionCoverageState.Incomplete
+                            or FindProjectionCoverageState.Interrupted)
+                    || (!contentRequested
+                        && matching is (FindCoverageState.Complete or FindCoverageState.Incomplete)
+                        && projection == FindProjectionCoverageState.NotRequested),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(status),
+                status,
+                "The Find result status is not defined."),
+        };
+
+    internal static bool IsAllowedFindingStatus(
         CliSemanticStatus resultStatus,
         CliSemanticStatus findingStatus)
         => resultStatus switch
         {
+            CliSemanticStatus.Complete => false,
             CliSemanticStatus.Attention => findingStatus == CliSemanticStatus.Attention,
             CliSemanticStatus.Incomplete => findingStatus is CliSemanticStatus.Attention or CliSemanticStatus.Incomplete,
             CliSemanticStatus.Invalid => findingStatus == CliSemanticStatus.Invalid,
             CliSemanticStatus.Blocked => findingStatus is CliSemanticStatus.Attention or CliSemanticStatus.Incomplete or CliSemanticStatus.Blocked,
             CliSemanticStatus.Failed => findingStatus is CliSemanticStatus.Attention or CliSemanticStatus.Incomplete or CliSemanticStatus.Failed,
             CliSemanticStatus.Interrupted => findingStatus is CliSemanticStatus.Attention or CliSemanticStatus.Incomplete or CliSemanticStatus.Interrupted,
-            _ => false,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(resultStatus),
+                resultStatus,
+                "The Find result status is not defined."),
         };
 
     private static void ValidateNext(

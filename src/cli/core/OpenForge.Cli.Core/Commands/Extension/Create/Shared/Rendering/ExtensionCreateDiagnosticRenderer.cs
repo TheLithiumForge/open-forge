@@ -1,5 +1,6 @@
 using System.Globalization;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Result;
+using OpenForge.Cli.Core.Commands.Extension.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 
@@ -29,7 +30,7 @@ internal static class ExtensionCreateDiagnosticRenderer
                 $"finding={ExtensionCreateDefinitions.ReadFindingCode(finding.Code)}:subject={Value(finding.Subject)}:cause={Value(finding.Cause)}");
         }
 
-        return ExtensionCreateTextEscaping.Clamp(
+        return ExtensionTextEscaping.Clamp(
             string.Join("; ", values),
             CliRenderingStage.MaximumDiagnosticLength);
     }
@@ -37,7 +38,7 @@ internal static class ExtensionCreateDiagnosticRenderer
     private static string Value(string? value)
         => value is null
             ? "none"
-            : ExtensionCreateTextEscaping.Clamp(
-                ExtensionCreateTextEscaping.Escape(value),
-                ExtensionCreateTextEscaping.DiagnosticValueLimit);
+            : ExtensionTextEscaping.Clamp(
+                ExtensionTextEscaping.Escape(value),
+                ExtensionTextEscaping.DiagnosticValueLimit);
 }

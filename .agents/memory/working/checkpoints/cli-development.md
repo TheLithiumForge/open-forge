@@ -12,15 +12,15 @@ Complete the replacement CLI from its accepted Architecture and command
 contracts, with safe local development, reproducible evidence, and no partial
 release.
 
-- Last updated: 2026-08-31.
+- Last updated: 2026-09-01.
 
 ## Current State
 
 The current local `develop` product integration baseline is
-`19412d2a562ae66d1b4642256d854438df75366f` with exact tree
-`2bbba7e216e75809e99213e0ccd155bffe720d1f`. Route Create is Complete and
-squash-integrated there from reviewed candidate
-`392114a03a3c1329eb3ce9410795dcd36419815c`, with exact tree equality. Route Init
+`868860e046c954b0f1d654833afb20052fda18dd` with exact tree
+`0def1aba230d1871b89736d8921a23d776efc04a`. It closes the Route Create
+integration whose command commit is `19412d2a562ae66d1b4642256d854438df75366f`.
+Route Init
 is Complete and squash-integrated at `cc5085ce` from reviewed closeout
 `c5801494ac6426add2c64e32cafbba6f0162561a`, with exact tree equality. Its
 executable evidence candidate remains `cb62b19f73afcace163371af9093d877821fa800`,
@@ -209,9 +209,11 @@ Install JSON result is accepted and frozen, including typed residual values
 `none`, `retained`, and `unknown`. Generic and Framework-aware Route Init is
 Complete at `cc5085ce`; Route Create is Complete at `19412d2`, exact tree
 `2bbba7e`, and supplies the `RouteCreateJsonContext` and Route-help predecessor
-slices. The separate CLI Quality Remediation Task is Active before Route Update;
-it consumes and revalidates those slices. Root Update remains after the complete Route
-Mutation M2 lane.
+slices. CLI Quality Remediation is Complete in reviewed candidate
+`a4ccf19a3489d06f20a0fd940219be1acb22646d`, tree
+`97254e655f51ab421dacc8eff7a8c93f726f2625`; local integration is the sole
+remaining gate before Route Update. Root Update remains after the complete
+Route Mutation M2 lane.
 
 Route Init candidate `cb62b19`, tree `be93900`, has a warning-free Release
 build; managed Unit `1481/1481`, Integration `695/695`, generated serialization
@@ -275,8 +277,8 @@ native root `146/146`, native Integration `720/720`, and native EndToEnd
 apply, verified hashes, persistent zero-byte lock, and repeat no-op dogfood pass
 without an authored repository mutation. Fresh Sol/xhigh `RC-R2` returns `PASS`
 at `0.91` confidence with no material finding. The command-local serializer and
-Route-help predecessor slices are present for the active CLI Quality Remediation
-Task to consume and revalidate.
+Route-help predecessor slices were consumed and revalidated by the Complete
+CLI Quality Remediation Task.
 
 ## Current Step
 
@@ -306,8 +308,9 @@ result schema is accepted and frozen, including typed residual values `none`,
 `retained`, and `unknown`. Generic and Framework-aware Route Init is Complete at
 `cc5085ce`, and Route Create is Complete at `19412d2`, exact tree `2bbba7e`. It
 supplies the `RouteCreateJsonContext` and Route-help predecessor slices. The
-separate CLI Quality Remediation Task is Active before Route Update and now
-consumes and revalidates those slices. Route Init's Framework mode accepts one concrete
+separate CLI Quality Remediation Task is Complete at accepted candidate
+`a4ccf19a`, tree `97254e65`; local integration now precedes Route Update.
+Route Init's Framework mode accepts one concrete
 uniquely aligned route, slugs only ID-form inserted scope labels, creates one
 sparse chain, keeps scope entrypoints user-owned, and lifecycle-manages only
 copied canonical assets and derived generated regions.
@@ -357,10 +360,9 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Execute the active CLI Quality Remediation Task, consume and revalidate Route
-   Create's two predecessor slices, and complete the residual serializer/help
-   work and batches 3–9 before Route Update. Continue Move → Remove and only
-   afterward root Update M3.
+1. Integrate accepted CLI Quality Remediation candidate `a4ccf19a`, exact tree
+   `97254e65`, then begin Route Update. Continue Move → Remove and only afterward
+   root Update M3.
 2. Retain thin D1 as current `linux-x64` build/smoke, packed
    install/invocation, and checksums. Keep future RIDs, signatures, SBOM,
    provenance, OIDC, and support floors behind a later explicit decision.

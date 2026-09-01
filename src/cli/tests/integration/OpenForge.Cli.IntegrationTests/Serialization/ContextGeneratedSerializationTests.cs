@@ -1,5 +1,5 @@
 using System.Text.Json;
-using OpenForge.Cli.Core.Shell.Serialization;
+using OpenForge.Cli.Core.Commands.Context.Shared.Rendering;
 using OpenForge.Cli.IntegrationTests.Hosting;
 using OpenForge.Cli.TestSupport;
 
@@ -11,7 +11,7 @@ public sealed class ContextGeneratedSerializationTests
     [Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task ContextDocumentUsesGeneratedMetadataAndFrozenOrder()
     {
-        var metadata = CliJsonContext.Default.ContextJsonDocument;
+        var metadata = ContextJsonContext.Default.ContextJsonDocument;
         Assert.False(JsonSerializer.IsReflectionEnabledByDefault);
         Assert.Equal("ContextJsonDocument", metadata.Type.Name);
         using var workspace = CreateWorkspace();

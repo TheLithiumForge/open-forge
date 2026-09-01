@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
+using OpenForge.Cli.Core.Framework.Lifecycle;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Shared.Application;
@@ -202,7 +203,7 @@ internal static class RouteInitApplicationResultFactory
             OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
 
     private static bool IsLifecyclePath(RouteInitPlan plan, string logicalPath)
-        => PathEquals(plan, logicalPath, ".agents/open-forge.lifecycle.json");
+        => PathEquals(plan, logicalPath, LifecycleSchema.RelativePath);
 
     private static bool IsAttempt(
         RouteInitPlan plan,
@@ -246,12 +247,16 @@ internal static class RouteInitApplicationResultFactory
             _ => throw new InvalidOperationException("The Route Init filesystem receipt is incoherent."),
         };
 
-    private static RouteInitEffectResidual ReadResidual(
+    internal static RouteInitEffectResidual ReadResidual(
         DirectoryCreationReceipt receipt,
         RouteInitEffectOutcome outcome,
         RouteInitVerificationState verification)
-        => outcome switch
+    {
+        ValidateVerificationState(verification);
+        return outcome switch
         {
+            RouteInitEffectOutcome.Planned
+                or RouteInitEffectOutcome.NotStarted => RouteInitEffectResidual.None,
             RouteInitEffectOutcome.Verified => verification == RouteInitVerificationState.Verified
                 ? RouteInitEffectResidual.None
                 : RouteInitEffectResidual.Retained,
@@ -259,15 +264,23 @@ internal static class RouteInitApplicationResultFactory
                 ? RouteInitEffectResidual.Unknown
                 : RouteInitEffectResidual.Retained,
             RouteInitEffectOutcome.CompletionUnknown => RouteInitEffectResidual.Unknown,
-            _ => RouteInitEffectResidual.None,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(outcome),
+                outcome,
+                "The Route Init effect outcome is not defined."),
         };
+    }
 
-    private static RouteInitEffectResidual ReadResidual(
+    internal static RouteInitEffectResidual ReadResidual(
         FileChangeReceipt receipt,
         RouteInitEffectOutcome outcome,
         RouteInitVerificationState verification)
-        => outcome switch
+    {
+        ValidateVerificationState(verification);
+        return outcome switch
         {
+            RouteInitEffectOutcome.Planned
+                or RouteInitEffectOutcome.NotStarted => RouteInitEffectResidual.None,
             RouteInitEffectOutcome.Verified => verification == RouteInitVerificationState.Verified
                 ? RouteInitEffectResidual.None
                 : RouteInitEffectResidual.Retained,
@@ -275,8 +288,27 @@ internal static class RouteInitApplicationResultFactory
                 ? RouteInitEffectResidual.Unknown
                 : RouteInitEffectResidual.Retained,
             RouteInitEffectOutcome.CompletionUnknown => RouteInitEffectResidual.Unknown,
-            _ => RouteInitEffectResidual.None,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(outcome),
+                outcome,
+                "The Route Init effect outcome is not defined."),
         };
+    }
+
+    private static void ValidateVerificationState(RouteInitVerificationState verification)
+    {
+        _ = verification switch
+        {
+            RouteInitVerificationState.NotRequested
+                or RouteInitVerificationState.Verified
+                or RouteInitVerificationState.Failed
+                or RouteInitVerificationState.Unknown => true,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(verification),
+                verification,
+                "The Route Init verification state is not defined."),
+        };
+    }
 
     private static RouteInitLifecycleOutcome ReadLifecycleOutcome(FileChangeReceipt receipt)
         => (receipt.EffectState, receipt.VerificationState) switch

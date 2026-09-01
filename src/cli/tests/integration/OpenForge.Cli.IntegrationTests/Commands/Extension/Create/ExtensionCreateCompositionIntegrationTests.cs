@@ -89,8 +89,13 @@ public sealed class ExtensionCreateCompositionIntegrationTests
                 Assert.Contains("extension create  Create one local Extension package scaffold.", run.StandardOutput, StringComparison.Ordinal);
                 break;
             case "group":
-                Assert.Contains("create   Create one local catalogue scaffold without installing it.", run.StandardOutput, StringComparison.Ordinal);
-                Assert.DoesNotContain("create   Planned", run.StandardOutput, StringComparison.Ordinal);
+                Assert.Contains("list", run.StandardOutput, StringComparison.Ordinal);
+                Assert.Contains("inspect <stable-id>", run.StandardOutput, StringComparison.Ordinal);
+                Assert.Contains("create <stable-id>", run.StandardOutput, StringComparison.Ordinal);
+                Assert.Contains("The extension group performs no operation.", run.StandardOutput, StringComparison.Ordinal);
+                Assert.Contains("Planned but unavailable operations: install, update, and remove.", run.StandardOutput, StringComparison.Ordinal);
+                Assert.DoesNotContain("Operations:", run.StandardOutput, StringComparison.Ordinal);
+                Assert.DoesNotContain("Create one local catalogue scaffold without installing it.", run.StandardOutput, StringComparison.Ordinal);
                 break;
             case "leaf":
                 Assert.Contains("open-forge extension create [<stable-id>]", run.StandardOutput, StringComparison.Ordinal);

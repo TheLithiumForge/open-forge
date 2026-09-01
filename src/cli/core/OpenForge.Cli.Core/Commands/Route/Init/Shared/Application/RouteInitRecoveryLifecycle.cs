@@ -118,32 +118,57 @@ internal sealed class RouteInitRecoveryLifecycle
             return FailedAfterStoreEntry();
         }
 
-        return preparation.State switch
+        var resultState = ReadPreparationState(
+            preparation.State,
+            preparation.Preparation is not null);
+        return resultState switch
         {
-            RecoveryBundlePreparationState.Prepared when preparation.Preparation is { } verified =>
+            RouteInitRecoveryPreparationState.Prepared when preparation.Preparation is { } verified =>
                 new RouteInitRecoveryPreparationResult(
                     RouteInitRecoveryPreparationState.Prepared,
                     verified,
                     new RouteInitRecovery(RouteInitRecoveryState.Retained, verified.BundlePath),
                     Cause: null),
-            RecoveryBundlePreparationState.Incomplete =>
+            RouteInitRecoveryPreparationState.Incomplete =>
                 new RouteInitRecoveryPreparationResult(
                     RouteInitRecoveryPreparationState.Incomplete,
                     Preparation: null,
                     Recovery(preparation.ResidualPath),
                     preparation.Cause ?? "Route Init recovery preparation is incomplete."),
-            RecoveryBundlePreparationState.Blocked =>
+            RouteInitRecoveryPreparationState.Blocked =>
                 new RouteInitRecoveryPreparationResult(
                     RouteInitRecoveryPreparationState.Blocked,
                     Preparation: null,
                     Recovery(preparation.ResidualPath),
                     preparation.Cause ?? "Route Init recovery preparation is blocked."),
-            RecoveryBundlePreparationState.Cancelled => Cancelled(preparation.ResidualPath),
-            _ => Failed(
+            RouteInitRecoveryPreparationState.Cancelled => Cancelled(preparation.ResidualPath),
+            RouteInitRecoveryPreparationState.NotRequired
+                or RouteInitRecoveryPreparationState.Failed => Failed(
                 "Route Init recovery preparation returned an incoherent result.",
                 preparation.ResidualPath),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(resultState),
+                resultState,
+                "The Route Init recovery preparation result state is not defined."),
         };
     }
+
+    internal static RouteInitRecoveryPreparationState ReadPreparationState(
+        RecoveryBundlePreparationState state,
+        bool hasPreparation)
+        => state switch
+        {
+            RecoveryBundlePreparationState.NotNeeded => RouteInitRecoveryPreparationState.Failed,
+            RecoveryBundlePreparationState.Prepared when hasPreparation => RouteInitRecoveryPreparationState.Prepared,
+            RecoveryBundlePreparationState.Prepared => RouteInitRecoveryPreparationState.Failed,
+            RecoveryBundlePreparationState.Incomplete => RouteInitRecoveryPreparationState.Incomplete,
+            RecoveryBundlePreparationState.Blocked => RouteInitRecoveryPreparationState.Blocked,
+            RecoveryBundlePreparationState.Cancelled => RouteInitRecoveryPreparationState.Cancelled,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(state),
+                state,
+                "The recovery bundle preparation state is not defined."),
+        };
 
     internal async ValueTask<RouteInitRecoveryDeletionResult> DeleteAsync(
         WorkspaceLockLease lease,
@@ -218,30 +243,81 @@ internal sealed class RouteInitRecoveryLifecycle
             return Unknown(preparation, RouteInitFindingCode.RecoveryFailed, "Recovery deletion failed unexpectedly.");
         }
 
-        return (deletion.State, deletion.Disposition) switch
+        var outcome = ReadDeletionOutcome(deletion.State, deletion.Disposition);
+        if (outcome.State == RouteInitRecoveryState.Removed)
+        {
+            return new RouteInitRecoveryDeletionResult(
+                new RouteInitRecovery(RouteInitRecoveryState.Removed, ResidualPath: null),
+                FindingCode: null,
+                Cause: null);
+        }
+
+        if (outcome.State == RouteInitRecoveryState.Retained
+            && deletion.State == RecoveryBundleDeletionState.Failed)
+        {
+            return new RouteInitRecoveryDeletionResult(
+                new RouteInitRecovery(
+                    RouteInitRecoveryState.Retained,
+                    deletion.ResidualPath ?? preparation.BundlePath),
+                RouteInitFindingCode.RecoveryArtifactRetained,
+                deletion.Cause ?? "The verified Route Init recovery artifact was retained.");
+        }
+
+        if (outcome.State == RouteInitRecoveryState.Retained)
+        {
+            return Retained(
+                preparation,
+                RouteInitFindingCode.Interrupted,
+                "Recovery deletion was interrupted.");
+        }
+
+        return new RouteInitRecoveryDeletionResult(
+            new RouteInitRecovery(
+                RouteInitRecoveryState.Unknown,
+                deletion.ResidualPath ?? preparation.BundlePath),
+            outcome.FindingCode,
+            deletion.Cause ?? "The Route Init recovery artifact disposition is unknown.");
+    }
+
+    internal static (RouteInitRecoveryState State, RouteInitFindingCode? FindingCode) ReadDeletionOutcome(
+        RecoveryBundleDeletionState state,
+        RecoveryBundleDisposition disposition)
+    {
+        _ = state switch
+        {
+            RecoveryBundleDeletionState.Deleted
+                or RecoveryBundleDeletionState.Failed
+                or RecoveryBundleDeletionState.Blocked
+                or RecoveryBundleDeletionState.Cancelled => true,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(state),
+                state,
+                "The recovery deletion state is not defined."),
+        };
+        _ = disposition switch
+        {
+            RecoveryBundleDisposition.Removed
+                or RecoveryBundleDisposition.Retained
+                or RecoveryBundleDisposition.Unknown => true,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(disposition),
+                disposition,
+                "The recovery bundle disposition is not defined."),
+        };
+
+        return (state, disposition) switch
         {
             (RecoveryBundleDeletionState.Deleted, RecoveryBundleDisposition.Removed) =>
-                new RouteInitRecoveryDeletionResult(
-                    new RouteInitRecovery(RouteInitRecoveryState.Removed, ResidualPath: null),
-                    FindingCode: null,
-                    Cause: null),
+                (RouteInitRecoveryState.Removed, null),
             (RecoveryBundleDeletionState.Failed, RecoveryBundleDisposition.Retained) =>
-                new RouteInitRecoveryDeletionResult(
-                    new RouteInitRecovery(
-                        RouteInitRecoveryState.Retained,
-                        deletion.ResidualPath ?? preparation.BundlePath),
-                    RouteInitFindingCode.RecoveryArtifactRetained,
-                    deletion.Cause ?? "The verified Route Init recovery artifact was retained."),
+                (RouteInitRecoveryState.Retained, RouteInitFindingCode.RecoveryArtifactRetained),
             (RecoveryBundleDeletionState.Cancelled, RecoveryBundleDisposition.Retained) =>
-                Retained(preparation, RouteInitFindingCode.Interrupted, "Recovery deletion was interrupted."),
-            _ => new RouteInitRecoveryDeletionResult(
-                new RouteInitRecovery(
-                    RouteInitRecoveryState.Unknown,
-                    deletion.ResidualPath ?? preparation.BundlePath),
-                deletion.State == RecoveryBundleDeletionState.Cancelled
+                (RouteInitRecoveryState.Retained, RouteInitFindingCode.Interrupted),
+            _ => (
+                RouteInitRecoveryState.Unknown,
+                state == RecoveryBundleDeletionState.Cancelled
                     ? RouteInitFindingCode.Interrupted
-                    : RouteInitFindingCode.RecoveryFailed,
-                deletion.Cause ?? "The Route Init recovery artifact disposition is unknown."),
+                    : RouteInitFindingCode.RecoveryFailed),
         };
     }
 

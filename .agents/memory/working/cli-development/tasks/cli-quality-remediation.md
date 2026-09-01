@@ -8,22 +8,27 @@ open-forge:
 
 ## Task State
 
-- State: Active immediately after Route Create integration
-  `19412d2a562ae66d1b4642256d854438df75366f`, exact tree
-  `2bbba7e216e75809e99213e0ccd155bffe720d1f`, and before Route Update. It is a
-  separate root Task; no remediation implementation has begun.
-- Responsible role: Overseer-managed Task Mastermind.
+- State: Complete in reviewed candidate
+  `a4ccf19a3489d06f20a0fd940219be1acb22646d`, exact tree
+  `97254e655f51ab421dacc8eff7a8c93f726f2625`, from accepted clean `develop`
+  baseline `868860e046c954b0f1d654833afb20052fda18dd`, exact tree
+  `0def1aba230d1871b89736d8921a23d776efc04a`. All thirteen findings and
+  candidates have accepted corrections or dispositions. Final Sol/xhigh
+  `QR-R1` reported one evidence-tier regression, `QR-R1-001`; its bounded
+  correction and same-reviewer narrow revalidation are accepted. Local
+  integration remains the only gate before Route Update.
+- Responsible role: Dedicated Overseer-managed Task Mastermind in isolated
+  branch `codex/cli-quality-remediation`.
 - Task source: Maintainer-accepted synthesis of the strategic first-pass PR-style audit of the replacement CLI `development` branch.
-- Last updated: 2026-08-31.
+- Last updated: 2026-09-01.
 
 Route Create is Complete and squash-integrated at `19412d2`. It supplies two
 command-local predecessor slices: the `RouteCreateJsonContext` slice, with no
 legacy JSON-context migration, and the Route half of group-help cleanup. This
-Task is now Active; it owns the residual eleven command-local contexts/Shell
-aggregate removal, the Extension help half, and findings
-`CLI-DESIGN-003` through `CLI-TEST-013`. It consumes and revalidates those
-predecessor slices rather than duplicating their correction. Nothing here
-changes the sealed Route Create handoff.
+Task consumed and revalidated those predecessor slices, corrected the residual
+eleven command-local contexts/Shell aggregate and Extension help half, and
+closed findings `CLI-DESIGN-003` through `CLI-TEST-013`. Nothing changed the
+sealed Route Create handoff.
 
 ## Problem And Expected Outcome
 
@@ -147,8 +152,9 @@ line drift would otherwise make a future recheck brittle.
 
 ### Excluded
 
-- Route Create production/test work currently in progress, its sealed Handoff,
-  or its protected integration decision.
+- Completed Route Create production/tests, its sealed Handoff, or its protected
+  integration decision, except for the maintainer-authorized physical
+  co-location of `RouteCreateJsonContext` in its matching renderer after QR7.
 - New product behavior, public contract or wire changes, lifecycle ownership,
   stronger filesystem threat guarantees, dependency changes, new projects,
   new test tiers, or a generic route/query/refactoring framework.
@@ -163,7 +169,7 @@ line drift would otherwise make a future recheck brittle.
 
 ### Expected Paths
 
-Expected paths are forecasts for the future remediation Task, not an allowlist.
+Expected paths are forecasts for this remediation Task, not an allowlist.
 The implementation owner must report any directly required neighboring path.
 
 - Shared and integration boundaries:
@@ -218,8 +224,9 @@ The implementation owner must report any directly required neighboring path.
 
 - Integrated Route Create source and tests remain outside remediation ownership
   except for direct revalidation of the accepted `RouteCreateJsonContext` and
-  Route-help predecessor slices. This Task consumes their accepted evidence
-  without reopening Route Create behavior.
+  Route-help predecessor slices, plus the maintainer-authorized physical
+  co-location of that context in `RouteCreateJsonRenderer.cs` after QR7. This
+  does not reopen Route Create behavior or wire meaning.
 - The sealed `.agents/memory/working/handoffs/2026-08-31_cli-route-create-green.md`
   must not change.
 - Accepted Architecture, command contracts, shared operation contracts,
@@ -242,7 +249,7 @@ The implementation owner must report any directly required neighboring path.
 | A1 | Prerequisite | Route Create must reach its accepted command-local Green/focused evidence and protected integration boundary before this separate Task starts. | Satisfied at integration `19412d2`, exact tree `2bbba7e`; Route Create supplies the `RouteCreateJsonContext` and Route-help predecessor slices. | Route Create Task, Checkpoint, and Git state | Reopen only if exact baseline inspection contradicts the recorded integration. |
 | A2 | Prerequisite | The current Architecture, contracts, mutation foundation, and project graph remain accepted. | Read the linked current sources and inspect the actual baseline before mutation. | Overseer and Task Mastermind | Return a project change request before changing shared meaning. |
 | A3 | Boundary | The audit is a strategic first-pass PR-style audit, not exhaustive deep scrubbing. | Finding scope and no-findings caveat below remain visible. | Accepted audit synthesis | Do not expand the task into a general codebase cleanup. |
-| A4 | Resource | Every C# implementer and reviewer can independently read the complete three C# directive files. | The future packet names all three exact paths and requires acknowledgement before work. | Task Mastermind | Stop that C# boundary and return a task gap if the rules cannot be loaded. |
+| A4 | Resource | Every C# implementer and reviewer can independently read the complete three C# directive files. | Every implementation or review packet names all three exact paths and requires acknowledgement before work. | Task Mastermind | Stop that C# boundary and return a task gap if the rules cannot be loaded. |
 | A5 | Evidence | Serialization/help and test-tier changes are material boundaries. | Applicability check selects affected Unit/Integration/public evidence and the complete managed plus supported `linux-x64` Native AOT gate at the material trigger. | Task Mastermind | Do not accept from source inspection or partial tests alone. |
 | A6 | Candidate | Similar Extension escaping and Find test scenarios may not justify promotion by themselves. | Fresh proof must show identical semantic ownership or measurable evidence value. | Task Mastermind and reviewer | Close `CLI-SHARED-009` or `CLI-TEST-013` as no-op when proof is absent. |
 | A7 | Safety | No remote, destructive, dependency-installation, publication, or delivery action is part of this task. | Execution-safety inspection and exact-path local edits. | All delegated owners | Return `AUTHORIZATION_REQUIRED` or stop at the boundary. |
@@ -536,13 +543,12 @@ contracts.
 
 ## Accepted Order And Sub-Batches
 
-The separate remediation Task is Active after Route Create integration. Route
-Create supplied the accepted `RouteCreateJsonContext` predecessor slice and the
-Route half of group-help cleanup. This Task now consumes and revalidates those
-slices, owns the residual serializer/help corrections, and then executes the
-remaining batches before Route Update. Execute the
-remediation in this order, preserving the distinction between actual defects
-and candidates:
+The separate remediation Task ran after Route Create integration. Route Create
+supplied the accepted `RouteCreateJsonContext` predecessor slice and the Route
+half of group-help cleanup. This Task consumed and revalidated those slices,
+owned the residual serializer/help corrections, and executed the remaining
+batches before Route Update. The remediation followed this order while
+preserving the distinction between actual defects and candidates:
 
 | Order | Sub-batch | Finding IDs | Dependency and completion boundary |
 | --- | --- | --- | --- |
@@ -553,6 +559,7 @@ and candidates:
 | 5 | Install planner | `CLI-DESIGN-004` | Split the Install planner locally; do not attribute Route Init/Framework Markdown conformance or lifecycle authority work to Install. |
 | 6 | Extension Inspect | `CLI-DESIGN-005`, `CLI-SHARED-009` | Refactor topical local clusters; evaluate Extension-family escaping promotion and close the candidate if proof is insufficient. |
 | 7 | Find/References/Route List | `CLI-DESIGN-003`, `CLI-DESIGN-006`, affected `CLI-DESIGN-007` | Reduce service bags and long call surfaces with typed local stages and capabilities; Route List receives `CLI-DESIGN-003` only, while `CLI-DESIGN-006` and affected `CLI-DESIGN-007` remain Find/References-only. |
+| 7a | Serialization context co-location follow-up | `CLI-ARCH-001` physical-quality correction | After QR7 and before QR8, co-locate each of the twelve command-local `*JsonContext` declarations in its matching `*JsonRenderer.cs`, delete the standalone context files, and re-run full serialization, managed, and supported AOT evidence. Preserve exactly one command context, type info, options, schema, and renderer behavior; no global, family, or generic context. The narrow Route Create context/renderer move is authorized. |
 | 8 | Deterministic cancellation | `CLI-TEST-011` | Replace watcher-race evidence with deterministic boundary/barrier evidence. |
 | 9 | Durable test naming and Find test restructuring | `CLI-TEST-012`, `CLI-TEST-013` | Rename active `*RedTests`; evaluate typed scenarios/focused assertions and close the candidate if no material gain is proved. |
 
@@ -580,17 +587,183 @@ protected integration is reviewed sequentially.
 | Durable test identity | `CLI-TEST-012` | Exact rename and discovery audit | Focused project test execution with unchanged counts and behavior. |
 | Candidate Find test structure | `CLI-TEST-013` | Focused scenario/readability/coverage comparison | No-op is valid; if changed, run affected focused tests and inspect fixture ownership. |
 
-The future Task Mastermind must record its per-Task applicability check before
-mutation. Serialization, help, test-tier, or shared-capability changes trigger
+The Task Mastermind recorded the per-Task applicability check below before
+production or test mutation. Serialization, help, test-tier, or shared-capability changes trigger
 the complete managed and supported `linux-x64` Native AOT gates at the recorded
 material boundary. Focused evidence remains the default between those gates.
 No current document-only authoring action claims any executable evidence.
 
 ## Execution Capsule
 
-- Current owner: Overseer pending assignment to one dedicated Task Mastermind.
-- Current boundary: Active task preflight; no production or test mutation has
-  started.
+- Current owner: Dedicated CLI Quality Remediation Task Mastermind.
+- QR7B3 direct-owner checkpoint: The Task Mastermind's complete independent
+  C# directive acknowledgement remained current before References binding
+  conformance mutation. The two postfix suppressions are replaced with
+  explicit invariant patterns, and the selector reader's nested missing/empty
+  cause decision is flat and named. The preliminary packet said the invariant
+  patterns preceded workspace handling; implementation correctly preserves
+  the actual old evaluation order: typed invalid-result formation, bound
+  workspace invariant, nullable direction invariant, source invariant, then
+  request construction. Invalid-result formation still consumes the already
+  established invocation workspace exactly as before but performs no later
+  bound-workspace invariant or domain request. Exception type, message, and
+  parameter name remain exact. No test or other production file changed.
+- QR7B2 direct-owner checkpoint: The Task Mastermind's complete independent
+  C# directive acknowledgement remained current before finding-formation
+  mutation. The fourteen-parameter `ReferencesFindingFactory.AddFinding`
+  surface now consumes one immutable finding input with required code and
+  cause plus named optional facts. Seven direct callers and the `AddEvent`
+  delegate use the typed input; all nineteen `AddEvent` callers remain
+  unchanged. Candidate, selector, location, status, nullability, validation,
+  append-order, and result semantics remain owned by the existing
+  `ReferencesFinding`. QR7B3 binder/selector conformance remains untouched.
+- QR7B1 direct-owner checkpoint: The Task Mastermind's complete independent
+  acknowledgement of `.agents/directives/csharp/_csharp.md`,
+  `.agents/directives/csharp/design.md`, and
+  `.agents/directives/csharp/style.md` remained current before References
+  mutation. The eight-service `ReferencesOperationComponents` bag is removed.
+  Boundary/reference/universe resolution, layer inspection, and destination
+  resolution now own their exact delegates and facts behind cohesive
+  References-local capabilities; one shared Markdown-parser callable retains
+  the identical authority consumed by inspection and destination resolution.
+  `ReferencesOperation` consumes exactly four capabilities and retains the
+  original orchestration, coverage, cancellation, failure, and final result
+  boundary. QR7B2 finding formation and QR7B3 binder/selector conformance
+  remain untouched.
+- QR7A direct-owner checkpoint: The Task Mastermind's complete independent
+  acknowledgement of `.agents/directives/csharp/_csharp.md`,
+  `.agents/directives/csharp/design.md`, and
+  `.agents/directives/csharp/style.md` remained current before Route List
+  mutation. The six-service `RouteListOperationComponents` bag is removed.
+  Source inventory, route facts, primary selection, and optional loader-root
+  selection now belong to one Route List-local source resolver; topology,
+  coverage, and result formation belong to one Route List-local result
+  composer. The coordinator has two dependencies and retains the original
+  attempted-selection update point, cancellation rethrow, and failure-result
+  boundary. No generic route engine, other command, public surface, or test was
+  changed.
+- QR6-S3B direct-owner checkpoint: Under the active normalized-owner efficiency
+  circuit, the Task Mastermind directly moved path comparison, dependency
+  comparison, and root mode/side/state projection behind three cohesive local
+  capabilities. Path findings still precede dependency findings; installed
+  closure is read once for the root and both comparison sides. The comparison
+  facade retains exactly eight temporary S3C surfaces. The Task Mastermind's
+  complete independent C# directive acknowledgement remained current; no
+  separate owner or protected consumer was introduced.
+- QR6-S3A direct-owner checkpoint: The Task Mastermind's complete independent
+  acknowledgement of `.agents/directives/csharp/_csharp.md`,
+  `.agents/directives/csharp/design.md`, and
+  `.agents/directives/csharp/style.md` remained current before direct S3A
+  mutation. One continuous Sol/xhigh implementation owner independently
+  acknowledged all three files and returned the exact comparison map, but was
+  circuited with zero scoped edits after its accepted gate produced no
+  implementation progress. The Task Mastermind then moved installed-closure,
+  fingerprint, and generated-Markdown facts directly behind cohesive local
+  capabilities while retaining compile-green comparison forwards. Exact
+  fingerprint, generated-state, finding, order, and nullable policy remains
+  unchanged.
+- QR6-S2D direct-owner checkpoint: The final top-down result-formation audit
+  found the `178`-line facade free of private helpers and temporary wrappers;
+  its three boundary forwards remain the explicitly frozen S2A compatibility
+  surfaces. S2B and S2C remain cohesive typed stages rather than speculative
+  line-count splits. The only bounded findings were one unread
+  `AvailableMatches` stage property and source/available naming drift at the
+  S2C connection. Under the accepted efficiency circuit, the Task Mastermind
+  removed that dead seam and normalized only stage-local `AvailablePackage`
+  and `AvailableClosure` names directly. No product, result, JSON, branch,
+  order, nullability, or consumer meaning changed.
+- QR6-S2C direct-owner checkpoint: The Task Mastermind's complete independent
+  acknowledgement of `.agents/directives/csharp/_csharp.md`,
+  `.agents/directives/csharp/design.md`, and
+  `.agents/directives/csharp/style.md` remained current before S2C mutation.
+  The frozen graph moved dependency traversal, source closure, declared-path
+  projection, current-path findings, aggregate path state, and event path facts
+  behind one capability-specific typed stage input/result. Traversal, finding,
+  source/path order, conflict, state-precedence, and nullable-event semantics
+  remain unchanged. The S2B source-identity capability is now consumed directly;
+  the temporary facade delegate and obsolete dependency input are absent.
+  Repeated delegated structure-owner gate/execution stalls triggered the
+  accepted efficiency circuit, so this normalized slice was implemented
+  directly without another owner.
+- QR6-S2B direct-owner checkpoint: The Task Mastermind's complete independent
+  acknowledgement of `.agents/directives/csharp/_csharp.md`,
+  `.agents/directives/csharp/design.md`, and
+  `.agents/directives/csharp/style.md` remained current before S2B mutation.
+  The frozen graph moved subject, source, lifecycle, installed, available, and
+  boundary-finding formation behind two capability-specific typed stage inputs
+  and results. Public `Build`/`Event` signatures, nullable event defaults,
+  package selection, branch/finding order, and the existing local findings
+  append semantics remain unchanged. All dependency/closure/path bodies stayed
+  protected; their two existing source-identity calls consume one temporary
+  facade delegate until the next slice. The delegated S2B structure owner was
+  circuited without a scoped edit after failing to return the mandatory gate,
+  so the Task Mastermind completed the accepted slice directly without a
+  replacement owner.
+- QR6-S2A direct-owner checkpoint: Before the first direct S2A production edit,
+  the Task Mastermind independently read and acknowledged the complete
+  `.agents/directives/csharp/_csharp.md`,
+  `.agents/directives/csharp/design.md`, and
+  `.agents/directives/csharp/style.md` files. The frozen Extension Inspect-only
+  map is (1) a boundary result factory for invalid, workspace-blocked, and typed
+  empty results behind the existing facade; (2) one honest standalone finding
+  policy owning sort, status, add, create, and normalization; and (3) finite
+  framework, source, lifecycle, package, path, and side mappings. `Event`
+  remains facade-owned, nullable source/business match-context decisions remain
+  local, and the comparison builder, S1 result models, JSON projection,
+  escaping, tests, and S2B/S2C methods remain protected. The delegated S2A
+  structure owner was circuited after acknowledging this exact map but before
+  returning a connected change; the Task Mastermind completed the frozen slice
+  directly without a replacement owner.
+- QR5 direct-owner checkpoint: Before the first Install production edit, the
+  Task Mastermind independently read and acknowledged the complete
+  `.agents/directives/csharp/_csharp.md`,
+  `.agents/directives/csharp/design.md`, and
+  `.agents/directives/csharp/style.md` files. The frozen Install-only graph is
+  (1) inspection/basis for payload, intended state, lifecycle, recovery,
+  targets, and `.agents` expectation; (2) managed-current evaluation for
+  intended lifecycle, exactness, and preservation; (3) establishment planning
+  for occupant, managed-block, file/lifecycle-effect, and directory decisions;
+  and (4) result projection for boundaries, findings, completed plans,
+  evidence, and effect identities. The primary
+  `(PhysicalPathResolver, LifecycleStore, RecoveryBundleCatalogue)` constructor,
+  `InstallOperationFactory` composition, and `InstallOperation.BuildAsync`
+  consumer remain unchanged. Focused acceptance owns existing Install Unit
+  contracts, Install Integration planning/operation/preservation/revalidation,
+  and `PublishedInstallProcessTests`; prior QR1 renderer/context and QR3 tier
+  edits remain protected. Two delegated owners were circuited before QR5 edits,
+  so the Task Mastermind continues directly from this frozen map.
+- Current boundary: `CLI-ARCH-001` serialization, `CLI-ARCH-002` group help,
+  `CLI-TEST-010` evidence tiers, and the Route Init planner sub-batch for
+  `CLI-DESIGN-004`, affected `CLI-DESIGN-007`, and `CLI-AUTH-008` are corrected
+  and revalidated. The Install planner consumer of `CLI-DESIGN-004` is also
+  corrected and revalidated. Extension Inspect `CLI-DESIGN-005` result-model
+  structure and its first two result-formation slices are corrected and
+  revalidated, as is its dependency/closure/path slice. The final
+  result-formation facade slice is now also corrected and revalidated;
+  comparison formation, counts, actionability, and the final one-build facade
+  are corrected and revalidated. JSON document projection and finite wire
+  vocabulary are also corrected and revalidated, closing `CLI-DESIGN-005`.
+  The three byte-identical Extension-family text escapers now consume one
+  Extension-shared neutral mechanism, closing candidate `CLI-SHARED-009` and
+  the Extension Inspect sub-batch. The Route List portion of
+  `CLI-DESIGN-003` is corrected and revalidated. The References portion is now
+  also corrected and revalidated; only its Find portion remains open. The
+  References long finding-call portion of `CLI-DESIGN-006` is corrected and
+  revalidated; its Find portion remains open. The References portion of
+  affected `CLI-DESIGN-007` is corrected and revalidated, closing the
+  References sub-batch.
+- Applicability: This assured, behavior-preserving refactor affects the
+  non-shipping local CLI and its tests. Git provides the practical recovery
+  boundary. Accepted public wire, lifecycle, filesystem-safety, and threat
+  meaning remain unchanged. The pinned compiler, source generator, serializer,
+  parser, BCL, and test platform provide the required capabilities through
+  their ordinary supported behavior. Existing Shell, command, Framework,
+  `TemporaryWorkspace`, and source-generated serialization authorities remain
+  in use; command semantics stay local. Exceptional machinery: none. Each
+  sub-batch uses its cheapest decisive Unit, Integration, EndToEnd, and static
+  evidence, with complete managed and supported `linux-x64` Native AOT gates at
+  the material serialization/help, test-architecture, shared-capability, and
+  final acceptance boundaries.
 - Dependencies: Accepted Route Create integration after its protected lane has
   supplied the `RouteCreateJsonContext` and Route-help predecessor slices;
   exact residual serializer/help decisions; current Architecture and
@@ -600,15 +773,58 @@ No current document-only authoring action claims any executable evidence.
 - Integration or full gate: Sequential sub-batches; complete managed and
   supported `linux-x64` Native AOT at the material serialization/help,
   shared-capability, test-architecture, or final acceptance trigger.
-- Review budget: Maximum one independent final Sol/xhigh architecture and
-  correctness review, `QR-R1` (unconsumed). Targeted rechecks of accepted
-  findings are part of the one correction cycle, not extra review units.
+- Review budget: The independent final Sol/xhigh architecture and correctness
+  review, `QR-R1`, is consumed over exact candidate `e11b225e`, tree
+  `a19fa69b`; same-reviewer narrow revalidation accepts corrected candidate
+  `a4ccf19a`, tree `97254e65`, after closing High `QR-R1-001`. A
+  maintainer-authorized adherence trial
+  added four independent topic units over exact checkpoint `f324beae`, tree
+  `0def1aba`, to `1f8708f`, tree `306324e2`: `QR-R2` C# conformance,
+  `QR-R3` architecture/ownership/refactoring, `QR-R4` behavior/contract
+  equivalence, and `QR-R5` test/evidence quality. Each unit is valid only after
+  its reviewer confirms Git-object evidence, corrected provenance, full
+  independent reads of `_csharp.md`, `design.md`, and `style.md`, and no
+  dirty-filesystem or LSP evidence. The coordinator consumes no unit because it
+  only schedules and synthesizes; the Task Mastermind retains disposition and
+  repair ownership. Targeted rechecks of accepted findings remain part of the
+  one grouped correction cycle rather than additional review units.
 - Council budget: Zero; no council round is authorized or consumed.
-- Correction budget: One grouped correction cycle, `QR-C1` (unconsumed),
-  returned to the original implementation owner where possible.
-- Consumed IDs: This document authoring action consumed no implementation,
-  review, council, or correction ID. `QR-R1` and `QR-C1` remain available for
-  the future remediation Task.
+- Correction budget: One grouped correction cycle, `QR-C1` (closed), returned
+  to one continuous Sol/xhigh implementation owner across C1A through C1D and
+  a bounded Luna/max mechanical owner for C1E. The single bounded `QR-R1-001`
+  correction returned to the original C1 owner does not consume another review
+  or grouped correction unit.
+- Consumed IDs: Preflight consumed no review, council, or correction ID.
+  Checkpoint topic reviews `QR-R2` through `QR-R5` are consumed over exact
+  checkpoint `f324beae`, tree `0def1aba`, to `1f8708f`, tree `306324e2`.
+  Holistic final review `QR-R1` is consumed over `e11b225e`, tree `a19fa69b`,
+  and reported High `QR-R1-001`; its narrow revalidation accepts the correction
+  in `a4ccf19a`, tree `97254e65`, with no new material finding. Grouped
+  correction `QR-C1` is consumed and closed; C1A through C1E are closed.
+- Accepted checkpoint dispositions: Revalidate every item against the latest
+  snapshot, then address them together in phase 10 after phase 9 commits.
+  `ARCH-001`/`CSHARP-003` move state-only types from Shared behavior files into
+  nearest `Models/<Topic>` owners, organize Extension Inspect model/result
+  topics, and place `ReferencesMarkdownParser` under explicit Documents/Parsing
+  ownership. `ARCH-002` splits only the two identified dual-responsibility
+  Extension Inspect builders; size alone is not a defect. `ARCH-004` replaces
+  References `InspectLayersAsync`'s eight-parameter surface with one cohesive
+  immutable scan input while keeping mutable outputs and cancellation explicit.
+  `CSHARP-001` corrects the raw multiline Extension group-help literal;
+  `CSHARP-002` flattens the named dependency-path conditional; and `CSHARP-004`
+  adds explicit named enum mappings, undefined-value throws, and evidence at the
+  identified Extension Inspect, Find, References, and Route Init sites.
+  `ARCH-005` is satisfied by `25e7e62` and closes after revalidation without a
+  duplicate edit.
+- Accepted shared-source decision: `ARCH-003` may add one small neutral
+  `Framework/Sources` source-read session fact and reader shared by Find and
+  References because their catalogue, document-reader, and default-selection-
+  scope boundary is identical. Source-reference resolution, universe/filter
+  logic, findings, and command policy remain local. No generic query engine,
+  service bag, dependency injection, or parameterized policy is allowed. The
+  correction requires complete managed and supported Native AOT evidence.
+  Phase 10 also closes the durable Red-name and Find test-structure candidates;
+  `QR-R1` remains reserved for the exact final candidate.
 - Stop conditions: An unresolved product/public-contract/lifecycle/safety or
   cross-task architecture choice; a protected Route Create integration change
   without an accepted decision; a required new dependency/project/test tier;
@@ -616,38 +832,763 @@ No current document-only authoring action claims any executable evidence.
   stronger hostile-process guarantee; inability to prove a test tier; a
   destructive/remote/publishing action; or exhaustion of distinct correction
   strategies.
-- Next action: Independently inspect the exact integrated baseline and assigned
-  worktree, read all three C# directive files,
-  consume and revalidate the two protected predecessor slices, and issue one
-  closed packet for the residual serializer/help work followed by each
-  sequential sub-batch. The Task Mastermind supervises any delegated
-  implementers or reviewers, preserves one implementation owner per coherent
-  sub-batch, and returns compact evidence. Reviewers remain read-only and
-  return stable findings to the Task Mastermind.
+- Next action: Integrate accepted candidate `a4ccf19a`, exact tree `97254e65`,
+  into local `develop`, then begin Route Update from that integrated baseline.
 
 ## Progress And Evidence
 
-- Current result: The accepted thirteen-finding audit is now one Active
-  remediation Task. No remediation production or test source has changed.
-- Evidence: Route Create is integrated at `19412d2`, exact tree `2bbba7e`. The
+- Current result: `CLI-ARCH-001` behavior and ownership are corrected. Shell
+  source-generated JSON metadata now registers only Shell-owned
+  `CliProcessCompletion`. Twelve command graphs use command-local contexts, and
+  the maintainer-directed physical-quality follow-up now co-locates each
+  declaration in its matching renderer without changing that graph.
+  `CLI-ARCH-002` is also corrected: standard help owns the exact live Route and Extension child
+  graphs, while custom group content contains only bounded no-operation and
+  unavailable-operation notes. Root Discovery remains excluded.
+  `CLI-TEST-010` is corrected: fourteen real filesystem or operating-system
+  cases moved from the Unit assembly to four nearest Integration files backed
+  by `TemporaryWorkspace`; nine pure Unit methods remain in the original
+  three Unit files, and the empty application-integrity Unit file was removed.
+  The Route Init portion of `CLI-DESIGN-004`, its affected `CLI-DESIGN-007`
+  sites, and `CLI-AUTH-008` are corrected. `RouteInitPlanBuilder` is now an
+  83-line command-local orchestrator over inspection, intended-chain,
+  prospective-plan, finalization, and result-projection capabilities. The
+  original recovery-catalogue constructor seam and direct consumers remain
+  unchanged. Route Init suppressions, nested conditional sites, and raw
+  lifecycle-path literals are removed; the companion Markdown leaf-inline
+  suppression has focused evidence.
+  `CLI-DESIGN-004` is fully corrected across its two command consumers.
+  `InstallPlanBuilder` is now a 75-line command-local orchestrator over typed
+  inspection/basis, managed-current evaluation, establishment planning, and
+  result-projection responsibilities. Its original three-dependency
+  constructor, `InstallOperationFactory` composition, and `InstallOperation`
+  behavior remain unchanged; no generic planner or shared Install policy was
+  introduced.
+  The first Extension Inspect `CLI-DESIGN-005` slice replaces the 679-line,
+  53-type result-model monolith with five same-namespace topical files for
+  subject/source/lifecycle, package/dependency, paths,
+  comparison/generated/fingerprint, and finding/count/root-result facts.
+  Every declaration remains internal and unchanged; no builder, projection,
+  source-generation, or consumer file changed in this slice.
+  The next Extension Inspect result-formation slice makes the result builder a
+  non-partial facade over a dedicated boundary-result factory, a standalone
+  finding policy, and finite vocabulary mappings. The original boundary facade
+  signatures and `Event` ownership remain unchanged, nullable source and
+  match-context policy stay local, and the comparison builder is untouched.
+  The legacy five-parameter empty-result call and partial-file concealment are
+  absent. `CLI-DESIGN-005` remains open for its later result-formation,
+  comparison, and JSON projection slices.
+  Subject/source/lifecycle/installed/available facts and boundary findings now
+  form in a command-local subject/package capability behind two typed stage
+  inputs. The result-builder facade is `630` lines and keeps its original
+  `Build` and `Event` signatures; both consumers use the new capability while
+  nullable event evidence continues to retain the boundary-result defaults.
+  One narrow source-identity delegate remains temporarily so the protected
+  dependency/closure/path bodies are unchanged until their own slice.
+  Dependency traversal, source closure, declared/current path projection, and
+  aggregate/event path facts now form behind one typed dependency/path stage.
+  The result-builder facade is `178` lines, all former formation bodies are
+  absent, and it orchestrates the subject/package, dependency/path, comparison,
+  finding, count, next-action, and final result capabilities. Final S2D still
+  owns the frozen old-vs-new facade/call-surface audit and any bounded
+  reconnection refinement; `CLI-DESIGN-005` is not yet closed.
+  The final S2D audit removed the only dead result-formation stage property and
+  normalized the selected-source stage names to `AvailablePackage` and
+  `AvailableClosure`. The facade remains `178` lines with its original
+  `Build`, `Event`, and three boundary signatures. Result formation is closed;
+  `CLI-DESIGN-005` remains open only for comparison and JSON projection.
+  The first comparison sub-slice extracts installed-package closure,
+  baseline/current/intended fingerprint formation, and generated Markdown
+  region facts. `ExtensionInspectComparisonBuilder` is `657` lines and retains
+  its five temporary comparison forwards until the final S3 reconnection.
+  Path comparison, dependency comparison, and root mode/side/state projection
+  now live behind typed local stages. `ExtensionInspectComparisonBuilder` is
+  `164` lines and retains exactly eight temporary surfaces for final S3C
+  reconnection. The final comparison sub-slice moves count formation and
+  actionability policy behind typed command-local inputs, reconnects result
+  formation to one comparison `Build` surface, and places comparison/count
+  inputs beside their owning capabilities. `ExtensionInspectComparisonBuilder`
+  is `82` lines and `ExtensionInspectResultBuilder` is `177` lines; none of the
+  eight temporary surfaces remains. Comparison cohesion is closed, and
+  `CLI-DESIGN-005` remains open only for its JSON projection slice. The final
+  JSON slice replaces the 610-line mixed projection/vocabulary type with a
+  10-line stable `Create` facade, a 280-line DTO document projector, and a
+  341-line finite wire-vocabulary authority. JSON rendering still consumes the
+  stable facade; the exact fourteen Human/Diagnostic vocabulary calls now
+  name the vocabulary owner directly. Schema-v1, presentation DTOs,
+  source-generation context, renderer behavior, and escaping remain unchanged.
+  `CLI-DESIGN-005` is fully corrected. Fresh identity proof for
+  `CLI-SHARED-009` shows the Create, List, and Inspect text escapers normalize
+  to the same SHA-256 `53dc840d66673ba556124a17dcc3d74686b82515e5e7d00be7f4982d19f72fc9`.
+  Their exact 53-line mechanism now lives at
+  `Commands/Extension/Shared/Rendering/ExtensionTextEscaping.cs`; the three
+  local copies are removed and the six renderers use exactly fifteen shared
+  references. Consumer-specific outer diagnostic limits remain local and
+  unchanged. The Extension Inspect sub-batch is closed.
+  Route List operation composition no longer uses
+  `RouteListOperationComponents`: one 75-line source resolver and one 35-line
+  result composer sit behind a 65-line factory/coordinator surface. The
+  coordinator consumes exactly two command-local capabilities; resolution and
+  composition capability constructors each consume three cohesive
+  collaborators. Inventory, route-fact, selection, loader-root, topology,
+  coverage, attempted-selection, cancellation, and failure-result order remain
+  unchanged. No Route List test or public/schema/source-generation surface was
+  changed.
+  References operation composition no longer uses
+  `ReferencesOperationComponents`. A 79-line source resolver owns boundary,
+  reference, and universe formation; the existing layer inspector owns its
+  reader and parser behind one typed layer-inspection input; the existing
+  destination resolver owns physical-path and strict-UTF8 callables; the
+  result builder remains its own capability. The operation constructor has
+  four cohesive dependencies, while source, layer, and destination capability
+  constructors have three, two, and three dependencies. Only the two direct
+  Unit construction sites changed; rendering, JSON, source generation, public
+  schemas, finding formation, and binder/selector conformance remain
+  protected.
+  References finding formation now uses one immutable
+  `ReferencesFindingInput` behind the two-parameter `AddFinding` surface.
+  Required code/cause and named direction, subject, selector, source/layer/path,
+  location, candidate, and conditional-status facts replace positional
+  omission across seven direct callers. `AddEvent` remains a stable
+  three-parameter boundary with nineteen unchanged callers. No test, public
+  result, rendering, JSON, source-generation, B1 composition, or B3 binding
+  surface changed.
+  References binding now establishes validated source and direction locals
+  without postfix suppressions. Invalid findings still form a typed result
+  before the later bound-workspace invariant; direction and source invariant
+  failure precedence remains exact. Selector occurrence cause formation is a
+  flat missing-then-empty decision with unchanged tokens, queues, positions,
+  strings, and null-success behavior. The References sub-batch is closed.
+- Evidence: The clean accepted baseline is `868860e0`, exact tree `0def1aba`.
+  This isolated lane began at the tree-equivalent predecessor object
+  `f324beae` and was intentionally not rebased while evidence was active.
+  Route Create remains integrated at `19412d2`, exact tree `2bbba7e`. The
   finding identities, scopes, consequences, corrections,
   ownership, caveats, order, and acceptance ladder above preserve the accepted
-  audit synthesis. The sealed Route Create handoff remains untouched.
-- Blockers: None currently. Route Update remains gated on this Task's accepted
-  completion.
-- Residual risk: The actual findings remain unresolved until the future
-  remediation Task is executed and accepted. Candidate findings may be closed
-  without code after fresh proof.
+  audit synthesis. Static inspection finds no Shell-to-Commands import in
+  `CliJsonContext` and no command renderer or direct metadata test consuming a
+  command graph from that context. Focused generated-serialization Integration
+  evidence passes `19/19`. Format verification and a warning-free Release build
+  pass. Complete managed Unit `1507/1507`, Integration `720/720`, and EndToEnd
+  `146/146` pass with zero skips. Supported `linux-x64` Native AOT root
+  publication produces the expected ELF and version; native Integration
+  `720/720` and EndToEnd `146/146` pass with zero skips. The sealed Route Create
+  handoff and protected Route Create source/tests remain untouched. Focused
+  Extension help Integration `8/8` and published EndToEnd `7/7` pass. The final
+  public help contains live `list`, `inspect`, and `create` entries from the
+  composed graph, no custom `Operations` catalogue, and bounded unavailable
+  `install`, `update`, and `remove` notes. Post-help format, warning-free Release,
+  complete managed `1507/720/146`, root ELF/version, and native `720/146` gates
+  pass with zero failures or skips. For `CLI-TEST-010`, the Unit and Integration
+  Release builds pass with zero warnings or errors; Unit passes `1493/1493`,
+  the four moved Integration classes pass `14/14`, and EndToEnd passes
+  `146/146`, all with zero skips. The first unchanged complete Integration run
+  passed `733/734` and failed only the already-recorded `CLI-TEST-011`
+  `FileSystemWatcher` race; the immediate unchanged rerun passed `734/734`,
+  confirming that finding remains nondeterministic and unresolved rather than
+  resolving it. Format verification passes. Supported `linux-x64` Native AOT
+  root publication produces the expected ELF and version; native Integration
+  passes `734/734` and native EndToEnd passes `146/146`, both with zero skips.
+  For the corrected Route Init boundary, Core, Unit, Integration, and EndToEnd
+  Release builds pass with zero warnings or errors. Focused Markdown Unit
+  passes `67/67`, Route Init Unit `23/23`, Route Init Integration `85/85`, and
+  published Route Init EndToEnd `6/6`, all with zero skips. Final format and
+  diff verification pass. The complete managed gate passes Unit `1494/1494`,
+  Integration `734/734`, and EndToEnd `146/146`; supported `linux-x64` Native
+  AOT root publication is an x86-64 ELF and reports `0.0.0-dev`, and native
+  Integration `734/734` and EndToEnd `146/146` pass with zero skips. This clean
+  Integration observation does not close `CLI-TEST-011`; its recorded failed
+  first run and unchanged passing rerun remain the controlling race evidence.
+  For the corrected Install boundary, the Release solution build passes with
+  zero warnings and errors; focused Install Unit `31/31`, Integration `23/23`,
+  and published EndToEnd `4/4` pass with zero skips on their first run. The
+  original and extracted graphs have identical finding-code, management-state,
+  and user-facing string multisets; only two new unreachable-stage diagnostic
+  strings exist. Boundary evidence, plan/findings/effects result shapes,
+  branch/effect ordering, constructor, and consumers are unchanged. Format and
+  diff verification pass, and the Install Planning graph contains no
+  suppression, raw lifecycle-path literal, reflection, or dynamic dispatch.
+  For the first Extension Inspect slice, Core, Unit, and Integration Release
+  builds pass with zero warnings and errors. Extension Inspect Unit contract
+  evidence passes `5/5`, and generated serialization Integration evidence
+  passes `4/4`, both with zero skips on their first run. All 53 result
+  declarations exist exactly once across files of `208`, `132`, `150`, `69`,
+  and `124` lines; the operation factory, operation, result builders, JSON
+  projection, and source-generation consumer graph have no slice-local diff.
+  Format and diff verification pass. For Extension Inspect S2A, the first Core
+  compile exposed one bounded causal error: a nullable source-kind call had
+  been routed to the non-null finite mapping. Restoring that single call to the
+  retained nullable local overload, which delegates only non-null values to
+  the mapping capability, was the only post-failure semantic correction. The
+  corrected Core and Unit Release builds pass with zero warnings and errors,
+  and Extension Inspect Unit contract evidence passes `5/5` with zero skips on
+  its first run. Original and corrected user-facing string,
+  `ExtensionInspectFindingCode`, and `CliSemanticStatus` occurrence multisets
+  are identical. The result builder, finding policy, boundary factory, and
+  mapping files are respectively `987`, `234`, `173`, and `132` lines. Static
+  inspection finds no partial result builder or legacy five-parameter empty
+  call; comparison, operation, operation-factory, and public result DTO paths
+  have no S2A diff. Format verification completes in `55194ms`, and final diff
+  verification passes. For Extension Inspect S2B, the first connected Core
+  compile failed only because the final next-action call retained the removed
+  local `subject` name. Changing that single reference to the typed stage
+  result was the only post-failure correction; the corrected Core, Unit,
+  Integration, and EndToEnd Release builds pass with zero warnings or errors.
+  Focused Extension Inspect Unit passes `5/5`, Integration `22/22`, and
+  published EndToEnd `5/5`, all with zero skips on their first run. Original
+  and corrected user-facing string, finding-code, and semantic-status
+  occurrence multisets are identical. Static inspection finds no moved S2B
+  body in the facade, no null-forgiving flow or new mutable capability state,
+  and exactly one temporary source-identity delegate; public `Build`/`Event`
+  signatures and protected comparison/dependency/path call surfaces remain.
+  The subject/package capability is `494` lines. Format verification completes
+  in `54110ms`, and final diff verification passes. Extension Inspect S2C's
+  first connected Core compile passes with zero warnings and errors, requiring
+  no correction. Unit, Integration, and EndToEnd Release builds also pass with
+  zero warnings and errors; focused Unit passes `5/5`, Integration `22/22`,
+  and published EndToEnd `5/5`, all with zero skips on their first run. Original
+  and corrected user-facing string, finding-code, semantic-status, and
+  dependency/path-state occurrence multisets are identical. Static branch and
+  order inspection preserves dependency traversal, source-closure ordering,
+  finding append order, declared/current path ordering, conflict and state
+  precedence, and nullable event defaults. The result facade and dependency/path
+  capability are respectively `178` and `508` lines; no moved body, obsolete
+  dependency input, temporary source-identity delegate, null-forgiving flow, or
+  new mutable capability state remains. Format verification completes in
+  `64836ms`, and final diff verification passes. S2D Core, Unit, Integration,
+  and EndToEnd Release builds pass with zero warnings and errors. Focused Unit
+  passes `5/5`, Integration `22/22`, and published EndToEnd `5/5`, all with zero
+  skips on their first run. The obsolete `AvailableMatches`, `SourcePackage`,
+  and `SourceClosure` stage names are absent. Original and corrected strings,
+  finding codes, semantic statuses, dependency/path states, result shape,
+  branch/order, and nullable-event audits remain identical. Format verification
+  completes in `58514ms`, and final diff verification passes. S3A's first Core
+  compile passes with zero warnings and errors. Unit and Integration Release
+  builds also pass with zero warnings and errors; focused Unit passes `5/5` and
+  focused Integration `22/22`, both with zero skips on their first run.
+  Original and corrected string, finding-code, fingerprint-kind/origin,
+  Markdown/generated-state, installed-closure order, and
+  current-before-intended-before-generated occurrence and branch audits are
+  identical. The installed-closure reader, fingerprint builder, and generated
+  builder are respectively `38`, `179`, and `102` lines. Format verification
+  completes in `54425ms`, and final diff verification passes. S3B's first Core
+  compile passes with zero warnings and errors. Unit and Integration Release
+  builds also pass with zero warnings and errors; focused Unit passes `5/5` and
+  focused Integration `22/22`, both with zero skips on their first run.
+  Original and corrected strings, finding codes, modes, side/root states, path
+  and dependency relations, finding order, result shape, and nullability audits
+  are identical. The path builder, dependency builder, and root projector are
+  respectively `233`, `108`, and `177` lines; the old bodies and private
+  finding-factory forward are absent. Format verification completes in
+  `56586ms`, and final diff verification passes. S3C's first connected Core
+  compile failed with one missing existing lifecycle-model import in the new
+  actionability-policy file; adding only that import was the sole correction.
+  Corrected Core, Unit, Integration, and EndToEnd Release builds pass with zero
+  warnings and errors. Focused Unit passes `5/5`, Integration `22/22`,
+  published EndToEnd `5/5`, and generated-serialization Integration `4/4`, all
+  with zero skips. The first Unit test command used unsupported positional
+  project syntax and executed no tests; the corrected supported `--project`
+  invocation produced the recorded `5/5` result. Static inspection preserves
+  baseline-current-intended-generated-path-dependency formation order,
+  finding-sort/status/count/actionability timing, count null-versus-zero rules,
+  the complete actionability truth table, result shape, nullability, and the
+  constructor/consumer graph. Exactly one comparison input and one counts input
+  exist beside their owners, and no temporary comparison forward remains.
+  Two earlier formatter invocations exited zero but emitted required-reference
+  workspace-load warnings; those warning-bearing results remain recorded. The
+  controlling run sets `DOTNET_ROOT=/usr/lib/dotnet`, restores the locked
+  unchanged solution from a fresh empty local source with audit disabled, and
+  then loads and verifies the complete solution without warnings. The restore
+  exits zero in `2.46s`, format exits zero in `60504ms`, and final
+  `git diff --check` passes. S4's first connected Core compile failed with one
+  missing existing Presentation-model import in the thin JSON facade; adding
+  only that import was the sole correction. Corrected Core, Unit, Integration,
+  and EndToEnd Release builds pass with zero warnings and errors. Focused Unit
+  passes `5/5`, Integration `22/22`, published EndToEnd `5/5`, and
+  generated-serialization Integration `4/4`, all with zero skips on their first
+  run. Old/new string-literal and enum-token multisets, DTO initializer/member
+  order, list materialization/order, nullability branches, and exception
+  messages are identical. The extracted workspace-selection mapper preserves
+  the original `workspace` exception parameter name and actual enum value.
+  Static inspection finds one stable JSON facade consumer, exactly fourteen
+  Human/Diagnostic vocabulary calls, no old projection/vocabulary body in the
+  facade, and no source-generation context or presentation-DTO change. The
+  controlling `DOTNET_ROOT=/usr/lib/dotnet` locked offline restore from a fresh
+  empty local source exits zero in `2.57s`; warning-free full-solution format
+  exits zero in `59669ms`, and final `git diff --check` passes. The shared
+  escaping promotion's first Core compile passes with zero warnings and errors;
+  Unit, Integration, and EndToEnd Release builds also pass with zero warnings
+  and errors. Focused Create/List/Inspect presentation-contract Unit evidence
+  passes `47/47`, the direct List Integration consumer passes `10/10`, and the
+  three published Extension process classes pass `28/28`, all with zero skips
+  on their first run. Static inspection confirms the exact normalized hash,
+  fifteen shared sites, zero old local-owner sites, the preserved 240-character
+  value limit and consumer-owned outer limits, and no test or non-Extension
+  widening. The controlling locked offline restore exits zero in `2.57s`;
+  warning-free full-solution format exits zero in `61815ms`, and final
+  `git diff --check` passes. For QR7A, the first Core compile failed only
+  because the new result composer imported a nonexistent `.Models.Result`
+  namespace; removing that import lets `RouteListResult` resolve from its
+  existing parent command namespace and was the only correction. The corrected
+  Core, Integration, and EndToEnd Release builds pass with zero warnings and
+  errors. The exact Route List Unit namespace passes `122/122`, the exact Route
+  List Integration namespace passes `88/88`, and the published
+  `CliProcessTests` plus `PublishedRouteInitNeighborProcessTests` pass `27/27`,
+  all with zero failures or skips. A separate exact-class Unit selector passed
+  `6/6`. Two unsupported `dotnet test` filter attempts and one list-discovery
+  attempt each executed zero tests and remain recorded separately from the
+  decisive direct Microsoft.Testing.Platform runs. Static inspection confirms
+  zero old component references, the preserved inventory-to-result order,
+  attempted-selection timing, cancellation rethrow, failure-result selection,
+  and call surfaces of `2`, `2/3`, and `4/2` parameters. The controlling
+  locked offline restore from a fresh empty source exits zero in `2.74s`;
+  warning-free full-solution format exits zero in `64168ms`, and final
+  `git diff --check` passes. For QR7B1, the first Core compile failed only
+  because the relocated layer-reader delegate lacked the existing
+  `Framework.Sources.Reading` import. Adding that import was the sole
+  correction; the corrected Core, Unit, Integration, and EndToEnd Release
+  builds pass with zero warnings and errors. The exact References Unit
+  namespace passes `37/37`, the exact References Integration namespace passes
+  `21/21`, generated-serialization Integration passes `2/2`, and the exact
+  published References process class passes `12/12`, all with zero failures or
+  skips. Static inspection finds no service bag, obsolete component/namespace
+  reference, or hidden service field. Production and compile-required test
+  string-literal multisets are identical; finding, status, coverage, direction,
+  order, cancellation, failure, and nullability/result-shape audits are
+  unchanged. The QR7B2 finding factory and QR7B3 binder/selector files have no
+  diff. The controlling locked offline restore from a fresh empty source exits
+  zero in `2.54s`; warning-free full-solution format exits zero in `59171ms`,
+  and final `git diff --check` passes. QR7B2's first Core compile passes with
+  zero warnings and errors and requires no correction. Unit, Integration, and
+  EndToEnd Release builds also pass with zero warnings and errors. The exact
+  References Unit namespace passes `37/37`, the exact References Integration
+  namespace passes `21/21`, generated-serialization Integration passes `2/2`,
+  and the exact published References process class passes `12/12`, all with
+  zero failures or skips on their first runs. Static inspection finds exactly
+  eight typed finding-input constructions, nine `AddFinding` occurrences
+  including its definition, and twenty `AddEvent` occurrences including its
+  definition, proving seven direct calls plus the delegate and nineteen stable
+  event callers. Old/new production string literals are identical; candidate
+  dedup/order, selector validation, status override, direction, nullability,
+  append order, and exception semantics remain delegated unchanged to
+  `ReferencesFinding`. QR7B3 files have no diff. The controlling locked offline
+  restore from a fresh empty source exits zero in `2.46s`; warning-free
+  full-solution format exits zero in `61094ms`, and final `git diff --check`
+  passes. QR7B3's first Core compile passes with zero warnings and errors and
+  requires no correction. Unit, Integration, and EndToEnd Release builds also
+  pass with zero warnings and errors. The exact binding Unit class passes
+  `13/13`, the exact application Integration class passes `9/9`, and the exact
+  published References process class passes `12/12`, all with zero failures or
+  skips on their first runs. Static inspection confirms no postfix suppression
+  or nested cause conditional remains; missing evidence still precedes empty
+  evidence and retains both exact cause strings. Joint-null inspection proves
+  invalid-result formation, workspace, direction, source, and request order,
+  with the same workspace exception, nullable-value `InvalidOperationException`
+  message, and source-null `ArgumentNullException` parameter name. The
+  controlling locked offline restore from a fresh empty source exits zero in
+  `2.50s`; warning-free full-solution format exits zero in `61083ms`, and final
+  `git diff --check` passes. QR7C1's first Core compile failed only because the
+  moved paired-overwrite probe lacked the existing
+  `Framework.Sources.Models.Identity` import. Adding that import was the sole
+  correction; the corrected Core, Unit, Integration, and EndToEnd Release
+  builds pass with zero warnings and errors. The exact Find operation,
+  presentation-binding, binding, and query-parser Unit classes pass `32/32`;
+  the exact operation, source-universe, and application Integration classes
+  pass `31/31`; and the exact published Find process class passes `14/14`, all
+  with zero failures or skips. Static inspection finds no service bag or
+  obsolete helper, proves the operation's five cohesive dependencies and the
+  source resolver's four dependencies with `2/3/1/2` call surfaces, and
+  preserves boundary-to-result stage order, include-before-exclude probe order
+  and deduplication, cancellation/failure timing, coverage, nullability,
+  findings, status, and result shape. The binder's named queue choice preserves
+  predicate-token order, typed-value agreement, and both exact invariant
+  messages. Matcher, projection, and result-builder bodies have no QR7C1 diff.
+  The controlling locked offline restore from a fresh empty source exits zero
+  in `2.55s`; warning-free full-solution format exits zero in `63791ms`, and
+  final `git diff --check` passes. QR7C2A's first Core compile passes with zero
+  warnings and errors and requires no correction. Unit, Integration, and
+  EndToEnd Release builds also pass with zero warnings and errors. The exact
+  matcher and operation Unit classes pass `14/14`; the exact operation and
+  document-inspection Integration classes pass `10/10`; generated Find
+  serialization passes `2/2`; and the exact published Find process class passes
+  `14/14`, all with zero failures or skips on their first runs. Static
+  inspection proves byte-identical user-facing string and finding-code
+  multisets and preserves base-before-overwrite inspection, missing/body
+  finding formation, deduplication keys, finding order, coverage mapping/rank,
+  candidate-count coverage, description selection, and nullability/exception
+  behavior. The matcher is reduced from `704` to `523` lines over an `88`-line
+  typed layer-facts builder and `128`-line finding policy; both long layer
+  overloads, reference-coverage mutation, nested layer facts, and old policy
+  bodies are absent. Regional matching and source/result truth tables remain
+  behaviorally unchanged. The controlling locked offline restore from a fresh
+  empty source exits zero in `2.58s`; warning-free full-solution format exits
+  zero in `61056ms`, and final `git diff --check` passes. QR7C2B's first Core
+  compile failed only because the connected source matcher retained the moved
+  private evidence-candidate type name. Replacing that reference with the new
+  immutable `FindEvidenceCandidate` name was the sole correction; the corrected
+  Core, Unit, Integration, and EndToEnd Release builds pass with zero warnings
+  and errors. The exact matcher and operation Unit classes pass `14/14`; the
+  exact operation and document-inspection Integration classes pass `10/10`;
+  generated Find serialization passes `2/2`; and the exact published Find
+  process class passes `14/14`, all with zero failures or skips. Static
+  inspection proves byte-identical user-facing strings and finding codes and
+  preserves predicate/layer/region order, Document frontmatter-before-body
+  dispatch, unknown propagation, first-occurrence finding deduplication,
+  section ambiguity/missing precedence, ordinal-ignore-case comparison, UTF-8
+  containment and locations, evidence ordering, nullability, and exception
+  behavior. The matcher is now `151` lines over a `325`-line stateless typed
+  predicate matcher and `66`-line immutable predicate/evidence facts file; the
+  old `5/7/9/8/8` trains, reference-unknown mutation, regional bodies, and
+  nested predicate/evidence facts are absent. The controlling locked offline
+  restore from a fresh empty source exits zero in `2.52s`; warning-free
+  full-solution format exits zero in `62887ms`, and final `git diff --check`
+  passes. QR7C2C's first Core compile failed only because the bare-query branch
+  and later predicate branch used the same local coverage name across C# local
+  declaration scopes. Renaming the bare-query fact to `bareCoverage` was the
+  sole correction; the corrected Core, Unit, Integration, and EndToEnd Release
+  builds pass with zero warnings and errors. The exact matcher and operation
+  Unit classes pass `14/14`; the exact operation and document-inspection
+  Integration classes pass `10/10`; generated Find serialization passes `2/2`;
+  and the exact published Find process class passes `14/14`, all with zero
+  failures or skips. Static inspection proves byte-identical user-facing
+  strings and finding codes and preserves source grouping, layer-before-
+  predicate finding order, bare and All/Any truth tables, unknown and candidate
+  coverage, evidence order, matched-source filtering, ID/path ordering,
+  one-based result indices, nullability, and result shape. The public-local
+  parameterless matcher facade is `32` lines over a `95`-line source matcher,
+  `48`-line matching result builder, and `55`-line immutable source/result facts
+  file; no old source/result body or nested facts remain. The controlling
+  locked offline restore from a fresh empty source exits zero in `2.48s`;
+  warning-free full-solution format exits zero in `61718ms`, and final
+  `git diff --check` passes. QR7C3A's first Core compile failed on six missing
+  `FindSourceIdentity` references because the moved projection fact and source
+  resolver files lacked the existing Selection-model import. After that import
+  correction, the second Core compile failed because the projection facade had
+  lost its existing Shell status import. Restoring that import was the sole
+  second correction. The corrected Core, Unit, Integration, and EndToEnd
+  Release builds pass with zero warnings and errors. The exact projection and
+  operation Unit classes pass `14/14`; the exact operation and
+  document-inspection Integration classes pass `10/10`; generated Find
+  serialization passes `2/2`; and the exact published Find process class passes
+  `14/14`, all with zero failures or skips. Static inspection proves identical
+  user-facing strings and finding-code multisets and preserves source matching,
+  route selection, layer order, missing-section finding order and deduplication,
+  coverage, nullability, and result shape. The projection facade is reduced to
+  `361` lines over a `114`-line source resolver, `86`-line finding policy,
+  `28`-line immutable source-facts file, and `61`-line immutable build-facts
+  file; all moved source, route, layer, finding, rank, and overwrite-path bodies
+  are absent from the facade. The controlling locked offline restore from a
+  fresh empty source exits zero in `2.68s`; warning-free full-solution format
+  exits zero in `61072ms` (`61.53s` wall time), and final `git diff --check`
+  passes. QR7C3B's first Core compile passes with zero warnings and errors and
+  requires no correction. Unit, Integration, and EndToEnd Release builds also
+  pass with zero warnings and errors. The exact projection and operation Unit
+  classes pass `14/14`; the exact operation and document-inspection Integration
+  classes pass `10/10`; generated Find serialization passes `2/2`; and the
+  exact published Find process class passes `14/14`, all with zero failures or
+  skips. Static inspection proves identical user-facing string and finding-code
+  multisets, one-typed-input content call surfaces, and the absence of all moved
+  content bodies from the facade. Metadata-before-physical, layer and requested-
+  part ordering, missing-section timing, unavailable and incomplete-inspection
+  behavior, frontmatter/headings/body/section precedence, UTF-8 location
+  mapping, exception details, finding order, coverage, nullability, and result
+  shape remain unchanged. The complete projection facade is now `75` lines over
+  a `301`-line stateless content builder plus the closed C3A source resolver and
+  finding policy; the facade owns only requested-part, match, and stage
+  orchestration. The controlling locked offline restore from a fresh empty
+  source exits zero in `2.84s`; warning-free full-solution format exits zero in
+  `57054ms` (`57.50s` wall time), and final `git diff --check` passes. QR7C4A's
+  first Core compile failed only because the extracted match builder lacked the
+  existing Query-model import. After that correction, the second compile
+  exposed the still-protected inspected-count body's use of the former nested
+  `MatchKey`; restoring that same facade-local key as an explicit temporary C4C
+  seam was the sole second correction. The corrected Core, Unit, and
+  Integration Release builds pass with zero warnings and errors. The direct
+  result-builder and operation Unit classes pass `31/31`, and the application
+  Integration class passes `21/21`, with zero failures or skips. Static
+  inspection proves identical user-facing strings and finding codes and
+  preserves first ID/path occurrence, ordinal match order, one-based positions,
+  evidence order, requested projection filtering, overwrite-path normalization,
+  explicit/nearby/free metadata attachment, projection order, and exact
+  exceptions. All moved attachment bodies are absent from the facade, which is
+  reduced from `935` to `703` lines over a `246`-line match builder and
+  `8`-line immutable one-input fact. The controlling locked offline restore
+  from a fresh empty source exits zero in `2.94s`; warning-free full-solution
+  format exits zero in `63284ms` (`63.74s` wall time), and final
+  `git diff --check` passes. QR7C4B's first Core compile failed only because the
+  new typed input file lacked the existing Documents-model import. After that
+  correction, the second compile failed because the status policy lacked the
+  existing Result-model import that owns both coverage enums. Adding that import
+  was the sole second correction. The corrected Core, Unit, and Integration
+  Release builds pass with zero warnings and errors. The direct result-builder
+  and operation Unit classes pass `31/31`, and the application Integration class
+  passes `21/21`, with zero failures or skips. Static inspection proves
+  identical user-facing strings and finding-code multisets, the exact
+  reference-identity inspection deduplication, projection/stage/terminal append
+  and suppression order, terminal/status precedence, retained-status matrix,
+  synthesized status-finding conditions, final finding sort, and exceptions.
+  All moved finding/status bodies are absent from the facade, which is reduced
+  to `328` lines over a `354`-line finding builder, `65`-line status policy, and
+  `25`-line immutable typed-input file. The remaining coverage, universe,
+  inspected-count, next-action, conditional match-clear, and temporary
+  `MatchKey` seams are unchanged for C4C. The controlling locked offline restore
+  from a fresh empty source exits zero in `2.69s`; warning-free full-solution
+  format exits zero in `63244ms` (`63.67s` wall time), and final
+  `git diff --check` passes. QR7C4C's first Core compile failed only because the
+  expanded typed-input file lacked the existing Selection-model import for
+  `FindUniverse`. After that correction, the second compile failed because the
+  inspected-count builder lacked the existing Matching-model import for body-
+  tag availability. Adding that import was the sole second correction. The
+  corrected Core, Unit, Integration, and EndToEnd Release builds pass with zero
+  warnings and errors. The direct result-builder and operation Unit classes
+  pass `31/31`, and the application Integration class passes `21/21`. The final
+  projection and operation Unit classes pass `14/14`; operation and document-
+  inspection Integration pass `10/10`; generated Find serialization passes
+  `2/2`; and the published Find process class passes `14/14`, all with zero
+  failures or skips. Static inspection proves identical user-facing strings
+  and finding-code multisets and preserves matching/projection/overall coverage
+  truth tables, invalid/blocked match-clear timing, unresolved-selector and
+  universe nullability, inspected-source grouping and completeness, candidate
+  clamp, next-action selection, exact exceptions, and final result shape. The
+  temporary facade `MatchKey` and every moved C4C body are absent. The complete
+  result facade is now `69` lines over the closed `246`-line match builder,
+  `354`-line finding builder, `65`-line status policy, `124`-line coverage
+  builder, `59`-line universe builder, `90`-line inspected-count builder,
+  `28`-line next-action policy, and `50`-line typed-input file. The controlling
+  locked offline restore from a fresh empty source exits zero in `2.79s`;
+  warning-free full-solution format exits zero in `65128ms` (`65.58s` wall
+  time), and final `git diff --check` passes. The accepted composition decision
+  remains explicit concrete
+  construction rather than dependency injection: the removed Find service bag
+  was the violation, while the current typed `5/4/4` surfaces comply. DI is
+  reconsidered only if long-lived scope or three-family variability/churn
+  appears. Before QR7 closes, dense Find factory construction will be rewritten
+  with named local capabilities or private factory-local helpers and named
+  arguments; References, Index, Install, and Route List receive the same
+  readability inspection, but only comparable direct smells may change and
+  small factories are not rewritten mechanically. QR7D applies that decision:
+  Find and References now use named capability locals, named constructor
+  arguments, and factory-local boundary/path delegate helpers while preserving
+  their single physical resolver and shared delegate identities. Route List now
+  names its source, result, and coordinator graphs with named arguments. Index
+  and Install were inspected and intentionally remain unchanged because their
+  already named local composition has no comparable dense-construction smell.
+  The first Core build passes with zero warnings and errors. Unit and
+  Integration Release builds pass with zero warnings and errors; focused Find
+  Unit and Integration pass `31/31` and `21/21`, References pass `37/37` and
+  `21/21`, and Route List passes `122/122` and `88/88`. A preliminary exact
+  References Unit namespace selector ran `22/22` green but failed its `37`
+  minimum; the accepted wildcard namespace selector's `37/37` result is the
+  decisive evidence and both outcomes remain recorded. EndToEnd Release passes;
+  published Find, References, and Route List neighbor/process evidence passes
+  `14/14`, `12/12`, and `27/27`. Static inspection proves the same factory
+  instance counts, closure targets, Markdown parser sharing, catalogue/read
+  order, selection scope, operation dependency graph, and zero Index/Install
+  diff. The controlling locked offline restore from a fresh empty source exits
+  zero in `3.17s`; warning-free full-solution format exits zero in `70678ms`
+  (`71.24s` wall time), and final `git diff --check` passes. QR7 is closed.
+  The coherent Task 1 stages 1–7 snapshot is commit
+  `1f8708f6e3720b7f654cf4479714fe14de27f3eb`, tree
+  `306324e2ffe0238448a46a4545e7295cd9bc060e`, with subject
+  `Improved the CLI architecture`.
+  The QR7a physical-quality correction moves the twelve command-local context
+  declarations into their matching JSON renderers and deletes the twelve
+  standalone context files. Exact old/new declaration-block comparison proves
+  unchanged namespaces, attributes and order, source-generation options,
+  registered document types, generated properties, modifiers, context names,
+  and renderer call sites. The Framework ExtensionPackage, Lifecycle, and
+  Recovery contexts and Shell `CliJsonContext` have zero diff. The implementation
+  owner and independent reviewer each fully read and acknowledged `_csharp.md`,
+  `design.md`, and `style.md`; the reviewer reports no material finding and made
+  zero edits. Release solution build passes with zero warnings and errors;
+  serialization selections pass `18/18` for the exact Serialization namespace
+  and `19/19` for the wider `FullyQualifiedName~Serialization` selector. Complete
+  managed Unit, Integration, and EndToEnd pass `1494/1494`, `734/734`, and
+  `146/146`. Supported `linux-x64` Native AOT root publication produces the
+  expected x86-64 ELF and version `0.0.0-dev`; native EndToEnd passes `146/146`.
+  The first native Integration run passes `733/734` and fails only the already
+  recorded Route Init cancellation/residual race; its immediate unchanged rerun
+  passes `734/734`. Both outcomes remain controlling evidence and
+  `CLI-TEST-011` stays open. The controlling fresh-empty-source locked offline
+  restore exits zero in `3.05s`; warning-free full-solution format exits zero in
+  `69333ms` (`69.86s` wall time), final `git diff --check` passes, and QR7a is
+  closed.
+  `CLI-TEST-011` is now corrected. The frozen Red replaces the asynchronous
+  `FileSystemWatcher`/`ManualResetEventSlim` race with a synchronous observer
+  call and fails once, without retry, at the exact missing seam with `CS1501`,
+  zero warnings, and one error. Green adds one internal Route Init-local named
+  `RouteInitDirectoryCreationObserver`, threads its nullable/default value only
+  through `RouteInitOperationFactory` and `RouteInitApplicationOperation`, and
+  invokes it after a directory receipt is recorded and verified and before the
+  next planned effect. The production null path and every existing caller are
+  unchanged; Framework appliers, public surfaces, and other commands have zero
+  diff. The deterministic containing class passes `9/9`, and affected Route
+  Init application/Framework Integration passes `48/48`. Complete Release
+  build passes with zero warnings and errors; managed Unit, Integration, and
+  EndToEnd pass `1494/1494`, `734/734`, and `146/146` on their first corrected
+  runs. Fresh supported `linux-x64` Native AOT root publication produces an
+  x86-64 ELF and version `0.0.0-dev`; the first corrected native Integration
+  run passes `734/734`, and native EndToEnd passes `146/146`, with no retry.
+  The preserved pre-correction native `733/734` failure and immediate unchanged
+  `734/734` pass remain the defect receipts rather than being flattened into a
+  clean first run. Red and Green owners and the independent reviewer each fully
+  read and acknowledged `_csharp.md`, `design.md`, and `style.md`; review passes
+  with zero edits. The controlling fresh-empty-source locked offline restore
+  exits zero in `2.69s`; warning-free full-solution format exits zero in
+  `71441ms` (`71.94s` wall time), and final `git diff --check` passes. QR8 is
+  closed.
+  Phase 10 revalidated every accepted checkpoint finding against QR8 commit
+  `a81745df1126d9d869567d92f972166b944f050f`, tree
+  `040ef0b720632433861e3ce95bb5b6ef93e2223d`, before mutation. C1A is closed:
+  twenty Extension Inspect property-only formation records now live exactly
+  once in four `Models/Result` topic files, and `Shared/Result` retains no
+  top-level sealed record declarations. The subject/package facade is `81`
+  lines over `173`-line subject/source and `252`-line package/lifecycle
+  capabilities; the dependency/path facade is `34` lines over `211`-line
+  dependency/closure and `276`-line path-facts capabilities. Stable facade call
+  sites, public result/JSON/source-generation shape, finding and string order,
+  nullability, and all non-Extension behavior remain unchanged. The Extension
+  group Notes text is now one byte-equivalent raw multiline literal; event path
+  state uses named flat decisions; comparison mode and source failure mappings
+  enumerate every named value and throw for undefined values. The first
+  connected Core Release build passes with zero warnings and errors. Focused
+  Extension Inspect Unit, Integration, published process, and serialization
+  evidence passes `5/5`, `22/22`, `5/5`, and `4/4`; exact group-help Integration
+  and published evidence passes `4/4` and `4/4`. A preliminary direct artifact
+  invocation without the controlling `DOTNET_ROOT` exited `150` before app
+  execution; the corrected controlling invocation exits zero with exact Notes
+  output. Warning-free full-solution format exits zero after formatting `0` of
+  `1155` files in `62.948s`, and final diff checks pass. The mandatory bounded
+  follow-up exposes exactly two internal command-local mapping seams at their
+  existing semantic owners and adds two direct Unit facts. They exercise all
+  four named comparison modes across their complete, incomplete, and
+  not-started outcomes; all eleven named source-failure kinds across exact and
+  fallback outcomes; and one undefined value per mapping with exact
+  `ParamName` and `ActualValue`. Core and Unit Release builds pass with zero
+  warnings and errors. Direct mapping evidence passes `2/2`; affected Unit,
+  Integration, published process, and generated-serialization evidence passes
+  `5/5`, `22/22`, `5/5`, and `4/4`. A broad preliminary Unit selector passed
+  `12/12` before exact FQNs proved the intended `5/5`; a preliminary
+  serialization command targeted the Unit project and selected zero tests with
+  exit `8` before the required Integration selector passed `4/4`. Both operator
+  receipts remain explicit. Warning-free full-solution format exits zero after
+  formatting `0` of `1155` files in `60.120s`, and final diff checks pass.
+  C1B now provides one neutral Framework `SourceReadSession` fact and reader
+  for the identical Find and References catalogue, document-reader, and
+  default-contained-scope boundary. Each command factory shares one
+  `PhysicalPathResolver` instance with that reader and its command-local path
+  delegates; reference resolution, universe policy, findings, and result
+  formation remain local. The duplicated command contexts, readers, and
+  delegates are absent. References state-only inspection, resolution, and
+  result inputs now live under truthful Models topics, its markdown parser is
+  under Documents/Parsing, and `InspectLayersAsync` is reduced from eight
+  parameters to one immutable five-fact scan input plus the two mutable outputs
+  and explicit cancellation. Five References enum seams enumerate every named
+  value, nullable `null` where applicable, and undefined throws; direct session
+  and enum evidence passes `3/3` and `5/5`. Focused Find evidence passes
+  `31/31`, `21/21`, `14/14`, and `2/2`; References evidence passes stable
+  `37/37` Unit plus direct `5/5`, then `21/21`, `12/12`, and `2/2`. The first
+  connected Core checkpoint preserved one missed-rename `CS0103`; the first
+  Unit compile preserved one missing test import and one invalid test-only path
+  constant before the exact corrections. Full Release builds pass with zero
+  warnings and errors; managed Unit, Integration, and EndToEnd pass
+  `1504/1504`, `734/734`, and `146/146`. Supported `linux-x64` Native AOT CLI,
+  Integration, and EndToEnd publication succeeds; exact native Integration and
+  EndToEnd runs pass `734/734` and `146/146`. One preliminary passing native
+  Integration run reported a deprecated `--no-progress` option before the
+  exact no-argument run passed cleanly. Warning-free full-solution format exits
+  zero after formatting `0` of `1162` files in `55.339s`, and final static and
+  diff checks pass. C1C makes nine nearest-owner Find enum seams explicit and
+  exhaustive while retaining every prior guard, cause string, status/coverage
+  truth table, order, and valid result. Nine direct Unit facts cover every
+  named value, nullable `null` and guarded alternatives where applicable, and
+  one undefined input per seam with exact `ParamName` and `ActualValue`;
+  evidence passes `9/9`. The accepted Find test-structure candidate is
+  confirmed and corrected: immutable compiler-checked scenario facts replace
+  string discriminators for exactly eleven Universe and seven Matcher theory
+  rows, with fixture recreation, physical-probe counts, assertions, discovery
+  labels, and the total eighteen-row coverage unchanged. Exact changed theory,
+  two-class, and frozen Unit neighborhoods pass `18/18`, `20/20`, and `31/31`;
+  affected Integration, published process, and serialization evidence passes
+  `21/21`, `14/14`, and `2/2`. The preliminary broad Unit trait selector passes
+  `86/86` but is retained only as broader evidence, and a provisional
+  four-class Integration selection passes `20/20` without replacing the exact
+  `21/21` receipt. Core, Unit, and full-solution Release builds pass with zero
+  warnings and errors. Preserved operator/compile receipts cover a wrong SDK-9
+  root, one test import, typed-carrier accessibility/initializer shape, one
+  `IReadOnlyList.Length` use, and one wrong forecast solution path; none is a
+  behavioral failure. Warning-free full-solution format exits zero after
+  formatting `0` of `1163` files in `62.952s`, and final static and diff checks
+  pass. C1D makes all eleven accepted Route Init enum sites explicit and
+  exhaustive while preserving existing guards, effect/receipt order, cause
+  strings, findings, residual formation, nullability, and every valid-but-
+  incoherent tuple fallback. Eleven direct Unit facts cover each original site,
+  every named component value and valid tuple fallback, and undefined values
+  with exact exception message, `ParamName`, and `ActualValue`; evidence passes
+  `11/11`. Route Init Unit grows by exactly eleven and passes `34/34`; affected
+  Integration, published process, and serialization evidence passes `85/85`,
+  `6/6`, and `1/1`. Full Release builds pass with zero warnings and errors;
+  managed Unit, Integration, and EndToEnd pass the exact expected `1524/1524`,
+  `734/734`, and `146/146`. Selector-only preliminary receipts selected zero,
+  seven, or zero tests before the decisive MTP class, namespace-wildcard, and
+  trait selectors passed; no behavior test failed. Warning-free full-solution
+  format exits zero after formatting `0` of `1164` files in `54.88s`, only the
+  two intended valid-tuple policy fallbacks remain nonthrowing behind exhaustive
+  component validation, and final static and diff checks pass.
+  C1E closes the durable test-identity defect through exactly fifty-six
+  filesystem-safe file moves and matching declaration-only class renames from
+  temporary `*RedTests` identities to stable `*Tests` identities. Normalized
+  old/new blobs are identical except for their containing class names; active
+  old paths and symbols are zero, all fifty-six new classes discover, and no
+  project, namespace, directory, fixture, display name, trait, body, tier,
+  production path, or historical/working prose changes. Discovery remains
+  exactly `1502` Unit identities producing `1524` cases, `734` Integration
+  cases, and `146` EndToEnd cases. Exact post-rename FQN execution across all
+  fifty-six classes passes `633/633` with zero failures or skips. Release builds
+  pass with zero warnings and errors; the fresh-empty-source locked restore
+  exits zero in `2.45s`. A preliminary unsupported formatter `--nologo`
+  invocation exits `1` as an operator receipt; the supported warning-free
+  formatter exits zero with no changes in `54.36s`, and final static and diff
+  checks pass.
+  `QR-R1` reviewed exact candidate `e11b225e`, tree `a19fa69b`, and reported
+  one High evidence-tier finding, `QR-R1-001`: two `SourceReadSessionReader`
+  tests performed real temporary-workspace, catalogue, and filesystem work in
+  Unit. The bounded correction moves exactly those two unchanged test bodies,
+  display names, and `source-catalogue` features to mirrored
+  `Framework/Sources/Reading` Integration ownership, changing only the class,
+  namespace, and `Evidence` trait; the pure session-fact test remains in Unit,
+  and each tier retains the identical local workspace helper it needs. The
+  first Unit build preserved one missed required `Sources.Reading` import and
+  its cascading xUnit overload diagnostic; the exact import correction then
+  builds warning-free. Focused Unit and Integration pass `1/1` and `2/2`.
+  Discovery/execution parity is exact: Unit has `1500` identities and passes
+  `1522/1522`, Integration passes `736/736`, and EndToEnd passes `146/146`, with
+  zero failures or skips. Supported `linux-x64` Native AOT Integration publish
+  succeeds and the published runner passes `736/736`. The fresh-empty-source
+  locked restore exits zero in `2.49s`; warning-free format changes `0` of
+  `1165` files and exits zero in `52.81s`. The original reviewer narrowly
+  revalidated exact range `e11b225e..a4ccf19a`, closed `QR-R1-001`, found no
+  new material issue, and accepts corrected candidate `a4ccf19a`, tree
+  `97254e65`.
+- Blockers: None. Route Update remains gated only on local integration of the
+  accepted candidate.
+- Residual risk: The Route List, References, and Find portions of
+  `CLI-DESIGN-003`, `CLI-DESIGN-006`, and `CLI-DESIGN-007` are closed.
+  `CLI-TEST-011` is closed. C1A closed the Extension Inspect portions of
+  `ARCH-001`, `ARCH-002`, `CSHARP-001`, `CSHARP-002`, and `CSHARP-004`. C1B
+  closed accepted `ARCH-003`, References `ARCH-001`, `ARCH-004`, and its five
+  `CSHARP-004` sites. C1C closed the nine Find `CSHARP-004` sites and confirmed
+  and corrected `CLI-TEST-013`. C1D closed all eleven Route Init `CSHARP-004`
+  sites. C1E closed `CLI-TEST-012`. Grouped correction `QR-C1` is closed;
+  holistic final review `QR-R1` is consumed and accepted after `QR-R1-001`
+  correction and narrow revalidation. No material finding remains.
 
 ## Completion And Closeout
 
-The remediation Task is complete only when every actual finding has a verified
-behavior-preserving correction or an explicitly accepted disposition, both
-candidates have fresh proof or a recorded no-op disposition, and the final
-review finds no material regression. The owner must verify the exact changed
-paths, dependency direction, local/shared placement, canonical authority,
-truthful Unit/Integration classification, deterministic cancellation, durable
-test names, focused regressions, and the required managed and supported
-`linux-x64` Native AOT gates. The owner must update the affected Task,
-Checkpoint, Plan, and Overseer continuity records without hand-editing generated
-`Entries`, and must report any direct integration-neighborhood expansion.
+Complete. Every actual finding has a verified behavior-preserving correction or
+accepted disposition; both candidates have fresh proof; final review and its
+single bounded correction revalidation accept exact candidate `a4ccf19a`, tree
+`97254e65`. Exact paths, dependency direction, local/shared placement, canonical
+authority, evidence tiers, deterministic cancellation, durable names, managed
+regressions, and supported `linux-x64` Native AOT gates are recorded above. The
+remaining project action is local integration before Route Update.

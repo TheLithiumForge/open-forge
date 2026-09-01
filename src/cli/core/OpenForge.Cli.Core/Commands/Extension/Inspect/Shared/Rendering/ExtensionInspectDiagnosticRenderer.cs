@@ -1,5 +1,6 @@
 using System.Globalization;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
+using OpenForge.Cli.Core.Commands.Extension.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 
@@ -20,8 +21,8 @@ internal static class ExtensionInspectDiagnosticRenderer
             $"workspace={Value(result.Workspace?.LexicalRoot)}",
             $"subject={Value(result.Subject.Id)}",
             $"source={Value(result.Source.Identity)}",
-            $"source-state={ExtensionInspectJsonProjection.SourceState(result.Source.State)}",
-            $"lifecycle={ExtensionInspectJsonProjection.LifecycleTrust(result.Lifecycle.Trust)}",
+            $"source-state={ExtensionInspectWireVocabulary.SourceState(result.Source.State)}",
+            $"lifecycle={ExtensionInspectWireVocabulary.LifecycleTrust(result.Lifecycle.Trust)}",
             string.Create(CultureInfo.InvariantCulture, $"findings={result.Findings.Count}"),
         };
         foreach (var finding in result.Findings)
@@ -30,13 +31,13 @@ internal static class ExtensionInspectDiagnosticRenderer
                 $"finding={ExtensionInspectDefinitions.ReadFindingCode(finding.Code)}:subject={Value(finding.Subject)}:path={Value(finding.Path)}:cause={Value(finding.Cause)}");
         }
 
-        return ExtensionInspectTextEscaping.Clamp(string.Join("; ", values), MaximumDiagnosticLength);
+        return ExtensionTextEscaping.Clamp(string.Join("; ", values), MaximumDiagnosticLength);
     }
 
     private static string Value(string? value)
         => value is null
             ? "none"
-            : ExtensionInspectTextEscaping.Clamp(
-                ExtensionInspectTextEscaping.Escape(value),
-                ExtensionInspectTextEscaping.DiagnosticValueLimit);
+            : ExtensionTextEscaping.Clamp(
+                ExtensionTextEscaping.Escape(value),
+                ExtensionTextEscaping.DiagnosticValueLimit);
 }

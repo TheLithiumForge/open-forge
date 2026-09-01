@@ -48,9 +48,10 @@ The accepted dependency order is:
    squash-integrated at `19412d2`, exact tree `2bbba7e`, from reviewed candidate
    `392114a`. It supplies the `RouteCreateJsonContext` and Route-help predecessor
    slices. The separate [CLI Quality Remediation](tasks/cli-quality-remediation.md)
-   Task is Active before Route Update; it consumes/revalidates those slices, owns the residual
-   serializer/help work, and then completes before Route Update and the
-   remaining Route Mutation M2 leaves.
+   Task is Complete in accepted candidate `a4ccf19a`, tree `97254e65`, after
+   consuming/revalidating those slices and closing the residual findings. Local
+   integration is the only remaining gate before Route Update and the remaining
+   Route Mutation M2 leaves.
 4. Implement root Update M3 only after full M2 is complete. Preparation that is
    independent of unfinished behavior may proceed earlier in isolated lanes:
    scope discovery, contract and ownership audits, callable-surface analysis,
@@ -75,8 +76,8 @@ or a general template/scaffold system.
 | C2 | Root Install | Complete at local integration `c60fcb98a57e9ec80769b9cb1d399ce13a227863`; final candidate `11994e4d21ddc807b7480afc39ae3612e5a69a56`, exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed` |
 | C3 | Route Inspect interactive correction | Complete and squash-integrated at `fa3db1ee` with exact tree equality to final reviewed candidate `37c9360` |
 | C4 | Generic and Framework-aware Route Init | Complete and squash-integrated at `cc5085ce`; reviewed closeout `c580149`, tree `a1810c4` |
-| M2 preparation | Init/Create/Update/Move/Remove readiness | Complete on clean no-op branches from `33913dfe`; Route Create is Complete at `19412d2` and supplies the `RouteCreateJsonContext` and Route-help predecessor slices; the separate QR1 Task is Active before Route Update; leaf Tasks retain accepted preparation decisions and remaining authority gates |
-| Quality remediation | Accepted first-pass CLI architecture, design, authority, and test-evidence findings | Separate root Task, Active before Route Update; it consumes/revalidates the two predecessor slices and owns the residual serializer/help work plus findings 003–013 under the next Task Mastermind boundary |
+| M2 preparation | Init/Create/Update/Move/Remove readiness | Complete on clean no-op branches from `33913dfe`; Route Create is Complete at `19412d2`; accepted QR1 candidate `a4ccf19a`, tree `97254e65`, awaits local integration before Route Update; leaf Tasks retain accepted preparation decisions and remaining authority gates |
+| Quality remediation | Accepted first-pass CLI architecture, design, authority, and test-evidence findings | Complete in accepted candidate `a4ccf19a`, tree `97254e65`; all thirteen findings/candidates, final `QR-R1-001`, managed `1522/736/146`, native Integration `736/736`, format, diff, and Sol/xhigh review are closed |
 
 Each mutating lane owns a distinct worktree and feature branch. Shared root
 composition, serializer registration, public help, process evidence, Plan, and
@@ -153,7 +154,8 @@ Checkpoint are integration-owned unless a Task packet explicitly says otherwise.
 
 ## Open Decision Frontier
 
-No currently surfaced product decision blocks CLI Quality Remediation preflight.
+No currently surfaced product decision blocks integration of the accepted CLI
+Quality Remediation candidate or Route Update preparation.
 The exact public Root Install JSON result schema is accepted, implemented, and
 frozen, including fully present ordered facts and typed residual values `none`,
 `retained`, and `unknown`.
@@ -170,8 +172,9 @@ compatibility. The candidate owns the `RouteCreateJsonContext` predecessor
 slice, with no legacy JSON-context migration, and the Route-help predecessor
 slice. Restored format, managed `1507/720/146`, portable `linux-x64` Native AOT
 root plus `720/146`, isolated dogfood, and Sol/xhigh `RC-R2` evidence pass. The
-separate CLI Quality Remediation Task is Active, consumes/revalidates those
-slices, and precedes Route Update.
+separate CLI Quality Remediation Task is Complete in accepted candidate
+`a4ccf19a`, tree `97254e65`, and precedes Route Update only through its pending
+local integration.
 New architecture or product questions must still be returned to the maintainer
 before changing accepted meaning.
 

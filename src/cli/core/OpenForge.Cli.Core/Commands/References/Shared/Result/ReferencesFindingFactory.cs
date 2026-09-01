@@ -16,44 +16,33 @@ internal static class ReferencesFindingFactory
         ReferencesDirection? direction)
         => AddFinding(
             findings,
-            code,
-            direction,
-            null,
-            null,
-            null,
-            null,
-            null,
-            code == ReferencesFindingCode.Interrupted
+            new ReferencesFindingInput(
+                code,
+                code == ReferencesFindingCode.Interrupted
                 ? "The References operation was interrupted before all requested evidence was established."
-                : "The References operation failed before normal completion.");
+                : "The References operation failed before normal completion.")
+            {
+                Direction = direction,
+            });
 
     internal static void AddFinding(
         ICollection<ReferencesFinding> findings,
-        ReferencesFindingCode code,
-        ReferencesDirection? direction,
-        ReferencesSourceIdentity? source,
-        SourceLayerKind? layer,
-        string? path,
-        SourceLocation? location,
-        SourceLocation? destinationLocation,
-        string cause,
-        IEnumerable<ReferencesSourceIdentity>? candidates = null,
-        SourceUniverseSelectorRole? selectorRole = null,
-        int? selectorOccurrence = null,
-        string? subject = null,
-        CliSemanticStatus? statusOverride = null)
-        => findings.Add(new ReferencesFinding(
-            code,
-            direction,
-            subject,
-            cause,
-            selectorRole,
-            selectorOccurrence,
-            source,
-            layer,
-            path,
-            location,
-            destinationLocation,
-            candidates ?? [],
-            statusOverride));
+        ReferencesFindingInput input)
+    {
+        ArgumentNullException.ThrowIfNull(input);
+        findings.Add(new ReferencesFinding(
+            input.Code,
+            input.Direction,
+            input.Subject,
+            input.Cause,
+            input.SelectorRole,
+            input.SelectorOccurrence,
+            input.Source,
+            input.Layer,
+            input.Path,
+            input.Location,
+            input.DestinationLocation,
+            input.Candidates ?? [],
+            input.StatusOverride));
+    }
 }

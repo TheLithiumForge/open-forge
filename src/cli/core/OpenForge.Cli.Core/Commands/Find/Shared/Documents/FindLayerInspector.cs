@@ -68,13 +68,7 @@ internal sealed class FindLayerInspector(
     {
         var code = read.Verification.State switch
         {
-            SourceLayerVerificationState.Verified => read.Read?.State switch
-            {
-                FileReadState.Complete => (FindFindingCode?)null,
-                FileReadState.InvalidEncoding => FindFindingCode.InvalidEncoding,
-                FileReadState.Cancelled => FindFindingCode.Interrupted,
-                _ => FindFindingCode.InspectionUnavailable,
-            },
+            SourceLayerVerificationState.Verified => ReadFileFindingCode(read.Read?.State),
             SourceLayerVerificationState.Unsafe => FindFindingCode.CandidateUnsafe,
             SourceLayerVerificationState.Cancelled => FindFindingCode.Interrupted,
             SourceLayerVerificationState.Missing
@@ -91,6 +85,23 @@ internal sealed class FindLayerInspector(
             : null;
     }
 
+    internal static FindFindingCode? ReadFileFindingCode(FileReadState? state)
+        => state switch
+        {
+            FileReadState.Complete => null,
+            FileReadState.Missing => FindFindingCode.InspectionUnavailable,
+            FileReadState.InvalidEncoding => FindFindingCode.InvalidEncoding,
+            FileReadState.InvalidSyntax => FindFindingCode.InspectionUnavailable,
+            FileReadState.AccessDenied => FindFindingCode.InspectionUnavailable,
+            FileReadState.InputOutputFailure => FindFindingCode.InspectionUnavailable,
+            FileReadState.Cancelled => FindFindingCode.Interrupted,
+            null => FindFindingCode.InspectionUnavailable,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(state),
+                state,
+                "The file read state is not defined."),
+        };
+
     private static FindFinding CreateFinding(
         OpenForge.Cli.Core.Framework.Sources.Models.Inventory.SourceLogicalSource source,
         OpenForge.Cli.Core.Framework.Sources.Models.Inventory.SourceLayer layer,
@@ -99,18 +110,11 @@ internal sealed class FindLayerInspector(
         var sourceIdentity = new FindSourceIdentity(
             source.Identity.AutomaticId,
             source.Identity.CanonicalBasePath);
-        var cause = code switch
-        {
-            FindFindingCode.CandidateUnsafe => "The source layer left the established workspace boundary.",
-            FindFindingCode.InvalidEncoding => "The source layer is not valid UTF-8.",
-            FindFindingCode.Interrupted => "The source layer read was cancelled.",
-            _ => "The source layer could not be read or verified.",
-        };
         return new FindFinding(
             code,
             FindDefinitions.ReadFindingStatus(code),
             null,
-            cause,
+            ReadFindingCause(code),
             null,
             null,
             sourceIdentity,
@@ -120,4 +124,30 @@ internal sealed class FindLayerInspector(
             null,
             []);
     }
+
+    internal static string ReadFindingCause(FindFindingCode code)
+        => code switch
+        {
+            FindFindingCode.InvalidInput => "The source layer could not be read or verified.",
+            FindFindingCode.InvalidSelector => "The source layer could not be read or verified.",
+            FindFindingCode.WorkspaceUnavailable => "The source layer could not be read or verified.",
+            FindFindingCode.WorkspaceUnsafe => "The source layer could not be read or verified.",
+            FindFindingCode.SelectorAmbiguous => "The source layer could not be read or verified.",
+            FindFindingCode.SelectorUnsafe => "The source layer could not be read or verified.",
+            FindFindingCode.IdentityCollision => "The source layer could not be read or verified.",
+            FindFindingCode.CandidateUnsafe => "The source layer left the established workspace boundary.",
+            FindFindingCode.LayerUnresolved => "The source layer could not be read or verified.",
+            FindFindingCode.InspectionUnavailable => "The source layer could not be read or verified.",
+            FindFindingCode.InvalidEncoding => "The source layer is not valid UTF-8.",
+            FindFindingCode.FrontmatterUnavailable => "The source layer could not be read or verified.",
+            FindFindingCode.SectionAmbiguous => "The source layer could not be read or verified.",
+            FindFindingCode.ProjectionMissing => "The source layer could not be read or verified.",
+            FindFindingCode.ProjectionUnavailable => "The source layer could not be read or verified.",
+            FindFindingCode.OperationFailed => "The source layer could not be read or verified.",
+            FindFindingCode.Interrupted => "The source layer read was cancelled.",
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(code),
+                code,
+                "The Find finding code is not defined."),
+        };
 }

@@ -1,11 +1,13 @@
 using OpenForge.Cli.Core.Commands.References;
 using OpenForge.Cli.Core.Commands.References.Models.Request;
 using OpenForge.Cli.Core.Commands.References.Models.Occurrence;
-using OpenForge.Cli.Core.Commands.References.Models.Operation;
 using OpenForge.Cli.Core.Commands.References.Models.Result;
 using OpenForge.Cli.Core.Commands.References.Models.Selection;
 using OpenForge.Cli.Core.Commands.References.Models.Source;
+using OpenForge.Cli.Core.Commands.References.Shared.Documents.Parsing;
 using OpenForge.Cli.Core.Commands.References.Shared.Extraction;
+using OpenForge.Cli.Core.Commands.References.Shared.Inspection;
+using OpenForge.Cli.Core.Commands.References.Shared.Resolution;
 using OpenForge.Cli.Core.Commands.References.Shared.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
@@ -289,17 +291,20 @@ public sealed class ReferencesDomainModelTests
     {
         SourcePhysicalPathResolver sourcePathResolver = static (_, _) => throw new InvalidOperationException("not reached");
         var sourceReferenceResolver = new SourceReferenceResolver(sourcePathResolver);
-        var operation = new ReferencesOperation(new ReferencesOperationComponents
-        {
-            SourceBoundaryReader = static (_, _) => throw new InvalidOperationException("boundary failure"),
-            SourceReferenceResolver = sourceReferenceResolver,
-            UniverseFilterResolver = new SourceUniverseFilterResolver(sourceReferenceResolver),
-            LayerReader = static (_, _, _) => throw new InvalidOperationException("not reached"),
-            MarkdownParser = static _ => throw new InvalidOperationException("not reached"),
-            PhysicalPathResolver = static (_, _) => throw new InvalidOperationException("not reached"),
-            StrictUtf8Reader = static (_, _, _) => throw new InvalidOperationException("not reached"),
-            ResultBuilder = new ReferencesResultBuilder(),
-        });
+        ReferencesMarkdownParser markdownParser = static _ => throw new InvalidOperationException("not reached");
+        var operation = new ReferencesOperation(
+            new ReferencesSourceResolver(
+                static (_, _) => throw new InvalidOperationException("boundary failure"),
+                sourceReferenceResolver,
+                new SourceUniverseFilterResolver(sourceReferenceResolver)),
+            new ReferencesLayerInspector(
+                static (_, _, _) => throw new InvalidOperationException("not reached"),
+                markdownParser),
+            new ReferencesDestinationResolver(
+                static (_, _) => throw new InvalidOperationException("not reached"),
+                static (_, _, _) => throw new InvalidOperationException("not reached"),
+                markdownParser),
+            new ReferencesResultBuilder());
         var request = new ReferencesRequest(
             new CliWorkspace("/tmp/references-failed", "/tmp/references-failed", CliWorkspaceSelectionMethod.CurrentDirectory),
             "docs",

@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Extension.Inspect;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Result;
+using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 
@@ -11,6 +12,151 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Inspect;
 
 public sealed class ExtensionInspectContractTests
 {
+    [Fact(DisplayName = "Extension Inspect comparison state mapping is exhaustive over modes and side availability"), Trait("Feature", "extension-inspect"), Trait("Evidence", "Unit")]
+    public void ComparisonStateMappingIsExhaustive()
+    {
+        var available = ExtensionInspectComparisonSideState.Available;
+        var unavailable = ExtensionInspectComparisonSideState.Unavailable;
+
+        Assert.Equal(
+            ExtensionInspectComparisonState.NotStarted,
+            ExtensionInspectComparisonProjector.ReadComparisonState(
+                ExtensionInspectComparisonMode.None,
+                available,
+                available,
+                available));
+        Assert.Equal(
+            ExtensionInspectComparisonState.Complete,
+            ExtensionInspectComparisonProjector.ReadComparisonState(
+                ExtensionInspectComparisonMode.ThreeWay,
+                available,
+                available,
+                available));
+        Assert.Equal(
+            ExtensionInspectComparisonState.Incomplete,
+            ExtensionInspectComparisonProjector.ReadComparisonState(
+                ExtensionInspectComparisonMode.ThreeWay,
+                unavailable,
+                available,
+                available));
+        Assert.Equal(
+            ExtensionInspectComparisonState.Incomplete,
+            ExtensionInspectComparisonProjector.ReadComparisonState(
+                ExtensionInspectComparisonMode.ThreeWay,
+                available,
+                unavailable,
+                available));
+        Assert.Equal(
+            ExtensionInspectComparisonState.Incomplete,
+            ExtensionInspectComparisonProjector.ReadComparisonState(
+                ExtensionInspectComparisonMode.ThreeWay,
+                available,
+                available,
+                unavailable));
+        Assert.Equal(
+            ExtensionInspectComparisonState.Complete,
+            ExtensionInspectComparisonProjector.ReadComparisonState(
+                ExtensionInspectComparisonMode.InstalledOnly,
+                available,
+                available,
+                unavailable));
+        Assert.Equal(
+            ExtensionInspectComparisonState.Incomplete,
+            ExtensionInspectComparisonProjector.ReadComparisonState(
+                ExtensionInspectComparisonMode.InstalledOnly,
+                unavailable,
+                available,
+                available));
+        Assert.Equal(
+            ExtensionInspectComparisonState.Incomplete,
+            ExtensionInspectComparisonProjector.ReadComparisonState(
+                ExtensionInspectComparisonMode.InstalledOnly,
+                available,
+                unavailable,
+                available));
+        Assert.Equal(
+            ExtensionInspectComparisonState.Complete,
+            ExtensionInspectComparisonProjector.ReadComparisonState(
+                ExtensionInspectComparisonMode.AvailableOnly,
+                unavailable,
+                unavailable,
+                available));
+        Assert.Equal(
+            ExtensionInspectComparisonState.Incomplete,
+            ExtensionInspectComparisonProjector.ReadComparisonState(
+                ExtensionInspectComparisonMode.AvailableOnly,
+                available,
+                available,
+                unavailable));
+
+        var undefined = (ExtensionInspectComparisonMode)int.MaxValue;
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(
+            () => ExtensionInspectComparisonProjector.ReadComparisonState(
+                undefined,
+                available,
+                available,
+                available));
+        Assert.Equal("mode", exception.ParamName);
+        Assert.Equal(undefined, exception.ActualValue);
+    }
+
+    [Fact(DisplayName = "Extension Inspect source failure mapping is exhaustive over failure kinds and source states"), Trait("Feature", "extension-inspect"), Trait("Evidence", "Unit")]
+    public void SourceFailureFindingMappingIsExhaustive()
+    {
+        var fallbackFailureKinds = new[]
+        {
+            ExtensionSourceFailureKind.None,
+            ExtensionSourceFailureKind.Unavailable,
+            ExtensionSourceFailureKind.Invalid,
+            ExtensionSourceFailureKind.PackageUnavailable,
+        };
+        foreach (var failureKind in fallbackFailureKinds)
+        {
+            Assert.Equal(
+                ExtensionInspectFindingCode.SourceUnavailable,
+                ExtensionInspectPackageLifecycleBuilder.ReadSourceFailureFindingCode(
+                    failureKind,
+                    ExtensionSourceReadState.Missing));
+            Assert.Equal(
+                ExtensionInspectFindingCode.SourceUnavailable,
+                ExtensionInspectPackageLifecycleBuilder.ReadSourceFailureFindingCode(
+                    failureKind,
+                    ExtensionSourceReadState.Unavailable));
+            Assert.Equal(
+                ExtensionInspectFindingCode.SourceInvalid,
+                ExtensionInspectPackageLifecycleBuilder.ReadSourceFailureFindingCode(
+                    failureKind,
+                    ExtensionSourceReadState.Invalid));
+        }
+
+        var expected = new (ExtensionSourceFailureKind FailureKind, ExtensionInspectFindingCode Code)[]
+        {
+            (ExtensionSourceFailureKind.Overlap, ExtensionInspectFindingCode.SourceOverlap),
+            (ExtensionSourceFailureKind.Ambiguous, ExtensionInspectFindingCode.SourceAmbiguous),
+            (ExtensionSourceFailureKind.DependencyIncomplete, ExtensionInspectFindingCode.DependencyIncomplete),
+            (ExtensionSourceFailureKind.DependencyCycle, ExtensionInspectFindingCode.DependencyCycle),
+            (ExtensionSourceFailureKind.DependencyConflict, ExtensionInspectFindingCode.DependencyConflict),
+            (ExtensionSourceFailureKind.PackageInvalid, ExtensionInspectFindingCode.PackageInvalid),
+            (ExtensionSourceFailureKind.IdentityAmbiguous, ExtensionInspectFindingCode.IdentityAmbiguous),
+        };
+        foreach (var (failureKind, code) in expected)
+        {
+            Assert.Equal(
+                code,
+                ExtensionInspectPackageLifecycleBuilder.ReadSourceFailureFindingCode(
+                    failureKind,
+                    ExtensionSourceReadState.Invalid));
+        }
+
+        var undefined = (ExtensionSourceFailureKind)int.MaxValue;
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(
+            () => ExtensionInspectPackageLifecycleBuilder.ReadSourceFailureFindingCode(
+                undefined,
+                ExtensionSourceReadState.Invalid));
+        Assert.Equal("failureKind", exception.ParamName);
+        Assert.Equal(undefined, exception.ActualValue);
+    }
+
     [Fact(DisplayName = "Extension Inspect maps all 31 finding codes to the frozen wire code and status"), Trait("Feature", "extension-inspect"), Trait("Evidence", "Unit")]
     public void FindingVocabularyAndStatusesAreExhaustive()
     {

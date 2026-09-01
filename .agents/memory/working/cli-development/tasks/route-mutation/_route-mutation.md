@@ -13,10 +13,10 @@ open-forge:
   squash-integrated at `19412d2a562ae66d1b4642256d854438df75366f`, exact tree
   `2bbba7e216e75809e99213e0ccd155bffe720d1f`, from reviewed candidate
   `392114a03a3c1329eb3ce9410795dcd36419815c`. The separate [CLI Quality
-  Remediation](../cli-quality-remediation.md) root Task is Active next; it
-  consumes and revalidates Route Create's `RouteCreateJsonContext` and Route-help
-  predecessor slices before Route Update. Later Route Mutation commands remain
-  Planned in the accepted sequence.
+  Remediation](../cli-quality-remediation.md) root Task is Complete in accepted
+  candidate `a4ccf19a`, tree `97254e65`; local integration is the only remaining
+  gate before Route Update. Later Route Mutation commands remain Planned in the
+  accepted sequence.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Common prerequisites: Route discovery, `index`, and Mutation Foundation.
 - Intended-membership formation prerequisite: accepted feature
@@ -65,9 +65,9 @@ command Active or Ready.
 - [ ] [Implement route removal with dependency, reference, generated-navigation, and recovery integrity](route-remove.md) — Planned — Implementer: Not assigned
 
 CLI Quality Remediation is a separate root Task, not a child of Route Mutation.
-Route Create's protected integration owns its two predecessor slices; after
-Route Create integrates, the separate remediation Task consumes/revalidates
-those slices and completes its residual serializer/help work and batches 3–9
+Route Create's protected integration owns its two predecessor slices; the
+Complete remediation Task consumed/revalidated them and closed its residual
+serializer/help work and batches 3–9. Local remediation integration remains
 before Route Update begins.
 
 ## Preparation Closeout
@@ -83,13 +83,13 @@ projection at `89a35a7876f39123d9538bca24126ff7197b9459`.
 | --- | --- | --- |
 | Route Init | `codex/route-init` | Complete and squash-integrated at `cc5085ce`; reviewed closeout `c580149`, tree `a1810c4` |
 | Route Create | `codex/route-create` | Complete and squash-integrated at `19412d2`; reviewed candidate `392114a`, tree `2bbba7e`; it supplies the `RouteCreateJsonContext` and Route-help predecessor slices plus the maintainer-approved required effect-change correction |
-| Route Update | `codex/route-update` | Waiting for active CLI Quality Remediation completion and a closed callable/public-result boundary |
+| Route Update | `codex/route-update` | Waiting for local integration of accepted CLI Quality Remediation candidate `a4ccf19a`, tree `97254e65`, and a closed callable/public-result boundary |
 | Route Move | `codex/route-move` | Waiting for Route Update, its remaining proportionality/wire gate, and the accepted neutral-reference correction |
 | Route Remove | `codex/route-remove` | Waiting for Route Move and its command-local result freeze; its parser and canonical lifecycle prerequisites are integrated |
 
 The required behavior and integration order is root Install, Route Init, Route
 Create, Route Create protected integration with its two predecessor slices,
-separate CLI Quality Remediation completion, Route Update, Route Move, Route
+separate CLI Quality Remediation integration, Route Update, Route Move, Route
 Remove, then root Update M3. Independent preparation may overlap; dependent
 command behavior may not. Each leaf Task owns
 its expected paths, protected integration neighborhood, evidence boundary, and

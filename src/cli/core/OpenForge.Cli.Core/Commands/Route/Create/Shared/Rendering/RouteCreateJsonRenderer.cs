@@ -1,4 +1,6 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using OpenForge.Cli.Core.Commands.Route.Create.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
@@ -18,3 +20,10 @@ internal static class RouteCreateJsonRenderer
             RouteCreateJsonContext.Default.RouteCreateJsonDocument);
     }
 }
+
+[JsonSourceGenerationOptions(
+    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
+    WriteIndented = true,
+    GenerationMode = JsonSourceGenerationMode.Serialization)]
+[JsonSerializable(typeof(RouteCreateJsonDocument))]
+internal sealed partial class RouteCreateJsonContext : JsonSerializerContext;

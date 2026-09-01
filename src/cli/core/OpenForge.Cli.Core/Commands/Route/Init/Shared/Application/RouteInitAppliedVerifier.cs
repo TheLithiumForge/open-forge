@@ -206,15 +206,26 @@ internal sealed class RouteInitAppliedVerifier(
                 expectation,
                 cancellationToken)
             .ConfigureAwait(false);
-        return validation.State switch
+        return ReadExpectationBoundary(validation.State, validation.Cause);
+    }
+
+    internal static RouteInitAppliedVerification? ReadExpectationBoundary(
+        FileExpectationValidationState state,
+        string? cause)
+        => state switch
         {
             FileExpectationValidationState.Matched => null,
+            FileExpectationValidationState.Mismatched
+                or FileExpectationValidationState.Blocked
+                or FileExpectationValidationState.Failed => Failed(
+                    cause
+                        ?? "An applied Route Init postcondition changed before final verification."),
             FileExpectationValidationState.Cancelled => Cancelled(),
-            _ => Failed(
-                validation.Cause
-                    ?? "An applied Route Init postcondition changed before final verification."),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(state),
+                state,
+                "The file expectation validation state is not defined."),
         };
-    }
 
     private static bool Matches(PlannedFileChange expected, PlannedFileChange actual)
         => expected.Kind == actual.Kind

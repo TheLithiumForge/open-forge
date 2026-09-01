@@ -29,26 +29,39 @@ internal sealed class RouteInitMetadataResolver
             tags.Add(NeedsAuthoring);
         }
 
-        var responsibility = input.ResponsibilitySpecified && input.Responsibility?.Length > 0
-            ? input.Responsibility
-            : null;
+        string? responsibility = null;
+        if (input.ResponsibilitySpecified && input.Responsibility?.Length > 0)
+        {
+            responsibility = input.Responsibility;
+        }
+
+        var responsibilitySource = RouteInitResponsibilitySource.DefaultOmitted;
+        if (input.ResponsibilitySpecified)
+        {
+            responsibilitySource = responsibility is null
+                ? RouteInitResponsibilitySource.ExplicitOmitted
+                : RouteInitResponsibilitySource.Explicit;
+        }
+
+        var tagsSource = RouteInitTagsSource.Explicit;
+        if (!hasTags)
+        {
+            tagsSource = RouteInitTagsSource.Draft;
+        }
+        else if (!hasDescription)
+        {
+            tagsSource = RouteInitTagsSource.Mixed;
+        }
+
         return new RouteInitMetadata(
             input.Description ?? draft,
             hasDescription
                 ? RouteInitDescriptionSource.Explicit
                 : RouteInitDescriptionSource.Draft,
             responsibility,
-            input.ResponsibilitySpecified
-                ? responsibility is null
-                    ? RouteInitResponsibilitySource.ExplicitOmitted
-                    : RouteInitResponsibilitySource.Explicit
-                : RouteInitResponsibilitySource.DefaultOmitted,
+            responsibilitySource,
             tags,
-            !hasTags
-                ? RouteInitTagsSource.Draft
-                : !hasDescription
-                    ? RouteInitTagsSource.Mixed
-                    : RouteInitTagsSource.Explicit);
+            tagsSource);
     }
 
     private static RouteInitMetadata Draft(string description)

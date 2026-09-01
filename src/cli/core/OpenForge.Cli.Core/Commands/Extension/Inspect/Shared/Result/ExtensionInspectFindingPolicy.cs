@@ -4,16 +4,16 @@ using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Result;
 
-internal sealed partial class ExtensionInspectResultBuilder
+internal static class ExtensionInspectFindingPolicy
 {
-    private static void SortFindings(List<ExtensionInspectFinding> findings)
+    internal static void Sort(List<ExtensionInspectFinding> findings)
     {
-        var normalized = ExtensionInspectFindingPolicy.Normalize(findings);
+        var normalized = Normalize(findings);
         findings.Clear();
         findings.AddRange(normalized);
     }
 
-    private static CliSemanticStatus ReadStatus(IEnumerable<ExtensionInspectFinding> findings)
+    internal static CliSemanticStatus ReadStatus(IEnumerable<ExtensionInspectFinding> findings)
     {
         var statuses = findings.Select(finding => finding.Status).ToHashSet();
         foreach (var status in new[]
@@ -35,17 +35,14 @@ internal sealed partial class ExtensionInspectResultBuilder
         return CliSemanticStatus.Complete;
     }
 
-    private static void AddFinding(
+    internal static void Add(
         ICollection<ExtensionInspectFinding> findings,
         ExtensionInspectFindingInput input)
         => findings.Add(ExtensionInspectFindingFactory.Create(input));
 
-    private static ExtensionInspectFinding Finding(ExtensionInspectFindingInput input)
+    internal static ExtensionInspectFinding Create(ExtensionInspectFindingInput input)
         => ExtensionInspectFindingFactory.Create(input);
-}
 
-internal static class ExtensionInspectFindingPolicy
-{
     private const string InvalidFormationCause =
         "Extension Inspect result formation produced duplicate or invalid findings.";
 

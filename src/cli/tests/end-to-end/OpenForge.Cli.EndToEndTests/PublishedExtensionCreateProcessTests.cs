@@ -28,8 +28,13 @@ public sealed class PublishedExtensionCreateProcessTests
                 Assert.Contains("extension create  Create one local Extension package scaffold.", result.StandardOutput, StringComparison.Ordinal);
                 break;
             case "group":
-                Assert.Contains("create   Create one local catalogue scaffold without installing it.", result.StandardOutput, StringComparison.Ordinal);
-                Assert.DoesNotContain("create   Planned", result.StandardOutput, StringComparison.Ordinal);
+                Assert.Contains("list", result.StandardOutput, StringComparison.Ordinal);
+                Assert.Contains("inspect <stable-id>", result.StandardOutput, StringComparison.Ordinal);
+                Assert.Contains("create <stable-id>", result.StandardOutput, StringComparison.Ordinal);
+                Assert.Contains("The extension group performs no operation.", result.StandardOutput, StringComparison.Ordinal);
+                Assert.Contains("Planned but unavailable operations: install, update, and remove.", result.StandardOutput, StringComparison.Ordinal);
+                Assert.DoesNotContain("Operations:", result.StandardOutput, StringComparison.Ordinal);
+                Assert.DoesNotContain("Create one local catalogue scaffold without installing it.", result.StandardOutput, StringComparison.Ordinal);
                 break;
             case "leaf":
                 Assert.Contains("open-forge extension create [<stable-id>]", result.StandardOutput, StringComparison.Ordinal);

@@ -3,44 +3,40 @@ using OpenForge.Cli.Core.Commands.Find.Models.Request;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Commands.Find.Models.Selection;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
-using OpenForge.Cli.Core.Framework.Sources.Reading;
+using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 
 namespace OpenForge.Cli.Core.Commands.Find.Models.Operation;
 
-internal sealed record FindSourceReadContext
-{
-    internal FindSourceReadContext(
-        SourceCatalogue catalogue,
-        SourceDocumentReader documentReader,
-        SourceCatalogueSelectionScope? defaultSelectionScope)
-    {
-        ArgumentNullException.ThrowIfNull(catalogue);
-        ArgumentNullException.ThrowIfNull(documentReader);
-        Catalogue = catalogue;
-        DocumentReader = documentReader;
-        DefaultSelectionScope = defaultSelectionScope;
-    }
-
-    internal SourceCatalogue Catalogue { get; }
-
-    internal SourceDocumentReader DocumentReader { get; }
-
-    internal SourceCatalogueSelectionScope? DefaultSelectionScope { get; }
-}
-
 internal sealed record FindUniverseInput
 {
-    internal FindUniverseInput(FindRequest request, FindSourceReadContext sourceContext)
+    internal FindUniverseInput(FindRequest request, SourceReadSession sourceSession)
     {
         ArgumentNullException.ThrowIfNull(request);
-        ArgumentNullException.ThrowIfNull(sourceContext);
+        ArgumentNullException.ThrowIfNull(sourceSession);
         Request = request;
-        SourceContext = sourceContext;
+        SourceSession = sourceSession;
     }
 
     internal FindRequest Request { get; }
 
-    internal FindSourceReadContext SourceContext { get; }
+    internal SourceReadSession SourceSession { get; }
+}
+
+internal sealed record FindRouteFactsInput
+{
+    internal FindRouteFactsInput(
+        SourceReadSession sourceSession,
+        SourceCatalogueSelection selection)
+    {
+        ArgumentNullException.ThrowIfNull(sourceSession);
+        ArgumentNullException.ThrowIfNull(selection);
+        SourceSession = sourceSession;
+        Selection = selection;
+    }
+
+    internal SourceReadSession SourceSession { get; }
+
+    internal SourceCatalogueSelection Selection { get; }
 }
 
 internal sealed record FindUniverseResolution

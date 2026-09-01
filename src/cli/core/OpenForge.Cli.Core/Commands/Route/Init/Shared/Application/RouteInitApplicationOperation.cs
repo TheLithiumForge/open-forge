@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Lifecycle;
 using OpenForge.Cli.Core.Framework.Mutation.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
@@ -15,9 +16,12 @@ namespace OpenForge.Cli.Core.Commands.Route.Init.Shared.Application;
 
 internal sealed class RouteInitApplicationOperation
 {
-    internal RouteInitApplicationOperation(WorkspaceLockStoreRoot? lockStoreRoot)
+    internal RouteInitApplicationOperation(
+        WorkspaceLockStoreRoot? lockStoreRoot,
+        RouteInitDirectoryCreationObserver? directoryCreationObserver = null)
     {
         LockStoreRoot = lockStoreRoot;
+        _directoryCreationObserver = directoryCreationObserver;
         var physicalPathResolver = new PhysicalPathResolver();
         var validator = new FileExpectationValidator(physicalPathResolver);
         var revalidator = new MutationRevalidator(validator);
@@ -36,6 +40,7 @@ internal sealed class RouteInitApplicationOperation
     internal WorkspaceLockStoreRoot? LockStoreRoot { get; }
 
     private readonly WorkspaceLockManager _lockManager;
+    private readonly RouteInitDirectoryCreationObserver? _directoryCreationObserver;
     private readonly MutationRevalidator _revalidator;
     private readonly DirectoryCreationApplier _directoryApplier;
     private readonly FileChangeApplier _fileApplier;
@@ -180,7 +185,9 @@ internal sealed class RouteInitApplicationOperation
 
         if (!HasExactChecks(plan, validation))
         {
-            var (code, cause) = ReadValidationBoundary(validation);
+            var (code, cause) = ReadValidationBoundary(
+                validation.State,
+                validation.Cause);
             return Finish(
                 plan,
                 directories,
@@ -260,6 +267,8 @@ internal sealed class RouteInitApplicationOperation
                     code,
                     cause);
             }
+
+            _directoryCreationObserver?.Invoke(receipt);
         }
 
         foreach (var change in plan.FileChanges)
@@ -397,35 +406,46 @@ internal sealed class RouteInitApplicationOperation
             && check.Expectation == expectation
             && check.Actual?.Expectation == expectation;
 
-    private static (RouteInitFindingCode Code, string Cause) ReadValidationBoundary(
-        MutationValidationResult validation)
-        => validation.State switch
+    internal static (RouteInitFindingCode Code, string Cause) ReadValidationBoundary(
+        MutationValidationState state,
+        string? cause)
+        => state switch
         {
+            MutationValidationState.Valid => (
+                RouteInitFindingCode.OperationFailed,
+                "Route Init whole-plan revalidation returned incoherent checks."),
             MutationValidationState.Mismatched => (
                 RouteInitFindingCode.TargetChanged,
-                validation.Cause ?? "A planned Route Init target changed before application."),
+                cause ?? "A planned Route Init target changed before application."),
             MutationValidationState.Blocked => (
                 RouteInitFindingCode.TargetUnsafe,
-                validation.Cause ?? "A planned Route Init target became unsafe before application."),
+                cause ?? "A planned Route Init target became unsafe before application."),
             MutationValidationState.Failed => (
                 RouteInitFindingCode.InspectionIncomplete,
-                validation.Cause ?? "A planned Route Init target could not be revalidated completely."),
+                cause ?? "A planned Route Init target could not be revalidated completely."),
             MutationValidationState.Cancelled => (
                 RouteInitFindingCode.Interrupted,
                 "Route Init whole-plan revalidation was interrupted."),
-            _ => (
-                RouteInitFindingCode.OperationFailed,
-                "Route Init whole-plan revalidation returned incoherent checks."),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(state),
+                state,
+                "The mutation validation state is not defined."),
         };
 
-    private static RouteInitFindingCode ReadPreparationFinding(
+    internal static RouteInitFindingCode ReadPreparationFinding(
         RouteInitRecoveryPreparationState state)
         => state switch
         {
+            RouteInitRecoveryPreparationState.NotRequired
+                or RouteInitRecoveryPreparationState.Prepared
+                or RouteInitRecoveryPreparationState.Failed => RouteInitFindingCode.OperationFailed,
             RouteInitRecoveryPreparationState.Incomplete => RouteInitFindingCode.RecoveryUnavailable,
             RouteInitRecoveryPreparationState.Blocked => RouteInitFindingCode.RecoveryConflict,
             RouteInitRecoveryPreparationState.Cancelled => RouteInitFindingCode.Interrupted,
-            _ => RouteInitFindingCode.OperationFailed,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(state),
+                state,
+                "The Route Init recovery preparation state is not defined."),
         };
 
     private static bool IsVerified(DirectoryCreationReceipt receipt)
@@ -461,11 +481,45 @@ internal sealed class RouteInitApplicationOperation
             receipt.Cause ?? "A planned Route Init file could not be applied and verified.");
     }
 
-    private static RouteInitFindingCode ReadReceiptFinding(
+    internal static RouteInitFindingCode ReadReceiptFinding(
         FilesystemEffectState effect,
         FilesystemVerificationState verification,
         FilesystemNotStartedReason? reason)
-        => (effect, verification, reason) switch
+    {
+        _ = effect switch
+        {
+            FilesystemEffectState.NotStarted
+                or FilesystemEffectState.Applied
+                or FilesystemEffectState.Unknown => true,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(effect),
+                effect,
+                "The filesystem effect state is not defined."),
+        };
+        _ = verification switch
+        {
+            FilesystemVerificationState.NotStarted
+                or FilesystemVerificationState.Verified
+                or FilesystemVerificationState.Failed => true,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(verification),
+                verification,
+                "The filesystem verification state is not defined."),
+        };
+        _ = reason switch
+        {
+            null
+                or FilesystemNotStartedReason.Cancelled
+                or FilesystemNotStartedReason.TargetChanged
+                or FilesystemNotStartedReason.ApplicationFailed
+                or FilesystemNotStartedReason.ContractRejected => true,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(reason),
+                reason,
+                "The filesystem not-started reason is not defined."),
+        };
+
+        return (effect, verification, reason) switch
         {
             (FilesystemEffectState.NotStarted, FilesystemVerificationState.NotStarted,
                 FilesystemNotStartedReason.Cancelled) => RouteInitFindingCode.Interrupted,
@@ -481,13 +535,14 @@ internal sealed class RouteInitApplicationOperation
                 RouteInitFindingCode.WriteFailed,
             _ => RouteInitFindingCode.OperationFailed,
         };
+    }
 
     private static bool IsLifecyclePath(RouteInitPlan plan, string logicalPath)
         => string.Equals(
             Path.GetRelativePath(plan.Request.Workspace.LexicalRoot, logicalPath)
                 .Replace(Path.DirectorySeparatorChar, '/')
                 .Replace(Path.AltDirectorySeparatorChar, '/'),
-            ".agents/open-forge.lifecycle.json",
+            LifecycleSchema.RelativePath,
             OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
 
     private static RouteInitApplicationOutcome FinishPreparedFailure(

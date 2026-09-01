@@ -66,11 +66,20 @@ internal static class ReferencesSelectorOccurrenceReader
             missing = true;
         }
 
-        cause = missing
-            ? "Each include and exclude option requires one scalar source reference."
-            : values.Any(value => string.IsNullOrWhiteSpace(value.Value))
-                ? "Include and exclude values cannot be empty."
-                : null;
+        var hasEmptyValue = values.Any(value => string.IsNullOrWhiteSpace(value.Value));
+        if (missing)
+        {
+            cause = "Each include and exclude option requires one scalar source reference.";
+        }
+        else if (hasEmptyValue)
+        {
+            cause = "Include and exclude values cannot be empty.";
+        }
+        else
+        {
+            cause = null;
+        }
+
         return values;
     }
 

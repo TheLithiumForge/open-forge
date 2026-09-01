@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
+using OpenForge.Cli.Core.Commands.Extension.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 
@@ -25,10 +26,10 @@ internal static class ExtensionInspectHumanRenderer
         var builder = new StringBuilder();
         builder.AppendLine(
             CultureInfo.InvariantCulture,
-            $"Extension inspect: id={Value(result.Subject.Id)}; source={ExtensionInspectJsonProjection.SourceState(result.Source.State)}; comparison={ExtensionInspectJsonProjection.ComparisonMode(result.Comparison.Mode)}; status={HumanStatus(result.Status)}");
+            $"Extension inspect: id={Value(result.Subject.Id)}; source={ExtensionInspectWireVocabulary.SourceState(result.Source.State)}; comparison={ExtensionInspectWireVocabulary.ComparisonMode(result.Comparison.Mode)}; status={HumanStatus(result.Status)}");
         builder.AppendLine(
             CultureInfo.InvariantCulture,
-            $"Installed: {ExtensionInspectJsonProjection.InstalledState(result.Installed.State)}; available: {ExtensionInspectJsonProjection.AvailableState(result.Available.State)}; findings: {result.Findings.Count}");
+            $"Installed: {ExtensionInspectWireVocabulary.InstalledState(result.Installed.State)}; available: {ExtensionInspectWireVocabulary.AvailableState(result.Available.State)}; findings: {result.Findings.Count}");
         foreach (var finding in result.Findings)
         {
             builder.AppendLine($"Finding: {ExtensionInspectDefinitions.ReadFindingCode(finding.Code)}; {Escape(finding.Cause)}");
@@ -49,13 +50,13 @@ internal static class ExtensionInspectHumanRenderer
         builder.AppendLine($"Open Forge extension inspect {Value(result.Subject.Id)}");
         builder.AppendLine($"Workspace: {workspace}");
         builder.AppendLine(
-            $"Source: {Value(result.Source.Identity)}; {ExtensionInspectJsonProjection.SourceState(result.Source.State)}");
+            $"Source: {Value(result.Source.Identity)}; {ExtensionInspectWireVocabulary.SourceState(result.Source.State)}");
         builder.AppendLine(
-            $"Lifecycle: {ExtensionInspectJsonProjection.LifecycleReadState(result.Lifecycle.ReadState)}; trust: {ExtensionInspectJsonProjection.LifecycleTrust(result.Lifecycle.Trust)}; coverage: {ExtensionInspectJsonProjection.Coverage(result.Lifecycle.Coverage)}");
+            $"Lifecycle: {ExtensionInspectWireVocabulary.LifecycleReadState(result.Lifecycle.ReadState)}; trust: {ExtensionInspectWireVocabulary.LifecycleTrust(result.Lifecycle.Trust)}; coverage: {ExtensionInspectWireVocabulary.Coverage(result.Lifecycle.Coverage)}");
         builder.AppendLine(
-            $"Installed: {ExtensionInspectJsonProjection.InstalledState(result.Installed.State)}{InstalledVersion(result.Installed)}");
+            $"Installed: {ExtensionInspectWireVocabulary.InstalledState(result.Installed.State)}{InstalledVersion(result.Installed)}");
         builder.AppendLine(
-            $"Available: {ExtensionInspectJsonProjection.AvailableState(result.Available.State)}{AvailableVersion(result.Available)}");
+            $"Available: {ExtensionInspectWireVocabulary.AvailableState(result.Available.State)}{AvailableVersion(result.Available)}");
         builder.AppendLine(
             CultureInfo.InvariantCulture,
             $"Dependencies: {result.Dependencies.Declared.Count} declared; {result.Dependencies.Resolved.Count} package(s) in the resolved closure");
@@ -63,12 +64,12 @@ internal static class ExtensionInspectHumanRenderer
             CultureInfo.InvariantCulture,
             $"Paths: {result.PathFacts.Declared.Count} declared; {result.PathFacts.Current.Count} current; {result.Available.Package?.Payload.Count ?? 0} intended");
         builder.AppendLine(
-            $"Comparison: {ExtensionInspectJsonProjection.ComparisonMode(result.Comparison.Mode)}; {Count(result.Counts.ChangedPaths)} changed");
+            $"Comparison: {ExtensionInspectWireVocabulary.ComparisonMode(result.Comparison.Mode)}; {Count(result.Counts.ChangedPaths)} changed");
         builder.AppendLine("Generated: derived navigation, not package-owned authored bytes");
         foreach (var region in result.Generated.Regions)
         {
             builder.AppendLine(
-                $"Generated region: {Escape(region.Path)}; {ExtensionInspectJsonProjection.GeneratedRegionState(region.State)}");
+                $"Generated region: {Escape(region.Path)}; {ExtensionInspectWireVocabulary.GeneratedRegionState(region.State)}");
         }
 
         foreach (var finding in result.Findings)
@@ -103,5 +104,5 @@ internal static class ExtensionInspectHumanRenderer
             ? "requires attention"
             : CliStatusDefinitions.Read(status).MachineName;
 
-    private static string Escape(string value) => ExtensionInspectTextEscaping.Escape(value);
+    private static string Escape(string value) => ExtensionTextEscaping.Escape(value);
 }

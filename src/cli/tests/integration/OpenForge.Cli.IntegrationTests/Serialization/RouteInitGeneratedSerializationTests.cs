@@ -1,6 +1,6 @@
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Presentation;
-using OpenForge.Cli.Core.Shell.Serialization;
+using OpenForge.Cli.Core.Commands.Route.Init.Shared.Rendering;
 
 namespace OpenForge.Cli.IntegrationTests.Serialization;
 
@@ -50,7 +50,7 @@ public sealed class RouteInitGeneratedSerializationTests
             Next = null,
         };
 
-        var metadata = CliJsonContext.Default.RouteInitJsonDocument;
+        var metadata = RouteInitJsonContext.Default.RouteInitJsonDocument;
         Assert.Equal(typeof(RouteInitJsonDocument), metadata.Type);
         Assert.False(JsonSerializer.IsReflectionEnabledByDefault);
 

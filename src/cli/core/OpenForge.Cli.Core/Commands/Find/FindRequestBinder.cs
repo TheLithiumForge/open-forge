@@ -371,9 +371,8 @@ internal static class FindBindingSupport
                 continue;
             }
 
-            var value = kind == FindPredicateKind.Tag
-                ? tags.Count == 0 ? null : tags.Dequeue()
-                : headings.Count == 0 ? null : headings.Dequeue();
+            var queue = kind == FindPredicateKind.Tag ? tags : headings;
+            var value = queue.Count == 0 ? null : queue.Dequeue();
             if (value is null
                 || !string.Equals(value, result.Tokens[index + 1].Value, StringComparison.Ordinal))
             {

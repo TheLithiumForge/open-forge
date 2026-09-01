@@ -33,18 +33,17 @@ internal static class ReferencesSourceFindingMapper
 
             ReferencesFindingFactory.AddFinding(
                 findings,
-                code.Value,
-                ReferencesDirection.In,
-                null,
-                null,
-                selector.Reference.CanonicalPath,
-                null,
-                null,
-                selector.Reference.Cause ?? "The source selector could not be resolved.",
-                selector.Reference.Candidates.Select(ToSourceIdentity),
-                selector.Occurrence.Role,
-                selector.RoleOccurrence,
-                selector.Occurrence.Value);
+                new ReferencesFindingInput(
+                    code.Value,
+                    selector.Reference.Cause ?? "The source selector could not be resolved.")
+                {
+                    Direction = ReferencesDirection.In,
+                    Path = selector.Reference.CanonicalPath,
+                    Candidates = selector.Reference.Candidates.Select(ToSourceIdentity),
+                    SelectorRole = selector.Occurrence.Role,
+                    SelectorOccurrence = selector.RoleOccurrence,
+                    Subject = selector.Occurrence.Value,
+                });
         }
     }
 
@@ -69,16 +68,14 @@ internal static class ReferencesSourceFindingMapper
 
         ReferencesFindingFactory.AddFinding(
             findings,
-            code.Value,
-            null,
-            null,
-            null,
-            resolution.CanonicalPath,
-            null,
-            null,
-            resolution.Cause ?? "The source reference could not be resolved.",
-            resolution.Candidates.Select(ToSourceIdentity),
-            subject: resolution.Value);
+            new ReferencesFindingInput(
+                code.Value,
+                resolution.Cause ?? "The source reference could not be resolved.")
+            {
+                Path = resolution.CanonicalPath,
+                Candidates = resolution.Candidates.Select(ToSourceIdentity),
+                Subject = resolution.Value,
+            });
     }
 
     internal static void AddRootIssues(
@@ -87,13 +84,7 @@ internal static class ReferencesSourceFindingMapper
     {
         foreach (var issue in issues)
         {
-            var code = issue.Code switch
-            {
-                SourceCatalogueIssueCode.RootMissing => ReferencesFindingCode.WorkspaceUnavailable,
-                SourceCatalogueIssueCode.RootUnsafe => ReferencesFindingCode.WorkspaceUnsafe,
-                SourceCatalogueIssueCode.RootUnavailable => ReferencesFindingCode.WorkspaceUnavailable,
-                _ => (ReferencesFindingCode?)null,
-            };
+            var code = ReadRootIssueFindingCode(issue.Code);
             if (code is null)
             {
                 continue;
@@ -101,14 +92,12 @@ internal static class ReferencesSourceFindingMapper
 
             ReferencesFindingFactory.AddFinding(
                 findings,
-                code.Value,
-                null,
-                null,
-                null,
-                issue.AttemptedCanonicalPath,
-                null,
-                null,
-                "The selected workspace source root could not be established.");
+                new ReferencesFindingInput(
+                    code.Value,
+                    "The selected workspace source root could not be established.")
+                {
+                    Path = issue.AttemptedCanonicalPath,
+                });
         }
     }
 
@@ -131,17 +120,7 @@ internal static class ReferencesSourceFindingMapper
                 continue;
             }
 
-            var code = issue.Code switch
-            {
-                SourceCatalogueIssueCode.IdentityCollision or SourceCatalogueIssueCode.PhysicalAlias
-                    => ReferencesFindingCode.IdentityCollision,
-                SourceCatalogueIssueCode.CandidateUnsafe => ReferencesFindingCode.CandidateUnsafe,
-                SourceCatalogueIssueCode.CandidateUnavailable or SourceCatalogueIssueCode.DirectoryUnavailable
-                    => ReferencesFindingCode.InspectionUnavailable,
-                SourceCatalogueIssueCode.OrphanOverwrite => ReferencesFindingCode.LayerUnresolved,
-                SourceCatalogueIssueCode.IdentityUnavailable => ReferencesFindingCode.IdentityCollision,
-                _ => (ReferencesFindingCode?)null,
-            };
+            var code = ReadSourceCatalogueFindingCode(issue.Code);
             if (code is null)
             {
                 continue;
@@ -149,17 +128,56 @@ internal static class ReferencesSourceFindingMapper
 
             ReferencesFindingFactory.AddFinding(
                 findings,
-                code.Value,
-                direction,
-                source,
-                null,
-                issue.AttemptedCanonicalPath,
-                null,
-                null,
-                "The source catalogue retained an unresolved boundary.",
-                ReadIssueCandidates(catalogue, issue));
+                new ReferencesFindingInput(
+                    code.Value,
+                    "The source catalogue retained an unresolved boundary.")
+                {
+                    Direction = direction,
+                    Source = source,
+                    Path = issue.AttemptedCanonicalPath,
+                    Candidates = ReadIssueCandidates(catalogue, issue),
+                });
         }
     }
+
+    internal static ReferencesFindingCode? ReadRootIssueFindingCode(SourceCatalogueIssueCode code)
+        => code switch
+        {
+            SourceCatalogueIssueCode.RootMissing => ReferencesFindingCode.WorkspaceUnavailable,
+            SourceCatalogueIssueCode.RootUnsafe => ReferencesFindingCode.WorkspaceUnsafe,
+            SourceCatalogueIssueCode.RootUnavailable => ReferencesFindingCode.WorkspaceUnavailable,
+            SourceCatalogueIssueCode.DirectoryUnavailable => null,
+            SourceCatalogueIssueCode.CandidateUnsafe => null,
+            SourceCatalogueIssueCode.CandidateUnavailable => null,
+            SourceCatalogueIssueCode.IdentityUnavailable => null,
+            SourceCatalogueIssueCode.IdentityCollision => null,
+            SourceCatalogueIssueCode.PhysicalAlias => null,
+            SourceCatalogueIssueCode.OrphanOverwrite => null,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(code),
+                code,
+                "The source catalogue issue code is not defined."),
+        };
+
+    internal static ReferencesFindingCode? ReadSourceCatalogueFindingCode(
+        SourceCatalogueIssueCode code)
+        => code switch
+        {
+            SourceCatalogueIssueCode.RootMissing => null,
+            SourceCatalogueIssueCode.RootUnsafe => null,
+            SourceCatalogueIssueCode.RootUnavailable => null,
+            SourceCatalogueIssueCode.DirectoryUnavailable => ReferencesFindingCode.InspectionUnavailable,
+            SourceCatalogueIssueCode.CandidateUnsafe => ReferencesFindingCode.CandidateUnsafe,
+            SourceCatalogueIssueCode.CandidateUnavailable => ReferencesFindingCode.InspectionUnavailable,
+            SourceCatalogueIssueCode.IdentityUnavailable => ReferencesFindingCode.IdentityCollision,
+            SourceCatalogueIssueCode.IdentityCollision => ReferencesFindingCode.IdentityCollision,
+            SourceCatalogueIssueCode.PhysicalAlias => ReferencesFindingCode.IdentityCollision,
+            SourceCatalogueIssueCode.OrphanOverwrite => ReferencesFindingCode.LayerUnresolved,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(code),
+                code,
+                "The source catalogue issue code is not defined."),
+        };
 
     private static IReadOnlyList<ReferencesSourceIdentity> ReadIssueCandidates(
         SourceCatalogue catalogue,

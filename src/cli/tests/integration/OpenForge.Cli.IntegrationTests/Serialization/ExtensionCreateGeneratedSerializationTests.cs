@@ -8,7 +8,6 @@ using OpenForge.Cli.Core.Commands.Extension.Create.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Create.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Core.Shell.Serialization;
 
 namespace OpenForge.Cli.IntegrationTests.Serialization;
 
@@ -47,7 +46,7 @@ public sealed class ExtensionCreateGeneratedSerializationTests
 
         var json = JsonSerializer.Serialize(
             document,
-            CliJsonContext.Default.ExtensionCreateJsonDocument);
+            ExtensionCreateJsonContext.Default.ExtensionCreateJsonDocument);
 
         using var parsed = JsonDocument.Parse(json);
         var root = parsed.RootElement;
@@ -78,7 +77,7 @@ public sealed class ExtensionCreateGeneratedSerializationTests
         var rendered = ExtensionCreateJsonRenderer.Render(presentation);
         var expected = JsonSerializer.Serialize(
             ExtensionCreateJsonProjection.Create(result),
-            CliJsonContext.Default.ExtensionCreateJsonDocument);
+            ExtensionCreateJsonContext.Default.ExtensionCreateJsonDocument);
 
         Assert.Equal(expected, rendered);
         using var parsed = JsonDocument.Parse(rendered);

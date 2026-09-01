@@ -1,50 +1,56 @@
 using OpenForge.Cli.Core.Commands.References.Models.Inspection;
 using OpenForge.Cli.Core.Commands.References.Models.Occurrence;
-using OpenForge.Cli.Core.Commands.References.Models.Operation;
 using OpenForge.Cli.Core.Commands.References.Models.Request;
 using OpenForge.Cli.Core.Commands.References.Models.Result;
 using OpenForge.Cli.Core.Commands.References.Models.Source;
+using OpenForge.Cli.Core.Commands.References.Shared.Documents.Parsing;
 using OpenForge.Cli.Core.Commands.References.Shared.Extraction;
 using OpenForge.Cli.Core.Commands.References.Shared.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
+using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.References.Shared.Inspection;
 
-internal sealed record ReferencesLayerInspectionResult(
-    ReferencesInspectionFacts? Inspection,
-    bool Established,
-    bool Blocked,
-    bool Interrupted,
-    bool Failed);
+internal delegate ValueTask<SourceDocumentReadResult> ReferencesLayerReader(
+    SourceDocumentReader reader,
+    SourceLayer layer,
+    CancellationToken cancellationToken);
 
 internal sealed class ReferencesLayerInspector
 {
-    private readonly ReferencesOperationComponents _components;
+    private readonly ReferencesLayerReader _layerReader;
+    private readonly ReferencesMarkdownParser _markdownParser;
     private readonly ReferencesLinkExtractor _extractor = new();
 
-    internal ReferencesLayerInspector(ReferencesOperationComponents components)
+    internal ReferencesLayerInspector(
+        ReferencesLayerReader layerReader,
+        ReferencesMarkdownParser markdownParser)
     {
-        ArgumentNullException.ThrowIfNull(components);
-        _components = components;
+        ArgumentNullException.ThrowIfNull(layerReader);
+        ArgumentNullException.ThrowIfNull(markdownParser);
+        _layerReader = layerReader;
+        _markdownParser = markdownParser;
     }
 
     internal async ValueTask<ReferencesLayerInspectionResult> InspectAsync(
-        ReferencesSourceReadContext context,
-        SourceLogicalSource source,
-        SourceLayer layer,
-        ReferencesDirection direction,
-        ReferencesProvenance provenance,
+        ReferencesLayerInspectionInput input,
         ICollection<ReferencesFinding> findings,
         CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(input);
+        var session = input.Session;
+        var source = input.Source;
+        var layer = input.Layer;
+        var direction = input.Direction;
+        var provenance = input.Provenance;
         SourceDocumentReadResult read;
         try
         {
-            read = await _components.LayerReader(context.DocumentReader, layer, cancellationToken).ConfigureAwait(false);
+            read = await _layerReader(session.DocumentReader, layer, cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
@@ -57,6 +63,7 @@ internal sealed class ReferencesLayerInspector
             return new ReferencesLayerInspectionResult(null, false, false, false, true);
         }
 
+        var verificationFindingCode = ReadVerificationFindingCode(read.Verification.State);
         if (read.Verification.State == SourceLayerVerificationState.Cancelled
             || read.Read?.State == FileReadState.Cancelled)
         {
@@ -64,15 +71,9 @@ internal sealed class ReferencesLayerInspector
             return new ReferencesLayerInspectionResult(null, false, false, true, false);
         }
 
-        if (read.Verification.State != SourceLayerVerificationState.Verified)
+        if (verificationFindingCode is { } verificationCode)
         {
-            var code = read.Verification.State switch
-            {
-                SourceLayerVerificationState.Unsafe => ReferencesFindingCode.CandidateUnsafe,
-                SourceLayerVerificationState.Missing or SourceLayerVerificationState.Changed => ReferencesFindingCode.LayerUnresolved,
-                _ => ReferencesFindingCode.InspectionUnavailable,
-            };
-            AddLayerFinding(findings, code, direction, source, layer, "The source layer could not be verified.");
+            AddLayerFinding(findings, verificationCode, direction, source, layer, "The source layer could not be verified.");
             return new ReferencesLayerInspectionResult(null, false, false, false, false);
         }
 
@@ -90,12 +91,7 @@ internal sealed class ReferencesLayerInspector
 
         if (read.Read.State != FileReadState.Complete || read.Read.Value is null)
         {
-            var code = read.Read.State switch
-            {
-                FileReadState.InvalidEncoding => ReferencesFindingCode.InvalidEncoding,
-                FileReadState.Cancelled => ReferencesFindingCode.Interrupted,
-                _ => ReferencesFindingCode.InspectionUnavailable,
-            };
+            var code = ReadFileFindingCode(read.Read.State);
             if (code == ReferencesFindingCode.Interrupted)
             {
                 ReferencesFindingFactory.AddEvent(findings, code, direction);
@@ -109,7 +105,7 @@ internal sealed class ReferencesLayerInspector
         MarkdownDocumentFacts document;
         try
         {
-            document = _components.MarkdownParser(read.Read.Value);
+            document = _markdownParser(read.Read.Value);
         }
         catch (OperationCanceledException)
         {
@@ -155,15 +151,16 @@ internal sealed class ReferencesLayerInspector
         {
             ReferencesFindingFactory.AddFinding(
                 findings,
-                finding.Code,
-                direction,
-                ToSourceIdentity(source),
-                layer.Kind,
-                layer.CanonicalPath,
-                finding.Location,
-                finding.DestinationLocation,
-                finding.Cause,
-                statusOverride: finding.Blocked ? CliSemanticStatus.Blocked : null);
+                new ReferencesFindingInput(finding.Code, finding.Cause)
+                {
+                    Direction = direction,
+                    Source = ToSourceIdentity(source),
+                    Layer = layer.Kind,
+                    Path = layer.CanonicalPath,
+                    Location = finding.Location,
+                    DestinationLocation = finding.DestinationLocation,
+                    StatusOverride = finding.Blocked ? CliSemanticStatus.Blocked : null,
+                });
         }
 
         if (cancellationToken.IsCancellationRequested)
@@ -175,6 +172,38 @@ internal sealed class ReferencesLayerInspector
         return new ReferencesLayerInspectionResult(inspection, inspection.Established, inspection.Blocked, false, false);
     }
 
+    internal static ReferencesFindingCode? ReadVerificationFindingCode(
+        SourceLayerVerificationState state)
+        => state switch
+        {
+            SourceLayerVerificationState.Verified => null,
+            SourceLayerVerificationState.Missing => ReferencesFindingCode.LayerUnresolved,
+            SourceLayerVerificationState.Unsafe => ReferencesFindingCode.CandidateUnsafe,
+            SourceLayerVerificationState.Unavailable => ReferencesFindingCode.InspectionUnavailable,
+            SourceLayerVerificationState.Changed => ReferencesFindingCode.LayerUnresolved,
+            SourceLayerVerificationState.Cancelled => ReferencesFindingCode.Interrupted,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(state),
+                state,
+                "The source layer verification state is not defined."),
+        };
+
+    internal static ReferencesFindingCode ReadFileFindingCode(FileReadState state)
+        => state switch
+        {
+            FileReadState.Complete => ReferencesFindingCode.InspectionUnavailable,
+            FileReadState.Missing => ReferencesFindingCode.InspectionUnavailable,
+            FileReadState.InvalidEncoding => ReferencesFindingCode.InvalidEncoding,
+            FileReadState.InvalidSyntax => ReferencesFindingCode.InspectionUnavailable,
+            FileReadState.AccessDenied => ReferencesFindingCode.InspectionUnavailable,
+            FileReadState.InputOutputFailure => ReferencesFindingCode.InspectionUnavailable,
+            FileReadState.Cancelled => ReferencesFindingCode.Interrupted,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(state),
+                state,
+                "The file read state is not defined."),
+        };
+
     private static void AddLayerFinding(
         ICollection<ReferencesFinding> findings,
         ReferencesFindingCode code,
@@ -184,14 +213,13 @@ internal sealed class ReferencesLayerInspector
         string cause)
         => ReferencesFindingFactory.AddFinding(
             findings,
-            code,
-            direction,
-            ToSourceIdentity(source),
-            layer.Kind,
-            layer.CanonicalPath,
-            null,
-            null,
-            cause);
+            new ReferencesFindingInput(code, cause)
+            {
+                Direction = direction,
+                Source = ToSourceIdentity(source),
+                Layer = layer.Kind,
+                Path = layer.CanonicalPath,
+            });
 
     private static ReferencesSourceIdentity ToSourceIdentity(SourceLogicalSource source)
         => new(source.Identity.AutomaticId, source.Identity.CanonicalBasePath);

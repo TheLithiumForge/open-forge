@@ -34,11 +34,21 @@ internal sealed class ReferencesRequestBinder(
 
         var workspace = invocation.Workspace
             ?? throw new InvalidOperationException("A bound References invocation requires a selected workspace.");
+        if (input.Direction is not { } direction)
+        {
+            throw new InvalidOperationException("Nullable object must have a value.");
+        }
+
+        if (input.SourceReference is not { } sourceReference)
+        {
+            throw new ArgumentNullException(nameof(sourceReference));
+        }
+
         return CliBindResult<ReferencesRequest, ReferencesResult>.Bound(
             new ReferencesRequest(
                 workspace,
-                input.SourceReference!,
-                input.Direction!.Value,
+                sourceReference,
+                direction,
                 input.SelectorOccurrences));
     }
 }

@@ -1,8 +1,9 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
-using OpenForge.Cli.Core.Shell.Serialization;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Rendering;
 
@@ -16,6 +17,13 @@ internal static class RouteInspectJsonRenderer
         var document = RouteInspectJsonProjection.Create(presentation.Result);
         return JsonSerializer.Serialize(
             document,
-            CliJsonContext.Default.RouteInspectJsonDocument);
+            RouteInspectJsonContext.Default.RouteInspectJsonDocument);
     }
 }
+
+[JsonSourceGenerationOptions(
+    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
+    WriteIndented = true,
+    GenerationMode = JsonSourceGenerationMode.Serialization)]
+[JsonSerializable(typeof(RouteInspectJsonDocument))]
+internal sealed partial class RouteInspectJsonContext : JsonSerializerContext;

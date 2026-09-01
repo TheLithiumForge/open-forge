@@ -273,6 +273,13 @@ Any future trial should include explicit internal limits and stop conditions:
 - Keep one authoritative synthesis in the active Task or checkpoint. Retain
   an Emerging Observation only when recurrence, surprise, cost, or decision
   value justifies it.
+- Keep Mastermind-to-Overseer execution checkpoints extremely short:
+  `Done:` concrete change or evidence, `Now:` one active action, `Next:` one
+  boundary, and `Blocker:` only when a real blocker exists. Exact pre-edit
+  architecture packets may retain necessary detail, but should lead with the
+  same compact status shape. The QR execution showed that this makes latency
+  circuits and unfinished boundaries visible without repeatedly transmitting
+  the accepted context.
 
 ## Open Questions
 
