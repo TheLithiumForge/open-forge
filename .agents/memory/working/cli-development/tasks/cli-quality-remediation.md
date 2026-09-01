@@ -8,15 +8,15 @@ open-forge:
 
 ## Task State
 
-- State: Complete in reviewed candidate
+- State: Complete and squash-integrated at
+  `862cbf2a847b5adac77c6923e51f2c28c315415f`, exact tree
+  `571f104f507c3f72b7404cc0dacd86c818ec0a2e`, from reviewed implementation
   `a4ccf19a3489d06f20a0fd940219be1acb22646d`, exact tree
-  `97254e655f51ab421dacc8eff7a8c93f726f2625`, from accepted clean `develop`
-  baseline `868860e046c954b0f1d654833afb20052fda18dd`, exact tree
-  `0def1aba230d1871b89736d8921a23d776efc04a`. All thirteen findings and
+  `97254e655f51ab421dacc8eff7a8c93f726f2625`. All thirteen findings and
   candidates have accepted corrections or dispositions. Final Sol/xhigh
   `QR-R1` reported one evidence-tier regression, `QR-R1-001`; its bounded
-  correction and same-reviewer narrow revalidation are accepted. Local
-  integration remains the only gate before Route Update.
+  correction and same-reviewer narrow revalidation are accepted. Route Update
+  is the next sequential mutation Task.
 - Responsible role: Dedicated Overseer-managed Task Mastermind in isolated
   branch `codex/cli-quality-remediation`.
 - Task source: Maintainer-accepted synthesis of the strategic first-pass PR-style audit of the replacement CLI `development` branch.
@@ -832,8 +832,8 @@ No current document-only authoring action claims any executable evidence.
   stronger hostile-process guarantee; inability to prove a test tier; a
   destructive/remote/publishing action; or exhaustion of distinct correction
   strategies.
-- Next action: Integrate accepted candidate `a4ccf19a`, exact tree `97254e65`,
-  into local `develop`, then begin Route Update from that integrated baseline.
+- Next action: Begin Route Update from integrated baseline `862cbf2a`, exact
+  tree `571f104f`.
 
 ## Progress And Evidence
 
@@ -1570,8 +1570,8 @@ No current document-only authoring action claims any executable evidence.
   revalidated exact range `e11b225e..a4ccf19a`, closed `QR-R1-001`, found no
   new material issue, and accepts corrected candidate `a4ccf19a`, tree
   `97254e65`.
-- Blockers: None. Route Update remains gated only on local integration of the
-  accepted candidate.
+- Blockers: None. Route Update may begin from the integrated remediation
+  baseline.
 - Residual risk: The Route List, References, and Find portions of
   `CLI-DESIGN-003`, `CLI-DESIGN-006`, and `CLI-DESIGN-007` are closed.
   `CLI-TEST-011` is closed. C1A closed the Extension Inspect portions of
@@ -1587,8 +1587,9 @@ No current document-only authoring action claims any executable evidence.
 
 Complete. Every actual finding has a verified behavior-preserving correction or
 accepted disposition; both candidates have fresh proof; final review and its
-single bounded correction revalidation accept exact candidate `a4ccf19a`, tree
-`97254e65`. Exact paths, dependency direction, local/shared placement, canonical
+single bounded correction revalidation accept exact implementation candidate
+`a4ccf19a`, tree `97254e65`, now squash-integrated at `862cbf2a`, exact tree
+`571f104f`. Exact paths, dependency direction, local/shared placement, canonical
 authority, evidence tiers, deterministic cancellation, durable names, managed
-regressions, and supported `linux-x64` Native AOT gates are recorded above. The
-remaining project action is local integration before Route Update.
+regressions, and supported `linux-x64` Native AOT gates are recorded above.
+Route Update is next.

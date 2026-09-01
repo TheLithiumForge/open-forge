@@ -13,10 +13,10 @@ open-forge:
   squash-integrated at `19412d2a562ae66d1b4642256d854438df75366f`, exact tree
   `2bbba7e216e75809e99213e0ccd155bffe720d1f`, from reviewed candidate
   `392114a03a3c1329eb3ce9410795dcd36419815c`. The separate [CLI Quality
-  Remediation](../cli-quality-remediation.md) root Task is Complete in accepted
-  candidate `a4ccf19a`, tree `97254e65`; local integration is the only remaining
-  gate before Route Update. Later Route Mutation commands remain Planned in the
-  accepted sequence.
+  Remediation](../cli-quality-remediation.md) root Task is Complete and
+  squash-integrated at `862cbf2a`, exact tree `571f104f`, from accepted
+  implementation candidate `a4ccf19a`, tree `97254e65`. Route Update is next;
+  later Route Mutation commands remain Planned in the accepted sequence.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Common prerequisites: Route discovery, `index`, and Mutation Foundation.
 - Intended-membership formation prerequisite: accepted feature
@@ -83,7 +83,7 @@ projection at `89a35a7876f39123d9538bca24126ff7197b9459`.
 | --- | --- | --- |
 | Route Init | `codex/route-init` | Complete and squash-integrated at `cc5085ce`; reviewed closeout `c580149`, tree `a1810c4` |
 | Route Create | `codex/route-create` | Complete and squash-integrated at `19412d2`; reviewed candidate `392114a`, tree `2bbba7e`; it supplies the `RouteCreateJsonContext` and Route-help predecessor slices plus the maintainer-approved required effect-change correction |
-| Route Update | `codex/route-update` | Waiting for local integration of accepted CLI Quality Remediation candidate `a4ccf19a`, tree `97254e65`, and a closed callable/public-result boundary |
+| Route Update | `codex/route-update` | Next after CLI Quality Remediation integration `862cbf2a`, exact tree `571f104f`; still requires its closed callable/public-result boundary before behavior mutation |
 | Route Move | `codex/route-move` | Waiting for Route Update, its remaining proportionality/wire gate, and the accepted neutral-reference correction |
 | Route Remove | `codex/route-remove` | Waiting for Route Move and its command-local result freeze; its parser and canonical lifecycle prerequisites are integrated |
 
