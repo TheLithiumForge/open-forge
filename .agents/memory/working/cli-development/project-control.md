@@ -64,6 +64,12 @@ production architecture and structure, and test/evidence quality. Separate Blue
 and Purple phases and owners are skipped unless Preflight names a material risk
 that requires an independent protected boundary.
 
+Use Luna/max support workers liberally for disjoint menial or simple work, exact
+shell/build/test execution, artifact inspection, and large-output summarization.
+The Brilliant Implementer retains the coherent semantic mutation boundary;
+support workers receive literal bounded packets and do not choose product,
+architecture, test meaning, or commands.
+
 The Overseer evaluates this trial after each Task and cumulatively after Task 6.
 Record elapsed critical-path time, agent/context handoffs, correction cycles,
 accepted review findings by behavior, production-structure, and test/evidence

@@ -61,6 +61,12 @@ open-forge:
   to that Implementer for one grouped improvement pass. Do not create separate
   Blue or Purple phases or owners unless Preflight identifies a material risk
   that needs its own protected boundary.
+- Use Luna/max workers liberally for disjoint menial or simple work, exact
+  shell/build/test execution, artifact inspection, and large-output
+  summarization when their result is cheaper to verify than to produce in the
+  primary context. Keep semantic implementation ownership with the selected
+  Implementer; do not let a Luna worker infer product meaning, architecture,
+  test meaning, or commands, or mutate the same live boundary concurrently.
 - Treat missing optional child progress as `progress unobserved`. Inspect exposed runtime state, owned processes, Git state, and artifacts before classifying the condition. Do not cancel, duplicate, or take over work because a child is quiet. Transfer a mutable boundary only after the runtime confirms interruption, the exact owned mutating processes have stopped, commits and changed or untracked artifacts and partial evidence have been inspected, and the new owner receives an explicit ownership transfer.
 - When local commits are authorized, prefer useful coherent green commits that improve review, recovery, or integration. Do not require a commit per file, keystroke, or formal phase. Treat an authorized review commit as an immutable snapshot and require it to include every relevant formerly untracked artifact.
 - Default to no independent review for direct or routine work. Use one review when a named risk justifies it and add another only for a different named risk. Consolidate accepted findings into one repair pass and recheck only affected boundaries.

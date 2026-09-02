@@ -369,6 +369,11 @@ Do not absorb complete child transcripts, raw successful logs, repeated reposito
   boundaries, then keep one Brilliant Implementer through Green, verification,
   and the grouped post-review improvement pass. Let the Task Mastermind absorb
   ordinary Blue and Purple assessment into its closing whole-task review.
+- Use Luna/max workers liberally for disjoint menial or simple work, exact
+  shell/build/test activity, artifact inspection, and large-output
+  summarization. Keep semantic ownership with the selected Implementer, make
+  Luna packets literal and cheap to verify, and never assign them a concurrent
+  mutation over the same live boundary.
 - Default to one independent review only when a named risk justifies it.
 - Add a second reviewer only for a different named risk.
 - Consolidate accepted findings into one repair pass and recheck only affected boundaries.

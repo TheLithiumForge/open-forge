@@ -277,6 +277,12 @@ Keep behavior local until the project has accepted identical cross-task meaning.
   for Green, focused verification, and the later grouped improvement pass.
   Otherwise prefer one continuous Luna implementation owner when that matches
   the selected profile and risk.
+- Use Luna/max workers liberally for disjoint menial or simple implementation,
+  exact shell/build/test execution, artifact inspection, and large-output
+  summarization when their outputs are cheap to verify. Give each one a literal
+  bounded packet and keep it away from the Brilliant Implementer's live mutable
+  semantic boundary. Luna workers do not choose architecture, product meaning,
+  test meaning, or unprovided commands.
 - For routine build, test, AOT/tool execution, or literal evidence/output parsing, use a `Luna/max` worker under the `AGENTS.md` exact mechanical execution exception only for exact pre-decided mechanical commands and only when the assignment explicitly labels an eligible task `no Open Forge context` (or uses clear equivalent wording). That worker may skip `.agents/loader.md` and all Open Forge task/scoped materials for that task only; preserve the narrow allowance for already-authorized deterministic build, test, AOT, or tool execution artifacts, and require the exact evidence-only return. Semantic analysis, investigation requiring project meaning, design, implementation, integration, and code, product, architecture, acceptance, or correctness review always use normal Open Forge loading. Focused semantic review remains allowed as a `Luna/max` model allocation where accepted, but never qualifies for the no-context bypass. Keep this Task Mastermind's `Sol/xhigh` ownership for consequential work and preserve accepted focused `Luna/max` work.
 - Preserve separate Gray and Red owners when the streamlined assured capsule
   requires those frozen boundaries. Do not use separate Green, Blue, or Purple
