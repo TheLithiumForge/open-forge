@@ -145,7 +145,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:a4e8996cc2cb89e6aee07f8b17df6122a294a4938cb3ac03e952201c6ce9e571
+  content_hash: sha256:5610a9e0ef8d45c56d5d4060892e92bda19faab3bafc1ab30b4ea073ccc127e7
 - kind: project-relative
   target: codex
   value: .codex/agents/purple-evidence-improver.toml
@@ -208,7 +208,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:3f3d7c6775c729ad697fe69f84fd023d87992754a4675ccac77a26ee941bcebf
+  content_hash: sha256:a84a20b524e13dbb19d8c12dfb6777abc743e9653aff228c89cc52375f051bb4
 - kind: project-relative
   target: codex
   value: .codex/agents/test-evidence.toml
@@ -388,7 +388,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:821e347fe59b30c42cfcce4a9a3a5679cda50e86b89758732256bfe1d0b94bdb
+  content_hash: sha256:7e8a52bd7113fde344e4cb5e876319007f94a8fb98236259fa41408c2215819a
 - kind: project-relative
   target: opencode
   value: .opencode/agents/purple-evidence-improver.md
@@ -451,7 +451,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:e6bc361c2ecfc38182f9a5694346e82bae86857bb3a28ce129f4f6838899017c
+  content_hash: sha256:23e50412cdc73bcf45882eaf8045dc08b923959628bd794451b0090f2330c694
 - kind: project-relative
   target: opencode
   value: .opencode/agents/test-evidence.md
@@ -559,14 +559,14 @@ local_deployed_file_hashes:
   .codex/agents/implementer.toml: sha256:e131e7881785eb1245f8a7a6ae7f078216e88d37e3612457ea0682eb938c7c6a
   .codex/agents/improvement-reviewer.toml: sha256:1a51df63220604874d8c7f257d7405c9fc47754fa148d365044a27041b0510ab
   .codex/agents/integration-mastermind.toml: sha256:2cbf250e95dfd6dbb729fa8f687f0c0949674f82c6252c6112c18c53bada612c
-  .codex/agents/overseer.toml: sha256:a4e8996cc2cb89e6aee07f8b17df6122a294a4938cb3ac03e952201c6ce9e571
+  .codex/agents/overseer.toml: sha256:5610a9e0ef8d45c56d5d4060892e92bda19faab3bafc1ab30b4ea073ccc127e7
   .codex/agents/purple-evidence-improver.toml: sha256:1ebccb6ebd33952c8188a44b483bee2966442fabaa315fdb9f527cd00e7227bd
   .codex/agents/red-evidence-author.toml: sha256:68baed7911ccf07fa3f1d0066aa9800659593822977d89e53e57c35628ca825e
   .codex/agents/researcher.toml: sha256:c269aa23d2fd7dca8bd5038285875148eaa464c2c7294a104a27184934d52bea
   .codex/agents/review-mastermind.toml: sha256:63a328688c6781d1291571ca4f365f3af1339e4ed3bb41072e6eb29cc385f426
   .codex/agents/reviewer-terra.toml: sha256:a1919b79321f5714536728d51b3583127c98462142c7c09b1d10e9365d00d37c
   .codex/agents/reviewer.toml: sha256:0b28b439e6c15e6f533b7bbbf701de7513bb484aeb3937af1f94d7664d4a7731
-  .codex/agents/task-mastermind.toml: sha256:3f3d7c6775c729ad697fe69f84fd023d87992754a4675ccac77a26ee941bcebf
+  .codex/agents/task-mastermind.toml: sha256:a84a20b524e13dbb19d8c12dfb6777abc743e9653aff228c89cc52375f051bb4
   .codex/agents/test-evidence.toml: sha256:1498ff1bd21938a2cb65a3d03bfc4ddc9734c1b31f3f493a9b4f2553b07ef970
   .codex/agents/workspace-operator.toml: sha256:196ca92f9cd756ad66b16ecb8ab4555ee4585fb00ec995b6557be2108fd6087b
   .codex/agents/writer.toml: sha256:0099b7d20d1ae14228fcf6f5706c24cf6ef49cd1a6dc04d9a83516ddea2edf2a
@@ -586,14 +586,14 @@ local_deployed_file_hashes:
   .opencode/agents/implementer.md: sha256:51ea86b4f4044bb2cbd8e40efdc4710dcbfb85777eddadf102cb39c9965b11b8
   .opencode/agents/improvement-reviewer.md: sha256:04d7e96e0b9039626a56df355b136921367aa067b0c60a52bb271cc4b857999e
   .opencode/agents/integration-mastermind.md: sha256:4f74fb50e228251beb587dec9ee72708badfe920eb0a3d4dda00277989e3638d
-  .opencode/agents/overseer.md: sha256:821e347fe59b30c42cfcce4a9a3a5679cda50e86b89758732256bfe1d0b94bdb
+  .opencode/agents/overseer.md: sha256:7e8a52bd7113fde344e4cb5e876319007f94a8fb98236259fa41408c2215819a
   .opencode/agents/purple-evidence-improver.md: sha256:dcff0c0565e57c5c974fdf9604157c229fc78a619892fd5d37aa69b74567c68b
   .opencode/agents/red-evidence-author.md: sha256:659f51fd9fbdc6b8e790f11f1a1a776a3f06a095b5954a97906990d03c63d18f
   .opencode/agents/researcher.md: sha256:0d8e0b16996b7f2e467550f72d86ac79a66cff0bf92e0c5da24c00851224790e
   .opencode/agents/review-mastermind.md: sha256:d25cf91e66fb0548cf64845db0f63625f11e74d0b26afce68283e95e52b15746
   .opencode/agents/reviewer-terra.md: sha256:d72bb152b496aa7db77aa4f1fb3cd08e0c38b432de480f928614bab7866ffe9a
   .opencode/agents/reviewer.md: sha256:77a19258d81aab9012fc88adbcd3bfc146d25a8ced68c39b7d39feca56d8ed27
-  .opencode/agents/task-mastermind.md: sha256:e6bc361c2ecfc38182f9a5694346e82bae86857bb3a28ce129f4f6838899017c
+  .opencode/agents/task-mastermind.md: sha256:23e50412cdc73bcf45882eaf8045dc08b923959628bd794451b0090f2330c694
   .opencode/agents/test-evidence.md: sha256:e360acb192464997af604af5900cf1e2490910e914b2636b4bea9cec554df42a
   .opencode/agents/workspace-operator.md: sha256:480ffdfe4c73f4b10da87ad6ff775ad88b35f56bf2aecac845628f9f3ce4b790
   .opencode/agents/writer.md: sha256:ea0263f96fffbbfc24b6c1b99a04b544e54e66d7c959ffd938e27ff917b2fe4e

@@ -53,6 +53,14 @@ open-forge:
   any genuine contradiction upward.
 - Expected paths are forecasts. Protected paths and protected semantic authorities are hard boundaries. A directly required integration-neighborhood path may be added when accepted meaning already requires it and must be reported.
 - Keep one continuous implementation owner for a coherent tests, production, repair, and local-refactor loop. Use separate phase specialists only when an independently frozen boundary materially protects a named risk.
+- When a Task capsule selects the streamlined assured lane, the Task Mastermind
+  completes Preflight, preserves separate Gray and Red freeze boundaries, gives
+  one Brilliant Implementer continuous ownership of Green through focused
+  verification, performs one fresh whole-task review that includes the
+  production-structure and test/evidence lenses, and returns accepted findings
+  to that Implementer for one grouped improvement pass. Do not create separate
+  Blue or Purple phases or owners unless Preflight identifies a material risk
+  that needs its own protected boundary.
 - Treat missing optional child progress as `progress unobserved`. Inspect exposed runtime state, owned processes, Git state, and artifacts before classifying the condition. Do not cancel, duplicate, or take over work because a child is quiet. Transfer a mutable boundary only after the runtime confirms interruption, the exact owned mutating processes have stopped, commits and changed or untracked artifacts and partial evidence have been inspected, and the new owner receives an explicit ownership transfer.
 - When local commits are authorized, prefer useful coherent green commits that improve review, recovery, or integration. Do not require a commit per file, keystroke, or formal phase. Treat an authorized review commit as an immutable snapshot and require it to include every relevant formerly untracked artifact.
 - Default to no independent review for direct or routine work. Use one review when a named risk justifies it and add another only for a different named risk. Consolidate accepted findings into one repair pass and recheck only affected boundaries.

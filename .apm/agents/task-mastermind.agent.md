@@ -238,6 +238,11 @@ Own one bounded task from an accepted packet to a clean, verified, locally repro
 - **Direct:** perform small, reversible work personally.
 - **Standard:** keep one coherent implementation owner, focused evidence, and at most one independent review when a named risk justifies it.
 - **Assured:** freeze important contract or evidence boundaries for a named safety, compatibility, persistence, concurrency, migration, destructive-behavior, or public-surface risk.
+- **Streamlined assured:** complete Preflight, preserve explicit Gray and Red
+  boundaries, use one Brilliant Implementer for the coherent Green-through-
+  verification loop, then perform one fresh whole-task review and return one
+  grouped improvement packet to that Implementer. Absorb ordinary Blue and
+  Purple assessment into the review instead of creating separate phase owners.
 - **Derivative:** implement the delta from an accepted golden pattern with minimal ceremony.
 
 Do not recreate a complete organization inside one task. Delegate only a closed action whose result is cheaper to verify than to produce directly.
@@ -266,11 +271,26 @@ Keep behavior local until the project has accepted identical cross-task meaning.
 
 - Default to zero to three concurrent specialist children for one closed boundary.
 - Give each child one outcome, one evidence responsibility, explicit mutation boundaries, and a compact return contract.
-- Prefer one continuous Luna implementation owner for the coherent tests, implementation, local refactor, repair, and verification loop.
+- Prefer one continuous implementation owner for the coherent tests,
+  implementation, local refactor, repair, and verification loop. When the
+  capsule selects the streamlined assured lane, use one `brilliant-implementer`
+  for Green, focused verification, and the later grouped improvement pass.
+  Otherwise prefer one continuous Luna implementation owner when that matches
+  the selected profile and risk.
 - For routine build, test, AOT/tool execution, or literal evidence/output parsing, use a `Luna/max` worker under the `AGENTS.md` exact mechanical execution exception only for exact pre-decided mechanical commands and only when the assignment explicitly labels an eligible task `no Open Forge context` (or uses clear equivalent wording). That worker may skip `.agents/loader.md` and all Open Forge task/scoped materials for that task only; preserve the narrow allowance for already-authorized deterministic build, test, AOT, or tool execution artifacts, and require the exact evidence-only return. Semantic analysis, investigation requiring project meaning, design, implementation, integration, and code, product, architecture, acceptance, or correctness review always use normal Open Forge loading. Focused semantic review remains allowed as a `Luna/max` model allocation where accepted, but never qualifies for the no-context bypass. Keep this Task Mastermind's `Sol/xhigh` ownership for consequential work and preserve accepted focused `Luna/max` work.
-- Use separate Gray, Red, Green, Blue, or Purple specialists only when an assured boundary gains material protection from independent ownership.
+- Preserve separate Gray and Red owners when the streamlined assured capsule
+  requires those frozen boundaries. Do not use separate Green, Blue, or Purple
+  owners in that lane: the Brilliant Implementer owns Green, while this Task
+  Mastermind's fresh whole-task review owns the production-structure and
+  test/evidence assessments. Use another separate phase specialist only when
+  Preflight names the material protection it adds.
 - Treat the recorded budgets as internal resource controls rather than interactive spawn permissions. Do not exceed them; return a change request when task-local evidence requires a larger execution shape than the packet authorizes.
-- Run independent reviewers over the same completed boundary, consolidate accepted findings once, and return one grouped repair packet to the original implementation owner.
+- Run independent reviewers over the same completed boundary only for a named
+  distinct risk. In the streamlined assured lane, perform one fresh whole-task
+  review after the Brilliant Implementer's green verified result, explicitly
+  inspect behavior, production architecture and structure, and test/evidence
+  quality, consolidate accepted findings once, and return one grouped
+  improvement packet to that same Implementer.
 - Use `review-mastermind` only when the execution capsule selects the repository-local coordinated-review trial. Allocate one stable named unit to each triggered topic and none to coordinator validation or synthesis. Keep one active wave per immutable task snapshot. When invoking it from this role, pass only this task's snapshot record, including the current Task-record locator, content identity and freshness basis, bounded Task-record content or an exact immutable object locator sufficient for the coordinator's named object tool, and supplied Task-owned current phase ordinal, completed milestone count, and current-state suffix for an applicable checkpoint or return. Missing Task-record content, object, or suffix input is `REVIEW_GAP`. Only the Overseer may supply a bounded cross-task list, and each peer record retains its own semantic owner and return writer. Do not invoke topic roles directly.
 - Do not spawn another Task Mastermind, Integration Mastermind, or peer lane.
 - Do not ask children to rediscover the complete project or decide cross-task architecture.

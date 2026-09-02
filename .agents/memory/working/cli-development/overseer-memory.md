@@ -64,6 +64,14 @@ The accepted dependency order is:
    Gray/Red readiness, and worktree preparation. Parallelize those processes;
    do not implement dependent command behavior out of order.
 
+Tasks 4–6 are the accepted measured trial of the streamlined assured lane. Each
+keeps Task Mastermind Preflight plus explicit Gray and Red boundaries, uses one
+Brilliant Implementer for Green through verification and the grouped
+improvement pass, and folds ordinary Blue and Purple assessment into the Task
+Mastermind's closing whole-task review. Compare task yield after every trial
+using critical-path time, handoffs, correction cycles, dispositioned findings,
+gate failures, integration friction, and any post-acceptance miss.
+
 Root Install owns the closed base Framework installation. Route Init owns
 concrete scoped route initialization and reuses the neutral embedded payload and
 topology capability. It does not become `install --route`, a blueprint engine,

@@ -270,6 +270,32 @@ one coherent final review. Do not compare raw finding totals without their
 dispositions. Record enough context to distinguish a true review catch from an
 issue that the implementation owner would have found in the ordinary flow.
 
+## Simplified Assured Lane Comparison
+
+The maintainer selected a simpler comparison for CLI Tasks 4–6. It is not the
+continuous per-checkpoint overlay above. One Task Mastermind performs Preflight,
+Gray and Red retain explicit freeze boundaries, one Brilliant Implementer owns
+Green through focused verification, and the Task Mastermind then performs one
+fresh whole-task review that includes the ordinary Blue production-structure
+and Purple test/evidence questions. Accepted findings return to the same
+Implementer as one grouped improvement pass.
+
+Treat Route Move as the first observation, Route Remove as the second informed
+iteration, and Root Update as the cumulative check after Route Mutation. For
+each Task, record critical-path time, number of agent/context handoffs,
+correction loops, findings by responsibility and final disposition, full-gate
+regressions, integration friction, and any issue found only after acceptance.
+Compare those facts with the recent Route Create and Route Update flow. The
+useful question is whether continuity plus one broad Mastermind review preserves
+or improves quality with less coordination and rework; lower token use is
+secondary.
+
+Promote the simplified shape only if the trial keeps contract and evidence
+integrity, catches material structural and test-quality issues before
+integration, and reduces handoff or correction cost. Restore a separate Blue or
+Purple owner for a later Task only when Preflight names a material risk that the
+combined review cannot protect adequately.
+
 ## Circuit Breakers And Operating Limits
 
 Any future trial should include explicit internal limits and stop conditions:

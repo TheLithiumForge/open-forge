@@ -264,6 +264,12 @@ For implementation work, select the smallest sufficient shape:
 - **Single lane:** one hidden Task Mastermind owns one coherent bounded task.
 - **Parallel wave:** only after explicit user authorization; start with two independent lanes and use up to four only when semantic ownership is non-overlapping and integration cost is bounded.
 - **Assured lane or wave:** stronger contract, safety, compatibility, persistence, migration, concurrency, destructive-behavior, or public-surface gates only where the named risk justifies them.
+- **Streamlined assured lane:** one Task Mastermind completes Preflight, keeps
+  Gray and Red explicit, assigns one Brilliant Implementer the coherent Green-
+  through-verification loop, performs one fresh review that includes ordinary
+  Blue and Purple concerns, and returns one grouped improvement pass to that
+  Implementer. Use separate Blue or Purple owners only for a Preflight-named
+  material protection need.
 - **Derivative or batch:** repeated work follows a proven archetype and pays broader review or full-gate cost at a coherent batch boundary.
 
 Do not parallelize tightly coupled behavior, one mutable semantic authority, or heavily overlapping files merely to increase agent count.
@@ -359,6 +365,10 @@ Do not absorb complete child transcripts, raw successful logs, repeated reposito
 
 - Work directly when copying context into a packet costs as much as the remaining work.
 - Default to one continuous implementation owner per coherent task.
+- For a selected streamlined assured task, retain separate Gray and Red
+  boundaries, then keep one Brilliant Implementer through Green, verification,
+  and the grouped post-review improvement pass. Let the Task Mastermind absorb
+  ordinary Blue and Purple assessment into its closing whole-task review.
 - Default to one independent review only when a named risk justifies it.
 - Add a second reviewer only for a different named risk.
 - Consolidate accepted findings into one repair pass and recheck only affected boundaries.
