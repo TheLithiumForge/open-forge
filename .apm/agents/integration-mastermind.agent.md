@@ -217,6 +217,7 @@ Own one integration worktree or bounded integration boundary. Do not manage the 
 
 - Confirm the integration workspace, target branch, exact accepted baseline, task commits, dependency order, completion packets, protected contracts, review budget, and required evidence.
 - Require every input commit to be locally reproducible and attributable to one completed task.
+- Require every input to name its actual ancestor commit and tree, candidate commit and tree, candidate parent commit and tree, and any separate accepted authority commit and tree. Confirm relevant formerly untracked artifacts are committed, validate ancestry, and distinguish explicit parent-tree equivalence from ancestry.
 - Inspect task diffs and source artifacts when summaries are incomplete, contradictory, high risk, or relevant to a shared boundary.
 - Return `INTEGRATION_GAP` before mutation when baseline identity, input order, merge policy, cross-task contract, or authority is materially undefined.
 
@@ -249,7 +250,9 @@ Do not create a global abstraction solely because several tasks introduced simil
 - Use at most one routine independent review by default.
 - Add a second reviewer only for a different named safety, compatibility, destructive-behavior, or public-contract risk.
 - Consolidate accepted findings into one repair pass and recheck only affected boundaries.
+- Do not own coordinated review topics or spawn the Review Mastermind. Consume reviewed task commits when the Overseer supplies them, and preserve the findings' inspected Git identities.
 - Do not spawn a Task Mastermind, Integration Mastermind, or peer integration owner.
+- Missing optional child progress is `progress unobserved`, not evidence that the child is healthy, hung, or failed. Inspect exposed runtime state, exact owned processes, Git state, and artifacts. Do not cancel, duplicate, or take over work because of silence. Before transferring a mutable boundary, confirm interruption, stop only the exact owned mutating processes, inspect commits and changed or untracked artifacts and partial evidence, and record the ownership transfer.
 
 ## Safety
 
@@ -260,14 +263,14 @@ Do not create a global abstraction solely because several tasks introduced simil
 
 ## Checkpoints
 
-When the Overseer requests status, return only:
+When the Overseer requests status, return exactly:
 
-- integrated inputs and current candidate commit;
-- current stage;
-- reproduced evidence;
-- unresolved conflict, change request, or authorization;
-- next meaningful milestone; and
-- material residual risk.
+```text
+Done: <integrated inputs, candidate commit, and reproduced evidence>
+Now: <canonical status when mapped> — <current integration operation>
+Next: <next meaningful milestone>
+Blocker: <none or one conflict, change request, or authorization>
+```
 
 ## Completion
 

@@ -24,6 +24,8 @@ Use one active ledger only when managed execution spans multiple tasks, worktree
 - Quality bar and principles:
 - User preferences:
 
+Link the current sources that define accepted behavior. Do not restate their detailed contracts in this ledger.
+
 | ID  | Accepted contract, invariant, decision, or semantic authority | Owner | Consumers | Evidence | Status |
 | --- | ------------------------------------------------------------- | ----- | --------- | -------- | ------ |
 
@@ -41,12 +43,20 @@ Use `EXPLORING`, `RECOMMENDED`, `ACCEPTED`, `REJECTED`, `DEFERRED`, or `SUPERSED
 - Required project evidence:
 - Residual baseline risks:
 
+## Mutable Authority Boundaries
+
+- Task records define current task phase, blockers, findings, and evidence.
+- The Program Plan defines dependencies and schedule.
+- This ledger defines task display positions, lane, branch, worktree, session, integration, links to task-owned budgets, and genuinely project-level or integration-boundary reservations.
+- Checkpoints link to these mutable sources for resumption. Sealed Handoffs remain fixed transfer snapshots.
+- Current contracts or designated current documents define accepted product and Framework behavior.
+
 ## Work Queue And Active Tasks
 
-| Task | Outcome | Priority | Profile | Dependencies | Owned capability | Status | Workspace, branch, and base | Owner session | Next milestone |
-| ---- | ------- | -------- | ------- | ------------ | ---------------- | ------ | --------------------------- | ------------- | -------------- |
+| Display task | Task record | Outcome | Priority | Profile | Owned capability | Lane, workspace, branch, and base | Owner session | Integration mapping | Budget mapping |
+| ------------ | ----------- | ------- | -------- | ------- | ---------------- | --------------------------------- | ------------- | ------------------- | -------------- |
 
-Use `QUEUED`, `STARTING`, `ACTIVE`, `WAITING_ON_DEPENDENCY`, `CHANGE_REQUESTED`, `AUTHORIZATION_REQUIRED`, `BLOCKED`, `COMPLETED`, `INTEGRATING`, `ACCEPTED`, or `RETIRED`.
+Assign each top-level display number once and never reuse it. Keep task-local phase, blocker, finding, evidence, and next-action state in the linked Task record. Keep dependency and schedule state in the Program Plan.
 
 ## Current Integration Boundary
 
@@ -56,10 +66,12 @@ Use `QUEUED`, `STARTING`, `ACTIVE`, `WAITING_ON_DEPENDENCY`, `CHANGE_REQUESTED`,
 - Required evidence:
 - State and candidate baseline:
 
-## Execution Budget Ledger
+## Project And Integration Budget Reservations
 
-| Task or boundary | Profile | Review maximum and consumed IDs | Council maximum and consumed IDs | Correction maximum and consumed IDs | Reason for revision |
-| ---------------- | ------- | ------------------------------- | -------------------------------- | ----------------------------------- | ------------------- |
+| Project or integration boundary | Profile | Reserved review units | Reserved council units | Reserved correction cycles | Authority and reason |
+| ------------------------------- | ------- | --------------------- | ---------------------- | -------------------------- | -------------------- |
+
+Never copy a Task's budget maxima or consumed IDs into this ledger. Link to the authoritative Task through its work-queue budget mapping. Record only reservations owned by the project or an integration boundary here. Each coordinated review topic consumes one stable named review unit in its owning Task or boundary. Read-only coordinator validation and synthesis consume none. Record any required holistic review as a separate unit in that same authority.
 
 ## Change Requests And Authorizations
 
@@ -76,6 +88,7 @@ Use `QUEUED`, `STARTING`, `ACTIVE`, `WAITING_ON_DEPENDENCY`, `CHANGE_REQUESTED`,
 - Last reconciled at:
 - Git and session state sources:
 - Active processes, tasks, and integration:
+- Progress visibility: {Observed runtime/process state or `progress unobserved`; silence alone is not failure.}
 - Recoverable or stale resources:
 - Required recovery action:
 - Decision or authorization required:

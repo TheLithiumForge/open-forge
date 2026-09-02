@@ -23,13 +23,14 @@ Use direct or sequential execution when parallel work was not requested, the wor
 7. **Preserve implementation continuity.** Keep one implementation owner through tests, production, repair, local refactor, and focused verification unless an assured boundary requires independent ownership.
 8. **Monitor durable state.** Track task checkpoint, Git identity, blockers, change requests, authorizations, and next milestone without copying complete transcripts.
 9. **Resolve project discoveries once.** A task returns a project change request before changing shared meaning or another lane's assumptions. Resolve it once and invalidate only affected packets.
-10. **Complete tasks locally.** Require focused evidence, clean local Git state, coherent commits, and compact completion packets. Tasks do not push or integrate themselves.
-11. **Integrate one boundary.** Combine completed task commits in dependency order through the Integration Mastermind or a small direct integration.
-12. **Reach green mechanically.** Resolve textual and direct conflicts while preserving accepted behavior and traceability. Reproduce focused evidence after each input.
-13. **Converge semantically.** After green, generalize proven identical meaning, share neutral mechanism where policy differs, and leave coincidental similarity local.
-14. **Gate proportionately.** Run affected integration, public, generated-output, compatibility, and full evidence appropriate to risk. Use independent review only for a named risk, followed by one grouped repair pass.
-15. **Advance the baseline.** Record the accepted commit, update affected project authority, retire internal resources safely, and start newly unblocked work from the new baseline.
-16. **Report one result.** State delivered outcomes, decisive evidence, material residual risk, remaining work, and the next meaningful action without exposing routine orchestration ceremony.
+10. **Complete tasks locally.** Require canonical execution receipts, clean local Git state, coherent commits containing every relevant formerly untracked artifact, and compact completion packets. Tasks do not push or integrate themselves.
+11. **Review task inputs when selected.** Use the ordinary review path by default. For an explicitly budgeted coordinated pass, give one read-only Review Mastermind a bounded list of independently owned snapshot records across exact task commits from several worktrees. Each record retains its semantic owner, display and lane, original return writer, lineage, changed and formerly untracked paths, contracts, protected paths, non-goals, receipts, and topic units, prefixes, and routing. The coordinator validates each record independently, preserves its actual ancestor, candidate, candidate parent, and separate authority commits and trees, validates ancestry, keeps at most one wave per task snapshot, and joins returns by snapshot and writer. It never treats a branch or worktree as the reviewed snapshot or gives one Task Mastermind authority over peer semantics.
+12. **Integrate one boundary.** Combine completed task commits in dependency order through the Integration Mastermind or a small direct integration. The Integration Mastermind does not own review topics.
+13. **Reach green mechanically.** Resolve textual and direct conflicts while preserving accepted behavior and traceability. Reproduce focused evidence after each input.
+14. **Converge semantically.** After green, generalize proven identical meaning, share neutral mechanism where policy differs, and leave coincidental similarity local.
+15. **Gate proportionately.** Run affected integration, public, generated-output, compatibility, and full evidence appropriate to risk. Use independent review only for a named risk, followed by one grouped repair pass.
+16. **Advance the baseline.** Record the accepted commit, update affected project authority, retire internal resources safely, and start newly unblocked work from the new baseline.
+17. **Report one result.** State delivered outcomes, decisive evidence, material residual risk, remaining work, and the next meaningful action without exposing routine orchestration ceremony.
 
 ## Completion
 

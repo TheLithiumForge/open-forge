@@ -13,9 +13,13 @@ Use this Template only when the current request or external task source cannot p
 ## Task State
 
 - State: {Local state vocabulary.}
+- Display mapping: {Stable `Task X/Y “<actual task name>”`; use this task's actual name and keep optional local letter labels separate.}
+- Current phase and milestone: {Numeric progress for `phase A/B` and `milestone C/D`, with fixed denominators for the accepted horizon.}
 - Responsible person or role: {Accountable owner.}
 - Task source: {This file or external system.}
 - Last updated: {Date or timestamp when freshness matters.}
+
+This Task is the mutable source for its current phase, blockers, findings, evidence, and task-level budget maxima and consumed IDs. A linked Plan defines dependencies and schedule. A project control ledger defines lane, worktree, session, and integration mappings, links to this task-level budget authority, and records only project or integration reservations it owns. A Checkpoint links to these sources for resumption, and a sealed Handoff remains historical.
 
 ## Problem And Expected Outcome
 
@@ -85,7 +89,7 @@ Use this Template only when the current request or external task source cannot p
 
 - Current owner: {Primary or delegated owner.}
 - Current boundary: {Planning, contract, Red, implementation, review, correction, acceptance, or local vocabulary.}
-- Dependencies: {Inputs and predecessor outputs.}
+- Dependency source: {Link to the Plan that defines dependencies and schedule, or `None`.}
 - Focused evidence: {Commands or inspections.}
 - Integration or full gate: {Boundary and commands.}
 - Review budget: {Explicit maximum; name each lens and consumption ID.}
@@ -94,18 +98,24 @@ Use this Template only when the current request or external task source cannot p
 - Stop conditions: {Plan gap, protected path, safety, external effect, or invalid assumption.}
 - Next action: {Exact next useful action.}
 
+When coordinated topic review is selected, name one stable review-budget unit per topic. Coordinator validation and synthesis consume no unit. Keep at most one active wave for one immutable task snapshot, and record any separately required fresh holistic review as its own unit.
+
 ## Findings And Corrections
 
-| ID   | Severity               | Finding                         | Disposition                                                        | Owner   | Recheck evidence   |
-| ---- | ---------------------- | ------------------------------- | ------------------------------------------------------------------ | ------- | ------------------ |
-| {R1} | {Blocking or material} | {Concise evidence-backed issue} | {Accepted, rejected, duplicate, preference, false positive, fixed} | {Owner} | {Targeted recheck} |
+| ID   | Severity               | Finding                         | Disposition                                                                     | Owner   | Recheck evidence   |
+| ---- | ---------------------- | ------------------------------- | ------------------------------------------------------------------------------- | ------- | ------------------ |
+| {R1} | {Blocking or material} | {Concise evidence-backed issue} | {Accepted, rejected, duplicate, preference, false-positive, fixed, or deferred} | {Owner} | {Targeted recheck} |
 
 ## Progress And Evidence
 
 - Current result: {What changed or was learned.}
-- Evidence: {Links or concise results.}
+- Evidence: {Links or concise results and canonical receipt IDs.}
 - Blockers: {Current blockers or `None`.}
 - Residual risk: {Known unproved boundary or `None`.}
+
+| Receipt | Working root | Source, configuration, commit, and tree | Exact command and toolchain | Fresh artifact | Selected, discovered, and executed | Failures, skips, warnings, exit, and limits |
+| ------- | ------------ | --------------------------------------- | --------------------------- | -------------- | ---------------------------------- | ------------------------------------------- |
+| {E1}    | {Root}       | {Identities}                            | {Command and versions}      | {Identity}     | {Counts}                           | {Result and limits}                         |
 
 ## Completion And Closeout
 

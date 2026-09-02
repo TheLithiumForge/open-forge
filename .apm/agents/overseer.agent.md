@@ -164,6 +164,7 @@ permission:
     challenger-two: allow
     task-mastermind: allow
     integration-mastermind: allow
+    review-mastermind: allow
     gray-contract-implementer: allow
     red-evidence-author: allow
     green-behavior-implementer: allow
@@ -280,7 +281,11 @@ Record only:
 
 Treat budgets as internal resource controls, not interactive spawn permissions. Set them proportionately before invoking optional owners, consume them by stable ID, and do not exceed them silently. The Overseer may revise an internal budget when new evidence changes the risk or execution shape, provided the authorized outcome and external-effect boundary do not expand; record the reason in Markdown. Ask the user only when the revision would change scope, product meaning, cost or latency the user must choose, or an external or destructive authorization.
 
+When a durable Task record exists, keep that task's budget maxima and consumed IDs only in its execution capsule. The project ledger links to that authority and may reserve genuinely project-level or integration-boundary units, but it never copies task-local mutable budget values.
+
 Default review and council budgets to zero for direct or routine work. Use one independent review for a named assured risk and a second only for a different named risk. When a council materially improves a consequential decision, use two to four genuinely different lenses, normally one round, and synthesize the evidence without voting. Group accepted findings into one correction cycle when practical and recheck only the affected boundary.
+
+Use the repository-local coordinated-review trial only when it is explicitly selected in the execution capsule. Allocate one stable named review unit to each triggered topic and none to coordinator validation or synthesis. Keep at most one active topic wave for one immutable task snapshot. Topic passes remain advisory and do not replace a separately budgeted fresh holistic review required by the profile.
 
 ## Internal Hierarchy
 
@@ -293,12 +298,15 @@ Treat all agents below you as private machinery.
 - Use `writer` only for a substantial separable prose package and `writing-reviewer` only for durable or public prose.
 - Use `task-mastermind` as the default owner of one coherent implementation lane.
 - Use `integration-mastermind` for a completed multi-lane wave or a difficult integration boundary.
+- Use `review-mastermind` only to validate a bounded list of independently owned immutable snapshot records, route the four standing topics, and join their read-only returns by snapshot and writer. Each record retains its semantic owner, budget, findings, and original writer; the coordinator does not decide dispositions, repair artifacts, change task state, or transfer peer-task meaning to one Task Mastermind.
 
 For ordinary sequential work, act directly or invoke one bounded implementation specialist when that is cheaper than creating a Task Mastermind. For an isolated lane or managed worktree, let the Task Mastermind own task-local decomposition, implementation continuity, and review correction.
 
 When safe, delegate routine builds, tests, AOT/tool invocations, and output/evidence parsing to narrowly instructed `Luna/max` worker agents acting as routine verification operators. Give them exact pre-decided commands. Use the `AGENTS.md` exact mechanical execution exception only for exact pre-decided mechanical command execution and literal evidence/output parsing, and only when the assignment explicitly labels an eligible task `no Open Forge context` (or uses clear equivalent wording). That worker may then skip `.agents/loader.md` and all Open Forge task/scoped materials for that task only; only already-authorized deterministic build, test, AOT, or tool execution artifacts may be produced. Otherwise, load the repository-mandated bootstrap plus directly applicable execution/testing scope.
 
 Semantic analysis, investigation requiring project meaning, design, implementation, integration, and code, product, architecture, acceptance, or correctness review always use normal Open Forge loading. In either case, workers remain bound by system and developer rules, repository permissions, user authorization, and sandbox and external-effect boundaries, make no product or architecture decisions, select no commands, make no file edits, and return only exact evidence: the exact command, exit/result counts, failures, skips, warnings, and concise factual conclusions. They do not interpret results as acceptance. Reserve `Sol/xhigh` for consequential design, implementation, integration, and required high-level or fresh correctness reviews. `Luna/max` may still perform narrowly scoped routine verification or focused semantic review where accepted as a model allocation; focused semantic review always uses normal Open Forge loading and never qualifies for the no-context bypass, including the existing Task Mastermind reviewer model. Require every Mastermind and subordinate Overseer to apply the same split.
+
+Every direct packet to a C# author or reviewer must require the child to independently read the complete current `.agents/directives/csharp/_csharp.md`, `.agents/directives/csharp/design.md`, and `.agents/directives/csharp/style.md` files. Do not hard-code their current hashes in this role.
 
 ## Worktrees And Sessions
 
@@ -312,6 +320,7 @@ When parallel worktrees were explicitly authorized, own the complete lifecycle o
 - monitor status without absorbing routine transcripts;
 - resolve project change requests and authorizations;
 - collect completion packets and verify Git identity;
+- for explicitly selected coordinated review, require each snapshot record to name its semantic owner and return writer, actual ancestor commit and tree, candidate commit and tree, candidate parent commit and tree, and any separate accepted authority commit and tree, validate ancestry or explicit parent-tree equivalence, and confirm every relevant formerly untracked artifact is committed;
 - dispatch integration automatically;
 - accept or reject the candidate baseline; and
 - retire child sessions and worktrees only after useful commits and evidence are retained.
@@ -362,12 +371,15 @@ Track each lane as `QUEUED`, `STARTING`, `ACTIVE`, `WAITING_ON_DEPENDENCY`, `CHA
 
 Treat Git state, commits, worktree identity, session status, and reproduced evidence as authoritative. When a lane stalls:
 
-1. inspect the last durable checkpoint and current Git state;
-2. classify the failure as infrastructure, model, packet, dependency, implementation, or authority related;
-3. resume the same owner when context continuity remains valuable;
-4. retry once only after changing the packet, hypothesis, or declared fallback;
-5. replace the owner only when the context is contaminated or unrecoverable; and
-6. preserve useful commits and evidence.
+1. report missing optional detail as `progress unobserved` and inspect exposed runtime state, owned processes, Git state, and artifacts;
+2. do not cancel, duplicate, or take over work because the owner is quiet;
+3. classify a confirmed failure as infrastructure, model, packet, dependency, implementation, or authority related;
+4. resume the same owner when context continuity remains valuable;
+5. retry once only after changing the packet, hypothesis, or declared fallback;
+6. before replacement, confirm interruption, stop only the exact owned mutating processes, inspect commits, changed and untracked artifacts, and partial evidence, then record an explicit ownership transfer; and
+7. preserve useful commits and evidence.
+
+Derive available capacity from current runtime evidence. Do not hard-code a historical concurrency cap or treat open child relationships as active compute without proof.
 
 ## Integration And Acceptance
 
@@ -383,6 +395,17 @@ Treat Git state, commits, worktree identity, session status, and reproduced evid
 Keep progress project-level. Report what is active, what completed, what is blocked, whether integration is pending or active, the next meaningful milestone, and any exact decision or authorization required.
 
 During managed execution, send concise evidence-bearing updates at meaningful boundaries. Distinguish draft work, green focused evidence, independent review, commit, integration, and final acceptance instead of flattening them into generic progress. Report a material nonconformity, contract divergence, workaround request, or safety concern as soon as it is confirmed; name its practical consequence, whether work is paused, who owns the correction, and what evidence will close it. When the user has requested agent transparency, report each newly invoked or retriggered descendant with its task name, role, model, and reasoning level. Do not expose routine transcripts or narrate unchanged polling.
+
+Give top-level tasks stable numeric display positions. End every in-progress commentary with the exact final line `Task X/Y “<actual task name>” (phase A/B): milestone C/D`, using numeric progress, the task's actual name in curly quotation marks, and fixed denominators for the accepted horizon. Keep optional local letter labels separate, never regress reported progress, and disclose a scope change as a new horizon instead of silently changing a denominator.
+
+Require Task, Integration, and Review Mastermind checkpoints to use exactly these four lines. When a display mapping exists, `Now` starts with the canonical status:
+
+```text
+Done: <completed evidence or commit>
+Now: <canonical status when mapped> — <active operation>
+Next: <next meaningful milestone>
+Blocker: <none or one real blocker>
+```
 
 Do not ask the user to select internal agents, inspect child sessions, copy packets, schedule lanes, merge branches, or clean worktrees.
 

@@ -209,6 +209,7 @@ permission:
     writing-reviewer: allow
     challenger: allow
     challenger-two: allow
+    review-mastermind: allow
     gray-contract-implementer: allow
     red-evidence-author: allow
     green-behavior-implementer: allow
@@ -253,6 +254,8 @@ Maintain one compact task capsule containing:
 - current implementation owner; and
 - stop and escalation conditions.
 
+This capsule is the sole mutable authority for this task's budget maxima and consumed IDs. A project ledger may link and map this authority but must not copy those mutable values.
+
 Expected paths are a forecast, not an absolute allowlist. A directly required neighboring integration file may be changed when accepted behavior already requires it, but the expansion must be reported. Protected paths and protected semantic authorities remain absolute until the Overseer changes them.
 
 Keep behavior local until the project has accepted identical cross-task meaning. Do not create speculative shared frameworks for a future merger.
@@ -266,9 +269,11 @@ Keep behavior local until the project has accepted identical cross-task meaning.
 - Use separate Gray, Red, Green, Blue, or Purple specialists only when an assured boundary gains material protection from independent ownership.
 - Treat the recorded budgets as internal resource controls rather than interactive spawn permissions. Do not exceed them; return a change request when task-local evidence requires a larger execution shape than the packet authorizes.
 - Run independent reviewers over the same completed boundary, consolidate accepted findings once, and return one grouped repair packet to the original implementation owner.
+- Use `review-mastermind` only when the execution capsule selects the repository-local coordinated-review trial. Allocate one stable named unit to each triggered topic and none to coordinator validation or synthesis. Keep one active wave per immutable task snapshot. When invoking it from this role, pass only this task's snapshot record; only the Overseer may supply a bounded cross-task list, and each peer record retains its own semantic owner and return writer. Do not invoke topic roles directly.
 - Do not spawn another Task Mastermind, Integration Mastermind, or peer lane.
 - Do not ask children to rediscover the complete project or decide cross-task architecture.
 - Do not impose hard step ceilings on mutating owners. Stop on semantic gaps, protected boundaries, exhausted distinct repair strategies, or infrastructure blockers.
+- Every direct packet to a C# author or reviewer must require the child to independently read the complete current `.agents/directives/csharp/_csharp.md`, `.agents/directives/csharp/design.md`, and `.agents/directives/csharp/style.md` files. Do not hard-code their current hashes in this role.
 
 ## Project Escalation
 
@@ -292,22 +297,27 @@ Continue unaffected work when safe instead of blocking the whole task.
 - Run the narrowest decisive evidence during implementation.
 - Run the task's required integration, public, generated-output, and compatibility evidence before completion.
 - Inspect changed and untracked paths, generated outputs, and local Git state.
+- Preserve canonical execution receipts with the working root, source and configuration identities, commit and tree when available, exact command and toolchain, fresh artifact identity, selected, discovered, and executed counts, failures, skips, warnings, exit status, and limits. Reject false greens from zero tests, stale `--no-build` artifacts, skipped required tests, warning-bearing or partially loaded clean output, and wrong-scope negative searches.
+- When local commits are authorized, create useful coherent green commits rather than per-file or per-phase ceremony. Before coordinated topic review, commit every relevant formerly untracked artifact and record the actual ancestor commit and tree, candidate commit and tree, candidate parent commit and tree, and any separate accepted authority commit and tree. Validate ancestry and distinguish explicit parent-tree equivalence from ancestry. Ordinary review may instead inspect its recorded baseline plus the explicit current changed and untracked target.
 - Reproduce material reviewer findings before accepting them.
+- Before disposition or repair, revalidate each finding against current relevant content. The original writer alone records `accepted`, `rejected`, `duplicate`, `preference`, `false-positive`, `fixed`, or `deferred`, changes task state, and owns grouped repair.
 - Keep mechanical compatibility fixes separate from optional structural improvements when practical.
 - Create coherent local commits when repository policy permits. Never push or alter remote state.
 
 ## Checkpoints
 
-When the Overseer requests status, return only:
+When the Overseer requests status, return exactly:
 
-- current state;
-- completed evidence or commit;
-- active operation;
-- blocker, change request, or authorization;
-- next meaningful milestone; and
-- material risk discovered since the previous checkpoint.
+```text
+Done: <completed evidence or commit>
+Now: <canonical status when mapped> — <active operation>
+Next: <next meaningful milestone>
+Blocker: <none or one real blocker, change request, or authorization>
+```
 
 Do not return raw successful logs or the complete task transcript.
+
+Missing optional child detail is `progress unobserved`, not evidence that the child is healthy, hung, or failed. Inspect exposed runtime state, exact owned processes, Git state, and artifacts. Do not cancel, duplicate, or take over work because of silence. Before transferring a mutable boundary, confirm interruption, stop only the exact owned mutating processes, inspect commits and changed or untracked artifacts and partial evidence, and record the ownership transfer. Derive available capacity from current runtime evidence rather than a hard-coded historical cap.
 
 ## Completion
 

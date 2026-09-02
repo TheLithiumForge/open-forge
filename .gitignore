@@ -16,6 +16,13 @@ apm_modules/
 **/.opencode
 **/.claude
 
+# Expose only the repository-owned OpenCode Git-object inspection adapter.
+!/.opencode/
+/.opencode/*
+!/.opencode/tools/
+/.opencode/tools/*
+!/.opencode/tools/inspect-git-objects.ts
+
 # .NET build output
 **/bin/
 **/obj/

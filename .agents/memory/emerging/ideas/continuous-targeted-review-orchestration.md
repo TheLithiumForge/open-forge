@@ -60,28 +60,33 @@ promotes a smaller workflow or guidance change.
 
 The recommended candidate is a review-only Mastermind with no edit authority:
 
-1. The implementation owner announces a coherent checkpoint containing the
-   exact baseline, changed and untracked paths, accepted outcome, protected
-   paths, direct integration neighborhood, claimed evidence, and current
-   execution state.
-2. The review Mastermind classifies the change and dispatches only relevant
-   read-only Luna/max lenses in parallel. A file/diff checkpoint may use C#
-   conformance, callable design, source locality, contract neighborhood, or
-   test-evidence lenses. It does not automatically use every lens.
+1. One or more implementation owners announce a bounded list of coherent
+   immutable checkpoint records. Each record names its semantic owner and
+   original return writer, display and lane, actual ancestor, candidate,
+   candidate parent, and any separate authority commit and tree identities;
+   exact changed and formerly untracked paths; accepted outcome; protected
+   paths; direct integration neighborhood; claimed evidence; topic units and
+   prefixes; and current execution state.
+2. The review Mastermind validates each immutable Git record independently and
+   dispatches only relevant standing topics. C# conformance, architecture and
+   ownership, behavior contracts, and test evidence remain non-overlapping.
+   Workflow and repository conformance stays with coordinator intake rather
+   than becoming a fifth topic.
 3. Each reviewer reads the complete applicable context, including all three
    C# design files for any C# review, and returns stable finding IDs, severity,
    evidence, consequence, smallest correction, and earliest invalidated
    boundary. Reviewers do not edit, commit, or accept architecture.
-4. The Mastermind deduplicates findings, records accepted/rejected/
-   duplicate/preference/false-positive dispositions when useful, and sends one
-   grouped correction packet to the original implementation owner.
-5. After a module or task is complete, the Mastermind starts a fresh set of
-   top-down architecture, refactoring/locality, test-evidence, integration, and
-   public-surface lenses. The fresh pass is independent of earlier findings;
-   earlier results are compared only after the independent return.
-6. The implementation owner corrects the accepted packet, and the Mastermind
-   rechecks changed finding IDs and the affected neighborhood. A complete new
-   review is reserved for a materially changed review horizon.
+4. The Mastermind links likely duplicates and preserves material dissent without
+   disposition, then groups joined returns by snapshot and original writer.
+   Each writer revalidates its findings against current relevant content,
+   records dispositions, and owns grouped correction.
+5. At one or more module or task checkpoints, the Mastermind may allocate
+   capacity across the relevant standing topics while keeping at most one wave
+   per task snapshot. These topic passes remain advisory and do not replace a
+   separately budgeted fresh holistic review required by the task profile.
+6. The original writer revalidates and dispositions the findings, corrects the
+   accepted packet, and may ask the Mastermind to route affected topic rechecks.
+   A complete new review is reserved for a materially changed review horizon.
 
 The model should use narrow context capsules rather than copy the entire
 program history into each reviewer. Capsules name the exact routes, contracts,
@@ -103,17 +108,17 @@ permission to copy those directives into every packet.
 
 Use saved checkpoints that represent a meaningful state transition:
 
-| Trigger | Targeted lenses | Why it is useful |
-| --- | --- | --- |
-| Coherent file/diff checkpoint | C# conformance, callable surface, source locality, directly affected contract, and focused test-evidence lens | Catches local PR smells before they spread while the changed neighborhood is small. |
-| Capability or module completion | Architecture/dependency direction, refactoring ownership, shared-versus-local promotion, and affected evidence-tier lens | Tests whether local code still fits the accepted top-down model. |
-| Task completion or protected integration boundary | Fresh architecture, contract, integration, public output, lifecycle/safety, and release/AOT lens as applicable | Checks cross-surface consequences before the next dependent task or integration. |
-| Material correction | Recheck only changed finding IDs and affected consumers by default | Avoids paying for a full repeated review when the horizon is unchanged. |
+| Trigger                                           | Targeted lenses                                                                                                          | Why it is useful                                                                    |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| Coherent file/diff checkpoint                     | C# conformance, callable surface, source locality, directly affected contract, and focused test-evidence lens            | Catches local PR smells before they spread while the changed neighborhood is small. |
+| Capability or module completion                   | Architecture/dependency direction, refactoring ownership, shared-versus-local promotion, and affected evidence-tier lens | Tests whether local code still fits the accepted top-down model.                    |
+| Task completion or protected integration boundary | Fresh architecture, contract, integration, public output, lifecycle/safety, and release/AOT lens as applicable           | Checks cross-surface consequences before the next dependent task or integration.    |
+| Material correction                               | Recheck only changed finding IDs and affected consumers by default                                                       | Avoids paying for a full repeated review when the horizon is unchanged.             |
 
-The trigger is a coherent diff or state boundary, not an editor keystroke. A
-review Mastermind may coalesce frequent events, cancel stale reviews, and
-decline a review when no relevant unit exists or the recorded review budget is
-exhausted.
+The trigger is a coherent immutable commit or state boundary, not an editor
+keystroke. A review Mastermind may coalesce frequent events and decline a review
+when no relevant unit exists or the recorded review budget is exhausted. It
+does not cancel or replace an owner because progress commentary is quiet.
 
 Escalate only consequential design or review questions to the higher-reasoning
 Sol/xhigh role. Keep Luna/max for targeted semantic reviews, direct evidence
@@ -136,8 +141,8 @@ The costs are material:
   prevention justifies, especially when every small file change triggers a
   complete lens set.
 - Parallel reviewers can rediscover the same issue, disagree on severity, or
-  report preferences as defects. Deduplication and disposition work then moves
-  to the Mastermind.
+  report preferences as defects. The coordinator must link likely duplicates
+  and preserve dissent, while disposition remains with the original writer.
 - A reviewer can inspect a stale partial diff while the implementation owner
   is still changing the file. Stale findings add noise and can send a correct
   owner toward an obsolete correction.
@@ -227,15 +232,16 @@ tasks. A possible treatment is:
 
 - The implementation owner emits one stable file/diff checkpoint after each
   meaningful local increment.
-- A review-only Mastermind dispatches only the relevant Luna/max lenses in
-  parallel, with a small maximum concurrency and a coalescing window.
+- A review-only Mastermind dispatches only relevant topics, with capacity
+  derived from current runtime evidence and coherent-checkpoint coalescing.
 - At task completion, a fresh Sol/xhigh top-down review checks architecture,
   refactoring/locality, evidence tiers, integration, and public/AOT boundaries
   as applicable.
 - Reviewers remain read-only. The original Task Mastermind retains correction,
   task-state, integration, and acceptance authority.
-- Every C# reviewer reads the three complete C# directive files. Each finding
-  has a stable ID and is deduplicated before reaching the implementation owner.
+- Every topic that touches C# reads and fingerprints the three complete current
+  C# Directive files. Each finding has a stable unit-derived ID. The coordinator
+  links likely duplicates without erasing dissent.
 
 Collect, for each comparable task:
 
@@ -258,7 +264,8 @@ issue that the implementation owner would have found in the ordinary flow.
 
 Any future trial should include explicit internal limits and stop conditions:
 
-- Coalesce repeated file events and cancel a review whose baseline is stale.
+- Coalesce repeated lower checkpoints, and let a higher coherent checkpoint
+  subsume queued review of identical content.
 - Stop a lens after repeated infrastructure failure or after it returns no
   usable checkpoint, following the existing failure-circuit rule.
 - Do not exceed the task's recorded review, council, correction, or concurrency
@@ -291,8 +298,8 @@ Any future trial should include explicit internal limits and stop conditions:
   without building a second semantic dispatcher?
 - What context capsule is sufficient for independence without making each
   reviewer rediscover the complete project?
-- How should stale partial reviews be cancelled, recorded, and excluded from
-  correction packets?
+- How should stale partial reviews be recorded and excluded from correction
+  packets without cancelling active ownership from silence?
 - What maximum parallelism and latency preserve flow without creating a review
   queue or storm?
 - When should Luna/max suffice, and when does a consequential question justify
@@ -306,15 +313,23 @@ Any future trial should include explicit internal limits and stop conditions:
 - Does the current hierarchical model need any change at all, or can Guidance,
   Task packets, and existing reviewer roles express the experiment completely?
 
+## Future Hypotheses
+
+Automatic or per-file fan-out, a fifth workflow topic, dirty or untracked
+snapshot transport, cross-runtime permission and collection guarantees, hard
+concurrency numbers, optimal reviewer economics and metrics, and Extension
+packaging remain Emerging hypotheses. The selected repository-local trial does
+not claim or require them.
+
 ## Promotion Signals
 
 Consider promoting a small workflow or Guidance change only after several
 comparable tasks show that the overlay catches material issues before
 integration, reduces rework or decision delay, and does so with acceptable
 token, latency, and maintenance cost. Positive evidence should also show that
-reviewers remain independent, findings are deduplicated, stale partial state is
-controlled, and the original owner understands and can apply the grouped
-packet.
+reviewers remain independent, likely duplicates are linked without losing
+dissent, stale partial state is controlled, and the original owner understands
+and can apply the grouped packet.
 
 Promote the smallest useful change. A short checkpoint rule or targeted-lens
 section is preferable to a new Framework primitive unless repeated tasks prove

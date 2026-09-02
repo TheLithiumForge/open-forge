@@ -36,6 +36,9 @@ Raise or lower the level only for concrete complexity, risk, reversibility, evid
 - Parallelize non-overlapping actions or independent read-only perspectives with a named integration point.
 - Do not parallelize several agents over the same mutable responsibility unless comparison is the explicit deliverable.
 - Use one independent review by default only when a named risk justifies it. Add a second reviewer only for a distinct risk or genuinely independent provider perspective.
+- When the repository-local coordinated-review trial is explicitly selected, allocate one stable named review-budget unit to each topic and none to coordinator validation or synthesis. Route only topics justified by the changed responsibility.
+- Keep at most one active topic wave for one immutable task snapshot. Coalesce lower checkpoints and let a higher coherent checkpoint subsume queued review of identical content.
+- Derive review-wave capacity from current runtime evidence. Do not hard-code a historical concurrency number or count open child relationships as active compute without runtime proof.
 - Give findings stable identifiers, group corrections, and recheck only changed findings and their neighborhood.
 - Measure review value by accepted blocking or material findings, prevented rework, and decision impact, not by finding count.
 
