@@ -15,8 +15,9 @@ open-forge:
   `392114a03a3c1329eb3ce9410795dcd36419815c`. The separate [CLI Quality
   Remediation](../cli-quality-remediation.md) root Task is Complete and
   squash-integrated at `862cbf2a`, exact tree `571f104f`, from accepted
-  implementation candidate `a4ccf19a`, tree `97254e65`. Route Update is next;
-  later Route Mutation commands remain Planned in the accepted sequence.
+  implementation candidate `a4ccf19a`, tree `97254e65`. Task 3 “Route Update”
+  is active with M6 accepted and M7 active; later Route Mutation commands remain
+  Planned in the accepted sequence.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Common prerequisites: Route discovery, `index`, and Mutation Foundation.
 - Intended-membership formation prerequisite: accepted feature
@@ -60,7 +61,7 @@ command Active or Ready.
 
 - [x] [Implement generic and Framework-aware sparse route initialization after root Install](route-init.md) — Complete and squash-integrated at `cc5085ce` — Implementer: Overseer-managed Task Mastermind
 - [x] [Implement one-file route creation below an existing routable parent](route-create.md) — Complete and squash-integrated at `19412d2` — Implementer: Overseer-managed Route Create Task Mastermind
-- [ ] [Implement bounded route content and metadata update without identity drift](route-update.md) — Planned — Implementer: Not assigned
+- [ ] [Implement bounded route content and metadata update without identity drift](route-update.md) — Active; M6 accepted and M7 active — Implementer: Overseer-managed Route Update Task Mastermind
 - [ ] [Implement route move with reference, overwrite, generated-navigation, and recovery integrity](route-move.md) — Planned — Implementer: Not assigned
 - [ ] [Implement route removal with dependency, reference, generated-navigation, and recovery integrity](route-remove.md) — Planned — Implementer: Not assigned
 
@@ -68,7 +69,7 @@ CLI Quality Remediation is a separate root Task, not a child of Route Mutation.
 Route Create's protected integration owns its two predecessor slices; the
 Complete remediation Task consumed/revalidated them and closed its residual
 serializer/help work and batches 3–9. Local remediation integration remains
-before Route Update begins.
+before Route Update activation; that boundary is now complete.
 
 ## Preparation Closeout
 
@@ -79,13 +80,13 @@ are now integrated into local `develop`: canonical lifecycle creation at
 `1d404c5cef3f5fd464ca771fc132a657f792f533` and the neutral Markdown link-label
 projection at `89a35a7876f39123d9538bca24126ff7197b9459`.
 
-| Command | Preparation branch | Readiness |
-| --- | --- | --- |
-| Route Init | `codex/route-init` | Complete and squash-integrated at `cc5085ce`; reviewed closeout `c580149`, tree `a1810c4` |
-| Route Create | `codex/route-create` | Complete and squash-integrated at `19412d2`; reviewed candidate `392114a`, tree `2bbba7e`; it supplies the `RouteCreateJsonContext` and Route-help predecessor slices plus the maintainer-approved required effect-change correction |
-| Route Update | `codex/route-update` | Next after CLI Quality Remediation integration `862cbf2a`, exact tree `571f104f`; still requires its closed callable/public-result boundary before behavior mutation |
-| Route Move | `codex/route-move` | Waiting for Route Update, its remaining proportionality/wire gate, and the accepted neutral-reference correction |
-| Route Remove | `codex/route-remove` | Waiting for Route Move and its command-local result freeze; its parser and canonical lifecycle prerequisites are integrated |
+| Command      | Preparation branch   | Readiness                                                                                                                                                                                                                               |
+| ------------ | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Route Init   | `codex/route-init`   | Complete and squash-integrated at `cc5085ce`; reviewed closeout `c580149`, tree `a1810c4`                                                                                                                                               |
+| Route Create | `codex/route-create` | Complete and squash-integrated at `19412d2`; reviewed candidate `392114a`, tree `2bbba7e`; it supplies the `RouteCreateJsonContext` and Route-help predecessor slices plus the maintainer-approved required effect-change correction    |
+| Route Update | `codex/route-update` | Active from accepted base `5aad04a`, exact tree `0f56b2c`; activation, architecture, Gray, Red, and M6 are accepted, and M7 is active; revalidate the next coherent commit boundary against current `develop` `128b70b`, tree `0ff3d38` |
+| Route Move   | `codex/route-move`   | Waiting for Route Update, its remaining proportionality/wire gate, and the accepted neutral-reference correction                                                                                                                        |
+| Route Remove | `codex/route-remove` | Waiting for Route Move and its command-local result freeze; its parser and canonical lifecycle prerequisites are integrated                                                                                                             |
 
 The required behavior and integration order is root Install, Route Init, Route
 Create, Route Create protected integration with its two predecessor slices,

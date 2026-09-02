@@ -43,5 +43,6 @@ Do not restore its structure by default.
 - [Active ledger of deferred replacement-CLI edge cases, owners, risks, and closure conditions](edge-cases.md) - #Memory #Working #CLI #EdgeCase #Evidence #Contextual #Active
 - [Active Overseer continuity for the replacement CLI task graph, decisions, agents, worktrees, and observations](overseer-memory.md) - #Memory #Working #Contextual #Active #KeepInMind #CLI #Overseer #Orchestration #Decision #Evidence
 - [Executable top-down work graph for completing the greenfield replacement CLI](plan.md) - #Memory #Working #CLI #Plan #Architecture #Development #Contextual #Active
+- [Control permanent task identities, the dynamic queue, integration, and recovery for replacement CLI development](project-control.md) - #Memory #Working #Contextual #Active #KeepInMind #CLI #Project #Orchestration #Task #Integration
 - [Hierarchical implementation Tasks for the complete greenfield replacement CLI](tasks/_tasks.md) - #Memory #Working #Contextual #Active #CLI #Task #Architecture #Development
 <!-- open-forge:generated-index:end -->

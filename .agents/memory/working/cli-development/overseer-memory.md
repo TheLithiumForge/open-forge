@@ -10,10 +10,12 @@ open-forge:
 
 Keep the compact project-level state needed to resume and coordinate replacement
 CLI development without retaining complete child transcripts. Accepted product
-meaning remains in Crystallized contracts and architecture. The Plan, Tasks, and
-Checkpoint remain authoritative for execution state and evidence; this record
-retains only the live orchestration graph, decision frontier, and observations
-that the Overseer must carry across parallel lanes.
+meaning remains in Crystallized contracts and architecture. The [project control
+ledger](project-control.md) defines permanent task identities, queue state,
+completion grace, and integration mapping. The Plan, Tasks, and Checkpoint
+define execution state and evidence; this record retains only the live
+orchestration graph, decision frontier, and observations that the Overseer must
+carry across parallel lanes.
 
 ## Maintainer Authority
 
@@ -50,8 +52,11 @@ The accepted dependency order is:
    slices. The separate [CLI Quality Remediation](tasks/cli-quality-remediation.md)
    Task is Complete and squash-integrated at `862cbf2a`, exact tree `571f104f`,
    from accepted implementation candidate `a4ccf19a`, tree `97254e65`, after
-   consuming/revalidating those slices and closing the residual findings. Route
-   Update is the next sequential Route Mutation M2 leaf.
+   consuming/revalidating those slices and closing the residual findings.
+   Review orchestration is integrated at `5aad04ac`; permanent task identity and
+   progress follow-up is integrated at `3356eba1`; repository-local npm linking
+   is integrated at `128b70b3`, current `develop` tree `0ff3d386`. Task 3 “Route
+   Update” is the active sequential Route Mutation M2 leaf.
 4. Implement root Update M3 only after full M2 is complete. Preparation that is
    independent of unfinished behavior may proceed earlier in isolated lanes:
    scope discovery, contract and ownership audits, callable-surface analysis,
@@ -65,19 +70,22 @@ or a general template/scaffold system.
 
 ## Active Lanes
 
-| Lane | Responsibility | State |
-| --- | --- | --- |
-| D0 | Contract, architecture, Plan, Task, checkpoint, and public-doc freeze | Integrated at `38e1498` |
-| F1 | Native Shell question/answer transport and invocation capability | Integrated at `e782090` after review |
-| F2 | Embedded Framework payload reader and deterministic inventory | Integrated at `680915a` after review |
-| F3 | Framework lifecycle `sourceAssetPath` provenance | Integrated at `0989356` after review |
-| F4 | Shared planned directory-creation mutation effect | Integrated at `33913df` after review |
-| C1 | Extension Create | Complete at protected public integration `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5` |
-| C2 | Root Install | Complete at local integration `c60fcb98a57e9ec80769b9cb1d399ce13a227863`; final candidate `11994e4d21ddc807b7480afc39ae3612e5a69a56`, exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed` |
-| C3 | Route Inspect interactive correction | Complete and squash-integrated at `fa3db1ee` with exact tree equality to final reviewed candidate `37c9360` |
-| C4 | Generic and Framework-aware Route Init | Complete and squash-integrated at `cc5085ce`; reviewed closeout `c580149`, tree `a1810c4` |
-| M2 preparation | Init/Create/Update/Move/Remove readiness | Complete on clean no-op branches from `33913dfe`; Route Create is Complete at `19412d2`; QR1 is squash-integrated at `862cbf2a`, exact tree `571f104f`; Route Update is next, and leaf Tasks retain accepted preparation decisions and remaining authority gates |
-| Quality remediation | Accepted first-pass CLI architecture, design, authority, and test-evidence findings | Complete and squash-integrated at `862cbf2a`, exact tree `571f104f`, from accepted implementation candidate `a4ccf19a`, tree `97254e65`; all thirteen findings/candidates, final `QR-R1-001`, managed `1522/736/146`, native Integration `736/736`, format, diff, and Sol/xhigh review are closed |
+| Lane                 | Responsibility                                                                      | State                                                                                                                                                                                                                                                                                             |
+| -------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D0                   | Contract, architecture, Plan, Task, checkpoint, and public-doc freeze               | Integrated at `38e1498`                                                                                                                                                                                                                                                                           |
+| F1                   | Native Shell question/answer transport and invocation capability                    | Integrated at `e782090` after review                                                                                                                                                                                                                                                              |
+| F2                   | Embedded Framework payload reader and deterministic inventory                       | Integrated at `680915a` after review                                                                                                                                                                                                                                                              |
+| F3                   | Framework lifecycle `sourceAssetPath` provenance                                    | Integrated at `0989356` after review                                                                                                                                                                                                                                                              |
+| F4                   | Shared planned directory-creation mutation effect                                   | Integrated at `33913df` after review                                                                                                                                                                                                                                                              |
+| C1                   | Extension Create                                                                    | Complete at protected public integration `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5`                                                                                                                                                                                                               |
+| C2                   | Root Install                                                                        | Complete at local integration `c60fcb98a57e9ec80769b9cb1d399ce13a227863`; final candidate `11994e4d21ddc807b7480afc39ae3612e5a69a56`, exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed`                                                                                                       |
+| C3                   | Route Inspect interactive correction                                                | Complete and squash-integrated at `fa3db1ee` with exact tree equality to final reviewed candidate `37c9360`                                                                                                                                                                                       |
+| C4                   | Generic and Framework-aware Route Init                                              | Complete and squash-integrated at `cc5085ce`; reviewed closeout `c580149`, tree `a1810c4`                                                                                                                                                                                                         |
+| M2 preparation       | Init/Create/Update/Move/Remove readiness                                            | Complete on clean no-op branches from `33913dfe`; Route Create is Complete at `19412d2`; QR1 is squash-integrated at `862cbf2a`, exact tree `571f104f`; Route Update is active, and later leaf Tasks retain accepted preparation decisions and remaining authority gates                          |
+| Quality remediation  | Accepted first-pass CLI architecture, design, authority, and test-evidence findings | Complete and squash-integrated at `862cbf2a`, exact tree `571f104f`, from accepted implementation candidate `a4ccf19a`, tree `97254e65`; all thirteen findings/candidates, final `QR-R1-001`, managed `1522/736/146`, native Integration `736/736`, format, diff, and Sol/xhigh review are closed |
+| Review orchestration | Opt-in immutable coordinated topic review and permanent task-progress controls      | Complete and integrated at `5aad04ac` plus follow-up `3356eba1`; APM, Open Forge, projection, formatting, protected-path, and C# identity gates pass                                                                                                                                              |
+| npm link shims       | Repository-local managed development CLI linking                                    | Complete and integrated at `128b70b3`; Node `16/16` and exact package, mode, manifest, nonmutation, and protected-path gates pass                                                                                                                                                                 |
+| Route Update         | Bounded route content and metadata update                                           | Active on `codex/route-update`; M6 is accepted and M7 application, recovery, verification, result, and rendering is active; the Task Mastermind recorded current `develop` without interrupting the isolated lane                                                                                 |
 
 Each mutating lane owns a distinct worktree and feature branch. Shared root
 composition, serializer registration, public help, process evidence, Plan, and
@@ -154,8 +162,8 @@ Checkpoint are integration-owned unless a Task packet explicitly says otherwise.
 
 ## Open Decision Frontier
 
-No currently surfaced product decision blocks integration of the accepted CLI
-Quality Remediation candidate or Route Update preparation.
+No currently surfaced product decision blocks active Route Update
+implementation.
 The exact public Root Install JSON result schema is accepted, implemented, and
 frozen, including fully present ordered facts and typed residual values `none`,
 `retained`, and `unknown`.
@@ -174,7 +182,8 @@ slice. Restored format, managed `1507/720/146`, portable `linux-x64` Native AOT
 root plus `720/146`, isolated dogfood, and Sol/xhigh `RC-R2` evidence pass. The
 separate CLI Quality Remediation Task is Complete and squash-integrated at
 `862cbf2a`, exact tree `571f104f`, from accepted implementation candidate
-`a4ccf19a`, tree `97254e65`. Route Update is next.
+`a4ccf19a`, tree `97254e65`. Task 3 “Route Update” is active in its frozen
+seven-phase, twelve-milestone horizon; M6 is accepted and M7 is active.
 New architecture or product questions must still be returned to the maintainer
 before changing accepted meaning.
 
@@ -238,3 +247,9 @@ outcome-first updates: important current change, exact evidence, decision or
 blocker, and next dependency. Do not discard sound work because an agent omitted
 a requested self-identification when the actual model and reasoning can be
 verified independently.
+
+Render every progress-bearing Overseer update from the project control ledger
+and linked Task records. Show actual task names, permanent IDs, truthful active
+phase ordinals and completed milestone counts, and the dynamic Active, Recently
+completed, and Queued sections. Advance completion grace only on those Overseer
+updates.
