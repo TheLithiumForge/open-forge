@@ -17,5 +17,5 @@ Analysis keeps structured reasoning, investigation, or comparison that is useful
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- none - No entries - #Empty
+- [Decision-ready audit of replacement CLI Architecture placement, provenance, references, and proposed narrower authority boundaries](2026-09-02_cli-architecture-authority-audit.md) - #Memory #Analysis #Contextual #Candidate #CLI #Architecture #Authority #Audit #Documentation #CSharp #NativeAOT #Package
 <!-- open-forge:generated-index:end -->
