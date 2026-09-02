@@ -1,0 +1,20 @@
+{
+  "name": "@thelithiumforge/open-forge-development-link",
+  "version": "0.0.0-development",
+  "description": "Links the repository-managed Open Forge development CLI publication.",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "open-forge-dev": "./open-forge-dev.mjs"
+  },
+  "files": [
+    "launcher.mjs",
+    "open-forge-dev.mjs"
+  ],
+  "scripts": {
+    "test": "node --test launcher.test.mjs manage-link.test.mjs"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

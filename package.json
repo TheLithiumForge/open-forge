@@ -24,7 +24,10 @@
   "scripts": {
     "build": "bun run build.ts",
     "build:assets": "bun run src/cli-mvp/build/generate-build-module.ts",
+    "cli:dev": "open-forge-dev",
+    "cli:link": "node src/cli/root/development-link/manage-link.mjs link",
     "cli:old": "bun run src/cli-mvp/cli.ts",
+    "cli:unlink": "node src/cli/root/development-link/manage-link.mjs unlink",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",
