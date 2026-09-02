@@ -16,7 +16,8 @@ open-forge:
   Remediation](../cli-quality-remediation.md) root Task is Complete and
   squash-integrated at `862cbf2a`, exact tree `571f104f`, from accepted
   implementation candidate `a4ccf19a`, tree `97254e65`. Task 3 “Route Update”
-  is active with M6 accepted and M7 active; later Route Mutation commands remain
+  has completed M11 at immutable review snapshot `d8b8a33e`, tree `e0b8f85a`,
+  and has active M12 at 11/12 milestones; later Route Mutation commands remain
   Planned in the accepted sequence.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Common prerequisites: Route discovery, `index`, and Mutation Foundation.
@@ -24,8 +25,9 @@ open-forge:
   `f82c2b168657baf2fac50c76e2ff2cc0ed3776d7`, squash-integrated at
   `cc35c853fd7b55d31e3fb2c9a454d9ab61c1884e`, with closeout integrated at
   `18f2acff31cfd6600a16430ac5d689d05482e297`, exact tree
-  `39f0a8c4e6d3695cfbe7407dfd6043dc5ec9680a`. It applies only to Route Init,
-  Route Create, Route Move, and Route Remove. Route Update is independent of it.
+  `39f0a8c4e6d3695cfbe7407dfd6043dc5ec9680a`. Route Init, Route Create,
+  Route Update, Route Move, and Route Remove consume its accepted
+  generated-navigation formation or projection capabilities.
 
 ## Shared Boundary
 
@@ -40,7 +42,9 @@ overload to project their complete post-operation Generated Navigation graph fro
 real observed evidence. The overload extends existing formation only. It does not
 create a prospective catalogue/source framework, virtual filesystem, temporary
 checkout, or hidden Index. Existing `Build(SourceCatalogue)` remains unchanged
-current-state behavior and delegates to the overload.
+current-state behavior and delegates to the overload. Update consumes the same
+accepted generated-navigation formation and projection behavior through its
+command-local destination/navigation planning boundary.
 
 Implement in order because later commands consume identity, collision, overwrite,
 and lifecycle facts established by earlier operations. Every command proves dry
@@ -61,7 +65,7 @@ command Active or Ready.
 
 - [x] [Implement generic and Framework-aware sparse route initialization after root Install](route-init.md) — Complete and squash-integrated at `cc5085ce` — Implementer: Overseer-managed Task Mastermind
 - [x] [Implement one-file route creation below an existing routable parent](route-create.md) — Complete and squash-integrated at `19412d2` — Implementer: Overseer-managed Route Create Task Mastermind
-- [ ] [Implement bounded route content and metadata update without identity drift](route-update.md) — Active; M6 accepted and M7 active — Implementer: Overseer-managed Route Update Task Mastermind
+- [ ] [Implement bounded route content and metadata update without identity drift](route-update.md) — Active; M11 complete and M12 active at 11/12 milestones — Implementer: Overseer-managed Route Update Task Mastermind
 - [ ] [Implement route move with reference, overwrite, generated-navigation, and recovery integrity](route-move.md) — Planned — Implementer: Not assigned
 - [ ] [Implement route removal with dependency, reference, generated-navigation, and recovery integrity](route-remove.md) — Planned — Implementer: Not assigned
 
@@ -80,13 +84,13 @@ are now integrated into local `develop`: canonical lifecycle creation at
 `1d404c5cef3f5fd464ca771fc132a657f792f533` and the neutral Markdown link-label
 projection at `89a35a7876f39123d9538bca24126ff7197b9459`.
 
-| Command      | Preparation branch   | Readiness                                                                                                                                                                                                                               |
-| ------------ | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Route Init   | `codex/route-init`   | Complete and squash-integrated at `cc5085ce`; reviewed closeout `c580149`, tree `a1810c4`                                                                                                                                               |
-| Route Create | `codex/route-create` | Complete and squash-integrated at `19412d2`; reviewed candidate `392114a`, tree `2bbba7e`; it supplies the `RouteCreateJsonContext` and Route-help predecessor slices plus the maintainer-approved required effect-change correction    |
-| Route Update | `codex/route-update` | Active from accepted base `5aad04a`, exact tree `0f56b2c`; activation, architecture, Gray, Red, and M6 are accepted, and M7 is active; revalidate the next coherent commit boundary against current `develop` `128b70b`, tree `0ff3d38` |
-| Route Move   | `codex/route-move`   | Waiting for Route Update, its remaining proportionality/wire gate, and the accepted neutral-reference correction                                                                                                                        |
-| Route Remove | `codex/route-remove` | Waiting for Route Move and its command-local result freeze; its parser and canonical lifecycle prerequisites are integrated                                                                                                             |
+| Command      | Preparation branch   | Readiness                                                                                                                                                                                                                                                                                           |
+| ------------ | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Route Init   | `codex/route-init`   | Complete and squash-integrated at `cc5085ce`; reviewed closeout `c580149`, tree `a1810c4`                                                                                                                                                                                                           |
+| Route Create | `codex/route-create` | Complete and squash-integrated at `19412d2`; reviewed candidate `392114a`, tree `2bbba7e`; it supplies the `RouteCreateJsonContext` and Route-help predecessor slices plus the maintainer-approved required effect-change correction                                                                |
+| Route Update | `codex/route-update` | Active from accepted base `5aad04a`, exact tree `0f56b2c`; M11 is complete at immutable review snapshot `d8b8a33e`, tree `e0b8f85a`; M12 is active at 11/12 and its five continuity overlaps must reconcile against accepted `develop` continuity `fc7e3c7`, tree `af2a8880`, after Task acceptance |
+| Route Move   | `codex/route-move`   | Waiting for Route Update, its remaining proportionality/wire gate, and the accepted neutral-reference correction                                                                                                                                                                                    |
+| Route Remove | `codex/route-remove` | Waiting for Route Move and its command-local result freeze; its parser and canonical lifecycle prerequisites are integrated                                                                                                                                                                         |
 
 The required behavior and integration order is root Install, Route Init, Route
 Create, Route Create protected integration with its two predecessor slices,
@@ -108,9 +112,11 @@ verification boundary; the leaf Task retains that process/evidence limitation.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
+
 - [Implement one-file route creation below an existing routable parent](route-create.md) - #Memory #Working #CLI #Task #Route #Create #Mutation #Contextual
 - [Implement generic and Framework-aware sparse route initialization after root Install](route-init.md) - #Memory #Working #CLI #Task #Route #Init #Mutation #Contextual
 - [Implement route move with reference, overwrite, generated-navigation, and recovery integrity](route-move.md) - #Memory #Working #CLI #Task #Route #Move #Mutation #Contextual
 - [Implement route removal with dependency, reference, generated-navigation, and recovery integrity](route-remove.md) - #Memory #Working #CLI #Task #Route #Remove #Mutation #Contextual
 - [Implement bounded route content and metadata update without identity drift](route-update.md) - #Memory #Working #CLI #Task #Route #Update #Mutation #Contextual
+
 <!-- open-forge:generated-index:end -->

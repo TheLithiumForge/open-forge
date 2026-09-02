@@ -29,23 +29,23 @@ identity, queue state, completion grace, worktree mapping, and integration state
 
 ## Accepted Baseline
 
-- Accepted local `develop` commit:
-  `128b70b3a9eca6e4a653ac60499e0d25ada4d14b`.
-- Exact tree: `0ff3d386f09770384e7529bb6101e0a7c108b63c`.
+- Accepted pre-transition local `develop` continuity commit:
+  `fc7e3c75eddcb799e23fa65d2e6549a1d8a3d584`.
+- Exact tree: `af2a8880e97c209010fef5151e3e0072a5c1c4d1`.
 - The baseline contains CLI Quality Remediation, bounded review orchestration,
-  permanent task identity and dynamic progress controls, and repository-local
-  npm linking for the managed development CLI.
+  permanent task identity and dynamic progress controls, repository-local npm
+  linking for the managed development CLI, and the live project-control ledger.
 - The replacement CLI remains non-shipping. No remote action or publication is
   authorized.
 
 ## Task Identity, Queue, And Active Work
 
-| Permanent task ID and actual name | Task record                                          | Queue state | Completion grace | Outcome                                                                                                    | Queue order and dependency reason                    | Profile      | Lane, branch, worktree, and base                                                                       | Responsible role                                                      | Integration mapping                                                                                                            |
-| --------------------------------- | ---------------------------------------------------- | ----------- | ---------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- | ------------ | ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| Task 3 “Route Update”             | [Route Update](tasks/route-mutation/route-update.md) | `ACTIVE`    | Not applicable   | Implement bounded route content and metadata update without identity drift.                                | Current mutation task after CLI Quality Remediation. | Assured      | `codex/route-update`; `open-forge-worktree/route-update`; accepted task base `5aad04a`, tree `0f56b2c` | Route Update Task Mastermind with one continuous implementation owner | Revalidate against `128b70b`, tree `0ff3d38`, at the next coherent commit boundary; integrate only after full Task acceptance. |
-| Task 4 “Route Move”               | [Route Move](tasks/route-mutation/route-move.md)     | `QUEUED`    | Not applicable   | Implement route movement with reference, overwrite, navigation, lifecycle, and recovery integrity.         | First after accepted Route Update integration.       | Not selected | Planned `codex/route-move`; exact base deferred until activation                                       | Not assigned                                                          | Separate future integration boundary.                                                                                          |
-| Task 5 “Route Remove”             | [Route Remove](tasks/route-mutation/route-remove.md) | `QUEUED`    | Not applicable   | Implement positive-unmanaged route removal with dependency, reference, navigation, and recovery integrity. | After Route Move and its command-local freeze.       | Not selected | Planned `codex/route-remove`; exact base deferred until activation                                     | Not assigned                                                          | Separate future integration boundary.                                                                                          |
-| Task 6 “Root Update”              | [Root Update](tasks/lifecycle/update.md)             | `QUEUED`    | Not applicable   | Reconcile lifecycle-managed Framework files and regions from accepted identity.                            | After the complete Route Mutation M2 lane.           | Not selected | Planned branch and worktree; exact base deferred until activation                                      | Not assigned                                                          | Separate future integration boundary.                                                                                          |
+| Permanent task ID and actual name | Task record                                          | Queue state | Completion grace | Outcome                                                                                                    | Queue order and dependency reason                    | Profile      | Lane, branch, worktree, and base                                                                                                                           | Responsible role                                                      | Integration mapping                                                                                                                                                                   |
+| --------------------------------- | ---------------------------------------------------- | ----------- | ---------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Task 3 “Route Update”             | [Route Update](tasks/route-mutation/route-update.md) | `ACTIVE`    | Not applicable   | Implement bounded route content and metadata update without identity drift.                                | Current mutation task after CLI Quality Remediation. | Assured      | `codex/route-update`; `open-forge-worktree/route-update`; accepted task base `5aad04a`, tree `0f56b2c`; immutable M11 snapshot `d8b8a33e`, tree `e0b8f85a` | Route Update Task Mastermind with one continuous implementation owner | M11 complete; M12 active at 11/12. Reconcile five known continuity overlaps against accepted `develop` continuity commit `fc7e3c7`, tree `af2a8880`, only after full Task acceptance. |
+| Task 4 “Route Move”               | [Route Move](tasks/route-mutation/route-move.md)     | `QUEUED`    | Not applicable   | Implement route movement with reference, overwrite, navigation, lifecycle, and recovery integrity.         | First after accepted Route Update integration.       | Not selected | Planned `codex/route-move`; exact base deferred until activation                                                                                           | Not assigned                                                          | Separate future integration boundary.                                                                                                                                                 |
+| Task 5 “Route Remove”             | [Route Remove](tasks/route-mutation/route-remove.md) | `QUEUED`    | Not applicable   | Implement positive-unmanaged route removal with dependency, reference, navigation, and recovery integrity. | After Route Move and its command-local freeze.       | Not selected | Planned `codex/route-remove`; exact base deferred until activation                                                                                         | Not assigned                                                          | Separate future integration boundary.                                                                                                                                                 |
+| Task 6 “Root Update”              | [Root Update](tasks/lifecycle/update.md)             | `QUEUED`    | Not applicable   | Reconcile lifecycle-managed Framework files and regions from accepted identity.                            | After the complete Route Mutation M2 lane.           | Not selected | Planned branch and worktree; exact base deferred until activation                                                                                          | Not assigned                                                          | Separate future integration boundary.                                                                                                                                                 |
 
 Queue order expresses dependency and priority, not numeric order. A completed
 task remains in `RECENTLY_COMPLETED` on its completion-bearing update and exactly
@@ -55,12 +55,13 @@ and actual name and receives a new explicit Task-owned horizon.
 
 ## Current Integration Boundary
 
-- Task 3 remains isolated on `codex/route-update`. Its Task Mastermind recorded
-  the newer `develop` identity without rebasing, merging, or interrupting active
-  M7 work.
-- The next coherent Task 3 commit and evidence boundary must prove ancestry and
-  exact path overlap against the two post-base integrations before later
-  integration planning.
+- Task 3 remains isolated on `codex/route-update`. M11 is complete on immutable
+  review snapshot `d8b8a33e`, tree `e0b8f85a`; M12 dispositions, at most one
+  grouped correction, rechecks, and fresh holistic acceptance are active.
+- The Task Mastermind recorded accepted `develop` continuity commit `fc7e3c7`,
+  tree `af2a8880`, without rebasing or merging. Five known continuity paths
+  overlap; integration must reconcile their meaning after Task acceptance rather
+  than copy stale branch prose.
 - Task 3 owns Route Update behavior and its declared integration neighborhood.
   The Overseer retains project sequencing, shared semantic authority, final
   integration, and project acceptance.
@@ -83,7 +84,7 @@ and actual name and receives a new explicit Task-owned horizon.
   Missing optional child messages alone are `progress unobserved`, not failure.
 - Active task: Task 3 “Route Update”. Its linked Task record defines the current
   phase, completed milestone count, current-state suffix, and evidence.
-- Next meaningful project boundary: Revalidate the Task's next accepted commit
-  against current `develop`, then retain isolation until Task acceptance makes
-  it integration-ready.
+- Next meaningful project boundary: Complete M12 dispositions, any single
+  grouped correction and rechecks, and fresh holistic acceptance. Then reconcile
+  the five continuity overlaps against `develop` and integrate the accepted Task.
 - Blocker: None.

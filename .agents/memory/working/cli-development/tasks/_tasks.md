@@ -21,7 +21,7 @@ Read the [program Task](00-cli-development.md), [Architecture](../../../crystall
 - [x] [Read-Only CLI Dogfooding Corrections](read-only-dogfooding-corrections.md) — Complete and squash-integrated at `bba84b6` — Implementer: Overseer
 - [x] [Proportional CLI Corrections](proportional-cli-corrections.md) — Complete and squash-integrated through `0d88606`; Mutation Foundation may resume — Implementer: Overseer with bounded Task Masterminds
 - [x] [Next-Wave Shared Foundations](shared-foundations/_shared-foundations.md) — Complete at integrated D0/SF1-SF4 baseline — Implementer: Overseer-managed bounded Task Masterminds
-- [ ] [Route Mutation Commands](route-mutation/_route-mutation.md) — Active: Route Init, Route Create, and [CLI Quality Remediation](cli-quality-remediation.md) are Complete; Task 3 “Route Update” is active with M6 accepted and M7 active — Implementer: Overseer-managed command lanes
+- [ ] [Route Mutation Commands](route-mutation/_route-mutation.md) — Active: Route Init, Route Create, and [CLI Quality Remediation](cli-quality-remediation.md) are Complete; Task 3 “Route Update” has completed M11 and has active M12 at 11/12 milestones — Implementer: Overseer-managed command lanes
 - [x] [CLI Quality Remediation](cli-quality-remediation.md) — Complete and squash-integrated at `862cbf2a`, exact tree `571f104f`, from accepted implementation candidate `a4ccf19a`, tree `97254e65`; all thirteen findings/candidates and final `QR-R1-001` are closed — Implementer: Overseer-managed Task Mastermind
 - [ ] [Lifecycle Commands](lifecycle/_lifecycle.md) — Active: Extension Create and root Install are Complete; root Update remains planned after M2, with later Extension lifecycle commands still Planned — Implementer: Overseer-managed command lanes
 - [ ] [Operational Commands](operations/_operations.md) — Planned — Implementer: Not assigned
@@ -59,6 +59,7 @@ define execution state.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
+
 - [Parent outcome, scope, authority, and acceptance for the complete replacement CLI program](00-cli-development.md) - #Memory #Working #CLI #Task #Program #Architecture #Development #Contextual #Active
 - [Remediate the accepted first-pass CLI architecture, C# design, authority, and test-evidence findings after Route Create and before Route Update](cli-quality-remediation.md) - #Memory #Working #CLI #Task #Audit #Architecture #Refactoring #Testing #Review #Contextual
 - [Package, prove, document, and release the complete native CLI without partial publication](delivery/_delivery.md) - #Memory #Working #CLI #Task #Distribution #NativeAOT #SupplyChain #Release #Contextual
@@ -76,4 +77,5 @@ define execution state.
 - [Implement retained route mutation commands on the accepted mutation foundation](route-mutation/_route-mutation.md) - #Memory #Working #CLI #Task #Route #Mutation #Contextual
 - [Add the interaction, Framework distribution, lifecycle provenance, and directory-create prerequisites for the next command wave](shared-foundations/_shared-foundations.md) - #Memory #Working #CLI #Task #Foundation #Shell #Framework #Lifecycle #Contextual
 - [Audit symbolic constants, generated-region authority, and composable active-test foundations across the replacement CLI](test-architecture-and-constants.md) - #Memory #Working #CLI #Task #Testing #Architecture #Constants #Fixtures #Snapshot #Contextual
+
 <!-- open-forge:generated-index:end -->

@@ -16,16 +16,16 @@ release.
 
 ## Current State
 
-The current local `develop` integration baseline is
-`128b70b3a9eca6e4a653ac60499e0d25ada4d14b` with exact tree
-`0ff3d386f09770384e7529bb6101e0a7c108b63c`. It contains CLI Quality
+The accepted pre-transition local `develop` continuity baseline is
+`fc7e3c75eddcb799e23fa65d2e6549a1d8a3d584` with exact tree
+`af2a8880e97c209010fef5151e3e0072a5c1c4d1`. It contains CLI Quality
 Remediation at `862cbf2a`, its closeout at `5053bf0c`, bounded review
 orchestration at `5aad04ac`, permanent task identity and dynamic progress at
 `3356eba1`, and repository-local npm linking for the managed development CLI at
-`128b70b3`. The [project control ledger](../cli-development/project-control.md)
+`128b70b3`, plus live progression at `fc7e3c7`. The [project control ledger](../cli-development/project-control.md)
 defines permanent task identities and the current dynamic queue. Route Update
-remains isolated on `codex/route-update`; its Task Mastermind recorded the new
-baseline without interrupting active M7 work.
+remains isolated on `codex/route-update`; M11 is complete at immutable review
+snapshot `d8b8a33e`, tree `e0b8f85a`, and M12 is active at 11/12 milestones.
 
 The preceding Route Create integration command is
 `19412d2a562ae66d1b4642256d854438df75366f`.
@@ -301,8 +301,9 @@ enums admit unnamed numeric values; no compiler-enforced exhaustiveness or
 warning suppression is claimed. Final closeout tip
 `2b353c48978ee88e53345be8037776181612222c` is locally integrated at
 `09aa03eddb97831ff544afe1eac54ad9af501f5c` with exact tree equality. The
-intended-membership formation prerequisite is integrated, but it applies only to
-Route Init, Route Create, Route Move, Route Remove, and root Install/Update.
+intended-membership formation prerequisite is integrated. Route Init, Route
+Create, Route Update, Route Move, Route Remove, and root Install/Update consume
+its accepted generated-navigation formation or projection capabilities.
 Its integration closeout is the pre-foundation commit
 `18f2acff31cfd6600a16430ac5d689d05482e297`, exact tree
 `39f0a8c4e6d3695cfbe7407dfd6043dc5ec9680a`.
@@ -321,7 +322,8 @@ supplies the `RouteCreateJsonContext` and Route-help predecessor slices. The
 separate CLI Quality Remediation Task is Complete and squash-integrated at
 `862cbf2a`, exact tree `571f104f`, from accepted implementation candidate
 `a4ccf19a`, tree `97254e65`. Task 3 “Route Update” is active on its isolated
-worktree and has completed M6; M7 is active.
+worktree; M11 is complete at `d8b8a33e`, tree `e0b8f85a`, and M12 dispositions,
+grouped correction/rechecks, and holistic acceptance are active at 11/12.
 Route Init's Framework mode accepts one concrete
 uniquely aligned route, slugs only ID-form inserted scope labels, creates one
 sparse chain, keeps scope entrypoints user-owned, and lifecycle-manages only
@@ -372,12 +374,11 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Continue Task 3 “Route Update” through M7 application, recovery,
-   verification, result, and rendering. At its next coherent commit boundary,
-   revalidate exact ancestry and path overlap against current `develop`
-   `128b70b`, tree `0ff3d38`. Complete protected M8 and the accepted review and
-   evidence horizon before integration. Then continue Route Move → Route Remove
-   and only afterward root Update M3.
+1. Continue Task 3 “Route Update” through M12 finding dispositions, at most one
+   grouped Red-first correction, full rechecks, and fresh holistic acceptance.
+   Then reconcile its five known continuity overlaps against accepted `develop`
+   continuity `fc7e3c7`, tree `af2a8880`, and integrate the accepted Task before
+   Route Move → Route Remove and only afterward root Update M3.
 2. Retain thin D1 as current `linux-x64` build/smoke, packed
    install/invocation, and checksums. Keep future RIDs, signatures, SBOM,
    provenance, OIDC, and support floors behind a later explicit decision.

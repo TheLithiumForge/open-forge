@@ -55,8 +55,9 @@ The accepted dependency order is:
    consuming/revalidating those slices and closing the residual findings.
    Review orchestration is integrated at `5aad04ac`; permanent task identity and
    progress follow-up is integrated at `3356eba1`; repository-local npm linking
-   is integrated at `128b70b3`, current `develop` tree `0ff3d386`. Task 3 “Route
-   Update” is the active sequential Route Mutation M2 leaf.
+   is integrated at `128b70b3`; live progression is recorded at `fc7e3c75`, tree
+   `af2a8880`. Task 3 “Route Update” is the active sequential Route Mutation M2
+   leaf at M12, 11/12 milestones complete.
 4. Implement root Update M3 only after full M2 is complete. Preparation that is
    independent of unfinished behavior may proceed earlier in isolated lanes:
    scope discovery, contract and ownership audits, callable-surface analysis,
@@ -85,7 +86,7 @@ or a general template/scaffold system.
 | Quality remediation  | Accepted first-pass CLI architecture, design, authority, and test-evidence findings | Complete and squash-integrated at `862cbf2a`, exact tree `571f104f`, from accepted implementation candidate `a4ccf19a`, tree `97254e65`; all thirteen findings/candidates, final `QR-R1-001`, managed `1522/736/146`, native Integration `736/736`, format, diff, and Sol/xhigh review are closed |
 | Review orchestration | Opt-in immutable coordinated topic review and permanent task-progress controls      | Complete and integrated at `5aad04ac` plus follow-up `3356eba1`; APM, Open Forge, projection, formatting, protected-path, and C# identity gates pass                                                                                                                                              |
 | npm link shims       | Repository-local managed development CLI linking                                    | Complete and integrated at `128b70b3`; Node `16/16` and exact package, mode, manifest, nonmutation, and protected-path gates pass                                                                                                                                                                 |
-| Route Update         | Bounded route content and metadata update                                           | Active on `codex/route-update`; M6 is accepted and M7 application, recovery, verification, result, and rendering is active; the Task Mastermind recorded current `develop` without interrupting the isolated lane                                                                                 |
+| Route Update         | Bounded route content and metadata update                                           | Active on `codex/route-update`; M11 full managed/native/dogfood acceptance and the four-topic immutable review are complete at `d8b8a33e`, tree `e0b8f85a`; M12 dispositions, at most one grouped correction, rechecks, and holistic acceptance are active at 11/12                               |
 
 Each mutating lane owns a distinct worktree and feature branch. Shared root
 composition, serializer registration, public help, process evidence, Plan, and
@@ -183,7 +184,8 @@ root plus `720/146`, isolated dogfood, and Sol/xhigh `RC-R2` evidence pass. The
 separate CLI Quality Remediation Task is Complete and squash-integrated at
 `862cbf2a`, exact tree `571f104f`, from accepted implementation candidate
 `a4ccf19a`, tree `97254e65`. Task 3 “Route Update” is active in its frozen
-seven-phase, twelve-milestone horizon; M6 is accepted and M7 is active.
+seven-phase, twelve-milestone horizon; M11 is complete and M12 is active at
+11/12 milestones on immutable review snapshot `d8b8a33e`, tree `e0b8f85a`.
 New architecture or product questions must still be returned to the maintainer
 before changing accepted meaning.
 
