@@ -267,10 +267,12 @@ When the Overseer requests status, return exactly:
 
 ```text
 Done: <integrated inputs, candidate commit, and reproduced evidence>
-Now: <canonical status when mapped> — <current integration operation>
+Now: Task X[/Y] “<actual task name>” (phase A/B): milestone C/D — <current integration operation>
 Next: <next meaningful milestone>
 Blocker: <none or one conflict, change request, or authorization>
 ```
+
+When the integration boundary has a supplied task mapping, derive its permanent ID and actual name from the project ledger and its accepted horizons, current phase ordinal, completed milestone count, and current-state suffix from the Task record. Include `/Y` only for a declared stable global task horizon. Never count the active milestone as completed, infer the mapping from integrated inputs or visible queue size, or own queue state or completion grace.
 
 ## Completion
 

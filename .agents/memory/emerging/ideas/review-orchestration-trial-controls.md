@@ -22,39 +22,80 @@ the result.
 
 ## Stable Progress Display
 
-Use a stable display layer that lets the maintainer see task and phase progress
-without replacing semantic task, finding, evidence, or Git identities.
+Current policy uses a stable display layer that lets the maintainer see task and
+phase progress without replacing semantic task, finding, evidence, or Git
+identities.
 
-- Give top-level tasks progressive numeric display positions. Assign each number
-  once, never reuse it, and show the current total in the leading `Task X/Y`
-  segment of the named canonical status below.
-- Use the exact status
-  `Task X/Y “<actual task name>” (phase A/B): milestone C/D`, with numeric
-  progress and denominators in all four positions and the task's actual name in
-  curly quotation marks. Optional local letter labels such as `Phase A` remain
-  separate and never become task or phase identities.
-- Keep denominators fixed for the accepted horizon and never report regressing
-  progress. Disclose accepted scope change as a new horizon instead of silently
-  redrawing a denominator.
+- Give every top-level task one permanent repository-global numeric ID and its
+  mandatory actual name. The project control ledger retains that mapping across
+  completion, reopening, and follow-up work and never reuses the ID.
+- Use `Task X “<actual task name>” (phase A/B): milestone C/D`. Add `/Y` after
+  `X` only when the ledger declares a stable repository-global task horizon;
+  never derive it from the active or visible queue.
+- Treat `phase A/B` as the current active phase ordinal and declared phase
+  count, starting at `1/B`. Treat milestone `C` as completed milestones,
+  including zero, and `D` as the fixed milestone count. Keep the phase ordinal
+  and completed milestone count non-regressing inside each Task-owned accepted
+  horizon. Name the active milestone only in the suffix. For example,
+  `(phase 3/3): milestone 3/4 — M4 review active` means the task is active in
+  its final phase and three milestones are complete. The final phase may remain
+  `B/B` while work continues. Reserve `C=D` for task completion.
+- Disclose accepted scope change, reopening, or follow-up work as a new
+  Task-owned horizon. Start the new phase at `1/<new B>` and milestone progress
+  at `0/<new D>` unless the Task record can state preserved milestone progress
+  truthfully. Optional local letter labels such as `Phase A` remain separate
+  and never become task or phase identities.
 - Keep durable semantic IDs, dependency edges, finding IDs, commit IDs, and tree
-  IDs authoritative beneath this display. Display position never grants
+  IDs authoritative beneath this display. Permanent task identity never grants
   authority, sets execution order, or proves acceptance.
-- End every in-progress Overseer commentary message with one compact progress
-  line derived from declared milestones. Do not invent percentage precision.
-  The progress line is the last content in the message.
+- Every progress-bearing Overseer update renders the nonempty `Active`,
+  `Recently completed`, and `Queued` sections. Queue order follows project
+  priority and dependencies rather than task ID order. Queued tasks show their
+  permanent ID and name without invented phase or milestone horizons.
+- A completed task appears on its completion-bearing update and exactly two
+  subsequent progress-bearing Overseer updates, then leaves the visible queue
+  before the third. Non-progress Overseer messages and descendant updates do
+  not consume this grace. Reopened or follow-up work reuses the same ID and name
+  and clears stale completion grace.
+- The ledger owns permanent identity, name, queue state, and grace. The Task
+  record owns phase and milestone. The Overseer renders and advances the grace
+  counter. Project Status and Checkpoint records derive and link these facts.
 
 Task, Integration, and Review Masterminds must report checkpoints in compact
 caveman form:
 
 ```text
 Done: <completed evidence or commit>
-Now: <canonical status when mapped> — <active operation>
+Now: Task X[/Y] “<actual task name>” (phase A/B): milestone C/D — <active operation>
 Next: <next meaningful milestone>
 Blocker: <none or one real blocker>
 ```
 
 Omit incidental transcript detail. A completion packet may link to durable
 evidence, but its summary should preserve this shape.
+
+### Progress Scenarios
+
+These scenarios are focused contract evidence for the display policy. They do
+not add trial-only behavior.
+
+| Scenario                             | Derived status                                                                                                                                                                                     | Queue and grace evidence                                                                                                           |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Before the first milestone completes | `Task 2 “Review Orchestration Workflow” (phase 1/3): milestone 0/4 — M1 active`                                                                                                                    | The task is `ACTIVE`; phase starts at one and zero completed milestones is valid.                                                  |
+| Final phase and milestone active     | `Task 2 “Review Orchestration Workflow” (phase 3/3): milestone 3/4 — M4 active`                                                                                                                    | The task remains `ACTIVE`; the final phase ordinal is visible and the active final milestone is not counted as complete.           |
+| Completion-bearing update            | `Task 2 “Review Orchestration Workflow” (phase 3/3): milestone 4/4 — Completed`                                                                                                                    | The task enters `RECENTLY_COMPLETED` with two subsequent progress-bearing updates remaining; this update does not decrement grace. |
+| First subsequent progress update     | The same completed status remains visible.                                                                                                                                                         | Render, then decrement remaining grace from two to one.                                                                            |
+| Second subsequent progress update    | The same completed status remains visible.                                                                                                                                                         | Render, then decrement remaining grace from one to zero; dequeue before the next progress update.                                  |
+| Non-progress or descendant update    | No progress section is required.                                                                                                                                                                   | Do not consume completion grace.                                                                                                   |
+| Reopened or follow-up horizon        | Reuse `Task 2 “Review Orchestration Workflow”`; declare `phase 1/<new B>` and `milestone 0/<new D>` unless truthful milestone progress is preserved, then name the active milestone in the suffix. | Return to `ACTIVE` and clear stale completion grace.                                                                               |
+
+Review Mastermind mapping has a separate restricted-input check:
+
+| Scenario                                                                                                                        | Required result                                                                                                                                                                                                                                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Valid task-mapped checkpoint or return                                                                                          | Validate the supplied ledger ID, name, and optional global horizon together with the current repository-relative Task-record locator, content identity, freshness basis, current phase ordinal, completed milestone count, current-state suffix, and bounded immutable content. Render the validated mapping without reading mutable filesystem state. |
+| Missing or inconsistent Task record, identity, freshness, horizon, phase, completed milestone progress, or current-state suffix | Return `REVIEW_GAP` for that snapshot before topic launch. Do not read or invent mutable filesystem state.                                                                                                                                                                                                                                             |
+| Cross-task intake without one return mapping                                                                                    | Join by snapshot and writer without fabricating one combined task status.                                                                                                                                                                                                                                                                              |
 
 ## Observable Agent State
 
@@ -138,6 +179,12 @@ record contains:
 
 - a stable snapshot key, working-root or worktree locator, task and lane display
   labels, semantic task owner, and original writer that receives the return;
+- for each task-mapped checkpoint or return, the current repository-relative
+  Task-record locator, its content identity and freshness basis, bounded
+  Task-record content or an exact immutable object locator sufficient for the
+  coordinator's named object tool, and the supplied Task-owned current phase
+  ordinal, completed milestone count, and current-state suffix; missing content,
+  object, or suffix input is `REVIEW_GAP`;
 - actual ancestor commit and tree;
 - candidate commit and tree, plus candidate parent commit and tree;
 - accepted authority commit and tree when it differs from the code ancestor;
@@ -258,14 +305,15 @@ evidence-neutral.
 
 Reduce mutable Memory duplication by giving each changing question one source:
 
-| Question                                  | Candidate source                                |
-| ----------------------------------------- | ----------------------------------------------- |
-| Current task phase, blocker, and evidence | Task record                                     |
-| Task dependencies and schedule            | Program plan                                    |
-| Active lane, branch, worktree, and owner  | Project ledger                                  |
-| Resumption state                          | Checkpoint that links to the sources above      |
-| Fixed transfer boundary                   | Sealed Handoff                                  |
-| Accepted product or Framework behavior    | Current contract or designated current document |
+| Question                                                                                          | Candidate source                                |
+| ------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| Permanent task identity, queue, and grace                                                         | Project ledger                                  |
+| Accepted task horizons, current phase, completed milestones, current state, blocker, and evidence | Task record                                     |
+| Task dependencies and schedule                                                                    | Program plan                                    |
+| Active lane, branch, worktree, and owner                                                          | Project ledger                                  |
+| Resumption state                                                                                  | Checkpoint that links to the sources above      |
+| Fixed transfer boundary                                                                           | Sealed Handoff                                  |
+| Accepted product or Framework behavior                                                            | Current contract or designated current document |
 
 Keep commit presentation separate from technical evidence. A message-only
 identity change does not invalidate an unchanged tree, while an evidence input

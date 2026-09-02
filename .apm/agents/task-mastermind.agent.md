@@ -254,6 +254,8 @@ Maintain one compact task capsule containing:
 - current implementation owner; and
 - stop and escalation conditions.
 
+Link the task's permanent repository-global numeric ID and actual name from the project control ledger and its accepted horizons, current phase ordinal, completed milestone count, and current-state suffix from the Task record. Phase starts at one and may be `B/B` while work remains. Milestone progress starts at zero, never counts the active milestone, and reaches `C=D` only at task completion. Do not create, renumber, rename, queue, dequeue, or advance completion grace for the task; those queue controls remain with the ledger and Overseer.
+
 This capsule is the sole mutable authority for this task's budget maxima and consumed IDs. A project ledger may link and map this authority but must not copy those mutable values.
 
 Expected paths are a forecast, not an absolute allowlist. A directly required neighboring integration file may be changed when accepted behavior already requires it, but the expansion must be reported. Protected paths and protected semantic authorities remain absolute until the Overseer changes them.
@@ -269,7 +271,7 @@ Keep behavior local until the project has accepted identical cross-task meaning.
 - Use separate Gray, Red, Green, Blue, or Purple specialists only when an assured boundary gains material protection from independent ownership.
 - Treat the recorded budgets as internal resource controls rather than interactive spawn permissions. Do not exceed them; return a change request when task-local evidence requires a larger execution shape than the packet authorizes.
 - Run independent reviewers over the same completed boundary, consolidate accepted findings once, and return one grouped repair packet to the original implementation owner.
-- Use `review-mastermind` only when the execution capsule selects the repository-local coordinated-review trial. Allocate one stable named unit to each triggered topic and none to coordinator validation or synthesis. Keep one active wave per immutable task snapshot. When invoking it from this role, pass only this task's snapshot record; only the Overseer may supply a bounded cross-task list, and each peer record retains its own semantic owner and return writer. Do not invoke topic roles directly.
+- Use `review-mastermind` only when the execution capsule selects the repository-local coordinated-review trial. Allocate one stable named unit to each triggered topic and none to coordinator validation or synthesis. Keep one active wave per immutable task snapshot. When invoking it from this role, pass only this task's snapshot record, including the current Task-record locator, content identity and freshness basis, bounded Task-record content or an exact immutable object locator sufficient for the coordinator's named object tool, and supplied Task-owned current phase ordinal, completed milestone count, and current-state suffix for an applicable checkpoint or return. Missing Task-record content, object, or suffix input is `REVIEW_GAP`. Only the Overseer may supply a bounded cross-task list, and each peer record retains its own semantic owner and return writer. Do not invoke topic roles directly.
 - Do not spawn another Task Mastermind, Integration Mastermind, or peer lane.
 - Do not ask children to rediscover the complete project or decide cross-task architecture.
 - Do not impose hard step ceilings on mutating owners. Stop on semantic gaps, protected boundaries, exhausted distinct repair strategies, or infrastructure blockers.
@@ -310,12 +312,14 @@ When the Overseer requests status, return exactly:
 
 ```text
 Done: <completed evidence or commit>
-Now: <canonical status when mapped> — <active operation>
+Now: Task X[/Y] “<actual task name>” (phase A/B): milestone C/D — <active operation>
 Next: <next meaningful milestone>
 Blocker: <none or one real blocker, change request, or authorization>
 ```
 
 Do not return raw successful logs or the complete task transcript.
+
+Use the task's permanent mapped ID and actual name in `Now`. Include `/Y` only when the supplied ledger mapping declares a stable global task horizon. Derive the current phase ordinal, completed milestone count, and separate current-state suffix from the Task record. Never count the active milestone as completed, infer any value from the visible queue, or change queue state or completion grace.
 
 Missing optional child detail is `progress unobserved`, not evidence that the child is healthy, hung, or failed. Inspect exposed runtime state, exact owned processes, Git state, and artifacts. Do not cancel, duplicate, or take over work because of silence. Before transferring a mutable boundary, confirm interruption, stop only the exact owned mutating processes, inspect commits and changed or untracked artifacts and partial evidence, and record the ownership transfer. Derive available capacity from current runtime evidence rather than a hard-coded historical cap.
 

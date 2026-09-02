@@ -31,6 +31,11 @@ named risk justifies it. The Review Evidence Directive requires stable finding
 IDs, independent first passes, grouped correction packets, and targeted
 rechecks. The C# Directives already require every C# source or test author and
 reviewer to read the complete `_csharp.md`, `design.md`, and `style.md` files.
+The project ledger owns each task's permanent repository-global numeric ID,
+actual name, queue state, and completion grace. Task records define accepted
+phase and milestone horizons, the current phase ordinal, completed milestone
+count, and separate current state. Progress and checkpoint surfaces derive
+those facts.
 
 The proposed overlay is useful because different questions are easy to miss in
 one local implementation context:
@@ -62,11 +67,16 @@ The recommended candidate is a review-only Mastermind with no edit authority:
 
 1. One or more implementation owners announce a bounded list of coherent
    immutable checkpoint records. Each record names its semantic owner and
-   original return writer, display and lane, actual ancestor, candidate,
+   original return writer, permanent task ID and actual name plus any lane
+   display, current Task-record locator, content identity and freshness basis,
+   bounded Task-record content or an exact immutable object locator sufficient
+   for the coordinator's named object tool, supplied Task-owned current phase
+   ordinal, completed milestone count, and current-state suffix, actual ancestor, candidate,
    candidate parent, and any separate authority commit and tree identities;
    exact changed and formerly untracked paths; accepted outcome; protected
    paths; direct integration neighborhood; claimed evidence; topic units and
    prefixes; and current execution state.
+   Missing Task-record content, object, or suffix input is `REVIEW_GAP`.
 2. The review Mastermind validates each immutable Git record independently and
    dispatches only relevant standing topics. C# conformance, architecture and
    ownership, behavior contracts, and test evidence remain non-overlapping.
@@ -284,9 +294,13 @@ Any future trial should include explicit internal limits and stop conditions:
   `Done:` concrete change or evidence, `Now:` one active action, `Next:` one
   boundary, and `Blocker:` only when a real blocker exists. Exact pre-edit
   architecture packets may retain necessary detail, but should lead with the
-  same compact status shape. The QR execution showed that this makes latency
-  circuits and unfinished boundaries visible without repeatedly transmitting
-  the accepted context.
+  same compact status shape. When a task mapping applies, `Now:` derives the
+  permanent ID and actual name from the ledger and phase and milestone from the
+  Task record. The phase numerator is the current active ordinal, while the
+  milestone numerator counts completed milestones and the active milestone is
+  named only in the suffix. The checkpoint does not own queue or completion grace. The QR
+  execution showed that this makes latency circuits and unfinished boundaries
+  visible without repeatedly transmitting the accepted context.
 
 ## Open Questions
 

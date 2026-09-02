@@ -19,23 +19,23 @@ Replace this template's frontmatter, title, and placeholders, then remove this b
 
 ## Scope And Freshness
 
-{State what this status covers, when it was last made current, and which external systems own live details.}
+{State what this status covers, when it was last made current, and which external systems define live details. Link the project control ledger for permanent task identity, queue state, and completion grace, and link Task records for accepted horizons, current phase ordinals, completed milestone counts, and current-state suffixes. This Status only derives and presents those facts.}
 
 ## Current Phase
 
-{State the present operating or development phase in ordinary domain language.}
+{Name the present operating or development phase in ordinary domain language. The numeric phase value is the current active ordinal, starting at one.}
 
 ## Completed
 
-{Record only completed outcomes needed to understand the current position. Link to durable authoritative sources and evidence.}
+{Record only completed outcomes needed to understand the current position. If this Status projects `Recently completed`, derive membership and remaining grace from the project control ledger, show the final Task-owned phase and full milestone count, and do not extend grace. Link to durable authoritative sources and evidence.}
 
 ## In Progress
 
-{State active work and its responsible person or role without copying full task systems.}
+{State active work and its responsible person or role without copying full task systems. Derive each permanent task ID and actual name from the project control ledger. Derive the current phase ordinal, completed milestone count, and separate current-state suffix from the linked Task record.}
 
 ## Current Priorities
 
-{State the ordered outcomes receiving attention now.}
+{State the ordered outcomes receiving attention now. When showing queued tasks, preserve the ledger's priority and dependency order rather than sorting by task ID. Do not invent phase or milestone horizons.}
 
 ## Gaps And Blockers
 

@@ -19,6 +19,7 @@ A Checkpoint records the current state, current step, and next steps for one act
   - Accepted decisions and evidence.
   - Unresolved questions and next steps.
   - Links to durable sources.
+- Link to the project control ledger for a task's permanent ID, actual name, queue state, and completion grace, and to the Task record for its accepted horizons, current phase ordinal, completed milestone count, and current-state suffix. A Checkpoint may derive those facts for a compact status line but does not own or advance them. Keep an active milestone's name in the suffix rather than treating its ordinal as completed. Checkpoint and descendant updates never consume Overseer completion grace.
 - Refresh the Checkpoint after an important state change and after context restoration.
 
 ### Closeout

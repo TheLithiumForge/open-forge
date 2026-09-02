@@ -250,6 +250,7 @@ Keep distinct sections for:
 - current accepted Git baseline;
 - queued, active, blocked, completed, and integrated work;
 - child sessions, branches, and worktrees;
+- permanent task IDs and names, queue state, and completion grace;
 - change requests, authorizations, evidence, and residual risks; and
 - the next meaningful project action.
 
@@ -320,7 +321,7 @@ When parallel worktrees were explicitly authorized, own the complete lifecycle o
 - monitor status without absorbing routine transcripts;
 - resolve project change requests and authorizations;
 - collect completion packets and verify Git identity;
-- for explicitly selected coordinated review, require each snapshot record to name its semantic owner and return writer, actual ancestor commit and tree, candidate commit and tree, candidate parent commit and tree, and any separate accepted authority commit and tree, validate ancestry or explicit parent-tree equivalence, and confirm every relevant formerly untracked artifact is committed;
+- for explicitly selected coordinated review, require each snapshot record to name its semantic owner and return writer, permanent task mapping, current Task-record locator plus content identity and freshness basis, bounded Task-record content or an exact immutable object locator sufficient for the coordinator's named object tool, supplied Task-owned current phase ordinal, completed milestone count, and current-state suffix, actual ancestor commit and tree, candidate commit and tree, candidate parent commit and tree, and any separate accepted authority commit and tree; treat missing Task-record content, object, or suffix input as `REVIEW_GAP`, validate ancestry or explicit parent-tree equivalence, and confirm every relevant formerly untracked artifact is committed;
 - dispatch integration automatically;
 - accept or reject the candidate baseline; and
 - retire child sessions and worktrees only after useful commits and evidence are retained.
@@ -396,16 +397,31 @@ Keep progress project-level. Report what is active, what completed, what is bloc
 
 During managed execution, send concise evidence-bearing updates at meaningful boundaries. Distinguish draft work, green focused evidence, independent review, commit, integration, and final acceptance instead of flattening them into generic progress. Report a material nonconformity, contract divergence, workaround request, or safety concern as soon as it is confirmed; name its practical consequence, whether work is paused, who owns the correction, and what evidence will close it. When the user has requested agent transparency, report each newly invoked or retriggered descendant with its task name, role, model, and reasoning level. Do not expose routine transcripts or narrate unchanged polling.
 
-Give top-level tasks stable numeric display positions. End every in-progress commentary with the exact final line `Task X/Y “<actual task name>” (phase A/B): milestone C/D`, using numeric progress, the task's actual name in curly quotation marks, and fixed denominators for the accepted horizon. Keep optional local letter labels separate, never regress reported progress, and disclose a scope change as a new horizon instead of silently changing a denominator.
+Give every top-level task one permanent repository-global numeric ID and its mandatory actual name. Store that mapping, queue state, and completion grace in the project control ledger. Never reuse an ID or replace its name when the work is completed, reopened, or continued as a follow-up. Use `Task X “<actual task name>” (phase A/B): milestone C/D`; add `/Y` after `X` only when the ledger declares a stable repository-global task horizon, never from the active or visible queue. Derive the current phase ordinal, declared phase count, completed milestone count, and fixed milestone count from the Task record. Phase starts at one and may be `B/B` while work remains. Milestone progress starts at zero, never counts the active milestone, and reaches `C=D` only at task completion. Keep the phase ordinal and milestone count non-regressing inside each accepted horizon. A reopened or follow-up Task record declares phase `1/<new B>` and milestone `0/<new D>` unless truthful milestone progress is preserved.
+
+Every progress-bearing update renders these nonempty sections in this order:
+
+```text
+Active
+- Task X[/Y] “<actual task name>” (phase A/B): milestone C/D — <current state>
+Recently completed
+- Task X[/Y] “<actual task name>” (phase B/B): milestone D/D — <completed result>
+Queued
+- Task X[/Y] “<actual task name>” — <priority or dependency reason>
+```
+
+Preserve ledger queue order, which expresses project priority and dependencies rather than ID order. Never invent phase or milestone horizons for a queued task. On a task's completion-bearing update, require its final Task-owned phase and full milestone count, place it in `Recently completed` with two subsequent progress-bearing updates remaining, and do not decrement that count. On each subsequent progress-bearing update, render it and then decrement; dequeue it before the next update when the count is zero. Non-progress messages and descendant updates do not consume grace. Reopened or follow-up work re-enters with the same ID and name, a new explicit Task-owned horizon, phase `1/<new B>`, truthful zero or preserved milestone progress, and no stale completion grace.
 
 Require Task, Integration, and Review Mastermind checkpoints to use exactly these four lines. When a display mapping exists, `Now` starts with the canonical status:
 
 ```text
 Done: <completed evidence or commit>
-Now: <canonical status when mapped> — <active operation>
+Now: Task X[/Y] “<actual task name>” (phase A/B): milestone C/D — <active operation>
 Next: <next meaningful milestone>
 Blocker: <none or one real blocker>
 ```
+
+The `A` value in every active checkpoint is the current phase ordinal, starting at one. The `C` value is the completed milestone count, including zero. Put the active milestone or current state after the dash. A task in its final phase may report `B/B` while work remains; only a completed task reports `C=D`.
 
 Do not ask the user to select internal agents, inspect child sessions, copy packets, schedule lanes, merge branches, or clean worktrees.
 

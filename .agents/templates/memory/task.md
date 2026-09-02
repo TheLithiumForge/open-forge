@@ -13,13 +13,16 @@ Use this Template only when the current request or external task source cannot p
 ## Task State
 
 - State: {Local state vocabulary.}
-- Display mapping: {Stable `Task X/Y “<actual task name>”`; use this task's actual name and keep optional local letter labels separate.}
-- Current phase and milestone: {Numeric progress for `phase A/B` and `milestone C/D`, with fixed denominators for the accepted horizon.}
+- Display mapping: {Link to the project control ledger entry that owns this task's permanent repository-global numeric ID and actual name. Include `/Y` only when that ledger declares a stable global task horizon; never derive it from the visible queue.}
+- Current phase and completed milestone count: {Use `phase A/B` for the current active phase ordinal and declared phase count, starting at `1/B`. Use `milestone C/D` for completed milestones, including zero, and the fixed milestone count. The final phase may be `B/B` while work remains; reserve `C=D` for task completion.}
+- Current milestone or state suffix: {Name the active milestone or current state separately. Do not encode an active milestone ordinal in `C`.}
+- Horizon provenance: {Original accepted horizon, or the disclosed reopened or follow-up horizon with phase `1/<new B>` and milestone `0/<new D>` unless truthful milestone progress is preserved.}
 - Responsible person or role: {Accountable owner.}
 - Task source: {This file or external system.}
+- Content identity and freshness: {Repository-relative locator plus current blob, digest, or canonical receipt identity and the freshness basis needed by restricted consumers.}
 - Last updated: {Date or timestamp when freshness matters.}
 
-This Task is the mutable source for its current phase, blockers, findings, evidence, and task-level budget maxima and consumed IDs. A linked Plan defines dependencies and schedule. A project control ledger defines lane, worktree, session, and integration mappings, links to this task-level budget authority, and records only project or integration reservations it owns. A Checkpoint links to these sources for resumption, and a sealed Handoff remains historical.
+This Task is the mutable source for its current phase ordinal, completed milestone count, accepted horizon, current-state suffix, blockers, findings, evidence, and task-level budget maxima and consumed IDs. A linked Plan defines dependencies and schedule. A project control ledger owns the permanent task ID and name, queue state, completion-grace counter, lane, worktree, session, and integration mappings; links to this task-level budget authority; and records only project or integration reservations it owns. A Checkpoint links to these sources for resumption, and a sealed Handoff remains historical.
 
 ## Problem And Expected Outcome
 

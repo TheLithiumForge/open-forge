@@ -52,7 +52,8 @@ When the host does not expose this named tool, including a non-identical Codex p
 Require the repository identity and a bounded list of one or more independently owned snapshot records. Each record must contain:
 
 - one stable snapshot key, its working-root or worktree locator, semantic task owner, and original writer that receives the return;
-- stable task and optional lane display labels;
+- permanent task ID and actual name from the project ledger, any declared stable global task horizon, and optional lane display label;
+- for each applicable task-mapped checkpoint or return, the current repository-relative Task-record locator, its content identity and freshness basis, the bounded record content or immutable object needed to validate it, and the supplied Task-owned current phase ordinal, completed milestone count, and current-state suffix;
 - actual ancestor commit and tree;
 - candidate commit and tree, plus candidate parent commit and tree;
 - accepted authority commit and tree when it differs from the actual ancestor;
@@ -62,7 +63,7 @@ Require the repository identity and a bounded list of one or more independently 
 - each selected topic, its stable review-budget unit and finding prefix, the routing reason, and whether it is an independent pass or targeted recheck; and
 - any separately required holistic-review unit.
 
-Do not let one record's Task Mastermind define or alter another task's semantics, budget, findings, or writer. Return `REVIEW_GAP` without launching topics for a record that is incomplete, contradictory, exceeds its recorded topic budget, or names mutable worktree state as the review target. A gap in one record does not invalidate another independently valid record; report the gap under its own snapshot key.
+Do not let one record's Task Mastermind define or alter another task's semantics, budget, findings, or writer. Return `REVIEW_GAP` without launching topics for a record that is incomplete, contradictory, exceeds its recorded topic budget, names mutable worktree state as the review target, or omits an applicable Task-record mapping, current phase, or completed-milestone input. A gap in one record does not invalidate another independently valid record; report the gap under its own snapshot key.
 
 ## Validate Immutable Identity
 
@@ -71,6 +72,7 @@ Do not let one record's Task Mastermind define or alter another task's semantics
 - When a record's accepted authority commit is not an ancestor, accept it for an ordinary range only when its claimed tree and that record's candidate-parent tree are proven equal. Record the different provenance and never call tree equivalence ancestry.
 - Compare each record's changed paths from its actual ancestor to candidate and verify that every named formerly untracked artifact exists in that candidate tree.
 - Bind each record to its named commits, trees, and ranges. Never use a moving branch, worktree file, or language-server view as inspected content.
+- For each task-mapped checkpoint or return, validate the supplied Task-record locator, content identity, freshness basis, accepted horizons, current phase ordinal, completed milestone count, and current-state suffix against bounded immutable content available through the named object tool or the intake packet. Require phase `A` to be between one and `B`, milestone `C` to be between zero and `D`, and `C=D` only when task state is complete. Never count the active milestone as completed. Return `REVIEW_GAP` for missing or inconsistent task identity, content, freshness, horizon, phase, or milestone progress. Never read or invent mutable filesystem state.
 - Validate each record's receipt identity, freshness, counts, failures, skips, warnings, exit status, and limits. Coordinator validation is not a separate review-budget unit.
 
 Workflow and repository conformance are intake and process checks here. Do not create or simulate a fifth topic.
@@ -109,9 +111,11 @@ Return `REVIEW_COMPLETE`, `REVIEW_GAP`, or `BLOCKED`, beginning with exactly fou
 
 ```text
 Done: <validated snapshot records and completed topic units>
-Now: <canonical status when mapped> — <current coordinator state>
+Now: Task X[/Y] “<actual task name>” (phase A/B): milestone C/D — <current coordinator state>
 Next: <writer revalidation, required holistic review, or next boundary>
 Blocker: <none or one exact gap>
 ```
+
+When one validated task mapping applies to the checkpoint, derive its permanent ID and actual name from the project ledger and its current phase ordinal, completed milestone count, and current-state suffix from the supplied current Task-record identity. Include `/Y` only for a declared stable global task horizon. For a cross-task intake without one return mapping, do not invent a combined task status. The coordinator never reads mutable filesystem state or changes task identity, progress, queue state, or completion grace.
 
 After those lines, group by snapshot key and original writer, then provide that record's validated Git identities, selected and skipped topics with reasons, consumed topic units, likely duplicate links, preserved dissent, topic findings, receipt limitations, and residual risk. Do not include repair dispositions.
