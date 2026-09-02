@@ -47,6 +47,10 @@ using OpenForge.Cli.Core.Commands.Route.List;
 using OpenForge.Cli.Core.Commands.Route.List.Models.Binding;
 using OpenForge.Cli.Core.Commands.Route.List.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Route.Shared.Rendering;
+using OpenForge.Cli.Core.Commands.Route.Update;
+using OpenForge.Cli.Core.Commands.Route.Update.Models.Binding;
+using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Update.Shared.Rendering;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Workspace;
@@ -93,6 +97,7 @@ internal static class CliCompositionRoot
                   route list        List routed sources and descendants at a structural depth.
                   route inspect     Explain one source's route behavior without returning authored content.
                   route init        Initialize every missing entrypoint in one exact route chain.
+                  route update      Update selected fields or an eligible Template body on one routed source.
                   find              Find Markdown sources by authored tags and structural headings.
                   extension list    List installed and available Extension packages.
                   extension inspect Inspect one installed or available Extension package.
@@ -107,11 +112,13 @@ internal static class CliCompositionRoot
         var inspectSymbols = RouteInspectBinding.CreateSymbols(routeGroup);
         var initSymbols = RouteInitBinding.CreateSymbols(routeGroup);
         var createSymbols = RouteCreateBinding.CreateSymbols(routeGroup);
+        var updateSymbols = RouteUpdateBinding.CreateSymbols(routeGroup);
         IReadOnlyList<CliDelimiterPolicy> routeDelimiterPolicies =
         [
             .. listSymbols.DelimiterPolicies
                 .Concat(initSymbols.DelimiterPolicies)
                 .Concat(createSymbols.DelimiterPolicies)
+                .Concat(updateSymbols.DelimiterPolicies)
                 .Distinct(),
         ];
         var listBinding = RouteListBinding.Close(
@@ -157,6 +164,16 @@ internal static class CliCompositionRoot
                     RouteCreateHumanRenderer.Render,
                     RouteCreateJsonRenderer.Render),
                 DiagnosticRenderer = RouteCreateDiagnosticRenderer.Render,
+            });
+        var updateBinding = new RouteUpdateBinding(updateSymbols).Bind(
+            new RouteUpdateBindingComponents
+            {
+                Help = RouteUpdateHelpSections.Create(),
+                Operation = RouteUpdateOperationFactory.Create(inputs.LockStoreRoot),
+                Renderers = new CliRendererSet<RouteUpdateResult>(
+                    RouteUpdateHumanRenderer.Render,
+                    RouteUpdateJsonRenderer.Render),
+                DiagnosticRenderer = RouteUpdateDiagnosticRenderer.Render,
             });
         var findSymbols = FindBinding.CreateSymbols();
         var findBinding = FindBinding.Close(
@@ -261,7 +278,21 @@ internal static class CliCompositionRoot
                     ExtensionHelpSections.CreateGroup(),
                     []),
             ],
-            [listBinding, inspectBinding, initBinding, createBinding, findBinding, indexBinding, installBinding, referencesBinding, extensionListBinding, extensionInspectBinding, extensionCreateBinding, contextBinding],
+            [
+                listBinding,
+                inspectBinding,
+                initBinding,
+                createBinding,
+                updateBinding,
+                findBinding,
+                indexBinding,
+                installBinding,
+                referencesBinding,
+                extensionListBinding,
+                extensionInspectBinding,
+                extensionCreateBinding,
+                contextBinding,
+            ],
             rootLeaves:
             [
                 new CliRootLeaf(findSymbols.FindCommand, []),

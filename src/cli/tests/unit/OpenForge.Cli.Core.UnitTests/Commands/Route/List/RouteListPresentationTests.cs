@@ -87,7 +87,7 @@ public sealed class RouteListPresentationTests
             [binding]);
         var parse = new CliParser(tree).Parse(["route", "list", "--depth=-1"]);
         var completion = await binding.InvokeAsync(
-            new CliBindingParse(parse.Result),
+            new CliBindingParse(parse.Result, parse.OriginalArguments),
             Invocation(RouteListContractTestData.Workspace()),
             new CliOutputWriters(output, error),
             TestContext.Current.CancellationToken);
@@ -212,11 +212,12 @@ public sealed class RouteListPresentationTests
             CliInvalidInputSource.Workspace,
             ["The selected workspace is missing."]);
         var symbols = RouteListBinding.CreateSymbols(RouteBinding.CreateGroup());
+        string[] arguments = ["list"];
         var context = new CliInvalidBindingInput(
             invalidInput,
             input,
             new CliProcessEnvironment(RouteListContractTestData.Workspace().LexicalRoot),
-            new CliBindingParse(symbols.RouteGroup.Parse(["list"])));
+            new CliBindingParse(symbols.RouteGroup.Parse(arguments), arguments));
         var result = RouteListBinding.CreateInvalidResultFactory()(context);
 
         Assert.Null(result.Workspace);

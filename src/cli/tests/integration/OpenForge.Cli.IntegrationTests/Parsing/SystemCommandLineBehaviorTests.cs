@@ -2,6 +2,8 @@ using System.CommandLine;
 using System.CommandLine.Parsing;
 using OpenForge.Cli.Core.Commands.Route;
 using OpenForge.Cli.Core.Commands.Route.List;
+using OpenForge.Cli.Core.Commands.Route.Update;
+using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Parsing;
 using OpenForge.Cli.Core.Shell.Parsing.Models;
@@ -11,6 +13,51 @@ namespace OpenForge.Cli.IntegrationTests.Parsing;
 
 public sealed class SystemCommandLineBehaviorTests
 {
+    [Fact(DisplayName = "Binding parse retains raw attached-empty spelling that the pinned parser erases")]
+    [Trait("Feature", "cli-parser"), Trait("Evidence", "Integration")]
+    public void BindingParseRetainsRawAttachedEmptySpelling()
+    {
+        var route = RouteBinding.CreateGroup();
+        var symbols = RouteUpdateBinding.CreateSymbols(route);
+        var tree = CliCommandTree.Create(
+            CliHelpContent.Empty,
+            [new CliRootBranch(route, CliHelpContent.Empty, symbols.DelimiterPolicies)],
+            []);
+        string[] attachedArguments =
+        [
+            "route", "update", "memory/project-alpha/overview", "--responsibility=",
+        ];
+        string[] bareArguments =
+        [
+            "route", "update", "memory/project-alpha/overview", "--responsibility",
+        ];
+        var attached = new CliParser(tree).Parse(attachedArguments);
+        var bare = new CliParser(tree).Parse(bareArguments);
+        var attachedResult = Assert.IsType<OptionResult>(
+            attached.Result.GetResult(symbols.Responsibility));
+        var bareResult = Assert.IsType<OptionResult>(
+            bare.Result.GetResult(symbols.Responsibility));
+
+        Assert.Equal(attachedResult.IdentifierToken?.Value, bareResult.IdentifierToken?.Value);
+        Assert.Empty(attachedResult.Tokens);
+        Assert.Empty(bareResult.Tokens);
+        Assert.Equal(
+            attached.Result.Tokens.Select(token => (token.Type, token.Value)),
+            bare.Result.Tokens.Select(token => (token.Type, token.Value)));
+
+        var attachedCarrier = new CliBindingParse(
+            attached.Result,
+            attached.OriginalArguments);
+        var bareCarrier = new CliBindingParse(
+            bare.Result,
+            bare.OriginalArguments);
+        Assert.Equal(attachedArguments, attachedCarrier.OriginalArguments);
+        Assert.Equal(bareArguments, bareCarrier.OriginalArguments);
+        Assert.NotEqual(
+            attachedCarrier.OriginalArguments[^1],
+            bareCarrier.OriginalArguments[^1]);
+    }
+
     [Fact(DisplayName = "Pinned parser reports scalar repetition and Boolean occurrences")]
     [Trait("Feature", "cli-parser"), Trait("Evidence", "Integration")]
     public void PinnedParserReportsScalarRepetitionAndCountsBooleanOccurrences()

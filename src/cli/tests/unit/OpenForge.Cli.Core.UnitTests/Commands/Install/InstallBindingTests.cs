@@ -36,16 +36,17 @@ public sealed class InstallBindingTests
     public void BindingNormalizesRepeatedBooleans()
     {
         var symbols = InstallBinding.CreateSymbols();
+        string[] arguments =
+        [
+            "--force",
+            "--force",
+            "--automatic",
+            "--automatic",
+            "--dry-run",
+            "--dry-run",
+        ];
         var bound = new InstallRequestBinder(symbols).Bind(
-            new CliBindingParse(symbols.InstallCommand.Parse(
-            [
-                "--force",
-                "--force",
-                "--automatic",
-                "--automatic",
-                "--dry-run",
-                "--dry-run",
-            ])),
+            new CliBindingParse(symbols.InstallCommand.Parse(arguments), arguments),
             Invocation(CliOutputFormat.Human));
 
         var request = Assert.IsType<InstallRequest>(bound.Request);
@@ -81,7 +82,7 @@ public sealed class InstallBindingTests
         }
 
         var bound = new InstallRequestBinder(symbols).Bind(
-            new CliBindingParse(symbols.InstallCommand.Parse([.. arguments])),
+            new CliBindingParse(symbols.InstallCommand.Parse([.. arguments]), arguments),
             Invocation(ReadFormat(format)));
 
         var request = Assert.IsType<InstallRequest>(bound.Request);

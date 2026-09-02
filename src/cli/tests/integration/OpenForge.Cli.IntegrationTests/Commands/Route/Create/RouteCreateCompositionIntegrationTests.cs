@@ -25,7 +25,7 @@ public sealed class RouteCreateCompositionIntegrationTests
             command => command.Name == "route");
 
         Assert.Equal(
-            ["list", "inspect", "init", "create"],
+            ["list", "inspect", "init", "create", "update"],
             route.Subcommands.Select(command => command.Name));
         var create = route.Subcommands[3];
         var parse = tree.Parse(["route", "create"]);
@@ -63,9 +63,10 @@ public sealed class RouteCreateCompositionIntegrationTests
         Assert.Contains("inspect <source-reference>", group.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("init <route-target>", group.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("create <file-target>", group.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("update <source-reference>", group.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("list     available", group.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("The route group performs no operation.", group.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Planned but unavailable operations: update, move, and remove.", group.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Planned but unavailable operations: move and remove.", group.StandardOutput, StringComparison.Ordinal);
 
         Assert.Equal(0, leaf.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, leaf.Status);

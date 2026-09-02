@@ -16,16 +16,15 @@ release.
 
 ## Current State
 
-The accepted pre-transition local `develop` continuity baseline is
-`fc7e3c75eddcb799e23fa65d2e6549a1d8a3d584` with exact tree
-`af2a8880e97c209010fef5151e3e0072a5c1c4d1`. It contains CLI Quality
-Remediation at `862cbf2a`, its closeout at `5053bf0c`, bounded review
-orchestration at `5aad04ac`, permanent task identity and dynamic progress at
-`3356eba1`, and repository-local npm linking for the managed development CLI at
-`128b70b3`, plus live progression at `fc7e3c7`. The [project control ledger](../cli-development/project-control.md)
-defines permanent task identities and the current dynamic queue. Route Update
-remains isolated on `codex/route-update`; M11 is complete at immutable review
-snapshot `d8b8a33e`, tree `e0b8f85a`, and M12 is active at 11/12 milestones.
+Task 3 “Route Update” is squash-integrated by the commit containing this record
+from accepted local `develop` baseline
+`996c2e17d1142ffb30dc7a2d17df657419566f97`, tree
+`877314d48db49013edc1c4dad1abb545b37caefc`, and accepted Task closeout
+`27df8325488a4c036a240d03ad54105be0f2cdfa`, tree
+`b68d4349e13879fccc607f78a284a49e61f955ea`. The final executable behavior is
+commit `8a398f2e8e6f50beb730bea2a9c658a1fc923ffa`, tree
+`3bb4a22440b32781376c4b9160d3d72d168da9ef`. The [project control ledger](../cli-development/project-control.md)
+defines permanent task identities and the current dynamic queue.
 
 The preceding Route Create integration command is
 `19412d2a562ae66d1b4642256d854438df75366f`.
@@ -221,9 +220,9 @@ Complete at `cc5085ce`; Route Create is Complete at `19412d2`, exact tree
 slices. CLI Quality Remediation is Complete and squash-integrated at
 `862cbf2a847b5adac77c6923e51f2c28c315415f`, exact tree
 `571f104f507c3f72b7404cc0dacd86c818ec0a2e`, from reviewed implementation
-`a4ccf19a3489d06f20a0fd940219be1acb22646d`. Task 3 “Route Update” is active
-in its accepted Green horizon. Root Update remains after the complete Route
-Mutation M2 lane.
+`a4ccf19a3489d06f20a0fd940219be1acb22646d`. Task 3 “Route Update” is Complete
+at accepted closeout `27df8325`, tree `b68d4349`. Root Update remains after the
+complete Route Mutation M2 lane.
 
 Route Init candidate `cb62b19`, tree `be93900`, has a warning-free Release
 build; managed Unit `1481/1481`, Integration `695/695`, generated serialization
@@ -321,9 +320,8 @@ result schema is accepted and frozen, including typed residual values `none`,
 supplies the `RouteCreateJsonContext` and Route-help predecessor slices. The
 separate CLI Quality Remediation Task is Complete and squash-integrated at
 `862cbf2a`, exact tree `571f104f`, from accepted implementation candidate
-`a4ccf19a`, tree `97254e65`. Task 3 “Route Update” is active on its isolated
-worktree; M11 is complete at `d8b8a33e`, tree `e0b8f85a`, and M12 dispositions,
-grouped correction/rechecks, and holistic acceptance are active at 11/12.
+`a4ccf19a`, tree `97254e65`. Task 3 “Route Update” is Complete at phase 7/7,
+milestone 12/12, on accepted closeout `27df8325`, tree `b68d4349`.
 Route Init's Framework mode accepts one concrete
 uniquely aligned route, slugs only ID-form inserted scope labels, creates one
 sparse chain, keeps scope entrypoints user-owned, and lifecycle-manages only
@@ -374,11 +372,9 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Continue Task 3 “Route Update” through M12 finding dispositions, at most one
-   grouped Red-first correction, full rechecks, and fresh holistic acceptance.
-   Then reconcile its five known continuity overlaps against accepted `develop`
-   continuity `fc7e3c7`, tree `af2a8880`, and integrate the accepted Task before
-   Route Move → Route Remove and only afterward root Update M3.
+1. Activate Task 4 “Route Move” from the accepted integrated Route Update
+   baseline. Continue Route Move → Route Remove and only afterward root Update
+   M3.
 2. Retain thin D1 as current `linux-x64` build/smoke, packed
    install/invocation, and checksums. Keep future RIDs, signatures, SBOM,
    provenance, OIDC, and support floors behind a later explicit decision.

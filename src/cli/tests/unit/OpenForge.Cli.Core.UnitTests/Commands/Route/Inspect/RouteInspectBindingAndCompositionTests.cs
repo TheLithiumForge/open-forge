@@ -22,7 +22,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect;
 
 public sealed class RouteInspectBindingAndCompositionTests
 {
-    [Fact(DisplayName = "Route family composes exact List and Inspect children with bounded group notes")]
+    [Fact(DisplayName = "Manual Route graph composes List and Inspect with current group notes")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]
     public void RouteFamilyComposesOneGroupWithExactChildren()
     {
@@ -46,7 +46,8 @@ public sealed class RouteInspectBindingAndCompositionTests
         Assert.DoesNotContain("init", text, StringComparison.Ordinal);
         Assert.DoesNotContain("create", text, StringComparison.Ordinal);
         Assert.Contains("performs no operation", text, StringComparison.Ordinal);
-        Assert.Contains("update, move, and remove", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("update", text, StringComparison.Ordinal);
+        Assert.Contains("move and remove", text, StringComparison.Ordinal);
     }
 
     [Fact(DisplayName = "Route Inspect owns one parser argument with omission and typed semantic cardinality")]
@@ -112,8 +113,9 @@ public sealed class RouteInspectBindingAndCompositionTests
         var output = new StringWriter();
         var error = new StringWriter();
 
+        string[] arguments = ["inspect"];
         var completion = await binding.InvokeAsync(
-            new CliBindingParse(route.Parse(["inspect"])),
+            new CliBindingParse(route.Parse(arguments), arguments),
             Invocation(RouteInspectPresentationTestDataWorkspace()),
             new CliOutputWriters(output, error),
             TestContext.Current.CancellationToken);
@@ -132,8 +134,9 @@ public sealed class RouteInspectBindingAndCompositionTests
         var output = new StringWriter();
         var error = new StringWriter();
 
+        string[] arguments = ["inspect", "first", "second"];
         var completion = await binding.InvokeAsync(
-            new CliBindingParse(route.Parse(["inspect", "first", "second"])),
+            new CliBindingParse(route.Parse(arguments), arguments),
             Invocation(RouteInspectPresentationTestDataWorkspace()),
             new CliOutputWriters(output, error),
             TestContext.Current.CancellationToken);
@@ -251,7 +254,8 @@ public sealed class RouteInspectBindingAndCompositionTests
     {
         var route = new Command("route");
         var symbols = RouteInspectBinding.CreateSymbols(route);
-        var parse = route.Parse(["inspect", "requested-source"]);
+        string[] arguments = ["inspect", "requested-source"];
+        var parse = route.Parse(arguments);
         var input = new CliGlobalInput(
             null,
             0,
@@ -269,7 +273,7 @@ public sealed class RouteInspectBindingAndCompositionTests
             "cli.workspace.invalid",
             CliInvalidInputSource.Workspace,
             ["The selected workspace is missing."]);
-        var bindingParse = new CliBindingParse(parse);
+        var bindingParse = new CliBindingParse(parse, arguments);
         var context = new CliInvalidBindingInput(
             invalidInput,
             input,
@@ -357,11 +361,12 @@ public sealed class RouteInspectBindingAndCompositionTests
             },
         };
         var binding = RouteInspectBinding.Close(symbols, components);
-        var parse = route.Parse(["inspect", "root/item"]);
+        string[] arguments = ["inspect", "root/item"];
+        var parse = route.Parse(arguments);
         var output = new StringWriter();
         var error = new StringWriter();
         var completion = await binding.InvokeAsync(
-            new CliBindingParse(parse),
+            new CliBindingParse(parse, arguments),
             new CliInvocation(
                 new CliProcessIdentity("open-forge", "test"),
                 new CliPresentation(

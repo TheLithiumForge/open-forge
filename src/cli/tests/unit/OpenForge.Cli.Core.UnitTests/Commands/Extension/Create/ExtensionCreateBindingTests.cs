@@ -66,7 +66,7 @@ public sealed class ExtensionCreateBindingTests
     public void BindingPreservesCompleteRequestAndInteractionPolicy()
     {
         var symbols = ExtensionCreateBinding.CreateSymbols(ExtensionBinding.CreateGroup());
-        var parse = symbols.CreateCommand.Parse(
+        string[] arguments =
         [
             "development-toolkit",
             "--path", "/catalogue",
@@ -76,10 +76,11 @@ public sealed class ExtensionCreateBindingTests
             "--dependency", "zeta",
             "--dependency", "alpha",
             "--dry-run",
-        ]);
+        ];
+        var parse = symbols.CreateCommand.Parse(arguments);
 
         var bound = new ExtensionCreateRequestBinder(symbols).Bind(
-            new CliBindingParse(parse),
+            new CliBindingParse(parse, arguments),
             Invocation(CliOutputFormat.Human, CliVerbosity.Normal));
 
         var request = Assert.IsType<ExtensionCreateRequest>(bound.Request);
@@ -108,7 +109,7 @@ public sealed class ExtensionCreateBindingTests
         var format = presentation == "json" ? CliOutputFormat.Json : CliOutputFormat.Human;
 
         var bound = new ExtensionCreateRequestBinder(symbols).Bind(
-            new CliBindingParse(parse),
+            new CliBindingParse(parse, arguments),
             Invocation(format, CliVerbosity.Normal));
 
         var request = Assert.IsType<ExtensionCreateRequest>(bound.Request);
@@ -133,10 +134,11 @@ public sealed class ExtensionCreateBindingTests
     public void BindingFormsInvalidResultForInvalidGrammar(string scenario)
     {
         var symbols = ExtensionCreateBinding.CreateSymbols(ExtensionBinding.CreateGroup());
-        var parse = symbols.CreateCommand.Parse(InvalidArguments(scenario));
+        var arguments = InvalidArguments(scenario);
+        var parse = symbols.CreateCommand.Parse(arguments);
 
         var bound = new ExtensionCreateRequestBinder(symbols).Bind(
-            new CliBindingParse(parse),
+            new CliBindingParse(parse, arguments),
             Invocation(CliOutputFormat.Human, CliVerbosity.Normal));
 
         var result = Assert.IsType<ExtensionCreateResult>(bound.InvalidResult);
@@ -149,14 +151,15 @@ public sealed class ExtensionCreateBindingTests
     public void BindingCollapsesIdempotentFlags()
     {
         var symbols = ExtensionCreateBinding.CreateSymbols(ExtensionBinding.CreateGroup());
-        var parse = symbols.CreateCommand.Parse(
+        string[] arguments =
         [
             "development-toolkit", "--path", "/catalogue",
             "--automatic", "--automatic", "--dry-run", "--dry-run",
-        ]);
+        ];
+        var parse = symbols.CreateCommand.Parse(arguments);
 
         var bound = new ExtensionCreateRequestBinder(symbols).Bind(
-            new CliBindingParse(parse),
+            new CliBindingParse(parse, arguments),
             Invocation(CliOutputFormat.Human, CliVerbosity.Normal));
 
         var request = Assert.IsType<ExtensionCreateRequest>(bound.Request);

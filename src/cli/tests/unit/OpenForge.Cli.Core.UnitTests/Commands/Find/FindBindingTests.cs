@@ -71,7 +71,7 @@ public sealed class FindBindingTests
             workspace,
             viewInput == "omitted" ? CliView.Expanded : CliView.Compact);
         var bound = new FindRequestBinder(symbols, new FindResultBuilder()).Bind(
-            new CliBindingParse(parse.Result),
+            new CliBindingParse(parse.Result, parse.OriginalArguments),
             invocation);
 
         var request = Assert.IsType<FindRequest>(bound.Request);
@@ -108,7 +108,7 @@ public sealed class FindBindingTests
         Assert.Empty(parse.Result.Errors);
 
         var bound = new FindRequestBinder(symbols, new FindResultBuilder()).Bind(
-            new CliBindingParse(parse.Result),
+            new CliBindingParse(parse.Result, parse.OriginalArguments),
             Invocation(Workspace()));
         var request = Assert.IsType<FindRequest>(bound.Request);
 
@@ -133,9 +133,10 @@ public sealed class FindBindingTests
     public void BinderRejectsMissingAndRepeatedSingletonValues(string scenario)
     {
         var symbols = FindSymbols.Create();
-        var parse = symbols.FindCommand.Parse(SingletonArguments(scenario));
+        var arguments = SingletonArguments(scenario);
+        var parse = symbols.FindCommand.Parse(arguments);
         var bound = new FindRequestBinder(symbols, new FindResultBuilder()).Bind(
-            new CliBindingParse(parse),
+            new CliBindingParse(parse, arguments),
             Invocation(Workspace()));
 
         var result = Assert.IsType<FindResult>(bound.InvalidResult);
@@ -156,7 +157,8 @@ public sealed class FindBindingTests
     public void WorkspaceFailurePreservesValuesLocalInvalidPrecedenceAndUnavailableFinding(string scenario)
     {
         var symbols = FindSymbols.Create();
-        var parse = symbols.FindCommand.Parse(WorkspaceFailureArguments(scenario));
+        var arguments = WorkspaceFailureArguments(scenario);
+        var parse = symbols.FindCommand.Parse(arguments);
         var input = new CliInvalidBindingInput(
             new CliInvalidInput(
                 "cli.workspace.invalid",
@@ -164,7 +166,7 @@ public sealed class FindBindingTests
                 ["The selected workspace is missing."]),
             GlobalInput(),
             new CliProcessEnvironment(Path.GetTempPath()),
-            new CliBindingParse(parse));
+            new CliBindingParse(parse, arguments));
 
         var result = new FindWorkspaceResultFactory(symbols, new FindResultBuilder()).Create(input);
 

@@ -33,7 +33,7 @@ public sealed class CliProcessTests
         Assert.Equal(otherBefore, other.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Published root and Route help expose standard children and List and Inspect leaves")]
+    [Fact(DisplayName = "Published root and Route help expose the current command family")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedRootAndRouteFamilyHelpExposeAvailableCommands()
     {
@@ -69,8 +69,9 @@ public sealed class CliProcessTests
         Assert.Contains("inspect <source-reference>", group.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("init <route-target>", group.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("create <file-target>", group.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("update <source-reference>", group.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(
-            "Planned but unavailable operations: update, move, and remove.",
+            "Planned but unavailable operations: move and remove.",
             group.StandardOutput,
             StringComparison.Ordinal);
         Assert.DoesNotContain("Operations:", group.StandardOutput, StringComparison.Ordinal);

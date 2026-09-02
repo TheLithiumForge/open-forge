@@ -375,6 +375,19 @@ delimiter when an accepted syntax distinction cannot be obtained from the pinned
 library. It does not parse values, count occurrences, select commands, or produce
 parser diagnostics.
 
+`CLI-EDGE-005` supersedes the parser-boundary detail for the exact-empty
+`route update --responsibility` spelling. Pinned `System.CommandLine` 2.0.11
+erases the distinction between a bare zero-token option and the accepted attached
+empty `--responsibility=` or `--responsibility:` spelling from its typed parse
+result. `CliBindingParse` therefore carries the immutable `ParseResult` and the
+original argument sequence together. Only the Route Update binding may consult
+that sequence, and only after the typed parse proves one selected responsibility
+option with zero value tokens. Its lexical check recognizes the two exact attached
+empty spellings and stops at `--`; it does not inspect following values, select a
+command, count occurrences, or replace parser diagnostics. Original arguments do
+not enter `CliInvocation`, the Route Update request, or domain behavior. All other
+parser facts remain exclusively parser-owned.
+
 `CliInvocation` contains normalized process-wide facts only. A command request is
 complete and immutable. It does not carry `ParseResult`, parser symbols, writers,
 service collections, or an unrelated context bag.

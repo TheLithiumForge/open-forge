@@ -33,9 +33,10 @@ public sealed class RouteListApplicationIntegrationTests
             .Where(line => line.StartsWith("  ", StringComparison.Ordinal)
                 && !string.IsNullOrWhiteSpace(line))
             .Select(line => line.TrimStart().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries)[0]);
-        Assert.Equal(["list", "inspect", "init", "create"], groupCommands);
+        Assert.Equal(["list", "inspect", "init", "create", "update"], groupCommands);
+        Assert.Contains("update <source-reference>", group.Output, StringComparison.Ordinal);
         Assert.Contains(
-            "Planned but unavailable operations: update, move, and remove.",
+            "Planned but unavailable operations: move and remove.",
             group.Output,
             StringComparison.Ordinal);
         Assert.DoesNotContain("Operations:", group.Output, StringComparison.Ordinal);

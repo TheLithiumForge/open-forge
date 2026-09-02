@@ -56,8 +56,9 @@ The accepted dependency order is:
    Review orchestration is integrated at `5aad04ac`; permanent task identity and
    progress follow-up is integrated at `3356eba1`; repository-local npm linking
    is integrated at `128b70b3`; live progression is recorded at `fc7e3c75`, tree
-   `af2a8880`. Task 3 “Route Update” is the active sequential Route Mutation M2
-   leaf at M12, 11/12 milestones complete.
+   `af2a8880`. Task 3 “Route Update” is Complete at accepted closeout
+   `27df8325`, tree `b68d4349`, and is squash-integrated by the commit containing
+   this record.
 4. Implement root Update M3 only after full M2 is complete. Preparation that is
    independent of unfinished behavior may proceed earlier in isolated lanes:
    scope discovery, contract and ownership audits, callable-surface analysis,
@@ -90,11 +91,11 @@ or a general template/scaffold system.
 | C2                   | Root Install                                                                        | Complete at local integration `c60fcb98a57e9ec80769b9cb1d399ce13a227863`; final candidate `11994e4d21ddc807b7480afc39ae3612e5a69a56`, exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed`                                                                                                       |
 | C3                   | Route Inspect interactive correction                                                | Complete and squash-integrated at `fa3db1ee` with exact tree equality to final reviewed candidate `37c9360`                                                                                                                                                                                       |
 | C4                   | Generic and Framework-aware Route Init                                              | Complete and squash-integrated at `cc5085ce`; reviewed closeout `c580149`, tree `a1810c4`                                                                                                                                                                                                         |
-| M2 preparation       | Init/Create/Update/Move/Remove readiness                                            | Complete on clean no-op branches from `33913dfe`; Route Create is Complete at `19412d2`; QR1 is squash-integrated at `862cbf2a`, exact tree `571f104f`; Route Update is active, and later leaf Tasks retain accepted preparation decisions and remaining authority gates                          |
+| M2 preparation       | Init/Create/Update/Move/Remove readiness                                            | Complete on clean no-op branches from `33913dfe`; Route Create is Complete at `19412d2`; QR1 is squash-integrated at `862cbf2a`, exact tree `571f104f`; Route Update is Complete, and later leaf Tasks retain accepted preparation decisions and remaining authority gates                        |
 | Quality remediation  | Accepted first-pass CLI architecture, design, authority, and test-evidence findings | Complete and squash-integrated at `862cbf2a`, exact tree `571f104f`, from accepted implementation candidate `a4ccf19a`, tree `97254e65`; all thirteen findings/candidates, final `QR-R1-001`, managed `1522/736/146`, native Integration `736/736`, format, diff, and Sol/xhigh review are closed |
 | Review orchestration | Opt-in immutable coordinated topic review and permanent task-progress controls      | Complete and integrated at `5aad04ac` plus follow-up `3356eba1`; APM, Open Forge, projection, formatting, protected-path, and C# identity gates pass                                                                                                                                              |
 | npm link shims       | Repository-local managed development CLI linking                                    | Complete and integrated at `128b70b3`; Node `16/16` and exact package, mode, manifest, nonmutation, and protected-path gates pass                                                                                                                                                                 |
-| Route Update         | Bounded route content and metadata update                                           | Active on `codex/route-update`; M11 full managed/native/dogfood acceptance and the four-topic immutable review are complete at `d8b8a33e`, tree `e0b8f85a`; M12 dispositions, at most one grouped correction, rechecks, and holistic acceptance are active at 11/12                               |
+| Route Update         | Bounded route content and metadata update                                           | Complete at accepted closeout `27df8325`, tree `b68d4349`; immutable behavior `8a398f2e`, tree `3bb4a224`; managed `1602/809/152`, native `809/152`, managed-on-native `152`, dogfood, and holistic review pass                                                                                   |
 
 Each mutating lane owns a distinct worktree and feature branch. Shared root
 composition, serializer registration, public help, process evidence, Plan, and
@@ -171,8 +172,7 @@ Checkpoint are integration-owned unless a Task packet explicitly says otherwise.
 
 ## Open Decision Frontier
 
-No currently surfaced product decision blocks active Route Update
-implementation.
+No currently surfaced product decision blocks the next Route Move activation.
 The exact public Root Install JSON result schema is accepted, implemented, and
 frozen, including fully present ordered facts and typed residual values `none`,
 `retained`, and `unknown`.
@@ -191,9 +191,10 @@ slice. Restored format, managed `1507/720/146`, portable `linux-x64` Native AOT
 root plus `720/146`, isolated dogfood, and Sol/xhigh `RC-R2` evidence pass. The
 separate CLI Quality Remediation Task is Complete and squash-integrated at
 `862cbf2a`, exact tree `571f104f`, from accepted implementation candidate
-`a4ccf19a`, tree `97254e65`. Task 3 “Route Update” is active in its frozen
-seven-phase, twelve-milestone horizon; M11 is complete and M12 is active at
-11/12 milestones on immutable review snapshot `d8b8a33e`, tree `e0b8f85a`.
+`a4ccf19a`, tree `97254e65`. Task 3 “Route Update” is Complete at phase 7/7,
+milestone 12/12, on accepted closeout `27df8325`, tree `b68d4349`; final
+executable behavior is `8a398f2e`, tree `3bb4a224`, with fresh holistic review
+PASS and the portable real interrupted-process proof deferred.
 New architecture or product questions must still be returned to the maintainer
 before changing accepted meaning.
 

@@ -471,7 +471,7 @@ public sealed class FindQueryParserTests
             ]);
         Assert.Empty(parse.Result.Errors);
         var bound = new FindRequestBinder(symbols, new FindResultBuilder()).Bind(
-            new CliBindingParse(parse.Result),
+            new CliBindingParse(parse.Result, parse.OriginalArguments),
             Invocation(Workspace()));
         return Assert.IsType<FindRequest>(bound.Request);
     }

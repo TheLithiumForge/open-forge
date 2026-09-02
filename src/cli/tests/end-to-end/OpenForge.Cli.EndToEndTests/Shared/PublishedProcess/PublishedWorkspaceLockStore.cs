@@ -108,6 +108,52 @@ internal sealed class PublishedWorkspaceLockStore : IDisposable
         Assert.False(Directory.Exists(LocalApplicationDataPath()));
     }
 
+    internal IReadOnlyList<string> RemoveRecoveryArtifacts(string workspacePath)
+    {
+        var recoveryRoot = Path.Combine(
+            LocalApplicationDataPath(),
+            "OpenForge",
+            "recovery",
+            "v1");
+        var workspaceDirectory = Path.Combine(
+            recoveryRoot,
+            WorkspaceKey(Normalize(workspacePath)));
+        var attributes = AttributesIfPresent(workspaceDirectory);
+        if (attributes is null)
+        {
+            return [];
+        }
+
+        if (!IsOrdinaryDirectory(attributes.Value))
+        {
+            throw new InvalidOperationException(
+                "The published-test recovery workspace path is not an ordinary directory.");
+        }
+
+        var artifacts = Directory.EnumerateFiles(workspaceDirectory)
+            .Order(StringComparer.Ordinal)
+            .ToArray();
+        foreach (var artifact in artifacts)
+        {
+            var fileAttributes = AttributesIfPresent(artifact);
+            if (fileAttributes is null || !IsOrdinaryFile(fileAttributes.Value))
+            {
+                throw new InvalidOperationException(
+                    "The published-test recovery artifact is not an ordinary file.");
+            }
+
+            File.Delete(artifact);
+        }
+
+        DeleteEmptyDirectory(workspaceDirectory);
+        if (!OperatingSystem.IsWindows())
+        {
+            DeleteEmptyDirectoryTree(Path.Combine(LocalApplicationDataPath(), "OpenForge", "recovery"));
+        }
+
+        return artifacts;
+    }
+
     public void Dispose()
     {
         if (_disposed)

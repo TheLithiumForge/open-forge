@@ -65,7 +65,7 @@ public sealed class ReferencesBindingTests
             : ["references", "docs", $"--direction={direction}"];
         var parse = Parse(symbols, arguments);
         var bound = new ReferencesRequestBinder(symbols, new ReferencesResultBuilder()).Bind(
-            new CliBindingParse(parse.Result),
+            new CliBindingParse(parse.Result, parse.OriginalArguments),
             Invocation());
 
         var request = Assert.IsType<ReferencesRequest>(bound.Request);
@@ -86,7 +86,7 @@ public sealed class ReferencesBindingTests
                 "--include:alpha", "--exclude", "beta",
             ]);
         var bound = new ReferencesRequestBinder(symbols, new ReferencesResultBuilder()).Bind(
-            new CliBindingParse(parse.Result),
+            new CliBindingParse(parse.Result, parse.OriginalArguments),
             Invocation());
 
         var request = Assert.IsType<ReferencesRequest>(bound.Request);
@@ -116,7 +116,7 @@ public sealed class ReferencesBindingTests
         var symbols = ReferencesBinding.CreateSymbols();
         var parse = Parse(symbols, InvalidArguments(scenario));
         var bound = new ReferencesRequestBinder(symbols, new ReferencesResultBuilder()).Bind(
-            new CliBindingParse(parse.Result),
+            new CliBindingParse(parse.Result, parse.OriginalArguments),
             Invocation());
 
         var result = Assert.IsType<ReferencesResult>(bound.InvalidResult);
@@ -144,7 +144,7 @@ public sealed class ReferencesBindingTests
                 ["The selected workspace is missing."]),
             GlobalInput(),
             new CliProcessEnvironment(Path.GetTempPath()),
-            new CliBindingParse(parse.Result));
+            new CliBindingParse(parse.Result, parse.OriginalArguments));
 
         var result = new ReferencesWorkspaceResultFactory(symbols, new ReferencesResultBuilder()).Create(invalidInput);
 
@@ -161,7 +161,7 @@ public sealed class ReferencesBindingTests
                 ["The selected workspace is missing."]),
             GlobalInput(),
             new CliProcessEnvironment(Path.GetTempPath()),
-            new CliBindingParse(validParse.Result));
+            new CliBindingParse(validParse.Result, validParse.OriginalArguments));
 
         var unavailable = new ReferencesWorkspaceResultFactory(symbols, new ReferencesResultBuilder()).Create(unavailableInput);
 
@@ -228,8 +228,9 @@ public sealed class ReferencesBindingTests
 
         using var output = new StringWriter();
         using var error = new StringWriter();
+        string[] arguments = ["references", "docs"];
         var completion = await binding.InvokeAsync(
-            new CliBindingParse(symbols.ReferencesCommand.Parse(["references", "docs"])),
+            new CliBindingParse(symbols.ReferencesCommand.Parse(arguments), arguments),
             Invocation(CliOutputFormat.Json, CliVerbosity.Verbose),
             new CliOutputWriters(output, error),
             CancellationToken.None);

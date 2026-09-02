@@ -37,17 +37,17 @@ public sealed class RouteCreatePlanningIntegrationTests
             System.Text.Encoding.UTF8.GetString(resolution.BodyBytes.AsSpan()));
     }
 
-    [Theory(DisplayName = "Route Create Template resolution rejects unavailable or malformed sources"), Trait("Feature", "route-create"), Trait("Evidence", "IntegrationBehavior")]
-    [InlineData(false, (int)RouteCreateFindingCode.TemplateUnavailable)]
+    [Theory(DisplayName = "Route Create Template resolution rejects missing or malformed sources"), Trait("Feature", "route-create"), Trait("Evidence", "IntegrationBehavior")]
+    [InlineData(false, (int)RouteCreateFindingCode.InvalidTemplate)]
     [InlineData(true, (int)RouteCreateFindingCode.MetadataUnsafe)]
-    public async Task TemplateResolutionRejectsUnavailableOrMalformedSources(
+    public async Task TemplateResolutionRejectsMissingOrMalformedSources(
         bool seedMalformedTemplate,
         int expectedFindingValue)
     {
         using var workspace = RouteCreateIntegrationWorkspace.Create(
             seedMalformedTemplate
                 ? "route-create-template-malformed"
-                : "route-create-template-unavailable");
+                : "route-create-template-missing");
         workspace.SeedBase();
         if (seedMalformedTemplate)
         {

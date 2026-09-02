@@ -81,7 +81,7 @@ internal sealed class CliCoreApplication
                         invocation.InvalidInput,
                         input,
                         environment,
-                        new CliBindingParse(parse.Result)),
+                        new CliBindingParse(parse.Result, parse.OriginalArguments)),
                     writers,
                     cancellationToken)
                 .ConfigureAwait(false);
@@ -92,7 +92,7 @@ internal sealed class CliCoreApplication
 
         return await selection.Binding
             .InvokeAsync(
-                new CliBindingParse(parse.Result),
+                new CliBindingParse(parse.Result, parse.OriginalArguments),
                 resolvedInvocation,
                 writers,
                 cancellationToken)

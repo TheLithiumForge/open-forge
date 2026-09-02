@@ -58,7 +58,7 @@ public sealed class BindingTests
         var standardOutput = new StringWriter();
 
         var completion = await ((ICliCommandBinding)binding).InvokeAsync(
-            new CliBindingParse(parse.Result),
+            new CliBindingParse(parse.Result, parse.OriginalArguments),
             invocation,
             new CliOutputWriters(standardOutput, new StringWriter()),
             TestContext.Current.CancellationToken);

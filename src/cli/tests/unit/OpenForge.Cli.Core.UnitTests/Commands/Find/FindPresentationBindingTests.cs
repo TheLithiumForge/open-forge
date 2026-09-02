@@ -131,12 +131,13 @@ public sealed class FindPresentationBindingTests
                     return "bounded diagnostic";
                 },
             });
-        var parse = symbols.FindCommand.Parse(["find"]);
+        string[] arguments = ["find"];
+        var parse = symbols.FindCommand.Parse(arguments);
         using var output = new StringWriter();
         using var error = new StringWriter();
 
         var completion = await binding.InvokeAsync(
-            new CliBindingParse(parse),
+            new CliBindingParse(parse, arguments),
             Invocation(
                 Workspace(),
                 (CliOutputFormat)formatValue,
@@ -163,10 +164,11 @@ public sealed class FindPresentationBindingTests
     public void InvalidContentRetainsExplicitPresenceState()
     {
         var symbols = FindBinding.CreateSymbols();
-        var parse = symbols.FindCommand.Parse(["find", "--content=unknown-part"]);
+        string[] arguments = ["find", "--content=unknown-part"];
+        var parse = symbols.FindCommand.Parse(arguments);
         Assert.Empty(parse.Errors);
         var bound = new FindRequestBinder(symbols, new FindResultBuilder()).Bind(
-            new CliBindingParse(parse),
+            new CliBindingParse(parse, arguments),
             Invocation(Workspace()));
 
         var result = Assert.IsType<FindResult>(bound.InvalidResult);
@@ -182,7 +184,8 @@ public sealed class FindPresentationBindingTests
     public void WorkspaceSelectionFailureUsesTypedBlockedResult()
     {
         var symbols = FindSymbols.Create();
-        var parse = symbols.FindCommand.Parse(["find", "--include=docs"]);
+        string[] arguments = ["find", "--include=docs"];
+        var parse = symbols.FindCommand.Parse(arguments);
         var invalidInput = new CliInvalidBindingInput(
             new CliInvalidInput(
                 "cli.workspace.invalid",
@@ -190,7 +193,7 @@ public sealed class FindPresentationBindingTests
                 ["The selected workspace is missing."]),
             GlobalInput(),
             new CliProcessEnvironment(Path.GetTempPath()),
-            new CliBindingParse(parse));
+            new CliBindingParse(parse, arguments));
 
         var result = FindBindingSupport.CreateWorkspaceUnavailableResult(
             new FindResultBuilder(),

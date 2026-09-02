@@ -11,7 +11,7 @@ internal static class RouteHelpSections
             new CliHelpSection(
                 "Notes",
                 "  The route group performs no operation.\n"
-                + "  Planned but unavailable operations: update, move, and remove."),
+                + "  Planned but unavailable operations: move and remove."),
         ]);
     }
 }

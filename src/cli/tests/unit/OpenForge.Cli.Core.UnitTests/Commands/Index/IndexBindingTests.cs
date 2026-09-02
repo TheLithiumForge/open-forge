@@ -38,16 +38,17 @@ public sealed class IndexBindingTests
     public void BindingPreservesSourceOccurrencesAndDryRun()
     {
         var symbols = IndexBinding.CreateSymbols();
-        var parse = symbols.IndexCommand.Parse(
+        string[] arguments =
         [
             "memory",
             ".agents/skills/_skills.md",
             "memory",
             "--dry-run",
             "--dry-run",
-        ]);
+        ];
+        var parse = symbols.IndexCommand.Parse(arguments);
         var bound = new IndexRequestBinder(symbols, new IndexResultBuilder()).Bind(
-            new CliBindingParse(parse),
+            new CliBindingParse(parse, arguments),
             Invocation());
 
         var request = Assert.IsType<IndexRequest>(bound.Request);
@@ -60,8 +61,9 @@ public sealed class IndexBindingTests
     public void BindingFormsTypedInvalidSourceResult()
     {
         var symbols = IndexBinding.CreateSymbols();
+        string[] arguments = ["memory", ".agents/../outside.md"];
         var bound = new IndexRequestBinder(symbols, new IndexResultBuilder()).Bind(
-            new CliBindingParse(symbols.IndexCommand.Parse(["memory", ".agents/../outside.md"])),
+            new CliBindingParse(symbols.IndexCommand.Parse(arguments), arguments),
             Invocation());
 
         var result = Assert.IsType<IndexResult>(bound.InvalidResult);

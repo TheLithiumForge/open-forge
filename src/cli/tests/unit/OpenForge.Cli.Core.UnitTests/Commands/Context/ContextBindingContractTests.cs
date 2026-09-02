@@ -41,15 +41,16 @@ public sealed class ContextBindingContractTests
     public void BindingPreservesNormalizedRequest()
     {
         var symbols = ContextBinding.CreateSymbols();
-        var parse = symbols.ContextCommand.Parse(
+        string[] arguments =
         [
             "alpha", ".agents/docs.md", "alpha",
             "--additions-only", "--additions-only",
             @"--content=section:Rules\, Limits,body,paths,body",
             "--follow-links=2",
-        ]);
+        ];
+        var parse = symbols.ContextCommand.Parse(arguments);
         var bound = new ContextRequestBinder(symbols).Bind(
-            new CliBindingParse(parse),
+            new CliBindingParse(parse, arguments),
             Invocation(CliView.Compact));
 
         var request = Assert.IsType<ContextRequest>(bound.Request);
@@ -84,7 +85,7 @@ public sealed class ContextBindingContractTests
         };
 
         var bound = new ContextRequestBinder(symbols).Bind(
-            new CliBindingParse(symbols.ContextCommand.Parse(arguments)),
+            new CliBindingParse(symbols.ContextCommand.Parse(arguments), arguments),
             Invocation(CliView.Compact, suppliedView: true));
 
         var request = Assert.IsType<ContextRequest>(bound.Request);
@@ -105,9 +106,10 @@ public sealed class ContextBindingContractTests
     public void BindingFormsTypedInvalidResults(string scenario, string expectedCode)
     {
         var symbols = ContextBinding.CreateSymbols();
-        var parse = symbols.ContextCommand.Parse(InvalidArguments(scenario));
+        var arguments = InvalidArguments(scenario);
+        var parse = symbols.ContextCommand.Parse(arguments);
         var bound = new ContextRequestBinder(symbols).Bind(
-            new CliBindingParse(parse),
+            new CliBindingParse(parse, arguments),
             Invocation(CliView.Expanded));
 
         var result = Assert.IsType<ContextResult>(bound.InvalidResult);

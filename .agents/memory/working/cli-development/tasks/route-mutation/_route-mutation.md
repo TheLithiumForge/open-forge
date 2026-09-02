@@ -16,9 +16,8 @@ open-forge:
   Remediation](../cli-quality-remediation.md) root Task is Complete and
   squash-integrated at `862cbf2a`, exact tree `571f104f`, from accepted
   implementation candidate `a4ccf19a`, tree `97254e65`. Task 3 “Route Update”
-  has completed M11 at immutable review snapshot `d8b8a33e`, tree `e0b8f85a`,
-  and has active M12 at 11/12 milestones; later Route Mutation commands remain
-  Planned in the accepted sequence.
+  is Complete at accepted closeout `27df8325`, tree `b68d4349`; later Route
+  Mutation commands remain Planned in the accepted sequence.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Common prerequisites: Route discovery, `index`, and Mutation Foundation.
 - Intended-membership formation prerequisite: accepted feature
@@ -65,7 +64,7 @@ command Active or Ready.
 
 - [x] [Implement generic and Framework-aware sparse route initialization after root Install](route-init.md) — Complete and squash-integrated at `cc5085ce` — Implementer: Overseer-managed Task Mastermind
 - [x] [Implement one-file route creation below an existing routable parent](route-create.md) — Complete and squash-integrated at `19412d2` — Implementer: Overseer-managed Route Create Task Mastermind
-- [ ] [Implement bounded route content and metadata update without identity drift](route-update.md) — Active; M11 complete and M12 active at 11/12 milestones — Implementer: Overseer-managed Route Update Task Mastermind
+- [x] [Implement bounded route content and metadata update without identity drift](route-update.md) — Complete at accepted closeout `27df8325`, tree `b68d4349` — Implementer: Overseer-managed Route Update Task Mastermind
 - [ ] [Implement route move with reference, overwrite, generated-navigation, and recovery integrity](route-move.md) — Planned — Implementer: Not assigned
 - [ ] [Implement route removal with dependency, reference, generated-navigation, and recovery integrity](route-remove.md) — Planned — Implementer: Not assigned
 
@@ -84,13 +83,13 @@ are now integrated into local `develop`: canonical lifecycle creation at
 `1d404c5cef3f5fd464ca771fc132a657f792f533` and the neutral Markdown link-label
 projection at `89a35a7876f39123d9538bca24126ff7197b9459`.
 
-| Command      | Preparation branch   | Readiness                                                                                                                                                                                                                                                                                           |
-| ------------ | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Route Init   | `codex/route-init`   | Complete and squash-integrated at `cc5085ce`; reviewed closeout `c580149`, tree `a1810c4`                                                                                                                                                                                                           |
-| Route Create | `codex/route-create` | Complete and squash-integrated at `19412d2`; reviewed candidate `392114a`, tree `2bbba7e`; it supplies the `RouteCreateJsonContext` and Route-help predecessor slices plus the maintainer-approved required effect-change correction                                                                |
-| Route Update | `codex/route-update` | Active from accepted base `5aad04a`, exact tree `0f56b2c`; M11 is complete at immutable review snapshot `d8b8a33e`, tree `e0b8f85a`; M12 is active at 11/12 and its five continuity overlaps must reconcile against accepted `develop` continuity `fc7e3c7`, tree `af2a8880`, after Task acceptance |
-| Route Move   | `codex/route-move`   | Waiting for Route Update, its remaining proportionality/wire gate, and the accepted neutral-reference correction                                                                                                                                                                                    |
-| Route Remove | `codex/route-remove` | Waiting for Route Move and its command-local result freeze; its parser and canonical lifecycle prerequisites are integrated                                                                                                                                                                         |
+| Command      | Preparation branch   | Readiness                                                                                                                                                                                                                            |
+| ------------ | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Route Init   | `codex/route-init`   | Complete and squash-integrated at `cc5085ce`; reviewed closeout `c580149`, tree `a1810c4`                                                                                                                                            |
+| Route Create | `codex/route-create` | Complete and squash-integrated at `19412d2`; reviewed candidate `392114a`, tree `2bbba7e`; it supplies the `RouteCreateJsonContext` and Route-help predecessor slices plus the maintainer-approved required effect-change correction |
+| Route Update | `codex/route-update` | Complete at accepted closeout `27df8325`, tree `b68d4349`, from base `5aad04a`, tree `0f56b2c`; final executable behavior is `8a398f2e`, tree `3bb4a224`, with holistic review PASS                                                  |
+| Route Move   | `codex/route-move`   | Waiting for the integrated Route Update baseline, its remaining proportionality/wire gate, and the accepted neutral-reference correction                                                                                             |
+| Route Remove | `codex/route-remove` | Waiting for Route Move and its command-local result freeze; its parser and canonical lifecycle prerequisites are integrated                                                                                                          |
 
 The required behavior and integration order is root Install, Route Init, Route
 Create, Route Create protected integration with its two predecessor slices,
