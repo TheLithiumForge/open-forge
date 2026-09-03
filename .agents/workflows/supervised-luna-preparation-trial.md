@@ -66,6 +66,14 @@ review, or repeats the same infrastructure failure twice. A model-capacity or
 availability fallback must be disclosed and does not count as evidence for the
 requested model.
 
+Quiet remains unobserved progress, not failure. The Overseer nevertheless ends
+the experiment without accepting preparation when a running lane misses two
+explicit checkpoint or return requests across separate supervision intervals.
+This latency circuit breaker classifies the trial as uneconomic or unobservable;
+it does not classify the Task, repository, or agent result as failed. Preserve
+any returned evidence only if it arrives before termination and can be bound to
+the frozen base.
+
 ## Completion
 
 - The selected preparation result is committed coherently in its isolated lane
