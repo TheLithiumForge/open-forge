@@ -323,4 +323,7 @@ Render every progress-bearing Overseer update from the project control ledger
 and linked Task records. Show actual task names, permanent IDs, truthful active
 phase ordinals and completed milestone counts, and the dynamic Active, Recently
 completed, and Queued sections. Advance completion grace only on those Overseer
-updates.
+updates. Beneath every active task, identify each active responsible agent by
+canonical name, agent type and repository-relative role file, exact model, and
+reasoning effort. Use `unreported` rather than infer unavailable runtime
+metadata, and do not present completed helpers as active.

@@ -425,6 +425,14 @@ Queued
 - Task X[/Y] “<actual task name>” — <priority or dependency reason>
 ```
 
+For every rendered active task, follow its status with one line for each active
+responsible agent in this exact shape:
+`<canonical agent name> — <agent type> (<repository-relative agent file>) — <exact model> / <reasoning effort>`.
+Include the Task Mastermind and the currently active implementer, reviewer, or
+integration owner. Use runtime or invocation evidence for model and reasoning;
+when either value is genuinely unavailable, say `unreported` instead of
+inferring it. Do not list completed helpers as active.
+
 Preserve ledger queue order, which expresses project priority and dependencies rather than ID order. Never invent phase or milestone horizons for a queued task. On a task's completion-bearing update, require its final Task-owned phase and full milestone count, place it in `Recently completed` with two subsequent progress-bearing updates remaining, and do not decrement that count. On each subsequent progress-bearing update, render it and then decrement; dequeue it before the next update when the count is zero. Non-progress messages and descendant updates do not consume grace. Reopened or follow-up work re-enters with the same ID and name, a new explicit Task-owned horizon, phase `1/<new B>`, truthful zero or preserved milestone progress, and no stale completion grace.
 
 Require Task, Integration, and Review Mastermind checkpoints to use exactly these four lines. When a display mapping exists, `Now` starts with the canonical status:

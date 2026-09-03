@@ -145,7 +145,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:5d4c9c527a51dd3ed6948c8ccf3f54955110b43a4f295238c86549d910b06412
+  content_hash: sha256:09ea6d69d3a1ab30367751dcc07d90e9acdb9ebef1010c5e57e9eb1f04e85adf
 - kind: project-relative
   target: codex
   value: .codex/agents/purple-evidence-improver.toml
@@ -388,7 +388,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:d807bc80419d23ec9cf804f9ce5c7cc6ba87b6cb079b3035c11671eb6f1c28ec
+  content_hash: sha256:fbdead0879b0bc8e32dafe7902c0325ba48f99709632767181ede511fb34363d
 - kind: project-relative
   target: opencode
   value: .opencode/agents/purple-evidence-improver.md
@@ -559,7 +559,7 @@ local_deployed_file_hashes:
   .codex/agents/implementer.toml: sha256:e131e7881785eb1245f8a7a6ae7f078216e88d37e3612457ea0682eb938c7c6a
   .codex/agents/improvement-reviewer.toml: sha256:1a51df63220604874d8c7f257d7405c9fc47754fa148d365044a27041b0510ab
   .codex/agents/integration-mastermind.toml: sha256:2cbf250e95dfd6dbb729fa8f687f0c0949674f82c6252c6112c18c53bada612c
-  .codex/agents/overseer.toml: sha256:5d4c9c527a51dd3ed6948c8ccf3f54955110b43a4f295238c86549d910b06412
+  .codex/agents/overseer.toml: sha256:09ea6d69d3a1ab30367751dcc07d90e9acdb9ebef1010c5e57e9eb1f04e85adf
   .codex/agents/purple-evidence-improver.toml: sha256:1ebccb6ebd33952c8188a44b483bee2966442fabaa315fdb9f527cd00e7227bd
   .codex/agents/red-evidence-author.toml: sha256:68baed7911ccf07fa3f1d0066aa9800659593822977d89e53e57c35628ca825e
   .codex/agents/researcher.toml: sha256:c269aa23d2fd7dca8bd5038285875148eaa464c2c7294a104a27184934d52bea
@@ -586,7 +586,7 @@ local_deployed_file_hashes:
   .opencode/agents/implementer.md: sha256:51ea86b4f4044bb2cbd8e40efdc4710dcbfb85777eddadf102cb39c9965b11b8
   .opencode/agents/improvement-reviewer.md: sha256:04d7e96e0b9039626a56df355b136921367aa067b0c60a52bb271cc4b857999e
   .opencode/agents/integration-mastermind.md: sha256:4f74fb50e228251beb587dec9ee72708badfe920eb0a3d4dda00277989e3638d
-  .opencode/agents/overseer.md: sha256:d807bc80419d23ec9cf804f9ce5c7cc6ba87b6cb079b3035c11671eb6f1c28ec
+  .opencode/agents/overseer.md: sha256:fbdead0879b0bc8e32dafe7902c0325ba48f99709632767181ede511fb34363d
   .opencode/agents/purple-evidence-improver.md: sha256:dcff0c0565e57c5c974fdf9604157c229fc78a619892fd5d37aa69b74567c68b
   .opencode/agents/red-evidence-author.md: sha256:659f51fd9fbdc6b8e790f11f1a1a776a3f06a095b5954a97906990d03c63d18f
   .opencode/agents/researcher.md: sha256:0d8e0b16996b7f2e467550f72d86ac79a66cff0bf92e0c5da24c00851224790e
