@@ -16,30 +16,31 @@ release.
 
 ## Current State
 
-Task 12 “CLI Architecture Authority Remediation” is Complete at phase 5/5,
-milestone 6/6. Corrected source
+Task 12 “CLI Architecture Authority Remediation” is Complete and dequeued at
+phase 5/5, milestone 6/6. Corrected source
 `a0e6bc8dc25ae9395beae98289f594e1f9f56af2`, exact tree
 `9c4a33b1c16617cf79beefd9f16a6e1d2d551382`, is squash-integrated at
 `495a7ed6b55bca2a879ece83818f89e530c33af2`, the same exact tree, from local
 `develop` parent `d3d2dc1362ec1ba03844927f44fefdffb2fd466d`, tree
-`6959b51e148af44d59512d8bdd801350d88fc651`. Task 12 is
-`RECENTLY_COMPLETED` with 0/2 subsequent progress updates consumed.
+`6959b51e148af44d59512d8bdd801350d88fc651`. Its two-update completion grace
+is consumed.
 
-Task 4 “Route Move” remains Complete at phase 6/6, milestone 12/12. Accepted
-closeout `631983ea1ec7d7ad5f5fc3999f938ba5f445ed81`, tree
+Task 4 “Route Move” remains Complete and dequeued at phase 6/6, milestone
+12/12. Accepted closeout `631983ea1ec7d7ad5f5fc3999f938ba5f445ed81`, tree
 `d6f6fdf7d1caf62a9ac68582609c7282921f557c`, is squash-integrated at
 `d3d2dc1362ec1ba03844927f44fefdffb2fd466d`, tree
 `6959b51e148af44d59512d8bdd801350d88fc651`, from local `develop` parent
 `83902c8849bc98e44812b33175c5122421171e8b`, tree
-`4b8324b2e9e0cb4c876ef9a5db293968b37a9192`. Its completion grace is 1/2
-subsequent progress updates consumed. The [project control ledger](../cli-development/project-control.md)
-defines permanent task identities, both completion-grace counters, and the
-current dynamic queue.
+`4b8324b2e9e0cb4c876ef9a5db293968b37a9192`. Its two-update completion grace
+is consumed. The [project control ledger](../cli-development/project-control.md)
+defines permanent task identities and the current dynamic queue.
 
-Task 14 “Extension Install” remains `PREPARED` at phase 0/5, milestone 0/8.
-Its activation/preflight base is Task 12 integration `495a7ed6`, tree
-`9c4a33b1`. Its four command-local freezes remain recorded, and no Task 14
-implementation is active.
+Task 14 “Extension Install” (phase 2/5): milestone 1/8 — Gray is freezing the
+contract and smallest typed callable boundary. Its clean continuity base is
+`596123df`, tree `ae8cabdb`; isolated activation commit
+`f1ebd9b6`, tree `20e1035f`, records the four accepted command-local freezes,
+the `.agents/**`-only payload boundary, and the deferred non-authoritative
+`.apm/**` idea. Production implementation is not active.
 
 Task 3 “Route Update” remains Complete from accepted closeout `27df8325`, tree
 `b68d4349`, with final executable behavior `8a398f2e`, tree `3bb4a224`.
@@ -406,9 +407,9 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Resolve Task 14's four recorded command-local freezes, then activate its
-   explicit Gray/Red boundary from Task 12 integration `495a7ed6`, tree
-   `9c4a33b1`. Do not begin implementation before that activation.
+1. Complete and commit Task 14's Gray contract/callable freeze, then give a
+   separate Red owner the accepted immutable boundary. Do not begin production
+   implementation before both freezes are complete.
 2. Continue through Task 15 Status and Task 16 Doctor after Task 14. Task 15
    Gray still owns exact catalogue and view signatures. Task 7 may overlap after
    its recorded prerequisites.
