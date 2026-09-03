@@ -60,17 +60,19 @@ The accepted dependency order is:
    `27df8325`, tree `b68d4349`, and is squash-integrated at `272f5121`, tree
    `702f06d9`.
 4. Task 4 “Route Move” is Complete at accepted closeout `631983ea`, tree
-   `d6f6fdf7`, and is squash-integrated by the commit containing this record.
-   Task 12 CLI Architecture Authority Remediation is next after its prepared
-   authority destinations are accepted. The accepted adoption-first slice is
-   Task 14 Extension Install,
-   Task 15 Status, and Task 16 Doctor. Status and Doctor completely cover the
-   explicit contributor inventory at their frozen baseline; every later
-   producer extends that inventory and affected evidence before its own
+   `d6f6fdf7`, and is squash-integrated at `d3d2dc1`, tree `6959b51e`. Task 12
+   CLI Architecture Authority Remediation is Complete at phase 5/5, milestone
+   6/6. Corrected source `a0e6bc8d`, exact tree `9c4a33b1`, is
+   squash-integrated at `495a7ed6`, the same exact tree. The accepted
+   adoption-first slice is Task 14 Extension Install, Task 15 Status, and Task
+   16 Doctor. Task 14 remains Prepared on activation/preflight base `495a7ed6`,
+   tree `9c4a33b1`; no implementation is active. Status and Doctor completely
+   cover the explicit contributor inventory at their frozen baseline; every
+   later producer extends that inventory and affected evidence before its own
    acceptance. Task 7's Linux/macOS/Windows x64 expansion may overlap the slice
-   after Task 12 and Task 13 preparation. Task 5 Route Remove, Task 6 Root
-   Update, Tasks 17–20, Task 10 and conditional Task 21, Task 13 implementation,
-   and Task 22 follow in the project-control order.
+   after integrated Task 12 and Task 13 preparation. Task 5 Route Remove, Task 6
+   Root Update, Tasks 17–20, Task 10 and conditional Task 21, Task 13
+   implementation, and Task 22 follow in the project-control order.
 
 Tasks 4–6 and 14–20 are the accepted measured trial of the streamlined assured lane. Each
 keeps Task Mastermind Preflight plus explicit Gray and Red boundaries, uses one
@@ -103,9 +105,9 @@ or a general template/scaffold system.
 | Review orchestration          | Opt-in immutable coordinated topic review and permanent task-progress controls         | Complete and integrated at `5aad04ac` plus follow-up `3356eba1`; APM, Open Forge, projection, formatting, protected-path, and C# identity gates pass                                                                                                                                                                                                              |
 | npm link shims                | Repository-local managed development CLI linking                                       | Complete and integrated at `128b70b3`; Node `16/16` and exact package, mode, manifest, nonmutation, and protected-path gates pass                                                                                                                                                                                                                                 |
 | Route Update                  | Bounded route content and metadata update                                              | Complete at accepted closeout `27df8325`, tree `b68d4349`; immutable behavior `8a398f2e`, tree `3bb4a224`; managed `1602/809/152`, native `809/152`, managed-on-native `152`, dogfood, and holistic review pass                                                                                                                                                   |
-| Task 4 Route Move             | Route movement with reference, navigation, lifecycle, and recovery integrity           | Complete at phase 6/6, milestone 12/12; closeout `631983ea`, tree `d6f6fdf7`, is squash-integrated by the commit containing this record                                                                                                                                                                                                                            |
-| Task 12 authority remediation | Move accepted CLI Architecture detail to its correct authority without behavior change | Phase 0/5 preparation is ready; Route Move is integrated, and implementation now waits only for maintainer acceptance of the prepared authority destinations                                                                                                                                                                                                       |
-| Task 14 Extension Install     | Install reviewed Extension packages with isolated lifecycle and recovery integrity     | Phase 0/5 preparation is ready with four maintainer freezes: command-local result/presentation, interaction policy, final lifecycle publication order, and `.agents/`-descendant payload policy; activation waits for Task 4 and Task 12                                                                                                                          |
+| Task 4 Route Move             | Route movement with reference, navigation, lifecycle, and recovery integrity           | Complete at phase 6/6, milestone 12/12; closeout `631983ea`, tree `d6f6fdf7`, is squash-integrated at `d3d2dc1`, tree `6959b51e`; completion grace is 1/2 subsequent progress updates                                                                                                                                                                             |
+| Task 12 authority remediation | Move accepted CLI Architecture detail to its correct authority without behavior change | Complete at phase 5/5, milestone 6/6; corrected source `a0e6bc8d`, exact tree `9c4a33b1`, is squash-integrated at `495a7ed6`, the same exact tree; completion grace is 0/2 subsequent progress updates                                                                                                                                                            |
+| Task 14 Extension Install     | Install reviewed Extension packages with isolated lifecycle and recovery integrity     | Phase 0/5 preparation remains ready with four maintainer freezes: command-local result/presentation, interaction policy, final lifecycle publication order, and `.agents/`-descendant payload policy; activation/preflight base is `495a7ed6`, tree `9c4a33b1`; no implementation is active                                                                       |
 | Task 13 native CI             | Prepare minimal build/test CI, manual publish, artifacts, and package targets          | Preparation completed at phase 1/3, milestone 2/6 on candidate `e7689696`, tree `c204c17b`, and is integrated by the commit containing this record from `develop` parent `de40d550`, tree `e6040c49`. The Task is queued behind all retained commands, Task 10, and conditional Task 21 remediation. Linux/macOS/Windows x64 are accepted; ARM remains undecided. |
 
 Each mutating lane owns a distinct worktree and feature branch. Shared root
@@ -179,6 +181,17 @@ Checkpoint are integration-owned unless a Task packet explicitly says otherwise.
   static, format, and immutable whole-task review gates pass with zero skips.
   Mid-read BCL cancellation or unexpected-read fault injection without a
   forbidden seam remains the accepted verification limit.
+- Task 12 CLI Architecture Authority Remediation is Complete from accepted
+  `develop` base `d3d2dc1362ec1ba03844927f44fefdffb2fd466d`, tree
+  `6959b51e148af44d59512d8bdd801350d88fc651`, through corrected source
+  `a0e6bc8dc25ae9395beae98289f594e1f9f56af2`, exact tree
+  `9c4a33b1c16617cf79beefd9f16a6e1d2d551382`, and squash integration
+  `495a7ed6b55bca2a879ece83818f89e530c33af2`, the same exact tree. The twelve
+  routed authority destinations, 27 Architecture headings, exact result and edge
+  coordinates, dependency-version ownership, generated navigation, formatting,
+  links, protected manifests, and focused integration re-review pass. No
+  executable, package, platform, project, schema, build, runtime-projection, or
+  public-document behavior changed.
 
 - A switch that names every declared enum member is not closed over unnamed
   runtime numeric values. The direct modern-C# pattern is a clear switch
@@ -203,8 +216,8 @@ Checkpoint are integration-owned unless a Task packet explicitly says otherwise.
 Route Move has no open decision. Its third positional operand follows the
 accepted standard pinned-parser boundary as shell `cli.parser.invalid`; missing
 required operands remain typed Route Move `invalid` results.
-Task 12 still requires acceptance of its prepared authority destinations before
-mutation. Its accepted future Status/Doctor decision is one explicit immutable
+Task 12 is complete and integrated. Its accepted future Status/Doctor decision
+is one explicit immutable
 application-scoped `OperationalContributorCatalogue` built by
 `CliCompositionRoot`, with producer-owned typed contributors, narrow Status and
 Doctor views, and fresh invocation observations. It adds no dependency
