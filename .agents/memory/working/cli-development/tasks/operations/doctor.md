@@ -25,6 +25,33 @@ open-forge:
 - Parent: [Operational Commands](_operations.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/doctor/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/doctor/behavior.md).
 
+## Read-Only Preparation Receipt
+
+Experimental Luna/max single-owner preparation completed against clean
+`develop` commit `328599a006ef206fd82004e778296c2cac2bc10c`, tree
+`56a24a7a50550702eae13bcbfaed9e9ead2a19f3`, without edits, builds, tests,
+artifacts, or activation. The selected runtime exposed no child-agent
+collaboration tools, so the result does not count as evidence for a Luna/max
+Mastermind supervising topic workers. One correction converted its initial
+checkpoint-only return into a reviewable evidence packet; the limitation and
+workflow adjustment are recorded in the [trial results](../../../../emerging/observations/2026-09-03_supervised-luna-preparation-trial-results.md).
+
+The six accepted domains remain stable: workspace/entry, recovery/residual,
+routes/metadata/overwrites/generated navigation, local references, Framework
+lifecycle, and Extension lifecycle. Current source, generated-navigation,
+recovery, lifecycle, Extension, and reference readers provide reusable typed
+facts, but no Doctor command, Status command, operational contributor catalogue,
+complete Extension-currentness view, complete per-target Framework view, or
+cross-domain finding/provenance aggregation exists.
+
+After Tasks 14 and 15 integrate, Preflight must bind all six domains to Task
+15's complete frozen typed views, revalidate unknown/unavailable and
+coverage/status precedence, deterministic ordering and provenance-preserving
+deduplication, no-write/cancellation, real-producer fixtures, process evidence,
+Native AOT, and Status regressions. Task 16 remains queued at phase 0/5,
+milestone 0/8 and is suitable for the ordinary streamlined assured flow only
+after those prerequisites are accepted.
+
 ## Expected Outcome
 
 `doctor` evaluates accepted diagnostic domains from shared observed facts,

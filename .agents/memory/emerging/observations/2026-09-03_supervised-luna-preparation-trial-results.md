@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Record the first two supervised Luna preparation samples and the resulting latency circuit breaker
+  description: Record the first three supervised Luna preparation samples and their delegation and latency circuit breakers
   tags: [Memory, Emerging, Observation, Workflow, Experimental, Luna, Preparation, Efficiency, Orchestration]
 ---
 
@@ -8,7 +8,7 @@ open-forge:
 
 ## Scope
 
-This Observation records two opt-in preparation samples. It does not replace
+This Observation records three opt-in preparation samples. It does not replace
 the ordinary Task Mastermind, authorize Luna/max semantic implementation, or
 change the default development Workflow. The selected workflow remains
 [Supervised Luna Preparation Trial](../../../workflows/supervised-luna-preparation-trial.md).
@@ -54,19 +54,46 @@ child, handoff, finding, and revalidation measurements are unavailable because
 the lane returned no receipt. The observed critical-path cost was supervisory
 waiting plus one interrupt and one unproductive follow-up.
 
+## Sample 3: Task 16 Doctor Preparation
+
+Task 16 selected a read-only Luna/max preparation against clean `develop` at
+`328599a006ef206fd82004e778296c2cac2bc10c`, tree
+`56a24a7a50550702eae13bcbfaed9e9ead2a19f3`. The lane was explicitly asked to
+supervise two bounded Luna/max inventories. Its runtime exposed no direct
+collaboration capability: `spawn_agent`, `send_message`, `followup_task`,
+`wait_agent`, `interrupt_agent`, and `list_agents` were absent from both its tool
+declaration and `ALL_TOOLS` inventory. It therefore created zero children.
+
+The first return was too terse to review. One grouped correction produced a
+useful single-owner evidence packet covering the six accepted Doctor domains,
+current typed readers and fixtures, missing contributor views, false-green
+risks, protected surfaces, and a ten-step post-Task14/15 revalidation gate. No
+file, Git, Task, production, test, contract, build, or artifact state changed.
+
+This sample supports Luna/max for bounded single-owner inventory and
+summarization after a precise correction. It does not test or support the
+proposed Luna/max Mastermind-with-workers shape. The missing collaboration
+surface is a runtime capability mismatch that should be detected before the
+sample begins, not after supervisory waiting. Task 16 remains queued and later
+returns to the ordinary streamlined assured flow after Tasks 14 and 15.
+
 ## Current Disposition
 
 - Keep Luna/max workers for exact shell/build/test execution, artifact
   inspection, simple mechanical changes, and large-output summarization.
 - Keep semantic C#, architecture, lifecycle, recovery, public wire, and test
   meaning under Sol/xhigh ownership.
+- Verify child-agent capability before selecting a team-dependent preparation
+  sample. If collaboration is absent, stop immediately or record an explicitly
+  single-owner sample; do not count it as supervised-Mastermind evidence.
 - Allow another Luna/max preparation Mastermind only when the result is smaller
   than Task 14's cross-cutting lifecycle inventory and has an explicit early
   checkpoint.
 - End a preparation trial after two explicit checkpoint or return requests go
   unanswered across separate supervision intervals. Record the trial as
   uneconomic or unobservable without calling the Task failed.
-- Do not treat either sample as enough evidence to change the default Workflow.
+- Do not treat any of the three samples as enough evidence to change the default
+  Workflow.
 
 The next useful comparison is a narrow, closed, derivative preparation with a
 small durable result, measured against an equivalent Sol/xhigh preparation. Do

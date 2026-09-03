@@ -32,11 +32,17 @@ safety, lifecycle, serialization, shared-placement, or test-meaning decisions.
    exact commit and tree, isolated branch and worktree when the trial writes a
    durable result, expected and protected paths, direct integration
    neighborhood, and the later gate that must revalidate the preparation.
-3. **Assign one Luna/max Task Mastermind.** Give it a maximum of three bounded
-   evidence workers. Each child receives one literal responsibility and remains
-   read-only unless the Task capsule separately authorizes a narrow preparation
-   record. The Task Mastermind supervises and synthesizes its children rather
-   than forwarding their raw output.
+3. **Verify delegation capability, then assign one Luna/max Task Mastermind.**
+   Before a team-dependent sample begins, verify that the selected Task
+   Mastermind runtime actually exposes child-agent collaboration. Give a capable
+   runtime a maximum of three bounded evidence workers. Each child receives one
+   literal responsibility and remains read-only unless the Task capsule
+   separately authorizes a narrow preparation record. The Task Mastermind
+   supervises and synthesizes its children rather than forwarding their raw
+   output. When collaboration is unavailable, stop the team-dependent sample or
+   explicitly reclassify it as single-owner preparation; its useful result may
+   be retained, but it is not evidence that a Luna/max Mastermind can supervise
+   a team.
 4. **Load normal Open Forge context.** The experimental model does not relax
    context or authority rules. Every child that authors or reviews C# semantics
    independently reads the complete current `.agents/directives/csharp/_csharp.md`,
