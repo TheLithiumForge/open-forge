@@ -1,15 +1,15 @@
 ---
 open-forge:
   description: Place live repository-owned agent tooling in explicit source scopes and remove the unexplained root scripts bucket
-  tags: [Memory, Working, Contextual, Active, CLI, Task, Tooling, TypeScript, Testing]
+  tags: [Memory, Working, Contextual, CLI, Task, Tooling, TypeScript, Testing]
 ---
 
 # Task 11: Root Tooling Placement Remediation
 
 ## Task State
 
-- State: Complete candidate; pending Overseer integration and ledger queue
-  disposition.
+- State: Complete, squash-integrated, and dequeued after the ledger's
+  completion-update grace.
 - Permanent mapping: Task 11 “Root Tooling Placement Remediation” in the
   [project control ledger](../project-control.md).
 - Profile: Standard; maintainer-selected simplified single-owner flow with one
@@ -19,16 +19,17 @@ open-forge:
 - Correction budget: maximum 1; `T11-C1` consumed by the M6 grouped
   correction.
 - Council budget: 0.
-- Current owner: Root Tooling Placement Task Mastermind through integration
-  handoff.
+- Completed owner: Root Tooling Placement Task Mastermind, one Brilliant
+  Implementer, and one fresh reviewer.
 - Worktree: `open-forge-worktree/root-tooling-placement` on branch
   `codex/root-tooling-placement`.
 - Exact base: commit `416ea6ce59e019b7dec0f32e8262640133c6dca5`, tree
   `0ee2597a1ca69656e941d2c88e1035cf6e992b4b`.
 - Current phase and milestone: phase 5 of 5, milestone 8 of 8 is complete.
-- Current-state suffix: M7 passed over candidate `dfc044f2`, tree `9032f9c9`;
-  the commit containing this record closes M8 and awaits Overseer squash
-  integration, completion mapping, and queue disposition.
+- Current-state suffix: M8 complete; accepted closeout `f309f29f`, tree
+  `c05c2ed6`, is squash-integrated as commit `f8377094f5cb4bfa056cf9e286c1cf8efd386986`,
+  exact tree `c05c2ed6d1adef05bc6cdc3cb486fc29899f2c97`. The project control ledger
+  records the same immutable mapping and completed queue disposition.
 
 This Task record defines its phase and milestone horizon, execution capsule,
 budgets, findings, and evidence. The project control ledger defines permanent
