@@ -9,14 +9,12 @@ open-forge:
 ## Task State
 
 - State: Complete.
-- Display mapping: The assigning Overseer packet declares permanent Task 9
-  “CLI Architecture Authority Audit”. The project control ledger does not yet
-  contain the corresponding linked row at the accepted task base, so integration
-  must add that mapping without changing this Task's identity or horizon.
+- Permanent mapping: Task 9 “CLI Architecture Authority Audit” in the
+  [project control ledger](../project-control.md).
 - Current phase and completed milestone count: phase 3/3, milestone 5/5.
-- Current milestone or state suffix: Audit packet validated and committed by the
-  commit containing this record; ready for Overseer integration. Completion grace
-  remains project-ledger authority.
+- Current milestone or state suffix: Audit packet validated, committed as
+  `e431395add33a95d266b71d05b46fc1768ebcbf9`, integrated on local `develop`,
+  and dequeued after completion grace.
 - Horizon provenance: Original accepted horizon from the 2026-09-02 assigning
   Overseer packet. The three phases are evidence, synthesis, and closeout. The
   five milestones are Preflight, targeted evidence, synthesis, fresh whole-task
@@ -146,7 +144,7 @@ mapping, queue state, worktree mapping, and integration state.
 ## Execution Capsule
 
 - Current owner: CLI Architecture Authority Audit Task Mastermind.
-- Current boundary: Complete documentation audit awaiting project integration.
+- Current boundary: Complete documentation audit integrated on local `develop`.
 - Dependency source: Assigning Overseer packet and the current CLI authority map.
 - Focused evidence: Exact Architecture section/line inventory, repository-wide
   inbound/outbound reference census, Git log/blame provenance, authority-source
@@ -168,9 +166,8 @@ mapping, queue state, worktree mapping, and integration state.
   product meaning needed to state a finding as fact, protected-path change,
   dependency installation, remote effect, destructive/history rewrite, or
   evidence that the assigned base is not the intended authority.
-- Next action: Overseer integrates the coherent Task 9 commit, adds its permanent
-  project-ledger mapping, and corrects Task 7's canonical name/state when that
-  Task integrates.
+- Next action: Task 12 “CLI Architecture Authority Remediation” applies the
+  accepted findings after Route Move integrates and before Route Remove starts.
 
 ## Progress And Evidence
 
@@ -250,18 +247,17 @@ mapping, queue state, worktree mapping, and integration state.
   `_csharp.md` `31045ebcb02d5bfeee8ba9f3112d307b1f72a2186cda618fbf7d22e7d1d90b53`;
   `design.md` `76aa8fc7aaaa79d9535998f5557150f3754e3d80520a7a06864b61659373c1a9`;
   `style.md` `c3fa9d31575e77fedb103ca397f0ccf10ab7236e6edbef1658c7fe36138457cb`.
-- Blockers: None. The missing Task 9 project-ledger row is an integration action
-  for the Overseer, as is Task 7's stale label/state correction; neither blocks
-  the complete task-owned audit result.
+- Blockers: None. The project ledger now records Task 9, and Task 7's canonical
+  name and completed state are already corrected.
 - Residual risk: Line anchors can move after future Architecture edits; every
   finding will also name its stable heading and quoted subject.
 
 ## Completion And Closeout
 
-The repaired durable audit covers the full Architecture and reference boundary,
-all material findings have stable IDs and decision-ready remediation, the fresh
+The durable audit covers the full Architecture and reference boundary. All
+material findings have stable IDs and decision-ready remediation, the fresh
 whole-task review is dispositioned, only authorized documentation and generated
-navigation changed, and validation passed. The Overseer must add the permanent
-Task 9 ledger mapping, integrate the commit, correct Task 7's stale canonical
-name/state at its integration boundary, and decide later Architecture
-remediation; this Task does not change queue state or completion grace.
+navigation changed, and validation passed. Commit
+`e431395add33a95d266b71d05b46fc1768ebcbf9`, tree
+`656cccdf8fc5a13d84ab09537bd605704aa2faac`, is integrated on local `develop`.
+Task 9 is complete and dequeued. Task 12 retains the later remediation boundary.

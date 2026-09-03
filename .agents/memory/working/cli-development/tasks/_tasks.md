@@ -21,11 +21,14 @@ Read the [program Task](00-cli-development.md), [Architecture](../../../crystall
 - [x] [Read-Only CLI Dogfooding Corrections](read-only-dogfooding-corrections.md) — Complete and squash-integrated at `bba84b6` — Implementer: Overseer
 - [x] [Proportional CLI Corrections](proportional-cli-corrections.md) — Complete and squash-integrated through `0d88606`; Mutation Foundation may resume — Implementer: Overseer with bounded Task Masterminds
 - [x] [Next-Wave Shared Foundations](shared-foundations/_shared-foundations.md) — Complete at integrated D0/SF1-SF4 baseline — Implementer: Overseer-managed bounded Task Masterminds
-- [ ] [Route Mutation Commands](route-mutation/_route-mutation.md) — Active: Route Init, Route Create, [CLI Quality Remediation](cli-quality-remediation.md), and Task 3 “Route Update” are Complete; Route Move remains Planned — Implementer: Overseer-managed command lanes
+- [ ] [Route Mutation Commands](route-mutation/_route-mutation.md) — Active: Route Init, Route Create, [CLI Quality Remediation](cli-quality-remediation.md), and Task 3 “Route Update” are Complete; Task 4 “Route Move” is Active — Implementer: Overseer-managed command lanes
 - [x] [CLI Quality Remediation](cli-quality-remediation.md) — Complete and squash-integrated at `862cbf2a`, exact tree `571f104f`, from accepted implementation candidate `a4ccf19a`, tree `97254e65`; all thirteen findings/candidates and final `QR-R1-001` are closed — Implementer: Overseer-managed Task Mastermind
+- [x] [CLI Architecture Authority Audit](cli-architecture-authority-audit.md) — Task 9 is Complete and integrated at `e431395a`, exact tree `656cccdf`; twelve location-precise findings are retained for Task 12 — Implementer: Dedicated Task Mastermind
+- [ ] [CLI Architecture Authority Remediation](cli-architecture-authority-remediation.md) — Task 12 is queued after Route Move and before Route Remove; executable behavior is protected — Implementer: Dedicated Task Mastermind with one Brilliant Implementer and one fresh review
 - [x] [Root Tooling Placement Remediation](root-tooling-placement.md) — Complete and squash-integrated at `f8377094`, exact tree `c05c2ed6`; dequeued after completion-update grace — Implementer: Task 11 Task Mastermind with one Brilliant Implementer and one fresh review
 - [ ] [Lifecycle Commands](lifecycle/_lifecycle.md) — Active: Extension Create and root Install are Complete; root Update remains planned after M2, with later Extension lifecycle commands still Planned — Implementer: Overseer-managed command lanes
 - [ ] [Operational Commands](operations/_operations.md) — Planned — Implementer: Not assigned
+- [ ] [CLI Command Surface Audit](cli-command-surface-audit.md) — Task 10 is queued after all retained commands and before delivery; audit only, with no implementation mutation — Implementer: Dedicated Review Mastermind
 - [ ] [CLI Delivery](delivery/_delivery.md) — Planned — Implementer: Not assigned
 
 ## Axioms
@@ -62,6 +65,8 @@ define execution state.
 <!-- open-forge:generated-index:start -->
 - [Parent outcome, scope, authority, and acceptance for the complete replacement CLI program](00-cli-development.md) - #Memory #Working #CLI #Task #Program #Architecture #Development #Contextual #Active
 - [Audit the current replacement CLI Architecture authority and route misplaced detail to narrower sources without changing accepted meaning](cli-architecture-authority-audit.md) - #Memory #Working #Contextual #Complete #CLI #Task #Architecture #Audit #Authority #Documentation
+- [Apply the accepted CLI Architecture authority audit without changing product behavior or requirement strength](cli-architecture-authority-remediation.md) - #Memory #Working #Contextual #Planned #CLI #Task #Architecture #Authority #Documentation #Remediation
+- [Review the complete retained CLI command surface for direct PR-level architecture, design, refactoring, and test-evidence problems](cli-command-surface-audit.md) - #Memory #Working #Contextual #Planned #CLI #Task #Audit #Architecture #Refactoring #Testing #Review
 - [Remediate the accepted first-pass CLI architecture, C# design, authority, and test-evidence findings after Route Create and before Route Update](cli-quality-remediation.md) - #Memory #Working #CLI #Task #Audit #Architecture #Refactoring #Testing #Review #Contextual
 - [Package, prove, document, and release the complete native CLI without partial publication](delivery/_delivery.md) - #Memory #Working #CLI #Task #Distribution #NativeAOT #SupplyChain #Release #Contextual
 - [Build and accept the actual command-free C# workspace, Core, host, safety, tests, and Native AOT foundation](foundation/_foundation.md) - #Memory #Working #CLI #Task #Foundation #Architecture #DotNet #NativeAOT #Contextual #Complete
