@@ -63,13 +63,14 @@ identity, queue state, completion grace, worktree mapping, and integration state
 
 ## Task Identity, Queue, And Active Work
 
-| Permanent task ID and actual name                | Task record                                                                           | Queue state | Completion grace | Outcome                                                                                                             | Queue order and dependency reason                                       | Profile                           | Lane, branch, worktree, and base                                                                                       | Responsible role                                                                             | Integration mapping                                                                  |
-| ------------------------------------------------ | ------------------------------------------------------------------------------------- | ----------- | ---------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| Task 4 “Route Move”                              | [Route Move](tasks/route-mutation/route-move.md)                                      | `ACTIVE`    | Not applicable   | Implement route movement with reference, overwrite, navigation, lifecycle, and recovery integrity.                  | Active at phase 4/6, milestone 5/12; M6 active.                         | Streamlined assured trial         | `codex/route-move`; base `272f5121`; worktree `open-forge-worktree/route-move`; accepted fixture checkpoint `67ed59bf` | Route Move Task Mastermind with Gray/Red boundaries and one continuous Brilliant Implementer | Separate future squash-integration boundary after behavior, review, and final gates. |
-| Task 12 “CLI Architecture Authority Remediation” | [Architecture Authority Remediation](tasks/cli-architecture-authority-remediation.md) | `QUEUED`    | Not applicable   | Apply Task 9's twelve authority-placement findings without changing accepted meaning or executable behavior.        | After Route Move integration and before Route Remove.                   | Streamlined assured documentation | Planned branch and worktree; exact base deferred until activation                                                      | Task Mastermind; explicit Gray/Red boundaries; one Brilliant Implementer; one fresh review   | Separate future integration boundary.                                                |
-| Task 5 “Route Remove”                            | [Route Remove](tasks/route-mutation/route-remove.md)                                  | `QUEUED`    | Not applicable   | Implement positive-unmanaged route removal with dependency, reference, navigation, and recovery integrity.          | After Route Move and Task 12's authority freeze.                        | Streamlined assured trial         | Planned `codex/route-remove`; exact base deferred until activation                                                     | Task Mastermind; Gray/Red owners; one Brilliant Implementer                                  | Separate future integration boundary.                                                |
-| Task 6 “Root Update”                             | [Root Update](tasks/lifecycle/update.md)                                              | `QUEUED`    | Not applicable   | Reconcile lifecycle-managed Framework files and regions from accepted identity.                                     | After the complete Route Mutation M2 lane.                              | Streamlined assured trial         | Planned branch and worktree; exact base deferred until activation                                                      | Task Mastermind; Gray/Red owners; one Brilliant Implementer                                  | Separate future integration boundary.                                                |
-| Task 10 “CLI Command Surface Audit”              | [CLI Command Surface Audit](tasks/cli-command-surface-audit.md)                       | `QUEUED`    | Not applicable   | Review the complete retained CLI for direct PR-level architecture, design, refactoring, and test-evidence problems. | After all retained commands and before delivery and release acceptance. | Read-only strategic audit         | Planned branch and worktree; exact base deferred until activation                                                      | Dedicated Review Mastermind with bounded topic reviewers selected at Preflight               | Audit-only integration; accepted findings receive a later remediation task.          |
+| Permanent task ID and actual name                        | Task record                                                                           | Queue state | Completion grace | Outcome                                                                                                                | Queue order and dependency reason                                       | Profile                           | Lane, branch, worktree, and base                                                                                       | Responsible role                                                                             | Integration mapping                                                                  |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------- | ----------- | ---------------- | ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Task 4 “Route Move”                                      | [Route Move](tasks/route-mutation/route-move.md)                                      | `ACTIVE`    | Not applicable   | Implement route movement with reference, overwrite, navigation, lifecycle, and recovery integrity.                     | Active at phase 4/6, milestone 5/12; M6 active.                         | Streamlined assured trial         | `codex/route-move`; base `272f5121`; worktree `open-forge-worktree/route-move`; accepted fixture checkpoint `67ed59bf` | Route Move Task Mastermind with Gray/Red boundaries and one continuous Brilliant Implementer | Separate future squash-integration boundary after behavior, review, and final gates. |
+| Task 13 “Native linux-x64 CI and Reproducible Artifacts” | [Native CI and Reproducible Artifacts](tasks/delivery/02-native-ci.md)                | `ACTIVE`    | Not applicable   | Prepare the current CI/artifact gap and a future execution capsule without editing CI or claiming delivery acceptance. | Parallel preparation only; future mutation waits for complete commands. | Supervised Luna preparation trial | `codex/native-ci-preparation`; base `c8051478`; worktree `open-forge-worktree/native-ci-preparation`                   | Experimental Luna/max Task Mastermind; at most three evidence workers; one Sol/xhigh review  | Preparation returns to the queue; implementation integrates in the later horizon.    |
+| Task 12 “CLI Architecture Authority Remediation”         | [Architecture Authority Remediation](tasks/cli-architecture-authority-remediation.md) | `QUEUED`    | Not applicable   | Apply Task 9's twelve authority-placement findings without changing accepted meaning or executable behavior.           | After Route Move integration and before Route Remove.                   | Streamlined assured documentation | Planned branch and worktree; exact base deferred until activation                                                      | Task Mastermind; explicit Gray/Red boundaries; one Brilliant Implementer; one fresh review   | Separate future integration boundary.                                                |
+| Task 5 “Route Remove”                                    | [Route Remove](tasks/route-mutation/route-remove.md)                                  | `QUEUED`    | Not applicable   | Implement positive-unmanaged route removal with dependency, reference, navigation, and recovery integrity.             | After Route Move and Task 12's authority freeze.                        | Streamlined assured trial         | Planned `codex/route-remove`; exact base deferred until activation                                                     | Task Mastermind; Gray/Red owners; one Brilliant Implementer                                  | Separate future integration boundary.                                                |
+| Task 6 “Root Update”                                     | [Root Update](tasks/lifecycle/update.md)                                              | `QUEUED`    | Not applicable   | Reconcile lifecycle-managed Framework files and regions from accepted identity.                                        | After the complete Route Mutation M2 lane.                              | Streamlined assured trial         | Planned branch and worktree; exact base deferred until activation                                                      | Task Mastermind; Gray/Red owners; one Brilliant Implementer                                  | Separate future integration boundary.                                                |
+| Task 10 “CLI Command Surface Audit”                      | [CLI Command Surface Audit](tasks/cli-command-surface-audit.md)                       | `QUEUED`    | Not applicable   | Review the complete retained CLI for direct PR-level architecture, design, refactoring, and test-evidence problems.    | After all retained commands and before delivery and release acceptance. | Read-only strategic audit         | Planned branch and worktree; exact base deferred until activation                                                      | Dedicated Review Mastermind with bounded topic reviewers selected at Preflight               | Audit-only integration; accepted findings receive a later remediation task.          |
 
 Queue order expresses dependency and priority, not numeric order. A completed
 task remains in `RECENTLY_COMPLETED` on its completion-bearing update and exactly
@@ -104,6 +105,22 @@ heavier Route Create and Route Update flows. Retain, adjust, or stop the trial
 from observed quality and rework rather than token count or raw finding count
 alone.
 
+## Selected Luna Preparation Experiment
+
+Task 13 explicitly selects the
+[Supervised Luna Preparation Trial](../../../workflows/supervised-luna-preparation-trial.md).
+It runs beside Route Move only because its writable result is limited to its
+own preparation record and its inspected delivery/CI surfaces are protected.
+The trial does not change the streamlined Tasks 4–6 profile, the ordinary Task
+Mastermind role, or the default development Workflows.
+
+The experimental Task Mastermind may supervise at most three bounded evidence
+workers. One fresh Sol/xhigh whole-task review is mandatory, and at most one
+grouped correction is allowed. The lane returns immediately if it must choose
+product, architecture, public wire, safety, lifecycle, serialization,
+shared-placement, or test-meaning authority. Its preparation must be revalidated
+before later CI mutation.
+
 ## Current Integration Boundary
 
 - Task 7 is Complete at phase 5/5, milestone 8/8. Accepted closeout `6ba0e060`,
@@ -121,6 +138,10 @@ alone.
   Mutation lane respectively.
 - Task 10 retains its permanent identity and is queued after every retained
   command and before delivery and release acceptance.
+- Task 13 is Active only for phase 1 preparation on exact base `c8051478`, tree
+  `ccc76211`. CI, package, production, test, and public surfaces are protected;
+  implementation remains behind complete command acceptance, Task 10, and every
+  accepted Task 10 remediation.
 
 ## Completion And Integration Ledger
 
@@ -143,9 +164,13 @@ alone.
   immutable Git state, reproduced focused evidence, and linked Task records.
   Missing optional child messages alone remain `progress unobserved`, not
   failure.
-- Active task: Task 4 “Route Move” (phase 4/6): milestone 5/12 — M6 active.
+- Active tasks:
+  - Task 4 “Route Move” (phase 4/6): milestone 5/12 — M6 active.
+  - Task 13 “Native linux-x64 CI and Reproducible Artifacts” (phase 1/3):
+    milestone 0/6 — M1 preparation inventory active.
 - Task 11 “Root Tooling Placement Remediation” is dequeued after its
   completion-bearing update and two subsequent progress updates.
 - Next meaningful project boundary: complete Route Move's grouped M6
-  corrections, behavior, review, and gates, then activate Task 12 before Task 5.
+  corrections, behavior, review, and gates, while Task 13 completes its bounded
+  preparation and returns to the queue. Then activate Task 12 before Task 5.
 - Blocker: None.
