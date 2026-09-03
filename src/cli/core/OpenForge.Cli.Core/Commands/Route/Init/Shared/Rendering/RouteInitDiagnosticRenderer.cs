@@ -1,5 +1,6 @@
 using System.Globalization;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 
@@ -37,7 +38,7 @@ internal static class RouteInitDiagnosticRenderer
                 $"finding={RouteInitDefinitions.ReadMachineName(finding.Code)}:target={Value(finding.Target)}:cause={Value(finding.Cause)}");
         }
 
-        return RouteInitTextEscaping.Escape(
+        return RouteTextEscaping.Escape(
             string.Join("; ", values),
             MaximumDiagnosticLength);
     }
@@ -45,7 +46,7 @@ internal static class RouteInitDiagnosticRenderer
     private static string Value(string? value)
         => value is null
             ? "none"
-            : RouteInitTextEscaping.Escape(
+            : RouteTextEscaping.Escape(
                 value,
-                RouteInitTextEscaping.DiagnosticValueLimit);
+                RouteTextEscaping.DiagnosticValueLimit);
 }

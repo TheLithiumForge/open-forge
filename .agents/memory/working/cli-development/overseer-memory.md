@@ -57,10 +57,13 @@ The accepted dependency order is:
    progress follow-up is integrated at `3356eba1`; repository-local npm linking
    is integrated at `128b70b3`; live progression is recorded at `fc7e3c75`, tree
    `af2a8880`. Task 3 “Route Update” is Complete at accepted closeout
-   `27df8325`, tree `b68d4349`, and is squash-integrated by the commit containing
-   this record.
-4. Complete Task 4 Route Move, then Task 12 CLI Architecture Authority
-   Remediation. The accepted adoption-first slice is Task 14 Extension Install,
+   `27df8325`, tree `b68d4349`, and is squash-integrated at `272f5121`, tree
+   `702f06d9`.
+4. Task 4 “Route Move” is Complete at accepted closeout `631983ea`, tree
+   `d6f6fdf7`, and is squash-integrated by the commit containing this record.
+   Task 12 CLI Architecture Authority Remediation is next after its prepared
+   authority destinations are accepted. The accepted adoption-first slice is
+   Task 14 Extension Install,
    Task 15 Status, and Task 16 Doctor. Status and Doctor completely cover the
    explicit contributor inventory at their frozen baseline; every later
    producer extends that inventory and affected evidence before its own
@@ -100,8 +103,8 @@ or a general template/scaffold system.
 | Review orchestration          | Opt-in immutable coordinated topic review and permanent task-progress controls         | Complete and integrated at `5aad04ac` plus follow-up `3356eba1`; APM, Open Forge, projection, formatting, protected-path, and C# identity gates pass                                                                                                                                                                                                              |
 | npm link shims                | Repository-local managed development CLI linking                                       | Complete and integrated at `128b70b3`; Node `16/16` and exact package, mode, manifest, nonmutation, and protected-path gates pass                                                                                                                                                                                                                                 |
 | Route Update                  | Bounded route content and metadata update                                              | Complete at accepted closeout `27df8325`, tree `b68d4349`; immutable behavior `8a398f2e`, tree `3bb4a224`; managed `1602/809/152`, native `809/152`, managed-on-native `152`, dogfood, and holistic review pass                                                                                                                                                   |
-| Task 4 Route Move             | Route movement with reference, navigation, lifecycle, and recovery integrity           | Active at phase 4/6, milestone 6/12; M7 public composition, presentation, and evidence are supervised in `open-forge-worktree/route-move`                                                                                                                                                                                                                         |
-| Task 12 authority remediation | Move accepted CLI Architecture detail to its correct authority without behavior change | Phase 0/5 preparation is ready with exact destinations; implementation waits for Task 4 integration and maintainer destination approval                                                                                                                                                                                                                           |
+| Task 4 Route Move             | Route movement with reference, navigation, lifecycle, and recovery integrity           | Complete at phase 6/6, milestone 12/12; closeout `631983ea`, tree `d6f6fdf7`, is squash-integrated by the commit containing this record                                                                                                                                                                                                                            |
+| Task 12 authority remediation | Move accepted CLI Architecture detail to its correct authority without behavior change | Phase 0/5 preparation is ready; Route Move is integrated, and implementation now waits only for maintainer acceptance of the prepared authority destinations                                                                                                                                                                                                       |
 | Task 14 Extension Install     | Install reviewed Extension packages with isolated lifecycle and recovery integrity     | Phase 0/5 preparation is ready with four maintainer freezes: command-local result/presentation, interaction policy, final lifecycle publication order, and `.agents/`-descendant payload policy; activation waits for Task 4 and Task 12                                                                                                                          |
 | Task 13 native CI             | Prepare minimal build/test CI, manual publish, artifacts, and package targets          | Preparation completed at phase 1/3, milestone 2/6 on candidate `e7689696`, tree `c204c17b`, and is integrated by the commit containing this record from `develop` parent `de40d550`, tree `e6040c49`. The Task is queued behind all retained commands, Task 10, and conditional Task 21 remediation. Linux/macOS/Windows x64 are accepted; ARM remains undecided. |
 
@@ -169,6 +172,13 @@ Checkpoint are integration-owned unless a Task packet explicitly says otherwise.
   reopening, accepted Linux/macOS/Windows x64 direction, and undecided ARM
   boundary. It changes no CI, package, CLI, test, Architecture, contract, or
   release authority and does not claim D1 or ARM acceptance.
+- Task 4 Route Move is Complete from accepted activation base `272f5121`, tree
+  `702f06d9`, through closeout `631983ea`, tree `d6f6fdf7`. Warning-free Release,
+  full managed `1701/888/165`, native `888/165`, managed-on-native `165`, focused
+  `94/79/13`, shared escaping `5/5`, exact composition `1/1`, disposable dogfood,
+  static, format, and immutable whole-task review gates pass with zero skips.
+  Mid-read BCL cancellation or unexpected-read fault injection without a
+  forbidden seam remains the accepted verification limit.
 
 - A switch that names every declared enum member is not closed over unnamed
   runtime numeric values. The direct modern-C# pattern is a clear switch
@@ -190,12 +200,18 @@ Checkpoint are integration-owned unless a Task packet explicitly says otherwise.
 
 ## Open Decision Frontier
 
-Route Move is active. Its final public acceptance awaits one exact maintainer
-decision: accept standard pinned-parser handling for a third positional operand
-as shell `cli.parser.invalid`, or explicitly authorize an exceptional mechanism.
-No safe accepted command-local typed API distinguishes that operand from other
-unmatched input without prohibited token heuristics. This decision does not stop
-the command's independent composition, review, or verification work.
+Route Move has no open decision. Its third positional operand follows the
+accepted standard pinned-parser boundary as shell `cli.parser.invalid`; missing
+required operands remain typed Route Move `invalid` results.
+Task 12 still requires acceptance of its prepared authority destinations before
+mutation. Its accepted future Status/Doctor decision is one explicit immutable
+application-scoped `OperationalContributorCatalogue` built by
+`CliCompositionRoot`, with producer-owned typed contributors, narrow Status and
+Doctor views, and fresh invocation observations. It adds no dependency
+injection, service locator, reflection, runtime registry, generic operational
+engine, or ambient registration. Task 12 owns durable architecture placement;
+Task 15 Gray owns exact signatures. Composition alone does not change public
+Status or Doctor contracts.
 The exact public Root Install JSON result schema is accepted, implemented, and
 frozen, including fully present ordered facts and typed residual values `none`,
 `retained`, and `unknown`.

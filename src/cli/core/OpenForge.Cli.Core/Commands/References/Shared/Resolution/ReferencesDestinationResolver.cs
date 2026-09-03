@@ -50,7 +50,7 @@ internal sealed class ReferencesDestinationResolver
             {
                 Workspace = input.Workspace,
                 Catalogue = input.Catalogue,
-                LayerCanonicalPath = input.Layer.CanonicalPath,
+                SourceCanonicalPath = input.Layer.CanonicalPath,
                 RawDestination = input.RawDestination,
             },
             cancellationToken).ConfigureAwait(false);

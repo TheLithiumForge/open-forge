@@ -1,56 +1,3 @@
-using OpenForge.Cli.Core.Commands.Context;
-using OpenForge.Cli.Core.Commands.Context.Models.Binding;
-using OpenForge.Cli.Core.Commands.Context.Models.Result;
-using OpenForge.Cli.Core.Commands.Context.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Find;
-using OpenForge.Cli.Core.Commands.Find.Models.Binding;
-using OpenForge.Cli.Core.Commands.Find.Models.Result;
-using OpenForge.Cli.Core.Commands.Find.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Index;
-using OpenForge.Cli.Core.Commands.Index.Models.Result;
-using OpenForge.Cli.Core.Commands.Index.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Install;
-using OpenForge.Cli.Core.Commands.Install.Models.Result;
-using OpenForge.Cli.Core.Commands.Install.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Extension;
-using OpenForge.Cli.Core.Commands.Extension.Create;
-using OpenForge.Cli.Core.Commands.Extension.Create.Models.Binding;
-using OpenForge.Cli.Core.Commands.Extension.Create.Models.Result;
-using OpenForge.Cli.Core.Commands.Extension.Create.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Extension.List;
-using OpenForge.Cli.Core.Commands.Extension.List.Models.Binding;
-using OpenForge.Cli.Core.Commands.Extension.List.Models.Result;
-using OpenForge.Cli.Core.Commands.Extension.List.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Extension.Inspect;
-using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Binding;
-using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
-using OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Extension.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.References;
-using OpenForge.Cli.Core.Commands.References.Models.Binding;
-using OpenForge.Cli.Core.Commands.References.Models.Result;
-using OpenForge.Cli.Core.Commands.References.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Route;
-using OpenForge.Cli.Core.Commands.Route.Create;
-using OpenForge.Cli.Core.Commands.Route.Create.Models.Binding;
-using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
-using OpenForge.Cli.Core.Commands.Route.Create.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Route.Init;
-using OpenForge.Cli.Core.Commands.Route.Init.Models.Binding;
-using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
-using OpenForge.Cli.Core.Commands.Route.Init.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Route.Inspect;
-using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Binding;
-using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
-using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Route.List;
-using OpenForge.Cli.Core.Commands.Route.List.Models.Binding;
-using OpenForge.Cli.Core.Commands.Route.List.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Route.Shared.Rendering;
-using OpenForge.Cli.Core.Commands.Route.Update;
-using OpenForge.Cli.Core.Commands.Route.Update.Models.Binding;
-using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
-using OpenForge.Cli.Core.Commands.Route.Update.Shared.Rendering;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Workspace;
@@ -66,8 +13,7 @@ namespace OpenForge.Cli.Composition;
 internal static class CliCompositionRoot
 {
     internal static CliCoreApplication Create(CliProcessIdentity process)
-    {
-        return Create(
+        => Create(
             process,
             new CliCompositionInputs
             {
@@ -76,17 +22,49 @@ internal static class CliCompositionRoot
                 StandardInputRedirected = true,
                 PromptOutputRedirected = true,
             });
-    }
 
     internal static CliCoreApplication Create(
         CliProcessIdentity process,
         CliCompositionInputs inputs)
     {
-        var interactiveSession = new CliInteractiveSession(
+        var interactiveSession = CreateInteractiveSession(inputs);
+        var route = CliRouteComposer.Compose(interactiveSession, inputs.LockStoreRoot);
+        var standalone = CliStandaloneComposer.Compose(interactiveSession, inputs.LockStoreRoot);
+        var extension = CliExtensionComposer.Compose(interactiveSession);
+        var tree = CliCommandTree.Create(
+            CreateRootHelp(),
+            [route.Branch, extension.Branch],
+            [
+                route.ListBinding,
+                route.InspectBinding,
+                route.InitBinding,
+                route.CreateBinding,
+                route.UpdateBinding,
+                route.MoveBinding,
+                standalone.FindBinding,
+                standalone.IndexBinding,
+                standalone.InstallBinding,
+                standalone.ReferencesBinding,
+                extension.ListBinding,
+                extension.InspectBinding,
+                extension.CreateBinding,
+                standalone.ContextBinding,
+            ],
+            rootLeaves: standalone.RootLeaves);
+        return new CliCoreApplication(
+            process,
+            tree,
+            new CliWorkspaceSelector(new PhysicalPathResolver()));
+    }
+
+    private static CliInteractiveSession CreateInteractiveSession(CliCompositionInputs inputs)
+        => new(
             standardInput: inputs.StandardInput,
             promptOutput: inputs.PromptOutput,
             canPrompt: !inputs.StandardInputRedirected && !inputs.PromptOutputRedirected);
-        var rootHelp = new CliHelpContent(
+
+    private static CliHelpContent CreateRootHelp()
+        => new(
         [
             new CliHelpSection(
                 "Product",
@@ -98,6 +76,7 @@ internal static class CliCompositionRoot
                   route inspect     Explain one source's route behavior without returning authored content.
                   route init        Initialize every missing entrypoint in one exact route chain.
                   route update      Update selected fields or an eligible Template body on one routed source.
+                  route move        Move one routed source or category while preserving its route meaning.
                   find              Find Markdown sources by authored tags and structural headings.
                   extension list    List installed and available Extension packages.
                   extension inspect Inspect one installed or available Extension package.
@@ -107,203 +86,6 @@ internal static class CliCompositionRoot
                 heading: "Lifecycle",
                 body: "  Framework management is established or verified by install without reconciling managed divergence."),
         ]);
-        var routeGroup = RouteBinding.CreateGroup();
-        var listSymbols = RouteListBinding.CreateSymbols(routeGroup);
-        var inspectSymbols = RouteInspectBinding.CreateSymbols(routeGroup);
-        var initSymbols = RouteInitBinding.CreateSymbols(routeGroup);
-        var createSymbols = RouteCreateBinding.CreateSymbols(routeGroup);
-        var updateSymbols = RouteUpdateBinding.CreateSymbols(routeGroup);
-        IReadOnlyList<CliDelimiterPolicy> routeDelimiterPolicies =
-        [
-            .. listSymbols.DelimiterPolicies
-                .Concat(initSymbols.DelimiterPolicies)
-                .Concat(createSymbols.DelimiterPolicies)
-                .Concat(updateSymbols.DelimiterPolicies)
-                .Distinct(),
-        ];
-        var listBinding = RouteListBinding.Close(
-            listSymbols,
-            new RouteListBindingComponents
-            {
-                Help = RouteListHelpSections.CreateList(),
-                Operation = RouteListOperationFactory.Create(),
-                Renderers = new CliRendererSet<RouteListResult>(
-                    RouteListHumanRenderer.Render,
-                    RouteListJsonRenderer.Render),
-                DiagnosticRenderer = RouteListDiagnosticRenderer.Render,
-            });
-        var inspectBinding = RouteInspectBinding.Close(
-            inspectSymbols,
-            new RouteInspectBindingComponents
-            {
-                Help = RouteInspectHelpSections.CreateInspect(),
-                Operation = RouteInspectOperationFactory.Create(interactiveSession),
-                Renderers = new CliRendererSet<RouteInspectResult>(
-                    RouteInspectHumanRenderer.Render,
-                    RouteInspectJsonRenderer.Render),
-                DiagnosticRenderer = RouteInspectDiagnosticRenderer.Render,
-            });
-        var initBinding = RouteInitBinding.Close(
-            initSymbols,
-            new RouteInitBindingComponents
-            {
-                Help = RouteInitHelpSections.Create(),
-                Operation = RouteInitOperationFactory.Create(inputs.LockStoreRoot),
-                Renderers = new CliRendererSet<RouteInitResult>(
-                    RouteInitHumanRenderer.Render,
-                    RouteInitJsonRenderer.Render),
-                DiagnosticRenderer = RouteInitDiagnosticRenderer.Render,
-            });
-        var createBinding = RouteCreateBinding.Close(
-            createSymbols,
-            new RouteCreateBindingComponents
-            {
-                Help = RouteCreateHelpSections.Create(),
-                Operation = RouteCreateOperationFactory.Create(inputs.LockStoreRoot),
-                Renderers = new CliRendererSet<RouteCreateResult>(
-                    RouteCreateHumanRenderer.Render,
-                    RouteCreateJsonRenderer.Render),
-                DiagnosticRenderer = RouteCreateDiagnosticRenderer.Render,
-            });
-        var updateBinding = new RouteUpdateBinding(updateSymbols).Bind(
-            new RouteUpdateBindingComponents
-            {
-                Help = RouteUpdateHelpSections.Create(),
-                Operation = RouteUpdateOperationFactory.Create(inputs.LockStoreRoot),
-                Renderers = new CliRendererSet<RouteUpdateResult>(
-                    RouteUpdateHumanRenderer.Render,
-                    RouteUpdateJsonRenderer.Render),
-                DiagnosticRenderer = RouteUpdateDiagnosticRenderer.Render,
-            });
-        var findSymbols = FindBinding.CreateSymbols();
-        var findBinding = FindBinding.Close(
-            findSymbols,
-            new FindBindingComponents
-            {
-                Help = FindHelpSections.Create(),
-                Operation = FindOperationFactory.Create(),
-                Renderers = new CliRendererSet<FindResult>(
-                    FindHumanRenderer.Render,
-                    FindJsonRenderer.Render),
-                DiagnosticRenderer = FindDiagnosticRenderer.Render,
-            });
-        var indexSymbols = IndexBinding.CreateSymbols();
-        var indexBinding = IndexBinding.Close(
-            symbols: indexSymbols,
-            help: IndexHelpSections.Create(),
-            operation: IndexOperationFactory.Create(inputs.LockStoreRoot).ExecuteAsync,
-            renderers: new CliRendererSet<IndexResult>(
-                IndexHumanRenderer.Render,
-                IndexJsonRenderer.Render),
-            diagnosticRenderer: IndexDiagnosticRenderer.Render);
-        var installSymbols = InstallBinding.CreateSymbols();
-        var installBinding = InstallBinding.Close(
-            symbols: installSymbols,
-            help: InstallHelpSections.Create(),
-            operation: InstallOperationFactory.Create(interactiveSession, inputs.LockStoreRoot).ExecuteAsync,
-            renderers: new CliRendererSet<InstallResult>(
-                InstallHumanRenderer.Render,
-                InstallJsonRenderer.Render),
-            diagnosticRenderer: InstallDiagnosticRenderer.Render);
-        var referencesSymbols = ReferencesBinding.CreateSymbols();
-        var referencesBinding = ReferencesBinding.Close(
-            referencesSymbols,
-            new ReferencesBindingComponents
-            {
-                Help = ReferencesHelpSections.Create(),
-                Operation = ReferencesOperationFactory.Create(),
-                Renderers = new CliRendererSet<ReferencesResult>(
-                    ReferencesHumanRenderer.Render,
-                    ReferencesJsonRenderer.Render),
-                DiagnosticRenderer = ReferencesDiagnosticRenderer.Render,
-            });
-        var contextSymbols = ContextBinding.CreateSymbols();
-        var contextBinding = ContextBinding.Close(
-            contextSymbols,
-            new ContextBindingComponents
-            {
-                Help = ContextHelpSections.Create(),
-                Operation = ContextOperationFactory.Create(),
-                Renderers = new CliRendererSet<ContextResult>(
-                    ContextHumanRenderer.Render,
-                    ContextJsonRenderer.Render),
-                DiagnosticRenderer = ContextDiagnosticRenderer.Render,
-            });
-        var extensionGroup = ExtensionBinding.CreateGroup();
-        var extensionListSymbols = ExtensionListBinding.CreateSymbols(extensionGroup);
-        var extensionListBinding = ExtensionListBinding.Close(
-            extensionListSymbols,
-            new ExtensionListBindingComponents
-            {
-                Help = ExtensionListHelpSections.Create(),
-                Operation = ExtensionListOperationFactory.Create(),
-                Renderers = new CliRendererSet<ExtensionListResult>(
-                    ExtensionListHumanRenderer.Render,
-                    ExtensionListJsonRenderer.Render),
-                DiagnosticRenderer = ExtensionListDiagnosticRenderer.Render,
-            });
-        var extensionInspectSymbols = ExtensionInspectBinding.CreateSymbols(extensionGroup);
-        var extensionInspectBinding = ExtensionInspectBinding.Close(
-            extensionInspectSymbols,
-            new ExtensionInspectBindingComponents
-            {
-                Help = ExtensionInspectHelpSections.Create(),
-                Operation = ExtensionInspectOperationFactory.Create(),
-                Renderers = new CliRendererSet<ExtensionInspectResult>(
-                    ExtensionInspectHumanRenderer.Render,
-                    ExtensionInspectJsonRenderer.Render),
-                DiagnosticRenderer = ExtensionInspectDiagnosticRenderer.Render,
-            });
-        var extensionCreateSymbols = ExtensionCreateBinding.CreateSymbols(extensionGroup);
-        var extensionCreateBinding = ExtensionCreateBinding.Close(
-            extensionCreateSymbols,
-            new ExtensionCreateBindingComponents
-            {
-                Help = ExtensionCreateHelpSections.Create(),
-                Operation = ExtensionCreateOperationFactory.Create(interactiveSession),
-                Renderers = new CliRendererSet<ExtensionCreateResult>(
-                    ExtensionCreateHumanRenderer.Render,
-                    ExtensionCreateJsonRenderer.Render),
-                DiagnosticRenderer = ExtensionCreateDiagnosticRenderer.Render,
-            });
-        var tree = CliCommandTree.Create(
-            rootHelp,
-            [
-                new CliRootBranch(
-                    routeGroup,
-                    RouteHelpSections.CreateGroup(),
-                    routeDelimiterPolicies),
-                new CliRootBranch(
-                    extensionGroup,
-                    ExtensionHelpSections.CreateGroup(),
-                    []),
-            ],
-            [
-                listBinding,
-                inspectBinding,
-                initBinding,
-                createBinding,
-                updateBinding,
-                findBinding,
-                indexBinding,
-                installBinding,
-                referencesBinding,
-                extensionListBinding,
-                extensionInspectBinding,
-                extensionCreateBinding,
-                contextBinding,
-            ],
-            rootLeaves:
-            [
-                new CliRootLeaf(findSymbols.FindCommand, []),
-                new CliRootLeaf(indexSymbols.IndexCommand, []),
-                new CliRootLeaf(installSymbols.InstallCommand, []),
-                new CliRootLeaf(referencesSymbols.ReferencesCommand, []),
-                new CliRootLeaf(contextSymbols.ContextCommand, []),
-            ]);
-        var workspaceSelector = new CliWorkspaceSelector(new PhysicalPathResolver());
-        return new CliCoreApplication(process, tree, workspaceSelector);
-    }
 }
 
 internal sealed record CliCompositionInputs

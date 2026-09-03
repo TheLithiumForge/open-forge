@@ -10,9 +10,10 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized authority for the caller-visible
-Interface Contract for `route move`. The command does not ship yet;
-implementation and executable proof remain pending Gate 5. It is one explicit
-mutation operation, not a generic batch or apply surface.
+Interface Contract for `route move`. The command does not ship yet. Its
+implementation and complete executable proof are squash-integrated by the
+commit containing this record; replacement-CLI delivery remains pending. It is
+one explicit mutation operation, not a generic batch or apply surface.
 
 The sibling [Behavior Contract](behavior.md) defines the deterministic,
 technology-neutral resolution, planning, effects, safety, recovery, and
@@ -80,6 +81,15 @@ reference and exactly one destination target. The shared [Global CLI Flags](../.
 contract defines `--workspace`, `--json`, `--view`, `--verbose`, `--help`, and
 `--version`; all six apply under that contract.
 
+Omitting the source or destination still selects `route move` and produces its
+typed `invalid` result without workspace mutation. Supplying a third positional
+operand is different: the shared shell parser rejects that unmatched input as
+`cli.parser.invalid` before Route Move binding, workspace selection, or domain
+execution. That shell-owned
+failure returns exit `4`, writes no stdout, writes a parser diagnostic to stderr,
+and produces no Route Move result, status, finding, or `Next:` envelope. The
+diagnostic wording is not part of this command contract.
+
 `--dry-run` is the only preview spelling. The command does not inspect or report
 repository state. It does not select a subject, add authority,
 or change the operation.
@@ -116,6 +126,11 @@ idempotent. Repetition does not multiply preview, consent, recovery, or mutation
 authority. Shared global-flag
 repetition, ordering, terminal behavior, and composition remain defined only by
 the shared contract.
+
+Ordinary `--help` and `--version` invocations retain their successful shared
+terminal short-circuits. Unmatched positional input, unknown symbols, and other
+shell-invalid input remain terminal failures under the shared parser policy;
+terminal flags do not turn that input into a Route Move result.
 
 ## Source Subject Selection
 
@@ -495,7 +510,7 @@ the human compact view is selected.
 | `complete`    | A complete safe dry-run plan was established, or application and final verification completed, for a leaf or category move. This includes a valid logical base/overwrite move and every complete reference and generated effect.                            |
 | `attention`   | Post-verification recovery deletion returns `Failed` with positively observed disposition `Retained`; target effects remain successful with the exact residual path and cleanup guidance. Planned changes and reference rewrites do not create it.          |
 | `incomplete`  | Safe identity and facts exist, but the complete supported-Markdown catalogue, reference pass, category inventory, or another required coverage boundary cannot be enumerated or inspected. No write begins.                                                 |
-| `invalid`     | Command input, operand cardinality, source kind, destination shape, flag use, or exact source reference does not follow this interface. A repeated move using the consumed old source is the exact source-not-found `invalid` result, not a verified no-op. |
+| `invalid`     | A shell-accepted Route Move invocation omits its required source or destination, or its source kind, destination shape, flag use, or exact source reference does not follow this interface. A repeated move using the consumed old source is the exact source-not-found `invalid` result, not a verified no-op. |
 | `blocked`     | A valid request cannot establish one safe complete move because ownership, lifecycle, route, identity, containment, collision, destination, generated boundary, expected state, or recovery is unsafe or ambiguous. No write begins.                        |
 | `failed`      | An unexpected application or verification failure occurs after a persistent effect begins, or recovery deletion returns `Failed`/`Unknown`; `Failed`/positively observed `Retained` recovery is the distinct `attention` case.                              |
 | `interrupted` | The caller cancels before completion; an unexpected application or verification failure remains `failed`.                                                                                                                                                   |
@@ -509,7 +524,10 @@ process-status mapping is defined by the CLI Architecture.
 
 The command rejects or blocks:
 
-- zero or several source or destination operands;
+- a missing source or destination, which produces the typed Route Move
+  `invalid` result;
+- a third positional operand, which the shared shell rejects as
+  `cli.parser.invalid` before Route Move result formation;
 - an unknown, missing, ambiguous, Loader, root, entrypoint, native, resource,
   orphan, or otherwise ineligible leaf subject;
 - a category reference that is not exactly one recognized entrypoint or whose
@@ -531,6 +549,8 @@ The command rejects or blocks:
 Every ordinary error names `route move`, the affected subject or path, the direct
 cause, and one useful next action when one exists. The command does not diagnose
 authoring quality, infer semantic intent, or propose a different destination.
+Shell parser diagnostics are outside that Route Move result rule and do not
+carry Route Move status, finding, or next-action meaning.
 
 ## Scenarios
 
@@ -622,6 +642,10 @@ Gate 5 executable proof must cover:
   restoration, residual preservation, and fresh-plan rerun;
 - `complete`, reserved `attention`, `incomplete`, `invalid`, `blocked`, `failed`,
   and `interrupted` results, including consumed-source `invalid` repetition;
+- missing source and destination as typed Route Move `invalid` results, plus a
+  third positional operand as a write-free `cli.parser.invalid` shell failure
+  with exit `4`, empty stdout, nonempty stderr, and no Route Move result
+  envelope;
 - human stream allocation, compact retention, every planned dry-run effect,
   structured JSON parity, and no mixed human text in JSON stdout; and
 - one typed result consumed by both human and structured renderers without

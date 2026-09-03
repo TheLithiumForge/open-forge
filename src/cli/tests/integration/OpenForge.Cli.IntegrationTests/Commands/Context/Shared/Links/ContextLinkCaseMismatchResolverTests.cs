@@ -31,7 +31,7 @@ public sealed class ContextLinkCaseMismatchResolverTests
         {
             Workspace = workspace.Workspace,
             Catalogue = catalogue,
-            LayerCanonicalPath = ".agents/projects/guide.md",
+            SourceCanonicalPath = ".agents/projects/guide.md",
             RawDestination = "linked.md#details",
         };
         var initial = new SourceLinkDestinationFacts

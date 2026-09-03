@@ -35,7 +35,7 @@ internal static class ContextLinkCaseMismatchResolver
             };
         }
 
-        var corrected = CorrectedDestination(input.LayerCanonicalPath, actualPath, input.RawDestination);
+        var corrected = CorrectedDestination(input.SourceCanonicalPath, actualPath, input.RawDestination);
         var facts = await resolver.ResolveAsync(
             input with { RawDestination = corrected },
             cancellationToken).ConfigureAwait(false);

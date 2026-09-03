@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
+using OpenForge.Cli.Core.Framework.Workspace;
 
 namespace OpenForge.Cli.Core.Framework.Mutation.Validation;
 
@@ -67,5 +68,40 @@ internal sealed class MutationRevalidator(FileExpectationValidator validator)
             directoryCreations,
             fileChanges,
             cancellationToken);
+    }
+
+    internal ValueTask<MutationValidationResult> ValidateAsync(
+        WorkspaceLockLease lease,
+        PlannedDirectoryDeletion deletion,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(lease);
+        ArgumentNullException.ThrowIfNull(deletion);
+        var workspace = lease.Request.Workspace;
+        if (!lease.IsHeldFor(workspace))
+        {
+            return ValueTask.FromResult(
+                MutationValidationResult.Blocked(
+                    "The workspace lock lease identity does not match its selected workspace."));
+        }
+
+        return ValidateDeletionAsync(
+            _validator,
+            workspace,
+            deletion,
+            cancellationToken);
+    }
+
+    private static async ValueTask<MutationValidationResult> ValidateDeletionAsync(
+        FileExpectationValidator validator,
+        CliWorkspace workspace,
+        PlannedDirectoryDeletion deletion,
+        CancellationToken cancellationToken)
+    {
+        var check = await validator.ValidateAsync(
+            workspace,
+            deletion.Expectation,
+            cancellationToken).ConfigureAwait(false);
+        return MutationValidationResult.FromChecks([check]);
     }
 }

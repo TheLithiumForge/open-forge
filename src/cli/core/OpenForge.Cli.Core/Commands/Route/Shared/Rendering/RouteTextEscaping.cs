@@ -1,8 +1,9 @@
+using System.Text;
 using System.Text.Json;
 
-namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Rendering;
+namespace OpenForge.Cli.Core.Commands.Route.Shared.Rendering;
 
-internal static class RouteUpdateTextEscaping
+internal static class RouteTextEscaping
 {
     private const string Ellipsis = "...";
 
@@ -33,8 +34,19 @@ internal static class RouteUpdateTextEscaping
         }
 
         var contentLength = maximumLength - Ellipsis.Length;
-        return string.Concat(
-            escaped.AsSpan(0, contentLength),
-            Ellipsis.AsSpan());
+        var builder = new StringBuilder(contentLength);
+        foreach (var scalar in value.EnumerateRunes())
+        {
+            var encodedScalar = Escape(scalar.ToString());
+            if (builder.Length + encodedScalar.Length > contentLength)
+            {
+                break;
+            }
+
+            builder.Append(encodedScalar);
+        }
+
+        builder.Append(Ellipsis);
+        return builder.ToString();
     }
 }

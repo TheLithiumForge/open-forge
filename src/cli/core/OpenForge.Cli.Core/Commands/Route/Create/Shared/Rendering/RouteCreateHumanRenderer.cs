@@ -1,5 +1,6 @@
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Shared.Rendering;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
@@ -153,12 +154,12 @@ internal static class RouteCreateHumanRenderer
     }
 
     private static string Value(string? value)
-        => value is null ? "unavailable" : RouteCreateTextEscaping.Escape(value);
+        => value is null ? "unavailable" : RouteTextEscaping.Escape(value);
 
     private static string PathSuffix(string? path)
         => path is null
             ? string.Empty
-            : $" / {RouteCreateTextEscaping.Escape(path)}";
+            : $" / {RouteTextEscaping.Escape(path)}";
 
     private static string Status(CliSemanticStatus status)
         => status == CliSemanticStatus.Attention

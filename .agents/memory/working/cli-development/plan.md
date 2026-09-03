@@ -13,7 +13,7 @@ open-forge:
 - Planning authority: The maintainer accepts consequential decisions. The
   Overseer owns architecture, sequencing, Task decomposition, integration, and
   Plan maintenance within that direction.
-- Last updated: 2026-09-02.
+- Last updated: 2026-09-03.
 - I1 proportional prerequisite: committed at exact `b25d76e`. I1 is Complete in
   exact feature candidate `4e89d945b38a2d1e24600dd22789b55e4395a534`.
   Operation orchestration is committed at `125b6a2a`; public composition and
@@ -21,6 +21,11 @@ open-forge:
   `2b353c48978ee88e53345be8037776181612222c` is locally squash-integrated at
   `09aa03eddb97831ff544afe1eac54ad9af501f5c`; both commits have exact tree
   `2dcfca18020980a9cafbc429a72930af3368df5f`.
+- Task 4 “Route Move” is Complete at phase 6/6, milestone 12/12. Accepted
+  closeout `631983ea1ec7d7ad5f5fc3999f938ba5f445ed81`, tree
+  `d6f6fdf7d1caf62a9ac68582609c7282921f557c`, is squash-integrated by the
+  commit containing this record from local `develop` parent `83902c88`, tree
+  `4b8324b2`. Task 12 remains the next prepared project boundary.
 - Accepted Route Update integration input baseline: local `develop` commit
   `996c2e17d1142ffb30dc7a2d17df657419566f97`, exact tree
   `877314d48db49013edc1c4dad1abb545b37caefc`. It integrates CLI
@@ -152,16 +157,16 @@ open-forge:
   Task is Complete and squash-integrated at `862cbf2a`, exact tree `571f104f`,
   from accepted implementation candidate `a4ccf19a`, tree `97254e65`. Task 3
   “Route Update” is Complete at accepted closeout `27df8325`, tree `b68d4349`.
-  Route
-  Move and Route Remove remain later command-local Tasks, and the complete Route Mutation
-  M2 lane precedes root Update M3.
+  Route Move is Complete at accepted closeout `631983ea`, tree `d6f6fdf7`.
+  Route Remove remains Planned after the current Task 12 and adoption-slice
+  priority. The complete Route Mutation M2 lane still precedes root Update M3.
   New lifecycle documents now emit all five ordered root keys. Framework-created
   documents use complete empty Extensions, and existing incomplete files remain
   untrusted. The integrated Markdown parser now exposes AST-only `Supported` or
   `Unsupported` link labels;
   its Release `0/0`, parser `31/31`, Unit `1410/1410`, Integration `614/614`, and
   independent `ROBUST PASS` review gates pass. Route Remove itself remains
-  Planned after Route Move and its result freeze.
+  Planned after Task 12 and the accepted adoption slice.
   Independent scope/contract/ownership discovery, callable-surface analysis,
   Gray/Red readiness, and worktree preparation may overlap earlier work;
   dependent command behavior may not. The localized C1/C2/C3 interaction,
@@ -496,11 +501,14 @@ contracts stay with the Mastermind. A smaller implementer receives one closed
 child Task and exact predecessor outputs. A reviewer receives the exact commit or
 diff, parent requirements, and claimed evidence.
 
-Operational aggregate domains will contribute explicit ordered typed facts and
-diagnostics registered directly through composition. They will not use
-reflection, a service locator, or a dynamic plug-in engine. This records the
-accepted composition mechanism only and does not select or change the persisted
-operational-command order.
+Operational aggregate domains use one explicit immutable application-scoped
+`OperationalContributorCatalogue` built by `CliCompositionRoot`. Producer-owned
+typed contributors project narrow Status and Doctor views from fresh invocation
+observations. They do not use dependency injection, a service locator,
+reflection, a runtime registry, a generic operational engine, or ambient
+registration. Task 12 owns the durable architecture rewrite; Task 15 Gray owns
+the exact contributor and view signatures. Composition alone does not change
+Status or Doctor public contracts or the persisted operational-command order.
 
 ## Prerequisites
 
@@ -561,7 +569,7 @@ operational-command order.
 | C1   | Complete at protected public integration `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5`; exact candidate `789cc917f2d0cb38c5229cc2dc7fee013218d341`, tree `fa29bd9572df39b2d5457c35bb8a0bd6ba5a9945`                                              | Implement Extension Create with accepted manifest defaults/options, catalogue boundary, ordered JSON result, and a command-local wizard for missing required facts.                                                                                                                                                                                                                                                                                                                                                                            | SF1, M1, E1                                 | Parallel command                                       | Lifecycle mutation                      | Managed `1356/575/132`; `linux-x64` Native AOT root/version/ELF and `575/132`; dogfood and Sol/xhigh review pass                  |
 | C2   | Complete at local integration `c60fcb98a57e9ec80769b9cb1d399ce13a227863`; final candidate `11994e4d21ddc807b7480afc39ae3612e5a69a56`, exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed`                                                   | Implement root Install over the closed embedded base Framework subset while preserving trusted dynamically added scoped lifecycle targets and forming the accepted exact public JSON result, including typed residual values `none`, `retained`, and `unknown`.                                                                                                                                                                                                                                                                                | SF1-SF4, M1, I1                             | Parallel command                                       | Framework lifecycle                     | Release `0/0`; managed `1390/598/136`; `linux-x64` Native AOT `598/136`; focused post-rebase, dogfood, and two Sol/xhigh rechecks |
 | C3   | Complete and squash-integrated at `fa3db1ee` with exact tree equality to final reviewed candidate `37c9360`                                                                                                                                   | Correct Route Inspect's accepted one-answer interactive collision selection without changing its non-interactive contract or result model.                                                                                                                                                                                                                                                                                                                                                                                                     | SF1, R2                                     | Parallel command plus sequential protected integration | Route discovery correction              | Focused `131/8/82/32`, full managed `1284/511/125`, Native AOT `511/125`, no-write dogfood, and review pass                       |
-| M2   | Active: Route Init, Route Create, QR1, and Task 3 “Route Update” Complete; Route Move and Route Remove remain                                                                                                                                 | Complete Route Move and current positive-unmanaged-only Route Remove through separate command-local gates. Route Create includes its maintainer-approved required effect-change correction and supplied both consumed predecessor slices. No Route Remove command or public wire exists, and Remove remains Planned after Move and its result freeze.                                                                                                                                                                                          | C2, M1, R2, I1, QR1                         | Sequential route mutation                              | Route mutation                          | Route Update managed `1602/809/152`, Native AOT `809/152`, managed-on-native `152`, dogfood, and fresh holistic review pass       |
+| M2   | Active: Route Init, Route Create, QR1, Task 3 “Route Update”, and Task 4 “Route Move” Complete; Route Remove remains                                                                                                                           | Complete the current positive-unmanaged-only Route Remove through its separate command-local gate after the project-control priority interposes Task 12 and the adoption slice. No Route Remove command or public wire exists, and Remove remains Planned after the accepted Move result.                                                                                                                                                                                         | C2, M1, R2, I1, QR1                         | Sequential route mutation                              | Route mutation                          | Route Move managed `1701/888/165`, Native AOT `888/165`, managed-on-native `165`, focused `94/79/13`, dogfood, and review pass    |
 | QR1  | Complete and squash-integrated at `862cbf2a847b5adac77c6923e51f2c28c315415f`, exact tree `571f104f507c3f72b7404cc0dacd86c818ec0a2e`, from accepted implementation candidate `a4ccf19a`, exact tree `97254e655f51ab421dacc8eff7a8c93f726f2625` | Closed all thirteen accepted findings/candidates, including final `QR-R1-001` evidence-tier correction and same-reviewer narrow revalidation.                                                                                                                                                                                                                                                                                                                                                                                                  | M2 Route Create integration, C2, M1, R2, I1 | Sequential quality remediation                         | Architecture/design/evidence correction | Final managed `1522/736/146`; supported Native AOT Integration `736/736`; focused, format, diff, and Sol/xhigh acceptance pass    |
 | M3   | Planned after M2 integration                                                                                                                                                                                                                  | Implement root Update only after the complete Route Mutation lane, preserving its independent lifecycle reconciliation boundary. Independent preparation may begin earlier without implementing dependent behavior.                                                                                                                                                                                                                                                                                                                            | M2, C2, M1, I1                              | Sequential lifecycle mutation                          | Lifecycle mutation                      | Payload, lifecycle, recovery, workspace, and AOT evidence                                                                         |
 | M4A  | Prepared with findings after Task 12                                                                                                                                                                                                          | Implement Task 14 Extension Install as the first adoption command. Its lifecycle authority is settled; four command-local Gray freezes remain recorded in the Task. Unfinished Route Remove and root Update are not prerequisites.                                                                                                                                                                                                                                                                                                             | Task 12, C2, M1, I1                         | Prioritized lifecycle mutation                         | Extension mutation                      | Collision, dependency, source-review, recovery, catalogue, process, and AOT evidence                                              |
@@ -595,10 +603,12 @@ program items through the later boundaries that own them:
       Init/Create/Update/Move/Remove and root Install/Update consume its accepted
       generated-navigation formation or projection capabilities. Extension Create
       remains independent of it.
-- [ ] Keep Route Move and Route Remove behind separate command-local reference
-      and lifecycle proportionality gates. Canonical lifecycle creation and the
-      neutral Markdown label projection are integrated, but they do not settle the
-      remaining command-local decisions or make either command Active or Ready.
+- [x] Route Move completed its separate command-local reference and lifecycle
+      proportionality gate and is integrated.
+- [ ] Keep Route Remove behind its separate command-local reference and lifecycle
+      proportionality gate. Route Move completion, canonical lifecycle creation,
+      and the neutral Markdown label projection do not settle Route Remove's
+      remaining command-local decisions or make it Active or Ready.
 - [x] Accept Extension Create's manifest options and command-local missing-fact
       wizard. Invalid input may be corrected locally without an attempt limit; EOF
       is invalid and cancellation interrupted, both without writes. C1 was sequenced
@@ -684,7 +694,7 @@ has non-overlapping production and test ownership.
 | Read-only C     | E1                                                   | G1 and GI1 complete; extension source contract frozen                                                                                                                                                                                                               | Extension List/Inspect roots                                                                                                                            | Shell and filesystem foundation                                                       | M1                                                    |
 | Read-only D     | GN1                                                  | Q1-Q3 and R2 complete; pure-effect boundary frozen                                                                                                                                                                                                                  | New `Framework/GeneratedNavigation/**` and mirrors                                                                                                      | Accepted source/route/document facts                                                  | GN1 acceptance                                        |
 | Next foundation | SF1, SF2, SF3, SF4                                   | Complete at integrated D0/SF1-SF4 baseline; combined managed and Native AOT evidence recorded above                                                                                                                                                                 | Separate Shell interaction, Framework distribution, lifecycle-provenance, and directory-effect paths                                                    | M1 and accepted root project graph                                                    | Complete; protected surfaces remain integration-owned |
-| Next commands   | C1, C2, C3, C4                                       | C1 complete at `4c85d1d6`; C3 complete at `fa3db1ee`; C2 complete at `c60fcb98`; C4 Route Init complete at `cc5085ce`; Route Create complete at `19412d2`; QR1 squash-integrated at `862cbf2a`/tree `571f104f`; Route Update complete at `27df8325`/tree `b68d4349` | Separate Extension Create, Install, Route Inspect, Route Init, Route Create, and Route Update paths; QR1 consumed Route Create's two predecessor slices | Root composition, serialization, help, process, recovery, lifecycle, and AOT evidence | Begin Route Move in the accepted M2 order             |
+| Next commands   | C1, C2, C3, C4                                       | C1 complete at `4c85d1d6`; C3 complete at `fa3db1ee`; C2 complete at `c60fcb98`; C4 Route Init complete at `cc5085ce`; Route Create complete at `19412d2`; QR1 squash-integrated at `862cbf2a`/tree `571f104f`; Route Update complete at `27df8325`/tree `b68d4349`; Route Move complete at `631983ea`/tree `d6f6fdf7` | Separate Extension Create, Install, Route Inspect, Route Init, Route Create, Route Update, and Route Move paths; QR1 consumed Route Create's two predecessor slices | Root composition, serialization, help, process, recovery, lifecycle, and AOT evidence | Begin Task 12 and the adoption slice before Route Remove |
 | Delivery        | Current `linux-x64` smoke, packed journey, checksums | O2 behavior complete; release contracts frozen                                                                                                                                                                                                                      | Separate workflow and package paths                                                                                                                     | Accepted command binaries                                                             | D1 acceptance                                         |
 
 No parallel implementation may change the same shared capability. Promotion or

@@ -32,7 +32,8 @@ identity, queue state, completion grace, worktree mapping, and integration state
 - Route Update integration started from local `develop` commit
   `996c2e17d1142ffb30dc7a2d17df657419566f97`, exact tree
   `877314d48db49013edc1c4dad1abb545b37caefc`.
-- The commit containing this record squash-integrates accepted Task closeout
+- Integration commit `272f5121ccb792a8ca1eb9871235006665d8fb30`, tree
+  `702f06d90cb646389d3082f0e95fc1d2d7f40faa`, squash-integrates accepted Task closeout
   `27df8325488a4c036a240d03ad54105be0f2cdfa`, tree
   `b68d4349e13879fccc607f78a284a49e61f955ea`. The final executable behavior is
   commit `8a398f2e8e6f50beb730bea2a9c658a1fc923ffa`, tree
@@ -62,11 +63,18 @@ identity, queue state, completion grace, worktree mapping, and integration state
   that semantic delta from local `develop` parent
   `de40d550c00e51f55fe7e8b5d39297c450f721e9`, tree
   `e6040c4996eb8af5375979b54a9bafc198438a34`.
+- The commit containing this record squash-integrates Task 4 “Route Move” from
+  accepted activation base `272f5121ccb792a8ca1eb9871235006665d8fb30`, tree
+  `702f06d90cb646389d3082f0e95fc1d2d7f40faa`, through accepted closeout
+  `631983ea1ec7d7ad5f5fc3999f938ba5f445ed81`, tree
+  `d6f6fdf7d1caf62a9ac68582609c7282921f557c`. The final full-gate candidate is
+  `715bf245a6ceee083e73bddc096cbd8ce0de3506`, tree
+  `d837ac93f2ca7e35c4ef1b6c90b97dd39e480c14`.
 - The resulting local baseline contains CLI Quality Remediation, bounded review
   orchestration, permanent task identity and dynamic progress controls, the
   non-shipping Task 7 npm package and local-link preparation, the agent/workflow
   and CLI Architecture authority audits, the streamlined Task 4–6 trial,
-  explicit repository agent-tooling placement, and Route Update.
+  explicit repository agent-tooling placement, Route Update, and Route Move.
 - The replacement CLI remains non-shipping. No remote action or publication is
   authorized.
 
@@ -74,8 +82,8 @@ identity, queue state, completion grace, worktree mapping, and integration state
 
 | Permanent task ID and actual name                        | Task record                                                                           | Queue state   | Completion grace | Outcome                                                                                                             | Queue order and dependency reason                                                              | Profile                           | Lane, branch, worktree, and base                                                                                       | Responsible role                                                                                     | Integration mapping                                                                                           |
 | -------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Task 4 “Route Move”                                      | [Route Move](tasks/route-mutation/route-move.md)                                      | `ACTIVE`      | Not applicable   | Implement route movement with reference, overwrite, navigation, lifecycle, and recovery integrity.                  | Active at phase 4/6, milestone 6/12; M7 public composition, presentation, and evidence active. | Streamlined assured trial         | `codex/route-move`; base `272f5121`; worktree `open-forge-worktree/route-move`; accepted fixture checkpoint `67ed59bf` | Route Move Task Mastermind with Gray/Red boundaries and one continuous Brilliant Implementer         | Separate future squash-integration boundary after behavior, review, and final gates.                          |
-| Task 12 “CLI Architecture Authority Remediation”         | [Architecture Authority Remediation](tasks/cli-architecture-authority-remediation.md) | `PREPARED`    | Not applicable   | Apply Task 9's twelve authority-placement findings without changing accepted meaning or executable behavior.        | Read-only preparation is ready; mutation follows Task 4 integration and destination approval.  | Streamlined assured documentation | Preparation reads current `develop`; exact implementation base is the integrated Task 4 result                         | Sol/xhigh Task Mastermind; explicit Gray/Red boundaries; one Brilliant Implementer; one fresh review | Separate future integration boundary.                                                                         |
+| Task 4 “Route Move”                                      | [Route Move](tasks/route-mutation/route-move.md)                                      | `RECENTLY_COMPLETED` | Completion-bearing update; 0/2 subsequent updates consumed | Implement route movement with reference, overwrite, navigation, lifecycle, and recovery integrity.                  | Complete at phase 6/6, milestone 12/12; Task 12 remains next in the accepted priority order.   | Streamlined assured trial         | `codex/route-move`; base `272f5121`; closeout `631983ea`, tree `d6f6fdf7`; integrated by this record's commit          | Route Move Task Mastermind with Gray/Red boundaries and one continuous Brilliant Implementer         | One coherent squash integration after semantic reconciliation of current continuity authority.               |
+| Task 12 “CLI Architecture Authority Remediation”         | [Architecture Authority Remediation](tasks/cli-architecture-authority-remediation.md) | `PREPARED`    | Not applicable   | Apply Task 9's twelve authority-placement findings without changing accepted meaning or executable behavior.        | Route Move is integrated; mutation awaits acceptance of the prepared authority destinations.   | Streamlined assured documentation | Preparation reads current `develop`; exact implementation base is the integrated Task 4 result                         | Sol/xhigh Task Mastermind; explicit Gray/Red boundaries; one Brilliant Implementer; one fresh review | Separate future integration boundary.                                                                         |
 | Task 14 “Extension Install”                              | [Extension Install](tasks/lifecycle/extension-install.md)                             | `PREPARED`    | Not applicable   | Install reviewed Extension packages with isolated lifecycle, collision, dependency, and recovery integrity.         | First adoption command after Task 12; four command-local Gray freezes await acceptance.        | Streamlined assured task          | Planned branch and worktree; exact base deferred until activation                                                      | Task Mastermind; explicit Gray/Red boundaries; one Brilliant Implementer; one fresh review           | Separate future integration boundary.                                                                         |
 | Task 15 “Status”                                         | [Status](tasks/operations/status.md)                                                  | `QUEUED`      | Not applicable   | Report typed facts for every producer present at its frozen baseline without diagnosis or mutation.                 | After Task 14; establishes the first explicit contributor inventory.                           | Streamlined assured task          | Planned branch and worktree; exact base deferred until activation                                                      | Task Mastermind; explicit Gray/Red boundaries; one Brilliant Implementer; one fresh review           | Later producers extend the accepted contributor inventory before their acceptance.                            |
 | Task 16 “Doctor”                                         | [Doctor](tasks/operations/doctor.md)                                                  | `QUEUED`      | Not applicable   | Diagnose the complete Task 15 contributor inventory with typed facts and deterministic recommendations.             | After Task 15; healthy means complete for the declared inventory.                              | Streamlined assured task          | Planned branch and worktree; exact base deferred until activation                                                      | Task Mastermind; explicit Gray/Red boundaries; one Brilliant Implementer; one fresh review           | Later producers extend both Status facts and applicable Doctor domains.                                       |
@@ -96,6 +104,15 @@ task remains in `RECENTLY_COMPLETED` on its completion-bearing update and exactl
 two later progress-bearing Overseer updates. The ledger then moves it to the
 completion record before the next update. Reopened work retains its permanent ID
 and actual name and receives a new explicit Task-owned horizon.
+
+The accepted future Status/Doctor composition boundary is an explicit immutable
+application-scoped `OperationalContributorCatalogue` built by
+`CliCompositionRoot`. Producer-owned typed contributors expose narrow Status and
+Doctor views from fresh invocation observations. There is no dependency
+injection, service locator, reflection, runtime registry, generic operational
+engine, or ambient registration. Task 12 owns durable architecture placement;
+Task 15 Gray owns exact callable signatures. Composition alone does not change
+Status or Doctor public contracts.
 
 ## Simplified Flow Trial
 
@@ -146,16 +163,18 @@ before later CI mutation.
   `bccefb12`, remains immutable and squash-integrated. A separate phase 0/4,
   milestone 0/7 platform-expansion horizon is queued after Tasks 12 and 13's
   preparation decision.
-- Task 4 “Route Move” (phase 4/6): milestone 6/12 — M7 public composition,
-  presentation, and evidence are active in its isolated worktree. Its source
-  remains separate from this root-tooling integration.
+- Task 4 “Route Move” is Complete at phase 6/6, milestone 12/12. Accepted
+  closeout `631983ea`, tree `d6f6fdf7`, is squash-integrated by the commit
+  containing this record from local `develop` parent `83902c88`, tree
+  `4b8324b2`.
 - Task 11 is Complete at phase 5/5, milestone 8/8. Accepted closeout `f309f29f`,
   tree `c05c2ed6`, is squash-integrated as `f8377094`, the same exact tree, from
   local `develop` baseline `416ea6ce`.
 - Tasks 8 and 9 are Complete and dequeued. Their accepted commits and exact
   trees are recorded below.
-- Task 12 preparation is ready without mutation. After Route Move integration
-  and destination approval, Task 12 mutates first. Task 14 preparation is also
+- Task 12 preparation is ready without mutation. After the still-required
+  destination approval, Task 12 mutates first from this integrated Route Move
+  baseline. Task 14 preparation is also
   ready with four exact maintainer freezes recorded in its Task; Tasks 14–16
   then form the prioritized adoption slice.
   Task 7 may run beside that slice after Task 12 and Task 13's platform decision.
@@ -175,11 +194,12 @@ before later CI mutation.
 | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
 | Task 1 “CLI Quality Remediation”                       | Product squash `862cbf2a`, tree `571f104f`; closeout `5053bf0c`, tree `732d8ea6`.                                                                        | Warning-free Release build; managed Unit `1522/1522`, Integration `736/736`, EndToEnd `146/146`; supported Native AOT Integration `736/736`; format, diff, and independent review passed.                                                                                                                                                                                                                   | Complete and dequeued. |
 | Task 2 “Review Orchestration Workflow”                 | Initial integration `5aad04ac`, tree `0f56b2ce`; permanent-identity and progress follow-up `3356eba1`, tree `af5efb2a`.                                  | Immutable Git-object review gateway, bounded topic roles, quiet-child and takeover controls, APM `27/27/27/54`, Open Forge, formatting, projection, protected-path, and C# identity gates passed. Automatic per-file fan-out and reviewer-economics claims remain experimental.                                                                                                                             | Complete and dequeued. |
-| Task 3 “Route Update”                                  | Accepted closeout `27df8325`, tree `b68d4349`; executable behavior `8a398f2e`, tree `3bb4a224`; squash integration is the commit containing this record. | Warning-free Release build; managed Unit `1602/1602`, Integration `809/809`, EndToEnd `152/152`; native Integration `809/809`, native EndToEnd `152/152`, managed-on-native EndToEnd `152/152`; dogfood, format, static, protected-path, and holistic review pass. Portable real interrupted-process proof remains deferred.                                                                                | Complete and dequeued. |
+| Task 3 “Route Update”                                  | Accepted closeout `27df8325`, tree `b68d4349`; executable behavior `8a398f2e`, tree `3bb4a224`; squash integration `272f5121`, tree `702f06d9`. | Warning-free Release build; managed Unit `1602/1602`, Integration `809/809`, EndToEnd `152/152`; native Integration `809/809`, native EndToEnd `152/152`, managed-on-native EndToEnd `152/152`; dogfood, format, static, protected-path, and holistic review pass. Portable real interrupted-process proof remains deferred.                                                                                | Complete and dequeued. |
 | Task 7 “npm Package Manager Release and Local Linking” | Restarted closeout `6ba0e060`, tree `bccefb12`; squash integration is the commit containing this record.                                                 | TypeScript, static, package stage/pack, and one isolated offline-install `PackageEndToEnd` journey pass. Publication, live link/unlink, CLI invocation, and live Windows evidence remain intentionally unexecuted. The former “npm Link Shims” label and integration `128b70b3`, tree `0ff3d386`, are rejected mistaken realization history for this same permanent Task ID, not a separate or reused Task. | Complete and dequeued. |
 | Task 8 “Agent and Workflow Change Audit”               | Accepted commit `975008d6`, exact tree `842666bd`.                                                                                                       | The durable Observation classifies changes from 2026-08-28 through the Route Update baseline as accepted controls, additive capabilities, selected trials, unresolved ideas, generated projections, continuity state, deliberate replacements, or placement concerns. No executable or workflow authority changed in this audit.                                                                            | Complete and dequeued. |
 | Task 9 “CLI Architecture Authority Audit”              | Accepted commit `e431395a`, exact tree `656cccdf`.                                                                                                       | Complete 1,053-line and 27-heading coverage, twelve stable `T9-ARCH-*` findings, repository reference and Git provenance evidence, reviewer dissent, protected executable surfaces, formatting, links, generated navigation, and diff checks passed. The Architecture and CLI behavior remained unchanged.                                                                                                  | Complete and dequeued. |
 | Task 11 “Root Tooling Placement Remediation”           | Accepted closeout `f309f29f`, tree `c05c2ed6`; squash integration `f8377094`, exact tree `c05c2ed6`.                                                     | Review integration `7/7/103`, projection integration `1/1/4`, strict TypeScript, targeted ESLint and Prettier, patcher help, path classification, source inventory, protected-path, JSON, diff, and clean-state gates passed. No dependency install, generated-agent mutation, APM install, remote action, or publication occurred.                                                                         | Complete and dequeued. |
+| Task 4 “Route Move”                                    | Accepted closeout `631983ea`, tree `d6f6fdf7`; final full-gate candidate `715bf245`, tree `d837ac93`; squash integration is the commit containing this record. | Release build `0/0`; managed Unit `1701/1701`, Integration `888/888`, EndToEnd `165/165`; native Integration `888/888`, native EndToEnd `165/165`, and managed-on-native EndToEnd `165/165`; focused `94/79/13`, escaping `5/5`, composition `1/1`, dogfood, static, format, and immutable review gates pass. Mid-read BCL fault injection remains the accepted verification limit. | Complete; completion-bearing update with 0/2 subsequent updates consumed. |
 
 ## Recovery And Current State
 
@@ -190,12 +210,14 @@ before later CI mutation.
   immutable Git state, reproduced focused evidence, and linked Task records.
   Missing optional child messages alone remain `progress unobserved`, not
   failure.
-- Active tasks:
-  - Task 4 “Route Move” (phase 4/6): milestone 6/12 — M7 public composition,
-    presentation, and evidence active.
+- Active tasks: None during the integration-to-Task-12 activation handoff.
+- Recently completed:
+  - Task 4 “Route Move” (phase 6/6): milestone 12/12 — complete and
+    squash-integrated by the commit containing this record; 0/2 subsequent
+    progress updates consumed.
 - Prepared tasks:
   - Task 12 “CLI Architecture Authority Remediation” (phase 0/5): milestone
-    0/1 — authority map ready; mutation waits for Task 4 integration and
+    0/1 — authority map ready; Route Move is integrated, and mutation waits for
     destination approval.
   - Task 14 “Extension Install” (phase 0/5): milestone 0/8 — preflight ready;
     four command-local freezes await acceptance and Task 12 completion.
@@ -204,12 +226,10 @@ before later CI mutation.
   waits for all retained commands, Task 10, and conditional Task 21 remediation.
 - Task 11 “Root Tooling Placement Remediation” is dequeued after its
   completion-bearing update and two subsequent progress updates.
-- Next meaningful project boundary: complete Route Move M7 composition,
-  presentation, evidence, whole-task review, and final gates. Then integrate
-  Route Move, activate the prepared Task 12 mutation after destination approval,
-  and proceed through the prepared Extension Install boundary, Status, and
-  Doctor. Task 13 remains queued at its later delivery boundary.
-- Blocker: Route Move's final public acceptance awaits the maintainer's
-  third-positional-operand decision. Standard pinned-parser behavior can safely
-  report that input as shell `cli.parser.invalid`; no accepted command-local
-  typed mechanism distinguishes it without prohibited token heuristics.
+- Next meaningful project boundary: accept Task 12's prepared authority
+  destinations, activate its durable architecture rewrite from this integrated
+  baseline, and then proceed through the prepared Extension Install boundary,
+  Status, and Doctor. Task 13 remains queued at its later delivery boundary.
+- Blocker: Task 12 mutation still requires acceptance of its prepared authority
+  destinations. Route Move has no remaining blocker; its third-positional-
+  operand authority is settled as shell `cli.parser.invalid`.

@@ -120,7 +120,7 @@ internal sealed class ContextLinkExpander
                     {
                         Workspace = request.Workspace,
                         Catalogue = graph.Catalogue,
-                        LayerCanonicalPath = layer.CanonicalPath,
+                        SourceCanonicalPath = layer.CanonicalPath,
                         RawDestination = authored.RawDestination,
                     };
                     var evidence = new ContextAuthoredLinkEvidence

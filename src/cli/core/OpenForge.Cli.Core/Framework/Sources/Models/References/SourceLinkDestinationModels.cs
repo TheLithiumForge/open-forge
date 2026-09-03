@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Workspace;
 
@@ -54,11 +55,22 @@ internal sealed record SourceLinkIdentity
 
 internal sealed record SourceLinkDestinationInput
 {
+    private string _sourceCanonicalPath = string.Empty;
+
     public required CliWorkspace Workspace { get; init; }
 
     public required SourceCatalogue Catalogue { get; init; }
 
-    public required string LayerCanonicalPath { get; init; }
+    public required string SourceCanonicalPath
+    {
+        get => _sourceCanonicalPath;
+        init
+        {
+            _sourceCanonicalPath = SourceWorkspaceRelativePath.ValidateMarkdown(
+                value,
+                nameof(value));
+        }
+    }
 
     public required string RawDestination { get; init; }
 }

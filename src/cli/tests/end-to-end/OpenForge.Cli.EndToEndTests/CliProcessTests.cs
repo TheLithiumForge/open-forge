@@ -71,7 +71,7 @@ public sealed class CliProcessTests
         Assert.Contains("create <file-target>", group.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("update <source-reference>", group.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(
-            "Planned but unavailable operations: move and remove.",
+            "Planned but unavailable operation: remove.",
             group.StandardOutput,
             StringComparison.Ordinal);
         Assert.DoesNotContain("Operations:", group.StandardOutput, StringComparison.Ordinal);

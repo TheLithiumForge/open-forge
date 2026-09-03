@@ -141,6 +141,12 @@ public sealed class RecoveryBundleStoreIntegrationTests
             var first = await Store().PrepareAsync(input, TestContext.Current.CancellationToken);
             preparation = Assert.IsType<RecoveryBundlePreparation>(first.Preparation);
             var collision = await Store().PrepareAsync(input, TestContext.Current.CancellationToken);
+            using var readbackCancellation = new CancellationTokenSource();
+            readbackCancellation.Cancel();
+            var cancelledReadback = await new RecoveryBundleReader().ReadExpectedFinalAsync(
+                input,
+                preparation.BundlePath,
+                readbackCancellation.Token);
             using var cancellation = new CancellationTokenSource();
             cancellation.Cancel();
             var cancelled = await Store().PrepareAsync(
@@ -150,6 +156,9 @@ public sealed class RecoveryBundleStoreIntegrationTests
             Assert.Equal(RecoveryBundlePreparationState.Blocked, collision.State);
             Assert.Equal(preparation.BundlePath, collision.ResidualPath);
             Assert.True(File.Exists(collision.ResidualPath));
+            Assert.Equal(RecoveryBundleReadState.Cancelled, cancelledReadback.Read.State);
+            Assert.Null(cancelledReadback.Preparation);
+            Assert.True(File.Exists(preparation.BundlePath));
             Assert.Equal(RecoveryBundlePreparationState.Cancelled, cancelled.State);
             Assert.Null(cancelled.ResidualPath);
         }

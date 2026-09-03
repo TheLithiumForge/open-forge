@@ -40,7 +40,7 @@ public sealed class PublishedRouteInitHelpProcessTests
         Assert.DoesNotContain("init     available", group.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("The route group performs no operation.", group.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(
-            "Planned but unavailable operations: move and remove.",
+            "Planned but unavailable operation: remove.",
             group.StandardOutput,
             StringComparison.Ordinal);
         Assert.Contains(

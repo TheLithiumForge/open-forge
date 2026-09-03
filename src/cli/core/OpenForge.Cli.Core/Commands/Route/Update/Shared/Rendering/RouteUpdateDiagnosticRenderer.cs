@@ -1,5 +1,6 @@
 using System.Globalization;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 
@@ -30,7 +31,7 @@ internal static class RouteUpdateDiagnosticRenderer
         };
         values.AddRange(result.Findings.Select(finding =>
             $"finding={RouteUpdateDefinitions.ReadMachineName(finding.Code)}:target={Value(finding.Target)}:cause={Value(finding.Cause)}"));
-        return RouteUpdateTextEscaping.Escape(
+        return RouteTextEscaping.Escape(
             string.Join("; ", values),
             MaximumDiagnosticLength);
     }
@@ -38,7 +39,7 @@ internal static class RouteUpdateDiagnosticRenderer
     private static string Value(string? value)
         => value is null
             ? "none"
-            : RouteUpdateTextEscaping.Escape(
+            : RouteTextEscaping.Escape(
                 value,
-                RouteUpdateTextEscaping.DiagnosticValueLimit);
+                RouteTextEscaping.DiagnosticValueLimit);
 }

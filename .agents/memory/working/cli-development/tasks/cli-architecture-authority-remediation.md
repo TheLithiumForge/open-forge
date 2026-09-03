@@ -8,10 +8,9 @@ open-forge:
 
 ## Task State
 
-- State: Non-mutating preparation ready while Task 4 “Route Move” remains the
-  live semantic owner. Implementation stays queued until Task 4 integrates and
-  the maintainer accepts the prepared authority destinations. It precedes Task
-  14 “Extension Install”.
+- State: Non-mutating preparation ready after Task 4 “Route Move” integration.
+  Implementation stays queued until the maintainer accepts the prepared
+  authority destinations. It precedes Task 14 “Extension Install”.
 - Permanent mapping: Task 12 “CLI Architecture Authority Remediation” in the
   [project control ledger](../project-control.md).
 - Preparation progress: phase 0 of 5, milestone 0 of 1. The read-only
@@ -53,6 +52,16 @@ before changing any authority source.
   retaining `Directory.Packages.props` as the sole exact-version authority.
 - Retain live order and execution receipts only in the Plan, Task records, and
   project-control ledger.
+- Preserve the accepted future Status/Doctor composition architecture as one
+  explicit immutable application-scoped `OperationalContributorCatalogue`
+  built by `CliCompositionRoot`. Producer-owned typed contributors project
+  narrow Status and Doctor views from fresh per-invocation observations. Do not
+  introduce dependency injection, a service locator, reflection, a runtime
+  registry, a generic operational engine, or ambient registration. Do not
+  change Status or Doctor public contracts merely to accommodate composition.
+  This Task owns the durable architecture rewrite; Task 15 Gray later freezes
+  the exact contributor and view signatures against its integrated producer
+  baseline.
 
 The maintainer must accept these destinations before Gray. That approval moves
 existing meaning; it does not approve new product behavior, platforms, schema,
@@ -72,6 +81,12 @@ The remediation preserves product behavior, requirement strength, uncertainty,
 public schemas, CLI source, tests, package behavior, and supported platform
 meaning. It does not use documentation movement to choose an unresolved product
 or implementation decision.
+
+The accepted Status/Doctor catalogue decision above is already settled project
+meaning, not a destination proposal. This Task places that meaning durably while
+leaving exact callable signatures to Task 15 Gray and leaving public Status and
+Doctor contracts unchanged unless a separate accepted product decision requires
+otherwise.
 
 ## Authority And Dependencies
 
@@ -129,7 +144,8 @@ work does not waive those rules when it judges C# architecture or design.
 
 ## Activation Boundary
 
-Do not activate this Task until Route Move is accepted and integrated. At
-activation, the Task Mastermind must verify the exact base, inspect every source
-named by the audit, surface only the remaining consequential decision frontier,
-and declare a non-regressing phase and milestone horizon before mutation.
+Route Move is accepted and integrated by the commit containing this record. At
+activation, the Task Mastermind must verify that exact base, inspect every source
+named by the audit, obtain the still-required authority-destination acceptance,
+surface only the remaining consequential decision frontier, and declare a
+non-regressing phase and milestone horizon before mutation.

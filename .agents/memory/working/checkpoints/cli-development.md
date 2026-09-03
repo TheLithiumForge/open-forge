@@ -12,19 +12,23 @@ Complete the replacement CLI from its accepted Architecture and command
 contracts, with safe local development, reproducible evidence, and no partial
 release.
 
-- Last updated: 2026-09-02.
+- Last updated: 2026-09-03.
 
 ## Current State
 
-Task 3 “Route Update” is squash-integrated by the commit containing this record
-from accepted local `develop` baseline
-`996c2e17d1142ffb30dc7a2d17df657419566f97`, tree
-`877314d48db49013edc1c4dad1abb545b37caefc`, and accepted Task closeout
-`27df8325488a4c036a240d03ad54105be0f2cdfa`, tree
-`b68d4349e13879fccc607f78a284a49e61f955ea`. The final executable behavior is
-commit `8a398f2e8e6f50beb730bea2a9c658a1fc923ffa`, tree
-`3bb4a22440b32781376c4b9160d3d72d168da9ef`. The [project control ledger](../cli-development/project-control.md)
-defines permanent task identities and the current dynamic queue.
+Task 4 “Route Move” is Complete at phase 6/6, milestone 12/12. Accepted
+closeout `631983ea1ec7d7ad5f5fc3999f938ba5f445ed81`, tree
+`d6f6fdf7d1caf62a9ac68582609c7282921f557c`, is squash-integrated by the
+commit containing this record from local `develop` parent
+`83902c8849bc98e44812b33175c5122421171e8b`, tree
+`4b8324b2e9e0cb4c876ef9a5db293968b37a9192`. The final full-gate candidate is
+`715bf245a6ceee083e73bddc096cbd8ce0de3506`, tree
+`d837ac93f2ca7e35c4ef1b6c90b97dd39e480c14`. The [project control ledger](../cli-development/project-control.md)
+defines permanent task identities, Task 4's completion-bearing update, and the
+current dynamic queue.
+
+Task 3 “Route Update” remains Complete from accepted closeout `27df8325`, tree
+`b68d4349`, with final executable behavior `8a398f2e`, tree `3bb4a224`.
 
 The preceding Route Create integration command is
 `19412d2a562ae66d1b4642256d854438df75366f`.
@@ -322,25 +326,39 @@ separate CLI Quality Remediation Task is Complete and squash-integrated at
 `862cbf2a`, exact tree `571f104f`, from accepted implementation candidate
 `a4ccf19a`, tree `97254e65`. Task 3 “Route Update” is Complete at phase 7/7,
 milestone 12/12, on accepted closeout `27df8325`, tree `b68d4349`.
+Task 4 “Route Move” is Complete at phase 6/6, milestone 12/12, on accepted
+closeout `631983ea`, tree `d6f6fdf7`, and is squash-integrated by the commit
+containing this record.
 Route Init's Framework mode accepts one concrete
 uniquely aligned route, slugs only ID-form inserted scope labels, creates one
 sparse chain, keeps scope entrypoints user-owned, and lifecycle-manages only
 copied canonical assets and derived generated regions.
 
-The full Route Mutation M2 lane precedes root Update M3. Independent preparation
-may still run early in isolated lanes—scope discovery, contract and ownership
-audits, callable-surface analysis, Gray/Red readiness, and worktree setup—but
-dependent Update behavior waits for M2 completion.
+Route Remove is the remaining Route Mutation M2 leaf, and the full M2 lane still
+precedes root Update M3. The current project-control priority interposes Task 12
+and the adoption slice before Route Remove. Independent preparation may still
+run early in isolated lanes, but dependent Update behavior waits for M2
+completion.
 
 Initial read-only M2 preparation completed on five clean no-op branches from
 `33913dfe7f8f80598ca4765c516d308ed179c3ab` without a preparation commit, Gray,
 Red, or Green change. The later lifecycle and parser prerequisites above are now
 integrated. The Route Mutation parent and leaf Tasks retain each accepted
 preparation decision or remaining maintainer-authority frontier, expected and
-protected path boundary, and evidence scope. Route Remove remains Planned after
-Route Move and its result freeze. Behavior remains ordered Install → Init →
-Create → protected Route Create predecessor slices → Route Create integration →
-CLI Quality Remediation → Update → Move → Remove → M3.
+protected path boundary, and evidence scope. Route Move is Complete. Route
+Remove remains Planned after Task 12 and the current adoption slice. The M2
+dependency remains ordered Install → Init → Create → protected Route Create
+predecessor slices → Route Create integration → CLI Quality Remediation → Update
+→ Move → Remove → M3.
+
+The accepted future Status/Doctor composition boundary is one explicit immutable
+application-scoped `OperationalContributorCatalogue` built by
+`CliCompositionRoot`. Producer-owned typed contributors expose narrow Status and
+Doctor views from fresh invocation observations. There is no dependency
+injection, service locator, reflection, runtime registry, generic operational
+engine, or ambient registration. Task 12 owns the durable architecture rewrite;
+Task 15 Gray freezes exact signatures. Composition alone does not change Status
+or Doctor public contracts.
 
 The root composition boundary and all localized D0 choices are closed. Route
 Inspect accepts one answer by one-based number or exact displayed path only when
@@ -363,8 +381,8 @@ JSON, and redirected flows never prompt.
 
 - Do not stage or alter unrelated `.apm` and `apm.lock.yaml` worktree changes.
 - Do not edit sealed Handoffs or archived evidence to rewrite history.
-- Do not change accepted Find, References, Context, Extension List, Route, Shell,
-  or source-reference meaning during the wave.
+- Task 12 may move accepted architecture prose but must not change executable,
+  public-contract, package, dependency, platform, or test meaning.
 - Do not implement public Index selection, binding, application, locking,
   recovery, or result presentation in the Generated Navigation lane.
 - Do not download additional dependencies without exact authorization.
@@ -372,15 +390,15 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Activate Task 4 “Route Move” from the accepted integrated Route Update
-   baseline. Continue Route Move → Route Remove and only afterward root Update
-   M3.
-2. Retain thin D1 as current `linux-x64` build/smoke, packed
+1. Accept Task 12's prepared authority destinations, then activate its durable
+   architecture rewrite from the integrated Route Move baseline.
+2. Continue through Task 14 Extension Install, Task 15 Status, and Task 16
+   Doctor. Task 7 may overlap after its recorded prerequisites.
+3. Resume Task 5 Route Remove, then Task 6 root Update and the remaining
+   project-control order.
+4. Retain thin D1 as current `linux-x64` build/smoke, packed
    install/invocation, and checksums. Keep future RIDs, signatures, SBOM,
    provenance, OIDC, and support floors behind a later explicit decision.
-3. Keep actual Status/Doctor implementation in O1 and actual Cleanup selection,
-   default, empty-no-lease policy, orchestration, guidance, aggregation, and E2E
-   in O2.
 
 ## Current Sources
 

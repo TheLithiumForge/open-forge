@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Shared.Rendering;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
@@ -92,7 +93,7 @@ internal static class RouteInitHumanRenderer
         builder.AppendLine($"Workspace: {Value(result.Workspace?.LexicalRoot)}");
         builder.AppendLine($"Selected by: {SelectedBy(result.Workspace)}");
         builder.AppendLine(
-            $"Target: {RouteInitTextEscaping.Escape(result.Target.Id ?? result.Target.Requested)}");
+            $"Target: {RouteTextEscaping.Escape(result.Target.Id ?? result.Target.Requested)}");
         builder.AppendLine($"Path: {Value(result.Target.Path)}");
     }
 
@@ -135,11 +136,11 @@ internal static class RouteInitHumanRenderer
                 ? "would"
                 : "did";
             builder.AppendLine(
-                $"  {RouteInitTextEscaping.Escape(effect.Path)}: {tense} {RouteInitDefinitions.ReadMachineName(effect.Action)} {RouteInitDefinitions.ReadMachineName(effect.Kind)} / {RouteInitDefinitions.ReadMachineName(effect.Outcome)} / residual={RouteInitDefinitions.ReadMachineName(effect.Residual)}");
+                $"  {RouteTextEscaping.Escape(effect.Path)}: {tense} {RouteInitDefinitions.ReadMachineName(effect.Action)} {RouteInitDefinitions.ReadMachineName(effect.Kind)} / {RouteInitDefinitions.ReadMachineName(effect.Outcome)} / residual={RouteInitDefinitions.ReadMachineName(effect.Residual)}");
             if (effect.SourceAssetPath is not null)
             {
                 builder.AppendLine(
-                    $"    Source: {RouteInitTextEscaping.Escape(effect.SourceAssetPath)}");
+                    $"    Source: {RouteTextEscaping.Escape(effect.SourceAssetPath)}");
             }
 
             if (effect.Change is not null
@@ -148,7 +149,7 @@ internal static class RouteInitHumanRenderer
                 builder.AppendLine(
                     $"    Before: {Value(effect.Change.Before)}");
                 builder.AppendLine(
-                    $"    Expected: {RouteInitTextEscaping.Escape(effect.Change.Expected)}");
+                    $"    Expected: {RouteTextEscaping.Escape(effect.Change.Expected)}");
             }
         }
     }
@@ -165,7 +166,7 @@ internal static class RouteInitHumanRenderer
         builder.AppendLine("Unchanged:");
         foreach (var path in unchangedPaths)
         {
-            builder.AppendLine($"  {RouteInitTextEscaping.Escape(path)}");
+            builder.AppendLine($"  {RouteTextEscaping.Escape(path)}");
         }
     }
 
@@ -175,7 +176,7 @@ internal static class RouteInitHumanRenderer
     {
         foreach (var entrypoint in entrypoints.Where(IsDraft))
         {
-            builder.AppendLine($"Draft: {RouteInitTextEscaping.Escape(entrypoint.Path)}");
+            builder.AppendLine($"Draft: {RouteTextEscaping.Escape(entrypoint.Path)}");
         }
     }
 
@@ -192,11 +193,11 @@ internal static class RouteInitHumanRenderer
         }
 
         builder.AppendLine(
-            $"Framework inventory: {RouteInitTextEscaping.Escape(framework.InventoryFingerprint)}");
+            $"Framework inventory: {RouteTextEscaping.Escape(framework.InventoryFingerprint)}");
         foreach (var segment in framework.Segments)
         {
             builder.AppendLine(
-                $"  {RouteInitTextEscaping.Escape(segment.Path)}: {RouteInitDefinitions.ReadMachineName(segment.Role)}{PathSuffix(segment.SourceAssetPath)}");
+                $"  {RouteTextEscaping.Escape(segment.Path)}: {RouteInitDefinitions.ReadMachineName(segment.Role)}{PathSuffix(segment.SourceAssetPath)}");
         }
     }
 
@@ -207,10 +208,10 @@ internal static class RouteInitHumanRenderer
         foreach (var finding in findings)
         {
             builder.AppendLine(
-                $"{FindingLabel(finding.Status)}: {RouteInitTextEscaping.Escape(finding.Cause)}");
+                $"{FindingLabel(finding.Status)}: {RouteTextEscaping.Escape(finding.Cause)}");
             if (finding.Target is not null)
             {
-                builder.AppendLine($"  Target: {RouteInitTextEscaping.Escape(finding.Target)}");
+                builder.AppendLine($"  Target: {RouteTextEscaping.Escape(finding.Target)}");
             }
         }
     }
@@ -237,10 +238,10 @@ internal static class RouteInitHumanRenderer
         }
 
         builder.AppendLine(
-            $"{FindingLabel(finding.Status)}: {RouteInitTextEscaping.Escape(finding.Cause)}");
+            $"{FindingLabel(finding.Status)}: {RouteTextEscaping.Escape(finding.Cause)}");
         if (finding.Target is not null)
         {
-            builder.AppendLine($"  Target: {RouteInitTextEscaping.Escape(finding.Target)}");
+            builder.AppendLine($"  Target: {RouteTextEscaping.Escape(finding.Target)}");
         }
     }
 
@@ -254,7 +255,7 @@ internal static class RouteInitHumanRenderer
         var guidance = next.Command == "open-forge route update"
             ? "author each NeedsAuthoring entrypoint before relying on its description or tags."
             : LowerInitial(next.Reason);
-        builder.AppendLine($"Next: {RouteInitTextEscaping.Escape(guidance)}");
+        builder.AppendLine($"Next: {RouteTextEscaping.Escape(guidance)}");
     }
 
     private static string SelectedBy(CliWorkspace? workspace)
@@ -270,10 +271,10 @@ internal static class RouteInitHumanRenderer
         };
 
     private static string Value(string? value)
-        => value is null ? "unavailable" : RouteInitTextEscaping.Escape(value);
+        => value is null ? "unavailable" : RouteTextEscaping.Escape(value);
 
     private static string PathSuffix(string? path)
-        => path is null ? string.Empty : $" / {RouteInitTextEscaping.Escape(path)}";
+        => path is null ? string.Empty : $" / {RouteTextEscaping.Escape(path)}";
 
     private static string Status(CliSemanticStatus status)
         => status == CliSemanticStatus.Attention

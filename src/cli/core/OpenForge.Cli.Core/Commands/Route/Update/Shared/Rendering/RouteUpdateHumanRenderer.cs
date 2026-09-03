@@ -1,5 +1,6 @@
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Shared.Rendering;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
@@ -144,12 +145,12 @@ internal static partial class RouteUpdateHumanRenderer
     }
 
     private static string Value(string? value)
-        => value is null ? "unavailable" : RouteUpdateTextEscaping.Escape(value);
+        => value is null ? "unavailable" : RouteTextEscaping.Escape(value);
 
     private static string PathSuffix(string? path)
         => path is null
             ? string.Empty
-            : $" / {RouteUpdateTextEscaping.Escape(path)}";
+            : $" / {RouteTextEscaping.Escape(path)}";
 
     private static string Status(CliSemanticStatus status)
         => status == CliSemanticStatus.Attention

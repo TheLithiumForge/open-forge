@@ -3,7 +3,6 @@ using System.Text;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
-using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Workspace;
@@ -139,9 +138,9 @@ internal sealed class SourceLinkDestinationResolver
             return Malformed(rawFragment, SourceLinkTargetResolution.Malformed, "A local destination cannot use backslash separators.");
         }
 
-        var sourceLexicalPath = SourceLogicalPath.ToLexicalPath(
+        var sourceLexicalPath = Path.Combine(
             input.Workspace.LexicalRoot,
-            input.LayerCanonicalPath);
+            input.SourceCanonicalPath.Replace('/', Path.DirectorySeparatorChar));
         var sourceDirectory = Path.GetDirectoryName(sourceLexicalPath);
         if (sourceDirectory is null)
         {
@@ -474,6 +473,95 @@ internal sealed class SourceLinkDestinationResolver
     {
         var hash = raw.IndexOf('#');
         return hash < 0 ? null : raw[(hash + 1)..];
+    }
+
+    internal static bool ResolvesToCanonicalPath(
+        CliWorkspace workspace,
+        string sourceCanonicalPath,
+        string rawDestination,
+        string expectedCanonicalPath)
+    {
+        if (!TryDecodeDestinationPath(rawDestination, out var decodedPath)
+            || !TryResolveCanonicalPath(
+                workspace,
+                sourceCanonicalPath,
+                decodedPath,
+                out var canonicalPath))
+        {
+            return false;
+        }
+
+        return string.Equals(
+            canonicalPath,
+            expectedCanonicalPath,
+            StringComparison.Ordinal);
+    }
+
+    private static bool TryDecodeDestinationPath(
+        string rawDestination,
+        out string decodedPath)
+    {
+        var hash = rawDestination.IndexOf('#');
+        var rawPath = hash >= 0 ? rawDestination[..hash] : rawDestination;
+        decodedPath = string.Empty;
+        if (rawPath.Contains('?')
+            || rawPath.Contains('\\')
+            || IsDriveRooted(rawPath)
+            || rawPath.StartsWith("/", StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        try
+        {
+            decodedPath = DecodePercent(rawPath);
+        }
+        catch (FormatException)
+        {
+            return false;
+        }
+
+        return !decodedPath.Contains('\\')
+            && !IsDriveRooted(decodedPath)
+            && !decodedPath.StartsWith("/", StringComparison.Ordinal);
+    }
+
+    private static bool TryResolveCanonicalPath(
+        CliWorkspace workspace,
+        string sourceCanonicalPath,
+        string decodedPath,
+        out string canonicalPath)
+    {
+        canonicalPath = string.Empty;
+        var sourceLexicalPath = Path.Combine(
+            workspace.LexicalRoot,
+            sourceCanonicalPath.Replace('/', Path.DirectorySeparatorChar));
+        var sourceDirectory = Path.GetDirectoryName(sourceLexicalPath);
+        if (sourceDirectory is null)
+        {
+            return false;
+        }
+
+        string lexicalTarget;
+        try
+        {
+            lexicalTarget = Path.GetFullPath(
+                string.IsNullOrEmpty(decodedPath)
+                    ? sourceLexicalPath
+                    : Path.Combine(sourceDirectory, decodedPath));
+        }
+        catch (Exception exception) when (exception is ArgumentException or NotSupportedException or PathTooLongException)
+        {
+            return false;
+        }
+
+        if (!PhysicalContainment.Contains(workspace.LexicalRoot, lexicalTarget))
+        {
+            return false;
+        }
+
+        canonicalPath = ReadCanonicalPath(workspace.LexicalRoot, lexicalTarget);
+        return true;
     }
 
     private static bool IsDriveRooted(string value)

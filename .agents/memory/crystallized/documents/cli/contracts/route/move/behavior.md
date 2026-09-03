@@ -10,8 +10,10 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized authority for the technology-neutral
-Behavior Contract behind `route move`. The command does not ship yet;
-implementation and executable proof remain pending Gate 5.
+Behavior Contract behind `route move`. The command does not ship yet. Its
+implementation and complete managed and Native AOT executable proof are
+squash-integrated by the commit containing this record; replacement-CLI delivery
+remains pending.
 
 The [Interface Contract](interface.md) defines the complete public syntax,
 subject boundary, destination meaning, observable output, semantic results,
@@ -72,9 +74,18 @@ The operation satisfies these invariants:
 ### Command and workspace
 
 Request resolution applies the shared terminal rules before domain work. It
-validates exactly one source reference, one destination target, the Boolean
-write-policy flags, and the shared global flags against the [Interface
-Contract](interface.md#syntax).
+first leaves unmatched positional input, unknown symbols, and parser diagnostics
+to the shared shell. A third positional operand therefore stops as shell-owned
+`cli.parser.invalid` input before Route Move binding, workspace selection, or domain
+execution. It returns exit `4` with empty stdout and a nonempty stderr diagnostic,
+but no Route Move result, status, finding, or next action. Parser diagnostic text
+is not a Route Move contract.
+
+For a shell-accepted selected command, binding reads the source reference,
+destination target, Boolean write-policy flags, and shared global flags against
+the [Interface Contract](interface.md#syntax). A missing source or destination
+forms the typed Route Move `invalid` result before workspace or domain work. A
+valid request contains exactly one source reference and one destination target.
 
 The selected workspace is the exact current working directory or the exact
 `--workspace <path>` value under the shared [Global CLI Flags Behavior
@@ -86,8 +97,11 @@ or use a nearby `.agents` directory.
 input has last-wins or precedence behavior. Shared
 global flags retain their own repetition, composition, and terminal rules.
 
-Invalid command input stops before source resolution. JSON and other
+Command-local invalid input stops before source resolution. JSON and other
 non-interactive modes never prompt for a collision or missing semantic subject.
+Ordinary help and version invocations retain the shared successful terminal
+short-circuit. Unmatched or unknown input remains shell terminal invalid even
+when a terminal flag is present.
 
 ### Source reference classification
 
@@ -322,7 +336,10 @@ The status selector applies the Interface meanings:
   after verified effects is `attention`.
 - Safe but unfinished catalogue or reference coverage is `incomplete` and has no
   effects.
-- Invalid operands and consumed-source exact source-not-found are `invalid`.
+- Missing required source or destination and consumed-source exact
+  source-not-found are Route Move `invalid` results. A third positional operand
+  has already stopped as `cli.parser.invalid` at the shell parser and never
+  reaches this selector.
 - Unsafe or ambiguous ownership, identity, route, destination, generated,
   expected-state, or recovery boundaries are `blocked`.
 - An unexpected post-effect application or verification failure, or
@@ -449,6 +466,10 @@ renderers do not rerun source resolution, inventory, reference scanning,
 planning, application, verification, or retained-state reporting. Presentation cannot change
 status or hide a required safety or coverage boundary.
 
+This presentation relationship applies only after Route Move result formation.
+A shell parser failure writes its terminal diagnostic directly under shared
+shell policy and never enters Route Move human or JSON rendering.
+
 Human `complete`, `attention`, and `incomplete` results go to stdout. Human
 `invalid`, `blocked`, `failed`, and `interrupted` results go to stderr. JSON
 emits one complete result on stdout for every semantic status, and bounded
@@ -467,6 +488,10 @@ A conforming implementation must additionally prove:
 
 - one exact request resolver with shared source and global flag semantics and no
   hidden category or destination inference;
+- shell-owned `cli.parser.invalid` rejection of a third positional operand with
+  exit `4`, empty stdout, nonempty stderr, no workspace/domain/lock effect, and no Route Move
+  result envelope, while missing required operands remain typed Route Move
+  `invalid` results;
 - leaf base/overwrite pairing, category root selection, complete physical
   inventory, preserved relative layout, and rejection of Loader/workspace-root,
   native, unsupported, orphan, ambiguous, and lifecycle-managed subjects;

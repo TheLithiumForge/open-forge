@@ -120,11 +120,29 @@ internal sealed class RecoveryBundleStore(RecoveryBundleReader reader)
                     exception));
         }
 
-        var draftRead = await _reader.VerifyExpectedAsync(
-            input,
-            draftPath,
-            RecoveryBundleCandidateKind.Draft,
-            cancellationToken).ConfigureAwait(false);
+        RecoveryBundleReadResult draftRead;
+        try
+        {
+            draftRead = await _reader.VerifyExpectedAsync(
+                input,
+                draftPath,
+                RecoveryBundleCandidateKind.Draft,
+                cancellationToken).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return RecoveryBundlePreparationResult.Cancelled(ObserveResidualPath(
+                draftPath,
+                finalPath,
+                knownResidualPath));
+        }
+        catch (Exception)
+        {
+            return RecoveryBundlePreparationResult.Incomplete(
+                "The recovery bundle draft could not be read back after it was written.",
+                ObserveResidualPath(draftPath, finalPath, knownResidualPath));
+        }
+
         if (draftRead.State != RecoveryBundleReadState.Valid)
         {
             return FromReadFailure(draftRead, draftPath);
@@ -178,10 +196,28 @@ internal sealed class RecoveryBundleStore(RecoveryBundleReader reader)
                 FilesystemFailure.FromException(FilesystemFailureKind.InputOutput, exception));
         }
 
-        var finalRead = await _reader.ReadExpectedFinalAsync(
-            input,
-            finalPath,
-            cancellationToken).ConfigureAwait(false);
+        RecoveryBundleFinalReadResult finalRead;
+        try
+        {
+            finalRead = await _reader.ReadExpectedFinalAsync(
+                input,
+                finalPath,
+                cancellationToken).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return RecoveryBundlePreparationResult.Cancelled(ObserveResidualPath(
+                draftPath,
+                finalPath,
+                knownResidualPath));
+        }
+        catch (Exception)
+        {
+            return RecoveryBundlePreparationResult.Incomplete(
+                "The published recovery bundle could not be read back after it was written.",
+                ObserveResidualPath(draftPath, finalPath, knownResidualPath));
+        }
+
         if (finalRead.Read.State != RecoveryBundleReadState.Valid
             || finalRead.Preparation is not { } preparation)
         {
