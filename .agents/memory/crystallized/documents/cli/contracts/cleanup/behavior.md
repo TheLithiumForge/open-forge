@@ -21,10 +21,11 @@ errors, examples, non-goals, and public verification. This file does not add
 operands, selectors, flags, artifact names, storage schema, JSON fields, numeric
 exits, or implementation technology.
 
-The [CLI Architecture](../../architecture.md) defines the accepted shared
-structured schema, process-status mapping, source structure, package and runtime
-boundaries, BCL-first filesystem boundary, workspace lock, and recovery identity
-model. Implementation and executable proof remain pending Gate 5. The shared
+The [Shared Result Coordinates](../shared/result-coordinates/interface.md) define
+the accepted shared structured schema and process-status mapping. The [CLI
+Architecture](../../architecture.md) defines source and runtime boundaries,
+BCL-first filesystem structure, the workspace-lock boundary, and recovery
+identity relationships. Implementation and executable proof remain pending Gate 5. The shared
 [Global CLI Flags Behavior Contract](../shared/global-flags/behavior.md) owns
 shared request, workspace, presentation, terminal, and repetition meaning.
 Doctor, Repair, Index, lifecycle, package, and Gate 6 sources retain their own
@@ -123,18 +124,20 @@ in its typed result. It does not
 treat workspace selection as proof of installation, health, ownership, or
 artifact provenance.
 
-Cleanup uses the existing `WorkspaceLockLease` for cooperating-process exclusion.
-The persistent external zero-byte lock below
-`LocalApplicationData/OpenForge/locks/v1` is held with one read/write
-`FileShare.None` handle. Cleanup writes no marker, PID, journal, or lock metadata,
-never deletes the lock file, and makes no activity inference.
+Cleanup uses the existing `WorkspaceLockLease` for cooperating-process
+exclusion. It writes no marker, PID, journal, or lock metadata, never deletes
+the lock file, and makes no activity inference. Exact lock identity, storage,
+handle, and lifetime mechanics follow the [Mutation And Recovery Technical
+Design](../../technical-designs/mutation-and-recovery.md).
 
 ## Current Facts And Catalogue Coverage
 
 The resolver establishes a complete current catalogue by filtering exact
 selected-workspace final and draft names, then determining each candidate's kind
-and integrity. The CLI Architecture defines the realization of names, storage,
-and schema; the observable facts below are fixed by this Behavior Contract.
+and integrity. The [Mutation And Recovery Technical
+Design](../../technical-designs/mutation-and-recovery.md) defines the realization
+of names, storage, and schema; the observable facts below are fixed by this
+Behavior Contract.
 
 For every exact-name candidate admitted to the catalogue, current facts include:
 
@@ -298,7 +301,8 @@ Result formation follows the Interface meanings:
 For ordinary conditions, precedence from strongest to weakest is `blocked`,
 `incomplete`, `attention`, then `complete`. Invalid input stops first. `failed`
 and `interrupted` retain their event meaning. The shared process-status mapping is
-defined by the CLI Architecture.
+defined by the [Shared Result
+Coordinates](../shared/result-coordinates/interface.md).
 
 ## Presentation Relationship
 
@@ -311,8 +315,8 @@ erase a remaining or residual item.
 Primary human `complete`, `attention`, and `incomplete` results use stdout.
 Primary human `invalid`, `blocked`, `failed`, and `interrupted` results use
 stderr. JSON emits one complete result on stdout for every semantic status, and
-bounded diagnostics use stderr. The exact structured schema is defined by the CLI
-Architecture.
+bounded diagnostics use stderr. The exact structured schema is defined by the
+[Shared Result Coordinates](../shared/result-coordinates/interface.md).
 
 ## Behavioral Conformance
 
@@ -353,9 +357,11 @@ A conforming implementation must demonstrate:
   arbitrary filesystem, or Gate 6 documentation/history/release cleanup.
 
 Gate 5 executable proof should use real isolated workspaces and real filesystem
-identity, workspace association, and external-root boundaries. The CLI Architecture defines the accepted
-parser, filesystem, concurrency, artifact naming and schema, package, and source
-realization; this Behavior Contract does not select another implementation.
+identity, workspace association, and external-root boundaries. The CLI
+Architecture defines the accepted parser, filesystem, concurrency, package, and
+source boundaries. The [Mutation And Recovery Technical
+Design](../../technical-designs/mutation-and-recovery.md) defines artifact naming
+and schema; this Behavior Contract does not select another implementation.
 
 ## Related Sources
 

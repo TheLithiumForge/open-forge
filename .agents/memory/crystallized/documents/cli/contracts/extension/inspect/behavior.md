@@ -14,10 +14,11 @@ This is the current Crystallized Behavior Contract for read-only
 through exact workspace and source boundaries, lifecycle and package facts,
 dependency and path coverage, fingerprints, comparison, findings, status, and
 `next` formation. The [Interface Contract](interface.md) owns the wire graph,
-finite values, finding meanings, golden vectors, and public examples. The
-[CLI Architecture](../../../architecture.md) owns the shared envelope,
-source-location primitive, parser boundary, process exits, and serialization
-boundary. This document claims neither implementation nor Gate-5 evidence.
+finite values, finding meanings, golden vectors, and public examples. The [Shared
+Result Coordinates](../../shared/result-coordinates/interface.md) own the shared
+envelope, source-location primitive, and process exits. The [CLI
+Architecture](../../../architecture.md) owns parser and concrete serialization
+boundaries. This document claims neither implementation nor Gate-5 evidence.
 
 Inspect is a read operation. It never installs, updates, removes, creates,
 repairs, adopts, indexes, locks, downloads, executes package content, writes a
@@ -259,6 +260,7 @@ Apply the policy in this order:
    or ambiguous markers are invalid; no likely pair is selected. No outside-
    code marker means an absent region and semantic hashing of the complete
    line-ending-normalized document.
+
 5. For one valid pair, omit only
    `[end-of-start-marker-line, start-of-end-marker-line)` after line-ending
    normalization. These positions are the normalized UTF-8
@@ -395,7 +397,8 @@ replace a null with an empty string, zero, false, or a fabricated identity.
 
 The shared envelope contains `schemaVersion: 1`, the exact command identity,
 aggregate status, shared workspace, this result object, and one `next` object or
-`null`, in Architecture order. Envelope `status`, `workspace`, `command`, and
+`null`, in [Shared Result
+Coordinates](../../shared/result-coordinates/interface.md) order. Envelope `status`, `workspace`, `command`, and
 `next` are not duplicated in the command-local result. JSON emits one complete
 envelope on stdout for every status. Human complete, attention, and incomplete
 primary output uses stdout; invalid, blocked, failed, and interrupted primary
@@ -409,19 +412,19 @@ reorders facts or recomputes any result member.
 
 ## Scenario Behavior Matrix
 
-| Scenario | Processing and retained facts | Result and finding | `next` |
-| --- | --- | --- | --- |
-| Trusted lifecycle plus complete source, baseline equals current and intended differs semantically | Read all three sides; retain owners, path facts, and dependency closure | `attention`; `path-changed` and/or `dependency-changed` | Update only when the complete actionable gate holds |
-| Trusted installed lifecycle plus missing explicit source | Preserve installed package, baseline, current bytes, and generated observation; mark source missing and intended not applicable | `attention`; `source-unavailable` | `null` |
-| Available source plus missing lifecycle document/section | Preserve source package and payload; do not call installed state absent | `incomplete`; `lifecycle-unavailable` | Exact doctor action |
-| Source contains no requested package | Preserve source identity and installed facts if readable; do not choose a nearby package | `incomplete`; `package-unavailable` | Exact doctor action |
-| Malformed package or partial closure | Preserve validated metadata/nodes; stop unsafe or unavailable portions | `incomplete`; `package-invalid` or `dependency-incomplete` | Exact doctor action |
-| Duplicate identity, cycle, unsafe path, source overlap, or owner conflict | Preserve candidates and prior safe facts; do not select an unsafe node | `blocked`; corresponding fixed finding | Exact doctor action |
-| Valid Markdown with a malformed generated boundary | Preserve original bytes and exact-byte fallback; no generated exclusion | `incomplete`; `generated-boundary-invalid` and `fingerprint-fallback` as applicable | Exact doctor action |
-| Unsupported, binary, invalid-UTF-8, or unparseable payload | Preserve readable path and exact original bytes; semantic equivalence is unavailable | `incomplete`; `fingerprint-fallback` or `fingerprint-unavailable` | Exact doctor action |
-| Invalid request | Keep supplied operand when safe; later domain states are `not-started` and arrays empty | `invalid`; `invalid-input` or `invalid-stable-id` | Exact inspect-help action |
-| Unexpected failure | Keep facts formed before failure; do not convert failure to unavailable success | `failed`; `operation-failed` | Exact verbose retry action |
-| Cancellation | Keep facts formed before cancellation; stop all later work | `interrupted`; `interrupted` | Exact same-request retry action |
+| Scenario                                                                                          | Processing and retained facts                                                                                                   | Result and finding                                                                  | `next`                                              |
+| ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | --------------------------------------------------- |
+| Trusted lifecycle plus complete source, baseline equals current and intended differs semantically | Read all three sides; retain owners, path facts, and dependency closure                                                         | `attention`; `path-changed` and/or `dependency-changed`                             | Update only when the complete actionable gate holds |
+| Trusted installed lifecycle plus missing explicit source                                          | Preserve installed package, baseline, current bytes, and generated observation; mark source missing and intended not applicable | `attention`; `source-unavailable`                                                   | `null`                                              |
+| Available source plus missing lifecycle document/section                                          | Preserve source package and payload; do not call installed state absent                                                         | `incomplete`; `lifecycle-unavailable`                                               | Exact doctor action                                 |
+| Source contains no requested package                                                              | Preserve source identity and installed facts if readable; do not choose a nearby package                                        | `incomplete`; `package-unavailable`                                                 | Exact doctor action                                 |
+| Malformed package or partial closure                                                              | Preserve validated metadata/nodes; stop unsafe or unavailable portions                                                          | `incomplete`; `package-invalid` or `dependency-incomplete`                          | Exact doctor action                                 |
+| Duplicate identity, cycle, unsafe path, source overlap, or owner conflict                         | Preserve candidates and prior safe facts; do not select an unsafe node                                                          | `blocked`; corresponding fixed finding                                              | Exact doctor action                                 |
+| Valid Markdown with a malformed generated boundary                                                | Preserve original bytes and exact-byte fallback; no generated exclusion                                                         | `incomplete`; `generated-boundary-invalid` and `fingerprint-fallback` as applicable | Exact doctor action                                 |
+| Unsupported, binary, invalid-UTF-8, or unparseable payload                                        | Preserve readable path and exact original bytes; semantic equivalence is unavailable                                            | `incomplete`; `fingerprint-fallback` or `fingerprint-unavailable`                   | Exact doctor action                                 |
+| Invalid request                                                                                   | Keep supplied operand when safe; later domain states are `not-started` and arrays empty                                         | `invalid`; `invalid-input` or `invalid-stable-id`                                   | Exact inspect-help action                           |
+| Unexpected failure                                                                                | Keep facts formed before failure; do not convert failure to unavailable success                                                 | `failed`; `operation-failed`                                                        | Exact verbose retry action                          |
+| Cancellation                                                                                      | Keep facts formed before cancellation; stop all later work                                                                      | `interrupted`; `interrupted`                                                        | Exact same-request retry action                     |
 
 These scenarios are behavioral mappings; the Interface's exact field grammar,
 status table, finding table, action strings, and structured examples are the

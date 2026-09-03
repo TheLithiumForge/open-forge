@@ -21,10 +21,11 @@ The [Interface Contract](interface.md) owns the exact public grammar, selection
 modes, relink value grammar, admitted catalogue, observable output, semantic
 result names, errors, examples, non-goals, and public verification. This
 Behavior Contract does not add flags, operands, aliases, or lifecycle command
-syntax. The [CLI Architecture](../../architecture.md) defines the accepted
-shared JSON schema, process-status mapping, source structure, package and runtime
-boundaries, BCL-first filesystem boundary, workspace lock, and recovery identity
-model. This file retains the technology-neutral concurrency, revalidation, and
+syntax. The [Shared Result Coordinates](../shared/result-coordinates/interface.md)
+define the accepted shared JSON schema and process-status mapping. The [CLI
+Architecture](../../architecture.md) defines source and runtime boundaries,
+BCL-first filesystem structure, the workspace-lock boundary, and recovery
+identity relationships. This file retains the technology-neutral concurrency, revalidation, and
 recovery requirements behind that realization.
 
 ## Operation Flow And Invariants
@@ -527,9 +528,12 @@ Gate 5 executable proof should prove request, selection, candidate, plan, confli
 preflight, no-op, dry-run, recovery-bundle preparation, verification, status, and
 post-diagnosis behavior. Focused integration tests should use real isolated
 Markdown workspaces, contained targets, changed bytes, recovery-bundle residuals,
-interruption, and concurrent edits. The CLI Architecture defines the accepted
-parser, atomic replacement, filesystem identity, hashing, concurrency, structured
-schema, process-status, package, and Native AOT boundaries. Gate 5 provides the
+interruption, and concurrent edits. The [Shared Result
+Coordinates](../shared/result-coordinates/interface.md) define the structured
+schema and process status. The [CLI Architecture](../../architecture.md) defines
+the parser, filesystem identity, hashing, concurrency, and Native AOT boundaries;
+exact atomic-file mechanics live in the [Mutation And Recovery Technical
+Design](../../technical-designs/mutation-and-recovery.md). Gate 5 provides the
 executable proof.
 
 ## Related Current Sources

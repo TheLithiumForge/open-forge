@@ -18,8 +18,10 @@ Doctor is always read-only and stateless. It does not create a plan, backup,
 temporary file, Git change, lifecycle effect, or repair effect. It does not
 acquire the workspace mutation lock.
 
-The accepted CLI Architecture defines the shared implementation boundary and the
-exact JSON result schema and exit mapping. Gate 5 must prove source-generated
+The accepted [CLI Architecture](../../architecture.md) defines the shared
+implementation boundary. The [Shared Result
+Coordinates](../shared/result-coordinates/interface.md) define the exact JSON
+result schema and exit mapping. Gate 5 must prove source-generated
 YamlDotNet and STJ serialization, fixed Markdig where used, real `System.IO`,
 Native AOT, OS locking, isolated tests, and package journeys. This contract set
 does not claim that implementation or proof.

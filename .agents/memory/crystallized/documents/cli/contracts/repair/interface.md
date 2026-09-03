@@ -25,10 +25,11 @@ contract defines the six global flags once. The [Source References](../shared/so
 contract remains authoritative for any source identity that is reported as
 diagnostic evidence; `--relink` uses its own exact occurrence grammar below.
 
-The [CLI Architecture](../../architecture.md) defines the accepted shared
-structured schema, process-status mapping, source structure, package and runtime
-boundaries, BCL-first filesystem boundary, workspace lock, and recovery identity
-model. No command-local Technical Design file exists for Repair. This Interface
+The [Shared Result Coordinates](../shared/result-coordinates/interface.md) define
+the accepted shared structured schema and process-status mapping. The [CLI
+Architecture](../../architecture.md) defines source and runtime boundaries,
+BCL-first filesystem structure, the workspace-lock boundary, and recovery
+identity relationships. No command-local Technical Design file exists for Repair. This Interface
 Contract remains technology-neutral.
 
 ## Purpose And Boundary
@@ -500,7 +501,8 @@ from the same typed result as human output. JSON never prompts and retains the
 complete selected, unselected, finding, effect, exact-diff, fingerprint,
 preflight, application, verification, recovery, residual, and post-diagnosis
 meaning that the contract exposes. Exact field names and schema compatibility are
-defined by the CLI Architecture.
+defined by the [Shared Result
+Coordinates](../shared/result-coordinates/interface.md).
 
 Primary human `complete`, `attention`, and `incomplete` results are kept
 together on stdout. Primary human `invalid`, `blocked`, `failed`, and
@@ -686,8 +688,8 @@ Conformance evidence must cover:
   with no fixpoint loop.
 - Human compact and expanded, JSON, and verbose projections from one typed
   result, including exact bounded effects and the accepted stdout and stderr
-  policy under the shared schema and process-status mapping defined by the CLI
-  Architecture.
+  policy under the shared schema and process-status mapping defined by the
+  [Shared Result Coordinates](../shared/result-coordinates/interface.md).
 - Selected, unselected, repaired, remaining, new, manual, guided, and blocked
   findings and effects, mode, affected paths, preflight, application,
   verification, recovery, residual, and post-diagnosis coverage.

@@ -333,10 +333,11 @@ direction is absent, not represented as complete.
 
 ### Exact Schema-v1 Command-Local Result
 
-The Architecture's schema-v1 envelope wraps this command-local `result` object.
+The [Shared Result Coordinates](../shared/result-coordinates/interface.md)
+schema-v1 envelope wraps this command-local `result` object.
 The envelope is exactly the shared `{ schemaVersion, command, status, workspace,
 result, next }` shape; its `status` is the aggregate semantic result and is not
-duplicated here. The shared `SourceLocation` primitive is the Architecture's
+duplicated here. The shared `SourceLocation` primitive is the same authority's
 exact `{ line, column, byteOffset, byteLength }` shape. The following grammar
 defines every command-local member in wire order. No member is omitted.
 

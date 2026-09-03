@@ -22,11 +22,12 @@ results, or other public meaning. Request normalization, status formation, and
 presentation follow the accepted repetition, status, dry-run, stream, and
 compact-result rules in the Interface Contract.
 
-The [CLI Architecture](../../../architecture.md) defines the accepted shared
-result schema, process-status mapping, System.CommandLine binding, fixed Markdig
-pipeline, source-generated YamlDotNet and JSON paths, BCL-first filesystem
-boundary, workspace lock, recovery boundary, test evidence, runtime, Native AOT,
-and source layout. This Behavior Contract remains technology-neutral within
+The [Shared Result Coordinates](../../shared/result-coordinates/interface.md)
+define the accepted shared result schema and process-status mapping. The [CLI
+Architecture](../../../architecture.md) defines System.CommandLine binding, fixed
+Markdig and source-generated serialization relationships, the BCL-first
+filesystem, workspace-lock and recovery boundaries, evidence, runtime, Native
+AOT, and source layout. This Behavior Contract remains technology-neutral within
 those accepted boundaries.
 
 ## Operation Invariants
@@ -205,21 +206,24 @@ it; a failure after a write is `failed` under the existing recovery rules.
 ### Architecture-constrained realization
 
 The following realization details are intentionally not repeated as command-local
-technology choices. They must satisfy the CLI Architecture and the observable
-requirements in this contract:
+technology choices. They must satisfy their linked current authorities and the
+observable requirements in this contract:
 
 - Exact YAML and Markdown parser behavior, compatibility parsing, frontmatter
   preservation mechanics, line endings, encoding, heading and link handling,
   and canonical serialization.
 - Exact filesystem APIs, physical identity, symlink and junction behavior, case
-  and Unicode rules, atomic replacement mechanics, containment implementation,
-  and test seams.
-- Exact recovery-bundle filenames, collision-handling mechanics, and related recovery
-  implementation boundaries.
+  and Unicode rules, containment implementation, and test seams follow the [CLI
+  Architecture](../../../architecture.md). Exact atomic-file mechanics follow the
+  [Mutation And Recovery Technical
+  Design](../../../technical-designs/mutation-and-recovery.md).
+- Exact recovery-bundle filenames, collision-handling mechanics, and related
+  recovery implementation follow the Mutation And Recovery Technical Design.
 - Lock scope, stale-lock handling, and broader cross-platform concurrency
   mechanics. Expected-state revalidation and preservation of unexpected
-  concurrent edits remain current safety requirements, and mutation locking
-  follows the Architecture's accepted workspace-lock boundary.
+  concurrent edits remain current safety requirements. Exact lock mechanics
+  follow the Mutation And Recovery Technical Design within the Architecture's
+  accepted workspace-lock boundary.
 - Exact .NET modules, parser and serializer ownership, shared graph or mutation
   boundaries, and other implementation source boundaries.
 
@@ -539,7 +543,8 @@ use real temporary routed workspaces, ordinary and compatibility entrypoints,
 overwrite pairs and orphans, external recovery bundles,
 filesystem failures, expected-state changes, concurrent edits, and generated
 parent effects. Gate 5 executable proof should prove command parsing, exact
-dry-run output, human and structured rendering from one result, the Architecture's
+dry-run output, human and structured rendering from one result, the [Shared
+Result Coordinates](../../shared/result-coordinates/interface.md)
 status-preserving process completion, Native AOT execution, and packaged
 execution without adding another command-local implementation choice.
 

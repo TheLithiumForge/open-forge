@@ -30,14 +30,17 @@ emits one deterministic canonical UTF-8 whole-document representation; lifecycle
 property order, whitespace, and line endings are not preserved. A semantic
 no-op writes nothing. Prior bytes for every existing-target effect (`Replace`,
 `ReplaceGeneratedRegion`, or `Delete`) are retained only in the verified external
-recovery bundle described by the shared Architecture; the CLI does not inspect
-or report repository state or claim history evidence.
+recovery bundle defined by the [Mutation And Recovery Technical
+Design](../../../technical-designs/mutation-and-recovery.md); the CLI does not
+inspect or report repository state or claim history evidence.
 The document stores no plan, runtime history, journal, recovery evidence, or session.
 Files outside this exact path are ordinary workspace content, not lifecycle input.
 
-The shared CLI Architecture defines the exact package serialization, structured
-JSON result schema, and numeric exit mapping. This Interface uses those shared
-definitions without duplicating implementation mechanics. Gate 5 must prove
+The [Shared Result Coordinates](../../shared/result-coordinates/interface.md)
+define the structured JSON result schema and numeric exit mapping. The [CLI
+Architecture](../../../architecture.md) defines concrete source-generated package
+serialization relationships. This Interface uses those shared definitions
+without duplicating implementation mechanics. Gate 5 must prove
 source-generated YamlDotNet and STJ serialization, fixed Markdig where used,
 real `System.IO`, Native AOT, OS locking, isolated tests, and package journeys.
 
@@ -99,7 +102,8 @@ occurs.
 
 Before a workspace effect, the implementation must hold the persistent reusable
 zero-byte external lock under `LocalApplicationData/OpenForge/locks/v1` defined
-by the accepted CLI Architecture. It holds one read/write `FileShare.None`
+by the [Mutation And Recovery Technical
+Design](../../../technical-designs/mutation-and-recovery.md). It holds one read/write `FileShare.None`
 handle and never writes metadata, deletes, or truncates the lock file. Another process holding
 the handle blocks mutation; the lock is concurrency safety, not lifecycle
 authority, recovery evidence, or history.
@@ -339,7 +343,8 @@ semantic fingerprints, generated navigation, reserved paths, complete planning,
 external recovery-bundle storage and verification, typed post-verification
 deletion state/disposition facts, dry-run parity,
 seven statuses/streams, JSON, no mutation of
-sources, and no runtime or shipping claim. The shared CLI Architecture defines
-the exact JSON result schema and exit mapping. Gate 5 must prove source-generated
+sources, and no runtime or shipping claim. The [Shared Result
+Coordinates](../../shared/result-coordinates/interface.md) define the exact JSON
+result schema and exit mapping. Gate 5 must prove source-generated
 serialization, fixed Markdig where used, real `System.IO`, Native AOT, OS
 locking, isolated tests, and package journeys.

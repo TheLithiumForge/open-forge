@@ -17,9 +17,10 @@ complete public authority for spelling, value grammar, defaults, observable
 presentation, errors, examples, and non-goals. This file links to those
 definitions rather than maintaining a second public contract.
 
-The [CLI Architecture](../../../architecture.md) defines the shared result
-envelope, process-status mapping, parser binding, runtime, filesystem, and
-evidence boundaries. This behavior remains technology-neutral within those
+The [Shared Result Coordinates](../result-coordinates/interface.md) define the
+shared result envelope and process-status mapping. The [CLI
+Architecture](../../../architecture.md) defines parser binding, runtime,
+filesystem, and evidence boundaries. This behavior remains technology-neutral within those
 accepted choices.
 
 ## Shared Flag Invariants
@@ -77,8 +78,9 @@ use stderr only when the shared output contract allows it.
 JSON resolution disables prompts. Missing semantic input forms the public
 invalid result. Missing authority or an unresolved choice for an otherwise
 complete request forms the public blocked result. The exact shared result schema
-and compatibility rules are defined by the CLI Architecture, as stated in
-[the public JSON contract](interface.md#--json).
+and compatibility rules are defined by the [Shared Result
+Coordinates](../result-coordinates/interface.md), as stated in [the public JSON
+contract](interface.md#--json).
 
 ## Human Presentation
 

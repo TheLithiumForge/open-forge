@@ -13,13 +13,14 @@ This is the accepted current Crystallized authority for the caller-visible
 Interface Contract for `route update`. The command does not ship yet;
 implementation and executable proof remain pending Gate 5.
 
-The [CLI Architecture](../../../architecture.md) defines the accepted shared
-result schema, process-status mapping, System.CommandLine binding, fixed Markdig
-pipeline, source-generated YamlDotNet and JSON paths, BCL-first filesystem
-boundary, workspace lock, recovery boundary, test evidence, runtime, Native AOT,
-and source layout. The observable byte-preservation and compatibility
+The [Shared Result Coordinates](../../shared/result-coordinates/interface.md)
+define the accepted shared result schema and process-status mapping. The [CLI
+Architecture](../../../architecture.md) defines System.CommandLine binding, fixed
+Markdig and source-generated serialization relationships, the BCL-first
+filesystem, workspace-lock and recovery boundaries, evidence, runtime, Native
+AOT, and source layout. The observable byte-preservation and compatibility
 requirements below remain the command's contract; their realization must satisfy
-that Architecture and Gate 5 proof.
+those authorities and Gate 5 proof.
 
 The [canonical Markdown syntax](../../../../framework/markdown/syntax.md)
 defines destination metadata. The [Template contract](../../../../framework/primitives/templates.md)
@@ -502,7 +503,7 @@ The structured result exposes:
   one required `Next:` action when applicable.
 
 Exact field names, schema versioning, and compatibility rules are defined by the
-CLI Architecture.
+[Shared Result Coordinates](../../shared/result-coordinates/interface.md).
 
 ## Semantic Results
 
@@ -516,7 +517,8 @@ CLI Architecture.
 | `failed`      | A post-write unexpected failure, application or verification failure after effects begin, or post-verification recovery deletion `Failed`/`Unknown` prevents the update from completing.                                                                                                                                                                                                                   |
 | `interrupted` | The caller cancelled before completion and no unexpected application or verification failure changes the result.                                                                                                                                                                                                                                                                                           |
 
-The shared numeric process-status mapping is defined by the CLI Architecture.
+The shared numeric process-status mapping is defined by the [Shared Result
+Coordinates](../../shared/result-coordinates/interface.md).
 
 For ordinary operation conditions, status precedence is `blocked` > `incomplete`
 

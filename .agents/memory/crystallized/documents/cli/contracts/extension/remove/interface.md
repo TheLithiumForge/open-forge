@@ -62,8 +62,8 @@ performs no managed mutation.
 
 Before a workspace effect, the implementation must hold the actual OS lock for
 the persistent external zero-byte path under
-`LocalApplicationData/OpenForge/locks/v1` defined by the accepted CLI
-Architecture. The lock file is persistent and reusable: write no metadata,
+`LocalApplicationData/OpenForge/locks/v1` defined by the [Mutation And Recovery
+Technical Design](../../../technical-designs/mutation-and-recovery.md). The lock file is persistent and reusable: write no metadata,
 timestamp, or ownership record. Hold a
 `FileShare.None` handle for the operation; file existence is not lock
 ownership. A crash releases the OS lock, and another process holding it blocks
@@ -308,7 +308,8 @@ orphan retention, shared owners, semantic current-versus-baseline classification
 unchanged final-owner deletion, changed Keep/Delete and same-request prune,
 ownership release, later-prune refusal, route/generated safety, package-source
 preservation, complete plan, recovery-bundle behavior, dry-run parity, no-op proof,
-seven statuses/streams, JSON parity, and no Framework mutation. The shared CLI
-Architecture defines the exact JSON result schema and exit mapping. Gate 5 must
+seven statuses/streams, JSON parity, and no Framework mutation. The [Shared
+Result Coordinates](../../shared/result-coordinates/interface.md) define the exact
+JSON result schema and exit mapping. Gate 5 must
 prove source-generated serialization, fixed Markdig where used, real
 `System.IO`, Native AOT, OS locking, isolated tests, and package journeys.

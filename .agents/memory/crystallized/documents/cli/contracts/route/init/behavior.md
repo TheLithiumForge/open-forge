@@ -29,10 +29,12 @@ guide this boundary. The shared [Global CLI Flags](../../shared/global-flags/beh
 contracts remain authoritative at their own scopes. The Framework routing and
 Markdown sources remain authoritative for the meaning this operation consumes.
 
-The [CLI Architecture](../../../architecture.md) defines the accepted shared
-structured schema, process-status mapping, parser and serialization, source
-structure, package and runtime boundaries, BCL-first filesystem boundary,
-workspace lock, and recovery identity model. This contract does not choose those
+The [Shared Result Coordinates](../../shared/result-coordinates/interface.md)
+define the accepted shared structured schema and process-status mapping. The
+[CLI Architecture](../../../architecture.md) defines parser and concrete
+serialization relationships, source and runtime boundaries, BCL-first filesystem
+structure, the workspace-lock boundary, and recovery identity relationships.
+This contract does not choose those
 details and remains technology-neutral.
 
 ## Operation Invariants
@@ -494,8 +496,11 @@ Expected-state revalidation and preservation of unexpected concurrent edits are
 current safety meaning. The persistent reusable zero-byte external workspace
 lock below `LocalApplicationData/OpenForge/locks/v1` is held with one read/write
 `FileShare.None` handle; it never receives metadata writes, deletion, or
-truncation. The BCL-first filesystem boundary and recovery-bundle identity model
-are defined by the CLI Architecture; they are not public command flags.
+truncation. The BCL-first filesystem boundary is defined by the [CLI
+Architecture](../../../architecture.md), and exact recovery-bundle identity
+mechanics are defined by the [Mutation And Recovery Technical
+Design](../../../technical-designs/mutation-and-recovery.md); they are not public
+command flags.
 
 ## Presentation Relationship
 
@@ -611,10 +616,13 @@ in addition to the public checks in [Interface Verification](interface.md#verifi
   status, bounded diagnostics on stderr, and no human text in JSON stdout, all
   from one typed result.
 
-The Interface defines the exact Route Init result graph. The CLI Architecture
-defines the shared envelope and JSON compatibility, process-status mapping,
-parser and serialization, filesystem and identity implementation,
-recovery-bundle identity, concurrency mechanics, and source boundaries. Gate 5
+The Interface defines the exact Route Init result graph. The [Shared Result
+Coordinates](../../shared/result-coordinates/interface.md) define the shared
+envelope, JSON compatibility, and process-status mapping. The [CLI
+Architecture](../../../architecture.md) defines parser and concrete serialization,
+filesystem identity, concurrency, and source boundaries; exact recovery-bundle
+identity mechanics live in the [Mutation And Recovery Technical
+Design](../../../technical-designs/mutation-and-recovery.md). Gate 5
 executable proof must cover those decisions without weakening the accepted
 repetition, status, stream, attention, dry-run, compact, safety, or recovery
 requirements.

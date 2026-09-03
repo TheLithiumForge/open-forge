@@ -27,9 +27,10 @@ accepted [Context Interface Contract](../../context/interface.md) defines select
 and the [Status Interface Contract](../../status/interface.md) defines the shared physical
 measurements and token estimate.
 
-The [CLI Architecture](../../../architecture.md) defines the accepted shared
-JSON envelope, process-status mapping, source structure, package and runtime
-boundaries, BCL-first filesystem boundary, and diagnostic realization. Primary
+The [Shared Result Coordinates](../../shared/result-coordinates/interface.md)
+define the accepted shared JSON envelope and process-status mapping. The [CLI
+Architecture](../../../architecture.md) defines source and runtime boundaries,
+the BCL-first filesystem boundary, and diagnostic structure. Primary
 human `complete`, `attention`, and `incomplete` results use
 stdout. Primary human `invalid`, `blocked`, `failed`, and `interrupted` results
 use stderr. `--json` writes one complete structured result to stdout for every
@@ -37,10 +38,11 @@ status; bounded diagnostics use stderr, and human text is never mixed into JSON
 stdout. Command-specific repetition beyond the shared global flags is not
 invented here.
 
-The CLI Architecture defines the shared envelope, schema compatibility,
-process-status mapping, serialization, parser and filesystem realization,
-physical identity, containment, diagnostics, source structure, package and
-runtime boundaries, and test boundaries. This Interface defines the exact
+The [Shared Result Coordinates](../../shared/result-coordinates/interface.md)
+define the shared envelope, schema compatibility, and process-status mapping.
+The [CLI Architecture](../../../architecture.md) defines concrete serialization,
+parser and filesystem structure, physical identity, containment, diagnostics,
+source and runtime boundaries, and test boundaries. This Interface defines the exact
 command-local structured fields below without choosing their implementation.
 
 ## Purpose
@@ -597,24 +599,24 @@ The structured `next` member uses `{ command, reason }` with these exact values:
 
 - `complete`, and `attention` after exact-path selection: null;
 - interactive `attention`: the command is `open-forge route inspect
-  "<canonical-path>"`, and the reason is `Rerun with the exact path for
-  non-interactive use.`;
+"<canonical-path>"`, and the reason is `Rerun with the exact path for
+non-interactive use.`;
 - `invalid`: `{ command: "open-forge route inspect --help", reason: "Correct
-  the named source or input, then rerun route inspect." }`;
+the named source or input, then rerun route inspect." }`;
 - `incomplete`: `{ command: "open-forge doctor", reason: "Review the unavailable
-  route fact, then rerun route inspect." }`;
+route fact, then rerun route inspect." }`;
 - a blocked source-ID collision: the command reruns `open-forge route inspect`
   with the first listed exact path, and the reason is `Rerun with one listed
-  exact path to resolve the source collision.`;
+exact path to resolve the source collision.`;
 - an ambiguous-route block: the command reruns `open-forge route inspect` with
   the selected exact path, and the reason is `Rerun with the exact source path
-  after resolving the ambiguous route.`;
+after resolving the ambiguous route.`;
 - another `blocked` result: `{ command: "open-forge doctor", reason: "Review the
-  blocked source boundary, then rerun route inspect." }`;
+blocked source boundary, then rerun route inspect." }`;
 - `failed`: `{ command: "open-forge route inspect", reason: "Address the reported
-  failure, then retry route inspect." }`; and
+failure, then retry route inspect." }`; and
 - `interrupted`: `{ command: "open-forge route inspect", reason: "Rerun the same
-  route-inspect request." }`.
+route-inspect request." }`.
 
 `route inspect` never emits route mutation proposals, health recommendations,
 content-placement advice, or diagnostic recommendations. `doctor` owns complete
@@ -796,7 +798,8 @@ The exact condition codes and their condition status are:
 - `interrupted`: `route-inspect.interrupted`.
 
 `command` in the shared envelope is exactly `route inspect`. The envelope's
-`workspace` uses the shared Architecture member, and `next` uses that shared
+`workspace` uses the [Shared Result
+Coordinates](../../shared/result-coordinates/interface.md) member, and `next` uses that shared
 shape with the exact Route Inspect values above; neither is repeated inside
 `result`. Arrays are present when empty. `requestedReference`, `identity`,
 `profile`, nullable fact values, fact reasons, `relatedSourceId`, and `parentId`
@@ -807,8 +810,10 @@ The result does not include authored source bodies or sections, ordinary links,
 all route paths in the workspace, a generated-index comparison, diagnosis,
 recommendations, or route mutation proposals. Exact field names, schema
 versioning, and command-local field meaning are defined by this Interface. The
-shared envelope, compatibility coordinates, and serialization realization are
-defined by the CLI Architecture.
+shared envelope and compatibility coordinates are defined by the [Shared Result
+Coordinates](../../shared/result-coordinates/interface.md), and concrete
+serialization relationships are defined by the [CLI
+Architecture](../../../architecture.md).
 
 `--view` is accepted with `--json` but has no effect because JSON always emits
 the complete structured result under the shared global contract.
@@ -834,7 +839,8 @@ For ordinary conditions, the precedence is `blocked`, `incomplete`, `attention`,
 then `complete`. Invalid input stops before operation work; failed and
 interrupted retain their event meanings.
 
-The shared process-status mapping is defined by the CLI Architecture.
+The shared process-status mapping is defined by the [Shared Result
+Coordinates](../../shared/result-coordinates/interface.md).
 
 ## Errors
 

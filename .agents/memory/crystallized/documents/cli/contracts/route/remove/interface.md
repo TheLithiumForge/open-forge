@@ -30,10 +30,11 @@ operation. The [Index Interface Contract](../../index-candidate/interface.md)
 remains authoritative for generated-navigation projection and bounded generated
 regions.
 
-The [CLI Architecture](../../../architecture.md) defines the accepted shared
-structured schema, process-status mapping, parser and serializer dependencies,
-filesystem and physical-identity boundary, workspace lock, recovery boundary,
-test evidence, runtime, Native AOT, and source-layout choices. This command
+The [Shared Result Coordinates](../../shared/result-coordinates/interface.md)
+define the accepted shared structured schema and process-status mapping. The [CLI
+Architecture](../../../architecture.md) defines parser and serializer roles,
+filesystem and physical-identity, workspace-lock and recovery boundaries, test
+evidence, runtime, Native AOT, and source-layout choices. This command
 contract adds no competing implementation choice and preserves the observable
 boundaries below.
 
@@ -427,7 +428,8 @@ reporting. Human text
 is not mixed into JSON stdout; bounded diagnostics use stderr.
 
 The structured result exposes the concrete command result under the exact shared
-schema defined by the [CLI Architecture](../../../architecture.md):
+schema defined by the [Shared Result
+Coordinates](../../shared/result-coordinates/interface.md):
 
 - workspace and selection method;
 - requested and resolved source identity and canonical path;
@@ -461,7 +463,8 @@ reference effect that makes surrounding prose safe.
 For ordinary conditions, status precedence is `blocked` > `incomplete` >
 `attention` > `complete`. Invalid input stops before operation resolution.
 Failed and interrupted preserve their event meanings. The shared numeric
-process-status mapping is defined by the CLI Architecture.
+process-status mapping is defined by the [Shared Result
+Coordinates](../../shared/result-coordinates/interface.md).
 
 ## Verified No-Op And Honest Repeats
 
@@ -558,10 +561,11 @@ leaf.
 - create a receipt, tombstone, journal, saved plan, session, or automatic
   recovery history;
 - create a Git commit; or
-- redefine the shared libraries, parser boundary, physical identity, recovery
-  bundle,
-  lock, concurrency, test, Native AOT, or C# source-layout choices accepted by
-  the CLI Architecture.
+- redefine the shared libraries, parser boundary, physical identity, lock,
+  concurrency, test, Native AOT, or C# source-layout choices accepted by the [CLI
+  Architecture](../../../architecture.md), or the exact recovery-bundle mechanics
+  accepted by the [Mutation And Recovery Technical
+  Design](../../../technical-designs/mutation-and-recovery.md).
 
 Use `index` for standalone generated navigation, `references` for read-only
 direct reference facts, `doctor` for diagnosis, and the accepted lifecycle

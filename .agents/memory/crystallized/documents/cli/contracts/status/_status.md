@@ -14,8 +14,10 @@ This routed contract set is the current Crystallized authority for the accepted
 Behavior contracts are the detailed authorities for the public surface and
 technology-neutral operation.
 
-The accepted CLI Architecture defines the shared implementation boundary and the
-exact JSON result schema and exit mapping. Gate 5 must prove source-generated
+The accepted [CLI Architecture](../../architecture.md) defines the shared
+implementation boundary. The [Shared Result
+Coordinates](../shared/result-coordinates/interface.md) define the exact JSON
+result schema and exit mapping. Gate 5 must prove source-generated
 YamlDotNet and STJ serialization, fixed Markdig where used, real `System.IO`,
 Native AOT, OS locking, isolated tests, and package journeys. Status is
 read-only, so it does not acquire the workspace mutation lock.

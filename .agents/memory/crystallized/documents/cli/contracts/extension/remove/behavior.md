@@ -16,8 +16,10 @@ semantic removal classification, Keep-as-unmanaged/Delete intent, generated
 projection, complete planning, dry-run/application, verification, lifecycle
 publication, recovery, result formation, and conformance. It does not choose
 package source, schema, parser, storage, or implementation technology. The
-accepted CLI Architecture defines the exact shared JSON result schema and exit
-mapping and the implementation boundary; this behavior does not duplicate those
+[Shared Result Coordinates](../../shared/result-coordinates/interface.md) define
+the exact shared JSON result schema and exit mapping, while the [CLI
+Architecture](../../../architecture.md) defines the cross-cutting implementation
+boundary; this behavior does not duplicate those
 mechanics or claim their Gate 5 proof.
 
 ## Complete Typed Flow
@@ -150,8 +152,8 @@ and semantic facts, route and generated boundaries, cross-section preservation,
 expected state, deletion safety, verification, and recovery-bundle readiness.
 One failed condition blocks all effects. Before the first workspace effect,
 obtain the actual OS lock for the persistent external zero-byte path under
-`LocalApplicationData/OpenForge/locks/v1` defined by the accepted CLI
-Architecture. The lock file is persistent and reusable: write no metadata,
+`LocalApplicationData/OpenForge/locks/v1` defined by the [Mutation And Recovery
+Technical Design](../../../technical-designs/mutation-and-recovery.md). The lock file is persistent and reusable: write no metadata,
 timestamp, or ownership record.
 Hold a `FileShare.None` handle; existence is not lock ownership, and another
 process holding the handle blocks mutation. A crash releases the OS lock. The
@@ -247,7 +249,8 @@ deletion, changed Keep-as-unmanaged, same-request prune Delete, later-prune
 refusal, unknown/unowned/Framework preservation, semantic fingerprints,
 generated projection, complete plan, recovery-bundle behavior, revalidation,
 verification, dry-run no-effects, statuses/streams/JSON, and
-package-source preservation. The shared CLI Architecture defines the exact JSON
+package-source preservation. The [Shared Result
+Coordinates](../../shared/result-coordinates/interface.md) define the exact JSON
 result schema and exit mapping. Gate 5 must prove source-generated
 serialization, fixed Markdig where used, real `System.IO`, Native AOT, OS
 locking, isolated tests, and package journeys.

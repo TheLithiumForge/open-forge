@@ -19,6 +19,7 @@ Decisions record important accepted choices and why they were made.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
+- [Why replacement CLI dependency roles are narrow, centrally pinned, and constrained by Native AOT and trimming](cli-dependency-policy.md) - #Memory #Decision #CurrentTruth #CLI #Dependency #DotNet #NativeAOT #Security
 - [Accepted rationale for optional Extension packaging, ownership, and catalogue choices](extensions/_extensions.md) - #Memory #Decision #CurrentTruth #Extension #Rationale
 - [Accepted Framework rationale for routing, authority, Core roles, Memory, Markdown, packaging, and user-facing writing](framework/_framework.md) - #Memory #Decision #CurrentTruth #Framework #Rationale
 - [Accepted product-direction rationale, distinct from Framework and implementation decisions](product/_product.md) - #Memory #Decision #CurrentTruth #Product #Rationale

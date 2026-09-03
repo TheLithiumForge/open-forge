@@ -30,11 +30,12 @@ CLI does not ship yet; implementation and executable proof remain pending Gate 5
 - [`behavior.md`](behavior.md) defines technology-neutral current-fact
   resolution, complete planning, preflight, deletion, verification, the narrow
   monotonic recovery exception, result formation, and conformance.
-- No command-local Technical Design file is needed. The [CLI
-  Architecture](../../architecture.md) defines the accepted shared structured
-  result, process-status, source, package, runtime, filesystem, and recovery
-  realization. This contract remains the authority for cleanup's observable
-  meaning.
+- No command-local Technical Design file is needed. The [Shared Result
+  Coordinates](../shared/result-coordinates/interface.md) define the shared
+  structured result and process-status coordinates. The [CLI
+  Architecture](../../architecture.md) defines cross-cutting source, runtime,
+  filesystem, and recovery structure. This contract remains the authority for
+  cleanup's observable meaning.
 
 The [historical Decision Agenda](../../../../../archived/cli-release/decision-agenda-2026-08-21.md) records the accepted D017A
 direction. The detailed local contracts remain the authorities for cleanup's

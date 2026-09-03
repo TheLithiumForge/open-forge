@@ -13,7 +13,7 @@ This file is the current Crystallized authority for the caller-visible `find`
 Interface Contract. The command is a current non-shipping contract and does not
 claim executable behavior.
 
-The [CLI Architecture](../../architecture.md#result-json-coordinates-and-process-status)
+The [Shared Result Coordinates](../shared/result-coordinates/interface.md)
 defines only the shared JSON envelope, source-location primitive, and
 status/process coordinates. This Interface owns the exact command-local
 `find.result` object, its findings and finite values, and every `find`-specific
@@ -405,7 +405,7 @@ complete public selection, matching, projection, and result meaning.
   supplied include and exclude occurrences together with their resolved
   selector identities. Its candidate, inspected, and matched counts describe
   only the effective universe. Expanded output always shows `Projection
-  coverage:` as `not requested`, `not started`, `complete`, `incomplete`,
+coverage:` as `not requested`, `not started`, `complete`, `incomplete`,
   `blocked`, `failed`, or `interrupted`; the corresponding structured values use
   hyphens where shown in the exact schema, including `not-requested` and
   `not-started`.
@@ -516,17 +516,18 @@ complete public selection, matching, projection, and result meaning.
 - The structured result exposes the complete typed public result described in
   [Structured Result Fields](#structured-result-fields) and the source-universe
   facts in [Filtered Coverage, Results, And Ordering](#filtered-coverage-results-and-ordering).
-  The exact command-local schema is defined below. The Architecture supplies
-  only the shared top-level envelope, location, and status coordinates.
+  The exact command-local schema is defined below. The [Shared Result
+  Coordinates](../shared/result-coordinates/interface.md) supply only the shared
+  top-level envelope, location, and status coordinates.
 - The JSON document preserves the complete typed facts above and the semantic
   status through the shared top-level envelope. Its command-local members are
-  not duplicated in the Architecture document.
+  not duplicated in the shared result-coordinate contract.
 
 #### Exact Command-Local Schema
 
 The following camel-case grammar lists every command-local member in wire order.
 No member in this grammar is omitted. `SourceLocation` is the shared primitive
-defined by the [CLI Architecture](../../architecture.md#result-json-coordinates-and-process-status).
+defined by the [Shared Result Coordinates](../shared/result-coordinates/interface.md).
 The shared envelope's `command` member is exactly `find`; the complete public
 command form remains `open-forge find`.
 
@@ -756,14 +757,14 @@ Arrays are always present, and no command-local schema member is omitted.
 Metadata records keep `layers` in base-then-overwrite order as `{ kind, path }`
 records. Projected heading records use `text`, `level`, `form`, `location`, and
 `canonical` in that order. The top-level `workspace` and `next` members remain
-the Architecture envelope members; Find supplies the command-local `next`
+the shared result-coordinate envelope members; Find supplies the command-local `next`
 values below.
 
 #### Finding Codes And Ordering
 
 Find has exactly this finding vocabulary. Each code has only the status shown:
 
-| Machine code                    | Finding status |
+| Machine code                   | Finding status |
 | ------------------------------ | -------------- |
 | `find.invalid-input`           | `invalid`      |
 | `find.invalid-selector`        | `invalid`      |
@@ -834,7 +835,8 @@ order, or exception order.
 
 #### Next Actions
 
-The top-level `next` member uses the Architecture shape `{ command, reason }` or
+The top-level `next` member uses the [Shared Result
+Coordinates](../shared/result-coordinates/interface.md) shape `{ command, reason }` or
 `null`, with these exact Find values. The compact human line is shown in the
 last column. `next.command` is a canonical action command line, not the result's
 command identity and not a reconstruction of the caller's original arguments.
@@ -842,16 +844,16 @@ It includes a fixed option only when that option is the action itself; a reason
 that says to rerun the same request requires the caller to preserve the original
 Find arguments.
 
-| Condition | Top-level `next` | Compact human line |
-| --------- | ---------------- | ------------------ |
-| `complete` | `null` | no line |
-| `attention` | `null` | no line |
-| `incomplete` | `{ command: "open-forge doctor", reason: "Inspect the unavailable source or projection facts before relying on this Find result." }` | `Next: open-forge doctor` |
-| `invalid` | `{ command: "open-forge find --help", reason: "Correct the named Find input, then rerun the request." }` | `Next: correct the named Find input.` |
+| Condition                                                              | Top-level `next`                                                                                                                      | Compact human line                                                    |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `complete`                                                             | `null`                                                                                                                                | no line                                                               |
+| `attention`                                                            | `null`                                                                                                                                | no line                                                               |
+| `incomplete`                                                           | `{ command: "open-forge doctor", reason: "Inspect the unavailable source or projection facts before relying on this Find result." }`  | `Next: open-forge doctor`                                             |
+| `invalid`                                                              | `{ command: "open-forge find --help", reason: "Correct the named Find input, then rerun the request." }`                              | `Next: correct the named Find input.`                                 |
 | `blocked` where `find.selector-ambiguous` is the only blocking finding | `{ command: "open-forge find", reason: "Replace every ambiguous selector with one listed exact path, then rerun the same request." }` | `Next: rerun with one listed exact path for each ambiguous selector.` |
-| other `blocked` | `{ command: "open-forge doctor", reason: "Inspect the blocked workspace or source boundary before rerunning Find." }` | `Next: open-forge doctor` |
-| `failed` | `{ command: "open-forge find --verbose", reason: "Report the failure and retry the same request with bounded diagnostics." }` | `Next: report the failure and retry with bounded diagnostics.` |
-| `interrupted` | `{ command: "open-forge find", reason: "Rerun the same Find request." }` | `Next: rerun the same request.` |
+| other `blocked`                                                        | `{ command: "open-forge doctor", reason: "Inspect the blocked workspace or source boundary before rerunning Find." }`                 | `Next: open-forge doctor`                                             |
+| `failed`                                                               | `{ command: "open-forge find --verbose", reason: "Report the failure and retry the same request with bounded diagnostics." }`         | `Next: report the failure and retry with bounded diagnostics.`        |
+| `interrupted`                                                          | `{ command: "open-forge find", reason: "Rerun the same Find request." }`                                                              | `Next: rerun the same request.`                                       |
 
 Find never recommends mutation, repair, or content rewriting. These values are
 status-deterministic except for the selector-ambiguity-only blocked branch.
@@ -881,7 +883,7 @@ status-deterministic except for the selector-ambiguity-only blocked branch.
 - `attention` never hides a candidate that might match. Any
   uncertainty that can change the result set is `incomplete` or `blocked`.
 - The exact numeric process-status mapping is defined by the
-  [CLI Architecture](../../architecture.md#result-json-coordinates-and-process-status). The semantic result names and
+  [Shared Result Coordinates](../shared/result-coordinates/interface.md). The semantic result names and
   conditions above remain the public `find` meanings.
 
 ## Errors
@@ -1369,8 +1371,9 @@ interface. Detailed technology-neutral semantic evidence is mapped in the
   ```
 
 - Each body occurrence records authored spelling, source layer,
-  1-based line, and occurrence count. The shared CLI Architecture defines the
-  exact column and source-span representation; each occurrence retains the
+  1-based line, and occurrence count. The [Shared Result
+  Coordinates](../shared/result-coordinates/interface.md) define the exact column
+  and source-span representation; each occurrence retains the
   required line, count, layer, and authored-spelling facts above.
 
 ### Public Heading Matching

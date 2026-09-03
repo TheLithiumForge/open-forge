@@ -31,8 +31,8 @@ writes nothing. The document stores no plan, runtime history, journal, recovery
 evidence, or session. Files outside this exact path are ordinary workspace
 content, not lifecycle input.
 
-The shared CLI Architecture defines the exact structured JSON result schema and
-numeric exit mapping. This Interface uses those shared definitions without
+The [Shared Result Coordinates](../shared/result-coordinates/interface.md) define
+the exact structured JSON result schema and numeric exit mapping. This Interface uses those shared definitions without
 duplicating implementation mechanics. Gate 5 must prove source-generated
 YamlDotNet and STJ serialization, fixed Markdig where used, real `System.IO`,
 Native AOT, OS locking, isolated tests, and package journeys. The new CLI remains
@@ -151,7 +151,8 @@ engine.
 
 Workspace mutation uses the persistent external zero-byte path under the
 application-owned `LocalApplicationData/OpenForge/locks/v1` catalogue defined by
-the accepted CLI Architecture. File existence is not lock ownership: the
+the [Mutation And Recovery Technical
+Design](../../technical-designs/mutation-and-recovery.md). File existence is not lock ownership: the
 operation must hold the actual OS file lock. A crash releases that OS lock. An unlocked
 file is reusable and may be manually removed only when no process is active.
 This lock is concurrency safety, not lifecycle authority or history. An active
@@ -397,12 +398,18 @@ Update does not:
 If a supported formatter configuration is detected, update may give conservative
 advice only. It does not execute a formatter or persist formatter state.
 
-The accepted CLI Architecture owns exact document serialization, semantic
-canonicalization mechanics, parser libraries, filesystem identity, containment,
-locks, concurrency, recovery-bundle and temporary artifact details, diagnostics, Native
-AOT architecture, package implementation, and tests. Gate 5 must prove those
-boundaries, the shared result schema and exit mapping, and the embedded
-deterministic inventory/hash evidence.
+The [Lifecycle Provenance Technical
+Design](../../technical-designs/lifecycle-provenance.md) owns exact document
+serialization, and the [Mutation And Recovery Technical
+Design](../../technical-designs/mutation-and-recovery.md) owns exact lock,
+recovery-bundle, and temporary-artifact mechanics. The [CLI
+Architecture](../../architecture.md) owns parser roles, filesystem identity and
+containment invariants, concurrency boundaries, diagnostics, and Native AOT
+structure. Gate 5 must prove those boundaries, the shared result schema and exit
+mapping from the [Shared Result
+Coordinates](../shared/result-coordinates/interface.md), and the embedded
+inventory/hash realization from the [Embedded Payload Technical
+Design](../../technical-designs/embedded-payload.md).
 
 ## Public Conformance
 

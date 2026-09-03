@@ -27,9 +27,10 @@ and [Index Behavior Contract](../../index-candidate/behavior.md) remain
 authoritative at their own scopes. The current Framework routing, Markdown,
 overwrite, and lifecycle sources define the meaning consumed by this operation.
 
-The [CLI Architecture](../../../architecture.md) defines the accepted shared
-result schema, process-status mapping, parser and serializer dependencies,
-filesystem and physical-identity boundary, workspace lock, recovery boundary,
+The [Shared Result Coordinates](../../shared/result-coordinates/interface.md)
+define the accepted shared result schema and process-status mapping. The [CLI
+Architecture](../../../architecture.md) defines parser and serializer roles,
+filesystem and physical-identity, workspace-lock and recovery boundaries,
 libraries, test evidence, Native AOT, and source-layout choices. This behavior
 remains technology-neutral within those accepted boundaries.
 

@@ -362,9 +362,10 @@ coverage status in this order: `blocked`, `incomplete`, `attention`, then
 `complete`. Preserve every independently safe source and observation that this
 boundary allows, and never hide a broken edge. Failed and interrupted retain
 their event meanings rather than being replaced by an ordinary finding status.
-The CLI Architecture defines exact numeric process exits, structured field names,
-schema version, and compatibility. This Behavior Contract defines the semantic
-conditions that those shared results represent.
+The [Shared Result Coordinates](../shared/result-coordinates/interface.md) define
+exact numeric process exits, structured field names, schema version, and
+compatibility. This Behavior Contract defines the semantic conditions that those
+shared results represent.
 
 The typed result includes the complete Interface-defined workspace, source,
 closure, flag, count, finding, boundary, view, and content facts. It preserves

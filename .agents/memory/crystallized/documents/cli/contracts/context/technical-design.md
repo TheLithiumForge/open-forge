@@ -10,9 +10,10 @@ open-forge:
 ## Status And Authority
 
 This is the accepted Technical Design for `context`. It is subordinate to the
-[CLI Architecture](../../architecture.md), which defines the shared JSON schema,
-process-status mapping, source structure, package boundary, runtime libraries,
-BCL-first filesystem boundary, and recovery identity model. The [Interface
+[Shared Result Coordinates](../shared/result-coordinates/interface.md), which
+define the shared JSON schema and process-status mapping, and to the [CLI
+Architecture](../../architecture.md), which defines source structure, runtime
+boundaries, BCL-first filesystem structure, and recovery identity relationships. The [Interface
 Contract](interface.md) and [Behavior Contract](behavior.md) remain authoritative
 for public and technology-neutral meaning.
 
@@ -62,9 +63,11 @@ observable finding rather than being silently repaired.
 
 ### Results and filesystem boundary
 
-The operation produces the shared typed result defined by the CLI Architecture.
-JSON uses source-generated serialization of that result. Human and JSON
-presentation consume the same result and do not rerun resolution or projection.
+The operation produces one concrete typed result conforming to the [Shared Result
+Coordinates](../shared/result-coordinates/interface.md). The CLI Architecture
+defines its concrete typed pipeline and source-generated serialization. Human
+and JSON presentation consume the same result and do not rerun resolution or
+projection.
 
 Filesystem access is BCL-first and uses real `System.IO` behavior. The design
 does not introduce a virtual filesystem or a private filesystem authority.

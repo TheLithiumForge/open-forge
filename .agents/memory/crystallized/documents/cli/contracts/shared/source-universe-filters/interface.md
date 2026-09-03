@@ -12,8 +12,9 @@ open-forge:
 This file is the accepted current Crystallized authority for the caller-visible
 meaning of the shared source-universe filters. Their final route is under
 `cli/contracts/shared/`. The commands that apply the contract do not ship yet;
-implementation and executable proof remain pending Gate 5. The [CLI
-Architecture](../../../architecture.md) defines the shared result, filesystem,
+implementation and executable proof remain pending Gate 5. The [Shared Result
+Coordinates](../result-coordinates/interface.md) define the shared result
+boundary. The [CLI Architecture](../../../architecture.md) defines filesystem,
 runtime, and evidence boundaries; this contract defines only selector meaning.
 
 This is not a global-flag contract. `--include` and `--exclude` are reusable

@@ -19,9 +19,13 @@ recovery, result formation, and conformance.
 The [Interface Contract](interface.md) defines public syntax, states, output,
 status vocabulary, errors, examples, and non-goals. Shared Global Flags and the
 Framework, routing, maintenance, and Index contracts define their respective
-meanings. The accepted CLI Architecture defines the exact lifecycle serialization,
-shared JSON result schema, exit mapping, and implementation mechanics. This file
-does not duplicate those mechanics or claim their Gate 5 proof.
+meanings. The [Shared Result
+Coordinates](../shared/result-coordinates/interface.md) define the shared JSON
+result schema and exit mapping. The [Lifecycle Provenance Technical
+Design](../../technical-designs/lifecycle-provenance.md) defines exact lifecycle
+serialization realization, while the [CLI Architecture](../../architecture.md)
+defines cross-cutting implementation structure. This file does not duplicate
+those mechanics or claim their Gate 5 proof.
 
 ## Operation Flow And Invariants
 
@@ -299,8 +303,8 @@ verified bundle preparation; a `Create` or semantic/byte no-op has none. A
 verified no-op has no mutation path and needs no bundle.
 
 Before the first workspace effect, the implementation obtains the actual OS lock
-for the persistent reusable zero-byte external path defined by the accepted CLI
-Architecture. The operation holds one read/write `FileShare.None` handle and
+for the persistent reusable zero-byte external path defined by the [Mutation And
+Recovery Technical Design](../../technical-designs/mutation-and-recovery.md). The operation holds one read/write `FileShare.None` handle and
 never writes metadata, truncates, or deletes the lock file. An active handle
 blocks the plan; lock state is not lifecycle authority, history, or recovery
 evidence.
@@ -357,18 +361,18 @@ When application is selected:
 9. Rebuild and verify the complete recognized Framework result and preservation
    boundaries as one operation.
 10. Publish or refresh only the Framework lifecycle facts established by the
-   complete verified result, preserving the unrelated lifecycle section
-   semantically. A selected lifecycle semantic change is source-generated as one
-   deterministic canonical UTF-8 whole-document representation; formatting,
-   ordering, and line-ending trivia may be normalized. A semantic no-op publishes
-   no lifecycle write. Prior bytes remain retained in the verified operation
-   bundle.
+    complete verified result, preserving the unrelated lifecycle section
+    semantically. A selected lifecycle semantic change is source-generated as one
+    deterministic canonical UTF-8 whole-document representation; formatting,
+    ordering, and line-ending trivia may be normalized. A semantic no-op publishes
+    no lifecycle write. Prior bytes remain retained in the verified operation
+    bundle.
 11. After final verification, delete only the positively recognized bundle
-   created for this operation. `Deleted`/`Removed` permits normal completion.
-   `Failed`/positively observed `Retained` keeps target effects successful and
-   produces `attention`, the exact residual path,
-   and cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the
-   deletion result provides one.
+    created for this operation. `Deleted`/`Removed` permits normal completion.
+    `Failed`/positively observed `Retained` keeps target effects successful and
+    produces `attention`, the exact residual path,
+    and cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the
+    deletion result provides one.
 
 Install has no target deletion effect. Before any existing byte or bounded region
 is replaced, orchestration selects only

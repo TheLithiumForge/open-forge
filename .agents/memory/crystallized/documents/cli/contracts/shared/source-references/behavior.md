@@ -18,9 +18,10 @@ grammar, defaults and interpretation, observable identities and results, errors,
 examples, and non-goals. This file links to those definitions rather than
 maintaining a second detailed public contract.
 
-The [CLI Architecture](../../../architecture.md) defines the BCL-first
-filesystem and physical-identity boundary, shared result envelope,
-process-status mapping, runtime, and evidence boundary. This behavior remains
+The [Shared Result Coordinates](../result-coordinates/interface.md) define the
+shared result envelope and process-status mapping. The [CLI
+Architecture](../../../architecture.md) defines the BCL-first filesystem and
+physical-identity, runtime, and evidence boundaries. This behavior remains
 technology-neutral within those accepted choices.
 
 ## Reference Invariants

@@ -16,7 +16,7 @@ surface that this behavior satisfies. The [Technical Design](technical-design.md
 records the accepted realization without changing this contract. The command
 does not ship, and this file does not claim an implementation.
 
-The accepted [Open Forge CLI Architecture](../../architecture.md#result-json-coordinates-and-process-status)
+The accepted [Shared Result Coordinates](../shared/result-coordinates/interface.md)
 defines the shared exact structured-result schema and numeric process-exit
 mapping. This Behavior Contract forms the typed result that conforms to that
 shared boundary and does not choose libraries, modules, or other technology.
@@ -424,7 +424,7 @@ sources, target closure, authoritative topology and metadata coverage,
 per-region action and change evidence, preflight and effect states, verification
 and recovery, changed and unchanged targets, residual state, findings, semantic
 status, and next actions. The shared exact field names and schema version come
-from the accepted [Open Forge CLI Architecture](../../architecture.md#result-json-coordinates-and-process-status).
+from the accepted [Shared Result Coordinates](../shared/result-coordinates/interface.md).
 
 The semantic conditions for `complete`, `attention`, `incomplete`, `invalid`,
 `blocked`, `failed`, and `interrupted` are exactly the conditions in the
@@ -436,7 +436,7 @@ and overlapping selections do not create duplicate result entries or effects.
 Residual draft or final paths are reported without recovery-derived current
 target classification; no restoration or rollback is selected. Numeric process
 exits use the shared mapping defined by the accepted
-[Open Forge CLI Architecture](../../architecture.md#result-json-coordinates-and-process-status).
+[Shared Result Coordinates](../shared/result-coordinates/interface.md).
 
 The command-owned structured result uses exactly this top-level order:
 `mode`, `selection`, `regions`, `recovery`, `findings`, `counts`. It retains no

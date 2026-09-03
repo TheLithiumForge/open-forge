@@ -21,21 +21,22 @@ Native AOT. The command does not ship. This document claims no existing code,
 executable, test suite, package, or proof. Actual Native AOT proof is pending
 Gate 5.
 
-The Architecture defines only the shared schema-v1 JSON envelope,
-source-location primitive, and status/process coordinates. The Find Interface
+The [Shared Result Coordinates](../shared/result-coordinates/interface.md) define
+the shared schema-v1 JSON envelope, source-location primitive, and status/process
+coordinates. The Find Interface
 defines the exact command-local result schema, finding codes, finite values, and
 `next` contents. This design uses those definitions and does not redefine either
 authority.
 
 ## Contract Traceability
 
-| Contract boundary                                                                                                                                                                    | Accepted design response                                                                                                                                                                                                                                                                         | Evidence state                                       |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------- |
-| [Structured Result Fields](interface.md#structured-result-fields) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities)           | Produce one typed result rich enough for the public workspace, universe, query, projection, counts, coverage, ordered sources, evidence, content, findings, and semantic status. Follow the exact Find Interface command-local schema inside the shared Architecture envelope and use the Architecture status-to-exit mapping. | Design accepted; executable proof is pending Gate 5. |
-| [Semantic Results](interface.md#semantic-results) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities)                           | Map semantic results to process completion behavior without changing the named semantic conditions.                                                                                                                                                                                              | Design accepted; executable proof is pending Gate 5. |
-| [Public Heading Matching](interface.md#public-heading-matching) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities)             | Use the fixed Markdig 1.3.2 CommonMark pipeline to expose the required structural heading nodes, visible inline text, source forms, levels, locations, and section boundaries.                                                                                                                   | Design accepted; executable proof is pending Gate 5. |
-| [Workspace And Source Universe](interface.md#workspace-and-source-universe) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities) | Use real `System.IO` boundaries and command-local source units that establish the declared workspace and source-universe containment without hiding eligible files.                                                                                                                              | Design accepted; executable proof is pending Gate 5. |
-| [Public Tag Matching](interface.md#public-tag-matching) and [Public Heading Matching](interface.md#public-heading-matching)                                                          | Use strict UTF-8 byte-origin mapping for source locations and keep body-tag scanners and compatibility patches local to `find`. Preserve exact authored spelling, line, occurrence, layer, and source-span facts without guessing unavailable origins.                                           | Design accepted; executable proof is pending Gate 5. |
+| Contract boundary                                                                                                                                                                    | Accepted design response                                                                                                                                                                                                                                                                                               | Evidence state                                       |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| [Structured Result Fields](interface.md#structured-result-fields) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities)           | Produce one typed result rich enough for the public workspace, universe, query, projection, counts, coverage, ordered sources, evidence, content, findings, and semantic status. Follow the exact Find Interface command-local schema inside the shared result-coordinate envelope and use its status-to-exit mapping. | Design accepted; executable proof is pending Gate 5. |
+| [Semantic Results](interface.md#semantic-results) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities)                           | Map semantic results to process completion behavior without changing the named semantic conditions.                                                                                                                                                                                                                    | Design accepted; executable proof is pending Gate 5. |
+| [Public Heading Matching](interface.md#public-heading-matching) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities)             | Use the fixed accepted Markdig CommonMark pipeline to expose the required structural heading nodes, visible inline text, source forms, levels, locations, and section boundaries.                                                                                                                                      | Design accepted; executable proof is pending Gate 5. |
+| [Workspace And Source Universe](interface.md#workspace-and-source-universe) and [Deterministic Conformance Responsibilities](behavior.md#deterministic-conformance-responsibilities) | Use real `System.IO` boundaries and command-local source units that establish the declared workspace and source-universe containment without hiding eligible files.                                                                                                                                                    | Design accepted; executable proof is pending Gate 5. |
+| [Public Tag Matching](interface.md#public-tag-matching) and [Public Heading Matching](interface.md#public-heading-matching)                                                          | Use strict UTF-8 byte-origin mapping for source locations and keep body-tag scanners and compatibility patches local to `find`. Preserve exact authored spelling, line, occurrence, layer, and source-span facts without guessing unavailable origins.                                                                 | Design accepted; executable proof is pending Gate 5. |
 
 ## Runtime And Dependencies
 
@@ -43,17 +44,18 @@ The command uses System.CommandLine with manual binding. Binding is explicit and
 produces the typed request described by the Interface Contract; it does not create
 an alternate convention- or reflection-defined public grammar.
 
-Markdown parsing uses Markdig 1.3.2 with one fixed CommonMark pipeline. Plugin
+Markdown parsing uses Markdig with one fixed CommonMark pipeline. Plugin
 discovery is disabled. The fixed pipeline does not discover extensions or add a
 public heading form beyond the accepted CommonMark ATX and Setext boundary.
 
-YAML frontmatter uses the shared neutral YamlDotNet 18.1.0 syntax boundary plus
+YAML frontmatter uses the shared neutral YamlDotNet syntax boundary plus
 the one source-generated semantic metadata path. The operation matches parsed
 authored values, not serialized YAML text, and does not make unknown metadata or
 generated `Entries` copies part of tag semantics.
 
 Structured JSON uses System.Text.Json source generation. The serializer realizes
-the shared Architecture envelope and the exact Find Interface command-local
+the [Shared Result Coordinates](../shared/result-coordinates/interface.md)
+envelope and the exact Find Interface command-local
 result graph without reflection-based discovery becoming a private compatibility
 contract.
 
@@ -95,13 +97,13 @@ sources.
 
 ## Parsing And Origin Mapping
 
-The fixed Markdig 1.3.2 CommonMark pipeline supplies ATX and Setext heading nodes,
+The fixed accepted Markdig CommonMark pipeline supplies ATX and Setext heading nodes,
 visible inline text, source forms, levels, and section boundaries. It preserves
 the technology-neutral rules for formatted, linked, code-containing, duplicate,
 and malformed headings. No plugin discovery changes that boundary.
 
 The shared Markdown frontmatter boundary preserves exact delimiter, YAML, and
-body spans. The shared neutral YamlDotNet 18.1.0 syntax parser preserves the
+body spans. The shared neutral YamlDotNet syntax parser preserves the
 decoded node shape and half-open UTF-16 scalar spans while reporting aliases,
 duplicate keys, and non-scalar mapping keys without importing Find policy. The
 one source-generated semantic path supplies accepted metadata values. Together
@@ -122,7 +124,8 @@ scanner observations. Local scanners and compatibility patches preserve the
 mapping when a library does not expose the needed byte origin, line, column, or
 span directly. They do not normalize Unicode, repair malformed authored input,
 or broaden the accepted public syntax. Exact column and source-span fields follow
-the shared Architecture location primitive and retain the Interface Contract's
+the [Shared Result Coordinates](../shared/result-coordinates/interface.md)
+location primitive and retain the Interface Contract's
 authored spelling, layer, region, line, occurrence, and source-location
 requirements.
 
@@ -142,7 +145,7 @@ Result construction produces the one typed result consumed by compact, expanded,
 content-projected, verbose, and structured renderers. Human and structured
 renderers do not rerun enumeration, parsing, matching, projection, or verification.
 The shared envelope fields, location primitive, compatibility rules, and numeric
-process-status mapping come from the [CLI Architecture](../../architecture.md#result-json-coordinates-and-process-status).
+process-status mapping come from the [Shared Result Coordinates](../shared/result-coordinates/interface.md).
 The exact `find.result` schema, finding codes, finite values, and `next` contents
 come from the [Find Interface](interface.md). This design does not replace either
 authority.

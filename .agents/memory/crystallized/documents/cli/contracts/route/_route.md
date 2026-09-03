@@ -40,5 +40,5 @@ define the exact boundaries. Generated `Entries` provide navigation only.
 - [Routing-only entrypoint for the accepted current `route list` command contracts](list/_list.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #List #CurrentTruth
 - [Routing-only entrypoint for the accepted current `route move` contract](move/_move.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Move #Mutation #Reference #CurrentTruth
 - [Routing-only entrypoint for the accepted current `route remove` contract](remove/_remove.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Remove #Mutation #Reference #CurrentTruth
-- [Routing-only entrypoint for the accepted `route update` command contracts](update/_update.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Update #Metadata #Template #Mutation #CurrentTruth
+- [Routing-only entrypoint for the accepted `route update` command contracts](update/_update.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Update #Metadata #Template #Mutation #TechnicalDesign #CurrentTruth
 <!-- open-forge:generated-index:end -->

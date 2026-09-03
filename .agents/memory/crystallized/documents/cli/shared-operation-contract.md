@@ -19,14 +19,19 @@ locality.
 The [Command Contract Set](command-contract-set.md) defines the roles, topology,
 and authority boundaries for those local contracts. The command-local Interface
 and Behavior Contracts remain authoritative for each command's exact syntax,
-subjects, finite conditions, effects, and result facts. This Contract does not
-replace or duplicate those local definitions. It is a Crystallized
-Document/Contract, not a Pattern, Directive, Architecture, or implementation
-design. The replacement does not ship yet. The accepted [CLI
+subjects, finite conditions, effects, and result facts. The shared [Result
+Coordinates](contracts/shared/result-coordinates/_result-coordinates.md) define
+the exact public envelope, source locations, statuses, exits, streams, and
+compatibility used by those results.
+
+This Contract does not replace or duplicate those definitions. It is a
+Crystallized Document/Contract, not a Pattern, Directive, Architecture, or
+implementation design. The replacement does not ship yet. The accepted [CLI
 Architecture](architecture.md) controls high-level implementation choices while
-this Contract remains technology-neutral. It does not choose libraries, modules,
-filesystem mechanics, or other implementation details, and it does not weaken
-the Architecture's fixed result, lifecycle, recovery, or AOT boundaries.
+the routed [Technical Designs](technical-designs/_technical-designs.md) define
+exact shared-capability realization. This Contract remains technology-neutral
+and chooses no library, module, storage path, archive format, lock API, or file
+application mechanism.
 
 The [generic CLI Operation Pattern](../../../../patterns/open-forge/cli/composable-operation.md)
 is optional reusable shape and context. It is not authority for current Open
@@ -249,7 +254,10 @@ The [Global CLI Flags contract](contracts/shared/global-flags/interface.md)
 remains the detailed owner for JSON, `--view`, and `--verbose`. Each command
 contract remains the detailed owner for its local finite conditions and result
 facts. This shared status and stream rule does not create a second command
-schema.
+schema. The [Result Coordinates Interface
+Contract](contracts/shared/result-coordinates/interface.md) defines the exact
+numeric exits, envelope, source-location coordinates, primary streams, and
+compatibility.
 
 ## Typed Operation Flow
 
@@ -283,75 +291,47 @@ not rerun the operation.
 
 The direct root [`cleanup` contract](contracts/cleanup/_cleanup.md) is a narrow
 exception to the normal recovery shape. Other mutating operations prepare one
-external recovery bundle for the complete operation before effects as described
-below. Cleanup still forms one complete catalogue and plan, runs preflight, and
-revalidates each selected artifact immediately before deletion. It may return a
-verified empty no-op without a lease. Before any deletion, it acquires the
-existing same-workspace `WorkspaceLockLease` through the persistent reusable
-lock file and `FileShare.None`, then performs a final catalogue and expected-state
-revalidation while holding that lease. It does not create a replacement bundle,
-staging copy, receipt, journal, or tombstone merely to delete eligible cleanup
-artifacts, and it does not reverse a deletion that it has verified.
+external recovery bundle for the complete operation before the first existing-
+target effect. Cleanup still forms one complete catalogue and plan, runs
+preflight, and revalidates selected artifacts immediately before deletion. It
+may return a verified empty no-op without a lease. Before any deletion, it
+acquires the same-workspace lease and repeats final catalogue and expected-state
+validation under that lease. It creates no replacement bundle, staging copy,
+journal, or tombstone merely to delete eligible cleanup artifacts, and it does
+not reverse a deletion that it has verified.
 
 Already verified deletions remain desired effects when a later deletion fails or
 the caller interrupts. Remaining and residual facts stay visible for a fresh
 plan. This exception applies only to cleanup. Other mutating operations retain
 their accepted bundle-preparation and post-verification disposition rules.
 
-Recovery-store resolution has distinct writer and observer modes. Only the
-mutation bundle writer uses
-`Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)` so it may create the application-owned
-`OpenForge/recovery/v1` subtree during pre-effect preparation. Status, Doctor,
-and Cleanup use `Environment.SpecialFolderOption.None` for discovery and never
-create the OS application-data root or the Open Forge subtree. An absent root or
-store is zero recognized bundles or drafts for Status and Doctor and a verified
-Cleanup no-op. An existing selected workspace bucket that cannot be read remains
-the command's unavailable or incomplete result; a final ZIP that cannot be
-semantically validated remains malformed, unsupported, unavailable, incomplete,
-or blocked according to the command contract. Neither condition is absence.
+Recovery writing and observation remain distinct. Only a mutation bundle writer
+may create application-owned recovery storage during pre-effect preparation.
+Status, Doctor, and Cleanup observe without creating storage. An absent store is
+zero recognized bundles or drafts for Status and Doctor and a verified Cleanup
+no-op. An unreadable selected-workspace catalogue remains unavailable. A final
+bundle that cannot be validated retains its exact malformed, unsupported, or
+unavailable condition. Neither condition is absence.
 
 Status and Doctor do not acquire the workspace lease, report activity, or infer
 activity from bundle contents, a filename, age, PID, marker, journal, or the
 persistent external lock file.
 
 Before applying an existing-target effect (`Replace`, `ReplaceGeneratedRegion`,
-or `Delete`), mutation orchestration
-uses `Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-Environment.SpecialFolderOption.Create)` and only the application-owned
-`OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
-`HOME`, or custom-platform fallback; unavailable storage is a
-pre-effect `incomplete` result. If the plan contains one or more such
-existing-target effects, the complete operation gets exactly one
-immutable ZIP bundle outside the workspace under a deterministic
-key made from the normalized physical workspace path and operation ID. An
-operation containing only `Create` effects or no-ops creates no bundle. Its
-source-generated schema-v1 `manifest.json` records command/operation
-identity, workspace identity, ordered relative targets, change kinds, prior
-lengths/hashes/payload names, and intended final absence or length/hash. Streamed
-ordinal payload entries contain the exact prior bytes for every existing-target
-effect. Fingerprints are recovery provenance, not an evolving journal. `Create`
-targets and semantic or byte no-ops have no bundle entry.
+or `Delete`), the complete operation prepares exactly one immutable verified
+bundle outside the workspace. The bundle contains the exact prior bytes and
+static prior and intended identity for every existing-target effect. Create and
+semantic or byte no-op targets have no bundle entry. An operation containing
+only those effects creates no bundle. Unavailable required storage forms a
+pre-effect incomplete result. Unknown, malformed, mismatched, or colliding
+artifacts do not authorize an effect.
 
-The writer may select the managed BCL's `CompressionLevel.NoCompression`, but
-compression method is not recognized or promised. Schema v1 defines no ZIP
-entry timestamp, deterministic archive bytes, or whole-archive length or hash.
-Verification semantically decodes the source-generated manifest and validates
-the exact ordered entry names and counts, declared lengths and hashes, and exact
-payload bytes without a raw ZIP parser.
-
-The draft uses `CreateNew` under its exact deterministic draft name in the same
-external directory, is closed and reopened for semantic schema, exact ordered
-entry inventory, length, hash, and payload-byte validation, moved within that
-directory to its deterministic final name, and reopened and verified again.
-`RecoveryBundlePreparation` has no freely initializable construction surface.
-Only the real store's successful final close/reopen semantic readback constructs
-the opaque preparation; neither a caller-created verification value nor a draft
-can construct it. `FileChangeApplier` requires that matching opaque final
-preparation for `Replace`, `Delete`, and `ReplaceGeneratedRegion`. `Create` must
-receive `null`, and a non-null preparation for `Create` is rejected. The applier
-performs one final effect per target, and all bundle preparation completes before
-the first target effect.
+All bundle preparation and verification complete before the first target effect.
+A draft never authorizes an effect. Every existing-target effect requires the
+matching verified final preparation. Create requires no preparation. Exact
+store, ZIP, manifest, draft/final, bounded-validation, and callable mechanics
+live in the [Mutation And Recovery Technical
+Design](technical-designs/mutation-and-recovery.md).
 
 Before post-verification deletion begins, handled application, verification, or
 cancellation outcomes stop new effects and report the actual residual draft or
@@ -365,21 +345,20 @@ path and cleanup guidance. `Failed` with disposition `Unknown` produces `failed`
 and reports an exact expected path only when the deletion result provides one.
 `Blocked` and `Cancelled`, with either `Retained` or `Unknown`, remain neutral
 typed event facts for command-local mapping; disposition alone never selects a
-command status. A closed final ZIP may remain after an abrupt process
+command status. A closed final artifact may remain after an abrupt process
 termination, but the CLI provides no executable crash or power-loss durability
-guarantee.
-Shared support never
+guarantee. Shared support never
 automatically restores a target, rolls back an effect, or compensates for target
 effects, classifies current target state from recovery provenance, or saves a
 journal, progress receipt, history, or replayable plan. A fresh invocation plans
 from current facts.
 
 Bundles are immutable after preparation and are never extracted by the CLI.
-Status, Doctor, and Cleanup may stream ZIP payload entries through fixed bounded
-buffers solely to validate exact declared lengths and lowercase SHA-256 values.
-They never extract, disclose, render, log, return, retain, or materialize payload
-bytes, and payload size does not increase validation memory beyond the fixed
-buffer and hash state.
+Status, Doctor, and Cleanup may inspect payload data only through bounded
+validation. They never extract, disclose, render, log, return, retain, or
+materialize payload bytes. Exact archive, hashing, and bounded-reading mechanics
+belong to the [Mutation And Recovery Technical
+Design](technical-designs/mutation-and-recovery.md).
 
 Cleanup mechanically deletes only exact named final or draft candidates for the
 selected workspace after it acquires the same-workspace lease and repeats the
@@ -393,16 +372,13 @@ though Doctor or Cleanup may report orphaned original-root bundles and never
 auto-binds or restores them. Cleanup writes no marker, PID, journal, lock
 metadata, or other lifecycle record and makes no activity inference.
 
-The mutation lock is a persistent reusable zero-byte ordinary file under
-`LocalApplicationData/OpenForge/locks/v1`, named
-`<friendly-workspace-name>-<full-sha256-workspace-key>.lock`. The full SHA-256 of
-the normalized physical workspace path is authoritative; the bounded sanitized
-friendly prefix is display only. The CLI holds one read/write `FileShare.None`
-handle and never writes metadata, truncates, or deletes the file. Persistent
-reuse prevents unlink/recreate from splitting coordination across open handles.
-Current-user lock-store resolution is deferred until acquisition after the
-initial cancellation boundary. Composition and terminal no-effect flows do not
-create the application-data root or lock infrastructure.
+The mutation lock is a persistent reusable external coordination artifact with
+no activity metadata. Its existence does not demonstrate ownership or activity,
+and read-only observation never acquires it. Composition and terminal no-effect
+flows do not create recovery or lock infrastructure. Exact location, identity,
+handle, and lifetime mechanics belong to the [Mutation And Recovery Technical
+Design](technical-designs/mutation-and-recovery.md).
+
 Standalone Extension Create uses a separate exact-destination, collision, and
 revalidation path with no workspace lease, none of `Replace`,
 `ReplaceGeneratedRegion`, or `Delete`, and no recovery bundle.
@@ -531,19 +507,16 @@ content on its own. Read-only `extension list` and `extension inspect` reject
 - `--dry-run` is the sole preview spelling and shares planning and preflight
   with application while writing nothing. It shares status conditions, and
   planned changes alone do not create `attention`.
-- One verified immutable external schema-v1 ZIP recovery bundle covers every
+- One verified immutable external recovery bundle covers every
   existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or `Delete`) in
   the complete operation before the first target effect; creates and semantic or
   byte no-ops receive none.
-- A draft is CreateNew-written under its exact name, closed and semantically
-  verified, moved within the same directory to its final deterministic name,
-  and verified again. Only the valid final ZIP forms the opaque
-  `RecoveryBundlePreparation`; a draft remains `Draft`/`Incomplete` support
-  data. Only the real store's final close/reopen semantic readback can construct
-  the opaque preparation; it has no freely initializable or caller-forgeable
-  verification surface. `FileChangeApplier` requires the matching preparation
-  for every Replace/ReplaceGeneratedRegion/Delete, requires `null` for Create,
-  rejects non-null preparation for Create, and makes one final effect per target.
+- Preparation produces one verified final bundle before any existing-target
+  effect. A draft never authorizes an effect, and every existing-target effect
+  requires the matching verified preparation; Create requires none. Exact
+  archive, draft/final, atomic-file, callable, and validation mechanics belong
+  to the [Mutation And Recovery Technical
+  Design](technical-designs/mutation-and-recovery.md).
 - Successful commands delete their command-owned bundle only after whole-command
   verification. `Deleted`/`Removed` permits normal completion;
   `Failed`/positively observed `Retained` preserves successful target effects
@@ -559,15 +532,15 @@ content on its own. Read-only `extension list` and `extension inspect` reject
   target, rolls back an effect, or compensates for target effects, and it does
   not save a journal, progress receipt, history, or replayable plan.
 - Cleanup deletes only exact named selected-workspace final bundles or drafts
-  under its nonrecursive support-artifact exception. Before deletion it
-  holds the same-workspace `FileShare.None` lease, re-enumerates the selected
-  bucket once, and repeats exact path/kind and final semantic validation;
-  contention prevents all deletion. Unknown,
+  under its nonrecursive support-artifact exception. Before deletion it holds
+  the same-workspace lease, repeats catalogue and expected-state validation, and
+  revalidates each candidate immediately before deletion; contention prevents
+  all deletion. Unknown,
   malformed, mismatched, or differently keyed artifacts remain untouched. The
-  persistent external lock remains zero bytes and carries no activity metadata.
-- Status, Doctor, and Cleanup validate payload entry lengths and hashes only by
-  bounded streaming and never extract, disclose, retain, or materialize payload
-  bytes. Status and Doctor neither report nor infer activity.
+  persistent external lock carries no activity metadata.
+- Status, Doctor, and Cleanup use bounded validation and never extract, disclose,
+  retain, or materialize payload bytes. Status and Doctor neither report nor
+  infer activity.
 - Read-only and mutating authority remain separate.
 - Important stages return typed results and can be tested directly.
 - Human and structured output use one operation result. The seven statuses,

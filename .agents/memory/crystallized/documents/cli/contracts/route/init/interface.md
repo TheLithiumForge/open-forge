@@ -31,10 +31,11 @@ The [Index Interface Contract](../../index-candidate/interface.md) defines the g
 navigation projection, ordering, generated boundary, verification, and recovery
 behavior consumed by this command.
 
-The [CLI Architecture](../../../architecture.md) defines the shared structured
-envelope and compatibility policy, process-status mapping, source structure,
-package and runtime boundaries, BCL-first filesystem boundary, workspace lock,
-and recovery identity model. This Interface Contract owns the Route Init result
+The [Shared Result Coordinates](../../shared/result-coordinates/interface.md)
+define the shared structured envelope, compatibility policy, and process-status
+mapping. The [CLI Architecture](../../../architecture.md) defines source and
+runtime boundaries, BCL-first filesystem structure, the workspace-lock boundary,
+and recovery identity relationships. This Interface Contract owns the Route Init result
 graph inside that envelope, without changing those shared details. The
 command-specific repetition, seven-status, stream, finite-attention, and
 compact-result rules below are accepted current behavior.
@@ -138,7 +139,7 @@ contract. This command does not copy their complete definitions.
 
 | Flag                      | Role              | Value                                                          | Omission                                                                                         | Repetition, ordering, and composition                                                                                           |
 | ------------------------- | ----------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
-| `--framework`             | Scaffold mode     | No value                                                       | Generic exact-chain initialization is selected                                                    | Repetition is accepted and idempotent. It selects embedded canonical Framework topology and assets.                            |
+| `--framework`             | Scaffold mode     | No value                                                       | Generic exact-chain initialization is selected                                                   | Repetition is accepted and idempotent. It selects embedded canonical Framework topology and assets.                             |
 | `--description <text>`    | Authored metadata | One description value                                          | The final target uses its draft description unless another rule supplies an explicit description | Singleton. Repetition is invalid, including repetition with an equal value.                                                     |
 | `--responsibility <text>` | Authored metadata | One responsibility value, including the exact empty value `""` | No responsibility field is added to a missing target                                             | A non-empty value adds the field and `""` omits it. The flag is singleton; any repetition is invalid, including an equal value. |
 | `--tag=<tag>`             | Authored metadata | One tag without a `#` prefix                                   | The final target uses draft metadata and the `NeedsAuthoring` rule                               | Repeatable. Values retain argument order. Empty tags and duplicate exact tags are invalid.                                      |
@@ -263,7 +264,9 @@ Draft route for memory/project-alpha/documents; replace this description before 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
+
 - none - No entries - #Empty
+
 <!-- open-forge:generated-index:end -->
 ```
 
@@ -628,76 +631,78 @@ contains only its bounded interior. Directory changes are `null`.
 
 The finite machine values are:
 
-| Coordinate | Values |
-| --- | --- |
-| `mode` | `apply`, `dry-run` |
-| `scaffold` | `generic`, `framework` |
-| `plan.completeness` | `not-established`, `incomplete`, `complete` |
-| `plan.safety` | `not-established`, `safe`, `blocked` |
-| Framework segment `role` | `installed-root`, `managed`, `scope` |
-| Entrypoint `form` | `canonical`, `compatibility` |
-| Entrypoint `current` | `existing`, `missing` |
-| Entrypoint `ownership` | `user`, `framework` |
-| `descriptionSource` | `draft`, `explicit`, `embedded` |
-| `responsibilitySource` | `default-omitted`, `explicit-omitted`, `explicit`, `embedded` |
-| `tagsSource` | `draft`, `explicit`, `mixed`, `embedded` |
-| Entrypoint `outcome` | `unchanged`, `planned`, `not-started`, `created`, `verification-failed`, `completion-unknown` |
-| Effect `kind` | `directory`, `entrypoint`, `generated-region` |
-| Effect `action` | `create`, `replace` |
-| Effect `outcome` | `planned`, `not-started`, `verified`, `verification-failed`, `completion-unknown` |
-| Effect `residual` | `none`, `retained`, `unknown` |
-| Lifecycle `action` | `none`, `preserve`, `publish` |
-| Lifecycle `outcome` | `not-requested`, `planned`, `already-current`, `not-started`, `verified`, `verification-failed`, `completion-unknown` |
-| Recovery `state` | `not-required`, `not-created`, `removed`, `retained`, `unknown` |
-| `verification` | `not-requested`, `verified`, `failed`, `unknown` |
+| Coordinate               | Values                                                                                                                |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| `mode`                   | `apply`, `dry-run`                                                                                                    |
+| `scaffold`               | `generic`, `framework`                                                                                                |
+| `plan.completeness`      | `not-established`, `incomplete`, `complete`                                                                           |
+| `plan.safety`            | `not-established`, `safe`, `blocked`                                                                                  |
+| Framework segment `role` | `installed-root`, `managed`, `scope`                                                                                  |
+| Entrypoint `form`        | `canonical`, `compatibility`                                                                                          |
+| Entrypoint `current`     | `existing`, `missing`                                                                                                 |
+| Entrypoint `ownership`   | `user`, `framework`                                                                                                   |
+| `descriptionSource`      | `draft`, `explicit`, `embedded`                                                                                       |
+| `responsibilitySource`   | `default-omitted`, `explicit-omitted`, `explicit`, `embedded`                                                         |
+| `tagsSource`             | `draft`, `explicit`, `mixed`, `embedded`                                                                              |
+| Entrypoint `outcome`     | `unchanged`, `planned`, `not-started`, `created`, `verification-failed`, `completion-unknown`                         |
+| Effect `kind`            | `directory`, `entrypoint`, `generated-region`                                                                         |
+| Effect `action`          | `create`, `replace`                                                                                                   |
+| Effect `outcome`         | `planned`, `not-started`, `verified`, `verification-failed`, `completion-unknown`                                     |
+| Effect `residual`        | `none`, `retained`, `unknown`                                                                                         |
+| Lifecycle `action`       | `none`, `preserve`, `publish`                                                                                         |
+| Lifecycle `outcome`      | `not-requested`, `planned`, `already-current`, `not-started`, `verified`, `verification-failed`, `completion-unknown` |
+| Recovery `state`         | `not-required`, `not-created`, `removed`, `retained`, `unknown`                                                       |
+| `verification`           | `not-requested`, `verified`, `failed`, `unknown`                                                                      |
 
 Every finding is exactly `{ code, status, target, cause }`. `complete` has no
 finding. Within each status, finding codes use this exact order:
 
-| Status | Finding codes in order |
-| --- | --- |
-| `invalid` | `route-init.invalid-input`, `route-init.invalid-target`, `route-init.invalid-metadata` |
-| `blocked` | `route-init.workspace-unavailable`, `route-init.workspace-unsafe`, `route-init.target-unsafe`, `route-init.route-ambiguous`, `route-init.identity-collision`, `route-init.loader-unsafe`, `route-init.framework-payload-invalid`, `route-init.framework-install-required`, `route-init.framework-update-required`, `route-init.framework-alignment-blocked`, `route-init.metadata-unsafe`, `route-init.generated-region-unsafe`, `route-init.lifecycle-blocked`, `route-init.workspace-lock-unavailable`, `route-init.target-changed`, `route-init.recovery-conflict` |
-| `incomplete` | `route-init.framework-payload-unavailable`, `route-init.inspection-incomplete`, `route-init.metadata-incomplete`, `route-init.projection-incomplete`, `route-init.lifecycle-unavailable`, `route-init.recovery-unavailable` |
-| `attention` | `route-init.needs-authoring`, `route-init.recovery-artifact-retained` |
-| `failed` | `route-init.target-changed-during-apply`, `route-init.write-failed`, `route-init.verification-failed`, `route-init.lifecycle-publication-failed`, `route-init.recovery-failed`, `route-init.operation-failed` |
-| `interrupted` | `route-init.interrupted` |
+| Status        | Finding codes in order                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `invalid`     | `route-init.invalid-input`, `route-init.invalid-target`, `route-init.invalid-metadata`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| `blocked`     | `route-init.workspace-unavailable`, `route-init.workspace-unsafe`, `route-init.target-unsafe`, `route-init.route-ambiguous`, `route-init.identity-collision`, `route-init.loader-unsafe`, `route-init.framework-payload-invalid`, `route-init.framework-install-required`, `route-init.framework-update-required`, `route-init.framework-alignment-blocked`, `route-init.metadata-unsafe`, `route-init.generated-region-unsafe`, `route-init.lifecycle-blocked`, `route-init.workspace-lock-unavailable`, `route-init.target-changed`, `route-init.recovery-conflict` |
+| `incomplete`  | `route-init.framework-payload-unavailable`, `route-init.inspection-incomplete`, `route-init.metadata-incomplete`, `route-init.projection-incomplete`, `route-init.lifecycle-unavailable`, `route-init.recovery-unavailable`                                                                                                                                                                                                                                                                                                                                           |
+| `attention`   | `route-init.needs-authoring`, `route-init.recovery-artifact-retained`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `failed`      | `route-init.target-changed-during-apply`, `route-init.write-failed`, `route-init.verification-failed`, `route-init.lifecycle-publication-failed`, `route-init.recovery-failed`, `route-init.operation-failed`                                                                                                                                                                                                                                                                                                                                                         |
+| `interrupted` | `route-init.interrupted`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 
 Aggregate precedence is `failed`, `interrupted`, `invalid`, `blocked`,
 `incomplete`, `attention`, then `complete`.
 
 The one structured `next` action uses this exact first-applicable policy:
 
-| Condition | `next.command` | `next.reason` |
-| --- | --- | --- |
-| `complete` | `null` | `null` |
-| `invalid` | `open-forge route init --help` | `Correct the named Route Init input, then rerun the request.` |
-| `route-init.framework-install-required` | `open-forge install` | `Establish a trusted current Framework installation before rerunning Route Init in Framework mode.` |
-| `route-init.framework-update-required` | `open-forge update` | `Update the installed Framework state to the running CLI's embedded inventory before rerunning Route Init.` |
-| Workspace lock unavailable or target changed | `open-forge route init` | `Wait for the blocking condition or inspect the changed target, then rerun Route Init from a fresh plan.` |
-| Other `blocked` | `open-forge doctor` | `Inspect the blocked workspace, route, identity, lifecycle, generated-region, or recovery boundary before rerunning Route Init.` |
-| `incomplete` | `open-forge doctor` | `Inspect the unavailable route, metadata, projection, lifecycle, or recovery facts before relying on this Route Init result.` |
-| Retained recovery artifact | `open-forge cleanup` | `Review and remove the reported recovery artifact after confirming the verified Route Init result.` |
-| NeedsAuthoring attention | `open-forge route update` | `Author each reported NeedsAuthoring entrypoint before relying on its description or tags.` |
-| `failed` | `open-forge route init --verbose` | `Report the failure and retry the same Route Init request with bounded diagnostics.` |
-| `interrupted` | `open-forge route init` | `Rerun the same Route Init request.` |
+| Condition                                    | `next.command`                    | `next.reason`                                                                                                                    |
+| -------------------------------------------- | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `complete`                                   | `null`                            | `null`                                                                                                                           |
+| `invalid`                                    | `open-forge route init --help`    | `Correct the named Route Init input, then rerun the request.`                                                                    |
+| `route-init.framework-install-required`      | `open-forge install`              | `Establish a trusted current Framework installation before rerunning Route Init in Framework mode.`                              |
+| `route-init.framework-update-required`       | `open-forge update`               | `Update the installed Framework state to the running CLI's embedded inventory before rerunning Route Init.`                      |
+| Workspace lock unavailable or target changed | `open-forge route init`           | `Wait for the blocking condition or inspect the changed target, then rerun Route Init from a fresh plan.`                        |
+| Other `blocked`                              | `open-forge doctor`               | `Inspect the blocked workspace, route, identity, lifecycle, generated-region, or recovery boundary before rerunning Route Init.` |
+| `incomplete`                                 | `open-forge doctor`               | `Inspect the unavailable route, metadata, projection, lifecycle, or recovery facts before relying on this Route Init result.`    |
+| Retained recovery artifact                   | `open-forge cleanup`              | `Review and remove the reported recovery artifact after confirming the verified Route Init result.`                              |
+| NeedsAuthoring attention                     | `open-forge route update`         | `Author each reported NeedsAuthoring entrypoint before relying on its description or tags.`                                      |
+| `failed`                                     | `open-forge route init --verbose` | `Report the failure and retry the same Route Init request with bounded diagnostics.`                                             |
+| `interrupted`                                | `open-forge route init`           | `Rerun the same Route Init request.`                                                                                             |
 
 Recovery cleanup wins when both attention findings coexist. Exact schema
-versioning and compatibility rules remain defined by the CLI Architecture.
+versioning and compatibility rules remain defined by the [Shared Result
+Coordinates](../../shared/result-coordinates/interface.md).
 
 ## Semantic Results
 
-| Result        | Meaning                                                                                                                                                                                                                                                                                                         | Process completion status            |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
-| `complete`    | Dry-run established the complete safe plan without a finite attention condition, or application and final verification completed without one, including a verified no-op.                                                                                                                                       | Architecture-defined process status. |
-| `attention`   | A safe complete dry-run preview or completed and verified application includes at least one new entrypoint whose intended tags contain exact `NeedsAuthoring`, or post-verification recovery deletion returns `Failed` with positively observed disposition `Retained`; human output says `requires attention`. | Architecture-defined process status. |
-| `incomplete`  | Safe current facts are available, but required inspection or planning coverage cannot complete; no write begins.                                                                                                                                                                                                | Architecture-defined process status. |
-| `invalid`     | Command input, metadata, flag use, or target shape does not follow this interface; invalid input stops before operation resolution.                                                                                                                                                                             | Architecture-defined process status. |
-| `blocked`     | Unsafe or ambiguous authority or safety prevents one safe complete route plan; no mutation begins.                                                                                                                                                                                                              | Architecture-defined process status. |
-| `failed`      | An unexpected application, post-write, or verification failure, or post-verification recovery deletion `Failed`/`Unknown`, prevents normal completion.                                                                                                                                                          | Architecture-defined process status. |
-| `interrupted` | The caller cancelled or interrupted before completion and no unexpected application or verification failure changes the result.                                                                                                                                                                                 | Architecture-defined process status. |
+| Result        | Meaning                                                                                                                                                                                                                                                                                                         | Process completion status                |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| `complete`    | Dry-run established the complete safe plan without a finite attention condition, or application and final verification completed without one, including a verified no-op.                                                                                                                                       | Shared result-coordinate process status. |
+| `attention`   | A safe complete dry-run preview or completed and verified application includes at least one new entrypoint whose intended tags contain exact `NeedsAuthoring`, or post-verification recovery deletion returns `Failed` with positively observed disposition `Retained`; human output says `requires attention`. | Shared result-coordinate process status. |
+| `incomplete`  | Safe current facts are available, but required inspection or planning coverage cannot complete; no write begins.                                                                                                                                                                                                | Shared result-coordinate process status. |
+| `invalid`     | Command input, metadata, flag use, or target shape does not follow this interface; invalid input stops before operation resolution.                                                                                                                                                                             | Shared result-coordinate process status. |
+| `blocked`     | Unsafe or ambiguous authority or safety prevents one safe complete route plan; no mutation begins.                                                                                                                                                                                                              | Shared result-coordinate process status. |
+| `failed`      | An unexpected application, post-write, or verification failure, or post-verification recovery deletion `Failed`/`Unknown`, prevents normal completion.                                                                                                                                                          | Shared result-coordinate process status. |
+| `interrupted` | The caller cancelled or interrupted before completion and no unexpected application or verification failure changes the result.                                                                                                                                                                                 | Shared result-coordinate process status. |
 
-The shared process-status mapping is defined by the CLI Architecture.
+The shared process-status mapping is defined by the [Shared Result
+Coordinates](../../shared/result-coordinates/interface.md).
 
 Aggregate status precedence is `failed`, `interrupted`, `invalid`, `blocked`,
 `incomplete`, `attention`, then `complete`. Invalid input still stops before
@@ -851,10 +856,13 @@ of this Interface Contract:
 The [Behavior Contract](behavior.md) records the required technology-neutral
 evidence for planning, projection, effects, recovery-bundle boundaries,
 revalidation, verification, recovery, concurrency, and convergence. This
-Interface owns the exact command-local schema while shared JSON compatibility,
-numeric exits, parser and serialization, filesystem and identity implementation,
-recovery-bundle names, concurrency mechanics, and source boundaries remain
-defined by the CLI Architecture. Those accepted technical choices do not weaken
+Interface owns the exact command-local schema while shared JSON compatibility and
+numeric exits remain defined by the [Shared Result
+Coordinates](../../shared/result-coordinates/interface.md). Parser and concrete
+serialization, filesystem identity, concurrency, and source boundaries remain
+defined by the [CLI Architecture](../../../architecture.md); exact recovery-bundle
+names follow the [Mutation And Recovery Technical
+Design](../../../technical-designs/mutation-and-recovery.md). Those accepted technical choices do not weaken
 the repetition, status, stream, attention, dry-run, compact, or verification
 rules above.
 

@@ -15,8 +15,9 @@ facts, output, semantic result names, errors, non-goals, examples, and public
 verification. The command does not ship yet. The sibling Behavior Contract
 defines the technology-neutral operation behind this public surface.
 
-The accepted CLI Architecture defines the exact shared JSON result schema and
-numeric exit mapping. Status uses those definitions without duplicating
+The accepted [Shared Result
+Coordinates](../shared/result-coordinates/interface.md) define the exact shared
+JSON result schema and numeric exit mapping. Status uses those definitions without duplicating
 implementation mechanics. Gate 5 must prove source-generated YamlDotNet and STJ
 serialization, fixed Markdig where used, real `System.IO`, Native AOT, OS
 locking, isolated tests, and package journeys. Token estimation, recovery-bundle
@@ -101,7 +102,7 @@ non-directory workspace is blocked.
   with isolated `framework` and `extensions` sections.
 - The current user's external recovery store at
   `Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
-  Environment.SpecialFolderOption.None)/OpenForge/recovery/v1`, limited to
+Environment.SpecialFolderOption.None)/OpenForge/recovery/v1`, limited to
   exact-name final and draft candidates for the selected normalized physical
   workspace path.
 
@@ -123,13 +124,13 @@ workspace content, not lifecycle input.
 
 Each section retains its finite state:
 
-| State        | Status meaning                                                                                                                                                          |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| State        | Status meaning                                                                                                                                                                 |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `absent`     | Complete inspection proves that no expected managed state, managed boundary, or recovery-bundle residual exists. It does not claim that unmanaged or idless content is absent. |
-| `trusted`    | Supported document and section facts bind the exact workspace and managed identities, preserve internal consistency, and provide complete verifiable coverage.          |
-| `untrusted`  | Some lifecycle facts are readable, but provenance, integrity, compatibility, identity, or coverage cannot establish current trust.                                      |
-| `incomplete` | Safe required lifecycle or source coverage is unavailable.                                                                                                              |
-| `blocked`    | Malformed, ambiguous, colliding, or unsafe lifecycle identity prevents a safe classification.                                                                           |
+| `trusted`    | Supported document and section facts bind the exact workspace and managed identities, preserve internal consistency, and provide complete verifiable coverage.                 |
+| `untrusted`  | Some lifecycle facts are readable, but provenance, integrity, compatibility, identity, or coverage cannot establish current trust.                                             |
+| `incomplete` | Safe required lifecycle or source coverage is unavailable.                                                                                                                     |
+| `blocked`    | Malformed, ambiguous, colliding, or unsafe lifecycle identity prevents a safe classification.                                                                                  |
 
 The absence of `.agents/open-forge.lifecycle.json` alone does not establish an
 unmanaged or empty workspace. `absent` requires complete inspection of the
@@ -244,7 +245,8 @@ the percentage is not-applicable. A positive current value with a zero total is
 an incomplete accounting invariant, so the percentage is unavailable and the
 result is incomplete. An unavailable required operand makes the percentage
 unavailable. Status never renders unavailable or not-applicable as zero. The
-exact JSON representation of these values follows the shared CLI Architecture.
+exact JSON representation of these values follows the [Shared Result
+Coordinates](../shared/result-coordinates/interface.md).
 
 ### Continuity Context
 
@@ -413,8 +415,9 @@ path after a workspace move is not auto-bound to the newly selected path.
 
 Status does not remove, clean, restore, roll back, or otherwise mutate bundles or
 workspace targets. The accepted [cleanup contract](../cleanup/interface.md) owns
-lease-validated candidate deletion; the accepted CLI Architecture defines the
-exact bundle identity and storage mechanics. Status does not treat the visible
+lease-validated candidate deletion; the [Mutation And Recovery Technical
+Design](../../technical-designs/mutation-and-recovery.md) defines exact bundle
+identity and storage mechanics. Status does not treat the visible
 workspace lock as a recovery bundle.
 
 ## Human Output
@@ -528,8 +531,9 @@ never fabricates zero for an unavailable or not-applicable fact.
 
 Numeric fields remain numeric. Signed differences remain derived from the two
 measured inputs. Unavailable, zero, and not-applicable values remain distinct and
-are never substituted for one another. The shared CLI Architecture defines the
-exact JSON representation, result schema, compatibility rules, and exit mapping.
+are never substituted for one another. The [Shared Result
+Coordinates](../shared/result-coordinates/interface.md) define the exact JSON
+representation, result schema, compatibility rules, and exit mapping.
 
 For an attention result, structured output keeps the semantic status value
 `attention`; only human presentation uses `requires attention`.
@@ -538,20 +542,25 @@ For an attention result, structured output keeps the semantic status value
 Flags](../shared/global-flags/interface.md) contract. Those diagnostics use
 stderr. It does not change collection, measurements, ordering, semantic result,
 or exit behavior, and it does not add Doctor diagnosis or recommendations. The
-accepted CLI Architecture defines diagnostic fields and redaction.
+exact Status diagnostic fields and redaction remain bounded command-local
+implementation details under the accepted CLI Architecture and Gate 5 evidence.
 
 ## Architecture Boundary
 
-These implementation details are defined by the accepted CLI Architecture and are
-not duplicated by this contract:
+These implementation boundaries are routed to their exact current authorities
+and are not duplicated by this contract:
 
 - **Structured schema and compatibility.** JSON exposes the same typed facts as
   human output and keeps numeric, zero, unavailable, and not-applicable
-  distinctions. Exact field names, schema version, compatibility rules, JSON
-  representations, and serialization details follow the shared Architecture.
+  distinctions. Exact field names, schema version, compatibility rules, and JSON
+  representations follow the [Shared Result
+  Coordinates](../shared/result-coordinates/interface.md); concrete
+  source-generated serialization remains in the [CLI
+  Architecture](../../architecture.md).
 - **Numeric process exits.** Semantic result categories are accepted and
   structured `attention` remains `attention`; human output says `requires
-attention`. Numeric process-exit mapping follows the shared Architecture.
+attention`. Numeric process-exit mapping follows the [Shared Result
+  Coordinates](../shared/result-coordinates/interface.md).
 - **Token-estimation implementation.** The planning estimate is
   `ceiling(characters / 4)` and is explicitly not a model tokenizer, billing
   value, context guarantee, latency estimate, or provider count. The
@@ -567,12 +576,15 @@ attention`. Numeric process-exit mapping follows the shared Architecture.
   retaining, or materializing payload bytes. It does not acquire the workspace
   lease or report or infer activity. The separate [cleanup
   contract](../cleanup/interface.md) owns lease-validated candidate deletion.
-  Exact identity, storage, schema, and implementation follow the accepted
-  Architecture.
+  Exact identity, storage, and bounded-validation implementation follow the
+  [Mutation And Recovery Technical
+  Design](../../technical-designs/mutation-and-recovery.md); the shared schema
+  follows the [Shared Result Coordinates](../shared/result-coordinates/interface.md).
 - **Diagnostics and redaction.** `--verbose` may add bounded diagnostic evidence
-  without changing collection, ordering, semantic result, or exit behavior. Exact
-  Status diagnostic fields and redaction follow the accepted Architecture. Their bounded
-  diagnostic stream is stderr as stated above.
+  without changing collection, ordering, semantic result, or exit behavior. The
+  exact Status diagnostic fields and redaction remain bounded command-local
+  implementation details under the accepted Architecture and Gate 5 evidence.
+  Their bounded diagnostic stream is stderr as stated above.
 - **.NET source boundaries.** .NET Native AOT is the accepted canonical
   implementation direction for the CLI. Status has no command-local Technical
   Design; its concrete module, parser, serializer, filesystem, and source
@@ -580,15 +592,15 @@ attention`. Numeric process-exit mapping follows the shared Architecture.
 
 ## Semantic Results
 
-| Result        | Meaning                                                                                                                                                          | Process completion status       |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
-| `complete`    | Every applicable status fact was measured and no attention condition exists                                                                                      | Shared CLI Architecture mapping |
-| `attention`   | Measurement completed, but trusted managed files are changed or missing, a verified recovery final is present, or a finite lifecycle/source observation remains | Shared CLI Architecture mapping |
-| `incomplete`  | Safe facts are available, but one or more applicable measurements are unavailable or incomplete, including an incomplete draft or a safely reportable invalid final | Shared CLI Architecture mapping |
-| `invalid`     | Command input does not follow the accepted grammar                                                                                                               | Shared CLI Architecture mapping |
-| `blocked`     | The command cannot establish the selected workspace or a safe inspection boundary                                                                                | Shared CLI Architecture mapping |
-| `failed`      | An unexpected internal failure prevents normal completion                                                                                                        | Shared CLI Architecture mapping |
-| `interrupted` | The caller cancels or interrupts the operation before completion                                                                                                 | Shared CLI Architecture mapping |
+| Result        | Meaning                                                                                                                                                             | Process completion status        |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| `complete`    | Every applicable status fact was measured and no attention condition exists                                                                                         | Shared result-coordinate mapping |
+| `attention`   | Measurement completed, but trusted managed files are changed or missing, a verified recovery final is present, or a finite lifecycle/source observation remains     | Shared result-coordinate mapping |
+| `incomplete`  | Safe facts are available, but one or more applicable measurements are unavailable or incomplete, including an incomplete draft or a safely reportable invalid final | Shared result-coordinate mapping |
+| `invalid`     | Command input does not follow the accepted grammar                                                                                                                  | Shared result-coordinate mapping |
+| `blocked`     | The command cannot establish the selected workspace or a safe inspection boundary                                                                                   | Shared result-coordinate mapping |
+| `failed`      | An unexpected internal failure prevents normal completion                                                                                                           | Shared result-coordinate mapping |
+| `interrupted` | The caller cancels or interrupts the operation before completion                                                                                                    | Shared result-coordinate mapping |
 
 An uninstalled workspace is a valid completed state when its absence can be
 established safely. Differences in context size and added or removed root
@@ -627,8 +639,13 @@ status, and separate bounded diagnostics use stderr.
 These scenarios cover the smallest valid invocation, exact workspace selection,
 human-density and structured presentation, valid uninstalled state, and the
 meaningful semantic boundaries without adding implementation mechanics to the
-command contract. The shared CLI Architecture defines the exact schema, exits,
-diagnostic fields, recovery identity, and .NET boundaries.
+command contract. The [Shared Result
+Coordinates](../shared/result-coordinates/interface.md) define the exact schema
+and exits; the [Mutation And Recovery Technical
+Design](../../technical-designs/mutation-and-recovery.md) defines exact recovery
+identity; and the [CLI Architecture](../../architecture.md) defines .NET
+boundaries while keeping exact Status diagnostic fields and redaction as bounded
+command-local implementation details subject to Gate 5 evidence.
 
 ### Default current workspace
 
@@ -671,7 +688,8 @@ open-forge status --json
 
 The command exposes one structured result containing the typed facts listed under
 [Structured Output](#structured-output). The exact schema and numeric process
-exit follow the shared CLI Architecture. A well-formed `--view` is accepted as a
+exit follow the [Shared Result
+Coordinates](../shared/result-coordinates/interface.md). A well-formed `--view` is accepted as a
 no-op under the shared Global CLI Flags contract.
 
 ### Uninstalled workspace
@@ -779,11 +797,16 @@ semantic results. Focused integration tests should use real temporary workspaces
 embedded assets, the exact lifecycle document, and filesystem state. A small built Native AOT process suite
 should prove parsing, output, exit behavior, and packaged payload comparison.
 
-The shared CLI Architecture defines the exact numeric exit values, structured
-schema and JSON value representation, diagnostic fields, redaction, recovery-bundle
-identities and retention, and .NET source boundaries. Gate 5 must prove
-source-generated YamlDotNet and STJ serialization, fixed Markdig where used,
-real `System.IO`, Native AOT, OS locking, isolated tests, and package journeys.
+The [Shared Result Coordinates](../shared/result-coordinates/interface.md) define
+the exact numeric exit values, structured schema, and JSON value representation.
+The [Mutation And Recovery Technical
+Design](../../technical-designs/mutation-and-recovery.md) defines exact
+recovery-bundle identities and retention mechanics. The [CLI
+Architecture](../../architecture.md) defines .NET source boundaries and keeps
+exact Status diagnostic fields and redaction as bounded command-local
+implementation details. Gate 5 must prove those details, source-generated
+YamlDotNet and STJ serialization, fixed Markdig where used, real `System.IO`,
+Native AOT, OS locking, isolated tests, and package journeys.
 
 ## Related Current Sources
 

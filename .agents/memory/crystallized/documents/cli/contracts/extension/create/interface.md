@@ -101,13 +101,13 @@ invalid.
 After those two required inputs resolve, omitted manifest fields use these exact
 deterministic defaults:
 
-| Field | Default |
-| --- | --- |
-| `id` | The exact resolved stable ID. |
-| `name` | Split the ID on `-`, uppercase the first ASCII letter of each segment, and join segments with one space. |
-| `description` | `Open Forge Extension package <stable-id>.` |
-| `version` | `0.1.0` |
-| `dependencies` | An empty array. |
+| Field          | Default                                                                                                  |
+| -------------- | -------------------------------------------------------------------------------------------------------- |
+| `id`           | The exact resolved stable ID.                                                                            |
+| `name`         | Split the ID on `-`, uppercase the first ASCII letter of each segment, and join segments with one space. |
+| `description`  | `Open Forge Extension package <stable-id>.`                                                              |
+| `version`      | `0.1.0`                                                                                                  |
+| `dependencies` | An empty array.                                                                                          |
 
 Explicit manifest options replace only their corresponding defaults. Optional
 manifest metadata never adds a wizard question. Human planning shows the
@@ -197,11 +197,11 @@ stderr. JSON uses one result on stdout for every status.
 | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `complete`    | The scaffold was completely applied or previewed, or the exact intended scaffold is already present as a verified no-op.                           |
 | `attention`   | No current finite create attention condition is accepted. This status remains in the shared vocabulary but is not reached by the current contract. |
-| `incomplete`  | Safe catalogue, path, parser, or filesystem coverage is unavailable. No scaffold write occurs.                                                       |
+| `incomplete`  | Safe catalogue, path, parser, or filesystem coverage is unavailable. No scaffold write occurs.                                                     |
 | `invalid`     | Required ID/path input, value, repetition, operand, or terminal-mode combination is invalid.                                                       |
-| `blocked`     | Catalogue shape, package destination, identity, containment, ownership, or exact create-only collision boundary is unsafe or colliding.           |
-| `failed`      | Scaffold application or verification fails unexpectedly.                                                                                            |
-| `interrupted` | The caller interrupts before completion and no stronger failure remains.                                                                              |
+| `blocked`     | Catalogue shape, package destination, identity, containment, ownership, or exact create-only collision boundary is unsafe or colliding.            |
+| `failed`      | Scaffold application or verification fails unexpectedly.                                                                                           |
+| `interrupted` | The caller interrupts before completion and no stronger failure remains.                                                                           |
 
 ## Errors And Examples
 
@@ -261,8 +261,8 @@ repeatable dependency ordering, duplicate/self/invalid dependency rejection,
 exact manifest property order, no dependency availability resolution, no
 optional-metadata wizard questions, exact command-local JSON result/property order without
 shared-envelope duplication, all seven statuses
-and streams, JSON parity, and no workspace lifecycle effect. The shared CLI
-Architecture defines the exact JSON result
-schema and exit mapping. Gate 5 must prove source-generated serialization,
+and streams, JSON parity, and no workspace lifecycle effect. The [Shared Result
+Coordinates](../../shared/result-coordinates/interface.md) define the exact JSON
+result schema and exit mapping. Gate 5 must prove source-generated serialization,
 fixed Markdig where used, real `System.IO`, Native AOT, isolated tests, and
 package journeys.

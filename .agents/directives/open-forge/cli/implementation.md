@@ -172,8 +172,9 @@ open-forge:
   occurrence aggregation, typed conversion, unknown symbols, parser diagnostics,
   and standard help. Read typed parse results and library-owned occurrence facts.
   Do not create a second parser or rescan raw arguments to reinterpret a spelling.
-- For the current pinned `System.CommandLine` 2.0.11, accept its native long-option
-  value forms: `--option value`, `--option=value`, and `--option:value`. Use the
+- For the centrally pinned `System.CommandLine` package, accept its native
+  long-option value forms: `--option value`, `--option=value`, and
+  `--option:value`. Use the
   ordinary spaced form in generated help. Use that form in examples by default.
   An explicitly accepted command contract may demonstrate another native form
   without changing canonical help. Reverify this rule and its focused parser
@@ -246,8 +247,9 @@ open-forge:
 
 ### Dependencies And Native AOT
 
-- Use only dependencies and exact versions accepted by the Architecture and
-  central package file. Do not add or update a package inside a command Task.
+- Use only dependency roles accepted by the Architecture and exact versions
+  owned by the central package file. Do not add or update a package inside a
+  command Task.
 - Keep every runtime feature, serializer, package, and test fixture trimming and
   Native-AOT compatible. Actual publish and execution evidence is required;
   source inspection and project properties are not proof.

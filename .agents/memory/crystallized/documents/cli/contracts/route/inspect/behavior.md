@@ -20,10 +20,11 @@ classification, measurement, topology, result formation, read-only safety,
 presentation, and conformance without adding a public operand, flag, output
 shape, status, or implementation technology.
 
-The [CLI Architecture](../../../architecture.md) defines the accepted shared
-structured schema, process-status mapping, parser and serialization, filesystem
-and physical-identity realization, diagnostics, source structure, package and
-runtime boundaries, and test boundaries. This Behavior Contract makes no
+The [Shared Result Coordinates](../../shared/result-coordinates/interface.md)
+define the accepted shared structured schema and process-status mapping. The [CLI
+Architecture](../../../architecture.md) defines parser and concrete serialization,
+filesystem and physical-identity structure, diagnostics, source and runtime
+boundaries, and test boundaries. This Behavior Contract makes no
 implementation choice to change those boundaries and remains technology-neutral.
 
 ## Operation Invariants
@@ -504,9 +505,11 @@ should cover parsing, concise human output, structured output, exit behavior, an
 packaged execution, including the accepted AOT boundary.
 
 The Route Inspect Interface defines its exact command-local structured result.
-The CLI Architecture defines the shared envelope and compatibility coordinates,
-process-status mapping, parser and filesystem realization, diagnostics and
-redaction, and source boundaries. The source-stated exact heading-name comparison
+The [Shared Result Coordinates](../../shared/result-coordinates/interface.md)
+define the shared envelope, compatibility coordinates, and process-status
+mapping. The [CLI Architecture](../../../architecture.md) defines parser and
+filesystem structure, diagnostics and redaction boundaries, and source
+boundaries. The source-stated exact heading-name comparison
 belongs to the Context contract, not this route-profile operation. No
 command-local Technical Design is needed for `route inspect`.
 

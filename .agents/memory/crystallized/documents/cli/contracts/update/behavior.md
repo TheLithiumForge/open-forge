@@ -18,10 +18,13 @@ technology-neutral conformance.
 
 The [Interface Contract](interface.md) defines public syntax, flags, statuses,
 output, errors, examples, and non-goals. `install` owns establishment and
-initial force. The accepted CLI Architecture defines the exact lifecycle
-serialization, shared JSON result schema, exit mapping, and implementation
-mechanics. This behavior does not duplicate those mechanics or claim their Gate 5
-proof.
+initial force. The [Shared Result
+Coordinates](../shared/result-coordinates/interface.md) define the shared JSON
+result schema and exit mapping. The [Lifecycle Provenance Technical
+Design](../../technical-designs/lifecycle-provenance.md) defines exact lifecycle
+serialization realization, while the [CLI Architecture](../../architecture.md)
+defines cross-cutting implementation structure. This behavior does not duplicate
+those mechanics or claim their Gate 5 proof.
 
 ## Complete Typed Flow
 
@@ -254,8 +257,8 @@ are `blocked` before effects.
 
 Before the first workspace effect, the implementation obtains the actual OS lock
 for the persistent reusable zero-byte external path under
-`LocalApplicationData/OpenForge/locks/v1` defined by the accepted CLI
-Architecture. It holds one read/write `FileShare.None` handle and never writes
+`LocalApplicationData/OpenForge/locks/v1` defined by the [Mutation And Recovery
+Technical Design](../../technical-designs/mutation-and-recovery.md). It holds one read/write `FileShare.None` handle and never writes
 metadata, deletes, or truncates the
 lock file. An active handle blocks the plan; the lock is not lifecycle authority,
 history, or recovery evidence.

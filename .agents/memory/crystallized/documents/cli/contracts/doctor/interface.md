@@ -21,10 +21,11 @@ contract defines the six global flags once. The [Source References](../shared/so
 contract remains the authority for source identity wherever a diagnostic finding
 reports a source.
 
-The accepted CLI Architecture defines the exact shared JSON result schema and
-numeric exit mapping, parser and library choices, filesystem identity details,
-token and hashing choices, concurrency, numeric resource limits, C# and .NET
-Native AOT source boundaries, and packaging. Gate 5 must prove source-generated
+The [Shared Result Coordinates](../shared/result-coordinates/interface.md) define
+the exact shared JSON result schema and numeric exit mapping. The accepted [CLI
+Architecture](../../architecture.md) defines parser roles, filesystem identity,
+hashing and concurrency constraints, resource boundaries, and C# and .NET Native
+AOT structure. Gate 5 must prove source-generated
 YamlDotNet and STJ serialization, fixed Markdig where used, real `System.IO`,
 Native AOT, OS locking, isolated tests, and package journeys. No Technical Design
 file exists for Doctor, and this contract does not duplicate those mechanics.
@@ -45,7 +46,7 @@ The operation always uses these six diagnostic domains, in this order:
 | Order | Domain                                                   | Boundary                                                                                                                                                                                   |
 | ----- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 1     | `workspace and entry`                                    | Establish the selected workspace, `.agents` boundary, Loader, entrypoints, source identity, parsing, and reachable roots.                                                                  |
-| 2     | `recovery and residual state`                            | Report exact named external final bundles and incomplete drafts, with one semantic final-ZIP integrity check and Cleanup guidance.                                                          |
+| 2     | `recovery and residual state`                            | Report exact named external final bundles and incomplete drafts, with one semantic final-ZIP integrity check and Cleanup guidance.                                                         |
 | 3     | `routes, metadata, overwrites, and generated navigation` | Compare authored topology and metadata with derived route relationships and generated `Entries`.                                                                                           |
 | 4     | `local references`                                       | Inspect supported authored local references, target and fragment resolution, containment, and bounded repair evidence.                                                                     |
 | 5     | `Framework lifecycle`                                    | Diagnose the installed or absent Framework payload, isolated Framework lifecycle section, managed files and regions, trust, ownership boundaries, and recovery evidence.                   |
@@ -280,12 +281,12 @@ bytes. Cleanup owns deletion only after it acquires the same-workspace lease,
 re-enumerates the selected bucket, and repeats final ordinary path/kind and
 semantic validation.
 
-| Kind                              | Detectable condition                                                                                                                     | Resolution or next action                                                                                                                               |
-| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `recovery.bundle-recognized`      | An exact named final ZIP is semantically verified under the selected workspace bucket.                                                   | `informational`; report its path and `Verified` integrity, then offer the separate [cleanup operation](../cleanup/interface.md).                           |
-| `recovery.draft-recognized`       | An exact named draft is present under the selected workspace bucket.                                                                      | `informational`; report its path as `Incomplete`; it is never a recovery preparation.                                                                    |
-| `recovery.bundle-collision`       | An exact deterministic final name contains malformed, unsupported, or unreadable content.                                                | `blocked-repair`; preserve it and report the exact integrity condition.                                                                                   |
-| `recovery.provenance-unavailable` | A final ZIP cannot provide complete semantic schema, exact ordered entries, prior payload, intended fingerprint, or operation provenance. | `blocked-repair`; preserve it; Cleanup cannot delete it without semantic validation and final under-lease revalidation.                                  |
+| Kind                              | Detectable condition                                                                                                                      | Resolution or next action                                                                                                        |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `recovery.bundle-recognized`      | An exact named final ZIP is semantically verified under the selected workspace bucket.                                                    | `informational`; report its path and `Verified` integrity, then offer the separate [cleanup operation](../cleanup/interface.md). |
+| `recovery.draft-recognized`       | An exact named draft is present under the selected workspace bucket.                                                                      | `informational`; report its path as `Incomplete`; it is never a recovery preparation.                                            |
+| `recovery.bundle-collision`       | An exact deterministic final name contains malformed, unsupported, or unreadable content.                                                 | `blocked-repair`; preserve it and report the exact integrity condition.                                                          |
+| `recovery.provenance-unavailable` | A final ZIP cannot provide complete semantic schema, exact ordered entries, prior payload, intended fingerprint, or operation provenance. | `blocked-repair`; preserve it; Cleanup cannot delete it without semantic validation and final under-lease revalidation.          |
 
 ### Routes, Metadata, Overwrites, And Generated Navigation
 
@@ -481,8 +482,8 @@ as human output. JSON is non-interactive and never prompts. It includes the
 complete domain groups, coverage and limitations, counts, findings, typed
 subjects and evidence, provenance, resolution lanes, candidates or proposals,
 next actions, status, and post-condition facts that the contract exposes. Exact
-field names, schema compatibility, and exit mapping follow the shared CLI
-Architecture.
+field names, schema compatibility, and exit mapping follow the [Shared Result
+Coordinates](../shared/result-coordinates/interface.md).
 
 ## Semantic Results
 
@@ -580,10 +581,11 @@ Doctor does not:
   Framework lifecycle, or Extension lifecycle.
 - Report a health score, percentage, or fabricated complete coverage.
 
-The accepted CLI Architecture defines the exact JSON schema, numeric exits,
-parser and library, filesystem alias and physical-identity mechanics, token and
-hashing rules, concurrency, numeric resource limits, and lifecycle mutation
-boundaries. Gate 5 must prove source-generated YamlDotNet and STJ serialization,
+The [Shared Result Coordinates](../shared/result-coordinates/interface.md) define
+the exact JSON schema and numeric exits. The accepted [CLI
+Architecture](../../architecture.md) defines parser roles, filesystem alias and
+physical-identity structure, hashing and concurrency constraints, resource
+limits, and lifecycle mutation boundaries. Gate 5 must prove source-generated YamlDotNet and STJ serialization,
 fixed Markdig where used, real `System.IO`, Native AOT, OS locking, isolated
 tests, and package journeys. Doctor remains non-shipping and does not claim that
 proof.

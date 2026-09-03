@@ -17,9 +17,10 @@ Gate 5. The sibling Behavior Contract defines the technology-neutral operation,
 and the Technical Design is subordinate to the [CLI Architecture](../../architecture.md)
 for the accepted context realization.
 
-The [CLI Architecture](../../architecture.md) defines the exact shared
-structured result schema, process-status mapping, source structure, package and
-runtime boundaries, and filesystem realization. The [Technical
+The [Shared Result Coordinates](../shared/result-coordinates/interface.md) define
+the exact shared structured result schema and process-status mapping. The [CLI
+Architecture](../../architecture.md) defines source and runtime boundaries and
+filesystem structure. The [Technical
 Design](technical-design.md) records the accepted context-specific realization;
 neither source can redefine this Interface Contract.
 
@@ -721,7 +722,8 @@ The command returns one result status:
 | `failed`      | An unexpected internal failure prevented normal completion                                                                                                                                                                                                             |
 | `interrupted` | The caller cancelled or interrupted the operation before completion                                                                                                                                                                                                    |
 
-The shared process-status mapping is defined by the CLI Architecture.
+The shared process-status mapping is defined by the [Shared Result
+Coordinates](../shared/result-coordinates/interface.md).
 
 ### Required Summary
 
@@ -744,10 +746,11 @@ facts and source order from the same typed result.
 
 ### Exact Schema-v1 Command-Local Result
 
-The Architecture's schema-v1 envelope wraps this command-local `result` object.
+The [Shared Result Coordinates](../shared/result-coordinates/interface.md)
+schema-v1 envelope wraps this command-local `result` object.
 The envelope remains exactly `{ schemaVersion, command, status, workspace,
 result, next }`; its aggregate `status`, workspace, and next action are not
-duplicated below. The shared `SourceLocation` primitive is the Architecture's
+duplicated below. The shared `SourceLocation` primitive is the same authority's
 exact `{ line, column, byteOffset, byteLength }` shape.
 
 The following camel-case grammar lists every command-local member in wire order.
@@ -999,35 +1002,35 @@ content.
 Context has exactly the following finding vocabulary. Each code has only the
 status shown, and this table order is the primary finding order.
 
-| Machine code | Finding status |
-| --- | --- |
-| `context.invalid-input` | `invalid` |
-| `context.invalid-source` | `invalid` |
-| `context.invalid-content` | `invalid` |
-| `context.invalid-link-depth` | `invalid` |
-| `context.workspace-unavailable` | `blocked` |
-| `context.workspace-unsafe` | `blocked` |
-| `context.source-ambiguous` | `blocked` |
-| `context.source-unsafe` | `blocked` |
-| `context.overwrite-ambiguous` | `blocked` |
-| `context.target-ambiguous` | `blocked` |
-| `context.target-unsafe` | `blocked` |
-| `context.closure-unavailable` | `incomplete` |
-| `context.layer-unavailable` | `incomplete` |
-| `context.invalid-encoding` | `incomplete` |
-| `context.markdown-unavailable` | `incomplete` |
-| `context.target-missing` | `incomplete` |
-| `context.fragment-missing` | `incomplete` |
-| `context.link-encoding-invalid` | `incomplete` |
-| `context.target-unreadable` | `incomplete` |
-| `context.section-ambiguous` | `incomplete` |
-| `context.projection-unavailable` | `incomplete` |
-| `context.identity-collision` | `attention` |
-| `context.target-case-mismatch` | `attention` |
-| `context.frontmatter-missing` | `attention` |
-| `context.section-missing` | `attention` |
-| `context.operation-failed` | `failed` |
-| `context.interrupted` | `interrupted` |
+| Machine code                     | Finding status |
+| -------------------------------- | -------------- |
+| `context.invalid-input`          | `invalid`      |
+| `context.invalid-source`         | `invalid`      |
+| `context.invalid-content`        | `invalid`      |
+| `context.invalid-link-depth`     | `invalid`      |
+| `context.workspace-unavailable`  | `blocked`      |
+| `context.workspace-unsafe`       | `blocked`      |
+| `context.source-ambiguous`       | `blocked`      |
+| `context.source-unsafe`          | `blocked`      |
+| `context.overwrite-ambiguous`    | `blocked`      |
+| `context.target-ambiguous`       | `blocked`      |
+| `context.target-unsafe`          | `blocked`      |
+| `context.closure-unavailable`    | `incomplete`   |
+| `context.layer-unavailable`      | `incomplete`   |
+| `context.invalid-encoding`       | `incomplete`   |
+| `context.markdown-unavailable`   | `incomplete`   |
+| `context.target-missing`         | `incomplete`   |
+| `context.fragment-missing`       | `incomplete`   |
+| `context.link-encoding-invalid`  | `incomplete`   |
+| `context.target-unreadable`      | `incomplete`   |
+| `context.section-ambiguous`      | `incomplete`   |
+| `context.projection-unavailable` | `incomplete`   |
+| `context.identity-collision`     | `attention`    |
+| `context.target-case-mismatch`   | `attention`    |
+| `context.frontmatter-missing`    | `attention`    |
+| `context.section-missing`        | `attention`    |
+| `context.operation-failed`       | `failed`       |
+| `context.interrupted`            | `interrupted`  |
 
 Invalid findings stop before operation resolution. Blocked findings mean the
 workspace, source, overwrite, or local-target safety boundary cannot be
@@ -1058,15 +1061,15 @@ enumeration, parser, or exception order never controls finding order.
 The top-level envelope's `next` member uses at most one Context action. After the
 aggregate status and ordered findings are fixed, the first applicable row wins.
 
-| Condition | `next.command` | `next.reason` |
-| --- | --- | --- |
-| `complete` or `attention` | `null` | `null` |
-| `invalid` | `open-forge context --help` | `Correct the named Context input, then rerun the request.` |
-| `blocked` with `context.source-ambiguous` as the first blocked finding | `open-forge context` | `Replace every ambiguous source reference with one listed exact path, then rerun the same request.` |
-| Other `blocked` | `open-forge doctor` | `Inspect the blocked workspace, source, overwrite, or link-target boundary before rerunning Context.` |
-| `incomplete` | `open-forge doctor` | `Inspect the unavailable closure, source, link, or projection facts before relying on this Context result.` |
-| `failed` | `open-forge context --verbose` | `Report the failure and retry the same Context request with bounded diagnostics.` |
-| `interrupted` | `open-forge context` | `Rerun the same Context request.` |
+| Condition                                                              | `next.command`                 | `next.reason`                                                                                               |
+| ---------------------------------------------------------------------- | ------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| `complete` or `attention`                                              | `null`                         | `null`                                                                                                      |
+| `invalid`                                                              | `open-forge context --help`    | `Correct the named Context input, then rerun the request.`                                                  |
+| `blocked` with `context.source-ambiguous` as the first blocked finding | `open-forge context`           | `Replace every ambiguous source reference with one listed exact path, then rerun the same request.`         |
+| Other `blocked`                                                        | `open-forge doctor`            | `Inspect the blocked workspace, source, overwrite, or link-target boundary before rerunning Context.`       |
+| `incomplete`                                                           | `open-forge doctor`            | `Inspect the unavailable closure, source, link, or projection facts before relying on this Context result.` |
+| `failed`                                                               | `open-forge context --verbose` | `Report the failure and retry the same Context request with bounded diagnostics.`                           |
+| `interrupted`                                                          | `open-forge context`           | `Rerun the same Context request.`                                                                           |
 
 Human compact and expanded output use the same optional action. Renderers do not
 choose, rewrite, or multiply next actions.
@@ -1092,10 +1095,11 @@ stderr. Each primary human result stays together on its assigned stream.
 Separate bounded diagnostics go to stderr, and human text is not mixed into JSON
 stdout.
 
-The [CLI Architecture](../../architecture.md) defines exact structured field
-names, schema compatibility, process-status mapping, parser and serialization
-realization, source ranges, filesystem identity and containment, source
-structure, package and runtime boundaries, and verbose diagnostics. These
+The [Shared Result Coordinates](../shared/result-coordinates/interface.md) define
+exact structured field names, schema compatibility, and process-status mapping.
+The [CLI Architecture](../../architecture.md) defines parser and concrete
+serialization relationships, source ranges, filesystem identity and containment,
+source structure, runtime boundaries, and bounded diagnostic structure. These
 accepted technical choices do not weaken the status, stream, ordering, or
 completeness rules above.
 

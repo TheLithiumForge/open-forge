@@ -21,10 +21,11 @@ The sibling [Behavior Contract](behavior.md) defines technology-neutral
 resolution, fingerprint formation, comparison, retention, and result
 formation. The [Extension group entrypoint](../_extension.md) defines group help
 only. [Global CLI Flags](../../shared/global-flags/interface.md) defines shared
-flags and terminal behavior. The [CLI Architecture](../../../architecture.md)
-defines the shared JSON envelope, source-location primitive, status/process
-coordinates, parser boundary, filesystem boundary, serialization boundary, and
-evidence gates.
+flags and terminal behavior. The [Shared Result
+Coordinates](../../shared/result-coordinates/interface.md) define the shared JSON
+envelope, source-location primitive, and status/process coordinates. The [CLI
+Architecture](../../../architecture.md) defines parser, filesystem, concrete
+serialization, and evidence boundaries.
 
 ## Purpose And Boundary
 
@@ -110,7 +111,8 @@ known empty count is `0`. A count whose input could not be established is
 ## Structured Result And Shared Envelope
 
 For JSON presentation, Inspect emits one `CliJsonEnvelopeV1` document in the
-shared Architecture envelope. Its camel-case members and order are fixed:
+shared [result-coordinate envelope](../../shared/result-coordinates/interface.md).
+Its camel-case members and order are fixed:
 
 ```text
 CliJsonEnvelopeV1 {
@@ -124,10 +126,10 @@ CliJsonEnvelopeV1 {
 ```
 
 `schemaVersion`, `command`, `status`, `workspace`, and `next` belong to the
-Architecture envelope. They do not occur inside `InspectResult`. `result` is
-never `null`. Every envelope member is present, including a `null` workspace or
-`null` next action. JSON uses stdout for all seven statuses; terminal help and
-version retain the shared text-only bypass.
+shared envelope. They do not occur inside `InspectResult`. `result` is never
+`null`. Every envelope member is present, including a `null` workspace or `null`
+next action. JSON uses stdout for all seven statuses; terminal help and version
+retain the shared text-only bypass.
 
 ### Exact Command-Local Schema
 
@@ -507,39 +509,39 @@ is the sum of valid omitted interiors and is `0` when no bytes are omitted.
 Inspect has exactly this finding vocabulary. The `Order` column is the global
 finding ordinal; each code has exactly one status.
 
-| Order | Machine code | Status | Meaning |
-| ---: | --- | --- | --- |
-| 1 | `extension-inspect.invalid-input` | `invalid` | The command has missing or extra operands, an unsupported flag, a terminal-mode conflict, or another invalid request shape. |
-| 2 | `extension-inspect.invalid-stable-id` | `invalid` | The supplied stable ID is empty or violates the exact Extension ID grammar. |
-| 3 | `extension-inspect.workspace-unavailable` | `blocked` | The selected workspace cannot be established as the required directory. |
-| 4 | `extension-inspect.workspace-unsafe` | `blocked` | Workspace physical identity or containment cannot be proved safely. |
-| 5 | `extension-inspect.source-unavailable` | `attention` | The explicit or embedded source is missing or inaccessible while independently readable installed facts still answer the installed-only inspection. |
-| 6 | `extension-inspect.source-invalid` | `incomplete` | The selected source has invalid encoding, structure, or package metadata, so source-dependent facts are incomplete. |
-| 7 | `extension-inspect.source-overlap` | `blocked` | The selected source is lexically or physically overlapping with the target workspace. |
-| 8 | `extension-inspect.source-ambiguous` | `blocked` | One source value has more than one structural package or catalogue interpretation. |
-| 9 | `extension-inspect.identity-ambiguous` | `blocked` | The requested ID has duplicate active package identities or unresolved source candidates. |
-| 10 | `extension-inspect.lifecycle-unavailable` | `incomplete` | Required lifecycle document or Extension-section facts cannot be read. |
-| 11 | `extension-inspect.lifecycle-invalid` | `incomplete` | Lifecycle encoding, schema, value, order, or reciprocal facts are malformed while safe partial facts remain. |
-| 12 | `extension-inspect.lifecycle-blocked` | `blocked` | Lifecycle identity, ownership, path, or cross-section ambiguity makes a safe classification impossible. |
-| 13 | `extension-inspect.package-unavailable` | `incomplete` | The requested package is not readable in the selected source universe or its required package facts are unavailable. |
-| 14 | `extension-inspect.package-invalid` | `incomplete` | The requested package manifest or payload inventory is malformed or cannot be validated. |
-| 15 | `extension-inspect.dependency-incomplete` | `incomplete` | Dependency declarations or transitive closure are only partly established. |
-| 16 | `extension-inspect.dependency-cycle` | `blocked` | The selected dependency graph contains a cycle. |
-| 17 | `extension-inspect.dependency-conflict` | `blocked` | Dependency IDs, declarations, source identities, or closure order conflict or duplicate. |
-| 18 | `extension-inspect.path-unavailable` | `incomplete` | A declared or current path cannot be read or its required fact cannot be established. |
-| 19 | `extension-inspect.path-invalid` | `blocked` | A declared target path is unsafe, reserved, malformed, or outside the permitted workspace boundary. |
-| 20 | `extension-inspect.ownership-conflict` | `blocked` | Owner sets or route ownership are conflicting, ambiguous, or unsafe. |
-| 21 | `extension-inspect.fingerprint-unavailable` | `incomplete` | Required bytes or an operation-time fingerprint cannot be read. |
-| 22 | `extension-inspect.fingerprint-fallback` | `incomplete` | Unsupported, binary, invalid-UTF-8, unparseable, or invalid-region input uses exact-byte fallback and cannot claim semantic equivalence. |
-| 23 | `extension-inspect.generated-boundary-invalid` | `incomplete` | A marker-looking generated region is malformed, duplicate, reversed, nested, or ambiguous and therefore remains in exact-byte fallback. |
-| 24 | `extension-inspect.dependency-changed` | `attention` | Complete three-way facts show intended dependency identity differs from the current identity. |
-| 25 | `extension-inspect.path-changed` | `attention` | Complete three-way facts show baseline and current identity agree while intended content differs. |
-| 26 | `extension-inspect.path-current-diverged` | `attention` | Complete facts show current content differs from the persisted baseline; Inspect does not authorize replacement. |
-| 27 | `extension-inspect.path-missing` | `attention` | A trusted expected path is missing from the current workspace. |
-| 28 | `extension-inspect.path-new` | `attention` | Intended source contains a new path with no persisted baseline. |
-| 29 | `extension-inspect.path-retired` | `attention` | Intended source no longer contains a previously managed path. |
-| 30 | `extension-inspect.operation-failed` | `failed` | An unexpected read or result-formation failure prevents normal completion. |
-| 31 | `extension-inspect.interrupted` | `interrupted` | Caller cancellation or interruption stopped the operation before completion. |
+| Order | Machine code                                   | Status        | Meaning                                                                                                                                             |
+| ----: | ---------------------------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+|     1 | `extension-inspect.invalid-input`              | `invalid`     | The command has missing or extra operands, an unsupported flag, a terminal-mode conflict, or another invalid request shape.                         |
+|     2 | `extension-inspect.invalid-stable-id`          | `invalid`     | The supplied stable ID is empty or violates the exact Extension ID grammar.                                                                         |
+|     3 | `extension-inspect.workspace-unavailable`      | `blocked`     | The selected workspace cannot be established as the required directory.                                                                             |
+|     4 | `extension-inspect.workspace-unsafe`           | `blocked`     | Workspace physical identity or containment cannot be proved safely.                                                                                 |
+|     5 | `extension-inspect.source-unavailable`         | `attention`   | The explicit or embedded source is missing or inaccessible while independently readable installed facts still answer the installed-only inspection. |
+|     6 | `extension-inspect.source-invalid`             | `incomplete`  | The selected source has invalid encoding, structure, or package metadata, so source-dependent facts are incomplete.                                 |
+|     7 | `extension-inspect.source-overlap`             | `blocked`     | The selected source is lexically or physically overlapping with the target workspace.                                                               |
+|     8 | `extension-inspect.source-ambiguous`           | `blocked`     | One source value has more than one structural package or catalogue interpretation.                                                                  |
+|     9 | `extension-inspect.identity-ambiguous`         | `blocked`     | The requested ID has duplicate active package identities or unresolved source candidates.                                                           |
+|    10 | `extension-inspect.lifecycle-unavailable`      | `incomplete`  | Required lifecycle document or Extension-section facts cannot be read.                                                                              |
+|    11 | `extension-inspect.lifecycle-invalid`          | `incomplete`  | Lifecycle encoding, schema, value, order, or reciprocal facts are malformed while safe partial facts remain.                                        |
+|    12 | `extension-inspect.lifecycle-blocked`          | `blocked`     | Lifecycle identity, ownership, path, or cross-section ambiguity makes a safe classification impossible.                                             |
+|    13 | `extension-inspect.package-unavailable`        | `incomplete`  | The requested package is not readable in the selected source universe or its required package facts are unavailable.                                |
+|    14 | `extension-inspect.package-invalid`            | `incomplete`  | The requested package manifest or payload inventory is malformed or cannot be validated.                                                            |
+|    15 | `extension-inspect.dependency-incomplete`      | `incomplete`  | Dependency declarations or transitive closure are only partly established.                                                                          |
+|    16 | `extension-inspect.dependency-cycle`           | `blocked`     | The selected dependency graph contains a cycle.                                                                                                     |
+|    17 | `extension-inspect.dependency-conflict`        | `blocked`     | Dependency IDs, declarations, source identities, or closure order conflict or duplicate.                                                            |
+|    18 | `extension-inspect.path-unavailable`           | `incomplete`  | A declared or current path cannot be read or its required fact cannot be established.                                                               |
+|    19 | `extension-inspect.path-invalid`               | `blocked`     | A declared target path is unsafe, reserved, malformed, or outside the permitted workspace boundary.                                                 |
+|    20 | `extension-inspect.ownership-conflict`         | `blocked`     | Owner sets or route ownership are conflicting, ambiguous, or unsafe.                                                                                |
+|    21 | `extension-inspect.fingerprint-unavailable`    | `incomplete`  | Required bytes or an operation-time fingerprint cannot be read.                                                                                     |
+|    22 | `extension-inspect.fingerprint-fallback`       | `incomplete`  | Unsupported, binary, invalid-UTF-8, unparseable, or invalid-region input uses exact-byte fallback and cannot claim semantic equivalence.            |
+|    23 | `extension-inspect.generated-boundary-invalid` | `incomplete`  | A marker-looking generated region is malformed, duplicate, reversed, nested, or ambiguous and therefore remains in exact-byte fallback.             |
+|    24 | `extension-inspect.dependency-changed`         | `attention`   | Complete three-way facts show intended dependency identity differs from the current identity.                                                       |
+|    25 | `extension-inspect.path-changed`               | `attention`   | Complete three-way facts show baseline and current identity agree while intended content differs.                                                   |
+|    26 | `extension-inspect.path-current-diverged`      | `attention`   | Complete facts show current content differs from the persisted baseline; Inspect does not authorize replacement.                                    |
+|    27 | `extension-inspect.path-missing`               | `attention`   | A trusted expected path is missing from the current workspace.                                                                                      |
+|    28 | `extension-inspect.path-new`                   | `attention`   | Intended source contains a new path with no persisted baseline.                                                                                     |
+|    29 | `extension-inspect.path-retired`               | `attention`   | Intended source no longer contains a previously managed path.                                                                                       |
+|    30 | `extension-inspect.operation-failed`           | `failed`      | An unexpected read or result-formation failure prevents normal completion.                                                                          |
+|    31 | `extension-inspect.interrupted`                | `interrupted` | Caller cancellation or interruption stopped the operation before completion.                                                                        |
 
 The code meaning is local to Inspect. It does not infer lifecycle ownership,
 select an update mode, repair a marker, or convert an observation into an
@@ -588,16 +590,16 @@ The top-level `next` member is the Architecture shape `{ command, reason }` or
 `null`. It is not repeated inside `InspectResult`. This table is exhaustive and
 uses only the exact values shown.
 
-| Condition | Top-level `next` | Compact human line |
-| --- | --- | --- |
-| `complete` | `null` | no line |
-| `attention` with an actionable trusted complete semantic three-way divergence | `{ command: "open-forge extension update {subject.id}", reason: "Apply the trusted current-source change for this stable ID with the explicit update command." }` | `Next: open-forge extension update {subject.id}` |
-| other `attention` | `null` | no line |
-| `incomplete` | `{ command: "open-forge doctor", reason: "Inspect unavailable lifecycle, source, dependency, path, or fingerprint facts before relying on this result." }` | `Next: open-forge doctor` |
-| `invalid` | `{ command: "open-forge extension inspect --help", reason: "Correct the named Extension Inspect input, then rerun the request." }` | `Next: correct the named Extension Inspect input.` |
-| `blocked` | `{ command: "open-forge doctor", reason: "Inspect the blocked workspace, source, identity, or ownership boundary before rerunning Extension Inspect." }` | `Next: open-forge doctor` |
-| `failed` | `{ command: "open-forge extension inspect --verbose", reason: "Report the failure and retry Extension Inspect with bounded diagnostics." }` | `Next: report the failure and retry with bounded diagnostics.` |
-| `interrupted` | `{ command: "open-forge extension inspect", reason: "Rerun the same Extension Inspect request." }` | `Next: rerun the same request.` |
+| Condition                                                                     | Top-level `next`                                                                                                                                                  | Compact human line                                             |
+| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `complete`                                                                    | `null`                                                                                                                                                            | no line                                                        |
+| `attention` with an actionable trusted complete semantic three-way divergence | `{ command: "open-forge extension update {subject.id}", reason: "Apply the trusted current-source change for this stable ID with the explicit update command." }` | `Next: open-forge extension update {subject.id}`               |
+| other `attention`                                                             | `null`                                                                                                                                                            | no line                                                        |
+| `incomplete`                                                                  | `{ command: "open-forge doctor", reason: "Inspect unavailable lifecycle, source, dependency, path, or fingerprint facts before relying on this result." }`        | `Next: open-forge doctor`                                      |
+| `invalid`                                                                     | `{ command: "open-forge extension inspect --help", reason: "Correct the named Extension Inspect input, then rerun the request." }`                                | `Next: correct the named Extension Inspect input.`             |
+| `blocked`                                                                     | `{ command: "open-forge doctor", reason: "Inspect the blocked workspace, source, identity, or ownership boundary before rerunning Extension Inspect." }`          | `Next: open-forge doctor`                                      |
+| `failed`                                                                      | `{ command: "open-forge extension inspect --verbose", reason: "Report the failure and retry Extension Inspect with bounded diagnostics." }`                       | `Next: report the failure and retry with bounded diagnostics.` |
+| `interrupted`                                                                 | `{ command: "open-forge extension inspect", reason: "Rerun the same Extension Inspect request." }`                                                                | `Next: rerun the same request.`                                |
 
 An actionable three-way divergence is deliberately narrow. It requires all of
 the following:
@@ -683,6 +685,7 @@ The parser recognizes a generated region only when all conditions below hold:
    The marker line has no indentation or additional bytes other than its line
    ending; at EOF, the final marker may have no line-ending bytes. Both markers
    belong to that final `Entries` section.
+
 3. The end marker is the final non-empty line of the document. Only its own
    line-ending bytes may follow it. The marker lines and their normalized line
    endings are part of the retained output.
@@ -776,15 +779,15 @@ stdout. Primary human `invalid`, `blocked`, `failed`, and `interrupted` results
 go to stderr. Bounded diagnostics use stderr. JSON uses one result on stdout
 for every status.
 
-| Result | Meaning for `inspect` |
-| --- | --- |
-| `complete` | The requested ID and all applicable installed/source facts are completely readable, with a valid empty comparison or equal comparison where applicable. |
-| `attention` | Complete facts expose finite divergence or another non-blocking observation that does not prevent safe reporting. |
-| `incomplete` | Safe installed or source facts remain, but required current source, lifecycle, dependency, parser, path, generated-boundary, or semantic coverage is unavailable. |
-| `invalid` | The ID, source input, operand, flag, repetition, or terminal-mode request is invalid. |
-| `blocked` | Ambiguous identity, source overlap, unsafe containment, ownership collision, malformed lifecycle evidence, or another unsafe boundary prevents safe inspection. |
-| `failed` | An unexpected read or result-formation failure occurs. |
-| `interrupted` | Caller cancellation or interruption occurs before the read-only result completes. |
+| Result        | Meaning for `inspect`                                                                                                                                             |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `complete`    | The requested ID and all applicable installed/source facts are completely readable, with a valid empty comparison or equal comparison where applicable.           |
+| `attention`   | Complete facts expose finite divergence or another non-blocking observation that does not prevent safe reporting.                                                 |
+| `incomplete`  | Safe installed or source facts remain, but required current source, lifecycle, dependency, parser, path, generated-boundary, or semantic coverage is unavailable. |
+| `invalid`     | The ID, source input, operand, flag, repetition, or terminal-mode request is invalid.                                                                             |
+| `blocked`     | Ambiguous identity, source overlap, unsafe containment, ownership collision, malformed lifecycle evidence, or another unsafe boundary prevents safe inspection.   |
+| `failed`      | An unexpected read or result-formation failure occurs.                                                                                                            |
+| `interrupted` | Caller cancellation or interruption occurs before the read-only result completes.                                                                                 |
 
 Every error names `extension inspect`, the ID or source when known, the direct
 cause, and at most one useful next action. An explicit missing or malformed
@@ -800,20 +803,20 @@ The following table maps the public scenarios to the exact command-local fields,
 status, findings, and `next`. It is normative; human wording remains
 illustrative.
 
-| Scenario | Established fields | Status and finding | `next` |
-| --- | --- | --- | --- |
-| Trusted installed record, embedded source, semantic three-way path change where baseline equals current and intended differs | `subject.resolved`; `source.available`; lifecycle `complete/trusted/matched`; installed and available `present`; dependency, path, comparison, and generated states `complete`; comparison mode `three-way` | `attention`; `path-changed` (and `dependency-changed` only when applicable) | Exact update action from the actionable three-way row |
-| Trusted installed record with explicit source missing | Installed package, baseline, declared paths, and current path facts remain; `source.state: missing`; available source facts unavailable and intended comparison is not applicable to the installed-only view | `attention`; `source-unavailable` | `null` |
-| Valid complete empty lifecycle Extension section with available package | lifecycle `readState: complete`, `trust: absent`, `coverage: complete`; installed `absent`; available `present`; dependency and source paths complete | `complete`; no findings | `null` |
-| Available package with missing lifecycle document or section | source and available package facts remain; lifecycle `missing/incomplete`; installed `unavailable`, never fabricated `absent` | `incomplete`; `lifecycle-unavailable` | `open-forge doctor` |
-| Explicit source contains no requested package | source available; available package `null`; dependency closure not complete; installed facts retained if present | `incomplete`; `package-unavailable` | `open-forge doctor` |
-| Malformed manifest or incomplete dependency closure | source identity remains; available package or dependency nodes retained only when safe; unknown fields are `null` or empty | `incomplete`; `package-invalid` or `dependency-incomplete` | `open-forge doctor` |
-| Duplicate ID, cycle, conflicting dependency, unsafe target path, overlap, or ownership ambiguity | Subject/source candidates and all safe earlier facts remain; unsafe boundary is not selected | `blocked`; corresponding `identity-ambiguous`, `dependency-cycle`, `dependency-conflict`, `path-invalid`, `source-overlap`, or `ownership-conflict` | `open-forge doctor` |
-| Supported Markdown with a malformed generated boundary | Current exact bytes and exact-byte fallback hash remain; generated region is invalid; semantic exclusion is not claimed | `incomplete`; `generated-boundary-invalid` and/or `fingerprint-fallback` | `open-forge doctor` |
-| Unsupported, binary, invalid-UTF-8, or unparseable payload | Path and exact bytes remain when readable; fingerprint kind is `exact-bytes`; no semantic equality or update recommendation | `incomplete`; `fingerprint-fallback` or `fingerprint-unavailable` | `open-forge doctor` |
-| Invalid ID or request grammar | `subject.supplied` may remain; later source, lifecycle, package, path, comparison, and generated states are `not-started`; arrays are empty | `invalid`; `invalid-input` or `invalid-stable-id` | `open-forge extension inspect --help` |
-| Unexpected read/result-formation failure | Facts completed before the failure remain; later states are `not-started`; no fallback is invented | `failed`; `operation-failed` | `open-forge extension inspect --verbose` |
-| Cancellation before completion | Facts completed before cancellation remain; later states are `not-started`; no write occurs | `interrupted`; `interrupted` | `open-forge extension inspect` |
+| Scenario                                                                                                                     | Established fields                                                                                                                                                                                           | Status and finding                                                                                                                                  | `next`                                                |
+| ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| Trusted installed record, embedded source, semantic three-way path change where baseline equals current and intended differs | `subject.resolved`; `source.available`; lifecycle `complete/trusted/matched`; installed and available `present`; dependency, path, comparison, and generated states `complete`; comparison mode `three-way`  | `attention`; `path-changed` (and `dependency-changed` only when applicable)                                                                         | Exact update action from the actionable three-way row |
+| Trusted installed record with explicit source missing                                                                        | Installed package, baseline, declared paths, and current path facts remain; `source.state: missing`; available source facts unavailable and intended comparison is not applicable to the installed-only view | `attention`; `source-unavailable`                                                                                                                   | `null`                                                |
+| Valid complete empty lifecycle Extension section with available package                                                      | lifecycle `readState: complete`, `trust: absent`, `coverage: complete`; installed `absent`; available `present`; dependency and source paths complete                                                        | `complete`; no findings                                                                                                                             | `null`                                                |
+| Available package with missing lifecycle document or section                                                                 | source and available package facts remain; lifecycle `missing/incomplete`; installed `unavailable`, never fabricated `absent`                                                                                | `incomplete`; `lifecycle-unavailable`                                                                                                               | `open-forge doctor`                                   |
+| Explicit source contains no requested package                                                                                | source available; available package `null`; dependency closure not complete; installed facts retained if present                                                                                             | `incomplete`; `package-unavailable`                                                                                                                 | `open-forge doctor`                                   |
+| Malformed manifest or incomplete dependency closure                                                                          | source identity remains; available package or dependency nodes retained only when safe; unknown fields are `null` or empty                                                                                   | `incomplete`; `package-invalid` or `dependency-incomplete`                                                                                          | `open-forge doctor`                                   |
+| Duplicate ID, cycle, conflicting dependency, unsafe target path, overlap, or ownership ambiguity                             | Subject/source candidates and all safe earlier facts remain; unsafe boundary is not selected                                                                                                                 | `blocked`; corresponding `identity-ambiguous`, `dependency-cycle`, `dependency-conflict`, `path-invalid`, `source-overlap`, or `ownership-conflict` | `open-forge doctor`                                   |
+| Supported Markdown with a malformed generated boundary                                                                       | Current exact bytes and exact-byte fallback hash remain; generated region is invalid; semantic exclusion is not claimed                                                                                      | `incomplete`; `generated-boundary-invalid` and/or `fingerprint-fallback`                                                                            | `open-forge doctor`                                   |
+| Unsupported, binary, invalid-UTF-8, or unparseable payload                                                                   | Path and exact bytes remain when readable; fingerprint kind is `exact-bytes`; no semantic equality or update recommendation                                                                                  | `incomplete`; `fingerprint-fallback` or `fingerprint-unavailable`                                                                                   | `open-forge doctor`                                   |
+| Invalid ID or request grammar                                                                                                | `subject.supplied` may remain; later source, lifecycle, package, path, comparison, and generated states are `not-started`; arrays are empty                                                                  | `invalid`; `invalid-input` or `invalid-stable-id`                                                                                                   | `open-forge extension inspect --help`                 |
+| Unexpected read/result-formation failure                                                                                     | Facts completed before the failure remain; later states are `not-started`; no fallback is invented                                                                                                           | `failed`; `operation-failed`                                                                                                                        | `open-forge extension inspect --verbose`              |
+| Cancellation before completion                                                                                               | Facts completed before cancellation remain; later states are `not-started`; no write occurs                                                                                                                  | `interrupted`; `interrupted`                                                                                                                        | `open-forge extension inspect`                        |
 
 ## Exact Structured Examples
 
@@ -861,9 +864,7 @@ evidence. Every member is present and follows the frozen order above.
         "version": "0.1.0",
         "source": "embedded catalogue",
         "dependencies": [],
-        "paths": [
-          ".agents/extensions/development-toolkit.md"
-        ]
+        "paths": [".agents/extensions/development-toolkit.md"]
       }
     },
     "available": {
@@ -897,9 +898,7 @@ evidence. Every member is present and follows the frozen order above.
           "state": "available"
         }
       ],
-      "order": [
-        "development-toolkit"
-      ]
+      "order": ["development-toolkit"]
     },
     "pathFacts": {
       "state": "complete",
@@ -987,28 +986,16 @@ evidence. Every member is present and follows the frozen order above.
             "origin": "operation-time-intended"
           },
           "relation": "changed",
-          "baselineOwners": [
-            "development-toolkit"
-          ],
-          "currentOwners": [
-            "development-toolkit"
-          ],
-          "intendedOwners": [
-            "development-toolkit"
-          ]
+          "baselineOwners": ["development-toolkit"],
+          "currentOwners": ["development-toolkit"],
+          "intendedOwners": ["development-toolkit"]
         }
       ],
       "dependencies": {
         "state": "available",
-        "baseline": [
-          "development-toolkit"
-        ],
-        "current": [
-          "development-toolkit"
-        ],
-        "intended": [
-          "development-toolkit"
-        ],
+        "baseline": ["development-toolkit"],
+        "current": ["development-toolkit"],
+        "intended": ["development-toolkit"],
         "relation": "equal"
       }
     },
@@ -1109,9 +1096,7 @@ evidence. Every member is present and follows the frozen order above.
         "version": "0.1.0",
         "source": "catalogue:/packages/open-forge",
         "dependencies": [],
-        "paths": [
-          ".agents/extensions/development-toolkit.md"
-        ]
+        "paths": [".agents/extensions/development-toolkit.md"]
       }
     },
     "available": {
@@ -1129,9 +1114,7 @@ evidence. Every member is present and follows the frozen order above.
           "state": "available"
         }
       ],
-      "order": [
-        "development-toolkit"
-      ]
+      "order": ["development-toolkit"]
     },
     "pathFacts": {
       "state": "complete",
@@ -1204,23 +1187,15 @@ evidence. Every member is present and follows the frozen order above.
           },
           "intended": null,
           "relation": "unknown",
-          "baselineOwners": [
-            "development-toolkit"
-          ],
-          "currentOwners": [
-            "development-toolkit"
-          ],
+          "baselineOwners": ["development-toolkit"],
+          "currentOwners": ["development-toolkit"],
           "intendedOwners": []
         }
       ],
       "dependencies": {
         "state": "complete",
-        "baseline": [
-          "development-toolkit"
-        ],
-        "current": [
-          "development-toolkit"
-        ],
+        "baseline": ["development-toolkit"],
+        "current": ["development-toolkit"],
         "intended": [],
         "relation": "not-applicable"
       }
@@ -1286,22 +1261,22 @@ the lowercase SHA-256 of the normalized or exact-fallback bytes identified in
 the `Output bytes` column. They are calculated vectors, not implementation
 evidence.
 
-| Vector | Input bytes | Treatment | Output bytes | SHA-256 |
-| --- | --- | --- | --- | --- |
-| LF baseline | `alpha\x0A` | admitted Markdown | `alpha\x0A` | `b6a98d9ce9a2d9149288fa3df42d377c3e42737afdcdaf714e33c0a100b51060` |
-| CRLF equals LF | `alpha\x0D\x0A` | CRLF → LF | `alpha\x0A` | `b6a98d9ce9a2d9149288fa3df42d377c3e42737afdcdaf714e33c0a100b51060` |
-| Lone CR equals LF | `alpha\x0D` | lone CR → LF | `alpha\x0A` | `b6a98d9ce9a2d9149288fa3df42d377c3e42737afdcdaf714e33c0a100b51060` |
-| Authored whitespace | `alpha\x20\x20\x0A` | whitespace retained | `alpha\x20\x20\x0A` | `a1d36921b09507031f6a0d2ecbda13dac0d41b20318f6138ccbf3f01907deb5c` |
-| Authored final-newline difference | `alpha` | final newline not added | `alpha` | `8ed3f6ad685b959ead7022518e1af76cd816f8e8ec7ccdda1ed4018e8f2223f8` |
-| Unicode | `caf\xC3\xA9\x0A` | Unicode retained | `caf\xC3\xA9\x0A` | `7b49b9e063bd91a4f9252b413261f5557b9c570aa61516989499f64a62dbcdd6` |
-| Leading BOM retained | `\xEF\xBB\xBFalpha\x0A` | BOM retained; no preamble added | `\xEF\xBB\xBFalpha\x0A` | `9eff3bdb19b9bef9372b96a1244c0f0f939acdb8f539551e0a099a5b20a3862e` |
-| Valid generated interior | `## Entries\x0A\x0A<!-- open-forge:generated-index:start -->\x0A- generated\x0A<!-- open-forge:generated-index:end -->\x0A` | omit only interior | `## Entries\x0A\x0A<!-- open-forge:generated-index:start -->\x0A<!-- open-forge:generated-index:end -->\x0A` | `2d253cbfbaea22ccffbc10d37e25d5ed52db632b6accf1698896b8d135c4e0e9` |
-| Reversed boundary | `## Entries\x0A<!-- open-forge:generated-index:end -->\x0A- route\x0A<!-- open-forge:generated-index:start -->\x0A` | invalid region; exact fallback | same bytes | `fa690b96fc34ae0c7fd05e3d4318d947b1d7eef4c33cc745ed8cc5cf4fae10bb` |
-| Unsupported bytes | `{}\x0D` | unsupported kind; exact fallback | `{}\x0D` | `f545623b541a21d6b8b415ee1793b91001a50ca985d26fad253c3c68aba5ffe9` |
-| Binary NUL | `\x00a\x0D\x0A` | binary/NUL; exact fallback | `\x00a\x0D\x0A` | `c4cbb7cbfda0feb8dde8cd2e8abfb0771fc2c04fe50720acc3b83971937b8ac3` |
-| Invalid UTF-8 | `\xFF\x0D\x0A` | invalid UTF-8; exact fallback | `\xFF\x0D\x0A` | `1320b5dc13aa91dbac6eabc346cb655592aef8244a8ed04b8c4b3bdd59b8af4c` |
-| Deterministic repeat, first run | `repeat\x0Avalue` | admitted Markdown | `repeat\x0Avalue` | `d9884573b6ea5e967e594532570e613d871fe38fc980df9ac05423e0c2559f38` |
-| Deterministic repeat, second run | `repeat\x0Avalue` | admitted Markdown | `repeat\x0Avalue` | `d9884573b6ea5e967e594532570e613d871fe38fc980df9ac05423e0c2559f38` |
+| Vector                            | Input bytes                                                                                                                 | Treatment                        | Output bytes                                                                                                 | SHA-256                                                            |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
+| LF baseline                       | `alpha\x0A`                                                                                                                 | admitted Markdown                | `alpha\x0A`                                                                                                  | `b6a98d9ce9a2d9149288fa3df42d377c3e42737afdcdaf714e33c0a100b51060` |
+| CRLF equals LF                    | `alpha\x0D\x0A`                                                                                                             | CRLF → LF                        | `alpha\x0A`                                                                                                  | `b6a98d9ce9a2d9149288fa3df42d377c3e42737afdcdaf714e33c0a100b51060` |
+| Lone CR equals LF                 | `alpha\x0D`                                                                                                                 | lone CR → LF                     | `alpha\x0A`                                                                                                  | `b6a98d9ce9a2d9149288fa3df42d377c3e42737afdcdaf714e33c0a100b51060` |
+| Authored whitespace               | `alpha\x20\x20\x0A`                                                                                                         | whitespace retained              | `alpha\x20\x20\x0A`                                                                                          | `a1d36921b09507031f6a0d2ecbda13dac0d41b20318f6138ccbf3f01907deb5c` |
+| Authored final-newline difference | `alpha`                                                                                                                     | final newline not added          | `alpha`                                                                                                      | `8ed3f6ad685b959ead7022518e1af76cd816f8e8ec7ccdda1ed4018e8f2223f8` |
+| Unicode                           | `caf\xC3\xA9\x0A`                                                                                                           | Unicode retained                 | `caf\xC3\xA9\x0A`                                                                                            | `7b49b9e063bd91a4f9252b413261f5557b9c570aa61516989499f64a62dbcdd6` |
+| Leading BOM retained              | `\xEF\xBB\xBFalpha\x0A`                                                                                                     | BOM retained; no preamble added  | `\xEF\xBB\xBFalpha\x0A`                                                                                      | `9eff3bdb19b9bef9372b96a1244c0f0f939acdb8f539551e0a099a5b20a3862e` |
+| Valid generated interior          | `## Entries\x0A\x0A<!-- open-forge:generated-index:start -->\x0A- generated\x0A<!-- open-forge:generated-index:end -->\x0A` | omit only interior               | `## Entries\x0A\x0A<!-- open-forge:generated-index:start -->\x0A<!-- open-forge:generated-index:end -->\x0A` | `2d253cbfbaea22ccffbc10d37e25d5ed52db632b6accf1698896b8d135c4e0e9` |
+| Reversed boundary                 | `## Entries\x0A<!-- open-forge:generated-index:end -->\x0A- route\x0A<!-- open-forge:generated-index:start -->\x0A`         | invalid region; exact fallback   | same bytes                                                                                                   | `fa690b96fc34ae0c7fd05e3d4318d947b1d7eef4c33cc745ed8cc5cf4fae10bb` |
+| Unsupported bytes                 | `{}\x0D`                                                                                                                    | unsupported kind; exact fallback | `{}\x0D`                                                                                                     | `f545623b541a21d6b8b415ee1793b91001a50ca985d26fad253c3c68aba5ffe9` |
+| Binary NUL                        | `\x00a\x0D\x0A`                                                                                                             | binary/NUL; exact fallback       | `\x00a\x0D\x0A`                                                                                              | `c4cbb7cbfda0feb8dde8cd2e8abfb0771fc2c04fe50720acc3b83971937b8ac3` |
+| Invalid UTF-8                     | `\xFF\x0D\x0A`                                                                                                              | invalid UTF-8; exact fallback    | `\xFF\x0D\x0A`                                                                                               | `1320b5dc13aa91dbac6eabc346cb655592aef8244a8ed04b8c4b3bdd59b8af4c` |
+| Deterministic repeat, first run   | `repeat\x0Avalue`                                                                                                           | admitted Markdown                | `repeat\x0Avalue`                                                                                            | `d9884573b6ea5e967e594532570e613d871fe38fc980df9ac05423e0c2559f38` |
+| Deterministic repeat, second run  | `repeat\x0Avalue`                                                                                                           | admitted Markdown                | `repeat\x0Avalue`                                                                                            | `d9884573b6ea5e967e594532570e613d871fe38fc980df9ac05423e0c2559f38` |
 
 The LF, CRLF, and lone-CR rows have equal output bytes and hashes. The
 whitespace, Unicode, BOM, and final-newline rows demonstrate that no other
@@ -1351,6 +1326,8 @@ Conformance must demonstrate, with the same typed result for human and JSON:
 - supported source-generated serialization and Native-AOT/process evidence at
   Gate 5, without treating this contract or its examples as proof.
 
-The shared CLI Architecture owns the envelope, source-location shape, status
-exit map, parser/runtime boundary, and Gate-5 evidence. This Interface owns the
-Inspect result, finding, fingerprint, scenario, and `next` meanings above.
+The [Shared Result Coordinates](../../shared/result-coordinates/interface.md) own
+the envelope, source-location shape, and status exit map. The [CLI
+Architecture](../../../architecture.md) owns parser/runtime boundaries and
+system-level evidence. This Interface owns the Inspect result, finding,
+fingerprint, scenario, and `next` meanings above.

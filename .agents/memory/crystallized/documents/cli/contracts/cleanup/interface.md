@@ -22,10 +22,11 @@ The [Doctor Interface](../doctor/interface.md) and [Repair Interface](../repair/
 remain authoritative for their read-only diagnosis and local-repair boundaries;
 cleanup does not invoke either operation.
 
-The [CLI Architecture](../../architecture.md) defines the accepted shared
-structured schema, process-status mapping, source structure, package and runtime
-boundaries, BCL-first filesystem boundary, workspace lock, and recovery identity
-model. This Interface Contract remains the authority for cleanup's public
+The [Shared Result Coordinates](../shared/result-coordinates/interface.md) define
+the accepted shared structured schema and process-status mapping. The [CLI
+Architecture](../../architecture.md) defines source and runtime boundaries,
+BCL-first filesystem structure, the workspace-lock boundary, and recovery
+identity relationships. This Interface Contract remains the authority for cleanup's public
 meaning. Implementation and executable proof remain pending Gate 5; those
 pending proofs do not weaken the observable boundaries below.
 
@@ -79,10 +80,10 @@ behavior.
 
 ## Flags
 
-| Flag                | Role                       | Value                          | Omission                                                              | Repetition and composition                                                                                      |
-| ------------------- | -------------------------- | ------------------------------ | --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `--dry-run`         | Write policy               | Boolean                        | Application is selected                                               | Repeats idempotently. It changes only whether effects are applied and never changes the catalogue or authority. |
-| Shared global flags | Workspace and presentation | Defined by the shared contract | Shared defaults apply                                                 | Shared repetition, ordering, composition, and terminal rules apply.                                             |
+| Flag                | Role                       | Value                          | Omission                | Repetition and composition                                                                                      |
+| ------------------- | -------------------------- | ------------------------------ | ----------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `--dry-run`         | Write policy               | Boolean                        | Application is selected | Repeats idempotently. It changes only whether effects are applied and never changes the catalogue or authority. |
+| Shared global flags | Workspace and presentation | Defined by the shared contract | Shared defaults apply   | Shared repetition, ordering, composition, and terminal rules apply.                                             |
 
 Cleanup has no `--force`, `--yes`, `--apply`, `--automatic`, age filter, glob,
 recursive selector, artifact selector, saved plan, cleanup profile, or generic
@@ -102,10 +103,10 @@ existing selected workspace bucket that cannot be read produces the locally
 contracted `incomplete` result rather than an empty catalogue. Each exact-name
 candidate retains its path, current file kind, and integrity condition:
 
-| Artifact kind         | Candidate and eligibility facts                                                                                                                                                                                                                                      |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Exact-name final      | Semantic source-generated schema-v1 validation determines `Verified`, `Malformed`, `Unsupported`, or `Unavailable`. Only a `Verified` ordinary file is deletion-eligible; every other integrity condition is reported, preserved, and blocks deletion.                 |
-| Exact-name draft      | An ordinary direct-child file is `Incomplete` support data, never a recovery preparation, and is deletion-eligible. A non-ordinary or otherwise unsafe exact-name draft is reported, preserved, and blocks deletion.                                                  |
+| Artifact kind    | Candidate and eligibility facts                                                                                                                                                                                                                        |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Exact-name final | Semantic source-generated schema-v1 validation determines `Verified`, `Malformed`, `Unsupported`, or `Unavailable`. Only a `Verified` ordinary file is deletion-eligible; every other integrity condition is reported, preserved, and blocks deletion. |
+| Exact-name draft | An ordinary direct-child file is `Incomplete` support data, never a recovery preparation, and is deletion-eligible. A non-ordinary or otherwise unsafe exact-name draft is reported, preserved, and blocks deletion.                                   |
 
 Semantic final validation may stream each ZIP payload entry through fixed bounded
 buffers solely to validate the exact declared length and lowercase SHA-256.
@@ -274,8 +275,8 @@ formation, planning, preflight, deletion, or verification. Human text is not
 mixed into JSON stdout; bounded diagnostics use stderr under the shared output
 contract.
 
-The result retains, using the shared structured schema defined by the [CLI
-Architecture](../../architecture.md):
+The result retains, using the shared structured schema defined by the [Shared
+Result Coordinates](../shared/result-coordinates/interface.md):
 
 - workspace and selection method;
 - dry-run or application mode and normalized flags;
@@ -296,20 +297,21 @@ artifact and effect.
 
 Cleanup uses the shared seven-status vocabulary:
 
-| Result        | Meaning                                                                                                                                                                                                                                                |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `complete`    | The complete safe candidate catalogue and contingent deletion plan were established in dry-run, application acquired the lease and deleted and verified every final planned artifact, or a complete current catalogue verified that no candidate exists without acquiring a lease. |
-| `attention`   | Reserved by the shared status contract and reachable only if a finite condition already required by that shared current authority applies. Cleanup has no such accepted condition, so planned deletions and preserved unknown items do not produce it. |
-| `incomplete`  | Safe catalogue enumeration or another required coverage fact could not be completed. No deletion begins while the operation has only this pre-effect condition.                                                                                        |
-| `invalid`     | Operands, an unknown or malformed flag, an invalid value, an invalid repetition, or command-specific input in a terminal help/version mode prevents request resolution.                                                                                |
+| Result        | Meaning                                                                                                                                                                                                                                                                                                   |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `complete`    | The complete safe candidate catalogue and contingent deletion plan were established in dry-run, application acquired the lease and deleted and verified every final planned artifact, or a complete current catalogue verified that no candidate exists without acquiring a lease.                        |
+| `attention`   | Reserved by the shared status contract and reachable only if a finite condition already required by that shared current authority applies. Cleanup has no such accepted condition, so planned deletions and preserved unknown items do not produce it.                                                    |
+| `incomplete`  | Safe catalogue enumeration or another required coverage fact could not be completed. No deletion begins while the operation has only this pre-effect condition.                                                                                                                                           |
+| `invalid`     | Operands, an unknown or malformed flag, an invalid value, an invalid repetition, or command-specific input in a terminal help/version mode prevents request resolution.                                                                                                                                   |
 | `blocked`     | The required same-workspace lease cannot be acquired, an exact-name candidate is malformed, unsupported, unavailable, non-ordinary, or unsafe, the filtered under-lease candidate set differs from the planned catalogue, or final revalidation prevents safe deletion. No unstarted deletion is applied. |
-| `failed`      | An unexpected deletion, verification, or other partial application failure occurs after effects begin. Already verified deletions and remaining or residual items are reported.                                                                        |
-| `interrupted` | The caller cancels and no stronger unsafe residual condition applies. Any already verified monotonic deletions and all remaining items are reported.                                                                                                   |
+| `failed`      | An unexpected deletion, verification, or other partial application failure occurs after effects begin. Already verified deletions and remaining or residual items are reported.                                                                                                                           |
+| `interrupted` | The caller cancels and no stronger unsafe residual condition applies. Any already verified monotonic deletions and all remaining items are reported.                                                                                                                                                      |
 
 For ordinary pre-effect conditions, status precedence is `blocked` >
 `incomplete` > `attention` > `complete`. Invalid input stops before catalogue
 formation. `failed` and `interrupted` preserve their event meaning. Exact
-process-status mapping is defined by the CLI Architecture.
+process-status mapping is defined by the [Shared Result
+Coordinates](../shared/result-coordinates/interface.md).
 
 ## Errors And Boundaries
 
@@ -383,10 +385,11 @@ Cleanup does not:
 - change the accepted Architecture. Implementation and executable proof for
   the accepted boundaries remain pending Gate 5.
 
-The CLI Architecture defines cleanup's accepted artifact identity realization,
-structured schema, process-status mapping, filesystem and concurrency boundary,
-package behavior, and runtime structure. Gate 5 provides implementation and
-executable proof for those decisions.
+The [Shared Result Coordinates](../shared/result-coordinates/interface.md) define
+the structured schema and process-status mapping. The [CLI
+Architecture](../../architecture.md) defines cleanup's cross-cutting artifact
+identity, filesystem, concurrency, and runtime structure. Gate 5 provides
+implementation and executable proof for those decisions.
 
 ## Verification Requirements
 

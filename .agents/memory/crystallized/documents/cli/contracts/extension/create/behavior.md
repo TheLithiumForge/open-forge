@@ -167,6 +167,7 @@ identity, workspace no-op, dry-run no-effects, the separate create-only path
 with no Replace/Delete, no workspace lease, no recovery bundle,
 expected-state revalidation immediately before effects, verification, retained
 partial state without restoration, repeated no-op, result parity, all statuses,
-and no implementation or shipping claim. The shared CLI Architecture defines the exact JSON result schema and exit
-mapping. Gate 5 must prove source-generated serialization, fixed Markdig where
+and no implementation or shipping claim. The [Shared Result
+Coordinates](../../shared/result-coordinates/interface.md) define the exact JSON
+result schema and exit mapping. Gate 5 must prove source-generated serialization, fixed Markdig where
 used, real `System.IO`, Native AOT, isolated tests, and package journeys.

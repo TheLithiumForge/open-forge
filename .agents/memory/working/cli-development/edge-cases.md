@@ -30,6 +30,7 @@ Use these current Task links when assigning or closing an item.
 - [Accept Find Presentation And The Complete Command](tasks/read-only/find-presentation-acceptance.md)
 - [Implement Doctor](tasks/operations/doctor.md)
 - [Implement Repair](tasks/operations/repair.md)
+- [Implement Route Update](tasks/route-mutation/route-update.md)
 
 ## Deferred Items
 
@@ -462,3 +463,33 @@ Use these current Task links when assigning or closing an item.
 - **Closure condition:** Managed and Native AOT help no longer calls implemented
   Context planned or unavailable, and the named command is registered and
   executable in the same artifact.
+
+### CLI-EDGE-016 — Route Update attached-empty responsibility spelling
+
+- **Current behavior and evidence:** The pinned parser erases the distinction
+  between a bare zero-token `--responsibility` option and the accepted
+  attached-empty `--responsibility=` and `--responsibility:` forms. Route Update
+  therefore requires one bounded lexical recognizer after typed parsing proves
+  exactly one selected responsibility option with zero value tokens.
+- **Accepted exception:** The [Route Update Technical
+  Design](../../crystallized/documents/cli/contracts/route/update/technical-design.md)
+  recognizes exactly `--responsibility=` and `--responsibility:`. Bare remains
+  invalid. Ordinary valued forms, including `--responsibility ""`, keep their
+  Interface-contract meaning. Inspection stops at `--`, and original arguments
+  enter neither the typed request nor domain behavior.
+- **Separation from CLI-EDGE-005:** This edge belongs exclusively to Route
+  Update's responsibility grammar. `CLI-EDGE-005` remains exclusively the Route
+  List equals-only depth-delimiter exception. Neither recognizer parses a value,
+  counts occurrences, crosses `--`, or becomes general binding authority.
+- **Risk:** A generic raw-argument workaround could create a second parser,
+  reinterpret ordinary values, leak raw arguments into the domain, or merge two
+  unrelated command grammars.
+- **Owning Task(s):** [Implement Route
+  Update](tasks/route-mutation/route-update.md) owns implementation and focused
+  parser/process evidence. Final release owns preservation in the complete
+  artifact.
+- **Closure condition:** Focused evidence proves both attached-empty forms, bare
+  rejection, ordinary valued forms including the explicit empty string, the
+  exactly-one-occurrence and zero-token precondition, the `--` boundary, and the
+  absence of raw arguments from the request and domain while Route List retains
+  its separate grammar.

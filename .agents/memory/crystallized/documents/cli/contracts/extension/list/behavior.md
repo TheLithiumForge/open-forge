@@ -13,8 +13,10 @@ This is the accepted current Crystallized Behavior Contract for read-only
 `open-forge extension list`. It defines deterministic request resolution, exact
 workspace and source handling, lifecycle-section trust classification, Installed
 and Available projection, coverage, result formation, and read-only conformance.
-The accepted CLI Architecture defines the exact shared JSON result schema and
-exit mapping, parser and filesystem mechanics, and package implementation. This
+The [Shared Result Coordinates](../../shared/result-coordinates/interface.md)
+define the exact shared JSON result schema and exit mapping. The accepted [CLI
+Architecture](../../../architecture.md) defines parser, filesystem, and package
+implementation boundaries. This
 behavior does not duplicate those mechanics or claim their Gate 5 proof.
 
 ## Typed Flow
@@ -125,7 +127,8 @@ update, remove, create, status, or doctor as a public subprocess.
 Conformance must demonstrate source and target boundaries, section filters,
 deterministic ordering, trust-state preservation, source-unavailable installed
 facts, one typed result, all statuses and streams, JSON parity, repeated-read
-determinism, no prompts, and no mutation. The shared CLI Architecture defines the
-exact JSON result schema and exit mapping. Gate 5 must prove source-generated
+determinism, no prompts, and no mutation. The [Shared Result
+Coordinates](../../shared/result-coordinates/interface.md) define the exact JSON
+result schema and exit mapping. Gate 5 must prove source-generated
 serialization, fixed Markdig where used, real `System.IO`, Native AOT, isolated
 tests, and package journeys.

@@ -548,7 +548,7 @@ Sol/xhigh review remains a separate final gate.
   evidence. Framework, shared Template behavior, public schema, and command
   contracts remain unchanged.
 - `T3-M11-BEH-01-F006` exposed parser information loss rather than a Route Update
-  grammar change. Overseer-authorized exception `CLI-EDGE-005` carries immutable
+  grammar change. Overseer-authorized exception `CLI-EDGE-016` carries immutable
   typed parse facts together with original arguments. Route Update inspects raw
   spelling only after typed zero-token responsibility facts, recognizes exact
   `--responsibility=` or `--responsibility:`, stops at `--`, and never carries raw

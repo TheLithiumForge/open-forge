@@ -196,6 +196,7 @@ explicit source, package/catalogue distinction, source disjointness, both
 section filters and their composition, trusted/untrusted/incomplete/blocked/
 absent states, source-unavailable installed facts, deterministic ordering, all
 seven statuses, human/JSON parity and streams, no prompts, and no persistent
-effect. The shared CLI Architecture defines the exact JSON result schema and exit
-mapping. Gate 5 must prove source-generated serialization, fixed Markdig where
+effect. The [Shared Result
+Coordinates](../../shared/result-coordinates/interface.md) define the exact JSON
+result schema and exit mapping. Gate 5 must prove source-generated serialization, fixed Markdig where
 used, real `System.IO`, Native AOT, isolated tests, and package journeys.

@@ -14,9 +14,11 @@ This is the accepted current Crystallized Behavior Contract for non-shipping
 universe, dependency closure, Framework-anchor and route-host facts, lifecycle
 trust, semantic identity, intended topology, ownership planning, initial force,
 dry-run/application, verification, recovery, result formation, and conformance.
-The accepted CLI Architecture defines package serialization, the exact shared
-JSON result schema and exit mapping, parser and filesystem mechanics, and the
-implementation boundary. This behavior does not duplicate those mechanics or
+The [Shared Result Coordinates](../../shared/result-coordinates/interface.md)
+define the exact shared JSON result schema and exit mapping. The accepted [CLI
+Architecture](../../../architecture.md) defines package serialization
+relationships, parser and filesystem boundaries, and cross-cutting implementation
+structure. This behavior does not duplicate those mechanics or
 claim their Gate 5 proof.
 
 ## Complete Typed Flow
@@ -260,7 +262,8 @@ generated navigation, reserved paths, complete planning, external recovery-bundl
 storage and verification, typed post-verification deletion state/disposition facts,
 dry-run no-effects, revalidation,
 verification, retained partial state without restoration, no-op repetition,
-JSON/human parity, and no package-source mutation. The shared CLI
-Architecture defines the exact JSON result schema and exit mapping. Gate 5 must
+JSON/human parity, and no package-source mutation. The [Shared Result
+Coordinates](../../shared/result-coordinates/interface.md) define the exact JSON
+result schema and exit mapping. Gate 5 must
 prove source-generated serialization, fixed Markdig where used, real
 `System.IO`, Native AOT, OS locking, isolated tests, and package journeys.

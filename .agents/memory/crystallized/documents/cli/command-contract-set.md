@@ -27,10 +27,11 @@ accepted. It does not choose libraries, modules, algorithms, or storage
 structures.
 
 Shared [Global Flags](contracts/shared/global-flags/interface.md), [Source
-References](contracts/shared/source-references/interface.md), and other shared
-contract files define reusable input once. A command-local Interface states how
-that shared input applies to its own operation without copying the shared
-meaning.
+References](contracts/shared/source-references/interface.md), [Result
+Coordinates](contracts/shared/result-coordinates/interface.md), and other shared
+contract files define reusable input and output coordinates once. A
+command-local Interface states how that shared meaning applies to its own
+operation without copying it.
 
 ## Behavior Contract
 
@@ -55,21 +56,26 @@ weaken a safety guarantee, or change a semantic result.
 
 The accepted [CLI Architecture](architecture.md) controls high-level C# structure,
 dependency direction, cross-cutting boundaries, physical source and test
-organization, libraries, serialization, filesystem, recovery, testing, Native
-AOT, and distribution. Local Technical Designs remain subordinate to that
-Architecture and may not reopen or override it. A local design may identify
-required evidence and may record accepted implementation evidence when that
-context belongs with the design. The active CLI Development route remains the
-source for program-wide execution state.
+organization, allowed dependency roles, testing, and Native AOT constraints.
+[Shared-capability Technical Designs](technical-designs/_technical-designs.md)
+own exact realization that does not belong in system Architecture, and [CLI
+Distribution](distribution.md) owns the public package graph and platform
+horizon. Local Technical Designs remain subordinate to those authorities and
+may not reopen or override them. A local design may identify required evidence
+and may record accepted implementation evidence when that context belongs with
+the design. The active CLI Development route remains the source for program-wide
+execution state.
 
 ### Current local Technical Designs
 
 The direct-command topology below lists local Technical Designs for `find`,
-`index`, and `context`. The remaining direct commands, `route` operations,
-`extension` leaves, and shared contract scopes have no local Technical Design
-now. That absence is intentional. Their implementation choices remain
-controlled by the Architecture and their command-local contracts until a real
-local boundary earns a separate design.
+`index`, and `context`. Route Update additionally has one bounded local Technical
+Design for its attached-empty parser exception. The remaining direct commands,
+`route` operations, `extension` leaves, and shared contract scopes have no local
+Technical Design now. That absence is intentional. Their implementation choices
+remain controlled by the Architecture, applicable shared-capability designs, and
+their command-local contracts until a real local boundary earns a separate
+design.
 
 ## Authority boundaries
 
@@ -88,18 +94,18 @@ complete detailed source set remains under [`contracts/`](contracts/_contracts.m
 
 Direct commands keep their detailed files in one local scope:
 
-| Command      | Interface                                                            | Behavior                                                           | Technical Design                                                            |
-| ------------ | -------------------------------------------------------------------- | ------------------------------------------------------------------ | --------------------------------------------------------------------------- |
-| `find`       | [`find Interface`](contracts/find/interface.md)                      | [`find Behavior`](contracts/find/behavior.md)                      | [`find Technical Design`](contracts/find/technical-design.md)               |
-| `index`      | [`index Interface`](contracts/index-candidate/interface.md)           | [`index Behavior`](contracts/index-candidate/behavior.md)           | [`index Technical Design`](contracts/index-candidate/technical-design.md)   |
-| `status`     | [`status Interface`](contracts/status/interface.md)                  | [`status Behavior`](contracts/status/behavior.md)                  | None; no Technical Design exists.                                           |
-| `context`    | [`context Interface`](contracts/context/interface.md)                | [`context Behavior`](contracts/context/behavior.md)                | [`context Technical Design`](contracts/context/technical-design.md)         |
-| `references` | [`references Interface`](contracts/references-candidate/interface.md) | [`references Behavior`](contracts/references-candidate/behavior.md) | None; no Technical Design exists.                                           |
-| `doctor`     | [`doctor Interface`](contracts/doctor/interface.md)                  | [`doctor Behavior`](contracts/doctor/behavior.md)                  | None; no Technical Design exists.                                           |
-| `repair`     | [`repair Interface`](contracts/repair/interface.md)                  | [`repair Behavior`](contracts/repair/behavior.md)                  | None; no Technical Design exists.                                           |
-| `install`    | [`install Interface`](contracts/install/interface.md)                | [`install Behavior`](contracts/install/behavior.md)                | None; no Technical Design exists.                                           |
-| `update`     | [`update Interface`](contracts/update/interface.md)                  | [`update Behavior`](contracts/update/behavior.md)                  | None; no Technical Design exists.                                           |
-| `cleanup`    | [`cleanup Interface`](contracts/cleanup/interface.md)                | [`cleanup Behavior`](contracts/cleanup/behavior.md)                | None; no Technical Design exists.                                           |
+| Command      | Interface                                                             | Behavior                                                            | Technical Design                                                          |
+| ------------ | --------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `find`       | [`find Interface`](contracts/find/interface.md)                       | [`find Behavior`](contracts/find/behavior.md)                       | [`find Technical Design`](contracts/find/technical-design.md)             |
+| `index`      | [`index Interface`](contracts/index-candidate/interface.md)           | [`index Behavior`](contracts/index-candidate/behavior.md)           | [`index Technical Design`](contracts/index-candidate/technical-design.md) |
+| `status`     | [`status Interface`](contracts/status/interface.md)                   | [`status Behavior`](contracts/status/behavior.md)                   | None; no Technical Design exists.                                         |
+| `context`    | [`context Interface`](contracts/context/interface.md)                 | [`context Behavior`](contracts/context/behavior.md)                 | [`context Technical Design`](contracts/context/technical-design.md)       |
+| `references` | [`references Interface`](contracts/references-candidate/interface.md) | [`references Behavior`](contracts/references-candidate/behavior.md) | None; no Technical Design exists.                                         |
+| `doctor`     | [`doctor Interface`](contracts/doctor/interface.md)                   | [`doctor Behavior`](contracts/doctor/behavior.md)                   | None; no Technical Design exists.                                         |
+| `repair`     | [`repair Interface`](contracts/repair/interface.md)                   | [`repair Behavior`](contracts/repair/behavior.md)                   | None; no Technical Design exists.                                         |
+| `install`    | [`install Interface`](contracts/install/interface.md)                 | [`install Behavior`](contracts/install/behavior.md)                 | None; no Technical Design exists.                                         |
+| `update`     | [`update Interface`](contracts/update/interface.md)                   | [`update Behavior`](contracts/update/behavior.md)                   | None; no Technical Design exists.                                         |
+| `cleanup`    | [`cleanup Interface`](contracts/cleanup/interface.md)                 | [`cleanup Behavior`](contracts/cleanup/behavior.md)                 | None; no Technical Design exists.                                         |
 
 The public `index` command files are currently staged under
 [`contracts/index-candidate/`](contracts/index-candidate/_index-candidate.md).
@@ -114,17 +120,18 @@ proved identity behavior. Frozen `open-forge-old` compatibility does not change
 either command's public identity or the replacement's logical contract topology.
 
 The grouped `route` command is routing-only. Each operation has its own local
-Interface and Behavior files:
+Interface and Behavior files. Route Update alone has a bounded local Technical
+Design:
 
-| Operation       | Interface                                                         | Behavior                                                        |
-| --------------- | ----------------------------------------------------------------- | --------------------------------------------------------------- |
-| `route inspect` | [`route inspect Interface`](contracts/route/inspect/interface.md) | [`route inspect Behavior`](contracts/route/inspect/behavior.md) |
-| `route list`    | [`route list Interface`](contracts/route/list/interface.md)       | [`route list Behavior`](contracts/route/list/behavior.md)       |
-| `route init`    | [`route init Interface`](contracts/route/init/interface.md)       | [`route init Behavior`](contracts/route/init/behavior.md)       |
-| `route create`  | [`route create Interface`](contracts/route/create/interface.md)   | [`route create Behavior`](contracts/route/create/behavior.md)   |
-| `route update`  | [`route update Interface`](contracts/route/update/interface.md)   | [`route update Behavior`](contracts/route/update/behavior.md)   |
-| `route move`    | [`route move Interface`](contracts/route/move/interface.md)       | [`route move Behavior`](contracts/route/move/behavior.md)       |
-| `route remove`  | [`route remove Interface`](contracts/route/remove/interface.md)   | [`route remove Behavior`](contracts/route/remove/behavior.md)   |
+| Operation       | Interface                                                         | Behavior                                                        | Technical Design                                                              |
+| --------------- | ----------------------------------------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `route inspect` | [`route inspect Interface`](contracts/route/inspect/interface.md) | [`route inspect Behavior`](contracts/route/inspect/behavior.md) | None                                                                          |
+| `route list`    | [`route list Interface`](contracts/route/list/interface.md)       | [`route list Behavior`](contracts/route/list/behavior.md)       | None                                                                          |
+| `route init`    | [`route init Interface`](contracts/route/init/interface.md)       | [`route init Behavior`](contracts/route/init/behavior.md)       | None                                                                          |
+| `route create`  | [`route create Interface`](contracts/route/create/interface.md)   | [`route create Behavior`](contracts/route/create/behavior.md)   | None                                                                          |
+| `route update`  | [`route update Interface`](contracts/route/update/interface.md)   | [`route update Behavior`](contracts/route/update/behavior.md)   | [`route update Technical Design`](contracts/route/update/technical-design.md) |
+| `route move`    | [`route move Interface`](contracts/route/move/interface.md)       | [`route move Behavior`](contracts/route/move/behavior.md)       | None                                                                          |
+| `route remove`  | [`route remove Interface`](contracts/route/remove/interface.md)   | [`route remove Behavior`](contracts/route/remove/behavior.md)   | None                                                                          |
 
 The genuinely shared contracts live in the permanent [`contracts/shared/`](contracts/shared/_shared.md)
 scope:
@@ -135,17 +142,20 @@ scope:
   and [Source References Behavior](contracts/shared/source-references/behavior.md)
 - [Source Universe Filters Interface](contracts/shared/source-universe-filters/interface.md)
   and [Source Universe Filters Behavior](contracts/shared/source-universe-filters/behavior.md)
+- [Result Coordinates Interface](contracts/shared/result-coordinates/interface.md)
+  and [Result Coordinates Behavior](contracts/shared/result-coordinates/behavior.md)
 
 Consumers link to these shared files instead of copying their meaning into each
 command. Source Universe Filters are reusable operation-specific flags, not
-global flags. No shared Technical Design file is needed now.
+global flags. Shared capability realization is routed outside the contract set
+through the [CLI Technical Designs](technical-designs/_technical-designs.md).
 
 The grouped [`extension`](contracts/extension/_extension.md) route has six actual
 leaf operations. Each leaf keeps its Interface and Behavior in its own local
 scope:
 
-| Operation           | Interface                                                       | Behavior                                                      | Technical Design                   |
-| ------------------- | --------------------------------------------------------------- | ------------------------------------------------------------- | ---------------------------------- |
+| Operation           | Interface                                                       | Behavior                                                      | Technical Design                  |
+| ------------------- | --------------------------------------------------------------- | ------------------------------------------------------------- | --------------------------------- |
 | `extension list`    | [`list Interface`](contracts/extension/list/interface.md)       | [`list Behavior`](contracts/extension/list/behavior.md)       | None; no Technical Design exists. |
 | `extension inspect` | [`inspect Interface`](contracts/extension/inspect/interface.md) | [`inspect Behavior`](contracts/extension/inspect/behavior.md) | None; no Technical Design exists. |
 | `extension create`  | [`create Interface`](contracts/extension/create/interface.md)   | [`create Behavior`](contracts/extension/create/behavior.md)   | None; no Technical Design exists. |

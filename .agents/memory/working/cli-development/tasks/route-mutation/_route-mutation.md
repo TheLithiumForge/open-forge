@@ -115,11 +115,9 @@ verification boundary; the leaf Task retains that process/evidence limitation.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
 - [Implement one-file route creation below an existing routable parent](route-create.md) - #Memory #Working #CLI #Task #Route #Create #Mutation #Contextual
 - [Implement generic and Framework-aware sparse route initialization after root Install](route-init.md) - #Memory #Working #CLI #Task #Route #Init #Mutation #Contextual
 - [Implement route move with reference, overwrite, generated-navigation, and recovery integrity](route-move.md) - #Memory #Working #CLI #Task #Route #Move #Mutation #Contextual
 - [Implement route removal with dependency, reference, generated-navigation, and recovery integrity](route-remove.md) - #Memory #Working #CLI #Task #Route #Remove #Mutation #Contextual
 - [Implement bounded route content and metadata update without identity drift](route-update.md) - #Memory #Working #CLI #Task #Route #Update #Mutation #Contextual
-
 <!-- open-forge:generated-index:end -->

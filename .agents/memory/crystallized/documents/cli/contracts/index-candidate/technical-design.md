@@ -12,9 +12,10 @@ open-forge:
 This is the current accepted Technical Design for the non-shipping `index`
 command. The [Interface Contract](interface.md) and [Behavior
 Contract](behavior.md) remain authoritative for public and technology-neutral
-meaning. The accepted [Open Forge CLI Architecture](../../architecture.md#result-json-coordinates-and-process-status)
-defines the shared exact structured-result schema and numeric process-exit
-mapping. This design is subordinate to those contracts and that Architecture.
+meaning. The accepted [Shared Result Coordinates](../shared/result-coordinates/interface.md)
+define the shared exact structured-result schema and numeric process-exit
+mapping. This design remains subordinate to the [CLI
+Architecture](../../architecture.md) for cross-cutting implementation structure.
 
 The design cannot add a public flag, weaken a safety invariant, change a
 semantic result, or make a private implementation artifact authoritative for
@@ -58,21 +59,26 @@ recovery boundary. It does not become route
 content or a source of workspace meaning, and it does not replace
 expected-state checks. Dry-run and read-only inspection do not acquire mutation
 authority merely to inspect. Lock lifecycle and platform mechanics follow the
-accepted Architecture.
+[Mutation And Recovery Technical
+Design](../../technical-designs/mutation-and-recovery.md).
 
 ## Command And Result Boundaries
 
-`System.CommandLine` is the accepted command parser. The accepted Architecture
-pins its dependency version and owns the exact dependency evidence. The parser
+`System.CommandLine` is the accepted command parser. The [CLI
+Architecture](../../architecture.md) approves its dependency role, and the
+repository-root [`Directory.Packages.props`](../../../../../../../Directory.Packages.props)
+owns its exact version. The parser
 owns command syntax, positional operands, command-specific flags, shared flags,
 help, version, input validation, and terminal-input handling at the process
 boundary. It does not own `index` selection, projection, mutation, verification,
 or recovery meaning.
 
-The accepted Architecture selects System.CommandLine 2.0.11, Markdig 1.3.2,
-and YamlDotNet 18.1.0. The Architecture remains authoritative for those versions.
-The accepted candidate evidence recorded below exercised those dependencies in
-managed and Native AOT execution; this design does not independently repin them.
+The [CLI Architecture](../../architecture.md) approves the parser, Markdown, and
+YAML dependency roles. The repository-root
+[`Directory.Packages.props`](../../../../../../../Directory.Packages.props) remains
+authoritative for their exact versions. The accepted candidate evidence recorded
+below exercised those dependencies in managed and Native AOT execution; this
+design does not independently repin them.
 
 The operation remains a directly testable typed flow:
 
@@ -94,8 +100,8 @@ parsed input
 
 The handler and domain stages return typed values. Human and structured
 renderers consume the same typed result and do not rerun the operation. The
-shared exact JSON schema and numeric exits come from the accepted [Open Forge CLI
-Architecture](../../architecture.md#result-json-coordinates-and-process-status); this command adds no
+shared exact JSON schema and numeric exits come from the accepted [Shared Result
+Coordinates](../shared/result-coordinates/interface.md); this command adds no
 private schema or exit mapping.
 
 Index owns binding, source-reference resolution, rooted/detached target closure,
@@ -115,8 +121,10 @@ structure. Its configuration is not selected per file or inferred from authored
 content.
 
 YamlDotNet is the accepted generated semantic path for the bounded authored
-metadata models that the source contracts admit. The accepted Architecture pins
-its dependency version and evidence. It contributes typed semantic facts
+metadata models that the source contracts admit. The [CLI
+Architecture](../../architecture.md) approves that role, and the repository-root
+[`Directory.Packages.props`](../../../../../../../Directory.Packages.props) owns its
+exact version. It contributes typed semantic facts
 without inventing descriptions, tags, routing, scope, or authority, and it does
 not rewrite authored YAML bytes.
 
@@ -147,7 +155,8 @@ facts.
 ## JSON And Presentation
 
 Structured output uses source-generated `System.Text.Json` metadata for the
-shared Architecture schema. `--json` renders one complete document from the
+[Shared Result Coordinates](../shared/result-coordinates/interface.md) schema.
+`--json` renders one complete document from the
 same typed result used by human output. It never prompts, reruns planning,
 applies effects, or mixes ordinary human text into JSON stdout. Bounded
 diagnostics remain on stderr.
@@ -290,7 +299,7 @@ publication, or packed delivery.
 
 - [Index Interface Contract](interface.md)
 - [Index Behavior Contract](behavior.md)
-- [Open Forge CLI Architecture](../../architecture.md#result-json-coordinates-and-process-status)
+- [Shared Result Coordinates](../shared/result-coordinates/interface.md)
 - [Global CLI Flags](../shared/global-flags/interface.md)
 - [CLI Source References](../shared/source-references/interface.md)
 - [Shared CLI Operation Contract](../../shared-operation-contract.md)

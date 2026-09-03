@@ -34,8 +34,8 @@ repository state or claim history evidence. The document stores no plan, runtime
 history, journal, recovery evidence, or session. Files outside this exact path
 are ordinary workspace content, not lifecycle input.
 
-The shared CLI Architecture defines the exact structured JSON result schema and
-numeric exit mapping. This Interface uses those shared definitions without
+The [Shared Result Coordinates](../shared/result-coordinates/interface.md) define
+the exact structured JSON result schema and numeric exit mapping. This Interface uses those shared definitions without
 duplicating implementation mechanics. Gate 5 must prove source-generated
 YamlDotNet and STJ serialization, fixed Markdig where used, real `System.IO`,
 Native AOT, OS locking, isolated tests, and package journeys. The accepted
@@ -109,10 +109,12 @@ deterministic inventory and hash proof. That proof identifies distributed source
 assets; it is not evidence of a selected workspace's current installation or of
 a proven runtime implementation.
 
-The root command consumes the neutral Framework distribution reader defined by
-the CLI Architecture. The Core project embeds the canonical `src/open-forge/`
-tree through ordinary .NET `EmbeddedResource` items, and runtime uses exact-prefix
-BCL manifest-resource access. Install never reads the development checkout.
+The root command consumes the neutral Framework distribution reader placed by
+the [CLI Architecture](../../architecture.md). The [Embedded Payload Technical
+Design](../../technical-designs/embedded-payload.md) defines how the Core project
+embeds the canonical `src/open-forge/` tree through ordinary .NET
+`EmbeddedResource` items and how runtime uses exact-prefix BCL manifest-resource
+access. Install never reads the development checkout.
 
 ## Recognized Framework Footprint
 
@@ -422,31 +424,31 @@ values, an exact nullable `target`, and an exact non-empty `cause`.
 Finding `code` uses exactly the following finite vocabulary and status mapping,
 in this declaration and primary ordering sequence:
 
-| Code | Status | Meaning |
-| --- | --- | --- |
-| `install.invalid-input` | `invalid` | Command syntax or normalized input is invalid. |
-| `install.confirmation-required` | `invalid` | A non-prompt-capable human write request requires `--automatic`. |
-| `install.workspace-unavailable` | `blocked` | The exact workspace cannot be selected as a safe Install subject. |
-| `install.workspace-unsafe` | `blocked` | Workspace identity, containment, or lock acquisition is unsafe. |
-| `install.managed-divergence` | `blocked` | Trusted managed state differs from its accepted baseline and requires Update. |
-| `install.target-occupied` | `blocked` | A selected destination has an ineligible existing occupant. |
-| `install.ownership-conflict` | `blocked` | Another owner or lifecycle section conflicts with the selected effect. |
-| `install.target-unsafe` | `blocked` | A selected target cannot be resolved, revalidated, or mutated safely. |
-| `install.generated-region-unsafe` | `blocked` | A required generated-region boundary is missing, malformed, or ambiguous. |
-| `install.lifecycle-blocked` | `blocked` | Lifecycle facts are present but invalid, untrusted, or conflicting. |
-| `install.recovery-conflict` | `blocked` | A recognized recovery candidate or destination conflicts with this operation. |
-| `install.payload-unavailable` | `incomplete` | The embedded Framework payload cannot be read completely. |
-| `install.payload-invalid` | `blocked` | Embedded payload identity or content is structurally invalid. |
-| `install.lifecycle-unavailable` | `incomplete` | Required lifecycle facts cannot be read completely. |
-| `install.projection-unavailable` | `incomplete` | Intended topology or generated projection cannot be formed completely. |
-| `install.recovery-unavailable` | `incomplete` | Required external recovery storage or evidence is unavailable before effects. |
-| `install.recovery-artifact-retained` | `attention` | Verified target effects succeeded but a positively retained recovery artifact remains. |
-| `install.write-failed` | `failed` | A planned target effect failed or could not be verified. |
-| `install.verification-failed` | `failed` | Whole-target or whole-operation verification failed. |
-| `install.lifecycle-publication-failed` | `failed` | Framework lifecycle publication failed or could not be verified. |
-| `install.recovery-failed` | `failed` | Recovery preparation or cleanup failed with unsafe or unknown completion. |
-| `install.operation-failed` | `failed` | Another unexpected Install operation failure occurred. |
-| `install.interrupted` | `interrupted` | Caller cancellation or refusal stopped the operation without a stronger failure. |
+| Code                                   | Status        | Meaning                                                                                |
+| -------------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
+| `install.invalid-input`                | `invalid`     | Command syntax or normalized input is invalid.                                         |
+| `install.confirmation-required`        | `invalid`     | A non-prompt-capable human write request requires `--automatic`.                       |
+| `install.workspace-unavailable`        | `blocked`     | The exact workspace cannot be selected as a safe Install subject.                      |
+| `install.workspace-unsafe`             | `blocked`     | Workspace identity, containment, or lock acquisition is unsafe.                        |
+| `install.managed-divergence`           | `blocked`     | Trusted managed state differs from its accepted baseline and requires Update.          |
+| `install.target-occupied`              | `blocked`     | A selected destination has an ineligible existing occupant.                            |
+| `install.ownership-conflict`           | `blocked`     | Another owner or lifecycle section conflicts with the selected effect.                 |
+| `install.target-unsafe`                | `blocked`     | A selected target cannot be resolved, revalidated, or mutated safely.                  |
+| `install.generated-region-unsafe`      | `blocked`     | A required generated-region boundary is missing, malformed, or ambiguous.              |
+| `install.lifecycle-blocked`            | `blocked`     | Lifecycle facts are present but invalid, untrusted, or conflicting.                    |
+| `install.recovery-conflict`            | `blocked`     | A recognized recovery candidate or destination conflicts with this operation.          |
+| `install.payload-unavailable`          | `incomplete`  | The embedded Framework payload cannot be read completely.                              |
+| `install.payload-invalid`              | `blocked`     | Embedded payload identity or content is structurally invalid.                          |
+| `install.lifecycle-unavailable`        | `incomplete`  | Required lifecycle facts cannot be read completely.                                    |
+| `install.projection-unavailable`       | `incomplete`  | Intended topology or generated projection cannot be formed completely.                 |
+| `install.recovery-unavailable`         | `incomplete`  | Required external recovery storage or evidence is unavailable before effects.          |
+| `install.recovery-artifact-retained`   | `attention`   | Verified target effects succeeded but a positively retained recovery artifact remains. |
+| `install.write-failed`                 | `failed`      | A planned target effect failed or could not be verified.                               |
+| `install.verification-failed`          | `failed`      | Whole-target or whole-operation verification failed.                                   |
+| `install.lifecycle-publication-failed` | `failed`      | Framework lifecycle publication failed or could not be verified.                       |
+| `install.recovery-failed`              | `failed`      | Recovery preparation or cleanup failed with unsafe or unknown completion.              |
+| `install.operation-failed`             | `failed`      | Another unexpected Install operation failure occurred.                                 |
+| `install.interrupted`                  | `interrupted` | Caller cancellation or refusal stopped the operation without a stronger failure.       |
 
 Findings order first by this code order. For equal codes, a `null` target comes
 before every non-null target; non-null targets then use ordinal comparison.
@@ -480,7 +482,7 @@ format-only observations, automatic mode, and managed divergence do not produce
 `attention`. Post-verification recovery deletion `Failed` with positively
 observed disposition `Retained` is the only current install condition that does.
 JSON uses one result on stdout for every status; process exits use the exact
-shared CLI Architecture mapping.
+[Shared Result Coordinates](../shared/result-coordinates/interface.md) mapping.
 
 ## Errors And Next Actions
 
@@ -553,10 +555,16 @@ direction allows informational advice only. Detection does not select a
 formatter, execute it, change files, grant authority, make a formatting guess,
 or persist formatter state.
 
-The accepted CLI Architecture defines lifecycle serialization, filesystem
-identity, concurrency, recovery-bundle names, temporary artifacts, diagnostics,
-packaging, and implementation boundaries. Gate 5 must prove those boundaries and
-the embedded deterministic inventory/hash evidence. This Interface remains
+The [Lifecycle Provenance Technical
+Design](../../technical-designs/lifecycle-provenance.md) defines exact lifecycle
+serialization, and the [Mutation And Recovery Technical
+Design](../../technical-designs/mutation-and-recovery.md) defines exact recovery
+and temporary-artifact mechanics. The [Embedded Payload Technical
+Design](../../technical-designs/embedded-payload.md) defines exact inventory and
+hash realization. The [CLI Architecture](../../architecture.md) defines
+filesystem identity, diagnostic, and cross-cutting implementation boundaries.
+Gate 5 must prove those boundaries and the embedded deterministic inventory/hash
+evidence. This Interface remains
 technology-neutral and does not claim that proof.
 
 ## Public Conformance

@@ -17,17 +17,21 @@ local implementation and complete executable proof are squash-integrated at
 The [Interface Contract](interface.md) defines the complete public
 surface. This file defines only the deterministic, technology-neutral semantics,
 effects, safety, recovery, and conformance behind that surface. It does not
-choose implementation technology or another Technical Design. The [CLI
-Architecture](../../../architecture.md) defines the accepted shared structured
-schema, process-status mapping, source structure, package and runtime
-boundaries, BCL-first filesystem boundary, workspace lock, and recovery identity
-model.
+choose implementation technology or another Technical Design. The [Shared Result
+Coordinates](../../shared/result-coordinates/interface.md) define the accepted
+shared structured schema and process-status mapping. The [CLI
+Architecture](../../../architecture.md) defines source and runtime boundaries,
+BCL-first filesystem structure, the workspace-lock boundary, and recovery
+identity relationships.
 
 The Interface Contract defines command-specific repetition, seven semantic
 statuses, stream allocation, and compact-result retention; this Behavior
 implements those accepted meanings without changing shared global-flag rules.
-The Architecture defines the exact shared result, filesystem, recovery-bundle,
-concurrency, and source boundaries.
+The [Shared Result Coordinates](../../shared/result-coordinates/interface.md)
+define the exact shared result. The [CLI Architecture](../../../architecture.md)
+defines filesystem, concurrency, and source boundaries; exact recovery-bundle
+mechanics live in the [Mutation And Recovery Technical
+Design](../../../technical-designs/mutation-and-recovery.md).
 
 ## Operation Invariants
 
@@ -412,8 +416,11 @@ Expected-state revalidation and preservation of unexpected concurrent edits are
 required safety properties. The persistent reusable zero-byte external workspace
 lock below `LocalApplicationData/OpenForge/locks/v1` is held with one read/write
 `FileShare.None` handle; it never receives metadata writes, deletion, or
-truncation. The BCL-first filesystem boundary and recovery-bundle identity model
-are defined by the CLI Architecture; they are not public command flags.
+truncation. The BCL-first filesystem boundary is defined by the [CLI
+Architecture](../../../architecture.md), and exact recovery-bundle identity
+mechanics are defined by the [Mutation And Recovery Technical
+Design](../../../technical-designs/mutation-and-recovery.md); they are not public
+command flags.
 
 ## Presentation Relationship
 
@@ -430,7 +437,8 @@ any operation stage. It renders one complete structured result to stdout for
 every semantic status. Bounded diagnostics use stderr, and ordinary human text
 is never mixed into structured JSON stdout. Compact and structured results
 retain at most one required `Next:` action. Exact structured schema fields and
-compatibility rules are defined by the CLI Architecture.
+compatibility rules are defined by the [Shared Result
+Coordinates](../../shared/result-coordinates/interface.md).
 
 The human renderer does not name successful internal stages by default.
 `--verbose` and structured output may expose planning and preflight evidence
@@ -502,9 +510,12 @@ obligations:
   recommendations.
 
 Gate 5 evidence should include direct semantic checks, real filesystem boundary
-checks, and built-process checks for the public result. The CLI Architecture
-defines parser, serialization, filesystem API, recovery-bundle identity,
-lock, concurrency, and source boundaries; this contract does not change them.
+checks, and built-process checks for the public result. The [CLI
+Architecture](../../../architecture.md) defines parser, concrete serialization,
+filesystem, lock, concurrency, and source boundaries; exact recovery-bundle
+identity mechanics live in the [Mutation And Recovery Technical
+Design](../../../technical-designs/mutation-and-recovery.md). This contract does
+not change them.
 
 ## Related Current Sources
 

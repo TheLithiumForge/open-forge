@@ -146,8 +146,9 @@ the complete link-use node as `location`. It records a separate exact
 `destinationLocation` when the parser exposes the destination span. A
 reference-style link keeps the use span as `location` and maps the destination
 definition's span separately. Inline and explicit-autolink nodes use their exact
-destination span when available. The implementation maps spans to the
-Architecture's source-location primitive rather than exposing parser-native
+destination span when available. The implementation maps spans to the [Shared
+Result Coordinates](../shared/result-coordinates/interface.md) source-location
+primitive rather than exposing parser-native
 spans; it retains no occurrence whose link-use location cannot be established.
 
 `rawDestination` is the authored destination payload, not a normalized or
@@ -403,8 +404,8 @@ A conforming implementation should prove at least these observable scenarios:
    code fences, and parser-unrecognized bare URL text produce no occurrence.
 8. Reference-style occurrences preserve distinct link-use and destination
    definition locations; inline and explicit-autolink occurrences preserve exact
-   destination spans when available; all locations map to the Architecture
-   primitive.
+   destination spans when available; all locations map to the shared
+   result-coordinate primitive.
 9. A valid bounded generated `Entries` interior is excluded exactly once per
    physical layer, while malformed, duplicate, misplaced, or unsafe regions do
    not suppress links and produce incomplete or blocked coverage according to the

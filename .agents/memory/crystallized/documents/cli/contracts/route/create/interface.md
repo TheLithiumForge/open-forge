@@ -14,11 +14,12 @@ Interface Contract for `route create`. The command does not ship yet. Its local
 implementation and complete executable proof are squash-integrated at
 `19412d2`; replacement-CLI delivery remains pending.
 
-The [CLI Architecture](../../../architecture.md) defines the accepted shared
-result schema, process-status mapping, System.CommandLine binding, fixed Markdig
-pipeline, source-generated YamlDotNet and JSON paths, BCL-first filesystem
-boundary, workspace lock, recovery boundary, test evidence, runtime, Native AOT,
-and source layout. This Interface Contract adds no competing implementation
+The [Shared Result Coordinates](../../shared/result-coordinates/interface.md)
+define the accepted shared result schema and process-status mapping. The [CLI
+Architecture](../../../architecture.md) defines System.CommandLine binding, fixed
+Markdig and source-generated serialization relationships, the BCL-first
+filesystem boundary, workspace-lock and recovery boundaries, evidence, runtime,
+Native AOT, and source layout. This Interface Contract adds no competing implementation
 choice.
 
 The current [Template contract](../../../../framework/primitives/templates.md)
@@ -38,17 +39,21 @@ choices:
   contract remains authoritative for shared flags, including their repetition
   and composition; this command does not add precedence or last-wins behavior.
 - The shared structured field names, schema versioning, compatibility rules, and
-  numeric process-status mapping are defined by the CLI Architecture. The
+  numeric process-status mapping are defined by the [Shared Result
+  Coordinates](../../shared/result-coordinates/interface.md). The
   semantic result names and meanings below remain part of this contract.
 - YAML and Markdown realization uses the Architecture's accepted source-
   generated YAML path and fixed Markdown pipeline while preserving the byte,
   compatibility, and canonical-syntax requirements below.
 - Filesystem APIs, physical identity, symlink and junction behavior, case and
-  Unicode rules, atomic replacement, containment implementation, and test seams
-  must satisfy the Architecture's BCL-first and real-filesystem boundary.
-- The recovery policy and preservation goals are current; recovery-bundle names,
-  collision-handling mechanics, and related realization details remain
-  implementation details constrained by the Architecture's recovery boundary.
+  Unicode rules, containment implementation, and test seams must satisfy the
+  Architecture's BCL-first and real-filesystem boundary. Exact atomic-file
+  mechanics follow the [Mutation And Recovery Technical
+  Design](../../../technical-designs/mutation-and-recovery.md).
+- The recovery policy and preservation goals are current; exact recovery-bundle
+  names, collision handling, and related realization follow the [Mutation And
+  Recovery Technical Design](../../../technical-designs/mutation-and-recovery.md)
+  within the Architecture's recovery boundary.
 - Expected-state revalidation and preservation of unexpected concurrent edits
   are current safety meaning. Mutation locking follows the Architecture's
   accepted workspace-lock and cross-platform concurrency boundary.
@@ -457,7 +462,7 @@ The structured result exposes:
   semantic status, and at most one required `Next:` action when applicable.
 
 Exact field names, schema versioning, and compatibility rules are defined by the
-CLI Architecture.
+[Shared Result Coordinates](../../shared/result-coordinates/interface.md).
 
 ## Semantic Results
 
@@ -481,7 +486,8 @@ For ordinary operation conditions, status precedence is
 operation resolution and forms `invalid`. Failed and interrupted results retain
 their event meaning.
 
-The shared process-status mapping is defined by the CLI Architecture.
+The shared process-status mapping is defined by the [Shared Result
+Coordinates](../../shared/result-coordinates/interface.md).
 
 ## Scenarios
 

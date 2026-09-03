@@ -19,8 +19,10 @@ The [Status Interface Contract](interface.md) defines the complete public syntax
 observable facts, output, semantic result names, errors, non-goals, examples, and
 public verification. This file defines only the deterministic operation behind
 that surface. It does not add operands, flags, aliases, output shapes, semantic
-results, or technology requirements. The accepted CLI Architecture defines the
-exact shared JSON result schema, exit mapping, and implementation boundary. This
+results, or technology requirements. The [Shared Result
+Coordinates](../shared/result-coordinates/interface.md) define the exact shared
+JSON result schema and exit mapping, while the accepted [CLI
+Architecture](../../architecture.md) defines the implementation boundary. This
 behavior does not duplicate those mechanics or claim their Gate 5 proof.
 
 The [Framework loading contract](../../../framework/routing/loading.md),
@@ -242,7 +244,8 @@ current value with a zero total is an incomplete accounting invariant, so the
 percentage is unavailable and the result is incomplete. An unavailable required
 operand makes the percentage unavailable. The operation never renders unavailable
 or not-applicable as zero and does not claim relevance or future loading for every
-available file. Exact JSON representation follows the shared CLI Architecture.
+available file. Exact JSON representation follows the [Shared Result
+Coordinates](../shared/result-coordinates/interface.md).
 
 ### Largest Continuity Source Ordering
 
@@ -411,7 +414,8 @@ Context-size differences and root-category additions or removals do not select
 change status alone. Untrusted or unavailable lifecycle coverage selects
 `incomplete` when safe and `blocked` when unsafe. Source-unavailable installed
 facts remain visible and do not become trusted current source. Numeric exits and
-the exact JSON schema follow the shared CLI Architecture.
+the exact JSON schema follow the [Shared Result
+Coordinates](../shared/result-coordinates/interface.md).
 
 ### Human Rendering
 
@@ -446,8 +450,8 @@ measured inputs, and the distinction among unavailable, zero, and not-applicable
 values without substituting one for another. It retains every continuity-source
 contribution in the deterministic order defined by Interface and retains
 Framework/Extension lifecycle trust, ownership, and source-availability state.
-Exact JSON representations and schema details follow the shared CLI
-Architecture.
+Exact JSON representations and schema details follow the [Shared Result
+Coordinates](../shared/result-coordinates/interface.md).
 
 `--json` does not rerun collection or allow `--view` to change the structured
 result. `--verbose` may add bounded diagnostics without changing collection,
@@ -495,11 +499,15 @@ Direct tests should prove measurement, comparison, ordering, classifications, an
 semantic results. Focused integration tests should use real temporary workspaces,
 embedded or supplied assets, the exact lifecycle document, and filesystem state.
 A small built Native AOT process suite should prove parsing, output, exit
-behavior, and packaged payload comparison. The shared CLI Architecture defines
-the exact result schema, exits, diagnostic fields, recovery identities, and .NET
-boundaries. Gate 5 must prove source-generated YamlDotNet and STJ serialization,
-fixed Markdig where used, real `System.IO`, Native AOT, OS locking, isolated
-tests, and package journeys.
+behavior, and packaged payload comparison. The [Shared Result
+Coordinates](../shared/result-coordinates/interface.md) define the exact result
+schema and exits. Exact recovery identity mechanics live in the [Mutation And
+Recovery Technical Design](../../technical-designs/mutation-and-recovery.md).
+The [CLI Architecture](../../architecture.md) defines .NET boundaries and keeps
+exact Status diagnostic fields and redaction as bounded command-local
+implementation details. Gate 5 must prove those details, source-generated
+YamlDotNet and STJ serialization, fixed Markdig where used, real `System.IO`,
+Native AOT, OS locking, isolated tests, and package journeys.
 
 Behavioral conformance must also show that human and structured renderers consume
 one typed result, that Status does not parse ordinary links or named sections,

@@ -16,10 +16,11 @@ spelling, values, composition, presentation, errors, and examples instead of
 redefining them.
 
 The sibling [Behavior Contract](behavior.md) defines technology-neutral
-resolution, invariants, safety, result formation, and conformance. The [CLI
-Architecture](../../../architecture.md) defines the shared result envelope,
-process-status mapping, parser binding, runtime, filesystem, and evidence
-boundaries. This file defines the public contract and does not select
+resolution, invariants, safety, result formation, and conformance. The [Shared
+Result Coordinates](../result-coordinates/interface.md) define the shared result
+envelope and process-status mapping. The [CLI
+Architecture](../../../architecture.md) defines parser binding, runtime,
+filesystem, and evidence boundaries. This file defines the public contract and does not select
 command-local implementation technology.
 
 ## Meaning Of Global
@@ -104,8 +105,8 @@ Rules:
 - Disable prompts. Missing semantic input is invalid. Missing authority or an
   unresolved choice for an otherwise complete request is blocked.
 
-The exact shared result schema and compatibility rules are defined by the CLI
-Architecture.
+The exact shared result schema and compatibility rules are defined by the [Shared
+Result Coordinates](../result-coordinates/interface.md).
 
 ## `--view=<compact|expanded>`
 

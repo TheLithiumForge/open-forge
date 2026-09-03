@@ -57,7 +57,7 @@ The following sources define related accepted behavior:
   defines direct routed children.
 - [Overwrite Contract](../../../framework/routing/overwrites.md)
   defines why overwrite companions are never indexed independently.
-- [Open Forge CLI Architecture](../../architecture.md#result-json-coordinates-and-process-status)
+- [Shared Result Coordinates](../shared/result-coordinates/interface.md)
   defines the shared exact structured-result schema and numeric process-exit
   mapping.
 - [Shared CLI Operation Contract](../../shared-operation-contract.md) defines
@@ -65,7 +65,7 @@ The following sources define related accepted behavior:
 
 ## Shared Schema And Process Exits
 
-The accepted [Open Forge CLI Architecture](../../architecture.md#result-json-coordinates-and-process-status)
+The accepted [Shared Result Coordinates](../shared/result-coordinates/interface.md)
 defines the shared exact structured-result schema, schema version and compatibility
 rules, and numeric process-exit mapping. `index` uses those shared definitions;
 it does not add a command-specific schema or exit mapping. The [Technical
@@ -654,21 +654,21 @@ application—the structured status value is `attention`; only human presentatio
 uses `requires attention`.
 
 The exact field names, schema versioning, compatibility rules, and numeric exit
-mapping are defined by the accepted [Open Forge CLI Architecture](../../architecture.md#result-json-coordinates-and-process-status).
+mapping are defined by the accepted [Shared Result Coordinates](../shared/result-coordinates/interface.md).
 The [Technical Design](technical-design.md#json-and-presentation) describes
 the source-generated serialization path without changing that shared authority.
 
 ## Semantic Results
 
-| Result        | Meaning                                                                                                                                                                                                                                                                                |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `complete`    | Dry run formed and preflighted the complete plan, or application and final verification completed, including a verified no-op. |
-| `attention`   | Application and verification completed, but the command-owned recovery artifact is positively retained. Human output says `requires attention`. |
-| `incomplete`  | Safe inspection facts are available, but complete target discovery or projection coverage could not finish. No mutation begins, and human facts and findings remain one result.                                                                                                        |
-| `invalid`     | Command input, a flag value, or a source reference does not follow the accepted interface.                                                                                                                                                                                             |
-| `blocked`     | A valid request cannot establish or apply one safe complete plan. No mutation begins.                                                                                                                                                                                                  |
-| `failed`      | Application, verification, or bundle handling failed to complete the selected operation.                                                                                                                                                                                               |
-| `interrupted` | The caller cancelled or interrupted the operation before completion and no unexpected application or verification failure changes the result.                                                                                                                                                |
+| Result        | Meaning                                                                                                                                                                         |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `complete`    | Dry run formed and preflighted the complete plan, or application and final verification completed, including a verified no-op.                                                  |
+| `attention`   | Application and verification completed, but the command-owned recovery artifact is positively retained. Human output says `requires attention`.                                 |
+| `incomplete`  | Safe inspection facts are available, but complete target discovery or projection coverage could not finish. No mutation begins, and human facts and findings remain one result. |
+| `invalid`     | Command input, a flag value, or a source reference does not follow the accepted interface.                                                                                      |
+| `blocked`     | A valid request cannot establish or apply one safe complete plan. No mutation begins.                                                                                           |
+| `failed`      | Application, verification, or bundle handling failed to complete the selected operation.                                                                                        |
+| `interrupted` | The caller cancelled or interrupted the operation before completion and no unexpected application or verification failure changes the result.                                   |
 
 Changes and verified no-ops are ordinary `complete` results. They do not
 require `attention` merely because bytes changed or no effect was needed.
@@ -683,33 +683,33 @@ producer is a retained recovery artifact.
 
 The complete Index finding vocabulary is fixed in this order:
 
-| Order | Code | Status | Public condition |
-| ---: | --- | --- | --- |
-| 1 | `index.invalid-input` | `invalid` | An option or binding combination is invalid. |
-| 2 | `index.invalid-source` | `invalid` | An explicit source is malformed, unknown, or unsupported. |
-| 3 | `index.workspace-unavailable` | `blocked` | The selected workspace cannot be established. |
-| 4 | `index.workspace-unsafe` | `blocked` | Workspace identity or containment is unsafe. |
-| 5 | `index.source-ambiguous` | `blocked` | One explicit source has multiple normalized candidates. |
-| 6 | `index.source-unsafe` | `blocked` | A selected source crosses an unsafe boundary. |
-| 7 | `index.topology-ambiguous` | `blocked` | The selected topology closure is not unique. |
-| 8 | `index.target-unexposed` | `blocked` | A selected routed leaf has no safe exposing entrypoint or parent. |
-| 9 | `index.target-unsafe` | `blocked` | Target identity, containment, or write boundary is unsafe. |
-| 10 | `index.metadata-unsafe` | `blocked` | Admitted metadata makes the complete plan unsafe. |
-| 11 | `index.generated-region-unsafe` | `blocked` | The generated boundary is missing, malformed, ambiguous, or unsafe. |
-| 12 | `index.workspace-lock-unavailable` | `blocked` | The workspace lock could not be acquired; no contention claim is inferred. |
-| 13 | `index.target-changed` | `blocked` | A required target changed before any effect. |
-| 14 | `index.recovery-conflict` | `blocked` | Recovery collision or recognition blocks preparation. |
-| 15 | `index.discovery-incomplete` | `incomplete` | Required source or topology facts are unavailable. |
-| 16 | `index.metadata-incomplete` | `incomplete` | Required metadata is unavailable. |
-| 17 | `index.projection-incomplete` | `incomplete` | Exact expected generated bodies are unavailable. |
-| 18 | `index.recovery-unavailable` | `incomplete` | Writable recovery storage is unavailable before effects. |
-| 19 | `index.recovery-artifact-retained` | `attention` | Verified effects succeeded, but cleanup leaves the recognized artifact. |
-| 20 | `index.target-changed-during-apply` | `failed` | A required target changed after successful recovery preparation began the apply phase. |
-| 21 | `index.write-failed` | `failed` | A target effect failed. |
-| 22 | `index.verification-failed` | `failed` | Applied content could not be verified. |
-| 23 | `index.recovery-failed` | `failed` | Recovery handling failed after effects began. |
-| 24 | `index.operation-failed` | `failed` | An unexpected operation failure falls outside every named condition. |
-| 25 | `index.interrupted` | `interrupted` | Cancellation occurred without a higher-priority failure. |
+| Order | Code                                | Status        | Public condition                                                                       |
+| ----: | ----------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
+|     1 | `index.invalid-input`               | `invalid`     | An option or binding combination is invalid.                                           |
+|     2 | `index.invalid-source`              | `invalid`     | An explicit source is malformed, unknown, or unsupported.                              |
+|     3 | `index.workspace-unavailable`       | `blocked`     | The selected workspace cannot be established.                                          |
+|     4 | `index.workspace-unsafe`            | `blocked`     | Workspace identity or containment is unsafe.                                           |
+|     5 | `index.source-ambiguous`            | `blocked`     | One explicit source has multiple normalized candidates.                                |
+|     6 | `index.source-unsafe`               | `blocked`     | A selected source crosses an unsafe boundary.                                          |
+|     7 | `index.topology-ambiguous`          | `blocked`     | The selected topology closure is not unique.                                           |
+|     8 | `index.target-unexposed`            | `blocked`     | A selected routed leaf has no safe exposing entrypoint or parent.                      |
+|     9 | `index.target-unsafe`               | `blocked`     | Target identity, containment, or write boundary is unsafe.                             |
+|    10 | `index.metadata-unsafe`             | `blocked`     | Admitted metadata makes the complete plan unsafe.                                      |
+|    11 | `index.generated-region-unsafe`     | `blocked`     | The generated boundary is missing, malformed, ambiguous, or unsafe.                    |
+|    12 | `index.workspace-lock-unavailable`  | `blocked`     | The workspace lock could not be acquired; no contention claim is inferred.             |
+|    13 | `index.target-changed`              | `blocked`     | A required target changed before any effect.                                           |
+|    14 | `index.recovery-conflict`           | `blocked`     | Recovery collision or recognition blocks preparation.                                  |
+|    15 | `index.discovery-incomplete`        | `incomplete`  | Required source or topology facts are unavailable.                                     |
+|    16 | `index.metadata-incomplete`         | `incomplete`  | Required metadata is unavailable.                                                      |
+|    17 | `index.projection-incomplete`       | `incomplete`  | Exact expected generated bodies are unavailable.                                       |
+|    18 | `index.recovery-unavailable`        | `incomplete`  | Writable recovery storage is unavailable before effects.                               |
+|    19 | `index.recovery-artifact-retained`  | `attention`   | Verified effects succeeded, but cleanup leaves the recognized artifact.                |
+|    20 | `index.target-changed-during-apply` | `failed`      | A required target changed after successful recovery preparation began the apply phase. |
+|    21 | `index.write-failed`                | `failed`      | A target effect failed.                                                                |
+|    22 | `index.verification-failed`         | `failed`      | Applied content could not be verified.                                                 |
+|    23 | `index.recovery-failed`             | `failed`      | Recovery handling failed after effects began.                                          |
+|    24 | `index.operation-failed`            | `failed`      | An unexpected operation failure falls outside every named condition.                   |
+|    25 | `index.interrupted`                 | `interrupted` | Cancellation occurred without a higher-priority failure.                               |
 
 Findings are ordered by this table, then by `sourceOccurrence` with `null` first
 and positive integers in numeric ascending order, followed by `source.path`,
@@ -719,23 +719,24 @@ and positive integers in numeric ascending order, followed by `source.path`,
 
 `next` is deterministic and never interpolates a source operand:
 
-| Result condition | `next.command` | `next.reason` |
-| --- | --- | --- |
-| `complete` | `null` | `null` |
-| `invalid` | `open-forge index --help` | `Correct the named Index input, then rerun the request.` |
-| `blocked`, first finding `index.source-ambiguous` | `open-forge index` | `Replace every ambiguous source with one listed exact path, then rerun the same Index request.` |
-| `blocked`, first finding `index.workspace-lock-unavailable` | `open-forge index` | `Wait for the workspace lock to become available or inspect lock availability, then rerun Index from a fresh plan.` |
-| `blocked`, first finding `index.target-changed` | `open-forge index` | `Inspect the changed target, then rerun Index from a fresh plan.` |
-| other `blocked` | `open-forge doctor` | `Inspect the blocked workspace, topology, metadata, generated-region, or recovery boundary before rerunning Index.` |
-| `incomplete` | `open-forge doctor` | `Inspect the unavailable discovery, metadata, projection, or recovery facts before relying on this Index result.` |
-| `attention` | `open-forge cleanup` | `Review and remove the reported recovery artifact after confirming the verified Index result.` |
-| `failed` | `open-forge index --verbose` | `Report the failure and retry the same Index request with bounded diagnostics.` |
-| `interrupted` | `open-forge index` | `Rerun the same Index request.` |
+| Result condition                                            | `next.command`               | `next.reason`                                                                                                       |
+| ----------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `complete`                                                  | `null`                       | `null`                                                                                                              |
+| `invalid`                                                   | `open-forge index --help`    | `Correct the named Index input, then rerun the request.`                                                            |
+| `blocked`, first finding `index.source-ambiguous`           | `open-forge index`           | `Replace every ambiguous source with one listed exact path, then rerun the same Index request.`                     |
+| `blocked`, first finding `index.workspace-lock-unavailable` | `open-forge index`           | `Wait for the workspace lock to become available or inspect lock availability, then rerun Index from a fresh plan.` |
+| `blocked`, first finding `index.target-changed`             | `open-forge index`           | `Inspect the changed target, then rerun Index from a fresh plan.`                                                   |
+| other `blocked`                                             | `open-forge doctor`          | `Inspect the blocked workspace, topology, metadata, generated-region, or recovery boundary before rerunning Index.` |
+| `incomplete`                                                | `open-forge doctor`          | `Inspect the unavailable discovery, metadata, projection, or recovery facts before relying on this Index result.`   |
+| `attention`                                                 | `open-forge cleanup`         | `Review and remove the reported recovery artifact after confirming the verified Index result.`                      |
+| `failed`                                                    | `open-forge index --verbose` | `Report the failure and retry the same Index request with bounded diagnostics.`                                     |
+| `interrupted`                                               | `open-forge index`           | `Rerun the same Index request.`                                                                                     |
 
 Specialized blocked guidance uses the first finding of the overall result status.
 
-The numeric process-exit mapping is the shared mapping defined by the accepted
-Architecture. This command adds no command-specific exits.
+The numeric process-exit mapping is the shared mapping defined by the [Shared
+Result Coordinates](../shared/result-coordinates/interface.md). This command adds
+no command-specific exits.
 
 ## Errors And Boundaries
 
@@ -789,34 +790,34 @@ Boolean write-policy state, accepted Boolean repetition, each global terminal
 mode, the assigned human and structured streams, and each semantic result
 without enumerating every compatible combination.
 
-| Invocation or state                                                                                                                                   | Observable result                                                                                                                                                                                       |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `open-forge index` with a valid Loader and rooted topology                                                                                            | The Loader and every reachable entrypoint region are selected.                                                                                                                                          |
-| `open-forge index memory`                                                                                                                             | The entrypoint, its routed descendant closure, and its direct exposing parent when present are selected.                                                                                                |
-| `open-forge index .agents/memory/_memory.md`                                                                                                          | The exact entrypoint path selects the same logical entrypoint as its source ID.                                                                                                                         |
-| `open-forge index skills/experience-design`                                                                                                           | Only the direct exposing parent is selected, and that parent projects all current direct children.                                                                                                      |
-| An explicit detached entrypoint with complete local topology                                                                                          | Its local subtree and any parent present in that topology are maintained without inventing a Loader or installed Framework route.                                                                       |
-| An ID, base path, or overwrite path for a valid pair                                                                                                  | The base logical source supplies route identity; overwrite content never becomes a generated entry.                                                                                                     |
-| `open-forge index memory skills/experience-design` with duplicate or overlapping closures                                                             | Each target region is processed once in canonical path order.                                                                                                                                           |
-| A compatible recognized entrypoint reached through more than one current-host physical-alias path                                                     | The physical entrypoint is processed exactly once; a proven incompatible alias blocks.                                                                                                                  |
-| A selected entrypoint has no direct routed children                                                                                                   | Its expected generated body is `- none - No entries - #Empty`.                                                                                                                                          |
-| A valid target has stale generated lines                                                                                                              | Application replaces only the bounded generated interior.                                                                                                                                               |
-| `open-forge index --dry-run` with changes                                                                                                              | The result is `complete`; human output shows exact bounded diffs and says no files changed, and structured output carries exact before/expected bodies.                                                  |
-| `open-forge index --dry-run --dry-run`                                                                                                             | Repeated Boolean occurrences are accepted with no additional effect, and the preview still writes nothing.                                                                                             |
-| `open-forge index --workspace ../another-workspace`                                                                                                   | The exact supplied workspace is used; no parent or Git-root discovery occurs.                                                                                                                           |
-| `open-forge index --json`                                                                                                                             | One complete structured result for every semantic status is written to stdout, preserving the typed status. Separate bounded diagnostics use stderr; ordinary human text is not mixed into JSON stdout. |
-| `open-forge index --verbose`                                                                                                                          | Bounded diagnostics are added without changing operation behavior or status.                                                                                                                            |
-| `open-forge index --help`                                                                                                                             | Help for `index` is shown without workspace resolution or domain execution.                                                                                                                             |
-| `open-forge index --version`                                                                                                                          | The distributed CLI version is shown without workspace resolution or a domain operation.                                                                                                                |
-| A valid unchanged target set after a successful prior application                                                                                     | The result is `complete`, reports a verified no-op, and performs no write or bundle preparation.                                                                                                       |
-| A valid empty target projection                                                                                                                       | The result can be a complete update or verified no-op with the exact empty body, depending on current bytes.                                                                                            |
-| Safe facts exist but complete discovery or projection coverage cannot finish                                                                          | The result is `incomplete`, no mutation begins, and safe facts remain together with their findings in the primary human result.                                                                         |
-| An unknown source, invalid flag value, or conflicting terminal input                                                                                  | The result is `invalid`; the primary human error is on stderr and identifies the useful correction when one exists.                                                                                     |
-| Missing Loader, invalid metadata, unsafe boundary, missing/unverified/colliding recovery bundle, or another unsafe complete-plan condition       | The result is `blocked`, no mutation begins, and the primary human error is on stderr.                                                                                                                  |
-| Unavailable or unsafe recovery-bundle storage                                                                                                     | The result is `incomplete`, no mutation begins, and the primary human result retains the safe facts and storage limitation.                                                                                |
-| Application, verification, or bundle handling cannot complete                                                                                         | The result is `failed` or `interrupted` according to the semantic-result definitions, the primary human error is on stderr, and residual bundle state is reported when present.                          |
-| `open-forge index --view=compact`                                                                                                                     | Human output retains semantic result, effect counts, affected paths, safety findings, required next actions, and every dry-run diff while omitting optional explanation and provenance.                 |
-| `open-forge index --view=expanded` or omitted `--view`                                                                                                | Human output uses the default expanded examples and includes complete ordinary evidence and provenance.                                                                                                 |
+| Invocation or state                                                                                                                        | Observable result                                                                                                                                                                                       |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `open-forge index` with a valid Loader and rooted topology                                                                                 | The Loader and every reachable entrypoint region are selected.                                                                                                                                          |
+| `open-forge index memory`                                                                                                                  | The entrypoint, its routed descendant closure, and its direct exposing parent when present are selected.                                                                                                |
+| `open-forge index .agents/memory/_memory.md`                                                                                               | The exact entrypoint path selects the same logical entrypoint as its source ID.                                                                                                                         |
+| `open-forge index skills/experience-design`                                                                                                | Only the direct exposing parent is selected, and that parent projects all current direct children.                                                                                                      |
+| An explicit detached entrypoint with complete local topology                                                                               | Its local subtree and any parent present in that topology are maintained without inventing a Loader or installed Framework route.                                                                       |
+| An ID, base path, or overwrite path for a valid pair                                                                                       | The base logical source supplies route identity; overwrite content never becomes a generated entry.                                                                                                     |
+| `open-forge index memory skills/experience-design` with duplicate or overlapping closures                                                  | Each target region is processed once in canonical path order.                                                                                                                                           |
+| A compatible recognized entrypoint reached through more than one current-host physical-alias path                                          | The physical entrypoint is processed exactly once; a proven incompatible alias blocks.                                                                                                                  |
+| A selected entrypoint has no direct routed children                                                                                        | Its expected generated body is `- none - No entries - #Empty`.                                                                                                                                          |
+| A valid target has stale generated lines                                                                                                   | Application replaces only the bounded generated interior.                                                                                                                                               |
+| `open-forge index --dry-run` with changes                                                                                                  | The result is `complete`; human output shows exact bounded diffs and says no files changed, and structured output carries exact before/expected bodies.                                                 |
+| `open-forge index --dry-run --dry-run`                                                                                                     | Repeated Boolean occurrences are accepted with no additional effect, and the preview still writes nothing.                                                                                              |
+| `open-forge index --workspace ../another-workspace`                                                                                        | The exact supplied workspace is used; no parent or Git-root discovery occurs.                                                                                                                           |
+| `open-forge index --json`                                                                                                                  | One complete structured result for every semantic status is written to stdout, preserving the typed status. Separate bounded diagnostics use stderr; ordinary human text is not mixed into JSON stdout. |
+| `open-forge index --verbose`                                                                                                               | Bounded diagnostics are added without changing operation behavior or status.                                                                                                                            |
+| `open-forge index --help`                                                                                                                  | Help for `index` is shown without workspace resolution or domain execution.                                                                                                                             |
+| `open-forge index --version`                                                                                                               | The distributed CLI version is shown without workspace resolution or a domain operation.                                                                                                                |
+| A valid unchanged target set after a successful prior application                                                                          | The result is `complete`, reports a verified no-op, and performs no write or bundle preparation.                                                                                                        |
+| A valid empty target projection                                                                                                            | The result can be a complete update or verified no-op with the exact empty body, depending on current bytes.                                                                                            |
+| Safe facts exist but complete discovery or projection coverage cannot finish                                                               | The result is `incomplete`, no mutation begins, and safe facts remain together with their findings in the primary human result.                                                                         |
+| An unknown source, invalid flag value, or conflicting terminal input                                                                       | The result is `invalid`; the primary human error is on stderr and identifies the useful correction when one exists.                                                                                     |
+| Missing Loader, invalid metadata, unsafe boundary, missing/unverified/colliding recovery bundle, or another unsafe complete-plan condition | The result is `blocked`, no mutation begins, and the primary human error is on stderr.                                                                                                                  |
+| Unavailable or unsafe recovery-bundle storage                                                                                              | The result is `incomplete`, no mutation begins, and the primary human result retains the safe facts and storage limitation.                                                                             |
+| Application, verification, or bundle handling cannot complete                                                                              | The result is `failed` or `interrupted` according to the semantic-result definitions, the primary human error is on stderr, and residual bundle state is reported when present.                         |
+| `open-forge index --view=compact`                                                                                                          | Human output retains semantic result, effect counts, affected paths, safety findings, required next actions, and every dry-run diff while omitting optional explanation and provenance.                 |
+| `open-forge index --view=expanded` or omitted `--view`                                                                                     | Human output uses the default expanded examples and includes complete ordinary evidence and provenance.                                                                                                 |
 
 ## Non-Goals
 

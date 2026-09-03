@@ -19,7 +19,7 @@ Documents explain accepted current knowledge that needs one coherent view.
 
 <!-- open-forge:generated-index:start -->
 - [Current Open Forge system model, component boundaries, context flow, authority, evolution, scaling, and tool boundary](architecture.md) - #Memory #Document #CurrentTruth #Evergreen #Architecture #Framework #ACE
-- [Current replacement CLI Architecture and contracts, kept separate from the frozen MVP and its historical evidence](cli/_cli.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #Architecture #Contract #MVP #Legacy
+- [Current replacement CLI architecture, contracts, technical designs, and distribution authority, kept separate from the frozen MVP and its historical evidence](cli/_cli.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #Architecture #Contract #TechnicalDesign #Distribution #MVP #Legacy
 - [Current documents for the Open Forge Extensions MVP package, composition, ownership, safety, and lifecycle](extensions/_extensions.md) - #Memory #Document #CurrentTruth #Architecture #Extension #MVP
 - [Current documents for Open Forge Framework internals, including Core and Memory](framework/_framework.md) - #Memory #Document #CurrentTruth #Framework #Core #Architecture
 - [Current maintainer contracts, writing standard, and repository-only authoring helpers for Open Forge source and documentation](maintenance/_maintenance.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance

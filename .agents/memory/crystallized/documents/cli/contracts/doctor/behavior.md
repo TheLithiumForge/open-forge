@@ -19,8 +19,10 @@ The [Interface Contract](interface.md) owns the complete public grammar,
 catalogue, observable projections, semantic result names, errors, examples, and
 public verification. This Behavior Contract does not add flags, operands,
 aliases, JSON field names, numeric exits, libraries, parsers, storage, or
-lifecycle mutation. The accepted CLI Architecture defines the exact shared JSON
-result schema, exit mapping, and implementation boundary. This behavior does not
+lifecycle mutation. The [Shared Result
+Coordinates](../shared/result-coordinates/interface.md) define the exact shared
+JSON result schema and exit mapping, while the accepted [CLI
+Architecture](../../architecture.md) defines the implementation boundary. This behavior does not
 duplicate those mechanics or claim their Gate 5 proof.
 
 The operation consumes Framework and Markdown facts without replacing the
@@ -550,9 +552,11 @@ section. A conforming implementation must additionally prove:
 Direct tests should prove request, boundary, domain, finding, ordering, and
 semantic-result behavior. Focused integration tests should use real temporary
 workspaces with malformed, ambiguous, detached, recovery, link, lifecycle, and
-ownership evidence. The accepted CLI Architecture defines the exact parser,
-filesystem abstraction, structured schema, numeric exits, hashing, and AOT
-process boundary. Gate 5 must prove source-generated YamlDotNet and STJ
+ownership evidence. The [Shared Result
+Coordinates](../shared/result-coordinates/interface.md) define the structured
+schema and numeric exits. The accepted [CLI
+Architecture](../../architecture.md) defines the parser, filesystem abstraction,
+hashing constraints, and AOT process boundary. Gate 5 must prove source-generated YamlDotNet and STJ
 serialization, fixed Markdig where used, real `System.IO`, Native AOT, OS
 locking, isolated tests, and package journeys.
 
