@@ -35,14 +35,14 @@ Task 4 “Route Move” remains Complete and dequeued at phase 6/6, milestone
 is consumed. The [project control ledger](../cli-development/project-control.md)
 defines permanent task identities and the current dynamic queue.
 
-Task 14 “Extension Install” (phase 2/5): milestone 2/8 — immutable Gray contract
-`fb8b98c8`, tree `8217ae57`, and receipt `2c3918ae`, tree `35bedaa2`, freeze the
-contract and smallest typed callable boundary. Its clean continuity base is
-`596123df`, tree `ae8cabdb`; isolated activation commit `f1ebd9b6`, tree
-`20e1035f`, records the four accepted command-local freezes, the
-`.agents/**`-only payload boundary, and the deferred non-authoritative
-`.apm/**` idea. Bounded Red Unit, Integration, and published-process evidence is
-being reproduced and committed; production implementation is not active.
+Task 14 “Extension Install” (phase 3/5): milestone 3/8 — immutable Gray contract
+`fb8b98c8`, tree `8217ae57`, receipt `2c3918ae`, tree `35bedaa2`, and Red
+`81c8bc1e`, tree `75738db7`, freeze the accepted command and evidence boundary.
+Its clean continuity base is `596123df`, tree `ae8cabdb`; isolated activation
+commit `f1ebd9b6`, tree `20e1035f`, records the four accepted command-local
+freezes, the `.agents/**`-only payload boundary, and the deferred
+non-authoritative `.apm/**` idea. One Brilliant Implementer owns coherent
+production and focused verification under its Task Mastermind.
 
 Task 3 “Route Update” remains Complete from accepted closeout `27df8325`, tree
 `b68d4349`, with final executable behavior `8a398f2e`, tree `3bb4a224`.
@@ -409,9 +409,9 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Complete and commit Task 14's bounded Red evidence and receipt, then give one
-   Brilliant Implementer the accepted immutable Gray/Red boundary. Do not begin
-   production implementation before Red is complete.
+1. Inspect and commit Task 14's coherent production candidate, then run its
+   focused, public, packed-package, managed, and Native AOT verification before
+   the single fresh whole-task review.
 2. Continue through Task 15 Status and Task 16 Doctor after Task 14. Their
    read-only preparation receipts are complete; Task 15 Gray still owns exact
    catalogue and view signatures, and both Tasks must revalidate their frozen
