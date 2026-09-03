@@ -4,11 +4,13 @@ open-forge:
   tags: [Memory, Working, CLI, Task, Cleanup, Mutation, Contextual]
 ---
 
-# Implement Cleanup
+# Task 20: Cleanup
 
 ## Task State
 
-- State: Planned after Repair and every artifact producer.
+- State: Queued after Task 19 “Repair” and every artifact producer.
+- Permanent mapping: Task 20 “Cleanup” in the
+  [project control ledger](../../project-control.md).
 - Parent: [Operational Commands](_operations.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/cleanup/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/cleanup/behavior.md).
 

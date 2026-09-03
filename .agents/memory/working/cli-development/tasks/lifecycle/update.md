@@ -4,13 +4,17 @@ open-forge:
   tags: [Memory, Working, CLI, Task, Update, Framework, Lifecycle, Contextual]
 ---
 
-# Implement Root Update
+# Task 6: Root Update
 
 ## Task State
 
 - State: Planned after the complete Route Mutation M2 lane, which itself follows
   Install. Independent scope, contract, ownership, Gray/Red-readiness, and
   worktree preparation may occur earlier; dependent command behavior may not.
+- Permanent mapping: Task 6 “Root Update” in the
+  [project control ledger](../../project-control.md).
+- Status/Doctor obligation: extend the explicit typed contributor inventory and
+  affected evidence before Task acceptance.
 - Parent: [Lifecycle Commands](_lifecycle.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/update/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/update/behavior.md).
 

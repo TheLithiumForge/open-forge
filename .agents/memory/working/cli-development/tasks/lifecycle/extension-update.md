@@ -4,11 +4,16 @@ open-forge:
   tags: [Memory, Working, CLI, Task, Extension, Update, Lifecycle, Contextual]
 ---
 
-# Implement Extension Update
+# Task 17: Extension Update
 
 ## Task State
 
-- State: Planned after Extension Install.
+- State: Queued after Task 6 “Root Update” and the accepted Task 14 “Extension
+  Install” boundary.
+- Permanent mapping: Task 17 “Extension Update” in the
+  [project control ledger](../../project-control.md).
+- Status/Doctor obligation: extend the explicit typed contributor inventory and
+  affected evidence before Task acceptance.
 - Parent: [Lifecycle Commands](_lifecycle.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/extension/update/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/extension/update/behavior.md).
 

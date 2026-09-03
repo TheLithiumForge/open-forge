@@ -4,11 +4,17 @@ open-forge:
   tags: [Memory, Working, CLI, Task, Route, Remove, Mutation, Contextual]
 ---
 
-# Implement Route Remove
+# Task 5: Route Remove
 
 ## Task State
 
-- State: Planned after Route Move.
+- State: Queued after Task 4 “Route Move” and Task 12 “CLI Architecture
+  Authority Remediation”; implementation is reprioritized behind the adoption
+  slice formed by Tasks 14–16 and the eligible Task 7 follow-up.
+- Permanent mapping: Task 5 “Route Remove” in the
+  [project control ledger](../../project-control.md).
+- Status/Doctor obligation: extend the explicit typed contributor inventory and
+  affected evidence before Task acceptance.
 - Parent: [Route Mutation Commands](_route-mutation.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/route/remove/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/route/remove/behavior.md).
 

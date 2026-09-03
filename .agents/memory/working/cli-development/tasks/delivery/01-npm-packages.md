@@ -8,15 +8,23 @@ open-forge:
 
 ## Task State
 
-- State: Complete and squash-integrated by the commit containing this record.
+- State: Historical 8/8 horizon complete and squash-integrated; a separate
+  platform-expansion horizon is queued after Task 12 and Task 13 preparation.
 - Parent: [CLI Delivery](_delivery.md).
-- Profile: Standard; maintainer-selected simplified single-owner flow.
-- Review budget: maximum 1; `T7-R1` is consumed with `CHANGES_REQUIRED`.
-- Correction budget: maximum 1; `T7-C1` is consumed by the grouped M7 repair.
+- Profile: Reopened maintainer-selected simplified single-owner flow: one Task
+  Mastermind, one Brilliant Implementer, one fresh reviewer, and at most one
+  grouped correction.
+- Historical review budget: maximum 1; `T7-R1` was consumed with
+  `CHANGES_REQUIRED`.
+- Historical correction budget: maximum 1; `T7-C1` was consumed by the grouped
+  M7 repair.
+- Follow-up review budget: maximum 1, unused.
+- Follow-up correction budget: maximum 1, unused.
 - Council budget: 0.
-- Current owner: the task mastermind completed acceptance and handoff.
+- Current owner: none until activation; Task 13 owns platform feasibility only.
 - Restart baseline: `195ff13ecff6a598dd18ef22a0335c1dc75e6736`.
-- Progress: 8 of 8 milestones complete in phase 5 of 5.
+- Historical progress: 8 of 8 milestones complete in phase 5 of 5.
+- Follow-up progress: 0 of 7 milestones complete in phase 0 of 4.
 - M3 package staging is committed on the restarted task branch as
   `00e09b24059e26e8dbec8cff129bc404876c9f0c`.
 - M4 local linking and root migration are committed on the restarted task branch
@@ -33,29 +41,33 @@ open-forge:
 
 ## Expected Outcome
 
-The repository owns a publishable npm package graph for the accepted Linux x64
-and Windows x64 native artifacts. The same package-owned tooling can stage the
-current host packages and explicitly link or unlink them for local CLI use. It
-does not publish, download, install from a registry, or add CLI domain behavior.
+The repository owns a publishable npm package graph for accepted Linux x64,
+macOS x64, and Windows x64 native artifacts. The same package-owned tooling can
+stage the current host packages and explicitly link or unlink them for local CLI
+use. It does not publish, download, install from a registry, or add CLI domain
+behavior. ARM remains a Task 13 feasibility question, not an accepted package
+target.
 
 ## Package Contract
 
 - Main package: `@thelithiumforge/open-forge`.
-- Platform packages: `@thelithiumforge/open-forge-linux-x64` and
+- Platform packages: `@thelithiumforge/open-forge-linux-x64`,
+  `@thelithiumforge/open-forge-darwin-x64`, and
   `@thelithiumforge/open-forge-win-x64`.
-- The main package has exact synchronized `optionalDependencies` on both
+- The main package has exact synchronized `optionalDependencies` on all accepted
   platform packages. They are not peer dependencies.
 - Linux metadata is `os: ["linux"]`, `cpu: ["x64"]`, and `libc: "glibc"`.
   Windows metadata is `os: ["win32"]` and `cpu: ["x64"]`.
+- macOS metadata is `os: ["darwin"]` and `cpu: ["x64"]`.
 - Tracked templates are private and use version `0.0.0`. Staged manifests are
   public and synchronize all package versions to either a stable
   `major.minor.patch` release or `0.0.0-dev.sha-<full lowercase Git SHA>`.
 - The main package alone owns `open-forge -> ./bin/open-forge.js`. Each platform
   package contains only its manifest, license, and native executable.
-- The launcher admits only Node Linux/x64 and Windows/x64, resolves the matching
-  optional package, and directly hands process arguments and state to the native
-  executable. It has no download, postinstall, fallback, telemetry, compilation,
-  or domain behavior.
+- The launcher admits only the accepted host/platform pairs, resolves the
+  matching optional package, and directly hands process arguments and state to
+  the native executable. It has no download, postinstall, fallback, telemetry,
+  compilation, or domain behavior.
 - Authored source is TypeScript. Generated JavaScript exists only below ignored
   `/artifacts/`.
 
@@ -97,6 +109,35 @@ does not publish, download, install from a registry, or add CLI domain behavior.
 The discarded predecessor used a 73-test internal-contract suite. That suite is
 rejected history only and carries no current implementation or acceptance
 authority.
+
+## Platform Expansion Horizon
+
+1. Phase 1 — consume and revalidate Task 13 platform evidence.
+   - M1 freezes Linux, macOS, and Windows x64 RID/package mappings and resolves
+     ARM only as accepted, deferred, or rejected; feasibility alone does not add
+     ARM packages.
+   - M2 freezes exact protected paths, owned package contracts, local-link
+     journeys, and target-host evidence without reopening accepted CLI behavior.
+2. Phase 2 — one Brilliant Implementer owns the coherent expansion.
+   - M3 adds the macOS x64 optional package and generalizes only the package-owned
+     model, staging, launcher, and local-link surfaces required by the frozen
+     graph.
+   - M4 makes each accepted host build its native CLI through the existing .NET
+     build boundary, then stage and link from `src/cli/package-managers/npm/`.
+3. Phase 3 — focused owned-package evidence.
+   - M5 keeps evidence intentionally small: exact main/optional package graphs,
+     accepted-host staging and packing, and one simple install/reachability
+     journey per executable host where the runner is available. It does not
+     retest CLI commands, npm, Node, the operating system, or another library.
+4. Phase 4 — one review and closeout.
+   - M6 is one fresh whole-task review followed by at most one grouped
+     correction.
+   - M7 records exact evidence, target limitations, commit/tree identity, and
+     integration readiness.
+
+This horizon preserves the original accepted 8/8 history. It does not amend or
+reinterpret those commits, execute publication, authorize global link/unlink in
+evidence, or add a generic multi-package-manager framework.
 
 ## Review Disposition
 

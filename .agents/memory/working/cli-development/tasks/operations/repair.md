@@ -4,11 +4,14 @@ open-forge:
   tags: [Memory, Working, CLI, Task, Repair, Mutation, Recovery, Contextual]
 ---
 
-# Implement Repair
+# Task 19: Repair
 
 ## Task State
 
-- State: Planned after Doctor.
+- State: Queued after Task 18 “Extension Remove” and final revalidation of the
+  Task 15/16 contributor inventory.
+- Permanent mapping: Task 19 “Repair” in the
+  [project control ledger](../../project-control.md).
 - Parent: [Operational Commands](_operations.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/repair/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/repair/behavior.md).
 

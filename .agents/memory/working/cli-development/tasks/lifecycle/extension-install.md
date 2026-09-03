@@ -4,11 +4,20 @@ open-forge:
   tags: [Memory, Working, CLI, Task, Extension, Install, Lifecycle, Contextual]
 ---
 
-# Implement Extension Install
+# Task 14: Extension Install
 
 ## Task State
 
-- State: Planned after Extension Inspect, Install, and Mutation Foundation.
+- State: Queued after Task 12 “CLI Architecture Authority Remediation”.
+- Permanent mapping: Task 14 “Extension Install” in the
+  [project control ledger](../../project-control.md).
+- Prerequisites: Extension Inspect, root Install, and Mutation Foundation are
+  complete. Route Move and Task 12 integration provide the accepted activation
+  base; Route Remove and root Update are not prerequisites.
+- Planned progress horizon: phase 0 of 5, milestone 0 of 8. The streamlined
+  phases are Preflight, explicit Gray/Red, one coherent implementation and
+  focused-verification pass, one fresh whole-task review with at most one
+  grouped improvement pass, and acceptance.
 - Parent: [Lifecycle Commands](_lifecycle.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/extension/install/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/extension/install/behavior.md).
 

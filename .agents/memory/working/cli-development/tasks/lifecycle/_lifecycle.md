@@ -11,8 +11,8 @@ open-forge:
 - State: Active. The next-wave shared foundations, Route Inspect correction,
   Extension Create, and root Install are integrated. Root Install is complete at
   `c60fcb98a57e9ec80769b9cb1d399ce13a227863`, exact tree
-  `464a4a6b6ef6447209edffbf53df7348c70691ed`. Generic and Framework-aware Route
-  Init is the next lifecycle boundary in the accepted Route Mutation sequence.
+  `464a4a6b6ef6447209edffbf53df7348c70691ed`. Task 14 Extension Install is the
+  prioritized next lifecycle boundary after Route Move and Task 12 integrate.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Common prerequisites: Extension discovery and `index`; workspace mutations also
   consume Mutation Foundation.
@@ -60,6 +60,10 @@ Root Update remains sequenced after the complete Route Mutation M2 lane. Only
 independent preparation such as scope discovery, contract and ownership audits,
 callable-surface analysis, Gray/Red readiness, and worktree setup may proceed
 earlier; dependent Update behavior does not overlap unfinished M2 behavior.
+Extension Install is independent of unfinished Route Remove and root Update, so
+it may form the first adoption slice after Task 12. Later lifecycle producers
+must extend the accepted explicit Status/Doctor contributor inventory and its
+affected evidence before their own acceptance.
 
 Every other lifecycle mutation that replaces or deletes an existing ordinary
 target prepares one immutable, strictly verified external recovery bundle for
@@ -72,18 +76,20 @@ bytes and is owned only through a read/write `FileShare.None` handle.
 
 - [x] [Implement creation of one reviewable Extension package outside a workspace](extension-create.md) — Complete; command-local squash `3ef81227ba50fba869f0129b958eabc6d0c29fbc`, protected public integration `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5`
 - [x] [Implement root Framework installation into a selected workspace](install.md) — Complete; final candidate `11994e4d21ddc807b7480afc39ae3612e5a69a56` is squash-integrated at `c60fcb98a57e9ec80769b9cb1d399ce13a227863`, exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed`
-- [ ] [Implement root Framework update from accepted lifecycle identity](update.md) — Planned after full Route Mutation M2 — Implementer: Not assigned
-- [ ] [Implement Extension installation from exact reviewed package identity](extension-install.md) — Planned — Implementer: Not assigned
-- [ ] [Implement Extension update with source review, ownership, and recovery integrity](extension-update.md) — Planned — Implementer: Not assigned
-- [ ] [Implement Extension removal with preserved user content and recovery integrity](extension-remove.md) — Planned — Implementer: Not assigned
+- [ ] [Task 14: implement Extension installation from exact reviewed package identity](extension-install.md) — Queued after Task 12 — Implementer: Not assigned
+- [ ] [Task 6: implement root Framework update from accepted lifecycle identity](update.md) — Queued after full Route Mutation M2 — Implementer: Not assigned
+- [ ] [Task 17: implement Extension update with source review, ownership, and recovery integrity](extension-update.md) — Queued after Task 6 and Task 14 — Implementer: Not assigned
+- [ ] [Task 18: implement Extension removal with preserved user content and recovery integrity](extension-remove.md) — Queued after Task 17 — Implementer: Not assigned
 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
+
 - [Implement creation of one reviewable Extension package outside a workspace](extension-create.md) - #Memory #Working #CLI #Task #Extension #Create #Lifecycle #Contextual
 - [Implement Extension installation from exact reviewed package identity](extension-install.md) - #Memory #Working #CLI #Task #Extension #Install #Lifecycle #Contextual
 - [Implement Extension removal with preserved user content and recovery integrity](extension-remove.md) - #Memory #Working #CLI #Task #Extension #Remove #Lifecycle #Contextual
 - [Implement Extension update with source review, ownership, and recovery integrity](extension-update.md) - #Memory #Working #CLI #Task #Extension #Update #Lifecycle #Contextual
 - [Implement root Framework installation into a selected workspace](install.md) - #Memory #Working #CLI #Task #Install #Framework #Lifecycle #Contextual
 - [Implement root Framework update from accepted lifecycle identity](update.md) - #Memory #Working #CLI #Task #Update #Framework #Lifecycle #Contextual
+
 <!-- open-forge:generated-index:end -->

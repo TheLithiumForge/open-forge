@@ -4,11 +4,24 @@ open-forge:
   tags: [Memory, Working, CLI, Task, Doctor, Diagnosis, Contextual]
 ---
 
-# Implement Doctor
+# Task 16: Doctor
 
 ## Task State
 
-- State: Planned after Status.
+- State: Queued after Task 15 “Status”.
+- Permanent mapping: Task 16 “Doctor” in the
+  [project control ledger](../../project-control.md).
+- Planned progress horizon: phase 0 of 5, milestone 0 of 8. The streamlined
+  phases are Preflight, explicit Gray/Red, one coherent implementation and
+  focused-verification pass, one fresh whole-task review with at most one
+  grouped improvement pass, and acceptance.
+- Incremental completeness: the first accepted horizon diagnoses the complete
+  explicit contributor inventory frozen by Task 15. A healthy result means
+  complete zero-finding evaluation for that declared inventory, never a guess
+  from omitted or unavailable domains. Every later producer must extend the
+  applicable typed facts and diagnostic domains before that producer is
+  accepted. Final release requires a complete revalidated inventory for all
+  retained producers.
 - Parent: [Operational Commands](_operations.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/doctor/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/doctor/behavior.md).
 

@@ -8,11 +8,15 @@ open-forge:
 
 ## Task State
 
-- State: Queued after Task 4 “Route Move” and before Task 5 “Route Remove”.
+- State: Non-mutating preparation active while Task 4 “Route Move” remains the
+  live semantic owner. Implementation stays queued until Task 4 integrates and
+  precedes Task 14 “Extension Install”.
 - Permanent mapping: Task 12 “CLI Architecture Authority Remediation” in the
   [project control ledger](../project-control.md).
-- Phase and milestone horizon: Deferred until activation. Queued work does not
-  invent progress.
+- Preparation progress: phase 0 of 5, milestone 0 of 1. This phase may freeze a
+  revalidation-ready execution capsule but cannot change authority. The
+  implementation horizon is frozen only after the integrated Task 4 base is
+  revalidated.
 - Planned profile: Streamlined assured documentation remediation. The Task
   Mastermind completes Preflight and freezes explicit Gray and Red authority
   and evidence boundaries. One Brilliant Implementer performs the coherent

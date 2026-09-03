@@ -4,11 +4,15 @@ open-forge:
   tags: [Memory, Working, CLI, Task, Extension, Remove, Lifecycle, Contextual]
 ---
 
-# Implement Extension Remove
+# Task 18: Extension Remove
 
 ## Task State
 
-- State: Planned after Extension Update.
+- State: Queued after Task 17 “Extension Update”.
+- Permanent mapping: Task 18 “Extension Remove” in the
+  [project control ledger](../../project-control.md).
+- Status/Doctor obligation: extend the explicit typed contributor inventory and
+  affected evidence before Task acceptance.
 - Parent: [Lifecycle Commands](_lifecycle.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/extension/remove/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/extension/remove/behavior.md).
 

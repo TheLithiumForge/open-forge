@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Implement aggregate status, diagnosis, repair, and cleanup after every state producer exists
+  description: Implement incremental aggregate status and diagnosis, then repair and cleanup after the complete producer inventory
   tags: [Memory, Working, CLI, Task, Status, Doctor, Repair, Cleanup, Contextual]
 ---
 
@@ -8,10 +8,11 @@ open-forge:
 
 ## Task State
 
-- State: Planned.
+- State: Queued in an adoption-first sequence.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
-- Prerequisites: Every read-only and mutating command that produces observable
-  state, lifecycle, recovery, or generated artifacts.
+- Initial prerequisites: Task 14 “Extension Install” for Status, then Status for
+  Doctor. Repair and Cleanup remain behind the complete retained producer
+  inventory and their command-local dependencies.
 
 ## Shared Boundary
 
@@ -38,12 +39,19 @@ reflection, a service locator, or a dynamic plug-in engine. This freezes the
 composition mechanism only and does not select or change the accepted child
 command order.
 
+Task 15 freezes an initial complete contributor inventory for every producer in
+its exact baseline. Task 16 diagnoses that complete declared inventory. Later
+producers extend the same explicit typed composition and pass affected
+Status/Doctor evidence before their own acceptance. No early result calls an
+absent or unavailable future domain healthy. Final release revalidates the
+complete inventory for every retained producer.
+
 ## Child Tasks
 
-- [ ] [Implement complete workspace, lifecycle, managed-source, generated, and recovery-bundle status facts](status.md) — Planned — Implementer: Not assigned
-- [ ] [Implement diagnosis domains, severity, recommendations, and complete doctor projections](doctor.md) — Planned — Implementer: Not assigned
-- [ ] [Implement explicit repair planning, dry run, application, verification, and recovery](repair.md) — Planned — Implementer: Not assigned
-- [ ] [Implement lease-validated cleanup of recognized recovery bundles and drafts](cleanup.md) — Planned — Implementer: Not assigned
+- [ ] [Task 15: implement complete baseline workspace, lifecycle, managed-source, generated, and recovery-bundle status facts](status.md) — Queued after Task 14 — Implementer: Not assigned
+- [ ] [Task 16: implement diagnosis domains, severity, recommendations, and complete doctor projections](doctor.md) — Queued after Task 15 — Implementer: Not assigned
+- [ ] [Task 19: implement explicit repair planning, dry run, application, verification, and recovery](repair.md) — Queued after the complete producer inventory — Implementer: Not assigned
+- [ ] [Task 20: implement lease-validated cleanup of recognized recovery bundles and drafts](cleanup.md) — Queued after Task 19 and every artifact producer — Implementer: Not assigned
 
 ## Entries
 

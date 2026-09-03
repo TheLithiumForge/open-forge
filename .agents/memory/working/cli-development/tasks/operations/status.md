@@ -4,11 +4,24 @@ open-forge:
   tags: [Memory, Working, CLI, Task, Status, Observation, Contextual]
 ---
 
-# Implement Status
+# Task 15: Status
 
 ## Task State
 
-- State: Planned after every lifecycle and mutation producer.
+- State: Queued after Task 14 “Extension Install”.
+- Permanent mapping: Task 15 “Status” in the
+  [project control ledger](../../project-control.md).
+- Planned progress horizon: phase 0 of 5, milestone 0 of 8. The streamlined
+  phases are Preflight, explicit Gray/Red, one coherent implementation and
+  focused-verification pass, one fresh whole-task review with at most one
+  grouped improvement pass, and acceptance.
+- Incremental completeness: the first accepted horizon covers every observable
+  producer present in its exact frozen baseline and records that complete typed
+  contributor inventory. It does not call absent future commands healthy,
+  supported, or silently omitted. Every later producer must extend the explicit
+  contributor inventory and pass affected Status evidence before that producer
+  is accepted. Final release requires a complete revalidated inventory for all
+  retained producers.
 - Parent: [Operational Commands](_operations.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/status/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/status/behavior.md).
 

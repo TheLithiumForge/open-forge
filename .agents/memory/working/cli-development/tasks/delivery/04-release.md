@@ -4,11 +4,14 @@ open-forge:
   tags: [Memory, Working, CLI, Task, Distribution, Documentation, Release, Contextual]
 ---
 
-# Accept And Release The Complete CLI
+# Task 22: Final Documentation, Acceptance, and Release
 
 ## Task State
 
-- State: Planned after package and current `linux-x64` native/checksum evidence.
+- State: Queued last, after Task 13 implementation, Task 10 and any accepted Task
+  21 remediation, and the final complete Status/Doctor contributor gate.
+- Permanent mapping: Task 22 “Final Documentation, Acceptance, and Release” in
+  the [project control ledger](../../project-control.md).
 - Responsible roles: Mastermind and maintainer.
 - Parent: [CLI Delivery](_delivery.md).
 
