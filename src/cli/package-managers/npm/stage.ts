@@ -1,0 +1,126 @@
+import { execFileSync } from "node:child_process";
+import { chmodSync, copyFileSync, mkdirSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { createRequire } from "node:module";
+import { join } from "node:path";
+
+import linuxPackageTemplate from "./linux-x64/package.json" with { type: "json" };
+import mainPackageTemplate from "./main/package.json" with { type: "json" };
+import {
+  FullGitShaPattern,
+  LocalVersionPrefix,
+  MainPackageName,
+  PlatformPackages,
+  StableReleaseVersionPattern,
+  TemplatePackageVersion,
+  type SupportedRuntime,
+} from "./package-model.ts";
+import windowsPackageTemplate from "./win-x64/package.json" with { type: "json" };
+
+export type StageVersion = { kind: "release"; value: string } | { kind: "local"; sha: string };
+
+export interface StageRequest {
+  repositoryRoot: string;
+  artifactsRoot: string;
+  runtime: SupportedRuntime;
+  nativeArtifact: string;
+  version: StageVersion;
+}
+
+export interface StagedPackages {
+  version: string;
+  mainPackageDirectory: string;
+  platformPackageDirectory: string;
+}
+
+const platformPackageTemplates = {
+  "linux-x64": linuxPackageTemplate,
+  "win-x64": windowsPackageTemplate,
+} as const satisfies Record<SupportedRuntime, { name: string; version: string; private: boolean }>;
+
+export function stagePackages(request: StageRequest): StagedPackages {
+  const platformPackage = PlatformPackages[request.runtime];
+  const platformTemplate = platformPackageTemplates[request.runtime];
+  const version = resolveVersion(request.version);
+  validateInputs(request, platformTemplate.name, platformPackage.packageName);
+
+  const npmArtifacts = join(request.artifactsRoot, "npm");
+  const buildDirectory = join(npmArtifacts, "build", request.runtime);
+  const stageDirectory = join(npmArtifacts, "stage", request.runtime);
+  const mainPackageDirectory = join(stageDirectory, "open-forge");
+  const platformPackageDirectory = join(stageDirectory, platformPackage.directoryName);
+
+  rmSync(buildDirectory, { force: true, recursive: true });
+  rmSync(stageDirectory, { force: true, recursive: true });
+  compileLauncher(request.repositoryRoot, buildDirectory);
+
+  const mainBinDirectory = join(mainPackageDirectory, "bin");
+  const platformBinDirectory = join(platformPackageDirectory, "bin");
+  mkdirSync(mainBinDirectory, { recursive: true });
+  mkdirSync(platformBinDirectory, { recursive: true });
+
+  copyExecutable(join(buildDirectory, "main", "open-forge.js"), join(mainBinDirectory, "open-forge.js"));
+  copyFileSync(join(buildDirectory, "package-model.js"), join(mainPackageDirectory, "package-model.js"));
+  copyExecutable(request.nativeArtifact, join(platformBinDirectory, platformPackage.nativeFileName));
+  copyFileSync(join(request.repositoryRoot, "LICENSE"), join(mainPackageDirectory, "LICENSE"));
+  copyFileSync(join(request.repositoryRoot, "LICENSE"), join(platformPackageDirectory, "LICENSE"));
+
+  const { private: mainPrivate, ...publicMainTemplate } = mainPackageTemplate;
+  const { private: platformPrivate, ...publicPlatformTemplate } = platformTemplate;
+  void mainPrivate;
+  void platformPrivate;
+  writeManifest(join(mainPackageDirectory, "package.json"), {
+    ...publicMainTemplate,
+    version,
+    optionalDependencies: {
+      [PlatformPackages["linux-x64"].packageName]: version,
+      [PlatformPackages["win-x64"].packageName]: version,
+    },
+  });
+  writeManifest(join(platformPackageDirectory, "package.json"), { ...publicPlatformTemplate, version });
+
+  return { version, mainPackageDirectory, platformPackageDirectory };
+}
+
+function resolveVersion(version: StageVersion): string {
+  if (version.kind === "release") {
+    if (!StableReleaseVersionPattern.test(version.value)) {
+      throw new Error("The release version must use the stable major.minor.patch form.");
+    }
+
+    return version.value;
+  }
+
+  if (!FullGitShaPattern.test(version.sha)) {
+    throw new Error("The local version requires one full lowercase 40-character Git SHA.");
+  }
+
+  return `${LocalVersionPrefix}${version.sha}`;
+}
+
+function validateInputs(request: StageRequest, templateName: string, packageName: string): void {
+  if (!statSync(request.nativeArtifact).isFile()) {
+    throw new Error(`The native artifact is not a regular file: ${request.nativeArtifact}`);
+  }
+
+  if (mainPackageTemplate.name !== MainPackageName || mainPackageTemplate.version !== TemplatePackageVersion) {
+    throw new Error("The tracked main package template does not match the package model.");
+  }
+
+  if (templateName !== packageName || platformPackageTemplates[request.runtime].version !== TemplatePackageVersion) {
+    throw new Error(`The tracked ${request.runtime} package template does not match the package model.`);
+  }
+}
+
+function compileLauncher(repositoryRoot: string, outputDirectory: string): void {
+  const compiler = createRequire(import.meta.url).resolve("typescript/bin/tsc");
+  execFileSync(process.execPath, [compiler, "--project", join(import.meta.dirname, "tsconfig.build.json"), "--outDir", outputDirectory], { cwd: repositoryRoot, stdio: "inherit" });
+}
+
+function copyExecutable(source: string, destination: string): void {
+  copyFileSync(source, destination);
+  chmodSync(destination, 0o755);
+}
+
+function writeManifest(path: string, manifest: object): void {
+  writeFileSync(path, `${JSON.stringify(manifest, undefined, 2)}\n`, "utf8");
+}

@@ -1,0 +1,26 @@
+{
+  "name": "@thelithiumforge/open-forge",
+  "version": "0.0.0",
+  "description": "Thin npm launcher for the Open Forge native CLI.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "open-forge": "./bin/open-forge.js"
+  },
+  "files": [
+    "bin",
+    "package-model.js",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "optionalDependencies": {
+    "@thelithiumforge/open-forge-linux-x64": "0.0.0",
+    "@thelithiumforge/open-forge-win-x64": "0.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -14,10 +14,11 @@ open-forge:
 
 ## Expected Outcome
 
-The canonical `linux-x64` executable and thin package wrapper pass native build
-and smoke, packed install and invocation, and checksum evidence. Public
+The accepted native executables and thin package graph pass native build and
+smoke, packed install and invocation, and checksum evidence. Public
 documentation matches that exact product boundary, and the maintainer accepts
-one complete main-only release.
+one complete main-only release. The current package target and its bounded
+evidence live in [Task 7](01-npm-packages.md).
 
 ## Delivery Invariants
 
@@ -26,13 +27,13 @@ one complete main-only release.
 - Checksums bind the exact accepted native and packed artifacts.
 - Release credentials and remote publication remain outside local Tasks until the
   explicit release Task authorizes them.
-- Additional RIDs, signatures, SBOM, provenance, OIDC attestation, and support-
-  floor matrices are future expansions that require a later explicit maintainer
-  decision. They are not current D1 evidence.
+- Target or evidence expansion beyond the accepted Task 7 package graph, plus
+  signatures, SBOM, provenance, OIDC attestation, and support-floor matrices,
+  requires a later explicit maintainer decision. It is not current D1 evidence.
 
 ## Child Tasks
 
-- [ ] [Create and prove the thin launcher and `linux-x64` platform package from the accepted native artifact](01-npm-packages.md) — Planned — Implementer: Not assigned
+- [x] [Prepare and prove the accepted thin npm package graph and local-link workflow](01-npm-packages.md) — Complete and integrated
 - [ ] [Complete current `linux-x64` native CI and reproducible artifact collection](02-native-ci.md) — Planned — Implementer: Not assigned
 - [ ] [Preserve future supply-chain expansion behind an explicit decision](03-supply-chain.md) — Deferred outside current D1 — Implementer: Not assigned
 - [ ] [Align public documentation, run complete acceptance, publish from main, and close the program](04-release.md) — Planned — Implementer: Not assigned
@@ -40,8 +41,10 @@ one complete main-only release.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-- [Create and prove the thin launcher and linux-x64 platform package from accepted native artifacts](01-npm-packages.md) - #Memory #Working #CLI #Task #Distribution #Npm #Package #Contextual
+
+- [Prepare and prove the thin npm package graph and explicit local-link workflow](01-npm-packages.md) - #Memory #Working #CLI #Task #Delivery #Npm #Package #Contextual
 - [Complete current linux-x64 native CI and reproducible artifact collection](02-native-ci.md) - #Memory #Working #CLI #Task #Distribution #NativeAOT #CI #Contextual
 - [Preserve future signatures, SBOM, provenance, and OIDC expansion behind explicit acceptance](03-supply-chain.md) - #Memory #Working #CLI #Task #Distribution #SupplyChain #Security #Contextual
 - [Align public documentation, run complete acceptance, publish from main, and close the program](04-release.md) - #Memory #Working #CLI #Task #Distribution #Documentation #Release #Contextual
+
 <!-- open-forge:generated-index:end -->

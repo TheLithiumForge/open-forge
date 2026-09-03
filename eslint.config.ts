@@ -46,7 +46,7 @@ const typeCheckedFrozenCliBuildConfigs = [...typescriptEslint.configs.strictType
 
 export default typescriptEslint.config(
   {
-    ignores: ["coverage/**", "dist/**", "node_modules/**", ".agents/memory/archived/**", ".temp/**"],
+    ignores: ["artifacts/**", "coverage/**", "dist/**", "node_modules/**", ".agents/memory/archived/**", ".temp/**"],
   },
   {
     ...eslint.configs.recommended,

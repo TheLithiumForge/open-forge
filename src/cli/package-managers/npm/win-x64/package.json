@@ -1,0 +1,20 @@
+{
+  "name": "@thelithiumforge/open-forge-win-x64",
+  "version": "0.0.0",
+  "description": "Open Forge native CLI for Windows x64.",
+  "license": "MIT",
+  "private": true,
+  "os": [
+    "win32"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "files": [
+    "bin",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

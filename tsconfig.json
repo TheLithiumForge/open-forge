@@ -6,6 +6,7 @@
     "moduleResolution": "Bundler",
     "moduleDetection": "force",
     "verbatimModuleSyntax": true,
+    "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "noEmit": true,
@@ -26,5 +27,5 @@
     "allowUnusedLabels": false,
     "skipLibCheck": false
   },
-  "include": ["src/cli-mvp/build/**/*.ts", ".temp/cli/embedded-assets.generated.ts"]
+  "include": ["eslint.config.ts", "src/cli-mvp/build/**/*.ts", "src/cli/package-managers/npm/**/*.ts", ".temp/cli/embedded-assets.generated.ts"]
 }

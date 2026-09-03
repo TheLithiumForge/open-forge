@@ -1,0 +1,21 @@
+{
+  "name": "@thelithiumforge/open-forge-linux-x64",
+  "version": "0.0.0",
+  "description": "Open Forge native CLI for Linux x64 with glibc.",
+  "license": "MIT",
+  "private": true,
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "libc": "glibc",
+  "files": [
+    "bin",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

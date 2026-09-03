@@ -46,10 +46,10 @@ The new CLI direction is:
 - npm as the first wrapper
 - The root `package.json` retained as an ecosystem-neutral orchestration layer
 
-The command surface, architecture, libraries, tests, safety model, native
-artifacts, and public wrapper remain subject to explicit design and maintainer
-acceptance. The private development link described below is repository-local
-tooling. It does not settle the future public package design.
+The replacement CLI remains non-shipping until its complete command and release
+boundary is accepted. Its thin npm package source is accepted for distribution
+preparation and repository-local linking; actual package publication remains a
+separate explicitly authorized release effect.
 
 Rune is outside the current release effort.
 
@@ -58,8 +58,9 @@ Rune is outside the current release effort.
 The root `package.json` contains transitional Bun and TypeScript scripts for the
 frozen MVP and repository build. They are not replacement CLI implementation or
 a replacement release gate. The non-shipping native CLI toolchain remains
-separate from this frozen support. Public distribution wrappers do not exist
-yet. The private development link below is not a distribution package.
+separate from this frozen support. Package-manager source below
+`src/cli/package-managers/` prepares the non-shipping distribution wrappers and
+local links without repointing the frozen root package.
 
 The replacement C# implementation follows the current [CLI
 Architecture](../.agents/memory/crystallized/documents/cli/architecture.md) and
@@ -91,56 +92,37 @@ EndToEnd project for one supported target RID and use the corresponding
 The root `package.json` and frozen MVP tooling do not provide a replacement CLI
 build.
 
-### Link The Development CLI
+### Link The Native CLI Locally
 
-The repository includes an optional private npm package that links the managed
-development publication as `open-forge-dev`. Build the selected configuration
-before linking or invoking it. The launcher does not build the CLI or search for
-another publication.
+The npm package source under `src/cli/package-managers/npm/` can prepare the
+current Linux x64 or Windows x64 native package graph for local use. The root
+link command publishes the current host in Release mode without restoring,
+stages a local version containing the full Git commit SHA, and links the
+platform package through the main package into this repository.
 
-Debug is the default configuration:
+Restore the .NET workspace before the first link or after its dependencies
+change. Then link and invoke the current native CLI:
 
 ```sh
-dotnet build
+dotnet restore
 npm run cli:link
 npm run cli:dev -- --version
 ```
 
-Set `OPEN_FORGE_DEV_CONFIGURATION` to the exact value `Release` to use a Release
-publication. Rebuild that configuration whenever its source changes:
+The command uses ordinary npm package links and therefore creates npm's normal
+global package links as well as repository-local links. It does not save a
+dependency, update the lockfile, run package scripts, contact the registry, or
+publish a package. Generated JavaScript, native publications, and staged package
+files remain below the ignored `artifacts/` directory.
 
-```sh
-dotnet build --configuration Release
-OPEN_FORGE_DEV_CONFIGURATION=Release npm run cli:dev -- --version
-```
-
-In PowerShell, set the same value for the current session before invoking the
-command:
-
-```powershell
-dotnet build --configuration Release
-$env:OPEN_FORGE_DEV_CONFIGURATION = "Release"
-npm run cli:dev -- --version
-```
-
-Only `Debug` and `Release` are valid configuration values. `cli:link` creates a
-repository-local npm link and the package-manager global link used to maintain
-it. Invoke the command through `cli:dev`, which uses npm's repository-local bin
-path on Windows and Linux. No bare `open-forge-dev` command or machine `PATH`
-configuration is promised.
-
-The link remains active until you remove it:
+Remove the known repository and global links when they are no longer needed:
 
 ```sh
 npm run cli:unlink
 ```
 
-`cli:unlink` removes the repository-local link first and then removes the npm
-global package link. Neither link action saves a dependency or changes a
-lockfile. The linked `open-forge-dev` launcher resolves the managed publication
-in this repository and preserves the caller's current directory, arguments,
-streams, and environment. It is separate from the frozen `open-forge-old`
-command and from the future public `open-forge` npm package.
+The public command name is `open-forge`. The frozen MVP remains available only
+through `open-forge-old` and `npm run cli:old`.
 
 Do not treat `dist/` or `.temp/` as authored authority. Do not edit generated
 output manually.
