@@ -241,7 +241,8 @@ listing, editing, language-server use, and Bash for the coordinator and topics.
 They allow only the named `inspect-git-objects` custom tool. OpenCode loads its
 tracked adapter from `.opencode/tools/inspect-git-objects.ts`; structured
 `operation`, `object`, `otherObject`, and `path` fields delegate without a shell
-to the fixed repository engine in `scripts/inspect-git-objects.ts`. The engine
+to the fixed repository engine in
+`src/agent-tooling/review/inspect-git-objects.ts`. The engine
 accepts only fixed object, tree, path, diff, diff-check, and ancestry operations
 over complete object IDs; it rejects refs, selectors, revision syntax,
 arbitrary or unknown fields, output targets, and unsafe tree paths. The
@@ -330,7 +331,9 @@ Read-only preparation confirmed:
   `apm.yml`. `.codex/agents` and `.opencode/agents` are ignored generated
   projections. `apm.lock.yaml` is derived deployment inventory.
 - APM validation recognizes the current recursive agent source set. The local
-  Codex model patcher also scans nested topic folders recursively.
+  Codex model patcher at
+  `src/agent-tooling/agent-projections/patch-codex-agent-models.ts` also scans
+  nested topic folders recursively.
 - The installed runtime persists turn status, tool/process activity, completed
   results, interrupted turns, queue state, and open child relationships. It does
   not expose a parent-side collection acknowledgement, and open relationships

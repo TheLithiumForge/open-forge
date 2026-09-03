@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 import { GitObjectInspectionError, inspectGitObjects } from "./inspect-git-objects.ts";
 
 const ScriptDirectory = path.dirname(fileURLToPath(import.meta.url));
-const RepositoryRoot = path.dirname(ScriptDirectory);
+const RepositoryRoot = path.resolve(ScriptDirectory, "../../..");
 const GatewayScript = path.join(ScriptDirectory, "inspect-git-objects.ts");
 const AdapterSource = ".opencode/tools/inspect-git-objects.ts";
 const RejectedExit = 2;

@@ -277,6 +277,13 @@ independent audits here only when they cover a matching agent/workflow change
 set and compare changed scope, authority, and evidence rather than merely
 repeating commit subjects.
 
+A later Task 11 placement review resolved the provisional root `scripts/`
+bucket. The immutable Git engine and evidence now live under
+`src/agent-tooling/review/`, while the APM-to-Codex projection correction lives
+under `src/agent-tooling/agent-projections/`. The OpenCode adapter remains a
+thin provider bridge, authored APM agents remain the policy source, and the
+orchestration Extension remains planning-only.
+
 ## Follow-Up And Promotion Signals
 
 - Evaluate Tasks 4–6 after each task and cumulatively after Task 6 using the
