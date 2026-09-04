@@ -42,12 +42,14 @@ Integration `917/917`, and EndToEnd `169/169`; Native AOT passes Integration
 `917/917` and EndToEnd `169/169`; managed EndToEnd against the fresh native
 root passes `169/169`; and the final isolated offline package journey verifies
 the launcher, Root Install's 44 effects, and Extension Install's 28 effects.
-The Task is recently completed with two subsequent progress-update grace slots.
+Its completion grace is consumed and it is dequeued.
 
-Task 15 “Status” and Task 7 “npm Package Manager Release and Local Linking” are
-queued and authorized to activate from fresh worktrees based on `20807781`.
-Their C# and npm/TypeScript implementation surfaces are disjoint and may proceed
-in parallel. Doctor still waits for Status Gray to freeze the contributor
+Task 15 “Status” remains in its recorded lane. Task 7 “npm Package Manager
+Release and Local Linking” is Complete at phase 4/4, milestone 7/7. Accepted
+lane `a2942781`, tree `fe36fc3f`, is squash-integrated at `e19d429e` with the
+same tree. Its Linux host journey passed; Darwin and Windows have stage-and-pack
+evidence only. ARM, publication, and live link or unlink remain unproven and
+unauthorized. Doctor still waits for Status Gray to freeze the contributor
 catalogue and typed views.
 
 Task 3 “Route Update” remains Complete from accepted closeout `27df8325`, tree
@@ -415,9 +417,9 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Activate Task 15 Status and the disjoint Task 7 package expansion in fresh
-   worktrees from the accepted Task 14 integration boundary. Task 16 Doctor
-   waits for Task 15 Gray signatures.
+1. Continue Task 15 Status according to its existing Task record. Task 16
+   Doctor waits for Task 15 Gray signatures. Task 7 package expansion is
+   complete.
 2. Begin Doctor's Gray preparation as soon as Status freezes the exact immutable
    contributor catalogue and typed views; do not parse Status output or add a
    dynamic registry.

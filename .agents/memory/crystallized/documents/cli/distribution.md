@@ -44,12 +44,14 @@ package, channel, or support-floor claim requires a new maintainer decision.
 
 ## Current Implementation And Delivery State
 
-The accepted target is not the present implementation. Task 7's historical
-baseline implemented Linux x64 and Windows x64 packages. The accepted macOS x64
-package and its `osx-x64` payload remain follow-up work. Task 13's current D1
-scope remains Linux only. No document, workflow row, local build, or historical
-receipt may be read as completion of the macOS target, broader CI support, or
-release.
+Task 7's platform-expansion horizon is complete at phase 4/4, milestone 7/7.
+Its accepted lane is `a2942781` with tree `fe36fc3f`, and its squash integration
+is `e19d429e` with the same tree. The accepted graph now has Linux, macOS, and
+Windows x64 package staging and packing. The only installed-launcher journey
+was run on Linux. Darwin and Windows have stage-and-pack evidence only. ARM,
+publication, and live link or unlink remain unproven and unauthorized. Task
+13's current D1 scope remains Linux only. No document, workflow row, local
+build, or historical receipt may be read as completion of D1, ARM, or release.
 
 The replacement remains non-shipping until the complete retained command set,
 accepted package graph and native target set, documentation, and release evidence
@@ -88,9 +90,11 @@ and integrity. Byte-for-byte reproducibility requires a separate repeated-build
 comparison and is not implied by one manifest.
 
 Task 13 owns the current Linux D1 native build and smoke, packed Linux install and
-invocation, checksums, bounded artifact collection, and its exact receipt. The
-reopened Task 7 horizon owns macOS and Windows package journeys and synchronized
-graph realization on their applicable hosts.
+invocation, checksums, bounded artifact collection, and its exact receipt. Task 7
+owns the synchronized x64 graph plus package staging and packing; its accepted
+host-installed journey is Linux-only, while Darwin and Windows remain limited to
+stage-and-pack evidence. Task 22 owns final complete-graph acceptance and
+separately authorized publication.
 
 ## Publication Boundary
 

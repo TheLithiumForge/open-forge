@@ -85,9 +85,11 @@ The accepted dependency order is:
    rule remains complete coverage of the explicit contributor
    inventory at each frozen baseline; every later producer extends that
    inventory and affected evidence before its own acceptance. Task 7's
-   Linux/macOS/Windows x64 expansion has completed preparation and authority
-   alignment at root `53805940`; its phase 1/4, milestone 0/7 follow-up may now
-   activate beside Status from fresh base `20807781`. Task 5 Route
+   Linux/macOS/Windows x64 expansion is Complete at phase 4/4, milestone 7/7:
+   accepted lane `a2942781`, tree `fe36fc3f`, is squash-integrated at `e19d429e`
+   with the same tree. Its Linux host journey passed; Darwin and Windows have
+   stage-and-pack evidence only. ARM, publication, and live link or unlink
+   remain unproven and unauthorized. Task 5 Route
    Remove, Task 6 Root Update, Tasks 17–20, Task 10 and conditional Task 21,
    Task 13
    implementation, and Task 22 follow in the project-control order.
@@ -138,7 +140,8 @@ or a general template/scaffold system.
 | Route Update                  | Bounded route content and metadata update                                              | Complete at accepted closeout `27df8325`, tree `b68d4349`; immutable behavior `8a398f2e`, tree `3bb4a224`; managed `1602/809/152`, native `809/152`, managed-on-native `152`, dogfood, and holistic review pass                                                                                                                                                   |
 | Task 4 Route Move             | Route movement with reference, navigation, lifecycle, and recovery integrity           | Complete at phase 6/6, milestone 12/12; closeout `631983ea`, tree `d6f6fdf7`, is squash-integrated at `d3d2dc1`, tree `6959b51e`; two-update completion grace is consumed and the Task is dequeued                                                                                                                                                                |
 | Task 12 authority remediation | Move accepted CLI Architecture detail to its correct authority without behavior change | Complete at phase 5/5, milestone 6/6; corrected source `a0e6bc8d`, exact tree `9c4a33b1`, is squash-integrated at `495a7ed6`, the same exact tree; two-update completion grace is consumed and the Task is dequeued                                                                                                                                               |
-| Task 14 Extension Install     | Install reviewed Extension packages with isolated lifecycle and recovery integrity     | Complete at phase 5/5, milestone 8/8; lane `a6b44f07`, tree `cd4c074d`, is squash-integrated at `20807781`, tree `4592a139`; final managed `1711/917/169`, Native `917/169`, managed-on-native `169`, and offline package journey pass; two subsequent progress-update grace slots remain                                                                         |
+| Task 14 Extension Install     | Install reviewed Extension packages with isolated lifecycle and recovery integrity     | Complete at phase 5/5, milestone 8/8; lane `a6b44f07`, tree `cd4c074d`, is squash-integrated at `20807781`, tree `4592a139`; final managed `1711/917/169`, Native `917/169`, managed-on-native `169`, and offline package journey pass; completion grace consumed and the Task is dequeued                                                                        |
+| Task 7                        | Complete x64 package graph and package evidence                                        | Complete 4/4, 7/7; `a2942781` → `e19d429e`; Linux journey passed; Darwin/Windows stage+pack only.                                                                                                                                                                                                                                                                 |
 | Task 15 Status                | Report complete typed current facts for the frozen producer inventory                  | Ready to activate with milestone 0/8 and no active phase from fresh base `20807781`; read-only revalidation is complete; Gray owns exact immutable catalogue/view signatures                                                                                                                                                                                      |
 | Task 16 Doctor                | Diagnose the complete Status contributor inventory without mutation                    | Queued at phase 0/5, milestone 0/8; read-only activation reconnaissance began at `53805940` and had a Sol/xhigh Task Mastermind supervise three Luna/max Explorer inventories; six-domain/112-kind contract and typed-view boundary unchanged; root clean at `bbf2d87c` after coordination ledgers only; no build, test, or mutation                              |
 | Task 13 native CI             | Prepare minimal build/test CI, manual publish, artifacts, and package targets          | Preparation completed at phase 1/3, milestone 2/6 on candidate `e7689696`, tree `c204c17b`, and is integrated by the commit containing this record from `develop` parent `de40d550`, tree `e6040c49`. The Task is queued behind all retained commands, Task 10, and conditional Task 21 remediation. Linux/macOS/Windows x64 are accepted; ARM remains undecided. |
@@ -203,12 +206,12 @@ Checkpoint are integration-owned unless a Task packet explicitly says otherwise.
   commit `3c904a23ed6735ca91bb3ca2810156b01a25e5b9`, tree
   `f2a780b8cb1da6ac680b7d7d7586d9732cb20cf6`; that direct-parent comparison
   changes only the Task 13 record. The integrated preparation preserves the
-  fresh Sol/xhigh R1–R8 dispositions, the Task 7 phase 1/4 and milestone 0/7
-  follow-up horizon, accepted Linux/macOS/Windows x64 direction, and undecided
-  ARM boundary. Task 7 preparation and authority alignment are subsequently
-  recorded at root `53805940`. It changes no CI, package, CLI, test,
-  Architecture, contract, or release authority and does not claim D1 or ARM
-  acceptance.
+  fresh Sol/xhigh R1–R8 dispositions, accepted Linux/macOS/Windows x64 direction,
+  and undecided ARM boundary. Task 7's later platform-expansion closeout is
+  accepted in lane `a2942781`, tree `fe36fc3f`, and squash-integrated at
+  `e19d429e` with the same tree. It proves the Linux host journey and Darwin and
+  Windows stage-and-pack only. It changes no CI, CLI behavior, or release
+  authority and does not claim D1, ARM, publication, or live link/unlink.
 - Task 4 Route Move is Complete from accepted activation base `272f5121`, tree
   `702f06d9`, through closeout `631983ea`, tree `d6f6fdf7`. Warning-free Release,
   full managed `1701/888/165`, native `888/165`, managed-on-native `165`, focused
@@ -261,10 +264,13 @@ engine, or ambient registration. Task 12 owns durable architecture placement;
 Task 15 Gray owns exact signatures. Doctor consumes Task 15's immutable typed
 views rather than parsing Status output or using direct producer fan-in, and
 neutral readers remain reusable. Composition alone does not change public
-Status or Doctor contracts. Task 14 integration is complete. The remaining Task
-16 activation order is Task 15 Gray and acceptance, then Doctor; Task 7 may run
-beside Status. Further Doctor implementation has high staleness risk until Task
-15 is accepted.
+Status or Doctor contracts. Task 14 integration is complete. Task 7's
+platform-expansion horizon is also complete at phase 4/4, milestone 7/7, with
+the Linux host journey passed and Darwin and Windows limited to stage-and-pack
+evidence. ARM, publication, and live link or unlink remain unproven and
+unauthorized. The remaining Task 16 activation order is Task 15 Gray and
+acceptance, then Doctor; further Doctor implementation has high staleness risk
+until Task 15 is accepted.
 The exact public Root Install JSON result schema is accepted, implemented, and
 frozen, including fully present ordered facts and typed residual values `none`,
 `retained`, and `unknown`.
