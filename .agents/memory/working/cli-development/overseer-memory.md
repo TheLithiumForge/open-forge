@@ -65,19 +65,23 @@ The accepted dependency order is:
    6/6. Corrected source `a0e6bc8d`, exact tree `9c4a33b1`, is
    squash-integrated at `495a7ed6`, the same exact tree. The accepted
    adoption-first slice is Task 14 Extension Install, Task 15 Status, and Task
-   16 Doctor. Task 14 “Extension Install” (phase 3/5): milestone 3/8 — immutable
-   Gray contract `fb8b98c8`, tree `8217ae57`, receipt `2c3918ae`, tree
-   `35bedaa2`, and Red `81c8bc1e`, tree `75738db7`, freeze the accepted command
-   and evidence boundary. One Brilliant Implementer owns coherent production
-   and focused verification under its Task Mastermind. Status and Doctor
-   read-only preparation is complete, but both
-   remain queued and must revalidate the accepted Task 14/15 baselines. Their
+   16 Doctor. Task 14 “Extension Install” is active at phase 4/5, milestone 4/8.
+   Immutable Green `9a6ae2fa`, tree `c39cfcb`, follows accepted Gray and Red;
+   focused Unit `3/3`, Integration `26/26`, and EndToEnd `4/4` pass after
+   warning-free Release builds. Four fresh ordinary topic reviews and wider
+   managed, Native AOT, and package gates are active under its Task Mastermind.
+   The strict Review Mastermind launched no topic because its named Git-object
+   tool was unavailable, so it consumed no review budget. Status and Doctor
+   read-only preparation is complete; Status is revalidating the immutable Task
+   14 candidate, but both remain queued and must revalidate accepted
+   baselines. Their
    accepted rule remains complete coverage of the explicit contributor
    inventory at each frozen baseline; every later producer extends that
    inventory and affected evidence before its own acceptance. Task 7's
-   Linux/macOS/Windows x64 expansion may overlap the slice
-   after integrated Task 12 and Task 13 preparation. Task 5 Route Remove, Task 6
-   Root Update, Tasks 17–20, Task 10 and conditional Task 21, Task 13
+   Linux/macOS/Windows x64 expansion has a read-only restart audit in flight and
+   may implement beside Status only after Task 14 acceptance. Task 5 Route
+   Remove, Task 6 Root Update, Tasks 17–20, Task 10 and conditional Task 21,
+   Task 13
    implementation, and Task 22 follow in the project-control order.
 
 Tasks 4–6 and 14–20 are the accepted measured trial of the streamlined assured lane. Each
@@ -113,8 +117,8 @@ or a general template/scaffold system.
 | Route Update                  | Bounded route content and metadata update                                              | Complete at accepted closeout `27df8325`, tree `b68d4349`; immutable behavior `8a398f2e`, tree `3bb4a224`; managed `1602/809/152`, native `809/152`, managed-on-native `152`, dogfood, and holistic review pass                                                                                                                                                   |
 | Task 4 Route Move             | Route movement with reference, navigation, lifecycle, and recovery integrity           | Complete at phase 6/6, milestone 12/12; closeout `631983ea`, tree `d6f6fdf7`, is squash-integrated at `d3d2dc1`, tree `6959b51e`; two-update completion grace is consumed and the Task is dequeued                                                                                                                                                                |
 | Task 12 authority remediation | Move accepted CLI Architecture detail to its correct authority without behavior change | Complete at phase 5/5, milestone 6/6; corrected source `a0e6bc8d`, exact tree `9c4a33b1`, is squash-integrated at `495a7ed6`, the same exact tree; two-update completion grace is consumed and the Task is dequeued                                                                                                                                               |
-| Task 14 Extension Install     | Install reviewed Extension packages with isolated lifecycle and recovery integrity     | Active at phase 3/5, milestone 3/8; Gray `fb8b98c8`, receipt `2c3918ae`, and Red `81c8bc1e` are immutable; one Brilliant Implementer owns coherent production and focused verification; `.agents/**` remains authoritative and `.apm/**` deferred                                                                                                                 |
-| Task 15 Status                | Report complete typed current facts for the frozen producer inventory                  | Queued at phase 0/5, milestone 0/8; read-only preparation at `328599a0`, tree `56a24a7a`, forecasts neutral `Framework/OperationalContributors/**` and records three Gray authority gaps for post-Task14 revalidation                                                                                                                                             |
+| Task 14 Extension Install     | Install reviewed Extension packages with isolated lifecycle and recovery integrity     | Active at phase 4/5, milestone 4/8; Green `9a6ae2fa`, tree `c39cfcb`, is immutable; focused `3/26/4` evidence and warning-free builds pass; four topic reviews and wider gates are active; `.agents/**` remains authoritative and `.apm/**` deferred                                                                                                              |
+| Task 15 Status                | Report complete typed current facts for the frozen producer inventory                  | Queued at phase 0/5, milestone 0/8; a Task Mastermind and three Luna/max inventories are revalidating immutable Task 14 Green; Gray still owns exact catalogue/view signatures and no implementation is authorized                                                                                                                                                |
 | Task 16 Doctor                | Diagnose the complete Status contributor inventory without mutation                    | Queued at phase 0/5, milestone 0/8; corrected Luna/max single-owner preparation at `328599a0`, tree `56a24a7a`, records six stable domains and post-Task14/15 gates; child collaboration was unavailable, so the sample is not supervised-team evidence                                                                                                           |
 | Task 13 native CI             | Prepare minimal build/test CI, manual publish, artifacts, and package targets          | Preparation completed at phase 1/3, milestone 2/6 on candidate `e7689696`, tree `c204c17b`, and is integrated by the commit containing this record from `develop` parent `de40d550`, tree `e6040c49`. The Task is queued behind all retained commands, Task 10, and conditional Task 21 remediation. Linux/macOS/Windows x64 are accepted; ARM remains undecided. |
 

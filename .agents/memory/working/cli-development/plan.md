@@ -33,10 +33,14 @@ open-forge:
   `9c4a33b1c16617cf79beefd9f16a6e1d2d551382`, is squash-integrated at
   `495a7ed6b55bca2a879ece83818f89e530c33af2`, the same exact tree, from
   `develop` parent `d3d2dc1362ec1ba03844927f44fefdffb2fd466d`, tree
-  `6959b51e148af44d59512d8bdd801350d88fc651`. Task 14 is active from clean
-  continuity base `596123df34a658886ea70f319b22abc91630950d`, tree
-  `ae8cabdbf357323bd5522b3e64f8e72fa8a6b358`; Gray and Red are immutable,
-  and one Brilliant Implementer is active under its Task Mastermind.
+  `6959b51e148af44d59512d8bdd801350d88fc651`. Task 14 is active at phase 4/5,
+  milestone 4/8. Immutable Green
+  `9a6ae2fa509d7bf1268f6012650e41655d3c27fe`, tree
+  `c39cfcbec1ea532ee27060020c681caa9b306245`, follows the clean continuity
+  base and accepted Gray/Red boundaries. Four fresh topic reviews and wider
+  managed, Native AOT, and package gates are active under its Task Mastermind.
+  Task 15 and Task 7 have separate read-only prerequisite audits; neither is
+  authorized to implement before Task 14 acceptance.
 - Accepted Route Update integration input baseline: local `develop` commit
   `996c2e17d1142ffb30dc7a2d17df657419566f97`, exact tree
   `877314d48db49013edc1c4dad1abb545b37caefc`. It integrates CLI

@@ -35,14 +35,20 @@ Task 4 “Route Move” remains Complete and dequeued at phase 6/6, milestone
 is consumed. The [project control ledger](../cli-development/project-control.md)
 defines permanent task identities and the current dynamic queue.
 
-Task 14 “Extension Install” (phase 3/5): milestone 3/8 — immutable Gray contract
-`fb8b98c8`, tree `8217ae57`, receipt `2c3918ae`, tree `35bedaa2`, and Red
-`81c8bc1e`, tree `75738db7`, freeze the accepted command and evidence boundary.
-Its clean continuity base is `596123df`, tree `ae8cabdb`; isolated activation
-commit `f1ebd9b6`, tree `20e1035f`, records the four accepted command-local
-freezes, the `.agents/**`-only payload boundary, and the deferred
-non-authoritative `.apm/**` idea. One Brilliant Implementer owns coherent
-production and focused verification under its Task Mastermind.
+Task 14 “Extension Install” (phase 4/5): milestone 4/8 — immutable Green
+`9a6ae2fa`, tree `c39cfcb`, follows Gray `fb8b98c8`, receipt `2c3918ae`, and Red
+`81c8bc1e`. Its 31-path candidate adds the command-local implementation and
+bounded composition/evidence changes. Focused Release builds are warning-free;
+Unit `3/3`, Integration `26/26`, and EndToEnd `4/4` pass without skip. Four fresh
+ordinary topic reviewers are active under the Task Mastermind, while wider
+managed, Native AOT, and package gates run against the immutable candidate. The
+strict Review Mastermind runtime lacked its required named Git-object tool and
+therefore launched no review unit or consumed no review budget.
+
+Task 15 “Status” and Task 7 “npm Package Manager Release and Local Linking” have
+separate read-only prerequisite audits in flight. Both remain queued and may not
+implement before Task 14 acceptance. Doctor still waits for Status Gray to
+freeze the contributor catalogue and typed views.
 
 Task 3 “Route Update” remains Complete from accepted closeout `27df8325`, tree
 `b68d4349`, with final executable behavior `8a398f2e`, tree `3bb4a224`.
@@ -409,13 +415,12 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Inspect and commit Task 14's coherent production candidate, then run its
-   focused, public, packed-package, managed, and Native AOT verification before
-   the single fresh whole-task review.
-2. Continue through Task 15 Status and Task 16 Doctor after Task 14. Their
-   read-only preparation receipts are complete; Task 15 Gray still owns exact
-   catalogue and view signatures, and both Tasks must revalidate their frozen
-   baselines. Task 7 may overlap after its recorded prerequisites.
+1. Disposition Task 14's four-topic whole-task review and complete wider managed,
+   Native AOT, and package verification against immutable Green. Apply at most
+   one grouped correction before acceptance.
+2. Activate Task 15 Status and the disjoint Task 7 package expansion after Task
+   14 acceptance. Their current read-only audits may prepare exact capsules but
+   cannot mutate. Task 16 Doctor waits for Task 15 Gray signatures.
 3. Resume Task 5 Route Remove, then Task 6 root Update and the remaining
    project-control order.
 4. Retain thin D1 as current `linux-x64` build/smoke, packed
