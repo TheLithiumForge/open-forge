@@ -161,13 +161,14 @@ decision.
 The permanent Task 7 “npm Package Manager Release and Local Linking” record is
 already reopened with a separate platform-expansion horizon. That current
 record, rather than the earlier candidate recommendation preserved in the review
-receipt below, defines phase 0 of 4 with 0 of 7 milestones complete. It keeps
-the historical 8/8 closeout intact, consumes and revalidates this Task's target
-evidence in M1 and M2, applies the coherent x64 package expansion in M3 and M4,
-runs focused owned-package evidence in M5, and closes through one review and
-integration record in M6 and M7. The package evidence asserts only Open
-Forge-owned package placement and reachability; it does not test npm, Node,
-third-party libraries, or CLI command behavior.
+receipt below, defines phase 1 of 4 with 0 of 7 milestones complete; its
+preparation is complete. It keeps the historical 8/8 closeout intact, consumes
+and revalidates this Task's target evidence in M1 and M2, applies the coherent
+x64 package expansion in M3 and M4, runs focused owned-package evidence in M5,
+and closes through one review and integration record in M6 and M7. The package
+evidence asserts only Open Forge package placement, launcher reachability,
+argument/process forwarding, and completion; it does not test npm, Node, the
+operating system, third-party libraries, or CLI command behavior.
 
 The ARM candidates were assessed as feasibility only:
 
@@ -254,29 +255,16 @@ release configuration, generated runtime projection, or project-control file
 is needed for M3. A mismatch in those sources returns to the Overseer as a
 project change request rather than receiving an improvised local substitute.
 
-### Deferred Project-Change Request
+### Accepted Authority Split
 
-Before any implementation of the accepted x64 expansion, the Overseer must
-coordinate one explicit authority update. The current Architecture and release
-records still describe Linux-only delivery, so Task 13 and Task 7 cannot make
-macOS or Windows native artifacts shipping by changing a workflow or package
-manifest alone. The change request must:
-
-- update the CLI Architecture and release boundary to name `linux-x64`,
-  `osx-x64`, and `win-x64` as the accepted native/package targets;
-- update CLI Delivery and Task 7 ownership for the main package, three x64
-  platform packages, native artifacts, checksums, and minimal package
-  installation/reachability evidence;
-- decide whether Task 13 remains Linux D1 plus a later cross-platform delivery
-  task, or receives an explicitly widened artifact-ownership horizon; and
-- update the permanent Task records and project-control ledger together,
-  preserving the separate task identities, queue order, phase/milestone
-  values, and integration mappings.
-
-The Linux, macOS, and Windows x64 direction is accepted. Until the named
-authoritative sources are aligned, its execution details remain planning input
-and do not authorize workflow, package, artifact, or release mutation. ARM
-remains outside the request and must not be added by implication.
+The accepted x64 direction is aligned across the current Distribution, Delivery,
+Task 7, Task 13, and Task 22 records. Task 7 owns the accepted x64 package graph,
+platform-package expansion, and applicable-host package journeys. Task 13
+retains only the later Linux D1 native build and smoke, checksums, and bounded
+artifact collection after retained commands, Task 10, and accepted Task 21
+remediation. Task 22 owns final acceptance and separately authorized atomic
+publication of the complete x64 graph. ARM remains undecided and outside all
+three task scopes.
 
 ### Stale Risks And Revalidation Triggers
 
@@ -317,16 +305,16 @@ Open Forge context, the activation parent/tree, local links, protected paths,
 and the official feasibility sources. It found no blocking issue. One grouped
 correction accepted all eight findings:
 
-| Review ID | Finding                                                                                          | Disposition                                                                                                                                      |
-| --------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| R1        | The Task record could not own queue state while saying `Queued` against an `ACTIVE` ledger row.  | Accepted and fixed: the record remains active for review; the Overseer must perform any ledger handback.                                         |
-| R2        | M2 could not be complete while whole-task review and correction were pending.                    | Accepted and fixed: review is now dispositioned and the record is at phase 1/3, milestone 2/6.                                                   |
-| R3        | The accepted x64 expansion needed an explicit authority and ownership handoff beyond Task 13.    | Accepted and recorded as the deferred project-change request naming Architecture, release, Delivery, Task 7, Task 13, and the ledger.            |
-| R4        | The future change matrix contradicted the accepted build/test/manual-publish workflow split.     | Accepted and fixed: the three responsibilities are now separate and exact future file paths remain an authorization boundary.                    |
-| R5        | The recommended Task 7 reopening named phases but not six milestones.                            | Accepted and fixed: the recommendation now names M1 through M6 and remains non-authoritative until Task 7 is reopened.                           |
-| R6        | The future recipe did not guard fresh pack/delivery directories or capture unique tarball paths. | Accepted and fixed: guarded output-root initialization and one-tarball path capture are now explicit.                                            |
-| R7        | One checksum pass proved identity, not byte-for-byte reproducibility.                            | Accepted and fixed: the current outcome is traceable/checksummed collection; stronger reproducibility requires an independent repeat comparison. |
-| R8        | Activation provenance omitted the Task record from its changed-record description.               | Accepted and fixed: Task, project-control, and workflow navigation records are named.                                                            |
+| Review ID | Finding                                                                                          | Disposition                                                                                                                                                                    |
+| --------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| R1        | The Task record could not own queue state while saying `Queued` against an `ACTIVE` ledger row.  | Accepted and fixed: the record remains active for review; the Overseer must perform any ledger handback.                                                                       |
+| R2        | M2 could not be complete while whole-task review and correction were pending.                    | Accepted and fixed: review is now dispositioned and the record is at phase 1/3, milestone 2/6.                                                                                 |
+| R3        | The accepted x64 expansion needed an explicit authority and ownership handoff beyond Task 13.    | Accepted and recorded as the deferred project-change request naming Architecture, release, Delivery, Task 7, Task 13, and the ledger; the current authority split resolves it. |
+| R4        | The future change matrix contradicted the accepted build/test/manual-publish workflow split.     | Accepted and fixed: the three responsibilities are now separate and exact future file paths remain an authorization boundary.                                                  |
+| R5        | The recommended Task 7 reopening named phases but not six milestones.                            | Accepted and fixed: the recommendation now names M1 through M6 and remains non-authoritative until Task 7 is reopened.                                                         |
+| R6        | The future recipe did not guard fresh pack/delivery directories or capture unique tarball paths. | Accepted and fixed: guarded output-root initialization and one-tarball path capture are now explicit.                                                                          |
+| R7        | One checksum pass proved identity, not byte-for-byte reproducibility.                            | Accepted and fixed: the current outcome is traceable/checksummed collection; stronger reproducibility requires an independent repeat comparison.                               |
+| R8        | Activation provenance omitted the Task record from its changed-record description.               | Accepted and fixed: Task, project-control, and workflow navigation records are named.                                                                                          |
 
 No finding was rejected, duplicated, or treated as preference. The reviewer
 verified that only the owned Task record is modified, protected-path diff is
@@ -334,7 +322,7 @@ empty, all local links resolve, and `git diff --check` passes.
 
 Integration completed R1's ledger handback. It also converged R5's earlier
 non-authoritative recommendation with the already accepted current Task 7
-phase 0/4 and 0/7 horizon. The other review dispositions remain unchanged.
+phase 1/4 and 0/7 horizon. The other review dispositions remain unchanged.
 
 ## Execution Horizon
 
@@ -395,5 +383,5 @@ evidence and none counts as Luna-only evidence. The ARM packet independently
 confirmed that all three candidates are possible only subject to native
 toolchain/runner receipts, while the accepted release boundary remains the
 three x64 targets above. The whole-task review accepted R1–R8, one grouped
-correction was applied, and no finding was rejected or deferred except the
-authority update explicitly recorded as a future project-change request.
+correction was applied, and no finding was rejected or deferred. The accepted
+authority split is now recorded in the current delivery records.

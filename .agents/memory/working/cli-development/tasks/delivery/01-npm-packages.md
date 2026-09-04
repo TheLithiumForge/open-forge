@@ -8,8 +8,10 @@ open-forge:
 
 ## Task State
 
-- State: Historical 8/8 horizon complete and squash-integrated; a separate
-  platform-expansion horizon is queued after Task 12 and Task 13 preparation.
+- State: Historical 8/8 horizon complete and squash-integrated; the separate
+  platform-expansion horizon is queued at phase 1 of 4, milestone 0 of 7.
+  Preparation is complete; mutation waits for Task 14 acceptance and a fresh
+  develop-based isolated lane.
 - Parent: [CLI Delivery](_delivery.md).
 - Profile: Reopened maintainer-selected simplified single-owner flow: one Task
   Mastermind, one Brilliant Implementer, one fresh reviewer, and at most one
@@ -21,10 +23,12 @@ open-forge:
 - Follow-up review budget: maximum 1, unused.
 - Follow-up correction budget: maximum 1, unused.
 - Council budget: 0.
-- Current owner: none until activation; Task 13 owns platform feasibility only.
+- Current owner: none until activation; Task 13 owns Linux D1 only, while this
+  follow-up owns the accepted x64 package graph and journeys.
 - Restart baseline: `195ff13ecff6a598dd18ef22a0335c1dc75e6736`.
 - Historical progress: 8 of 8 milestones complete in phase 5 of 5.
-- Follow-up progress: 0 of 7 milestones complete in phase 0 of 4.
+- Follow-up progress: 0 of 7 milestones complete in phase 1 of 4; preparation is
+  complete.
 - M3 package staging is committed on the restarted task branch as
   `00e09b24059e26e8dbec8cff129bc404876c9f0c`.
 - M4 local linking and root migration are committed on the restarted task branch
@@ -34,19 +38,32 @@ open-forge:
 - M6 canonical verification is recorded as
   `de6690f6367ed7864d22de9aadd9e678106dfa4b`.
 - M7 review and grouped repair are committed as
-  `d5bfddd1b580283e84c9a62e041ce1d48ffec107`.
+  `d5bfddd156c4708780a0fe4a12cc2c6c1c30ea43`.
 - M8 accepted closeout is `6ba0e060ed9aabc1954d70d0f1d2277bf5d8dff6`,
   tree `bccefb120f4e2d05a632cc80fc03b04ab2870e2d`; squash integration is the commit
   containing this record.
 
+## Follow-up Preflight
+
+- Durable Distribution accepts one main package plus optional `linux-x64`,
+  `darwin/osx-x64`, and `win-x64` platform packages. ARM remains undecided.
+- The current reusable npm source is 10 files and 587 lines, with no authored
+  JS, MJS, or CJS. The current implementation may be reused and generalized as
+  required by the accepted graph; a rewrite is not implied.
+- Clean historical restart `6ba0e060` has the identical package subtree but is
+  stale. Dirty `1541d1ef` and rejected MJS lane `dc7c769f` are discard-only and
+  must not be reused.
+- The Darwin x64 package is the missing package in the current implementation.
+
 ## Expected Outcome
 
-The repository owns a publishable npm package graph for accepted Linux x64,
-macOS x64, and Windows x64 native artifacts. The same package-owned tooling can
-stage the current host packages and explicitly link or unlink them for local CLI
-use. It does not publish, download, install from a registry, or add CLI domain
-behavior. ARM remains a Task 13 feasibility question, not an accepted package
-target.
+The accepted public package graph is one main package plus optional Linux x64,
+Darwin x64, and Windows x64 platform packages. The historical Task 7
+implementation realizes Linux and Windows x64; the Darwin x64 package is the
+missing follow-up implementation. The same package-owned tooling can stage the
+current host packages and explicitly link or unlink them for local CLI use. It
+does not publish, download, install from a registry, or add CLI domain behavior.
+ARM remains undecided and outside this Task.
 
 ## Package Contract
 
@@ -112,13 +129,13 @@ authority.
 
 ## Platform Expansion Horizon
 
-1. Phase 1 — consume and revalidate Task 13 platform evidence.
-   - M1 freezes Linux, macOS, and Windows x64 RID/package mappings and resolves
-     ARM only as accepted, deferred, or rejected; feasibility alone does not add
-     ARM packages.
+1. Phase 1 — consume and revalidate Task 13's Linux D1 evidence.
+   - M1 freezes Linux, macOS, and Windows x64 RID/package mappings and records
+     ARM as undecided; feasibility alone does not add ARM packages.
    - M2 freezes exact protected paths, owned package contracts, local-link
      journeys, and target-host evidence without reopening accepted CLI behavior.
-2. Phase 2 — one Brilliant Implementer owns the coherent expansion.
+2. Phase 2 — one Task Mastermind and one Brilliant Implementer own the coherent
+   expansion.
    - M3 adds the macOS x64 optional package and generalizes only the package-owned
      model, staging, launcher, and local-link surfaces required by the frozen
      graph.
@@ -126,9 +143,13 @@ authority.
      build boundary, then stage and link from `src/cli/package-managers/npm/`.
 3. Phase 3 — focused owned-package evidence.
    - M5 keeps evidence intentionally small: exact main/optional package graphs,
-     accepted-host staging and packing, and one simple install/reachability
-     journey per executable host where the runner is available. It does not
-     retest CLI commands, npm, Node, the operating system, or another library.
+     accepted-host staging and packing, and one simple host-selected owned
+     `PackageEndToEnd` journey. The journey may stage, pack, install offline in
+     isolation, resolve the launcher, and make one harmless reachability
+     invocation such as `--version`. Assert only Open Forge package placement,
+     launcher reachability, argument/process forwarding, and completion. Never
+     test npm, Node, the operating system, a third-party library, or CLI command
+     behavior.
 4. Phase 4 — one review and closeout.
    - M6 is one fresh whole-task review followed by at most one grouped
      correction.
@@ -139,6 +160,10 @@ This horizon preserves the original accepted 8/8 history. It does not amend or
 reinterpret those commits, execute publication, authorize global link/unlink in
 evidence, or add a generic multi-package-manager framework.
 
+The follow-up uses one Task Mastermind, one Brilliant Implementer, and one fresh
+reviewer, with at most one grouped correction. Its journey never uses live
+global link or unlink in evidence.
+
 ## Review Disposition
 
 - `T7-R1-F1` was accepted and fixed by letting cleanup skip only an absent
@@ -147,7 +172,7 @@ evidence, or add a generic multi-package-manager framework.
   package source from the separately authorized publication effect in the
   development guide.
 
-## Evidence Boundary
+## Historical Evidence Boundary
 
 Exactly one `PackageEndToEnd` Node test owns one Linux-host journey. It creates an
 X_OK inert native payload, invokes the package-owned stage entry as a black box,
@@ -163,6 +188,16 @@ The journey never invokes the launcher or CLI, simulates Windows, imports packag
 internals, or tests npm, Node, manifest matrices, forwarding, missing-package, or
 unsupported-platform behavior. Focused verification also requires strict
 typecheck, lint, format, diff, source-inventory, protected-root, and no-C# gates.
+
+## Follow-up Evidence Boundary
+
+The follow-up owns one simple host-selected `PackageEndToEnd` journey. It may
+stage, pack, install offline in an isolated prefix, resolve the launcher, and
+make one harmless reachability invocation such as `--version`. It asserts only
+Open Forge package placement, launcher reachability, argument/process forwarding,
+and completion. It never tests npm, Node, the operating system, a third-party
+library, or CLI command behavior, and it does not use live global link or unlink
+in evidence.
 
 ## Final Acceptance
 
