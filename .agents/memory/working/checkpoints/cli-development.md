@@ -40,15 +40,19 @@ Task 14 “Extension Install” (phase 4/5): milestone 4/8 — immutable Green
 `81c8bc1e`. Its 31-path candidate adds the command-local implementation and
 bounded composition/evidence changes. Focused Release builds are warning-free;
 Unit `3/3`, Integration `26/26`, and EndToEnd `4/4` pass without skip. Four fresh
-ordinary topic reviewers are active under the Task Mastermind, while wider
-managed, Native AOT, and package gates run against the immutable candidate. The
+ordinary topic reviews are dispositioned. The single grouped T14-C1 correction
+is frozen in Task receipt `8bede7cd` and handed to the same Brilliant
+Implementer. Managed, Native AOT, and packed-package Green receipts are complete;
+the corrected candidate must rerun affected and final gates. The
 strict Review Mastermind runtime lacked its required named Git-object tool and
 therefore launched no review unit or consumed no review budget.
 
-Task 15 “Status” and Task 7 “npm Package Manager Release and Local Linking” have
-separate read-only prerequisite audits in flight. Both remain queued and may not
-implement before Task 14 acceptance. Doctor still waits for Status Gray to
-freeze the contributor catalogue and typed views.
+Task 15 “Status” remains queued/prepared after its read-only candidate
+revalidation. Task 7 “npm Package Manager Release and Local Linking” remains
+queued at platform-expansion phase 1/4, milestone 0/7; its preparation and
+authority alignment are complete at root `53805940`. Neither may implement
+before Task 14 acceptance and a fresh develop-based lane. Doctor still waits
+for Status Gray to freeze the contributor catalogue and typed views.
 
 Task 3 “Route Update” remains Complete from accepted closeout `27df8325`, tree
 `b68d4349`, with final executable behavior `8a398f2e`, tree `3bb4a224`.
@@ -415,9 +419,9 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Disposition Task 14's four-topic whole-task review and complete wider managed,
-   Native AOT, and package verification against immutable Green. Apply at most
-   one grouped correction before acceptance.
+1. Apply Task 14's frozen T14-C1 correction packet, run focused affected-review
+   checks and final managed, Native AOT, and package gates against the corrected
+   candidate, then accept or return the Task.
 2. Activate Task 15 Status and the disjoint Task 7 package expansion after Task
    14 acceptance. Their current read-only audits may prepare exact capsules but
    cannot mutate. Task 16 Doctor waits for Task 15 Gray signatures.
