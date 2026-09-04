@@ -44,9 +44,11 @@ root passes `169/169`; and the final isolated offline package journey verifies
 the launcher, Root Install's 44 effects, and Extension Install's 28 effects.
 Its completion grace is consumed and it is dequeued.
 
-Task 15 “Status” is ACTIVE at phase 2/5, milestone 2/8. Gray
-`dac2aece`/`874bdcae` and bounded callable correction `df46fb9c`/`eda74e79` are
-recorded; Red is active on three exclusive Unit, Integration, and EndToEnd lanes.
+Task 15 “Status” is ACTIVE at phase 3/5, milestone 3/8. Gray
+`dac2aece`/`874bdcae`, bounded callable correction `df46fb9c`/`eda74e79`, and
+accepted Red `f633fe1f`/`5dbfe9d7` are recorded. One Sol/xhigh Brilliant
+Implementer owns coherent production and focused verification from phase-3
+activation `de27fcd6`/`ebdcb4a6`.
 Task 16 “Doctor” is PREPARED at phase 2/5, milestone 2/8 from the exact Status
 Gray snapshot. Activation `26e245e4`/`680df032` and accepted Gray
 `ce627593`/`1f07abb7` are recorded. The lane is cleanly parked before
@@ -424,10 +426,11 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Continue active Task 15 Status at phase 2/5, milestone 2/8 through its three
-   exclusive Red lanes and later acceptance/integration. Continue Task 16
-   Doctor at its prepared phase 2/5, milestone 2/8 boundary until Task 15 is
-   accepted and integrated. Task 7 package expansion is complete.
+1. Continue active Task 15 Status at phase 3/5, milestone 3/8 through coherent
+   production and focused verification under one Brilliant Implementer.
+   Continue Task 16 Doctor at its prepared phase 2/5, milestone 2/8 boundary
+   until Task 15 is accepted and integrated. Task 7 package expansion is
+   complete.
 2. After Task 15 integration, revalidate Doctor's six shared view blobs before
    Red; do not parse Status output or add a dynamic registry.
 3. Resume Task 5 Route Remove, then Task 6 root Update and the remaining
