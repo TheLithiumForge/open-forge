@@ -50,10 +50,12 @@ accepted Red `f633fe1f`/`5dbfe9d7` are recorded. One Sol/xhigh Brilliant
 Implementer was activated at `de27fcd6`/`ebdcb4a6`, then the early architecture
 checkpoint found that the two lifecycle Status signatures cannot guarantee one
 common lifecycle-document observation without prohibited mutable state.
-Production remains unmodified while a bounded Gray/Red correction makes one
-stateless invocation-local observation explicit. The interrupted Implementer's
-94-line partial `StatusDefinitions` work is preserved losslessly at named stash
-`9b51b3f8`; one Luna/max Gray Contract Implementer owns the correction.
+Corrected raw-snapshot Gray `b859d0aa`/`8f417c58` now makes that stateless
+invocation-local observation explicit and passes a warning-free Core Release
+build. The interrupted Implementer's 94-line partial `StatusDefinitions` work
+is preserved losslessly at named stash `9b51b3f8`; one Luna/max Red Evidence
+Author owns only the affected Unit and Integration re-freeze before Green
+resumes.
 Task 16 “Doctor” is PREPARED at phase 2/5, milestone 2/8 from the exact Status
 Gray snapshot. Activation `26e245e4`/`680df032` and accepted Gray
 `ce627593`/`1f07abb7` are recorded. The lane is cleanly parked before

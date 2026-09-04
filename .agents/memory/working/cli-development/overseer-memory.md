@@ -76,12 +76,14 @@ The accepted dependency order is:
    `f633fe1f`/`5dbfe9d7`. A Sol/xhigh Brilliant Implementer was activated at
    `de27fcd6`/`ebdcb4a6`; its early architecture checkpoint found that the two
    lifecycle Status signatures cannot guarantee one common lifecycle-document
-   observation without prohibited mutable state. Production remains unmodified
-   while a bounded Gray/Red correction makes one stateless invocation-local
-   observation explicit. The interrupted Implementer's 94-line partial
-   `StatusDefinitions` work is preserved losslessly at named stash `9b51b3f8`;
-   one Luna/max Gray Contract Implementer owns the correction. Task 16 Doctor is
-   PREPARED at phase 2/5, milestone 2/8 from the exact Status Gray snapshot;
+   observation without prohibited mutable state. Coherent Green behavior
+   remained unmodified while the bounded correction made one stateless
+   invocation-local observation explicit. Corrected raw-snapshot Gray
+   `b859d0aa`/`8f417c58` is committed with a warning-free Core Release build.
+   The interrupted Implementer's 94-line partial `StatusDefinitions` work is
+   preserved losslessly at named stash `9b51b3f8`; one Luna/max Red Evidence
+   Author owns only the affected Unit and Integration re-freeze. Task 16 Doctor
+   is PREPARED at phase 2/5, milestone 2/8 from the exact Status Gray snapshot;
    activation
    `26e245e4`/`680df032` and accepted Gray `ce627593`/`1f07abb7` are recorded.
    The lane is parked before Red/production until Task 15
@@ -155,7 +157,7 @@ or a general template/scaffold system.
 | Task 12 authority remediation | Move accepted CLI Architecture detail to its correct authority without behavior change | Complete at phase 5/5, milestone 6/6; corrected source `a0e6bc8d`, exact tree `9c4a33b1`, is squash-integrated at `495a7ed6`, the same exact tree; two-update completion grace is consumed and the Task is dequeued                                                                                                                                               |
 | Task 14 Extension Install     | Install reviewed Extension packages with isolated lifecycle and recovery integrity     | Complete at phase 5/5, milestone 8/8; lane `a6b44f07`, tree `cd4c074d`, is squash-integrated at `20807781`, tree `4592a139`; final managed `1711/917/169`, Native `917/169`, managed-on-native `169`, and offline package journey pass; completion grace consumed and the Task is dequeued                                                                        |
 | Task 7                        | Complete x64 package graph and package evidence                                        | Complete 4/4, 7/7; `a2942781` → `e19d429e`; Linux journey passed; Darwin/Windows stage+pack only.                                                                                                                                                                                                                                                                 |
-| Task 15 Status                | Report complete typed current facts for the frozen producer inventory                  | ACTIVE phase 3/5, milestone 3/8; Gray `dac2aece`/`874bdcae`; bounded callable correction `df46fb9c`/`eda74e79`; accepted Red `f633fe1f`/`5dbfe9d7`; phase-3 activation `de27fcd6`/`ebdcb4a6`; production paused unmodified for the bounded lifecycle-observation Gray/Red correction; no completion claimed                                                       |
+| Task 15 Status                | Report complete typed current facts for the frozen producer inventory                  | ACTIVE phase 3/5, milestone 3/8; Gray `dac2aece`/`874bdcae`; callable correction `df46fb9c`/`eda74e79`; Red `f633fe1f`/`5dbfe9d7`; activation `de27fcd6`/`ebdcb4a6`; raw-snapshot Gray correction `b859d0aa`/`8f417c58`; affected Unit/Integration Red re-freeze active; coherent Green held at stash `9b51b3f8`; no completion claimed                           |
 | Task 16 Doctor                | Diagnose the complete Status contributor inventory without mutation                    | PREPARED phase 2/5, milestone 2/8 from the exact Status Gray snapshot; activation `26e245e4`/`680df032`; accepted Gray `ce627593`/`1f07abb7`; parked before Red/production until Task 15 acceptance/integration; no tests or completion claimed                                                                                                                   |
 | Task 13 native CI             | Prepare minimal build/test CI, manual publish, artifacts, and package targets          | Preparation completed at phase 1/3, milestone 2/6 on candidate `e7689696`, tree `c204c17b`, and is integrated by the commit containing this record from `develop` parent `de40d550`, tree `e6040c49`. The Task is queued behind all retained commands, Task 10, and conditional Task 21 remediation. Linux/macOS/Windows x64 are accepted; ARM remains undecided. |
 
@@ -281,9 +283,9 @@ Status or Doctor contracts. Task 14 integration is complete. Task 7's
 platform-expansion horizon is also complete at phase 4/4, milestone 7/7, with
 the Linux host journey passed and Darwin and Windows limited to stage-and-pack
 evidence. ARM, publication, and live link or unlink remain unproven and
-unauthorized. Task 15 Status is ACTIVE at phase 3/5, milestone 3/8 with Gray and
-Red recorded above; production is paused unmodified for the bounded
-lifecycle-observation Gray/Red correction. Task 16 Doctor is PREPARED at phase
+unauthorized. Task 15 Status is ACTIVE at phase 3/5, milestone 3/8 with its
+corrected raw-snapshot Gray committed and affected Unit/Integration Red
+re-freeze active; coherent Green remains held. Task 16 Doctor is PREPARED at phase
 2/5,
 milestone 2/8 from the exact Status Gray snapshot and is parked before
 Red/production until Task 15 acceptance/integration.
