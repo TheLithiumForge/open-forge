@@ -97,6 +97,19 @@ The accepted dependency order is:
    Task 13
    implementation, and Task 22 follow in the project-control order.
 
+Task 5's supervised read-only reconnaissance ran from assigned `develop`
+commit `bbf2d87c` to clean `develop` commit `08f2fbb6`: a Sol/xhigh Task
+Mastermind supervised three Luna/max Explorers, with no build, test, source,
+contract, architecture, workspace, or artifact mutation. Only Doctor
+coordination bookkeeping drift was reconciled. The historical
+`codex/route-remove` lane is stale. Its durable positive-unmanaged
+leaf/category boundary, neutral shared mechanisms, Route Remove-local policy,
+and prohibition on sibling-private surfaces remain unchanged. Revalidate
+lifecycle/Extension ownership, Task 15 catalogue/views, root composition, help,
+serialization, and affected Status/Doctor evidence after Tasks 14–16. Task 6
+may do read-only preparation after Route Remove Gray; implementation waits
+for Task 5 acceptance.
+
 Tasks 4–6 and 14–20 are the accepted measured trial of the streamlined assured lane. Each
 keeps Task Mastermind Preflight plus explicit Gray and Red boundaries, uses one
 Brilliant Implementer for Green through verification and the grouped

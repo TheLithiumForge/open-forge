@@ -213,6 +213,18 @@ retains phase 0/5 and milestone 0/8.
   alignment are complete at root `53805940`. Both remain queued and may
   implement only after Task 14 acceptance and a fresh lane.
   Tasks 5, 6, and 17–20 follow in the recorded priority order.
+- Task 5 “Route Remove” completed a supervised read-only reconnaissance from
+  assigned `develop` commit `bbf2d87c` to clean `develop` commit `08f2fbb6`.
+  A Sol/xhigh Task Mastermind supervised three Luna/max Explorers. No build,
+  test, source, contract, architecture, workspace, or artifact mutation
+  occurred; only Doctor coordination bookkeeping drift was reconciled. The
+  historical `codex/route-remove` lane is stale. Its durable boundary remains
+  positive-unmanaged leaf/category removal with neutral reusable mechanisms and
+  Route Remove-local policy; sibling-private surfaces remain forbidden. Before
+  activation, revalidate lifecycle and Extension ownership, Task 15 catalogue
+  and views, root/help/serialization, and affected Status/Doctor evidence after
+  Tasks 14–16. Task 6 may prepare read-only after Task 5 Gray, but implementation
+  waits for Task 5 acceptance.
 - Task 10 retains its permanent identity and is queued after every retained
   command and before delivery and release acceptance.
 - Task 13 is queued at phase 1/3, milestone 2/6 after accepted preparation

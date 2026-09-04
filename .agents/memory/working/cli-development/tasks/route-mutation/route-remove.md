@@ -72,6 +72,32 @@ Planned after Route Move and the remaining command-local result freeze.
   effects, recovery and residual state, typed presentation, process behavior,
   and Native AOT.
 
+## Read-Only Reconnaissance Receipt
+
+A supervised read-only reconnaissance was assigned from `develop` commit
+`bbf2d87c` and ended at clean `develop` commit `08f2fbb6`. A Sol/xhigh Task
+Mastermind supervised three Luna/max Explorers. It made no build, test, source,
+contract, architecture, workspace, or artifact mutation. The only observed
+drift was Doctor coordination bookkeeping, which was reconciled in `08f2fbb6`.
+The historical `codex/route-remove` lane is stale and cannot provide the
+activation base.
+
+The durable Task 5 boundary remains positive-unmanaged removal of one ordinary
+routed leaf or one complete routed category. Neutral reusable mechanisms remain
+shared; subject classification, refusal policy, removal ordering, results, and
+lifecycle behavior remain Route Remove-local. Route Remove must not import
+another command's private `Shared/**` or any sibling-private surface.
+
+Before activation, revalidate Framework and Extension ownership, Task 15's
+catalogue and typed views, root composition/help/serialization, and affected
+Status/Doctor evidence after Tasks 14–16. The later forecast keeps separate
+Preflight, Gray, and Red boundaries; this receipt authorizes no implementation.
+The adoption slice completes first, then Task 7 may run ahead on a fresh
+`develop` lane when project-control order permits. Task 6 may perform only
+read-only preparation after Task 5 Gray; its implementation waits for Task 5
+acceptance. Future tests cover Open Forge-owned behavior only; third-party
+behavior is out of scope.
+
 ### Accepted Parser Prerequisite
 
 Integrated commit `89a35a7876f39123d9538bca24126ff7197b9459`
