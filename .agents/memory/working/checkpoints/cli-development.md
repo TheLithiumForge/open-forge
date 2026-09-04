@@ -44,13 +44,19 @@ root passes `169/169`; and the final isolated offline package journey verifies
 the launcher, Root Install's 44 effects, and Extension Install's 28 effects.
 Its completion grace is consumed and it is dequeued.
 
-Task 15 “Status” remains in its recorded lane. Task 7 “npm Package Manager
-Release and Local Linking” is Complete at phase 4/4, milestone 7/7. Accepted
-lane `a2942781`, tree `fe36fc3f`, is squash-integrated at `e19d429e` with the
-same tree. Its Linux host journey passed; Darwin and Windows have stage-and-pack
-evidence only. ARM, publication, and live link or unlink remain unproven and
-unauthorized. Doctor still waits for Status Gray to freeze the contributor
-catalogue and typed views.
+Task 15 “Status” is ACTIVE at phase 2/5, milestone 2/8. Gray
+`dac2aece`/`874bdcae` and bounded callable correction `df46fb9c`/`eda74e79` are
+recorded; Red is active on three exclusive Unit, Integration, and EndToEnd lanes.
+Task 16 “Doctor” is ACTIVE PREPARATION at phase 2/5, milestone 1/8 from the
+exact Status Gray snapshot. Activation is `26e245e4`/`680df032`; Gray is active,
+and Doctor deliberately stops before Red/production until Task 15
+acceptance/integration. No tests or completion are claimed.
+
+Task 7 “npm Package Manager Release and Local Linking” is Complete at phase 4/4,
+milestone 7/7. Accepted lane `a2942781`, tree `fe36fc3f`, is squash-integrated at
+`e19d429e` with the same tree. Its Linux host journey passed; Darwin and Windows
+have stage-and-pack evidence only. ARM, publication, and live link or unlink
+remain unproven and unauthorized.
 
 Task 3 “Route Update” remains Complete from accepted closeout `27df8325`, tree
 `b68d4349`, with final executable behavior `8a398f2e`, tree `3bb4a224`.
@@ -417,10 +423,12 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Continue Task 15 Status according to its existing Task record. Task 16
-   Doctor waits for Task 15 Gray signatures. Task 7 package expansion is
-   complete.
-2. Begin Doctor's Gray preparation as soon as Status freezes the exact immutable
+1. Continue active Task 15 Status at phase 2/5, milestone 2/8 through its three
+   exclusive Red lanes and later acceptance/integration. Continue Task 16
+   Doctor Gray preparation at phase 2/5, milestone 1/8 from the exact Status
+   Gray snapshot; stop before Red/production until Task 15 is accepted and
+   integrated. Task 7 package expansion is complete.
+2. Complete Doctor's active Gray preparation against the frozen immutable
    contributor catalogue and typed views; do not parse Status output or add a
    dynamic registry.
 3. Resume Task 5 Route Remove, then Task 6 root Update and the remaining

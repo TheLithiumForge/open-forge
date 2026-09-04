@@ -70,9 +70,14 @@ The accepted dependency order is:
    `20807781`, tree `4592a139`. Final warning-free managed evidence passes
    `1711/917/169`; Native AOT passes `917/169`; managed-on-native passes `169`;
    and the isolated offline package journey verifies launcher reachability,
-   Root Install's 44 effects, and Extension Install's 28 effects. Status is now
-   authorized to activate from that exact base; Doctor remains queued behind
-   Status Gray. A later Task 16 activation reconnaissance began at
+   Root Install's 44 effects, and Extension Install's 28 effects. Task 15
+   Status is ACTIVE at phase 2/5, milestone 2/8: Gray `dac2aece`/`874bdcae`,
+   bounded callable correction `df46fb9c`/`eda74e79`, and Red active on three
+   exclusive Unit, Integration, and EndToEnd lanes. Task 16 Doctor is ACTIVE
+   PREPARATION at phase 2/5, milestone 1/8 from the exact Status Gray snapshot;
+   activation is `26e245e4`/`680df032`, Gray is active, and the lane deliberately
+   stops before Red/production until Task 15 acceptance/integration. No test or
+   completion claim is made. A later Task 16 activation reconnaissance began at
    root `53805940`: a Sol/xhigh Task Mastermind successfully supervised three
    Luna/max Explorer inventories from `/root/doctor_activation_recon`. No
    build, test, source or workspace mutation, artifact, or activation occurred;
@@ -142,8 +147,8 @@ or a general template/scaffold system.
 | Task 12 authority remediation | Move accepted CLI Architecture detail to its correct authority without behavior change | Complete at phase 5/5, milestone 6/6; corrected source `a0e6bc8d`, exact tree `9c4a33b1`, is squash-integrated at `495a7ed6`, the same exact tree; two-update completion grace is consumed and the Task is dequeued                                                                                                                                               |
 | Task 14 Extension Install     | Install reviewed Extension packages with isolated lifecycle and recovery integrity     | Complete at phase 5/5, milestone 8/8; lane `a6b44f07`, tree `cd4c074d`, is squash-integrated at `20807781`, tree `4592a139`; final managed `1711/917/169`, Native `917/169`, managed-on-native `169`, and offline package journey pass; completion grace consumed and the Task is dequeued                                                                        |
 | Task 7                        | Complete x64 package graph and package evidence                                        | Complete 4/4, 7/7; `a2942781` → `e19d429e`; Linux journey passed; Darwin/Windows stage+pack only.                                                                                                                                                                                                                                                                 |
-| Task 15 Status                | Report complete typed current facts for the frozen producer inventory                  | Ready to activate with milestone 0/8 and no active phase from fresh base `20807781`; read-only revalidation is complete; Gray owns exact immutable catalogue/view signatures                                                                                                                                                                                      |
-| Task 16 Doctor                | Diagnose the complete Status contributor inventory without mutation                    | Queued at phase 0/5, milestone 0/8; read-only activation reconnaissance began at `53805940` and had a Sol/xhigh Task Mastermind supervise three Luna/max Explorer inventories; six-domain/112-kind contract and typed-view boundary unchanged; root clean at `bbf2d87c` after coordination ledgers only; no build, test, or mutation                              |
+| Task 15 Status                | Report complete typed current facts for the frozen producer inventory                  | ACTIVE phase 2/5, milestone 2/8; Gray `dac2aece`/`874bdcae`; bounded callable correction `df46fb9c`/`eda74e79`; Red active on three exclusive Unit/Integration/EndToEnd lanes; no completion claimed                                                                                                                                                              |
+| Task 16 Doctor                | Diagnose the complete Status contributor inventory without mutation                    | ACTIVE PREPARATION phase 2/5, milestone 1/8 from the exact Status Gray snapshot; activation `26e245e4`/`680df032`; Gray active; deliberately stops before Red/production until Task 15 acceptance/integration; no tests or completion claimed                                                                                                                     |
 | Task 13 native CI             | Prepare minimal build/test CI, manual publish, artifacts, and package targets          | Preparation completed at phase 1/3, milestone 2/6 on candidate `e7689696`, tree `c204c17b`, and is integrated by the commit containing this record from `develop` parent `de40d550`, tree `e6040c49`. The Task is queued behind all retained commands, Task 10, and conditional Task 21 remediation. Linux/macOS/Windows x64 are accepted; ARM remains undecided. |
 
 Each mutating lane owns a distinct worktree and feature branch. Shared root
@@ -268,9 +273,10 @@ Status or Doctor contracts. Task 14 integration is complete. Task 7's
 platform-expansion horizon is also complete at phase 4/4, milestone 7/7, with
 the Linux host journey passed and Darwin and Windows limited to stage-and-pack
 evidence. ARM, publication, and live link or unlink remain unproven and
-unauthorized. The remaining Task 16 activation order is Task 15 Gray and
-acceptance, then Doctor; further Doctor implementation has high staleness risk
-until Task 15 is accepted.
+unauthorized. Task 15 Status is ACTIVE at phase 2/5, milestone 2/8 with Gray
+and Red active as recorded above. Task 16 Doctor is ACTIVE PREPARATION at phase
+2/5, milestone 1/8 from the exact Status Gray snapshot and deliberately stops
+before Red/production until Task 15 acceptance/integration.
 The exact public Root Install JSON result schema is accepted, implemented, and
 frozen, including fully present ordered facts and typed residual values `none`,
 `retained`, and `unknown`.
