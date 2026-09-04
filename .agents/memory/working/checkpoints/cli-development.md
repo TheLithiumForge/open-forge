@@ -58,11 +58,28 @@ Integration, and 3 unchanged EndToEnd tests. Resume checkpoint
 `StatusDefinitions` work losslessly; recovery stash `9b51b3f8` remains retained
 while the same Sol/xhigh Brilliant Implementer owns coherent production and
 focused verification.
+After `T15-S1`, the immutable Status continuation is
+`cf00fb86`/`bf69e7c2` → `48309613`/`b8e0ad0f` → `e79a9767`/`17068f0b` →
+`2521574d`/`11eb89ee` → `b8ac2dd7`/`453eb1b8`, covering rendering and
+compatibility Green, direct JSON context, plural-source Gray, direct producer
+construction authority, and focused plural-source Red. Red selected, discovered,
+and executed `1/1/1`; only the expected three-observation versus one-scaffold
+oracle failed, while lifecycle completeness/trust and five package/source facts
+passed. The same Sol/xhigh Brilliant Implementer is implementing plural
+semantics, and independent Route selected-view work is present. No stable
+full-producer evidence or completion is claimed.
 Task 16 “Doctor” is PREPARED at phase 2/5, milestone 2/8 from the exact Status
 Gray snapshot. Activation `26e245e4`/`680df032` and accepted Gray
 `ce627593`/`1f07abb7` are recorded. The lane is cleanly parked before
 Red/production until Task 15 acceptance/integration. No tests or completion are
 claimed.
+Its prepared alignment consumes the complete plural Extension view and never
+reads the removed singular source. The six Doctor-facing signatures and
+catalogue shape remain unchanged through Status `2521574d`, while two
+Status-only methods changed. After Status acceptance, reapply 17 C# files and
+two contract amendments, then add Red that consumes every supplied observation
+without fallback, substitution, reconstruction, or reread. No Task 16 files,
+tests, builds, or implementation occurred in this alignment.
 
 Task 7 “npm Package Manager Release and Local Linking” is Complete at phase 4/4,
 milestone 7/7. Accepted lane `a2942781`, tree `fe36fc3f`, is squash-integrated at

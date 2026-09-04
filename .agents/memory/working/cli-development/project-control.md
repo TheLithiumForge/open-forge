@@ -124,6 +124,25 @@ engine, or ambient registration. Task 12 owns durable architecture placement;
 Task 15 Gray owns exact callable signatures. Composition alone does not change
 Status or Doctor public contracts.
 
+The current immutable Status continuation after `T15-S1` is
+`cf00fb86`/`bf69e7c2` → `48309613`/`b8e0ad0f` → `e79a9767`/`17068f0b` →
+`2521574d`/`11eb89ee` → `b8ac2dd7`/`453eb1b8`, covering rendering and
+compatibility Green, direct JSON context, plural-source Gray, direct producer
+construction authority, and focused plural-source Red. The final Red selected,
+discovered, and executed `1/1/1`; only the expected three-observation versus
+one-scaffold oracle failed, while lifecycle completeness/trust and five
+package/source facts passed. The same Sol/xhigh Brilliant Implementer is
+implementing plural semantics, with independent Route selected-view work
+present. No stable full-producer evidence or completion is claimed.
+
+Task 16's read-only alignment consumes the full plural Extension view. The six
+Doctor-facing signatures and catalogue shape remain unchanged through Status
+`2521574d`, but two Status-only methods changed. After Status acceptance, its
+lane must reapply 17 C# files and two contract amendments, then add Red that
+consumes every supplied source observation without fallback, substitution,
+reconstruction, or reread. No Task 16 files, tests, builds, or implementation
+occurred in this alignment.
+
 ## Simplified Flow Trial
 
 Tasks 4–6 and 14–20 use the streamlined assured lane unless their Preflight

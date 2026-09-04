@@ -171,6 +171,40 @@ Rendering stash `fa35ffbc1fc44f952d1e469d4ca9f78dd1b17232` is reapplied lossless
 both recovery stashes remain retained while the same Brilliant Implementer
 continues Green. Phase and milestone remain unchanged.
 
+### Immutable Status Continuation After T15-S1
+
+The accepted Status lane continues after `T15-S1` through these immutable
+commit/tree pairs:
+
+- `cf00fb8661d18b4405fbcf2a918e5f549aea8776` /
+  `bf69e7c20e6a53de03ab0820c504adf403f9b08c`: rendering and compatibility
+  Green.
+- `48309613be036f401d16373415dbb748a9fac877` /
+  `b8e0ad0f15b3a340482b7caa49ee4e59472f4627`: direct Status JSON source
+  context.
+- `e79a97677b99a4b535a251453bd544225605edbd` /
+  `17068f0bca16491162b92a51e5344dfa4e14c62d`: plural Extension Doctor-source
+  Gray.
+- `2521574d03bb05bee38043f64067454f5b0c0d28` /
+  `11eb89ee3ab51f5b79339d499b2d41c26459fe5a`: direct producer-construction
+  authority.
+- `b8ac2dd782b27ae619cc90974af64d03ef22dad1` /
+  `453eb1b81e3bc2008edf6fb9b3dd074c57b58947`: focused plural-source Red.
+
+The final focused Red selected, discovered, and executed `1/1/1`. It failed
+only the expected plural collection oracle: three retained observations were
+expected and the disclosed compile-only scaffold supplied one. Lifecycle
+completeness/trust and all five package/source facts passed. This is not stable
+full-producer evidence or Task completion.
+
+The same Sol/xhigh Brilliant Implementer is implementing the plural semantics.
+Independent Route selected-view work is present in the active worktree. Task 16
+remains read-only and prepared: its six Doctor-facing signatures and catalogue
+shape remain unchanged through Status `2521574d`, while two Status-only methods
+changed. After Status acceptance, reapply the accepted 17 C# files and two
+contract amendments, then add Red that consumes every supplied source
+observation without fallback, substitution, reconstruction, or reread.
+
 ## Expected Outcome
 
 `status` reports complete typed current facts for workspace, Framework and

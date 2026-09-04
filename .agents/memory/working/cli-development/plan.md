@@ -70,6 +70,23 @@ open-forge:
   squash-integrated at `e19d429e` with the same tree. Its Linux host journey
   passed; Darwin and Windows have stage-and-pack evidence only. ARM,
   publication, and live link or unlink remain unproven and unauthorized.
+- After `T15-S1`, the immutable Status continuation is
+  `cf00fb86`/`bf69e7c2` → `48309613`/`b8e0ad0f` → `e79a9767`/`17068f0b` →
+  `2521574d`/`11eb89ee` → `b8ac2dd7`/`453eb1b8`, covering rendering and
+  compatibility Green, direct JSON context, plural-source Gray, direct producer
+  construction authority, and focused plural-source Red. Red selected,
+  discovered, and executed `1/1/1`; only the expected three-observation versus
+  one-scaffold oracle failed, while lifecycle completeness/trust and five
+  package/source facts passed. The same Sol/xhigh Brilliant Implementer is
+  implementing plural semantics, and independent Route selected-view work is
+  present. No stable full-producer evidence or Task completion is claimed.
+- Task 16's read-only alignment consumes the complete plural Extension view.
+  Its six Doctor-facing signatures and catalogue shape remain unchanged through
+  Status `2521574d`, but two Status-only methods changed. After Status
+  acceptance, reapply 17 C# files and two contract amendments, then add Red that
+  consumes every supplied source observation without fallback, substitution,
+  reconstruction, or reread. No Task 16 files, tests, builds, or implementation
+  occurred in this alignment.
 - Accepted Route Update integration input baseline: local `develop` commit
   `996c2e17d1142ffb30dc7a2d17df657419566f97`, exact tree
   `877314d48db49013edc1c4dad1abb545b37caefc`. It integrates CLI

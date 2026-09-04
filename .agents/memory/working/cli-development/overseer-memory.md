@@ -174,6 +174,25 @@ or a general template/scaffold system.
 | Task 16 Doctor                | Diagnose the complete Status contributor inventory without mutation                    | PREPARED phase 2/5, milestone 2/8 from the exact Status Gray snapshot; activation `26e245e4`/`680df032`; accepted Gray `ce627593`/`1f07abb7`; parked before Red/production until Task 15 acceptance/integration; no tests or completion claimed                                                                                                                   |
 | Task 13 native CI             | Prepare minimal build/test CI, manual publish, artifacts, and package targets          | Preparation completed at phase 1/3, milestone 2/6 on candidate `e7689696`, tree `c204c17b`, and is integrated by the commit containing this record from `develop` parent `de40d550`, tree `e6040c49`. The Task is queued behind all retained commands, Task 10, and conditional Task 21 remediation. Linux/macOS/Windows x64 are accepted; ARM remains undecided. |
 
+The Status lane's immutable continuation after `T15-S1` is
+`cf00fb86`/`bf69e7c2` → `48309613`/`b8e0ad0f` → `e79a9767`/`17068f0b` →
+`2521574d`/`11eb89ee` → `b8ac2dd7`/`453eb1b8`. It covers rendering and
+compatibility Green, direct JSON context, plural-source Gray, direct producer
+construction authority, and focused plural-source Red. Red selected, discovered,
+and executed `1/1/1`; only the expected three-observation versus one-scaffold
+oracle failed, while lifecycle completeness/trust and five package/source facts
+passed. The same Sol/xhigh Brilliant Implementer is implementing plural
+semantics, and independent Route selected-view work is present. No stable
+full-producer evidence or completion is claimed.
+
+Task 16's read-only alignment consumes the complete plural Extension view. Its
+six Doctor-facing signatures and catalogue shape remain unchanged through
+Status `2521574d`, but two Status-only methods changed. After Status acceptance,
+reapply 17 C# files and two contract amendments, then add Red that consumes every
+supplied source observation without fallback, substitution, reconstruction, or
+reread. No Task 16 files, tests, builds, or implementation occurred in this
+alignment.
+
 Each mutating lane owns a distinct worktree and feature branch. Shared root
 composition, serializer registration, public help, process evidence, Plan, and
 Checkpoint are integration-owned unless a Task packet explicitly says otherwise.
