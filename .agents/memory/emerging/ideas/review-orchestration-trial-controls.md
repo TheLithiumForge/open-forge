@@ -621,6 +621,23 @@ with one Luna/max general Reviewer and one Sol/xhigh Challenger that have normal
 read-only Git and filesystem authority over the same immutable commit. This
 preserved the implementation owner and avoided blocking Green.
 
+The replacement evidence reviewer accepted the bounded seam and correctly
+limited its residual-risk claim. The replacement architecture Challenger found
+one material issue, `T15-S1`, that the original 62-test compatibility selection
+and evidence review missed: the common lifecycle snapshot had erased the
+mechanical failure stage needed for Extension List/Inspect to preserve blocked
+semantics when physical identity could not be resolved. The Task Mastermind
+reproduced it, paused Green, and routed one narrow Gray/Red correction. Corrected
+Gray `e6a89c24`/`9f98c0e4` and corrected Red `c5726e5c`/`f719db23` preserve the
+three-stage raw provenance and exact prior-consumer mapping without adding
+decoded facts or public representation.
+
+This is one positive-yield checkpoint-overlay sample: two replacement review
+units produced one accepted material architecture finding, zero test-evidence
+findings, and one early correction before command composition or integration.
+It does not establish token or latency superiority, and the unusable standing
+topic invocations remain transport failures rather than semantic review units.
+
 This sample strengthens the existing cross-runtime caveat: topic-role routing
 must preflight the named inspection capability, or the packet must carry the
 bounded immutable content that the role can inspect. Until that condition is

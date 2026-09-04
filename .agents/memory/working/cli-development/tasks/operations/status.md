@@ -17,9 +17,10 @@ open-forge:
 - Current progress: phase 3 of 5, milestone 3 of 8. The five streamlined
   phases are Preflight, explicit Gray/Red, one coherent implementation and
   focused-verification pass, one fresh whole-task review with at most one
-  grouped improvement pass, and acceptance. Corrected Gray and Red are
-  accepted. Coherent production and focused verification continue from the
-  first production seam.
+  grouped improvement pass, and acceptance. Two bounded Gray/Red corrections
+  are accepted. The second preserves the mechanical failure stage required for
+  existing lifecycle consumers to retain distinct status policies. Coherent
+  production and focused verification have resumed from that boundary.
 - Incremental completeness: the first accepted horizon covers every observable
   producer present in its exact frozen baseline and records that complete typed
   contributor inventory. It does not call absent future commands healthy,
@@ -153,6 +154,22 @@ selected Status Integration cases remain expected Green work at absent command
 composition or rendering. Sixty-two selected lifecycle-store and Extension
 compatibility tests pass. Production continues from this checkpoint; no task
 completion or broader evidence claim is made.
+
+Immutable seam review found `T15-S1`: the common snapshot had collapsed
+physical-resolution failure into the contained-file-access classification,
+changing Extension List/Inspect from blocked to incomplete for unresolved
+physical identity. Corrected Gray
+`e6a89c24e3eaad1fc2f785ded785ac5ec53e9928`, tree
+`9f98c0e4ebd6e7fda4daf47cdba67d3f82e677f6`, freezes only three raw mechanical
+failure stages and the exact prior-consumer mapping. Corrected Red
+`c5726e5cda571fe09a22a742121e5f1a3ec3859d`, tree
+`f719db23d57a79f15d731da133bc569cdd597751`, adds one in-memory compatibility
+fact plus snapshot invariants. Its isolated 2/2 Unit run passed the invariant
+fact and failed only the two intended physical-resolution and
+physical-reconfirmation Extension mappings, with zero skips or warnings.
+Rendering stash `fa35ffbc1fc44f952d1e469d4ca9f78dd1b17232` is reapplied losslessly;
+both recovery stashes remain retained while the same Brilliant Implementer
+continues Green. Phase and milestone remain unchanged.
 
 ## Expected Outcome
 
