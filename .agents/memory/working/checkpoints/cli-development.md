@@ -47,8 +47,13 @@ Its completion grace is consumed and it is dequeued.
 Task 15 “Status” is ACTIVE at phase 3/5, milestone 3/8. Gray
 `dac2aece`/`874bdcae`, bounded callable correction `df46fb9c`/`eda74e79`, and
 accepted Red `f633fe1f`/`5dbfe9d7` are recorded. One Sol/xhigh Brilliant
-Implementer owns coherent production and focused verification from phase-3
-activation `de27fcd6`/`ebdcb4a6`.
+Implementer was activated at `de27fcd6`/`ebdcb4a6`, then the early architecture
+checkpoint found that the two lifecycle Status signatures cannot guarantee one
+common lifecycle-document observation without prohibited mutable state.
+Production remains unmodified while a bounded Gray/Red correction makes one
+stateless invocation-local observation explicit. The interrupted Implementer's
+94-line partial `StatusDefinitions` work is preserved losslessly at named stash
+`9b51b3f8`; one Luna/max Gray Contract Implementer owns the correction.
 Task 16 “Doctor” is PREPARED at phase 2/5, milestone 2/8 from the exact Status
 Gray snapshot. Activation `26e245e4`/`680df032` and accepted Gray
 `ce627593`/`1f07abb7` are recorded. The lane is cleanly parked before
@@ -426,8 +431,8 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Continue active Task 15 Status at phase 3/5, milestone 3/8 through coherent
-   production and focused verification under one Brilliant Implementer.
+1. Continue active Task 15 Status at phase 3/5, milestone 3/8 through the bounded
+   lifecycle-observation Gray/Red correction before coherent production resumes.
    Continue Task 16 Doctor at its prepared phase 2/5, milestone 2/8 boundary
    until Task 15 is accepted and integrated. Task 7 package expansion is
    complete.
