@@ -25,32 +25,38 @@ open-forge:
 - Parent: [Operational Commands](_operations.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/doctor/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/doctor/behavior.md).
 
-## Read-Only Preparation Receipt
+## Read-Only Preparation And Activation Reconnaissance
 
-Experimental Luna/max single-owner preparation completed against clean
-`develop` commit `328599a006ef206fd82004e778296c2cac2bc10c`, tree
-`56a24a7a50550702eae13bcbfaed9e9ead2a19f3`, without edits, builds, tests,
-artifacts, or activation. The selected runtime exposed no child-agent
-collaboration tools, so the result does not count as evidence for a Luna/max
-Mastermind supervising topic workers. One correction converted its initial
-checkpoint-only return into a reviewable evidence packet; the limitation and
-workflow adjustment are recorded in the [trial results](../../../../emerging/observations/2026-09-03_supervised-luna-preparation-trial-results.md).
+The earlier Luna/max single-owner preparation against `develop` commit
+`328599a006ef206fd82004e778296c2cac2bc10c`, tree
+`56a24a7a50550702eae13bcbfaed9e9ead2a19f3`, remains historical context. Its
+workflow limitation and later correction remain in the [trial
+results](../../../../emerging/observations/2026-09-03_supervised-luna-preparation-trial-results.md);
+they are not current authority for Task 16.
 
-The six accepted domains remain stable: workspace/entry, recovery/residual,
-routes/metadata/overwrites/generated navigation, local references, Framework
-lifecycle, and Extension lifecycle. Current source, generated-navigation,
-recovery, lifecycle, Extension, and reference readers provide reusable typed
-facts, but no Doctor command, Status command, operational contributor catalogue,
-complete Extension-currentness view, complete per-target Framework view, or
-cross-domain finding/provenance aggregation exists.
+A later read-only activation reconnaissance began at root commit `53805940`. A
+Sol/xhigh Task Mastermind successfully supervised three Luna/max Explorer
+inventories from `/root/doctor_activation_recon`. No build, test, source or
+workspace mutation, artifact, or activation occurred; the root advanced only
+through coordination ledgers and is clean at `bbf2d87c`.
 
-After Tasks 14 and 15 integrate, Preflight must bind all six domains to Task
-15's complete frozen typed views, revalidate unknown/unavailable and
-coverage/status precedence, deterministic ordering and provenance-preserving
-deduplication, no-write/cancellation, real-producer fixtures, process evidence,
-Native AOT, and Status regressions. Task 16 remains queued at phase 0/5,
-milestone 0/8 and is suitable for the ordinary streamlined assured flow only
-after those prerequisites are accepted.
+The reconnaissance confirmed that the six-domain, 112-kind Doctor contract is
+unchanged: workspace/entry; recovery/residual; routes, metadata, overwrites, and
+generated navigation; local references; Framework lifecycle; and Extension
+lifecycle. Doctor consumes Task 15's immutable typed views; it does not parse
+rendered Status output or fan directly into producers. Exact callable shapes
+remain Status Gray-owned, and neutral readers remain reusable. Doctor must not
+import another command's private `Shared/**` or introduce dependency injection,
+a service locator, reflection, a runtime registry, a generic operational
+engine, or mutation.
+
+The activation order remains Task 14 integration, then Task 15 Gray and
+acceptance, then Doctor. Task 7 may implement beside Status after Task 14 is
+accepted and integrated. Further Doctor work has high staleness risk until the
+Task 15 baseline is accepted, so Preflight must refresh the producer inventory
+and bind the implementation to that exact baseline. Task 16 remains queued at
+phase 0/5, milestone 0/8 and is suitable for the ordinary streamlined assured
+flow only after those prerequisites are accepted.
 
 ## Expected Outcome
 

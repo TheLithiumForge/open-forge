@@ -77,8 +77,17 @@ The accepted dependency order is:
    tool was unavailable, so it consumed no review budget. Status and Doctor
    read-only preparation is complete; Status's candidate revalidation is also
    complete, but both remain queued and must activate only after Task 14 is
-   accepted and integrated. Their
-   accepted rule remains complete coverage of the explicit contributor
+   accepted and integrated. A later Task 16 activation reconnaissance began at
+   root `53805940`: a Sol/xhigh Task Mastermind successfully supervised three
+   Luna/max Explorer inventories from `/root/doctor_activation_recon`. No
+   build, test, source or workspace mutation, artifact, or activation occurred;
+   root advanced only through coordination ledgers and is clean at `bbf2d87c`.
+   The six-domain, 112-kind Doctor contract is unchanged. Doctor consumes Task
+   15's immutable typed views rather than parsing Status output or using direct
+   producer fan-in; exact callable shapes remain Status Gray-owned and neutral
+   readers remain reusable. The earlier single-owner preparation at `328599a0`
+   remains historical context, not current authority. The accepted Status/Doctor
+   rule remains complete coverage of the explicit contributor
    inventory at each frozen baseline; every later producer extends that
    inventory and affected evidence before its own acceptance. Task 7's
    Linux/macOS/Windows x64 expansion has completed preparation and authority
@@ -123,7 +132,7 @@ or a general template/scaffold system.
 | Task 12 authority remediation | Move accepted CLI Architecture detail to its correct authority without behavior change | Complete at phase 5/5, milestone 6/6; corrected source `a0e6bc8d`, exact tree `9c4a33b1`, is squash-integrated at `495a7ed6`, the same exact tree; two-update completion grace is consumed and the Task is dequeued                                                                                                                                               |
 | Task 14 Extension Install     | Install reviewed Extension packages with isolated lifecycle and recovery integrity     | Active at phase 4/5, milestone 4/8; Green `9a6ae2fa`, tree `c39cfcb`, is immutable; reviews and wider Green receipts are complete; frozen T14-C1 receipt `8bede7cd` is handed to the same Brilliant Implementer; `.agents/**` remains authoritative and `.apm/**` deferred                                                                                        |
 | Task 15 Status                | Report complete typed current facts for the frozen producer inventory                  | Queued/prepared with milestone 0/8 and no active phase; read-only candidate revalidation against immutable Task 14 Green is complete; Gray still owns exact catalogue/view signatures and no implementation is authorized                                                                                                                                         |
-| Task 16 Doctor                | Diagnose the complete Status contributor inventory without mutation                    | Queued at phase 0/5, milestone 0/8; corrected Luna/max single-owner preparation at `328599a0`, tree `56a24a7a`, records six stable domains and post-Task14/15 gates; child collaboration was unavailable, so the sample is not supervised-team evidence                                                                                                           |
+| Task 16 Doctor                | Diagnose the complete Status contributor inventory without mutation                    | Queued at phase 0/5, milestone 0/8; read-only activation reconnaissance began at `53805940` and had a Sol/xhigh Task Mastermind supervise three Luna/max Explorer inventories; six-domain/112-kind contract and typed-view boundary unchanged; root clean at `bbf2d87c` after coordination ledgers only; no build, test, or mutation                              |
 | Task 13 native CI             | Prepare minimal build/test CI, manual publish, artifacts, and package targets          | Preparation completed at phase 1/3, milestone 2/6 on candidate `e7689696`, tree `c204c17b`, and is integrated by the commit containing this record from `develop` parent `de40d550`, tree `e6040c49`. The Task is queued behind all retained commands, Task 10, and conditional Task 21 remediation. Linux/macOS/Windows x64 are accepted; ARM remains undecided. |
 
 Each mutating lane owns a distinct worktree and feature branch. Shared root
@@ -241,8 +250,12 @@ application-scoped `OperationalContributorCatalogue` built by
 Doctor views, and fresh invocation observations. It adds no dependency
 injection, service locator, reflection, runtime registry, generic operational
 engine, or ambient registration. Task 12 owns durable architecture placement;
-Task 15 Gray owns exact signatures. Composition alone does not change public
-Status or Doctor contracts.
+Task 15 Gray owns exact signatures. Doctor consumes Task 15's immutable typed
+views rather than parsing Status output or using direct producer fan-in, and
+neutral readers remain reusable. Composition alone does not change public
+Status or Doctor contracts. The Task 16 activation order is Task 14
+integration, Task 15 Gray and acceptance, then Doctor; Task 7 may run beside
+Status. Further Doctor work has high staleness risk until Task 15 is accepted.
 The exact public Root Install JSON result schema is accepted, implemented, and
 frozen, including fully present ordered facts and typed residual values `none`,
 `retained`, and `unknown`.
