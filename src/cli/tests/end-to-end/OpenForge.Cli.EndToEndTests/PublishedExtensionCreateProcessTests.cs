@@ -32,7 +32,7 @@ public sealed class PublishedExtensionCreateProcessTests
                 Assert.Contains("inspect <stable-id>", result.StandardOutput, StringComparison.Ordinal);
                 Assert.Contains("create <stable-id>", result.StandardOutput, StringComparison.Ordinal);
                 Assert.Contains("The extension group performs no operation.", result.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("Planned but unavailable operations: install, update, and remove.", result.StandardOutput, StringComparison.Ordinal);
+                Assert.Contains("Planned but unavailable operations: update and remove.", result.StandardOutput, StringComparison.Ordinal);
                 Assert.DoesNotContain("Operations:", result.StandardOutput, StringComparison.Ordinal);
                 Assert.DoesNotContain("Create one local catalogue scaffold without installing it.", result.StandardOutput, StringComparison.Ordinal);
                 break;

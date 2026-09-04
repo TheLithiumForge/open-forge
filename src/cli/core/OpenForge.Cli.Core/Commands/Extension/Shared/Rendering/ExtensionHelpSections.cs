@@ -12,7 +12,8 @@ internal static class ExtensionHelpSections
                 "Notes",
                 """
                   The extension group performs no operation.
-                  Planned but unavailable operations: install, update, and remove.
+                  Install syntax: install [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--automatic] [--dry-run] [global flags].
+                  Planned but unavailable operations: update and remove.
                 """),
         ]);
     }

@@ -93,7 +93,7 @@ public sealed class ExtensionCreateCompositionIntegrationTests
                 Assert.Contains("inspect <stable-id>", run.StandardOutput, StringComparison.Ordinal);
                 Assert.Contains("create <stable-id>", run.StandardOutput, StringComparison.Ordinal);
                 Assert.Contains("The extension group performs no operation.", run.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("Planned but unavailable operations: install, update, and remove.", run.StandardOutput, StringComparison.Ordinal);
+                Assert.Contains("Planned but unavailable operations: update and remove.", run.StandardOutput, StringComparison.Ordinal);
                 Assert.DoesNotContain("Operations:", run.StandardOutput, StringComparison.Ordinal);
                 Assert.DoesNotContain("Create one local catalogue scaffold without installing it.", run.StandardOutput, StringComparison.Ordinal);
                 break;

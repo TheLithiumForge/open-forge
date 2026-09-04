@@ -8,6 +8,9 @@ using OpenForge.Cli.Core.Commands.Extension.Inspect;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Binding;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Rendering;
+using OpenForge.Cli.Core.Commands.Extension.Install;
+using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
+using OpenForge.Cli.Core.Commands.Extension.Install.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Extension.List;
 using OpenForge.Cli.Core.Commands.Extension.List.Models.Binding;
 using OpenForge.Cli.Core.Commands.Extension.List.Models.Result;
@@ -18,24 +21,31 @@ using OpenForge.Cli.Core.Shell.Interaction;
 using OpenForge.Cli.Core.Shell.Parsing;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Presentation;
+using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 
 namespace OpenForge.Cli.Composition;
 
 internal static class CliExtensionComposer
 {
     internal static CliExtensionComposition Compose(
-        CliInteractiveSession interactiveSession)
+        CliInteractiveSession interactiveSession,
+        WorkspaceLockStoreRoot? lockStoreRoot)
     {
         var group = ExtensionBinding.CreateGroup();
         var listSymbols = ExtensionListBinding.CreateSymbols(group);
         var inspectSymbols = ExtensionInspectBinding.CreateSymbols(group);
         var createSymbols = ExtensionCreateBinding.CreateSymbols(group);
+        var installSymbols = ExtensionInstallBinding.CreateSymbols(group);
         return new CliExtensionComposition
         {
             Branch = new CliRootBranch(group, ExtensionHelpSections.CreateGroup(), []),
             ListBinding = BuildList(listSymbols),
             InspectBinding = BuildInspect(inspectSymbols),
             CreateBinding = BuildCreate(createSymbols, interactiveSession),
+            InstallBinding = BuildInstall(
+                installSymbols,
+                interactiveSession,
+                lockStoreRoot),
         };
     }
 
@@ -79,4 +89,17 @@ internal static class CliExtensionComposer
                     ExtensionCreateJsonRenderer.Render),
                 DiagnosticRenderer = ExtensionCreateDiagnosticRenderer.Render,
             });
+
+    private static ICliCommandBinding BuildInstall(
+        ExtensionInstallSymbols symbols,
+        CliInteractiveSession interactiveSession,
+        WorkspaceLockStoreRoot? lockStoreRoot)
+        => ExtensionInstallBinding.Close(
+            symbols,
+            ExtensionInstallPresentation.CreateHelp(),
+            ExtensionInstallOperationFactory.Create(interactiveSession, lockStoreRoot),
+            new CliRendererSet<ExtensionInstallResult>(
+                ExtensionInstallPresentation.RenderHuman,
+                ExtensionInstallJsonProjection.RenderJson),
+            ExtensionInstallPresentation.RenderDiagnostic);
 }

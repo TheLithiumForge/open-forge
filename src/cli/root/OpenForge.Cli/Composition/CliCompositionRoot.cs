@@ -30,7 +30,9 @@ internal static class CliCompositionRoot
         var interactiveSession = CreateInteractiveSession(inputs);
         var route = CliRouteComposer.Compose(interactiveSession, inputs.LockStoreRoot);
         var standalone = CliStandaloneComposer.Compose(interactiveSession, inputs.LockStoreRoot);
-        var extension = CliExtensionComposer.Compose(interactiveSession);
+        var extension = CliExtensionComposer.Compose(
+            interactiveSession,
+            inputs.LockStoreRoot);
         var tree = CliCommandTree.Create(
             CreateRootHelp(),
             [route.Branch, extension.Branch],
@@ -48,6 +50,7 @@ internal static class CliCompositionRoot
                 extension.ListBinding,
                 extension.InspectBinding,
                 extension.CreateBinding,
+                extension.InstallBinding,
                 standalone.ContextBinding,
             ],
             rootLeaves: standalone.RootLeaves);
@@ -81,6 +84,7 @@ internal static class CliCompositionRoot
                   extension list    List installed and available Extension packages.
                   extension inspect Inspect one installed or available Extension package.
                   extension create  Create one local Extension package scaffold.
+                  extension install Install reviewed Extension packages into a Framework workspace.
                 """),
             new CliHelpSection(
                 heading: "Lifecycle",

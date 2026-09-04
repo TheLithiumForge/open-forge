@@ -34,8 +34,11 @@ validated command and package selection
   -> preflight
   -> dry-run or application
   -> expected-state revalidation
-  -> per-effect and whole-operation verification
-  -> Extension-section publication and recovery-disposition reporting
+  -> dependency-first target and generated effects with per-effect verification
+  -> intended target-topology verification
+  -> Extension lifecycle publication and verification as the last workspace file effect
+  -> final target, Extension lifecycle, and unchanged Framework reread
+  -> recovery-disposition reporting
   -> one typed result
 ```
 
@@ -43,6 +46,81 @@ No effect begins until all selected roots, dependencies, ownership sets, route
 hosts, generated boundaries, lifecycle sections, recovery-bundle, verification,
 and preservation facts pass. The operation does not apply a safe subset around a blocked
 dependency or path.
+
+## Typed Callable Boundary
+
+The command uses the existing closed shell operation delegate exactly as
+`CliOperation<ExtensionInstallRequest, ExtensionInstallResult>`. Its directly
+callable operation entry is equivalent to:
+
+```text
+ValueTask<ExtensionInstallResult> ExecuteAsync(
+  ExtensionInstallRequest request,
+  CancellationToken cancellationToken)
+```
+
+`ExtensionInstallRequest` is one immutable command-local value containing, in
+order, these exact typed members:
+
+```text
+CliWorkspace Workspace
+ExtensionInstallMode Mode
+IReadOnlyList<string> RequestedIds
+bool All
+string? SourcePath
+bool Force
+bool Automatic
+bool AllowInteraction
+```
+
+`ExtensionInstallMode` has only `Apply` and `DryRun`. `RequestedIds` is a
+non-null immutable ordered snapshot. Empty requested IDs and `All = false`
+preserve an unresolved selection for the operation to resolve through
+single-package inference, the bounded prompt, or an `invalid` result. The
+request carries no parser object, writer, stream, service collection, registry,
+or context bag.
+
+`ExtensionInstallResult` implements the shared non-wire `ICliCommandResult`
+boundary and contains the exact command identity `extension install`, one shared
+semantic status, genuine workspace presence, one shared next action or `null`,
+and the fourteen ordered command-local facts defined by the Interface Contract.
+Its exact typed members are:
+
+```text
+string Command
+CliSemanticStatus Status
+CliWorkspace? Workspace
+CliNextAction? Next
+ExtensionInstallMode Mode
+bool Force
+bool Automatic
+ExtensionInstallSelection? Selection
+ExtensionInstallSource? Source
+IReadOnlyList<ExtensionInstallPackage> Packages
+ExtensionInstallFramework? Framework
+ExtensionInstallFootprint? Footprint
+IReadOnlyList<ExtensionInstallEffect> Effects
+ExtensionInstallGeneratedNavigation? GeneratedNavigation
+ExtensionInstallLifecycle Lifecycle
+ExtensionInstallRecovery Recovery
+ExtensionInstallVerification Verification
+IReadOnlyList<ExtensionInstallFinding> Findings
+```
+
+The command-local fact types are `ExtensionInstallSelection`,
+`ExtensionInstallSource`, `ExtensionInstallPackage`,
+`ExtensionInstallFramework`, `ExtensionInstallFootprint`,
+`ExtensionInstallEffect`, `ExtensionInstallGeneratedNavigation`,
+`ExtensionInstallLifecycle`, `ExtensionInstallRecovery`,
+`ExtensionInstallVerification`, and `ExtensionInstallFinding`. Collections are
+immutable and non-null. The nullable atomic facts remain nullable rather than
+using plausible placeholder data.
+
+Human, JSON, diagnostic, status, next-action, and process-completion projection
+all consume that one result. The JSON document is a concrete source-generated
+projection of the same fields and is never the operation or shell interface.
+No dependency injection, service locator, reflection, runtime registry, generic
+operation engine, or untyped command-local state participates in this boundary.
 
 ## Request, Workspace, And Source Resolution
 
@@ -57,14 +135,21 @@ lexically and physically disjoint from the target workspace and is never
 mutated.
 
 Classify `--source` structurally as one package or catalogue. If omitted, use the
-embedded catalogue. Resolve IDs only from explicit operands, explicit `--all`,
-or the one-package manifest-ID inference rule. When the selected source contains
-exactly one completely validated package and no IDs or `--all` were supplied,
-use its valid manifest ID in human, non-interactive, and automatic requests. A
-multi-package source without explicit IDs or `--all` is an unresolved semantic
-selection: a human wizard may ask, while JSON and other non-interactive requests
-are `invalid`. Automatic mode never chooses among packages or broadens selection
-to all.
+embedded catalogue deterministically and never prompt for a source. Resolve IDs
+only from explicit operands, explicit `--all`, the one-package manifest-ID
+inference rule, or the bounded exact-selection prompt. When the selected source
+contains exactly one completely validated package and no IDs or `--all` were
+supplied, use its valid manifest ID in human, non-interactive, and automatic
+requests.
+
+A prompt-capable human multi-package request displays the finite inventory and
+accepts only exact stable package IDs or exact `all`. Invalid answers retry
+locally. Selected dependencies are displayed as the complete mandatory closure
+and are not optional answers. End-of-input produces a no-write `invalid` result
+and cancellation produces a no-write `interrupted` result. JSON, automatic, and
+other non-interactive multi-package requests without explicit selection are
+`invalid`. Automatic mode never chooses among packages or broadens selection to
+all.
 
 The CLI distribution embeds Framework and first-party Extension assets with
 deterministic inventory and hash proof. That proof identifies distributed source
@@ -79,7 +164,13 @@ affected authored host, generated `Entries` boundary, ownership relationship,
 route relationship, and cross-section preservation boundary. List and create do
 not need this anchor; install and update do. If a required safe fact is
 unavailable, return `incomplete`; if it is unsafe or ambiguous, return
-`blocked` and write nothing.
+`blocked` and write nothing. The installed anchor includes the existing
+`.agents` Framework container. A safely absent container is therefore an
+unavailable anchor and produces `incomplete` before planning; an unsafe or
+ambiguous container remains `blocked`. Extension Install never plans creation of
+`.agents` itself. The shared directory-creation capability remains unchanged;
+after the anchor is established, this command may consume it only for explicitly
+planned missing descendant directories beneath `.agents`.
 
 ## Manifest And Dependency Closure
 
@@ -90,6 +181,16 @@ source universe, offline and without semver negotiation. Reject unknown IDs,
 duplicate active IDs, duplicate dependency declarations, invalid manifests,
 cycles, unsafe paths, conflicting source identities, and incomplete closure.
 
+Validate every payload target in that complete closure as a canonical strict
+descendant of `.agents/` before planning. Reject `.agents` itself and every
+target outside it, including `.apm/`, before a plan, lock, recovery artifact, or
+workspace effect exists. Only legitimately missing descendant directories
+beneath the established `.agents` anchor may enter the command-local directory
+effect set. This is Extension Install policy only. It consumes the shared
+directory-creation capability and `ExtensionTargetPath` grammar without
+changing, narrowing, or replacing either shared authority. The deferred `.apm/`
+idea creates no behavior or implementation authority here.
+
 Deduplicate the closure by stable package identity and order dependencies before
 dependents. Keep selected roots, dependency edges, and order facts in the one
 operation result. A descriptive version never selects a different source or
@@ -99,15 +200,18 @@ grants compatibility authority.
 
 Read `.agents/open-forge.lifecycle.json`, schema v1, as isolated `framework` and
 `extensions` sections. Validate and preserve the unrelated section and common
-envelope meaning semantically. A selected semantic change emits one deterministic
-canonical UTF-8 whole-document representation, so lifecycle property order,
-whitespace, and line endings may be normalized. A semantic no-op writes nothing.
-Prior bytes for every existing-target effect (`Replace`,
-`ReplaceGeneratedRegion`, or `Delete`) remain only in the verified external
-recovery bundle described below; the CLI does not inspect or report repository
-state or claim history evidence. The document stores no plan, runtime history,
-journal, recovery evidence, or session. Files outside this exact path are ordinary
-workspace content, not lifecycle input.
+envelope meaning semantically. Publish a selected Extension semantic change only
+after dependency-first target and generated effects and intended-topology
+verification. Verify it as the last workspace file effect, then reread targets,
+Extension lifecycle, and unchanged Framework meaning before success or recovery
+cleanup. Publication emits one deterministic canonical UTF-8 whole-document
+representation, so lifecycle property order, whitespace, and line endings may
+be normalized. A semantic no-op writes nothing. Prior bytes for every
+existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or `Delete`) remain
+only in the verified external recovery bundle described below; the CLI does not
+inspect or report repository state or claim history evidence. The document
+stores no plan, runtime history, journal, recovery evidence, or session. Files
+outside this exact path are ordinary workspace content, not lifecycle input.
 
 The `extensions` section is trusted only with exact workspace binding, stable IDs,
 dependency reciprocity, target-relative paths, shared owner sets, semantic
@@ -154,7 +258,8 @@ the Index contract. Generated interiors are derived and not package-owned.
 
 Reject package paths targeting the lifecycle document, repository metadata,
 recovery or temporary artifacts, workspace-owned overwrite companions, Framework
-root/provider blocks, or another manager's path. Missing, duplicate, reversed,
+root/provider blocks, another manager's path, or any location that fails the
+command-local `.agents/`-descendant restriction. Missing, duplicate, reversed,
 nested, misplaced, or ambiguous generated boundaries block; force never repairs
 them. Include generated effects in the same parent plan and never invoke a hidden
 index subprocess.
@@ -180,6 +285,15 @@ overrides a shared owner, repairs markers, or bypasses containment,
 verification, or recovery. Automatic mode admits only safe absent/no-op effects
 already selected by explicit IDs, `--all`, or the permitted single-package
 manifest-ID inference; it never adds force or chooses among packages.
+
+After exact inspection proves an eligible initial occupant, a prompt-capable
+human request without `--force` may ask only whether to grant force for the
+exact eligible initial occupants displayed for that request. Invalid answers
+retry locally. Declining leaves the occupants unchanged and returns `blocked`.
+End-of-input is no-write `invalid`, and caller cancellation is no-write
+`interrupted`. Automatic and non-interactive requests never ask and remain
+`blocked` without explicit `--force`. No later generic apply confirmation
+exists.
 
 ## Preflight, Dry-Run, Application, And Recovery
 
@@ -223,15 +337,25 @@ result. A planning or read failure and caller cancellation before effects retain
 their own event meaning.
 
 Application revalidates every selected source, target, owner, route, marker,
-containment, expected-state, and recovery fact immediately before effects. Apply
-dependencies before dependents, verify each payload/generated/lifecycle effect,
-verify the complete operation, and publish Extension ownership only after the
-whole result is verified. Delete only the positively recognized bundle created
-by this operation after final verification. `Deleted`/`Removed` permits normal
-completion. `Failed`/positively observed `Retained` keeps target effects
-successful and produces `attention`, the exact
-residual path, and cleanup guidance. `Failed`/`Unknown` produces `failed` and reports an exact expected path only when the deletion
-result provides one.
+containment, expected-state, and recovery fact under the lease before effects.
+It then applies package target and generated-region effects in the exact
+dependency-first plan order and verifies each effect. After those effects, it
+verifies the complete intended target topology.
+
+Only verified target topology permits Extension lifecycle publication. That
+publication is the last workspace file effect and is verified before any final
+success decision. The operation then freshly rereads every target, the complete
+Extension lifecycle section, and the Framework lifecycle section. Success
+requires exact target bytes and identity, exact Extension lifecycle meaning,
+and unchanged Framework meaning. No recovery cleanup starts before all four
+verification members are `verified`.
+
+After that final reread, delete only the positively recognized bundle created by
+this operation. `Deleted`/`Removed` permits normal completion.
+`Failed`/positively observed `Retained` keeps target effects successful and
+produces `attention`, the exact residual path, and cleanup guidance.
+`Failed`/`Unknown` produces `failed` and reports an exact expected path only when
+the deletion result provides one.
 When `Failed`/positively observed `Retained` recovery attention coexists with a
 finite lifecycle observation, cleanup guidance owns the single next action; the
 lifecycle facts remain visible evidence.
@@ -257,11 +381,16 @@ Interface.
 
 Conformance must cover source and selection rules, dependency failures and
 ordering, Framework-anchor gating, trusted/untrusted/absent/unavailable state,
-initial force and managed-divergence block, shared owners, semantic fingerprints,
-generated navigation, reserved paths, complete planning, external recovery-bundle
-storage and verification, typed post-verification deletion state/disposition facts,
-dry-run no-effects, revalidation,
-verification, retained partial state without restoration, no-op repetition,
+initial force and managed-divergence block, exact bounded prompt outcomes,
+shared owners, semantic fingerprints, generated navigation, strict
+`.agents/`-descendant payload validation before planning, directory effects
+limited to missing descendants beneath the established anchor, reserved paths,
+complete planning, dependency-first target/generated application,
+target-topology verification, last-effect Extension lifecycle publication,
+final target, Extension lifecycle, and Framework lifecycle rereads, external
+recovery-bundle storage and verification, typed post-verification deletion
+state/disposition facts, dry-run no-effects, revalidation, retained partial
+state without restoration, no-op repetition, exact result/finding formation,
 JSON/human parity, and no package-source mutation. The [Shared Result
 Coordinates](../../shared/result-coordinates/interface.md) define the exact JSON
 result schema and exit mapping. Gate 5 must

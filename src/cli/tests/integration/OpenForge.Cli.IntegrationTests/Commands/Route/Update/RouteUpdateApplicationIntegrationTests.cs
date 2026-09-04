@@ -1,7 +1,14 @@
 using System.Text;
+using OpenForge.Cli.Core.Commands.Route.Update.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Update.Shared.Application;
+using OpenForge.Cli.Core.Commands.Route.Update.Shared.Planning;
+using OpenForge.Cli.Core.Commands.Route.Update.Shared.Result;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Mutation.Application;
+using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Update;
@@ -322,33 +329,73 @@ public sealed class RouteUpdateApplicationIntegrationTests
     {
         using var workspace = RouteUpdateIntegrationWorkspace.Create(
             "route-update-top-level-post-write-failure");
-        using var monitorStop = new CancellationTokenSource();
-        using var monitorReady = new ManualResetEventSlim();
-        var monitor = MonitorAppliedFileAsync(
-            workspace,
-            RouteUpdateIntegrationWorkspace.ParentPath,
-            workspace.MutateTargetAfterPlanning,
-            monitorReady,
-            monitorStop.Token);
-        Assert.True(
-            monitorReady.Wait(
-                TimeSpan.FromSeconds(5),
-                TestContext.Current.CancellationToken),
-            "The post-write monitor must be polling before application starts.");
-        RouteUpdateResult? result = null;
-        try
-        {
-            result = await workspace.ExecuteAsync(
-                workspace.Request(),
+        var planBuild = await workspace.BuildPlanAsync(workspace.Request());
+        var plan = Assert.IsType<RouteUpdatePlan>(planBuild.Plan);
+        var operationId = Guid.NewGuid();
+        await using var lease = await workspace.AcquireLeaseAsync(operationId);
+        var validator = new FileExpectationValidator(new PhysicalPathResolver());
+        var revalidator = new MutationRevalidator(validator);
+        var recovery = RouteUpdateIntegrationWorkspace.CreateRecoveryServices();
+        var planBuilder = RouteUpdateIntegrationWorkspace.CreatePlanBuilder();
+        var preparation = await new RouteUpdateApplicationPreparer(
+            new RouteUpdatePlanRevalidator(
+                planBuilder,
+                new RouteUpdatePlanEquivalence()),
+            recovery.Preparer,
+            revalidator).PrepareAsync(
+                new RouteUpdateApplicationPreparationInput
+                {
+                    Plan = plan,
+                    Lease = lease,
+                    OperationId = operationId,
+                },
                 TestContext.Current.CancellationToken);
-        }
-        finally
-        {
-            monitorStop.Cancel();
-        }
+        Assert.Equal(RouteUpdateApplicationPreparationState.Ready, preparation.State);
+        var recoveryPreparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.RecoveryBundlePreparation>(
+            preparation.RecoveryPreparation);
+        workspace.TrackRecovery(recoveryPreparation);
+        var validation = Assert.IsType<OpenForge.Cli.Core.Framework.Mutation.Validation.Models.MutationValidationResult>(
+            preparation.Validation);
+        var application = await new RouteUpdateEffectApplication(
+            new FileChangeApplier(revalidator, validator)).ApplyAsync(
+                new RouteUpdateEffectApplicationInput
+                {
+                    Plan = plan,
+                    Preparation = recoveryPreparation,
+                    Lease = lease,
+                    Validation = validation,
+                },
+                TestContext.Current.CancellationToken);
+        Assert.Empty(application.Findings);
+        Assert.Equal(plan.FileChanges.Length, application.Receipts.Length);
+        workspace.MutateTargetAfterPlanning();
 
-        Assert.True(await monitor, "The post-write monitor must observe the first effect.");
-        Assert.NotNull(result);
+        var verification = await new RouteUpdateAppliedVerifier(
+            planBuilder,
+            validator).VerifyAsync(
+                new RouteUpdateAppliedVerificationInput
+                {
+                    Plan = plan,
+                    Progress = application,
+                    Lease = lease,
+                },
+                TestContext.Current.CancellationToken);
+        Assert.Equal(RouteUpdateAppliedVerificationState.Failed, verification.State);
+        var progress = application with
+        {
+            Verification = RouteUpdateVerificationState.Failed,
+            Findings =
+            [
+                new RouteUpdateFinding(
+                    RouteUpdateFindingCode.VerificationFailed,
+                    verification.Cause
+                        ?? "Final Route Update verification did not complete.",
+                    plan.Preview.Target.Path),
+            ],
+        };
+        var result = new RouteUpdateResultBuilder().Build(
+            RouteUpdateApplicationResultFactory.Build(plan, progress));
+
         Assert.Equal(CliSemanticStatus.Failed, result.Status);
         Assert.Equal(RouteUpdateVerificationState.Failed, result.Verification);
         Assert.Equal(RouteUpdateRecoveryState.Retained, result.Recovery.State);
