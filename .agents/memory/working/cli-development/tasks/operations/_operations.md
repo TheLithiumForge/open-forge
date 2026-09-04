@@ -48,7 +48,7 @@ complete inventory for every retained producer.
 
 ## Child Tasks
 
-- [ ] [Task 15: implement complete baseline workspace, lifecycle, managed-source, generated, and recovery-bundle status facts](status.md) — Queued after Task 14 — Implementer: Not assigned
+- [ ] [Task 15: implement complete baseline workspace, lifecycle, managed-source, generated, and recovery-bundle status facts](status.md) — Ready to activate from completed Task 14 base `20807781` — Task Mastermind assigned at activation
 - [ ] [Task 16: implement diagnosis domains, severity, recommendations, and complete doctor projections](doctor.md) — Queued after Task 15 — Implementer: Not assigned
 - [ ] [Task 19: implement explicit repair planning, dry run, application, verification, and recovery](repair.md) — Queued after the complete producer inventory — Implementer: Not assigned
 - [ ] [Task 20: implement lease-validated cleanup of recognized recovery bundles and drafts](cleanup.md) — Queued after Task 19 and every artifact producer — Implementer: Not assigned
@@ -56,8 +56,10 @@ complete inventory for every retained producer.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
+
 - [Implement lease-validated cleanup of recognized recovery bundles and drafts](cleanup.md) - #Memory #Working #CLI #Task #Cleanup #Mutation #Contextual
 - [Implement diagnosis domains, severity, recommendations, and complete doctor projections](doctor.md) - #Memory #Working #CLI #Task #Doctor #Diagnosis #Contextual
 - [Implement explicit repair planning, dry run, application, verification, and recovery](repair.md) - #Memory #Working #CLI #Task #Repair #Mutation #Recovery #Contextual
 - [Implement complete workspace, lifecycle, managed-source, generated, and recovery-bundle status facts](status.md) - #Memory #Working #CLI #Task #Status #Observation #Contextual
+
 <!-- open-forge:generated-index:end -->

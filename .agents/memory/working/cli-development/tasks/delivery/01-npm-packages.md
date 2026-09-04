@@ -10,8 +10,8 @@ open-forge:
 
 - State: Historical 8/8 horizon complete and squash-integrated; the separate
   platform-expansion horizon is queued at phase 1 of 4, milestone 0 of 7.
-  Preparation is complete; mutation waits for Task 14 acceptance and a fresh
-  develop-based isolated lane.
+  Preparation is complete and activation is authorized from fresh Task 14
+  integration base `20807781` in a lane disjoint from Status.
 - Parent: [CLI Delivery](_delivery.md).
 - Profile: Reopened maintainer-selected simplified single-owner flow: one Task
   Mastermind, one Brilliant Implementer, one fresh reviewer, and at most one

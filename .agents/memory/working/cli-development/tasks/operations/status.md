@@ -8,7 +8,8 @@ open-forge:
 
 ## Task State
 
-- State: Queued after Task 14 “Extension Install”.
+- State: Queued and authorized to activate from completed Task 14 integration
+  base `20807781`.
 - Permanent mapping: Task 15 “Status” in the
   [project control ledger](../../project-control.md).
 - Planned progress horizon: five streamlined phases—Preflight, explicit

@@ -11,8 +11,9 @@ open-forge:
 - State: Active. The next-wave shared foundations, Route Inspect correction,
   Extension Create, and root Install are integrated. Root Install is complete at
   `c60fcb98a57e9ec80769b9cb1d399ce13a227863`, exact tree
-  `464a4a6b6ef6447209edffbf53df7348c70691ed`. Task 14 Extension Install is the
-  prioritized next lifecycle boundary after Route Move and Task 12 integrate.
+  `464a4a6b6ef6447209edffbf53df7348c70691ed`. Task 14 Extension Install is
+  complete at `20807781`, tree `4592a139`; root Update remains queued after the
+  complete Route Mutation lane.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Common prerequisites: Extension discovery and `index`; workspace mutations also
   consume Mutation Foundation.
@@ -76,7 +77,7 @@ bytes and is owned only through a read/write `FileShare.None` handle.
 
 - [x] [Implement creation of one reviewable Extension package outside a workspace](extension-create.md) — Complete; command-local squash `3ef81227ba50fba869f0129b958eabc6d0c29fbc`, protected public integration `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5`
 - [x] [Implement root Framework installation into a selected workspace](install.md) — Complete; final candidate `11994e4d21ddc807b7480afc39ae3612e5a69a56` is squash-integrated at `c60fcb98a57e9ec80769b9cb1d399ce13a227863`, exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed`
-- [ ] [Task 14: implement Extension installation from exact reviewed package identity](extension-install.md) — Queued after Task 12 — Implementer: Not assigned
+- [x] [Task 14: implement Extension installation from exact reviewed package identity](extension-install.md) — Complete at phase 5/5, milestone 8/8; accepted lane `a6b44f07`, tree `cd4c074d`, squash-integrated at `20807781`, tree `4592a139`
 - [ ] [Task 6: implement root Framework update from accepted lifecycle identity](update.md) — Queued after full Route Mutation M2 — Implementer: Not assigned
 - [ ] [Task 17: implement Extension update with source review, ownership, and recovery integrity](extension-update.md) — Queued after Task 6 and Task 14 — Implementer: Not assigned
 - [ ] [Task 18: implement Extension removal with preserved user content and recovery integrity](extension-remove.md) — Queued after Task 17 — Implementer: Not assigned

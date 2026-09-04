@@ -38,7 +38,7 @@ and outside this delivery.
 ## Child Tasks
 
 - [x] [Prepare and prove the accepted thin npm package graph and local-link workflow](01-npm-packages.md) — Historical 8/8 complete and integrated
-- [ ] [Continue Task 7 with the accepted x64 platform-expansion horizon](01-npm-packages.md#platform-expansion-horizon) — Queued at phase 1/4, milestone 0/7; preparation is complete, and mutation waits for Task 14 acceptance and a fresh develop-based isolated lane
+- [ ] [Continue Task 7 with the accepted x64 platform-expansion horizon](01-npm-packages.md#platform-expansion-horizon) — Queued at phase 1/4, milestone 0/7; preparation is complete and activation is authorized from fresh base `20807781` beside Status
 - [ ] [Complete current `linux-x64` native CI and reproducible artifact collection](02-native-ci.md) — Planned — Implementer: Not assigned
 - [ ] [Preserve future supply-chain expansion behind an explicit decision](03-supply-chain.md) — Deferred outside current D1 — Implementer: Not assigned
 - [ ] [Align public documentation, run complete x64 acceptance, publish from main, and close the program](04-release.md) — Planned — Implementer: Not assigned

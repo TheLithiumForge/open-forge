@@ -65,19 +65,14 @@ The accepted dependency order is:
    6/6. Corrected source `a0e6bc8d`, exact tree `9c4a33b1`, is
    squash-integrated at `495a7ed6`, the same exact tree. The accepted
    adoption-first slice is Task 14 Extension Install, Task 15 Status, and Task
-   16 Doctor. Task 14 “Extension Install” is active at phase 4/5, milestone 4/8.
-   Immutable Green `9a6ae2fa`, tree `c39cfcb`, follows accepted Gray and Red;
-   focused Unit `3/3`, Integration `26/26`, and EndToEnd `4/4` pass after
-   warning-free Release builds. Four fresh ordinary topic reviews are
-   dispositioned. The single grouped T14-C1 packet is frozen in Task receipt
-   `8bede7cd` and handed to the same Brilliant Implementer. Wider managed,
-   Native AOT, and package Green receipts are complete; affected and final gates
-   must run again against the corrected candidate under its Task Mastermind.
-   The strict Review Mastermind launched no topic because its named Git-object
-   tool was unavailable, so it consumed no review budget. Status and Doctor
-   read-only preparation is complete; Status's candidate revalidation is also
-   complete, but both remain queued and must activate only after Task 14 is
-   accepted and integrated. A later Task 16 activation reconnaissance began at
+   16 Doctor. Task 14 “Extension Install” is Complete at phase 5/5, milestone
+   8/8. Accepted lane `a6b44f07`, tree `cd4c074d`, is squash-integrated at
+   `20807781`, tree `4592a139`. Final warning-free managed evidence passes
+   `1711/917/169`; Native AOT passes `917/169`; managed-on-native passes `169`;
+   and the isolated offline package journey verifies launcher reachability,
+   Root Install's 44 effects, and Extension Install's 28 effects. Status is now
+   authorized to activate from that exact base; Doctor remains queued behind
+   Status Gray. A later Task 16 activation reconnaissance began at
    root `53805940`: a Sol/xhigh Task Mastermind successfully supervised three
    Luna/max Explorer inventories from `/root/doctor_activation_recon`. No
    build, test, source or workspace mutation, artifact, or activation occurred;
@@ -91,8 +86,8 @@ The accepted dependency order is:
    inventory at each frozen baseline; every later producer extends that
    inventory and affected evidence before its own acceptance. Task 7's
    Linux/macOS/Windows x64 expansion has completed preparation and authority
-   alignment at root `53805940`; its phase 1/4, milestone 0/7 follow-up may
-   implement beside Status only after Task 14 acceptance and a fresh lane. Task 5 Route
+   alignment at root `53805940`; its phase 1/4, milestone 0/7 follow-up may now
+   activate beside Status from fresh base `20807781`. Task 5 Route
    Remove, Task 6 Root Update, Tasks 17–20, Task 10 and conditional Task 21,
    Task 13
    implementation, and Task 22 follow in the project-control order.
@@ -143,8 +138,8 @@ or a general template/scaffold system.
 | Route Update                  | Bounded route content and metadata update                                              | Complete at accepted closeout `27df8325`, tree `b68d4349`; immutable behavior `8a398f2e`, tree `3bb4a224`; managed `1602/809/152`, native `809/152`, managed-on-native `152`, dogfood, and holistic review pass                                                                                                                                                   |
 | Task 4 Route Move             | Route movement with reference, navigation, lifecycle, and recovery integrity           | Complete at phase 6/6, milestone 12/12; closeout `631983ea`, tree `d6f6fdf7`, is squash-integrated at `d3d2dc1`, tree `6959b51e`; two-update completion grace is consumed and the Task is dequeued                                                                                                                                                                |
 | Task 12 authority remediation | Move accepted CLI Architecture detail to its correct authority without behavior change | Complete at phase 5/5, milestone 6/6; corrected source `a0e6bc8d`, exact tree `9c4a33b1`, is squash-integrated at `495a7ed6`, the same exact tree; two-update completion grace is consumed and the Task is dequeued                                                                                                                                               |
-| Task 14 Extension Install     | Install reviewed Extension packages with isolated lifecycle and recovery integrity     | Active at phase 4/5, milestone 4/8; Green `9a6ae2fa`, tree `c39cfcb`, is immutable; reviews and wider Green receipts are complete; frozen T14-C1 receipt `8bede7cd` is handed to the same Brilliant Implementer; `.agents/**` remains authoritative and `.apm/**` deferred                                                                                        |
-| Task 15 Status                | Report complete typed current facts for the frozen producer inventory                  | Queued/prepared with milestone 0/8 and no active phase; read-only candidate revalidation against immutable Task 14 Green is complete; Gray still owns exact catalogue/view signatures and no implementation is authorized                                                                                                                                         |
+| Task 14 Extension Install     | Install reviewed Extension packages with isolated lifecycle and recovery integrity     | Complete at phase 5/5, milestone 8/8; lane `a6b44f07`, tree `cd4c074d`, is squash-integrated at `20807781`, tree `4592a139`; final managed `1711/917/169`, Native `917/169`, managed-on-native `169`, and offline package journey pass; two subsequent progress-update grace slots remain                                                                         |
+| Task 15 Status                | Report complete typed current facts for the frozen producer inventory                  | Ready to activate with milestone 0/8 and no active phase from fresh base `20807781`; read-only revalidation is complete; Gray owns exact immutable catalogue/view signatures                                                                                                                                                                                      |
 | Task 16 Doctor                | Diagnose the complete Status contributor inventory without mutation                    | Queued at phase 0/5, milestone 0/8; read-only activation reconnaissance began at `53805940` and had a Sol/xhigh Task Mastermind supervise three Luna/max Explorer inventories; six-domain/112-kind contract and typed-view boundary unchanged; root clean at `bbf2d87c` after coordination ledgers only; no build, test, or mutation                              |
 | Task 13 native CI             | Prepare minimal build/test CI, manual publish, artifacts, and package targets          | Preparation completed at phase 1/3, milestone 2/6 on candidate `e7689696`, tree `c204c17b`, and is integrated by the commit containing this record from `develop` parent `de40d550`, tree `e6040c49`. The Task is queued behind all retained commands, Task 10, and conditional Task 21 remediation. Linux/macOS/Windows x64 are accepted; ARM remains undecided. |
 
@@ -266,9 +261,10 @@ engine, or ambient registration. Task 12 owns durable architecture placement;
 Task 15 Gray owns exact signatures. Doctor consumes Task 15's immutable typed
 views rather than parsing Status output or using direct producer fan-in, and
 neutral readers remain reusable. Composition alone does not change public
-Status or Doctor contracts. The Task 16 activation order is Task 14
-integration, Task 15 Gray and acceptance, then Doctor; Task 7 may run beside
-Status. Further Doctor work has high staleness risk until Task 15 is accepted.
+Status or Doctor contracts. Task 14 integration is complete. The remaining Task
+16 activation order is Task 15 Gray and acceptance, then Doctor; Task 7 may run
+beside Status. Further Doctor implementation has high staleness risk until Task
+15 is accepted.
 The exact public Root Install JSON result schema is accepted, implemented, and
 frozen, including fully present ordered facts and typed residual values `none`,
 `retained`, and `unknown`.
