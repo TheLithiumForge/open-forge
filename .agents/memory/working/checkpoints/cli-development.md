@@ -47,10 +47,11 @@ Its completion grace is consumed and it is dequeued.
 Task 15 “Status” is ACTIVE at phase 2/5, milestone 2/8. Gray
 `dac2aece`/`874bdcae` and bounded callable correction `df46fb9c`/`eda74e79` are
 recorded; Red is active on three exclusive Unit, Integration, and EndToEnd lanes.
-Task 16 “Doctor” is ACTIVE PREPARATION at phase 2/5, milestone 1/8 from the
-exact Status Gray snapshot. Activation is `26e245e4`/`680df032`; Gray is active,
-and Doctor deliberately stops before Red/production until Task 15
-acceptance/integration. No tests or completion are claimed.
+Task 16 “Doctor” is PREPARED at phase 2/5, milestone 2/8 from the exact Status
+Gray snapshot. Activation `26e245e4`/`680df032` and accepted Gray
+`ce627593`/`1f07abb7` are recorded. The lane is cleanly parked before
+Red/production until Task 15 acceptance/integration. No tests or completion are
+claimed.
 
 Task 7 “npm Package Manager Release and Local Linking” is Complete at phase 4/4,
 milestone 7/7. Accepted lane `a2942781`, tree `fe36fc3f`, is squash-integrated at
@@ -425,12 +426,10 @@ JSON, and redirected flows never prompt.
 
 1. Continue active Task 15 Status at phase 2/5, milestone 2/8 through its three
    exclusive Red lanes and later acceptance/integration. Continue Task 16
-   Doctor Gray preparation at phase 2/5, milestone 1/8 from the exact Status
-   Gray snapshot; stop before Red/production until Task 15 is accepted and
-   integrated. Task 7 package expansion is complete.
-2. Complete Doctor's active Gray preparation against the frozen immutable
-   contributor catalogue and typed views; do not parse Status output or add a
-   dynamic registry.
+   Doctor at its prepared phase 2/5, milestone 2/8 boundary until Task 15 is
+   accepted and integrated. Task 7 package expansion is complete.
+2. After Task 15 integration, revalidate Doctor's six shared view blobs before
+   Red; do not parse Status output or add a dynamic registry.
 3. Resume Task 5 Route Remove, then Task 6 root Update and the remaining
    project-control order.
 4. Retain thin D1 as current `linux-x64` build/smoke, packed
