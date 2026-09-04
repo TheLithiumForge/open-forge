@@ -9,9 +9,9 @@ open-forge:
 ## Task State
 
 - State: Historical 8/8 horizon complete and squash-integrated; the separate
-  platform-expansion horizon is queued at phase 1 of 4, milestone 0 of 7.
-  Preparation is complete and activation is authorized from fresh Task 14
-  integration base `20807781` in a lane disjoint from Status.
+  platform-expansion horizon is complete at phase 4 of 4, milestone 7 of 7. The
+  x64 graph, current-host link path, focused package evidence, fresh review, and
+  closeout are integration-ready.
 - Parent: [CLI Delivery](_delivery.md).
 - Profile: Reopened maintainer-selected simplified single-owner flow: one Task
   Mastermind, one Brilliant Implementer, one fresh reviewer, and at most one
@@ -20,15 +20,21 @@ open-forge:
   `CHANGES_REQUIRED`.
 - Historical correction budget: maximum 1; `T7-C1` was consumed by the grouped
   M7 repair.
-- Follow-up review budget: maximum 1, unused.
+- Follow-up review budget: maximum 1; `T7-XR1` was consumed with `PASS` and no
+  material findings.
 - Follow-up correction budget: maximum 1, unused.
 - Council budget: 0.
-- Current owner: none until activation; Task 13 owns Linux D1 only, while this
-  follow-up owns the accepted x64 package graph and journeys.
+- Current owner: Task Mastermind closeout is complete on branch
+  `codex/npm-package-expansion`; the Overseer owns integration. Task 13 retains
+  Linux D1 ownership.
 - Restart baseline: `195ff13ecff6a598dd18ef22a0335c1dc75e6736`.
 - Historical progress: 8 of 8 milestones complete in phase 5 of 5.
-- Follow-up progress: 0 of 7 milestones complete in phase 1 of 4; preparation is
-  complete.
+- Follow-up progress: 7 of 7 milestones complete in phase 4 of 4.
+- Follow-up M3-M5 implementation and evidence: `496df91ba59bc999fb0fea0b4bfb3a6aec5f69e3`,
+  tree `24e323ca3d37bda9ebea99568d62ba20d0caed0a`.
+- Follow-up M6 fresh-review candidate: `aa7450281bc17b361b0a79facfa82bb346cf63ba`,
+  tree `8f61dc066aa277dde76e12eed4915df8e4139a41`.
+- Follow-up M7 accepted closeout is the commit containing this record.
 - M3 package staging is committed on the restarted task branch as
   `00e09b24059e26e8dbec8cff129bc404876c9f0c`.
 - M4 local linking and root migration are committed on the restarted task branch
@@ -59,11 +65,11 @@ open-forge:
 
 The accepted public package graph is one main package plus optional Linux x64,
 Darwin x64, and Windows x64 platform packages. The historical Task 7
-implementation realizes Linux and Windows x64; the Darwin x64 package is the
-missing follow-up implementation. The same package-owned tooling can stage the
-current host packages and explicitly link or unlink them for local CLI use. It
-does not publish, download, install from a registry, or add CLI domain behavior.
-ARM remains undecided and outside this Task.
+implementation realized Linux and Windows x64; this follow-up adds the Darwin
+x64 package and completes the accepted graph. The same package-owned tooling can
+stage the current host packages and explicitly link or unlink them for local CLI
+use. It does not publish, download, install from a registry, or add CLI domain
+behavior. ARM remains undecided and outside this Task.
 
 ## Package Contract
 
@@ -164,6 +170,134 @@ The follow-up uses one Task Mastermind, one Brilliant Implementer, and one fresh
 reviewer, with at most one grouped correction. Its journey never uses live
 global link or unlink in evidence.
 
+## Platform Expansion Activation
+
+- Working branch: `codex/npm-package-expansion`.
+- Activation base: `e321fd45067cf7e2105e6ed62334636afb5fa136`, tree
+  `5e84659b5310b8cc1672764b8ae3ce253122cbb4`.
+- Authority relationship: the activation base is a clean descendant of Task 14
+  integration `20807781`; the Task 7 package source is unchanged from the
+  accepted ten-file historical foundation.
+- M1 mapping: `linux-x64` owns Linux x64 with glibc, `osx-x64` maps to the
+  `darwin-x64` npm package for macOS x64, and `win-x64` owns Windows x64. ARM is
+  undecided and excluded.
+- Profile: the maintainer-selected simple follow-up with one Task Mastermind,
+  one Brilliant Implementer, one fresh whole-task reviewer, and at most one
+  grouped correction.
+- Consequence and recovery: the Task changes non-shipping package source and a
+  local developer command. Git and ignored isolated artifacts provide recovery;
+  publication, registry contact, and live global link state stay outside local
+  evidence.
+- Standard capability: ordinary TypeScript, Node process and filesystem APIs,
+  npm optional packages, and the existing .NET publish boundary are sufficient.
+  Exceptional machinery is `none`.
+
+### M2 Frozen Boundary
+
+| Accepted behavior                                                                                                                                                                  | Decisive evidence                                                                                                                                                             |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The main template declares exact synchronized optional dependencies for Linux, macOS, and Windows x64.                                                                             | Parse the four tracked manifests and inspect the staged main manifest.                                                                                                        |
+| The package model maps `linux-x64`, `osx-x64`, and `win-x64` to the accepted npm package identities, host facts, and native filenames.                                             | Strict TypeScript plus isolated staging and packing for all three runtimes.                                                                                                   |
+| Direct local linking recognizes the current accepted host, publishes its existing .NET RID, stages its package pair, and uses the existing platform-to-main-to-root link sequence. | Static review and focused TypeScript checks only; local or global link/unlink is never executed as evidence.                                                                  |
+| The launcher selects the matching optional package and forwards one harmless invocation to its payload.                                                                            | One Linux-host `PackageEndToEnd` journey stages, packs, installs offline, resolves the launcher, invokes `--version`, and asserts the owned forwarding result and completion. |
+
+- Expected production paths:
+  `src/cli/package-managers/npm/darwin-x64/package.json`, `package-model.ts`,
+  `stage.ts`, `main/open-forge.ts`, `main/package.json`, `manage.ts`, and
+  `local-link.ts`. The Linux and Windows templates remain package-owned
+  integration neighbors and change only if the frozen synchronized graph
+  requires it.
+- Expected evidence path:
+  `src/cli/package-managers/npm/package-manager.e2e.test.ts`; it remains the sole
+  package-manager test and contains one host-selected journey. Internal helper
+  contracts and npm, Node, operating-system, runtime, library, or other
+  third-party behavior are explicitly excluded from assertions.
+- Direct integration neighborhood: the repository `LICENSE`, ignored
+  `/artifacts/`, the existing .NET root publish project, and the root TypeScript,
+  lint, formatting, and package-script configuration are read-only inputs.
+- Protected paths and meaning: all C# source and tests, `.github/**`, root
+  `package.json` and lockfiles, Task 13 and Task 22 records, CLI architecture and
+  distribution authority, unrelated package managers, `/scripts`, and
+  `src/cli/root/development-link`. No tracked JavaScript, MJS, or CJS may be
+  added. Generated JavaScript is allowed only in ignored artifacts.
+- Focused acceptance: strict root TypeScript, targeted lint and formatting,
+  parsed package manifests, three-runtime isolated stage and pack evidence, the
+  sole `1/1` Linux-host `PackageEndToEnd` journey, source inventory, protected
+  path, and diff checks. Zero selected or executed tests, warnings, skips,
+  network access, or stale artifacts cannot prove a gate.
+- Stop before a new dependency, package-manager framework, postinstall,
+  download, fallback, telemetry, registry contact, publication, live link or
+  unlink, remote mutation, C# or CLI behavior change, root package change, ARM
+  expansion, another test, or third-party behavior assertion.
+
+### M3-M5 Implementation And Evidence Receipt
+
+- Candidate: `496df91ba59bc999fb0fea0b4bfb3a6aec5f69e3`, tree
+  `24e323ca3d37bda9ebea99568d62ba20d0caed0a`.
+- Changed boundary: the Darwin template plus the existing main template,
+  package model, stage entry, manager entry, and sole package journey. The
+  model-driven launcher and local-link implementation required no change.
+- Toolchain: Node `24.19.0`, npm `11.17.0`, TypeScript `6.0.2`, ESLint
+  `10.9.1`, Prettier `3.9.6`, `typescript-eslint` `8.68.0`, and `@types/node`
+  `26.3.0` from the existing read-only dependency installation.
+- Strict TypeScript, targeted ESLint, and targeted Prettier passed with no
+  warnings. Four of four tracked manifests parsed with the exact package graph
+  and metadata.
+- Isolated staging passed for `linux-x64`, `osx-x64`, and `win-x64`; six of six
+  package tarballs packed offline. The platform tarballs contained only the
+  manifest, license, and exact native filename, while each main tarball
+  contained the launcher, package model, manifest, and license.
+- The sole `PackageEndToEnd` journey selected, discovered, executed, and passed
+  `1/1/1/1`; failures, cancellations, skips, todos, and warnings were zero. It
+  staged and packed the Linux pair, installed both tarballs offline in
+  isolation, resolved the installed main launcher, forwarded `--version` and
+  an owned environment marker to the inert owned payload, preserved its exact
+  output and empty stderr, and completed successfully.
+- The exact six-path inventory, eleven-file npm source inventory, sole-test
+  count, no-authored-JavaScript scan, protected-path comparison, diff check, and
+  clean dependency-residue check passed. Generated JavaScript and package
+  artifacts remained ignored.
+- Dependency reuse during final evidence used one explicit temporary read-only
+  `node_modules` symlink because ordinary TypeScript resolution does not consume
+  `NODE_PATH`. The exact symlink was removed before the source commit and final
+  inventory; no ignore or source accommodation was added.
+
+### M6 Review And M7 Closeout
+
+- Fresh whole-task review `T7-XR1` inspected candidate `aa745028`, tree
+  `8f61dc066aa277dde76e12eed4915df8e4139a41`, against frozen baseline
+  `beefac6a`, tree `374b72a9c1bf2e52dbf93faa9b050257cf25cebf`.
+  It passed behavior and package contracts, production architecture and
+  structure, and test/evidence quality with no material findings.
+- The review independently confirmed the exact six-path change, synchronized
+  three-package optional graph, correct RID and host mappings, model-driven
+  launcher and local link, TypeScript-only source, sole owned package journey,
+  clean protected paths, and the staged and packed artifacts.
+- No grouped correction was needed, so the follow-up correction budget remains
+  unused and the reviewed executable candidate is unchanged.
+- Accepted limits: only Linux executed the installed-launcher journey. Darwin
+  and Windows received staging and packing evidence. Live link or unlink, native
+  publication for those hosts, registry contact, publication, and remote effects
+  were intentionally not executed.
+
+### Follow-up Flow Evaluation
+
+- One Task Mastermind, one Brilliant Implementer, and one fresh Reviewer were
+  used. The implementation had one ownership handoff back to the Task
+  Mastermind, one review handoff, no semantic correction cycle, no accepted or
+  rejected finding, no integration conflict, and no defect found after review.
+- Three setup-only evidence issues occurred before the final gates: shared
+  dependencies were initially invisible to TypeScript in the isolated worktree,
+  one npm configuration attempt reused an invalid path combination, and one
+  source-inventory assertion trimmed the first porcelain byte. None changed
+  production or test meaning. The final receipts used a temporary dependency
+  symlink with exact cleanup, distinct npm configuration, and literal inventory
+  comparison.
+- The simple flow fit this bounded package-graph delta better than a multi-phase
+  implementation team. Keep it as a task-specific option for similarly small,
+  already-frozen delivery changes; isolated-worktree dependency visibility
+  should be preflighted before future TypeScript evidence.
+
 ## Review Disposition
 
 - `T7-R1-F1` was accepted and fixed by letting cleanup skip only an absent
@@ -171,6 +305,8 @@ global link or unlink in evidence.
 - `T7-R1-F2` was accepted and fixed by distinguishing the accepted non-shipping
   package source from the separately authorized publication effect in the
   development guide.
+- `T7-XR1` passed the platform-expansion candidate with no material findings;
+  no follow-up correction identifier was consumed.
 
 ## Historical Evidence Boundary
 

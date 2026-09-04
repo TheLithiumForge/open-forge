@@ -3,6 +3,7 @@ import { chmodSync, copyFileSync, mkdirSync, rmSync, statSync, writeFileSync } f
 import { createRequire } from "node:module";
 import { join } from "node:path";
 
+import darwinPackageTemplate from "./darwin-x64/package.json" with { type: "json" };
 import linuxPackageTemplate from "./linux-x64/package.json" with { type: "json" };
 import mainPackageTemplate from "./main/package.json" with { type: "json" };
 import {
@@ -33,6 +34,7 @@ export interface StagedPackages {
 }
 
 const platformPackageTemplates = {
+  "osx-x64": darwinPackageTemplate,
   "linux-x64": linuxPackageTemplate,
   "win-x64": windowsPackageTemplate,
 } as const satisfies Record<SupportedRuntime, { name: string; version: string; private: boolean }>;
@@ -72,6 +74,7 @@ export function stagePackages(request: StageRequest): StagedPackages {
     ...publicMainTemplate,
     version,
     optionalDependencies: {
+      [PlatformPackages["osx-x64"].packageName]: version,
       [PlatformPackages["linux-x64"].packageName]: version,
       [PlatformPackages["win-x64"].packageName]: version,
     },

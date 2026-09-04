@@ -17,6 +17,7 @@
     "node": ">=22.18.0"
   },
   "optionalDependencies": {
+    "@thelithiumforge/open-forge-darwin-x64": "0.0.0",
     "@thelithiumforge/open-forge-linux-x64": "0.0.0",
     "@thelithiumforge/open-forge-win-x64": "0.0.0"
   },

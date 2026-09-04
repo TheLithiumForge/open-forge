@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
-import { accessSync, chmodSync, constants, mkdirSync, mkdtempSync, readdirSync, realpathSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { execFileSync, spawnSync } from "node:child_process";
+import { chmodSync, mkdirSync, mkdtempSync, readdirSync, realpathSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -9,9 +9,13 @@ import { fileURLToPath } from "node:url";
 const repositoryRoot = fileURLToPath(new URL("../../../../", import.meta.url));
 const managerPath = join(import.meta.dirname, "manage.ts");
 const localGitSha = "0123456789abcdef0123456789abcdef01234567";
+const fixtureArgument = "--version";
+const fixtureEnvironmentName = "OPEN_FORGE_PACKAGE_E2E";
+const fixtureEnvironmentValue = "forwarded";
+const fixtureOutput = "open-forge owned package fixture\n";
 const npmFlags = ["--offline", "--ignore-scripts", "--no-save", "--no-package-lock", "--no-audit", "--no-fund"] as const;
 
-test("PackageEndToEnd: packed npm packages install the current Linux payload", () => {
+test("PackageEndToEnd: installed main launcher forwards one harmless invocation to the current Linux payload", () => {
   const npmCli = process.env["npm_execpath"];
   if (npmCli === undefined) {
     throw new Error("Run the package-manager journey through its root npm script.");
@@ -26,7 +30,16 @@ test("PackageEndToEnd: packed npm packages install the current Linux payload", (
     const npmEnvironment = createNpmEnvironment(temporaryRoot);
 
     mkdirSync(join(temporaryRoot, "native"), { recursive: true });
-    writeFileSync(nativeArtifact, "#!/bin/sh\nexit 97\n", "utf8");
+    writeFileSync(
+      nativeArtifact,
+      `#!/bin/sh
+test "$#" -eq 1 || exit 90
+test "$1" = "${fixtureArgument}" || exit 91
+test "$${fixtureEnvironmentName}" = "${fixtureEnvironmentValue}" || exit 92
+printf '%s' "${fixtureOutput}"
+`,
+      "utf8",
+    );
     chmodSync(nativeArtifact, 0o755);
 
     execFileSync(process.execPath, [managerPath, "stage", artifactsRoot, "linux-x64", nativeArtifact, "local", localGitSha], {
@@ -50,9 +63,19 @@ test("PackageEndToEnd: packed npm packages install the current Linux payload", (
     assert.equal(statSync(mainDirectory).isDirectory(), true);
     assert.equal(statSync(platformDirectory).isDirectory(), true);
     assert.equal(statSync(installedNative).isFile(), true);
-    accessSync(installedNative, constants.X_OK);
-    accessSync(installedBin, constants.F_OK);
     assert.equal(realpathSync(installedBin), realpathSync(installedLauncher));
+
+    const completion = spawnSync(realpathSync(installedBin), [fixtureArgument], {
+      cwd: installRoot,
+      encoding: "utf8",
+      env: { ...npmEnvironment, [fixtureEnvironmentName]: fixtureEnvironmentValue },
+      shell: false,
+    });
+    assert.equal(completion.error, undefined);
+    assert.equal(completion.signal, null);
+    assert.equal(completion.status, 0);
+    assert.equal(completion.stdout, fixtureOutput);
+    assert.equal(completion.stderr, "");
   } finally {
     rmSync(temporaryRoot, { force: true, recursive: true });
   }

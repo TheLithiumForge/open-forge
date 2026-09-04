@@ -5,6 +5,14 @@ export const FullGitShaPattern = /^[0-9a-f]{40}$/u;
 export const StableReleaseVersionPattern = /^(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)$/u;
 
 export const PlatformPackages = {
+  "osx-x64": {
+    runtime: "osx-x64",
+    packageName: "@thelithiumforge/open-forge-darwin-x64",
+    directoryName: "open-forge-darwin-x64",
+    nodePlatform: "darwin",
+    nodeArchitecture: "x64",
+    nativeFileName: "open-forge",
+  },
   "linux-x64": {
     runtime: "linux-x64",
     packageName: "@thelithiumforge/open-forge-linux-x64",
