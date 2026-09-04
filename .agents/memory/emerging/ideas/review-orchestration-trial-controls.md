@@ -603,6 +603,30 @@ tree. No recursive carrier hash is required.
 
 ## Unverified Trial Questions
 
+### Task 15 Status Seam Runtime Observation
+
+The first Task 15 production seam tested two standing topic roles against
+immutable commit `44104f03f1d596b47f395eeb7798b974fb88877c`, tree
+`71a19f8563a5c4c5e3b99fd8dd223a0849c79617`, while the original Brilliant
+Implementer continued later Green work. The test-evidence and
+architecture-ownership-refactoring roles both returned a topic gap before
+semantic inspection because the active Codex runtime did not expose their
+required `inspect-git-objects` tool and their authored policy forbids ordinary
+filesystem or Git fallback. They consumed no semantic review unit and produced
+no finding.
+
+The supervising Task Mastermind correctly treated this as a review-transport
+gap rather than an implementation or agent failure. It replaced the two roles
+with one Luna/max general Reviewer and one Sol/xhigh Challenger that have normal
+read-only Git and filesystem authority over the same immutable commit. This
+preserved the implementation owner and avoided blocking Green.
+
+This sample strengthens the existing cross-runtime caveat: topic-role routing
+must preflight the named inspection capability, or the packet must carry the
+bounded immutable content that the role can inspect. Until that condition is
+met, the standing topic files are not a reliable default in Codex. A prompt
+cannot compensate for a deliberately denied inspection surface.
+
 The following remain experimental:
 
 - automatic or per-file fan-out rather than explicit coherent checkpoints;

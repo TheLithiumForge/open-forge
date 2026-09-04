@@ -8,15 +8,18 @@ open-forge:
 
 ## Task State
 
-- State: Queued and authorized to activate from completed Task 14 integration
-  base `20807781`.
+- State: Active in isolated worktree
+  `/home/tedy/dev/open-forge-worktree/status`, branch `codex/status`, from exact
+  activation base `e321fd45067cf7e2105e6ed62334636afb5fa136`, tree
+  `5e84659b5310b8cc1672764b8ae3ce253122cbb4`.
 - Permanent mapping: Task 15 “Status” in the
   [project control ledger](../../project-control.md).
-- Planned progress horizon: five streamlined phases—Preflight, explicit
-  Gray/Red, one coherent implementation and focused-verification pass, one
-  fresh whole-task review with at most one grouped improvement pass, and
-  acceptance. While queued, no phase is active and milestone 0 of 8 remains
-  pending activation.
+- Current progress: phase 3 of 5, milestone 3 of 8. The five streamlined
+  phases are Preflight, explicit Gray/Red, one coherent implementation and
+  focused-verification pass, one fresh whole-task review with at most one
+  grouped improvement pass, and acceptance. Corrected Gray and Red are
+  accepted. Coherent production and focused verification continue from the
+  first production seam.
 - Incremental completeness: the first accepted horizon covers every observable
   producer present in its exact frozen baseline and records that complete typed
   contributor inventory. It does not call absent future commands healthy,
@@ -129,6 +132,27 @@ Activation remains blocked only on Task 14 acceptance/integration plus Gray
 closure. Any change to lifecycle publication, generated topology, source
 identity, ownership, recovery, verification, or composition invalidates this
 revalidation.
+
+## Active Implementation Receipt
+
+Corrected raw-snapshot Gray `b859d0aafd34bbe0ba86ef466e0f9eb441e0a634`,
+tree `8f417c58306dbd1f2b80084993bb683b93bec207`, and corrected Red
+`d768ca5292eec73493ad62fe843063b317b1f7bb`, tree
+`7a9b785b976182959868b83ee2c82eb547f70f4c`, are accepted. Resume checkpoint
+`d120d49eca2b02ecda3ccaab5a3f3f573dc5abc0`, tree
+`28f23430e312276fecc7c61efaa98e2c0ad6562b`, restored the retained production
+work under the same Brilliant Implementer.
+
+The first coherent production seam is
+`44104f03f1d596b47f395eeb7798b974fb88877c`, tree
+`71a19f8563a5c4c5e3b99fd8dd223a0849c79617`. It implements Status observation
+aggregation and one immutable lifecycle-document snapshot shared by both
+lifecycle contributors. Core Release builds with zero warnings and errors.
+The direct Status operation Integration seam passes, while the other nine
+selected Status Integration cases remain expected Green work at absent command
+composition or rendering. Sixty-two selected lifecycle-store and Extension
+compatibility tests pass. Production continues from this checkpoint; no task
+completion or broader evidence claim is made.
 
 ## Expected Outcome
 
