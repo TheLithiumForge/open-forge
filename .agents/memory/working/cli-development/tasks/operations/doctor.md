@@ -8,29 +8,26 @@ open-forge:
 
 ## Task State
 
-- State: The original coherent production and focused verification are complete
-  in isolated worktree
+- State: Complete and squash-integrated. The accepted isolated lane is
   `/home/tedy/dev/open-forge-worktree/doctor-implementation`, branch
-  `codex/doctor-implementation`, from exact integrated Status acceptance base
-  `bb3a03f64fed6e84def7a6d5e0cefe12f9f75f7d`, tree
-  `41669500d8e2a49a03412975c8fd00f7635a4b6a`, and fresh whole-task review
-  `T16-R1` is consumed. T16-C1 is actively mutating the producer-supported
-  scope in unstaged production from the committed Gray boundaries; the current
-  109-kind catalogue Gray amendment is pending. Full managed
-  and supported Native AOT acceptance gates remain uncounted.
+  `codex/doctor-implementation`, at commit
+  `a48a16cd80102331bca6d6cb3498160f37eb6b3f`, tree
+  `90e66b0562fea90c2aa2fed9bd573c59676124bd`. Local `develop` integrates that
+  exact tree at `59276c3bd764be4601ea92acbf4742b9bfa86837` without duplicating
+  the equivalent prose cleanup already present there. Full managed, public,
+  supported `linux-x64` Native AOT, managed-on-native, focused, and structural
+  acceptance gates are complete.
 - Permanent mapping: Task 16 “Doctor” in the
   [project control ledger](../../project-control.md).
-- Current progress: phase 4 of 5, milestone 4 of 8. The five streamlined phases
+- Current progress: phase 5 of 5, milestone 8 of 8. The five streamlined phases
   are Preflight, explicit Gray/Red, one coherent implementation and
   focused-verification pass, one fresh whole-task review with at most one
   grouped improvement pass, and acceptance. Preflight, Status acceptance and
   integration, Doctor activation, the post-Status Gray reconciliation, Red,
   coherent production, focused verification, the fresh whole-task review, and
-  all committed Gray amendments through `ce4e98b2` are complete. The current 109-kind
-  catalogue Gray amendment is pending.
-  Milestone 5 remains uncounted until the required full managed and supported
-  Native AOT evidence is fresh after this pending amendment and any grouped
-  correction.
+  all committed Gray amendments, coherent production, `T16-R2`, grouped
+  correction `T16-C2`, fresh whole-task evidence, acceptance, and integration
+  are complete.
 - Incremental completeness: the first accepted horizon diagnoses the complete
   explicit contributor inventory frozen by Task 15. A healthy supported
   observation may have zero findings, but the current result remains honestly
@@ -191,18 +188,13 @@ remain independent facts.
   Markdig, ZIP, BCL, OS, xUnit, or test-platform internals. Zero-test, stale
   `--no-build`, skipped, warning-bearing, partially loaded, or wrong-scope
   negative receipts cannot prove a gate.
-- Budgets: council 0; fresh whole-task review 1 (`T16-R1`, consumed); grouped
-  correction 1 (`T16-C1`, actively mutating the producer-supported scope from
-  immutable accepted Gray; this amendment concerns exactly the two Extension
-  emission and coverage-closure horizons while other T16-C1 production and
-  evidence remain active/uncounted). Gray and Red are separate frozen
-  boundaries, not review-budget units. Prior read-only reconnaissance consumes
-  no review unit.
-- Current implementation owner: Curie, the Brilliant Implementer, is actively
-  mutating the producer-supported scope from immutable accepted Gray. No
-  production is staged or committed. This amendment concerns exactly the two
-  Extension emission and coverage-closure horizons; other T16-C1 production and
-  evidence remain active/uncounted.
+- Budgets: council 0; the accepted whole-task review boundaries are consumed;
+  grouped corrections `T16-C1` and `T16-C2` are complete. Gray and Red remain
+  separate frozen boundaries, not review-budget units. Prior read-only
+  reconnaissance consumed no review unit.
+- Current implementation owner: none. Sagan's Task Mastermind boundary and
+  Curie's Brilliant Implementer boundary are complete; the accepted lane and
+  local integration are clean.
 - Stop and escalation: begin production only from the immutable Gray and Red
   boundaries; stop before changing public or cross-task meaning, producer or catalogue
   ownership direction, shared lifecycle/source/reference/recovery identity,
@@ -511,13 +503,9 @@ self-referential Task record, are:
 The second amendment was committed as
 `074a050c6c60baa67cb12c8ce29693aea5b473c2`, tree
 `73d6069ab7c25b3eb3c8fb45d1775acc93bb3272`, with parent
-`1d8624d3435e566ab3413eb91a48106c0eb25d0f`; it remains immutable. Phase remains
-4/5 and milestone remains 4/8. The reviewed production commit and tree remain
-immutable. Grouped correction unit `T16-C1` is actively mutating the
-producer-supported scope; this amendment concerns exactly the two Extension
-emissions and their coverage closure while other T16-C1 production and evidence
-remain active/uncounted. No production is staged or committed. No queue change
-occurs.
+`1d8624d3435e566ab3413eb91a48106c0eb25d0f`; it remains immutable. At that
+historical boundary, phase and milestone remained 4/5 and 4/8 while grouped
+correction `T16-C1` was pending. The final accepted state is recorded below.
 
 ## Current Doctor-v1 Disposition
 
@@ -529,11 +517,12 @@ aliases, migration, fallback, or synthetic producers; the schema discriminator
 remains exactly `1`. The historical `112`-kind and `52`-emission receipts above
 remain historical facts and are not current completeness claims.
 
-T16-C1 targets 107 supported producer-backed emissions plus exactly two accepted
+The accepted implementation supplies 107 supported producer-backed emissions
+plus exactly two accepted
 Extension deferrals: `extension.bridge-registration` and
 `extension.unmanaged-like-content`. Task 16 emits neither without the required
 producer facts and retains one honest bounded limitation for each unavailable
-Extension observation horizon. Route Remove remains queued with its accepted
+Extension observation horizon. Route Remove is next with its accepted
 positive-unmanaged removal boundary. Route Inspect's projection-derived synthetic
 overwrite-ambiguity conflict remains command-local and is one bounded Task 10
 audit input, not a Doctor finding or a new task.
@@ -584,6 +573,60 @@ excluding this self-referential Task record, are:
   `82dd32d113abc8a2a5e1fcf6d26d323c2f8634517ab14d1ed32cc8838358aad5`.
 - Project control ledger:
   `e827360cf90518d65940115470a4d398d6d87394648a7b96a582852a32f63152`.
+
+## Acceptance And Integration Closeout
+
+Fresh whole-task review `T16-R2` found eight material issues (`F1`–`F8`). Sagan
+revalidated every finding and supervised Curie's one grouped `T16-C2`
+correction. The immutable accepted correction chain is:
+
+- `1e5abb672c577f246fc18acc417ff3b49f8445a1`, tree
+  `3358722eea919e2baace5f46a267269f6b955e5e`, for the 28-path C# correction
+  plus the byte-identical sealed restart handoff;
+- `e0f23e2c23f966981a21ab04d0bb6addd5e4cfb0`, tree
+  `9d792059cf62331d3bd2f001bf8fad269b945843`, for the stale neutral source-enum
+  evidence; and
+- `a48a16cd80102331bca6d6cb3498160f37eb6b3f`, tree
+  `90e66b0562fea90c2aa2fed9bd573c59676124bd`, for the exact two-path Route List
+  consumer correction exposed by the full Integration gate.
+
+No immutable commit was amended. The final Doctor lane and index are clean.
+Exactly three simple public Doctor End-to-End journeys remain. The four exact
+handoff commands passed `3/3`, `3/3`, a warning-free End-to-End Release build,
+and `3/3`. Formatting, static, protected-path, callable-shape,
+prohibited-pattern, and line-length checks passed. The Route List regression
+selection passed `8/8`; its complete suites passed Unit `137/137`, Integration
+`82/82`, and EndToEnd `18/18`.
+
+Fresh final acceptance under SDK `10.0.111` passed the Release solution build
+with zero warnings and errors; managed Unit `1768/1768`, Integration `937/937`,
+and EndToEnd `175/175`; supported `linux-x64` Native AOT root, Integration, and
+EndToEnd publication; native Integration `937/937` and EndToEnd `175/175`; and
+managed-on-native Doctor `3/3` and complete EndToEnd `175/175`. Every test gate
+had zero failures and skips. Accepted native artifact SHA-256 identities are:
+
+- root: `5d148821fd4fb4d16c17b588f43b30d1e2f642886d96ce919999ec3b6db5c20f`;
+- version marker: `fe4d33c8c2c76a67725ea7d54dafb79c485bd2819a317d7235a6910157ef76f4`;
+- Integration: `48a65690ceb9787e9e3bd72c942256901dd4cc8009b1ff6d922873b65639b686`;
+  and
+- EndToEnd: `dc7d17c66aefbf74a3fe4eac63c4cf82506dc40b92d845da6797a857a0cbd85e`.
+
+All three executables are stripped x86-64 ELF PIE files. The grouped 28-path C#
+inventory hash is
+`24fde84c837d2aaf0ca471e3247dcb527d805fff040543b01a9b966e673bf065`;
+its content aggregate is
+`13f369666fdeb209c94bcf0b5cda9d03f8d746d67d440f47988c5f97a3ecaca4`.
+The sealed handoff hash is
+`e6f232cbfa6abbbfb4d8b9a6a57b01a170e74d0f28d0fee6624ac259541f4880`.
+
+Doctor commit `e602e2c1990930338286f938ffb3eb747f31daaa` and `develop` commit
+`f8e542a96c9f55679a8435f941bdd15ae67c0a78` have identical stable patch ID
+`35f5ded05af2e778b6934f8e253cec7f7a7cb835` for the isolated prose cleanup.
+Squash integration `59276c3bd764be4601ea92acbf4742b9bfa86837` therefore has exact accepted
+tree `90e66b0562fea90c2aa2fed9bd573c59676124bd` without duplicating those three
+paths. Its post-integration Release solution build passed with zero warnings and
+errors, and the exact public Doctor selection passed `3/3` with zero failures
+and skips. Task 16 is complete at phase 5/5, milestone 8/8.
 
 ## Read-Only Preparation And Activation Reconnaissance
 

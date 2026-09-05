@@ -75,22 +75,19 @@ errors; managed Unit `1739/1739`, Integration `933/933`, EndToEnd `172/172`;
 managed EndToEnd against the native root `172/172`; native Integration
 `933/933`; native EndToEnd `172/172`; all with `0` failures, `0` skips, and
 `0` warnings. Every later producer extends the explicit contributor inventory
-and affected Status evidence before acceptance. Task 16 “Doctor” is ACTIVE at
-phase 4/5, milestone 4/8 in worktree
-`/home/tedy/dev/open-forge-worktree/doctor-implementation`, branch
-`codex/doctor-implementation`. Its immutable Gray chain now ends at
-`ce4e98b2166768fafd99974e4edca8263a3f85c2`, tree
-`f014287b1402d34532265a53fb3755e96d12db7d`; Curie is the sole T16-C1 writer
-under Sagan, with Bacon as Gray. The current unreleased schema-v1 Doctor
-catalogue contains 109 kinds and targets 107 supported emissions plus two
-accepted Extension deferrals. This accepted 109-kind decision is the current
-Gray boundary under review. Route Remove remains queued with its accepted
-positive-unmanaged removal boundary; Route Inspect's synthetic overwrite-ambiguity
-conflict is one bounded Task 10 audit input, not a Doctor finding or a new task.
-Recovery attribution remains unreleased schema v1, old unattributed or
-malformed final bundles fail closed, full Doctor evidence remains uncounted,
-and no production is staged or committed. The earlier prepared alignment and
-its Status `2521574d` snapshot remain historical context.
+and affected Status evidence before acceptance. Task 16 “Doctor” is complete at
+phase 5/5, milestone 8/8. Accepted lane `a48a16cd`, exact tree `90e66b05`, is
+squash-integrated at `59276c3b` with the same tree. Full managed, public,
+supported `linux-x64` Native AOT, managed-on-native, focused, structural, and
+post-integration gates passed. The unreleased schema-v1 Doctor catalogue
+contains 109 kinds and supplies 107 supported emissions plus two accepted
+Extension observation limitations. Route Remove is next with its accepted
+positive-unmanaged removal boundary; Route Inspect's synthetic
+overwrite-ambiguity conflict remains one bounded Task 10 audit input, not a
+Doctor finding or a new task. Recovery attribution remains unreleased schema
+v1, and old unattributed or malformed final bundles fail closed. The earlier
+prepared alignment and its Status `2521574d` snapshot remain historical
+context.
 
 Task 7 “npm Package Manager Release and Local Linking” is Complete at phase 4/4,
 milestone 7/7. Accepted lane `a2942781`, tree `fe36fc3f`, is squash-integrated at
@@ -424,27 +421,26 @@ Every later producer extends the explicit contributor inventory and affected
 Status evidence before acceptance. Its historical completion-bearing update
 had a `2 updates remaining` grace; that grace is consumed.
 
-Task 16 “Doctor” is ACTIVE at phase 4/5, milestone 4/8 in worktree
-`/home/tedy/dev/open-forge-worktree/doctor-implementation`, branch
-`codex/doctor-implementation`. Its immutable Gray chain now ends at
-`ce4e98b2166768fafd99974e4edca8263a3f85c2`, tree
-`f014287b1402d34532265a53fb3755e96d12db7d`. Curie is the sole T16-C1
-writer. Route Remove remains queued with its accepted positive-unmanaged
-removal boundary; Route Inspect's synthetic overwrite-ambiguity conflict is one bounded Task 10
-audit input, not a Doctor finding or a new task. Recovery
-attribution remains unreleased schema v1; old unattributed or malformed final
-bundles fail closed. Task 16 defers exactly `extension.bridge-registration`
-to Task 17 and `extension.unmanaged-like-content` to Task 18. See the [Task 16
-Doctor record](../cli-development/tasks/operations/doctor.md) and [project
-control ledger](../cli-development/project-control.md) for implementation
-detail and live task state. Full Doctor evidence and acceptance remain
-uncounted. No implementation Task outside the active Task 16 lane is active.
+Task 16 “Doctor” is complete at phase 5/5, milestone 8/8. Its accepted lane is
+`a48a16cd80102331bca6d6cb3498160f37eb6b3f`, exact tree
+`90e66b0562fea90c2aa2fed9bd573c59676124bd`; local squash integration is
+`59276c3bd764be4601ea92acbf4742b9bfa86837`, the same exact tree. Full managed,
+public, supported `linux-x64` Native AOT, managed-on-native, focused,
+structural, and post-integration Doctor evidence passed. Recovery attribution
+remains unreleased schema v1; old unattributed or malformed final bundles fail
+closed. Doctor retains exactly `extension.bridge-registration` for Task 17 and
+`extension.unmanaged-like-content` for Task 18 as honest unavailable
+observation horizons. Route Inspect's synthetic overwrite-ambiguity conflict
+remains one bounded Task 10 audit input, not a Doctor finding or a new task. See
+the [Task 16 Doctor record](../cli-development/tasks/operations/doctor.md) and
+[project control ledger](../cli-development/project-control.md) for the exact
+accepted identities and evidence. No implementation Task is active during this
+closeout boundary; Route Remove is next.
 
 Route Remove is the remaining Route Mutation M2 leaf, and the full M2 lane still
-precedes root Update M3. Task 12 is integrated, and the current project-control
-priority places the adoption slice before Route Remove. Independent preparation
-may still run early in isolated lanes, but dependent Update behavior waits for
-M2 completion.
+precedes root Update M3. Task 12 and the adoption slice are integrated. Route
+Remove is now next for activation; dependent Update behavior waits for M2
+completion.
 
 Initial read-only M2 preparation completed on five clean no-op branches from
 `33913dfe7f8f80598ca4765c516d308ed179c3ab` without a preparation commit, Gray,
@@ -452,7 +448,7 @@ Red, or Green change. The later lifecycle and parser prerequisites above are now
 integrated. The Route Mutation parent and leaf Tasks retain each accepted
 preparation decision or remaining maintainer-authority frontier, expected and
 protected path boundary, and evidence scope. Route Move and Task 12 are
-Complete. Route Remove remains Planned after the current adoption slice. The M2
+Complete. Route Remove remains Planned only until its immediate activation. The M2
 dependency remains ordered Install → Init → Create → protected Route Create
 predecessor slices → Route Create integration → CLI Quality Remediation → Update
 → Move → Remove → M3.
@@ -496,18 +492,13 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Continue active [Task 16 Doctor](../cli-development/tasks/operations/doctor.md)
-   at phase 4/5, milestone 4/8, in its recorded worktree and branch. Curie is
-   the sole T16-C1 writer. Preserve the immutable Gray chain through
-   `ce4e98b2166768fafd99974e4edca8263a3f85c2`, unreleased schema-v1 recovery
-   attribution, and fail-closed handling for old unattributed or malformed
-   final bundles. The exact Extension deferrals are
-   `extension.bridge-registration` to Task 17 and
-   `extension.unmanaged-like-content` to Task 18. Complete the linked Task 16
-   boundary, fresh whole-task review, full evidence, and acceptance; the [project
-   control ledger](../cli-development/project-control.md) remains the live task
-   authority.
-2. After Task 16, continue in this order: Task 5 Route Remove → Task 6 Root
+1. Activate [Task 5 Route Remove](../cli-development/tasks/route-mutation/route-remove.md)
+   from the clean Doctor-closeout `develop` baseline in a fresh lane. Preserve
+   the stale historical `codex/route-remove` worktree unchanged. Revalidate the
+   accepted positive-unmanaged boundary, lifecycle and Extension ownership,
+   the explicit contributor catalogue and views, root/help/serialization, and
+   affected Status/Doctor evidence before freezing Gray and Red.
+2. Continue after Task 5 in this order: Task 6 Root
    Update → Task 17 Extension Update → Task 18 Extension Remove → Task 19 Repair
    → Task 20 Cleanup → Task 10 CLI Command Surface Audit → conditional Task 21
    CLI Command Surface Remediation → Task 13 Native linux-x64 CI and
