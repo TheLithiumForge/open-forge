@@ -70,9 +70,6 @@ on a parent summary as a substitute.
   review and evidence.
 - Do not amend, rebase published history, reset destructively, or rewrite
   timestamps.
-- Use natural commit times. On weekdays, commits and merges are allowed only
-  from 19:00 through 09:00 Europe/Zurich. On Saturday and Sunday they are
-  allowed at any hour.
 - Use plain English commit subjects, normally as past-tense sentences. Do not
   use category prefixes such as `feat:`, `fix:`, `docs:`, or `chore:`.
 - Give material commits and squashes a comprehensive body that explains what

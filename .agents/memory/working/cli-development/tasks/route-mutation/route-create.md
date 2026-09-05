@@ -74,9 +74,8 @@ a scope, copying route categories, or taking subtree lifecycle ownership.
   independent final Sol correctness/architecture review, and one grouped
   correction cycle per accepted material review packet. Additional review or
   improvement phases require a distinct named risk.
-- Commit policy: coherent natural-time local commits only, on weekdays between
-  19:00 and 09:00 Europe/Zurich; never push, contact remotes, amend, rewrite
-  history, or manipulate timestamps.
+- Commit policy: coherent local commits only; never push, contact remotes,
+  amend, rewrite history, or manipulate timestamps.
 
 ### Frozen Accepted Behavior Matrix
 

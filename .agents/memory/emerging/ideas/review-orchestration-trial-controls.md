@@ -150,8 +150,8 @@ remain harness-specific until exercised.
 ## Writer Checkpoints And Commit Discipline
 
 Writer Task Masterminds should commit at coherent green boundaries when local
-commits are authorized, the project commit window is open, and a commit improves
-review, recovery, or integration. This is a preference for useful named
+commits are authorized and a commit improves review, recovery, or integration.
+This is a preference for useful named
 snapshots, not a commit for every keystroke, file, or formal phase.
 
 A reviewable commit should:
@@ -160,7 +160,6 @@ A reviewable commit should:
 - pass its focused evidence without known false-green conditions;
 - include every tracked and previously untracked file in the review horizon;
 - use a plain natural past-tense subject without a Conventional Commit prefix;
-- preserve natural time and the active project commit window; and
 - identify the exact commit and tree used by reviewers.
 
 The active task packet supplies any stricter message-review rule. The Overseer
