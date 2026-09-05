@@ -22,6 +22,10 @@ internal sealed class IndexRecoveryLifecycle(
         var input = RecoveryBundleInput.Create(
             workspace: application.Request.Workspace,
             command: IndexDefinitions.CommandIdentity,
+            attribution: RecoveryBundleAttribution.Create(
+                RecoveryBundleProducer.Index,
+                RecoveryBundleOperation.Index,
+                application.Request.Workspace),
             operationId: application.OperationId,
             targets: application.Plan.RecoveryTargets);
         RecoveryBundlePreparationResult result;

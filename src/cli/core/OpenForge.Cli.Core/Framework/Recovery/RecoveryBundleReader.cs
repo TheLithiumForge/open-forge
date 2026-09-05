@@ -130,7 +130,8 @@ internal sealed class RecoveryBundleReader
             }
 
             if (manifest.State != RecoveryBundleManifestState.Valid
-                || manifest.Document is not { } document)
+                || manifest.Document is not { } document
+                || manifest.Attribution is not { } attribution)
             {
                 return Malformed(manifest.Cause ?? "The recovery manifest is malformed.");
             }
@@ -186,6 +187,7 @@ internal sealed class RecoveryBundleReader
                     document.WorkspacePath),
                 WorkspaceKey = document.WorkspaceKey,
                 Command = document.Command,
+                Attribution = attribution,
                 OperationId = operationId,
                 Entries = manifest.Entries,
             });
@@ -236,7 +238,11 @@ internal sealed class RecoveryBundleReader
 
         if (expectedInput is not null
             && (operationId != expectedInput.OperationId
-                || !string.Equals(document.Command, expectedInput.Command, StringComparison.Ordinal)))
+                || !string.Equals(document.Command, expectedInput.Command, StringComparison.Ordinal)
+                || !RecoveryBundleAttributionCodec.TryRead(
+                    document.Attribution,
+                    out var attribution)
+                || attribution != expectedInput.Attribution))
         {
             return "The recovery bundle does not match the expected operation.";
         }

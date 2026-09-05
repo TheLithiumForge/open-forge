@@ -366,18 +366,17 @@ public sealed class FindMatcherTests
             "---\n"
                 + "open-forge:\n"
                 + "# Body\n",
-            new MarkdownFrontmatterBoundary(
-                MarkdownFrontmatterState.Unavailable,
+            new MarkdownDocumentStructure(
+                new MarkdownFrontmatterBoundary(
+                    MarkdownFrontmatterState.Unavailable,
+                    null,
+                    null,
+                    null),
                 null,
-                null,
-                null),
-            null,
-            [],
-            [],
-            [],
-            [],
-            [],
-            MarkdownGeneratedRegionFact.Unavailable("The body boundary is unavailable."));
+                [],
+                [],
+                MarkdownGeneratedRegionFact.Unavailable("The body boundary is unavailable.")),
+            new MarkdownInlineFacts([], [], [], []));
         Assert.Equal(MarkdownFrontmatterState.Unavailable, unavailableDocument.Frontmatter.State);
         Assert.Null(unavailableDocument.BodySpan);
 
@@ -625,14 +624,13 @@ public sealed class FindMatcherTests
             .ToArray();
         return new MarkdownDocumentFacts(
             source,
-            new MarkdownFrontmatterBoundary(MarkdownFrontmatterState.Missing, null, null, 0),
-            body,
-            headings,
-            sections,
-            [],
-            [],
-            [],
-            MarkdownGeneratedRegionFact.Absent());
+            new MarkdownDocumentStructure(
+                new MarkdownFrontmatterBoundary(MarkdownFrontmatterState.Missing, null, null, 0),
+                body,
+                headings,
+                sections,
+                MarkdownGeneratedRegionFact.Absent()),
+            new MarkdownInlineFacts([], [], [], []));
     }
 
     private static MarkdownDocumentFacts DocumentFromHeadings(

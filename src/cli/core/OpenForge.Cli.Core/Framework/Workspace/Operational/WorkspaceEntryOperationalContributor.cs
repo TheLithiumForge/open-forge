@@ -1,4 +1,3 @@
-using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Workspace.Operational.Models;
@@ -17,7 +16,7 @@ internal interface IWorkspaceEntryOperationalContributor
 }
 
 internal sealed class WorkspaceEntryOperationalContributor(
-    PhysicalPathResolver physicalPathResolver) : IWorkspaceEntryOperationalContributor
+    WorkspacePathObserver pathObserver) : IWorkspaceEntryOperationalContributor
 {
     internal ValueTask<WorkspaceEntryStatusView> ReadStatusAsync(
         CliWorkspace workspace,
@@ -35,12 +34,22 @@ internal sealed class WorkspaceEntryOperationalContributor(
         CliWorkspace workspace,
         CancellationToken cancellationToken)
     {
-        var observation = Read(workspace, cancellationToken);
+        var root = pathObserver.ObserveRoot(workspace);
+        var agents = pathObserver.Observe(workspace, SourceLogicalPath.AgentsRoot);
+        var entry = pathObserver.Observe(workspace, SourceLogicalPath.WorkspaceEntryPath);
+        var loader = pathObserver.Observe(workspace, SourceLogicalPath.LoaderPath);
+        var observation = ReadDoctorObservation(
+            agents,
+            entry,
+            loader,
+            cancellationToken);
         return ValueTask.FromResult(new WorkspaceEntryDoctorView(
-            observation.State,
-            observation.Installation,
-            observation.EntryPath,
-            observation.LoaderPath));
+            new WorkspaceEntryDoctorSummary(
+                observation.State,
+                observation.Installation,
+                observation.EntryPath,
+                observation.LoaderPath),
+            new WorkspacePathObservationSet(root, agents, entry, loader)));
     }
 
     ValueTask<WorkspaceEntryStatusView> IWorkspaceEntryOperationalContributor.ReadStatusAsync(
@@ -66,8 +75,9 @@ internal sealed class WorkspaceEntryOperationalContributor(
                 null);
         }
 
-        var loader = ReadPath(workspace, SourceLogicalPath.LoaderPath);
-        if (loader == WorkspaceEntryPathState.Missing)
+        var loader = WorkspacePathObserver.ReadFileState(
+            pathObserver.Observe(workspace, SourceLogicalPath.LoaderPath));
+        if (loader == WorkspaceObservedPathState.Missing)
         {
             return new WorkspaceEntryObservation(
                 OperationalViewState.Complete,
@@ -76,9 +86,10 @@ internal sealed class WorkspaceEntryOperationalContributor(
                 null);
         }
 
-        var entry = ReadPath(workspace, SourceLogicalPath.WorkspaceEntryPath);
-        if (loader == WorkspaceEntryPathState.Present
-            && entry == WorkspaceEntryPathState.Present)
+        var entry = WorkspacePathObserver.ReadFileState(
+            pathObserver.Observe(workspace, SourceLogicalPath.WorkspaceEntryPath));
+        if (loader == WorkspaceObservedPathState.Present
+            && entry == WorkspaceObservedPathState.Present)
         {
             return new WorkspaceEntryObservation(
                 OperationalViewState.Complete,
@@ -87,67 +98,63 @@ internal sealed class WorkspaceEntryOperationalContributor(
                 SourceLogicalPath.LoaderPath);
         }
 
-        var blocked = loader == WorkspaceEntryPathState.Blocked
-            || entry == WorkspaceEntryPathState.Blocked;
+        var blocked = loader == WorkspaceObservedPathState.Blocked
+            || entry == WorkspaceObservedPathState.Blocked;
         return new WorkspaceEntryObservation(
             blocked ? OperationalViewState.Blocked : OperationalViewState.Incomplete,
             blocked ? OperationalInstallationState.Blocked : OperationalInstallationState.Incomplete,
-            entry == WorkspaceEntryPathState.Present ? SourceLogicalPath.WorkspaceEntryPath : null,
-            loader == WorkspaceEntryPathState.Present ? SourceLogicalPath.LoaderPath : null);
+            entry == WorkspaceObservedPathState.Present ? SourceLogicalPath.WorkspaceEntryPath : null,
+            loader == WorkspaceObservedPathState.Present ? SourceLogicalPath.LoaderPath : null);
     }
 
-    private WorkspaceEntryPathState ReadPath(CliWorkspace workspace, string relativePath)
+    private static WorkspaceEntryObservation ReadDoctorObservation(
+        WorkspacePathObservation agents,
+        WorkspacePathObservation entry,
+        WorkspacePathObservation loader,
+        CancellationToken cancellationToken)
     {
-        var lexicalPath = Path.Combine(
-            workspace.LexicalRoot,
-            relativePath.Replace('/', Path.DirectorySeparatorChar));
-        var resolution = physicalPathResolver.ResolveCandidate(
-            workspace.LexicalRoot,
-            workspace.PhysicalRoot,
-            lexicalPath);
-        if (resolution.State != PhysicalPathState.Contained)
+        if (cancellationToken.IsCancellationRequested)
         {
-            return resolution.State switch
-            {
-                PhysicalPathState.Missing => WorkspaceEntryPathState.Missing,
-                PhysicalPathState.Inaccessible or PhysicalPathState.InputOutputFailure
-                    => WorkspaceEntryPathState.Incomplete,
-                PhysicalPathState.Dangling
-                    or PhysicalPathState.External
-                    or PhysicalPathState.Cycle
-                    or PhysicalPathState.Invalid
-                    or PhysicalPathState.Unsupported => WorkspaceEntryPathState.Blocked,
-                _ => throw new ArgumentOutOfRangeException(
-                    nameof(resolution),
-                    resolution.State,
-                    "The workspace-entry physical path state is not defined."),
-            };
+            return new WorkspaceEntryObservation(
+                OperationalViewState.Interrupted,
+                OperationalInstallationState.Incomplete,
+                null,
+                null);
         }
 
-        var component = LinkTargetReader.Read(resolution.GetContainedPhysicalPath());
-        return component.State switch
+        var agentsState = WorkspacePathObserver.ReadDirectoryState(agents);
+        var entryState = WorkspacePathObserver.ReadFileState(entry);
+        var loaderState = WorkspacePathObserver.ReadFileState(loader);
+        if (agentsState == WorkspaceObservedPathState.Missing
+            && entryState == WorkspaceObservedPathState.Missing
+            && loaderState == WorkspaceObservedPathState.Missing)
         {
-            PathComponentState.Ordinary when component.Attributes is { } attributes
-                && (attributes & FileAttributes.Directory) == 0 => WorkspaceEntryPathState.Present,
-            PathComponentState.Missing => WorkspaceEntryPathState.Missing,
-            PathComponentState.Inaccessible or PathComponentState.InputOutputFailure
-                => WorkspaceEntryPathState.Incomplete,
-            PathComponentState.Ordinary
-                or PathComponentState.Link
-                or PathComponentState.Unsupported => WorkspaceEntryPathState.Blocked,
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(component),
-                component.State,
-                "The workspace-entry component state is not defined."),
-        };
-    }
+            return new WorkspaceEntryObservation(
+                OperationalViewState.Complete,
+                OperationalInstallationState.Uninstalled,
+                null,
+                null);
+        }
 
-    private enum WorkspaceEntryPathState
-    {
-        Present,
-        Missing,
-        Incomplete,
-        Blocked,
+        if (agentsState == WorkspaceObservedPathState.Present
+            && entryState == WorkspaceObservedPathState.Present
+            && loaderState == WorkspaceObservedPathState.Present)
+        {
+            return new WorkspaceEntryObservation(
+                OperationalViewState.Complete,
+                OperationalInstallationState.Installed,
+                SourceLogicalPath.WorkspaceEntryPath,
+                SourceLogicalPath.LoaderPath);
+        }
+
+        var blocked = agentsState == WorkspaceObservedPathState.Blocked
+            || entryState == WorkspaceObservedPathState.Blocked
+            || loaderState == WorkspaceObservedPathState.Blocked;
+        return new WorkspaceEntryObservation(
+            blocked ? OperationalViewState.Blocked : OperationalViewState.Incomplete,
+            blocked ? OperationalInstallationState.Blocked : OperationalInstallationState.Incomplete,
+            entryState == WorkspaceObservedPathState.Present ? SourceLogicalPath.WorkspaceEntryPath : null,
+            loaderState == WorkspaceObservedPathState.Present ? SourceLogicalPath.LoaderPath : null);
     }
 
     private sealed record WorkspaceEntryObservation(

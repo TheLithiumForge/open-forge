@@ -120,6 +120,8 @@ internal sealed record RecoveryBundleVerifiedRead
 
     public required string Command { get; init; }
 
+    public required RecoveryBundleAttribution Attribution { get; init; }
+
     public required Guid OperationId { get; init; }
 
     public required ImmutableArray<RecoveryBundleEntry> Entries { get; init; }

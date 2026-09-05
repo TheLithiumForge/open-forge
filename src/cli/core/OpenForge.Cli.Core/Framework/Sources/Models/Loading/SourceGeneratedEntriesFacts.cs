@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 
@@ -11,20 +12,32 @@ internal enum SourceGeneratedEntriesState
 
 internal sealed record SourceGeneratedEntry
 {
-    internal SourceGeneratedEntry(string destination, IEnumerable<string> tags)
+    internal SourceGeneratedEntry(
+        string description,
+        string destination,
+        IEnumerable<string> tags,
+        MarkdownTextSpan span)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(description);
         ArgumentException.ThrowIfNullOrWhiteSpace(destination);
         ArgumentNullException.ThrowIfNull(tags);
+        ArgumentNullException.ThrowIfNull(span);
         var values = tags
             .Select(value => value ?? throw new ArgumentException("Generated-entry tags cannot contain null members.", nameof(tags)))
             .ToArray();
+        Description = description;
         Destination = destination;
         Tags = new ReadOnlyCollection<string>(values);
+        Span = span;
     }
+
+    internal string Description { get; }
 
     internal string Destination { get; }
 
     internal IReadOnlyList<string> Tags { get; }
+
+    internal MarkdownTextSpan Span { get; }
 
     internal bool HasTag(string tag)
     {

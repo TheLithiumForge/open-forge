@@ -44,7 +44,7 @@ root passes `169/169`; and the final isolated offline package journey verifies
 the launcher, Root Install's 44 effects, and Extension Install's 28 effects.
 Its completion grace is consumed and it is dequeued.
 
-Task 15 “Status” is RECENTLY_COMPLETED at phase 5/5, milestone 8/8. Its
+Task 15 “Status” is Complete and dequeued at phase 5/5, milestone 8/8. Its
 historical phase-3 lane records Gray `dac2aece`/`874bdcae`, bounded callable
 correction `df46fb9c`/`eda74e79`, and accepted Red `f633fe1f`/`5dbfe9d7`. One
 Sol/xhigh Brilliant Implementer was activated at `de27fcd6`/`ebdcb4a6`, then the early architecture
@@ -75,22 +75,22 @@ errors; managed Unit `1739/1739`, Integration `933/933`, EndToEnd `172/172`;
 managed EndToEnd against the native root `172/172`; native Integration
 `933/933`; native EndToEnd `172/172`; all with `0` failures, `0` skips, and
 `0` warnings. Every later producer extends the explicit contributor inventory
-and affected Status evidence before acceptance. Task 16 “Doctor” is PREPARED at
-phase 2/5, milestone 2/8 from the exact Status Gray snapshot. Activation
-`26e245e4`/`680df032` and accepted Gray `ce627593`/`1f07abb7` are recorded. It is
-now next and eligible for exact post-Status reconciliation, but is not active.
-Its first next step is to revalidate the six shared view blobs and
-reapply/reconcile the accepted 17 C# files plus two contract amendments,
-preserving plural Extension sources; then add Red that consumes every source
-observation without fallback, substitution, reconstruction, or reread. Do not
-parse Status output or add dependency injection, a service locator, reflection,
-a runtime registry, or a generic operational engine. No Doctor tests, build,
-production, or completion are claimed.
-Its prepared alignment consumes the complete plural Extension view and never
-reads the removed singular source. The six Doctor-facing signatures and
-catalogue shape remain unchanged through Status `2521574d`, while two
-Status-only methods changed. The alignment changed no Task 16 files, tests,
-builds, or implementation; its accepted next step is recorded above.
+and affected Status evidence before acceptance. Task 16 “Doctor” is ACTIVE at
+phase 4/5, milestone 4/8 in worktree
+`/home/tedy/dev/open-forge-worktree/doctor-implementation`, branch
+`codex/doctor-implementation`. Its immutable Gray chain now ends at
+`ce4e98b2166768fafd99974e4edca8263a3f85c2`, tree
+`f014287b1402d34532265a53fb3755e96d12db7d`; Curie is the sole T16-C1 writer
+under Sagan, with Bacon as Gray. The current unreleased schema-v1 Doctor
+catalogue contains 109 kinds and targets 107 supported emissions plus two
+accepted Extension deferrals. This accepted 109-kind decision is the current
+Gray boundary under review. Route Remove remains queued with its accepted
+positive-unmanaged removal boundary; Route Inspect's synthetic overwrite-ambiguity
+conflict is one bounded Task 10 audit input, not a Doctor finding or a new task.
+Recovery attribution remains unreleased schema v1, old unattributed or
+malformed final bundles fail closed, full Doctor evidence remains uncounted,
+and no production is staged or committed. The earlier prepared alignment and
+its Status `2521574d` snapshot remain historical context.
 
 Task 7 “npm Package Manager Release and Local Linking” is Complete at phase 4/4,
 milestone 7/7. Accepted lane `a2942781`, tree `fe36fc3f`, is squash-integrated at
@@ -407,7 +407,7 @@ uniquely aligned route, slugs only ID-form inserted scope labels, creates one
 sparse chain, keeps scope entrypoints user-owned, and lifecycle-manages only
 copied canonical assets and derived generated regions.
 
-Task 15 “Status” is RECENTLY_COMPLETED at phase 5/5, milestone 8/8. Its
+Task 15 “Status” is complete and dequeued at phase 5/5, milestone 8/8. Its
 accepted lane is `0c19b7053ef2b8c48898cfebadedff0c5702bf34`, tree
 `8ff2ac4ac0f5985863a9aaf85911c2deb6152980`; correction
 `f2dcdcae8b7c2cc9522b5ce7df250c73a55347db`, tree
@@ -421,20 +421,24 @@ errors; managed Unit `1739/1739`, Integration `933/933`, EndToEnd `172/172`;
 managed EndToEnd against native root `172/172`; native Integration `933/933`;
 native EndToEnd `172/172`; all with `0` failures, `0` skips, and `0` warnings.
 Every later producer extends the explicit contributor inventory and affected
-Status evidence before acceptance. Its completion-bearing update is this
-candidate with `2 updates remaining` grace.
+Status evidence before acceptance. Its historical completion-bearing update
+had a `2 updates remaining` grace; that grace is consumed.
 
-Task 16 “Doctor” is PREPARED at phase 2/5, milestone 2/8 from the exact Status
-Gray snapshot; activation `26e245e4`, tree `680df032`, and accepted Gray
-`ce627593`, tree `1f07abb7`, are recorded. It is now next and eligible for
-exact post-Status reconciliation, but is not active. Its first next step is to
-revalidate the six shared view blobs and reapply/reconcile the accepted 17 C#
-files plus two contract amendments, preserving plural Extension sources, then
-add Red that consumes every source observation without fallback, substitution,
-reconstruction, or reread. Do not parse Status output or add dependency
-injection, a service locator, reflection, a runtime registry, or a generic
-operational engine. No Doctor tests, build, production, or completion is
-claimed. No implementation Task is active.
+Task 16 “Doctor” is ACTIVE at phase 4/5, milestone 4/8 in worktree
+`/home/tedy/dev/open-forge-worktree/doctor-implementation`, branch
+`codex/doctor-implementation`. Its immutable Gray chain now ends at
+`ce4e98b2166768fafd99974e4edca8263a3f85c2`, tree
+`f014287b1402d34532265a53fb3755e96d12db7d`. Curie is the sole T16-C1
+writer. Route Remove remains queued with its accepted positive-unmanaged
+removal boundary; Route Inspect's synthetic overwrite-ambiguity conflict is one bounded Task 10
+audit input, not a Doctor finding or a new task. Recovery
+attribution remains unreleased schema v1; old unattributed or malformed final
+bundles fail closed. Task 16 defers exactly `extension.bridge-registration`
+to Task 17 and `extension.unmanaged-like-content` to Task 18. See the [Task 16
+Doctor record](../cli-development/tasks/operations/doctor.md) and [project
+control ledger](../cli-development/project-control.md) for implementation
+detail and live task state. Full Doctor evidence and acceptance remain
+uncounted. No implementation Task outside the active Task 16 lane is active.
 
 Route Remove is the remaining Route Mutation M2 leaf, and the full M2 lane still
 precedes root Update M3. Task 12 is integrated, and the current project-control
@@ -492,17 +496,23 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Reconcile Task 16 Doctor at its prepared phase 2/5, milestone 2/8 boundary
-   after Status integration. First revalidate the six shared view blobs and
-   reapply/reconcile the accepted 17 C# files plus two contract amendments,
-   preserving plural Extension sources; then add Red that consumes every source
-   observation without fallback, substitution, reconstruction, or reread.
-   Do not parse Status output or add dependency injection, a service locator,
-   reflection, a runtime registry, or a generic operational engine. No Doctor
-   tests, build, production, or completion is claimed. Task 7 package expansion
-   is complete.
-2. Resume Task 5 Route Remove, then Task 6 root Update, Tasks 17/18/19/20, Task
-   10, conditional Task 21, Task 13, and Task 22 in project-control order.
+1. Continue active [Task 16 Doctor](../cli-development/tasks/operations/doctor.md)
+   at phase 4/5, milestone 4/8, in its recorded worktree and branch. Curie is
+   the sole T16-C1 writer. Preserve the immutable Gray chain through
+   `ce4e98b2166768fafd99974e4edca8263a3f85c2`, unreleased schema-v1 recovery
+   attribution, and fail-closed handling for old unattributed or malformed
+   final bundles. The exact Extension deferrals are
+   `extension.bridge-registration` to Task 17 and
+   `extension.unmanaged-like-content` to Task 18. Complete the linked Task 16
+   boundary, fresh whole-task review, full evidence, and acceptance; the [project
+   control ledger](../cli-development/project-control.md) remains the live task
+   authority.
+2. After Task 16, continue in this order: Task 5 Route Remove → Task 6 Root
+   Update → Task 17 Extension Update → Task 18 Extension Remove → Task 19 Repair
+   → Task 20 Cleanup → Task 10 CLI Command Surface Audit → conditional Task 21
+   CLI Command Surface Remediation → Task 13 Native linux-x64 CI and
+   Reproducible Artifacts → Task 22 Final Documentation, Acceptance, and
+   Release.
 3. Retain thin D1 as current `linux-x64` build/smoke, packed
    install/invocation, and checksums. Keep future RIDs, signatures, SBOM,
    provenance, OIDC, and support floors behind a later explicit decision.

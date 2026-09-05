@@ -134,6 +134,7 @@ internal static class RecoveryBundleManifestCodec
             OperationId = input.OperationId.ToString(RecoveryBundleFormatV1.OperationIdFormat),
             WorkspacePath = workspacePath,
             WorkspaceKey = WorkspaceIdentity.Key(workspacePath),
+            Attribution = RecoveryBundleAttributionCodec.Serialize(input.Attribution),
             Entries = serializedEntries,
         };
     }
@@ -158,9 +159,13 @@ internal static class RecoveryBundleManifestCodec
         if (string.IsNullOrWhiteSpace(document.Command)
             || !TryParseOperationId(document, out _)
             || string.IsNullOrWhiteSpace(document.WorkspacePath)
-            || string.IsNullOrWhiteSpace(document.WorkspaceKey))
+            || string.IsNullOrWhiteSpace(document.WorkspaceKey)
+            || !RecoveryBundleAttributionCodec.TryRead(
+                document.Attribution,
+                out var attribution)
+            || attribution is null)
         {
-            return Malformed("The recovery manifest operation or workspace identity is invalid.");
+            return Malformed("The recovery manifest operation, workspace identity, or attribution is invalid.");
         }
 
         var normalizedWorkspace = WorkspaceIdentity.NormalizePhysicalPath(
@@ -172,6 +177,14 @@ internal static class RecoveryBundleManifestCodec
                 StringComparison.Ordinal))
         {
             return Malformed("The recovery manifest workspace identity is invalid.");
+        }
+
+        if (!string.Equals(
+            attribution.Subject.Identity,
+            document.WorkspaceKey,
+            StringComparison.Ordinal))
+        {
+            return Malformed("The recovery manifest subject does not identify its workspace.");
         }
 
         if (document.Entries is not { Length: > 0 })
@@ -239,6 +252,7 @@ internal static class RecoveryBundleManifestCodec
         {
             State = RecoveryBundleManifestState.Valid,
             Document = document,
+            Attribution = attribution,
             Entries = builder.MoveToImmutable(),
         };
     }

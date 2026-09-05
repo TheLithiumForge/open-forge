@@ -64,6 +64,20 @@ report fresh SHA-256 fingerprints before reviewing. Reviewer packets must also
 include the current CLI Architecture, applicable command contracts, source
 locality, review evidence, and testing directives.
 
+## Bounded Route Review Input
+
+Task 10 retains one bounded audit input from Task 16's current route boundary.
+`RouteInspectSourceProjectionBuilder` can form a command-local ambiguous-
+overwrite state when one overwrite candidate's automatic ID maps to two or more
+base sources; `RouteInspectOverwriteResolutionPolicy` then reports
+`route-inspect.ambiguous-overwrite` as blocked. Task 10 must review whether this
+synthetic overwrite-ambiguity conflict conflicts with the shared exact-pair
+semantics or is separately justified by exact producer-observed facts under the
+Route Inspect contract. This is one bounded
+review input only: it is not a Doctor finding or a new task, does not restore any
+removed Doctor route kind, and does not authorize broad search, inference, or
+production change in the audit.
+
 ## Finding Standard
 
 Each material finding must provide:

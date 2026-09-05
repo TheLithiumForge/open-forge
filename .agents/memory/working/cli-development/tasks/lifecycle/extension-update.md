@@ -32,6 +32,22 @@ every existing target it replaces or deletes.
   multi-package order, command-local plan, findings, and result local.
 - Revalidate both source package identity and workspace expected state under lock.
 
+## Doctor Observation Ownership
+
+Before Task 17 acceptance, Extension Update owns the producer facts for the
+declared and owned bridge-registration role: the exact registration target
+identity and its observed state (missing, unreadable, or inconsistent), with
+content inspected only when the target is readable. It must extend the accepted
+typed contributor views and Doctor before acceptance. Until those facts are
+available, Task 16 emits no `extension.bridge-registration` finding and retains
+its bounded observation limitation.
+
+This boundary does not use legacy `open-forge.extensions.json`, package-source
+manifests, broad `.agents` recursion, payload/path/byte resemblance, or
+Framework bridges. Static CLI composition remains wiring only and cannot
+manufacture producer facts; dependency injection and a runtime registry are not
+substitutes.
+
 ## Evidence
 
 Cover no-op, one/many updates, dependency order, missing/changed source, installed

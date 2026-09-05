@@ -143,7 +143,6 @@ public sealed class IndexProjectionBuilderTests
         var entrypoint = Source(".agents/root/item/_item.md", SourceDocumentForm.CanonicalEntrypoint);
         Assert.Equal(leaf.Identity.AutomaticId, entrypoint.Identity.AutomaticId);
         var issue = new SourceCatalogueIssue(
-            SourceCatalogueIssueStage.Identity,
             SourceCatalogueIssueCode.IdentityCollision,
             leaf.Identity.CanonicalBasePath,
             [leaf.Identity.CanonicalBasePath, entrypoint.Identity.CanonicalBasePath],
@@ -441,7 +440,6 @@ public sealed class IndexProjectionBuilderTests
         SourceLogicalSource secondAlias)
     {
         var issue = new SourceCatalogueIssue(
-            SourceCatalogueIssueStage.Identity,
             SourceCatalogueIssueCode.PhysicalAlias,
             firstAlias.Identity.CanonicalBasePath,
             [firstAlias.Identity.CanonicalBasePath, secondAlias.Identity.CanonicalBasePath],
@@ -452,7 +450,6 @@ public sealed class IndexProjectionBuilderTests
 
     private static SourceCatalogueIssue DirectoryIssue(string attemptedPath, string scopePhysicalPath)
         => new(
-            SourceCatalogueIssueStage.Directory,
             SourceCatalogueIssueCode.DirectoryUnavailable,
             attemptedPath,
             relatedPaths: [],
@@ -463,7 +460,6 @@ public sealed class IndexProjectionBuilderTests
         SourceCatalogueIssueCode code,
         SourceCandidate candidate)
         => new(
-            SourceCatalogueIssueStage.Candidate,
             code,
             candidate.CanonicalPath,
             relatedPaths: [],

@@ -20,7 +20,10 @@ internal enum SourceCatalogueIssueCode
     DirectoryUnavailable,
     CandidateUnsafe,
     CandidateUnavailable,
+    UnsupportedSource,
     IdentityUnavailable,
+    EntrypointAmbiguous,
+    EntrypointCompatibilityCollision,
     IdentityCollision,
     PhysicalAlias,
     OrphanOverwrite,
@@ -29,27 +32,18 @@ internal enum SourceCatalogueIssueCode
 internal sealed class SourceCatalogueIssue
 {
     internal SourceCatalogueIssue(
-        SourceCatalogueIssueStage stage,
         SourceCatalogueIssueCode code,
         string attemptedCanonicalPath,
         IEnumerable<string> relatedPaths,
         string? scopePhysicalPath,
         FilesystemFailure? failure)
     {
-        if (!Enum.IsDefined(stage))
-        {
-            throw new ArgumentOutOfRangeException(nameof(stage), stage, "The source catalogue issue stage is not defined.");
-        }
-
         if (!Enum.IsDefined(code))
         {
             throw new ArgumentOutOfRangeException(nameof(code), code, "The source catalogue issue code is not defined.");
         }
 
-        if (ReadStage(code) != stage)
-        {
-            throw new ArgumentException("The source catalogue issue stage does not match its code.", nameof(stage));
-        }
+        var stage = ReadStage(code);
 
         ArgumentException.ThrowIfNullOrWhiteSpace(attemptedCanonicalPath);
         ArgumentNullException.ThrowIfNull(relatedPaths);
@@ -100,8 +94,11 @@ internal sealed class SourceCatalogueIssue
                 or SourceCatalogueIssueCode.RootUnavailable => SourceCatalogueIssueStage.Root,
             SourceCatalogueIssueCode.DirectoryUnavailable => SourceCatalogueIssueStage.Directory,
             SourceCatalogueIssueCode.CandidateUnsafe
-                or SourceCatalogueIssueCode.CandidateUnavailable => SourceCatalogueIssueStage.Candidate,
+                or SourceCatalogueIssueCode.CandidateUnavailable
+                or SourceCatalogueIssueCode.UnsupportedSource => SourceCatalogueIssueStage.Candidate,
             SourceCatalogueIssueCode.IdentityUnavailable
+                or SourceCatalogueIssueCode.EntrypointAmbiguous
+                or SourceCatalogueIssueCode.EntrypointCompatibilityCollision
                 or SourceCatalogueIssueCode.IdentityCollision
                 or SourceCatalogueIssueCode.PhysicalAlias => SourceCatalogueIssueStage.Identity,
             SourceCatalogueIssueCode.OrphanOverwrite => SourceCatalogueIssueStage.Pairing,

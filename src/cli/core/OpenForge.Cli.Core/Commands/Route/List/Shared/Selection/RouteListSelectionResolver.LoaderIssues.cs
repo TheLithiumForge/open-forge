@@ -36,16 +36,28 @@ internal sealed partial class RouteListSelectionResolver
         var subject = ReadLoaderIssueSubject(issue, loaderDestinations);
         return issue.Code switch
         {
-            SourceRouteIssueCode.LoaderUnavailable when IsMalformedLoaderRead(issue, projectionSet) =>
+            SourceRouteIssueCode.LoaderUnavailable
+                or SourceRouteIssueCode.LoaderUnreadable
+                or SourceRouteIssueCode.LoaderDestinationMissing
+                when IsMalformedLoaderRead(issue, projectionSet) =>
                 new RouteListSelectionIssue(RouteListFindingCode.LoaderMalformed, subject, issue.Cause),
-            SourceRouteIssueCode.LoaderUnavailable when IsMalformedOverwriteRoot(issue, catalogue) =>
+            SourceRouteIssueCode.LoaderUnavailable
+                or SourceRouteIssueCode.LoaderUnreadable
+                or SourceRouteIssueCode.LoaderDestinationMissing
+                when IsMalformedOverwriteRoot(issue, catalogue) =>
                 new RouteListSelectionIssue(RouteListFindingCode.LoaderMalformed, subject, issue.Cause),
-            SourceRouteIssueCode.LoaderUnavailable when IsUnsafeCandidate(issue.CanonicalPath, catalogue)
-                || IsUnsafeLoaderProjection(issue, projectionSet) =>
+            SourceRouteIssueCode.LoaderUnavailable
+                or SourceRouteIssueCode.LoaderUnreadable
+                or SourceRouteIssueCode.LoaderDestinationMissing
+                when IsUnsafeCandidate(issue.CanonicalPath, catalogue)
+                    || IsUnsafeLoaderProjection(issue, projectionSet) =>
                 new RouteListSelectionIssue(RouteListFindingCode.PhysicalBoundary, subject, issue.Cause),
-            SourceRouteIssueCode.LoaderUnavailable or SourceRouteIssueCode.RouteSupportUnavailable =>
+            SourceRouteIssueCode.LoaderUnavailable
+                or SourceRouteIssueCode.LoaderUnreadable
+                or SourceRouteIssueCode.LoaderDestinationMissing
+                or SourceRouteIssueCode.RouteSupportUnavailable =>
                 new RouteListSelectionIssue(RouteListFindingCode.LoaderUnavailable, subject, issue.Cause),
-            SourceRouteIssueCode.LoaderMalformed =>
+            SourceRouteIssueCode.LoaderMalformed or SourceRouteIssueCode.LoaderDuplicateRoot =>
                 new RouteListSelectionIssue(RouteListFindingCode.LoaderMalformed, subject, issue.Cause),
             SourceRouteIssueCode.LoaderUnsafe =>
                 new RouteListSelectionIssue(RouteListFindingCode.PhysicalBoundary, subject, issue.Cause),
@@ -85,9 +97,12 @@ internal sealed partial class RouteListSelectionResolver
         }
 
         var relatedPath = issue.RelatedPaths.FirstOrDefault();
-        var canonicalPath = relatedPath?.StartsWith(".agents/", StringComparison.Ordinal) == true
-            ? relatedPath
-            : issue.CanonicalPath;
+        var canonicalPath = issue.CanonicalPath;
+        if (issue.Code != SourceRouteIssueCode.LoaderDestinationMissing
+            && relatedPath?.StartsWith(".agents/", StringComparison.Ordinal) == true)
+        {
+            canonicalPath = relatedPath;
+        }
         if (issue.Code == SourceRouteIssueCode.LoaderMalformed
             && relatedPath is not null
             && !relatedPath.StartsWith(".agents/", StringComparison.Ordinal))
@@ -95,11 +110,7 @@ internal sealed partial class RouteListSelectionResolver
             return relatedPath;
         }
 
-        if (issue.Code == SourceRouteIssueCode.LoaderMalformed
-            && string.Equals(
-                issue.Cause,
-                "The Loader declares the same canonical root more than once.",
-                StringComparison.Ordinal))
+        if (issue.Code == SourceRouteIssueCode.LoaderDuplicateRoot)
         {
             return destinations.LastOrDefault(destination =>
                     string.Equals(destination.CanonicalPath, canonicalPath, StringComparison.Ordinal))

@@ -23,6 +23,10 @@ internal sealed class FrameworkLifecycleOperationalContributor(
     LifecycleStore lifecycleStore,
     FrameworkLifecycleTargetReader targetReader) : IFrameworkLifecycleOperationalContributor
 {
+    private readonly FrameworkLifecycleDoctorReader _doctorReader = new(
+        lifecycleStore,
+        targetReader);
+
     internal async ValueTask<FrameworkLifecycleStatusView> ReadStatusAsync(
         LifecycleDocumentSnapshot snapshot,
         CancellationToken cancellationToken)
@@ -43,20 +47,7 @@ internal sealed class FrameworkLifecycleOperationalContributor(
     internal async ValueTask<FrameworkLifecycleDoctorView> ReadDoctorAsync(
         CliWorkspace workspace,
         CancellationToken cancellationToken)
-    {
-        var lifecycle = await lifecycleStore
-            .ReadAsync(workspace, LifecycleSection.Framework, cancellationToken)
-            .ConfigureAwait(false);
-        var payload = EmbeddedFrameworkPayloadReader.Read();
-        var targets = await ReadTargetsAsync(lifecycle, payload, cancellationToken).ConfigureAwait(false);
-        return new FrameworkLifecycleDoctorView
-        {
-            State = ReadViewState(lifecycle, payload, targets),
-            Lifecycle = lifecycle,
-            Payload = payload,
-            Targets = targets,
-        };
-    }
+        => await _doctorReader.ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
 
     ValueTask<FrameworkLifecycleStatusView> IFrameworkLifecycleOperationalContributor.ReadStatusAsync(
         LifecycleDocumentSnapshot snapshot,

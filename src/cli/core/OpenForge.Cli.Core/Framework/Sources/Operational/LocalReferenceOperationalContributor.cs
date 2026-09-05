@@ -1,12 +1,10 @@
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
-using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Sources.Locations;
-using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
-using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models;
-using OpenForge.Cli.Core.Framework.Sources.Reading;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
 using OpenForge.Cli.Core.Framework.Sources.References;
 using OpenForge.Cli.Core.Framework.Workspace;
 
@@ -20,8 +18,9 @@ internal interface ILocalReferenceOperationalContributor
 }
 
 internal sealed class LocalReferenceOperationalContributor(
-    SourceReadSessionReader sessionReader,
-    SourceLinkDestinationResolver destinationResolver) : ILocalReferenceOperationalContributor
+    RouteSourceInspector sourceInspector,
+    SourceLinkDestinationResolver destinationResolver,
+    LocalReferenceCandidateReader candidateReader) : ILocalReferenceOperationalContributor
 {
     private readonly MarkdownDocumentParser _markdownParser = new();
 
@@ -29,32 +28,29 @@ internal sealed class LocalReferenceOperationalContributor(
         CliWorkspace workspace,
         CancellationToken cancellationToken)
     {
-        var session = await sessionReader.ReadAsync(workspace, cancellationToken)
+        var inspection = await sourceInspector.ReadAsync(workspace, cancellationToken)
             .ConfigureAwait(false);
-        var references = new List<LocalReferenceObservation>();
-        var state = ReadCatalogueState(session.Catalogue);
-        foreach (var source in session.Catalogue.Sources)
+        var observations = new LocalReferenceReadAccumulator();
+        foreach (var source in inspection.Sources)
         {
-            state = await ReadLayerAsync(
-                    session,
-                    source.Base,
-                    references,
-                    state,
-                    cancellationToken)
-                .ConfigureAwait(false);
-            if (source.Overwrite is { } overwrite)
-            {
-                state = await ReadLayerAsync(
-                        session,
-                        overwrite,
-                        references,
-                        state,
-                        cancellationToken)
-                    .ConfigureAwait(false);
-            }
+            await ReadSourceAsync(
+                workspace,
+                inspection,
+                source,
+                observations,
+                cancellationToken).ConfigureAwait(false);
         }
 
-        return new LocalReferenceDoctorView(state, references.ToArray());
+        var candidates = candidateReader.Read(
+            observations.References,
+            observations.Sources,
+            inspection.Routes.Topology);
+        return new LocalReferenceDoctorView(
+            inspection.State,
+            observations.References.ToArray(),
+            ReadCandidateState(inspection.State),
+            candidates,
+            LocalReferenceGraphReader.Read(observations.References));
     }
 
     ValueTask<LocalReferenceDoctorView> ILocalReferenceOperationalContributor.ReadDoctorAsync(
@@ -62,75 +58,91 @@ internal sealed class LocalReferenceOperationalContributor(
         CancellationToken cancellationToken)
         => ReadDoctorAsync(workspace, cancellationToken);
 
-    private async ValueTask<OperationalViewState> ReadLayerAsync(
-        SourceReadSession session,
-        SourceLayer layer,
-        ICollection<LocalReferenceObservation> references,
-        OperationalViewState currentState,
+    private async ValueTask ReadSourceAsync(
+        CliWorkspace workspace,
+        RouteSourceInspection inspection,
+        RouteSourceObservation source,
+        LocalReferenceReadAccumulator observations,
         CancellationToken cancellationToken)
     {
-        var read = await session.DocumentReader.ReadAsync(layer, cancellationToken)
-            .ConfigureAwait(false);
-        if (read.Read is not { State: FileReadState.Complete, Value: { } text })
+        var parsedLayers = new List<LocalReferenceParsedLayer>();
+        foreach (var layer in source.Layers)
         {
-            if (read.Verification.State == SourceLayerVerificationState.Cancelled
-                || read.Read?.State == FileReadState.Cancelled)
+            if (layer.Text is not { } text)
             {
-                return OperationalViewState.Interrupted;
+                continue;
             }
 
-            if (currentState is OperationalViewState.Blocked or OperationalViewState.Interrupted)
+            var document = _markdownParser.Parse(text);
+            var locations = new Utf8SourceMap(text);
+            parsedLayers.Add(new LocalReferenceParsedLayer(
+                layer.Path,
+                document,
+                locations));
+            var references = document.Links
+                .Select(link => (Fact: link, Kind: LocalReferenceKind.Link))
+                .Concat(document.Images.Select(image => (Fact: image, Kind: LocalReferenceKind.Image)));
+            foreach (var reference in references)
             {
-                return currentState;
+                var link = reference.Fact;
+                var facts = await destinationResolver.ResolveAsync(
+                        new SourceLinkDestinationInput
+                        {
+                            Workspace = workspace,
+                            Catalogue = inspection.Catalogue,
+                            SourceCanonicalPath = layer.Path,
+                            RawDestination = link.RawDestination,
+                        },
+                        cancellationToken)
+                    .ConfigureAwait(false);
+                observations.References.Add(new LocalReferenceObservation
+                {
+                    SourcePath = layer.Path,
+                    RoutePath = source.Source.Identity.CanonicalBasePath,
+                    Kind = reference.Kind,
+                    Destination = link.RawDestination,
+                    Label = link.Label,
+                    Location = locations.Map(link.Span.Start, link.Span.Length),
+                    DestinationLocation = link.DestinationSpan is { } destinationSpan
+                        ? locations.Map(destinationSpan.Start, destinationSpan.Length)
+                        : null,
+                    Facts = facts,
+                    Fragment = LocalReferenceFactReader.ReadFragment(facts),
+                    Canonicalizations = LocalReferenceFactReader.ReadCanonicalizations(
+                        layer.Path,
+                        link.RawDestination,
+                        link.DestinationSpan is { } exactDestinationSpan
+                            ? locations.Map(exactDestinationSpan.Start, exactDestinationSpan.Length)
+                            : null,
+                        facts),
+                });
             }
-
-            return OperationalViewState.Incomplete;
         }
 
-        var document = _markdownParser.Parse(text);
-        var locations = new Utf8SourceMap(text);
-        foreach (var link in document.Links)
-        {
-            var facts = await destinationResolver.ResolveAsync(
-                    new SourceLinkDestinationInput
-                    {
-                        Workspace = session.Catalogue.Workspace,
-                        Catalogue = session.Catalogue,
-                        SourceCanonicalPath = layer.CanonicalPath,
-                        RawDestination = link.RawDestination,
-                    },
-                    cancellationToken)
-                .ConfigureAwait(false);
-            references.Add(new LocalReferenceObservation
-            {
-                SourcePath = layer.CanonicalPath,
-                Kind = LocalReferenceKind.Link,
-                Destination = link.RawDestination,
-                Location = locations.Map(link.Span.Start, link.Span.Length),
-                Facts = facts,
-            });
-        }
-
-        return currentState;
+        observations.Sources.Add(new LocalReferenceSourceObservation(
+            source.Source.Identity.CanonicalBasePath,
+            source.Source.Identity.AutomaticId,
+            parsedLayers));
     }
 
-    private static OperationalViewState ReadCatalogueState(SourceCatalogue catalogue)
+    private static LocalReferenceCandidateScanState ReadCandidateState(
+        OperationalViewState state)
+        => state switch
+        {
+            OperationalViewState.Complete => LocalReferenceCandidateScanState.Complete,
+            OperationalViewState.Incomplete => LocalReferenceCandidateScanState.Incomplete,
+            OperationalViewState.Blocked => LocalReferenceCandidateScanState.Blocked,
+            OperationalViewState.Interrupted => LocalReferenceCandidateScanState.Interrupted,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(state),
+                state,
+                "The local-reference candidate scan state is not defined."),
+        };
+
+    private sealed class LocalReferenceReadAccumulator
     {
-        if (catalogue.IsCancelled)
-        {
-            return OperationalViewState.Interrupted;
-        }
+        internal List<LocalReferenceObservation> References { get; } = [];
 
-        if (catalogue.Issues.Any(issue => issue.Code is SourceCatalogueIssueCode.RootUnsafe
-            or SourceCatalogueIssueCode.CandidateUnsafe
-            or SourceCatalogueIssueCode.IdentityCollision
-            or SourceCatalogueIssueCode.PhysicalAlias))
-        {
-            return OperationalViewState.Blocked;
-        }
-
-        return catalogue.Issues.All(issue => issue.Code == SourceCatalogueIssueCode.RootMissing)
-            ? OperationalViewState.Complete
-            : OperationalViewState.Incomplete;
+        internal List<LocalReferenceSourceObservation> Sources { get; } = [];
     }
 }

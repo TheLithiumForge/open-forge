@@ -44,11 +44,13 @@ internal sealed partial class RouteInspectSourceFactsResolver
     {
         return issue.Code switch
         {
-            SourceRouteIssueCode.LoaderUnavailable => RouteInspectResolutionSupport.CreateIssue(
+            SourceRouteIssueCode.LoaderUnavailable
+                or SourceRouteIssueCode.LoaderUnreadable
+                or SourceRouteIssueCode.LoaderDestinationMissing => RouteInspectResolutionSupport.CreateIssue(
                 ReadLoaderUnavailableCode(input, issue),
                 issue.CanonicalPath,
                 issue.Cause),
-            SourceRouteIssueCode.LoaderMalformed => RouteInspectResolutionSupport.CreateIssue(
+            SourceRouteIssueCode.LoaderMalformed or SourceRouteIssueCode.LoaderDuplicateRoot => RouteInspectResolutionSupport.CreateIssue(
                 RouteInspectResolutionIssueCode.IncompleteRoute,
                 issue.CanonicalPath,
                 issue.Cause),

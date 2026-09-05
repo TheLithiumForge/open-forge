@@ -141,14 +141,12 @@ public sealed class SourceCatalogueTests
             "root/alias",
             PhysicalPathState.Contained);
         var rootIssue = new SourceCatalogueIssue(
-            SourceCatalogueIssueStage.Root,
             SourceCatalogueIssueCode.RootMissing,
             ".agents/missing",
             [],
             null,
             null);
         var directoryIssue = new SourceCatalogueIssue(
-            SourceCatalogueIssueStage.Directory,
             SourceCatalogueIssueCode.DirectoryUnavailable,
             ".agents/root/private",
             [],
@@ -157,14 +155,12 @@ public sealed class SourceCatalogueTests
                 OpenForge.Cli.Core.Framework.Filesystem.FilesystemFailureKind.AccessDenied,
                 "denied"));
         var collisionIssue = new SourceCatalogueIssue(
-            SourceCatalogueIssueStage.Identity,
             SourceCatalogueIssueCode.IdentityCollision,
             ".agents/root/collision.md",
             [first.Identity.CanonicalBasePath, second.Identity.CanonicalBasePath],
             Physical(".agents/root"),
             null);
         var aliasIssue = new SourceCatalogueIssue(
-            SourceCatalogueIssueStage.Identity,
             SourceCatalogueIssueCode.PhysicalAlias,
             ".agents/root/alias.md",
             [first.Identity.CanonicalBasePath, ".agents/root/alias.md"],
@@ -240,14 +236,12 @@ public sealed class SourceCatalogueTests
         }
 
         var rootIssue = new SourceCatalogueIssue(
-            SourceCatalogueIssueStage.Root,
             SourceCatalogueIssueCode.RootMissing,
             ".agents/missing",
             [],
             null,
             null);
         var collision = new SourceCatalogueIssue(
-            SourceCatalogueIssueStage.Identity,
             SourceCatalogueIssueCode.IdentityCollision,
             ".agents/root/other.md",
             [".agents/root/leaf.md", ".agents/root/other.md"],

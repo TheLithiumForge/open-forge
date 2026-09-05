@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Models;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
 
@@ -31,6 +32,10 @@ internal sealed record RouteSourceObservation
     public required FrameworkDocumentMetadataFacts FrameworkMetadata { get; init; }
 
     public required SourceGeneratedEntriesFacts GeneratedEntries { get; init; }
+
+    public required RouteSourceStructureObservation Structure { get; init; }
+
+    public required IReadOnlyList<RouteWorkspaceSourceIssue> WorkspaceIssues { get; init; }
 
     internal bool IsReadable => Layers.All(layer => layer.State == FileReadState.Complete);
 }

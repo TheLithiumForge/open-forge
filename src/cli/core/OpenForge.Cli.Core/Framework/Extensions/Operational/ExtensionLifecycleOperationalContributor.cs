@@ -1,4 +1,3 @@
-using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
 using OpenForge.Cli.Core.Framework.Lifecycle;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models;
@@ -19,61 +18,64 @@ internal interface IExtensionLifecycleOperationalContributor
         CancellationToken cancellationToken);
 }
 
-internal sealed class ExtensionLifecycleOperationalContributor(
-    LifecycleDocumentReader lifecycleReader,
-    ExtensionSourceReader sourceReader,
-    ExtensionLifecycleTargetReader targetReader,
-    LifecycleOwnershipReader ownershipReader) : IExtensionLifecycleOperationalContributor
+internal sealed class ExtensionLifecycleOperationalContributor :
+    IExtensionLifecycleOperationalContributor
 {
+    private readonly ExtensionLifecycleDoctorReader _doctorReader;
+    private readonly LifecycleDocumentReader _lifecycleReader;
+    private readonly ExtensionSourceObservationReader _sourceReader;
+    private readonly ExtensionLifecycleTargetReader _targetReader;
+
+    internal ExtensionLifecycleOperationalContributor(
+        LifecycleDocumentReader lifecycleReader,
+        ExtensionSourceReader sourceReader,
+        ExtensionLifecycleTargetReader targetReader,
+        LifecycleOwnershipReader ownershipReader)
+    {
+        _lifecycleReader = lifecycleReader;
+        _sourceReader = new ExtensionSourceObservationReader(sourceReader);
+        _targetReader = targetReader;
+        _doctorReader = new ExtensionLifecycleDoctorReader(
+            lifecycleReader,
+            _sourceReader,
+            targetReader,
+            ownershipReader);
+    }
+
     internal async ValueTask<ExtensionLifecycleStatusView> ReadStatusAsync(
         LifecycleDocumentSnapshot snapshot,
         CancellationToken cancellationToken)
     {
-        var lifecycle = lifecycleReader.ReadExtensions(snapshot);
-        var sources = await ReadSourceObservationsAsync(
-            snapshot.Workspace,
-            lifecycle.Packages,
-            cancellationToken).ConfigureAwait(false);
-        var targets = await targetReader
+        var lifecycle = _lifecycleReader.ReadExtensions(snapshot);
+        var sources = await _sourceReader
+            .ReadAsync(
+                snapshot.Workspace,
+                lifecycle.Packages,
+                includeEmbedded: false,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var targets = await _targetReader
             .ReadAsync(snapshot.Workspace, lifecycle.Paths, cancellationToken)
             .ConfigureAwait(false);
         return new ExtensionLifecycleStatusView
         {
-            State = ReadViewState(lifecycle),
-            Presence = ReadPresence(lifecycle.State),
-            Lifecycle = ReadLifecycleState(lifecycle),
-            SourceAvailability = ReadAggregateSourceAvailability(lifecycle, sources),
-            Installed = lifecycle.Packages.Select(package => Project(package, sources)).ToArray(),
+            State = ExtensionLifecycleEvaluation.ReadViewState(lifecycle),
+            Presence = ExtensionLifecycleEvaluation.ReadPresence(lifecycle.State),
+            Lifecycle = ExtensionLifecycleEvaluation.ReadLifecycleState(lifecycle),
+            SourceAvailability = ExtensionLifecycleEvaluation.ReadSourceAvailability(
+                lifecycle,
+                sources),
+            Installed = lifecycle.Packages
+                .Select(package => ExtensionSourceObservationReader.Project(package, sources))
+                .ToArray(),
             Targets = targets,
         };
     }
 
-    internal async ValueTask<ExtensionLifecycleDoctorView> ReadDoctorAsync(
+    internal ValueTask<ExtensionLifecycleDoctorView> ReadDoctorAsync(
         CliWorkspace workspace,
         CancellationToken cancellationToken)
-    {
-        var lifecycle = await lifecycleReader
-            .ReadExtensionsAsync(workspace, cancellationToken)
-            .ConfigureAwait(false);
-        var sources = await ReadSourceObservationsAsync(
-            workspace,
-            lifecycle.Packages,
-            cancellationToken).ConfigureAwait(false);
-        var ownership = await ownershipReader
-            .ReadAsync(workspace, cancellationToken)
-            .ConfigureAwait(false);
-        var targets = await targetReader
-            .ReadAsync(workspace, lifecycle.Paths, cancellationToken)
-            .ConfigureAwait(false);
-        return new ExtensionLifecycleDoctorView
-        {
-            State = ReadViewState(lifecycle),
-            Lifecycle = lifecycle,
-            Sources = sources,
-            Ownership = ownership,
-            Targets = targets,
-        };
-    }
+        => _doctorReader.ReadAsync(workspace, cancellationToken);
 
     ValueTask<ExtensionLifecycleStatusView> IExtensionLifecycleOperationalContributor.ReadStatusAsync(
         LifecycleDocumentSnapshot snapshot,
@@ -84,66 +86,11 @@ internal sealed class ExtensionLifecycleOperationalContributor(
         CliWorkspace workspace,
         CancellationToken cancellationToken)
         => ReadDoctorAsync(workspace, cancellationToken);
+}
 
-    private async ValueTask<IReadOnlyList<ExtensionSourceObservation>> ReadSourceObservationsAsync(
-        CliWorkspace workspace,
-        IReadOnlyList<LifecycleInstalledPackage> packages,
-        CancellationToken cancellationToken)
-    {
-        var includesEmbedded = false;
-        var explicitSources = new SortedSet<string>(StringComparer.Ordinal);
-        foreach (var package in packages)
-        {
-            if (package.Source is null)
-            {
-                includesEmbedded = true;
-                continue;
-            }
-
-            explicitSources.Add(package.Source);
-        }
-
-        var observations = new List<ExtensionSourceObservation>(
-            explicitSources.Count + (includesEmbedded ? 1 : 0));
-        if (includesEmbedded)
-        {
-            var source = await sourceReader
-                .ReadAsync(workspace, explicitSource: null, cancellationToken)
-                .ConfigureAwait(false);
-            observations.Add(new ExtensionSourceObservation(RecordedSource: null, source));
-        }
-
-        foreach (var recordedSource in explicitSources)
-        {
-            var source = await sourceReader
-                .ReadAsync(workspace, recordedSource, cancellationToken)
-                .ConfigureAwait(false);
-            observations.Add(new ExtensionSourceObservation(recordedSource, source));
-        }
-
-        return Array.AsReadOnly(observations.ToArray());
-    }
-
-    private static InstalledExtensionObservation Project(
-        LifecycleInstalledPackage package,
-        IReadOnlyList<ExtensionSourceObservation> sources)
-    {
-        var source = sources.Single(observation => string.Equals(
-            observation.RecordedSource,
-            package.Source,
-            StringComparison.Ordinal));
-        return new InstalledExtensionObservation
-        {
-            Id = package.Id,
-            Version = package.Version,
-            Source = package.Source,
-            SourceAvailability = ReadSourceAvailability(source.Read),
-            Dependencies = package.Dependencies.ToArray(),
-            Paths = package.Paths.ToArray(),
-        };
-    }
-
-    private static OperationalViewState ReadViewState(LifecycleReadResult lifecycle)
+internal static class ExtensionLifecycleEvaluation
+{
+    internal static OperationalViewState ReadViewState(LifecycleReadResult lifecycle)
     {
         if (lifecycle.State == LifecycleReadState.Cancelled)
         {
@@ -163,9 +110,8 @@ internal sealed class ExtensionLifecycleOperationalContributor(
         };
     }
 
-    private static OperationalLifecycleState ReadLifecycleState(LifecycleReadResult lifecycle)
-    {
-        return lifecycle.Trust switch
+    internal static OperationalLifecycleState ReadLifecycleState(LifecycleReadResult lifecycle)
+        => lifecycle.Trust switch
         {
             LifecycleExtensionTrust.Trusted => OperationalLifecycleState.Trusted,
             LifecycleExtensionTrust.Untrusted => OperationalLifecycleState.Untrusted,
@@ -179,9 +125,8 @@ internal sealed class ExtensionLifecycleOperationalContributor(
                 lifecycle.Trust,
                 "The Extension lifecycle trust is not defined."),
         };
-    }
 
-    private static OperationalSourceAvailability ReadAggregateSourceAvailability(
+    internal static OperationalSourceAvailability ReadSourceAvailability(
         LifecycleReadResult lifecycle,
         IReadOnlyList<ExtensionSourceObservation> sources)
     {
@@ -192,13 +137,13 @@ internal sealed class ExtensionLifecycleOperationalContributor(
         }
 
         return state == OperationalLifecycleState.Trusted
-            && sources.All(source =>
-                ReadSourceAvailability(source.Read) == OperationalSourceAvailability.Available)
+            && sources.All(source => ExtensionSourceObservationReader.ReadAvailability(source.Read)
+                == OperationalSourceAvailability.Available)
             ? OperationalSourceAvailability.Available
             : OperationalSourceAvailability.Unavailable;
     }
 
-    private static OperationalLifecyclePresenceState ReadPresence(
+    internal static OperationalLifecyclePresenceState ReadPresence(
         LifecycleReadState state)
         => state switch
         {
@@ -211,21 +156,5 @@ internal sealed class ExtensionLifecycleOperationalContributor(
                 nameof(state),
                 state,
                 "The Extension lifecycle presence state is not defined."),
-        };
-
-    private static OperationalSourceAvailability ReadSourceAvailability(
-        ExtensionSourceReadResult source)
-        => source.State switch
-        {
-            ExtensionSourceReadState.Complete => OperationalSourceAvailability.Available,
-            ExtensionSourceReadState.Missing
-                or ExtensionSourceReadState.Invalid
-                or ExtensionSourceReadState.Blocked
-                or ExtensionSourceReadState.Unavailable
-                or ExtensionSourceReadState.Cancelled => OperationalSourceAvailability.Unavailable,
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(source),
-                source.State,
-                "The Extension source read state is not defined."),
         };
 }

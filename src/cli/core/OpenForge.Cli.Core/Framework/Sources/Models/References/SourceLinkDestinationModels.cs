@@ -108,4 +108,42 @@ internal sealed record SourceLinkDestinationFacts
     public required SourceLinkTarget Target { get; init; }
 
     public required SourceLinkDestinationFinding? Finding { get; init; }
+
+    public SourceLinkCanonicalFragment? CanonicalFragment { get; private init; }
+
+    internal SourceLinkDestinationFacts WithCanonicalFragment(
+        SourceLinkCanonicalFragment canonicalFragment)
+    {
+        ArgumentNullException.ThrowIfNull(canonicalFragment);
+        if (Target.Resolution != SourceLinkTargetResolution.FragmentMissing
+            || Fragment is null
+            || Finding?.Code != SourceLinkDestinationFindingCode.FragmentMissing
+            || !string.Equals(Fragment, canonicalFragment.Authored, StringComparison.Ordinal))
+        {
+            throw new InvalidOperationException(
+                "A canonical fragment requires one exact fragment-missing destination fact.");
+        }
+
+        return this with { CanonicalFragment = canonicalFragment };
+    }
+}
+
+internal sealed record SourceLinkCanonicalFragment
+{
+    internal SourceLinkCanonicalFragment(string authored, string canonical)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(authored);
+        ArgumentException.ThrowIfNullOrWhiteSpace(canonical);
+        if (string.Equals(authored, canonical, StringComparison.Ordinal))
+        {
+            throw new ArgumentException("A canonical fragment correction must change the authored spelling.", nameof(canonical));
+        }
+
+        Authored = authored;
+        Canonical = canonical;
+    }
+
+    internal string Authored { get; }
+
+    internal string Canonical { get; }
 }

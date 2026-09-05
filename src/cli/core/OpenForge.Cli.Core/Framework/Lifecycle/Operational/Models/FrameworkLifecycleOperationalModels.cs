@@ -4,30 +4,62 @@ using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 
 namespace OpenForge.Cli.Core.Framework.Lifecycle.Operational.Models;
 
-internal enum FrameworkManagedTargetKind
+internal enum FrameworkManagedSetState
 {
-    File,
-    ManagedRegion,
-    GeneratedRegion,
+    Empty,
+    Current,
+    NonCurrent,
+    Mixed,
+    Unavailable,
 }
 
-internal sealed record FrameworkManagedTargetObservation
+internal sealed class FrameworkLifecycleDoctorAssessment
 {
-    public required string Path { get; init; }
+    private FrameworkLifecycleDoctorAssessment(
+        OperationalViewState state,
+        OperationalLifecycleState lifecycle,
+        OperationalSourceAvailability sourceAvailability,
+        FrameworkManagedSetState managedSet)
+    {
+        if (!Enum.IsDefined(state)
+            || !Enum.IsDefined(lifecycle)
+            || !Enum.IsDefined(sourceAvailability)
+            || !Enum.IsDefined(managedSet))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(state),
+                state,
+                "Framework Doctor assessment values must be defined.");
+        }
 
-    public required FrameworkManagedTargetKind Kind { get; init; }
+        if (lifecycle == OperationalLifecycleState.Trusted
+            != (sourceAvailability == OperationalSourceAvailability.Available))
+        {
+            throw new ArgumentException(
+                "Framework lifecycle trust must match source availability.",
+                nameof(sourceAvailability));
+        }
 
-    public required string? SourceAssetPath { get; init; }
+        State = state;
+        Lifecycle = lifecycle;
+        SourceAvailability = sourceAvailability;
+        ManagedSet = managedSet;
+    }
 
-    public required string? Region { get; init; }
+    internal OperationalViewState State { get; }
 
-    public required string BaselineFingerprint { get; init; }
+    internal OperationalLifecycleState Lifecycle { get; }
 
-    public required string FingerprintKind { get; init; }
+    internal OperationalSourceAvailability SourceAvailability { get; }
 
-    public required FrameworkLifecycleTargetSourceValidation Source { get; init; }
+    internal FrameworkManagedSetState ManagedSet { get; }
 
-    public required OperationalTargetState State { get; init; }
+    internal static FrameworkLifecycleDoctorAssessment Create(
+        OperationalViewState state,
+        OperationalLifecycleState lifecycle,
+        OperationalSourceAvailability sourceAvailability,
+        FrameworkManagedSetState managedSet)
+        => new(state, lifecycle, sourceAvailability, managedSet);
 }
 
 internal sealed record FrameworkLifecycleStatusView
@@ -43,13 +75,59 @@ internal sealed record FrameworkLifecycleStatusView
     public required IReadOnlyList<FrameworkManagedTargetObservation> Targets { get; init; }
 }
 
-internal sealed record FrameworkLifecycleDoctorView
+internal sealed class FrameworkLifecycleDoctorView
 {
-    public required OperationalViewState State { get; init; }
+    private FrameworkLifecycleDoctorView(
+        FrameworkLifecycleDoctorAssessment assessment,
+        LifecycleStoreReadResult lifecycle,
+        FrameworkPayloadReadResult payload,
+        IReadOnlyList<FrameworkManagedTargetDoctorObservation> targets)
+    {
+        ArgumentNullException.ThrowIfNull(assessment);
+        ArgumentNullException.ThrowIfNull(lifecycle);
+        ArgumentNullException.ThrowIfNull(payload);
+        ArgumentNullException.ThrowIfNull(targets);
+        if (targets.Any(target => target is null))
+        {
+            throw new ArgumentException(
+                "Framework Doctor target observations cannot contain null members.",
+                nameof(targets));
+        }
 
-    public required LifecycleStoreReadResult Lifecycle { get; init; }
+        if (targets.Count == 0 != (assessment.ManagedSet == FrameworkManagedSetState.Empty))
+        {
+            throw new ArgumentException(
+                "The Framework managed-set state must identify an empty target set exactly.",
+                nameof(assessment));
+        }
 
-    public required FrameworkPayloadReadResult Payload { get; init; }
+        Assessment = assessment;
+        Lifecycle = lifecycle;
+        Payload = payload;
+        Targets = targets.ToArray();
+    }
 
-    public required IReadOnlyList<FrameworkManagedTargetObservation> Targets { get; init; }
+    internal FrameworkLifecycleDoctorAssessment Assessment { get; }
+
+    internal OperationalViewState State => Assessment.State;
+
+    internal OperationalLifecycleState LifecycleState => Assessment.Lifecycle;
+
+    internal OperationalSourceAvailability SourceAvailability =>
+        Assessment.SourceAvailability;
+
+    internal LifecycleStoreReadResult Lifecycle { get; }
+
+    internal FrameworkPayloadReadResult Payload { get; }
+
+    internal IReadOnlyList<FrameworkManagedTargetDoctorObservation> Targets { get; }
+
+    internal FrameworkManagedSetState ManagedSet => Assessment.ManagedSet;
+
+    internal static FrameworkLifecycleDoctorView Create(
+        FrameworkLifecycleDoctorAssessment assessment,
+        LifecycleStoreReadResult lifecycle,
+        FrameworkPayloadReadResult payload,
+        IReadOnlyList<FrameworkManagedTargetDoctorObservation> targets)
+        => new(assessment, lifecycle, payload, targets);
 }

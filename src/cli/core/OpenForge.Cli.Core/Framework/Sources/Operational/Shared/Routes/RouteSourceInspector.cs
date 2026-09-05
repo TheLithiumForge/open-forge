@@ -15,6 +15,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Locations;
 using OpenForge.Cli.Core.Framework.Workspace;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
@@ -84,20 +85,32 @@ internal sealed class RouteSourceInspector
             ? baseRead.Read.Value
             : null;
         var document = text is null ? null : _markdownParser.Parse(text);
+        var locations = text is null ? null : new Utf8SourceMap(text);
+        var authoredMetadata = document is null
+            ? SourceAuthoredMetadataFacts.WithoutValues(SourceAuthoredMetadataState.Malformed)
+            : _sourceMetadataParser.Parse(document, source.Base.Form);
+        var frameworkMetadata = document is null
+            ? FrameworkDocumentMetadataFacts.WithoutValues(FrameworkDocumentMetadataState.Malformed)
+            : _frameworkMetadataParser.Parse(document);
         return new RouteSourceObservation
         {
             Source = source,
             Layers = layers.ToArray(),
             Document = document,
-            AuthoredMetadata = document is null
-                ? SourceAuthoredMetadataFacts.WithoutValues(SourceAuthoredMetadataState.Malformed)
-                : _sourceMetadataParser.Parse(document, source.Base.Form),
-            FrameworkMetadata = document is null
-                ? FrameworkDocumentMetadataFacts.WithoutValues(FrameworkDocumentMetadataState.Malformed)
-                : _frameworkMetadataParser.Parse(document),
+            AuthoredMetadata = authoredMetadata,
+            FrameworkMetadata = frameworkMetadata,
             GeneratedEntries = document is null
                 ? SourceGeneratedEntriesFacts.Unavailable("The source document is unavailable.")
                 : SourceGeneratedEntriesParser.Parse(document),
+            Structure = RouteSourceStructureReader.ReadStructure(
+                document,
+                source.Base.Form,
+                locations),
+            WorkspaceIssues = RouteSourceStructureReader.ReadWorkspaceIssues(
+                source.Identity.CanonicalBasePath,
+                document,
+                frameworkMetadata,
+                locations),
         };
     }
 

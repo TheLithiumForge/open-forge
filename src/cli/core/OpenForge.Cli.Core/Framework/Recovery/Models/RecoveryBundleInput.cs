@@ -8,24 +8,24 @@ namespace OpenForge.Cli.Core.Framework.Recovery.Models;
 internal sealed record RecoveryBundleInput
 {
     private RecoveryBundleInput(
-        CliWorkspace workspace,
-        string command,
-        Guid operationId,
+        RecoveryBundleOperationIdentity identity,
         ImmutableArray<RecoveryBundleTarget> targets,
         ImmutableArray<RecoveryBundleTarget> recoveryTargets)
     {
-        Workspace = workspace;
-        Command = command;
-        OperationId = operationId;
+        Identity = identity;
         Targets = targets;
         RecoveryTargets = recoveryTargets;
     }
 
-    internal CliWorkspace Workspace { get; }
+    private RecoveryBundleOperationIdentity Identity { get; }
 
-    internal string Command { get; }
+    internal CliWorkspace Workspace => Identity.Workspace;
 
-    internal Guid OperationId { get; }
+    internal string Command => Identity.Command;
+
+    internal RecoveryBundleAttribution Attribution => Identity.Attribution;
+
+    internal Guid OperationId => Identity.OperationId;
 
     internal ImmutableArray<RecoveryBundleTarget> Targets { get; }
 
@@ -34,15 +34,27 @@ internal sealed record RecoveryBundleInput
     internal static RecoveryBundleInput Create(
         CliWorkspace workspace,
         string command,
+        RecoveryBundleAttribution attribution,
         Guid operationId,
         IReadOnlyList<RecoveryBundleTarget> targets)
     {
         ArgumentNullException.ThrowIfNull(workspace);
         ArgumentException.ThrowIfNullOrWhiteSpace(command);
+        ArgumentNullException.ThrowIfNull(attribution);
         ArgumentNullException.ThrowIfNull(targets);
         if (operationId == Guid.Empty)
         {
             throw new ArgumentException("A recovery operation ID cannot be empty.", nameof(operationId));
+        }
+
+        var workspaceKey = WorkspaceIdentity.Key(
+            WorkspaceIdentity.NormalizePhysicalPath(workspace.PhysicalRoot));
+        if (attribution.Subject.Kind != RecoveryBundleSubjectKind.Workspace
+            || !string.Equals(attribution.Subject.Identity, workspaceKey, StringComparison.Ordinal))
+        {
+            throw new ArgumentException(
+                "Recovery attribution must identify the selected workspace.",
+                nameof(attribution));
         }
 
         var all = ImmutableArray.CreateBuilder<RecoveryBundleTarget>(targets.Count);
@@ -67,9 +79,11 @@ internal sealed record RecoveryBundleInput
         }
 
         return new RecoveryBundleInput(
-            workspace,
-            command,
-            operationId,
+            new RecoveryBundleOperationIdentity(
+                workspace,
+                command,
+                attribution,
+                operationId),
             all.MoveToImmutable(),
             recovery.ToImmutable());
     }
@@ -115,4 +129,10 @@ internal sealed record RecoveryBundleInput
 
     private static StringComparer PathComparer()
         => OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal;
+
+    private sealed record RecoveryBundleOperationIdentity(
+        CliWorkspace Workspace,
+        string Command,
+        RecoveryBundleAttribution Attribution,
+        Guid OperationId);
 }

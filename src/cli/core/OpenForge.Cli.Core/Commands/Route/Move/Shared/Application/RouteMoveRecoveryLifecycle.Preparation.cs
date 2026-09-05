@@ -46,6 +46,10 @@ internal sealed partial class RouteMoveRecoveryLifecycle
                 RecoveryBundleInput.Create(
                     input.Plan.Request.Workspace,
                     RouteMoveDefinitions.CommandIdentity,
+                    RecoveryBundleAttribution.Create(
+                        RecoveryBundleProducer.Route,
+                        RecoveryBundleOperation.Move,
+                        input.Plan.Request.Workspace),
                     input.OperationId,
                     input.Plan.Projection.RecoveryTargets),
                 cancellationToken).ConfigureAwait(false);

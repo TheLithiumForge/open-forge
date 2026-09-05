@@ -196,7 +196,15 @@ internal sealed class ExtensionSourceReader(PhysicalPathResolver physicalPathRes
             var manifestResolution = ResolveCandidate(directory, physicalPackage, Path.Combine(directory, "extension.json"));
             if (manifestResolution.State != PhysicalPathState.Contained)
             {
-                return Invalid(lexicalSource, $"Catalogue package directory '{Path.GetFileName(directory)}' has no safe manifest.", ExtensionSourceFailureKind.Invalid);
+                return manifestResolution.State == PhysicalPathState.Missing
+                    ? Invalid(
+                        lexicalSource,
+                        $"Catalogue package directory '{Path.GetFileName(directory)}' has no manifest.",
+                        ExtensionSourceFailureKind.ManifestMissing)
+                    : Blocked(
+                        lexicalSource,
+                        $"Catalogue package directory '{Path.GetFileName(directory)}' has an unsafe manifest boundary.",
+                        ExtensionSourceFailureKind.Invalid);
             }
 
             var manifest = await ReadPackageFactAsync(

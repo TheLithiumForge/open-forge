@@ -90,7 +90,7 @@ internal sealed class SourceRouteFactsResolver
                     AddIssue(
                         routeIssues,
                         ref nextOccurrence,
-                        SourceRouteIssueCode.LoaderUnavailable,
+                        SourceRouteIssueCode.LoaderUnreadable,
                         loader.Identity.CanonicalBasePath,
                         [],
                         ReadLoaderUnavailableCause(read));
@@ -150,9 +150,9 @@ internal sealed class SourceRouteFactsResolver
                         AddIssue(
                             routeIssues,
                             ref nextOccurrence,
-                            SourceRouteIssueCode.LoaderUnavailable,
-                            destinationPath,
-                            [],
+                        SourceRouteIssueCode.LoaderDestinationMissing,
+                        destinationPath,
+                        [loader.Identity.CanonicalBasePath],
                             "The Loader destination does not identify a retained source.");
                         areLoaderRootFactsComplete = false;
                         continue;
@@ -193,7 +193,7 @@ internal sealed class SourceRouteFactsResolver
                         AddIssue(
                             routeIssues,
                             ref nextOccurrence,
-                            SourceRouteIssueCode.LoaderMalformed,
+                            SourceRouteIssueCode.LoaderDuplicateRoot,
                             loader.Identity.CanonicalBasePath,
                             [destinationPath],
                             "The Loader declares the same canonical root more than once.");

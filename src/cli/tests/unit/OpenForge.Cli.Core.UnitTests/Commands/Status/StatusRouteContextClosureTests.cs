@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
@@ -51,7 +52,7 @@ public sealed class StatusRouteContextClosureTests
         var alphaRoot = Source(
             ".agents/alpha/_alpha.md",
             SourceDocumentForm.CanonicalEntrypoint,
-            Entries(new SourceGeneratedEntry("child.md", ["LoadNow"])),
+            Entries(Entry("child.md", "LoadNow")),
             parentPath: null);
         var alphaContinuity = Source(
             ".agents/alpha/continuity.md",
@@ -68,7 +69,7 @@ public sealed class StatusRouteContextClosureTests
         var betaRoot = Source(
             ".agents/beta/_beta.md",
             SourceDocumentForm.CanonicalEntrypoint,
-            Entries(new SourceGeneratedEntry("child.md", ["LoadNow"])),
+            Entries(Entry("child.md", "LoadNow")),
             parentPath: null);
         var betaContinuity = Source(
             ".agents/beta/continuity.md",
@@ -106,9 +107,9 @@ public sealed class StatusRouteContextClosureTests
             ".agents/loader.md",
             SourceDocumentForm.Loader,
             Entries(
-                new SourceGeneratedEntry("alpha/_alpha.md", ["KeepInMind"]),
-                new SourceGeneratedEntry("alpha/_alpha.md", ["KeepInMind"]),
-                new SourceGeneratedEntry("beta/_beta.md", ["KeepInMind"])),
+                Entry("alpha/_alpha.md", "KeepInMind"),
+                Entry("alpha/_alpha.md", "KeepInMind"),
+                Entry("beta/_beta.md", "KeepInMind")),
             parentPath: null);
         var alpha = Source(
             ".agents/alpha/_alpha.md",
@@ -118,7 +119,7 @@ public sealed class StatusRouteContextClosureTests
         var beta = Source(
             ".agents/beta/_beta.md",
             SourceDocumentForm.CanonicalEntrypoint,
-            Entries(new SourceGeneratedEntry("child.md", ["LoadNow"])),
+            Entries(Entry("child.md", "LoadNow")),
             parentPath: null);
         var child = Source(
             ".agents/beta/child.md",
@@ -170,4 +171,7 @@ public sealed class StatusRouteContextClosureTests
 
     private static SourceGeneratedEntriesFacts Entries(params SourceGeneratedEntry[] entries)
         => SourceGeneratedEntriesFacts.Complete(entries);
+
+    private static SourceGeneratedEntry Entry(string destination, string tag)
+        => new(destination, destination, [tag], new MarkdownTextSpan(0, 1));
 }

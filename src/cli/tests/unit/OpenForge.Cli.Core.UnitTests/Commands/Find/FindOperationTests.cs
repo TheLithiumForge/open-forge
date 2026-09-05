@@ -362,14 +362,13 @@ public sealed class FindOperationTests
         var documentSource = source.Length == 0 ? "Topic body" : source;
         return new MarkdownDocumentFacts(
             documentSource,
-            new MarkdownFrontmatterBoundary(MarkdownFrontmatterState.Missing, null, null, 0),
-            new MarkdownTextSpan(0, documentSource.Length),
-            [],
-            [],
-            [],
-            [],
-            [],
-            MarkdownGeneratedRegionFact.Absent());
+            new MarkdownDocumentStructure(
+                new MarkdownFrontmatterBoundary(MarkdownFrontmatterState.Missing, null, null, 0),
+                new MarkdownTextSpan(0, documentSource.Length),
+                [],
+                [],
+                MarkdownGeneratedRegionFact.Absent()),
+            new MarkdownInlineFacts([], [], [], []));
     }
 
     private static FindContentPart ReadContentPart(string value)

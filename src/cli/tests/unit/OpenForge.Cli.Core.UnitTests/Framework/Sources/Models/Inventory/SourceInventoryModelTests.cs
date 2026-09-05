@@ -88,7 +88,6 @@ public sealed class SourceInventoryModelTests
             FilesystemFailureKind.InputOutput,
             "directory inspection failed");
         var issue = new SourceCatalogueIssue(
-            SourceCatalogueIssueStage.Identity,
             SourceCatalogueIssueCode.IdentityCollision,
             ".agents/root/collision.md",
             [".agents/root/z.md", ".agents/root/a.md"],
@@ -136,14 +135,12 @@ public sealed class SourceInventoryModelTests
     public void SelectionModelKeepsIssueCollectionsTyped()
     {
         var rootIssue = new SourceCatalogueIssue(
-            SourceCatalogueIssueStage.Root,
             SourceCatalogueIssueCode.RootMissing,
             ".agents/missing",
             [],
             null,
             null);
         var directoryIssue = new SourceCatalogueIssue(
-            SourceCatalogueIssueStage.Directory,
             SourceCatalogueIssueCode.DirectoryUnavailable,
             ".agents/root",
             [],

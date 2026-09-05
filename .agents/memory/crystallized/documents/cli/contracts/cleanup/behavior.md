@@ -57,10 +57,20 @@ The operation satisfies these invariants:
 - An eligible item is either a verified final ordinary file or an ordinary
   exact-name draft in the selected normalized workspace bucket and passes final
   validation while Cleanup holds the same-workspace `WorkspaceLockLease`.
-- A final ZIP passes semantic source-generated schema-v1 manifest validation,
-  exact ordered entry names and counts, declared lengths and hashes, and exact
-  payload-byte checks. A draft is `Incomplete` support data and never
-  preparation.
+- A final ZIP passes semantic source-generated current schema-v1 manifest
+  validation, including the required immutable typed attribution, exact ordered
+  entry names and counts, declared lengths and hashes, and exact payload-byte
+  checks. A draft is exact-name, path-only `Incomplete` support data and never
+  forms preparation; observers do not inspect or use its bytes for attribution.
+- The schema discriminator is exactly `1`. A schema-1 final
+  missing or carrying invalid attribution is malformed/unattributed, remains
+  preserved, and blocks deletion; it is never migrated, rewritten, repaired,
+  adopted, or inferred. An unknown schema version is unsupported. Attribution
+  is an integrity fact, not deletion authority.
+- The exact schema-v1 attribution vocabulary, valid producer/operation/subject
+  combinations, and required non-null workspace identity are defined by the
+  [Mutation And Recovery Technical Design](../../technical-designs/mutation-and-recovery.md#schema-v1-attribution-vocabulary).
+  Cleanup accepts no unknown value or fallback attribution.
 - A suffix, age, extension, location, proximity, temporary-looking name, path,
   or matching bytes alone never establishes provenance or authority.
 - Malformed, unsupported, unavailable, non-ordinary, or unsafe exact-name
@@ -142,14 +152,14 @@ Behavior Contract.
 For every exact-name candidate admitted to the catalogue, current facts include:
 
 - final or draft kind and exact-name Open Forge provenance;
-- the associated operation and ordered target entries when the bundle requires
-  them;
+- the associated operation, valid immutable typed attribution for a verified
+  current-v1 final, and ordered target entries when the bundle requires them;
 - exact association with the selected normalized physical workspace path;
 - exact direct-child path, deterministic name, and current file kind;
 - the deletion verification condition; and
-- `Verified`, `Malformed`, `Unsupported`, or `Unavailable` semantic integrity for
-  a final, or the exact `Incomplete` draft name and ordinary-kind fact for a
-  draft.
+- `Verified`, `Malformed` (including unattributed), `Unsupported`, or `Unavailable`
+  semantic integrity for a final, or the exact `Incomplete` draft name and
+  ordinary-kind fact for a draft. Draft facts remain path-only.
 
 Strict final-bundle recognition may stream each ZIP payload entry through fixed
 bounded buffers solely to validate the exact declared length and lowercase
@@ -178,8 +188,9 @@ catalogue, is excluded from the deletion plan, and blocks every deletion.
 Cleanup does not require interpretation of user content. The exact selected
 workspace bucket, deterministic direct-child name, semantic final validation
 when applicable, explicit command intent, and held same-workspace lease provide
-deletion authority. Only verified final ordinary files and ordinary exact-name
-drafts are eligible.
+deletion authority. Attribution contributes only to final integrity and does not
+provide deletion authority. Only verified current-v1 final ordinary files and
+ordinary exact-name drafts are eligible.
 
 ## Selection And Plan Formation
 
@@ -334,9 +345,10 @@ A conforming implementation must demonstrate:
   lengths and hashes, bounded buffers and memory independent of entry size, and
   no extraction, disclosure, retention, or materialization;
 - default-all filtered exact-name catalogue formation, deterministic ordering,
-  plan eligibility only for verified finals and ordinary drafts, blocking
-  preservation of all invalid exact-name candidates, no arbitrary recursive
-  support-artifact cleanup, and no hidden command;
+  current-v1 attribution validation, plan eligibility only for verified finals
+  and ordinary drafts, blocking preservation of all invalid exact-name
+  candidates, no arbitrary recursive support-artifact cleanup, and no hidden
+  command;
 - exact dry-run/application candidate-plan parity and no persistent dry-run
   effects;
 - unavailable external recovery storage, deterministic bundle identity, and no

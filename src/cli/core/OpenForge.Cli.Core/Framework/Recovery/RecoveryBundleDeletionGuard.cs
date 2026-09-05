@@ -197,6 +197,7 @@ internal sealed class RecoveryBundleDeletionGuard(
             && expectedVerified.OperationId == actualVerified.OperationId
             && string.Equals(expectedVerified.Command, actualVerified.Command, StringComparison.Ordinal)
             && string.Equals(expectedVerified.WorkspaceKey, actualVerified.WorkspaceKey, StringComparison.Ordinal)
+            && expectedVerified.Attribution == actualVerified.Attribution
             && expectedVerified.Entries.SequenceEqual(actualVerified.Entries);
     }
 

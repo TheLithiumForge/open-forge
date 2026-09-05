@@ -490,7 +490,6 @@ public sealed class FindUniverseResolverTests
                 "docs/unreadable",
                 PhysicalPathState.External));
             issues.Add(new SourceCatalogueIssue(
-                SourceCatalogueIssueStage.Candidate,
                 SourceCatalogueIssueCode.CandidateUnsafe,
                 path,
                 [],
@@ -538,7 +537,6 @@ public sealed class FindUniverseResolverTests
                         ? PhysicalPathState.Inaccessible
                         : PhysicalPathState.Contained));
             issues.Add(new SourceCatalogueIssue(
-                SourceCatalogueIssueStage.Candidate.ToIssueStage(code),
                 code,
                 path,
                 [],
@@ -548,7 +546,6 @@ public sealed class FindUniverseResolverTests
         else if (code == SourceCatalogueIssueCode.DirectoryUnavailable)
         {
             issues.Add(new SourceCatalogueIssue(
-                SourceCatalogueIssueStage.Directory,
                 code,
                 ".agents/docs/private",
                 [],
@@ -571,7 +568,6 @@ public sealed class FindUniverseResolverTests
             sources.Add(CreateSource(workspace, secondSpec));
             candidates.AddRange(sources.SelectMany(source => CreateCandidates(workspace, source)));
             issues.Add(new SourceCatalogueIssue(
-                SourceCatalogueIssueStage.Identity,
                 code,
                 firstSpec.Path,
                 [firstSpec.Path, secondSpec.Path],
@@ -588,7 +584,6 @@ public sealed class FindUniverseResolverTests
                 "docs/orphan",
                 PhysicalPathState.Contained));
             issues.Add(new SourceCatalogueIssue(
-                SourceCatalogueIssueStage.Pairing,
                 code,
                 path,
                 [],
@@ -611,7 +606,6 @@ public sealed class FindUniverseResolverTests
             sources.Add(CreateSource(workspace, secondSpec));
             candidates.AddRange(sources.SelectMany(source => CreateCandidates(workspace, source)));
             issues.Add(new SourceCatalogueIssue(
-                SourceCatalogueIssueStage.Identity,
                 code,
                 firstSpec.Path,
                 [firstSpec.Path, secondSpec.Path],
@@ -622,7 +616,6 @@ public sealed class FindUniverseResolverTests
         if (rootIssue)
         {
             issues.Add(new SourceCatalogueIssue(
-                SourceCatalogueIssueStage.Root,
                 code,
                 ".agents",
                 [],
@@ -812,18 +805,4 @@ public sealed class FindUniverseResolverTests
         FindFindingCode? ExpectedFindingCode,
         CliSemanticStatus? ExpectedStatus,
         int? ExpectedCandidateCount);
-}
-
-internal static class SourceCatalogueIssueStageExtensions
-{
-    internal static SourceCatalogueIssueStage ToIssueStage(
-        this SourceCatalogueIssueStage stage,
-        SourceCatalogueIssueCode code)
-        => code switch
-        {
-            SourceCatalogueIssueCode.CandidateUnsafe
-                or SourceCatalogueIssueCode.CandidateUnavailable => SourceCatalogueIssueStage.Candidate,
-            SourceCatalogueIssueCode.IdentityUnavailable => SourceCatalogueIssueStage.Identity,
-            _ => stage,
-        };
 }

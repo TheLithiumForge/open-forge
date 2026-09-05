@@ -363,11 +363,28 @@ reopened for semantic manifest, exact ordered entry, length, hash, and payload-
 byte validation, moved within the same directory to the final name, and reopened
 and verified again. Only the valid final ZIP forms the opaque
 `RecoveryBundlePreparation`; the draft remains `Incomplete`. The source-generated
-`manifest.json` records schema-v1, command/operation/workspace identity, ordered
-relative targets and change kinds, exact prior byte lengths/hashes/payload names,
-and intended final absence or length/hash. Ordered ordinal payload entries hold
-the exact prior bytes for each existing-target effect. The bundle is
-immutable after preparation.
+`manifest.json` uses the one public schema-v1 discriminator value `1` and records
+command/operation/workspace identity, one required immutable `attribution`
+object, ordered relative targets and change kinds, exact prior byte
+lengths/hashes/payload names, and intended final absence or length/hash. The
+attribution contains one finite producer, one finite operation, and a typed
+subject `{kind, identity}`. Ordered ordinal payload entries hold the exact prior
+bytes for each existing-target effect. The bundle is immutable after
+preparation.
+
+The exact schema-v1 attribution vocabulary, valid producer/operation/subject
+combinations, and required non-null workspace identity are defined by the
+[Mutation And Recovery Technical Design](../../technical-designs/mutation-and-recovery.md#schema-v1-attribution-vocabulary).
+Repair accepts no unknown value or fallback attribution.
+
+Repair's future recovery writer uses this same current-v1 shape and supplies its
+own exact producer, operation, and subject from trusted Repair-owned facts. It
+does not forward free command, GUID, path, filename, or ordered-entry values as
+attribution or place them in a generic field bag. A schema-1 final missing or
+carrying invalid attribution is malformed/unattributed and remains preserved;
+it is not migrated, rewritten, repaired, deleted, or adopted. Unknown schema
+versions are unsupported. Drafts remain exact-name, path-only `Incomplete` facts;
+observers do not inspect or use their bytes for attribution.
 
 Every planned existing-target effect must match exactly one verified entry; Create and
 no-op effects have none. All preparation completes before the first effect.

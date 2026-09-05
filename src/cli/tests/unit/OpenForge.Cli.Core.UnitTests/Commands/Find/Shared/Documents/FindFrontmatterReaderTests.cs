@@ -243,14 +243,13 @@ public sealed class FindFrontmatterReaderTests
         {
             return new MarkdownDocumentFacts(
                 source,
-                new MarkdownFrontmatterBoundary(MarkdownFrontmatterState.Missing, null, null, 0),
-                new MarkdownTextSpan(0, source.Length),
-                [],
-                [],
-                [],
-                [],
-                [],
-                MarkdownGeneratedRegionFact.Absent());
+                new MarkdownDocumentStructure(
+                    new MarkdownFrontmatterBoundary(MarkdownFrontmatterState.Missing, null, null, 0),
+                    new MarkdownTextSpan(0, source.Length),
+                    [],
+                    [],
+                    MarkdownGeneratedRegionFact.Absent()),
+                new MarkdownInlineFacts([], [], [], []));
         }
 
         var openingLineEnd = source.IndexOf('\n') + 1;
@@ -260,18 +259,17 @@ public sealed class FindFrontmatterReaderTests
         var bodyStart = closingEnd + (source[closingEnd..].StartsWith("\r\n", StringComparison.Ordinal) ? 2 : 1);
         return new MarkdownDocumentFacts(
             source,
-            new MarkdownFrontmatterBoundary(
-                MarkdownFrontmatterState.Complete,
-                new MarkdownTextSpan(0, closingEnd),
-                new MarkdownTextSpan(openingLineEnd, closingStart - openingLineEnd),
-                bodyStart),
-            new MarkdownTextSpan(bodyStart, source.Length - bodyStart),
-            [],
-            [],
-            [],
-            [],
-            [],
-            MarkdownGeneratedRegionFact.Absent());
+            new MarkdownDocumentStructure(
+                new MarkdownFrontmatterBoundary(
+                    MarkdownFrontmatterState.Complete,
+                    new MarkdownTextSpan(0, closingEnd),
+                    new MarkdownTextSpan(openingLineEnd, closingStart - openingLineEnd),
+                    bodyStart),
+                new MarkdownTextSpan(bodyStart, source.Length - bodyStart),
+                [],
+                [],
+                MarkdownGeneratedRegionFact.Absent()),
+            new MarkdownInlineFacts([], [], [], []));
     }
 
     private static SourceLocation ExpectedLocation(

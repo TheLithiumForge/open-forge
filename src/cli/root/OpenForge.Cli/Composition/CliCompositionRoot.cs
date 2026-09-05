@@ -45,23 +45,30 @@ internal static class CliCompositionRoot
         var interactiveSession = CreateInteractiveSession(inputs);
         var physicalPathResolver = new PhysicalPathResolver();
         var sourceSessionReader = new SourceReadSessionReader(physicalPathResolver);
+        var routeSourceInspector = new RouteSourceInspector(
+            sourceSessionReader,
+            physicalPathResolver);
         var operationalContributors = new OperationalContributorCatalogue(
-            new WorkspaceEntryOperationalContributor(physicalPathResolver),
+            new WorkspaceEntryOperationalContributor(
+                new WorkspacePathObserver(physicalPathResolver)),
             new RecoveryResidualOperationalContributor(
-                new RecoveryBundleCatalogue(new RecoveryBundleReader())),
+                new RecoveryBundleCatalogue(new RecoveryBundleReader()),
+                new RecoveryBundleTargetStateReader(physicalPathResolver)),
             new RouteOperationalContributor(
                 new RouteObservationReader(
-                    new RouteSourceInspector(sourceSessionReader, physicalPathResolver),
-                    new RouteGeneratedNavigationReader(physicalPathResolver))),
+                    routeSourceInspector,
+                    new RouteGeneratedNavigationReader(physicalPathResolver),
+                    new RouteDoctorGeneratedNavigationReader())),
             new LocalReferenceOperationalContributor(
-                sourceSessionReader,
+                routeSourceInspector,
                 new SourceLinkDestinationResolver(
                     (workspace, lexicalPath) => physicalPathResolver.ResolveCandidate(
                         workspace.LexicalRoot,
                         workspace.PhysicalRoot,
                         lexicalPath),
                     StrictUtf8FileReader.ReadAsync,
-                    new MarkdownDocumentParser().Parse)),
+                    new MarkdownDocumentParser().Parse),
+                new LocalReferenceCandidateReader()),
             new FrameworkLifecycleOperationalContributor(
                 new LifecycleStore(physicalPathResolver),
                 new FrameworkLifecycleTargetReader(physicalPathResolver)),
@@ -92,6 +99,7 @@ internal static class CliCompositionRoot
                 standalone.FindBinding,
                 standalone.IndexBinding,
                 standalone.StatusBinding,
+                standalone.DoctorBinding,
                 standalone.ContextBinding,
                 standalone.ReferencesBinding,
                 standalone.InstallBinding,
@@ -129,6 +137,7 @@ internal static class CliCompositionRoot
                   route move        Move one routed source or category while preserving its route meaning.
                   find              Find Markdown sources by authored tags and structural headings.
                   status            Inspect workspace, context, lifecycle, generated-navigation, and recovery status.
+                  doctor            Diagnose workspace, route, reference, lifecycle, and recovery facts without changing them.
                   extension list    List installed and available Extension packages.
                   extension inspect Inspect one installed or available Extension package.
                   extension create  Create one local Extension package scaffold.

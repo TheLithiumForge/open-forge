@@ -105,13 +105,72 @@ ZIP before the first target effect. A create-only or semantic or byte no-op
 operation does not resolve recovery storage and creates no bundle.
 
 The deterministic external directory key and names bind the normalized physical
-workspace path and operation ID. The source-generated schema-v1 `manifest.json`
-records schema version, command and operation identity, workspace identity, and
-the ordered exact target set. Each target entry records its normalized relative
+workspace path and operation ID. The source-generated public schema-v1
+`manifest.json` has exactly one schema discriminator value: `1`; no v2, dual
+reader, or compatibility layer exists. It records command and operation
+identity, workspace identity, one required immutable `attribution` object, and
+the ordered exact target set. The attribution contains one finite `producer`, one
+finite `operation`, and one typed `subject` with `{kind, identity}`. Every current
+and future recovery writer supplies those facts from trusted producer-owned
+inputs. Command text, GUID, path, filename, or
+ordered-entry values never infer or substitute for attribution. Ordered entries
+remain exact plan evidence. Each target entry records its normalized relative
 path, change kind, prior byte length, prior lowercase SHA-256, ordinal payload
 name, and intended final absence or intended length and lowercase SHA-256. The
-ordinal payload entries contain exact prior bytes. These fingerprints are static
-provenance, not an evolving journal.
+ordinal payload entries contain exact prior bytes. These fingerprints and the
+attribution are static provenance, not an evolving journal.
+
+### Schema-v1 Attribution Vocabulary
+
+The attribution wire properties are exactly `producer`, `operation`, and
+`subject`; `subject` has exactly `kind` and `identity`. Producer, operation, and
+subject-kind values are case-sensitive lowercase ASCII tokens. The complete
+admissible combinations are:
+
+| Availability    | `producer`  | `operation` | `subject.kind` | Existing or accepted command identity |
+| --------------- | ----------- | ----------- | -------------- | ------------------------------------- |
+| Current writer  | `framework` | `install`   | `workspace`    | `install`                             |
+| Current writer  | `extension` | `install`   | `workspace`    | `extension install`                   |
+| Current writer  | `index`     | `index`     | `workspace`    | `index`                               |
+| Current writer  | `route`     | `create`    | `workspace`    | `route create`                        |
+| Current writer  | `route`     | `init`      | `workspace`    | `route init`                          |
+| Current writer  | `route`     | `move`      | `workspace`    | `route move`                          |
+| Current writer  | `route`     | `update`    | `workspace`    | `route update`                        |
+| Accepted future | `route`     | `remove`    | `workspace`    | `route remove`                        |
+| Accepted future | `framework` | `update`    | `workspace`    | `update`                              |
+| Accepted future | `extension` | `update`    | `workspace`    | `extension update`                    |
+| Accepted future | `extension` | `remove`    | `workspace`    | `extension remove`                    |
+| Accepted future | `repair`    | `repair`    | `workspace`    | `repair`                              |
+
+The command identity in this table is the already accepted command identity
+associated with the fixed writer tuple; it never supplies or substitutes for a
+typed attribution value. Cleanup has no row because its narrow deletion
+operation never writes a recovery bundle.
+
+Every admissible tuple uses the selected `CliWorkspace.PhysicalRoot` as its
+trusted subject source. The writer applies
+`WorkspaceIdentity.NormalizePhysicalPath` (fully qualified `Path.GetFullPath`,
+with trailing directory separators trimmed except for the filesystem root),
+then sets `subject.identity` to the existing
+`WorkspaceIdentity.Key(normalizedPhysicalRoot)`, also exposed as the manifest's
+`workspaceKey`. The key is required, non-null, and exactly the lowercase
+64-hex-character SHA-256 identity produced by that helper: Windows uppercases
+the normalized path before hashing, while other platforms hash it unchanged.
+No operation-specific route, package, set, command, GUID, path, filename,
+ordered-entry, or untrusted-byte value supplies a v1 subject. A writer that
+cannot provide this trusted workspace identity cannot emit a valid final.
+
+Readers accept only the exact property names, values, tuple combinations, and
+non-null subject identity above. A missing, null, empty, unknown, malformed, or
+cross-combined value is `Malformed`/unattributed with no command, operation ID,
+path, filename, ordered-entry, or draft-byte fallback.
+
+A schema-1 final that is missing or has invalid attribution is
+`Malformed`/unattributed and remains preserved. It is never migrated, rewritten,
+repaired, deleted, adopted, or inferred. An unknown schema version is
+`Unsupported`. Drafts remain exact-name, path-only `Incomplete` facts; catalogue
+observers do not inspect or use draft bytes for attribution. Only a semantically
+verified current-v1 final exposes the attribution facts.
 
 The writer uses `CreateNew` for the exact deterministic draft name. It closes and
 reopens the draft, semantically decodes the source-generated manifest, and
@@ -133,10 +192,45 @@ custom ZIP parser, reflection path, native dependency, extra package, or
 extraction behavior.
 
 `RecoveryBundleCatalogue` reports neutral candidate path, kind, and integrity
-facts. Finals receive one semantic read. Drafts remain exact-name, path-only
-incomplete facts. Payload validation uses fixed bounded buffers and never
-extracts, discloses, renders, logs, returns, retains, or materializes payload
-bytes.
+facts. Finals receive one semantic read, and only a current-v1 final with valid
+attribution exposes those neutral producer facts. Drafts remain exact-name,
+path-only incomplete facts, and their bytes are not inspected or used for
+attribution. Payload validation uses fixed bounded buffers and
+never extracts, discloses, renders, logs, returns, retains, or materializes
+payload bytes.
+
+### Neutral Recovery-State Comparison
+
+Framework attribution and a generic mixed lifecycle state do not establish
+partial recovery. For one semantically verified current-v1 final selected for
+the same workspace, a neutral producer may compare the current ordinary target
+state for that bundle's ordered existing-target entries (`Replace`,
+`ReplaceGeneratedRegion`, and `Delete`) with each entry's recorded exact prior
+and intended state. The Framework attribution must be verified first, including
+the `workspace` subject identity matching the selected workspace key. The
+producer exposes only finite comparison states or equivalent bounded evidence;
+it never exposes recovery payload bytes to Doctor.
+
+Partial recovery is emitted only when at least one compared entry has a prior
+match and at least one other entry has an intended match, every compared entry
+is safely observable, and no entry is third or unknown. A prior match means the
+current state is a safely observable ordinary file contained by the workspace
+whose exact length and lowercase SHA-256 match the recorded prior state. An
+intended match means the same exact ordinary-file comparison against the
+recorded intended state, or safely proven absence when the intended state is
+absence. Absence is not unavailable. An unsafe, unavailable, non-ordinary,
+third, unknown, or mismatched state produces incomplete or blocked coverage or
+another applicable exact finding, never partial recovery.
+
+Each verified Framework-attributed final is evaluated independently in
+deterministic catalogue order. Entries from separate bundles are never ranked,
+selected as a winner, or combined. When every compared entry in one final is
+intended, there is no finding (the state is compatible with a completed
+historical operation); when every compared entry is prior, there is no partial
+recovery finding (the state is compatible with an unapplied or fully restored
+operation). Neither state proves operation history. The partial-recovery
+finding describes mixed current state relative to recovery evidence and never
+claims that recovery occurred.
 
 ## Atomic File Application
 
@@ -210,9 +304,10 @@ replay mechanism exists.
 
 Given an existing same-workspace lease and one caller-selected eligible candidate,
 `RecoveryBundleDeletionGuard` re-enumerates the workspace bucket once, proves the
-exact path, name, and kind, immediately rereads a verified final semantically or
-revalidates an exact-name ordinary draft, performs ordinary `File.Delete`, and
-verifies positive absence.
+exact path, name, and kind, immediately rereads a verified current-v1 final
+semantically or revalidates an exact-name ordinary draft, performs ordinary
+`File.Delete`, and verifies positive absence. Valid attribution is an integrity
+fact, not deletion authority.
 
 The guard returns one state (`Deleted`, `Failed`, `Blocked`, or `Cancelled`) and
 one orthogonal disposition (`Removed`, `Retained`, or `Unknown`). Deleted requires

@@ -45,7 +45,6 @@ internal sealed class SourceCatalogueReader
             {
                 var failure = rootComponent.Failure;
                 state.AddRootIssue(new SourceCatalogueIssue(
-                    SourceCatalogueIssueStage.Root,
                     SourceCatalogueIssueCode.RootUnavailable,
                     logicalRoot,
                     [],
@@ -97,7 +96,6 @@ internal sealed class SourceCatalogueReader
             if (enumeration.State != DirectoryEnumerationState.Complete)
             {
                 state.AddIssue(new SourceCatalogueIssue(
-                    SourceCatalogueIssueStage.Directory,
                     SourceCatalogueIssueCode.DirectoryUnavailable,
                     directory.CanonicalPath,
                     [],
@@ -217,7 +215,6 @@ internal sealed class SourceCatalogueReader
             _ => SourceCatalogueIssueCode.RootUnsafe,
         };
         return new SourceCatalogueIssue(
-            SourceCatalogueIssueStage.Root,
             code,
             logicalRoot,
             [],
@@ -299,7 +296,6 @@ internal sealed class SourceCatalogueReader
             if (automaticId is null)
             {
                 AddIssue(new SourceCatalogueIssue(
-                    SourceCatalogueIssueStage.Identity,
                     SourceCatalogueIssueCode.IdentityUnavailable,
                     canonicalPath,
                     [],
@@ -310,7 +306,6 @@ internal sealed class SourceCatalogueReader
             if (_firstLogicalByPhysical.TryGetValue(physicalPath, out var firstPath))
             {
                 AddIssue(new SourceCatalogueIssue(
-                    SourceCatalogueIssueStage.Identity,
                     SourceCatalogueIssueCode.PhysicalAlias,
                     canonicalPath,
                     [firstPath, canonicalPath],
@@ -350,7 +345,6 @@ internal sealed class SourceCatalogueReader
                 if (automaticId is null)
                 {
                     AddIssue(new SourceCatalogueIssue(
-                        SourceCatalogueIssueStage.Identity,
                         SourceCatalogueIssueCode.IdentityUnavailable,
                         canonicalPath,
                         [],
@@ -360,7 +354,6 @@ internal sealed class SourceCatalogueReader
             }
 
             AddIssue(new SourceCatalogueIssue(
-                SourceCatalogueIssueStage.Candidate,
                 SourceCatalogueIssueCode.CandidateUnsafe,
                 canonicalPath,
                 [],
@@ -392,7 +385,6 @@ internal sealed class SourceCatalogueReader
             if (automaticId is null)
             {
                 AddIssue(new SourceCatalogueIssue(
-                    SourceCatalogueIssueStage.Identity,
                     SourceCatalogueIssueCode.IdentityUnavailable,
                     canonicalPath,
                     [],
@@ -401,7 +393,6 @@ internal sealed class SourceCatalogueReader
             }
 
             AddIssue(new SourceCatalogueIssue(
-                SourceCatalogueIssueStage.Candidate,
                 SourceCatalogueIssueCode.CandidateUnavailable,
                 canonicalPath,
                 [],
@@ -412,6 +403,7 @@ internal sealed class SourceCatalogueReader
         internal SourceCatalogue FormCatalogue(bool isCancelled)
         {
             var candidates = _candidatesByPath.Values.ToArray();
+            AddUnsupportedSources(candidates);
             var sources = FormSources(candidates);
             AddIdentityCollisions(sources, candidates);
             AddOrphanOverwrites(candidates, sources);
@@ -421,6 +413,21 @@ internal sealed class SourceCatalogueReader
                 sources,
                 Issues.Concat(RootIssues),
                 isCancelled);
+        }
+
+        private void AddUnsupportedSources(IReadOnlyList<SourceCandidate> candidates)
+        {
+            foreach (var candidate in candidates.Where(candidate =>
+                         candidate.Form is null
+                         && candidate.PhysicalState == PhysicalPathState.Contained))
+            {
+                AddIssue(new SourceCatalogueIssue(
+                    SourceCatalogueIssueCode.UnsupportedSource,
+                    candidate.CanonicalPath,
+                    [],
+                    candidate.PhysicalParentPath,
+                    failure: null));
+            }
         }
 
         private List<SourceLogicalSource> FormSources(IReadOnlyList<SourceCandidate> candidates)
@@ -478,9 +485,18 @@ internal sealed class SourceCatalogueReader
                     .OrderBy(path => path, StringComparer.Ordinal)
                     .ToArray();
                 var first = candidatesByPath[paths[0]];
+                var forms = paths
+                    .Select(path => candidatesByPath[path].Form
+                        ?? throw new InvalidOperationException("A retained source candidate requires a source form."))
+                    .ToArray();
+                var code = forms.All(SourceFormClassifier.IsEntrypoint)
+                    ? forms.Any(form => form == SourceDocumentForm.CanonicalEntrypoint)
+                        && forms.Any(form => form != SourceDocumentForm.CanonicalEntrypoint)
+                            ? SourceCatalogueIssueCode.EntrypointCompatibilityCollision
+                            : SourceCatalogueIssueCode.EntrypointAmbiguous
+                    : SourceCatalogueIssueCode.IdentityCollision;
                 AddIssue(new SourceCatalogueIssue(
-                    SourceCatalogueIssueStage.Identity,
-                    SourceCatalogueIssueCode.IdentityCollision,
+                    code,
                     paths[0],
                     paths,
                     first.PhysicalParentPath,
@@ -504,7 +520,6 @@ internal sealed class SourceCatalogueReader
                          && !pairedPaths.Contains(candidate.CanonicalPath)))
             {
                 AddIssue(new SourceCatalogueIssue(
-                    SourceCatalogueIssueStage.Pairing,
                     SourceCatalogueIssueCode.OrphanOverwrite,
                     overwrite.CanonicalPath,
                     [],

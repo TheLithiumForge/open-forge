@@ -185,10 +185,12 @@ user choice, not a default.
 
 An exact proposal is admitted only when current facts prove one
 meaning-preserving effect and its expected state, intended state, affected
-boundary, verification condition, and recovery requirement are available. Doctor
-does not apply it. A guided candidate is retained only when it comes from the
-finite filename, title, literal-content, or route-neighborhood evidence named by
-the Interface. Doctor does not perform semantic, fuzzy, synonym, relevance, or
+boundary, verification condition, and recovery requirement are available. The
+typed proposal retains each of those five facts, including the affected
+boundary, without converting any of them into an executable effect. Doctor does
+not apply it. A guided candidate is retained only when it comes from the finite
+filename, title, literal-content, or route-neighborhood evidence named by the
+Interface. Doctor does not perform semantic, fuzzy, synonym, relevance, or
 network selection.
 
 The resolution lanes are formed as follows:
@@ -259,13 +261,22 @@ arbitrary private artifacts.
 
 The stage enumerates exact deterministic final and draft names directly under
 the selected workspace bucket. It performs at most one semantic integrity check
-per exact named final ZIP: source-generated schema-v1 manifest decoding, exact
-ordered entry names and counts, declared lengths and hashes, and exact payload
-bytes. A valid final is `Verified`; an invalid or unreadable final is
-`Malformed`, `Unsupported`, or `Unavailable`. An exact named draft is
-`Incomplete` and never preparation. Payload validation uses fixed bounded
-buffers and never extracts, discloses, renders, logs, returns, retains, or
-materializes payload bytes.
+per exact named final ZIP: source-generated current schema-v1 manifest decoding,
+required immutable typed attribution validation, exact ordered entry names and
+counts, declared lengths and hashes, and exact payload bytes. A valid current-v1
+final is `Verified`; a schema-1 final missing or carrying invalid attribution is
+`Malformed`/unattributed, an unknown schema version is `Unsupported`, and an
+unreadable final is `Unavailable`. Finals without valid attribution remain
+preserved and are never migrated, rewritten, repaired, deleted, adopted, or
+inferred. An exact named draft is exact-name, path-only `Incomplete` and never
+preparation; Doctor does not inspect or use draft bytes for attribution. Payload
+validation uses fixed bounded buffers and never extracts, discloses, renders,
+logs, returns, retains, or materializes payload bytes.
+
+The exact schema-v1 attribution vocabulary, valid producer/operation/subject
+combinations, and required non-null workspace identity are defined by the
+[Mutation And Recovery Technical Design](../../technical-designs/mutation-and-recovery.md#schema-v1-attribution-vocabulary).
+Doctor accepts no unknown value or fallback attribution.
 
 The stage reports the exact path, kind, integrity condition, and separate Cleanup
 guidance. It does not acquire `WorkspaceLockLease`, inspect live targets,
@@ -273,6 +284,14 @@ classify target state, infer activity, or auto-bind another workspace bucket.
 The recovery catalogue contains only `recovery.bundle-recognized`,
 `recovery.draft-recognized`, `recovery.bundle-collision`, and
 `recovery.provenance-unavailable` under the Interface definitions.
+
+Recovery attribution, when available, remains a neutral producer fact beside
+the recovery models. Lifecycle diagnosis consumes it only after verifying the
+current-v1 final's immutable typed attribution to a Framework producer,
+operation, and typed subject `{kind, identity}` for the selected workspace, plus
+the exact neutral recovery-state comparison defined below. A generic
+mixed-current-state observation alone is insufficient. It is not a Doctor enum,
+a presentation dependency, or a generic bag.
 
 Recovery findings remain diagnosis, manual, blocked, or typed actions for the
 separate [cleanup operation](../cleanup/interface.md). The general Repair
@@ -289,10 +308,9 @@ generated lines do not define topology or provide metadata fallback.
 
 The stage realizes the route catalogue:
 
-- `route.entrypoint-missing`, `route.entrypoint-duplicate`, and
-  `route.child-missing` preserve route-shape gaps without authoring a route or
-  child.
-- `route.escape`, `route.cycle`, `route.unreachable`, and `route.detached`
+- `route.entrypoint-missing` and `route.entrypoint-duplicate` preserve
+  route-shape gaps without authoring a route or child.
+- `route.escape`, `route.unreachable`, and `route.detached`
   block or limit unsafe topology and never invent a parent, root, or route
   membership.
 - `route.metadata-required-missing`, `route.title-invalid`, and
@@ -310,10 +328,9 @@ The stage realizes the route catalogue:
   compare each generated entry's presence, membership, ordering, destination,
   description, and tags. They form a typed `index` action only when the route
   boundary and authored metadata are valid.
-- `route.overwrite-orphan`, `route.overwrite-ambiguous`, and
-  `route.overwrite-independent-index` preserve the base and overwrite
-  identity boundary. The overwrite is not treated as an independent source or
-  generated child.
+- `route.overwrite-orphan` and `route.overwrite-independent-index` preserve the
+  base and overwrite identity boundary. The overwrite is not treated as an
+  independent source or generated child.
 - `route.compatibility-conflict` retains every conflicting route form and does
   not choose a canonical winner.
 
@@ -375,6 +392,23 @@ content, and route-neighborhood evidence. It does not use fuzzy, semantic,
 synonym, relevance, vector, or network matching. The same contained local
 reference boundary is the only boundary available to an explicit Repair relink.
 
+Each candidate basis is an exact producer-observed fact over the bounded
+contained source universe. Doctor retains every applicable basis for each
+candidate. It does not rank bases or candidates, select a winner, fall back to
+another basis, or infer a basis through semantic, fuzzy, synonym, network, or
+broad text search. The bases are defined conservatively:
+
+- `filename` is an exact canonical leaf filename.
+- `title` is an exact authored link label or title matched to the parsed primary
+  title.
+- `literal-content` is an exact bounded link-label or title occurrence supplied
+  by retained parsed facts; it is not a broad body search.
+- `route-neighborhood` is an exact established route parent, child, or sibling
+  relation.
+
+When current typed facts cannot establish a basis, the basis is absent and the
+stage does not infer it.
+
 ## Domain 5: Framework Lifecycle
 
 The Framework lifecycle stage diagnoses the isolated `framework` section of
@@ -414,9 +448,39 @@ The stage realizes every Framework kind:
   unsafe bridge or root-region boundaries without selecting a replacement.
 - `framework.ownership-conflict` keeps managed, user, and Extension claims
   separate and requires a manual decision.
-- `framework.partial-lifecycle` and `framework.partial-recovery` preserve mixed
-  current or recovery state and block a general repair choice. The lifecycle
-  document itself stores no recovery evidence or operation history.
+- `framework.partial-lifecycle` is formed only from a finite mixed-current-state
+  observation within one exact trusted declared managed subject or set. At least
+  one expected member must be current and at least one other expected member
+  must be non-current. The finding reports observed mixed state only. It never
+  reports operation history, transition intent, or recovery attribution. The
+  more specific `framework.managed-missing` and `framework.managed-changed`
+  findings remain alongside it whenever their facts apply.
+- `framework.partial-recovery` is formed only for one semantically verified
+  current-v1 final whose immutable typed attribution identifies the finite
+  Framework producer, its exact operation, and a `workspace` subject whose
+  identity matches the selected workspace key. A neutral producer compares the
+  current ordinary target state for every ordered existing-target entry
+  (`Replace`, `ReplaceGeneratedRegion`, or `Delete`) with its recorded exact
+  prior and intended states. A prior match means a safely observable ordinary
+  file contained by the workspace has the exact recorded prior length and
+  lowercase SHA-256. An intended match means the same exact ordinary-file
+  comparison against the recorded intended state, or safely proven absence when
+  the intended state is absence. Absence is not unavailable. The finding is
+  formed only when at least one entry matches prior, at least one other matches
+  intended, every compared entry is safely observable, and no compared entry is
+  third or unknown. Each verified Framework-attributed final is evaluated
+  independently in deterministic catalogue order; entries from separate bundles
+  are never ranked, selected as a winner, or combined. All-intended is a
+  no-finding state compatible with a completed historical operation; all-prior is
+  a no-partial-finding state compatible with an unapplied or fully restored
+  operation. Unavailable, unsafe, non-ordinary, third, unknown, or mismatched
+  state produces incomplete or blocked coverage or another exact finding, never
+  partial recovery. The finding describes mixed current state relative to recovery
+  evidence and never claims that recovery occurred. Doctor never guesses
+  attribution or state from a GUID, path, filename, command text, ordered entry,
+  or untrusted bytes. The producer may expose only finite comparison states or
+  bounded evidence; no payload bytes enter Doctor output. The lifecycle document
+  itself stores no recovery evidence or operation history.
 - `framework.distributed-payload-defect` reports a defect in the distributed
   payload as diagnosis or a future distribution action. It does not mutate the
   installed workspace or payload.
@@ -439,7 +503,18 @@ workspace/package/path/owner/dependency identities, the `open-forge-markdown-v1`
 semantic baseline policy, reciprocal facts, and complete verifiable coverage. An
 absent document or section is not reconstructed from paths, bytes, or manifests.
 
-The stage realizes every Extension kind:
+The unreleased schema-v1 catalogue contains exactly 109 kinds: 21 workspace, 4
+recovery, 22 route, 28 local-reference, 14 Framework, and 20 Extension kinds.
+Task 16 realizes only producer-backed findings. Its current Extension
+observation horizon retains one honest bounded `incomplete` limitation for each
+unavailable observation horizon:
+bridge-registration observation and installed-manifest observation. These are
+coverage limitations, not synthesized findings.
+
+While both accepted Extension observation horizons remain unavailable, the
+overall Doctor result is honestly `incomplete` with exit `3`, even when every
+supported observation has zero findings. The result can become `complete` only
+after both horizons close and all 109 kinds have honest emission paths.
 
 - `extension.lifecycle-document-missing` distinguishes a missing document from a
   safely established absence; the missing document alone does not prove an empty
@@ -460,14 +535,43 @@ The stage realizes every Extension kind:
 - `extension.source-unavailable` and `extension.catalogue-unavailable` mark
   source-dependent coverage incomplete rather than substituting a source; safe
   installed facts remain visible.
-- `extension.partial-lifecycle` preserves mixed current state and blocks general
-  repair; recovery evidence remains outside the lifecycle document.
+- `extension.partial-lifecycle` is formed only from a finite mixed-current-state
+  observation within one exact trusted declared managed subject or set. At least
+  one expected member must be current and at least one other expected member
+  must be non-current. The finding reports observed mixed state only. It never
+  reports operation history, transition intent, or recovery attribution. The
+  more specific `extension.managed-missing` and `extension.managed-changed`
+  findings remain whenever their facts apply. Recovery evidence remains outside
+  the lifecycle document.
 - `extension.ownership-collision` keeps user, Framework, and Extension claims
   separate and requires a manual decision.
-- `extension.bridge-registration` reports missing or inconsistent registration
-  evidence as a future lifecycle or manual action.
-- `extension.unmanaged-like-content` records Extension-like content as
-  informational and never adopts or removes it.
+- `extension.bridge-registration` retains an exact trusted declared and owned
+  registration target identity first. Its observed state may be missing,
+  unreadable, or inconsistent, and content is inspected only when the target is
+  readable. The identity and ownership must already come from trusted lifecycle
+  or source facts. The finding remains inside that owned boundary and never uses
+  resemblance, arbitrary provider files, or path-only adoption.
+- `extension.unmanaged-like-content` is formed only for an exact contained
+  readable supported Extension manifest signature inside the accepted bounded
+  Extension scan universe, with no trusted lifecycle ownership for that exact
+  identity. It is informational only. It is never fuzzy, path-only,
+  filename-only, broad-scan, adoption, registration, or removal authority.
+
+Task 16 emits neither `extension.bridge-registration` nor
+`extension.unmanaged-like-content` without the required producer-owned facts.
+Task 17 owns the exact declared and owned bridge-registration role, target
+identity, and observed state, and extends the accepted typed contributor views
+and Doctor before acceptance. Task 18 owns the exact installed-manifest
+observation universe and extends those views and Doctor before acceptance. The
+final pre-release completeness gate requires an honest emission path for all 109
+kinds. The current implementation target is 107 producer-backed emissions plus
+exactly these two accepted Extension deferrals.
+
+Neither legacy `open-forge.extensions.json`, package-source manifests, broad
+`.agents` recursion, payload/path/byte resemblance, nor Framework bridges may
+substitute for producer facts. Static CLI composition is wiring only and cannot
+manufacture observations; dependency injection and a runtime registry are not
+observation substitutes.
 
 The accepted Extension lifecycle contracts own exact mutation syntax and effects.
 Doctor may report their typed next actions, but does not invoke them or grant
@@ -481,6 +585,24 @@ ordered domain reports, lifecycle section trust and source-availability states,
 coverage and limitations, counts, findings, candidates and proposals, typed next
 actions, and aggregate semantic status. Human and JSON
 renderers consume that result without rerunning diagnosis.
+
+The typed diagnosis is intrinsically read-only: `ReadOnly` is always `true` and
+`ChangesMade` is always `false`; callers cannot supply alternative values. The
+JSON projection emits those same required boolean values.
+
+Aggregate and per-domain resolution and severity counts retain one typed
+availability coordinate for every lane. The coordinate uses the shared
+`OperationalValueState` values `available`, `unavailable`, and
+`not-applicable`, with a nonnegative value only for `available`; unavailable or
+not-applicable counts remain `null` rather than being converted to zero.
+
+The JSON projection uses the exact command-local graph in the Interface Contract.
+It preserves the six-domain array, domain and finding order, independent
+resolution and severity counts, typed subject, evidence and provenance members,
+candidate or proposal nullability, and typed action arrays. It does not duplicate
+the shared envelope coordinates inside `result`. Every command-local object and
+array is present; nullable members remain present and are `null` only for an
+inapplicable or unavailable typed fact.
 
 Compact rendering is a projection only. It retains the identity, status,
 coverage, resolution lane, typed subject, candidate count when applicable, and

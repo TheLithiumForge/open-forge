@@ -112,7 +112,10 @@ internal static class RouteListFilesystemFindingPolicy
                 UnsupportedSourceForm(issue.AttemptedCanonicalPath),
             SourceCatalogueIssueCode.IdentityUnavailable => null,
             SourceCatalogueIssueCode.OrphanOverwrite => OrphanOverwrite(issue.AttemptedCanonicalPath),
-            SourceCatalogueIssueCode.IdentityCollision
+            SourceCatalogueIssueCode.UnsupportedSource
+                or SourceCatalogueIssueCode.EntrypointAmbiguous
+                or SourceCatalogueIssueCode.EntrypointCompatibilityCollision
+                or SourceCatalogueIssueCode.IdentityCollision
                 or SourceCatalogueIssueCode.PhysicalAlias => null,
             _ => throw new ArgumentOutOfRangeException(nameof(issue), issue.Code, "The source catalogue issue code is not defined."),
         };

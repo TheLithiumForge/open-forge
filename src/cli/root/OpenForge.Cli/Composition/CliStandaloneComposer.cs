@@ -3,6 +3,10 @@ using OpenForge.Cli.Core.Commands.Context;
 using OpenForge.Cli.Core.Commands.Context.Models.Binding;
 using OpenForge.Cli.Core.Commands.Context.Models.Result;
 using OpenForge.Cli.Core.Commands.Context.Shared.Rendering;
+using OpenForge.Cli.Core.Commands.Doctor;
+using OpenForge.Cli.Core.Commands.Doctor.Models.Binding;
+using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
+using OpenForge.Cli.Core.Commands.Doctor.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Find;
 using OpenForge.Cli.Core.Commands.Find.Models.Binding;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
@@ -45,6 +49,7 @@ internal static class CliStandaloneComposer
         var findSymbols = FindBinding.CreateSymbols();
         var indexSymbols = IndexBinding.CreateSymbols();
         var statusSymbols = StatusBinding.CreateSymbols();
+        var doctorSymbols = DoctorBinding.CreateSymbols();
         var contextSymbols = ContextBinding.CreateSymbols();
         var referencesSymbols = ReferencesBinding.CreateSymbols();
         var installSymbols = InstallBinding.CreateSymbols();
@@ -56,6 +61,7 @@ internal static class CliStandaloneComposer
                 statusSymbols,
                 operationalContributors,
                 lifecycleSnapshotReader),
+            DoctorBinding = BuildDoctor(doctorSymbols, operationalContributors),
             ContextBinding = BuildContext(contextSymbols),
             ReferencesBinding = BuildReferences(referencesSymbols),
             InstallBinding = BuildInstall(installSymbols, interactiveSession, lockStoreRoot),
@@ -64,6 +70,7 @@ internal static class CliStandaloneComposer
                 new CliRootLeaf(findSymbols.FindCommand, []),
                 new CliRootLeaf(indexSymbols.IndexCommand, []),
                 new CliRootLeaf(statusSymbols.StatusCommand, []),
+                new CliRootLeaf(doctorSymbols.DoctorCommand, []),
                 new CliRootLeaf(contextSymbols.ContextCommand, []),
                 new CliRootLeaf(referencesSymbols.ReferencesCommand, []),
                 new CliRootLeaf(installSymbols.InstallCommand, []),
@@ -112,6 +119,21 @@ internal static class CliStandaloneComposer
                     StatusHumanRenderer.Render,
                     StatusJsonRenderer.Render),
                 DiagnosticRenderer = StatusDiagnosticRenderer.Render,
+            });
+
+    private static ICliCommandBinding BuildDoctor(
+        DoctorSymbols symbols,
+        OperationalContributorCatalogue operationalContributors)
+        => DoctorBinding.Close(
+            symbols,
+            new DoctorBindingComponents
+            {
+                Help = DoctorHelpSections.Create(),
+                Operation = new DoctorOperation(operationalContributors),
+                Renderers = new CliRendererSet<DoctorResult>(
+                    DoctorHumanRenderer.Render,
+                    DoctorJsonRenderer.Render),
+                DiagnosticRenderer = DoctorDiagnosticRenderer.Render,
             });
 
     private static ICliCommandBinding BuildInstall(

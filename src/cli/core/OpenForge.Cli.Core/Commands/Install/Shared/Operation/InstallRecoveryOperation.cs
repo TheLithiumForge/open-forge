@@ -24,6 +24,10 @@ internal sealed class InstallRecoveryOperation(
         var input = RecoveryBundleInput.Create(
             plan.Request.Workspace,
             InstallDefinitions.CommandIdentity,
+            RecoveryBundleAttribution.Create(
+                RecoveryBundleProducer.Framework,
+                RecoveryBundleOperation.Install,
+                plan.Request.Workspace),
             operationId,
             plan.RecoveryTargets);
         return _recoveryStore.PrepareAsync(input, cancellationToken);

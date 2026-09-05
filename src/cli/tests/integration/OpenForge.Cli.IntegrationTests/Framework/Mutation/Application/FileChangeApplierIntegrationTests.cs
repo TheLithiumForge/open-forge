@@ -553,6 +553,10 @@ public sealed class FileChangeApplierIntegrationTests : IDisposable
         var input = RecoveryBundleInput.Create(
             lease.Request.Workspace,
             lease.Request.Command,
+            RecoveryBundleAttribution.Create(
+                RecoveryBundleProducer.Index,
+                RecoveryBundleOperation.Index,
+                lease.Request.Workspace),
             lease.Request.OperationId,
             [RecoveryBundleTarget.Create(change, before)]);
         var result = await new RecoveryBundleStore(new RecoveryBundleReader()).PrepareAsync(

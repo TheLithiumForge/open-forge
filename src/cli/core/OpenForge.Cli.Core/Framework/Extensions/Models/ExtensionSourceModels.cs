@@ -30,6 +30,7 @@ internal enum ExtensionSourceFailureKind
     DependencyCycle,
     DependencyConflict,
     PackageUnavailable,
+    ManifestMissing,
     PackageInvalid,
     IdentityAmbiguous,
 }

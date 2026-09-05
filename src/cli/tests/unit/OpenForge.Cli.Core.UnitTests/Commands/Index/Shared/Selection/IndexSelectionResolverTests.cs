@@ -250,7 +250,6 @@ public sealed class IndexSelectionResolverTests
 
     private static SourceCatalogueIssue RootIssue(SourceCatalogueIssueCode code)
         => new(
-            SourceCatalogueIssueStage.Root,
             code,
             SourceLogicalPath.AgentsRoot,
             relatedPaths: [],

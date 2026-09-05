@@ -35,7 +35,7 @@ internal static class RouteListTopologyFindingPolicy
     {
         return issue.Code switch
         {
-            SourceRouteIssueCode.LoaderMalformed => new RouteListFinding(
+            SourceRouteIssueCode.LoaderMalformed or SourceRouteIssueCode.LoaderDuplicateRoot => new RouteListFinding(
                 RouteListFindingCode.LoaderMalformed,
                 CliSemanticStatus.Incomplete,
                 issue.CanonicalPath,
@@ -51,7 +51,10 @@ internal static class RouteListTopologyFindingPolicy
                 issue.CanonicalPath,
                 issue.Cause,
                 issue.RelatedPaths),
-            SourceRouteIssueCode.LoaderUnavailable or SourceRouteIssueCode.RouteSupportUnavailable => new RouteListFinding(
+            SourceRouteIssueCode.LoaderUnavailable
+                or SourceRouteIssueCode.LoaderUnreadable
+                or SourceRouteIssueCode.LoaderDestinationMissing
+                or SourceRouteIssueCode.RouteSupportUnavailable => new RouteListFinding(
                 RouteListFindingCode.LoaderUnavailable,
                 CliSemanticStatus.Incomplete,
                 issue.CanonicalPath,

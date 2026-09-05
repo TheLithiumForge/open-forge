@@ -19,8 +19,32 @@ internal sealed record RecoveryBundleManifestV1
     [JsonPropertyName("workspaceKey"), JsonPropertyOrder(4)]
     public required string WorkspaceKey { get; init; }
 
-    [JsonPropertyName("entries"), JsonPropertyOrder(5)]
+    [JsonPropertyName("attribution"), JsonPropertyOrder(5)]
+    public required RecoveryBundleAttributionV1 Attribution { get; init; }
+
+    [JsonPropertyName("entries"), JsonPropertyOrder(6)]
     public required RecoveryBundleManifestEntryV1[] Entries { get; init; }
+}
+
+internal sealed record RecoveryBundleAttributionV1
+{
+    [JsonPropertyName("producer"), JsonPropertyOrder(0)]
+    public required string Producer { get; init; }
+
+    [JsonPropertyName("operation"), JsonPropertyOrder(1)]
+    public required string Operation { get; init; }
+
+    [JsonPropertyName("subject"), JsonPropertyOrder(2)]
+    public required RecoveryBundleSubjectV1 Subject { get; init; }
+}
+
+internal sealed record RecoveryBundleSubjectV1
+{
+    [JsonPropertyName("kind"), JsonPropertyOrder(0)]
+    public required string Kind { get; init; }
+
+    [JsonPropertyName("identity"), JsonPropertyOrder(1)]
+    public required string Identity { get; init; }
 }
 
 internal sealed record RecoveryBundleManifestEntryV1
@@ -65,6 +89,8 @@ internal sealed record RecoveryBundleManifestDecodeResult
     public required RecoveryBundleManifestState State { get; init; }
 
     public RecoveryBundleManifestV1? Document { get; init; }
+
+    public OpenForge.Cli.Core.Framework.Recovery.Models.RecoveryBundleAttribution? Attribution { get; init; }
 
     public required System.Collections.Immutable.ImmutableArray<OpenForge.Cli.Core.Framework.Recovery.Models.RecoveryBundleEntry> Entries { get; init; }
 

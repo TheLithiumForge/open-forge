@@ -17,7 +17,8 @@ internal interface IRecoveryResidualOperationalContributor
 }
 
 internal sealed class RecoveryResidualOperationalContributor(
-    RecoveryBundleCatalogue catalogue) : IRecoveryResidualOperationalContributor
+    RecoveryBundleCatalogue catalogue,
+    RecoveryBundleTargetStateReader targetStateReader) : IRecoveryResidualOperationalContributor
 {
     internal async ValueTask<RecoveryResidualStatusView> ReadStatusAsync(
         CliWorkspace workspace,
@@ -32,7 +33,42 @@ internal sealed class RecoveryResidualOperationalContributor(
         CancellationToken cancellationToken)
     {
         var result = await catalogue.ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
-        return new RecoveryResidualDoctorView(ReadState(result.State), ReadCandidates(result));
+        if (result.State != RecoveryBundleCatalogueState.Available)
+        {
+            return new RecoveryResidualDoctorView(
+                ReadState(result.State),
+                [],
+                result.Cause);
+        }
+
+        var candidates = new List<RecoveryDoctorCandidateObservation>(result.Candidates.Length);
+        try
+        {
+            foreach (var candidate in result.Candidates)
+            {
+                var verified = candidate.Verified;
+                var comparison = verified?.Attribution.Producer == RecoveryBundleProducer.Framework
+                    ? await targetStateReader
+                        .ReadAsync(workspace, verified, cancellationToken)
+                        .ConfigureAwait(false)
+                    : null;
+                candidates.Add(RecoveryDoctorCandidateObservation.Create(
+                    candidate,
+                    comparison));
+            }
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return new RecoveryResidualDoctorView(
+                OperationalViewState.Interrupted,
+                candidates.ToArray(),
+                "Recovery target comparison was interrupted.");
+        }
+
+        return new RecoveryResidualDoctorView(
+            OperationalViewState.Complete,
+            candidates.ToArray(),
+            null);
     }
 
     ValueTask<RecoveryResidualStatusView> IRecoveryResidualOperationalContributor.ReadStatusAsync(

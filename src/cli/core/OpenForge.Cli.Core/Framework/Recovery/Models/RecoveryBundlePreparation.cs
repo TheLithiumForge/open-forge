@@ -15,6 +15,7 @@ internal sealed record RecoveryBundlePreparation
         WorkspacePhysicalPath = verified.WorkspacePhysicalPath;
         WorkspaceKey = verified.WorkspaceKey;
         Command = verified.Command;
+        Attribution = verified.Attribution;
         OperationId = verified.OperationId;
         Entries = verified.Entries;
     }
@@ -26,6 +27,8 @@ internal sealed record RecoveryBundlePreparation
     internal string WorkspaceKey { get; }
 
     internal string Command { get; }
+
+    internal RecoveryBundleAttribution Attribution { get; }
 
     internal Guid OperationId { get; }
 

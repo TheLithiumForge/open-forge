@@ -100,14 +100,17 @@ public sealed class FindBodyTagScannerTests
     {
         return new MarkdownDocumentFacts(
             source,
-            new MarkdownFrontmatterBoundary(MarkdownFrontmatterState.Missing, null, null, 0),
-            new MarkdownTextSpan(0, source.Length),
-            [],
-            [],
-            visibleText.Select(span => new MarkdownVisibleTextFact(span)),
-            (opaqueSpans ?? []).Select(span => new MarkdownOpaqueSpan(span)),
-            [],
-            MarkdownGeneratedRegionFact.Absent());
+            new MarkdownDocumentStructure(
+                new MarkdownFrontmatterBoundary(MarkdownFrontmatterState.Missing, null, null, 0),
+                new MarkdownTextSpan(0, source.Length),
+                [],
+                [],
+                MarkdownGeneratedRegionFact.Absent()),
+            new MarkdownInlineFacts(
+                visibleText.Select(span => new MarkdownVisibleTextFact(span)),
+                (opaqueSpans ?? []).Select(span => new MarkdownOpaqueSpan(span)),
+                [],
+                []));
     }
 
     private static MarkdownTextSpan SpanOf(string source, string value)

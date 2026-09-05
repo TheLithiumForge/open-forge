@@ -19,24 +19,50 @@ internal sealed class ExtensionLifecycleTargetReader(
         IReadOnlyList<LifecycleInstalledPath> paths,
         CancellationToken cancellationToken)
     {
-        var observations = new List<ExtensionManagedTargetObservation>(paths.Count);
+        var detailed = await ReadDoctorAsync(
+            workspace,
+            paths,
+            cancellationToken).ConfigureAwait(false);
+        return detailed.Select(observation => observation.Target).ToArray();
+    }
+
+    internal async ValueTask<IReadOnlyList<ExtensionManagedTargetDoctorObservation>> ReadDoctorAsync(
+        CliWorkspace workspace,
+        IReadOnlyList<LifecycleInstalledPath> paths,
+        CancellationToken cancellationToken)
+    {
+        var observations = new List<ExtensionManagedTargetDoctorObservation>(paths.Count);
         foreach (var path in paths)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            observations.Add(new ExtensionManagedTargetObservation
+            var read = await ReadStateAsync(
+                workspace,
+                path,
+                cancellationToken).ConfigureAwait(false);
+            var observation = new ExtensionManagedTargetObservation
             {
                 Path = path.Path,
                 Owners = path.Owners.ToArray(),
                 BaselineFingerprint = path.BaselineFingerprint,
                 FingerprintKind = path.FingerprintKind,
-                State = await ReadStateAsync(workspace, path, cancellationToken).ConfigureAwait(false),
-            });
+                State = read.State,
+            };
+            observations.Add(read.ReadState == LifecycleManagedTargetReadState.Available
+                ? ExtensionManagedTargetDoctorObservation.Observed(
+                    observation,
+                    read.CurrentFingerprint
+                        ?? throw new InvalidOperationException(
+                            "An observed Extension target requires its current fingerprint."))
+                : ExtensionManagedTargetDoctorObservation.Boundary(
+                    observation,
+                    read.ReadState,
+                    read.Cause));
         }
 
         return observations.ToArray();
     }
 
-    private async ValueTask<OperationalTargetState> ReadStateAsync(
+    private async ValueTask<ExtensionManagedTargetDoctorRead> ReadStateAsync(
         CliWorkspace workspace,
         LifecycleInstalledPath path,
         CancellationToken cancellationToken)
@@ -44,10 +70,11 @@ internal sealed class ExtensionLifecycleTargetReader(
         var read = await _managedTargetReader
             .ReadAsync(workspace, path.Path, cancellationToken)
             .ConfigureAwait(false);
-        var boundary = ReadBoundaryState(read.State, cancellationToken);
-        if (boundary.HasValue)
+        if (read.State != LifecycleManagedTargetReadState.Available)
         {
-            return boundary.Value;
+            return ExtensionManagedTargetDoctorRead.Boundary(
+                read.State,
+                cancellationToken);
         }
 
         try
@@ -55,33 +82,61 @@ internal sealed class ExtensionLifecycleTargetReader(
             var fingerprint = _contentIdentity.ReadSourceFingerprint(
                 read.Bytes.Span,
                 path.FingerprintKind);
-            return string.Equals(fingerprint, path.BaselineFingerprint, StringComparison.Ordinal)
+            var state = string.Equals(fingerprint, path.BaselineFingerprint, StringComparison.Ordinal)
                 ? OperationalTargetState.Current
                 : OperationalTargetState.Changed;
+            return ExtensionManagedTargetDoctorRead.Observed(state, fingerprint);
         }
         catch (Exception exception) when (exception is ArgumentException
             or DecoderFallbackException
             or InvalidDataException
             or InvalidOperationException)
         {
-            return OperationalTargetState.Blocked;
+            return ExtensionManagedTargetDoctorRead.Blocked(exception.Message);
         }
     }
 
-    private static OperationalTargetState? ReadBoundaryState(
-        LifecycleManagedTargetReadState state,
-        CancellationToken cancellationToken)
-        => state switch
-        {
-            LifecycleManagedTargetReadState.Available => null,
-            LifecycleManagedTargetReadState.Missing => OperationalTargetState.Missing,
-            LifecycleManagedTargetReadState.Unavailable => OperationalTargetState.Unavailable,
-            LifecycleManagedTargetReadState.Blocked => OperationalTargetState.Blocked,
-            LifecycleManagedTargetReadState.Cancelled
-                => throw new OperationCanceledException(cancellationToken),
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(state),
-                state,
-                "The Extension target read state is not defined."),
-        };
+    private sealed record ExtensionManagedTargetDoctorRead(
+        OperationalTargetState State,
+        LifecycleManagedTargetReadState ReadState,
+        string? CurrentFingerprint,
+        string? Cause)
+    {
+        internal static ExtensionManagedTargetDoctorRead Observed(
+            OperationalTargetState state,
+            string fingerprint)
+            => new(state, LifecycleManagedTargetReadState.Available, fingerprint, Cause: null);
+
+        internal static ExtensionManagedTargetDoctorRead Blocked(string cause)
+            => new(
+                OperationalTargetState.Blocked,
+                LifecycleManagedTargetReadState.Blocked,
+                CurrentFingerprint: null,
+                cause);
+
+        internal static ExtensionManagedTargetDoctorRead Boundary(
+            LifecycleManagedTargetReadState state,
+            CancellationToken cancellationToken)
+            => state switch
+            {
+                LifecycleManagedTargetReadState.Missing => new(
+                    OperationalTargetState.Missing,
+                    state,
+                    CurrentFingerprint: null,
+                    Cause: null),
+                LifecycleManagedTargetReadState.Unavailable => new(
+                    OperationalTargetState.Unavailable,
+                    state,
+                    CurrentFingerprint: null,
+                    "The Extension target is unavailable."),
+                LifecycleManagedTargetReadState.Blocked => Blocked(
+                    "The Extension target boundary is blocked."),
+                LifecycleManagedTargetReadState.Cancelled =>
+                    throw new OperationCanceledException(cancellationToken),
+                _ => throw new ArgumentOutOfRangeException(
+                    nameof(state),
+                    state,
+                    "The Extension target read state is not defined."),
+            };
+    }
 }

@@ -468,18 +468,17 @@ public sealed class FindProjectionBuilderTests
             .ToArray();
         return new MarkdownDocumentFacts(
             source,
-            new MarkdownFrontmatterBoundary(
-                MarkdownFrontmatterState.Complete,
-                new MarkdownTextSpan(0, blockLength),
-                new MarkdownTextSpan(yamlStart, yamlLength),
-                bodyStart),
-            bodySpan,
-            headings,
-            sections,
-            [],
-            [],
-            [],
-            MarkdownGeneratedRegionFact.Absent());
+            new MarkdownDocumentStructure(
+                new MarkdownFrontmatterBoundary(
+                    MarkdownFrontmatterState.Complete,
+                    new MarkdownTextSpan(0, blockLength),
+                    new MarkdownTextSpan(yamlStart, yamlLength),
+                    bodyStart),
+                bodySpan,
+                headings,
+                sections,
+                MarkdownGeneratedRegionFact.Absent()),
+            new MarkdownInlineFacts([], [], [], []));
     }
 
     private static MarkdownHeadingFact Heading(

@@ -24,7 +24,6 @@ public sealed class GeneratedNavigationFormationOverloadTests
             form: SourceDocumentForm.OverwriteCompanion,
             physicalPath: shared);
         var issue = new SourceCatalogueIssue(
-            stage: SourceCatalogueIssueStage.Pairing,
             code: SourceCatalogueIssueCode.OrphanOverwrite,
             attemptedCanonicalPath: orphan.CanonicalPath,
             relatedPaths: [],
@@ -91,7 +90,6 @@ public sealed class GeneratedNavigationFormationOverloadTests
             form: SourceDocumentForm.OverwriteCompanion,
             physicalPath: GeneratedNavigationTestData.Physical("root/orphan.overwrite.md"));
         var issue = new SourceCatalogueIssue(
-            stage: SourceCatalogueIssueStage.Pairing,
             code: SourceCatalogueIssueCode.OrphanOverwrite,
             attemptedCanonicalPath: orphan.CanonicalPath,
             relatedPaths: [],
@@ -120,7 +118,6 @@ public sealed class GeneratedNavigationFormationOverloadTests
         var removed = Source(".agents/root/removed.md", SourceDocumentForm.Markdown, shared);
         var removedAlias = Source(".agents/root/removed-alias.md", SourceDocumentForm.Markdown, shared);
         var issue = new SourceCatalogueIssue(
-            stage: SourceCatalogueIssueStage.Identity,
             code: SourceCatalogueIssueCode.PhysicalAlias,
             attemptedCanonicalPath: removed.Identity.CanonicalBasePath,
             relatedPaths: [removed.Identity.CanonicalBasePath, removedAlias.Identity.CanonicalBasePath],

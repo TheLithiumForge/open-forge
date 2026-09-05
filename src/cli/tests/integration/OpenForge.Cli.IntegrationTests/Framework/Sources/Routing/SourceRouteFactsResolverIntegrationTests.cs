@@ -89,7 +89,7 @@ public sealed class SourceRouteFactsResolverIntegrationTests
             TestContext.Current.CancellationToken);
 
         Assert.False(facts.AreLoaderRootFactsComplete);
-        Assert.Contains(facts.Issues, issue => issue.Code == SourceRouteIssueCode.LoaderUnavailable);
+        Assert.Contains(facts.Issues, issue => issue.Code == SourceRouteIssueCode.LoaderUnreadable);
         Assert.Empty(facts.Topology.LoaderRootPaths);
         Assert.Contains(
             facts.RouteFacts,
@@ -149,7 +149,7 @@ public sealed class SourceRouteFactsResolverIntegrationTests
             boundary.Reader,
             TestContext.Current.CancellationToken);
 
-        Assert.Contains(facts.Issues, issue => issue.Code == SourceRouteIssueCode.LoaderMalformed);
+        Assert.Contains(facts.Issues, issue => issue.Code == SourceRouteIssueCode.LoaderDuplicateRoot);
         Assert.Single(facts.Topology.LoaderRootPaths);
     }
 

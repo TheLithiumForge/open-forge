@@ -37,6 +37,10 @@ internal sealed class StatusRecoveryFixture : IDisposable
         var input = RecoveryBundleInput.Create(
             _workspace.Workspace,
             command: "status integration",
+            RecoveryBundleAttribution.Create(
+                RecoveryBundleProducer.Index,
+                RecoveryBundleOperation.Index,
+                _workspace.Workspace),
             operationId,
             targets:
             [
@@ -101,6 +105,11 @@ internal sealed class StatusRecoveryFixture : IDisposable
             OperationId = operationId.ToString(RecoveryBundleFormatV1.OperationIdFormat),
             WorkspacePath = WorkspaceIdentity.NormalizePhysicalPath(_workspace.Path),
             WorkspaceKey = WorkspaceIdentity.Key(_workspace.Path),
+            Attribution = RecoveryBundleAttributionCodec.Serialize(
+                RecoveryBundleAttribution.Create(
+                    RecoveryBundleProducer.Index,
+                    RecoveryBundleOperation.Index,
+                    _workspace.Workspace)),
             Entries = [],
         };
         await stream.WriteAsync(

@@ -35,6 +35,10 @@ public sealed class RecoveryBundleStoreIntegrationTests
         var input = RecoveryBundleInput.Create(
             workspace,
             command: "index",
+            RecoveryBundleAttribution.Create(
+                RecoveryBundleProducer.Index,
+                RecoveryBundleOperation.Index,
+                workspace),
             operationId,
             targets:
             [
@@ -104,6 +108,10 @@ public sealed class RecoveryBundleStoreIntegrationTests
         var input = RecoveryBundleInput.Create(
             workspace,
             command: "extension create",
+            RecoveryBundleAttribution.Create(
+                RecoveryBundleProducer.Index,
+                RecoveryBundleOperation.Index,
+                workspace),
             operationId: Guid.NewGuid(),
             targets:
             [
@@ -182,6 +190,10 @@ public sealed class RecoveryBundleStoreIntegrationTests
         return RecoveryBundleInput.Create(
             workspace,
             command: "cleanup evidence",
+            RecoveryBundleAttribution.Create(
+                RecoveryBundleProducer.Index,
+                RecoveryBundleOperation.Index,
+                workspace),
             operationId,
             targets:
             [

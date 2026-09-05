@@ -935,7 +935,6 @@ public sealed class RouteListTopologyTests
                     .OrderBy(path => path, StringComparer.Ordinal)
                     .ToArray();
                 return new SourceCatalogueIssue(
-                    SourceCatalogueIssueStage.Identity,
                     SourceCatalogueIssueCode.IdentityCollision,
                     paths[0],
                     paths,

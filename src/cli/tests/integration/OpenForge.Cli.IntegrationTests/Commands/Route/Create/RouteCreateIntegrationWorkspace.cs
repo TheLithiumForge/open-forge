@@ -267,6 +267,10 @@ internal sealed class RouteCreateIntegrationWorkspace : IDisposable
             RecoveryBundleInput.Create(
                 Workspace,
                 RouteCreateDefinitions.CommandIdentity,
+                RecoveryBundleAttribution.Create(
+                    RecoveryBundleProducer.Route,
+                    RecoveryBundleOperation.Create,
+                    Workspace),
                 operationId,
                 plan.RecoveryTargets),
             TestContext.Current.CancellationToken);

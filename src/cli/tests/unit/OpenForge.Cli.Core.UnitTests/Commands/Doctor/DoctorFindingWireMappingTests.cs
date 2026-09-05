@@ -1,0 +1,140 @@
+using OpenForge.Cli.Core.Commands.Doctor;
+using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
+
+namespace OpenForge.Cli.Core.UnitTests.Commands.Doctor;
+
+public sealed class DoctorFindingWireMappingTests
+{
+    [Fact(DisplayName = "Doctor maps every finite finding kind to its exact wire name and rejects undefined values"), Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
+    public void FindingKindsMapToExactWireNamesAndUndefinedValuesFailClosed()
+    {
+        var expected = new (DoctorFindingKind Kind, string WireName)[]
+        {
+            (DoctorFindingKind.WorkspaceUnavailable, "workspace.unavailable"),
+            (DoctorFindingKind.WorkspaceNotDirectory, "workspace.not-directory"),
+            (DoctorFindingKind.WorkspaceAgentsMissing, "workspace.agents-missing"),
+            (DoctorFindingKind.WorkspaceAgentsInaccessible, "workspace.agents-inaccessible"),
+            (DoctorFindingKind.WorkspaceLoaderMissing, "workspace.loader-missing"),
+            (DoctorFindingKind.WorkspaceLoaderUnreadable, "workspace.loader-unreadable"),
+            (DoctorFindingKind.WorkspaceLoaderMalformed, "workspace.loader-malformed"),
+            (DoctorFindingKind.WorkspaceEntryMissing, "workspace.entry-missing"),
+            (DoctorFindingKind.WorkspaceEntryAmbiguous, "workspace.entry-ambiguous"),
+            (DoctorFindingKind.WorkspaceEntryCompatibilityCollision, "workspace.entry-compatibility-collision"),
+            (DoctorFindingKind.WorkspaceSourceIdCollision, "workspace.source-id-collision"),
+            (DoctorFindingKind.WorkspacePathInvalid, "workspace.path-invalid"),
+            (DoctorFindingKind.WorkspacePathContainment, "workspace.path-containment"),
+            (DoctorFindingKind.WorkspacePhysicalAlias, "workspace.physical-alias"),
+            (DoctorFindingKind.WorkspaceFrontmatterMalformed, "workspace.frontmatter-malformed"),
+            (DoctorFindingKind.WorkspaceFrontmatterDuplicate, "workspace.frontmatter-duplicate"),
+            (DoctorFindingKind.WorkspaceParseIncomplete, "workspace.parse-incomplete"),
+            (DoctorFindingKind.WorkspaceUnsupportedSource, "workspace.unsupported-source"),
+            (DoctorFindingKind.WorkspaceRootMissing, "workspace.root-missing"),
+            (DoctorFindingKind.WorkspaceRootUnreachable, "workspace.root-unreachable"),
+            (DoctorFindingKind.WorkspaceDetached, "workspace.detached"),
+            (DoctorFindingKind.RecoveryBundleRecognized, "recovery.bundle-recognized"),
+            (DoctorFindingKind.RecoveryDraftRecognized, "recovery.draft-recognized"),
+            (DoctorFindingKind.RecoveryBundleCollision, "recovery.bundle-collision"),
+            (DoctorFindingKind.RecoveryProvenanceUnavailable, "recovery.provenance-unavailable"),
+            (DoctorFindingKind.RouteEntrypointMissing, "route.entrypoint-missing"),
+            (DoctorFindingKind.RouteEntrypointDuplicate, "route.entrypoint-duplicate"),
+            (DoctorFindingKind.RouteEscape, "route.escape"),
+            (DoctorFindingKind.RouteUnreachable, "route.unreachable"),
+            (DoctorFindingKind.RouteDetached, "route.detached"),
+            (DoctorFindingKind.RouteMetadataRequiredMissing, "route.metadata-required-missing"),
+            (DoctorFindingKind.RouteTitleInvalid, "route.title-invalid"),
+            (DoctorFindingKind.RouteAxiomsInvalid, "route.axioms-invalid"),
+            (DoctorFindingKind.RouteGeneratedRegionStale, "route.generated-region-stale"),
+            (DoctorFindingKind.RouteGeneratedRegionMissing, "route.generated-region-missing"),
+            (DoctorFindingKind.RouteGeneratedRegionMalformed, "route.generated-region-malformed"),
+            (DoctorFindingKind.RouteGeneratedRegionMisplaced, "route.generated-region-misplaced"),
+            (DoctorFindingKind.RouteGeneratedRegionDuplicate, "route.generated-region-duplicate"),
+            (DoctorFindingKind.RouteGeneratedEntryMissing, "route.generated-entry-missing"),
+            (DoctorFindingKind.RouteGeneratedEntryExtra, "route.generated-entry-extra"),
+            (DoctorFindingKind.RouteGeneratedEntryOrder, "route.generated-entry-order"),
+            (DoctorFindingKind.RouteGeneratedEntryPath, "route.generated-entry-path"),
+            (DoctorFindingKind.RouteGeneratedEntryDescription, "route.generated-entry-description"),
+            (DoctorFindingKind.RouteGeneratedEntryTags, "route.generated-entry-tags"),
+            (DoctorFindingKind.RouteOverwriteOrphan, "route.overwrite-orphan"),
+            (DoctorFindingKind.RouteOverwriteIndependentIndex, "route.overwrite-independent-index"),
+            (DoctorFindingKind.RouteCompatibilityConflict, "route.compatibility-conflict"),
+            (DoctorFindingKind.ReferenceTargetValid, "reference.target-valid"),
+            (DoctorFindingKind.ReferenceTargetMissing, "reference.target-missing"),
+            (DoctorFindingKind.ReferenceFragmentMissing, "reference.fragment-missing"),
+            (DoctorFindingKind.ReferenceFragmentUnverified, "reference.fragment-unverified"),
+            (DoctorFindingKind.ReferenceDestinationMalformed, "reference.destination-malformed"),
+            (DoctorFindingKind.ReferenceDestinationAbsolute, "reference.destination-absolute"),
+            (DoctorFindingKind.ReferenceDestinationQuery, "reference.destination-query"),
+            (DoctorFindingKind.ReferenceDestinationEncoding, "reference.destination-encoding"),
+            (DoctorFindingKind.ReferenceTargetOutsideWorkspace, "reference.target-outside-workspace"),
+            (DoctorFindingKind.ReferenceTargetPhysicalEscape, "reference.target-physical-escape"),
+            (DoctorFindingKind.ReferenceTargetAlias, "reference.target-alias"),
+            (DoctorFindingKind.ReferenceTargetUnreadable, "reference.target-unreadable"),
+            (DoctorFindingKind.ReferenceTargetUnsupported, "reference.target-unsupported"),
+            (DoctorFindingKind.ReferenceImage, "reference.image"),
+            (DoctorFindingKind.ReferenceExternalUnchecked, "reference.external-unchecked"),
+            (DoctorFindingKind.ReferenceCycle, "reference.cycle"),
+            (DoctorFindingKind.ReferenceRepeat, "reference.repeat"),
+            (DoctorFindingKind.ReferenceSameTargetPath, "reference.same-target-path"),
+            (DoctorFindingKind.ReferenceSameTargetCase, "reference.same-target-case"),
+            (DoctorFindingKind.ReferenceSameTargetEncoding, "reference.same-target-encoding"),
+            (DoctorFindingKind.ReferenceSameTargetFragment, "reference.same-target-fragment"),
+            (DoctorFindingKind.ReferenceCandidateFilename, "reference.candidate-filename"),
+            (DoctorFindingKind.ReferenceCandidateTitle, "reference.candidate-title"),
+            (DoctorFindingKind.ReferenceCandidateLiteralContent, "reference.candidate-literal-content"),
+            (DoctorFindingKind.ReferenceCandidateRouteNeighborhood, "reference.candidate-route-neighborhood"),
+            (DoctorFindingKind.ReferenceCandidatesNone, "reference.candidates-none"),
+            (DoctorFindingKind.ReferenceCandidatesOne, "reference.candidates-one"),
+            (DoctorFindingKind.ReferenceCandidatesSeveral, "reference.candidates-several"),
+            (DoctorFindingKind.FrameworkInstallAbsent, "framework.install-absent"),
+            (DoctorFindingKind.FrameworkInstallIncomplete, "framework.install-incomplete"),
+            (DoctorFindingKind.FrameworkManagedMissing, "framework.managed-missing"),
+            (DoctorFindingKind.FrameworkManagedChanged, "framework.managed-changed"),
+            (DoctorFindingKind.FrameworkLifecycleEvidenceUnavailable, "framework.lifecycle-evidence-unavailable"),
+            (DoctorFindingKind.FrameworkLifecycleEvidenceMalformed, "framework.lifecycle-evidence-malformed"),
+            (DoctorFindingKind.FrameworkLifecycleUntrusted, "framework.lifecycle-untrusted"),
+            (DoctorFindingKind.FrameworkLifecycleSectionMissing, "framework.lifecycle-section-missing"),
+            (DoctorFindingKind.FrameworkBridgeBoundary, "framework.bridge-boundary"),
+            (DoctorFindingKind.FrameworkRootRegionBoundary, "framework.root-region-boundary"),
+            (DoctorFindingKind.FrameworkOwnershipConflict, "framework.ownership-conflict"),
+            (DoctorFindingKind.FrameworkPartialLifecycle, "framework.partial-lifecycle"),
+            (DoctorFindingKind.FrameworkPartialRecovery, "framework.partial-recovery"),
+            (DoctorFindingKind.FrameworkDistributedPayloadDefect, "framework.distributed-payload-defect"),
+            (DoctorFindingKind.ExtensionLifecycleDocumentMissing, "extension.lifecycle-document-missing"),
+            (DoctorFindingKind.ExtensionLifecycleDocumentInvalid, "extension.lifecycle-document-invalid"),
+            (DoctorFindingKind.ExtensionLifecycleUntrusted, "extension.lifecycle-untrusted"),
+            (DoctorFindingKind.ExtensionLifecycleSectionMissing, "extension.lifecycle-section-missing"),
+            (DoctorFindingKind.ExtensionManifestMissing, "extension.manifest-missing"),
+            (DoctorFindingKind.ExtensionManifestMalformed, "extension.manifest-malformed"),
+            (DoctorFindingKind.ExtensionDuplicateId, "extension.duplicate-id"),
+            (DoctorFindingKind.ExtensionUnknownId, "extension.unknown-id"),
+            (DoctorFindingKind.ExtensionVersionInvalid, "extension.version-invalid"),
+            (DoctorFindingKind.ExtensionManagedMissing, "extension.managed-missing"),
+            (DoctorFindingKind.ExtensionManagedChanged, "extension.managed-changed"),
+            (DoctorFindingKind.ExtensionDependencyMissing, "extension.dependency-missing"),
+            (DoctorFindingKind.ExtensionDependencyCycle, "extension.dependency-cycle"),
+            (DoctorFindingKind.ExtensionDependencyIncompatible, "extension.dependency-incompatible"),
+            (DoctorFindingKind.ExtensionSourceUnavailable, "extension.source-unavailable"),
+            (DoctorFindingKind.ExtensionCatalogueUnavailable, "extension.catalogue-unavailable"),
+            (DoctorFindingKind.ExtensionPartialLifecycle, "extension.partial-lifecycle"),
+            (DoctorFindingKind.ExtensionOwnershipCollision, "extension.ownership-collision"),
+            (DoctorFindingKind.ExtensionBridgeRegistration, "extension.bridge-registration"),
+            (DoctorFindingKind.ExtensionUnmanagedLikeContent, "extension.unmanaged-like-content"),
+        };
+
+        Assert.Equal(109, expected.Length);
+        Assert.Equal(21, expected.Count(item => item.WireName.StartsWith("workspace.", StringComparison.Ordinal)));
+        Assert.Equal(4, expected.Count(item => item.WireName.StartsWith("recovery.", StringComparison.Ordinal)));
+        Assert.Equal(22, expected.Count(item => item.WireName.StartsWith("route.", StringComparison.Ordinal)));
+        Assert.Equal(28, expected.Count(item => item.WireName.StartsWith("reference.", StringComparison.Ordinal)));
+        Assert.Equal(14, expected.Count(item => item.WireName.StartsWith("framework.", StringComparison.Ordinal)));
+        Assert.Equal(20, expected.Count(item => item.WireName.StartsWith("extension.", StringComparison.Ordinal)));
+        Assert.Equal(Enum.GetValues<DoctorFindingKind>(), expected.Select(item => item.Kind));
+        foreach (var (kind, wireName) in expected)
+        {
+            Assert.Equal(wireName, DoctorDefinitions.ReadFindingKind(kind));
+        }
+
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            DoctorDefinitions.ReadFindingKind((DoctorFindingKind)int.MaxValue));
+    }
+}

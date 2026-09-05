@@ -226,6 +226,9 @@ The following catalogue is the complete first-release set of detectable finding
 kinds. A domain may also report a limitation or coverage boundary when the
 declared check cannot be trusted. A fact that is valid and needs no action is
 represented as an informational finding where that distinction helps the user.
+For the unreleased schema-v1 first release, this catalogue contains exactly 109
+kinds: 21 workspace, 4 recovery, 22 route, 28 local-reference, 14 Framework,
+and 20 Extension kinds.
 
 ### Workspace And Entry
 
@@ -266,12 +269,23 @@ treat access failure as absence or search the workspace recursively.
 
 Doctor enumerates only exact deterministic final and draft names directly under
 the selected workspace bucket. It performs at most one semantic integrity check
-for each exact named final ZIP: source-generated schema-v1 manifest decoding,
-exact ordered entry names and counts, declared lengths and hashes, and exact
-payload bytes. A valid final is `Verified`; an invalid or unreadable final is
-`Malformed`, `Unsupported`, or `Unavailable`. An exact named draft is always
-`Incomplete` and never preparation. Doctor never creates, renames, deletes,
-extracts, restores, rolls back, or rebinds a recovery item.
+for each exact named final ZIP: source-generated current schema-v1 manifest
+decoding, required immutable typed attribution validation, exact ordered entry
+names and counts, declared lengths and hashes, and exact payload bytes. A valid
+current-v1 final is `Verified`; a schema-1 final missing or carrying invalid
+attribution is `Malformed`/unattributed, an unknown schema version is
+`Unsupported`, and an unreadable final is `Unavailable`. Finals with missing or
+invalid attribution remain preserved; Doctor never migrates,
+rewrites, repairs, deletes, adopts, or infers them. An exact named draft is
+always exact-name, path-only `Incomplete` and never preparation; Doctor does not
+inspect or use draft bytes for attribution.
+Doctor never creates, renames, deletes, extracts, restores, rolls back, or
+rebinds a recovery item.
+
+The exact schema-v1 attribution vocabulary, valid producer/operation/subject
+combinations, and required non-null workspace identity are defined by the
+[Mutation And Recovery Technical Design](../../technical-designs/mutation-and-recovery.md#schema-v1-attribution-vocabulary).
+Doctor accepts no unknown value or fallback attribution.
 
 Doctor reports only the item's exact path, kind, integrity condition, and the
 separate Cleanup action. It does not inspect live targets, classify target
@@ -281,12 +295,20 @@ bytes. Cleanup owns deletion only after it acquires the same-workspace lease,
 re-enumerates the selected bucket, and repeats final ordinary path/kind and
 semantic validation.
 
-| Kind                              | Detectable condition                                                                                                                      | Resolution or next action                                                                                                        |
-| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `recovery.bundle-recognized`      | An exact named final ZIP is semantically verified under the selected workspace bucket.                                                    | `informational`; report its path and `Verified` integrity, then offer the separate [cleanup operation](../cleanup/interface.md). |
-| `recovery.draft-recognized`       | An exact named draft is present under the selected workspace bucket.                                                                      | `informational`; report its path as `Incomplete`; it is never a recovery preparation.                                            |
-| `recovery.bundle-collision`       | An exact deterministic final name contains malformed, unsupported, or unreadable content.                                                 | `blocked-repair`; preserve it and report the exact integrity condition.                                                          |
-| `recovery.provenance-unavailable` | A final ZIP cannot provide complete semantic schema, exact ordered entries, prior payload, intended fingerprint, or operation provenance. | `blocked-repair`; preserve it; Cleanup cannot delete it without semantic validation and final under-lease revalidation.          |
+Recovery attribution, when available, remains a neutral producer fact beside
+the recovery models. Lifecycle diagnosis consumes it only after verifying the
+current-v1 final's immutable typed attribution to a Framework producer,
+operation, and typed subject `{kind, identity}` for the selected workspace, plus
+the exact neutral recovery-state comparison defined below. A generic
+mixed-current-state observation alone is insufficient. It is not a Doctor enum,
+a presentation dependency, or a generic bag.
+
+| Kind                              | Detectable condition                                                                                                                                                                    | Resolution or next action                                                                                                        |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `recovery.bundle-recognized`      | An exact named current-v1 final ZIP has valid immutable typed attribution and is semantically verified under the selected workspace bucket.                                             | `informational`; report its path and `Verified` integrity, then offer the separate [cleanup operation](../cleanup/interface.md). |
+| `recovery.draft-recognized`       | An exact named draft is present under the selected workspace bucket.                                                                                                                    | `informational`; report its path as `Incomplete`; it is never a recovery preparation.                                            |
+| `recovery.bundle-collision`       | An exact deterministic final name contains malformed, unsupported, or unreadable content.                                                                                               | `blocked-repair`; preserve it and report the exact integrity condition.                                                          |
+| `recovery.provenance-unavailable` | A final ZIP cannot provide complete current-v1 semantic schema, valid immutable typed attribution, exact ordered entries, prior payload, intended fingerprint, or operation provenance. | `blocked-repair`; preserve it; Cleanup cannot delete it without semantic validation and final under-lease revalidation.          |
 
 ### Routes, Metadata, Overwrites, And Generated Navigation
 
@@ -294,9 +316,7 @@ semantic validation.
 | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | `route.entrypoint-missing`          | A routed folder lacks its one recognized entrypoint.                                                                                                   | `manual-decision`; route authoring is not general repair.                                                                                      |
 | `route.entrypoint-duplicate`        | A folder has duplicate recognized entrypoints.                                                                                                         | `blocked-repair`; resolve the route identity manually.                                                                                         |
-| `route.child-missing`               | Authored topology refers to a routed child that is absent.                                                                                             | `manual-decision`; do not create the child from diagnosis.                                                                                     |
 | `route.escape`                      | A route destination leaves the containing workspace or route boundary.                                                                                 | `blocked-repair`; no route escape is repaired automatically.                                                                                   |
-| `route.cycle`                       | Route relationships contain a cycle where an acyclic route boundary is required.                                                                       | `blocked-repair`; resolve topology manually.                                                                                                   |
 | `route.unreachable`                 | A route is not reachable from its established root or exposing parent.                                                                                 | `manual-decision`; do not invent a parent.                                                                                                     |
 | `route.detached`                    | A complete-looking route tree is detached from the Loader or selected root.                                                                            | `manual-decision`; detached content is not adopted.                                                                                            |
 | `route.metadata-required-missing`   | Required route metadata is absent.                                                                                                                     | `manual-decision`; authored meaning is not invented.                                                                                           |
@@ -314,7 +334,6 @@ semantic validation.
 | `route.generated-entry-description` | A generated description does not match current authored metadata.                                                                                      | `targeted-operation`; use `index` after metadata is valid.                                                                                     |
 | `route.generated-entry-tags`        | Generated tags do not match current authored metadata.                                                                                                 | `targeted-operation`; use `index` after metadata is valid.                                                                                     |
 | `route.overwrite-orphan`            | An overwrite companion has no valid base source; route coverage is `blocked` when the relationship is unsafe to inspect.                               | `manual-decision`; never index or adopt the orphan.                                                                                            |
-| `route.overwrite-ambiguous`         | Base and overwrite relationships cannot establish one logical source.                                                                                  | `blocked-repair`; preserve both paths and resolve identity manually.                                                                           |
 | `route.overwrite-independent-index` | An overwrite appears as an independent generated or route entry.                                                                                       | `targeted-operation`; use accepted `index` behavior; overwrite content is not independently indexed.                                           |
 | `route.compatibility-conflict`      | Compatibility route forms cannot be reconciled to one accepted route identity.                                                                         | `blocked-repair`; no compatibility winner is selected.                                                                                         |
 
@@ -356,24 +375,76 @@ fuzzy, relevance-ranked, synonym, network, or broad text search. A candidate
 recommendation may be highlighted for review but never supplies automatic
 authority.
 
+Candidate bases are exact producer-observed facts over the bounded contained
+source universe. Doctor retains every applicable base for each candidate. It
+does not rank bases or candidates, select a winner, fall back to another basis,
+or infer a basis through semantic, fuzzy, synonym, network, or broad text
+search. The bases have these conservative meanings:
+
+- `filename` is an exact canonical leaf filename.
+- `title` is an exact authored link label or title matched to the parsed primary
+  title.
+- `literal-content` is an exact bounded link-label or title occurrence supplied
+  by retained parsed facts; it is not a broad body search.
+- `route-neighborhood` is an exact established route parent, child, or sibling
+  relation.
+
+When current typed facts cannot establish a basis, that basis is absent and
+Doctor does not infer it.
+
 ### Framework Lifecycle
 
-| Kind                                       | Detectable condition                                                                                                                                                                                   | Resolution or next action                                                                                |
-| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
-| `framework.install-absent`                 | No Framework installation is present, and absence is safely established.                                                                                                                               | `informational` with `open-forge install` as a typed next action; Doctor and Repair do not mutate it.    |
-| `framework.install-incomplete`             | Installation evidence is present but incomplete or cannot establish a safe state; Framework coverage is `incomplete` or `blocked` as applicable.                                                       | `blocked-repair`; use the accepted lifecycle contract or a manual action after the boundary is resolved. |
-| `framework.managed-missing`                | A trusted Framework lifecycle section names a managed file or region that is missing.                                                                                                                  | `targeted-operation`; use `open-forge update`; do not restore it through Doctor.                         |
-| `framework.managed-changed`                | A trusted Framework managed file or region differs from its semantic baseline.                                                                                                                         | `targeted-operation`; use `open-forge update`; do not replace it automatically.                          |
-| `framework.lifecycle-evidence-unavailable` | Framework lifecycle evidence or required embedded source facts are unavailable; affected Framework coverage is `incomplete`.                                                                           | `blocked-repair`; do not infer installation, ownership, or an update source.                             |
-| `framework.lifecycle-evidence-malformed`   | Framework lifecycle evidence cannot be trusted or safely preserved.                                                                                                                                    | `blocked-repair`; preserve the ordinary evidence and do not guess a section or baseline state.           |
-| `framework.lifecycle-untrusted`            | Framework facts are readable but provenance, integrity, compatibility, identity, or coverage does not establish `trusted`; coverage is `incomplete` when safely unavailable and `blocked` when unsafe. | `blocked-repair`; force is not inferred.                                                                 |
-| `framework.lifecycle-section-missing`      | A Framework section is expected but absent from the lifecycle document; affected Framework coverage is `incomplete` or `blocked`.                                                                      | `blocked-repair`; never treat the section as empty.                                                      |
-| `framework.bridge-boundary`                | A provider bridge or root-region boundary is missing, changed, or ambiguous.                                                                                                                           | `blocked-repair`; future lifecycle contracts own exact mutation.                                         |
-| `framework.root-region-boundary`           | A managed root region cannot be delimited safely.                                                                                                                                                      | `blocked-repair`; do not replace or adopt the region.                                                    |
-| `framework.ownership-conflict`             | Managed, user, and Extension claims overlap incompatibly.                                                                                                                                              | `manual-decision`; ownership is not inferred from severity.                                              |
-| `framework.partial-lifecycle`              | Current Framework targets or regions show a partial lifecycle transition.                                                                                                                              | `blocked-repair`; preserve the partial state until a typed recovery action is available.                 |
-| `framework.partial-recovery`               | Framework recovery evidence is incomplete or mixed.                                                                                                                                                    | `blocked-repair`; preserve recovery evidence.                                                            |
-| `framework.distributed-payload-defect`     | The distributed Framework payload is missing or internally inconsistent.                                                                                                                               | `manual-decision`; report the defect or a typed distribution action; Repair does not alter the payload.  |
+| Kind                                       | Detectable condition                                                                                                                                                                                                                                                                                                | Resolution or next action                                                                                |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `framework.install-absent`                 | No Framework installation is present, and absence is safely established.                                                                                                                                                                                                                                            | `informational` with `open-forge install` as a typed next action; Doctor and Repair do not mutate it.    |
+| `framework.install-incomplete`             | Installation evidence is present but incomplete or cannot establish a safe state; Framework coverage is `incomplete` or `blocked` as applicable.                                                                                                                                                                    | `blocked-repair`; use the accepted lifecycle contract or a manual action after the boundary is resolved. |
+| `framework.managed-missing`                | A trusted Framework lifecycle section names a managed file or region that is missing.                                                                                                                                                                                                                               | `targeted-operation`; use `open-forge update`; do not restore it through Doctor.                         |
+| `framework.managed-changed`                | A trusted Framework managed file or region differs from its semantic baseline.                                                                                                                                                                                                                                      | `targeted-operation`; use `open-forge update`; do not replace it automatically.                          |
+| `framework.lifecycle-evidence-unavailable` | Framework lifecycle evidence or required embedded source facts are unavailable; affected Framework coverage is `incomplete`.                                                                                                                                                                                        | `blocked-repair`; do not infer installation, ownership, or an update source.                             |
+| `framework.lifecycle-evidence-malformed`   | Framework lifecycle evidence cannot be trusted or safely preserved.                                                                                                                                                                                                                                                 | `blocked-repair`; preserve the ordinary evidence and do not guess a section or baseline state.           |
+| `framework.lifecycle-untrusted`            | Framework facts are readable but provenance, integrity, compatibility, identity, or coverage does not establish `trusted`; coverage is `incomplete` when safely unavailable and `blocked` when unsafe.                                                                                                              | `blocked-repair`; force is not inferred.                                                                 |
+| `framework.lifecycle-section-missing`      | A Framework section is expected but absent from the lifecycle document; affected Framework coverage is `incomplete` or `blocked`.                                                                                                                                                                                   | `blocked-repair`; never treat the section as empty.                                                      |
+| `framework.bridge-boundary`                | A provider bridge or root-region boundary is missing, changed, or ambiguous.                                                                                                                                                                                                                                        | `blocked-repair`; future lifecycle contracts own exact mutation.                                         |
+| `framework.root-region-boundary`           | A managed root region cannot be delimited safely.                                                                                                                                                                                                                                                                   | `blocked-repair`; do not replace or adopt the region.                                                    |
+| `framework.ownership-conflict`             | Managed, user, and Extension claims overlap incompatibly.                                                                                                                                                                                                                                                           | `manual-decision`; ownership is not inferred from severity.                                              |
+| `framework.partial-lifecycle`              | Within one exact trusted declared managed subject or set, at least one expected member is current and at least one other expected member is non-current.                                                                                                                                                            | `blocked-repair`; preserve the partial state until a typed recovery action is available.                 |
+| `framework.partial-recovery`               | For one semantically verified same-workspace Framework-attributed final, a neutral producer compares every ordered existing-target entry with its exact prior and intended states; every entry is safely observable, at least one matches prior, at least one other matches intended, and none is third or unknown. | `blocked-repair`; preserve recovery evidence.                                                            |
+| `framework.distributed-payload-defect`     | The distributed Framework payload is missing or internally inconsistent.                                                                                                                                                                                                                                            | `manual-decision`; report the defect or a typed distribution action; Repair does not alter the payload.  |
+
+`framework.partial-lifecycle` is a finite mixed-current-state observation within
+one exact trusted declared managed subject or set. It requires at least one
+expected member to be current and at least one other expected member to be
+non-current. It reports the observed mixed state only. It never reports
+operation history, transition intent, or recovery attribution. The more
+specific `framework.managed-missing` and `framework.managed-changed` findings
+remain alongside it whenever their facts apply.
+
+`framework.partial-recovery` requires one semantically verified current-v1 final
+whose immutable typed attribution identifies the finite Framework producer, its
+exact operation, and a `workspace` subject whose identity matches the selected
+workspace key. A neutral producer then compares the current ordinary target
+state for every ordered existing-target entry (`Replace`,
+`ReplaceGeneratedRegion`, or `Delete`) with its recorded exact prior and
+intended states. A prior match means a safely observable ordinary file contained
+by the workspace has the exact recorded prior length and lowercase SHA-256. An
+intended match means the same exact ordinary-file comparison against the
+recorded intended state, or safely proven absence when the intended state is
+absence. Absence is not unavailable. Doctor emits the finding only when every
+compared entry is safely observable, at least one entry matches prior, at least
+one other matches intended, and no compared entry is third or unknown. Each
+verified Framework-attributed final is evaluated independently in deterministic
+catalogue order; entries from separate bundles are never ranked, selected as a
+winner, or combined. All-intended is a no-finding state compatible with a
+completed historical operation; all-prior is a no-partial-finding state
+compatible with an unapplied or fully restored operation. Unavailable, unsafe,
+non-ordinary, third, unknown, or mismatched state produces incomplete or blocked
+coverage or another applicable exact finding, never partial recovery. The finding describes
+mixed current state relative to recovery evidence and never claims that recovery
+occurred. Doctor never guesses attribution or state from a GUID, path, filename,
+command text, ordered entry, or untrusted bytes. The neutral comparison may
+expose only finite states or bounded evidence; no payload bytes enter Doctor
+output. Attribution remains a verified neutral producer fact beside recovery
+models, not a Doctor enum or presentation dependency.
 
 All Framework lifecycle findings remain diagnosis, targeted, manual, or future
 lifecycle actions. General Repair does not mutate Framework files.
@@ -398,10 +469,56 @@ lifecycle actions. General Repair does not mutate Framework files.
 | `extension.dependency-incompatible`    | Dependency versions or capabilities cannot satisfy the declared relation.                                                                                                                                                                         | `manual-decision`; no version is selected automatically.                                                         |
 | `extension.source-unavailable`         | The Extension source or catalogue needed for source-dependent diagnosis is unavailable; source-dependent coverage is `incomplete`.                                                                                                                | `informational`; retain independently readable installed IDs and ownership facts and do not substitute a source. |
 | `extension.catalogue-unavailable`      | The declared catalogue cannot be inspected; Extension coverage is `incomplete` or `blocked` according to the boundary.                                                                                                                            | `blocked-repair`; no catalogue fallback is inferred.                                                             |
-| `extension.partial-lifecycle`          | Extension targets or lifecycle facts show a partial transition.                                                                                                                                                                                   | `blocked-repair`; preserve the partial state until a typed recovery action is available.                         |
+| `extension.partial-lifecycle`          | Within one exact trusted declared managed subject or set, at least one expected member is current and at least one other expected member is non-current.                                                                                          | `blocked-repair`; preserve the partial state until a typed recovery action is available.                         |
 | `extension.ownership-collision`        | User, Framework, or Extension ownership claims conflict.                                                                                                                                                                                          | `manual-decision`; ownership is not inferred.                                                                    |
-| `extension.bridge-registration`        | Extension bridge or registration evidence is missing or inconsistent.                                                                                                                                                                             | `manual-decision`; report the evidence or use a typed future lifecycle action.                                   |
-| `extension.unmanaged-like-content`     | Unmanaged content resembles an Extension without lifecycle evidence.                                                                                                                                                                              | `informational`; do not adopt, register, or remove it.                                                           |
+| `extension.bridge-registration`        | An exact trusted declared and owned registration target identity is retained first; its observed state is missing, unreadable, or inconsistent, and content is inspected only when the target is readable.                                        | `manual-decision`; report the evidence or use a typed future lifecycle action.                                   |
+| `extension.unmanaged-like-content`     | An exact contained readable supported Extension manifest signature exists in the accepted bounded Extension scan universe, with no trusted lifecycle ownership for that exact identity.                                                           | `informational`; do not adopt, register, or remove it.                                                           |
+
+`extension.partial-lifecycle` uses the same finite mixed-current-state rule as
+Framework lifecycle: within one exact trusted declared managed subject or set,
+at least one expected member is current and at least one other is non-current.
+It reports observed mixed state only, never operation history, transition intent,
+or recovery attribution. The more specific `extension.managed-missing` and
+`extension.managed-changed` findings remain whenever their facts apply.
+
+`extension.bridge-registration` retains an exact trusted declared and owned
+registration target identity first. Its observed state may be missing,
+unreadable, or inconsistent. Content is inspected only when the target is
+readable. The identity and ownership must already come from trusted lifecycle or
+source facts. The finding remains inside that owned boundary and never uses
+resemblance, arbitrary provider files, or path-only adoption.
+
+`extension.unmanaged-like-content` requires an exact contained readable supported
+Extension manifest signature inside the accepted bounded Extension scan universe,
+with no trusted lifecycle ownership for that exact identity. It is informational
+only. It is never fuzzy, path-only, filename-only, broad-scan, adoption,
+registration, or removal authority.
+
+The fixed first-release catalogue retains the public kind and wire name for both
+`extension.bridge-registration` and `extension.unmanaged-like-content`. Task 16
+emits neither kind unless the required producer-owned facts are present. While
+those facts are unavailable, the current Extension observation horizon retains
+one honest bounded `incomplete` limitation for each unavailable horizon: bridge-
+registration observation and installed-manifest observation. These are coverage
+limitations, not synthesized findings. Task 17 owns the exact declared and owned
+bridge-registration role, target identity, and observed state, and must extend
+the accepted typed contributor views and Doctor before its acceptance. Task 18
+owns the exact installed-manifest observation universe and must extend those
+views and Doctor before its acceptance. The final pre-release completeness gate
+requires an honest emission path for all 109 kinds. The current implementation
+target is 107 producer-backed emissions plus exactly these two accepted
+Extension deferrals.
+
+While both accepted Extension observation horizons remain unavailable, the
+overall Doctor result is honestly `incomplete` with exit `3`, even when every
+supported observation has zero findings. The result can become `complete` only
+after both horizons close and all 109 kinds have honest emission paths.
+
+Neither legacy `open-forge.extensions.json`, package-source manifests, broad
+`.agents` recursion, payload/path/byte resemblance, nor Framework bridges may
+substitute for those producer facts. Static CLI composition is wiring only and
+cannot manufacture observations; dependency injection and a runtime registry
+are not observation substitutes.
 
 All Extension lifecycle findings remain diagnosis, typed next actions, manual
 decisions, or blocked boundaries. Doctor does not run `extension install`,
@@ -484,6 +601,215 @@ subjects and evidence, provenance, resolution lanes, candidates or proposals,
 next actions, status, and post-condition facts that the contract exposes. Exact
 field names, schema compatibility, and exit mapping follow the [Shared Result
 Coordinates](../shared/result-coordinates/interface.md).
+
+### Command-Local JSON Result Graph
+
+The command-local `result` object uses these members in exactly this order. Every
+object and array member is present and non-null; members declared `| null` are
+present and may be `null` only under the discriminator rules below:
+
+```text
+DoctorJsonResult {
+  readOnly: boolean,
+  changesMade: boolean,
+  coverage: "complete" | "incomplete" | "blocked",
+  counts: DoctorJsonCounts,
+  actions: DoctorJsonAction[],
+  domains: DoctorJsonDomain[]
+}
+
+DoctorJsonCounts {
+  resolution: {
+    safeExact: DoctorJsonCount,
+    guidedChoice: DoctorJsonCount,
+    targetedOperation: DoctorJsonCount,
+    manualDecision: DoctorJsonCount,
+    blockedRepair: DoctorJsonCount,
+    informational: DoctorJsonCount
+  },
+  severity: {
+    information: DoctorJsonCount,
+    warning: DoctorJsonCount,
+    error: DoctorJsonCount
+  }
+}
+
+DoctorJsonCount {
+  state: "available" | "unavailable" | "not-applicable",
+  value: integer >= 0 | null
+}
+
+DoctorJsonDomain {
+  domain: "workspace-entry" | "recovery-residuals"
+    | "routes-metadata-overwrites-generated-navigation"
+    | "local-references" | "framework-lifecycle" | "extension-lifecycle",
+  boundary: {
+    kind: "workspace" | "recovery-store" | "route-universe"
+      | "local-reference-universe" | "framework-lifecycle"
+      | "extension-lifecycle",
+    path: string | null
+  },
+  coverage: "complete" | "incomplete" | "blocked",
+  lifecycle: "absent" | "trusted" | "untrusted" | "incomplete" | "blocked" | null,
+  sourceAvailability: "available" | "unavailable" | "not-applicable" | null,
+  limitations: DoctorJsonLimitation[],
+  counts: DoctorJsonCounts,
+  findings: DoctorJsonFinding[],
+  actions: DoctorJsonAction[]
+}
+
+DoctorJsonFinding {
+  kind: one of the 109 finite catalogue values,
+  severity: "information" | "warning" | "error",
+  message: string,
+  subject: DoctorJsonSubject,
+  evidence: DoctorJsonEvidence[],
+  provenance: DoctorJsonProvenance,
+  resolution: "safe-exact" | "guided-choice" | "targeted-operation"
+    | "manual-decision" | "blocked-repair" | "informational",
+  candidates: DoctorJsonCandidates | null,
+  proposal: DoctorJsonProposal | null,
+  actions: DoctorJsonAction[]
+}
+
+DoctorJsonSubject {
+  kind: "workspace" | "path" | "route" | "generated-region"
+    | "source-occurrence" | "target" | "recovery-item" | "managed-file"
+    | "extension" | "dependency",
+  path: string | null,
+  id: string | null,
+  location: SourceLocation | null
+}
+
+DoctorJsonEvidence {
+  kind: "availability" | "state" | "comparison" | "integrity"
+    | "authored-value" | "candidate-basis",
+  basis: "filename" | "title" | "literal-content" | "route-neighborhood" | null,
+  state: "available" | "unavailable" | "not-applicable" | "present" | "absent"
+    | "current" | "changed" | "missing" | "blocked" | "incomplete"
+    | "valid" | "invalid" | "unsupported" | "malformed" | "untrusted"
+    | "verified" | null,
+  expected: string | null,
+  actual: string | null,
+  value: string | null,
+  path: string | null,
+  location: SourceLocation | null
+}
+
+DoctorJsonProvenance {
+  domain: "workspace-entry" | "recovery-residuals"
+    | "routes-metadata-overwrites-generated-navigation"
+    | "local-references" | "framework-lifecycle" | "extension-lifecycle",
+  source: "workspace-entry" | "recovery-residuals" | "route-inventory"
+    | "route-metadata" | "generated-navigation" | "local-references"
+    | "framework-lifecycle" | "framework-payload" | "extension-lifecycle"
+    | "extension-source" | "lifecycle-ownership",
+  path: string | null,
+  location: SourceLocation | null
+}
+
+DoctorJsonCandidates {
+  cardinality: "none" | "one" | "several",
+  items: DoctorJsonCandidate[]
+}
+
+DoctorJsonCandidate {
+  subject: DoctorJsonSubject,
+  evidence: DoctorJsonCandidateBasis[],
+  provenance: DoctorJsonProvenance
+}
+
+DoctorJsonCandidateBasis {
+  kind: "filename" | "title" | "literal-content" | "route-neighborhood",
+  value: string | null,
+  location: SourceLocation | null
+}
+
+DoctorJsonProposal {
+  kind: "reference-canonicalization",
+  subject: DoctorJsonSubject,
+  expected: string,
+  intended: string,
+  boundary: DoctorJsonBoundary,
+  verification: "same-target-identity" | "resulting-bytes",
+  recovery: "no-persistent-state" | "repair-receipt-required"
+}
+
+DoctorJsonAction {
+  kind: "repair-preview" | "accepted-operation" | "future-operation"
+    | "review-candidates" | "manual-decision",
+  operation: "repair" | "index" | "cleanup" | "install" | "update"
+    | "extension-create" | "extension-install" | "extension-update"
+    | "extension-remove" | null,
+  command: string | null,
+  reason: string
+}
+
+DoctorJsonLimitation {
+  kind: "unavailable" | "unsupported" | "incomplete" | "blocked",
+  message: string
+}
+```
+
+The following command-local coordinates are finite machine-value sets, not
+open-ended strings:
+
+```text
+DoctorJsonBoundary.kind:
+  "workspace" | "recovery-store" | "route-universe"
+    | "local-reference-universe" | "framework-lifecycle"
+    | "extension-lifecycle"
+
+DoctorJsonEvidence.state:
+  "available" | "unavailable" | "not-applicable" | "present" | "absent"
+    | "current" | "changed" | "missing" | "blocked" | "incomplete"
+    | "valid" | "invalid" | "unsupported" | "malformed" | "untrusted"
+    | "verified" | null
+
+DoctorJsonProvenance.source:
+  "workspace-entry" | "recovery-residuals" | "route-inventory"
+    | "route-metadata" | "generated-navigation" | "local-references"
+    | "framework-lifecycle" | "framework-payload" | "extension-lifecycle"
+    | "extension-source" | "lifecycle-ownership"
+
+DoctorJsonAction.operation:
+  "repair" | "index" | "cleanup" | "install" | "update"
+    | "extension-create" | "extension-install" | "extension-update"
+    | "extension-remove" | null
+```
+
+For `DoctorJsonAction`, `operation` is `"repair"` for `repair-preview`, is one
+of the listed operation values for `accepted-operation` and `future-operation`,
+and is `null` for `review-candidates` and `manual-decision`. The accepted and
+future operation forms retain a typed operation even when only the latter lacks
+an established command spelling; the command member remains nullable.
+
+`DoctorJsonBoundary.path`, `DoctorJsonEvidence.basis`, `expected`, `actual`,
+`value`, `path`, and `location`, `DoctorJsonProvenance.path` and `location`,
+and `DoctorJsonAction.operation` are present but nullable. `basis` is non-null
+only for `candidate-basis` evidence; `state` is non-null for `availability`,
+`state`, and `integrity` evidence and null for `comparison`, `authored-value`,
+and `candidate-basis` evidence. `expected` and `actual` are non-null only for
+`comparison`; `value` and `location` are non-null only for `authored-value`;
+`path` and `location` remain null when the corresponding typed fact is
+unavailable. `DoctorJsonProposal.boundary` is always present for a proposal
+and carries the affected typed boundary.
+
+Every aggregate and per-domain `DoctorJsonCounts` uses the same
+`DoctorJsonCount` coordinate. Its `value` is non-null exactly when `state` is
+`available`; it is `null` for `unavailable` and `not-applicable`. Zero is an
+available count and is never used to represent either unavailable state.
+
+The shared envelope remains the outer graph and keeps its exact six-member order,
+including `workspace` and `next` nullability. `readOnly` is always `true` and
+`changesMade` is always `false` for a Doctor result. `domains` has exactly six
+members in the fixed diagnostic order. Domain `lifecycle` and
+`sourceAvailability` are present but `null` outside their applicable lifecycle
+domains. Finding `candidates` is non-null only for bounded candidate evidence,
+and `proposal` is non-null only for an exact proposal. Every array is present and
+non-null, including empty arrays. Nullable subject, evidence, provenance, and
+action members are present with `null` only when their discriminator makes the
+member inapplicable or the fact is unavailable.
 
 ## Semantic Results
 

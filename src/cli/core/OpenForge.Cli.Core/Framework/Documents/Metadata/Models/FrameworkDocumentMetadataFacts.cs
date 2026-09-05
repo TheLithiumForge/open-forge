@@ -10,12 +10,21 @@ internal enum FrameworkDocumentMetadataState
     Malformed,
 }
 
+internal enum FrameworkDocumentMetadataFailureKind
+{
+    None,
+    Malformed,
+    Duplicate,
+}
+
 internal sealed record FrameworkDocumentMetadataFacts
 {
     private FrameworkDocumentMetadataFacts(
         FrameworkDocumentMetadataState state,
         FrameworkDocumentMetadata? metadata,
-        IEnumerable<YamlTextSpan> tagSpans)
+        IEnumerable<YamlTextSpan> tagSpans,
+        FrameworkDocumentMetadataFailureKind failureKind,
+        YamlTextSpan? failureSpan)
     {
         if (!Enum.IsDefined(state))
         {
@@ -60,9 +69,26 @@ internal sealed record FrameworkDocumentMetadataFacts
                 nameof(tagSpans));
         }
 
+        var failureMatches = state switch
+        {
+            FrameworkDocumentMetadataState.Complete or FrameworkDocumentMetadataState.Missing =>
+                failureKind == FrameworkDocumentMetadataFailureKind.None && failureSpan is null,
+            FrameworkDocumentMetadataState.Malformed when failureKind == FrameworkDocumentMetadataFailureKind.Duplicate =>
+                failureSpan is not null,
+            FrameworkDocumentMetadataState.Malformed =>
+                failureKind == FrameworkDocumentMetadataFailureKind.Malformed && failureSpan is null,
+            _ => false,
+        };
+        if (!failureMatches)
+        {
+            throw new ArgumentException("The metadata failure kind and coordinate must match its state.", nameof(failureKind));
+        }
+
         State = state;
         Metadata = metadata;
         TagSpans = spans;
+        FailureKind = failureKind;
+        FailureSpan = failureSpan;
     }
 
     internal FrameworkDocumentMetadataState State { get; }
@@ -71,10 +97,37 @@ internal sealed record FrameworkDocumentMetadataFacts
 
     internal ImmutableArray<YamlTextSpan> TagSpans { get; }
 
+    internal FrameworkDocumentMetadataFailureKind FailureKind { get; }
+
+    internal YamlTextSpan? FailureSpan { get; }
+
     internal static FrameworkDocumentMetadataFacts Complete(
         FrameworkDocumentMetadata metadata,
         IEnumerable<YamlTextSpan> tagSpans)
-        => new(FrameworkDocumentMetadataState.Complete, metadata, tagSpans);
+        => new(
+            FrameworkDocumentMetadataState.Complete,
+            metadata,
+            tagSpans,
+            FrameworkDocumentMetadataFailureKind.None,
+            failureSpan: null);
+
+    internal static FrameworkDocumentMetadataFacts Malformed(
+        FrameworkDocumentMetadataFailureKind kind,
+        YamlTextSpan? span = null)
+    {
+        if (kind is not (FrameworkDocumentMetadataFailureKind.Malformed
+            or FrameworkDocumentMetadataFailureKind.Duplicate))
+        {
+            throw new ArgumentOutOfRangeException(nameof(kind), kind, "Malformed metadata requires one exact failure kind.");
+        }
+
+        return new(
+            FrameworkDocumentMetadataState.Malformed,
+            metadata: null,
+            tagSpans: [],
+            kind,
+            span);
+    }
 
     internal static FrameworkDocumentMetadataFacts WithoutValues(
         FrameworkDocumentMetadataState state)
@@ -87,6 +140,13 @@ internal sealed record FrameworkDocumentMetadataFacts
                 "Complete metadata facts require authored values.");
         }
 
-        return new FrameworkDocumentMetadataFacts(state, metadata: null, tagSpans: []);
+        return state == FrameworkDocumentMetadataState.Malformed
+            ? Malformed(FrameworkDocumentMetadataFailureKind.Malformed)
+            : new FrameworkDocumentMetadataFacts(
+                state,
+                metadata: null,
+                tagSpans: [],
+                FrameworkDocumentMetadataFailureKind.None,
+                failureSpan: null);
     }
 }

@@ -55,6 +55,10 @@ public sealed class RecoveryBundleContractTests
         var input = RecoveryBundleInput.Create(
             workspace,
             command: "index",
+            attribution: RecoveryBundleAttribution.Create(
+                RecoveryBundleProducer.Index,
+                RecoveryBundleOperation.Index,
+                workspace),
             operationId: Guid.NewGuid(),
             targets:
             [
@@ -211,6 +215,10 @@ public sealed class RecoveryBundleContractTests
             WorkspacePhysicalPath = Path.GetTempPath(),
             WorkspaceKey = new string('0', 64),
             Command = "index",
+            Attribution = RecoveryBundleAttribution.Create(
+                RecoveryBundleProducer.Index,
+                RecoveryBundleOperation.Index,
+                Workspace()),
             OperationId = Guid.NewGuid(),
             Entries = [],
         };
@@ -333,6 +341,10 @@ public sealed class RecoveryBundleContractTests
         var input = RecoveryBundleInput.Create(
             workspace,
             command: "index",
+            attribution: RecoveryBundleAttribution.Create(
+                RecoveryBundleProducer.Index,
+                RecoveryBundleOperation.Index,
+                workspace),
             operationId: Guid.NewGuid(),
             targets: [RecoveryBundleTarget.Create(change, before)]);
         return (

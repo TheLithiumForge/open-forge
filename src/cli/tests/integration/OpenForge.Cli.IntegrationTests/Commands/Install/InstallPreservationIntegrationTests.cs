@@ -155,6 +155,10 @@ public sealed class InstallPreservationIntegrationTests
         var input = RecoveryBundleInput.Create(
             workspace.Workspace,
             command: IndexDefinitions.CommandIdentity,
+            RecoveryBundleAttribution.Create(
+                RecoveryBundleProducer.Index,
+                RecoveryBundleOperation.Index,
+                workspace.Workspace),
             operationId: Guid.NewGuid(),
             targets:
             [

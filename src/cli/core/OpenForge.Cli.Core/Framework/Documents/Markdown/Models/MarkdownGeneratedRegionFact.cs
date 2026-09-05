@@ -8,6 +8,13 @@ internal enum MarkdownGeneratedRegionState
     Unavailable,
 }
 
+internal enum MarkdownGeneratedRegionInvalidKind
+{
+    Malformed,
+    Misplaced,
+    Duplicate,
+}
+
 internal sealed record MarkdownGeneratedRegionFact
 {
     private MarkdownGeneratedRegionFact(
@@ -15,7 +22,8 @@ internal sealed record MarkdownGeneratedRegionFact
         MarkdownTextSpan? regionSpan,
         MarkdownTextSpan? contentSpan,
         MarkdownTextSpan? omissionSpan,
-        string? cause)
+        string? cause,
+        MarkdownGeneratedRegionInvalidKind? invalidKind = null)
     {
         if (!Enum.IsDefined(state))
         {
@@ -30,6 +38,11 @@ internal sealed record MarkdownGeneratedRegionFact
                 && (regionSpan is not null || contentSpan is not null || omissionSpan is not null || string.IsNullOrWhiteSpace(cause)))
         {
             throw new ArgumentException("The Markdown generated-region facts do not match their state.");
+        }
+
+        if ((state == MarkdownGeneratedRegionState.Invalid) != (invalidKind is not null))
+        {
+            throw new ArgumentException("Only an invalid generated region carries one exact invalid kind.", nameof(invalidKind));
         }
 
         if (regionSpan is not null && contentSpan is not null
@@ -55,6 +68,7 @@ internal sealed record MarkdownGeneratedRegionFact
         ContentSpan = contentSpan;
         OmissionSpan = omissionSpan;
         Cause = cause;
+        InvalidKind = invalidKind;
     }
 
     internal MarkdownGeneratedRegionState State { get; }
@@ -66,6 +80,8 @@ internal sealed record MarkdownGeneratedRegionFact
     internal MarkdownTextSpan? OmissionSpan { get; }
 
     internal string? Cause { get; }
+
+    internal MarkdownGeneratedRegionInvalidKind? InvalidKind { get; }
 
     internal static MarkdownGeneratedRegionFact Absent()
         => new(
@@ -86,13 +102,16 @@ internal sealed record MarkdownGeneratedRegionFact
             omissionSpan: omissionSpan,
             cause: null);
 
-    internal static MarkdownGeneratedRegionFact Invalid(string cause)
+    internal static MarkdownGeneratedRegionFact Invalid(
+        MarkdownGeneratedRegionInvalidKind kind,
+        string cause)
         => new(
             state: MarkdownGeneratedRegionState.Invalid,
             regionSpan: null,
             contentSpan: null,
             omissionSpan: null,
-            cause: cause);
+            cause: cause,
+            invalidKind: kind);
 
     internal static MarkdownGeneratedRegionFact Unavailable(string cause)
         => new(

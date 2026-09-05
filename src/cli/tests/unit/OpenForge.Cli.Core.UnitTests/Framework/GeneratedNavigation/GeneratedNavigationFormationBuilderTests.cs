@@ -332,13 +332,14 @@ public sealed class GeneratedNavigationFormationBuilderTests
         string attemptedCanonicalPath,
         string? scopePhysicalPath)
     {
-        return new SourceCatalogueIssue(
-            stage: stage,
+        var issue = new SourceCatalogueIssue(
             code: code,
             attemptedCanonicalPath: attemptedCanonicalPath,
             relatedPaths: [],
             scopePhysicalPath: scopePhysicalPath,
             failure: null);
+        Assert.Equal(stage, issue.Stage);
+        return issue;
     }
 
     private static SourceLogicalSource Source(

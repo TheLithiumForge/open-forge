@@ -49,6 +49,10 @@ public sealed class RecoveryBundleApplicationIntegrationTests
         var input = RecoveryBundleInput.Create(
             workspace,
             command,
+            RecoveryBundleAttribution.Create(
+                RecoveryBundleProducer.Index,
+                RecoveryBundleOperation.Index,
+                workspace),
             operationId,
             targets:
             [
@@ -285,6 +289,10 @@ public sealed class RecoveryBundleApplicationIntegrationTests
         => RecoveryBundleInput.Create(
             workspace,
             command,
+            RecoveryBundleAttribution.Create(
+                RecoveryBundleProducer.Index,
+                RecoveryBundleOperation.Index,
+                workspace),
             operationId,
             [RecoveryBundleTarget.Create(
                 change,

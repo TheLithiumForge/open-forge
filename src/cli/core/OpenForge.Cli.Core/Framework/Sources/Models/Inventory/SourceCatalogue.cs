@@ -235,7 +235,10 @@ internal sealed class SourceCatalogue
             return issue;
         }
 
-        if (issue.Code is SourceCatalogueIssueCode.IdentityCollision or SourceCatalogueIssueCode.PhysicalAlias)
+        if (issue.Code is SourceCatalogueIssueCode.EntrypointAmbiguous
+            or SourceCatalogueIssueCode.EntrypointCompatibilityCollision
+            or SourceCatalogueIssueCode.IdentityCollision
+            or SourceCatalogueIssueCode.PhysicalAlias)
         {
             var selectedRelatedPaths = issue.RelatedPaths
                 .Where(selectedCandidatePaths.Contains)
@@ -256,7 +259,6 @@ internal sealed class SourceCatalogue
                 ? issue.AttemptedCanonicalPath
                 : selectedRelatedPaths[0];
             return new SourceCatalogueIssue(
-                issue.Stage,
                 issue.Code,
                 attemptedPath,
                 selectedRelatedPaths,

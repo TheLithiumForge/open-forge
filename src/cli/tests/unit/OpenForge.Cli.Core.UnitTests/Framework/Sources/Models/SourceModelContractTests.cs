@@ -27,10 +27,33 @@ public sealed class SourceModelContractTests
             ["Root", "Directory", "Candidate", "Identity", "Pairing"],
             Enum.GetNames<SourceCatalogueIssueStage>());
         Assert.Equal(
-            ["RootMissing", "RootUnsafe", "RootUnavailable", "DirectoryUnavailable", "CandidateUnsafe", "CandidateUnavailable", "IdentityUnavailable", "IdentityCollision", "PhysicalAlias", "OrphanOverwrite"],
+            [
+                "RootMissing",
+                "RootUnsafe",
+                "RootUnavailable",
+                "DirectoryUnavailable",
+                "CandidateUnsafe",
+                "CandidateUnavailable",
+                "UnsupportedSource",
+                "IdentityUnavailable",
+                "EntrypointAmbiguous",
+                "EntrypointCompatibilityCollision",
+                "IdentityCollision",
+                "PhysicalAlias",
+                "OrphanOverwrite",
+            ],
             Enum.GetNames<SourceCatalogueIssueCode>());
         Assert.Equal(
-            ["LoaderUnavailable", "LoaderMalformed", "LoaderUnsafe", "RouteAmbiguous", "RouteSupportUnavailable"],
+            [
+                "LoaderUnavailable",
+                "LoaderUnreadable",
+                "LoaderDestinationMissing",
+                "LoaderDuplicateRoot",
+                "LoaderMalformed",
+                "LoaderUnsafe",
+                "RouteAmbiguous",
+                "RouteSupportUnavailable",
+            ],
             Enum.GetNames<SourceRouteIssueCode>());
     }
 }

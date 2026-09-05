@@ -103,10 +103,25 @@ existing selected workspace bucket that cannot be read produces the locally
 contracted `incomplete` result rather than an empty catalogue. Each exact-name
 candidate retains its path, current file kind, and integrity condition:
 
-| Artifact kind    | Candidate and eligibility facts                                                                                                                                                                                                                        |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Exact-name final | Semantic source-generated schema-v1 validation determines `Verified`, `Malformed`, `Unsupported`, or `Unavailable`. Only a `Verified` ordinary file is deletion-eligible; every other integrity condition is reported, preserved, and blocks deletion. |
-| Exact-name draft | An ordinary direct-child file is `Incomplete` support data, never a recovery preparation, and is deletion-eligible. A non-ordinary or otherwise unsafe exact-name draft is reported, preserved, and blocks deletion.                                   |
+| Artifact kind    | Candidate and eligibility facts                                                                                                                                                                                                                                                                                                                                |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Exact-name final | Semantic source-generated current schema-v1 validation, including the required immutable typed attribution, determines `Verified`, `Malformed`, `Unsupported`, or `Unavailable`. Only a `Verified` ordinary file is deletion-eligible; every other integrity condition, including missing or invalid attribution, is reported, preserved, and blocks deletion. |
+| Exact-name draft | An ordinary direct-child file is exact-name, path-only `Incomplete` support data, never a recovery preparation, and is deletion-eligible; observers do not inspect or use its bytes for attribution. A non-ordinary or otherwise unsafe exact-name draft is reported, preserved, and blocks deletion.                                                          |
+
+A final is `Verified` only when the schema discriminator is exactly `1`, the
+manifest has valid immutable typed attribution, and its ordered entries and
+payload bytes pass semantic validation. A schema-1 final without valid attribution
+is malformed/unattributed and remains preserved; it is not migrated, rewritten,
+repaired, adopted, or inferred. An unknown schema
+version is `Unsupported`. Attribution is an integrity fact, not deletion
+authority: Cleanup still requires the exact selected bucket and name, explicit
+cleanup intent, the same-workspace lease, under-lease re-enumeration, and final
+semantic revalidation.
+
+The exact schema-v1 attribution vocabulary, valid producer/operation/subject
+combinations, and required non-null workspace identity are defined by the
+[Mutation And Recovery Technical Design](../../technical-designs/mutation-and-recovery.md#schema-v1-attribution-vocabulary).
+Cleanup accepts no unknown value or fallback attribution.
 
 Semantic final validation may stream each ZIP payload entry through fixed bounded
 buffers solely to validate the exact declared length and lowercase SHA-256.
@@ -142,8 +157,9 @@ intent.
 
 The exact selected-workspace bucket, deterministic direct-child name, semantic
 final validation when applicable, explicit command, and held same-workspace
-lease supply deletion authority. Lease contention prevents acquisition and
-therefore all deletion. Any item whose current
+lease supply deletion authority. Valid attribution only contributes to final
+integrity and never supplies deletion authority. Lease contention prevents
+acquisition and therefore all deletion. Any item whose current
 facts are unknown or unsafe remains visible and untouched. A bundle associated
 with an original workspace path after a workspace move is reportable but is not
 auto-bound to the selected path and is not eligible through that selected path.
@@ -199,8 +215,9 @@ Cleanup reads only the current user's
 `Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
 Environment.SpecialFolderOption.None)/OpenForge/recovery/v1` root and the
 deterministic selected-workspace bucket and exact names derived from the
-normalized physical workspace path. Manifest workspace association is required
-only as part of semantic verification for an exact-name final; it is not required
+normalized physical workspace path. Manifest workspace association and valid
+current-v1 typed attribution are required as part of semantic verification for
+an exact-name final; they are not required
 to catalogue a draft or a malformed, unsupported, or unavailable final. This
 observer-only lookup never creates the OS application-data root or the Open Forge
 subtree. It does not discover a repository root, inspect version-control state,
@@ -322,7 +339,7 @@ Cleanup rejects or blocks:
 - an unknown, malformed, repeated, or terminal-conflicting flag;
 - a selected workspace that is unavailable or not a directory;
 - incomplete required catalogue enumeration;
-- an exact-name final that is malformed, unsupported, unavailable, non-ordinary,
+- an exact-name final that is malformed, unattributed, unsupported, unavailable, non-ordinary,
   or unsafe, or a planned draft path that is not the exact named ordinary file
   under the selected workspace bucket;
 - failure to acquire the same-workspace lease, including when a cooperating

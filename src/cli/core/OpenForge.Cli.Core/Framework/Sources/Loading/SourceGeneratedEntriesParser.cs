@@ -40,6 +40,7 @@ internal static class SourceGeneratedEntriesParser
         }
 
         var entries = new List<SourceGeneratedEntry>();
+        var searchStart = span.Start;
         foreach (var line in lines)
         {
             if (line == EmptySentinel)
@@ -48,12 +49,29 @@ internal static class SourceGeneratedEntriesParser
                     "The empty Entries sentinel must be the sole declaration.");
             }
 
-            if (!TryParseEntry(line, out var destination, out var tags, out var cause))
+            if (!TryParseEntry(
+                line,
+                out var description,
+                out var destination,
+                out var tags,
+                out var cause))
             {
                 return SourceGeneratedEntriesFacts.Unavailable(cause);
             }
 
-            entries.Add(new SourceGeneratedEntry(destination, tags));
+            var lineStart = document.Source.IndexOf(line, searchStart, StringComparison.Ordinal);
+            if (lineStart < 0 || lineStart >= span.End)
+            {
+                return SourceGeneratedEntriesFacts.Unavailable(
+                    "A generated Entries declaration location could not be retained.");
+            }
+
+            entries.Add(new SourceGeneratedEntry(
+                description,
+                destination,
+                tags,
+                new MarkdownTextSpan(lineStart, line.Length)));
+            searchStart = checked(lineStart + line.Length);
         }
 
         return SourceGeneratedEntriesFacts.Complete(entries);
@@ -61,10 +79,12 @@ internal static class SourceGeneratedEntriesParser
 
     private static bool TryParseEntry(
         string line,
+        [NotNullWhen(true)] out string? description,
         [NotNullWhen(true)] out string? destination,
         out IReadOnlyList<string> tags,
         [NotNullWhen(false)] out string? cause)
     {
+        description = null;
         destination = null;
         tags = [];
         cause = null;
@@ -80,6 +100,8 @@ internal static class SourceGeneratedEntriesParser
             cause = "A generated Entries declaration must contain a non-empty inline link label.";
             return false;
         }
+
+        description = line[3..destinationStart];
 
         var destinationEnd = line.IndexOf(')', destinationStart + 2);
         if (destinationEnd < 0 || destinationEnd == destinationStart + 2)

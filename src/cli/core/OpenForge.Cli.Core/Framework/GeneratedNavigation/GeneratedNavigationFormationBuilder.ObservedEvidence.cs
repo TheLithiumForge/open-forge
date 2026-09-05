@@ -74,7 +74,6 @@ internal sealed partial class GeneratedNavigationFormationBuilder
             }
 
             return new SourceCatalogueIssue(
-                stage: issue.Stage,
                 code: issue.Code,
                 attemptedCanonicalPath: retainedCandidatePaths.Contains(issue.AttemptedCanonicalPath)
                     ? issue.AttemptedCanonicalPath
@@ -92,7 +91,6 @@ internal sealed partial class GeneratedNavigationFormationBuilder
         return relatedPaths.Length == issue.RelatedPaths.Count
             ? issue
             : new SourceCatalogueIssue(
-                stage: issue.Stage,
                 code: issue.Code,
                 attemptedCanonicalPath: issue.AttemptedCanonicalPath,
                 relatedPaths: relatedPaths,

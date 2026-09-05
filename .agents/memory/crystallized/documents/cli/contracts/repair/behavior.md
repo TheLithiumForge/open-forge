@@ -330,23 +330,35 @@ Environment.SpecialFolderOption.Create)/OpenForge/recovery/v1`. No temporary,
 repository, `HOME`, or custom platform fallback is allowed; unavailable storage
 is `incomplete` before any write.
 
-The bundle uses the normalized physical workspace path key and operation ID.
-Its source-generated `manifest.json` and ordered ordinal payload entries record
-schema-v1, command/operation/workspace identity, every planned relative target and
-change kind, exact prior lengths/hashes/payloads, and intended final
-absence/length/hash. The draft is created with `CreateNew` under its exact name
-in the same external directory, closed and reopened for semantic manifest,
-exact ordered entry names and counts, lengths, hashes, and bytes, moved within
-the same directory to its deterministic final name, and reopened and verified
-again. Only the valid final ZIP forms the opaque `RecoveryBundlePreparation`;
-the draft remains `Incomplete`. Create and no-op effects have no entries, and
-every planned existing-target effect has exactly one matching entry. All preparation
-completes before the first effect; `FileChangeApplier` requires the matching
-preparation and performs one final effect per target. Before workspace mutation,
-hold the persistent external zero-byte workspace lock with one read/write
-`FileShare.None` handle; write no metadata, timestamp, or ownership record and
-never truncate or delete it. The lock is concurrency safety, not lifecycle, history, or
-recovery evidence.
+The bundle uses the normalized physical workspace path key and operation ID. Its
+source-generated `manifest.json` uses the one public schema-v1 discriminator
+value `1` and records command/operation/workspace identity, one required
+immutable `attribution` object, every planned relative target and change kind,
+exact prior lengths/hashes/payloads, and intended final absence/length/hash. The
+attribution contains one finite producer, one finite operation, and a typed
+subject `{kind, identity}`. The exact schema-v1 attribution vocabulary, valid
+producer/operation/subject combinations, and required non-null workspace identity
+are defined by the [Mutation And Recovery Technical Design](../../technical-designs/mutation-and-recovery.md#schema-v1-attribution-vocabulary).
+Repair's future writer supplies its own exact
+producer, operation, and subject from trusted Repair-owned facts; it never
+infers them from free command, GUID, path, filename, or ordered-entry values and
+never uses a generic field bag. A schema-1 final missing or carrying invalid
+attribution is malformed/unattributed and remains preserved, while an unknown
+schema version is unsupported. The draft is created with `CreateNew` under its
+exact name in the same external directory, closed and reopened for semantic
+manifest, exact ordered entry names and counts, lengths, hashes, and bytes,
+moved within the same directory to its deterministic final name, and reopened
+and verified again. Only the valid current-v1 final ZIP forms the opaque
+`RecoveryBundlePreparation`; the draft remains exact-name, path-only
+`Incomplete` support data, and observers do not inspect or use its bytes for
+attribution. Create and no-op
+effects have no entries, and every planned existing-target effect has exactly
+one matching entry. All preparation completes before the first effect;
+`FileChangeApplier` requires the matching preparation and performs one final
+effect per target. Before workspace mutation, hold the persistent external
+zero-byte workspace lock with one read/write `FileShare.None` handle; write no
+metadata, timestamp, or ownership record and never truncate or delete it. The
+lock is concurrency safety, not lifecycle, history, or recovery evidence.
 
 ## Dry-Run Parity
 

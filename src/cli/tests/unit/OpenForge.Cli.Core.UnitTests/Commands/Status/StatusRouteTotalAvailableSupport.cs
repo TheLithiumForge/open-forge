@@ -135,11 +135,14 @@ internal static class StatusRouteTotalAvailableSupport
             FrameworkMetadata = FrameworkDocumentMetadataFacts.WithoutValues(
                 FrameworkDocumentMetadataState.Missing),
             GeneratedEntries = SourceGeneratedEntriesFacts.Absent,
+            Structure = new RouteSourceStructureObservation(
+                RouteTitleObservation.NotApplicable(),
+                RouteAxiomsObservation.NotApplicable()),
+            WorkspaceIssues = [],
         };
 
     private static SourceCatalogueIssue MissingRootIssue(CliWorkspace workspace)
         => new(
-            SourceCatalogueIssueStage.Root,
             SourceCatalogueIssueCode.RootMissing,
             Path.Combine(workspace.LexicalRoot, ".agents"),
             [],

@@ -69,6 +69,10 @@ internal sealed class RouteUpdateRecoveryPreparer(
                     RecoveryBundleInput.Create(
                         input.Plan.Request.Workspace,
                         RouteUpdateDefinitions.CommandIdentity,
+                        RecoveryBundleAttribution.Create(
+                            RecoveryBundleProducer.Route,
+                            RecoveryBundleOperation.Update,
+                            input.Plan.Request.Workspace),
                         operationId,
                         input.Plan.RecoveryTargets),
                     cancellationToken)

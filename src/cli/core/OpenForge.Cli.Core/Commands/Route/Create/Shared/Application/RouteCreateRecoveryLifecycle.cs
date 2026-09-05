@@ -93,6 +93,10 @@ internal sealed class RouteCreateRecoveryLifecycle
                     RecoveryBundleInput.Create(
                         plan.Request.Workspace,
                         RouteCreateDefinitions.CommandIdentity,
+                        RecoveryBundleAttribution.Create(
+                            RecoveryBundleProducer.Route,
+                            RecoveryBundleOperation.Create,
+                            plan.Request.Workspace),
                         operationId,
                         plan.RecoveryTargets),
                     cancellationToken)

@@ -288,6 +288,11 @@ public sealed class RecoveryBundleCatalogueIntegrationTests
             OperationId = operationId.ToString(RecoveryBundleFormatV1.OperationIdFormat),
             WorkspacePath = WorkspaceIdentity.NormalizePhysicalPath(workspace.PhysicalRoot),
             WorkspaceKey = WorkspaceIdentity.Key(workspace.PhysicalRoot),
+            Attribution = RecoveryBundleAttributionCodec.Serialize(
+                RecoveryBundleAttribution.Create(
+                    RecoveryBundleProducer.Index,
+                    RecoveryBundleOperation.Index,
+                    workspace)),
             Entries = [],
         };
         await using var file = new FileStream(path, FileMode.CreateNew, FileAccess.Write, FileShare.None);

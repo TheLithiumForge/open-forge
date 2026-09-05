@@ -1,4 +1,3 @@
-using System.Text;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models;
@@ -11,8 +10,9 @@ namespace OpenForge.Cli.Core.Framework.Lifecycle.Operational;
 internal sealed class FrameworkLifecycleTargetReader(
     PhysicalPathResolver physicalPathResolver)
 {
-    private readonly LifecycleManagedTargetReader _managedTargetReader = new(physicalPathResolver);
     private readonly FrameworkLifecycleTargetIdentity _targetIdentity = new();
+    private readonly FrameworkLifecycleTargetStateReader _targetStateReader = new(
+        new LifecycleManagedTargetReader(physicalPathResolver));
 
     internal async ValueTask<IReadOnlyList<FrameworkManagedTargetObservation>> ReadAsync(
         CliWorkspace workspace,
@@ -23,86 +23,102 @@ internal sealed class FrameworkLifecycleTargetReader(
         var generated = lifecycle.GeneratedRegions
             .Select(region => (region.Path, Region: (string?)region.Region))
             .ToHashSet();
-        var observations = new List<FrameworkManagedTargetObservation>(lifecycle.Targets.Length);
+        var observations = new List<FrameworkManagedTargetObservation>(
+            lifecycle.Targets.Length);
         foreach (var target in lifecycle.Targets)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var source = _targetIdentity.ValidateSource(target, generated, payload);
             var state = source.State == FrameworkLifecycleTargetSourceState.Blocked
                 ? OperationalTargetState.Blocked
-                : await ReadStateAsync(
+                : (await _targetStateReader.ReadAsync(
                     workspace,
                     target,
                     generated,
-                    cancellationToken).ConfigureAwait(false);
-            observations.Add(new FrameworkManagedTargetObservation
+                    cancellationToken).ConfigureAwait(false)).State;
+            observations.Add(CreateTarget(target, source, generated, state));
+        }
+
+        return observations;
+    }
+
+    internal async ValueTask<IReadOnlyList<FrameworkManagedTargetDoctorObservation>> ReadDoctorAsync(
+        CliWorkspace workspace,
+        FrameworkLifecycleState lifecycle,
+        FrameworkPayload payload,
+        CancellationToken cancellationToken)
+    {
+        var generated = lifecycle.GeneratedRegions
+            .Select(region => (region.Path, Region: (string?)region.Region))
+            .ToHashSet();
+        var observations = new List<FrameworkManagedTargetDoctorObservation>(lifecycle.Targets.Length);
+        foreach (var target in lifecycle.Targets)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var source = _targetIdentity.ValidateSource(target, generated, payload);
+            if (source.State != FrameworkLifecycleTargetSourceState.Valid)
             {
-                Path = target.Path,
-                Kind = ReadKind(target, generated),
-                SourceAssetPath = target.SourceAssetPath,
-                Region = target.Region,
-                BaselineFingerprint = target.BaselineFingerprint,
-                FingerprintKind = target.FingerprintKind,
-                Source = source,
-                State = state,
-            });
+                observations.Add(FrameworkManagedTargetDoctorObservation.SourceInvalid(
+                    CreateTarget(
+                        target,
+                        source,
+                        generated,
+                        OperationalTargetState.Blocked),
+                    source.Cause ?? "The Framework target source is invalid."));
+                continue;
+            }
+
+            var read = await _targetStateReader.ReadAsync(
+                    workspace,
+                    target,
+                    generated,
+                    cancellationToken)
+                .ConfigureAwait(false);
+            var observation = CreateTarget(target, source, generated, read.State);
+            var boundary = ReadBoundary(target);
+            observations.Add(read.ReadState == LifecycleManagedTargetReadState.Available
+                ? FrameworkManagedTargetDoctorObservation.Observed(
+                    observation,
+                    boundary,
+                    read.CurrentFingerprint
+                        ?? throw new InvalidOperationException(
+                            "An observed Framework target requires its current fingerprint."))
+                : FrameworkManagedTargetDoctorObservation.AtBoundary(
+                    observation,
+                    boundary,
+                    read.ReadState,
+                    read.Cause));
         }
 
         return observations.ToArray();
     }
 
-    private async ValueTask<OperationalTargetState> ReadStateAsync(
-        CliWorkspace workspace,
+    private static FrameworkManagedTargetBoundaryKind? ReadBoundary(
+        FrameworkLifecycleTarget target)
+        => target.Path switch
+        {
+            FrameworkPayloadAsset.RootClaudePath =>
+                FrameworkManagedTargetBoundaryKind.ProviderBridge,
+            FrameworkPayloadAsset.RootAgentPath =>
+                FrameworkManagedTargetBoundaryKind.RootRegion,
+            _ => null,
+        };
+
+    private FrameworkManagedTargetObservation CreateTarget(
         FrameworkLifecycleTarget target,
+        FrameworkLifecycleTargetSourceValidation source,
         IReadOnlySet<(string Path, string? Region)> generated,
-        CancellationToken cancellationToken)
-    {
-        var read = await _managedTargetReader
-            .ReadAsync(workspace, target.Path, cancellationToken)
-            .ConfigureAwait(false);
-        var boundary = ReadBoundaryState(read.State, cancellationToken);
-        if (boundary.HasValue)
+        OperationalTargetState state)
+        => new()
         {
-            return boundary.Value;
-        }
-
-        try
-        {
-            var fingerprint = _targetIdentity.ReadFingerprint(
-                target,
-                generated,
-                read.Bytes.Span);
-            return string.Equals(
-                fingerprint,
-                target.BaselineFingerprint,
-                StringComparison.Ordinal)
-                ? OperationalTargetState.Current
-                : OperationalTargetState.Changed;
-        }
-        catch (Exception exception) when (exception is ArgumentException
-            or DecoderFallbackException
-            or InvalidDataException
-            or InvalidOperationException)
-        {
-            return OperationalTargetState.Blocked;
-        }
-    }
-
-    private static OperationalTargetState? ReadBoundaryState(
-        LifecycleManagedTargetReadState state,
-        CancellationToken cancellationToken)
-        => state switch
-        {
-            LifecycleManagedTargetReadState.Available => null,
-            LifecycleManagedTargetReadState.Missing => OperationalTargetState.Missing,
-            LifecycleManagedTargetReadState.Unavailable => OperationalTargetState.Unavailable,
-            LifecycleManagedTargetReadState.Blocked => OperationalTargetState.Blocked,
-            LifecycleManagedTargetReadState.Cancelled
-                => throw new OperationCanceledException(cancellationToken),
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(state),
-                state,
-                "The Framework target read state is not defined."),
+            Path = target.Path,
+            Kind = ReadKind(target, generated),
+            SourceAssetPath = target.SourceAssetPath,
+            Region = target.Region,
+            BaselineFingerprint = target.BaselineFingerprint,
+            FingerprintKind = target.FingerprintKind,
+            Source = source,
+            State = state,
         };
 
     private FrameworkManagedTargetKind ReadKind(

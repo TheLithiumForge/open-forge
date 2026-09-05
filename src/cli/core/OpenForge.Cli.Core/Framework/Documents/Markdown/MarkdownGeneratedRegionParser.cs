@@ -31,7 +31,7 @@ internal static class MarkdownGeneratedRegionParser
             .ToArray();
         if (HasMalformedMarker(source, opaqueSpans, markers))
         {
-            return Invalid();
+            return Invalid(MarkdownGeneratedRegionInvalidKind.Malformed);
         }
 
         if (entriesHeadings.Length == 0 && markers.Length == 0)
@@ -44,12 +44,17 @@ internal static class MarkdownGeneratedRegionParser
             return MarkdownGeneratedRegionFact.Absent();
         }
 
+        if (entriesHeadings.Length > 1 || markers.Length > 2)
+        {
+            return Invalid(MarkdownGeneratedRegionInvalidKind.Duplicate);
+        }
+
         if (entriesHeadings.Length != 1
             || markers.Length != 2
             || markers[0].Kind != GeneratedMarkerKind.Start
             || markers[1].Kind != GeneratedMarkerKind.End)
         {
-            return Invalid();
+            return Invalid(MarkdownGeneratedRegionInvalidKind.Malformed);
         }
 
         var heading = entriesHeadings[0];
@@ -60,7 +65,7 @@ internal static class MarkdownGeneratedRegionParser
             || end.Start < start.End
             || !ContainsOnlyLineEndings(source, end.End, bodySpan.End))
         {
-            return Invalid();
+            return Invalid(MarkdownGeneratedRegionInvalidKind.Misplaced);
         }
 
         return MarkdownGeneratedRegionFact.Complete(
@@ -69,8 +74,10 @@ internal static class MarkdownGeneratedRegionParser
             omissionSpan: new MarkdownTextSpan(markers[0].NextStart, checked(end.Start - markers[0].NextStart)));
     }
 
-    private static MarkdownGeneratedRegionFact Invalid()
+    private static MarkdownGeneratedRegionFact Invalid(
+        MarkdownGeneratedRegionInvalidKind kind)
         => MarkdownGeneratedRegionFact.Invalid(
+            kind,
             "The document does not contain exactly one final Entries section with one complete ordered marker pair.");
 
     private static bool ContainsOnlyLineEndings(string source, int start, int end)

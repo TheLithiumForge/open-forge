@@ -5,6 +5,9 @@ namespace OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 internal enum SourceRouteIssueCode
 {
     LoaderUnavailable,
+    LoaderUnreadable,
+    LoaderDestinationMissing,
+    LoaderDuplicateRoot,
     LoaderMalformed,
     LoaderUnsafe,
     RouteAmbiguous,
@@ -34,6 +37,14 @@ internal sealed class SourceRouteIssue
             || materializedRelatedPaths.Distinct(StringComparer.Ordinal).Count() != materializedRelatedPaths.Length)
         {
             throw new ArgumentException("Related source route issue paths must be unique and nonempty.", nameof(relatedPaths));
+        }
+
+        if (code == SourceRouteIssueCode.LoaderDestinationMissing
+            && materializedRelatedPaths.Length != 1)
+        {
+            throw new ArgumentException(
+                "A missing Loader destination must retain its exact declaring Loader path.",
+                nameof(relatedPaths));
         }
 
         if (occurrence < 0)

@@ -424,6 +424,34 @@ internal sealed class SourceLinkDestinationResolver
                 };
         }
 
+        var canonicalFragmentCandidates = targetDocument.Headings
+            .Where(heading => heading.IsCanonical
+                && heading.FragmentIdentifier is not null
+                && string.Equals(
+                    heading.FragmentIdentifier,
+                    decodedFragment,
+                    StringComparison.OrdinalIgnoreCase))
+            .Select(heading => heading.FragmentIdentifier)
+            .OfType<string>()
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+        if (canonicalFragmentCandidates.Length == 1)
+        {
+            return new SourceLinkDestinationFacts
+            {
+                Fragment = rawFragment,
+                Target = target with { Resolution = SourceLinkTargetResolution.FragmentMissing },
+                Finding = new SourceLinkDestinationFinding
+                {
+                    Code = SourceLinkDestinationFindingCode.FragmentMissing,
+                    Cause = "The authored fragment differs from one exact canonical fragment spelling.",
+                    Candidates = [],
+                },
+            }.WithCanonicalFragment(new SourceLinkCanonicalFragment(
+                rawFragment,
+                canonicalFragmentCandidates[0]));
+        }
+
         if (targetDocument.Headings.Any(heading => heading.IsCanonical && heading.FragmentIdentifier is null))
         {
             return new SourceLinkDestinationFacts

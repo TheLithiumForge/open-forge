@@ -24,6 +24,10 @@ internal sealed class ExtensionInstallRecoveryOperation(
             RecoveryBundleInput.Create(
                 plan.Request.Workspace,
                 ExtensionInstallDefinitions.CommandIdentity,
+                RecoveryBundleAttribution.Create(
+                    RecoveryBundleProducer.Extension,
+                    RecoveryBundleOperation.Install,
+                    plan.Request.Workspace),
                 operationId,
                 plan.RecoveryTargets),
             cancellationToken);
