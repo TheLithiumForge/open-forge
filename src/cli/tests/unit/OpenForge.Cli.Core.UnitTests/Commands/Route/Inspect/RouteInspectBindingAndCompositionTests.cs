@@ -47,7 +47,7 @@ public sealed class RouteInspectBindingAndCompositionTests
         Assert.DoesNotContain("create", text, StringComparison.Ordinal);
         Assert.Contains("performs no operation", text, StringComparison.Ordinal);
         Assert.DoesNotContain("update", text, StringComparison.Ordinal);
-        Assert.Contains("Planned but unavailable operation: remove.", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("Planned but unavailable operation: remove.", text, StringComparison.Ordinal);
     }
 
     [Fact(DisplayName = "Route Inspect owns one parser argument with omission and typed semantic cardinality")]

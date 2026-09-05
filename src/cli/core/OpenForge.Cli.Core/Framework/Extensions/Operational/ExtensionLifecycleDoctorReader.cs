@@ -33,12 +33,16 @@ internal sealed class ExtensionLifecycleDoctorReader(
         var packages = lifecycle.Packages
             .Select(package => Compare(package, sources))
             .ToArray();
+        var sourceAvailability = lifecycle.State == LifecycleReadState.Complete
+            && lifecycle.Trust == LifecycleExtensionTrust.Absent
+            ? OperationalSourceAvailability.NotApplicable
+            : ExtensionLifecycleEvaluation.ReadSourceAvailability(lifecycle, sources);
         var assessment = ExtensionLifecycleDoctorAssessment.Create(
             ExtensionLifecycleEvaluation.ReadViewState(lifecycle),
             ReadSection(lifecycle),
             ReadManagedSet(lifecycle, targets),
             ExtensionLifecycleEvaluation.ReadLifecycleState(lifecycle),
-            ExtensionLifecycleEvaluation.ReadSourceAvailability(lifecycle, sources));
+            sourceAvailability);
         return ExtensionLifecycleDoctorView.Create(
             assessment,
             lifecycle,
@@ -51,8 +55,6 @@ internal sealed class ExtensionLifecycleDoctorReader(
         LifecycleReadResult lifecycle)
         => lifecycle.State switch
         {
-            LifecycleReadState.Complete when lifecycle.Trust == LifecycleExtensionTrust.Absent =>
-                ExtensionLifecycleSectionState.SectionMissing,
             LifecycleReadState.Complete => ExtensionLifecycleSectionState.Present,
             LifecycleReadState.Missing => ExtensionLifecycleSectionState.DocumentMissing,
             LifecycleReadState.Invalid when lifecycle.Trust == LifecycleExtensionTrust.Blocked =>

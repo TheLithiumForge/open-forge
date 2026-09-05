@@ -38,10 +38,7 @@ public sealed class PublishedRouteCreateProcessTests
         Assert.Contains("update <source-reference>", group.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("list     available", group.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("The route group performs no operation.", group.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains(
-            "Planned but unavailable operation: remove.",
-            group.StandardOutput,
-            StringComparison.Ordinal);
+        Assert.Contains("remove <source-reference>", group.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(
             "open-forge route create <file-target> --description <text> --tag=<tag>...",
             leaf.StandardOutput,

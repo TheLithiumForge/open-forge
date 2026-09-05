@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Lifecycle;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models;
 using OpenForge.Cli.Core.Framework.Lifecycle.Ownership;
 using OpenForge.Cli.Core.Framework.Lifecycle.Serialization;
+using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.TestSupport;
 
@@ -15,6 +16,34 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Extensions;
 
 public sealed class ExtensionLifecycleOperationalContributorIntegrationTests
 {
+    [Fact(
+        DisplayName = "Extension lifecycle Doctor view treats a present empty section as complete"),
+        Trait("Feature", "extension-lifecycle-observation"), Trait("Evidence", "Integration")]
+    public async Task DoctorViewTreatsPresentEmptySectionAsComplete()
+    {
+        using var workspace = TemporaryWorkspace.Create("extension-doctor-empty");
+        WriteLifecycle(workspace, []);
+        var resolver = new PhysicalPathResolver();
+        var contributor = new ExtensionLifecycleOperationalContributor(
+            lifecycleReader: new LifecycleDocumentReader(resolver),
+            sourceReader: new ExtensionSourceReader(resolver),
+            targetReader: new ExtensionLifecycleTargetReader(resolver),
+            ownershipReader: new LifecycleOwnershipReader(resolver));
+
+        var view = await contributor.ReadDoctorAsync(
+            Workspace(workspace),
+            TestContext.Current.CancellationToken);
+
+        Assert.Equal(ExtensionLifecycleSectionState.Present, view.Section);
+        Assert.Equal(OperationalViewState.Complete, view.State);
+        Assert.Equal(OperationalLifecycleState.Trusted, view.LifecycleState);
+        Assert.Equal(OperationalSourceAvailability.NotApplicable, view.SourceAvailability);
+        Assert.Equal(ExtensionManagedSetState.Empty, view.ManagedSet);
+        var source = Assert.Single(view.Sources);
+        Assert.Null(source.RecordedSource);
+        Assert.Equal(ExtensionSourceReadState.Complete, source.Read.State);
+    }
+
     [Fact(
         DisplayName = "Extension lifecycle Doctor view preserves distinct sources and installed facts when one source is unavailable"),
         Trait("Feature", "extension-lifecycle-observation"), Trait("Evidence", "Integration")]

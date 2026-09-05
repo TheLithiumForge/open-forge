@@ -20,6 +20,11 @@ using OpenForge.Cli.Core.Commands.Route.Move.Models.Binding;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Move.Shared.Binding;
 using OpenForge.Cli.Core.Commands.Route.Move.Shared.Rendering;
+using OpenForge.Cli.Core.Commands.Route.Remove;
+using OpenForge.Cli.Core.Commands.Route.Remove.Models.Binding;
+using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Remove.Shared.Binding;
+using OpenForge.Cli.Core.Commands.Route.Remove.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Route.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Route.Update;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Binding;
@@ -50,6 +55,10 @@ internal static class CliRouteComposer
             new RouteMoveBindingValidator(),
             new RouteMoveInvalidResultFactory());
         var moveSymbols = moveComposer.CreateSymbols(group);
+        var removeComposer = new RouteRemoveBinding(
+            new RouteRemoveBindingValidator(),
+            new RouteRemoveInvalidResultFactory());
+        var removeSymbols = removeComposer.CreateSymbols(group);
         return new CliRouteComposition
         {
             Branch = new CliRootBranch(
@@ -62,6 +71,7 @@ internal static class CliRouteComposer
             CreateBinding = BuildCreate(createSymbols, lockStoreRoot),
             UpdateBinding = BuildUpdate(updateSymbols, lockStoreRoot),
             MoveBinding = BuildMove(moveComposer, moveSymbols, lockStoreRoot),
+            RemoveBinding = BuildRemove(removeComposer, removeSymbols, lockStoreRoot),
         };
     }
 
@@ -165,5 +175,21 @@ internal static class CliRouteComposer
                     RouteMoveHumanRenderer.Render,
                     RouteMoveJsonRenderer.Render),
                 DiagnosticRenderer = RouteMoveDiagnosticRenderer.Render,
+            });
+
+    private static ICliCommandBinding BuildRemove(
+        RouteRemoveBinding composer,
+        RouteRemoveSymbols symbols,
+        WorkspaceLockStoreRoot? lockStoreRoot)
+        => composer.Close(
+            symbols,
+            new RouteRemoveBindingComponents
+            {
+                Help = RouteRemoveHelpSections.Create(),
+                Operation = RouteRemoveOperationFactory.Create(lockStoreRoot),
+                Renderers = new CliRendererSet<RouteRemoveResult>(
+                    RouteRemoveHumanRenderer.Render,
+                    RouteRemoveJsonRenderer.Render),
+                DiagnosticRenderer = RouteRemoveDiagnosticRenderer.Render,
             });
 }

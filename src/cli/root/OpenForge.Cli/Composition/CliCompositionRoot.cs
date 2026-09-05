@@ -96,6 +96,7 @@ internal static class CliCompositionRoot
                 route.CreateBinding,
                 route.UpdateBinding,
                 route.MoveBinding,
+                route.RemoveBinding,
                 standalone.FindBinding,
                 standalone.IndexBinding,
                 standalone.StatusBinding,
@@ -135,6 +136,7 @@ internal static class CliCompositionRoot
                   route init        Initialize every missing entrypoint in one exact route chain.
                   route update      Update selected fields or an eligible Template body on one routed source.
                   route move        Move one routed source or category while preserving its route meaning.
+                  route remove      Remove one unmanaged routed source or category and detach local references.
                   find              Find Markdown sources by authored tags and structural headings.
                   status            Inspect workspace, context, lifecycle, generated-navigation, and recovery status.
                   doctor            Diagnose workspace, route, reference, lifecycle, and recovery facts without changing them.

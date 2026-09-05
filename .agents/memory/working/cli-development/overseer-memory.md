@@ -141,10 +141,10 @@ The accepted dependency order is:
    accepted lane `a2942781`, tree `fe36fc3f`, is squash-integrated at `e19d429e`
    with the same tree. Its Linux host journey passed; Darwin and Windows have
    stage-and-pack evidence only. ARM, publication, and live link or unlink
-   remain unproven and unauthorized. Task 5 is the sole active implementation
-   Task at phase 1/5, milestone 0/8, from exact base `82fce051`, tree
-   `91fa73c2`. The current ordered queue after it is Task 6 →
-   Task 6 → Task 17 → Task 18 → Task 19 → Task 20 → Task 10 →
+   remain unproven and unauthorized. Task 16's completion grace is consumed.
+   Task 5 is the sole active implementation Task at phase 3/5, milestone 3/8,
+   from exact base `82fce051`, tree `91fa73c2`. The current ordered queue after
+   it is Task 6 → Task 17 → Task 18 → Task 19 → Task 20 → Task 10 →
    conditional Task 21 → Task 13 → Task 22.
 
 Task 5's supervised read-only reconnaissance ran from assigned `develop`
@@ -160,14 +160,20 @@ serialization, and affected Status/Doctor evidence after Tasks 14–16. Task 6
 may do read-only preparation after Route Remove Gray; implementation waits
 for Task 5 acceptance.
 
-Task 5 is now active for fresh Preflight in
-`/home/tedy/dev/open-forge-worktree/route-remove-implementation`, branch
+Task 5 accepted fresh Preflight in its Task-owned worktree on branch
 `codex/route-remove-implementation`, from exact Doctor-closeout base
 `82fce051f35f54b27a83c8d2d9ae96489d5360bb`, tree
 `91fa73c2109a959adf401e73fca4957a6e1ea00c`. The stale historical worktree and
-branch remain preserved. Sagan owns the Task Mastermind boundary; no C# author,
-Gray, Red, production, build, test, artifact, or completion is claimed until
-fresh Preflight selects the next boundary.
+branch remain preserved. Sagan owns the Task Mastermind boundary. Preflight
+retained the streamlined assured profile and froze the command-local result,
+finite values, `next`, existing six-contributor interpretation, direct
+integration neighborhood, evidence ladder, budgets, and stops recorded in the
+[Task 5 record](tasks/route-mutation/route-remove.md). Gray `7844f101`, the
+declaration-only evidence-seam gap `894c0b02`, and corrected Red `ec5d99da`
+are accepted. The 26-path Red freeze retains exactly three Route Remove public
+journeys, proves real recovery attribution through the existing six contributor
+domains, and changes no Doctor vocabulary. One Brilliant Implementer owns
+coherent production through focused verification next.
 
 Tasks 4–6 and 14–20 are the accepted measured trial of the streamlined assured lane. Each
 keeps Task Mastermind Preflight plus explicit Gray and Red boundaries, uses one

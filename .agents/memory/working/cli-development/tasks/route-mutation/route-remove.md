@@ -8,46 +8,49 @@ open-forge:
 
 ## Task State
 
-- State: Active for fresh Preflight from exact Doctor-closeout `develop` base
+- State: Active for coherent production after accepted Gray and corrected Red from
+  exact Doctor-closeout `develop` base
   `82fce051f35f54b27a83c8d2d9ae96489d5360bb`, tree
-  `91fa73c2109a959adf401e73fca4957a6e1ea00c`. The active lane is
-  `/home/tedy/dev/open-forge-worktree/route-remove-implementation`, branch
-  `codex/route-remove-implementation`. The clean historical worktree
-  `/home/tedy/dev/open-forge-worktree/route-remove`, branch
-  `codex/route-remove`, remains preserved at `e845c841`, tree `7e093f3a`; it is
-  stale and supplies no activation authority.
-- Current progress: phase 1 of 5, milestone 0 of 8. The five streamlined phases
+  `91fa73c2109a959adf401e73fca4957a6e1ea00c`. The active Task-owned worktree
+  uses branch `codex/route-remove-implementation`. The clean historical branch
+  `codex/route-remove` remains preserved at `e845c841`, tree `7e093f3a`; its
+  separate lane is stale and supplies no activation authority.
+- Current progress: phase 3 of 5, milestone 3 of 8. The five streamlined phases
   are Preflight, explicit Gray/Red, one coherent implementation and focused-
   verification pass, one fresh whole-task review with at most one grouped
   correction, and acceptance. The eight milestones are Preflight, Gray, Red,
   coherent production, focused/full evidence, fresh whole-task review, grouped
-  correction or documented no-op, and acceptance/integration. No milestone is
-  counted until the fresh lane and all accepted authority are revalidated.
+  correction or documented no-op, and acceptance/integration. Fresh Preflight,
+  the separate Gray contract freeze, its accepted evidence-seam gap, and the
+  corrected Red evidence freeze are accepted; coherent production is the active
+  milestone.
 - Permanent mapping: Task 5 “Route Remove” in the
   [project control ledger](../../project-control.md).
-- Status/Doctor obligation: extend the explicit typed contributor inventory and
-  affected evidence before Task acceptance.
+- Status/Doctor obligation: preserve the accepted six-member typed contributor
+  inventory and add explicit Route/Remove recovery-attribution plus affected
+  Status/Doctor evidence before Task acceptance.
 - Parent: [Route Mutation Commands](_route-mutation.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/route/remove/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/route/remove/behavior.md).
 
 ## Activation Capsule
 
-- Profile: streamlined assured trial, subject to a material Preflight trigger.
+- Profile: streamlined assured. Preflight found no material trigger for a larger
+  profile. Destructive category effects, external recovery, public JSON,
+  reference detachment, and generated projection retain explicit Gray and Red.
 - Ownership: one Task Mastermind owns Task-local architecture and supervises
   every specialist. Gray and Red are separate frozen boundaries. One Brilliant
   Implementer owns coherent production through focused verification only after
   Gray and Red are accepted. No C# author or reviewer may act before personally
   reading and fingerprinting `_csharp.md`, `design.md`, and `style.md`.
-- First action: revalidate the clean branch/worktree, contracts, current Route
-  Remove absence, Framework and Extension ownership, explicit contributor
-  catalogue and views, root composition/help/serialization, accepted mutation
-  and recovery primitives, and affected Status/Doctor evidence after Tasks
-  14–16. Freeze exact protected paths and decide whether any material trigger
-  changes the profile before assigning Gray.
+- Current action: one Brilliant Implementer owns coherent production through
+  focused verification against the accepted Gray surface and corrected Red
+  evidence.
 - Current authority: positive-unmanaged removal of one ordinary routed leaf or
-  one complete routed category. Managed scoped targets remain blocked. No
-  command, public wire, Gray, Red, production, build, test, artifact, or
-  completion is claimed by activation.
+  one complete routed category. Managed scoped targets remain blocked. Gray
+  exposes only the accepted callable and public declarations with execution
+  explicitly unavailable. Corrected Red freezes the accepted Open Forge-owned
+  contract, safety, persistence, and public evidence. No domain behavior, root
+  composition, artifact acceptance, or Task completion is claimed.
 - Evidence boundary: tests cover Open Forge-owned request formation, selection,
   planning, effects, state, safety, projection, and public reachability only.
   They do not test third-party library, runtime, OS, test-platform, or framework
@@ -57,6 +60,234 @@ open-forge:
   JavaScript/MJS/CJS implementation, remote action, destructive action, or
   publication is authorized by activation. Later evidence may exercise only
   isolated Open Forge-owned fixtures under an accepted test plan.
+
+## Accepted Fresh Preflight
+
+The read-only Preflight revalidated the exact clean activation lane at
+`0d269b7a326377edc173036bc56f36e199eb6e5c`, tree
+`8863d17629e0af6665bd8100f55b5b63da41035b`. It found no Route Remove
+production, tests, composition, help, or serialization. Three bounded Explorer
+packets independently covered contracts and architecture, implementation and
+protected surfaces, and evidence plus Status/Doctor integration. They created no
+build, test, source, artifact, or workspace mutation.
+
+### Accepted Architecture And Ownership
+
+Dependency direction is Root composition to Shell binding/result/rendering to
+Route Remove-local resolution, inventory, references, navigation, plan,
+application, and verification to Route-shared or Framework typed primitives and
+the BCL. Route Remove consumes existing source catalogue/reference resolution,
+the shared Route Markdown catalogue, Markdown AST link-label and span facts,
+lifecycle ownership reading, intended-topology Generated Navigation, workspace
+locking and revalidation, file application, exact nonrecursive directory
+deletion, and recovery store/deletion safeguards. It never imports a private
+`Shared/**` surface from Route Move, Create, Update, or another sibling.
+
+Expected command-local production and evidence remain:
+
+- `src/cli/core/OpenForge.Cli.Core/Commands/Route/Remove/**`;
+- `src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Route/Remove/**`;
+- `src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Route/Remove/**`;
+- bounded published Route Remove process/workspace evidence; and
+- focused Route/Remove recovery-attribution and affected Status/Doctor evidence.
+
+Direct integration neighbors are the Route composition and composition model,
+root command registration and help, Route group help, and existing tests whose
+exact unavailable-Route-Remove assertions become obsolete. Those paths may
+change only to expose the accepted command. Existing Framework production,
+Route-shared production, central `CliJsonContext`, preceding-command production
+and public models, Status/Doctor production and public vocabulary, lifecycle
+schema and writers, and unrelated EndToEnd or Native AOT surfaces remain
+protected. A command-local source-generated `RouteRemoveJsonContext` owns Remove
+serialization.
+
+The existing immutable `OperationalContributorCatalogue` retains exactly its
+six members. Route Remove produces an already-supported `Route`/`Remove`
+recovery attribution and changes facts observed by the existing Routes,
+LocalReferences, and RecoveryResiduals contributors. Task 5 proves that tuple
+and affected Status/Doctor behavior; it adds no seventh contributor, Doctor
+finding, Doctor operation, or public Status/Doctor meaning.
+
+### Accepted Public Representation
+
+The shared schema-v1 envelope remains ordered exactly
+`schemaVersion`, `command`, `status`, `workspace`, `result`, `next`. The
+command-local `result` is ordered exactly:
+
+```text
+mode
+source
+subject
+ownership
+references
+generatedNavigation
+plan
+effects
+unchangedPaths
+recovery
+verification
+findings
+```
+
+Its nested graph is:
+
+- `source`: `requested`, `selectedBy`, `id`, `path`, `form`;
+- `subject`: `kind`, `layers[{layer,sourcePath}]`,
+  `items[{kind,layer,sourceId,sourcePath,relativePath}]`;
+- `ownership`: `state`, `framework`, `extensions`,
+  `claims[{path,manager,owner}]`;
+- `references`: `coverage`, `scannedSourceCount`, `inspectedSourceCount`,
+  `occurrenceCount`, and
+  `detachments[{sourcePath,layer,location,before,expected,originalDestination,visibleLabel}]`;
+- `location`: `line`, `column`, `byteOffset`, `byteLength`;
+- `generatedNavigation`: `coverage`, `regions[{path,reasons,state}]`;
+- `plan`: `completeness`, `safety`;
+- each effect: `path`, `kind`, `action`, `before`, `expected`, `outcome`,
+  `residual`, where `before` and `expected` are each
+  `{kind,contentSha256}`;
+- `recovery`: `state`, `protectedPaths`, `residualPath`;
+- scalar `verification`: `not-requested`, `verified`, `failed`, or `unknown`;
+  and
+- each finding: `code`, `status`, `target`, `cause`.
+
+Finite values mirror Route Move only where meaning is identical. Generated
+reasons are exactly `old-parent` and `loader`. Effect kinds are exactly
+`directory`, `removed-file`, `reference-source`, and `generated-region`;
+actions are exactly `replace` and `delete`. The exact finding values are:
+
+```text
+route-remove.invalid-input
+route-remove.invalid-source
+route-remove.source-not-found
+route-remove.invalid-subject
+route-remove.workspace-unsafe
+route-remove.source-unsafe
+route-remove.route-ambiguous
+route-remove.identity-collision
+route-remove.overwrite-ambiguous
+route-remove.category-unsafe
+route-remove.ownership-unavailable
+route-remove.ownership-claimed
+route-remove.reference-unsafe
+route-remove.generated-region-unsafe
+route-remove.workspace-lock-unavailable
+route-remove.target-changed
+route-remove.recovery-conflict
+route-remove.workspace-unavailable
+route-remove.category-inventory-incomplete
+route-remove.reference-coverage-incomplete
+route-remove.projection-incomplete
+route-remove.recovery-unavailable
+route-remove.inspection-incomplete
+route-remove.recovery-artifact-retained
+route-remove.target-changed-during-apply
+route-remove.write-failed
+route-remove.verification-failed
+route-remove.recovery-failed
+route-remove.operation-failed
+route-remove.interrupted
+```
+
+Non-null `next` retains `{command,reason}`. Retained recovery selects
+`open-forge cleanup`; invalid input selects
+`open-forge route remove --help`; lock or target races select
+`open-forge route remove`; other blocked or incomplete conditions select
+`open-forge doctor`; failure selects
+`open-forge route remove --verbose`; interruption selects
+`open-forge route remove`; complete results use `null`.
+
+### Evidence, Budgets, And Stops
+
+Gray freezes the callable and public graph before Red. Red freezes the smallest
+decisive Open Forge-owned contract, safety, persistence, and public evidence.
+One Brilliant Implementer then owns coherent production through focused
+verification. The ladder is focused Unit and Integration; exact Route/Remove
+recovery attribution plus affected Status/Doctor checks; three bounded public
+journeys covering help/invalid, leaf dry-run/application with detachment, and
+category application/generated projection/honest repeat; then full warning-free
+managed, public, supported `linux-x64` Native AOT, and managed-on-native gates.
+Formatting, diff, static, protected-path, callable-shape, prohibited-pattern,
+line-length, source-tree, artifact, selected/discovered/executed, skip, warning,
+failure, and exit receipts remain required.
+
+The task capsule budgets are council `0`, one fresh whole-task review
+`T5-R1` unconsumed, and one grouped correction `T5-C1` unconsumed. Gray and Red
+remain separate frozen owners and do not consume those budgets.
+
+Stop before public or cross-task meaning changes; a seventh contributor or new
+Doctor vocabulary; managed release or lifecycle writes; Framework or
+Route-shared production changes; sibling-private imports; recursive or
+unbounded deletion; unsafe or incomplete inventory, reference, topology,
+ownership, expected-state, or recovery facts; unassigned protected paths;
+third-party behavior tests; a dependency download; a false green, zero-test or
+stale `--no-build` receipt; warning-bearing evidence; or unexpected workspace
+drift.
+
+## Accepted Gray Contract Freeze
+
+The separate Gray owner froze exactly 22 new declaration-only C# paths under
+`src/cli/core/OpenForge.Cli.Core/Commands/Route/Remove/**`. The boundary exposes
+`ValueTask<RouteRemoveResult> ExecuteAsync(RouteRemoveRequest,
+CancellationToken)` while throwing an explicit `NotSupportedException`; it
+implements no domain behavior. It includes command-local binding, request,
+planning and operation data shapes, the accepted finite result vocabulary, the
+ordered JSON document graph, a source-generated `RouteRemoveJsonContext`, and
+the accepted command and `next` coordinates. It changes no Root composition,
+help, test, contributor, Status/Doctor, Framework, Route-shared, lifecycle, or
+central serialization path.
+
+The author and Task Mastermind independently verified the current complete C#
+directive fingerprints: `_csharp.md` `31045ebcb02d5bfeee8ba9f3112d307b1f72a2186cda618fbf7d22e7d1d90b53`,
+`design.md` `76aa8fc7aaaa79d9535998f5557150f3754e3d80520a7a06864b61659373c1a9`,
+and `style.md` `c3fa9d31575e77fedb103ca397f0ccf10ab7236e6edbef1658c7fe36138457cb`.
+The 22-path content aggregate is
+`f621f933c5ac47c453f4ad2ad33475bb0b777b46485a40860e94c41b5b7118cf`.
+Fresh non-incremental Release Core compilation passed with zero warnings and
+errors. Project formatting changed zero files. Independent inventory,
+callable-shape, JSON-order, exact finding-set, finite-count, dependency,
+protected-path, prohibited-pattern, line-length, whitespace, and machine-path
+checks passed. The index remained empty before the exact stage set was
+presented for acceptance.
+
+## Accepted Corrected Red Evidence Freeze
+
+The accepted Gray declaration boundary is commit `7844f1014a0bc0e62c82e33162da5047ddbb4ad7`,
+tree `1760a5aad54889c120763441255865c54955e408`. A separate declaration-only
+evidence-seam gap commit `894c0b026ebc6176d7391a698d1125aa0302e8bc`, tree
+`7ced699dcd2adfc28ca35f3cf09e8ed95fd37c12`, added exactly five Task-local
+planning, same-plan revalidation, ordered effect application, recovery
+lifecycle, and applied-state verification callables. Each seam has explicit
+private construction and one internal static `Create()` factory. It changes no
+shared production or behavior.
+
+Corrected Red is commit `ec5d99da3e4350ebef34abf5d491510dd51b8259`,
+tree `6115d069b879cc2034e907f7f80454e977f13a1b`. It freezes exactly 26 test
+paths with path-manifest hash
+`333d9ed2dd094b0e47c6f4be7ff95c1071809614034afaaeb5a41f915c21fcb8`
+and content aggregate
+`ba5aa841f3f7eee3424845e23e1ce6e3a3f8b64b4a0aa8d2e69deedf01bb3d86`.
+The accepted evidence proves direct callable shape without reflection or Gray
+exception oracles; complete lifecycle-request binding; same-plan under-lease
+generated-region and subject revalidation; actual Loader path/reason and exact
+before/expected projection; independent bottom-up directory ordering; real
+later-effect target races with retained recovery and preserved concurrent
+bytes; and producer-side `Route`/`Remove` recovery attribution through the real
+recovery lifecycle. The existing six Status/Doctor contributor domains remain
+unchanged.
+
+Fresh warning-free Release builds passed for Unit, Integration, and EndToEnd.
+The focused Unit selection selected, discovered, and executed `29/29/29`, with
+`29` passed and no failures or skips. Intentional Red Integration selected,
+discovered, and executed `24/24/24`, with the exact `24` accepted unavailable
+behavior/composition failures and no skips. The three bounded Route Remove
+EndToEnd journeys selected, discovered, and executed `3/3/3`, with the exact
+three accepted unavailable-command failures and no skips. Affected Inspect,
+List, Create, and published-help neighbor selections executed `14`, `23`, `2`,
+and `3` tests, retaining only their exact Route Remove availability/composition
+failures. Project formatting, diff, protected-path, callable, prohibited-effect,
+line-length, whitespace, host-path, exact-three-journey, and unchanged Doctor
+EndToEnd checks passed. This milestone claims evidence only; coherent behavior
+remains unimplemented.
 
 ## Expected Outcome
 

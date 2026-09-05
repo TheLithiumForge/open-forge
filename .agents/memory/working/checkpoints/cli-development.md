@@ -434,15 +434,16 @@ observation horizons. Route Inspect's synthetic overwrite-ambiguity conflict
 remains one bounded Task 10 audit input, not a Doctor finding or a new task. See
 the [Task 16 Doctor record](../cli-development/tasks/operations/doctor.md) and
 [project control ledger](../cli-development/project-control.md) for the exact
-accepted identities and evidence. Task 5 “Route Remove” is active at phase 1/5,
-milestone 0/8 for fresh Preflight from exact base `82fce051`, tree `91fa73c2`,
-in `/home/tedy/dev/open-forge-worktree/route-remove-implementation`, branch
+accepted identities and evidence. Task 16's completion grace is consumed. Task
+5 “Route Remove” is active at phase 3/5, milestone 3/8 for coherent production
+after accepted Gray and corrected Red, from exact base
+`82fce051`, tree `91fa73c2`, in its Task-owned worktree on branch
 `codex/route-remove-implementation`. No other implementation Task is active.
 
 Route Remove is the remaining Route Mutation M2 leaf, and the full M2 lane still
 precedes root Update M3. Task 12 and the adoption slice are integrated. Route
-Remove is active for Preflight; dependent Update behavior waits for M2
-completion.
+Remove has accepted Preflight, Gray, and corrected Red and is active for coherent
+production; dependent Update behavior waits for M2 completion.
 
 Initial read-only M2 preparation completed on five clean no-op branches from
 `33913dfe7f8f80598ca4765c516d308ed179c3ab` without a preparation commit, Gray,
@@ -450,7 +451,7 @@ Red, or Green change. The later lifecycle and parser prerequisites above are now
 integrated. The Route Mutation parent and leaf Tasks retain each accepted
 preparation decision or remaining maintainer-authority frontier, expected and
 protected path boundary, and evidence scope. Route Move and Task 12 are
-Complete. Route Remove is active from a fresh Doctor-closeout baseline. The M2
+Complete. Route Remove accepted Preflight from a fresh Doctor-closeout baseline. The M2
 dependency remains ordered Install → Init → Create → protected Route Create
 predecessor slices → Route Create integration → CLI Quality Remediation → Update
 → Move → Remove → M3.
@@ -495,13 +496,12 @@ JSON, and redirected flows never prompt.
 ## Next Actions
 
 1. Continue active [Task 5 Route Remove](../cli-development/tasks/route-mutation/route-remove.md)
-   at phase 1/5, milestone 0/8, from exact base `82fce051`, tree `91fa73c2`,
-   in its fresh recorded lane. Preserve the stale historical
-   `codex/route-remove` worktree unchanged. Sagan performs Preflight and
-   revalidates the accepted positive-unmanaged boundary, lifecycle and Extension
-   ownership, the explicit contributor catalogue and views,
-   root/help/serialization, and affected Status/Doctor evidence before freezing
-   Gray and Red or assigning a C# author.
+   at phase 3/5, milestone 3/8, from exact base `82fce051`, tree `91fa73c2`,
+   in its Task-owned lane. Preserve the stale historical `codex/route-remove`
+   lane unchanged. Accepted Gray `7844f101`, evidence-seam gap `894c0b02`, and
+   corrected Red `ec5d99da` are frozen. One Brilliant Implementer owns coherent
+   production through focused verification. Every C# owner personally reads and
+   fingerprints `_csharp.md`, `design.md`, and `style.md`.
 2. Continue after Task 5 in this order: Task 6 Root
    Update → Task 17 Extension Update → Task 18 Extension Remove → Task 19 Repair
    → Task 20 Cleanup → Task 10 CLI Command Surface Audit → conditional Task 21

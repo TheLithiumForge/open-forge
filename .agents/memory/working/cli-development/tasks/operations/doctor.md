@@ -8,9 +8,8 @@ open-forge:
 
 ## Task State
 
-- State: Complete and squash-integrated. The accepted isolated lane is
-  `/home/tedy/dev/open-forge-worktree/doctor-implementation`, branch
-  `codex/doctor-implementation`, at commit
+- State: Complete and squash-integrated. The accepted isolated Task-owned
+  worktree used branch `codex/doctor-implementation`, at commit
   `a48a16cd80102331bca6d6cb3498160f37eb6b3f`, tree
   `90e66b0562fea90c2aa2fed9bd573c59676124bd`. Local `develop` integrates that
   exact tree at `59276c3bd764be4601ea92acbf4742b9bfa86837` without duplicating

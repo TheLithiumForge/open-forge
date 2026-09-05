@@ -35,12 +35,9 @@ public sealed class RouteListApplicationIntegrationTests
                 && line[1] == ' '
                 && !char.IsWhiteSpace(line[2]))
             .Select(line => line.TrimStart().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries)[0]);
-        Assert.Equal(["list", "inspect", "init", "create", "update", "move"], groupCommands);
+        Assert.Equal(["list", "inspect", "init", "create", "update", "move", "remove"], groupCommands);
         Assert.Contains("update <source-reference>", group.Output, StringComparison.Ordinal);
-        Assert.Contains(
-            "Planned but unavailable operation: remove.",
-            group.Output,
-            StringComparison.Ordinal);
+        Assert.Contains("remove <source-reference>", group.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("Operations:", group.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("available —", group.Output, StringComparison.Ordinal);
         Assert.Contains("open-forge route list [source-reference]", leaf.Output, StringComparison.Ordinal);

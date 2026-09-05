@@ -70,10 +70,7 @@ public sealed class CliProcessTests
         Assert.Contains("init <route-target>", group.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("create <file-target>", group.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("update <source-reference>", group.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains(
-            "Planned but unavailable operation: remove.",
-            group.StandardOutput,
-            StringComparison.Ordinal);
+        Assert.Contains("remove <source-reference>", group.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("Operations:", group.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("available —", group.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(
