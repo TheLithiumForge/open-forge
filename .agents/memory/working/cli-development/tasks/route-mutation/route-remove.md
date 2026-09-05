@@ -8,15 +8,55 @@ open-forge:
 
 ## Task State
 
-- State: Queued after Task 4 “Route Move” and Task 12 “CLI Architecture
-  Authority Remediation”; implementation is reprioritized behind the adoption
-  slice formed by Tasks 14–16 and the eligible Task 7 follow-up.
+- State: Active for fresh Preflight from exact Doctor-closeout `develop` base
+  `82fce051f35f54b27a83c8d2d9ae96489d5360bb`, tree
+  `91fa73c2109a959adf401e73fca4957a6e1ea00c`. The active lane is
+  `/home/tedy/dev/open-forge-worktree/route-remove-implementation`, branch
+  `codex/route-remove-implementation`. The clean historical worktree
+  `/home/tedy/dev/open-forge-worktree/route-remove`, branch
+  `codex/route-remove`, remains preserved at `e845c841`, tree `7e093f3a`; it is
+  stale and supplies no activation authority.
+- Current progress: phase 1 of 5, milestone 0 of 8. The five streamlined phases
+  are Preflight, explicit Gray/Red, one coherent implementation and focused-
+  verification pass, one fresh whole-task review with at most one grouped
+  correction, and acceptance. The eight milestones are Preflight, Gray, Red,
+  coherent production, focused/full evidence, fresh whole-task review, grouped
+  correction or documented no-op, and acceptance/integration. No milestone is
+  counted until the fresh lane and all accepted authority are revalidated.
 - Permanent mapping: Task 5 “Route Remove” in the
   [project control ledger](../../project-control.md).
 - Status/Doctor obligation: extend the explicit typed contributor inventory and
   affected evidence before Task acceptance.
 - Parent: [Route Mutation Commands](_route-mutation.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/route/remove/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/route/remove/behavior.md).
+
+## Activation Capsule
+
+- Profile: streamlined assured trial, subject to a material Preflight trigger.
+- Ownership: one Task Mastermind owns Task-local architecture and supervises
+  every specialist. Gray and Red are separate frozen boundaries. One Brilliant
+  Implementer owns coherent production through focused verification only after
+  Gray and Red are accepted. No C# author or reviewer may act before personally
+  reading and fingerprinting `_csharp.md`, `design.md`, and `style.md`.
+- First action: revalidate the clean branch/worktree, contracts, current Route
+  Remove absence, Framework and Extension ownership, explicit contributor
+  catalogue and views, root composition/help/serialization, accepted mutation
+  and recovery primitives, and affected Status/Doctor evidence after Tasks
+  14–16. Freeze exact protected paths and decide whether any material trigger
+  changes the profile before assigning Gray.
+- Current authority: positive-unmanaged removal of one ordinary routed leaf or
+  one complete routed category. Managed scoped targets remain blocked. No
+  command, public wire, Gray, Red, production, build, test, artifact, or
+  completion is claimed by activation.
+- Evidence boundary: tests cover Open Forge-owned request formation, selection,
+  planning, effects, state, safety, projection, and public reachability only.
+  They do not test third-party library, runtime, OS, test-platform, or framework
+  internals.
+- Prohibited expansion: no dependency injection, service locator, reflection,
+  runtime registry, generic operational engine, compatibility machinery,
+  JavaScript/MJS/CJS implementation, remote action, destructive action, or
+  publication is authorized by activation. Later evidence may exercise only
+  isolated Open Forge-owned fixtures under an accepted test plan.
 
 ## Expected Outcome
 

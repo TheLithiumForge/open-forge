@@ -108,7 +108,7 @@ The accepted dependency order is:
    phase 5/5, milestone 8/8. Accepted lane `a48a16cd`, exact tree `90e66b05`,
    is squash-integrated at `59276c3b` with the same tree. Fresh managed,
    public, supported `linux-x64` Native AOT, managed-on-native, focused,
-   structural, and post-integration gates passed. Route Remove is next with its
+   structural, and post-integration gates passed. Route Remove is active with its
    accepted positive-unmanaged removal boundary; Route Inspect's synthetic
    overwrite-ambiguity conflict is one bounded Task 10 audit input, not a
    Doctor finding or a new task. The
@@ -141,7 +141,9 @@ The accepted dependency order is:
    accepted lane `a2942781`, tree `fe36fc3f`, is squash-integrated at `e19d429e`
    with the same tree. Its Linux host journey passed; Darwin and Windows have
    stage-and-pack evidence only. ARM, publication, and live link or unlink
-   remain unproven and unauthorized. The current ordered queue is Task 5 →
+   remain unproven and unauthorized. Task 5 is the sole active implementation
+   Task at phase 1/5, milestone 0/8, from exact base `82fce051`, tree
+   `91fa73c2`. The current ordered queue after it is Task 6 →
    Task 6 → Task 17 → Task 18 → Task 19 → Task 20 → Task 10 →
    conditional Task 21 → Task 13 → Task 22.
 
@@ -157,6 +159,15 @@ lifecycle/Extension ownership, Task 15 catalogue/views, root composition, help,
 serialization, and affected Status/Doctor evidence after Tasks 14–16. Task 6
 may do read-only preparation after Route Remove Gray; implementation waits
 for Task 5 acceptance.
+
+Task 5 is now active for fresh Preflight in
+`/home/tedy/dev/open-forge-worktree/route-remove-implementation`, branch
+`codex/route-remove-implementation`, from exact Doctor-closeout base
+`82fce051f35f54b27a83c8d2d9ae96489d5360bb`, tree
+`91fa73c2109a959adf401e73fca4957a6e1ea00c`. The stale historical worktree and
+branch remain preserved. Sagan owns the Task Mastermind boundary; no C# author,
+Gray, Red, production, build, test, artifact, or completion is claimed until
+fresh Preflight selects the next boundary.
 
 Tasks 4–6 and 14–20 are the accepted measured trial of the streamlined assured lane. Each
 keeps Task Mastermind Preflight plus explicit Gray and Red boundaries, uses one
@@ -373,7 +384,7 @@ and affected Status evidence before acceptance. Task 16 Doctor is complete at
 phase 5/5, milestone 8/8. Accepted lane `a48a16cd`, exact tree `90e66b05`, is
 squash-integrated at `59276c3b` with the same tree. Its 109-kind horizon supplies
 107 producer-backed emissions plus the two accepted Extension observation
-limitations. Route Remove is next with its positive-unmanaged boundary; Route
+limitations. Route Remove is active with its positive-unmanaged boundary; Route
 Inspect's synthetic overwrite-ambiguity conflict remains one bounded Task 10
 audit input, not a Doctor finding or a new task.
 The exact public Root Install JSON result schema is accepted, implemented, and
