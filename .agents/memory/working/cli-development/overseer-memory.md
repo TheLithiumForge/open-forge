@@ -108,15 +108,14 @@ The accepted dependency order is:
    phase 5/5, milestone 8/8. Accepted lane `a48a16cd`, exact tree `90e66b05`,
    is squash-integrated at `59276c3b` with the same tree. Fresh managed,
    public, supported `linux-x64` Native AOT, managed-on-native, focused,
-   structural, and post-integration gates passed. Route Remove is active with its
-   accepted positive-unmanaged removal boundary; Route Inspect's synthetic
+   structural, and post-integration gates passed. Route Inspect's synthetic
    overwrite-ambiguity conflict is one bounded Task 10 audit input, not a
    Doctor finding or a new task. The
    exact Task 16 implementation detail remains in the [Task 16 Doctor
    record](tasks/operations/doctor.md) and [project control
    ledger](project-control.md). A later Task 16 activation reconnaissance began at
    root `53805940`: a Sol/xhigh Task Mastermind successfully supervised three
-   Luna/max Explorer inventories from `/root/doctor_activation_recon`. No
+   Luna/max Explorer inventories in its activation-reconnaissance agent tree. No
    build, test, source or workspace mutation, artifact, or activation occurred;
    root advanced only through coordination ledgers and is clean at `bbf2d87c`.
    The reconnaissance recorded the then six-domain, 112-kind Doctor contract
@@ -142,9 +141,10 @@ The accepted dependency order is:
    with the same tree. Its Linux host journey passed; Darwin and Windows have
    stage-and-pack evidence only. ARM, publication, and live link or unlink
    remain unproven and unauthorized. Task 16's completion grace is consumed.
-   Task 5 is the sole active implementation Task at phase 3/5, milestone 3/8,
-   from exact base `82fce051`, tree `91fa73c2`. The current ordered queue after
-   it is Task 6 → Task 17 → Task 18 → Task 19 → Task 20 → Task 10 →
+   Task 5 is complete at phase 5/5, milestone 8/8. Accepted lane `ab8da620`,
+   exact tree `bb41e1c9`, is squash-integrated at `5a2e650a` with exact tree
+   equality. No implementation Task is active during closeout. The current
+   ordered queue is Task 6 → Task 17 → Task 18 → Task 19 → Task 20 → Task 10 →
    conditional Task 21 → Task 13 → Task 22.
 
 Task 5's supervised read-only reconnaissance ran from assigned `develop`
@@ -156,24 +156,22 @@ coordination bookkeeping drift was reconciled. The historical
 leaf/category boundary, neutral shared mechanisms, Route Remove-local policy,
 and prohibition on sibling-private surfaces remain unchanged. Revalidate
 lifecycle/Extension ownership, Task 15 catalogue/views, root composition, help,
-serialization, and affected Status/Doctor evidence after Tasks 14–16. Task 6
-may do read-only preparation after Route Remove Gray; implementation waits
-for Task 5 acceptance.
+serialization, and affected Status/Doctor evidence after Tasks 14–16. That
+revalidation is complete and Task 6 is now eligible for activation.
 
-Task 5 accepted fresh Preflight in its Task-owned worktree on branch
-`codex/route-remove-implementation`, from exact Doctor-closeout base
-`82fce051f35f54b27a83c8d2d9ae96489d5360bb`, tree
-`91fa73c2109a959adf401e73fca4957a6e1ea00c`. The stale historical worktree and
-branch remain preserved. Sagan owns the Task Mastermind boundary. Preflight
-retained the streamlined assured profile and froze the command-local result,
-finite values, `next`, existing six-contributor interpretation, direct
-integration neighborhood, evidence ladder, budgets, and stops recorded in the
-[Task 5 record](tasks/route-mutation/route-remove.md). Gray `7844f101`, the
-declaration-only evidence-seam gap `894c0b02`, and corrected Red `ec5d99da`
-are accepted. The 26-path Red freeze retains exactly three Route Remove public
-journeys, proves real recovery attribution through the existing six contributor
-domains, and changes no Doctor vocabulary. One Brilliant Implementer owns
-coherent production through focused verification next.
+Task 5's accepted lane is `ab8da6202c2f638d3041de46fafeeced054c50b3`,
+exact tree `bb41e1c9993a7ea28a7b380e442350fc2bbae73c`; squash integration
+`5a2e650aa7623a2f19ff885ae664e56daded2df0` has the same exact tree from
+parent `0d269b7a`, tree `8863d176`. The stale historical branch remains
+preserved. Sagan's Task Mastermind and Curie's Brilliant Implementer boundaries
+are complete. The accepted lineage retains Gray `7844f101`, evidence seam
+`894c0b02`, corrected Red `ec5d99da`, protected Doctor producer correction
+`c2a347a3`, fixture correction `e9ffd70a`, Green `a2c786a3`, grouped correction
+`d3ae71cd`, and non-amending verification follow-up `ab8da620`. Final managed
+`1797/966/178`, managed-on-native `178`, native `966/178`, structural, and
+post-integration public Route Remove `3/3` evidence passed. Exactly three Route
+Remove and three Doctor public journeys remain. Full detail is in the [Task 5
+record](tasks/route-mutation/route-remove.md).
 
 Tasks 4–6 and 14–20 are the accepted measured trial of the streamlined assured lane. Each
 keeps Task Mastermind Preflight plus explicit Gray and Red boundaries, uses one
@@ -182,6 +180,14 @@ improvement pass, and folds ordinary Blue and Purple assessment into the Task
 Mastermind's closing whole-task review. Compare task yield after every trial
 using critical-path time, handoffs, correction cycles, dispositioned findings,
 gate failures, integration friction, and any post-acceptance miss.
+
+Task 5 showed that provisional command-private Gray and Red packets and isolated
+mechanical gates can overlap without shared-artifact interference. It also
+showed three costs: cold-owner handoff stalls, immutable-review capability gaps
+that required replacement or takeover, and a first full-gate pass invalidated by
+a later accepted correction. No reliable elapsed-time baseline exists, so no
+numeric speedup is claimed. Continue the experiment with shared foundations and
+accepted command Green serialized in dependency order.
 
 Root Install owns the closed base Framework installation. Route Init owns
 concrete scoped route initialization and reuses the neutral embedded payload and
@@ -390,8 +396,8 @@ and affected Status evidence before acceptance. Task 16 Doctor is complete at
 phase 5/5, milestone 8/8. Accepted lane `a48a16cd`, exact tree `90e66b05`, is
 squash-integrated at `59276c3b` with the same tree. Its 109-kind horizon supplies
 107 producer-backed emissions plus the two accepted Extension observation
-limitations. Route Remove is active with its positive-unmanaged boundary; Route
-Inspect's synthetic overwrite-ambiguity conflict remains one bounded Task 10
+limitations. Route Remove is complete at `5a2e650a`, exact tree `bb41e1c9`;
+Route Inspect's synthetic overwrite-ambiguity conflict remains one bounded Task 10
 audit input, not a Doctor finding or a new task.
 The exact public Root Install JSON result schema is accepted, implemented, and
 frozen, including fully present ordered facts and typed residual values `none`,

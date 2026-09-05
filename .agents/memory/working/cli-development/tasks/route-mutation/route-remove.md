@@ -8,22 +8,21 @@ open-forge:
 
 ## Task State
 
-- State: Active for coherent production after accepted Gray and corrected Red from
-  exact Doctor-closeout `develop` base
-  `82fce051f35f54b27a83c8d2d9ae96489d5360bb`, tree
-  `91fa73c2109a959adf401e73fca4957a6e1ea00c`. The active Task-owned worktree
-  uses branch `codex/route-remove-implementation`. The clean historical branch
+- State: Complete. The accepted Task-owned lane on branch
+  `codex/route-remove-implementation` is
+  `ab8da6202c2f638d3041de46fafeeced054c50b3`, tree
+  `bb41e1c9993a7ea28a7b380e442350fc2bbae73c`. Squash integration is
+  `5a2e650aa7623a2f19ff885ae664e56daded2df0`, the same exact tree, from
+  `develop` parent `0d269b7a326377edc173036bc56f36e199eb6e5c`, tree
+  `8863d17629e0af6665bd8100f55b5b63da41035b`. The historical branch
   `codex/route-remove` remains preserved at `e845c841`, tree `7e093f3a`; its
-  separate lane is stale and supplies no activation authority.
-- Current progress: phase 3 of 5, milestone 3 of 8. The five streamlined phases
-  are Preflight, explicit Gray/Red, one coherent implementation and focused-
-  verification pass, one fresh whole-task review with at most one grouped
-  correction, and acceptance. The eight milestones are Preflight, Gray, Red,
-  coherent production, focused/full evidence, fresh whole-task review, grouped
-  correction or documented no-op, and acceptance/integration. Fresh Preflight,
-  the separate Gray contract freeze, its accepted evidence-seam gap, and the
-  corrected Red evidence freeze are accepted; coherent production is the active
-  milestone.
+  separate lane is stale and supplied no activation authority.
+- Current progress: phase 5 of 5, milestone 8 of 8. The five streamlined phases
+  were Preflight, explicit Gray/Red, one coherent implementation and focused-
+  verification pass, one fresh whole-task review with one grouped correction,
+  and acceptance. The eight milestones were Preflight, Gray, Red, coherent
+  production, focused/full evidence, fresh whole-task review, grouped
+  correction, and acceptance/integration. All are accepted and complete.
 - Permanent mapping: Task 5 “Route Remove” in the
   [project control ledger](../../project-control.md).
 - Status/Doctor obligation: preserve the accepted six-member typed contributor
@@ -42,15 +41,14 @@ open-forge:
   Implementer owns coherent production through focused verification only after
   Gray and Red are accepted. No C# author or reviewer may act before personally
   reading and fingerprinting `_csharp.md`, `design.md`, and `style.md`.
-- Current action: one Brilliant Implementer owns coherent production through
-  focused verification against the accepted Gray surface and corrected Red
-  evidence.
+- Current action: none. The accepted positive-unmanaged command, focused and
+  full evidence, correction review, and integration are complete.
 - Current authority: positive-unmanaged removal of one ordinary routed leaf or
-  one complete routed category. Managed scoped targets remain blocked. Gray
-  exposes only the accepted callable and public declarations with execution
-  explicitly unavailable. Corrected Red freezes the accepted Open Forge-owned
-  contract, safety, persistence, and public evidence. No domain behavior, root
-  composition, artifact acceptance, or Task completion is claimed.
+  one complete routed category is implemented and accepted. Managed scoped
+  targets remain blocked pending the separate maintainer decisions recorded
+  below. The command retains the accepted callable, schema-v1 public graph,
+  safety, persistence, recovery, and verification boundaries without changing
+  shared Framework, lifecycle-release, or Doctor vocabulary authority.
 - Evidence boundary: tests cover Open Forge-owned request formation, selection,
   planning, effects, state, safety, projection, and public reachability only.
   They do not test third-party library, runtime, OS, test-platform, or framework
@@ -210,9 +208,13 @@ Formatting, diff, static, protected-path, callable-shape, prohibited-pattern,
 line-length, source-tree, artifact, selected/discovered/executed, skip, warning,
 failure, and exit receipts remain required.
 
-The task capsule budgets are council `0`, one fresh whole-task review
-`T5-R1` unconsumed, and one grouped correction `T5-C1` unconsumed. Gray and Red
-remain separate frozen owners and do not consume those budgets.
+The task capsule budgets at Preflight were council `0`, one fresh whole-task
+review `T5-R1`, and one grouped correction `T5-C1`, all then unconsumed. Gray and
+Red remained separate frozen owners and did not consume those budgets. At
+completion, `T5-R1` is consumed by the fresh whole-task review and `T5-C1` is
+consumed once by the grouped correction at `d3ae71cd` plus its required
+non-amending immutable-review follow-up at `ab8da620`. No second logical review
+or correction budget was used.
 
 Stop before public or cross-task meaning changes; a seventh contributor or new
 Doctor vocabulary; managed release or lifecycle writes; Framework or
@@ -288,6 +290,132 @@ failures. Project formatting, diff, protected-path, callable, prohibited-effect,
 line-length, whitespace, host-path, exact-three-journey, and unchanged Doctor
 EndToEnd checks passed. This milestone claims evidence only; coherent behavior
 remains unimplemented.
+
+## Accepted Completion
+
+### Immutable Lineage And Integration
+
+The accepted lineage is exact and linear:
+
+- activation base `0d269b7a326377edc173036bc56f36e199eb6e5c`, tree
+  `8863d17629e0af6665bd8100f55b5b63da41035b`;
+- Preflight `67590c4ffb98daec9cde6eb7db82b1fb67b69d3d`, tree
+  `b3dd26cc603385bf4466b1e31679458df4655ef3`;
+- Gray contract `7844f1014a0bc0e62c82e33162da5047ddbb4ad7`, tree
+  `1760a5aad54889c120763441255865c54955e408`;
+- Gray evidence seams `894c0b026ebc6176d7391a698d1125aa0302e8bc`, tree
+  `7ced699dcd2adfc28ca35f3cf09e8ed95fd37c12`;
+- Red evidence `ec5d99da3e4350ebef34abf5d491510dd51b8259`, tree
+  `6115d069b879cc2034e907f7f80454e977f13a1b`;
+- Red acceptance `c2c3852339f140f3516f41ddf5bcf9836874b701`, tree
+  `6c052a095c1822bfa0a472e67eb03bf8211c344a`;
+- protected Doctor producer correction
+  `c2a347a39e81dc4c6719b0973ec5037f6fa34659`, tree
+  `5dc65c2ab143f88ee1de69cfb6920c0d76361024`;
+- published fixture correction `e9ffd70a90ecf9cbd57a478959b24480c486118b`,
+  tree `a1faccbf5999edba95596651acd10a0ce3bd1f6c`;
+- coherent Green `a2c786a3b70adfa2e17b311c29917c2321792ce6`, tree
+  `a380b6934c2683229ac79aa9e908cdc3a938f5e3`;
+- grouped correction `d3ae71cd3795ee6fb2a276860001482d0b4601eb`, tree
+  `799868e02500e353bfacc137612ec191352601a3`; and
+- immutable-review follow-up
+  `ab8da6202c2f638d3041de46fafeeced054c50b3`, tree
+  `bb41e1c9993a7ea28a7b380e442350fc2bbae73c`.
+
+Squash integration `5a2e650aa7623a2f19ff885ae664e56daded2df0`
+has tree `bb41e1c9993a7ea28a7b380e442350fc2bbae73c`, exactly equal to the
+accepted lane, and parent `0d269b7a326377edc173036bc56f36e199eb6e5c`,
+tree `8863d17629e0af6665bd8100f55b5b63da41035b`. The protected Doctor
+producer correction is therefore present once in the integrated result; no
+immutable commit was amended.
+
+### Accepted Behavior And Corrections
+
+The integrated command implements the accepted positive-unmanaged leaf and
+complete-category removal boundary. It binds and resolves the subject, proves
+ownership, inventories complete category content, scans and detaches supported
+incoming references without losing visible labels, plans generated navigation,
+revalidates one plan under the workspace lease, applies deterministic ordered
+effects with typed recovery, and deletes recovery only after fresh complete
+postcondition verification. Repeat execution reports independently proven
+absence. Managed scoped targets remain blocked.
+
+The fresh whole-task review `T5-R1` was consumed and passed after one accepted
+grouped correction `T5-C1`. The grouped correction rebuilt post-remove absence
+and every affected generated projection from the current workspace, preserved
+unrelated reference occurrences, and rejected late relevant, late unrelated,
+and late routed-sibling drift while retaining exact recovery. Immutable review
+then required the two-path follow-up at `ab8da620` to compare the fresh authored
+occurrence total with the original surviving-source total minus planned
+detachments. The same reviewer returned `PASS`; this follow-up remained part of
+the single logical `T5-C1` budget.
+
+The public evidence retains exactly three Route Remove EndToEnd facts: help and
+invalid input, leaf preview/application with label-preserving detachment, and
+category application with generated projection plus honest repeat. Doctor
+EndToEnd evidence remains exactly three facts and unchanged. The six-member
+operational contributor catalogue remains unchanged; Route Remove proves the
+existing `Route`/`Remove` recovery attribution without adding Doctor vocabulary.
+
+### Accepted Evidence
+
+Fresh focused evidence selected, discovered, executed, and passed Route Remove
+Unit `29/29`, Integration `28/28`, and EndToEnd `3/3`, with zero failures and
+skips. Affected List `82/82`, Inspect `82/82`, Create `23/23`, Status `15/15`,
+Doctor Integration `3/3`, published help `3/3`, and Doctor EndToEnd `3/3` also
+passed. Forced Release builds were warning-free. Formatting, diff, static,
+protected-path, callable-shape, prohibited-pattern, line-length, host-path,
+source-drift, and exact-EndToEnd-count checks passed.
+
+Fresh full acceptance evidence restored six projects without dependency
+downloads and passed a warning-free Release solution build. Managed Unit
+`1797/1797`, Integration `966/966`, and EndToEnd `178/178` passed. Supported
+`linux-x64` evidence passed managed-on-native EndToEnd `178/178`, Native AOT
+Integration `966/966`, and Native AOT EndToEnd `178/178`. Every test gate had
+equal selected, discovered, executed, and passed counts, with zero failures,
+skips, and warnings; all exits were zero.
+
+The public development executable reports `0.0.0-dev`; its SHA-256 is
+`4450c4552ac44a4e463db6c9adad89a39d803da47801801019ee08c02045bd61`
+and its version marker is
+`fe4d33c8c2c76a67725ea7d54dafb79c485bd2819a317d7235a6910157ef76f4`.
+The Native AOT root, Integration, and EndToEnd executable SHA-256 identities are
+`0140e2a64e1192b899629d1d8b804c5efa4e338ac83b488a683808636423bf51`,
+`ec1fb3063b4fce86c669b04c0f6bc591a0e11a9239a734695492339af42c0714`,
+and `7504b0fd58ab36b33d15a92ef708ba639fef23e4c186f8f76a7ef9c0c6298fde`.
+Post-integration evidence passed a fresh Release solution build with zero
+warnings and errors and the exact public Route Remove selection `3/3`. The
+integrated source tree remained clean at the accepted commit and tree.
+
+### Residual Risk
+
+Managed-route release remains deliberately deferred to the maintainer decisions
+below. Native acceptance covers the supported `linux-x64` target, not additional
+platforms. Real-filesystem race evidence covers the accepted Open Forge-owned
+late-source, late-reference, stale-projection, and later-effect boundaries but
+does not claim exhaustive operating-system scheduling coverage. Remote action,
+publication, compatibility machinery, and JavaScript-family implementations
+remain outside this Task.
+
+## Simplified Flow Trial Observation
+
+The streamlined assured trial produced explicit command-private boundaries: 22
+Gray contract declarations, five Gray evidence seams, 26 Red test paths, one
+59-path coherent Green, one nine-path grouped correction, and one two-path
+immutable-review follow-up. The separate Gray and Red freezes made public shape,
+callable authority, failure mechanisms, and evidence ownership independently
+auditable. Keeping production command-private avoided a speculative shared
+category-inventory promotion. Isolated managed/public and Native AOT gate lanes
+ran concurrently without artifact interference.
+
+The observed costs were cold-handoff stalls before some bounded owners began
+work, specialist tool gaps during immutable review, and replacement or direct
+takeover where a read-only owner returned no usable disposition. Starting the
+first full-gate pass before the final correction review completed also meant
+that pass was invalidated and had to be repeated from the correction commit.
+These observations describe this Task only; they establish neither elapsed-time
+savings nor a numeric speedup and do not justify a project-wide workflow or
+shared-production change by themselves.
 
 ## Expected Outcome
 

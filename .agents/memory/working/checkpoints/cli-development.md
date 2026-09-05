@@ -81,8 +81,11 @@ squash-integrated at `59276c3b` with the same tree. Full managed, public,
 supported `linux-x64` Native AOT, managed-on-native, focused, structural, and
 post-integration gates passed. The unreleased schema-v1 Doctor catalogue
 contains 109 kinds and supplies 107 supported emissions plus two accepted
-Extension observation limitations. Route Remove is active with its accepted
-positive-unmanaged removal boundary; Route Inspect's synthetic
+Extension observation limitations. Task 5 “Route Remove” is complete at phase
+5/5, milestone 8/8. Accepted lane `ab8da620`, tree `bb41e1c9`, is
+squash-integrated at `5a2e650a` with exact tree equality. Final managed
+`1797/966/178`, managed-on-native `178`, native `966/178`, focused, structural,
+and post-integration Route Remove `3/3` gates passed. Route Inspect's synthetic
 overwrite-ambiguity conflict remains one bounded Task 10 audit input, not a
 Doctor finding or a new task. Recovery attribution remains unreleased schema
 v1, and old unattributed or malformed final bundles fail closed. The earlier
@@ -435,15 +438,15 @@ remains one bounded Task 10 audit input, not a Doctor finding or a new task. See
 the [Task 16 Doctor record](../cli-development/tasks/operations/doctor.md) and
 [project control ledger](../cli-development/project-control.md) for the exact
 accepted identities and evidence. Task 16's completion grace is consumed. Task
-5 “Route Remove” is active at phase 3/5, milestone 3/8 for coherent production
-after accepted Gray and corrected Red, from exact base
-`82fce051`, tree `91fa73c2`, in its Task-owned worktree on branch
-`codex/route-remove-implementation`. No other implementation Task is active.
+5 “Route Remove” is complete at phase 5/5, milestone 8/8. Its accepted lane is
+`ab8da6202c2f638d3041de46fafeeced054c50b3`, exact tree
+`bb41e1c9993a7ea28a7b380e442350fc2bbae73c`; local squash integration is
+`5a2e650aa7623a2f19ff885ae664e56daded2df0`, the same exact tree, from parent
+`0d269b7a`, tree `8863d176`. Its completion-bearing update has `2 updates
+remaining` grace. No implementation Task is active during closeout.
 
-Route Remove is the remaining Route Mutation M2 leaf, and the full M2 lane still
-precedes root Update M3. Task 12 and the adoption slice are integrated. Route
-Remove has accepted Preflight, Gray, and corrected Red and is active for coherent
-production; dependent Update behavior waits for M2 completion.
+Route Remove completes the Route Mutation M2 lane, so root Update M3 is now
+eligible for activation. Task 12 and the adoption slice remain integrated.
 
 Initial read-only M2 preparation completed on five clean no-op branches from
 `33913dfe7f8f80598ca4765c516d308ed179c3ab` without a preparation commit, Gray,
@@ -451,7 +454,8 @@ Red, or Green change. The later lifecycle and parser prerequisites above are now
 integrated. The Route Mutation parent and leaf Tasks retain each accepted
 preparation decision or remaining maintainer-authority frontier, expected and
 protected path boundary, and evidence scope. Route Move and Task 12 are
-Complete. Route Remove accepted Preflight from a fresh Doctor-closeout baseline. The M2
+Complete. Route Remove is accepted and integrated from a fresh Doctor-closeout
+baseline. The M2
 dependency remains ordered Install → Init → Create → protected Route Create
 predecessor slices → Route Create integration → CLI Quality Remediation → Update
 → Move → Remove → M3.
@@ -495,15 +499,13 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Continue active [Task 5 Route Remove](../cli-development/tasks/route-mutation/route-remove.md)
-   at phase 3/5, milestone 3/8, from exact base `82fce051`, tree `91fa73c2`,
-   in its Task-owned lane. Preserve the stale historical `codex/route-remove`
-   lane unchanged. Accepted Gray `7844f101`, evidence-seam gap `894c0b02`, and
-   corrected Red `ec5d99da` are frozen. One Brilliant Implementer owns coherent
-   production through focused verification. Every C# owner personally reads and
-   fingerprints `_csharp.md`, `design.md`, and `style.md`.
-2. Continue after Task 5 in this order: Task 6 Root
-   Update → Task 17 Extension Update → Task 18 Extension Remove → Task 19 Repair
+1. Activate [Task 6 Root Update](../cli-development/tasks/lifecycle/update.md)
+   from the clean Task 5 integration baseline. Revalidate its provisional
+   Preflight, Gray, and Red material against the accepted Route Remove tree
+   before adopting any of it. Every C# owner personally reads and fingerprints
+   `_csharp.md`, `design.md`, and `style.md`.
+2. Continue after Task 6 in this order: Task 17 Extension Update → Task 18
+   Extension Remove → Task 19 Repair
    → Task 20 Cleanup → Task 10 CLI Command Surface Audit → conditional Task 21
    CLI Command Surface Remediation → Task 13 Native linux-x64 CI and
    Reproducible Artifacts → Task 22 Final Documentation, Acceptance, and
