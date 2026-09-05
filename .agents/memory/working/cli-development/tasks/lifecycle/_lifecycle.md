@@ -57,10 +57,10 @@ intended-membership formation. Its exact command-local interaction is accepted.
 The Extension Create and root Install command lanes executed in parallel after
 their prerequisites. Both commands' protected root composition and executable
 acceptance seams are complete.
-Root Update remains sequenced after the complete Route Mutation M2 lane. Only
-independent preparation such as scope discovery, contract and ownership audits,
-callable-surface analysis, Gray/Red readiness, and worktree setup may proceed
-earlier; dependent Update behavior does not overlap unfinished M2 behavior.
+Root Update is active for fresh Preflight after the accepted and integrated
+Route Mutation M2 lane. Its earlier provisional Gray/Red lane is preserved as
+unaccepted revalidation input; dependent Update behavior begins only from the
+new Task-owned baseline after Preflight disposition.
 Extension Install is independent of unfinished Route Remove and root Update, so
 it may form the first adoption slice after Task 12. Later lifecycle producers
 must extend the accepted explicit Status/Doctor contributor inventory and its
@@ -78,7 +78,7 @@ bytes and is owned only through a read/write `FileShare.None` handle.
 - [x] [Implement creation of one reviewable Extension package outside a workspace](extension-create.md) — Complete; command-local squash `3ef81227ba50fba869f0129b958eabc6d0c29fbc`, protected public integration `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5`
 - [x] [Implement root Framework installation into a selected workspace](install.md) — Complete; final candidate `11994e4d21ddc807b7480afc39ae3612e5a69a56` is squash-integrated at `c60fcb98a57e9ec80769b9cb1d399ce13a227863`, exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed`
 - [x] [Task 14: implement Extension installation from exact reviewed package identity](extension-install.md) — Complete at phase 5/5, milestone 8/8; accepted lane `a6b44f07`, tree `cd4c074d`, squash-integrated at `20807781`, tree `4592a139`
-- [ ] [Task 6: implement root Framework update from accepted lifecycle identity](update.md) — Queued after full Route Mutation M2 — Implementer: Not assigned
+- [ ] [Task 6: implement root Framework update from accepted lifecycle identity](update.md) — Active at phase 1/5, milestone 0/8 — Task Mastermind: Sagan; C# Implementer not assigned before Preflight
 - [ ] [Task 17: implement Extension update with source review, ownership, and recovery integrity](extension-update.md) — Queued after Task 6 and Task 14 — Implementer: Not assigned
 - [ ] [Task 18: implement Extension removal with preserved user content and recovery integrity](extension-remove.md) — Queued after Task 17 — Implementer: Not assigned
 

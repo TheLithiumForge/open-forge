@@ -143,8 +143,9 @@ The accepted dependency order is:
    remain unproven and unauthorized. Task 16's completion grace is consumed.
    Task 5 is complete at phase 5/5, milestone 8/8. Accepted lane `ab8da620`,
    exact tree `bb41e1c9`, is squash-integrated at `5a2e650a` with exact tree
-   equality. No implementation Task is active during closeout. The current
-   ordered queue is Task 6 → Task 17 → Task 18 → Task 19 → Task 20 → Task 10 →
+   equality. Its completion grace is `1 update remaining`. Task 6 Root Update is
+   the sole active implementation Task at phase 1/5, milestone 0/8 for fresh
+   Preflight. The current order is Task 6 → Task 17 → Task 18 → Task 19 → Task 20 → Task 10 →
    conditional Task 21 → Task 13 → Task 22.
 
 Task 5's supervised read-only reconnaissance ran from assigned `develop`
@@ -157,7 +158,7 @@ leaf/category boundary, neutral shared mechanisms, Route Remove-local policy,
 and prohibition on sibling-private surfaces remain unchanged. Revalidate
 lifecycle/Extension ownership, Task 15 catalogue/views, root composition, help,
 serialization, and affected Status/Doctor evidence after Tasks 14–16. That
-revalidation is complete and Task 6 is now eligible for activation.
+revalidation is complete and Task 6 is active for fresh Preflight.
 
 Task 5's accepted lane is `ab8da6202c2f638d3041de46fafeeced054c50b3`,
 exact tree `bb41e1c9993a7ea28a7b380e442350fc2bbae73c`; squash integration
@@ -218,6 +219,7 @@ or a general template/scaffold system.
 | Task 7                        | Complete x64 package graph and package evidence                                        | Complete 4/4, 7/7; `a2942781` → `e19d429e`; Linux journey passed; Darwin/Windows stage+pack only.                                                                                                                                                                                                                                                                                                                        |
 | Task 15 Status                | Report complete typed current facts for the frozen producer inventory                  | Complete and dequeued at phase 5/5, milestone 8/8; accepted lane `0c19b7053ef2b8c48898cfebadedff0c5702bf34`/`8ff2ac4ac0f5985863a9aaf85911c2deb6152980`; correction `f2dcdcae8b7c2cc9522b5ce7df250c73a55347db`/`b6f83beb50cefe56a0aae7d9a4019dab08c19aea`; Green `7dd8de6c4f9eae3355f5ac4ee32d533e6ffb2564`/`f6c37550b78a01e7611178bd563e274f94bb2bb1`; final gates are recorded in [project control](project-control.md) |
 | Task 16 Doctor                | Diagnose the current 109-kind Doctor catalogue without mutation                        | Complete at phase 5/5, milestone 8/8; accepted lane `a48a16cd`, exact tree `90e66b05`, is squash-integrated at `59276c3b` with the same tree; managed `1768/937/175`, native `937/175`, managed-on-native `175`, and exact public Doctor `3/3` passed with zero failures/skips; exact detail is in the [Task 16 record](tasks/operations/doctor.md) and [project control](project-control.md)                            |
+| Task 5 Route Remove           | Remove positive-unmanaged routed leaves and complete categories safely                 | Complete at phase 5/5, milestone 8/8; accepted lane `ab8da620`, exact tree `bb41e1c9`, is squash-integrated at `5a2e650a` with the same tree; managed `1797/966/178`, native `966/178`, managed-on-native `178`, and exact public Route Remove `3/3` passed; completion grace is `1 update remaining`                                                                                                                    |
 | Task 13 native CI             | Prepare minimal build/test CI, manual publish, artifacts, and package targets          | Preparation completed at phase 1/3, milestone 2/6 on candidate `e7689696`, tree `c204c17b`, and is integrated by the commit containing this record from `develop` parent `de40d550`, tree `e6040c49`. The Task is queued behind all retained commands, Task 10, and conditional Task 21 remediation. Linux/macOS/Windows x64 are accepted; ARM remains undecided.                                                        |
 
 The Status lane's immutable pre-acceptance continuation after `T15-S1` remains
