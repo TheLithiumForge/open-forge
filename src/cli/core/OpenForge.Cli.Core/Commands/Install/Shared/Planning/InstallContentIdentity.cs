@@ -8,8 +8,6 @@ namespace OpenForge.Cli.Core.Commands.Install.Shared.Planning;
 
 internal sealed class InstallContentIdentity
 {
-    internal const string GeneratedRegionIdentity = "entries";
-
     private static readonly UTF8Encoding StrictUtf8 = new(
         encoderShouldEmitUTF8Identifier: false,
         throwOnInvalidBytes: true);
@@ -50,7 +48,7 @@ internal sealed class InstallContentIdentity
             .Select(path => new FrameworkGeneratedRegion
             {
                 Path = path,
-                Region = GeneratedRegionIdentity,
+                Region = LifecycleSchema.GeneratedEntriesRegion,
             })
             .ToList();
         var generatedKeys = generated
@@ -237,7 +235,7 @@ internal sealed class InstallContentIdentity
         {
             Path = path,
             SourceAssetPath = null,
-            Region = GeneratedRegionIdentity,
+            Region = LifecycleSchema.GeneratedEntriesRegion,
             BaselineFingerprint = ReadGeneratedFingerprint(bytes),
             FingerprintKind = LifecycleSchema.ExactBytesFingerprintKind,
         };
@@ -257,7 +255,7 @@ internal sealed class InstallContentIdentity
         ReadOnlySpan<byte> currentBytes,
         InstallIntendedState intendedState)
     {
-        if (target.Region == GeneratedRegionIdentity)
+        if (target.Region == LifecycleSchema.GeneratedEntriesRegion)
         {
             return ReadPersistedGeneratedFingerprint(
                 currentBytes,

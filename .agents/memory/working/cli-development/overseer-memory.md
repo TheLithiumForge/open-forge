@@ -71,10 +71,10 @@ The accepted dependency order is:
    `1711/917/169`; Native AOT passes `917/169`; managed-on-native passes `169`;
    and the isolated offline package journey verifies launcher reachability,
    Root Install's 44 effects, and Extension Install's 28 effects. Task 15
-   Status is ACTIVE at phase 3/5, milestone 3/8: Gray `dac2aece`/`874bdcae`,
-   bounded callable correction `df46fb9c`/`eda74e79`, and accepted Red
-   `f633fe1f`/`5dbfe9d7`. A Sol/xhigh Brilliant Implementer was activated at
-   `de27fcd6`/`ebdcb4a6`; its early architecture checkpoint found that the two
+   Status is RECENTLY_COMPLETED at phase 5/5, milestone 8/8. Its historical
+   phase-3 lane records Gray `dac2aece`/`874bdcae`, bounded callable correction
+   `df46fb9c`/`eda74e79`, and accepted Red `f633fe1f`/`5dbfe9d7`. A Sol/xhigh
+   Brilliant Implementer was activated at `de27fcd6`/`ebdcb4a6`; its early architecture checkpoint found that the two
    lifecycle Status signatures cannot guarantee one common lifecycle-document
    observation without prohibited mutable state. Coherent Green behavior
    remained unmodified while the bounded correction made one stateless
@@ -84,23 +84,38 @@ The accepted dependency order is:
    and 3 unchanged EndToEnd tests. Resume checkpoint
    `d120d49e`/`28f23430` reapplied the interrupted Implementer's 94-line partial
    `StatusDefinitions` work losslessly; recovery stash `9b51b3f8` remains
-   retained while the same Sol/xhigh Brilliant Implementer owns coherent
+   retained while the same Sol/xhigh Brilliant Implementer completed coherent
    production and focused verification. First coherent production seam
-   `44104f03`/`71a19f85` passes a warning-free Core Release build, one direct
+   `44104f03`/`71a19f85` passed a warning-free Core Release build, one direct
    Status operation Integration case, and 62 selected lifecycle-store and
    Extension compatibility tests. The other nine selected Status Integration
-   cases remain expected Green work at command composition or rendering.
+   cases were expected Green work at command composition or rendering.
    Immutable seam review found `T15-S1`, a real unresolved-identity
    compatibility change missed by that selection. Corrected Gray
    `e6a89c24`/`9f98c0e4` preserves three raw mechanical failure stages;
    corrected Red `c5726e5c`/`f719db23` fails only the two intended Extension
    mapping rows in its isolated 2/2 Unit selection. The same Brilliant
-   Implementer has resumed exact stage-sensitive Green. Task 16 Doctor
+   Implementer completed exact stage-sensitive Green. The accepted Status lane,
+   correction, and Green identities are recorded below. Its integration parent
+   is `e90b22f9a6d4fdd2043516e718fc782490396cb2`, tree
+   `74713c32473603e7f9100378fafd314c50f813e3`; the integration identity is the
+   commit containing this record. Final gates had Release `0` warnings and `0`
+   errors; managed Unit `1739/1739`, Integration `933/933`, EndToEnd `172/172`;
+   managed EndToEnd against the native root `172/172`; native Integration
+   `933/933`; native EndToEnd `172/172`; all with `0` failures, `0` skips, and
+   `0` warnings. Every later producer extends the explicit contributor inventory
+   and affected Status evidence before acceptance. Task 16 Doctor
    is PREPARED at phase 2/5, milestone 2/8 from the exact Status Gray snapshot;
    activation
    `26e245e4`/`680df032` and accepted Gray `ce627593`/`1f07abb7` are recorded.
-   The lane is parked before Red/production until Task 15
-   acceptance/integration. No test or completion claim is made. A later Task 16 activation reconnaissance began at
+   It is now next and eligible for exact post-Status reconciliation, but is not
+   active. Its first next step is to revalidate the six shared view blobs and
+   reapply/reconcile the accepted 17 C# files plus two contract amendments,
+   preserving plural Extension sources, then add Red that consumes every source
+   observation without fallback, substitution, reconstruction, or reread. Do
+   not parse Status output or add dependency injection, a service locator,
+   reflection, a runtime registry, or a generic operational engine. No Doctor
+   test, build, production, or completion claim is made. A later Task 16 activation reconnaissance began at
    root `53805940`: a Sol/xhigh Task Mastermind successfully supervised three
    Luna/max Explorer inventories from `/root/doctor_activation_recon`. No
    build, test, source or workspace mutation, artifact, or activation occurred;
@@ -117,10 +132,11 @@ The accepted dependency order is:
    accepted lane `a2942781`, tree `fe36fc3f`, is squash-integrated at `e19d429e`
    with the same tree. Its Linux host journey passed; Darwin and Windows have
    stage-and-pack evidence only. ARM, publication, and live link or unlink
-   remain unproven and unauthorized. Task 5 Route
-   Remove, Task 6 Root Update, Tasks 17–20, Task 10 and conditional Task 21,
-   Task 13
-   implementation, and Task 22 follow in the project-control order.
+   remain unproven and unauthorized. Task 16 Doctor is next and eligible for
+   exact post-Status reconciliation. Task 5 Route Remove, Task 6 Root Update,
+   Tasks 17/18/19/20, Task 10, conditional Task 21, Task 13 implementation,
+   and Task 22 follow in the project-control order. No implementation Task is
+   active.
 
 Task 5's supervised read-only reconnaissance ran from assigned `develop`
 commit `bbf2d87c` to clean `develop` commit `08f2fbb6`: a Sol/xhigh Task
@@ -150,48 +166,66 @@ or a general template/scaffold system.
 
 ## Active Lanes
 
-| Lane                          | Responsibility                                                                         | State                                                                                                                                                                                                                                                                                                                                                             |
-| ----------------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| D0                            | Contract, architecture, Plan, Task, checkpoint, and public-doc freeze                  | Integrated at `38e1498`                                                                                                                                                                                                                                                                                                                                           |
-| F1                            | Native Shell question/answer transport and invocation capability                       | Integrated at `e782090` after review                                                                                                                                                                                                                                                                                                                              |
-| F2                            | Embedded Framework payload reader and deterministic inventory                          | Integrated at `680915a` after review                                                                                                                                                                                                                                                                                                                              |
-| F3                            | Framework lifecycle `sourceAssetPath` provenance                                       | Integrated at `0989356` after review                                                                                                                                                                                                                                                                                                                              |
-| F4                            | Shared planned directory-creation mutation effect                                      | Integrated at `33913df` after review                                                                                                                                                                                                                                                                                                                              |
-| C1                            | Extension Create                                                                       | Complete at protected public integration `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5`                                                                                                                                                                                                                                                                               |
-| C2                            | Root Install                                                                           | Complete at local integration `c60fcb98a57e9ec80769b9cb1d399ce13a227863`; final candidate `11994e4d21ddc807b7480afc39ae3612e5a69a56`, exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed`                                                                                                                                                                       |
-| C3                            | Route Inspect interactive correction                                                   | Complete and squash-integrated at `fa3db1ee` with exact tree equality to final reviewed candidate `37c9360`                                                                                                                                                                                                                                                       |
-| C4                            | Generic and Framework-aware Route Init                                                 | Complete and squash-integrated at `cc5085ce`; reviewed closeout `c580149`, tree `a1810c4`                                                                                                                                                                                                                                                                         |
-| M2 preparation                | Init/Create/Update/Move/Remove readiness                                               | Complete on clean no-op branches from `33913dfe`; Route Create is Complete at `19412d2`; QR1 is squash-integrated at `862cbf2a`, exact tree `571f104f`; Route Update is Complete, and later leaf Tasks retain accepted preparation decisions and remaining authority gates                                                                                        |
-| Quality remediation           | Accepted first-pass CLI architecture, design, authority, and test-evidence findings    | Complete and squash-integrated at `862cbf2a`, exact tree `571f104f`, from accepted implementation candidate `a4ccf19a`, tree `97254e65`; all thirteen findings/candidates, final `QR-R1-001`, managed `1522/736/146`, native Integration `736/736`, format, diff, and Sol/xhigh review are closed                                                                 |
-| Review orchestration          | Opt-in immutable coordinated topic review and permanent task-progress controls         | Complete and integrated at `5aad04ac` plus follow-up `3356eba1`; APM, Open Forge, projection, formatting, protected-path, and C# identity gates pass                                                                                                                                                                                                              |
-| npm link shims                | Repository-local managed development CLI linking                                       | Complete and integrated at `128b70b3`; Node `16/16` and exact package, mode, manifest, nonmutation, and protected-path gates pass                                                                                                                                                                                                                                 |
-| Route Update                  | Bounded route content and metadata update                                              | Complete at accepted closeout `27df8325`, tree `b68d4349`; immutable behavior `8a398f2e`, tree `3bb4a224`; managed `1602/809/152`, native `809/152`, managed-on-native `152`, dogfood, and holistic review pass                                                                                                                                                   |
-| Task 4 Route Move             | Route movement with reference, navigation, lifecycle, and recovery integrity           | Complete at phase 6/6, milestone 12/12; closeout `631983ea`, tree `d6f6fdf7`, is squash-integrated at `d3d2dc1`, tree `6959b51e`; two-update completion grace is consumed and the Task is dequeued                                                                                                                                                                |
-| Task 12 authority remediation | Move accepted CLI Architecture detail to its correct authority without behavior change | Complete at phase 5/5, milestone 6/6; corrected source `a0e6bc8d`, exact tree `9c4a33b1`, is squash-integrated at `495a7ed6`, the same exact tree; two-update completion grace is consumed and the Task is dequeued                                                                                                                                               |
-| Task 14 Extension Install     | Install reviewed Extension packages with isolated lifecycle and recovery integrity     | Complete at phase 5/5, milestone 8/8; lane `a6b44f07`, tree `cd4c074d`, is squash-integrated at `20807781`, tree `4592a139`; final managed `1711/917/169`, Native `917/169`, managed-on-native `169`, and offline package journey pass; completion grace consumed and the Task is dequeued                                                                        |
-| Task 7                        | Complete x64 package graph and package evidence                                        | Complete 4/4, 7/7; `a2942781` → `e19d429e`; Linux journey passed; Darwin/Windows stage+pack only.                                                                                                                                                                                                                                                                 |
-| Task 15 Status                | Report complete typed current facts for the frozen producer inventory                  | ACTIVE phase 3/5, milestone 3/8; production seam `44104f03`/`71a19f85`; material review finding `T15-S1`; corrected Gray `e6a89c24`/`9f98c0e4`; corrected Red `c5726e5c`/`f719db23`; exact stage-sensitive Green active; rendering stash reapplied; both recovery stashes retained; no completion claimed                                                         |
-| Task 16 Doctor                | Diagnose the complete Status contributor inventory without mutation                    | PREPARED phase 2/5, milestone 2/8 from the exact Status Gray snapshot; activation `26e245e4`/`680df032`; accepted Gray `ce627593`/`1f07abb7`; parked before Red/production until Task 15 acceptance/integration; no tests or completion claimed                                                                                                                   |
-| Task 13 native CI             | Prepare minimal build/test CI, manual publish, artifacts, and package targets          | Preparation completed at phase 1/3, milestone 2/6 on candidate `e7689696`, tree `c204c17b`, and is integrated by the commit containing this record from `develop` parent `de40d550`, tree `e6040c49`. The Task is queued behind all retained commands, Task 10, and conditional Task 21 remediation. Linux/macOS/Windows x64 are accepted; ARM remains undecided. |
+| Lane                          | Responsibility                                                                         | State                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ----------------------------- | -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D0                            | Contract, architecture, Plan, Task, checkpoint, and public-doc freeze                  | Integrated at `38e1498`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| F1                            | Native Shell question/answer transport and invocation capability                       | Integrated at `e782090` after review                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| F2                            | Embedded Framework payload reader and deterministic inventory                          | Integrated at `680915a` after review                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| F3                            | Framework lifecycle `sourceAssetPath` provenance                                       | Integrated at `0989356` after review                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| F4                            | Shared planned directory-creation mutation effect                                      | Integrated at `33913df` after review                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| C1                            | Extension Create                                                                       | Complete at protected public integration `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5`                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| C2                            | Root Install                                                                           | Complete at local integration `c60fcb98a57e9ec80769b9cb1d399ce13a227863`; final candidate `11994e4d21ddc807b7480afc39ae3612e5a69a56`, exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed`                                                                                                                                                                                                                                                                                                                                             |
+| C3                            | Route Inspect interactive correction                                                   | Complete and squash-integrated at `fa3db1ee` with exact tree equality to final reviewed candidate `37c9360`                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| C4                            | Generic and Framework-aware Route Init                                                 | Complete and squash-integrated at `cc5085ce`; reviewed closeout `c580149`, tree `a1810c4`                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| M2 preparation                | Init/Create/Update/Move/Remove readiness                                               | Complete on clean no-op branches from `33913dfe`; Route Create is Complete at `19412d2`; QR1 is squash-integrated at `862cbf2a`, exact tree `571f104f`; Route Update is Complete, and later leaf Tasks retain accepted preparation decisions and remaining authority gates                                                                                                                                                                                                                                                              |
+| Quality remediation           | Accepted first-pass CLI architecture, design, authority, and test-evidence findings    | Complete and squash-integrated at `862cbf2a`, exact tree `571f104f`, from accepted implementation candidate `a4ccf19a`, tree `97254e65`; all thirteen findings/candidates, final `QR-R1-001`, managed `1522/736/146`, native Integration `736/736`, format, diff, and Sol/xhigh review are closed                                                                                                                                                                                                                                       |
+| Review orchestration          | Opt-in immutable coordinated topic review and permanent task-progress controls         | Complete and integrated at `5aad04ac` plus follow-up `3356eba1`; APM, Open Forge, projection, formatting, protected-path, and C# identity gates pass                                                                                                                                                                                                                                                                                                                                                                                    |
+| npm link shims                | Repository-local managed development CLI linking                                       | Complete and integrated at `128b70b3`; Node `16/16` and exact package, mode, manifest, nonmutation, and protected-path gates pass                                                                                                                                                                                                                                                                                                                                                                                                       |
+| Route Update                  | Bounded route content and metadata update                                              | Complete at accepted closeout `27df8325`, tree `b68d4349`; immutable behavior `8a398f2e`, tree `3bb4a224`; managed `1602/809/152`, native `809/152`, managed-on-native `152`, dogfood, and holistic review pass                                                                                                                                                                                                                                                                                                                         |
+| Task 4 Route Move             | Route movement with reference, navigation, lifecycle, and recovery integrity           | Complete at phase 6/6, milestone 12/12; closeout `631983ea`, tree `d6f6fdf7`, is squash-integrated at `d3d2dc1`, tree `6959b51e`; two-update completion grace is consumed and the Task is dequeued                                                                                                                                                                                                                                                                                                                                      |
+| Task 12 authority remediation | Move accepted CLI Architecture detail to its correct authority without behavior change | Complete at phase 5/5, milestone 6/6; corrected source `a0e6bc8d`, exact tree `9c4a33b1`, is squash-integrated at `495a7ed6`, the same exact tree; two-update completion grace is consumed and the Task is dequeued                                                                                                                                                                                                                                                                                                                     |
+| Task 14 Extension Install     | Install reviewed Extension packages with isolated lifecycle and recovery integrity     | Complete at phase 5/5, milestone 8/8; lane `a6b44f07`, tree `cd4c074d`, is squash-integrated at `20807781`, tree `4592a139`; final managed `1711/917/169`, Native `917/169`, managed-on-native `169`, and offline package journey pass; completion grace consumed and the Task is dequeued                                                                                                                                                                                                                                              |
+| Task 7                        | Complete x64 package graph and package evidence                                        | Complete 4/4, 7/7; `a2942781` → `e19d429e`; Linux journey passed; Darwin/Windows stage+pack only.                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| Task 15 Status                | Report complete typed current facts for the frozen producer inventory                  | RECENTLY_COMPLETED phase 5/5, milestone 8/8; accepted lane `0c19b7053ef2b8c48898cfebadedff0c5702bf34`/`8ff2ac4ac0f5985863a9aaf85911c2deb6152980`; correction `f2dcdcae8b7c2cc9522b5ce7df250c73a55347db`/`b6f83beb50cefe56a0aae7d9a4019dab08c19aea`; Green `7dd8de6c4f9eae3355f5ac4ee32d533e6ffb2564`/`f6c37550b78a01e7611178bd563e274f94bb2bb1`; completion-bearing update is this candidate; `2 updates remaining` grace; no active implementation                                                                                     |
+| Task 16 Doctor                | Diagnose the complete Status contributor inventory without mutation                    | PREPARED phase 2/5, milestone 2/8 from the exact Status Gray snapshot; activation `26e245e4`/`680df032`; accepted Gray `ce627593`/`1f07abb7`; now next and eligible for exact post-Status reconciliation, but not active; first revalidate six shared view blobs and reapply/reconcile 17 C# files plus two contract amendments, preserving plural Extension sources, then add Red that consumes every source observation without fallback, substitution, reconstruction, or reread; no tests, build, production, or completion claimed |
+| Task 13 native CI             | Prepare minimal build/test CI, manual publish, artifacts, and package targets          | Preparation completed at phase 1/3, milestone 2/6 on candidate `e7689696`, tree `c204c17b`, and is integrated by the commit containing this record from `develop` parent `de40d550`, tree `e6040c49`. The Task is queued behind all retained commands, Task 10, and conditional Task 21 remediation. Linux/macOS/Windows x64 are accepted; ARM remains undecided.                                                                                                                                                                       |
 
-The Status lane's immutable continuation after `T15-S1` is
+The Status lane's immutable pre-acceptance continuation after `T15-S1` remains
+historical:
 `cf00fb86`/`bf69e7c2` → `48309613`/`b8e0ad0f` → `e79a9767`/`17068f0b` →
 `2521574d`/`11eb89ee` → `b8ac2dd7`/`453eb1b8`. It covers rendering and
 compatibility Green, direct JSON context, plural-source Gray, direct producer
 construction authority, and focused plural-source Red. Red selected, discovered,
 and executed `1/1/1`; only the expected three-observation versus one-scaffold
 oracle failed, while lifecycle completeness/trust and five package/source facts
-passed. The same Sol/xhigh Brilliant Implementer is implementing plural
-semantics, and independent Route selected-view work is present. No stable
-full-producer evidence or completion is claimed.
+passed. Independent Route selected-view work was also present. Task 15 is now
+accepted at phase 5/5, milestone 8/8. Its accepted lane is
+`0c19b7053ef2b8c48898cfebadedff0c5702bf34`, tree
+`8ff2ac4ac0f5985863a9aaf85911c2deb6152980`; correction
+`f2dcdcae8b7c2cc9522b5ce7df250c73a55347db`, tree
+`b6f83beb50cefe56a0aae7d9a4019dab08c19aea`; and Green
+`7dd8de6c4f9eae3355f5ac4ee32d533e6ffb2564`, tree
+`f6c37550b78a01e7611178bd563e274f94bb2bb1`. Its integration parent is
+`e90b22f9a6d4fdd2043516e718fc782490396cb2`, tree
+`74713c32473603e7f9100378fafd314c50f813e3`; the integration identity is the
+commit containing this record. Final gates had Release `0` warnings and `0`
+errors; managed Unit `1739/1739`, Integration `933/933`, EndToEnd `172/172`;
+managed EndToEnd against the native root `172/172`; native Integration
+`933/933`; native EndToEnd `172/172`; all with `0` failures, `0` skips, and
+`0` warnings. Every later producer extends the explicit contributor inventory
+and affected Status evidence before acceptance.
 
 Task 16's read-only alignment consumes the complete plural Extension view. Its
 six Doctor-facing signatures and catalogue shape remain unchanged through
-Status `2521574d`, but two Status-only methods changed. After Status acceptance,
-reapply 17 C# files and two contract amendments, then add Red that consumes every
-supplied source observation without fallback, substitution, reconstruction, or
-reread. No Task 16 files, tests, builds, or implementation occurred in this
-alignment.
+Status `2521574d`, but two Status-only methods changed. Task 16 is now next and
+eligible for exact post-Status reconciliation, but is not active. Its first next
+step is to revalidate the six shared view blobs and reapply/reconcile the accepted
+17 C# files plus two contract amendments, preserving plural Extension sources,
+then add Red that consumes every supplied source observation without fallback,
+substitution, reconstruction, or reread. Do not parse Status output or add
+dependency injection, a service locator, reflection, a runtime registry, or a
+generic operational engine. No Task 16 files, tests, builds, production, or
+completion are claimed in this alignment.
 
 Each mutating lane owns a distinct worktree and feature branch. Shared root
 composition, serializer registration, public help, process evidence, Plan, and
@@ -315,12 +349,30 @@ Status or Doctor contracts. Task 14 integration is complete. Task 7's
 platform-expansion horizon is also complete at phase 4/4, milestone 7/7, with
 the Linux host journey passed and Darwin and Windows limited to stage-and-pack
 evidence. ARM, publication, and live link or unlink remain unproven and
-unauthorized. Task 15 Status is ACTIVE at phase 3/5, milestone 3/8 with corrected
-raw-snapshot Gray and Red accepted; coherent production and focused verification
-have resumed under the same Brilliant Implementer. Task 16 Doctor is PREPARED at phase
-2/5,
-milestone 2/8 from the exact Status Gray snapshot and is parked before
-Red/production until Task 15 acceptance/integration.
+unauthorized. Task 15 Status is RECENTLY_COMPLETED at phase 5/5, milestone 8/8
+with accepted lane `0c19b7053ef2b8c48898cfebadedff0c5702bf34`, tree
+`8ff2ac4ac0f5985863a9aaf85911c2deb6152980`, correction
+`f2dcdcae8b7c2cc9522b5ce7df250c73a55347db`, tree
+`b6f83beb50cefe56a0aae7d9a4019dab08c19aea`, and Green
+`7dd8de6c4f9eae3355f5ac4ee32d533e6ffb2564`, tree
+`f6c37550b78a01e7611178bd563e274f94bb2bb1`. Its integration parent is
+`e90b22f9a6d4fdd2043516e718fc782490396cb2`, tree
+`74713c32473603e7f9100378fafd314c50f813e3`; the integration identity is the
+commit containing this record. Final gates had Release `0` warnings and `0`
+errors; managed Unit `1739/1739`, Integration `933/933`, EndToEnd `172/172`;
+managed EndToEnd against the native root `172/172`; native Integration
+`933/933`; native EndToEnd `172/172`; all with `0` failures, `0` skips, and
+`0` warnings. Every later producer extends the explicit contributor inventory
+and affected Status evidence before acceptance. Task 16 Doctor is PREPARED at
+phase 2/5, milestone 2/8 from the exact Status Gray snapshot and is now next
+and eligible for exact post-Status reconciliation, but is not active.
+Its first next step is to revalidate the six shared view blobs and
+reapply/reconcile the accepted 17 C# files plus two contract amendments,
+preserving plural Extension sources, then add Red that consumes every source
+observation without fallback, substitution, reconstruction, or reread. Do not
+parse Status output or add dependency injection, a service locator, reflection,
+a runtime registry, or a generic operational engine. No Doctor tests, build,
+production, or completion is claimed.
 The exact public Root Install JSON result schema is accepted, implemented, and
 frozen, including fully present ordered facts and typed residual values `none`,
 `retained`, and `unknown`.

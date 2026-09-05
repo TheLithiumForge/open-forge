@@ -19,7 +19,13 @@ using OpenForge.Cli.Core.Commands.References;
 using OpenForge.Cli.Core.Commands.References.Models.Binding;
 using OpenForge.Cli.Core.Commands.References.Models.Result;
 using OpenForge.Cli.Core.Commands.References.Shared.Rendering;
+using OpenForge.Cli.Core.Commands.Status;
+using OpenForge.Cli.Core.Commands.Status.Models.Binding;
+using OpenForge.Cli.Core.Commands.Status.Models.Result;
+using OpenForge.Cli.Core.Commands.Status.Shared.Rendering;
+using OpenForge.Cli.Core.Framework.Lifecycle;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
+using OpenForge.Cli.Core.Framework.OperationalContributors;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Interaction;
 using OpenForge.Cli.Core.Shell.Parsing;
@@ -32,27 +38,35 @@ internal static class CliStandaloneComposer
 {
     internal static CliStandaloneComposition Compose(
         CliInteractiveSession interactiveSession,
-        WorkspaceLockStoreRoot? lockStoreRoot)
+        WorkspaceLockStoreRoot? lockStoreRoot,
+        OperationalContributorCatalogue operationalContributors,
+        LifecycleDocumentSnapshotReader lifecycleSnapshotReader)
     {
         var findSymbols = FindBinding.CreateSymbols();
         var indexSymbols = IndexBinding.CreateSymbols();
-        var installSymbols = InstallBinding.CreateSymbols();
-        var referencesSymbols = ReferencesBinding.CreateSymbols();
+        var statusSymbols = StatusBinding.CreateSymbols();
         var contextSymbols = ContextBinding.CreateSymbols();
+        var referencesSymbols = ReferencesBinding.CreateSymbols();
+        var installSymbols = InstallBinding.CreateSymbols();
         return new CliStandaloneComposition
         {
             FindBinding = BuildFind(findSymbols),
             IndexBinding = BuildIndex(indexSymbols, lockStoreRoot),
-            InstallBinding = BuildInstall(installSymbols, interactiveSession, lockStoreRoot),
-            ReferencesBinding = BuildReferences(referencesSymbols),
+            StatusBinding = BuildStatus(
+                statusSymbols,
+                operationalContributors,
+                lifecycleSnapshotReader),
             ContextBinding = BuildContext(contextSymbols),
+            ReferencesBinding = BuildReferences(referencesSymbols),
+            InstallBinding = BuildInstall(installSymbols, interactiveSession, lockStoreRoot),
             RootLeaves =
             [
                 new CliRootLeaf(findSymbols.FindCommand, []),
                 new CliRootLeaf(indexSymbols.IndexCommand, []),
-                new CliRootLeaf(installSymbols.InstallCommand, []),
-                new CliRootLeaf(referencesSymbols.ReferencesCommand, []),
+                new CliRootLeaf(statusSymbols.StatusCommand, []),
                 new CliRootLeaf(contextSymbols.ContextCommand, []),
+                new CliRootLeaf(referencesSymbols.ReferencesCommand, []),
+                new CliRootLeaf(installSymbols.InstallCommand, []),
             ],
         };
     }
@@ -81,6 +95,24 @@ internal static class CliStandaloneComposer
                 IndexHumanRenderer.Render,
                 IndexJsonRenderer.Render),
             diagnosticRenderer: IndexDiagnosticRenderer.Render);
+
+    private static ICliCommandBinding BuildStatus(
+        StatusSymbols symbols,
+        OperationalContributorCatalogue operationalContributors,
+        LifecycleDocumentSnapshotReader lifecycleSnapshotReader)
+        => StatusBinding.Close(
+            symbols,
+            new StatusBindingComponents
+            {
+                Help = StatusHelpSections.Create(),
+                Operation = new StatusOperation(
+                    operationalContributors,
+                    lifecycleSnapshotReader),
+                Renderers = new CliRendererSet<StatusResult>(
+                    StatusHumanRenderer.Render,
+                    StatusJsonRenderer.Render),
+                DiagnosticRenderer = StatusDiagnosticRenderer.Render,
+            });
 
     private static ICliCommandBinding BuildInstall(
         InstallSymbols symbols,

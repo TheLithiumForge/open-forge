@@ -529,11 +529,206 @@ never fabricates zero for an unavailable or not-applicable fact.
   unavailable finals remain issue items and are not counted as verified
 - Measurement availability and semantic result
 
-Numeric fields remain numeric. Signed differences remain derived from the two
-measured inputs. Unavailable, zero, and not-applicable values remain distinct and
-are never substituted for one another. The [Shared Result
-Coordinates](../shared/result-coordinates/interface.md) define the exact JSON
-representation, result schema, compatibility rules, and exit mapping.
+The shared schema-v1 envelope remains exactly as defined by the [Shared Result
+Coordinates](../shared/result-coordinates/interface.md). Its non-null
+command-local `result` object uses camel-case members in exactly this order:
+
+```text
+result: {
+  installation,
+  context,
+  structure,
+  lifecycle,
+  recovery,
+  findings
+}
+```
+
+The command-local graph is:
+
+```text
+installation: {
+  state,
+  entryPath,
+  loaderPath
+}
+
+context: {
+  tokenEstimator,
+  startup: {
+    initial,
+    current,
+    difference
+  },
+  totalAvailable,
+  startupPercentage,
+  continuity,
+  continuitySources: [{
+    sourceId,
+    utf8Bytes,
+    layers: [{ path, utf8Bytes }]
+  }]
+}
+
+structure: {
+  rootCategories: {
+    count,
+    added,
+    removed
+  },
+  generatedNavigation: [{ path, state }]
+}
+
+lifecycle: {
+  framework: {
+    state,
+    sourceAvailability,
+    targets: [{
+      path,
+      kind,
+      sourceAssetPath,
+      region,
+      baselineFingerprint,
+      fingerprintKind,
+      state
+    }]
+  },
+  extensions: {
+    state,
+    sourceAvailability,
+    installed: [{
+      id,
+      version,
+      source,
+      sourceAvailability,
+      dependencies,
+      paths
+    }],
+    managedFiles: {
+      counts: {
+        current,
+        changed,
+        missing,
+        unavailable,
+        blocked
+      },
+      targets: [{
+        path,
+        owners,
+        baselineFingerprint,
+        fingerprintKind,
+        state
+      }]
+    }
+  }
+}
+
+recovery: {
+  verifiedFinals,
+  incompleteDrafts,
+  candidates: [{ path, kind, integrity }]
+}
+
+findings: [{
+  code,
+  status,
+  subject,
+  cause
+}]
+```
+
+Every array is present and non-null, including an empty array. Every object in
+this graph is present and non-null. Only `installation.entryPath`,
+`installation.loaderPath`, a Framework target's `sourceAssetPath` and `region`,
+an installed Extension's `version` and `source`, a finding's `subject`, and the
+`value` member of the typed numeric values below may be `null`.
+
+Each measurement uses the exact member order `files`, `characters`,
+`utf8Bytes`, and `estimatedTokens`. Each member is one integer value object:
+
+```text
+{ state: "available" | "unavailable" | "not-applicable", value: integer | null }
+```
+
+`startupPercentage` uses the same member order and availability states, with a
+finite decimal JSON number or `null` as `value`. A numeric `value` is present
+exactly when `state` is `available`; it is `null` for `unavailable` and
+`not-applicable`. Signed Difference values remain numeric and may be negative.
+All other count and byte values are nonnegative. Zero is an available numeric
+value and is never used for either unavailable state. `tokenEstimator` is the
+exact value `ceiling-characters-divided-by-four`.
+
+The remaining command-local finite values are:
+
+| Coordinate                     | Values                                                                      |
+| ------------------------------ | --------------------------------------------------------------------------- |
+| `installation.state`           | `installed`, `uninstalled`, `incomplete`, `blocked`                         |
+| lifecycle `state`              | `absent`, `trusted`, `untrusted`, `incomplete`, `blocked`                   |
+| `sourceAvailability`           | `available`, `unavailable`, `not-applicable`                                |
+| Framework target `kind`        | `file`, `managed-region`, `generated-region`                                |
+| managed target `state`         | `current`, `changed`, `missing`, `unavailable`, `blocked`                   |
+| generated-navigation `state`   | `current`, `changed`, `missing`, `unavailable`, `blocked`, `not-applicable` |
+| recovery candidate `kind`      | `final`, `draft`                                                            |
+| recovery candidate `integrity` | `verified`, `incomplete`, `malformed`, `unsupported`, `unavailable`         |
+| finding `status`               | the seven exact shared semantic status values                               |
+
+Continuity sources follow their contracted contribution order. Their layers
+remain in base-then-overwrite order. Root `added` and `removed` arrays retain
+their contracted source order. Framework and Extension targets are ordered by
+canonical path. Installed Extensions are ordered by ID; their dependencies,
+paths, and target owners use deterministic ordinal order. Recovery candidates
+are ordered by path, then kind, then integrity. Findings are ordered by finding
+code, subject, and cause after semantic precedence is formed.
+
+The exact finite Status finding codes and their status are:
+
+| Code                               | Status        |
+| ---------------------------------- | ------------- |
+| `invalid-input`                    | `invalid`     |
+| `workspace-unavailable`            | `blocked`     |
+| `workspace-not-directory`          | `blocked`     |
+| `workspace-unsafe`                 | `blocked`     |
+| `entry-unavailable`                | `incomplete`  |
+| `embedded-framework-unavailable`   | `incomplete`  |
+| `context-inventory-incomplete`     | `incomplete`  |
+| `startup-context-unavailable`      | `incomplete`  |
+| `continuity-context-unavailable`   | `incomplete`  |
+| `root-categories-unavailable`      | `incomplete`  |
+| `generated-navigation-changed`     | `attention`   |
+| `generated-navigation-missing`     | `attention`   |
+| `generated-navigation-unavailable` | `incomplete`  |
+| `generated-navigation-blocked`     | `blocked`     |
+| `framework-lifecycle-untrusted`    | `incomplete`  |
+| `framework-lifecycle-incomplete`   | `incomplete`  |
+| `framework-lifecycle-blocked`      | `blocked`     |
+| `framework-target-changed`         | `attention`   |
+| `framework-target-missing`         | `attention`   |
+| `framework-target-unavailable`     | `incomplete`  |
+| `framework-target-blocked`         | `blocked`     |
+| `extension-lifecycle-untrusted`    | `incomplete`  |
+| `extension-lifecycle-incomplete`   | `incomplete`  |
+| `extension-lifecycle-blocked`      | `blocked`     |
+| `extension-source-unavailable`     | `incomplete`  |
+| `extension-target-changed`         | `attention`   |
+| `extension-target-missing`         | `attention`   |
+| `extension-target-unavailable`     | `incomplete`  |
+| `extension-target-blocked`         | `blocked`     |
+| `recovery-candidate-verified`      | `attention`   |
+| `recovery-draft-incomplete`        | `incomplete`  |
+| `recovery-final-malformed`         | `incomplete`  |
+| `recovery-final-unsupported`       | `incomplete`  |
+| `recovery-final-unavailable`       | `incomplete`  |
+| `recovery-catalogue-unavailable`   | `incomplete`  |
+| `operation-failed`                 | `failed`      |
+| `interrupted`                      | `interrupted` |
+
+The shared `command`, `status`, `workspace`, and `next` coordinates are not
+duplicated under `result`. Numeric fields remain numeric. Signed differences
+remain derived from the two measured inputs. Unavailable, zero, and
+not-applicable values remain distinct and are never substituted for one another.
+The Shared Result Coordinates continue to define shared envelope compatibility
+and exit mapping. This Interface owns compatibility for the exact Status-local
+graph, field order, presence, nullability, and finite values above.
 
 For an attention result, structured output keeps the semantic status value
 `attention`; only human presentation uses `requires attention`.

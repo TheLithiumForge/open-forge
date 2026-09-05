@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Install.Models.Planning;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Lifecycle;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Planning;
@@ -20,7 +21,7 @@ internal sealed class InstallPreservationVerifier(
             .Select(path => (Path: path, Region: (string?)null))
             .Concat(intended.GeneratedRegionPaths.Select(path => (
                 Path: path,
-                Region: (string?)InstallContentIdentity.GeneratedRegionIdentity)))
+                Region: (string?)LifecycleSchema.GeneratedEntriesRegion)))
             .Concat(intended.ManagedBlockBytes.Keys.Select(path => (
                 Path: path,
                 Region: (string?)null)))
@@ -106,7 +107,7 @@ internal sealed class InstallPreservationVerifier(
             if (target.SourceAssetPath is not null
                 || !string.Equals(
                     target.Region,
-                    InstallContentIdentity.GeneratedRegionIdentity,
+                    LifecycleSchema.GeneratedEntriesRegion,
                     StringComparison.Ordinal))
             {
                 throw new InvalidDataException(
@@ -133,7 +134,7 @@ internal sealed class InstallPreservationVerifier(
 
         if (string.Equals(
                 target.Region,
-                InstallContentIdentity.GeneratedRegionIdentity,
+                LifecycleSchema.GeneratedEntriesRegion,
                 StringComparison.Ordinal))
         {
             throw new InvalidDataException(

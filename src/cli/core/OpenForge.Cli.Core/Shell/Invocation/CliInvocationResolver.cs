@@ -7,7 +7,10 @@ namespace OpenForge.Cli.Core.Shell.Invocation;
 
 internal sealed record CliInvocationResolution(
     CliInvocation? Invocation,
-    CliInvalidInput? InvalidInput);
+    CliInvalidInput? InvalidInput)
+{
+    internal CliWorkspaceSelectionState? WorkspaceSelectionState { get; init; }
+}
 
 internal static class CliInvocationResolver
 {
@@ -62,7 +65,10 @@ internal static class CliInvocationResolver
             new CliInvalidInput(
                 "cli.workspace.invalid",
                 CliInvalidInputSource.Workspace,
-                [diagnostic]));
+                [diagnostic]))
+        {
+            WorkspaceSelectionState = selection.State,
+        };
     }
 
     private static CliInvocationResolution Selected(CliInvocation invocation)

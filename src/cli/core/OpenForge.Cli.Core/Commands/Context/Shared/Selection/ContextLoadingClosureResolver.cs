@@ -1,7 +1,6 @@
 using OpenForge.Cli.Core.Commands.Context.Models.Operation;
 using OpenForge.Cli.Core.Commands.Context.Models.Result;
 using OpenForge.Cli.Core.Framework.Sources.Loading;
-using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
@@ -41,106 +40,80 @@ internal sealed class ContextLoadingClosureResolver
         };
     }
 
-    private void ResolveStartup(ContextGraph graph, ContextSelectionAccumulator selected)
+    private void ResolveStartup(
+        ContextGraph graph,
+        ContextSelectionAccumulator selected)
     {
-        selected.Add(
-            graph.WorkspaceEntry,
-            new ContextInclusionReason(
-                kind: ContextInclusionReasonKind.WorkspaceEntry,
-                source: null,
-                reference: null,
-                depth: null,
-                location: null));
-        var loader = graph.Sources.SingleOrDefault(source => source.IsLoader);
-        if (loader is null)
+        var loading = new SourceLoadingClosureResolver().Resolve(new SourceLoadingClosureRequest
         {
-            AddClosureFinding(SourceLogicalPath.LoaderPath, "The canonical Loader source is unavailable.");
-            return;
+            WorkspaceEntryPath = graph.WorkspaceEntry.CanonicalPath,
+            Sources = graph.Sources.Select(source => new SourceLoadingClosureSource
+            {
+                Path = source.CanonicalPath,
+                Form = source.Form,
+                RouteState = source.RouteState,
+                ParentPath = ReadParentPath(graph, source),
+                Metadata = source.Metadata,
+                GeneratedEntries = source.GeneratedEntries,
+            }).ToArray(),
+            LoaderRootPaths = graph.RouteFacts.Topology.LoaderRootPaths,
+        });
+        foreach (var selection in loading.Startup)
+        {
+            var source = graph.FindByPath(selection.Path)
+                ?? throw new InvalidOperationException(
+                    "A resolved source loading selection must belong to the Context graph.");
+            foreach (var reason in selection.Reasons)
+            {
+                selected.Add(source, ProjectReason(graph, reason));
+            }
         }
 
-        selected.Add(
-            loader,
-            new ContextInclusionReason(
-                kind: ContextInclusionReasonKind.Loader,
-                source: null,
-                reference: null,
-                depth: null,
-                location: null));
-        var queue = new Queue<ContextGraphSource>();
-        AddVisibleStartup(graph, loader, selected, queue);
-        TraverseStartup(graph, selected, queue);
-
-        foreach (var source in graph.Sources
-                     .Where(source => !source.IsEntrypoint && !source.IsLoader)
-                     .OrderBy(source => source.CanonicalPath, StringComparer.Ordinal))
+        foreach (var issue in loading.Issues)
         {
-            if (source.Metadata.State != SourceAuthoredMetadataState.Complete)
-            {
-                if (source.RouteState != SourceRouteState.Unrouted)
-                {
-                    AddClosureFinding(
-                        source.CanonicalPath,
-                        "Global continuity membership is unavailable because source loading metadata is unavailable.");
-                }
-
-                continue;
-            }
-
-            if (!source.Metadata.Tags.Contains("KeepInMind", StringComparer.Ordinal))
-            {
-                continue;
-            }
-
-            if (source.RouteState != SourceRouteState.Routed)
-            {
-                AddClosureFinding(
-                    source.CanonicalPath,
-                    "The global continuity source route is unavailable or ambiguous.");
-                continue;
-            }
-
-            AddGlobalContinuitySource(graph, source, selected, queue);
+            AddClosureFinding(issue.Path, issue.Cause);
         }
     }
 
-    private void AddGlobalContinuitySource(
+    private static string? ReadParentPath(
         ContextGraph graph,
-        ContextGraphSource source,
-        ContextSelectionAccumulator selected,
-        Queue<ContextGraphSource> queue)
+        ContextGraphSource source)
     {
-        var chain = ReadChain(graph, source);
-        if (chain is null)
+        var node = graph.RouteFacts.Topology.FindByPath(source.CanonicalPath);
+        if (node?.ParentState == SourceRouteParentState.Resolved)
         {
-            AddClosureFinding(source.CanonicalPath, "The continuity source route chain is unavailable.");
-            return;
+            return node.ParentPaths[0];
         }
 
-        var identity = Identity(source);
-        foreach (var ancestor in chain.Take(chain.Count - 1).Where(item => item.IsEntrypoint))
-        {
-            if (selected.Add(
-                    ancestor,
-                    new ContextInclusionReason(
-                        kind: ContextInclusionReasonKind.AncestorRequired,
-                        source: identity,
-                        reference: null,
-                        depth: null,
-                        location: null)))
+        return null;
+    }
+
+    private static ContextInclusionReason ProjectReason(
+        ContextGraph graph,
+        SourceLoadingClosureReason reason)
+    {
+        var source = reason.SourcePath is null
+            ? null
+            : graph.FindByPath(reason.SourcePath)
+                ?? throw new InvalidOperationException(
+                    "A source loading inclusion reason must identify one Context graph source.");
+        return new ContextInclusionReason(
+            kind: reason.Kind switch
             {
-                queue.Enqueue(ancestor);
-            }
-        }
-
-        selected.Add(
-            source,
-            new ContextInclusionReason(
-                kind: ContextInclusionReasonKind.KeepInMind,
-                source: null,
-                reference: null,
-                depth: null,
-                location: null));
-        TraverseStartup(graph, selected, queue);
+                SourceLoadingClosureReasonKind.WorkspaceEntry => ContextInclusionReasonKind.WorkspaceEntry,
+                SourceLoadingClosureReasonKind.Loader => ContextInclusionReasonKind.Loader,
+                SourceLoadingClosureReasonKind.LoadNow => ContextInclusionReasonKind.LoadNow,
+                SourceLoadingClosureReasonKind.KeepInMind => ContextInclusionReasonKind.KeepInMind,
+                SourceLoadingClosureReasonKind.AncestorRequired => ContextInclusionReasonKind.AncestorRequired,
+                _ => throw new ArgumentOutOfRangeException(
+                    nameof(reason),
+                    reason.Kind,
+                    "The source loading closure reason kind is not defined."),
+            },
+            source: source is null ? null : Identity(source),
+            reference: null,
+            depth: null,
+            location: null);
     }
 
     private void ResolveExplicit(
@@ -218,48 +191,6 @@ internal sealed class ContextLoadingClosureResolver
             {
                 TraverseSelected(graph, selectedEntrypoints, selected, value.Reference);
             }
-        }
-    }
-
-    private void AddVisibleStartup(
-        ContextGraph graph,
-        ContextGraphSource parent,
-        ContextSelectionAccumulator selected,
-        Queue<ContextGraphSource> queue)
-    {
-        foreach (var entry in ReadVisibleEntries(graph, parent))
-        {
-            if (!entry.LoadNow && !(entry.KeepInMind && entry.Target.IsEntrypoint))
-            {
-                continue;
-            }
-
-            var kind = entry.LoadNow
-                ? ContextInclusionReasonKind.LoadNow
-                : ContextInclusionReasonKind.KeepInMind;
-            if (selected.Add(
-                    entry.Target,
-                    new ContextInclusionReason(
-                        kind: kind,
-                        source: Identity(parent),
-                        reference: null,
-                        depth: null,
-                        location: null))
-                && entry.Target.IsEntrypoint)
-            {
-                queue.Enqueue(entry.Target);
-            }
-        }
-    }
-
-    private void TraverseStartup(
-        ContextGraph graph,
-        ContextSelectionAccumulator selected,
-        Queue<ContextGraphSource> queue)
-    {
-        while (queue.TryDequeue(out var parent))
-        {
-            AddVisibleStartup(graph, parent, selected, queue);
         }
     }
 

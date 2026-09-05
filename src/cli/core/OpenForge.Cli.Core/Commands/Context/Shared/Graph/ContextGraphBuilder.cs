@@ -89,7 +89,7 @@ internal sealed class ContextGraphBuilder
         CliWorkspace workspace,
         CancellationToken cancellationToken)
     {
-        const string logicalPath = "AGENTS.md";
+        const string logicalPath = SourceLogicalPath.WorkspaceEntryPath;
         var lexicalPath = Path.Combine(workspace.LexicalRoot, logicalPath);
         var resolution = new PhysicalPathResolver().ResolveCandidate(
             workspace.LexicalRoot,

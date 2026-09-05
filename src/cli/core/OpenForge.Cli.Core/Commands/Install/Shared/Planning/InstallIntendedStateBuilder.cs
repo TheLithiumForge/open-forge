@@ -172,9 +172,11 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
             }
 
             var rootAgent = payload.Find(FrameworkPayloadAsset.RootAgentPath)
-                ?? throw new InvalidDataException("The embedded Framework payload is missing AGENTS.md.");
+                ?? throw new InvalidDataException(
+                    $"The embedded Framework payload is missing {FrameworkPayloadAsset.RootAgentPath}.");
             var rootClaude = payload.Find(FrameworkPayloadAsset.RootClaudePath)
-                ?? throw new InvalidDataException("The embedded Framework payload is missing CLAUDE.md.");
+                ?? throw new InvalidDataException(
+                    $"The embedded Framework payload is missing {FrameworkPayloadAsset.RootClaudePath}.");
             return new InstallIntendedStateBuild
             {
                 State = InstallIntendedStateBuildState.Complete,

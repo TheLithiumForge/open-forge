@@ -389,6 +389,54 @@ The typed result is formed once. Human and structured renderers consume it witho
 rerunning workspace resolution, closure collection, enumeration, measurement,
 comparison, ordering, or status formation.
 
+The operation obtains those facts through the six explicitly composed typed
+operational contributors for workspace and entry, recovery and residuals,
+routes and generated navigation, local references, Framework lifecycle, and
+Extension lifecycle. Status invokes the first, second, third, fifth, and sixth
+contributors once for its narrow Status view. It never invokes the local-
+reference contributor. The catalogue retains that local-reference domain for Doctor,
+which consumes the separate narrow Doctor views rather than Status output or
+command-private implementation.
+
+Direct root composition preserves the exact leaf order `find`, `index`,
+`status`, `context`, `references`, `install`. The Status leaf occupies the
+position between `index` and `context`; it is not appended after `install`.
+
+Each contributor view is a fresh immutable projection of observations made for
+the selected workspace in the current invocation. A view carries producer facts,
+not command status, recommendations, rendering, or mutation authority. Status
+owns the joining, derived arithmetic, deterministic ordering, finding mapping,
+overall result, and presentation. Neither command discovers contributors at
+runtime or receives an enumerable registry, service collection, ambient
+registration, broad context bag, or another command's result.
+
+Result formation projects the exact command-local graph and member order in
+[Interface Structured Output](interface.md#structured-output). It materializes
+every collection, including empty collections, before forming the concrete
+result. It preserves nullable installed package facts when source bytes are
+unavailable, counts a shared Extension target once while retaining its complete
+ordered owner set, and projects recovery candidates to path, kind, and integrity
+only. It never exposes a verified bundle's command, operation identity, entry
+manifest, payload facts, target state, activity, lock, fallback, preparation, or
+payload bytes.
+
+Each numeric result first receives an explicit `available`, `unavailable`, or
+`not-applicable` state. Only an available value carries a number. Difference is
+then derived independently for each metric from available current and Initial
+operands. Startup percentage is formed only under the Interface arithmetic
+rules and must be a finite decimal value. Count summaries are unavailable when
+the contributing boundary cannot establish completeness; an empty observation
+array never turns that state into an available zero.
+
+Generated-navigation observations use only `current`, `changed`, `missing`,
+`unavailable`, `blocked`, and `not-applicable`. Framework and Extension managed
+targets use only `current`, `changed`, `missing`, `unavailable`, and `blocked`.
+The result preserves every per-target observation and does not replace it with
+one aggregate currentness fact. Finding formation uses only the exact finite
+codes and code-to-status mapping in the Interface. The overall selector then
+applies the public semantic precedence without reclassifying a finding from its
+message text.
+
 ### Semantic Result Formation
 
 The result selector uses only the seven public semantic states in

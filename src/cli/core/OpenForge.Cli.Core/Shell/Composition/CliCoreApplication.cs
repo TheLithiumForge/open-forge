@@ -81,7 +81,10 @@ internal sealed class CliCoreApplication
                         invocation.InvalidInput,
                         input,
                         environment,
-                        new CliBindingParse(parse.Result, parse.OriginalArguments)),
+                        new CliBindingParse(parse.Result, parse.OriginalArguments))
+                    {
+                        WorkspaceSelectionState = invocation.WorkspaceSelectionState,
+                    },
                     writers,
                     cancellationToken)
                 .ConfigureAwait(false);

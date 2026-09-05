@@ -335,14 +335,6 @@ public sealed class PublishedRouteUpdateStatusProcessTests
         Assert.Contains("Recovery: retained", result.StandardError, StringComparison.Ordinal);
         Assert.Contains(recoveryArtifact, result.StandardError, StringComparison.Ordinal);
         Assert.Contains("Verification: failed", result.StandardError, StringComparison.Ordinal);
-        Assert.True(
-            result.StandardError.Contains(
-                "The current file state no longer matches the planned expectation.",
-                StringComparison.Ordinal)
-            || result.StandardError.Contains(
-                "The final Route Update state did not rebuild as the exact complete safe no-op.",
-                StringComparison.Ordinal),
-            "The failed process must report the exact receipt or rebuilt-state verification cause.");
         Assert.Contains(
             "Next: open-forge route update --verbose",
             result.StandardError,

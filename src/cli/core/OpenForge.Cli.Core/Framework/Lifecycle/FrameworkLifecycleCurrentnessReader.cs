@@ -8,30 +8,16 @@ namespace OpenForge.Cli.Core.Framework.Lifecycle;
 
 internal sealed class FrameworkLifecycleCurrentnessReader
 {
-    private const string GeneratedRegionIdentity = "entries";
-    private readonly FrameworkContentIdentity _contentIdentity = new();
-    private readonly PhysicalPathResolver _physicalPathResolver;
+    private readonly LifecycleManagedTargetReader _managedTargetReader;
+    private readonly FrameworkLifecycleTargetIdentity _targetIdentity = new();
 
     internal FrameworkLifecycleCurrentnessReader(
         PhysicalPathResolver physicalPathResolver)
     {
-        ArgumentNullException.ThrowIfNull(physicalPathResolver);
-        _physicalPathResolver = physicalPathResolver;
+        _managedTargetReader = new LifecycleManagedTargetReader(physicalPathResolver);
     }
 
-    internal ValueTask<FrameworkLifecycleCurrentness> ReadAsync(
-        CliWorkspace workspace,
-        FrameworkLifecycleState lifecycle,
-        FrameworkPayload payload,
-        CancellationToken cancellationToken)
-    {
-        ArgumentNullException.ThrowIfNull(workspace);
-        ArgumentNullException.ThrowIfNull(lifecycle);
-        ArgumentNullException.ThrowIfNull(payload);
-        return ReadCoreAsync(workspace, lifecycle, payload, cancellationToken);
-    }
-
-    private async ValueTask<FrameworkLifecycleCurrentness> ReadCoreAsync(
+    internal async ValueTask<FrameworkLifecycleCurrentness> ReadAsync(
         CliWorkspace workspace,
         FrameworkLifecycleState lifecycle,
         FrameworkPayload payload,
@@ -61,54 +47,28 @@ internal sealed class FrameworkLifecycleCurrentnessReader
                 return Cancelled();
             }
 
-            var ownershipBoundary = ValidateOwnership(target, generatedTargets, payload);
+            var ownershipBoundary = ReadSourceBoundary(target, generatedTargets, payload);
             if (ownershipBoundary is not null)
             {
                 return ownershipBoundary;
             }
 
-            var lexicalPath = Path.Combine(
-                workspace.LexicalRoot,
-                target.Path.Replace('/', Path.DirectorySeparatorChar));
-            var resolution = _physicalPathResolver.ResolveCandidate(
-                workspace.LexicalRoot,
-                workspace.PhysicalRoot,
-                lexicalPath);
-            var resolutionBoundary = ReadResolutionBoundary(target.Path, resolution);
-            if (resolutionBoundary is not null)
+            var read = await _managedTargetReader
+                .ReadAsync(workspace, target.Path, cancellationToken)
+                .ConfigureAwait(false);
+            var readBoundary = ReadTargetBoundary(target.Path, read);
+            if (readBoundary is not null)
             {
-                return resolutionBoundary;
-            }
-
-            byte[] bytes;
-            try
-            {
-                bytes = await File.ReadAllBytesAsync(
-                        resolution.GetContainedPhysicalPath(),
-                        cancellationToken)
-                    .ConfigureAwait(false);
-            }
-            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-            {
-                return Cancelled();
-            }
-            catch (Exception exception) when (exception is FileNotFoundException
-                or DirectoryNotFoundException)
-            {
-                return Missing(target.Path, "The lifecycle Framework target is missing.");
-            }
-            catch (Exception exception) when (exception is UnauthorizedAccessException
-                or IOException)
-            {
-                return Unavailable(
-                    target.Path,
-                    $"The lifecycle Framework target cannot be read: {exception.Message}");
+                return readBoundary;
             }
 
             string fingerprint;
             try
             {
-                fingerprint = ReadFingerprint(target, generatedTargets, bytes);
+                fingerprint = _targetIdentity.ReadFingerprint(
+                    target,
+                    generatedTargets,
+                    read.Bytes.Span);
             }
             catch (Exception exception) when (exception is ArgumentException
                 or DecoderFallbackException
@@ -134,123 +94,52 @@ internal sealed class FrameworkLifecycleCurrentnessReader
         return Current();
     }
 
-    private FrameworkLifecycleCurrentness? ValidateOwnership(
+    private FrameworkLifecycleCurrentness? ReadSourceBoundary(
         FrameworkLifecycleTarget target,
         IReadOnlySet<(string Path, string? Region)> generatedTargets,
         FrameworkPayload payload)
     {
-        var generated = generatedTargets.Contains((target.Path, target.Region));
-        if (generated)
+        var validation = _targetIdentity.ValidateSource(target, generatedTargets, payload);
+        return validation.State switch
         {
-            return target.SourceAssetPath is null
-                    && string.Equals(target.Region, GeneratedRegionIdentity, StringComparison.Ordinal)
-                    && string.Equals(
-                        target.FingerprintKind,
-                        LifecycleSchema.ExactBytesFingerprintKind,
-                        StringComparison.Ordinal)
-                ? null
-                : Blocked(
-                    target.Path,
-                    "A generated lifecycle Framework target has unsupported provenance or fingerprint identity.");
-        }
-
-        if (target.SourceAssetPath is not { } sourceAssetPath
-            || payload.Find(sourceAssetPath) is not { } asset)
-        {
-            return SourceMismatch(
-                "A lifecycle Framework target does not belong to the running embedded inventory.");
-        }
-
-        string sourceFingerprint;
-        try
-        {
-            sourceFingerprint = _contentIdentity.ReadSourceFingerprint(
-                asset.Bytes.AsSpan(),
-                target.FingerprintKind);
-        }
-        catch (Exception exception) when (exception is ArgumentException
-            or InvalidDataException
-            or InvalidOperationException)
-        {
-            return SourceMismatch(
-                $"A lifecycle Framework source asset cannot establish its running identity: {exception.Message}");
-        }
-
-        return string.Equals(
-                sourceFingerprint,
-                target.BaselineFingerprint,
-                StringComparison.Ordinal)
-            ? null
-            : SourceMismatch(
-                "A lifecycle Framework target baseline does not match its running embedded source asset.");
-    }
-
-    private string ReadFingerprint(
-        FrameworkLifecycleTarget target,
-        IReadOnlySet<(string Path, string? Region)> generatedTargets,
-        ReadOnlySpan<byte> bytes)
-    {
-        if (generatedTargets.Contains((target.Path, target.Region)))
-        {
-            return _contentIdentity.ReadGeneratedEntriesFingerprint(
-                bytes,
-                target.FingerprintKind);
-        }
-
-        if (target.Path is FrameworkPayloadAsset.RootAgentPath
-            or FrameworkPayloadAsset.RootClaudePath)
-        {
-            var recognition = _contentIdentity.ReadManagedBlock(bytes);
-            if (recognition.State != FrameworkManagedBlockState.Present
-                || recognition.ExistingBlockBytes is null)
-            {
-                throw new InvalidDataException(
-                    recognition.Cause
-                        ?? "The managed host requires one complete ordered Open Forge marker boundary.");
-            }
-
-            return _contentIdentity.ReadSourceFingerprint(
-                recognition.ExistingBlockBytes,
-                target.FingerprintKind);
-        }
-
-        if (target.Region is not null)
-        {
-            throw new InvalidDataException(
-                "Only entries regions and root managed blocks are supported Framework target regions.");
-        }
-
-        return _contentIdentity.ReadSourceFingerprint(bytes, target.FingerprintKind);
-    }
-
-    private static FrameworkLifecycleCurrentness? ReadResolutionBoundary(
-        string path,
-        PhysicalPathResolution resolution)
-    {
-        return resolution.State switch
-        {
-            PhysicalPathState.Contained => null,
-            PhysicalPathState.Missing => Missing(
-                path,
-                "The lifecycle Framework target is missing."),
-            PhysicalPathState.Inaccessible or PhysicalPathState.InputOutputFailure => Unavailable(
-                path,
-                resolution.Failure?.DirectCause
-                    ?? "The lifecycle Framework target is unavailable."),
-            PhysicalPathState.Dangling
-                or PhysicalPathState.External
-                or PhysicalPathState.Cycle
-                or PhysicalPathState.Invalid
-                or PhysicalPathState.Unsupported => Blocked(
-                    path,
-                    resolution.Failure?.DirectCause
-                        ?? "The lifecycle Framework target is not a safe contained path."),
+            FrameworkLifecycleTargetSourceState.Valid => null,
+            FrameworkLifecycleTargetSourceState.SourceMismatch => SourceMismatch(
+                validation.Cause
+                    ?? "The lifecycle Framework source identity is unavailable."),
+            FrameworkLifecycleTargetSourceState.Blocked => Blocked(
+                target.Path,
+                validation.Cause
+                    ?? "The lifecycle Framework target identity is blocked."),
             _ => throw new ArgumentOutOfRangeException(
-                nameof(resolution),
-                resolution.State,
-                "The physical path state is not defined."),
+                nameof(validation),
+                validation.State,
+                "The Framework lifecycle target source state is not defined."),
         };
     }
+
+    private static FrameworkLifecycleCurrentness? ReadTargetBoundary(
+        string path,
+        LifecycleManagedTargetReadResult read)
+        => read.State switch
+        {
+            LifecycleManagedTargetReadState.Available => null,
+            LifecycleManagedTargetReadState.Missing => Missing(
+                path,
+                "The lifecycle Framework target is missing."),
+            LifecycleManagedTargetReadState.Unavailable => Unavailable(
+                path,
+                read.Failure?.DirectCause
+                    ?? "The lifecycle Framework target is unavailable."),
+            LifecycleManagedTargetReadState.Blocked => Blocked(
+                path,
+                read.Failure?.DirectCause
+                        ?? "The lifecycle Framework target is not a safe contained path."),
+            LifecycleManagedTargetReadState.Cancelled => Cancelled(),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(read),
+                read.State,
+                "The lifecycle target read state is not defined."),
+        };
 
     private static FrameworkLifecycleCurrentness Current()
         => new(FrameworkLifecycleCurrentnessState.Current, path: null, cause: null);

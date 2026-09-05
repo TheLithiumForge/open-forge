@@ -83,7 +83,6 @@ internal sealed record RouteInitFrameworkLifecyclePlan(
 
 internal sealed class RouteInitFrameworkLifecycleBuilder
 {
-    private const string GeneratedEntriesRegion = "entries";
     private readonly FrameworkContentIdentity _contentIdentity = new();
     private readonly FrameworkLifecycleCurrentnessReader _currentnessReader;
     private readonly LifecycleStore _store;
@@ -184,22 +183,22 @@ internal sealed class RouteInitFrameworkLifecycleBuilder
                     continue;
                 }
 
-                targets[(addition.Path, GeneratedEntriesRegion)] = new FrameworkLifecycleTarget
+                targets[(addition.Path, LifecycleSchema.GeneratedEntriesRegion)] = new FrameworkLifecycleTarget
                 {
                     Path = addition.Path,
                     SourceAssetPath = null,
-                    Region = GeneratedEntriesRegion,
+                    Region = LifecycleSchema.GeneratedEntriesRegion,
                     BaselineFingerprint = _contentIdentity.ReadGeneratedEntriesFingerprint(
                         addition.FinalBytes.AsSpan(),
                         LifecycleSchema.ExactBytesFingerprintKind),
                     FingerprintKind = LifecycleSchema.ExactBytesFingerprintKind,
                 };
                 generated.TryAdd(
-                    (addition.Path, GeneratedEntriesRegion),
+                    (addition.Path, LifecycleSchema.GeneratedEntriesRegion),
                     new FrameworkGeneratedRegion
                     {
                         Path = addition.Path,
-                        Region = GeneratedEntriesRegion,
+                        Region = LifecycleSchema.GeneratedEntriesRegion,
                     });
             }
 

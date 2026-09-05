@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Invocation;
 using OpenForge.Cli.Core.Shell.Parsing.Models;
 
@@ -7,4 +8,7 @@ internal sealed record CliInvalidBindingInput(
     CliInvalidInput InvalidInput,
     CliGlobalInput GlobalInput,
     CliProcessEnvironment ProcessEnvironment,
-    CliBindingParse BindingParse);
+    CliBindingParse BindingParse)
+{
+    internal CliWorkspaceSelectionState? WorkspaceSelectionState { get; init; }
+}

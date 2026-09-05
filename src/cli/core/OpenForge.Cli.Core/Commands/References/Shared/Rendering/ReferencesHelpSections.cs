@@ -1,4 +1,5 @@
 using System.Globalization;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Presentation;
 
@@ -29,7 +30,7 @@ internal static class ReferencesHelpSections
                 "Examples",
                 "  open-forge references memory\n"
                 + "  open-forge references memory --direction=in --include=directives --exclude=working/checkpoints\n"
-                + "  open-forge references .agents/loader.md --direction=out --json"),
+                + $"  open-forge references {SourceLogicalPath.LoaderPath} --direction=out --json"),
             new CliHelpSection(
                 "Related commands",
                 "  open-forge find — discover sources by authored predicates.\n"

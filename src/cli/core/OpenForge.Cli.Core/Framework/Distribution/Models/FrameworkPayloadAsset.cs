@@ -6,7 +6,7 @@ namespace OpenForge.Cli.Core.Framework.Distribution.Models;
 
 internal sealed class FrameworkPayloadAsset
 {
-    internal const string RootAgentPath = "AGENTS.md";
+    internal const string RootAgentPath = SourceLogicalPath.WorkspaceEntryPath;
     internal const string RootClaudePath = "CLAUDE.md";
     internal const string LoaderPath = SourceLogicalPath.LoaderPath;
 

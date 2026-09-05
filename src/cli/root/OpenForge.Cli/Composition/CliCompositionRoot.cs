@@ -1,6 +1,21 @@
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Extensions;
+using OpenForge.Cli.Core.Framework.Extensions.Operational;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
+using OpenForge.Cli.Core.Framework.Lifecycle;
+using OpenForge.Cli.Core.Framework.Lifecycle.Operational;
+using OpenForge.Cli.Core.Framework.Lifecycle.Ownership;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
+using OpenForge.Cli.Core.Framework.OperationalContributors;
+using OpenForge.Cli.Core.Framework.Recovery;
+using OpenForge.Cli.Core.Framework.Recovery.Operational;
+using OpenForge.Cli.Core.Framework.Sources.Operational;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
+using OpenForge.Cli.Core.Framework.Sources.Reading;
+using OpenForge.Cli.Core.Framework.Sources.References;
 using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Workspace.Operational;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Interaction;
@@ -28,8 +43,39 @@ internal static class CliCompositionRoot
         CliCompositionInputs inputs)
     {
         var interactiveSession = CreateInteractiveSession(inputs);
+        var physicalPathResolver = new PhysicalPathResolver();
+        var sourceSessionReader = new SourceReadSessionReader(physicalPathResolver);
+        var operationalContributors = new OperationalContributorCatalogue(
+            new WorkspaceEntryOperationalContributor(physicalPathResolver),
+            new RecoveryResidualOperationalContributor(
+                new RecoveryBundleCatalogue(new RecoveryBundleReader())),
+            new RouteOperationalContributor(
+                new RouteObservationReader(
+                    new RouteSourceInspector(sourceSessionReader, physicalPathResolver),
+                    new RouteGeneratedNavigationReader(physicalPathResolver))),
+            new LocalReferenceOperationalContributor(
+                sourceSessionReader,
+                new SourceLinkDestinationResolver(
+                    (workspace, lexicalPath) => physicalPathResolver.ResolveCandidate(
+                        workspace.LexicalRoot,
+                        workspace.PhysicalRoot,
+                        lexicalPath),
+                    StrictUtf8FileReader.ReadAsync,
+                    new MarkdownDocumentParser().Parse)),
+            new FrameworkLifecycleOperationalContributor(
+                new LifecycleStore(physicalPathResolver),
+                new FrameworkLifecycleTargetReader(physicalPathResolver)),
+            new ExtensionLifecycleOperationalContributor(
+                new LifecycleDocumentReader(physicalPathResolver),
+                new ExtensionSourceReader(physicalPathResolver),
+                new ExtensionLifecycleTargetReader(physicalPathResolver),
+                new LifecycleOwnershipReader(physicalPathResolver)));
         var route = CliRouteComposer.Compose(interactiveSession, inputs.LockStoreRoot);
-        var standalone = CliStandaloneComposer.Compose(interactiveSession, inputs.LockStoreRoot);
+        var standalone = CliStandaloneComposer.Compose(
+            interactiveSession,
+            inputs.LockStoreRoot,
+            operationalContributors,
+            new LifecycleDocumentSnapshotReader(physicalPathResolver));
         var extension = CliExtensionComposer.Compose(
             interactiveSession,
             inputs.LockStoreRoot);
@@ -45,19 +91,20 @@ internal static class CliCompositionRoot
                 route.MoveBinding,
                 standalone.FindBinding,
                 standalone.IndexBinding,
-                standalone.InstallBinding,
+                standalone.StatusBinding,
+                standalone.ContextBinding,
                 standalone.ReferencesBinding,
+                standalone.InstallBinding,
                 extension.ListBinding,
                 extension.InspectBinding,
                 extension.CreateBinding,
                 extension.InstallBinding,
-                standalone.ContextBinding,
             ],
             rootLeaves: standalone.RootLeaves);
         return new CliCoreApplication(
             process,
             tree,
-            new CliWorkspaceSelector(new PhysicalPathResolver()));
+            new CliWorkspaceSelector(physicalPathResolver));
     }
 
     private static CliInteractiveSession CreateInteractiveSession(CliCompositionInputs inputs)
@@ -81,6 +128,7 @@ internal static class CliCompositionRoot
                   route update      Update selected fields or an eligible Template body on one routed source.
                   route move        Move one routed source or category while preserving its route meaning.
                   find              Find Markdown sources by authored tags and structural headings.
+                  status            Inspect workspace, context, lifecycle, generated-navigation, and recovery status.
                   extension list    List installed and available Extension packages.
                   extension inspect Inspect one installed or available Extension package.
                   extension create  Create one local Extension package scaffold.

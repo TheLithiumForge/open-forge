@@ -60,9 +60,9 @@ public sealed class WorkspaceSelectorTests
         Assert.Equal(before, temporary.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Workspace selector classifies an existing file as invalid")]
+    [Fact(DisplayName = "Workspace selector classifies an existing file as not a directory")]
     [Trait("Feature", "cli-workspace"), Trait("Evidence", "Integration")]
-    public void SelectorClassifiesExistingFileAsInvalid()
+    public void SelectorClassifiesExistingFileAsNotDirectory()
     {
         using var temporary = TemporaryWorkspace.Create("workspace-file");
         var file = temporary.CreateFile("workspace.txt", "not a directory");
@@ -70,7 +70,7 @@ public sealed class WorkspaceSelectorTests
         var result = new CliWorkspaceSelector(new PhysicalPathResolver()).Select(
             new CliWorkspaceRequest(file, temporary.Path));
 
-        Assert.Equal(CliWorkspaceSelectionState.Invalid, result.State);
+        Assert.Equal(CliWorkspaceSelectionState.NotDirectory, result.State);
         Assert.Equal(FilesystemFailureKind.InvalidPath, result.Failure?.Kind);
         Assert.Null(result.Workspace);
         Assert.True(File.Exists(file));

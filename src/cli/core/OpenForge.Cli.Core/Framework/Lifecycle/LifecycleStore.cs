@@ -1,6 +1,5 @@
 using System.Text;
 using System.Text.Json;
-using OpenForge.Cli.Core.Framework.Filesystem;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models;
 using OpenForge.Cli.Core.Framework.Lifecycle.Serialization;
@@ -14,11 +13,11 @@ internal sealed partial class LifecycleStore
     private static readonly UTF8Encoding StrictUtf8 = new(
         encoderShouldEmitUTF8Identifier: false,
         throwOnInvalidBytes: true);
-    private readonly PhysicalPathResolver _physicalPathResolver;
+    private readonly LifecycleDocumentSnapshotReader _snapshotReader;
 
     internal LifecycleStore(PhysicalPathResolver physicalPathResolver)
     {
-        _physicalPathResolver = physicalPathResolver;
+        _snapshotReader = new LifecycleDocumentSnapshotReader(physicalPathResolver);
     }
 
     internal async ValueTask<LifecycleStoreReadResult> ReadAsync(
@@ -35,103 +34,36 @@ internal sealed partial class LifecycleStore
                 "The lifecycle section is not defined.");
         }
 
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return LifecycleStoreReadResult.Cancelled(workspace, selectedSection);
-        }
+        var snapshot = await _snapshotReader.ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        return Read(snapshot, selectedSection);
+    }
 
-        var logicalPath = Path.Combine(
-            workspace.LexicalRoot,
-            LifecycleSchema.DirectoryName,
-            LifecycleSchema.FileName);
-        var resolution = Resolve(workspace, logicalPath);
-        if (resolution.State == PhysicalPathState.Missing)
+    internal LifecycleStoreReadResult Read(
+        LifecycleDocumentSnapshot snapshot,
+        LifecycleSection selectedSection)
+    {
+        if (!Enum.IsDefined(selectedSection))
         {
-            return LifecycleStoreReadResult.DocumentMissing(
-                workspace,
+            throw new ArgumentOutOfRangeException(
+                nameof(selectedSection),
                 selectedSection,
-                FileStateSnapshot.Missing(logicalPath));
+                "The lifecycle section is not defined.");
         }
 
-        if (resolution.State != PhysicalPathState.Contained)
+        return snapshot.State switch
         {
-            return FromResolution(workspace, selectedSection, resolution);
-        }
-
-        var physicalPath = resolution.GetContainedPhysicalPath();
-        try
-        {
-            var attributes = File.GetAttributes(physicalPath);
-            if ((attributes & FileAttributes.Directory) != 0)
-            {
-                return LifecycleStoreReadResult.Invalid(
-                    workspace,
-                    selectedSection,
-                    FileStateSnapshot.Directory(logicalPath, physicalPath),
-                    "The lifecycle document path is a directory.");
-            }
-
-            if ((attributes & (FileAttributes.Device | FileAttributes.ReparsePoint)) != 0)
-            {
-                return LifecycleStoreReadResult.Blocked(
-                    workspace,
-                    selectedSection,
-                    file: null,
-                    "The lifecycle document path is not an ordinary file.");
-            }
-
-            var bytes = await File.ReadAllBytesAsync(physicalPath, cancellationToken).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested)
-            {
-                return LifecycleStoreReadResult.Cancelled(workspace, selectedSection);
-            }
-
-            var confirmed = Resolve(workspace, logicalPath);
-            if (confirmed.State != PhysicalPathState.Contained)
-            {
-                return FromResolution(workspace, selectedSection, confirmed);
-            }
-
-            var confirmedPhysicalPath = confirmed.GetContainedPhysicalPath();
-            if (!string.Equals(physicalPath, confirmedPhysicalPath, PathComparison()))
-            {
-                return LifecycleStoreReadResult.Blocked(
-                    workspace,
-                    selectedSection,
-                    file: null,
-                    "The lifecycle document changed its resolved physical path during inspection.");
-            }
-
-            var file = FileStateSnapshot.File(logicalPath, confirmedPhysicalPath, bytes);
-            return Decode(workspace, selectedSection, file);
-        }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-            return LifecycleStoreReadResult.Cancelled(workspace, selectedSection);
-        }
-        catch (Exception exception) when (exception is FileNotFoundException or DirectoryNotFoundException)
-        {
-            return LifecycleStoreReadResult.DocumentMissing(
-                workspace,
-                selectedSection,
-                FileStateSnapshot.Missing(logicalPath));
-        }
-        catch (UnauthorizedAccessException exception)
-        {
-            return Unavailable(
-                workspace,
-                selectedSection,
-                FilesystemFailureKind.AccessDenied,
-                exception);
-        }
-        catch (IOException exception)
-        {
-            return Unavailable(
-                workspace,
-                selectedSection,
-                FilesystemFailureKind.InputOutput,
-                exception);
-        }
+            LifecycleDocumentSnapshotState.Available => DecodeAvailable(snapshot, selectedSection),
+            LifecycleDocumentSnapshotState.Missing => Missing(snapshot, selectedSection),
+            LifecycleDocumentSnapshotState.Blocked => Blocked(snapshot, selectedSection),
+            LifecycleDocumentSnapshotState.Unavailable => Unavailable(snapshot, selectedSection),
+            LifecycleDocumentSnapshotState.Interrupted => LifecycleStoreReadResult.Cancelled(
+                snapshot.Workspace,
+                selectedSection),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(snapshot),
+                snapshot.State,
+                "The lifecycle document snapshot state is not defined."),
+        };
     }
 
     private static LifecycleStoreReadResult Decode(
@@ -195,12 +127,47 @@ internal sealed partial class LifecycleStore
                 "The lifecycle section is not defined."),
         };
 
-    private PhysicalPathResolution Resolve(CliWorkspace workspace, string path)
-        => _physicalPathResolver.ResolveCandidate(
-            workspace.LexicalRoot,
-            workspace.PhysicalRoot,
-            path);
+    private static LifecycleStoreReadResult DecodeAvailable(
+        LifecycleDocumentSnapshot snapshot,
+        LifecycleSection selectedSection)
+    {
+        if (snapshot.File is not { } file)
+        {
+            throw new InvalidOperationException("An available lifecycle snapshot requires file bytes.");
+        }
 
-    private static StringComparison PathComparison()
-        => OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+        return Decode(snapshot.Workspace, selectedSection, file);
+    }
+
+    private static LifecycleStoreReadResult Missing(
+        LifecycleDocumentSnapshot snapshot,
+        LifecycleSection selectedSection)
+    {
+        if (snapshot.File is not { } file)
+        {
+            throw new InvalidOperationException("A missing lifecycle snapshot requires its file fact.");
+        }
+
+        return LifecycleStoreReadResult.DocumentMissing(snapshot.Workspace, selectedSection, file);
+    }
+
+    private static LifecycleStoreReadResult Blocked(
+        LifecycleDocumentSnapshot snapshot,
+        LifecycleSection selectedSection)
+    {
+        var cause = snapshot.Cause
+            ?? throw new InvalidOperationException("A blocked lifecycle snapshot requires its cause.");
+        return snapshot.File is { Kind: FileExpectationKind.Directory } file
+            ? LifecycleStoreReadResult.Invalid(snapshot.Workspace, selectedSection, file, cause)
+            : LifecycleStoreReadResult.Blocked(snapshot.Workspace, selectedSection, snapshot.File, cause);
+    }
+
+    private static LifecycleStoreReadResult Unavailable(
+        LifecycleDocumentSnapshot snapshot,
+        LifecycleSection selectedSection)
+    {
+        var failure = snapshot.Failure
+            ?? throw new InvalidOperationException("An unavailable lifecycle snapshot requires its failure.");
+        return LifecycleStoreReadResult.Unavailable(snapshot.Workspace, selectedSection, failure);
+    }
 }

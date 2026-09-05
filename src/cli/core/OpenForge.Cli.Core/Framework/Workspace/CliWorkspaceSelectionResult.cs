@@ -6,6 +6,7 @@ internal enum CliWorkspaceSelectionState
 {
     Selected,
     Missing,
+    NotDirectory,
     Invalid,
     Inaccessible,
     Unsafe,
@@ -40,6 +41,7 @@ internal sealed class CliWorkspaceSelectionResult
     {
         if (state is CliWorkspaceSelectionState.Selected
             or CliWorkspaceSelectionState.Invalid
+            or CliWorkspaceSelectionState.NotDirectory
             or CliWorkspaceSelectionState.Inaccessible
             or CliWorkspaceSelectionState.Unsupported
             or CliWorkspaceSelectionState.InputOutputFailure
@@ -57,6 +59,7 @@ internal sealed class CliWorkspaceSelectionResult
     {
         ArgumentNullException.ThrowIfNull(failure);
         if (state is not (CliWorkspaceSelectionState.Invalid
+            or CliWorkspaceSelectionState.NotDirectory
             or CliWorkspaceSelectionState.Inaccessible
             or CliWorkspaceSelectionState.Unsupported
             or CliWorkspaceSelectionState.InputOutputFailure))
@@ -67,6 +70,7 @@ internal sealed class CliWorkspaceSelectionResult
         var expectedFailureKind = state switch
         {
             CliWorkspaceSelectionState.Invalid => FilesystemFailureKind.InvalidPath,
+            CliWorkspaceSelectionState.NotDirectory => FilesystemFailureKind.InvalidPath,
             CliWorkspaceSelectionState.Inaccessible => FilesystemFailureKind.AccessDenied,
             CliWorkspaceSelectionState.Unsupported => FilesystemFailureKind.Unsupported,
             CliWorkspaceSelectionState.InputOutputFailure => FilesystemFailureKind.InputOutput,

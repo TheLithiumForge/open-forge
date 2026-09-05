@@ -50,6 +50,18 @@ import another command's private `Shared/**` or introduce dependency injection,
 a service locator, reflection, a runtime registry, a generic operational
 engine, or mutation.
 
+Task 16's prepared Extension lifecycle assumption is explicit: the Task 15
+`ExtensionLifecycleDoctorView.Sources` member is a non-null, immutable,
+materialized `IReadOnlyList<ExtensionSourceObservation>`. Each observation pairs
+the exact nullable recorded source identity (`null` for the embedded catalogue)
+with its own `ExtensionSourceReadResult`. There is exactly one observation per
+distinct recorded source, ordered with the nullable embedded source first and
+the remaining non-null identities by ordinal comparison. Doctor consumes that
+complete list; it must not select a first source, substitute another source,
+rebuild a nullable-key dictionary, or reread producers. The singular source
+assumption is removed without changing Doctor's public contract, domain order,
+or finding catalogue.
+
 The activation order remains Task 14 integration, then Task 15 Gray and
 acceptance, then Doctor. Task 7 may implement beside Status after Task 14 is
 accepted and integrated. Further Doctor work has high staleness risk until the

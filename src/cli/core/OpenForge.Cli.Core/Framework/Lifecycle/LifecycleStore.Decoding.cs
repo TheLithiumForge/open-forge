@@ -86,28 +86,4 @@ internal sealed partial class LifecycleStore
                 validation.Cause ?? "The lifecycle Extension section is invalid.");
     }
 
-    private static LifecycleStoreReadResult FromResolution(
-        CliWorkspace workspace,
-        LifecycleSection selectedSection,
-        PhysicalPathResolution resolution)
-        => resolution.Failure is not null
-            ? LifecycleStoreReadResult.Unavailable(
-                workspace,
-                selectedSection,
-                resolution.Failure)
-            : LifecycleStoreReadResult.Blocked(
-                workspace,
-                selectedSection,
-                file: null,
-                "The lifecycle document physical boundary is unsafe or unavailable.");
-
-    private static LifecycleStoreReadResult Unavailable(
-        CliWorkspace workspace,
-        LifecycleSection selectedSection,
-        FilesystemFailureKind kind,
-        Exception exception)
-        => LifecycleStoreReadResult.Unavailable(
-            workspace,
-            selectedSection,
-            FilesystemFailure.FromException(kind, exception));
 }

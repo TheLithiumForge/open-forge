@@ -54,7 +54,7 @@ internal sealed class CliWorkspaceSelector
             if ((attributes & FileAttributes.Directory) == 0)
             {
                 return CliWorkspaceSelectionResult.Failed(
-                    CliWorkspaceSelectionState.Invalid,
+                    CliWorkspaceSelectionState.NotDirectory,
                     new FilesystemFailure(
                         FilesystemFailureKind.InvalidPath,
                         "The selected workspace root is not a directory."));

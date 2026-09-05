@@ -12,80 +12,90 @@ internal sealed class LifecycleDocumentReader(PhysicalPathResolver physicalPathR
     private static readonly UTF8Encoding StrictUtf8 = new(
         encoderShouldEmitUTF8Identifier: false,
         throwOnInvalidBytes: true);
-    private readonly PhysicalPathResolver _physicalPathResolver = physicalPathResolver;
+    private readonly LifecycleDocumentSnapshotReader _snapshotReader = new(physicalPathResolver);
 
     internal async ValueTask<LifecycleReadResult> ReadExtensionsAsync(
         CliWorkspace workspace,
         CancellationToken cancellationToken)
     {
-        if (cancellationToken.IsCancellationRequested)
+        var snapshot = await _snapshotReader.ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        return ReadExtensions(snapshot);
+    }
+
+    internal LifecycleReadResult ReadExtensions(LifecycleDocumentSnapshot snapshot)
+    {
+        if (snapshot.State != LifecycleDocumentSnapshotState.Available)
         {
-            return Cancelled();
+            return ReadUnavailableSnapshot(snapshot);
         }
 
-        var path = Path.Combine(
-            workspace.LexicalRoot,
-            LifecycleSchema.DirectoryName,
-            LifecycleSchema.FileName);
-        var resolution = _physicalPathResolver.ResolveCandidate(
-            workspace.LexicalRoot,
-            workspace.PhysicalRoot,
-            path);
-        if (resolution.State == PhysicalPathState.Missing)
+        if (snapshot.File is not { } file)
         {
-            return Missing();
-        }
-
-        if (resolution.State != PhysicalPathState.Contained)
-        {
-            return Blocked("The lifecycle document physical boundary is unsafe or unavailable.");
-        }
-
-        var physicalPath = resolution.GetContainedPhysicalPath();
-        byte[] bytes;
-        try
-        {
-            bytes = await File.ReadAllBytesAsync(physicalPath, cancellationToken).ConfigureAwait(false);
-        }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-            return Cancelled();
-        }
-        catch (FileNotFoundException)
-        {
-            return Missing();
-        }
-        catch (DirectoryNotFoundException)
-        {
-            return Missing();
-        }
-        catch (UnauthorizedAccessException exception)
-        {
-            return Unavailable(exception.Message);
-        }
-        catch (IOException exception)
-        {
-            return Unavailable(exception.Message);
+            throw new InvalidOperationException("An available lifecycle snapshot requires file bytes.");
         }
 
         try
         {
-            _ = StrictUtf8.GetString(bytes);
-            LifecycleJsonSyntaxValidator.ValidateNoDuplicateProperties(bytes, LifecycleSection.Extensions);
+            _ = StrictUtf8.GetString(file.Bytes.AsSpan());
+            LifecycleJsonSyntaxValidator.ValidateNoDuplicateProperties(
+                file.Bytes.AsSpan(),
+                LifecycleSection.Extensions);
             var envelope = JsonSerializer.Deserialize(
-                bytes,
+                file.Bytes.AsSpan(),
                 LifecycleJsonContext.Default.LifecycleEnvelopeV1)
                 ?? throw new JsonException("The lifecycle document cannot be null.");
             var extensions = envelope.Extensions is { } extensionValue
                 ? extensionValue.Deserialize(LifecycleJsonContext.Default.ExtensionLifecycleState)
                     ?? throw new JsonException("The lifecycle Extension section cannot be null.")
                 : null;
-            return LifecycleDocumentValidator.ValidateExtensions(workspace, envelope, extensions);
+            return LifecycleDocumentValidator.ValidateExtensions(snapshot.Workspace, envelope, extensions);
         }
         catch (Exception exception) when (exception is JsonException or DecoderFallbackException)
         {
             return InvalidJson(exception);
         }
+    }
+
+    private static LifecycleReadResult ReadUnavailableSnapshot(LifecycleDocumentSnapshot snapshot)
+        => snapshot.State switch
+        {
+            LifecycleDocumentSnapshotState.Missing => Missing(),
+            LifecycleDocumentSnapshotState.Blocked => ReadBlockedSnapshot(snapshot),
+            LifecycleDocumentSnapshotState.Unavailable => ReadUnavailableFailure(snapshot),
+            LifecycleDocumentSnapshotState.Interrupted => Cancelled(),
+            LifecycleDocumentSnapshotState.Available => throw new InvalidOperationException(
+                "An available lifecycle snapshot must be decoded."),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(snapshot),
+                snapshot.State,
+                "The lifecycle document snapshot state is not defined."),
+        };
+
+    private static LifecycleReadResult ReadUnavailableFailure(LifecycleDocumentSnapshot snapshot)
+    {
+        var failure = snapshot.Failure
+            ?? throw new InvalidOperationException("An unavailable lifecycle snapshot requires its failure.");
+        return snapshot.FailureStage switch
+        {
+            LifecycleDocumentFailureStage.PhysicalResolution
+                or LifecycleDocumentFailureStage.PhysicalReconfirmation => Blocked(failure.DirectCause),
+            LifecycleDocumentFailureStage.ContainedFileAccess => Unavailable(failure.DirectCause),
+            null => throw new InvalidOperationException(
+                "An unavailable lifecycle snapshot requires its failure stage."),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(snapshot),
+                snapshot.FailureStage,
+                "The lifecycle document failure stage is not defined."),
+        };
+    }
+
+    private static LifecycleReadResult ReadBlockedSnapshot(LifecycleDocumentSnapshot snapshot)
+    {
+        var cause = snapshot.Cause
+            ?? throw new InvalidOperationException("A blocked lifecycle snapshot requires its cause.");
+        return snapshot.File is not null
+            ? Unavailable(cause)
+            : Blocked(cause);
     }
 
     private static LifecycleReadResult InvalidJson(Exception exception)

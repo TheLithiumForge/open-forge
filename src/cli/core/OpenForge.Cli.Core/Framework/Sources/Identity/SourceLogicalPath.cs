@@ -4,6 +4,7 @@ namespace OpenForge.Cli.Core.Framework.Sources.Identity;
 
 internal static class SourceLogicalPath
 {
+    internal const string WorkspaceEntryPath = "AGENTS.md";
     internal const string AgentsRoot = ".agents";
     internal const string LoaderPath = AgentsRoot + "/loader.md";
 

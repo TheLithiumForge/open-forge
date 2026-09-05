@@ -12,7 +12,7 @@ Complete the replacement CLI from its accepted Architecture and command
 contracts, with safe local development, reproducible evidence, and no partial
 release.
 
-- Last updated: 2026-09-04.
+- Last updated: 2026-09-05.
 
 ## Current State
 
@@ -44,10 +44,10 @@ root passes `169/169`; and the final isolated offline package journey verifies
 the launcher, Root Install's 44 effects, and Extension Install's 28 effects.
 Its completion grace is consumed and it is dequeued.
 
-Task 15 “Status” is ACTIVE at phase 3/5, milestone 3/8. Gray
-`dac2aece`/`874bdcae`, bounded callable correction `df46fb9c`/`eda74e79`, and
-accepted Red `f633fe1f`/`5dbfe9d7` are recorded. One Sol/xhigh Brilliant
-Implementer was activated at `de27fcd6`/`ebdcb4a6`, then the early architecture
+Task 15 “Status” is RECENTLY_COMPLETED at phase 5/5, milestone 8/8. Its
+historical phase-3 lane records Gray `dac2aece`/`874bdcae`, bounded callable
+correction `df46fb9c`/`eda74e79`, and accepted Red `f633fe1f`/`5dbfe9d7`. One
+Sol/xhigh Brilliant Implementer was activated at `de27fcd6`/`ebdcb4a6`, then the early architecture
 checkpoint found that the two lifecycle Status signatures cannot guarantee one
 common lifecycle-document observation without prohibited mutable state.
 Corrected raw-snapshot Gray `b859d0aa`/`8f417c58` now makes that stateless
@@ -55,31 +55,42 @@ invocation-local observation explicit and passes a warning-free Core Release
 build. Corrected Red `d768ca52`/`7a9b785b` is accepted with 14 Unit, 10
 Integration, and 3 unchanged EndToEnd tests. Resume checkpoint
 `d120d49e`/`28f23430` reapplied the interrupted Implementer's 94-line partial
-`StatusDefinitions` work losslessly; recovery stash `9b51b3f8` remains retained
-while the same Sol/xhigh Brilliant Implementer owns coherent production and
+`StatusDefinitions` work losslessly; recovery stash `9b51b3f8` remains retained.
+The same Sol/xhigh Brilliant Implementer then completed coherent production and
 focused verification.
-After `T15-S1`, the immutable Status continuation is
+After `T15-S1`, the immutable pre-acceptance Status continuation remains
+historical:
 `cf00fb86`/`bf69e7c2` → `48309613`/`b8e0ad0f` → `e79a9767`/`17068f0b` →
 `2521574d`/`11eb89ee` → `b8ac2dd7`/`453eb1b8`, covering rendering and
 compatibility Green, direct JSON context, plural-source Gray, direct producer
 construction authority, and focused plural-source Red. Red selected, discovered,
 and executed `1/1/1`; only the expected three-observation versus one-scaffold
 oracle failed, while lifecycle completeness/trust and five package/source facts
-passed. The same Sol/xhigh Brilliant Implementer is implementing plural
-semantics, and independent Route selected-view work is present. No stable
-full-producer evidence or completion is claimed.
-Task 16 “Doctor” is PREPARED at phase 2/5, milestone 2/8 from the exact Status
-Gray snapshot. Activation `26e245e4`/`680df032` and accepted Gray
-`ce627593`/`1f07abb7` are recorded. The lane is cleanly parked before
-Red/production until Task 15 acceptance/integration. No tests or completion are
-claimed.
+passed. Independent Route selected-view work was also present. The accepted
+Status lane, correction, and Green identities are recorded below. Its integration
+parent is `e90b22f9a6d4fdd2043516e718fc782490396cb2`, tree
+`74713c32473603e7f9100378fafd314c50f813e3`; the integration identity is the
+commit containing this record. Final gates had Release `0` warnings and `0`
+errors; managed Unit `1739/1739`, Integration `933/933`, EndToEnd `172/172`;
+managed EndToEnd against the native root `172/172`; native Integration
+`933/933`; native EndToEnd `172/172`; all with `0` failures, `0` skips, and
+`0` warnings. Every later producer extends the explicit contributor inventory
+and affected Status evidence before acceptance. Task 16 “Doctor” is PREPARED at
+phase 2/5, milestone 2/8 from the exact Status Gray snapshot. Activation
+`26e245e4`/`680df032` and accepted Gray `ce627593`/`1f07abb7` are recorded. It is
+now next and eligible for exact post-Status reconciliation, but is not active.
+Its first next step is to revalidate the six shared view blobs and
+reapply/reconcile the accepted 17 C# files plus two contract amendments,
+preserving plural Extension sources; then add Red that consumes every source
+observation without fallback, substitution, reconstruction, or reread. Do not
+parse Status output or add dependency injection, a service locator, reflection,
+a runtime registry, or a generic operational engine. No Doctor tests, build,
+production, or completion are claimed.
 Its prepared alignment consumes the complete plural Extension view and never
 reads the removed singular source. The six Doctor-facing signatures and
 catalogue shape remain unchanged through Status `2521574d`, while two
-Status-only methods changed. After Status acceptance, reapply 17 C# files and
-two contract amendments, then add Red that consumes every supplied observation
-without fallback, substitution, reconstruction, or reread. No Task 16 files,
-tests, builds, or implementation occurred in this alignment.
+Status-only methods changed. The alignment changed no Task 16 files, tests,
+builds, or implementation; its accepted next step is recorded above.
 
 Task 7 “npm Package Manager Release and Local Linking” is Complete at phase 4/4,
 milestone 7/7. Accepted lane `a2942781`, tree `fe36fc3f`, is squash-integrated at
@@ -396,6 +407,35 @@ uniquely aligned route, slugs only ID-form inserted scope labels, creates one
 sparse chain, keeps scope entrypoints user-owned, and lifecycle-manages only
 copied canonical assets and derived generated regions.
 
+Task 15 “Status” is RECENTLY_COMPLETED at phase 5/5, milestone 8/8. Its
+accepted lane is `0c19b7053ef2b8c48898cfebadedff0c5702bf34`, tree
+`8ff2ac4ac0f5985863a9aaf85911c2deb6152980`; correction
+`f2dcdcae8b7c2cc9522b5ce7df250c73a55347db`, tree
+`b6f83beb50cefe56a0aae7d9a4019dab08c19aea`; and Green
+`7dd8de6c4f9eae3355f5ac4ee32d533e6ffb2564`, tree
+`f6c37550b78a01e7611178bd563e274f94bb2bb1`. The integration parent is
+`e90b22f9a6d4fdd2043516e718fc782490396cb2`, tree
+`74713c32473603e7f9100378fafd314c50f813e3`; the integration identity is the
+commit containing this record. Final gates had Release `0` warnings and `0`
+errors; managed Unit `1739/1739`, Integration `933/933`, EndToEnd `172/172`;
+managed EndToEnd against native root `172/172`; native Integration `933/933`;
+native EndToEnd `172/172`; all with `0` failures, `0` skips, and `0` warnings.
+Every later producer extends the explicit contributor inventory and affected
+Status evidence before acceptance. Its completion-bearing update is this
+candidate with `2 updates remaining` grace.
+
+Task 16 “Doctor” is PREPARED at phase 2/5, milestone 2/8 from the exact Status
+Gray snapshot; activation `26e245e4`, tree `680df032`, and accepted Gray
+`ce627593`, tree `1f07abb7`, are recorded. It is now next and eligible for
+exact post-Status reconciliation, but is not active. Its first next step is to
+revalidate the six shared view blobs and reapply/reconcile the accepted 17 C#
+files plus two contract amendments, preserving plural Extension sources, then
+add Red that consumes every source observation without fallback, substitution,
+reconstruction, or reread. Do not parse Status output or add dependency
+injection, a service locator, reflection, a runtime registry, or a generic
+operational engine. No Doctor tests, build, production, or completion is
+claimed. No implementation Task is active.
+
 Route Remove is the remaining Route Mutation M2 leaf, and the full M2 lane still
 precedes root Update M3. Task 12 is integrated, and the current project-control
 priority places the adoption slice before Route Remove. Independent preparation
@@ -452,16 +492,18 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Continue active Task 15 Status at phase 3/5, milestone 3/8 through the bounded
-   lifecycle-observation Gray/Red correction before coherent production resumes.
-   Continue Task 16 Doctor at its prepared phase 2/5, milestone 2/8 boundary
-   until Task 15 is accepted and integrated. Task 7 package expansion is
-   complete.
-2. After Task 15 integration, revalidate Doctor's six shared view blobs before
-   Red; do not parse Status output or add a dynamic registry.
-3. Resume Task 5 Route Remove, then Task 6 root Update and the remaining
-   project-control order.
-4. Retain thin D1 as current `linux-x64` build/smoke, packed
+1. Reconcile Task 16 Doctor at its prepared phase 2/5, milestone 2/8 boundary
+   after Status integration. First revalidate the six shared view blobs and
+   reapply/reconcile the accepted 17 C# files plus two contract amendments,
+   preserving plural Extension sources; then add Red that consumes every source
+   observation without fallback, substitution, reconstruction, or reread.
+   Do not parse Status output or add dependency injection, a service locator,
+   reflection, a runtime registry, or a generic operational engine. No Doctor
+   tests, build, production, or completion is claimed. Task 7 package expansion
+   is complete.
+2. Resume Task 5 Route Remove, then Task 6 root Update, Tasks 17/18/19/20, Task
+   10, conditional Task 21, Task 13, and Task 22 in project-control order.
+3. Retain thin D1 as current `linux-x64` build/smoke, packed
    install/invocation, and checksums. Keep future RIDs, signatures, SBOM,
    provenance, OIDC, and support floors behind a later explicit decision.
 

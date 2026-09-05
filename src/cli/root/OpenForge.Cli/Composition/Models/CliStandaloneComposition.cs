@@ -9,11 +9,13 @@ internal sealed record CliStandaloneComposition
 
     public required ICliCommandBinding IndexBinding { get; init; }
 
-    public required ICliCommandBinding InstallBinding { get; init; }
+    public required ICliCommandBinding StatusBinding { get; init; }
+
+    public required ICliCommandBinding ContextBinding { get; init; }
 
     public required ICliCommandBinding ReferencesBinding { get; init; }
 
-    public required ICliCommandBinding ContextBinding { get; init; }
+    public required ICliCommandBinding InstallBinding { get; init; }
 
     public required IReadOnlyList<CliRootLeaf> RootLeaves { get; init; }
 }

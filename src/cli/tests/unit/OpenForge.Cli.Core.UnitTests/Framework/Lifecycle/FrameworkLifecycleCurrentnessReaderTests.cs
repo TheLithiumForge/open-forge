@@ -5,6 +5,37 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Lifecycle;
 
 public sealed class FrameworkLifecycleCurrentnessReaderTests
 {
+    [Fact(DisplayName = "Framework lifecycle target source validation enforces coherent causes"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
+    public void TargetSourceValidationEnforcesCoherentCauses()
+    {
+        var valid = new FrameworkLifecycleTargetSourceValidation(
+            FrameworkLifecycleTargetSourceState.Valid,
+            cause: null);
+        var mismatch = new FrameworkLifecycleTargetSourceValidation(
+            FrameworkLifecycleTargetSourceState.SourceMismatch,
+            "source mismatch");
+        var blocked = new FrameworkLifecycleTargetSourceValidation(
+            FrameworkLifecycleTargetSourceState.Blocked,
+            "source blocked");
+
+        Assert.Equal(FrameworkLifecycleTargetSourceState.Valid, valid.State);
+        Assert.Null(valid.Cause);
+        Assert.Equal("source mismatch", mismatch.Cause);
+        Assert.Equal("source blocked", blocked.Cause);
+        Assert.Throws<ArgumentException>(() => new FrameworkLifecycleTargetSourceValidation(
+            FrameworkLifecycleTargetSourceState.Valid,
+            "unexpected"));
+        Assert.Throws<ArgumentException>(() => new FrameworkLifecycleTargetSourceValidation(
+            FrameworkLifecycleTargetSourceState.SourceMismatch,
+            "  "));
+        Assert.Throws<ArgumentException>(() => new FrameworkLifecycleTargetSourceValidation(
+            FrameworkLifecycleTargetSourceState.Blocked,
+            cause: null));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new FrameworkLifecycleTargetSourceValidation(
+            (FrameworkLifecycleTargetSourceState)int.MaxValue,
+            cause: null));
+    }
+
     [Fact(DisplayName = "Framework lifecycle currentness preserves coherent state details and bounded causes"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void CurrentnessModelPreservesCoherentStateDetailsAndBoundedCauses()
     {
