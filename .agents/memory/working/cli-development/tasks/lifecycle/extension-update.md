@@ -8,7 +8,11 @@ open-forge:
 
 ## Task State
 
-- State: Complete on branch `codex/extension-update-implementation`. The accepted
+- State: Complete. The accepted candidate is commit
+  `3bcb602569e7e2243a0780e1ff9cbd8f424b6457`, tree
+  `63f5b22c9c73dd9aaf2044c88401e5b91638e143`; it is integrated into local
+  `develop` as commit `ae055a73597c4d2310b217dc67d053aa200282db`, the same
+  tree, from parent `a9987d5c208272370fc0fc1f647b7f253d12056c`. The accepted
   Red snapshot is commit `4c6d68de09bc45070e42cb184963ba9ebd3c398a`, tree
   `50a77b0d7b49313c2edd6266dc1bcd87f38a090b`, from Red parent
   `1b3f90abee85103018ac9239342e994a297665bc`. Its activation base remains
@@ -446,12 +450,36 @@ Findings, residuals, and warnings were absent. Prior package outputs remain
 archived intact.
 
 Task 17 “Extension Update” is Complete at phase 5/5, milestone 8/8. Curie III
-is paused. Completion grace remains unchanged. Task 18 “Extension Remove” stays
-`QUEUED` and inactive. Stop after Task 17 and do not activate Task 18.
+is paused. Its completion grace is `2 updates remaining`. Task 18 “Extension
+Remove” stays `QUEUED` and inactive. Stop after Task 17 and do not activate
+Task 18.
+
+## Accepted Integration
+
+Task 17 “Extension Update” remains Complete at phase 5/5, milestone 8/8 and is
+Recently completed with `2 updates remaining` under the project-control grace
+convention. The
+accepted candidate commit `3bcb602569e7e2243a0780e1ff9cbd8f424b6457`, tree
+`63f5b22c9c73dd9aaf2044c88401e5b91638e143`, is integrated into local
+`develop` as commit `ae055a73597c4d2310b217dc67d053aa200282db`, tree
+`63f5b22c9c73dd9aaf2044c88401e5b91638e143`, from parent commit
+`a9987d5c208272370fc0fc1f647b7f253d12056c`. The integration tree equals the
+accepted candidate tree.
+
+The declared integration delta covers 60 paths: 40 added, 20 modified, and
+0 deleted. Its sorted-path SHA-256 is
+`56d0dab3ba1f9463c864d3570c4c4875ef5975e2c935a39c2c56ed46d2b73911`. The
+final full-gate basis is commit `d3c29a2b20e77c18484b5ab58056063e019d469e`,
+tree `18f76ed403fbe2e9047ad68f289b7c89100421b4`.
+
+No task is active. Task 18 remains `QUEUED` and inactive because the user
+ordered work to stop after Task 17.
 
 ## Next Action
 
-Task 17 acceptance is complete. Stop here and do not activate Task 18.
+Task 17 acceptance and develop integration are complete. It is Recently
+completed with `2 updates remaining`; no task is active. Task 18 remains
+`QUEUED` and inactive because the user ordered work to stop after Task 17.
 
 ## Expected Outcome
 

@@ -527,10 +527,12 @@ squash-integrated at `c6eec9d26ad6b798d418d260027241795fb4aefc`, exact tree
 and public Update `3/3` passed.
 
 Task 6's two subsequent progress-update grace is consumed and it is dequeued.
-Task 17 “Extension Update” is Complete at phase 5/5, milestone 8/8,
-on branch `codex/extension-update-implementation` from exact base
-`a9987d5c208272370fc0fc1f647b7f253d12056c`, tree
-`e48823870cfb44914ffaaf5044e9e1125c8fd8d7`. Its streamlined-assured
+Task 17 “Extension Update” is Complete at phase 5/5, milestone 8/8 and is
+Recently completed with `2 updates remaining`. Its
+accepted candidate `3bcb602569e7e2243a0780e1ff9cbd8f424b6457`, tree
+`63f5b22c9c73dd9aaf2044c88401e5b91638e143`, is integrated into local
+`develop` as `ae055a73597c4d2310b217dc67d053aa200282db`, the same tree, from
+parent `a9987d5c208272370fc0fc1f647b7f253d12056c`. Its streamlined-assured
 Preflight, Gray, Red, coherent Green, milestone-5 gates, grouped correction, and
 final acceptance are accepted under Curie III and Sagan IV. Green is commit
 `e25a721f0099de7d7ecd160e0e1563edad430194`, tree
@@ -649,9 +651,25 @@ the exact repeat was a no-op. Findings, residuals, and warnings were zero, and
 prior package outputs remain archived intact.
 
 Task 17 “Extension Update” is Complete at phase 5/5 and milestone 8/8. Review
-`T17-R1` and correction `T17-C1` are consumed; completion grace is unchanged.
+`T17-R1` and correction `T17-C1` are consumed; completion grace is `2 updates
+remaining`.
 Stop after Task 17 acceptance. Task 18 remains `QUEUED` and inactive; do not
 activate Task 18 or any later task.
+
+The accepted candidate commit `3bcb602569e7e2243a0780e1ff9cbd8f424b6457`, tree
+`63f5b22c9c73dd9aaf2044c88401e5b91638e143`, is integrated into local `develop`
+as commit `ae055a73597c4d2310b217dc67d053aa200282db`, tree
+`63f5b22c9c73dd9aaf2044c88401e5b91638e143`, from parent commit
+`a9987d5c208272370fc0fc1f647b7f253d12056c`. The integration tree equals the
+accepted candidate tree. The declared integration delta covers 60 paths: 40
+added, 20 modified, and 0 deleted; its sorted-path SHA-256 is
+`56d0dab3ba1f9463c864d3570c4c4875ef5975e2c935a39c2c56ed46d2b73911`. The
+final full-gate basis is commit `d3c29a2b20e77c18484b5ab58056063e019d469e`,
+tree `18f76ed403fbe2e9047ad68f289b7c89100421b4`.
+
+No task is active. Task 17 is Recently completed with `2 updates remaining`.
+Task 18 remains `QUEUED` and inactive because the user ordered work to stop
+after Task 17.
 
 Rejected evidence included SHA-qualified native build configuration, main-repo
 `NODE_PATH`, npm offline materializations, and pre-closure stage attempts. Only
@@ -759,10 +777,11 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Perform fresh final managed/public, supported `linux-x64` Native AOT, and
-   packed same-worktree acceptance for Task 17 milestone 8/8.
-2. Complete Task 17 acceptance after the final gate packet.
-3. Stop after Task 17 acceptance. Do not activate Task 18 or any later task.
+1. Keep Task 17 Complete at phase 5/5, milestone 8/8, Recently completed with
+   `2 updates remaining`; its accepted integration is recorded above.
+2. Keep no task active.
+3. Keep Task 18 `QUEUED` and inactive because the user ordered work to stop
+   after Task 17. Do not activate Task 18 or any later task.
 
 ## Current Sources
 
