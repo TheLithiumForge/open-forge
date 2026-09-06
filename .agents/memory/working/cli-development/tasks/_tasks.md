@@ -26,12 +26,12 @@ Read the [program Task](00-cli-development.md), [Architecture](../../../crystall
 - [x] [CLI Architecture Authority Audit](cli-architecture-authority-audit.md) — Task 9 is Complete and integrated at `e431395a`, exact tree `656cccdf`; twelve location-precise findings are retained for Task 12 — Implementer: Dedicated Task Mastermind
 - [x] [CLI Architecture Authority Remediation](cli-architecture-authority-remediation.md) — Task 12 is Complete after all twelve authority dispositions, one fresh Task review/correction, protected-identity closeout, and two bounded integration findings/correction — Implementer: Dedicated Task Mastermind with one Brilliant Implementer and one fresh review
 - [x] [Root Tooling Placement Remediation](root-tooling-placement.md) — Complete and squash-integrated at `f8377094`, exact tree `c05c2ed6`; dequeued after completion-update grace — Implementer: Task 11 Task Mastermind with one Brilliant Implementer and one fresh review
-- [ ] [Lifecycle Commands](lifecycle/_lifecycle.md) — Active: Extension Create, Extension Install, root Install, root Update, and Task 17 Extension Update are Complete; Task 18 Extension Remove is active in Gray review — Implementer: Overseer-managed command lanes
-- [ ] [Operational Commands](operations/_operations.md) — Queued after active Task 18; Task 19 Repair and Task 20 Cleanup follow — Implementer: Overseer-managed command lanes
+- [x] [Lifecycle Commands](lifecycle/_lifecycle.md) — Complete: Extension Create, Extension Install, root Install, root Update, Extension Update, and Extension Remove are integrated — Implementer: Overseer-managed command lanes
+- [ ] [Operational Commands](operations/_operations.md) — Active through Task 19 Repair at phase 3/5, milestone 3/8; Task 20 is task-locally phase 4/5, milestone 3/8 with Green held — Implementer: Overseer-managed command lanes
 - [ ] [CLI Command Surface Audit](cli-command-surface-audit.md) — Task 10 is explicitly postponed until after the retained command sequence; audit only, with no implementation mutation — Implementer: Dedicated Review Mastermind
 - [ ] [CLI Delivery](delivery/_delivery.md) — Planned — Implementer: Not assigned
-- [ ] [Task 23: Workspace Libraries](workspace-libraries.md) — Queued post-command last-stage implementation after Task 20; bounded read-only Preflight may run now; no phase or milestone assigned
-- [ ] [Task 24: Extensions Evolution](extensions-evolution.md) — Queued after Task 23 as a post-command last-stage implementation; bounded read-only Preflight may run now; no phase or milestone assigned
+- [ ] [Task 23: Workspace Libraries](workspace-libraries.md) — Task-locally active at phase 2/5, milestone 1/8 for Gray/Red preparation; queued after Task 20 for Green and integration; accepted contract tip `c3f01acb`
+- [ ] [Task 24: Extensions Evolution](extensions-evolution.md) — Read-only Preflight complete; prepared and inactive at milestone 0/8 behind Task 23; preparation tip `8a153f23`
 
 ## Axioms
 
@@ -72,6 +72,7 @@ define execution state.
 - [Apply only the complete CLI command-surface audit findings accepted by the maintainer](cli-command-surface-remediation.md) - #Memory #Working #Contextual #Planned #CLI #Task #Remediation #Architecture #Refactoring #Testing
 - [Remediate the accepted first-pass CLI architecture, C# design, authority, and test-evidence findings after Route Create and before Route Update](cli-quality-remediation.md) - #Memory #Working #CLI #Task #Audit #Architecture #Refactoring #Testing #Review #Contextual
 - [Package, prove, document, and release the complete native CLI without partial publication](delivery/_delivery.md) - #Memory #Working #CLI #Task #Distribution #NativeAOT #SupplyChain #Release #Contextual
+- [Prepare a queued local and offline six-command Extension structure evolution after Workspace Libraries](extensions-evolution.md) - #Memory #Working #CLI #Task #Extension #Evolution #Contextual #Queued
 - [Build and accept the actual command-free C# workspace, Core, host, safety, tests, and Native AOT foundation](foundation/_foundation.md) - #Memory #Working #CLI #Task #Foundation #Architecture #DotNet #NativeAOT #Contextual #Complete
 - [Improve cross-cutting CLI parser, test, callable, and project structure without changing accepted command meaning](generic-improvements/_generic-improvements.md) - #Memory #Working #CLI #Task #Generic #Parser #Testing #Architecture #Contextual #Complete
 - [Implement root and Extension creation, installation, update, and removal lifecycle commands](lifecycle/_lifecycle.md) - #Memory #Working #CLI #Task #Lifecycle #Extension #Install #Update #Contextual
@@ -85,8 +86,7 @@ define execution state.
 - [Place live repository-owned agent tooling in explicit source scopes and remove the unexplained root scripts bucket](root-tooling-placement.md) - #Memory #Working #Contextual #CLI #Task #Tooling #TypeScript #Testing
 - [Implement read-only route discovery, beginning with route list and then route inspect](route-discovery/_route-discovery.md) - #Memory #Working #CLI #Task #Route #Discovery #ReadOnly #Contextual #Complete
 - [Implement retained route mutation commands on the accepted mutation foundation](route-mutation/_route-mutation.md) - #Memory #Working #CLI #Task #Route #Mutation #Contextual
-- [Define and later implement accepted contextual Workspace Libraries after the retained command sequence](workspace-libraries.md) - #Memory #Working #CLI #Task #Workspace #Library #Contextual #Queued
-- [Preserve and later evolve Extension distribution, ownership, and compatibility boundaries after the retained command sequence](extensions-evolution.md) - #Memory #Working #CLI #Task #Extension #Evolution #Contextual #Queued
 - [Add the interaction, Framework distribution, lifecycle provenance, and directory-create prerequisites for the next command wave](shared-foundations/_shared-foundations.md) - #Memory #Working #CLI #Task #Foundation #Shell #Framework #Lifecycle #Contextual
 - [Audit symbolic constants, generated-region authority, and composable active-test foundations across the replacement CLI](test-architecture-and-constants.md) - #Memory #Working #CLI #Task #Testing #Architecture #Constants #Fixtures #Snapshot #Contextual
+- [Execute the accepted Workspace Libraries contracts through bounded preparation, implementation, evidence, and integration](workspace-libraries.md) - #Memory #Working #CLI #Task #Workspace #Library #Contextual #Active #Queued
 <!-- open-forge:generated-index:end -->

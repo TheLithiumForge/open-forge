@@ -8,19 +8,26 @@ open-forge:
 
 ## Task State
 
-- State: Acceptance-ready at phase 5 of 5, milestone 8 of 8. The
+- State: Complete at phase 5 of 5, milestone 8 of 8. The
   streamlined-assured Preflight, Gray, Red, coherent Green, full verification,
   holistic review `T18-R1`, grouped correction `T18-C1`, and final acceptance
   are complete. The accepted feature candidate is commit
   `9326a9214acd58bd7018b021074813f1dccb3f59`, tree
-  `623335f16faaa214e001fccd0dd1740c845ab066`. Integration remains pending under
-  Overseer ownership; no integration commit exists yet.
+  `623335f16faaa214e001fccd0dd1740c845ab066`. Final feature tip
+  `8a6fa8deffe1579ed5834238a42daf2eeb23e843`, tree
+  `0967d795c3316893fb0c7d41d3e1d8d01455a08e`, is squash-integrated at
+  `f445a55aa7cedbf6fb5f3847dccb744dd8b6386c`, tree
+  `3b0fb29dd40952d1170776d9239f2837f3b56fe8`, from local `develop` parent
+  `4afa898b2bac464c2b4085f2253fa2ab5b84570a`, tree
+  `de3a888f864fcc4a6b3210316ee10b3821330c80`.
 - Permanent mapping: Task 18 “Extension Remove” in the
   [project control ledger](../../project-control.md).
-- Queue relation: Task 17 “Extension Update” is complete and its completion
-  grace is consumed. The active command horizon is Task 18, then Task 19
-  “Repair”, then Task 20 “Cleanup”. Workspace Libraries and Extensions
-  Evolution follow as queued last-stage improvements.
+- Queue relation: This completion-bearing update places Task 18 in Recently
+  completed with `1 update remaining`. Task 19 “Repair” is active at phase
+  3/5, milestone 3/8 with accepted Gray and Red; merge and refreeze against this
+  integration are pending, and Green is not open. Task 20 “Cleanup” has accepted
+  Red but holds Green for Task 19. Workspace Libraries and Extensions Evolution
+  retain their recorded preparation states and integration order.
 - Parent: [Lifecycle Commands](_lifecycle.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/extension/remove/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/extension/remove/behavior.md).
 
@@ -43,9 +50,9 @@ The five phases and eight milestones are fixed:
 The milestone ledger is: 1 Preflight and activation; 2 Gray; 3 Red; 4 coherent
 production; 5 focused, public, full managed, and supported `linux-x64` Native
 AOT verification; 6 fresh holistic review (`T18-R1`); 7 one grouped correction
-or documented no-op (`T18-C1`); and 8 acceptance. There is
-no council. The task is now acceptance-ready at phase 5/5 and milestone 8/8.
-The accepted feature candidate still requires Overseer-owned integration.
+or documented no-op (`T18-C1`); and 8 acceptance. There is no council. The
+task is complete at phase 5/5 and milestone 8/8. The accepted feature candidate
+and final feature tip are integrated at the identity recorded above.
 
 The workflow used one Mastermind supervising one Implementer. Gray and Red had
 independent owners, and the Implementer owned the coherent production change,
@@ -215,8 +222,16 @@ implementation branch altered the same production authority.
   for EndToEnd.
 - Formatting, static, protected-path, callable-shape, prohibited-pattern,
   durable-path, line-length, exact-inventory, and clean-Git checks passed. The
-  feature is acceptance-ready, but integration remains a separate
-  Overseer-owned boundary.
+  final feature tip is accepted and integrated.
+- The squash adopted exactly 74 paths: 49 additions and 25 modifications, with
+  zero candidate path, mode, or blob mismatches. The integrated tree differs
+  from the final feature tree only by the preserved develop-only observation.
+  The equivalent Doctor prose cleanup was not replayed, and its three blobs
+  remained unchanged.
+- The post-integration six-project Release build passed with zero warnings and
+  errors. Focused Extension Remove Unit passed `55/55`, focused Integration
+  passed `27/27`, public Extension Remove passed `3/3`, and retained public
+  Doctor passed `3/3`, all with zero failures and skips.
 
 The decisive evidence ladder is focused Unit and Integration evidence, exactly
 three Remove public journeys and the retained three Doctor public journeys,

@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Preserve and later evolve Extension distribution, ownership, and compatibility boundaries after the retained command sequence
+  description: Prepare a queued local and offline six-command Extension structure evolution after Workspace Libraries
   tags: [Memory, Working, CLI, Task, Extension, Evolution, Contextual, Queued]
 ---
 
@@ -8,16 +8,17 @@ open-forge:
 
 ## Task State
 
-- State: Queued post-command last-stage implementation. It follows Task 23
-  “Workspace Libraries” after Task 20 “Cleanup”.
+- State: Queued and inactive after Task 23 “Workspace Libraries”, which follows
+  Task 20 “Cleanup”. Read-only Preflight and the execution capsule are complete
+  at preparation tip `8a153f23dabb05019eae2c15fae51331b9e88335`, tree
+  `bafd3d1e3173ad9342bd25a6086330dcfbe5ee16`.
 - Permanent mapping: Task 24 “Extensions Evolution” in the
   [project control ledger](../project-control.md).
 - Source: accepted contextual [Extensions Evolution idea](../../../emerging/ideas/extensions-overhaul.md).
 - Parent: [Complete The Replacement CLI](00-cli-development.md).
-- Phase and milestone: not assigned. Read-only Preflight and draft preparation
-  may run while the retained command sequence is active. Shared semantic
-  implementation and integration wait for Task 23 and a separate contract
-  freeze with explicit maintainer acceptance.
+- Prepared horizon: five phases and eight milestones, with milestone 0 of 8.
+  No phase is active. Phase 1/5 begins only after Task 23 integration and an
+  explicit activation and refreeze.
 
 ## Accepted Boundary
 
@@ -45,6 +46,6 @@ CLI package require a distinct maintainer review and contract freeze before
 implementation. The task must preserve current ownership, recovery, route,
 lifecycle, and user-history boundaries.
 
-No phase, milestone, or evidence gate is assigned until the queued task is
-activated. No remote action, compatibility machinery, runtime registry,
-lifecycle-schema change, or publication is authorized.
+No phase or evidence gate is active until the queued task is activated; the
+prepared milestone remains 0 of 8. No remote action, compatibility machinery,
+runtime registry, lifecycle-schema change, or publication is authorized.

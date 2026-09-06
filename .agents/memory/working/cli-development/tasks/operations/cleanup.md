@@ -8,11 +8,23 @@ open-forge:
 
 ## Task State
 
-- State: Queued after Task 19 “Repair” and every artifact producer.
+- State: Task-locally Active at phase 4 of 5, milestone 3 of 8. Preflight, Gray,
+  and Red are accepted. Green is current but held until Task 19 is accepted and
+  integrated and the producer/callable boundary is freshly refrozen. In the
+  project queue, Task 20 remains Queued after active Task 19.
 - Permanent mapping: Task 20 “Cleanup” in the
   [project control ledger](../../project-control.md).
 - Parent: [Operational Commands](_operations.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/cleanup/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/cleanup/behavior.md).
+
+The accepted task-local record tip is
+`96ed0aa35b7e092aa78e5bb7249ce71c5598b2c9`, tree
+`be13c85b4cb26271c0770b880a094f125c0a7f7c`. Accepted Gray is
+`0263ae1e6f63b85b89457c35c28aee29eef1afb3`, tree
+`03f0f7c05f7b2d6b935313fd64de71169f7be7e7`; accepted Red is
+`e2b7fdc0ef49adaa9fc101e5c9c4e4a603b9807a`, tree
+`7922db08761f53c681937144f94ecef9d886679a`. This state claims no Green,
+review, correction, or final acceptance.
 
 ## Expected Outcome
 

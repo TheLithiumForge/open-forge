@@ -1,36 +1,36 @@
 ---
 open-forge:
-  description: Define and later implement accepted contextual Workspace Libraries after the retained command sequence
-  tags: [Memory, Working, CLI, Task, Workspace, Library, Contextual, Queued]
+  description: Execute the accepted Workspace Libraries contracts through bounded preparation, implementation, evidence, and integration
+  tags: [Memory, Working, CLI, Task, Workspace, Library, Contextual, Active, Queued]
 ---
 
 # Task 23: Workspace Libraries
 
 ## Task State
 
-- State: Queued post-command last-stage implementation. It follows Task 20
-  “Cleanup” and precedes Task 24 “Extensions Evolution”.
+- State: Task-locally Active at phase 2 of 5, milestone 1 of 8. The accepted
+  contract freeze is complete, and Gray and Red preparation are active. In the
+  project queue, Task 23 remains Queued after Task 20 “Cleanup” for semantic
+  Green and integration, and it precedes Task 24 “Extensions Evolution”.
 - Permanent mapping: Task 23 “Workspace Libraries” in the
   [project control ledger](../project-control.md).
-- Source: accepted contextual [Workspace Libraries design](../../../emerging/ideas/workspace-libraries.md).
+- Accepted contract source at the recorded tip:
+  `.agents/memory/crystallized/documents/cli/contracts/library/_library.md`.
+- Accepted design source at the recorded tip:
+  `.agents/memory/crystallized/documents/cli/technical-designs/workspace-libraries.md`.
+- Contextual source: [Workspace Libraries idea](../../../emerging/ideas/workspace-libraries.md).
 - Parent: [Complete The Replacement CLI](00-cli-development.md).
-- Phase and milestone: not assigned. Read-only Preflight and draft preparation
-  may run while the retained command sequence is active. Shared semantic
-  implementation and integration wait for Task 20 and a separate contract
-  freeze with explicit maintainer acceptance.
+- Accepted contract tip: `c3f01acb76c572ee486fdc24c6a2379b27459391`,
+  tree `5ccffb7156f73aac3c15a49588b7eafcfa661a0a`. The production baseline is
+  deferred until the exact post-Task 20 integrated baseline is refrozen.
 
 ## Accepted Boundary
 
-Workspace Libraries are a candidate middle layer between project-owned files
-and static Extension installation. The accepted design is contextual input for
-future contract work. It does not change the current CLI contracts, Framework
-routes, Extension boundary, lifecycle schema, Doctor vocabulary, or active
-command order.
-
-No implementation contract is authored here. The design remains the source of
-the candidate list/inspect, attach, sync, and detach concepts, their contained
-source-root boundary, relative-link requirement, consumer-owned controls, and
-recovery questions.
+Workspace Libraries are the accepted middle layer between project-owned files
+and static Extension installation. The accepted contracts and technical design
+define List, Inspect, Attach, Sync, and Detach plus their contained source-root,
+relative-link, consumer-control, ownership, and recovery boundaries. They do
+not change Framework roots, Extension identity, or the active command order.
 
 The maintainer accepted these design decisions: one contained source root with
 the complete eligible `.agents/**` inventory at identical consumer-relative
@@ -38,27 +38,26 @@ paths; a separate `.agents/open-forge.libraries.json` record with Sync
 retirement only after complete source inventory and exact expected-link proof,
 and all-or-nothing Detach with record publication or removal ordered last; and
 real relative file symlinks with no copy fallback or initial Git diagnostics or
-actions. The final drafted Library contracts and CLI package still require a
-distinct maintainer review and contract freeze before implementation.
+actions. The accepted contracts and technical design now govern bounded
+preparation; Green still requires the post-Task 20 baseline refreeze.
 
 ## Activation Conditions
 
-Before implementation, the final drafted Library contracts and CLI package
-must pass the distinct maintainer review and contract freeze. The link-aware
-guard for Route Update, Index, Route Move, and Route Remove, together with a
-real-filesystem regression, must also be accepted before any Attach dogfood.
+Gray and Red preparation may proceed against the accepted contracts. Semantic
+Green and integration wait for Task 20 integration and an exact baseline
+refreeze. The link-aware guard for Route Update, Index, Route Move, and Route
+Remove, together with a real-filesystem regression, must be accepted before any
+Attach dogfood.
 
-The contract freeze must cover the record and lifecycle contracts, ownership,
-recovery, collision, source availability, and supported-platform behavior.
-Status, Doctor, recovery, and Extension evidence may only be extended by later
-accepted contracts. No phase, milestone, or evidence gate is assigned until
-the queued task is activated.
+Status, Doctor, recovery, and Extension evidence may only be extended by the
+accepted contracts and directly required integration facts. No Green owner or
+production baseline is assigned until the post-Task 20 refreeze.
 
 ## Non-Goals
 
 This queued task does not authorize symlink or submodule behavior in the
 current CLI, external destinations, a new Framework root, imported-content
 runtime behavior, Git fetch/pull/checkout/switch/stage/commit operations,
-compatibility machinery, or publication before its contract freeze. It does
+compatibility machinery, or publication outside its accepted contracts. It does
 not move, delete, or rewrite source files and does not alter any current
 command.

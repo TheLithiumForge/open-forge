@@ -8,7 +8,7 @@ open-forge:
 
 ## Task State
 
-- State: Active. The next-wave shared foundations, Route Inspect correction,
+- State: Complete. The next-wave shared foundations, Route Inspect correction,
   Extension Create, and root Install are integrated. Root Install is complete at
   `c60fcb98a57e9ec80769b9cb1d399ce13a227863`, exact tree
   `464a4a6b6ef6447209edffbf53df7348c70691ed`. Task 14 Extension Install is
@@ -20,11 +20,14 @@ open-forge:
   `c3d621989a4b6698d5a9a8de1505da16a750dbcb`. The post-integration Release
   build and public Update `3/3` passed. Task 6's completion grace is consumed.
   Task 17 “Extension Update” is complete and dequeued after its completion grace
-  was consumed. Task 18 “Extension Remove” is active at phase 2/5, milestone
-  1/8 with Gray callable/public-shape review active from its accepted clean
-  activation base; its Preflight capsule is frozen without a manifest or
-  lifecycle schema change. Tasks 19 and 20 follow, then queued last-stage Tasks
-  23 “Workspace Libraries” and 24 “Extensions Evolution” in that order.
+  was consumed. Task 18 “Extension Remove” is complete at phase 5/5, milestone
+  8/8 and squash-integrated at `f445a55a`, tree `3b0fb29d`. Task 19 “Repair”
+  is active at phase 3/5, milestone 3/8 with accepted Gray and Red. Task 20
+  “Cleanup” is task-locally active at phase 4/5, milestone 3/8 with accepted Red
+  but queued after Task 19 for Green. Task 23 “Workspace Libraries” is
+  task-locally active at phase 2/5, milestone 1/8 for Gray/Red preparation and
+  queued after Task 20 for Green and integration. Task 24 “Extensions
+  Evolution” is prepared and inactive at milestone 0/8 behind Task 23.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Common prerequisites: Extension discovery and `index`; workspace mutations also
   consume Mutation Foundation.
@@ -107,8 +110,9 @@ tree `f31cacb0c54bda8ecf8a91d3516c6ffa48f48753`, from `develop` parent
 `c3d621989a4b6698d5a9a8de1505da16a750dbcb`. Its post-integration Release build
 and public Update `3/3` passed. The former Task 6 stop boundary was later
 superseded by explicit Task 17 activation. Task 17 is complete and dequeued;
-Task 18 is active at the phase and milestone recorded above. Task 19 “Repair”
-and Task 20 “Cleanup” follow Task 18.
+Task 18 is complete and integrated at the identity recorded above. Task 19
+“Repair” is active at phase 3/5, milestone 3/8, and Task 20 keeps its accepted
+Red while Green remains held behind Task 19.
 Extension Install was independent of Route Remove and root Update, so it formed
 the first adoption slice after Task 12. Later lifecycle producers
 must extend the accepted explicit Status/Doctor contributor inventory and its
@@ -128,7 +132,7 @@ bytes and is owned only through a read/write `FileShare.None` handle.
 - [x] [Task 14: implement Extension installation from exact reviewed package identity](extension-install.md) — Complete at phase 5/5, milestone 8/8; accepted lane `a6b44f07`, tree `cd4c074d`, squash-integrated at `20807781`, tree `4592a139`
 - [x] [Task 6: implement root Framework update from accepted lifecycle identity](update.md) — Complete at phase 5/5, milestone 8/8; accepted candidate `ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree `195f15388d6251f69244946183209d3dfe86b24a`, is squash-integrated at `c6eec9d26ad6b798d418d260027241795fb4aefc`, exact tree `f31cacb0c54bda8ecf8a91d3516c6ffa48f48753`; post-integration Release build and public Update `3/3` passed
 - [x] [Task 17: implement Extension update with source review, ownership, and recovery integrity](extension-update.md) — Complete; completion grace consumed and dequeued
-- [ ] [Task 18: implement Extension removal with preserved user content and recovery integrity](extension-remove.md) — Active at phase 2/5, milestone 1/8; Gray callable/public-shape review active; Preflight capsule frozen — Task Mastermind: Sagan VI
+- [x] [Task 18: implement Extension removal with preserved user content and recovery integrity](extension-remove.md) — Complete at phase 5/5, milestone 8/8; accepted candidate `9326a921`, final feature tip `8a6fa8de`, and squash integration `f445a55a`, tree `3b0fb29d`
 
 ## Entries
 

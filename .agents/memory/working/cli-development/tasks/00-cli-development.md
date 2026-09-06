@@ -88,15 +88,18 @@ open-forge:
 
 ## Current Execution Horizon
 
-Task 16 “Doctor” and Task 17 “Extension Update” are complete; Task 17's
-completion grace is consumed. Task 18 “Extension Remove” is active at phase 2/5,
-milestone 1/8 with Gray callable/public-shape review active, followed by Task 19
-“Repair” and Task 20 “Cleanup”. The queued last-stage implementation order after
-Task 20 is [Task 23 “Workspace Libraries”](workspace-libraries.md), then
-[Task 24 “Extensions Evolution”](extensions-evolution.md). Tasks 10, 21, 13, and 22
-remain recorded but explicitly postponed. Tasks 23 and 24 have no phase or
-milestone horizons and no implementation contracts until their distinct
-maintainer contract freezes.
+Tasks 16 “Doctor”, 17 “Extension Update”, and 18 “Extension Remove” are
+complete. Task 18 is squash-integrated at `f445a55a`, tree `3b0fb29d`, and is
+Recently completed with `1 update remaining`. Task 19 “Repair” is active at
+phase 3/5, milestone 3/8 with accepted Gray and Red; merge and refreeze against
+integrated Task 18 are pending, and Green is not open. Task 20 “Cleanup” is
+task-locally active at phase 4/5, milestone 3/8 with accepted Red while queued
+after Task 19 for Green. [Task 23 “Workspace Libraries”](workspace-libraries.md)
+is task-locally active at phase 2/5, milestone 1/8 for Gray/Red preparation and
+queued after Task 20 for Green and integration. [Task 24 “Extensions
+Evolution”](extensions-evolution.md) has completed read-only Preflight and remains
+prepared and inactive at milestone 0/8 behind Task 23. Tasks 10, 21, 13, and 22
+remain recorded but explicitly postponed.
 
 ## Problem Statement
 
@@ -179,13 +182,13 @@ to extend.
 
 ## Acceptance Evidence
 
-| Acceptance condition            | Evidence                                                                     | Verifier      |
-| ------------------------------- | ---------------------------------------------------------------------------- | ------------- |
-| Every child outcome is accepted | Task index with Complete or deliberate Cancelled state                       | Mastermind    |
-| Complete contract coverage      | Command-to-evidence matrices and public scenarios                            | Owning Tasks  |
-| Architecture remains coherent   | Dependency, source-locality, project, and whole-system review                | Mastermind    |
-| Native delivery is complete     | Current `linux-x64` build/smoke, packed install/invocation, and checksums     | Delivery Task |
-| Release is explicit             | Maintainer acceptance and main-only release record                           | Maintainer    |
+| Acceptance condition            | Evidence                                                                  | Verifier      |
+| ------------------------------- | ------------------------------------------------------------------------- | ------------- |
+| Every child outcome is accepted | Task index with Complete or deliberate Cancelled state                    | Mastermind    |
+| Complete contract coverage      | Command-to-evidence matrices and public scenarios                         | Owning Tasks  |
+| Architecture remains coherent   | Dependency, source-locality, project, and whole-system review             | Mastermind    |
+| Native delivery is complete     | Current `linux-x64` build/smoke, packed install/invocation, and checksums | Delivery Task |
+| Release is explicit             | Maintainer acceptance and main-only release record                        | Maintainer    |
 
 ## Prerequisites And Dependencies
 
