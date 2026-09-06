@@ -94,18 +94,18 @@ Update” is active at phase 2/5, milestone 3/8. Clean Green `a59d4df8`, tree
 and its Status `2521574d` snapshot remain historical context.
 
 Task 7 “npm Package Manager Release and Local Linking” retains its immutable
-complete historical horizons and is provisionally reopened at phase 2/3,
-milestone 3/5. Its disjoint local-use lane aligns the Loader with the replacement
-CLI, records an unaccepted centralized `.agents` interoperability idea, and
-prepares one reversible machine-local npm link. Live preflight found no existing
-`open-forge` command or accepted Open Forge package link to displace. Copied
-restore assets retain their originating-worktree paths, so the interrupted
-copied-assets publish probe is non-evidence. The reviewed prose candidate must
-be integrated into the clean already-restored main worktree before the Overseer
-may release the exact link effect. ARM and publication remain unauthorized.
-Both `T7-LR1` writing and `T7-LR2` package/local-link safety review passed the
-nine-path candidate with no material finding. Candidate refreeze and commit are
-active.
+complete historical horizons and completed its disjoint provisional local-use
+horizon at phase 3/3, milestone 5/5. Candidate `092ead98`, tree `1c4ab3ae`, is
+integrated into current `develop`. Locked restore and the exact Linux x64 local
+link succeeded; one user-local PATH shim was required. Version and root help
+matched the candidate, the installed Loader contained the replacement commands,
+and the isolated fresh-workspace JSON smoke returned the accepted
+`0`/`2`/`0`/`0`/`3` exits with empty stderr for Install, Context, Route List,
+Status, and Doctor. Ordinary projects use machine-global `open-forge`, while
+development, review, and acceptance worktrees use only same-worktree artifacts
+as evidence. The integrated worktree remained clean. No package publication,
+registry or remote mutation, or user-project smoke occurred. ARM remains
+outside scope.
 
 Task 3 “Route Update” remains Complete from accepted closeout `27df8325`, tree
 `b68d4349`, with final executable behavior `8a398f2e`, tree `3bb4a224`.
@@ -333,7 +333,7 @@ public wire, or shared mutation behavior.
 Implemented boundaries:
 
 - Repository-root `OpenForge.Cli.slnx`, SDK, NuGet, and shared MSBuild files.
-- Root `/artifacts/` for .NET binary, intermediate, test, publish, and package
+- Root `artifacts/` for .NET binary, intermediate, test, publish, and package
   output.
 - Automatic managed `open-forge-dev` publication from an ordinary non-RID CLI
   project build, including solution and EndToEnd dependency builds, with one
@@ -507,28 +507,24 @@ JSON, and redirected flows never prompt.
 - Do not implement public Index selection, binding, application, locking,
   recovery, or result presentation in the Generated Navigation lane.
 - Do not download additional dependencies without exact authorization.
-- Do not contact remotes, publish, deploy, or push. Do not install globally
-  except for Task 7's exact reversible local npm link after reviewed integration
-  and Overseer release.
+- Do not contact remotes, publish, deploy, or push. Task 7's one authorized
+  reversible local npm link is complete; do not mutate that state during
+  closeout.
 
 ## Next Actions
 
-1. Continue active [Task 7 npm Package Manager Release and Local Linking](../cli-development/tasks/delivery/01-npm-packages.md)
-   in parallel with Task 6. Refreeze the passed nine-path candidate, commit it,
-   and return the exact pre-link request. Link only from the verified integrated
-   restored tree after exact Overseer release.
-2. Continue active [Task 6 Root Update](../cli-development/tasks/lifecycle/update.md)
+1. Continue active [Task 6 Root Update](../cli-development/tasks/lifecycle/update.md)
    at phase 2/5, milestone 3/8. Sagan completes immutable `T6-R1` review of clean
    Green `a59d4df8`, tree `d4a530e7`, then groups any accepted correction.
    Every C# owner personally reads and fingerprints `_csharp.md`, `design.md`,
    and `style.md`.
-3. Continue after Task 6 in this order: Task 17 Extension Update → Task 18
+2. Continue after Task 6 in this order: Task 17 Extension Update → Task 18
    Extension Remove → Task 19 Repair
    → Task 20 Cleanup → Task 10 CLI Command Surface Audit → conditional Task 21
    CLI Command Surface Remediation → Task 13 Native linux-x64 CI and
    Reproducible Artifacts → Task 22 Final Documentation, Acceptance, and
    Release.
-4. Retain thin D1 as current `linux-x64` build/smoke, packed
+3. Retain thin D1 as current `linux-x64` build/smoke, packed
    install/invocation, and checksums. Keep future RIDs, signatures, SBOM,
    provenance, OIDC, and support floors behind a later explicit decision.
 

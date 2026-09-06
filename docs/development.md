@@ -100,13 +100,13 @@ link command publishes the current host in Release mode without restoring,
 stages a local version containing the full Git commit SHA, and links the
 platform package through the main package into this repository.
 
-Restore the .NET workspace before the first link or after its dependencies
-change. Then link and invoke the current native CLI:
+Restore the locked .NET workspace before the first link or after its
+dependencies change. Then link and invoke the current native CLI:
 
 ```sh
-dotnet restore
+dotnet restore OpenForge.Cli.slnx --locked-mode --configfile NuGet.Config --nologo
 npm run cli:link
-npm run cli:dev -- --version
+open-forge --version
 ```
 
 The command uses ordinary npm package links and therefore creates npm's normal
@@ -115,11 +115,23 @@ dependency, update the lockfile, run package scripts, contact the registry, or
 publish a package. Generated JavaScript, native publications, and staged package
 files remain below the ignored `artifacts/` directory.
 
+Ordinary projects use the machine-global `open-forge` command. Development,
+review, and acceptance in an Open Forge worktree must instead invoke an
+artifact built and published from that same worktree, such as
+`artifacts/publish/open-forge-dev/<Configuration>/open-forge-dev[.exe]` or the
+selected `artifacts/publish/<RID>/open-forge/OpenForge.Cli[.exe]`. Never use the
+machine-global CLI as worktree evidence. A package-manager-specific user-local
+PATH bridge may be needed when shell-facing shims differ from npm's active bin,
+but that bridge does not establish artifact identity.
+
 Remove the known repository and global links when they are no longer needed:
 
 ```sh
 npm run cli:unlink
 ```
+
+That command removes the known npm links. Remove an explicitly owned user-local
+PATH bridge only after resolving and revalidating its exact target.
 
 The public command name is `open-forge`. The frozen MVP remains available only
 through `open-forge-old` and `npm run cli:old`.

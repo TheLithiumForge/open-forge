@@ -9,10 +9,10 @@ open-forge:
 ## Task State
 
 - State: Historical 8/8 and platform-expansion 7/7 horizons remain complete and
-  immutable. The provisional local-use horizon is active at phase 2 of 3,
-  milestone 3 of 5. Live preflight, exact Loader/current-truth/future-idea
-  prose, focused evidence, and both independent reviews are complete; candidate
-  refreeze and commit are active.
+  immutable. The provisional local-use horizon is complete at phase 3 of 3,
+  milestone 5 of 5. Live preflight, exact Loader/current-truth/future-idea
+  prose, focused evidence, both independent reviews, candidate integration,
+  live linking, isolated smoke, and closeout are complete.
 - Parent: [CLI Delivery](_delivery.md).
 - Profile: Assured local-use flow with one Task Mastermind, one coherent prose
   owner, one independent Writing Reviewer, one focused local-link safety
@@ -27,9 +27,12 @@ open-forge:
 - Provisional review budget: maximum 2; `T7-LR1` passed writing and `T7-LR2`
   passed package/local-link safety. Both are consumed.
 - Provisional correction budget: maximum 1; `T7-LC1` is unused.
+- Closeout writing-review budget: maximum 1; `T7-LR3` passed the frozen
+  live-use receipt and durable local-evidence policy.
+- Closeout correction budget: maximum 1; `T7-LC2` is unused.
 - Council budget: 0 across the current horizon.
-- Current owner: Kepler Task Mastermind is refreezing and committing the
-  candidate on branch `codex/provisional-local-use`. Ada Writer completed the
+- Current owner: Kepler Task Mastermind completed the provisional local-use
+  horizon on branch `codex/provisional-local-use`. Ada Writer completed the
   bounded Loader, maintenance-contract, current-truth, and future-idea prose.
   Task 13 retains Linux D1 ownership.
 - Provisional activation base:
@@ -56,6 +59,10 @@ open-forge:
 - M8 accepted closeout is `6ba0e060ed9aabc1954d70d0f1d2277bf5d8dff6`,
   tree `bccefb120f4e2d05a632cc80fc03b04ab2870e2d`; squash integration is the commit
   containing this record.
+- Provisional candidate commit is
+  `092ead98e5f9992e7e329290a3c8b82f01c2deb1`, tree
+  `1c4ab3ae9ed92a96a8708211046617ec60f8011f`; it is integrated into the current
+  `develop` tree.
 
 ## Provisional Local-Use Horizon
 
@@ -91,11 +98,11 @@ package-owned local-link workflow and does not externalize or package
   review, and independent link-safety review.
 - Stop before publication, registry or remote contact, dependency installation,
   package-source or root-package mutation, authored JavaScript/MJS/CJS, C#
-  behavior, compatibility machinery, or any local link before the Overseer
-  verifies the exact integrated target and releases the pre-authorized effect.
+  behavior, compatibility machinery, or any local link until the Overseer
+  verifies the exact integrated target and authorizes the exact effect.
 - Phase 1 owns M1–M2 preflight and prose alignment. Phase 2 owns M3–M4 focused
   evidence, review, refreeze, and candidate commit. Phase 3 owns M5 integration,
-  exact live-link release, isolated smoke, receipt, and closeout.
+  exact local-link authorization, isolated smoke, receipt, and closeout.
 
 ### Milestones
 
@@ -107,11 +114,12 @@ package-owned local-link workflow and does not externalize or package
    interoperability idea.
 3. M3 — complete. Run focused evidence and consume `T7-LR1` and `T7-LR2` on one
    frozen prose and safety boundary.
-4. M4 — active. Apply at most one grouped correction, refreeze every path, and
-   create one coherent non-amending candidate commit.
-5. M5 — pending. After candidate integration and exact release, link only from
-   the verified restored integrated tree, run an isolated no-user-project
-   smoke, record rollback and receipts, and return integration readiness.
+4. M4 — complete. No grouped correction was required; every path was refrozen
+   and one coherent non-amending candidate commit was created.
+5. M5 — complete. The candidate was integrated into the verified restored tree,
+   the exact local-link effect was authorized and executed, the isolated
+   no-user-project smoke passed within its limits, and the receipt below closes
+   the provisional horizon.
 
 ### M1 Live Preflight
 
@@ -145,7 +153,7 @@ package-owned local-link workflow and does not externalize or package
   `77c649a67bf3943dd69f9050b682f9e0723668ace36d242a09b2c037f833e467`.
 - Source and dogfood authored Loader content matched, both generated Entries
   regions were unchanged, and the authored Loader contained 77 non-empty lines
-  within its 35–80 budget. Obsolete command, workstation-path, Git commit-time,
+  within its 35–80 budget. Obsolete-command, absolute-path, Git-metadata,
   implementation-path, and generated-drift checks passed.
 - All nine advertised root or leaf help surfaces executed successfully against
   the integrated replacement CLI. Targeted Markdown formatting passed; the
@@ -162,6 +170,43 @@ package-owned local-link workflow and does not externalize or package
   so exact pre-link revalidation and immediate `npm run cli:unlink` rollback
   remain mandatory.
 - No grouped correction was required; `T7-LC1` remains unused.
+
+### M5 Integration And Live-Use Receipt
+
+- Locked restore succeeded from the integrated candidate. `npm run cli:link`
+  built, staged, and linked the exact-SHA main package together with the Linux
+  x64 platform package.
+- One non-repository user-local PATH shim was required because Volta exposes its
+  shell-facing shims rather than npm's active image bin. No host path is part of
+  this receipt.
+- `open-forge --version` matched
+  `092ead98e5f9992e7e329290a3c8b82f01c2deb1` exactly through local version
+  `0.0.0-dev.sha-092ead98e5f9992e7e329290a3c8b82f01c2deb1`.
+- Root `--help` exposed `route`, `extension`, `find`, `index`, `status`,
+  `doctor`, `context`, `references`, and `install`. The installed Loader
+  contains the replacement commands and no obsolete `load --bodies` or `chain`
+  example.
+- A fresh-workspace JSON smoke produced these bounded results:
+
+  | Journey    | Result and exit        | Accepted limit               |
+  | ---------- | ---------------------- | ---------------------------- |
+  | Install    | `complete`, exit `0`   | None                         |
+  | Context    | `attention`, exit `2`  | Expected missing frontmatter |
+  | Route List | `complete`, exit `0`   | None                         |
+  | Status     | `complete`, exit `0`   | None                         |
+  | Doctor     | `incomplete`, exit `3` | Accepted observation limits  |
+
+  Every smoke stderr was empty.
+
+- The integrated Git worktree remained clean. No package publication, registry
+  release, remote mutation, or user-project smoke occurred.
+- The reversible package-link rollback is `npm run cli:unlink` from its owning
+  repository. Remove an explicitly owned user-local PATH bridge only after
+  resolving and revalidating its exact target; no host path is part of this
+  contract.
+- `T7-LR3` passed writing/current-truth review of the exact six-path closeout
+  freeze with no material finding. Its read-only limit was that it reviewed the
+  accepted live receipt without re-executing the link or smoke.
 
 ## Follow-up Preflight
 
@@ -206,7 +251,7 @@ behavior. ARM remains undecided and outside this Task.
   the native executable. It has no download, postinstall, fallback, telemetry,
   compilation, or domain behavior.
 - Authored source is TypeScript. Generated JavaScript exists only below ignored
-  `/artifacts/`.
+  `artifacts/`.
 
 ## Local-Use Contract
 
@@ -219,8 +264,9 @@ behavior. ARM remains undecided and outside this Task.
   host packages, then uses ordinary npm platform-to-main-to-root link semantics.
 - `unlink` reverses only those known package links.
 - Link commands use offline, ignore-scripts, no-save, no-lock, no-audit, and
-  no-fund flags. They run only when directly requested; task evidence never
-  executes link or unlink.
+  no-fund flags. They run only when directly requested. The focused candidate
+  evidence did not execute link or unlink; M5 separately records the one
+  authorized live link after integration.
 - The frozen root legacy package identity, version, bin, files, dependencies,
   build command, and `cli:old` compatibility stay intact.
 
@@ -327,11 +373,11 @@ global link or unlink in evidence.
   contracts and npm, Node, operating-system, runtime, library, or other
   third-party behavior are explicitly excluded from assertions.
 - Direct integration neighborhood: the repository `LICENSE`, ignored
-  `/artifacts/`, the existing .NET root publish project, and the root TypeScript,
+  `artifacts/`, the existing .NET root publish project, and the root TypeScript,
   lint, formatting, and package-script configuration are read-only inputs.
 - Protected paths and meaning: all C# source and tests, `.github/**`, root
   `package.json` and lockfiles, Task 13 and Task 22 records, CLI architecture and
-  distribution authority, unrelated package managers, `/scripts`, and
+  distribution authority, unrelated package managers, `scripts/`, and
   `src/cli/root/development-link`. No tracked JavaScript, MJS, or CJS may be
   added. Generated JavaScript is allowed only in ignored artifacts.
 - Focused acceptance: strict root TypeScript, targeted lint and formatting,
@@ -449,7 +495,7 @@ and completion. It never tests npm, Node, the operating system, a third-party
 library, or CLI command behavior, and it does not use live global link or unlink
 in evidence.
 
-## Final Acceptance
+## Historical Package Acceptance
 
 - Node `v24.19.0` with TypeScript `6.0.2`, ESLint `10.9.1`,
   `typescript-eslint` `8.68.0`, and `@types/node` `26.3.0` completed strict
@@ -460,14 +506,15 @@ in evidence.
   protected root package contract passed, and tracked JavaScript/MJS and C#
   changes were both zero.
 - No publication, live npm link/unlink, registry or remote contact, CLI
-  invocation, or live Windows claim was made.
+  invocation, or live Windows claim was made in these historical package gates.
 
 ## Stop Conditions
 
-The historical package horizons stopped before live link or unlink. The current
-provisional horizon keeps package publication, registry or network contact,
+The historical package horizons stopped before live link or unlink. The
+provisional horizon is complete after the reviewed candidate was integrated,
+the exact local link was authorized and executed, and the isolated smoke and
+receipt were accepted. Package publication, registry or network contact,
 remote mutation, a new dependency, a generic packaging framework, postinstall
-or download behavior, C# changes, package-source changes, and user-project smoke
-outside scope. It also stops before live link or unlink until the reviewed
-candidate is integrated and the Overseer releases the exact pre-authorized
-local effect.
+or download behavior, C# changes, package-source changes, and user-project
+smoke remain outside scope. Any future link or unlink requires separate exact
+authorization, target validation, and rollback validation.

@@ -37,6 +37,13 @@ version marker. Arbitrary executable and version overrides do not exist. `dotnet
 test --no-build` does not publish and therefore requires the artifact selected by
 the preceding build.
 
+Ordinary projects use the machine-global `open-forge` command. Development,
+review, and acceptance worktrees must invoke artifacts built and published from
+that same worktree and must never use the global command as evidence. A
+package-manager-specific user-local PATH bridge may expose the machine-global
+package when shell-facing shims differ from npm's active bin, but the bridge is
+not evidence of source or artifact identity.
+
 ## Rationale
 
 Repository-root tooling matches the way maintainers and IDEs enter the repository.
@@ -68,12 +75,15 @@ shell profiles or IDE launch configuration.
   developer workflow.
 - IDE test runners build the EndToEnd project and receive the same local
   publication.
-- Root `/artifacts/` is the only .NET output boundary.
+- Root `artifacts/` is the only .NET output boundary.
 - Local public-process evidence uses no environment configuration.
 - Native public-process evidence uses a closed build-time RID selection rather
   than arbitrary ambient paths.
 - Native AOT remains explicit evidence and is never implied by the development
   publication.
+- Local-link rollback removes the known npm links from the owning repository.
+  An explicitly owned user-local PATH bridge is removed only after its exact
+  target is resolved and revalidated.
 
 ## Authoritative Sources
 
