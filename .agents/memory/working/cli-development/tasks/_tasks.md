@@ -26,10 +26,12 @@ Read the [program Task](00-cli-development.md), [Architecture](../../../crystall
 - [x] [CLI Architecture Authority Audit](cli-architecture-authority-audit.md) — Task 9 is Complete and integrated at `e431395a`, exact tree `656cccdf`; twelve location-precise findings are retained for Task 12 — Implementer: Dedicated Task Mastermind
 - [x] [CLI Architecture Authority Remediation](cli-architecture-authority-remediation.md) — Task 12 is Complete after all twelve authority dispositions, one fresh Task review/correction, protected-identity closeout, and two bounded integration findings/correction — Implementer: Dedicated Task Mastermind with one Brilliant Implementer and one fresh review
 - [x] [Root Tooling Placement Remediation](root-tooling-placement.md) — Complete and squash-integrated at `f8377094`, exact tree `c05c2ed6`; dequeued after completion-update grace — Implementer: Task 11 Task Mastermind with one Brilliant Implementer and one fresh review
-- [ ] [Lifecycle Commands](lifecycle/_lifecycle.md) — Active: Extension Create, Extension Install, root Install, and root Update are Complete; Task 17 Extension Update is active — Implementer: Overseer-managed command lanes
-- [ ] [Operational Commands](operations/_operations.md) — Planned — Implementer: Not assigned
-- [ ] [CLI Command Surface Audit](cli-command-surface-audit.md) — Task 10 is queued after all retained commands and before delivery; audit only, with no implementation mutation — Implementer: Dedicated Review Mastermind
+- [ ] [Lifecycle Commands](lifecycle/_lifecycle.md) — Active: Extension Create, Extension Install, root Install, root Update, and Task 17 Extension Update are Complete; Task 18 Extension Remove is active in Gray review — Implementer: Overseer-managed command lanes
+- [ ] [Operational Commands](operations/_operations.md) — Queued after active Task 18; Task 19 Repair and Task 20 Cleanup follow — Implementer: Overseer-managed command lanes
+- [ ] [CLI Command Surface Audit](cli-command-surface-audit.md) — Task 10 is explicitly postponed until after the retained command sequence; audit only, with no implementation mutation — Implementer: Dedicated Review Mastermind
 - [ ] [CLI Delivery](delivery/_delivery.md) — Planned — Implementer: Not assigned
+- [ ] [Task 23: Workspace Libraries](workspace-libraries.md) — Queued post-command last-stage implementation after Task 20; bounded read-only Preflight may run now; no phase or milestone assigned
+- [ ] [Task 24: Extensions Evolution](extensions-evolution.md) — Queued after Task 23 as a post-command last-stage implementation; bounded read-only Preflight may run now; no phase or milestone assigned
 
 ## Axioms
 
@@ -83,6 +85,8 @@ define execution state.
 - [Place live repository-owned agent tooling in explicit source scopes and remove the unexplained root scripts bucket](root-tooling-placement.md) - #Memory #Working #Contextual #CLI #Task #Tooling #TypeScript #Testing
 - [Implement read-only route discovery, beginning with route list and then route inspect](route-discovery/_route-discovery.md) - #Memory #Working #CLI #Task #Route #Discovery #ReadOnly #Contextual #Complete
 - [Implement retained route mutation commands on the accepted mutation foundation](route-mutation/_route-mutation.md) - #Memory #Working #CLI #Task #Route #Mutation #Contextual
+- [Define and later implement accepted contextual Workspace Libraries after the retained command sequence](workspace-libraries.md) - #Memory #Working #CLI #Task #Workspace #Library #Contextual #Queued
+- [Preserve and later evolve Extension distribution, ownership, and compatibility boundaries after the retained command sequence](extensions-evolution.md) - #Memory #Working #CLI #Task #Extension #Evolution #Contextual #Queued
 - [Add the interaction, Framework distribution, lifecycle provenance, and directory-create prerequisites for the next command wave](shared-foundations/_shared-foundations.md) - #Memory #Working #CLI #Task #Foundation #Shell #Framework #Lifecycle #Contextual
 - [Audit symbolic constants, generated-region authority, and composable active-test foundations across the replacement CLI](test-architecture-and-constants.md) - #Memory #Working #CLI #Task #Testing #Architecture #Constants #Fixtures #Snapshot #Contextual
 <!-- open-forge:generated-index:end -->

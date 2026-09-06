@@ -19,11 +19,12 @@ open-forge:
   `d0d475f3b8106dfa7c8552cabab4c197bad53a71`, tree
   `c3d621989a4b6698d5a9a8de1505da16a750dbcb`. The post-integration Release
   build and public Update `3/3` passed. Task 6's completion grace is consumed.
-  Task 17 “Extension Update” is active at phase 2/5, milestone 1/8 from exact
-  base `a9987d5c208272370fc0fc1f647b7f253d12056c`, tree
-  `e48823870cfb44914ffaaf5044e9e1125c8fd8d7`. Its Preflight and set-valued
-  bridge-registration carrier are accepted without a manifest or lifecycle
-  schema change.
+  Task 17 “Extension Update” is complete and dequeued after its completion grace
+  was consumed. Task 18 “Extension Remove” is active at phase 2/5, milestone
+  1/8 with Gray callable/public-shape review active from its accepted clean
+  activation base; its Preflight capsule is frozen without a manifest or
+  lifecycle schema change. Tasks 19 and 20 follow, then queued last-stage Tasks
+  23 “Workspace Libraries” and 24 “Extensions Evolution” in that order.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Common prerequisites: Extension discovery and `index`; workspace mutations also
   consume Mutation Foundation.
@@ -105,8 +106,9 @@ tree `f31cacb0c54bda8ecf8a91d3516c6ffa48f48753`, from `develop` parent
 `d0d475f3b8106dfa7c8552cabab4c197bad53a71`, tree
 `c3d621989a4b6698d5a9a8de1505da16a750dbcb`. Its post-integration Release build
 and public Update `3/3` passed. The former Task 6 stop boundary was later
-superseded by explicit Task 17 activation. Task 17 is active at the phase and
-milestone recorded above; Task 18 and later tasks remain queued.
+superseded by explicit Task 17 activation. Task 17 is complete and dequeued;
+Task 18 is active at the phase and milestone recorded above. Task 19 “Repair”
+and Task 20 “Cleanup” follow Task 18.
 Extension Install was independent of Route Remove and root Update, so it formed
 the first adoption slice after Task 12. Later lifecycle producers
 must extend the accepted explicit Status/Doctor contributor inventory and its
@@ -125,8 +127,8 @@ bytes and is owned only through a read/write `FileShare.None` handle.
 - [x] [Implement root Framework installation into a selected workspace](install.md) — Complete; final candidate `11994e4d21ddc807b7480afc39ae3612e5a69a56` is squash-integrated at `c60fcb98a57e9ec80769b9cb1d399ce13a227863`, exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed`
 - [x] [Task 14: implement Extension installation from exact reviewed package identity](extension-install.md) — Complete at phase 5/5, milestone 8/8; accepted lane `a6b44f07`, tree `cd4c074d`, squash-integrated at `20807781`, tree `4592a139`
 - [x] [Task 6: implement root Framework update from accepted lifecycle identity](update.md) — Complete at phase 5/5, milestone 8/8; accepted candidate `ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree `195f15388d6251f69244946183209d3dfe86b24a`, is squash-integrated at `c6eec9d26ad6b798d418d260027241795fb4aefc`, exact tree `f31cacb0c54bda8ecf8a91d3516c6ffa48f48753`; post-integration Release build and public Update `3/3` passed
-- [ ] [Task 17: implement Extension update with source review, ownership, and recovery integrity](extension-update.md) — Active at phase 2/5, milestone 1/8 — Task Mastermind: Sagan IV
-- [ ] [Task 18: implement Extension removal with preserved user content and recovery integrity](extension-remove.md) — Queued after Task 17 — Implementer: Not assigned
+- [x] [Task 17: implement Extension update with source review, ownership, and recovery integrity](extension-update.md) — Complete; completion grace consumed and dequeued
+- [ ] [Task 18: implement Extension removal with preserved user content and recovery integrity](extension-remove.md) — Active at phase 2/5, milestone 1/8; Gray callable/public-shape review active; Preflight capsule frozen — Task Mastermind: Sagan VI
 
 ## Entries
 

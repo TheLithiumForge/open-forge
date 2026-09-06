@@ -226,9 +226,9 @@ The following catalogue is the complete first-release set of detectable finding
 kinds. A domain may also report a limitation or coverage boundary when the
 declared check cannot be trusted. A fact that is valid and needs no action is
 represented as an informational finding where that distinction helps the user.
-For the unreleased schema-v1 first release, this catalogue contains exactly 109
+For the unreleased schema-v1 first release, this catalogue contains exactly 108
 kinds: 21 workspace, 4 recovery, 22 route, 28 local-reference, 14 Framework,
-and 20 Extension kinds.
+and 19 Extension kinds.
 
 ### Workspace And Entry
 
@@ -472,7 +472,6 @@ lifecycle actions. General Repair does not mutate Framework files.
 | `extension.partial-lifecycle`          | Within one exact trusted declared managed subject or set, at least one expected member is current and at least one other expected member is non-current.                                                                                          | `blocked-repair`; preserve the partial state until a typed recovery action is available.                         |
 | `extension.ownership-collision`        | User, Framework, or Extension ownership claims conflict.                                                                                                                                                                                          | `manual-decision`; ownership is not inferred.                                                                    |
 | `extension.bridge-registration`        | One exact lifecycle-owned routed Extension payload target has a missing, unreadable, or inconsistent ordinary generated-navigation parent `Entries` registration.                                                                                | `manual-decision`; report the evidence or use a typed future lifecycle action.                                   |
-| `extension.unmanaged-like-content`     | An exact contained readable supported Extension manifest signature exists in the accepted bounded Extension scan universe, with no trusted lifecycle ownership for that exact identity.                                                           | `informational`; do not adopt, register, or remove it.                                                           |
 
 `extension.partial-lifecycle` uses the same finite mixed-current-state rule as
 Framework lifecycle: within one exact trusted declared managed subject or set,
@@ -492,40 +491,21 @@ supplies the current, missing, unreadable, or inconsistent observation. The
 singular target wording applies to each observation, not to one global target.
 Content is inspected only when readable.
 
-An unavailable source makes the source-dependent horizon `incomplete`; an
+An unavailable source makes the source-dependent observation `incomplete`; an
 ambiguous mapping is `blocked`. Neither case selects or reconstructs a role.
-This horizon adds no manifest or lifecycle field or schema change. It never
+This observation adds no manifest or lifecycle field or schema change. It never
 uses a compatibility path, provider bridge, symbolic link, registry, dependency
-injection, fuzzy path or content inference, or the Task 18 manifest scan.
+injection, fuzzy path, or content inference.
 
-`extension.unmanaged-like-content` requires an exact contained readable supported
-Extension manifest signature inside the accepted bounded Extension scan universe,
-with no trusted lifecycle ownership for that exact identity. It is informational
-only. It is never fuzzy, path-only, filename-only, broad-scan, adoption,
-registration, or removal authority.
-
-The fixed first-release catalogue retains the public kind and wire name for both
-`extension.bridge-registration` and `extension.unmanaged-like-content`. Task 16
-emits neither kind unless the required producer-owned facts are present. While
-those facts are unavailable, the current Extension observation horizon retains
-one honest bounded `incomplete` limitation for each unavailable horizon: bridge-
-registration observation and installed-manifest observation. These are coverage
-limitations, not synthesized findings. Task 17 owns the accepted set-valued
-bridge-registration observations and must extend the typed contributor views
-and Doctor before its acceptance. Task 18 owns the exact installed-manifest
-observation universe and must extend those views and Doctor before its
-acceptance. The final pre-release completeness gate requires an honest emission
-path for all 109 kinds. The current implementation target is 107 producer-backed
-emissions plus exactly these two accepted Extension deferrals.
-
-While both accepted Extension observation horizons remain unavailable, the
-overall Doctor result is honestly `incomplete` with exit `3`, even when every
-supported observation has zero findings. The result can become `complete` only
-after both horizons close and all 109 kinds have honest emission paths.
+The fixed first-release catalogue retains `extension.bridge-registration` as a
+producer-backed kind. Task 17 closed its accepted set-valued observation by
+extending the typed contributor views and Doctor. The current Extension domain
+has no remaining observation horizon, and the final pre-release completeness
+gate has an honest emission path for all 108 kinds.
 
 Neither legacy `open-forge.extensions.json`, package-source manifests, broad
 `.agents` recursion, payload/path/byte resemblance, nor Framework bridges may
-substitute for those producer facts. Static CLI composition is wiring only and
+substitute for producer-owned facts. Static CLI composition is wiring only and
 cannot manufacture observations; dependency injection and a runtime registry
 are not observation substitutes.
 
@@ -668,7 +648,7 @@ DoctorJsonDomain {
 }
 
 DoctorJsonFinding {
-  kind: one of the 109 finite catalogue values,
+  kind: one of the 108 finite catalogue values,
   severity: "information" | "warning" | "error",
   message: string,
   subject: DoctorJsonSubject,

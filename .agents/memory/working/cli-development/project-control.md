@@ -24,6 +24,15 @@ open-forge:
 - Declared stable repository-global task horizon: None. Permanent task IDs do
   not imply a fixed total task count.
 
+Current active execution is Task 18 “Extension Remove” → Task 19 “Repair” →
+Task 20 “Cleanup”, plus implementation-local coherence work. The queued
+last-stage implementation order after Task 20 is Task 23 “Workspace Libraries”
+→ Task 24 “Extensions Evolution”. Tasks 10 “CLI Command Surface Audit”, 21
+“CLI Command Surface Remediation”, 13 “Native linux-x64 CI and Reproducible
+Artifacts”, and 22 “Final Documentation, Acceptance, and Release” remain
+recorded but explicitly postponed. Tasks 23 and 24 have no phase or milestone
+horizons until their separate contract freezes.
+
 The [CLI Architecture](../../crystallized/documents/cli/architecture.md),
 [Development Plan](plan.md), and command contracts define accepted product and
 program meaning. Each linked Task record defines its accepted phase and
@@ -149,16 +158,23 @@ identity, queue state, completion grace, worktree mapping, and integration state
 
 | Permanent task ID and actual name                        | Task record                                                                 | Queue state          | Completion grace      | Outcome                                                                                                             | Queue order and dependency reason                                                          | Profile                           | Lane, branch, worktree, and base                                                                                                                                                                                                                                                            | Responsible role                                                                                                                       | Integration mapping                                                                                                                                                                                                                                                                                                                                   |
 | -------------------------------------------------------- | --------------------------------------------------------------------------- | -------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Task 17 “Extension Update”                               | [Extension Update](tasks/lifecycle/extension-update.md)                     | `RECENTLY_COMPLETED` | `2 updates remaining` | Update installed Extensions from reviewed source while preserving isolation, ownership, and recovery integrity.     | Complete at phase 5/5, milestone 8/8; stop after Task 17 without activating Task 18.       | Streamlined assured task          | Accepted candidate `3bcb6025`, tree `63f5b22c`; integrated into local `develop` as `ae055a73`, the same tree, from parent `a9987d5c`; phase 5/5, milestone 8/8; Green, full managed/native/packed gates, grouped correction, and final acceptance accepted; `T17-R1` and `T17-C1` consumed. | Sagan IV Task Mastermind; Curie III paused Brilliant Implementer; explicit Gray/Red boundaries; review and correction budgets consumed | Integration tree equals candidate tree; declared delta 60 paths (40 added / 20 modified / 0 deleted); sorted-path SHA-256 `56d0dab3ba1f9463c864d3570c4c4875ef5975e2c935a39c2c56ed46d2b73911`; final gate basis `d3c29a2b20e77c18484b5ab58056063e019d469e`, tree `18f76ed4`; bridge-registration carrier and affected Status/Doctor evidence accepted. |
-| Task 18 “Extension Remove”                               | [Extension Remove](tasks/lifecycle/extension-remove.md)                     | `QUEUED`             | Not applicable        | Remove only lifecycle-managed Extension content while preserving user and other-package state.                      | After Task 17.                                                                             | Streamlined assured task          | Planned branch and worktree; exact base deferred until activation                                                                                                                                                                                                                           | Task Mastermind; explicit Gray/Red boundaries; one Brilliant Implementer; one fresh review                                             | Must extend the accepted Status/Doctor contributor inventory with the exact installed-manifest observation producer before acceptance.                                                                                                                                                                                                                |
-| Task 19 “Repair”                                         | [Repair](tasks/operations/repair.md)                                        | `QUEUED`             | Not applicable        | Turn supported Doctor findings into explicit verified repair plans under mutation safeguards.                       | After Task 18 and the complete contributor inventory.                                      | Streamlined assured task          | Planned branch and worktree; exact base deferred until activation                                                                                                                                                                                                                           | Task Mastermind; explicit Gray/Red boundaries; one Brilliant Implementer; one fresh review                                             | Separate future integration boundary.                                                                                                                                                                                                                                                                                                                 |
-| Task 20 “Cleanup”                                        | [Cleanup](tasks/operations/cleanup.md)                                      | `QUEUED`             | Not applicable        | Delete only positively recognized recovery artifacts after lease-bound revalidation.                                | After Task 19 and every artifact producer.                                                 | Streamlined assured task          | Planned branch and worktree; exact base deferred until activation                                                                                                                                                                                                                           | Task Mastermind; explicit Gray/Red boundaries; one Brilliant Implementer; one fresh review                                             | Separate future integration boundary.                                                                                                                                                                                                                                                                                                                 |
-| Task 10 “CLI Command Surface Audit”                      | [CLI Command Surface Audit](tasks/cli-command-surface-audit.md)             | `QUEUED`             | Not applicable        | Review the complete retained CLI for direct PR-level architecture, design, refactoring, and test-evidence problems. | After Task 20 and before delivery and release acceptance.                                  | Read-only strategic audit         | Planned branch and worktree; exact base deferred until activation                                                                                                                                                                                                                           | Dedicated Review Mastermind with bounded topic reviewers selected at Preflight                                                         | Audit-only integration; accepted findings activate Task 21.                                                                                                                                                                                                                                                                                           |
-| Task 21 “CLI Command Surface Remediation”                | [CLI Command Surface Remediation](tasks/cli-command-surface-remediation.md) | `CONDITIONAL`        | Not applicable        | Apply only the Task 10 findings accepted by the maintainer.                                                         | Identity reserved; scope waits for Task 10 acceptance.                                     | Deferred conditional remediation  | No branch, worktree, or implementation horizon until accepted findings exist                                                                                                                                                                                                                | Future Task Mastermind                                                                                                                 | Activates only for an exact maintainer-accepted finding set.                                                                                                                                                                                                                                                                                          |
-| Task 13 “Native linux-x64 CI and Reproducible Artifacts” | [Native CI and Reproducible Artifacts](tasks/delivery/02-native-ci.md)      | `QUEUED`             | Not applicable        | Implement the accepted Linux D1 boundary after the completed preparation and required x64 authority alignment.      | After all retained commands, Task 10, and conditional Task 21 remediation; before Task 22. | Supervised Luna preparation trial | Preparation candidate `e7689696`, tree `c204c17b`; later implementation base deferred until activation                                                                                                                                                                                      | Preparation owner complete; later semantic implementation remains Sol/xhigh                                                            | Preparation is integrated by the commit containing this record; later implementation keeps this permanent ID.                                                                                                                                                                                                                                         |
-| Task 22 “Final Documentation, Acceptance, and Release”   | [Accept And Release The Complete CLI](tasks/delivery/04-release.md)         | `QUEUED`             | Not applicable        | Align docs and packages, run complete acceptance, and perform only a separately authorized release.                 | Final task after Task 13 implementation and complete contributor gate.                     | Final acceptance and release      | Planned branch and worktree; exact base deferred until activation                                                                                                                                                                                                                           | Task Mastermind and maintainer                                                                                                         | No publication is authorized by queueing this task.                                                                                                                                                                                                                                                                                                   |
+| Task 17 “Extension Update”                               | [Extension Update](tasks/lifecycle/extension-update.md)                     | `DEQUEUED`          | Consumed             | Update installed Extensions from reviewed source while preserving isolation, ownership, and recovery integrity.     | Complete at phase 5/5, milestone 8/8; completion grace consumed; Task 18 is active.       | Streamlined assured task          | Accepted candidate `3bcb6025`, tree `63f5b22c`; integrated into local `develop` as `ae055a73`, the same tree, from parent `a9987d5c`; phase 5/5, milestone 8/8; Green, full managed/native/packed gates, grouped correction, and final acceptance accepted; `T17-R1` and `T17-C1` consumed. | Sagan IV Task Mastermind; Curie III paused Brilliant Implementer; explicit Gray/Red boundaries; review and correction budgets consumed | Integration tree equals candidate tree; declared delta 60 paths (40 added / 20 modified / 0 deleted); sorted-path SHA-256 `56d0dab3ba1f9463c864d3570c4c4875ef5975e2c935a39c2c56ed46d2b73911`; final gate basis `d3c29a2b20e77c18484b5ab58056063e019d469e`, tree `18f76ed4`; bridge-registration carrier and affected Status/Doctor evidence accepted. |
+| Task 18 “Extension Remove”                               | [Extension Remove](tasks/lifecycle/extension-remove.md)                     | `ACTIVE`            | Not applicable        | Remove only lifecycle-managed Extension content while preserving user and other-package state.                      | Active after Task 17; phase 2/5, milestone 1/8; Gray callable/public-shape review active; Task 19 follows. | Streamlined assured task          | Accepted clean activation base `5cabb10d`, tree `fb16fed3`; exact branch/worktree are task-local; Preflight capsule frozen.                                                                                                                        | Sagan VI Task Mastermind; explicit Gray/Red boundaries; one Brilliant Implementer; one fresh review                                             | No Doctor producer obligation; no installed-manifest scan; integration remains pending acceptance.                                                                                                                                                                                                                                                |
+| Task 19 “Repair”                                         | [Repair](tasks/operations/repair.md)                                        | `QUEUED`            | Not applicable        | Turn supported Doctor findings into explicit verified repair plans under mutation safeguards.                       | After active Task 18; Task 20 follows.                                                   | Streamlined assured task          | Planned branch and worktree; exact base deferred until activation                                                                                                                                                                                                                           | Task Mastermind; explicit Gray/Red boundaries; one Brilliant Implementer; one fresh review                                             | Separate future integration boundary.                                                                                                                                                                                                                                                                                                                 |
+| Task 20 “Cleanup”                                        | [Cleanup](tasks/operations/cleanup.md)                                      | `QUEUED`            | Not applicable        | Delete only positively recognized recovery artifacts after lease-bound revalidation.                                | After Task 19; Task 23 follows as the first queued last-stage improvement.                 | Streamlined assured task          | Planned branch and worktree; exact base deferred until activation                                                                                                                                                                                                                           | Task Mastermind; explicit Gray/Red boundaries; one Brilliant Implementer; one fresh review                                             | Separate future integration boundary.                                                                                                                                                                                                                                                                                                                 |
+| Task 10 “CLI Command Surface Audit”                      | [CLI Command Surface Audit](tasks/cli-command-surface-audit.md)             | `POSTPONED`        | Not applicable        | Review the complete retained CLI for direct PR-level architecture, design, refactoring, and test-evidence problems. | Explicitly postponed until after the retained command sequence; before delivery if reopened. | Read-only strategic audit         | Planned branch and worktree; exact base deferred until activation                                                                                                                                                                                                                           | Dedicated Review Mastermind with bounded topic reviewers selected at Preflight                                                         | Audit-only integration; accepted findings activate Task 21.                                                                                                                                                                                                                                                                                           |
+| Task 21 “CLI Command Surface Remediation”                | [CLI Command Surface Remediation](tasks/cli-command-surface-remediation.md) | `CONDITIONAL`       | Not applicable        | Apply only the Task 10 findings accepted by the maintainer.                                                         | Explicitly postponed; identity reserved and scope waits for Task 10 acceptance.            | Deferred conditional remediation  | No branch, worktree, or implementation horizon until accepted findings exist                                                                                                                                                                                                                | Future Task Mastermind                                                                                                                 | Activates only for an exact maintainer-accepted finding set.                                                                                                                                                                                                                                                                                          |
+| Task 13 “Native linux-x64 CI and Reproducible Artifacts” | [Native CI and Reproducible Artifacts](tasks/delivery/02-native-ci.md)      | `POSTPONED`        | Not applicable        | Implement the accepted Linux D1 boundary after the completed preparation and required x64 authority alignment.      | Explicitly postponed until after retained commands and any reopened Task 10/21; before Task 22 if resumed. | Supervised Luna preparation trial | Preparation candidate `e7689696`, tree `c204c17b`; later implementation base deferred until activation                                                                                                                                                                                      | Preparation owner complete; later semantic implementation remains Sol/xhigh                                                            | Preparation is integrated by the commit containing this record; later implementation keeps this permanent ID.                                                                                                                                                                                                                                         |
+| Task 22 “Final Documentation, Acceptance, and Release”   | [Accept And Release The Complete CLI](tasks/delivery/04-release.md)         | `POSTPONED`        | Not applicable        | Align docs and packages, run complete acceptance, and perform only a separately authorized release.                 | Explicitly postponed after Task 13 and the complete contributor gate; no publication is implied. | Final acceptance and release      | Planned branch and worktree; exact base deferred until activation                                                                                                                                                                                                                           | Task Mastermind and maintainer                                                                                                         | No publication is authorized by queueing or postponement.                                                                                                                                                                                                                                                                                           |
+| Task 23 “Workspace Libraries”                            | [Workspace Libraries](tasks/workspace-libraries.md)                         | `QUEUED`            | Not applicable        | Prepare and implement the accepted contextual Workspace Libraries design after a final contract freeze.           | After Task 20; first queued last-stage improvement; bounded read-only Preflight may run now. | Queued last-stage task             | No branch or implementation horizon until activation after the distinct maintainer contract/CLI review                                                                                      | Future Task Mastermind after contract freeze                                                                                           | No implementation or integration assigned; design remains contextual input.                                                                                                                                                                                                                                                                          |
+| Task 24 “Extensions Evolution”                           | [Extensions Evolution](tasks/extensions-evolution.md)                       | `QUEUED`            | Not applicable        | Prepare and implement the contextual Extensions Evolution idea after Task 23 and a final contract freeze.        | After Task 23; second queued last-stage improvement; bounded read-only Preflight may run now. | Queued last-stage task             | No branch or implementation horizon until activation after the distinct maintainer contract/CLI review                                                                                      | Future Task Mastermind after contract freeze                                                                                           | No implementation or integration assigned; idea remains contextual input.                                                                                                                                                                                                                                                                             |
 
-Queue order expresses dependency and priority, not numeric order. A completed
+Queue state uses `ACTIVE` for the selected task, `QUEUED` for the next retained
+command or an ordered last-stage improvement, `POSTPONED` for a recorded task
+deliberately held outside the active sequence, `DEFERRED` for a later
+post-command improvement with no horizon, and
+`DEQUEUED` after completion grace is consumed. Queue order expresses dependency
+and priority, not numeric order. A completed
 task remains in `RECENTLY_COMPLETED` on its completion-bearing update and exactly
 two later progress-bearing Overseer updates. The ledger then moves it to the
 completion record before the next update. Reopened work retains its permanent ID
@@ -319,8 +335,9 @@ external Update completed one verified effect; and the exact repeat was a
 no-op. The source/target SHA-256 is
 `9c99cf2c3d165cfa06078a009d10f6120f356c1644f6f366da37102e8a413c00`.
 Findings, residuals, and warnings were absent. Prior package outputs remain
-archived intact. Task 18 “Extension Remove” remains `QUEUED` and inactive.
-Stop after Task 17 and do not activate Task 18.
+archived intact. At this historical receipt, Task 18 “Extension Remove” was
+`QUEUED` and inactive and work was ordered to stop after Task 17. The current
+ledger state is defined by the active-work table above.
 
 ## Task 17 Accepted Integration
 
@@ -338,8 +355,9 @@ The declared integration delta covers 60 paths: 40 added, 20 modified, and
 final full-gate basis is commit `d3c29a2b20e77c18484b5ab58056063e019d469e`,
 tree `18f76ed403fbe2e9047ad68f289b7c89100421b4`.
 
-No task is active. Task 18 remains `QUEUED` and inactive because the user
-ordered work to stop after Task 17.
+At this historical integration receipt, no task was active and Task 18 was
+`QUEUED` and inactive because work was ordered to stop after Task 17. The
+current ledger state is defined by the active-work table above.
 
 ## Task 6 Accepted Closeout
 
@@ -410,21 +428,12 @@ engine, or ambient registration. Task 12 owns durable architecture placement;
 Task 15 Gray owns exact callable signatures. Composition alone does not change
 Status or Doctor public contracts.
 
-Task 16 retains the fixed first-release Extension names for
-`extension.bridge-registration` and `extension.unmanaged-like-content`, but emits
-neither without producer-owned facts. Its current Extension horizon retains one
-honest bounded `incomplete` limitation for each unavailable observation horizon:
-bridge-registration observation and installed-manifest observation. Task 17 owns
-the accepted set-valued bridge-registration observations and must extend the
-typed contributor views and Doctor before acceptance. Task 18 owns the exact
-installed-manifest universe—accepted root and
-depth, exact `extension.json`, containment, ordinary-read boundary, existing
-source-generated parser, canonical identity, and exact lifecycle-ownership
-comparison—and must extend those views and Doctor before acceptance. The current
-Doctor catalogue contains exactly 109 kinds, and the implementation target is
-107 supported producer-backed emissions plus exactly these two accepted
-Extension deferrals. The final pre-release completeness gate requires an honest
-emission path for all 109 kinds.
+Task 16 retains the fixed first-release Extension catalogue at exactly 19 kinds,
+including the producer-backed `extension.bridge-registration` observation
+accepted through Task 17. The current Doctor catalogue contains exactly 108
+kinds, and its final pre-release completeness gate has an honest emission path
+for every kind. Task 17 closed the bridge-registration observation; Task 18 has
+no installed-manifest scan or Doctor producer obligation.
 
 Legacy `open-forge.extensions.json`, package-source manifests, broad `.agents`
 recursion, payload/path/byte resemblance, and Framework bridges are not
@@ -452,10 +461,11 @@ before acceptance.
 Task 16 consumed the full plural Extension view and the six explicit
 producer-owned Doctor views without fallback, substitution, reconstruction,
 reread, command-output parsing, dependency injection, a service locator,
-reflection, a runtime registry, or a generic operational engine. Its accepted
-lane `a48a16cd`, tree `90e66b05`, is squash-integrated at `59276c3b` with exact
-tree equality. The current horizon keeps the two named Extension limitations
-honest until Tasks 17 and 18 add their producer-owned observations.
+  reflection, a runtime registry, or a generic operational engine. Its accepted
+  lane `a48a16cd`, tree `90e66b05`, is squash-integrated at `59276c3b` with exact
+  tree equality. The current catalogue is 108 kinds with 19 Extension kinds;
+  Task 17 closed the bridge-registration observation, and no Extension
+  observation horizon remains.
 
 ## Simplified Flow Trial
 
@@ -556,8 +566,8 @@ successfully supervised three Luna/max Explorer inventories from
 its activation-reconnaissance agent tree. No build, test, source or workspace mutation,
 artifact, or activation occurred; root advanced only through coordination
 ledgers to clean `bbf2d87c`. The reconnaissance recorded the then six-domain,
-112-kind Doctor contract as historical context; the accepted current disposition
-is the 109-kind horizon recorded in the Task 16 record. Doctor consumes Task
+  112-kind Doctor contract as historical context; the accepted current disposition
+  is the 108-kind horizon recorded in the Task 16 record. Doctor consumes Task
 15's immutable typed views rather than parsing
 Status output or using direct producer fan-in; exact callable shapes remain
 Status Gray-owned and neutral readers remain reusable. Private command
@@ -651,8 +661,9 @@ tests, build, production, or completion was claimed.
 - Task 16 Doctor is complete at phase 5/5, milestone 8/8. Accepted lane
   `a48a16cd`, tree `90e66b05`, is squash-integrated at `59276c3b` with exact
   tree equality. Sagan's Task Mastermind boundary and Curie's Brilliant
-  Implementer boundary are complete. The 109-kind catalogue supplies 107
-  producer-backed emissions plus the two accepted Extension limitations. The
+  Implementer boundary are complete. The 108-kind catalogue supplies
+  producer-backed emissions for all 19 Extension kinds, including the accepted
+  bridge-registration observation; no Extension limitation remains. The
   Route Inspect
   synthetic overwrite-ambiguity conflict remains one bounded Task 10 audit
   input, not a Doctor finding or a new task.
@@ -676,14 +687,14 @@ tests, build, production, or completion was claimed.
   `c6eec9d26ad6b798d418d260027241795fb4aefc`, exact tree
   `f31cacb0c54bda8ecf8a91d3516c6ffa48f48753`; the post-integration Release
   build and public Update `3/3` passed.
-- Task 10 retains its permanent identity and is queued after every retained
-  command and before delivery and release acceptance.
-- Task 13 is queued at phase 1/3, milestone 2/6 after accepted preparation
-  candidate `e7689696`, tree `c204c17b`, was integrated by the commit containing
-  this record. Linux, macOS, and Windows x64 direction is accepted; ARM remains
-  undecided. CI, package, production, test, architecture, contract, and public
-  surfaces remain unchanged. Implementation waits for all retained commands,
-  Task 10, and every conditional Task 21 remediation accepted from that audit.
+- Task 10 retains its permanent identity and remains explicitly postponed until
+  the queued command and last-stage sequence is complete; it remains review-only
+  and before delivery and release acceptance if reopened.
+- Task 13 preparation is integrated from accepted candidate `e7689696`, tree
+  `c204c17b`, but implementation remains explicitly postponed until its recorded
+  downstream prerequisites are reopened. Linux, macOS, and Windows x64
+  direction is accepted; ARM remains undecided. CI, package, production, test,
+  architecture, contract, and public surfaces remain unchanged.
 
 ## Completion And Integration Ledger
 
@@ -700,7 +711,7 @@ tests, build, production, or completion was claimed.
 | Task 4 “Route Move”                                    | Accepted closeout `631983ea`, tree `d6f6fdf7`; final full-gate candidate `715bf245`, tree `d837ac93`; squash integration `d3d2dc1`, tree `6959b51e`.                                                                                                                                                                                                                                                                                                                                 | Release build `0/0`; managed Unit `1701/1701`, Integration `888/888`, EndToEnd `165/165`; native Integration `888/888`, native EndToEnd `165/165`, and managed-on-native EndToEnd `165/165`; focused `94/79/13`, escaping `5/5`, composition `1/1`, dogfood, static, format, and immutable review gates pass. Mid-read BCL fault injection remains the accepted verification limit.                                                               | Complete and dequeued after two subsequent progress updates. |
 | Task 12 “CLI Architecture Authority Remediation”       | Corrected source `a0e6bc8d`, exact tree `9c4a33b1`; squash integration `495a7ed6`, the same exact tree, from parent `d3d2dc1`, tree `6959b51e`.                                                                                                                                                                                                                                                                                                                                      | Twelve authority destinations, 27 Architecture headings, exact shared result coordinates, distinct Route Update `CLI-EDGE-016`, dependency-version ownership, generated navigation `41/0/41`, formatting, links, protected manifests, and focused integration re-review pass. Executable, package, project, schema, build, platform, runtime-projection, and public-document bytes remain unchanged.                                              | Complete and dequeued after two subsequent progress updates. |
 | Task 15 “Status”                                       | Accepted lane `0c19b7053ef2b8c48898cfebadedff0c5702bf34`, tree `8ff2ac4ac0f5985863a9aaf85911c2deb6152980`; correction `f2dcdcae8b7c2cc9522b5ce7df250c73a55347db`, tree `b6f83beb50cefe56a0aae7d9a4019dab08c19aea`; Green `7dd8de6c4f9eae3355f5ac4ee32d533e6ffb2564`, tree `f6c37550b78a01e7611178bd563e274f94bb2bb1`; integration parent `e90b22f9a6d4fdd2043516e718fc782490396cb2`, tree `74713c32473603e7f9100378fafd314c50f813e3`; identity is the commit containing this record. | Release `0` warnings/errors; managed Unit `1739/1739`, Integration `933/933`, EndToEnd `172/172`; managed EndToEnd against native root `172/172`; native Integration `933/933`; native EndToEnd `172/172`; all failures, skips, and warnings `0`. Every later producer extends the explicit contributor inventory and affected Status evidence before acceptance.                                                                                 | Complete and dequeued; completion grace consumed.            |
-| Task 16 “Doctor”                                       | Accepted correction chain `1e5abb67` → `e0f23e2c` → `a48a16cd`; final lane tree `90e66b05`; squash integration `59276c3b`, the same exact tree, from parent `f8e542a9`, tree `0344b7e5`.                                                                                                                                                                                                                                                                                             | Release `0` warnings/errors; managed Unit `1768/1768`, Integration `937/937`, EndToEnd `175/175`; native Integration `937/937`; native EndToEnd `175/175`; managed-on-native EndToEnd `175/175`; exact public Doctor `3/3`; all failures and skips `0`. The two named Extension observation limitations remain owned by Tasks 17 and 18.                                                                                                          | Complete and dequeued after two subsequent progress updates. |
+| Task 16 “Doctor”                                       | Accepted correction chain `1e5abb67` → `e0f23e2c` → `a48a16cd`; final lane tree `90e66b05`; squash integration `59276c3b`, the same exact tree, from parent `f8e542a9`, tree `0344b7e5`.                                                                                                                                                                                                                                                                                             | Release `0` warnings/errors; managed Unit `1768/1768`, Integration `937/937`, EndToEnd `175/175`; native Integration `937/937`; native EndToEnd `175/175`; managed-on-native EndToEnd `175/175`; exact public Doctor `3/3`; all failures and skips `0`. The current catalogue is 108 kinds / 19 Extension kinds; Task 17 closed the bridge-registration observation and no Extension horizon remains.                                                                                                          | Complete and dequeued after two subsequent progress updates. |
 | Task 5 “Route Remove”                                  | Accepted lane `ab8da620`, exact tree `bb41e1c9`; squash integration `5a2e650a`, the same exact tree, from parent `0d269b7a`, tree `8863d176`.                                                                                                                                                                                                                                                                                                                                        | Release `0` warnings/errors; managed Unit `1797/1797`, Integration `966/966`, EndToEnd `178/178`; native Integration `966/966`; native EndToEnd `178/178`; managed-on-native EndToEnd `178/178`; exact public Route Remove `3/3`; all failures and skips `0`. Managed-route release meaning and other platform breadth remain deferred. Completion grace is consumed; Task 5 is dequeued.                                                         | Complete and dequeued; completion grace consumed.            |
 | Task 6 “Root Update”                                   | Final candidate `ac96f4cc`, tree `195f1538`; accepted squash integration `c6eec9d2`, exact tree `f31cacb0`, from `develop` parent `d0d475f3`, tree `c3d62198`.                                                                                                                                                                                                                                                                                                                       | Integration adopted 65 paths with sorted-path SHA `88cbcb64`; candidate and eight develop-only path mismatches were zero. Fresh post-integration Release build had zero warnings/errors; managed public Update selected, discovered, executed, and passed exactly `3/3`, with zero failures/skips. Native evidence remains the accepted supported `linux-x64` boundary.                                                                           | Recently completed; `2 updates remaining`.                   |
 | Task 17 “Extension Update”                             | Accepted candidate `3bcb6025`, tree `63f5b22c`; integration `ae055a73`, same tree, from `develop` parent `a9987d5c`.                                                                                                                                                                                                                                                                                                                                                                 | Integration tree equals candidate tree; declared delta 60 paths (40 added / 20 modified / 0 deleted), sorted-path SHA `56d0dab3ba1f9463c864d3570c4c4875ef5975e2c935a39c2c56ed46d2b73911`; final full-gate basis `d3c29a2b`, tree `18f76ed4`.                                                                                                                                                                                                      | Complete; stop ordered after Task 17.                        |
@@ -714,14 +725,17 @@ tests, build, production, or completion was claimed.
   immutable Git state, reproduced focused evidence, and linked Task records.
   Missing optional child messages alone remain `progress unobserved`, not
   failure.
-- Active tasks: None. Task 17 “Extension Update” is Complete at phase 5/5,
-  milestone 8/8. Gray, Red, coherent Green, the full managed/native/packed
+- Active task: Task 18 “Extension Remove” at phase 2/5, milestone 1/8, with
+  Gray callable/public-shape review active. Its
+  accepted clean activation base and frozen Preflight capsule are recorded in
+  the linked Task 18 record. Task 17 “Extension Update” is Complete at phase
+  5/5, milestone 8/8. Gray, Red, coherent Green, the full managed/native/packed
   gates, grouped correction `T17-C1`, and final acceptance are accepted. Fresh
   whole-task review `T17-R1` is consumed with final `CHANGES_REQUIRED` for
   exactly one accepted High finding, `T17-R1-F2`; `T17-R1-F1` is withdrawn as a
   false positive. Curie III is paused after the correction; the review and
-  correction budgets are consumed. Task 17's completion grace is
-  `2 updates remaining`.
+  correction budgets are consumed. Task 17's completion grace is consumed and
+  it is dequeued.
   The accepted candidate `3bcb602569e7e2243a0780e1ff9cbd8f424b6457`, tree
   `63f5b22c9c73dd9aaf2044c88401e5b91638e143`, is integrated into local
   `develop` as `ae055a73597c4d2310b217dc67d053aa200282db`, the same tree, from
@@ -751,24 +765,23 @@ tests, build, production, or completion was claimed.
   `d0d475f3b8106dfa7c8552cabab4c197bad53a71`, tree
   `c3d621989a4b6698d5a9a8de1505da16a750dbcb`. Its completion-bearing grace is
   `2 updates remaining`.
-- Recently completed: Task 17 “Extension Update” at phase 5/5, milestone 8/8,
-  with `2 updates remaining`. Task 6 “Root Update” remains at phase 5/5,
-  milestone 8/8 with `2 updates remaining`. Tasks 5 and 7 are dequeued and
-  remain only in the completion ledger with consumed completion grace. Task 16
-  “Doctor” is also dequeued and remains only in the completion ledger.
-- No task is active. The retained queue order after completed Task 17 begins
-  with Tasks 18/19/20, Task 10 “CLI Command Surface Audit”, conditional Task 21
-  “CLI Command Surface Remediation”, Task 13 “Native linux-x64 CI and
+- Recently completed: none. Task 6 “Root Update” remains at phase 5/5,
+  milestone 8/8 with its completion grace recorded in the completion ledger;
+  Tasks 5, 7, 15, 16, and 17 are dequeued with consumed completion grace.
+- Queued: Task 19 “Repair” and Task 20 “Cleanup” follow active Task 18. Task
+  23 “Workspace Libraries” and Task 24 “Extensions Evolution” follow Task 20
+  in that order as queued last-stage improvements; bounded read-only Preflight
+  may run now, but shared semantic implementation and integration remain
+  sequential after each contract freeze. Task 10 “CLI Command Surface Audit”,
+  Task 21 “CLI Command Surface Remediation”, Task 13 “Native linux-x64 CI and
   Reproducible Artifacts”, and Task 22 “Final Documentation, Acceptance, and
-  Release”. Task 18 remains `QUEUED` and inactive because the user ordered work
-  to stop after Task 17.
-- Queued preparation result: Task 13 “Native linux-x64 CI and Reproducible
-  Artifacts” (phase 1/3): milestone 2/6 — preparation integrated; implementation
-  waits for all retained commands, Task 10, and conditional Task 21 remediation.
+  Release” remain explicitly postponed.
+- Task 13 preparation remains integrated, but its implementation is explicitly
+  postponed until its recorded downstream prerequisites are reopened.
 - Task 11 “Root Tooling Placement Remediation” is dequeued after its
   completion-bearing update and two subsequent progress updates.
-- Next meaningful project boundary: none. Task 17 “Extension Update” remains
-  Complete at phase 5/5, milestone 8/8; stop without activating Task 18 or any
-  later task or changing their queue state. Task 18 remains `QUEUED` and
-  inactive because the user ordered work to stop after Task 17.
+- Next meaningful project boundary: Task 18 “Extension Remove” Gray
+  callable/public-shape review at phase 2/5, milestone 1/8, followed by Task 19
+  and Task 20, then queued Task 23 and Task 24 after their separate contract
+  freezes.
 - Blocker: None.

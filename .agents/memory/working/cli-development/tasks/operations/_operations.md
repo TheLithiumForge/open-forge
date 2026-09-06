@@ -8,11 +8,11 @@ open-forge:
 
 ## Task State
 
-- State: Queued in an adoption-first sequence.
+- State: Queued in the retained command sequence after active Task 18.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Initial prerequisites: Task 14 “Extension Install” for Status, then Status for
-  Doctor. Repair and Cleanup remain behind the complete retained producer
-  inventory and their command-local dependencies.
+  Doctor. Status and Doctor are complete. Repair and Cleanup follow active Task
+  18 “Extension Remove” and retain their command-local dependencies.
 
 ## Shared Boundary
 
@@ -39,19 +39,19 @@ reflection, a service locator, or a dynamic plug-in engine. This freezes the
 composition mechanism only and does not select or change the accepted child
 command order.
 
-Task 15 freezes an initial complete contributor inventory for every producer in
-its exact baseline. Task 16 diagnoses that complete declared inventory. Later
-producers extend the same explicit typed composition and pass affected
-Status/Doctor evidence before their own acceptance. No early result calls an
-absent or unavailable future domain healthy. Final release revalidates the
-complete inventory for every retained producer.
+Task 15 froze an initial complete contributor inventory for every producer in its
+exact baseline. Task 16 diagnoses that complete declared inventory, and Task 17
+closed its accepted Extension bridge-registration observation. Task 18 has no
+Doctor producer obligation. Repair and Cleanup consume the accepted inventory
+and their command-local dependencies; no absent future domain is called
+healthy.
 
 ## Child Tasks
 
-- [ ] [Task 15: implement complete baseline workspace, lifecycle, managed-source, generated, and recovery-bundle status facts](status.md) — Ready to activate from completed Task 14 base `20807781` — Task Mastermind assigned at activation
-- [ ] [Task 16: implement diagnosis domains, severity, recommendations, and complete doctor projections](doctor.md) — Queued after Task 15 — Implementer: Not assigned
-- [ ] [Task 19: implement explicit repair planning, dry run, application, verification, and recovery](repair.md) — Queued after the complete producer inventory — Implementer: Not assigned
-- [ ] [Task 20: implement lease-validated cleanup of recognized recovery bundles and drafts](cleanup.md) — Queued after Task 19 and every artifact producer — Implementer: Not assigned
+- [x] [Task 15: implement complete baseline workspace, lifecycle, managed-source, generated, and recovery-bundle status facts](status.md) — Complete
+- [x] [Task 16: implement diagnosis domains, severity, recommendations, and complete doctor projections](doctor.md) — Complete; no remaining Extension observation horizon
+- [ ] [Task 19: implement explicit repair planning, dry run, application, verification, and recovery](repair.md) — Queued after active Task 18 — Implementer: Not assigned
+- [ ] [Task 20: implement lease-validated cleanup of recognized recovery bundles and drafts](cleanup.md) — Queued after Task 19 — Implementer: Not assigned
 
 ## Entries
 

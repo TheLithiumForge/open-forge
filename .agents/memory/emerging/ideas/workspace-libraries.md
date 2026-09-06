@@ -8,11 +8,14 @@ open-forge:
 
 ## Status
 
-This is a contextual maintainer-review draft. It is not accepted architecture,
-an implementation contract, or a permanent task. The current [Extensions MVP
-Architecture](../../crystallized/documents/extensions/architecture.md), CLI
-contracts, and Framework routes remain authoritative. No ledger, plan, or
-control record assigns this idea.
+This is accepted contextual input for the queued permanent Task 23
+“Workspace Libraries”. It is not accepted architecture or an implementation
+contract, and it does not authorize implementation. The current [Extensions
+MVP Architecture](../../crystallized/documents/extensions/architecture.md), CLI
+contracts, and Framework routes remain authoritative. The [Task 23 record](../../working/cli-development/tasks/workspace-libraries.md)
+and current CLI control documents register this idea outside the active command
+sequence as a post-command last-stage improvement. No phase or milestone
+horizon is assigned until a future contract freeze.
 
 ## Purpose And Boundary
 
@@ -265,35 +268,33 @@ documentation](https://git-scm.com/book/en/v2/Git-Tools-Submodules) and
 [`core.symlinks` configuration](https://git-scm.com/docs/git-config#Documentation/git-config.txt-coresymlinks)
 for those independent Git behaviors.
 
-## Maintainer Decisions Before Promotion
+## Accepted Maintainer Decisions
 
-The maintainer has selected the product name `Workspace Libraries`, managed
-entity `library`, and public group `open-forge library`. Three other decisions
-remain for review:
+The maintainer selected the product name `Workspace Libraries`, managed entity
+`library`, and public group `open-forge library`, and accepted these decisions:
 
-1. **First-release boundary.** Confirm one contained source root, eligible
+1. **First-release boundary.** Use one contained source root, eligible
    ordinary files under its `.agents/**`, same consumer-relative destinations,
    relative file symlinks, real parent directories, consumer-owned controls,
    no first-release `collection` selection, and the listed exclusions.
-2. **Record and complete-tree Sync deletion.** Confirm
-   `.agents/open-forge.libraries.json`, its minimal exact mapping shape,
-   whole-library detachment, and deletion during Sync only after a complete
-   source inventory and an exact expected-link check.
+2. **Record and complete-tree Sync deletion.** Use
+   `.agents/open-forge.libraries.json`, whole-library detachment, and deletion
+   during Sync only after a complete source inventory and an exact expected-link
+   check.
 3. **Link capability and Git scope.** Require real symlinks with no copy
    fallback, and defer all initial Git diagnostics and operations even when the
    source root is a contained submodule.
 
-## Queue Proposal
+## Queued Task 23 Horizon
 
-If the three remaining decisions are accepted, create candidate Task 23, Workspace
-Libraries, after Task 18 and before Tasks 19 and 20. Its first prerequisite
-must be the link-aware guard for Route Update, Index, Route Move, and Route
-Remove plus a real-filesystem regression. That prerequisite must pass before
-any Attach dogfood. The task would then freeze the record and lifecycle
-contracts, implement the smallest library list/inspect/attach/sync/detach
-slices, and extend Status, Doctor, recovery, and Extension collision evidence.
-This is a queue proposal only; it does not assign Task 23 or change the current
-CLI ledger.
+Task 23 “Workspace Libraries” is queued as a post-command last-stage
+improvement after Task 20 and remains outside the active command sequence.
+Read-only Preflight and draft preparation may run now, but shared semantic
+implementation and integration wait for Task 20 and the final drafted Library
+contracts and CLI package to pass a distinct maintainer review and contract
+freeze. The link-aware guard for Route Update, Index, Route Move, and Route
+Remove with a real-filesystem regression is required before Attach dogfood. No
+phase or milestone horizon is assigned until activation.
 
 ## Evidence Before Promotion
 
@@ -310,5 +311,5 @@ Promotion should wait for evidence that:
    operation follows a library link or deletes its physical source target.
 4. Status, Doctor, recovery, and Extension lifecycle evidence reports typed
    library facts without adopting, mutating, or confusing ownership.
-5. Maintainer review accepts the three remaining decisions before any promotion to
-   Architecture, contracts, planning, or a permanent task.
+5. A distinct maintainer review accepts the final drafted Library contracts and
+   CLI package before implementation.

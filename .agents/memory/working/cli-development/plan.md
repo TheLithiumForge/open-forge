@@ -14,6 +14,11 @@ open-forge:
   Overseer owns architecture, sequencing, Task decomposition, integration, and
   Plan maintenance within that direction.
 - Last updated: 2026-09-06.
+- Current active horizon: Task 18 “Extension Remove” → Task 19 “Repair” →
+  Task 20 “Cleanup”. The queued last-stage implementation order after Task 20
+  is Task 23 “Workspace Libraries” → Task 24 “Extensions Evolution”. Tasks 10,
+  21, 13, and 22 remain explicitly postponed. Tasks 23 and 24 have no phase or
+  milestone horizons until their separate contract freezes.
 - I1 proportional prerequisite: committed at exact `b25d76e`. I1 is Complete in
   exact feature candidate `4e89d945b38a2d1e24600dd22789b55e4395a534`.
   Operation orchestration is committed at `125b6a2a`; public composition and
@@ -154,9 +159,10 @@ open-forge:
   carrier joins exact lifecycle target ownership, exact reviewed routed-source
   facts, neutral generated-navigation parent and expected-entry facts, and
   generated-entry comparison per observation without a schema change. Review
-  `T17-R1` and correction `T17-C1` are consumed. Task 17 is Recently completed
-  with `2 updates remaining` under the completion-grace convention. Stop after
-  Task 17 acceptance without activating Task 18.
+  `T17-R1` and correction `T17-C1` are consumed. Task 17 is complete and
+  dequeued after its completion grace was consumed. Task 18 “Extension Remove”
+  is active at phase 2/5, milestone 1/8 with Gray callable/public-shape review
+  active; Task 19 and Task 20 follow it.
 
 Task 17's focused Green receipts are complete: the six-project full solution
 Release build exited `0` with `0` warnings and `0` errors; Update Unit passed
@@ -250,9 +256,10 @@ verified effects, embedded Update was a no-op, edited external Update completed
 one verified effect, and the exact repeat was a no-op. The source/target SHA-256
 is `9c99cf2c3d165cfa06078a009d10f6120f356c1644f6f366da37102e8a413c00`.
 Findings, residuals, and warnings were absent. Prior package outputs remain
-archived intact. Task 17 is Complete and Recently completed with `2 updates
-remaining`; Task 18 remains `QUEUED` and inactive.
-Stop without activating Task 18 or any later task.
+  archived intact. Task 17 is Complete and dequeued after its completion grace
+  was consumed. Task 18 “Extension Remove” is active at phase 2/5, milestone
+  1/8 with Gray callable/public-shape review active; Task 19 and Task 20 follow
+  it.
 
 Task 17's accepted candidate commit `3bcb602569e7e2243a0780e1ff9cbd8f424b6457`,
 tree `63f5b22c9c73dd9aaf2044c88401e5b91638e143`, is integrated into local
@@ -263,9 +270,10 @@ accepted candidate tree. The declared integration delta covers 60 paths: 40
 added, 20 modified, and 0 deleted; its sorted-path SHA-256 is
 `56d0dab3ba1f9463c864d3570c4c4875ef5975e2c935a39c2c56ed46d2b73911`. The
 final full-gate basis is commit `d3c29a2b20e77c18484b5ab58056063e019d469e`,
-tree `18f76ed403fbe2e9047ad68f289b7c89100421b4`. Task 17 is Recently completed
-with `2 updates remaining`; no task is active. Task 18 remains `QUEUED` and
-inactive because the user ordered work to stop after Task 17.
+tree `18f76ed403fbe2e9047ad68f289b7c89100421b4`. Task 17 is complete and
+dequeued after its completion grace was consumed. Task 18 “Extension Remove”
+is active at phase 2/5, milestone 1/8 with Gray callable/public-shape review
+active; Task 19 and Task 20 follow it.
 
 Task 17's accepted gate receipt is the six-project managed restore/Release build
 with exit `0`, `0` warnings, and `0` errors; full managed Unit/Integration/
@@ -324,9 +332,9 @@ ignored exact Bun-lock materializations (`TypeScript 6.0.2`, `@types/node
   producer-owned Doctor views without fallback, substitution, reconstruction,
   reread, command-output parsing, dependency injection, a service locator,
   reflection, a runtime registry, or a generic operational engine. The accepted
-  109-kind first-release horizon supplies 107 producer-backed emissions and
-  retains exactly two honest Extension observation limitations for Tasks 17
-  and 18.
+  108-kind first-release horizon supplies producer-backed emissions for all 19
+  Extension kinds. Task 17 closed the bridge-registration observation; Task 18
+  has no Doctor producer obligation.
 - Accepted Route Update integration input baseline: local `develop` commit
   `996c2e17d1142ffb30dc7a2d17df657419566f97`, exact tree
   `877314d48db49013edc1c4dad1abb545b37caefc`. It integrates CLI
@@ -814,9 +822,12 @@ Complete the program top down:
    follow-up ran beside Status where the paths did not overlap and is complete at
    phase 4/4, milestone 7/7. Its Linux host journey passed; Darwin and Windows
    have stage-and-pack evidence only.
-10. Keep Task 13's later D1 boundary to Linux-only build and smoke, packed install
-    and invocation, and checksum evidence, then complete final acceptance for the
-    full accepted x64 graph without partial publication.
+10. Complete the queued last-stage Task 23 Workspace Libraries and Task 24
+    Extensions Evolution after Task 20 in that order, with a distinct maintainer
+    review and contract freeze before each implementation. Keep Task 13's later
+    D1 boundary to Linux-only build and smoke, packed install and invocation,
+    and checksum evidence, then complete final acceptance for the full accepted
+    x64 graph without partial publication.
 
 Each step ends in one inspectable commit. Architecture and cross-cutting callable
 contracts stay with the Mastermind. A smaller implementer receives one closed
@@ -896,10 +907,12 @@ Status or Doctor public contracts or the persisted operational-command order.
 | M3   | Complete: Task 6 “Root Update” phase 5/5, milestone 8/8; final candidate `ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree `195f15388d6251f69244946183209d3dfe86b24a`; squash integration `c6eec9d2`, exact tree `f31cacb0`                    | Complete the accepted root Update boundary without transplanting historical provisional Gray `ed614488` or Red `69a1bd83`; T6-R1 and one logical T6-C1 are consumed. Post-integration Release and public Update `3/3` evidence passed.                                                                                                                                                                                                                                                                                                         | M2, C2, M1, I1                              | Sequential lifecycle mutation                          | Lifecycle mutation                      | Accepted activation, Preflight, Gray, addendum, Red, Green, T6-C1 lineage, integration adoption, and post-integration managed/public evidence pass                                                                                                                                                                                           |
 | M4A  | Complete at phase 5/5, milestone 8/8; lane `a6b44f07`, tree `cd4c074d`, squash-integrated at `20807781`, tree `4592a139`                                                                                                                      | Implement Task 14 Extension Install as the first adoption command. One Brilliant Implementer owned coherent production and focused verification under its Task Mastermind. Unfinished Route Remove and root Update were not prerequisites.                                                                                                                                                                                                                                                                                                     | Task 12, C2, M1, I1                         | Prioritized lifecycle mutation                         | Extension mutation                      | Final managed `1711/917/169`; Native `917/169`; managed-on-native `169`; offline package journey                                                                                                                                                                                                                                             |
 | T7   | Complete at phase 4/4, milestone 7/7; accepted lane `a2942781`, tree `fe36fc3f`; squash-integrated at `e19d429e`, the same tree                                                                                                               | Completed the accepted x64 package graph. The Linux host `PackageEndToEnd` journey passed; Darwin and Windows have stage-and-pack evidence only. ARM, publication, and live link or unlink remain unproven and unauthorized.                                                                                                                                                                                                                                                                                                                   | M4A                                         | Parallel adoption slice with O1A where safe            | Distribution                            | Main/optional graph, host staging/packing, launcher reachability/forwarding/completion; no live global link/unlink                                                                                                                                                                                                                           |
-| O1A  | Complete: Task 15 and Task 16 are both phase 5/5, milestone 8/8                                                                                                                                                                               | Preserve the explicit producer-owned contributor inventory. Task 16's accepted 109-kind horizon supplies 107 producer-backed emissions and two honest Extension observation limitations that Tasks 17 and 18 must close before their own acceptance.                                                                                                                                                                                                                                                                                           | M4A                                         | Sequential adoption slice                              | Operations                              | Doctor managed `1768/937/175`; native `937/175`; managed-on-native `175`; exact public Doctor `3/3`; every gate had zero failures/skips and the Release build had zero warnings/errors                                                                                                                                                       |
-| M4B  | Task 17 “Extension Update” Complete at phase 5/5, milestone 8/8; Task 18 “Extension Remove” queued                                                                                                                                            | Complete Task 17 first, extending the accepted Status/Doctor contributor inventory with one typed observation per exact lifecycle-owned routed target and exact generated `Entries` registration; stop after Task 17 without activating Task 18.                                                                                                                                                                                                                                                                                               | M3, M4A, O1A                                | Sequential lifecycle mutation                          | Extension mutation                      | Accepted candidate `3bcb6025`, tree `63f5b22c`; integrated at `ae055a73`, same tree, from parent `a9987d5c`; declared delta 60 paths (40 added / 20 modified / 0 deleted), sorted-path SHA `56d0dab3ba1f9463c864d3570c4c4875ef5975e2c935a39c2c56ed46d2b73911`; final gate basis `d3c29a2b`, tree `18f76ed4`; Task 18 remains queued/inactive |
-| O2   | Pending                                                                                                                                                                                                                                       | Finalize the complete Status/Doctor contributor inventory, then implement relevant-domain Task 19 Repair and Task 20 Cleanup.                                                                                                                                                                                                                                                                                                                                                                                                                  | M2-M4B, O1A                                 | Sequential                                             | Operations                              | Complete inventory, plan/apply/recovery, cleanup, and idempotence evidence                                                                                                                                                                                                                                                                   |
-| D1   | Preparation complete; implementation pending                                                                                                                                                                                                  | Keep Task 13's CI and artifact work to the later Linux-only D1 native build and smoke, checksums, and bounded artifact collection after all retained commands, Task 10, and accepted Task 21 remediation. Task 7 owns the accepted x64 package graph and journeys; Task 22 owns complete-graph acceptance and release.                                                                                                                                                                                                                         | O2, T7, Task 10 and accepted remediation    | Later sequential delivery                              | Distribution                            | Linux D1 native artifacts, checksums, bounded collection; no macOS, Windows, or ARM expansion                                                                                                                                                                                                                                                |
+| O1A  | Complete: Task 15 and Task 16 are both phase 5/5, milestone 8/8                                                                                                                                                                               | Preserve the explicit producer-owned contributor inventory. Task 16's accepted 108-kind horizon supplies producer-backed emissions for all 19 Extension kinds; Task 17 closed the bridge-registration observation and no Extension observation horizon remains.                                                                                                                                                                                                                                                                                           | M4A                                         | Sequential adoption slice                              | Operations                              | Doctor managed `1768/937/175`; native `937/175`; managed-on-native `175`; exact public Doctor `3/3`; every gate had zero failures/skips and the Release build had zero warnings/errors                                                                                                                                                       |
+| M4B  | Task 17 “Extension Update” complete and dequeued; Task 18 “Extension Remove” active at phase 2/5, milestone 1/8 with Gray active                                                                                                                | Complete Task 17, then execute active Task 18 Extension Remove. Task 17's accepted bridge-registration observation is already in the contributor inventory; Task 18 has no installed-manifest scan or Doctor producer obligation.                                                                                                                                                                                                                                                                                               | M3, M4A, O1A                                | Sequential lifecycle mutation                          | Extension mutation                      | Accepted Task 17 candidate `3bcb6025`, tree `63f5b22c`; integrated at `ae055a73`, same tree, from parent `a9987d5c`; final gate basis `d3c29a2b`, tree `18f76ed4`; Task 18 Preflight base `5cabb10d`, tree `fb16fed3` |
+| O2   | Pending behind Task 18                                                                                                                                                                                                                         | After active Task 18, implement relevant-domain Task 19 Repair and Task 20 Cleanup; Task 23 follows as the first queued last-stage improvement.                                                                                                                                                                                                                                                                                                                                                                                                        | M2-M4B, O1A                                 | Sequential                                             | Operations                              | Complete inventory, plan/apply/recovery, cleanup, and idempotence evidence                                                                                                                                                                                                                                                                   |
+| T23  | Queued after Task 20                                                                                                                                                                                                                             | Prepare and implement Workspace Libraries after a distinct maintainer review and contract freeze for the final drafted contracts and CLI package. Bounded read-only Preflight and draft preparation may run now; shared semantic implementation and integration remain sequential.                                                                                                                                                                                                                                                                    | O2, accepted Library design                     | Sequential last-stage improvement                      | Workspace Libraries                     | Link-aware Route Update/Index/Move/Remove guard, real-filesystem regression, library contract, lifecycle, recovery, and exact three-journey evidence                                                                                                                                                                                          |
+| T24  | Queued after Task 23                                                                                                                                                                                                                             | Prepare and implement Extensions Evolution after a distinct maintainer review and contract freeze for the final drafted contracts and CLI package. Bounded read-only Preflight and draft preparation may run now; shared semantic implementation and integration remain sequential.                                                                                                                                                                                                                                                                    | T23, accepted Extensions idea                    | Sequential last-stage improvement                      | Extensions Evolution                   | Accepted current lifecycle boundary, representative limitation, smallest new contract, adversarial evidence, and exact command-owned tests                                                                                                                                                                                                    |
+| D1   | Preparation complete; implementation explicitly postponed                                                                                                                                                                                     | Keep Task 13's CI and artifact work to the later Linux-only D1 native build and smoke, checksums, and bounded artifact collection after the retained command sequence and any explicitly reopened Task 10/21 work. Task 7 owns the accepted x64 package graph and journeys; Task 22 owns complete-graph acceptance and release.                                                                                                                                                                                       | O2, T7, Task 10 and accepted remediation    | Later sequential delivery                              | Distribution                            | Linux D1 native artifacts, checksums, bounded collection; no macOS, Windows, or ARM expansion                                                                                                                                                                                                                                                |
 | A1   | Pending                                                                                                                                                                                                                                       | Run final whole-program acceptance and local integration for the complete accepted x64 graph                                                                                                                                                                                                                                                                                                                                                                                                                                                   | D1, T7                                      | Sequential                                             | Acceptance                              | Maintainer acceptance; no partial release                                                                                                                                                                                                                                                                                                    |
 
 ### Post-M1 Durable Queue
@@ -928,10 +941,8 @@ program items through the later boundaries that own them:
       remains independent of it.
 - [x] Route Move completed its separate command-local reference and lifecycle
       proportionality gate and is integrated.
-- [ ] Keep Route Remove behind its separate command-local reference and lifecycle
-      proportionality gate. Route Move completion, canonical lifecycle creation,
-      and the neutral Markdown label projection do not settle Route Remove's
-      remaining command-local decisions or make it Active or Ready.
+- [x] Route Remove completed its separate command-local reference and lifecycle
+      proportionality gate and is integrated with completion grace consumed.
 - [x] Accept Extension Create's manifest options and command-local missing-fact
       wizard. Invalid input may be corrected locally without an attempt limit; EOF
       is invalid and cancellation interrupted, both without writes. C1 was sequenced
@@ -956,11 +967,19 @@ program items through the later boundaries that own them:
       acceptance and separately authorized atomic publication of the complete
       x64 graph. ARM remains undecided, and signing, SBOM, OIDC, provenance,
       attestation, and support-floor matrices remain outside current evidence.
-- [ ] Keep Repair behind fresh relevant-domain diagnosis and verification.
+- [ ] Keep the active command order as Task 18 Extension Remove, then Task 19
+      Repair, then Task 20 Cleanup. Queue Task 23 Workspace Libraries and Task
+      24 Extensions Evolution after Task 20 in that order. Bounded read-only
+      Preflight and draft preparation may run now; shared semantic
+      implementation and integration remain sequential.
 - [x] Keep the simplified O1 Status/Doctor and O2 Repair/Cleanup split reflected
-      in the work graph. O1 may land incrementally after Extension Install when
-      it completely names its frozen contributor inventory; every later producer
-      extends that inventory and final acceptance revalidates it in full.
+      in the work graph. Task 17 closed the last accepted Extension Doctor
+      observation; Task 18 has no Doctor producer obligation.
+- [ ] Keep Tasks 10, 21, 13, and 22 explicitly postponed outside the active
+      command sequence. Keep queued Tasks 23 Workspace Libraries and 24
+      Extensions Evolution after Task 20 without phase or milestone horizons;
+      require a distinct maintainer review and contract freeze for each final
+      drafted contract and CLI package before implementation.
 
 This queue does not reopen M1. D0 and SF1-SF4 are complete at the integrated
 baseline recorded above. C1 is Complete at protected public integration
@@ -1018,7 +1037,7 @@ has non-overlapping production and test ownership.
 | Read-only C      | E1                                                     | G1 and GI1 complete; extension source contract frozen                                                                                                                                                                                                                                                                                  | Extension List/Inspect roots                                                                                                                               | Shell and filesystem foundation                                                       | M1                                                                                                                          |
 | Read-only D      | GN1                                                    | Q1-Q3 and R2 complete; pure-effect boundary frozen                                                                                                                                                                                                                                                                                     | New `Framework/GeneratedNavigation/**` and mirrors                                                                                                         | Accepted source/route/document facts                                                  | GN1 acceptance                                                                                                              |
 | Next foundation  | SF1, SF2, SF3, SF4                                     | Complete at integrated D0/SF1-SF4 baseline; combined managed and Native AOT evidence recorded above                                                                                                                                                                                                                                    | Separate Shell interaction, Framework distribution, lifecycle-provenance, and directory-effect paths                                                       | M1 and accepted root project graph                                                    | Complete; protected surfaces remain integration-owned                                                                       |
-| Next commands    | C1, C2, C3, C4, M4A, M2, M3                            | C1 complete at `4c85d1d6`; C3 at `fa3db1ee`; C2 at `c60fcb98`; C4 Route Init at `cc5085ce`; Route Create at `19412d2`; QR1 at `862cbf2a`; Route Update at `27df8325`; Route Move at `631983ea`; Task 12 at `495a7ed6`; Task 14 at `20807781`; Route Remove at `5a2e650a`; Root Update is complete at `c6eec9d2`, exact tree `f31cacb0` | Separate Extension Create/Install, Route Inspect/Init/Create/Update/Move/Remove, and root Update paths; QR1 consumed Route Create's two predecessor slices | Root composition, serialization, help, process, recovery, lifecycle, and AOT evidence | Task 7, Status, Doctor, Route Remove, and Root Update complete; after Task 6, report the complete remaining queue and stop. |
+| Next commands    | C1, C2, C3, C4, M4A, M2, M3                            | C1 complete at `4c85d1d6`; C3 at `fa3db1ee`; C2 at `c60fcb98`; C4 Route Init at `cc5085ce`; Route Create at `19412d2`; QR1 at `862cbf2a`; Route Update at `27df8325`; Route Move at `631983ea`; Task 12 at `495a7ed6`; Task 14 at `20807781`; Route Remove at `5a2e650a`; Root Update is complete at `c6eec9d2`, exact tree `f31cacb0` | Separate Extension Create/Install, Route Inspect/Init/Create/Update/Move/Remove, and root Update paths; QR1 consumed Route Create's two predecessor slices | Root composition, serialization, help, process, recovery, lifecycle, and AOT evidence | Task 7, Status, Doctor, Route Remove, and Root Update complete; Task 18, Task 19, Task 20, Task 23, and Task 24 remain in the ordered queue before delivery. |
 | Task 7 expansion | Complete                                               | Complete phase 4/4, milestone 7/7; Linux journey passed; Darwin/Windows stage+pack only.                                                                                                                                                                                                                                               | npm x64 package graph, staging, and one host-selected `PackageEndToEnd` journey                                                                            | Task 13 Linux D1 preparation/evidence as consumed input                               | D1/A1                                                                                                                       |
 | Delivery         | Task 13 Linux-only D1 smoke, packed journey, checksums | O2 behavior, Task 7 expansion, Task 10, and accepted Task 21 remediation complete; release contracts frozen                                                                                                                                                                                                                            | Separate workflow and artifact paths                                                                                                                       | Accepted command binaries and Task 7 package graph                                    | D1 acceptance                                                                                                               |
 
@@ -1150,9 +1169,13 @@ passed. `CLI-EDGE-001` remains non-product only.
 | Task records become stale bureaucracy                                                      | S2 onward      | Update only at state/evidence boundaries; prune completed detail | Consolidate outcomes and archive or prune temporary records           |
 
 Task 17 “Extension Update” remains Complete at phase 5/5, milestone 8/8, and
-is Recently completed with `2 updates remaining`; its accepted integration is
-recorded above. No task is active. Task 18 remains `QUEUED` and inactive
-because the user ordered work to stop after Task 17.
+is dequeued after its completion grace was consumed; its accepted integration is
+recorded above. Task 18 “Extension Remove” is active at phase 2/5, milestone
+1/8 with Gray callable/public-shape review active, followed by Task 19 “Repair”
+and Task 20 “Cleanup”. Tasks 23 “Workspace Libraries” and 24 “Extensions
+Evolution” are queued after Task 20 in that order as last-stage improvements
+without phase or milestone horizons. Tasks 10, 21, 13, and 22 remain explicitly
+postponed.
 
 ## Verification And Integration
 

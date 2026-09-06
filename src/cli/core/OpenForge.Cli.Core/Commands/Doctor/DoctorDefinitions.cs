@@ -124,7 +124,6 @@ internal static class DoctorDefinitions
             DoctorFindingKind.ExtensionPartialLifecycle => "extension.partial-lifecycle",
             DoctorFindingKind.ExtensionOwnershipCollision => "extension.ownership-collision",
             DoctorFindingKind.ExtensionBridgeRegistration => "extension.bridge-registration",
-            DoctorFindingKind.ExtensionUnmanagedLikeContent => "extension.unmanaged-like-content",
             _ => throw new ArgumentOutOfRangeException(
                 nameof(kind),
                 kind,

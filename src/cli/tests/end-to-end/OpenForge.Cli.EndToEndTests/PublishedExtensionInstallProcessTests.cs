@@ -34,7 +34,8 @@ public sealed class PublishedExtensionInstallProcessTests
             case "group":
                 Assert.Contains("install [<stable-id>...]", result.StandardOutput, StringComparison.Ordinal);
                 Assert.Contains("The extension group performs no operation.", result.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("Planned but unavailable operations: update and remove.", result.StandardOutput, StringComparison.Ordinal);
+                Assert.Contains("Update syntax:", result.StandardOutput, StringComparison.Ordinal);
+                Assert.Contains("Remove syntax:", result.StandardOutput, StringComparison.Ordinal);
                 break;
             case "leaf":
                 Assert.Contains(

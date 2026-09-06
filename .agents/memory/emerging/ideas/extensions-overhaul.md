@@ -87,9 +87,21 @@ removal, recovery, and security contract.
 [Workspace Libraries](workspace-libraries.md) is the contextual candidate for
 projecting live shared files from one contained source root into ordinary
 `.agents/**` paths. It keeps one Framework Loader and treats projection as a
-lifecycle distinct from Extension installation. It is not accepted direction,
-does not create another Framework root, and does not authorize packaging or
-externalizing `local/extensions`.
+lifecycle distinct from Extension installation. It is accepted contextual input
+for queued Task 23, does not create another Framework root, and does not
+authorize packaging or externalizing `local/extensions`.
+
+## Queued Task 24 Horizon
+
+This accepted idea is linked to queued permanent Task 24 “Extensions Evolution”.
+Task 24 follows Task 23 as a post-command last-stage improvement after Task 20
+and remains outside the active command sequence. Read-only Preflight and draft
+preparation may run now, but the idea remains contextual input and is not an
+implementation contract. The final drafted Extension contracts and CLI package
+require a distinct maintainer review and contract freeze before implementation.
+The [Task 24 record](../../working/cli-development/tasks/extensions-evolution.md)
+is the queue authority. No phase or milestone horizon is assigned until
+activation, and no release plan is part of this queued horizon.
 
 ### Catalogue Governance
 

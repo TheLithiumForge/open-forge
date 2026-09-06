@@ -503,18 +503,14 @@ workspace/package/path/owner/dependency identities, the `open-forge-markdown-v1`
 semantic baseline policy, reciprocal facts, and complete verifiable coverage. An
 absent document or section is not reconstructed from paths, bytes, or manifests.
 
-The unreleased schema-v1 catalogue contains exactly 109 kinds: 21 workspace, 4
-recovery, 22 route, 28 local-reference, 14 Framework, and 20 Extension kinds.
-Task 16 realizes only producer-backed findings. Its current Extension
-observation horizon retains one honest bounded `incomplete` limitation for each
-unavailable observation horizon:
-bridge-registration observation and installed-manifest observation. These are
-coverage limitations, not synthesized findings.
-
-While both accepted Extension observation horizons remain unavailable, the
-overall Doctor result is honestly `incomplete` with exit `3`, even when every
-supported observation has zero findings. The result can become `complete` only
-after both horizons close and all 109 kinds have honest emission paths.
+The unreleased schema-v1 catalogue contains exactly 108 kinds: 21 workspace, 4
+recovery, 22 route, 28 local-reference, 14 Framework, and 19 Extension kinds.
+The accepted Task 16 implementation, as extended by Task 17, realizes
+producer-backed findings for the complete catalogue. Task 17 closed the
+accepted set-valued bridge-registration observation by extending the typed
+contributor views and Doctor. The current Extension domain has no remaining
+observation horizon, and the final pre-release completeness gate has an honest
+emission path for all 108 kinds.
 
 - `extension.lifecycle-document-missing` distinguishes a missing document from a
   safely established absence; the missing document alone does not prove an empty
@@ -556,20 +552,10 @@ after both horizons close and all 109 kinds have honest emission paths.
   singular target wording applies per observation. Content is inspected only
   when readable. Source-unavailable coverage is `incomplete`, and ambiguous
   mapping is `blocked`, without inference.
-- `extension.unmanaged-like-content` is formed only for an exact contained
-  readable supported Extension manifest signature inside the accepted bounded
-  Extension scan universe, with no trusted lifecycle ownership for that exact
-  identity. It is informational only. It is never fuzzy, path-only,
-  filename-only, broad-scan, adoption, registration, or removal authority.
-
-Task 16 emits neither `extension.bridge-registration` nor
-`extension.unmanaged-like-content` without the required producer-owned facts.
-Task 17 owns the accepted set-valued bridge-registration observations and
-extends the typed contributor views and Doctor before acceptance. Task 18 owns
-the exact installed-manifest observation universe and extends those views and
-Doctor before acceptance. The final pre-release completeness gate requires an
-honest emission path for all 109 kinds. The current implementation target is 107
-producer-backed emissions plus exactly these two accepted Extension deferrals.
+Task 16 emits `extension.bridge-registration` from the producer-owned facts
+accepted by Task 17. No Extension finding is synthesized without its required
+producer-owned facts, and the final pre-release completeness gate requires an
+honest emission path for all 108 kinds.
 
 Neither legacy `open-forge.extensions.json`, package-source manifests, broad
 `.agents` recursion, payload/path/byte resemblance, nor Framework bridges may
@@ -577,10 +563,9 @@ substitute for producer facts. Static CLI composition is wiring only and cannot
 manufacture observations; dependency injection and a runtime registry are not
 observation substitutes.
 
-The accepted bridge-registration horizon changes no Extension manifest or
+The accepted bridge-registration observation changes no Extension manifest or
 lifecycle field or schema. It adds no compatibility path, provider bridge,
-symbolic link, registry, dependency injection, fuzzy path or content inference,
-or Task 18 manifest scan.
+symbolic link, registry, dependency injection, fuzzy path, or content inference.
 
 The accepted Extension lifecycle contracts own exact mutation syntax and effects.
 Doctor may report their typed next actions, but does not invoke them or grant

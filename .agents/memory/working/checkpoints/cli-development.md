@@ -14,6 +14,14 @@ release.
 
 - Last updated: 2026-09-06.
 
+Current execution is Task 18 “Extension Remove” at phase 2/5, milestone 1/8,
+with Gray callable/public-shape review active, followed by Task 19 “Repair” and
+Task 20 “Cleanup”. The queued last-stage implementation order after Task 20 is
+Task 23 “Workspace Libraries”, then Task 24 “Extensions Evolution”. Task 17 is
+complete and dequeued with consumed grace. Tasks 10, 21, 13, and 22 remain
+explicitly postponed. Tasks 23 and 24 have no phase or milestone horizons until
+their separate contract freezes.
+
 ## Current State
 
 Task 12 “CLI Architecture Authority Remediation” is Complete and dequeued at
@@ -73,15 +81,16 @@ parent is `e90b22f9a6d4fdd2043516e718fc782490396cb2`, tree
 commit containing this record. Final gates had Release `0` warnings and `0`
 errors; managed Unit `1739/1739`, Integration `933/933`, EndToEnd `172/172`;
 managed EndToEnd against the native root `172/172`; native Integration
-`933/933`; native EndToEnd `172/172`; all with `0` failures, `0` skips, and
-`0` warnings. Every later producer extends the explicit contributor inventory
-and affected Status evidence before acceptance. Task 16 “Doctor” is complete at
+  `933/933`; native EndToEnd `172/172`; all with `0` failures, `0` skips, and
+  `0` warnings. Every later producer extends the explicit contributor inventory
+  and affected Status evidence before acceptance. Task 16 “Doctor” is complete at
 phase 5/5, milestone 8/8. Accepted lane `a48a16cd`, exact tree `90e66b05`, is
 squash-integrated at `59276c3b` with the same tree. Full managed, public,
 supported `linux-x64` Native AOT, managed-on-native, focused, structural, and
 post-integration gates passed. The unreleased schema-v1 Doctor catalogue
-contains 109 kinds and supplies 107 supported emissions plus two accepted
-Extension observation limitations. Task 5 “Route Remove” is complete at phase
+contains 108 kinds, including 19 Extension kinds; Task 17 closed the
+bridge-registration observation and no Extension observation horizon remains.
+Task 5 “Route Remove” is complete at phase
 5/5, milestone 8/8. Accepted lane `ab8da620`, tree `bb41e1c9`, is
 squash-integrated at `5a2e650a` with exact tree equality. Final managed
 `1797/966/178`, managed-on-native `178`, native `966/178`, focused, structural,
@@ -489,15 +498,16 @@ had a `2 updates remaining` grace; that grace is consumed.
 
 Task 16 “Doctor” is complete at phase 5/5, milestone 8/8. Its accepted lane is
 `a48a16cd80102331bca6d6cb3498160f37eb6b3f`, exact tree
-`90e66b0562fea90c2aa2fed9bd573c59676124bd`; local squash integration is
-`59276c3bd764be4601ea92acbf4742b9bfa86837`, the same exact tree. Full managed,
-public, supported `linux-x64` Native AOT, managed-on-native, focused,
-structural, and post-integration Doctor evidence passed. Recovery attribution
-remains unreleased schema v1; old unattributed or malformed final bundles fail
-closed. Doctor retains exactly `extension.bridge-registration` for Task 17 and
-`extension.unmanaged-like-content` for Task 18 as honest unavailable
-observation horizons. Route Inspect's synthetic overwrite-ambiguity conflict
-remains one bounded Task 10 audit input, not a Doctor finding or a new task. See
+  `90e66b0562fea90c2aa2fed9bd573c59676124bd`; local squash integration is
+  `59276c3bd764be4601ea92acbf4742b9bfa86837`, the same exact tree. Full managed,
+  public, supported `linux-x64` Native AOT, managed-on-native, focused,
+  structural, and post-integration Doctor evidence passed. Recovery attribution
+  remains unreleased schema v1; old unattributed or malformed final bundles fail
+  closed. The current Doctor catalogue contains exactly 108 kinds and 19
+  Extension kinds. Task 17 closed the bridge-registration observation; no
+  Extension observation horizon remains. Route Inspect's synthetic
+  overwrite-ambiguity conflict remains one bounded Task 10 audit input, not a
+  Doctor finding or a new task. See
 the [Task 16 Doctor record](../cli-development/tasks/operations/doctor.md) and
 [project control ledger](../cli-development/project-control.md) for the exact
 accepted identities and evidence. Task 16's completion grace is consumed. Task
@@ -528,7 +538,7 @@ and public Update `3/3` passed.
 
 Task 6's two subsequent progress-update grace is consumed and it is dequeued.
 Task 17 “Extension Update” is Complete at phase 5/5, milestone 8/8 and is
-Recently completed with `2 updates remaining`. Its
+dequeued after its completion grace was consumed. Its
 accepted candidate `3bcb602569e7e2243a0780e1ff9cbd8f424b6457`, tree
 `63f5b22c9c73dd9aaf2044c88401e5b91638e143`, is integrated into local
 `develop` as `ae055a73597c4d2310b217dc67d053aa200282db`, the same tree, from
@@ -558,8 +568,9 @@ field is contract-correct. No architecture, C#, evidence, Native AOT, package,
 or public journey finding was accepted. Exactly three Update and three Doctor
 EndToEnd journeys remain preserved. Review budget is consumed; grouped correction
 `T17-C1` was active under Curie III and is accepted below, and the review and
-correction budgets are consumed. Curie III is paused. Task 18 remains `QUEUED`
-and inactive.
+correction budgets are consumed. Curie III is paused. At this historical receipt,
+Task 18 was `QUEUED` and inactive; the current checkpoint activates it at the
+phase and milestone recorded above.
 
 Milestone 7/8 correction `T17-C1` is accepted at commit
 `8a3a754a4d20a8247a248b59e56abd1881530dd6`, tree
@@ -651,10 +662,11 @@ the exact repeat was a no-op. Findings, residuals, and warnings were zero, and
 prior package outputs remain archived intact.
 
 Task 17 “Extension Update” is Complete at phase 5/5 and milestone 8/8. Review
-`T17-R1` and correction `T17-C1` are consumed; completion grace is `2 updates
-remaining`.
-Stop after Task 17 acceptance. Task 18 remains `QUEUED` and inactive; do not
-activate Task 18 or any later task.
+`T17-R1` and correction `T17-C1` are consumed; completion grace is consumed.
+Task 18 “Extension Remove” is active at phase 2/5, milestone 1/8, with Gray
+callable/public-shape review active, followed by Task 19 “Repair” and Task 20
+“Cleanup”. Tasks 23 “Workspace Libraries” and 24 “Extensions Evolution” follow
+Task 20 in that order as queued last-stage improvements.
 
 The accepted candidate commit `3bcb602569e7e2243a0780e1ff9cbd8f424b6457`, tree
 `63f5b22c9c73dd9aaf2044c88401e5b91638e143`, is integrated into local `develop`
@@ -667,9 +679,10 @@ added, 20 modified, and 0 deleted; its sorted-path SHA-256 is
 final full-gate basis is commit `d3c29a2b20e77c18484b5ab58056063e019d469e`,
 tree `18f76ed403fbe2e9047ad68f289b7c89100421b4`.
 
-No task is active. Task 17 is Recently completed with `2 updates remaining`.
-Task 18 remains `QUEUED` and inactive because the user ordered work to stop
-after Task 17.
+Task 18 “Extension Remove” is the active task at phase 2/5, milestone 1/8, with
+Gray callable/public-shape review active.
+Task 17 is complete and dequeued after its completion grace was consumed; Task
+19 “Repair” and Task 20 “Cleanup” follow it.
 
 Rejected evidence included SHA-qualified native build configuration, main-repo
 `NODE_PATH`, npm offline materializations, and pre-closure stage attempts. Only
@@ -690,7 +703,7 @@ comparison supplies current, missing, unreadable, or inconsistent state.
 Source-unavailable and ambiguous mapping remain incomplete or blocked without
 inference. No manifest or lifecycle field, schema or compatibility change,
 provider bridge, symbolic link, registry, dependency injection, fuzzy inference,
-or Task 18 scan is accepted.
+or installed-manifest scan is accepted.
 
 Task 6 Preflight accepted the existing neutral payload, lifecycle, generated-
 navigation, mutation, lock, and recovery providers without adding a generic
@@ -777,11 +790,15 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Keep Task 17 Complete at phase 5/5, milestone 8/8, Recently completed with
-   `2 updates remaining`; its accepted integration is recorded above.
-2. Keep no task active.
-3. Keep Task 18 `QUEUED` and inactive because the user ordered work to stop
-   after Task 17. Do not activate Task 18 or any later task.
+1. Keep Task 18 “Extension Remove” active at phase 2/5, milestone 1/8 and
+   complete its Gray callable/public-shape review.
+2. Continue with Task 19 “Repair”, then Task 20 “Cleanup”. Queue Task 23
+   “Workspace Libraries” and Task 24 “Extensions Evolution” after Task 20 in
+   that order; bounded read-only Preflight and draft preparation may run now,
+   but shared semantic implementation and integration remain sequential.
+3. Keep Tasks 10, 21, 13, and 22 explicitly postponed. Require a distinct
+   maintainer review and contract freeze for each final drafted Task 23 or 24
+   contract and CLI package before implementation.
 
 ## Current Sources
 

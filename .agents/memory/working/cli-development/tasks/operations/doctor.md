@@ -27,15 +27,12 @@ open-forge:
   all committed Gray amendments, coherent production, `T16-R2`, grouped
   correction `T16-C2`, fresh whole-task evidence, acceptance, and integration
   are complete.
-- Incremental completeness: the first accepted horizon diagnoses the complete
+- Incremental completeness: the accepted Doctor catalogue diagnoses the complete
   explicit contributor inventory frozen by Task 15. A healthy supported
-  observation may have zero findings, but the current result remains honestly
-  `incomplete` with exit `3` while the two accepted Extension horizons are
-  unavailable; it is never a guess from omitted or unavailable domains. Every
-  later producer must extend the applicable typed facts and diagnostic domains
-  before that producer is accepted. Final release may regain a complete result
-  only after both Extension horizons are closed and the retained inventory is
-  fully revalidated.
+  observation may have zero findings, while an unavailable or unsafe producer
+  observation still reports its own honest coverage boundary. Task 17 closed
+  the accepted bridge-registration observation. No Extension observation
+  horizon remains, and no later command owns a Doctor producer obligation.
 - Parent: [Operational Commands](_operations.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/doctor/interface.md) and [Behavior](../../../../crystallized/documents/cli/contracts/doctor/behavior.md).
 
@@ -108,8 +105,8 @@ views and neutral fact models remain under their Framework producers. Status
 Gray owns and protects the exact callable signatures during this preparation
 window.
 
-The current unreleased schema-v1 catalogue contains exactly 109 kinds: 21
-workspace, 4 recovery, 22 route, 28 local-reference, 14 Framework, and 20
+The current unreleased schema-v1 catalogue contains exactly 108 kinds: 21
+workspace, 4 recovery, 22 route, 28 local-reference, 14 Framework, and 19
 Extension kinds. Fixed domain order is workspace, recovery, routes, local
 references, Framework lifecycle, then Extension lifecycle. Finding order is
 domain, stable kind, typed subject, then canonical location. Coverage, severity,
@@ -143,7 +140,7 @@ remain independent facts.
 - Behavior matrix: exact CWD or explicit workspace selection; terminal help and
   version; all six domains retained in fixed order; complete, incomplete, and
   blocked coverage; independent information, warning, and error severity; six
-  resolution lanes; all 109 stable kinds; bounded typed subjects, evidence,
+  resolution lanes; all 108 stable kinds; bounded typed subjects, evidence,
   provenance, candidates, proposals, and next actions; complete, attention,
   incomplete, invalid, blocked, failed, and interrupted results; one typed
   result feeding compact, expanded, verbose, and JSON presentation; stable
@@ -509,60 +506,52 @@ correction `T16-C1` was pending. The final accepted state is recorded below.
 ## Current Doctor-v1 Disposition
 
 Under the accepted unreleased schema-v1 horizon, the current Doctor catalogue
-contains exactly 109 kinds: 21 workspace, 4 recovery, 22 route, 28
-local-reference, 14 Framework, and 20 Extension. The current catalogue removes
+contains exactly 108 kinds: 21 workspace, 4 recovery, 22 route, 28
+local-reference, 14 Framework, and 19 Extension. The current catalogue removes
 `route.child-missing`, `route.cycle`, and `route.overwrite-ambiguous` without
 aliases, migration, fallback, or synthetic producers; the schema discriminator
 remains exactly `1`. The historical `112`-kind and `52`-emission receipts above
 remain historical facts and are not current completeness claims.
 
-The accepted implementation supplies 107 supported producer-backed emissions
-plus exactly two accepted
-Extension deferrals: `extension.bridge-registration` and
-`extension.unmanaged-like-content`. Task 16 emits neither without the required
-producer facts and retains one honest bounded limitation for each unavailable
-Extension observation horizon. Route Remove is next with its accepted
+The accepted producer-backed subset supplies emission paths for all 108 retained
+catalogue kinds. Task 17 closed the accepted set-valued
+`extension.bridge-registration` observation by extending the typed contributor
+views and Doctor; the Extension domain has no remaining observation horizon.
+Task 18 owns Extension Remove only and has no installed-manifest scan or Doctor
+producer obligation. Route Remove is complete with its accepted
 positive-unmanaged removal boundary. Route Inspect's projection-derived synthetic
 overwrite-ambiguity conflict remains command-local and is one bounded Task 10
 audit input, not a Doctor finding or a new task.
 
-## Incremental Extension Producer Deferral
+The Task 18 activation base still contains the now-unreleased
+`ExtensionUnmanagedLikeContent` enum member, wire mapping, and 109-count mapping
+expectation. Task 18 removes that narrow orphaned executable shape before its
+acceptance. This is conformance to the corrected catalogue, not a new Doctor
+producer, observation horizon, compatibility path, or schema change.
 
-Under the accepted incremental contributor-growth model, the Overseer authorized
-an incremental deferral for the two Extension finding kinds whose current
-producer horizon is not yet honest. The current 109-kind catalogue retains the
-Extension wire names, but Task 16 emits
-neither `extension.bridge-registration` nor
-`extension.unmanaged-like-content` without the required producer-owned facts.
-The current Extension domain retains one honest bounded `incomplete` limitation for
-each unavailable observation horizon: bridge-registration observation and
-installed-manifest observation. These are coverage limitations, not new finding
-kinds or synthesized findings.
+## Current Extension Producer Closure
 
-Task 17 owns freezing the exact declared and owned bridge-registration role,
-target identity, and observed state, then extending the accepted typed
-contributor views and Doctor before Task 17 acceptance. Task 18 owns freezing
-the exact installed-manifest observation universe: accepted root and depth,
-exact `extension.json` name, physical containment, ordinary-read boundary, the
-existing source-generated parser, canonical identity, and exact comparison to
-trusted lifecycle ownership. It then extends the same views and Doctor before
-Task 18 acceptance. Neither task may use legacy `open-forge.extensions.json`,
+Task 17 froze the exact declared and owned bridge-registration role, target
+identity, and observed state, then extended the accepted typed contributor views
+and Doctor. The resulting `extension.bridge-registration` observations are
+producer-owned and remain bounded to ordinary generated-navigation facts.
+Task 18 does not own an installed-manifest observation universe and introduces
+no scanner, storage, registry, compatibility, lifecycle-schema, or Doctor
+behavior. Neither task may use legacy `open-forge.extensions.json`,
 package-source manifests, broad `.agents` recursion, payload/path/byte
 resemblance, Framework bridges, static CLI composition, dependency injection,
 or a runtime registry as a substitute for producer facts. Static composition
 remains wiring only.
 
-The final pre-release completeness gate requires an honest emission path for all
-109 finding kinds. The current implementation target is 107 producer-backed
-emissions plus exactly these two accepted Extension deferrals. This deferral
-preserves `T16-R1-F1` exactly: only 52 of 112
-finding kinds had production emission paths; the remaining kinds lacked honest
-mapped producer facts. It does not revise any finding identity or weaken any
-other Doctor behavior. Task 17 and Task 18 remain queued; no queue, permanent
-ID, phase, milestone, or horizon changes.
+The final pre-release completeness gate has an honest emission path for all 108
+finding kinds. This correction does not revise the historical `T16-R1-F1`
+receipt: only 52 of 112 finding kinds had production emission paths at that
+earlier boundary. It does not weaken any other Doctor behavior. Task 17 is
+complete and dequeued; Task 18 is a separate lifecycle command task with no
+Doctor horizon.
 
-The current incremental amendment's final authority content SHA-256 values,
-excluding this self-referential Task record, are:
+The incremental amendment's historical authority content SHA-256 values,
+excluding this self-referential Task record, were:
 
 - Doctor Interface and Behavior:
   `f00393b476ff2e54e07498027cea313a562a4e4d49a1a4e44c168267e74cc18d` and

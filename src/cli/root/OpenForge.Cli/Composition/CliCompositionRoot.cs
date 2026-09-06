@@ -110,6 +110,7 @@ internal static class CliCompositionRoot
                 extension.CreateBinding,
                 extension.InstallBinding,
                 extension.UpdateBinding,
+                extension.RemoveBinding,
             ],
             rootLeaves: standalone.RootLeaves);
         return new CliCoreApplication(
@@ -147,6 +148,7 @@ internal static class CliCompositionRoot
                   extension create  Create one local Extension package scaffold.
                   extension install Install reviewed Extension packages into a Framework workspace.
                   extension update  Reconcile managed Extension packages from one reviewed source.
+                  extension remove  Release selected managed Extension ownership and remove eligible content.
                 """),
             new CliHelpSection(
                 heading: "Lifecycle",

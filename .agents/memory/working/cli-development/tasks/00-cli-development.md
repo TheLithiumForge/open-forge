@@ -84,7 +84,19 @@ open-forge:
   `retained`, and `unknown`.
 - Responsible role: Overseer.
 - Task source: This file.
-- Last updated: 2026-08-30.
+- Last updated: 2026-09-06.
+
+## Current Execution Horizon
+
+Task 16 “Doctor” and Task 17 “Extension Update” are complete; Task 17's
+completion grace is consumed. Task 18 “Extension Remove” is active at phase 2/5,
+milestone 1/8 with Gray callable/public-shape review active, followed by Task 19
+“Repair” and Task 20 “Cleanup”. The queued last-stage implementation order after
+Task 20 is [Task 23 “Workspace Libraries”](workspace-libraries.md), then
+[Task 24 “Extensions Evolution”](extensions-evolution.md). Tasks 10, 21, 13, and 22
+remain recorded but explicitly postponed. Tasks 23 and 24 have no phase or
+milestone horizons and no implementation contracts until their distinct
+maintainer contract freezes.
 
 ## Problem Statement
 

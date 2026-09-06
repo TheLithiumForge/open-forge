@@ -132,7 +132,6 @@ internal enum DoctorFindingKind
     ExtensionPartialLifecycle,
     ExtensionOwnershipCollision,
     ExtensionBridgeRegistration,
-    ExtensionUnmanagedLikeContent,
 }
 
 internal sealed record DoctorFinding

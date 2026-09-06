@@ -15,6 +15,10 @@ using OpenForge.Cli.Core.Commands.Extension.List;
 using OpenForge.Cli.Core.Commands.Extension.List.Models.Binding;
 using OpenForge.Cli.Core.Commands.Extension.List.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.List.Shared.Rendering;
+using OpenForge.Cli.Core.Commands.Extension.Remove;
+using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Binding;
+using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
+using OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Extension.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Extension.Update;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Binding;
@@ -41,6 +45,7 @@ internal static class CliExtensionComposer
         var createSymbols = ExtensionCreateBinding.CreateSymbols(group);
         var installSymbols = ExtensionInstallBinding.CreateSymbols(group);
         var updateSymbols = ExtensionUpdateBinding.CreateSymbols(group);
+        var removeSymbols = ExtensionRemoveBinding.CreateSymbols(group);
         return new CliExtensionComposition
         {
             Branch = new CliRootBranch(group, ExtensionHelpSections.CreateGroup(), []),
@@ -53,6 +58,10 @@ internal static class CliExtensionComposer
                 lockStoreRoot),
             UpdateBinding = BuildUpdate(
                 updateSymbols,
+                interactiveSession,
+                lockStoreRoot),
+            RemoveBinding = BuildRemove(
+                removeSymbols,
                 interactiveSession,
                 lockStoreRoot),
         };
@@ -124,4 +133,17 @@ internal static class CliExtensionComposer
                 ExtensionUpdatePresentation.RenderHuman,
                 ExtensionUpdateJsonProjection.RenderJson),
             ExtensionUpdatePresentation.RenderDiagnostic);
+
+    private static ICliCommandBinding BuildRemove(
+        ExtensionRemoveSymbols symbols,
+        CliInteractiveSession interactiveSession,
+        WorkspaceLockStoreRoot? lockStoreRoot)
+        => ExtensionRemoveBinding.Close(
+            symbols,
+            ExtensionRemovePresentation.CreateHelp(),
+            ExtensionRemoveOperationFactory.Create(interactiveSession, lockStoreRoot),
+            new CliRendererSet<ExtensionRemoveResult>(
+                ExtensionRemovePresentation.RenderHuman,
+                ExtensionRemoveJsonProjection.RenderJson),
+            ExtensionRemovePresentation.RenderDiagnostic);
 }

@@ -13,7 +13,10 @@ internal static class ExtensionHelpSections
                 """
                   The extension group performs no operation.
                   Install syntax: install [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--automatic] [--dry-run] [global flags].
-                  Planned but unavailable operations: update and remove.
+                  Update syntax:
+                    update [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--prune]
+                    [--automatic] [--dry-run] [global flags].
+                  Remove syntax: remove [<stable-id>...] [--prune] [--automatic] [--dry-run] [global flags].
                 """),
         ]);
     }

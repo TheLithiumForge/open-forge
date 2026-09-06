@@ -118,16 +118,15 @@ public sealed class DoctorFindingWireMappingTests
             (DoctorFindingKind.ExtensionPartialLifecycle, "extension.partial-lifecycle"),
             (DoctorFindingKind.ExtensionOwnershipCollision, "extension.ownership-collision"),
             (DoctorFindingKind.ExtensionBridgeRegistration, "extension.bridge-registration"),
-            (DoctorFindingKind.ExtensionUnmanagedLikeContent, "extension.unmanaged-like-content"),
         };
 
-        Assert.Equal(109, expected.Length);
+        Assert.Equal(108, expected.Length);
         Assert.Equal(21, expected.Count(item => item.WireName.StartsWith("workspace.", StringComparison.Ordinal)));
         Assert.Equal(4, expected.Count(item => item.WireName.StartsWith("recovery.", StringComparison.Ordinal)));
         Assert.Equal(22, expected.Count(item => item.WireName.StartsWith("route.", StringComparison.Ordinal)));
         Assert.Equal(28, expected.Count(item => item.WireName.StartsWith("reference.", StringComparison.Ordinal)));
         Assert.Equal(14, expected.Count(item => item.WireName.StartsWith("framework.", StringComparison.Ordinal)));
-        Assert.Equal(20, expected.Count(item => item.WireName.StartsWith("extension.", StringComparison.Ordinal)));
+        Assert.Equal(19, expected.Count(item => item.WireName.StartsWith("extension.", StringComparison.Ordinal)));
         Assert.Equal(Enum.GetValues<DoctorFindingKind>(), expected.Select(item => item.Kind));
         foreach (var (kind, wireName) in expected)
         {

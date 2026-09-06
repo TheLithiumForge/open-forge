@@ -450,15 +450,14 @@ Findings, residuals, and warnings were absent. Prior package outputs remain
 archived intact.
 
 Task 17 “Extension Update” is Complete at phase 5/5, milestone 8/8. Curie III
-is paused. Its completion grace is `2 updates remaining`. Task 18 “Extension
-Remove” stays `QUEUED` and inactive. Stop after Task 17 and do not activate
-Task 18.
+is paused. Its completion grace is consumed and Task 17 is dequeued. Task 18
+“Extension Remove” is the active successor at phase 2/5, milestone 1/8 with
+Gray callable/public-shape review active.
 
 ## Accepted Integration
 
 Task 17 “Extension Update” remains Complete at phase 5/5, milestone 8/8 and is
-Recently completed with `2 updates remaining` under the project-control grace
-convention. The
+dequeued after its project-control completion grace was consumed. The
 accepted candidate commit `3bcb602569e7e2243a0780e1ff9cbd8f424b6457`, tree
 `63f5b22c9c73dd9aaf2044c88401e5b91638e143`, is integrated into local
 `develop` as commit `ae055a73597c4d2310b217dc67d053aa200282db`, tree
@@ -472,14 +471,16 @@ The declared integration delta covers 60 paths: 40 added, 20 modified, and
 final full-gate basis is commit `d3c29a2b20e77c18484b5ab58056063e019d469e`,
 tree `18f76ed403fbe2e9047ad68f289b7c89100421b4`.
 
-No task is active. Task 18 remains `QUEUED` and inactive because the user
-ordered work to stop after Task 17.
+Task 18 “Extension Remove” is active at phase 2/5, milestone 1/8 with Gray
+callable/public-shape review active under its accepted clean activation base.
+Task 19 “Repair” and Task 20 “Cleanup” remain queued behind it.
 
 ## Next Action
 
-Task 17 acceptance and develop integration are complete. It is Recently
-completed with `2 updates remaining`; no task is active. Task 18 remains
-`QUEUED` and inactive because the user ordered work to stop after Task 17.
+Task 17 acceptance and develop integration are complete, and its completion
+grace is consumed. Task 18 “Extension Remove” is the active successor at phase
+2/5, milestone 1/8 with Gray callable/public-shape review active; Task 19
+“Repair” and Task 20 “Cleanup” follow it.
 
 ## Expected Outcome
 
@@ -506,16 +507,16 @@ reviewed source facts, one neutral generated-navigation parent host and expected
 be current, missing, unreadable, or inconsistent, and content is inspected only
 when readable. Source-unavailable and ambiguous mappings stay incomplete or
 blocked without inference. The accepted typed contributor views and Doctor now
-include these observations; the remaining full gates and Task acceptance still
-apply. Task 16's prior bounded observation limitation is addressed in this
-horizon.
+include these observations; Task 16's prior bounded observation limitation is
+closed in this horizon. Task 18 has no Doctor producer obligation and does not
+add an installed-manifest scan.
 
 This boundary does not use legacy `open-forge.extensions.json`, package-source
 manifests, broad `.agents` recursion, payload/path/byte resemblance, or
 Framework bridges. Static CLI composition remains wiring only and cannot
 manufacture producer facts; dependency injection and a runtime registry are not
 substitutes. It adds no manifest or lifecycle field, schema change,
-compatibility path, provider bridge, symbolic link, or Task 18 scan.
+compatibility path, provider bridge, or installed-manifest scan.
 
 ## Evidence
 

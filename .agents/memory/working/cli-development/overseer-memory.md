@@ -37,6 +37,13 @@ carry across parallel lanes.
 
 ## Current Horizon
 
+Current execution is Task 18 “Extension Remove” at phase 2/5, milestone 1/8,
+with Gray callable/public-shape review active, then Task 19 “Repair”, then Task
+20 “Cleanup”. The queued last-stage implementation order after Task 20 is Task
+23 “Workspace Libraries” → Task 24 “Extensions Evolution”. Tasks 10, 21, 13,
+and 22 remain explicitly postponed. Tasks 23 and 24 have no phase or milestone
+horizons until their separate contract freezes.
+
 The accepted dependency order is:
 
 1. The D0 contract freeze and all four shared foundations are integrated and
@@ -120,10 +127,9 @@ The accepted dependency order is:
    root advanced only through coordination ledgers and is clean at `bbf2d87c`.
    The reconnaissance recorded the then six-domain, 112-kind Doctor contract
    as historical context. The accepted current unreleased schema-v1 disposition
-   contains exactly 109 kinds: 21 workspace, 4 recovery, 22 route, 28
-   local-reference, 14 Framework, and 20 Extension; its accepted implementation
-   supplies 107 supported emissions plus two accepted Extension observation
-   limitations. Doctor
+   contains exactly 108 kinds: 21 workspace, 4 recovery, 22 route, 28
+   local-reference, 14 Framework, and 19 Extension; its accepted implementation
+   supplies producer-backed emissions for the complete catalogue. Doctor
    consumes Task 15's immutable typed views rather than parsing Status output or
    using direct producer fan-in; exact callable shapes remain Status Gray-owned
    and neutral readers remain reusable. The earlier single-owner preparation at
@@ -133,9 +139,9 @@ The accepted dependency order is:
    inventory at each frozen baseline; every later producer extends that
    inventory and affected evidence before its own acceptance. Recovery
    attribution remains unreleased schema v1; old unattributed or malformed
-   final bundles fail closed. Task 16 defers exactly
-   `extension.bridge-registration` to Task 17 and
-   `extension.unmanaged-like-content` to Task 18. Task 7's
+   final bundles fail closed. Task 17 closed the accepted
+   `extension.bridge-registration` observation; Task 18 has no Doctor producer
+   obligation or installed-manifest scan. Task 7's
    Linux/macOS/Windows x64 expansion is Complete at phase 4/4, milestone 7/7:
    accepted lane `a2942781`, tree `fe36fc3f`, is squash-integrated at `e19d429e`
    with the same tree. Its Linux host journey passed; Darwin and Windows have
@@ -202,16 +208,13 @@ The accepted dependency order is:
    `fe4d33c8c2c76a67725ea7d54dafb79c485bd2819a317d7235a6910157ef76f4` and
    reports `0.0.0-dev`. The global PATH CLI was not used as acceptance evidence.
    Task 6's two subsequent progress-update grace is consumed and it is
-   dequeued. Task 17 “Extension Update” is the only active task at phase 2/5,
-   milestone 1/8, on branch `codex/extension-update-implementation` from exact
-   base `a9987d5c208272370fc0fc1f647b7f253d12056c`, tree
-   `e48823870cfb44914ffaaf5044e9e1125c8fd8d7`. Its activation, Preflight, and
-   set-valued bridge-registration carrier are accepted. Each observation joins
-   exact lifecycle target ownership, exact reviewed routed-source facts,
-   neutral generated-navigation parent and expected-entry facts, and
-   generated-entry comparison without a manifest or lifecycle schema change.
-   Complete Task 17, then stop without activating Task 18 or changing the later
-   queue.
+   dequeued. Task 17 “Extension Update” is complete at phase 5/5, milestone 8/8
+   and dequeued after its completion grace was consumed. Task 18 “Extension
+   Remove” is now active at phase 2/5, milestone 1/8 with Gray
+   callable/public-shape review active from its accepted clean activation base;
+   its Preflight capsule is frozen. Task 19 and Task 20 follow Task 18. After
+   Task 20, Task 23 “Workspace Libraries” and Task 24 “Extensions Evolution”
+   are queued in that order, each after its separate maintainer contract freeze.
 
 Task 5's supervised read-only reconnaissance ran from assigned `develop`
 commit `bbf2d87c` to clean `develop` commit `08f2fbb6`: a Sol/xhigh Task
@@ -321,11 +324,19 @@ or a general template/scaffold system.
 | Task 14 Extension Install     | Install reviewed Extension packages with isolated lifecycle and recovery integrity     | Complete at phase 5/5, milestone 8/8; lane `a6b44f07`, tree `cd4c074d`, is squash-integrated at `20807781`, tree `4592a139`; final managed `1711/917/169`, Native `917/169`, managed-on-native `169`, and offline package journey pass; completion grace consumed and the Task is dequeued                                                                                                                               |
 | Task 7                        | Complete x64 package graph and package evidence                                        | Its disjoint local-use horizon is completion-only history at phase 3/3, milestone 5/5; candidate `092ead98`, tree `1c4ab3ae`, is integrated into current `develop`; its two-update completion grace is consumed and Task 7 is dequeued. The separate x64 platform-expansion horizon is complete 4/4, 7/7; `a2942781` → `e19d429e`; Linux journey passed; Darwin/Windows stage+pack only.                                                                                                                                                                                        |
 | Task 15 Status                | Report complete typed current facts for the frozen producer inventory                  | Complete and dequeued at phase 5/5, milestone 8/8; accepted lane `0c19b7053ef2b8c48898cfebadedff0c5702bf34`/`8ff2ac4ac0f5985863a9aaf85911c2deb6152980`; correction `f2dcdcae8b7c2cc9522b5ce7df250c73a55347db`/`b6f83beb50cefe56a0aae7d9a4019dab08c19aea`; Green `7dd8de6c4f9eae3355f5ac4ee32d533e6ffb2564`/`f6c37550b78a01e7611178bd563e274f94bb2bb1`; final gates are recorded in [project control](project-control.md) |
-| Task 16 Doctor                | Diagnose the current 109-kind Doctor catalogue without mutation                        | Complete at phase 5/5, milestone 8/8; accepted lane `a48a16cd`, exact tree `90e66b05`, is squash-integrated at `59276c3b` with the same tree; managed `1768/937/175`, native `937/175`, managed-on-native `175`, and exact public Doctor `3/3` passed with zero failures/skips; exact detail is in the [Task 16 record](tasks/operations/doctor.md) and [project control](project-control.md)                            |
+| Task 16 Doctor                | Diagnose the current 108-kind Doctor catalogue without mutation                        | Complete at phase 5/5, milestone 8/8; accepted lane `a48a16cd`, exact tree `90e66b05`, is squash-integrated at `59276c3b` with the same tree; managed `1768/937/175`, native `937/175`, managed-on-native `175`, and exact public Doctor `3/3` passed with zero failures/skips; Task 17 closed the bridge-registration observation and no Extension horizon remains; exact detail is in the [Task 16 record](tasks/operations/doctor.md) and [project control](project-control.md)                            |
 | Task 5 Route Remove           | Remove positive-unmanaged routed leaves and complete categories safely                 | Complete and dequeued at phase 5/5, milestone 8/8; accepted lane `ab8da620`, exact tree `bb41e1c9`, is squash-integrated at `5a2e650a` with the same tree; managed `1797/966/178`, native `966/178`, managed-on-native `178`, and exact public Route Remove `3/3` passed; completion grace consumed                                                                                                                      |
 | Task 6 Root Update            | Reconcile lifecycle-managed Framework content from accepted identity                   | Complete and dequeued at phase 5/5, milestone 8/8; final candidate `ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree `195f15388d6251f69244946183209d3dfe86b24a`, is squash-integrated at `c6eec9d2`, exact tree `f31cacb0`; `T6-R1` and one logical `T6-C1` correction are consumed; post-integration Release and public Update `3/3` passed; completion grace consumed                                                                                                                                                      |
-| Task 17 Extension Update      | Reconcile installed Extension packages from reviewed source with ownership and recovery integrity | Active at phase 2/5, milestone 1/8 from exact base `a9987d5c`, tree `e4882387`; Sagan IV owns the streamlined-assured lane. Preflight accepts one typed bridge-registration observation per exact lifecycle-owned routed target and exact generated `Entries` registration without manifest or lifecycle schema change. Stop after Task 17 without activating Task 18.                                                                                                                                                                                  |
-| Task 13 native CI             | Prepare minimal build/test CI, manual publish, artifacts, and package targets          | Preparation completed at phase 1/3, milestone 2/6 on candidate `e7689696`, tree `c204c17b`, and is integrated by the commit containing this record from `develop` parent `de40d550`, tree `e6040c49`. The Task is queued behind all retained commands, Task 10, and conditional Task 21 remediation. Linux/macOS/Windows x64 are accepted; ARM remains undecided.                                                        |
+| Task 17 Extension Update      | Reconcile installed Extension packages from reviewed source with ownership and recovery integrity | Complete and dequeued at phase 5/5, milestone 8/8; completion grace consumed; accepted bridge-registration observation and affected Status/Doctor evidence are integrated.                                                                                                                                                                                  |
+| Task 18 Extension Remove      | Remove lifecycle-managed Extension content with preservation and recovery integrity     | Active at phase 2/5, milestone 1/8 from accepted clean activation base `5cabb10d`, tree `fb16fed3`; Sagan VI owns the streamlined-assured lane and Gray callable/public-shape review is active; no Doctor producer obligation or installed-manifest scan.                                                                                                                                                                                  |
+| Task 19 Repair                | Plan and apply explicit verified repairs under mutation safeguards                    | Queued after active Task 18; no implementation horizon assigned yet.                                                                                                                                                                                                                                                                                                                                                      |
+| Task 20 Cleanup               | Lease-validate cleanup of recognized recovery bundles and drafts                       | Queued after Task 19; Task 23 follows as the first queued last-stage improvement.                                                                                                                                                                                                                                                                                                                                        |
+| Task 10 Command Surface Audit | Review the retained command surface for direct findings                              | Explicitly postponed until after the retained command sequence; review only.                                                                                                                                                                                                                                                                                                                                            |
+| Task 21 Command Surface Remediation | Apply only maintainer-accepted Task 10 findings                                    | Conditional and explicitly postponed; no branch or implementation horizon.                                                                                                                                                                                                                                                                                                                                            |
+| Task 13 native CI             | Prepare minimal build/test CI, manual publish, artifacts, and package targets          | Explicitly postponed; preparation is integrated at phase 1/3, milestone 2/6, while implementation waits for its recorded downstream prerequisites.                                                                                                                                                                                                                                                                        |
+| Task 22 Final Acceptance/Release | Align docs and packages, run final acceptance, and perform authorized release          | Explicitly postponed; no publication is implied.                                                                                                                                                                                                                                                                                                                                                                        |
+| Task 23 Workspace Libraries   | Prepare and implement accepted contextual Workspace Libraries after a final contract freeze | Queued after Task 20 as the first last-stage improvement; bounded read-only Preflight may run now; no phase or milestone horizon.                                                                                                                                                                                                                                                                                       |
+| Task 24 Extensions Evolution  | Prepare and implement contextual Extensions Evolution after Task 23 and a final contract freeze | Queued after Task 23 as the second last-stage improvement; bounded read-only Preflight may run now; no phase or milestone horizon.                                                                                                                                                                                                                                                                                    |
 
 The Status lane's immutable pre-acceptance continuation after `T15-S1` remains
 historical:
@@ -501,9 +512,10 @@ managed EndToEnd against the native root `172/172`; native Integration
 `0` warnings. Every later producer extends the explicit contributor inventory
 and affected Status evidence before acceptance. Task 16 Doctor is complete at
 phase 5/5, milestone 8/8. Accepted lane `a48a16cd`, exact tree `90e66b05`, is
-squash-integrated at `59276c3b` with the same tree. Its 109-kind horizon supplies
-107 producer-backed emissions plus the two accepted Extension observation
-limitations. Route Remove is complete at `5a2e650a`, exact tree `bb41e1c9`;
+squash-integrated at `59276c3b` with the same tree. Its current catalogue has 108
+kinds, including 19 Extension kinds with producer-backed emissions; Task 17
+closed the bridge-registration observation and no Extension horizon remains.
+Route Remove is complete at `5a2e650a`, exact tree `bb41e1c9`;
 Route Inspect's synthetic overwrite-ambiguity conflict remains one bounded Task 10
 audit input, not a Doctor finding or a new task.
 The exact public Root Install JSON result schema is accepted, implemented, and
