@@ -104,6 +104,7 @@ internal static class CliCompositionRoot
                 standalone.ContextBinding,
                 standalone.ReferencesBinding,
                 standalone.InstallBinding,
+                standalone.UpdateBinding,
                 extension.ListBinding,
                 extension.InspectBinding,
                 extension.CreateBinding,
@@ -147,7 +148,7 @@ internal static class CliCompositionRoot
                 """),
             new CliHelpSection(
                 heading: "Lifecycle",
-                body: "  Framework management is established or verified by install without reconciling managed divergence."),
+                body: "  Framework management is established or verified by install. Managed content is reconciled by update under its explicit force and prune authority."),
         ]);
 }
 

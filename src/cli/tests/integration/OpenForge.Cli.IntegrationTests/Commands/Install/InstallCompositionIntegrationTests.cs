@@ -177,7 +177,11 @@ public sealed class InstallCompositionIntegrationTests
             root.StandardOutput.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries),
             line => line.TrimStart().StartsWith("install", StringComparison.Ordinal));
         Assert.Contains("Lifecycle", root.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("without reconciling managed divergence", root.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("established or verified by install", root.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains(
+            "reconciled by update under its explicit force and prune authority",
+            root.StandardOutput,
+            StringComparison.Ordinal);
         Assert.Equal(0, leaf.ExitCode);
         Assert.Equal(string.Empty, leaf.StandardError);
         Assert.Contains(

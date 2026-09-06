@@ -19,5 +19,7 @@ internal sealed record CliStandaloneComposition
 
     public required ICliCommandBinding InstallBinding { get; init; }
 
+    public required ICliCommandBinding UpdateBinding { get; init; }
+
     public required IReadOnlyList<CliRootLeaf> RootLeaves { get; init; }
 }

@@ -140,13 +140,59 @@ The accepted dependency order is:
    accepted lane `a2942781`, tree `fe36fc3f`, is squash-integrated at `e19d429e`
    with the same tree. Its Linux host journey passed; Darwin and Windows have
    stage-and-pack evidence only. ARM, publication, and live link or unlink
-   remain unproven and unauthorized. Task 16's completion grace is consumed.
+   remain unproven and unauthorized. Task 7's disjoint local-use horizon is
+   completion-only history at phase 3/3, milestone 5/5. Candidate `092ead98`,
+   tree `1c4ab3ae`, is integrated into current `develop`; its two-update
+   completion grace is consumed and Task 7 is dequeued. Task 16's completion
+   grace is consumed.
    Task 5 is complete at phase 5/5, milestone 8/8. Accepted lane `ab8da620`,
    exact tree `bb41e1c9`, is squash-integrated at `5a2e650a` with exact tree
-   equality. Its completion grace is `1 update remaining`. Task 6 Root Update is
-   the sole active implementation Task at phase 1/5, milestone 0/8 for fresh
-   Preflight. The current order is Task 6 → Task 17 → Task 18 → Task 19 → Task 20 → Task 10 →
-   conditional Task 21 → Task 13 → Task 22.
+   equality. Its completion grace is consumed and it is dequeued. Task 6
+   “Root Update” is active and acceptance-ready at phase 5/5, milestone 7/8.
+   Its accepted immutable lineage is activation
+   `0bc82357a4fc7bd54ecbca1d58501d721c04baa6`, tree
+   `41b74d9cad9c5d16ed8a02bb60ba06a4b8df8903` → Preflight
+   `48ac549c241e769246cfecb773124ccbc5076dfa`, tree
+   `30e85c30ed27b2bcde562f570b198ae02d11bf10` → Gray
+   `ef584350a48d08b2d6307eea70f87f2f3c46283a`, tree
+   `f49f4be76607aec8d03d72252600e6c6718bc6a5` → bounded recovery-deletion
+   addendum `7a9ded305e9ee185c02aaf636b4ff78f301b1fb1`, tree
+   `d2ebd52378095775897bbb64c59eebfef68cc0cf` → Red
+   `13fe18a9d1cc9f829cc0cf778c44c96f97abddcb`, tree
+   `a834c59be9cc1c5409ee8502ac951ca02030fe40` → coherent Green
+   `a59d4df80a1f5d23cd7848140d7462495ca0a77b`, tree
+   `d4a530e785dadd5e899fc73a410aec228b536201` → logical `T6-C1` physical
+   follow-ups `c03c057cbc5fe204ce115ef4c4001968b27df04c`, tree
+   `01769edbff77400bb54507a1d694d68015c29210`,
+   `a252890756d166169c3d5b9bbd8a7adaa62cb896`, tree
+   `b55f15814e5f5153f0cbc37ce812b7bd56fa8a68`, and
+   `2e6b669d9ec2f8ce6fda7e176c1ba13d913cd9ba`, tree
+   `893160afdc52ac5d7fac966cef1e1f308da4817b` → final candidate
+   `ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree
+   `195f15388d6251f69244946183209d3dfe86b24a`. The final correction changes
+   Install help evidence only and adds no runtime behavior. No immutable commit
+   was amended. `T6-R1` is consumed with final focused rechecks PASS, and one
+   logical `T6-C1` correction is consumed while its three physical follow-ups
+   remain retained.
+   Focused evidence contains exactly 35 Update Unit cases, 22 Update
+   Integration cases, and three Update EndToEnd cases, all passing. The exactly
+   three Doctor EndToEnd cases remain unchanged and pass. The full managed suite
+   passes Unit `1832/1832`, Integration `988/988`, and EndToEnd `181/181`.
+   Managed-on-native EndToEnd passes `181/181`; Native Integration passes
+   `988/988`; Native EndToEnd passes `181/181`; all failures and skips are zero.
+   Native root, Integration, and EndToEnd publishes each have literal exit `0`
+   with no warning or error lines. All evidence uses only Task-built artifacts,
+   and the global PATH CLI was not invoked. Milestone 8 remains active pending
+   squash integration, the post-integration build, and public Update `3/3`.
+   The current order is Task 6 → Task 17 → Task 18 → Task 19 → Task 20 → Task
+   10 → conditional Task 21 → Task 13 → Task 22. After Task 6 completes, do
+   not activate Task 17 or any later task. The complete remaining-task list in
+   that order is Task 17 “Extension Update” → Task 18 “Extension Remove” →
+   Task 19 “Repair” → Task 20 “Cleanup” → Task 10 “CLI Command Surface Audit”
+   → conditional Task 21 “CLI Command Surface Remediation” → Task 13 “Native
+   linux-x64 CI and Reproducible Artifacts” → Task 22 “Final Documentation,
+   Acceptance, and Release”. Report that list and stop without changing queue,
+   dequeue, or completion-grace truth.
 
 Task 5's supervised read-only reconnaissance ran from assigned `develop`
 commit `bbf2d87c` to clean `develop` commit `08f2fbb6`: a Sol/xhigh Task
@@ -158,7 +204,10 @@ leaf/category boundary, neutral shared mechanisms, Route Remove-local policy,
 and prohibition on sibling-private surfaces remain unchanged. Revalidate
 lifecycle/Extension ownership, Task 15 catalogue/views, root composition, help,
 serialization, and affected Status/Doctor evidence after Tasks 14–16. That
-revalidation is complete and Task 6 is active for fresh Preflight.
+revalidation is complete and Task 6 is active and acceptance-ready at phase 5/5,
+milestone 7/8. Its final candidate is `ac96f4cc57550a83ef8651b40869ae4ff35da34e`,
+tree `195f15388d6251f69244946183209d3dfe86b24a`; milestone 8 remains pending
+squash integration, the post-integration build, and public Update `3/3`.
 
 Task 5's accepted lane is `ab8da6202c2f638d3041de46fafeeced054c50b3`,
 exact tree `bb41e1c9993a7ea28a7b380e442350fc2bbae73c`; squash integration
@@ -190,6 +239,39 @@ a later accepted correction. No reliable elapsed-time baseline exists, so no
 numeric speedup is claimed. Continue the experiment with shared foundations and
 accepted command Green serialized in dependency order.
 
+Task 6 Preflight adds one early experimental observation. Three concurrent
+read-only lenses classified contract, dependency, and evidence gaps while the
+Overseer inspected the provisional semantic unit. That overlap exposed reusable
+grammar/request and force/prune intent without delaying the global decision.
+The two provisional commits were still unsafe to transplant because their stale
+base and incomplete comparison, result, interaction, recovery, and whole-plan
+seams required one serialized core/public freeze. Continue parallel read-only
+Preflight, command-private Gray/Red drafting, and isolated mechanical gates;
+serialize shared meaning, public schema, composition, Status/Doctor integration,
+and semantic Green. No elapsed-time or numeric speedup claim is available yet.
+
+Task 6 Gray adds the first execution observation. Supervised pre-edit review
+prevented an unnecessary microtype split and an extra definitions path, while
+the Task Mastermind's semantic check rejected a 15/15 false-green until cause,
+fingerprint, nullability, uniqueness, and ordering invariants were complete.
+Delayed or missing child receipts caused repeated idle-looking intervals. A
+separate exact-command mechanical worker reproduced the decisive warning-free
+build and 15/15 evidence quickly and without source mutation. Keep one semantic
+writer, parallel read-only review, and isolated mechanical evidence; require
+short fixed receipt packets at command boundaries. No numeric speedup is
+claimed.
+
+Task 6 Red closes the experimental authoring comparison. Four cold semantic
+lanes produced no useful file before their stop rule; one warm context produced
+the disjoint test paths, with first-file checkpoints restoring visibility.
+Central Task Mastermind reconciliation caught false retirement, incomplete
+revalidation, recovery-deletion ambiguity, and misplaced Unit-tier evidence.
+Exact serialized mechanical gates then caught fixture ownership, trim-safe JSON,
+missing restore assets, and missing publication setup without shared-artifact
+conflicts. Keep frozen read-only discovery and exact mechanical gates parallel,
+reuse warm semantic context, and serialize shared/public Green. No reliable
+numeric speedup is claimed.
+
 Root Install owns the closed base Framework installation. Route Init owns
 concrete scoped route initialization and reuses the neutral embedded payload and
 topology capability. It does not become `install --route`, a blueprint engine,
@@ -216,10 +298,11 @@ or a general template/scaffold system.
 | Task 4 Route Move             | Route movement with reference, navigation, lifecycle, and recovery integrity           | Complete at phase 6/6, milestone 12/12; closeout `631983ea`, tree `d6f6fdf7`, is squash-integrated at `d3d2dc1`, tree `6959b51e`; two-update completion grace is consumed and the Task is dequeued                                                                                                                                                                                                                       |
 | Task 12 authority remediation | Move accepted CLI Architecture detail to its correct authority without behavior change | Complete at phase 5/5, milestone 6/6; corrected source `a0e6bc8d`, exact tree `9c4a33b1`, is squash-integrated at `495a7ed6`, the same exact tree; two-update completion grace is consumed and the Task is dequeued                                                                                                                                                                                                      |
 | Task 14 Extension Install     | Install reviewed Extension packages with isolated lifecycle and recovery integrity     | Complete at phase 5/5, milestone 8/8; lane `a6b44f07`, tree `cd4c074d`, is squash-integrated at `20807781`, tree `4592a139`; final managed `1711/917/169`, Native `917/169`, managed-on-native `169`, and offline package journey pass; completion grace consumed and the Task is dequeued                                                                                                                               |
-| Task 7                        | Complete x64 package graph and package evidence                                        | Complete 4/4, 7/7; `a2942781` → `e19d429e`; Linux journey passed; Darwin/Windows stage+pack only.                                                                                                                                                                                                                                                                                                                        |
+| Task 7                        | Complete x64 package graph and package evidence                                        | Its disjoint local-use horizon is completion-only history at phase 3/3, milestone 5/5; candidate `092ead98`, tree `1c4ab3ae`, is integrated into current `develop`; its two-update completion grace is consumed and Task 7 is dequeued. The separate x64 platform-expansion horizon is complete 4/4, 7/7; `a2942781` → `e19d429e`; Linux journey passed; Darwin/Windows stage+pack only.                                                                                                                                                                                        |
 | Task 15 Status                | Report complete typed current facts for the frozen producer inventory                  | Complete and dequeued at phase 5/5, milestone 8/8; accepted lane `0c19b7053ef2b8c48898cfebadedff0c5702bf34`/`8ff2ac4ac0f5985863a9aaf85911c2deb6152980`; correction `f2dcdcae8b7c2cc9522b5ce7df250c73a55347db`/`b6f83beb50cefe56a0aae7d9a4019dab08c19aea`; Green `7dd8de6c4f9eae3355f5ac4ee32d533e6ffb2564`/`f6c37550b78a01e7611178bd563e274f94bb2bb1`; final gates are recorded in [project control](project-control.md) |
 | Task 16 Doctor                | Diagnose the current 109-kind Doctor catalogue without mutation                        | Complete at phase 5/5, milestone 8/8; accepted lane `a48a16cd`, exact tree `90e66b05`, is squash-integrated at `59276c3b` with the same tree; managed `1768/937/175`, native `937/175`, managed-on-native `175`, and exact public Doctor `3/3` passed with zero failures/skips; exact detail is in the [Task 16 record](tasks/operations/doctor.md) and [project control](project-control.md)                            |
-| Task 5 Route Remove           | Remove positive-unmanaged routed leaves and complete categories safely                 | Complete at phase 5/5, milestone 8/8; accepted lane `ab8da620`, exact tree `bb41e1c9`, is squash-integrated at `5a2e650a` with the same tree; managed `1797/966/178`, native `966/178`, managed-on-native `178`, and exact public Route Remove `3/3` passed; completion grace is `1 update remaining`                                                                                                                    |
+| Task 5 Route Remove           | Remove positive-unmanaged routed leaves and complete categories safely                 | Complete and dequeued at phase 5/5, milestone 8/8; accepted lane `ab8da620`, exact tree `bb41e1c9`, is squash-integrated at `5a2e650a` with the same tree; managed `1797/966/178`, native `966/178`, managed-on-native `178`, and exact public Route Remove `3/3` passed; completion grace consumed                                                                                                                      |
+| Task 6 Root Update            | Reconcile lifecycle-managed Framework content from accepted identity                   | Active and acceptance-ready at phase 5/5, milestone 7/8; final candidate `ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree `195f15388d6251f69244946183209d3dfe86b24a`; `T6-R1` consumed with final focused rechecks PASS; one logical `T6-C1` correction consumed with three physical follow-ups retained; milestone 8 pending squash integration, post-integration build, and public Update `3/3`                                                                                                                                          |
 | Task 13 native CI             | Prepare minimal build/test CI, manual publish, artifacts, and package targets          | Preparation completed at phase 1/3, milestone 2/6 on candidate `e7689696`, tree `c204c17b`, and is integrated by the commit containing this record from `develop` parent `de40d550`, tree `e6040c49`. The Task is queued behind all retained commands, Task 10, and conditional Task 21 remediation. Linux/macOS/Windows x64 are accepted; ARM remains undecided.                                                        |
 
 The Status lane's immutable pre-acceptance continuation after `T15-S1` remains

@@ -27,6 +27,10 @@ using OpenForge.Cli.Core.Commands.Status;
 using OpenForge.Cli.Core.Commands.Status.Models.Binding;
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
 using OpenForge.Cli.Core.Commands.Status.Shared.Rendering;
+using OpenForge.Cli.Core.Commands.Update;
+using OpenForge.Cli.Core.Commands.Update.Models.Binding;
+using OpenForge.Cli.Core.Commands.Update.Models.Result;
+using OpenForge.Cli.Core.Commands.Update.Shared.Rendering;
 using OpenForge.Cli.Core.Framework.Lifecycle;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors;
@@ -53,6 +57,7 @@ internal static class CliStandaloneComposer
         var contextSymbols = ContextBinding.CreateSymbols();
         var referencesSymbols = ReferencesBinding.CreateSymbols();
         var installSymbols = InstallBinding.CreateSymbols();
+        var updateSymbols = UpdateBinding.CreateSymbols();
         return new CliStandaloneComposition
         {
             FindBinding = BuildFind(findSymbols),
@@ -65,6 +70,7 @@ internal static class CliStandaloneComposer
             ContextBinding = BuildContext(contextSymbols),
             ReferencesBinding = BuildReferences(referencesSymbols),
             InstallBinding = BuildInstall(installSymbols, interactiveSession, lockStoreRoot),
+            UpdateBinding = BuildUpdate(updateSymbols, interactiveSession, lockStoreRoot),
             RootLeaves =
             [
                 new CliRootLeaf(findSymbols.FindCommand, []),
@@ -74,6 +80,7 @@ internal static class CliStandaloneComposer
                 new CliRootLeaf(contextSymbols.ContextCommand, []),
                 new CliRootLeaf(referencesSymbols.ReferencesCommand, []),
                 new CliRootLeaf(installSymbols.InstallCommand, []),
+                new CliRootLeaf(updateSymbols.UpdateCommand, []),
             ],
         };
     }
@@ -150,6 +157,21 @@ internal static class CliStandaloneComposer
                 InstallHumanRenderer.Render,
                 InstallJsonRenderer.Render),
             diagnosticRenderer: InstallDiagnosticRenderer.Render);
+
+    private static ICliCommandBinding BuildUpdate(
+        UpdateSymbols symbols,
+        CliInteractiveSession interactiveSession,
+        WorkspaceLockStoreRoot? lockStoreRoot)
+        => UpdateBinding.Close(
+            symbols: symbols,
+            help: UpdateHelpSections.Create(),
+            operation: UpdateOperationFactory.Create(
+                interactiveSession,
+                lockStoreRoot).ExecuteAsync,
+            renderers: new CliRendererSet<UpdateResult>(
+                UpdateHumanRenderer.Render,
+                UpdateJsonRenderer.Render),
+            diagnosticRenderer: UpdateDiagnosticRenderer.Render);
 
     private static ICliCommandBinding BuildReferences(ReferencesSymbols symbols)
         => ReferencesBinding.Close(

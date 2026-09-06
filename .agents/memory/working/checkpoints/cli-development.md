@@ -88,10 +88,40 @@ squash-integrated at `5a2e650a` with exact tree equality. Final managed
 and post-integration Route Remove `3/3` gates passed. Route Inspect's synthetic
 overwrite-ambiguity conflict remains one bounded Task 10 audit input, not a
 Doctor finding or a new task. Recovery attribution remains unreleased schema
-v1, and old unattributed or malformed final bundles fail closed. Task 6 “Root
-Update” is active at phase 2/5, milestone 3/8. Clean Green `a59d4df8`, tree
-`d4a530e7`, is under immutable `T6-R1` review. The earlier prepared alignment
-and its Status `2521574d` snapshot remain historical context.
+v1, and old unattributed or malformed final bundles fail closed. Its completion
+grace is consumed and it is dequeued. Task 6 “Root
+Update” is active and acceptance-ready at phase 5/5, milestone 7/8. Its
+accepted immutable lineage is activation `0bc82357a4fc7bd54ecbca1d58501d721c04baa6`
+→ Preflight `48ac549c241e769246cfecb773124ccbc5076dfa` → Gray
+`ef584350a48d08b2d6307eea70f87f2f3c46283a` → bounded recovery-deletion
+addendum `7a9ded305e9ee185c02aaf636b4ff78f301b1fb1` → Red
+`13fe18a9d1cc9f829cc0cf778c44c96f97abddcb` → Green
+`a59d4df80a1f5d23cd7848140d7462495ca0a77b`, tree
+`d4a530e785dadd5e899fc73a410aec228b536201` → logical `T6-C1` physical
+follow-ups `c03c057cbc5fe204ce115ef4c4001968b27df04c`, tree
+`01769edbff77400bb54507a1d694d68015c29210`, `a252890756d166169c3d5b9bbd8a7adaa62cb896`,
+tree `b55f15814e5f5153f0cbc37ce812b7bd56fa8a68`, and
+`2e6b669d9ec2f8ce6fda7e176c1ba13d913cd9ba`, tree
+`893160afdc52ac5d7fac966cef1e1f308da4817b` → separately exposed full-gate
+direct-consumer evidence correction and final candidate
+`ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree
+`195f15388d6251f69244946183209d3dfe86b24a`. No immutable commit was amended;
+the final correction changes Install help evidence only and adds no runtime
+behavior. T6-R1 is consumed with final focused rechecks PASS, and one logical
+T6-C1 is consumed with the immutable physical follow-ups retained.
+
+Final acceptance is warning-free local-only locked restore for all six projects,
+Release solution build with zero warnings and errors, managed Unit `1832/1832`,
+Integration `988/988`, EndToEnd `181/181`, managed-on-native EndToEnd `181/181`,
+Native Integration `988/988`, and Native EndToEnd `181/181`. Native root,
+Integration, and EndToEnd publishes each have literal exit `0` and no
+warning/error lines; all failures and skips are zero. Focused Update evidence is
+exactly 35 Unit, 22 Integration, and three EndToEnd cases; the exactly three
+Doctor EndToEnd cases remain unchanged. The worktree-built public executable is
+`0.0.0-dev`. The global PATH CLI was not invoked. Milestone 8 remains active
+pending squash integration, the post-integration build, and public Update
+`3/3`. The earlier prepared alignment and its Status `2521574d` snapshot remain
+historical context.
 
 Task 7 “npm Package Manager Release and Local Linking” retains its immutable
 complete historical horizons and completed its disjoint provisional local-use
@@ -105,7 +135,7 @@ Status, and Doctor. Ordinary projects use machine-global `open-forge`, while
 development, review, and acceptance worktrees use only same-worktree artifacts
 as evidence. The integrated worktree remained clean. No package publication,
 registry or remote mutation, or user-project smoke occurred. ARM remains
-outside scope.
+outside scope. Its completion grace is consumed and it is dequeued.
 
 Task 3 “Route Update” remains Complete from accepted closeout `27df8325`, tree
 `b68d4349`, with final executable behavior `8a398f2e`, tree `3bb4a224`.
@@ -305,9 +335,11 @@ slices. CLI Quality Remediation is Complete and squash-integrated at
 `862cbf2a847b5adac77c6923e51f2c28c315415f`, exact tree
 `571f104f507c3f72b7404cc0dacd86c818ec0a2e`, from reviewed implementation
 `a4ccf19a3489d06f20a0fd940219be1acb22646d`. Task 3 “Route Update” is Complete
-at accepted closeout `27df8325`, tree `b68d4349`. Root Update clean Green
-`a59d4df8`, tree `d4a530e7`, is now under immutable `T6-R1` review after the
-complete Route Mutation M2 lane.
+at accepted closeout `27df8325`, tree `b68d4349`. Root Update has accepted Gray
+`ef584350`, bounded Gray addendum `7a9ded30`, and accepted Red `13fe18a9`, tree
+`a834c59b`, after the complete Route Mutation M2 lane. Root Update is
+acceptance-ready at phase 5/5, milestone 7/8, pending squash integration, the
+post-integration build, and public Update `3/3`.
 
 Route Init candidate `cb62b19`, tree `be93900`, has a warning-free Release
 build; managed Unit `1481/1481`, Integration `695/695`, generated serialization
@@ -452,13 +484,51 @@ accepted identities and evidence. Task 16's completion grace is consumed. Task
 `ab8da6202c2f638d3041de46fafeeced054c50b3`, exact tree
 `bb41e1c9993a7ea28a7b380e442350fc2bbae73c`; local squash integration is
 `5a2e650aa7623a2f19ff885ae664e56daded2df0`, the same exact tree, from parent
-`0d269b7a`, tree `8863d176`. Its completion-bearing update has `1 update
-remaining` grace. Task 6 “Root Update” is active at phase 2/5, milestone 3/8.
-Curie's clean Green is `a59d4df8`, tree `d4a530e7`; immutable `T6-R1` review is
-active.
+`0d269b7a`, tree `8863d176`. Its prior `1 update remaining` grace is consumed by
+the accepted Task 6 Preflight update; Task 5 is dequeued. Task 6 “Root Update” is
+active and acceptance-ready at phase 5/5, milestone 7/8. Its
+exact activation is `0bc82357a4fc7bd54ecbca1d58501d721c04baa6`, tree
+`41b74d9cad9c5d16ed8a02bb60ba06a4b8df8903`. Accepted Gray is
+`ef584350a48d08b2d6307eea70f87f2f3c46283a`, tree
+`f49f4be76607aec8d03d72252600e6c6718bc6a5`; its exact 13 production and three
+Unit paths freeze 15 green contract facts and three intentional Red seams. The
+bounded recovery-deletion addendum is
+`7a9ded305e9ee185c02aaf636b4ff78f301b1fb1`, tree
+`d2ebd52378095775897bbb64c59eebfef68cc0cf`. Accepted Red is
+`13fe18a9d1cc9f829cc0cf778c44c96f97abddcb`, tree
+`a834c59be9cc1c5409ee8502ac951ca02030fe40`; its eight test paths freeze 20
+Unit, 22 Integration, and exactly three EndToEnd failures. The clean provisional
+Gray/Red lane remains preserved, but both commits are rejected as transplant
+units. T6-R1 is consumed with final focused rechecks PASS, and one logical T6-C1
+is consumed with the immutable physical follow-ups retained. Milestone 8 remains
+pending squash integration, the post-integration build, and public Update `3/3`.
 
-Route Remove completes the Route Mutation M2 lane, so root Update M3 is active
-for Green review. Task 12 and the adoption slice remain integrated.
+Task 6 Preflight accepted the existing neutral payload, lifecycle, generated-
+navigation, mutation, lock, and recovery providers without adding a generic
+engine, sibling-private dependency, or seventh operational contributor. Update
+owns historical retirement, complete comparison, policy, result, recovery
+mapping, and orchestration. The exact one-confirmation matrix, schema-v1 result,
+30 findings, next actions, 15 green Gray cases, exactly 45 intentional Red
+failures, and exactly three Update public journeys are frozen in the Update
+contracts and Task record. Existing Framework lifecycle and recovery
+contributors own the durable Status/Doctor facts; exactly three Doctor public
+journeys remain.
+
+Task 6 Red closes the experimental authoring comparison. Four cold semantic
+lanes produced no useful file before the stop rule fired; one warm context then
+completed the disjoint test paths. First-file checkpoints improved visibility,
+while central Task Mastermind reconciliation rejected false retirement,
+revalidation, recovery-deletion, and Unit-tier evidence before builds. Exact
+serialized mechanical gates then found fixture ownership, trim-safe JSON,
+missing restore assets, and missing publication setup without shared-artifact
+conflicts. Keep frozen read-only discovery and exact mechanical gates parallel;
+reuse warm semantic context and serialize shared/public Green. No reliable
+numeric speedup is claimed.
+
+Route Remove completes the Route Mutation M2 lane, and root Update M3 is
+acceptance-ready at phase 5/5, milestone 7/8, after accepted Preflight. Its
+milestone 8 remains pending squash integration, the post-integration build, and
+public Update `3/3`. Task 12 and the adoption slice remain integrated.
 
 Initial read-only M2 preparation completed on five clean no-op branches from
 `33913dfe7f8f80598ca4765c516d308ed179c3ab` without a preparation commit, Gray,
@@ -507,23 +577,26 @@ JSON, and redirected flows never prompt.
 - Do not implement public Index selection, binding, application, locking,
   recovery, or result presentation in the Generated Navigation lane.
 - Do not download additional dependencies without exact authorization.
-- Do not contact remotes, publish, deploy, or push. Task 7's one authorized
-  reversible local npm link is complete; do not mutate that state during
-  closeout.
+- Do not contact remotes, publish, globally install, deploy, or push.
 
 ## Next Actions
 
 1. Continue active [Task 6 Root Update](../cli-development/tasks/lifecycle/update.md)
-   at phase 2/5, milestone 3/8. Sagan completes immutable `T6-R1` review of clean
-   Green `a59d4df8`, tree `d4a530e7`, then groups any accepted correction.
-   Every C# owner personally reads and fingerprints `_csharp.md`, `design.md`,
-   and `style.md`.
-2. Continue after Task 6 in this order: Task 17 Extension Update → Task 18
-   Extension Remove → Task 19 Repair
-   → Task 20 Cleanup → Task 10 CLI Command Surface Audit → conditional Task 21
-   CLI Command Surface Remediation → Task 13 Native linux-x64 CI and
-   Reproducible Artifacts → Task 22 Final Documentation, Acceptance, and
-   Release.
+   at phase 5/5, milestone 7/8. The final candidate is
+   `ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree
+   `195f15388d6251f69244946183209d3dfe86b24a`. Sagan's next exact boundary is
+   squash integration onto then-current `develop` without transplanting rejected
+   provisional commits, followed by the post-integration build and public
+   Update `3/3`; only after those pass may Task 6 sync to phase 5/5,
+   milestone 8/8, `Complete`. Every C# owner personally reads and fingerprints
+   `_csharp.md`, `design.md`, and `style.md`.
+2. After Task 6 completes, do not activate Task 17 or any later task. The
+   complete remaining-task list, retained in queue order, is Task 17 Extension
+   Update → Task 18 Extension Remove → Task 19 Repair → Task 20 Cleanup → Task
+   10 CLI Command Surface Audit → conditional Task 21 CLI Command Surface
+   Remediation → Task 13 Native linux-x64 CI and Reproducible Artifacts → Task
+   22 Final Documentation, Acceptance, and Release. Report that complete list
+   and stop.
 3. Retain thin D1 as current `linux-x64` build/smoke, packed
    install/invocation, and checksums. Keep future RIDs, signatures, SBOM,
    provenance, OIDC, and support floors behind a later explicit decision.

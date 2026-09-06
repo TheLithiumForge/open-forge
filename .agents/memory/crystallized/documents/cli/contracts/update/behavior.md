@@ -62,6 +62,15 @@ The resolver:
 5. Keeps authority dimensions independent. Force never enables prune; prune never
    enables force; automatic never enables either.
 
+After a complete plan and preflight, a prompt-capable human apply with at least
+one effect and without `--automatic` asks exactly once before lease acquisition.
+Trimmed `y` and `yes` answers are accepted case-insensitively. Refusal, end of
+input, or cancellation returns `interrupted` without a lease, recovery bundle,
+or workspace write. Verified no-op, effect-free attention, dry-run, automatic,
+JSON, and redirected or otherwise non-prompt-capable execution never prompt or
+consume input. A non-prompt-capable human apply that would write is `invalid`
+without explicit automatic mode. Automatic never supplies force or prune.
+
 Workspace validation establishes lexical and physical containment and exact
 identity. Missing, unavailable, non-directory, escaping, or aliased identity is
 `blocked`. The source resolver admits only the embedded current Framework and
@@ -255,6 +264,11 @@ reopens and verifies it. Only the valid final ZIP forms the opaque
 is `incomplete` before effects; malformed, mismatched, or colliding final facts
 are `blocked` before effects.
 
+For a prompt-capable human apply that would write, confirmation occurs after
+this complete preflight and before the workspace lease or recovery preparation.
+Confirmation continues the already formed plan; it never replans or widens
+authority.
+
 Before the first workspace effect, the implementation obtains the actual OS lock
 for the persistent reusable zero-byte external path under
 `LocalApplicationData/OpenForge/locks/v1` defined by the [Mutation And Recovery
@@ -310,6 +324,18 @@ recovery-bundle facts, verification, residuals, status, and at most one next
 action.
 Human and JSON renderers consume it once.
 
+The typed result forms exactly the ordered command-local JSON graph frozen by
+the Interface: mode, force, prune, automatic, atomic nullable source,
+comparisons, atomic nullable generated navigation, effects, lifecycle, recovery,
+verification, and findings. All top-level properties are present for every
+status, and arrays are empty rather than null. Each physical effect contains its
+ordered logical authored and generated changes, so one physical path has one
+application outcome, one receipt, and one recovery entry without hiding the
+logical comparison meaning. Findings expose exactly `code`, nullable `target`,
+and non-empty `cause`; their status comes from the finite Interface code map
+rather than a duplicated wire member. Finding order follows that declaration
+sequence, then null target before ordinal non-null target, then ordinal cause.
+
 Result formation uses `invalid` before operation work; then ordinary precedence
 `blocked` > `incomplete` > `attention` > `complete`. `failed` and `interrupted`
 retain event meaning. Complete includes a verified no-op and a complete dry-run;
@@ -326,6 +352,9 @@ Conformance must show:
 
 - exact parser and workspace resolution, shared global behavior, and independent
   force, prune, automatic, and dry-run dimensions;
+- the exact one-prompt matrix, no-write refusal, end-of-input, and cancellation,
+  direct automatic rerun guidance for redirected human writes, and no prompt for
+  no-op, effect-free attention, dry-run, automatic, JSON, or redirected modes;
 - trusted-state requirement, schema-v1 section semantic preservation,
   deterministic canonical whole-document serialization on selected change, no
   write on semantic no-op,
@@ -340,13 +369,16 @@ Conformance must show:
 - normal preservation, force-only current replacement/restoration, prune-only
   retired deletion, and safe force/prune composition;
 - authored-topology generated projection and bounded marker behavior;
+- one coalesced physical effect, application receipt, and recovery entry for a
+  path containing multiple ordered logical authored and generated changes;
 - complete-plan blocking, one bundle covering each existing replacement or
   deletion, exact-byte preservation, expected-state verification, all three
   post-verification deletion state/disposition facts, residual reporting, interruption,
   fresh rerun, and visible OS-lock ownership;
 - dry-run parity without persistent effects;
-- one typed result, seven status meanings, stream assignment, JSON stdout,
-  bounded diagnostics, and no more than one required next action; and
+- the exact ordered command-local schema-v1 result, 30 finding codes and their
+  ordering, seven status meanings, stream assignment, JSON stdout, and no more
+  than one required next action;
 - no formatter execution or persisted formatter state;
 - Gate 5 proof of source-generated serialization, fixed Markdig where used, real
   `System.IO`, Native AOT, OS locking, isolated tests, and package journeys; and

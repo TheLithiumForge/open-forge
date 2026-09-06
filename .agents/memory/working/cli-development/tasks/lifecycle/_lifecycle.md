@@ -12,8 +12,11 @@ open-forge:
   Extension Create, and root Install are integrated. Root Install is complete at
   `c60fcb98a57e9ec80769b9cb1d399ce13a227863`, exact tree
   `464a4a6b6ef6447209edffbf53df7348c70691ed`. Task 14 Extension Install is
-  complete at `20807781`, tree `4592a139`; root Update remains queued after the
-  complete Route Mutation lane.
+  complete at `20807781`, tree `4592a139`. Root Update is active and
+  acceptance-ready at phase 5/5, milestone 7/8. Its final candidate is
+  `ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree
+  `195f15388d6251f69244946183209d3dfe86b24a`; milestone 8 remains pending
+  squash integration, the post-integration build, and public Update `3/3`.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Common prerequisites: Extension discovery and `index`; workspace mutations also
   consume Mutation Foundation.
@@ -57,10 +60,48 @@ intended-membership formation. Its exact command-local interaction is accepted.
 The Extension Create and root Install command lanes executed in parallel after
 their prerequisites. Both commands' protected root composition and executable
 acceptance seams are complete.
-Root Update is active for fresh Preflight after the accepted and integrated
-Route Mutation M2 lane. Its earlier provisional Gray/Red lane is preserved as
-unaccepted revalidation input; dependent Update behavior begins only from the
-new Task-owned baseline after Preflight disposition.
+Root Update is active and acceptance-ready at phase 5/5, milestone 7/8 after the
+accepted and integrated Route Mutation M2 lane. Its accepted immutable lineage is
+activation `0bc82357a4fc7bd54ecbca1d58501d721c04baa6` → Preflight
+`48ac549c241e769246cfecb773124ccbc5076dfa` → Gray
+`ef584350a48d08b2d6307eea70f87f2f3c46283a` → bounded recovery-deletion addendum
+`7a9ded305e9ee185c02aaf636b4ff78f301b1fb1` → Red
+`13fe18a9d1cc9f829cc0cf778c44c96f97abddcb` → coherent Green
+`a59d4df80a1f5d23cd7848140d7462495ca0a77b`, tree
+`d4a530e785dadd5e899fc73a410aec228b536201` → logical `T6-C1` physical
+follow-ups `c03c057cbc5fe204ce115ef4c4001968b27df04c`, tree
+`01769edbff77400bb54507a1d694d68015c29210`, `a252890756d166169c3d5b9bbd8a7adaa62cb896`,
+tree `b55f15814e5f5153f0cbc37ce812b7bd56fa8a68`, and
+`2e6b669d9ec2f8ce6fda7e176c1ba13d913cd9ba`, tree
+`893160afdc52ac5d7fac966cef1e1f308da4817b` → final candidate
+`ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree
+`195f15388d6251f69244946183209d3dfe86b24a`. The final correction changes
+Install help evidence only and adds no runtime behavior. No immutable commit was
+amended. `T6-R1` is consumed with final focused rechecks PASS, and one logical
+`T6-C1` correction is consumed while its three physical follow-ups remain
+retained.
+
+Focused evidence contains exactly 35 Update Unit cases, 22 Update Integration
+cases, and three Update EndToEnd cases, all passing. The exactly three Doctor
+EndToEnd cases remain unchanged and pass. The contributor catalogue remains six
+members with the existing Framework and recovery attribution; no Doctor
+vocabulary was added. The full managed suite passes Unit `1832/1832`,
+Integration `988/988`, and EndToEnd `181/181`. Managed-on-native EndToEnd passes
+`181/181`; Native Integration passes `988/988`; Native EndToEnd passes
+`181/181`; all failures and skips are zero. Native root, Integration, and
+EndToEnd publishes each have literal exit `0` with no warning or error lines.
+All evidence uses only Task-built artifacts, and the global PATH CLI was not
+invoked.
+
+Milestone 8 remains active pending squash integration, the post-integration
+build, and public Update `3/3`. After Task 6 completes, do not activate Task 17
+or any later task. The complete remaining-task list in its existing queue order
+is Task 17 “Extension Update” → Task 18 “Extension Remove” → Task 19 “Repair” →
+Task 20 “Cleanup” → Task 10 “CLI Command Surface Audit” → conditional Task 21
+“CLI Command Surface Remediation” → Task 13 “Native linux-x64 CI and
+Reproducible Artifacts” → Task 22 “Final Documentation, Acceptance, and
+Release”. Report that list and stop without changing queue, dequeue, or
+completion-grace truth.
 Extension Install is independent of unfinished Route Remove and root Update, so
 it may form the first adoption slice after Task 12. Later lifecycle producers
 must extend the accepted explicit Status/Doctor contributor inventory and its
@@ -78,7 +119,7 @@ bytes and is owned only through a read/write `FileShare.None` handle.
 - [x] [Implement creation of one reviewable Extension package outside a workspace](extension-create.md) — Complete; command-local squash `3ef81227ba50fba869f0129b958eabc6d0c29fbc`, protected public integration `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5`
 - [x] [Implement root Framework installation into a selected workspace](install.md) — Complete; final candidate `11994e4d21ddc807b7480afc39ae3612e5a69a56` is squash-integrated at `c60fcb98a57e9ec80769b9cb1d399ce13a227863`, exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed`
 - [x] [Task 14: implement Extension installation from exact reviewed package identity](extension-install.md) — Complete at phase 5/5, milestone 8/8; accepted lane `a6b44f07`, tree `cd4c074d`, squash-integrated at `20807781`, tree `4592a139`
-- [ ] [Task 6: implement root Framework update from accepted lifecycle identity](update.md) — Active at phase 1/5, milestone 0/8 — Task Mastermind: Sagan; C# Implementer not assigned before Preflight
+- [ ] [Task 6: implement root Framework update from accepted lifecycle identity](update.md) — Active and acceptance-ready at phase 5/5, milestone 7/8; final candidate `ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree `195f15388d6251f69244946183209d3dfe86b24a`; milestone 8 remains pending squash integration, the post-integration build, and public Update `3/3`
 - [ ] [Task 17: implement Extension update with source review, ownership, and recovery integrity](extension-update.md) — Queued after Task 6 and Task 14 — Implementer: Not assigned
 - [ ] [Task 18: implement Extension removal with preserved user content and recovery integrity](extension-remove.md) — Queued after Task 17 — Implementer: Not assigned
 
