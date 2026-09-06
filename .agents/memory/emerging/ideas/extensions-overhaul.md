@@ -51,6 +51,28 @@ Extension lifecycle design.
 - How can any richer relation remain visible without recreating package-manager
   complexity or weakening exact ownership?
 
+### Destinations Beyond `.agents`
+
+The current replacement CLI deliberately restricts Extension installation to
+strict descendants of `.agents/`; `.apm/` and every other manager root are
+rejected. [Workspace Libraries](workspace-libraries.md) is a separate candidate
+for live projection into ordinary `.agents/**` paths. Its proposed first
+release does not add non-`.agents` destinations, and it does not change the
+Extension boundary. A future Extension lifecycle could still reuse a reviewed
+destination-permission model, but it needs its own accepted ownership, update,
+removal, recovery, and security contract.
+
+- Should a package be able to request typed content for another manager without
+  claiming that manager's semantics?
+- Which exact destination roots may the consumer approve, and where does that
+  durable approval live?
+- How do interactive approval and explicit non-interactive configuration avoid
+  letting source-controlled metadata grant itself new destinations?
+- Does another manager treat an installed file as instructions, configuration,
+  or executable behavior that needs a stronger review boundary?
+- Would `content/` eventually describe multi-manager package files more clearly
+  than `payload/`, and what compatibility path would preserve existing packages?
+
 ### Multi-root And Multi-manager Ownership
 
 - How should lifecycle authority work across nested repositories, submodules,
@@ -62,31 +84,12 @@ Extension lifecycle design.
 
 ### Centralized Framework Content And Loader Bridges
 
-A future option is to keep shared `.agents` content in a centralized
-Git-submodule-backed source and expose it in each workspace through a visible
-Open Forge symlink or junction, an alternate loader path, or a copy bridge.
-This idea is not accepted direction and is not implemented. It does not
-authorize packaging or externalizing `local/extensions`.
-
-Centralized content could simplify updates and migration while interoperating
-with AI tools that reserve `.agents` or discover skills there. A bridge could
-also let a workspace keep project-specific content beside shared content. The
-tradeoff is that a second source and projection may make authorship, route
-selection, and recovery harder to inspect.
-
-Before promotion, determine:
-
-- Which manager owns the centralized source, the workspace projection, and
-  user changes or deliberate removals?
-- How does each workspace establish identity across nested repositories and
-  submodules without letting a link or copy escape its intended containment?
-- How do update, removal, stale projections, failed copies, locking, and
-  recovery preserve user files and shared files?
-- Does a symlink, junction, alternate loader path, or copy bridge preserve
-  `root route` meaning, and how does loader discovery choose one unambiguous
-  Framework root?
-- How does the bridge coexist with another AI tool that reserves `.agents` or
-  discovers `SKILL.md` files there without claiming that tool's authority?
+[Workspace Libraries](workspace-libraries.md) is the contextual candidate for
+projecting live shared files from one contained source root into ordinary
+`.agents/**` paths. It keeps one Framework Loader and treats projection as a
+lifecycle distinct from Extension installation. It is not accepted direction,
+does not create another Framework root, and does not authorize packaging or
+externalizing `local/extensions`.
 
 ### Catalogue Governance
 
