@@ -471,7 +471,7 @@ lifecycle actions. General Repair does not mutate Framework files.
 | `extension.catalogue-unavailable`      | The declared catalogue cannot be inspected; Extension coverage is `incomplete` or `blocked` according to the boundary.                                                                                                                            | `blocked-repair`; no catalogue fallback is inferred.                                                             |
 | `extension.partial-lifecycle`          | Within one exact trusted declared managed subject or set, at least one expected member is current and at least one other expected member is non-current.                                                                                          | `blocked-repair`; preserve the partial state until a typed recovery action is available.                         |
 | `extension.ownership-collision`        | User, Framework, or Extension ownership claims conflict.                                                                                                                                                                                          | `manual-decision`; ownership is not inferred.                                                                    |
-| `extension.bridge-registration`        | An exact trusted declared and owned registration target identity is retained first; its observed state is missing, unreadable, or inconsistent, and content is inspected only when the target is readable.                                        | `manual-decision`; report the evidence or use a typed future lifecycle action.                                   |
+| `extension.bridge-registration`        | One exact lifecycle-owned routed Extension payload target has a missing, unreadable, or inconsistent ordinary generated-navigation parent `Entries` registration.                                                                                | `manual-decision`; report the evidence or use a typed future lifecycle action.                                   |
 | `extension.unmanaged-like-content`     | An exact contained readable supported Extension manifest signature exists in the accepted bounded Extension scan universe, with no trusted lifecycle ownership for that exact identity.                                                           | `informational`; do not adopt, register, or remove it.                                                           |
 
 `extension.partial-lifecycle` uses the same finite mixed-current-state rule as
@@ -481,12 +481,22 @@ It reports observed mixed state only, never operation history, transition intent
 or recovery attribution. The more specific `extension.managed-missing` and
 `extension.managed-changed` findings remain whenever their facts apply.
 
-`extension.bridge-registration` retains an exact trusted declared and owned
-registration target identity first. Its observed state may be missing,
-unreadable, or inconsistent. Content is inspected only when the target is
-readable. The identity and ownership must already come from trusted lifecycle or
-source facts. The finding remains inside that owned boundary and never uses
-resemblance, arbitrary provider files, or path-only adoption.
+`extension.bridge-registration` is a set-valued producer horizon. It forms one
+typed observation for each exact lifecycle-owned routed Extension payload
+target whose exact reviewed source facts form exactly one ordinary
+generated-navigation parent `Entries` registration. Lifecycle supplies the
+target identity and owners. Exact reviewed source bytes and metadata establish
+the routed role. Neutral generated-navigation formation and projection supply
+the exact parent host and expected entry, and generated-entry comparison
+supplies the current, missing, unreadable, or inconsistent observation. The
+singular target wording applies to each observation, not to one global target.
+Content is inspected only when readable.
+
+An unavailable source makes the source-dependent horizon `incomplete`; an
+ambiguous mapping is `blocked`. Neither case selects or reconstructs a role.
+This horizon adds no manifest or lifecycle field or schema change. It never
+uses a compatibility path, provider bridge, symbolic link, registry, dependency
+injection, fuzzy path or content inference, or the Task 18 manifest scan.
 
 `extension.unmanaged-like-content` requires an exact contained readable supported
 Extension manifest signature inside the accepted bounded Extension scan universe,
@@ -500,14 +510,13 @@ emits neither kind unless the required producer-owned facts are present. While
 those facts are unavailable, the current Extension observation horizon retains
 one honest bounded `incomplete` limitation for each unavailable horizon: bridge-
 registration observation and installed-manifest observation. These are coverage
-limitations, not synthesized findings. Task 17 owns the exact declared and owned
-bridge-registration role, target identity, and observed state, and must extend
-the accepted typed contributor views and Doctor before its acceptance. Task 18
-owns the exact installed-manifest observation universe and must extend those
-views and Doctor before its acceptance. The final pre-release completeness gate
-requires an honest emission path for all 109 kinds. The current implementation
-target is 107 producer-backed emissions plus exactly these two accepted
-Extension deferrals.
+limitations, not synthesized findings. Task 17 owns the accepted set-valued
+bridge-registration observations and must extend the typed contributor views
+and Doctor before its acceptance. Task 18 owns the exact installed-manifest
+observation universe and must extend those views and Doctor before its
+acceptance. The final pre-release completeness gate requires an honest emission
+path for all 109 kinds. The current implementation target is 107 producer-backed
+emissions plus exactly these two accepted Extension deferrals.
 
 While both accepted Extension observation horizons remain unavailable, the
 overall Doctor result is honestly `incomplete` with exit `3`, even when every

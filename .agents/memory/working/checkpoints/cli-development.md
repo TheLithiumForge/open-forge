@@ -526,6 +526,154 @@ squash-integrated at `c6eec9d26ad6b798d418d260027241795fb4aefc`, exact tree
 `f31cacb0c54bda8ecf8a91d3516c6ffa48f48753`; the post-integration Release build
 and public Update `3/3` passed.
 
+Task 6's two subsequent progress-update grace is consumed and it is dequeued.
+Task 17 “Extension Update” is Complete at phase 5/5, milestone 8/8,
+on branch `codex/extension-update-implementation` from exact base
+`a9987d5c208272370fc0fc1f647b7f253d12056c`, tree
+`e48823870cfb44914ffaaf5044e9e1125c8fd8d7`. Its streamlined-assured
+Preflight, Gray, Red, coherent Green, milestone-5 gates, grouped correction, and
+final acceptance are accepted under Curie III and Sagan IV. Green is commit
+`e25a721f0099de7d7ecd160e0e1563edad430194`, tree
+`ddf020d66f2457dbb055b95eb26ca2cb8eae7639`. Red is commit
+`4c6d68de09bc45070e42cb184963ba9ebd3c398a`, tree
+`50a77b0d7b49313c2edd6266dc1bcd87f38a090b`; Gray is
+`fce4d7f2ab054709b6b6b5ed2dd902842cfcbafb`, with correction
+`1b3f90abee85103018ac9239342e994a297665bc`. The accepted immutable gate basis
+is commit `10c2963f8e07109e5c6fb4afb8e566ba067d22b4`, tree
+`570959dc93e3db7989c2ea662ebdaf0659c2b0ee`. The immutable review target is
+the same commit and tree; the separately accepted milestone-5 record is commit
+`38cc702801def02e2d8c59eb2d39b21aa91479fa`, tree
+`511293c084dc5a4fda175b48e3918cc661438ea2`. Fresh whole-task review `T17-R1`
+is consumed with final `CHANGES_REQUIRED` for exactly one accepted High finding,
+`T17-R1-F2`: the planner collapses lifecycle `Invalid` and `Blocked` into
+`LifecycleUnavailable` or `Incomplete`. The accepted repair maps `Invalid` and
+`Blocked` to `LifecycleBlocked`; `DocumentMissing`, `SectionMissing`, and
+`Unavailable` to `LifecycleUnavailable`; and `Cancelled` to `Interrupted`, with
+focused lifecycle-gate evidence. `T17-R1-F1` is withdrawn as a false positive
+because Extension Update next is only at-most-one and blocked null was frozen.
+Recovery and cancellation have no finding. The absent JSON `frameworkLifecycle`
+field is contract-correct. No architecture, C#, evidence, Native AOT, package,
+or public journey finding was accepted. Exactly three Update and three Doctor
+EndToEnd journeys remain preserved. Review budget is consumed; grouped correction
+`T17-C1` was active under Curie III and is accepted below, and the review and
+correction budgets are consumed. Curie III is paused. Task 18 remains `QUEUED`
+and inactive.
+
+Milestone 7/8 correction `T17-C1` is accepted at commit
+`8a3a754a4d20a8247a248b59e56abd1881530dd6`, tree
+`f56ff6677974a949a336c51ab382b83229bf60b5`, from parent commit
+`38cc702801def02e2d8c59eb2d39b21aa91479fa`, tree
+`511293c084dc5a4fda175b48e3918cc661438ea2`. It maps `Invalid` and `Blocked`
+to `LifecycleBlocked`; `DocumentMissing`, `SectionMissing`, and `Unavailable`
+to `LifecycleUnavailable`; `Cancelled` to `Interrupted`; and `Available` to
+the normal outcome. One three-row existing Integration theory covers malformed,
+non-ordinary-path, and missing-lifecycle inputs, proving no effects and
+unchanged workspace and source. The six-path path manifest SHA-256 is
+`8c62f4aa43c05ae5b9923e140b29eb6963ae44bf57d16e99e86280a691c695b7`; the
+ordered content manifest SHA-256 is
+`48fcd926c79924d8a4afa3d4a4937442d23aab6d278327cdf0f4334fece3367c`.
+Focused Integration and full solution Release builds reported `0` warnings and
+`0` errors; Update Integration passed `11/11`, with zero failures and skips.
+Formatting, diff, protected-path, callable-shape, prohibited-pattern, C# line,
+durable host-path, and exact public-inventory checks are clean. Exactly three
+Update and three Doctor EndToEnd journeys remain preserved. Unstaged and
+untracked counts are zero. Curie III is paused. The next boundary is milestone
+8/8 fresh final managed/public, supported `linux-x64` Native AOT, and packed
+same-worktree acceptance.
+
+Green's six-project full solution Release build exited `0` with `0` warnings
+and `0` errors. Focused Update Unit, Update Integration, lifecycle observation,
+Status Integration, and Doctor Integration passed `22/22`, `8/8`, `2/2`,
+`15/15`, and `3/3`; public Update EndToEnd passed exactly `3/3`; and public
+Doctor EndToEnd separately passed exactly `3/3`. Failures, skips, and warnings
+were all `0`. Formatting, diff, protected-path, durable host-path,
+prohibited-pattern, changed-line, and callable-shape checks are clean. Exactly
+22 relative C# paths are accounted for, with 16 tracked and 6 formerly
+untracked; the path and content manifest SHA-256 values are
+`2a11af62c794a6918ccc4e620942bf8ed70cf13cccbd4bb7b54305e3bdd373aa` and
+`f27b55be74212b46520384e2ce082920ac040d3d10edd99214232c8c410b4bd4`. The
+complete path list remains in the [Task 17 record](../cli-development/tasks/lifecycle/extension-update.md).
+
+Milestone 5 managed restore and the full solution Release build covered six
+projects, exited `0`, and reported `0` warnings and `0` errors. Full managed
+Unit, Integration, and EndToEnd passed `1854/1854`, `996/996`, and `184/184`.
+The canonical default-version supported `linux-x64` root SHA-256 is
+`beeb545a3b968681d79f231b089ecffbe7d6c55276508bae60815e3ee8c662a7`; native
+Integration passed `996/996` at SHA-256
+`2f7b8051a4b3360cf7c4f62d5459e1cca102b95cf5072e2677fb3ce3b0daa9bc`; native
+EndToEnd passed `184/184` at SHA-256
+`29e2c0adcc871aa5022bd12a607ca4a07a7a4432a9d8efa7d8b96e65f41795da`; and
+managed-on-native EndToEnd passed `184/184`. Public Update and Doctor EndToEnd
+separately passed exactly `3/3` each. Failures, skips, and warnings were `0`.
+
+The accepted packed journey used version
+`0.0.0-dev.sha-10c2963f8e07109e5c6fb4afb8e566ba067d22b4`; main and supported
+`linux-x64` tarball SHA-256 values are
+`e07a02f2969b855195cbc8d3639c2ca5bd80a2c29ce3176a07721ad288a63805` and
+`3c37e2ecbe2863abab6199964a5cb7dbb2d51f8d26e4e1362d72c5da78fab209`.
+Native root, staged native payload, and installed native payload match the root
+SHA-256 above. Framework Install completed 44 effects, Extension Install 28
+effects, embedded Update was a no-op, changed external Update completed one
+effect with source-target SHA-256
+`9c99cf2c3d165cfa06078a009d10f6120f356c1644f6f366da37102e8a413c00`, and the
+repeat Update was a no-op. No findings, residuals, or warnings were reported.
+
+Milestone 8/8 final acceptance is locked at immutable gate basis commit
+`d3c29a2b20e77c18484b5ab58056063e019d469e`, tree
+`18f76ed403fbe2e9047ad68f289b7c89100421b4`. The locked restore and full
+solution Release build covered six projects, exited `0`, and reported `0`
+warnings and `0` errors. Managed Unit, Integration, and EndToEnd passed
+`1854/1854`, `999/999`, and `184/184`; public Update and Doctor each passed
+exactly `3/3`; native Update and Doctor each passed exactly `3/3`; and
+managed-on-native EndToEnd passed `184/184`. The default-version supported
+`linux-x64` native root SHA-256 is
+`67d561a5d877fd4516fa4e35a8a6e3accc67bb68f4f08266b229044c5fbbc154`;
+native Integration passed `999/999` at SHA-256
+`00ea4e7854371562ae9b28b7336484e5344d2e5ab3f197cd35ad3af0fdf25cfa`; native
+EndToEnd passed `184/184` at SHA-256
+`6abdf5551b94148942fd09f3434e943a4844afd96771d5a2879a473fcd10e04d`.
+Failures, skips, and warnings were all `0`; prior native outputs remain
+archived intact.
+
+The final packed same-worktree journey had stage, pack, and install exit `0`
+with SHA-versioned package manifests. Main and supported `linux-x64` tarball
+SHA-256 values are
+`d3c9b2eb24623729c5a225ca0112760bb27c77bbdd627344c4418e59aa81fc93` and
+`118ba7b036b92caef55f856b152415c93f83bdefacbb09100a2be610e30ff594`.
+Native root, staged native payload, and installed native payload all match the
+native root hash above. Framework Install completed 44 verified effects and
+Extension Install completed 28 verified effects. Embedded Update was a no-op;
+the edited external Update completed one verified effect, with source-target
+SHA-256 `9c99cf2c3d165cfa06078a009d10f6120f356c1644f6f366da37102e8a413c00`;
+the exact repeat was a no-op. Findings, residuals, and warnings were zero, and
+prior package outputs remain archived intact.
+
+Task 17 “Extension Update” is Complete at phase 5/5 and milestone 8/8. Review
+`T17-R1` and correction `T17-C1` are consumed; completion grace is unchanged.
+Stop after Task 17 acceptance. Task 18 remains `QUEUED` and inactive; do not
+activate Task 18 or any later task.
+
+Rejected evidence included SHA-qualified native build configuration, main-repo
+`NODE_PATH`, npm offline materializations, and pre-closure stage attempts. Only
+rejected SHA-qualified native outputs and partial failed-stage output were
+preserved. Failed npm/`NODE_PATH` attempts were rejected and recorded, not
+claimed as preserved artifacts. Accepted evidence used only worktree-local
+ignored exact Bun-lock materializations (`TypeScript 6.0.2`, `@types/node
+26.1.2`, and `undici-types 8.3.0`) and same-worktree source/artifacts.
+
+Green implements the accepted `extension.bridge-registration` producer horizon,
+which is set-valued:
+one typed observation per exact lifecycle-owned routed Extension payload target
+whose exact reviewed source facts form exactly one ordinary generated-navigation
+parent `Entries` registration. Lifecycle supplies target identity and owners;
+reviewed source bytes and metadata establish routed role; neutral formation and
+projection supply the parent host and expected entry; and generated-entry
+comparison supplies current, missing, unreadable, or inconsistent state.
+Source-unavailable and ambiguous mapping remain incomplete or blocked without
+inference. No manifest or lifecycle field, schema or compatibility change,
+provider bridge, symbolic link, registry, dependency injection, fuzzy inference,
+or Task 18 scan is accepted.
+
 Task 6 Preflight accepted the existing neutral payload, lifecycle, generated-
 navigation, mutation, lock, and recovery providers without adding a generic
 engine, sibling-private dependency, or seventh operational contributor. Update
@@ -547,6 +695,13 @@ missing restore assets, and missing publication setup without shared-artifact
 conflicts. Keep frozen read-only discovery and exact mechanical gates parallel;
 reuse warm semantic context and serialize shared/public Green. No reliable
 numeric speedup is claimed.
+
+Task 17's flow observation is one serialized fresh build followed by parallel
+exact no-build focused and public lanes that gave fast independent receipts
+without overlapping semantic writes. Command-private lanes were effective after
+the shared Green/build freeze; shared semantics remained serialized. Callable
+tightening needed a later serialized pass, showing the core-first dependency.
+No elapsed-time or numeric speedup claim is made.
 
 Route Remove completes the Route Mutation M2 lane, and root Update M3 is
 Complete at phase 5/5, milestone 8/8, after accepted Preflight and squash
@@ -604,15 +759,10 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Task 6 “Root Update” is Complete at phase 5/5, milestone 8/8. Its accepted
-   squash integration and post-integration evidence are recorded above. Do not
-   activate Task 17 or any later task at this boundary.
-2. Report the complete remaining-task list, retained in queue order: Task 17 Extension
-   Update → Task 18 Extension Remove → Task 19 Repair → Task 20 Cleanup → Task
-   10 CLI Command Surface Audit → conditional Task 21 CLI Command Surface
-   Remediation → Task 13 Native linux-x64 CI and Reproducible Artifacts → Task
-   22 Final Documentation, Acceptance, and Release. Report that complete list
-   and stop. Do not change queue, dequeue, or completion-grace state.
+1. Perform fresh final managed/public, supported `linux-x64` Native AOT, and
+   packed same-worktree acceptance for Task 17 milestone 8/8.
+2. Complete Task 17 acceptance after the final gate packet.
+3. Stop after Task 17 acceptance. Do not activate Task 18 or any later task.
 
 ## Current Sources
 

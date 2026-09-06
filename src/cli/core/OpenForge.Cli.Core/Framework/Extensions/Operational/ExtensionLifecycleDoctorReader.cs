@@ -12,7 +12,8 @@ internal sealed class ExtensionLifecycleDoctorReader(
     LifecycleDocumentReader lifecycleReader,
     ExtensionSourceObservationReader sourceReader,
     ExtensionLifecycleTargetReader targetReader,
-    LifecycleOwnershipReader ownershipReader)
+    LifecycleOwnershipReader ownershipReader,
+    ExtensionBridgeRegistrationObservationReader bridgeReader)
 {
     internal async ValueTask<ExtensionLifecycleDoctorView> ReadAsync(
         CliWorkspace workspace,
@@ -29,6 +30,9 @@ internal sealed class ExtensionLifecycleDoctorReader(
             .ConfigureAwait(false);
         var targets = await targetReader
             .ReadDoctorAsync(workspace, lifecycle.Paths, cancellationToken)
+            .ConfigureAwait(false);
+        var bridgeRegistrations = await bridgeReader
+            .ReadAsync(workspace, lifecycle, sources, cancellationToken)
             .ConfigureAwait(false);
         var packages = lifecycle.Packages
             .Select(package => Compare(package, sources))
@@ -48,7 +52,7 @@ internal sealed class ExtensionLifecycleDoctorReader(
             lifecycle,
             sources,
             ownership,
-            ExtensionLifecycleDoctorFacts.Create(targets, packages));
+            ExtensionLifecycleDoctorFacts.Create(targets, packages, bridgeRegistrations));
     }
 
     private static ExtensionLifecycleSectionState ReadSection(

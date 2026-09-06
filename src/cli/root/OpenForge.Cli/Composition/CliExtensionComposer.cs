@@ -16,6 +16,10 @@ using OpenForge.Cli.Core.Commands.Extension.List.Models.Binding;
 using OpenForge.Cli.Core.Commands.Extension.List.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.List.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Extension.Shared.Rendering;
+using OpenForge.Cli.Core.Commands.Extension.Update;
+using OpenForge.Cli.Core.Commands.Extension.Update.Models.Binding;
+using OpenForge.Cli.Core.Commands.Extension.Update.Models.Result;
+using OpenForge.Cli.Core.Commands.Extension.Update.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Interaction;
 using OpenForge.Cli.Core.Shell.Parsing;
@@ -36,6 +40,7 @@ internal static class CliExtensionComposer
         var inspectSymbols = ExtensionInspectBinding.CreateSymbols(group);
         var createSymbols = ExtensionCreateBinding.CreateSymbols(group);
         var installSymbols = ExtensionInstallBinding.CreateSymbols(group);
+        var updateSymbols = ExtensionUpdateBinding.CreateSymbols(group);
         return new CliExtensionComposition
         {
             Branch = new CliRootBranch(group, ExtensionHelpSections.CreateGroup(), []),
@@ -44,6 +49,10 @@ internal static class CliExtensionComposer
             CreateBinding = BuildCreate(createSymbols, interactiveSession),
             InstallBinding = BuildInstall(
                 installSymbols,
+                interactiveSession,
+                lockStoreRoot),
+            UpdateBinding = BuildUpdate(
+                updateSymbols,
                 interactiveSession,
                 lockStoreRoot),
         };
@@ -102,4 +111,17 @@ internal static class CliExtensionComposer
                 ExtensionInstallPresentation.RenderHuman,
                 ExtensionInstallJsonProjection.RenderJson),
             ExtensionInstallPresentation.RenderDiagnostic);
+
+    private static ICliCommandBinding BuildUpdate(
+        ExtensionUpdateSymbols symbols,
+        CliInteractiveSession interactiveSession,
+        WorkspaceLockStoreRoot? lockStoreRoot)
+        => ExtensionUpdateBinding.Close(
+            symbols,
+            ExtensionUpdatePresentation.CreateHelp(),
+            ExtensionUpdateOperationFactory.Create(interactiveSession, lockStoreRoot),
+            new CliRendererSet<ExtensionUpdateResult>(
+                ExtensionUpdatePresentation.RenderHuman,
+                ExtensionUpdateJsonProjection.RenderJson),
+            ExtensionUpdatePresentation.RenderDiagnostic);
 }

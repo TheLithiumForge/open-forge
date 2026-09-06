@@ -545,12 +545,17 @@ after both horizons close and all 109 kinds have honest emission paths.
   the lifecycle document.
 - `extension.ownership-collision` keeps user, Framework, and Extension claims
   separate and requires a manual decision.
-- `extension.bridge-registration` retains an exact trusted declared and owned
-  registration target identity first. Its observed state may be missing,
-  unreadable, or inconsistent, and content is inspected only when the target is
-  readable. The identity and ownership must already come from trusted lifecycle
-  or source facts. The finding remains inside that owned boundary and never uses
-  resemblance, arbitrary provider files, or path-only adoption.
+- `extension.bridge-registration` is a set-valued producer horizon. It forms one
+  typed observation for each exact lifecycle-owned routed Extension payload
+  target whose exact reviewed source facts form exactly one ordinary
+  generated-navigation parent `Entries` registration. Lifecycle supplies the
+  target identity and owners; exact reviewed source bytes and metadata establish
+  the routed role; neutral generated-navigation formation and projection supply
+  the exact parent host and expected entry; and generated-entry comparison
+  supplies the current, missing, unreadable, or inconsistent observation. The
+  singular target wording applies per observation. Content is inspected only
+  when readable. Source-unavailable coverage is `incomplete`, and ambiguous
+  mapping is `blocked`, without inference.
 - `extension.unmanaged-like-content` is formed only for an exact contained
   readable supported Extension manifest signature inside the accepted bounded
   Extension scan universe, with no trusted lifecycle ownership for that exact
@@ -559,19 +564,23 @@ after both horizons close and all 109 kinds have honest emission paths.
 
 Task 16 emits neither `extension.bridge-registration` nor
 `extension.unmanaged-like-content` without the required producer-owned facts.
-Task 17 owns the exact declared and owned bridge-registration role, target
-identity, and observed state, and extends the accepted typed contributor views
-and Doctor before acceptance. Task 18 owns the exact installed-manifest
-observation universe and extends those views and Doctor before acceptance. The
-final pre-release completeness gate requires an honest emission path for all 109
-kinds. The current implementation target is 107 producer-backed emissions plus
-exactly these two accepted Extension deferrals.
+Task 17 owns the accepted set-valued bridge-registration observations and
+extends the typed contributor views and Doctor before acceptance. Task 18 owns
+the exact installed-manifest observation universe and extends those views and
+Doctor before acceptance. The final pre-release completeness gate requires an
+honest emission path for all 109 kinds. The current implementation target is 107
+producer-backed emissions plus exactly these two accepted Extension deferrals.
 
 Neither legacy `open-forge.extensions.json`, package-source manifests, broad
 `.agents` recursion, payload/path/byte resemblance, nor Framework bridges may
 substitute for producer facts. Static CLI composition is wiring only and cannot
 manufacture observations; dependency injection and a runtime registry are not
 observation substitutes.
+
+The accepted bridge-registration horizon changes no Extension manifest or
+lifecycle field or schema. It adds no compatibility path, provider bridge,
+symbolic link, registry, dependency injection, fuzzy path or content inference,
+or Task 18 manifest scan.
 
 The accepted Extension lifecycle contracts own exact mutation syntax and effects.
 Doctor may report their typed next actions, but does not invoke them or grant

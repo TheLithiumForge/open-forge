@@ -118,4 +118,8 @@ internal sealed record ExtensionLifecycleStatusView
     public required IReadOnlyList<InstalledExtensionObservation> Installed { get; init; }
 
     public required IReadOnlyList<ExtensionManagedTargetObservation> Targets { get; init; }
+
+    public ExtensionBridgeRegistrationFacts BridgeRegistrations { get; init; } =
+        ExtensionBridgeRegistrationFacts.Incomplete(
+            "Typed Extension bridge-registration observations are unavailable.");
 }

@@ -14,4 +14,6 @@ internal sealed record CliExtensionComposition
     public required ICliCommandBinding CreateBinding { get; init; }
 
     public required ICliCommandBinding InstallBinding { get; init; }
+
+    public required ICliCommandBinding UpdateBinding { get; init; }
 }

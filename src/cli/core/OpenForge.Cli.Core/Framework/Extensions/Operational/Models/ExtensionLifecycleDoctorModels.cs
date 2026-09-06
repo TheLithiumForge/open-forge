@@ -9,19 +9,24 @@ internal sealed class ExtensionLifecycleDoctorFacts
 {
     private ExtensionLifecycleDoctorFacts(
         IReadOnlyList<ExtensionManagedTargetDoctorObservation> targets,
-        IReadOnlyList<ExtensionInstalledPackageComparison> packages)
+        IReadOnlyList<ExtensionInstalledPackageComparison> packages,
+        ExtensionBridgeRegistrationFacts bridgeRegistrations)
     {
         Targets = targets;
         Packages = packages;
+        BridgeRegistrations = bridgeRegistrations;
     }
 
     internal IReadOnlyList<ExtensionManagedTargetDoctorObservation> Targets { get; }
 
     internal IReadOnlyList<ExtensionInstalledPackageComparison> Packages { get; }
 
+    internal ExtensionBridgeRegistrationFacts BridgeRegistrations { get; }
+
     internal static ExtensionLifecycleDoctorFacts Create(
         IReadOnlyList<ExtensionManagedTargetDoctorObservation> targets,
-        IReadOnlyList<ExtensionInstalledPackageComparison> packages)
+        IReadOnlyList<ExtensionInstalledPackageComparison> packages,
+        ExtensionBridgeRegistrationFacts? bridgeRegistrations = null)
     {
         ArgumentNullException.ThrowIfNull(targets);
         ArgumentNullException.ThrowIfNull(packages);
@@ -34,7 +39,9 @@ internal sealed class ExtensionLifecycleDoctorFacts
 
         return new ExtensionLifecycleDoctorFacts(
             targets.ToArray(),
-            packages.ToArray());
+            packages.ToArray(),
+            bridgeRegistrations ?? ExtensionBridgeRegistrationFacts.Incomplete(
+                "Typed Extension bridge-registration observations are unavailable."));
     }
 }
 
@@ -72,6 +79,7 @@ internal sealed class ExtensionLifecycleDoctorView
         Ownership = ownership;
         Targets = facts.Targets;
         Packages = facts.Packages;
+        BridgeRegistrations = facts.BridgeRegistrations;
     }
 
     internal ExtensionLifecycleDoctorAssessment Assessment { get; }
@@ -89,6 +97,8 @@ internal sealed class ExtensionLifecycleDoctorView
     internal IReadOnlyList<ExtensionManagedTargetDoctorObservation> Targets { get; }
 
     internal IReadOnlyList<ExtensionInstalledPackageComparison> Packages { get; }
+
+    internal ExtensionBridgeRegistrationFacts BridgeRegistrations { get; }
 
     internal ExtensionManagedSetState ManagedSet => Assessment.ManagedSet;
 

@@ -93,6 +93,24 @@ internal sealed class PublishedWorkspaceLockStore : IDisposable
         Assert.False(File.Exists(Path.Combine(workspacePath, ".agents", "open-forge.lock")));
     }
 
+    internal void AssertNoRecoveryArtifacts(string workspacePath)
+    {
+        var recoveryWorkspaceDirectory = Path.Combine(
+            LocalApplicationDataPath(),
+            "OpenForge",
+            "recovery",
+            "v1",
+            WorkspaceKey(Normalize(workspacePath)));
+        var attributes = AttributesIfPresent(recoveryWorkspaceDirectory);
+        if (attributes is null)
+        {
+            return;
+        }
+
+        Assert.True(IsOrdinaryDirectory(attributes.Value));
+        Assert.Empty(Directory.EnumerateFileSystemEntries(recoveryWorkspaceDirectory));
+    }
+
     internal void AssertNoInfrastructure()
     {
         if (OperatingSystem.IsWindows())

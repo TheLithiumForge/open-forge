@@ -201,15 +201,17 @@ The accepted dependency order is:
    `artifacts/publish/open-forge-dev/Release/open-forge-dev.version` marker has SHA-256
    `fe4d33c8c2c76a67725ea7d54dafb79c485bd2819a317d7235a6910157ef76f4` and
    reports `0.0.0-dev`. The global PATH CLI was not used as acceptance evidence.
-   The current order is Task 17 → Task 18 → Task 19 → Task 20 → Task 10 →
-   conditional Task 21 → Task 13 → Task 22. At this completion boundary, do not
-   activate Task 17 or any later task. The complete remaining-task list in
-   that order is Task 17 “Extension Update” → Task 18 “Extension Remove” →
-   Task 19 “Repair” → Task 20 “Cleanup” → Task 10 “CLI Command Surface Audit”
-   → conditional Task 21 “CLI Command Surface Remediation” → Task 13 “Native
-   linux-x64 CI and Reproducible Artifacts” → Task 22 “Final Documentation,
-   Acceptance, and Release”. Report that list and stop without changing queue,
-   dequeue, or completion-grace truth.
+   Task 6's two subsequent progress-update grace is consumed and it is
+   dequeued. Task 17 “Extension Update” is the only active task at phase 2/5,
+   milestone 1/8, on branch `codex/extension-update-implementation` from exact
+   base `a9987d5c208272370fc0fc1f647b7f253d12056c`, tree
+   `e48823870cfb44914ffaaf5044e9e1125c8fd8d7`. Its activation, Preflight, and
+   set-valued bridge-registration carrier are accepted. Each observation joins
+   exact lifecycle target ownership, exact reviewed routed-source facts,
+   neutral generated-navigation parent and expected-entry facts, and
+   generated-entry comparison without a manifest or lifecycle schema change.
+   Complete Task 17, then stop without activating Task 18 or changing the later
+   queue.
 
 Task 5's supervised read-only reconnaissance ran from assigned `develop`
 commit `bbf2d87c` to clean `develop` commit `08f2fbb6`: a Sol/xhigh Task
@@ -321,7 +323,8 @@ or a general template/scaffold system.
 | Task 15 Status                | Report complete typed current facts for the frozen producer inventory                  | Complete and dequeued at phase 5/5, milestone 8/8; accepted lane `0c19b7053ef2b8c48898cfebadedff0c5702bf34`/`8ff2ac4ac0f5985863a9aaf85911c2deb6152980`; correction `f2dcdcae8b7c2cc9522b5ce7df250c73a55347db`/`b6f83beb50cefe56a0aae7d9a4019dab08c19aea`; Green `7dd8de6c4f9eae3355f5ac4ee32d533e6ffb2564`/`f6c37550b78a01e7611178bd563e274f94bb2bb1`; final gates are recorded in [project control](project-control.md) |
 | Task 16 Doctor                | Diagnose the current 109-kind Doctor catalogue without mutation                        | Complete at phase 5/5, milestone 8/8; accepted lane `a48a16cd`, exact tree `90e66b05`, is squash-integrated at `59276c3b` with the same tree; managed `1768/937/175`, native `937/175`, managed-on-native `175`, and exact public Doctor `3/3` passed with zero failures/skips; exact detail is in the [Task 16 record](tasks/operations/doctor.md) and [project control](project-control.md)                            |
 | Task 5 Route Remove           | Remove positive-unmanaged routed leaves and complete categories safely                 | Complete and dequeued at phase 5/5, milestone 8/8; accepted lane `ab8da620`, exact tree `bb41e1c9`, is squash-integrated at `5a2e650a` with the same tree; managed `1797/966/178`, native `966/178`, managed-on-native `178`, and exact public Route Remove `3/3` passed; completion grace consumed                                                                                                                      |
-| Task 6 Root Update            | Reconcile lifecycle-managed Framework content from accepted identity                   | Recently completed at phase 5/5, milestone 8/8; final candidate `ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree `195f15388d6251f69244946183209d3dfe86b24a`, is squash-integrated at `c6eec9d2`, exact tree `f31cacb0`; `T6-R1` and one logical `T6-C1` correction are consumed; post-integration Release and public Update `3/3` passed; completion grace `2 updates remaining`                                                                                                                                          |
+| Task 6 Root Update            | Reconcile lifecycle-managed Framework content from accepted identity                   | Complete and dequeued at phase 5/5, milestone 8/8; final candidate `ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree `195f15388d6251f69244946183209d3dfe86b24a`, is squash-integrated at `c6eec9d2`, exact tree `f31cacb0`; `T6-R1` and one logical `T6-C1` correction are consumed; post-integration Release and public Update `3/3` passed; completion grace consumed                                                                                                                                                      |
+| Task 17 Extension Update      | Reconcile installed Extension packages from reviewed source with ownership and recovery integrity | Active at phase 2/5, milestone 1/8 from exact base `a9987d5c`, tree `e4882387`; Sagan IV owns the streamlined-assured lane. Preflight accepts one typed bridge-registration observation per exact lifecycle-owned routed target and exact generated `Entries` registration without manifest or lifecycle schema change. Stop after Task 17 without activating Task 18.                                                                                                                                                                                  |
 | Task 13 native CI             | Prepare minimal build/test CI, manual publish, artifacts, and package targets          | Preparation completed at phase 1/3, milestone 2/6 on candidate `e7689696`, tree `c204c17b`, and is integrated by the commit containing this record from `develop` parent `de40d550`, tree `e6040c49`. The Task is queued behind all retained commands, Task 10, and conditional Task 21 remediation. Linux/macOS/Windows x64 are accepted; ARM remains undecided.                                                        |
 
 The Status lane's immutable pre-acceptance continuation after `T15-S1` remains

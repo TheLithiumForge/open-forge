@@ -22,6 +22,7 @@ internal sealed class ExtensionLifecycleOperationalContributor :
     IExtensionLifecycleOperationalContributor
 {
     private readonly ExtensionLifecycleDoctorReader _doctorReader;
+    private readonly ExtensionBridgeRegistrationObservationReader _bridgeReader;
     private readonly LifecycleDocumentReader _lifecycleReader;
     private readonly ExtensionSourceObservationReader _sourceReader;
     private readonly ExtensionLifecycleTargetReader _targetReader;
@@ -35,11 +36,13 @@ internal sealed class ExtensionLifecycleOperationalContributor :
         _lifecycleReader = lifecycleReader;
         _sourceReader = new ExtensionSourceObservationReader(sourceReader);
         _targetReader = targetReader;
+        _bridgeReader = new ExtensionBridgeRegistrationObservationReader();
         _doctorReader = new ExtensionLifecycleDoctorReader(
             lifecycleReader,
             _sourceReader,
             targetReader,
-            ownershipReader);
+            ownershipReader,
+            _bridgeReader);
     }
 
     internal async ValueTask<ExtensionLifecycleStatusView> ReadStatusAsync(
@@ -57,6 +60,9 @@ internal sealed class ExtensionLifecycleOperationalContributor :
         var targets = await _targetReader
             .ReadAsync(snapshot.Workspace, lifecycle.Paths, cancellationToken)
             .ConfigureAwait(false);
+        var bridgeRegistrations = await _bridgeReader
+            .ReadAsync(snapshot.Workspace, lifecycle, sources, cancellationToken)
+            .ConfigureAwait(false);
         return new ExtensionLifecycleStatusView
         {
             State = ExtensionLifecycleEvaluation.ReadViewState(lifecycle),
@@ -69,6 +75,7 @@ internal sealed class ExtensionLifecycleOperationalContributor :
                 .Select(package => ExtensionSourceObservationReader.Project(package, sources))
                 .ToArray(),
             Targets = targets,
+            BridgeRegistrations = bridgeRegistrations,
         };
     }
 

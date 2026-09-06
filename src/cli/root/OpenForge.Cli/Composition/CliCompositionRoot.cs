@@ -109,6 +109,7 @@ internal static class CliCompositionRoot
                 extension.InspectBinding,
                 extension.CreateBinding,
                 extension.InstallBinding,
+                extension.UpdateBinding,
             ],
             rootLeaves: standalone.RootLeaves);
         return new CliCoreApplication(
@@ -145,6 +146,7 @@ internal static class CliCompositionRoot
                   extension inspect Inspect one installed or available Extension package.
                   extension create  Create one local Extension package scaffold.
                   extension install Install reviewed Extension packages into a Framework workspace.
+                  extension update  Reconcile managed Extension packages from one reviewed source.
                 """),
             new CliHelpSection(
                 heading: "Lifecycle",

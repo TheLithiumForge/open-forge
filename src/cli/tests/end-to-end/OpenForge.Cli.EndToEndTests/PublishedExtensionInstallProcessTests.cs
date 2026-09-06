@@ -211,6 +211,8 @@ internal sealed class PublishedExtensionInstallWorkspace : IDisposable
 
     internal void AssertPersistentLock() => _lockStore.AssertPersistentZeroByteLock(WorkspacePath);
 
+    internal void AssertNoRecoveryArtifacts() => _lockStore.AssertNoRecoveryArtifacts(WorkspacePath);
+
     public void Dispose()
     {
         _ = _lockStore.RemoveRecoveryArtifacts(WorkspacePath);

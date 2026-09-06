@@ -36,6 +36,11 @@ internal static class ExtensionLifecycleDoctorInspector
         ExtensionManagedTargetDoctorInspector.InspectSet(
             view.ManagedSet,
             findings);
+        ExtensionObservationHorizonDoctorInspector.AddBridgeRegistrationObservations(
+            view.BridgeRegistrations,
+            findings,
+            limitations,
+            ref coverage);
         ExtensionObservationHorizonDoctorInspector.AddLimitations(
             limitations,
             ref coverage);
