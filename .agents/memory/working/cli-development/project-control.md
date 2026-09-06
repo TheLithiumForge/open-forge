@@ -142,7 +142,7 @@ identity, queue state, completion grace, worktree mapping, and integration state
 
 | Permanent task ID and actual name                        | Task record                                                                 | Queue state          | Completion grace      | Outcome                                                                                                             | Queue order and dependency reason                                                                   | Profile                           | Lane, branch, worktree, and base                                                                                           | Responsible role                                                                           | Integration mapping                                                                                                                          |
 | -------------------------------------------------------- | --------------------------------------------------------------------------- | -------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Task 6 “Root Update”                                     | [Root Update](tasks/lifecycle/update.md)                                    | `ACTIVE`             | Not applicable        | Reconcile lifecycle-managed Framework files and regions from accepted identity.                                     | Acceptance-ready at phase 5/5, milestone 7/8; milestone 8 remains squash integration and post-integration evidence. | Streamlined assured trial         | Branch `codex/root-update-implementation`; final candidate `ac96f4cc`, tree `195f1538`; accepted activation, Preflight, Gray, addendum, Red, Green, and T6-C1 lineage retained. | Sagan Task Mastermind; one Brilliant Implementer completed Green and focused verification | T6-R1 consumed with PASS; one logical T6-C1 consumed; full managed and Native AOT gates pass; no integration is accepted yet. |
+| Task 6 “Root Update”                                     | [Root Update](tasks/lifecycle/update.md)                                    | `RECENTLY_COMPLETED` | `2 updates remaining` | Reconcile lifecycle-managed Framework files and regions from accepted identity.                                     | Complete at phase 5/5, milestone 8/8; no later task activates at this completion boundary. | Streamlined assured trial         | Branch `codex/root-update-implementation`; final candidate `ac96f4cc`, tree `195f1538`; accepted activation, Preflight, Gray, addendum, Red, Green, and T6-C1 lineage retained. | Sagan Task Mastermind; one Brilliant Implementer completed Green and focused verification | T6-R1 and one logical T6-C1 are consumed; squash integration `c6eec9d2`, exact tree `f31cacb0`; post-integration Release and public Update `3/3` passed. |
 | Task 17 “Extension Update”                               | [Extension Update](tasks/lifecycle/extension-update.md)                     | `QUEUED`      | Not applicable   | Update installed Extensions from reviewed source while preserving isolation, ownership, and recovery integrity.     | After Task 6 and the accepted Extension Install boundary.                                  | Streamlined assured task          | Planned branch and worktree; exact base deferred until activation                                                                                                    | Task Mastermind; explicit Gray/Red boundaries; one Brilliant Implementer; one fresh review | Must extend the accepted Status/Doctor contributor inventory with exact declared/owned bridge-registration producer facts before acceptance. |
 | Task 18 “Extension Remove”                               | [Extension Remove](tasks/lifecycle/extension-remove.md)                     | `QUEUED`      | Not applicable   | Remove only lifecycle-managed Extension content while preserving user and other-package state.                      | After Task 17.                                                                             | Streamlined assured task          | Planned branch and worktree; exact base deferred until activation                                                                                                    | Task Mastermind; explicit Gray/Red boundaries; one Brilliant Implementer; one fresh review | Must extend the accepted Status/Doctor contributor inventory with the exact installed-manifest observation producer before acceptance.       |
 | Task 19 “Repair”                                         | [Repair](tasks/operations/repair.md)                                        | `QUEUED`      | Not applicable   | Turn supported Doctor findings into explicit verified repair plans under mutation safeguards.                       | After Task 18 and the complete contributor inventory.                                      | Streamlined assured task          | Planned branch and worktree; exact base deferred until activation                                                                                                    | Task Mastermind; explicit Gray/Red boundaries; one Brilliant Implementer; one fresh review | Separate future integration boundary.                                                                                                        |
@@ -158,10 +158,10 @@ two later progress-bearing Overseer updates. The ledger then moves it to the
 completion record before the next update. Reopened work retains its permanent ID
 and actual name and receives a new explicit Task-owned horizon.
 
-## Task 6 Acceptance-Ready Closeout
+## Task 6 Accepted Closeout
 
-Task 6 “Root Update” is active and acceptance-ready at phase 5/5, milestone
-7/8. The accepted immutable lineage is activation
+Task 6 “Root Update” is Complete at phase 5/5, milestone 8/8. The accepted
+immutable lineage is activation
 `0bc82357a4fc7bd54ecbca1d58501d721c04baa6` → Preflight
 `48ac549c241e769246cfecb773124ccbc5076dfa` → Gray
 `ef584350a48d08b2d6307eea70f87f2f3c46283a` → bounded recovery-deletion
@@ -177,7 +177,19 @@ tree `b55f15814e5f5153f0cbc37ce812b7bd56fa8a68`, and
 `ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree
 `195f15388d6251f69244946183209d3dfe86b24a`. T6-R1 is consumed with final
 focused rechecks passing. One logical T6-C1 correction is consumed; its three
-immutable physical follow-ups remain part of the lineage.
+immutable physical follow-ups remain part of the lineage. The accepted candidate
+was squash-integrated as `c6eec9d26ad6b798d418d260027241795fb4aefc`, with exact
+tree `f31cacb0c54bda8ecf8a91d3516c6ffa48f48753`, from `develop` parent
+`d0d475f3b8106dfa7c8552cabab4c197bad53a71`, tree
+`c3d621989a4b6698d5a9a8de1505da16a750dbcb`.
+
+Integration adoption covered 65 paths. The sorted-path SHA-256 is
+`88cbcb641e9a164fa61de9e357a26cf7f007a265b2b7686460d3e8f324ec5dcd`; the
+expected and actual pre-commit tree is
+`f31cacb0c54bda8ecf8a91d3516c6ffa48f48753`; the develop-relative binary
+SHA-256 is `b6975342bb29cb99fec7eef30683b4438ba537083eb7c377205581c7d433bc18`;
+candidate mismatches are zero; and the eight develop-only path mismatches are
+zero.
 
 Focused evidence contains exactly 35 Update Unit cases, 22 Update Integration
 cases, and three Update EndToEnd cases, all passing. The exactly three Doctor
@@ -185,17 +197,26 @@ EndToEnd cases remain unchanged and pass. The contributor catalogue remains six
 members with the existing Framework and recovery attribution.
 
 The local-only locked restore covered all six projects without source or
-download warnings. The Release solution build completed with zero warnings and
-zero errors. Managed Unit `1832/1832`, Integration `988/988`, and EndToEnd
-`181/181` passed. Managed-on-native EndToEnd passed `181/181`; Native
+download warnings. The pre-integration Release solution build completed with
+zero warnings and zero errors. Managed Unit `1832/1832`, Integration `988/988`,
+and EndToEnd `181/181` passed. Managed-on-native EndToEnd passed `181/181`; Native
 Integration passed `988/988`; and Native EndToEnd passed `181/181`. Native root,
 Integration, and EndToEnd publishes each had literal exit `0` with no warning or
 error lines. All evidence uses only artifacts built in Task 6 snapshots. The
 worktree-built public executable reports `0.0.0-dev`, and the global PATH CLI was
 not invoked.
 
-Milestone 8 remains active for squash integration, the post-integration build,
-and public Update `3/3`. No Task 6 integration is accepted yet.
+The fresh post-integration main Release build completed with zero warnings and
+zero errors. Its freshly built managed EndToEnd app selected the sole
+`PublishedUpdateProcessTests` class, which contains exactly three public facts;
+total, discovered, executed, and passed were `3`, with failed and skipped both
+`0`. The same-workspace development executable is
+`artifacts/publish/open-forge-dev/Release/open-forge-dev`, with SHA-256
+`4450c4552ac44a4e463db6c9adad89a39d803da47801801019ee08c02045bd61`; its
+`artifacts/publish/open-forge-dev/Release/open-forge-dev.version` marker has
+SHA-256 `fe4d33c8c2c76a67725ea7d54dafb79c485bd2819a317d7235a6910157ef76f4` and
+reports version `0.0.0-dev`. The global PATH CLI was not used as acceptance
+evidence.
 
 The accepted future Status/Doctor composition boundary is an explicit immutable
 application-scoped `OperationalContributorCatalogue` built by
@@ -456,13 +477,15 @@ tests, build, production, or completion was claimed.
   gates passed. The post-integration Release build and public Route Remove
   `3/3` passed. Managed-route release meaning and platform breadth beyond
   accepted `linux-x64` remain deferred. Its completion grace is consumed and it
-  is dequeued. Task 6 “Root Update” is active and acceptance-ready at phase 5/5,
-  milestone 7/8. Its final candidate is `ac96f4cc57550a83ef8651b40869ae4ff35da34e`,
-  tree `195f15388d6251f69244946183209d3dfe86b24a`, with accepted activation,
+  is dequeued. Task 6 “Root Update” is Complete at phase 5/5, milestone 8/8.
+  Its final candidate is `ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree
+  `195f15388d6251f69244946183209d3dfe86b24a`, with accepted activation,
   Preflight, Gray, recovery-deletion addendum, Red, Green, and logical T6-C1
   lineage recorded above. T6-R1 is consumed with PASS and one logical T6-C1 is
-  consumed. Milestone 8 remains squash integration, the post-integration build,
-  and public Update `3/3`.
+  consumed. It is squash-integrated at
+  `c6eec9d26ad6b798d418d260027241795fb4aefc`, exact tree
+  `f31cacb0c54bda8ecf8a91d3516c6ffa48f48753`; the post-integration Release
+  build and public Update `3/3` passed.
 - Task 10 retains its permanent identity and is queued after every retained
   command and before delivery and release acceptance.
 - Task 13 is queued at phase 1/3, milestone 2/6 after accepted preparation
@@ -489,6 +512,7 @@ tests, build, production, or completion was claimed.
 | Task 15 “Status”                                       | Accepted lane `0c19b7053ef2b8c48898cfebadedff0c5702bf34`, tree `8ff2ac4ac0f5985863a9aaf85911c2deb6152980`; correction `f2dcdcae8b7c2cc9522b5ce7df250c73a55347db`, tree `b6f83beb50cefe56a0aae7d9a4019dab08c19aea`; Green `7dd8de6c4f9eae3355f5ac4ee32d533e6ffb2564`, tree `f6c37550b78a01e7611178bd563e274f94bb2bb1`; integration parent `e90b22f9a6d4fdd2043516e718fc782490396cb2`, tree `74713c32473603e7f9100378fafd314c50f813e3`; identity is the commit containing this record. | Release `0` warnings/errors; managed Unit `1739/1739`, Integration `933/933`, EndToEnd `172/172`; managed EndToEnd against native root `172/172`; native Integration `933/933`; native EndToEnd `172/172`; all failures, skips, and warnings `0`. Every later producer extends the explicit contributor inventory and affected Status evidence before acceptance.                                    | Complete and dequeued; completion grace consumed.            |
 | Task 16 “Doctor”                                       | Accepted correction chain `1e5abb67` → `e0f23e2c` → `a48a16cd`; final lane tree `90e66b05`; squash integration `59276c3b`, the same exact tree, from parent `f8e542a9`, tree `0344b7e5`.                                                                                                                                                                                                                                                                                             | Release `0` warnings/errors; managed Unit `1768/1768`, Integration `937/937`, EndToEnd `175/175`; native Integration `937/937`; native EndToEnd `175/175`; managed-on-native EndToEnd `175/175`; exact public Doctor `3/3`; all failures and skips `0`. The two named Extension observation limitations remain owned by Tasks 17 and 18.                                                             | Complete and dequeued after two subsequent progress updates. |
 | Task 5 “Route Remove”                                  | Accepted lane `ab8da620`, exact tree `bb41e1c9`; squash integration `5a2e650a`, the same exact tree, from parent `0d269b7a`, tree `8863d176`.                                                                                                                                                                                                                                                                                                                                        | Release `0` warnings/errors; managed Unit `1797/1797`, Integration `966/966`, EndToEnd `178/178`; native Integration `966/966`; native EndToEnd `178/178`; managed-on-native EndToEnd `178/178`; exact public Route Remove `3/3`; all failures and skips `0`. Managed-route release meaning and other platform breadth remain deferred. Completion grace is consumed; Task 5 is dequeued.                                                              | Complete and dequeued; completion grace consumed.            |
+| Task 6 “Root Update”                                    | Final candidate `ac96f4cc`, tree `195f1538`; accepted squash integration `c6eec9d2`, exact tree `f31cacb0`, from `develop` parent `d0d475f3`, tree `c3d62198`.                                                                                                                                                                                                                                                                                                                                                                     | Integration adopted 65 paths with sorted-path SHA `88cbcb64`; candidate and eight develop-only path mismatches were zero. Fresh post-integration Release build had zero warnings/errors; managed public Update selected, discovered, executed, and passed exactly `3/3`, with zero failures/skips. Native evidence remains the accepted supported `linux-x64` boundary. | Recently completed; `2 updates remaining`.                 |
 
 ## Recovery And Current State
 
@@ -499,16 +523,20 @@ tests, build, production, or completion was claimed.
   immutable Git state, reproduced focused evidence, and linked Task records.
   Missing optional child messages alone remain `progress unobserved`, not
   failure.
-- Active tasks: Task 6 “Root Update” is active and acceptance-ready at phase 5/5,
-  milestone 7/8. Its final candidate is
+- Active tasks: none. Task 6 “Root Update” is Complete at phase 5/5,
+  milestone 8/8. Its final candidate
   `ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree
-  `195f15388d6251f69244946183209d3dfe86b24a`; T6-R1 is consumed with PASS and
-  one logical T6-C1 is consumed. Milestone 8 remains squash integration, the
-  post-integration build, and public Update `3/3`.
-- Recently completed: none. Tasks 5 and 7 are dequeued and remain only in the
+  `195f15388d6251f69244946183209d3dfe86b24a`, is squash-integrated at
+  `c6eec9d26ad6b798d418d260027241795fb4aefc`, exact tree
+  `f31cacb0c54bda8ecf8a91d3516c6ffa48f48753`, from `develop` parent
+  `d0d475f3b8106dfa7c8552cabab4c197bad53a71`, tree
+  `c3d621989a4b6698d5a9a8de1505da16a750dbcb`. Its completion-bearing grace is
+  `2 updates remaining`.
+- Recently completed: Task 6 “Root Update” at phase 5/5, milestone 8/8, with
+  `2 updates remaining`. Tasks 5 and 7 are dequeued and remain only in the
   completion ledger with consumed completion grace. Task 16 “Doctor” is also
   dequeued and remains only in the completion ledger.
-- Queued order after active Task 6: Tasks 17/18/19/20, Task 10 “CLI Command
+- Queued order after Task 6: Tasks 17/18/19/20, Task 10 “CLI Command
   Surface Audit”, conditional
   Task 21 “CLI Command Surface Remediation”, Task 13 “Native linux-x64 CI and
   Reproducible Artifacts”, and Task 22 “Final Documentation, Acceptance, and
@@ -518,14 +546,11 @@ tests, build, production, or completion was claimed.
   waits for all retained commands, Task 10, and conditional Task 21 remediation.
 - Task 11 “Root Tooling Placement Remediation” is dequeued after its
   completion-bearing update and two subsequent progress updates.
-- Next meaningful project boundary: squash-integrate the Task 6 final candidate
-  without transplanting rejected provisional commits, then run the
-  post-integration build and public Update `3/3`. After Task 6 completes, do not
-  activate Task 17 or any later task. Report the complete remaining-task list in
-  queue order: Task 17 “Extension Update” → Task 18 “Extension Remove” → Task 19
-  “Repair” → Task 20 “Cleanup” → Task 10 “CLI Command Surface Audit” →
-  conditional Task 21 “CLI Command Surface Remediation” → Task 13 “Native
-  linux-x64 CI and Reproducible Artifacts” → Task 22 “Final Documentation,
-  Acceptance, and Release”. Stop without changing queue, dequeue, or completion-
-  grace state.
+- Next meaningful project boundary: report the complete remaining-task list and
+  stop. Do not activate Task 17 or any later task. The list in queue order is
+  Task 17 “Extension Update” → Task 18 “Extension Remove” → Task 19 “Repair” →
+  Task 20 “Cleanup” → Task 10 “CLI Command Surface Audit” → conditional Task 21
+  “CLI Command Surface Remediation” → Task 13 “Native linux-x64 CI and
+  Reproducible Artifacts” → Task 22 “Final Documentation, Acceptance, and
+  Release”. Do not change queue, dequeue, or completion-grace state.
 - Blocker: None.

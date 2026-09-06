@@ -148,7 +148,7 @@ The accepted dependency order is:
    Task 5 is complete at phase 5/5, milestone 8/8. Accepted lane `ab8da620`,
    exact tree `bb41e1c9`, is squash-integrated at `5a2e650a` with exact tree
    equality. Its completion grace is consumed and it is dequeued. Task 6
-   “Root Update” is active and acceptance-ready at phase 5/5, milestone 7/8.
+   “Root Update” is Complete at phase 5/5, milestone 8/8.
    Its accepted immutable lineage is activation
    `0bc82357a4fc7bd54ecbca1d58501d721c04baa6`, tree
    `41b74d9cad9c5d16ed8a02bb60ba06a4b8df8903` → Preflight
@@ -173,7 +173,11 @@ The accepted dependency order is:
    Install help evidence only and adds no runtime behavior. No immutable commit
    was amended. `T6-R1` is consumed with final focused rechecks PASS, and one
    logical `T6-C1` correction is consumed while its three physical follow-ups
-   remain retained.
+   remain retained. The accepted candidate is squash-integrated at
+   `c6eec9d26ad6b798d418d260027241795fb4aefc`, exact tree
+   `f31cacb0c54bda8ecf8a91d3516c6ffa48f48753`, from `develop` parent
+   `d0d475f3b8106dfa7c8552cabab4c197bad53a71`, tree
+   `c3d621989a4b6698d5a9a8de1505da16a750dbcb`.
    Focused evidence contains exactly 35 Update Unit cases, 22 Update
    Integration cases, and three Update EndToEnd cases, all passing. The exactly
    three Doctor EndToEnd cases remain unchanged and pass. The full managed suite
@@ -182,11 +186,24 @@ The accepted dependency order is:
    `988/988`; Native EndToEnd passes `181/181`; all failures and skips are zero.
    Native root, Integration, and EndToEnd publishes each have literal exit `0`
    with no warning or error lines. All evidence uses only Task-built artifacts,
-   and the global PATH CLI was not invoked. Milestone 8 remains active pending
-   squash integration, the post-integration build, and public Update `3/3`.
-   The current order is Task 6 → Task 17 → Task 18 → Task 19 → Task 20 → Task
-   10 → conditional Task 21 → Task 13 → Task 22. After Task 6 completes, do
-   not activate Task 17 or any later task. The complete remaining-task list in
+   and the global PATH CLI was not invoked. Integration adoption covered 65
+   paths with sorted-path SHA-256
+   `88cbcb641e9a164fa61de9e357a26cf7f007a265b2b7686460d3e8f324ec5dcd`; the
+   expected and actual pre-commit tree was
+   `f31cacb0c54bda8ecf8a91d3516c6ffa48f48753`; and the develop-relative binary
+   SHA-256 was `b6975342bb29cb99fec7eef30683b4438ba537083eb7c377205581c7d433bc18`.
+   Candidate mismatches and eight develop-only path mismatches were zero. The
+   fresh post-integration main Release build passed with zero warnings and
+   errors. Its managed public Update selected, discovered, executed, and passed
+   exactly `3/3`, with zero failures and skips. The same-workspace executable is
+   `artifacts/publish/open-forge-dev/Release/open-forge-dev`, with SHA-256
+   `4450c4552ac44a4e463db6c9adad89a39d803da47801801019ee08c02045bd61`; its
+   `artifacts/publish/open-forge-dev/Release/open-forge-dev.version` marker has SHA-256
+   `fe4d33c8c2c76a67725ea7d54dafb79c485bd2819a317d7235a6910157ef76f4` and
+   reports `0.0.0-dev`. The global PATH CLI was not used as acceptance evidence.
+   The current order is Task 17 → Task 18 → Task 19 → Task 20 → Task 10 →
+   conditional Task 21 → Task 13 → Task 22. At this completion boundary, do not
+   activate Task 17 or any later task. The complete remaining-task list in
    that order is Task 17 “Extension Update” → Task 18 “Extension Remove” →
    Task 19 “Repair” → Task 20 “Cleanup” → Task 10 “CLI Command Surface Audit”
    → conditional Task 21 “CLI Command Surface Remediation” → Task 13 “Native
@@ -204,10 +221,12 @@ leaf/category boundary, neutral shared mechanisms, Route Remove-local policy,
 and prohibition on sibling-private surfaces remain unchanged. Revalidate
 lifecycle/Extension ownership, Task 15 catalogue/views, root composition, help,
 serialization, and affected Status/Doctor evidence after Tasks 14–16. That
-revalidation is complete and Task 6 is active and acceptance-ready at phase 5/5,
-milestone 7/8. Its final candidate is `ac96f4cc57550a83ef8651b40869ae4ff35da34e`,
-tree `195f15388d6251f69244946183209d3dfe86b24a`; milestone 8 remains pending
-squash integration, the post-integration build, and public Update `3/3`.
+revalidation is complete and Task 6 is Complete at phase 5/5, milestone 8/8.
+Its final candidate is `ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree
+`195f15388d6251f69244946183209d3dfe86b24a`; it is squash-integrated at
+`c6eec9d26ad6b798d418d260027241795fb4aefc`, exact tree
+`f31cacb0c54bda8ecf8a91d3516c6ffa48f48753`, and its post-integration Release
+build and public Update `3/3` passed.
 
 Task 5's accepted lane is `ab8da6202c2f638d3041de46fafeeced054c50b3`,
 exact tree `bb41e1c9993a7ea28a7b380e442350fc2bbae73c`; squash integration
@@ -302,7 +321,7 @@ or a general template/scaffold system.
 | Task 15 Status                | Report complete typed current facts for the frozen producer inventory                  | Complete and dequeued at phase 5/5, milestone 8/8; accepted lane `0c19b7053ef2b8c48898cfebadedff0c5702bf34`/`8ff2ac4ac0f5985863a9aaf85911c2deb6152980`; correction `f2dcdcae8b7c2cc9522b5ce7df250c73a55347db`/`b6f83beb50cefe56a0aae7d9a4019dab08c19aea`; Green `7dd8de6c4f9eae3355f5ac4ee32d533e6ffb2564`/`f6c37550b78a01e7611178bd563e274f94bb2bb1`; final gates are recorded in [project control](project-control.md) |
 | Task 16 Doctor                | Diagnose the current 109-kind Doctor catalogue without mutation                        | Complete at phase 5/5, milestone 8/8; accepted lane `a48a16cd`, exact tree `90e66b05`, is squash-integrated at `59276c3b` with the same tree; managed `1768/937/175`, native `937/175`, managed-on-native `175`, and exact public Doctor `3/3` passed with zero failures/skips; exact detail is in the [Task 16 record](tasks/operations/doctor.md) and [project control](project-control.md)                            |
 | Task 5 Route Remove           | Remove positive-unmanaged routed leaves and complete categories safely                 | Complete and dequeued at phase 5/5, milestone 8/8; accepted lane `ab8da620`, exact tree `bb41e1c9`, is squash-integrated at `5a2e650a` with the same tree; managed `1797/966/178`, native `966/178`, managed-on-native `178`, and exact public Route Remove `3/3` passed; completion grace consumed                                                                                                                      |
-| Task 6 Root Update            | Reconcile lifecycle-managed Framework content from accepted identity                   | Active and acceptance-ready at phase 5/5, milestone 7/8; final candidate `ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree `195f15388d6251f69244946183209d3dfe86b24a`; `T6-R1` consumed with final focused rechecks PASS; one logical `T6-C1` correction consumed with three physical follow-ups retained; milestone 8 pending squash integration, post-integration build, and public Update `3/3`                                                                                                                                          |
+| Task 6 Root Update            | Reconcile lifecycle-managed Framework content from accepted identity                   | Recently completed at phase 5/5, milestone 8/8; final candidate `ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree `195f15388d6251f69244946183209d3dfe86b24a`, is squash-integrated at `c6eec9d2`, exact tree `f31cacb0`; `T6-R1` and one logical `T6-C1` correction are consumed; post-integration Release and public Update `3/3` passed; completion grace `2 updates remaining`                                                                                                                                          |
 | Task 13 native CI             | Prepare minimal build/test CI, manual publish, artifacts, and package targets          | Preparation completed at phase 1/3, milestone 2/6 on candidate `e7689696`, tree `c204c17b`, and is integrated by the commit containing this record from `develop` parent `de40d550`, tree `e6040c49`. The Task is queued behind all retained commands, Task 10, and conditional Task 21 remediation. Linux/macOS/Windows x64 are accepted; ARM remains undecided.                                                        |
 
 The Status lane's immutable pre-acceptance continuation after `T15-S1` remains

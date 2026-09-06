@@ -8,14 +8,13 @@ open-forge:
 
 ## Task State
 
-- State: Active and acceptance-ready. The accepted Green and one logical
-  correction are complete; squash integration remains pending. The exact
-  immutable lineage and final candidate are recorded in the acceptance-ready
-  closeout below. The clean provisional branch `codex/root-update-provisional`
-  remains preserved at `69a1bd83`, tree `2a10f683`, from obsolete base
-  `0d269b7a`; its Gray and Red material is evidence for revalidation only and
-  has no acceptance authority.
-- Current progress: phase 5 of 5, milestone 7 of 8. The streamlined phases are
+- State: Complete. The accepted Green, grouped correction, squash integration,
+  and post-integration evidence are complete. The exact immutable lineage and
+  accepted integration are recorded in the closeout below. The clean
+  provisional branch `codex/root-update-provisional` remains preserved at
+  `69a1bd83`, tree `2a10f683`, from obsolete base `0d269b7a`; its Gray and Red
+  material is evidence for revalidation only and has no acceptance authority.
+- Current progress: phase 5 of 5, milestone 8 of 8. The streamlined phases are
   Preflight, explicit Gray/Red, one coherent implementation and focused-
   verification pass, one fresh whole-task review with at most one grouped
   correction, and acceptance. The milestones are Preflight, Gray, Red,
@@ -39,10 +38,9 @@ open-forge:
   author or reviewer acts before personally reading and fingerprinting
   `_csharp.md`, `design.md`, and `style.md`. After accepted Gray and Red, one
   Brilliant Implementer owns coherent Green through focused verification.
-- Current action: prepare squash integration of the final candidate onto the
-  then-current `develop` without transplanting the rejected provisional Gray or
-  Red commits. Post-integration build and public Update `3/3` evidence remain
-  before milestone 8 and completion.
+- Current action: retain the accepted integration and report the complete
+  remaining task queue. Do not activate Task 17 or any later task at this
+  boundary.
 - Experimental overlap: provisional command-private Gray and Red may be
   prepared in isolation. Any accepted shared foundation, cross-command meaning,
   root composition, Status/Doctor producer change, and semantic Green remains
@@ -218,11 +216,10 @@ composition.
   work, but keep shared/public Green serialized under one owner. No numeric
   speedup is claimed.
 
-## Acceptance-Ready Closeout
+## Accepted Closeout
 
-Task 6 is active and acceptance-ready at phase 5/5, milestone 7/8. Milestone 8
-remains active until squash integration, so the Task remains `ACTIVE` and Task
-17 remains queued. The accepted immutable lineage is:
+Task 6 “Root Update” is Complete at phase 5/5, milestone 8/8. The accepted
+immutable lineage is:
 
 - activation `0bc82357a4fc7bd54ecbca1d58501d721c04baa6`;
 - Preflight `48ac549c241e769246cfecb773124ccbc5076dfa`;
@@ -242,7 +239,18 @@ remains active until squash integration, so the Task remains `ACTIVE` and Task
 - separately exposed full-gate direct-consumer evidence correction and final
   candidate `ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree
   `195f15388d6251f69244946183209d3dfe86b24a`. This correction changes Install
-  help evidence only and adds no runtime behavior.
+  help evidence only and adds no runtime behavior. The accepted candidate was
+  squash-integrated as `c6eec9d26ad6b798d418d260027241795fb4aefc`, with exact tree
+  `f31cacb0c54bda8ecf8a91d3516c6ffa48f48753`, from `develop` parent
+  `d0d475f3b8106dfa7c8552cabab4c197bad53a71`, tree
+  `c3d621989a4b6698d5a9a8de1505da16a750dbcb`.
+
+Integration adoption covered 65 paths. Its sorted-path SHA-256 is
+`88cbcb641e9a164fa61de9e357a26cf7f007a265b2b7686460d3e8f324ec5dcd`; the
+expected and actual pre-commit tree is
+`f31cacb0c54bda8ecf8a91d3516c6ffa48f48753`; and the develop-relative binary
+SHA-256 is `b6975342bb29cb99fec7eef30683b4438ba537083eb7c377205581c7d433bc18`.
+Candidate mismatches and develop-only path mismatches were both zero.
 
 No immutable commit was amended. The `T6-R1` review budget is consumed and its
 final focused rechecks pass. One logical `T6-C1` correction budget is consumed;
@@ -255,10 +263,10 @@ remains six members with the existing Framework and recovery attribution; no
 Doctor vocabulary was added.
 
 The local-only locked restore covered all six projects without source or
-download warnings. The Release solution build completed with zero warnings and
-zero errors. Managed Unit `1832/1832`, Integration `988/988`, and EndToEnd
-`181/181` passed. The worktree-built public executable reports `0.0.0-dev`,
-with SHA-256
+download warnings. The pre-integration Release solution build completed with
+zero warnings and zero errors. Managed Unit `1832/1832`, Integration `988/988`,
+and EndToEnd `181/181` passed. The worktree-built public executable reports
+`0.0.0-dev`, with SHA-256
 `4450c4552ac44a4e463db6c9adad89a39d803da47801801019ee08c02045bd61` and marker
 SHA-256 `fe4d33c8c2c76a67725ea7d54dafb79c485bd2819a317d7235a6910157ef76f4`.
 
@@ -282,12 +290,24 @@ Managed-on-native EndToEnd passed `181/181`, Native Integration passed
 zero. A globally resolvable executable was identified but never invoked. All
 evidence uses only artifacts built in Task 6 snapshots.
 
+The fresh post-integration main Release build completed with zero warnings and
+zero errors. Its freshly built managed EndToEnd app selected the sole
+`PublishedUpdateProcessTests` class, which contains exactly three public facts;
+total, discovered, executed, and passed were `3`, with failed and skipped both
+`0`. The same-workspace development executable is
+`artifacts/publish/open-forge-dev/Release/open-forge-dev`, with SHA-256
+`4450c4552ac44a4e463db6c9adad89a39d803da47801801019ee08c02045bd61`; its
+`artifacts/publish/open-forge-dev/Release/open-forge-dev.version` marker has
+SHA-256 `fe4d33c8c2c76a67725ea7d54dafb79c485bd2819a317d7235a6910157ef76f4` and
+reports version `0.0.0-dev`. The global PATH CLI was not used as acceptance
+evidence.
+
 ### Residual Risks
 
 Native acceptance covers the supported `linux-x64` target and does not extend
 to other RIDs. The accepted cooperating-process boundary remains in force; no
-hostile same-user guarantee is claimed. Task 6 remains non-shipping until the
-candidate is squash-integrated and its post-integration public evidence passes.
+hostile same-user guarantee is claimed. The replacement CLI remains
+non-shipping until a later authorized release boundary.
 
 ### Simplified Flow Trial Observation
 
@@ -300,17 +320,14 @@ classification and evidence-fidelity gaps; the first full gate found a stale
 Install oracle. These quality-positive checks required correction cycles. No
 performance measurement or numeric acceleration estimate is recorded.
 
-Next exact boundary: squash-integrate the final candidate onto then-current
-`develop` without transplanting rejected provisional commits. Then run the
-post-integration build and public Update `3/3`; only after those pass sync Task 6
-to phase 5/5, milestone 8/8, `Complete`. After that post-integration completion
-boundary, no Task 17 or later activation follows. Report the complete remaining
-task list — Task 17 Extension Update, Task 18 Extension Remove, Task 19 Repair,
-Task 20 Cleanup, Task 10 CLI Command Surface Audit, conditional Task 21 CLI
-Command Surface Remediation, Task 13 Native linux-x64 CI and Reproducible
-Artifacts, and Task 22 Final Documentation, Acceptance, and Release — then
-stop. Task 17 remains `QUEUED`; existing queue order and completion-grace
-controls remain unchanged.
+Next exact boundary: after this Task 6 completion, do not activate Task 17 or
+any later task. Report the complete remaining task list — Task 17 “Extension
+Update”, Task 18 “Extension Remove”, Task 19 “Repair”, Task 20 “Cleanup”, Task
+10 “CLI Command Surface Audit”, conditional Task 21 “CLI Command Surface
+Remediation”, Task 13 “Native linux-x64 CI and Reproducible Artifacts”, and
+Task 22 “Final Documentation, Acceptance, and Release” — then stop. Task 17
+remains `QUEUED`; existing queue order and completion-grace controls remain
+unchanged.
 
 ## Expected Outcome
 

@@ -12,11 +12,14 @@ open-forge:
   Extension Create, and root Install are integrated. Root Install is complete at
   `c60fcb98a57e9ec80769b9cb1d399ce13a227863`, exact tree
   `464a4a6b6ef6447209edffbf53df7348c70691ed`. Task 14 Extension Install is
-  complete at `20807781`, tree `4592a139`. Root Update is active and
-  acceptance-ready at phase 5/5, milestone 7/8. Its final candidate is
-  `ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree
-  `195f15388d6251f69244946183209d3dfe86b24a`; milestone 8 remains pending
-  squash integration, the post-integration build, and public Update `3/3`.
+  complete at `20807781`, tree `4592a139`. Root Update is Complete at phase
+  5/5, milestone 8/8. Its accepted squash integration is
+  `c6eec9d26ad6b798d418d260027241795fb4aefc`, exact tree
+  `f31cacb0c54bda8ecf8a91d3516c6ffa48f48753`, from `develop` parent
+  `d0d475f3b8106dfa7c8552cabab4c197bad53a71`, tree
+  `c3d621989a4b6698d5a9a8de1505da16a750dbcb`. The post-integration Release
+  build and public Update `3/3` passed. Do not activate Task 17 or any later
+  task at this completion boundary.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Common prerequisites: Extension discovery and `index`; workspace mutations also
   consume Mutation Foundation.
@@ -60,7 +63,7 @@ intended-membership formation. Its exact command-local interaction is accepted.
 The Extension Create and root Install command lanes executed in parallel after
 their prerequisites. Both commands' protected root composition and executable
 acceptance seams are complete.
-Root Update is active and acceptance-ready at phase 5/5, milestone 7/8 after the
+Root Update is Complete at phase 5/5, milestone 8/8 after the
 accepted and integrated Route Mutation M2 lane. Its accepted immutable lineage is
 activation `0bc82357a4fc7bd54ecbca1d58501d721c04baa6` → Preflight
 `48ac549c241e769246cfecb773124ccbc5076dfa` → Gray
@@ -93,8 +96,11 @@ EndToEnd publishes each have literal exit `0` with no warning or error lines.
 All evidence uses only Task-built artifacts, and the global PATH CLI was not
 invoked.
 
-Milestone 8 remains active pending squash integration, the post-integration
-build, and public Update `3/3`. After Task 6 completes, do not activate Task 17
+Task 6 is squash-integrated at `c6eec9d26ad6b798d418d260027241795fb4aefc`, exact
+tree `f31cacb0c54bda8ecf8a91d3516c6ffa48f48753`, from `develop` parent
+`d0d475f3b8106dfa7c8552cabab4c197bad53a71`, tree
+`c3d621989a4b6698d5a9a8de1505da16a750dbcb`. Its post-integration Release build
+and public Update `3/3` passed. At this completion boundary, do not activate Task 17
 or any later task. The complete remaining-task list in its existing queue order
 is Task 17 “Extension Update” → Task 18 “Extension Remove” → Task 19 “Repair” →
 Task 20 “Cleanup” → Task 10 “CLI Command Surface Audit” → conditional Task 21
@@ -102,8 +108,8 @@ Task 20 “Cleanup” → Task 10 “CLI Command Surface Audit” → conditiona
 Reproducible Artifacts” → Task 22 “Final Documentation, Acceptance, and
 Release”. Report that list and stop without changing queue, dequeue, or
 completion-grace truth.
-Extension Install is independent of unfinished Route Remove and root Update, so
-it may form the first adoption slice after Task 12. Later lifecycle producers
+Extension Install was independent of Route Remove and root Update, so it formed
+the first adoption slice after Task 12. Later lifecycle producers
 must extend the accepted explicit Status/Doctor contributor inventory and its
 affected evidence before their own acceptance.
 
@@ -119,7 +125,7 @@ bytes and is owned only through a read/write `FileShare.None` handle.
 - [x] [Implement creation of one reviewable Extension package outside a workspace](extension-create.md) — Complete; command-local squash `3ef81227ba50fba869f0129b958eabc6d0c29fbc`, protected public integration `4c85d1d62004e8bdc885c51873ff6d9cdb6e6db5`
 - [x] [Implement root Framework installation into a selected workspace](install.md) — Complete; final candidate `11994e4d21ddc807b7480afc39ae3612e5a69a56` is squash-integrated at `c60fcb98a57e9ec80769b9cb1d399ce13a227863`, exact tree `464a4a6b6ef6447209edffbf53df7348c70691ed`
 - [x] [Task 14: implement Extension installation from exact reviewed package identity](extension-install.md) — Complete at phase 5/5, milestone 8/8; accepted lane `a6b44f07`, tree `cd4c074d`, squash-integrated at `20807781`, tree `4592a139`
-- [ ] [Task 6: implement root Framework update from accepted lifecycle identity](update.md) — Active and acceptance-ready at phase 5/5, milestone 7/8; final candidate `ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree `195f15388d6251f69244946183209d3dfe86b24a`; milestone 8 remains pending squash integration, the post-integration build, and public Update `3/3`
+- [x] [Task 6: implement root Framework update from accepted lifecycle identity](update.md) — Complete at phase 5/5, milestone 8/8; accepted candidate `ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree `195f15388d6251f69244946183209d3dfe86b24a`, is squash-integrated at `c6eec9d26ad6b798d418d260027241795fb4aefc`, exact tree `f31cacb0c54bda8ecf8a91d3516c6ffa48f48753`; post-integration Release build and public Update `3/3` passed
 - [ ] [Task 17: implement Extension update with source review, ownership, and recovery integrity](extension-update.md) — Queued after Task 6 and Task 14 — Implementer: Not assigned
 - [ ] [Task 18: implement Extension removal with preserved user content and recovery integrity](extension-remove.md) — Queued after Task 17 — Implementer: Not assigned
 

@@ -90,7 +90,7 @@ overwrite-ambiguity conflict remains one bounded Task 10 audit input, not a
 Doctor finding or a new task. Recovery attribution remains unreleased schema
 v1, and old unattributed or malformed final bundles fail closed. Its completion
 grace is consumed and it is dequeued. Task 6 “Root
-Update” is active and acceptance-ready at phase 5/5, milestone 7/8. Its
+Update” is Complete at phase 5/5, milestone 8/8. Its
 accepted immutable lineage is activation `0bc82357a4fc7bd54ecbca1d58501d721c04baa6`
 → Preflight `48ac549c241e769246cfecb773124ccbc5076dfa` → Gray
 `ef584350a48d08b2d6307eea70f87f2f3c46283a` → bounded recovery-deletion
@@ -110,7 +110,8 @@ the final correction changes Install help evidence only and adds no runtime
 behavior. T6-R1 is consumed with final focused rechecks PASS, and one logical
 T6-C1 is consumed with the immutable physical follow-ups retained.
 
-Final acceptance is warning-free local-only locked restore for all six projects,
+Final pre-integration acceptance was a warning-free local-only locked restore
+for all six projects,
 Release solution build with zero warnings and errors, managed Unit `1832/1832`,
 Integration `988/988`, EndToEnd `181/181`, managed-on-native EndToEnd `181/181`,
 Native Integration `988/988`, and Native EndToEnd `181/181`. Native root,
@@ -118,9 +119,29 @@ Integration, and EndToEnd publishes each have literal exit `0` and no
 warning/error lines; all failures and skips are zero. Focused Update evidence is
 exactly 35 Unit, 22 Integration, and three EndToEnd cases; the exactly three
 Doctor EndToEnd cases remain unchanged. The worktree-built public executable is
-`0.0.0-dev`. The global PATH CLI was not invoked. Milestone 8 remains active
-pending squash integration, the post-integration build, and public Update
-`3/3`. The earlier prepared alignment and its Status `2521574d` snapshot remain
+`0.0.0-dev`. The global PATH CLI was not invoked. The accepted candidate was
+squash-integrated as `c6eec9d26ad6b798d418d260027241795fb4aefc`, exact tree
+`f31cacb0c54bda8ecf8a91d3516c6ffa48f48753`, from `develop` parent
+`d0d475f3b8106dfa7c8552cabab4c197bad53a71`, tree
+`c3d621989a4b6698d5a9a8de1505da16a750dbcb`. Integration adoption covered 65
+paths with sorted-path SHA-256
+`88cbcb641e9a164fa61de9e357a26cf7f007a265b2b7686460d3e8f324ec5dcd`; the
+expected and actual pre-commit tree was
+`f31cacb0c54bda8ecf8a91d3516c6ffa48f48753`; and the develop-relative binary
+SHA-256 was `b6975342bb29cb99fec7eef30683b4438ba537083eb7c377205581c7d433bc18`.
+Candidate mismatches and eight develop-only path mismatches were zero.
+
+The fresh post-integration main Release build passed with zero warnings and
+errors. Its freshly built managed EndToEnd app selected the sole
+`PublishedUpdateProcessTests` class containing exactly three public facts;
+total, discovered, executed, and passed were `3`, with failed and skipped both
+`0`. The same-workspace development executable is
+`artifacts/publish/open-forge-dev/Release/open-forge-dev`, SHA-256
+`4450c4552ac44a4e463db6c9adad89a39d803da47801801019ee08c02045bd61`; its
+`artifacts/publish/open-forge-dev/Release/open-forge-dev.version` marker has
+SHA-256 `fe4d33c8c2c76a67725ea7d54dafb79c485bd2819a317d7235a6910157ef76f4` and
+reports `0.0.0-dev`. The global PATH CLI was not used as acceptance evidence.
+The earlier prepared alignment and its Status `2521574d` snapshot remain
 historical context.
 
 Task 7 “npm Package Manager Release and Local Linking” retains its immutable
@@ -337,9 +358,9 @@ slices. CLI Quality Remediation is Complete and squash-integrated at
 `a4ccf19a3489d06f20a0fd940219be1acb22646d`. Task 3 “Route Update” is Complete
 at accepted closeout `27df8325`, tree `b68d4349`. Root Update has accepted Gray
 `ef584350`, bounded Gray addendum `7a9ded30`, and accepted Red `13fe18a9`, tree
-`a834c59b`, after the complete Route Mutation M2 lane. Root Update is
-acceptance-ready at phase 5/5, milestone 7/8, pending squash integration, the
-post-integration build, and public Update `3/3`.
+`a834c59b`, after the complete Route Mutation M2 lane. Root Update is Complete
+at phase 5/5, milestone 8/8; its squash integration, post-integration build, and
+public Update `3/3` passed.
 
 Route Init candidate `cb62b19`, tree `be93900`, has a warning-free Release
 build; managed Unit `1481/1481`, Integration `695/695`, generated serialization
@@ -486,7 +507,7 @@ accepted identities and evidence. Task 16's completion grace is consumed. Task
 `5a2e650aa7623a2f19ff885ae664e56daded2df0`, the same exact tree, from parent
 `0d269b7a`, tree `8863d176`. Its prior `1 update remaining` grace is consumed by
 the accepted Task 6 Preflight update; Task 5 is dequeued. Task 6 “Root Update” is
-active and acceptance-ready at phase 5/5, milestone 7/8. Its
+Complete at phase 5/5, milestone 8/8. Its
 exact activation is `0bc82357a4fc7bd54ecbca1d58501d721c04baa6`, tree
 `41b74d9cad9c5d16ed8a02bb60ba06a4b8df8903`. Accepted Gray is
 `ef584350a48d08b2d6307eea70f87f2f3c46283a`, tree
@@ -500,8 +521,10 @@ bounded recovery-deletion addendum is
 Unit, 22 Integration, and exactly three EndToEnd failures. The clean provisional
 Gray/Red lane remains preserved, but both commits are rejected as transplant
 units. T6-R1 is consumed with final focused rechecks PASS, and one logical T6-C1
-is consumed with the immutable physical follow-ups retained. Milestone 8 remains
-pending squash integration, the post-integration build, and public Update `3/3`.
+is consumed with the immutable physical follow-ups retained. It is
+squash-integrated at `c6eec9d26ad6b798d418d260027241795fb4aefc`, exact tree
+`f31cacb0c54bda8ecf8a91d3516c6ffa48f48753`; the post-integration Release build
+and public Update `3/3` passed.
 
 Task 6 Preflight accepted the existing neutral payload, lifecycle, generated-
 navigation, mutation, lock, and recovery providers without adding a generic
@@ -526,9 +549,9 @@ reuse warm semantic context and serialize shared/public Green. No reliable
 numeric speedup is claimed.
 
 Route Remove completes the Route Mutation M2 lane, and root Update M3 is
-acceptance-ready at phase 5/5, milestone 7/8, after accepted Preflight. Its
-milestone 8 remains pending squash integration, the post-integration build, and
-public Update `3/3`. Task 12 and the adoption slice remain integrated.
+Complete at phase 5/5, milestone 8/8, after accepted Preflight and squash
+integration. Its post-integration build and public Update `3/3` passed. Task 12
+and the adoption slice remain integrated.
 
 Initial read-only M2 preparation completed on five clean no-op branches from
 `33913dfe7f8f80598ca4765c516d308ed179c3ab` without a preparation commit, Gray,
@@ -581,25 +604,15 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Continue active [Task 6 Root Update](../cli-development/tasks/lifecycle/update.md)
-   at phase 5/5, milestone 7/8. The final candidate is
-   `ac96f4cc57550a83ef8651b40869ae4ff35da34e`, tree
-   `195f15388d6251f69244946183209d3dfe86b24a`. Sagan's next exact boundary is
-   squash integration onto then-current `develop` without transplanting rejected
-   provisional commits, followed by the post-integration build and public
-   Update `3/3`; only after those pass may Task 6 sync to phase 5/5,
-   milestone 8/8, `Complete`. Every C# owner personally reads and fingerprints
-   `_csharp.md`, `design.md`, and `style.md`.
-2. After Task 6 completes, do not activate Task 17 or any later task. The
-   complete remaining-task list, retained in queue order, is Task 17 Extension
+1. Task 6 “Root Update” is Complete at phase 5/5, milestone 8/8. Its accepted
+   squash integration and post-integration evidence are recorded above. Do not
+   activate Task 17 or any later task at this boundary.
+2. Report the complete remaining-task list, retained in queue order: Task 17 Extension
    Update → Task 18 Extension Remove → Task 19 Repair → Task 20 Cleanup → Task
    10 CLI Command Surface Audit → conditional Task 21 CLI Command Surface
    Remediation → Task 13 Native linux-x64 CI and Reproducible Artifacts → Task
    22 Final Documentation, Acceptance, and Release. Report that complete list
-   and stop.
-3. Retain thin D1 as current `linux-x64` build/smoke, packed
-   install/invocation, and checksums. Keep future RIDs, signatures, SBOM,
-   provenance, OIDC, and support floors behind a later explicit decision.
+   and stop. Do not change queue, dequeue, or completion-grace state.
 
 ## Current Sources
 
