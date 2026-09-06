@@ -279,6 +279,34 @@ later CLI Tasks.
   rejected as harness setup, and the correctly configured run passed all cases.
   The conclusion changes if Green leaves a bypass, merges diagnostic and primary
   contracts, or uses resolved-path facts inconsistently.
+- Bounded command-flow fan-out experiment: **Expected:** private Gray and Red
+  work could fan out only across disjoint paths and prepared artifacts, while
+  shared or public Green work stayed serial. The strongest viable alternative was
+  fully serial execution, which reduced coordination risk but lengthened the
+  critical path. No emergency Mastermind takeover was needed for the private
+  lanes; Mastermind still retained shared/public sequencing and the review-gap
+  disposition. **Observed:** disjoint private lanes made useful progress
+  concurrently. The existing Verification-order occurrence above records the
+  shared-output collision and clean rerun; this experiment adds the fan-out
+  implication rather than repeating that detail. A fresh artifacts path used with
+  `--no-restore` lacked the assets that restore would have populated, so that run
+  was treated as setup evidence only and was rerun after the required assets were
+  prepared. Immutable review snapshots then exposed invalid-state surfaces that
+  passing builds and tests had not shown. Late findings were revalidated and
+  joined the original writer's one grouped correction, after which only affected
+  evidence was rerun. One specialist object-review capability was unavailable;
+  the resulting review gap was retained rather than treating a fallback advisory
+  pass as equivalent independent evidence. The Workspace Libraries prose pack
+  showed the value of fan-out after its meaning was fixed: separable documentation
+  slices progressed without repeated discovery, but the broad pack still required
+  one end review, allowed-path inspection, link and navigation checks, and
+  accounting for every new path. **Provisional inference:** disjoint private
+  analysis and authoring can shorten a command batch, but serial shared/public
+  composition, prepared isolated artifacts, and available independent review make
+  parallelism conditional. The [lean batching observation](2026-08-15_lean-agent-batching.md)
+  and [agent and workflow audit](2026-09-02_agent-and-workflow-change-audit.md)
+  provide related context; this occurrence does not establish automatic fan-out,
+  hard concurrency, or a new Framework rule.
 
 ## Follow-Up And Promotion Signals
 
