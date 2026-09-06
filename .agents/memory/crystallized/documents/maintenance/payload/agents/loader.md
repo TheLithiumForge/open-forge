@@ -64,9 +64,9 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 ### Deterministic Assistance
 
 - CLI commands automate the complete plain-file contract and never become prerequisites for ordinary inspection.
-- `load --bodies` remains a broad MVP audit command used at every #KeepInMind boundary, including handoff and closeout. It does not implement target-sensitive loading.
-- The loader names only commands with compact universal triggers: `load --bodies`, `chain`, `index`, and `doctor`.
-- Unimplemented commands, complete CLI help, installation lifecycles, and component internals stay outside the loader.
+- The loader names the compact replacement CLI surface useful for entering and checking a workspace: `--help`, `context`, `route list`, `route inspect`, `find`, `references`, `index`, `status`, and `doctor`.
+- `index` rebuilds generated `Entries` after routed files or route metadata change. `doctor` diagnoses workspace, routes, references, lifecycle, and recovery without changes after Framework structure changes and before closeout.
+- Complete CLI help, installation lifecycles, unimplemented commands, and component internals stay outside the loader.
 
 ### Distribution And Generation
 
@@ -75,13 +75,14 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 - The final marker-bounded `Entries` body is derived locally and may differ when the installed `root routes` differ.
 - Generated loader `entries` expose direct active root `entrypoints` only. They never flatten nested `routes`.
 - Generated links resolve relative to `.agents/loader.md`; CLI `route` identities remain workspace-relative.
-- The authored loader stays within 35 to 70 non-empty lines unless an accepted Framework change explicitly revises that review budget.
+- The authored loader stays within 35 to 80 non-empty lines unless an accepted Framework change explicitly revises that review budget.
 
 ## Verification
 
-- [`src/cli-mvp/cli.closure.test.ts`](../../../../../../../src/cli-mvp/cli.closure.test.ts) compares source and dogfood authored loader content while excluding generated entries.
-- Loader registry tests verify direct root generation, compatibility entrypoint names, and failure before mutation when one folder has multiple recognized entrypoints.
-- Load and chain tests verify loader-first order, visible transitive #LoadNow traversal, complete #KeepInMind discovery, inherited route order, and overwrite adjacency.
-- Doctor tests verify generated-region integrity, route resolution, containment, retired tags, and structural Framework requirements.
-- Core installation tests verify selected authority, truth, Template, and deterministic-assistance wording in the installed payload.
-- Review the source and dogfood authored line count and exact alignment whenever the loader contract changes.
+- The frozen [`src/cli-mvp/cli.closure.test.ts`](../../../../../../../src/cli-mvp/cli.closure.test.ts) remains legacy-only evidence for source and dogfood authored parity. It does not verify replacement command behavior.
+- Replacement [`CliProcessTests.cs`](../../../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/CliProcessTests.cs) verifies root and route-family help plus the read-only `route list` interface.
+- Replacement [`PublishedContextProcessTests.cs`](../../../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedContextProcessTests.cs) verifies `context` help, startup and selected context, and read-only results.
+- Replacement [`PublishedRouteInspectProcessTests.cs`](../../../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInspectProcessTests.cs) verifies `route inspect` help, route facts, and read-only results.
+- Replacement [`PublishedFindProcessTests.cs`](../../../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedFindProcessTests.cs), [`PublishedReferencesProcessTests.cs`](../../../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedReferencesProcessTests.cs), and [`PublishedIndexProcessTests.cs`](../../../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedIndexProcessTests.cs) verify search, references, and generated-navigation interfaces.
+- Replacement [`PublishedStatusProcessTests.cs`](../../../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedStatusProcessTests.cs) and [`PublishedDoctorProcessTests.cs`](../../../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedDoctorProcessTests.cs) verify status and doctor help, result streams, and read-only behavior.
+- Review the source and dogfood authored line count, exact alignment, and unchanged generated Entries whenever the loader contract changes.

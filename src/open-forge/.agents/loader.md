@@ -80,14 +80,19 @@ Defined tags keep the meanings below wherever they appear. Tags change what load
 
 ### CLI
 
-Use each relevant command below when the Open Forge CLI is available. The plain files remain complete without the CLI.
+Use each relevant command below when the replacement Open Forge CLI is available. The plain files remain complete without the CLI.
 
 #### Applicable Commands
 
-- `open-forge load --bodies` - Read or refresh baseline and continuity context at each required #KeepInMind boundary
-- `open-forge chain <route> --heading Axioms` - Read inherited rules for a selected route
-- `open-forge index` - Rebuild generated `Entries` after routed files or route metadata change
-- `open-forge doctor` - Validate routing after Framework structure changes and before closeout
+- `open-forge --help` - Show the complete current command interface
+- `open-forge context [<source-reference>...]` - Read startup or selected context
+- `open-forge route list [<source-reference>]` - List routed sources and descendants
+- `open-forge route inspect <source-reference>` - Inspect one source's route behavior
+- `open-forge find [options]` - Find Markdown sources by tags and headings
+- `open-forge references <source-reference>` - Inspect direct authored references
+- `open-forge index [<source-reference>...]` - Rebuild generated `Entries`
+- `open-forge status` - Summarize workspace, context, lifecycle, generated navigation, and recovery
+- `open-forge doctor` - Diagnose workspace, routes, references, lifecycle, and recovery without changes
 
 ## Entries
 

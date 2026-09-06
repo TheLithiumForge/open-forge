@@ -60,6 +60,34 @@ Extension lifecycle design.
 - Which manager identity and lock placement remain portable without leaking
   machine-local source locations?
 
+### Centralized Framework Content And Loader Bridges
+
+A future option is to keep shared `.agents` content in a centralized
+Git-submodule-backed source and expose it in each workspace through a visible
+Open Forge symlink or junction, an alternate loader path, or a copy bridge.
+This idea is not accepted direction and is not implemented. It does not
+authorize packaging or externalizing `local/extensions`.
+
+Centralized content could simplify updates and migration while interoperating
+with AI tools that reserve `.agents` or discover skills there. A bridge could
+also let a workspace keep project-specific content beside shared content. The
+tradeoff is that a second source and projection may make authorship, route
+selection, and recovery harder to inspect.
+
+Before promotion, determine:
+
+- Which manager owns the centralized source, the workspace projection, and
+  user changes or deliberate removals?
+- How does each workspace establish identity across nested repositories and
+  submodules without letting a link or copy escape its intended containment?
+- How do update, removal, stale projections, failed copies, locking, and
+  recovery preserve user files and shared files?
+- Does a symlink, junction, alternate loader path, or copy bridge preserve
+  `root route` meaning, and how does loader discovery choose one unambiguous
+  Framework root?
+- How does the bridge coexist with another AI tool that reserves `.agents` or
+  discovers `SKILL.md` files there without claiming that tool's authority?
+
 ### Catalogue Governance
 
 - Which admission, review, stability, support, and deprecation criteria justify

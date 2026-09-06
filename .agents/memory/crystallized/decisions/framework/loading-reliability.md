@@ -41,7 +41,7 @@ Unconditional context has a permanent attention cost, so only reliability-critic
 - Baseline directives and continuity entrypoints must remain compact
 - Broken route chains are repaired rather than used to weaken the loading contract
 - Conditional route descriptions must expose enough purpose or outcome for pre-load selection
-- Deterministic CLI assistance remains an optional accelerator over the complete manual traversal; the frozen legacy command is `open-forge-old load --bodies`, while the new interface remains unsettled
+- Deterministic CLI assistance remains an optional accelerator over the complete manual traversal. The frozen legacy command is `open-forge-old load --bodies`. The replacement `open-forge context` assists selected context without replacing the plain-file loading contract.
 - Changes to loading behavior require proportionate dogfood or behavioral evidence
 
 ## Authoritative Sources

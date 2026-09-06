@@ -8,14 +8,15 @@ open-forge:
 
 ## Task State
 
-- State: Historical 8/8 horizon complete and squash-integrated; the separate
-  platform-expansion horizon is complete at phase 4 of 4, milestone 7 of 7. The
-  x64 graph, current-host link path, focused package evidence, fresh review, and
-  closeout are integration-ready.
+- State: Historical 8/8 and platform-expansion 7/7 horizons remain complete and
+  immutable. The provisional local-use horizon is active at phase 2 of 3,
+  milestone 3 of 5. Live preflight, exact Loader/current-truth/future-idea
+  prose, focused evidence, and both independent reviews are complete; candidate
+  refreeze and commit are active.
 - Parent: [CLI Delivery](_delivery.md).
-- Profile: Reopened maintainer-selected simplified single-owner flow: one Task
-  Mastermind, one Brilliant Implementer, one fresh reviewer, and at most one
-  grouped correction.
+- Profile: Assured local-use flow with one Task Mastermind, one coherent prose
+  owner, one independent Writing Reviewer, one focused local-link safety
+  reviewer, and at most one grouped correction.
 - Historical review budget: maximum 1; `T7-R1` was consumed with
   `CHANGES_REQUIRED`.
 - Historical correction budget: maximum 1; `T7-C1` was consumed by the grouped
@@ -23,10 +24,17 @@ open-forge:
 - Follow-up review budget: maximum 1; `T7-XR1` was consumed with `PASS` and no
   material findings.
 - Follow-up correction budget: maximum 1, unused.
-- Council budget: 0.
-- Current owner: Task Mastermind closeout is complete on branch
-  `codex/npm-package-expansion`; the Overseer owns integration. Task 13 retains
-  Linux D1 ownership.
+- Provisional review budget: maximum 2; `T7-LR1` passed writing and `T7-LR2`
+  passed package/local-link safety. Both are consumed.
+- Provisional correction budget: maximum 1; `T7-LC1` is unused.
+- Council budget: 0 across the current horizon.
+- Current owner: Kepler Task Mastermind is refreezing and committing the
+  candidate on branch `codex/provisional-local-use`. Ada Writer completed the
+  bounded Loader, maintenance-contract, current-truth, and future-idea prose.
+  Task 13 retains Linux D1 ownership.
+- Provisional activation base:
+  `0bc82357a4fc7bd54ecbca1d58501d721c04baa6`, tree
+  `41b74d9cad9c5d16ed8a02bb60ba06a4b8df8903`.
 - Restart baseline: `195ff13ecff6a598dd18ef22a0335c1dc75e6736`.
 - Historical progress: 8 of 8 milestones complete in phase 5 of 5.
 - Follow-up progress: 7 of 7 milestones complete in phase 4 of 4.
@@ -48,6 +56,112 @@ open-forge:
 - M8 accepted closeout is `6ba0e060ed9aabc1954d70d0f1d2277bf5d8dff6`,
   tree `bccefb120f4e2d05a632cc80fc03b04ab2870e2d`; squash integration is the commit
   containing this record.
+
+## Provisional Local-Use Horizon
+
+The maintainer authorizes a provisional machine-local installation so the
+replacement CLI can support documentation migration, brainstorming, and new
+project authoring before the remaining command backlog is complete. This is
+private developer tooling, not release or publication. It reuses the accepted
+package-owned local-link workflow and does not externalize or package
+`local/extensions` or other Extension content.
+
+### Execution Capsule
+
+- Outcome: align the source Loader, dogfood Loader, and Loader maintenance
+  contract with the replacement CLI's actual integrated public commands; record
+  the unaccepted centralized `.agents` interoperability idea; prove package and
+  local-link safety; prepare and, only after exact release, execute one
+  reversible local link from the verified integrated tree.
+- Expected paths: `src/open-forge/.agents/loader.md`, `.agents/loader.md`, the
+  Loader maintenance contract, Loading Reliability decision, this Task record,
+  project control, checkpoint, plan, and the existing Extension-overhaul idea
+  record.
+- Protected paths: package source and root package files, C# source and tests,
+  generated Loader Entries, `local/extensions`, Extension content, lockfiles,
+  dependencies, release or CI surfaces, and every other Task's record and
+  implementation.
+- Accepted CLI examples are drawn from current executable and source evidence.
+  They must not advertise the unintegrated root Update command, obsolete
+  `load --bodies` or `chain` commands, or installation lifecycle as Loader
+  guidance.
+- Focused evidence: exact changed and untracked inventory, source/dogfood
+  authored parity with unchanged generated Entries, obsolete-example and
+  relative-path scans, Markdown/link and format checks, independent writing
+  review, and independent link-safety review.
+- Stop before publication, registry or remote contact, dependency installation,
+  package-source or root-package mutation, authored JavaScript/MJS/CJS, C#
+  behavior, compatibility machinery, or any local link before the Overseer
+  verifies the exact integrated target and releases the pre-authorized effect.
+- Phase 1 owns M1–M2 preflight and prose alignment. Phase 2 owns M3–M4 focused
+  evidence, review, refreeze, and candidate commit. Phase 3 owns M5 integration,
+  exact live-link release, isolated smoke, receipt, and closeout.
+
+### Milestones
+
+1. M1 — complete. Live Git, process, command-resolution, package-link, toolchain,
+   and clean isolated-worktree state were inspected. No existing `open-forge`
+   command or accepted package link would be displaced.
+2. M2 — complete. Align the three Loader authorities and Loading Reliability
+   consequence, then record the unaccepted centralized `.agents`
+   interoperability idea.
+3. M3 — complete. Run focused evidence and consume `T7-LR1` and `T7-LR2` on one
+   frozen prose and safety boundary.
+4. M4 — active. Apply at most one grouped correction, refreeze every path, and
+   create one coherent non-amending candidate commit.
+5. M5 — pending. After candidate integration and exact release, link only from
+   the verified restored integrated tree, run an isolated no-user-project
+   smoke, record rollback and receipts, and return integration readiness.
+
+### M1 Live Preflight
+
+- The activation base and isolated worktree were clean. No relevant owned
+  Open Forge, .NET, npm, or Node process remained, no `open-forge` executable
+  resolved from the active command search path, and neither the main nor
+  current-host Open Forge npm package was globally linked or installed.
+- Current host and accepted package mapping are Linux x64,
+  `@thelithiumforge/open-forge-linux-x64`, and
+  `@thelithiumforge/open-forge`. The accepted `npm run cli:link` sequence
+  performs an offline no-restore Native AOT publish, stages the host and main
+  packages, then links platform to main to repository root. Its inverse is
+  `npm run cli:unlink`.
+- A new isolated worktree does not carry restored .NET intermediates or the
+  existing dependency installation. Restore assets copied from another
+  worktree retain originating-worktree paths, so the interrupted copied-assets
+  publish probe is non-evidence. No npm link command ran, and all probe-created
+  artifacts were removed from the candidate worktree.
+- The accepted precondition is candidate review and commit first, then
+  integration into the clean already-restored main worktree. The Overseer will
+  revalidate its exact commit, tree, package inputs, resolved targets, global
+  state, and rollback before releasing `npm run cli:link` there. No artifact
+  copying may substitute for that source-identity proof.
+
+### M2-M3 Evidence And Review Receipt
+
+- The frozen review target changed exactly nine tracked prose paths and no
+  untracked paths. Its patch SHA-256 was
+  `3a82f7f665a0666276deccc0d737ec0d78682afe5ef72278c15d906db2cab398`;
+  its sorted path-manifest SHA-256 was
+  `77c649a67bf3943dd69f9050b682f9e0723668ace36d242a09b2c037f833e467`.
+- Source and dogfood authored Loader content matched, both generated Entries
+  regions were unchanged, and the authored Loader contained 77 non-empty lines
+  within its 35–80 budget. Obsolete command, workstation-path, Git commit-time,
+  implementation-path, and generated-drift checks passed.
+- All nine advertised root or leaf help surfaces executed successfully against
+  the integrated replacement CLI. Targeted Markdown formatting passed; the
+  dogfood Loader retains only its pre-existing generated-region formatting
+  difference, while its reviewed authored content is identical to the formatted
+  source Loader.
+- `T7-LR1` passed the exact writing/current-truth boundary with no material
+  finding. Its only residual was one pre-existing out-of-scope evidence link in
+  Loading Reliability.
+- The first `T7-LR2` allocation was interrupted after prolonged silence with no
+  output, process, finding, or mutation. One reviewer retry consumed the same
+  stable review ID and passed package/local-link safety with no material
+  finding. A mid-sequence external npm failure can leave known partial links,
+  so exact pre-link revalidation and immediate `npm run cli:unlink` rollback
+  remain mandatory.
+- No grouped correction was required; `T7-LC1` remains unused.
 
 ## Follow-up Preflight
 
@@ -350,8 +464,10 @@ in evidence.
 
 ## Stop Conditions
 
-Stop before package publication, registry or network contact, actual global
-link/unlink, remote mutation, a new dependency, a generic packaging framework,
-postinstall or download behavior, C# changes, CLI runtime behavior tests, broader
-architecture or plan edits, or any expansion of the single-journey evidence
-boundary.
+The historical package horizons stopped before live link or unlink. The current
+provisional horizon keeps package publication, registry or network contact,
+remote mutation, a new dependency, a generic packaging framework, postinstall
+or download behavior, C# changes, package-source changes, and user-project smoke
+outside scope. It also stops before live link or unlink until the reviewed
+candidate is integrated and the Overseer releases the exact pre-authorized
+local effect.

@@ -12,7 +12,7 @@ Complete the replacement CLI from its accepted Architecture and command
 contracts, with safe local development, reproducible evidence, and no partial
 release.
 
-- Last updated: 2026-09-05.
+- Last updated: 2026-09-06.
 
 ## Current State
 
@@ -89,16 +89,23 @@ and post-integration Route Remove `3/3` gates passed. Route Inspect's synthetic
 overwrite-ambiguity conflict remains one bounded Task 10 audit input, not a
 Doctor finding or a new task. Recovery attribution remains unreleased schema
 v1, and old unattributed or malformed final bundles fail closed. Task 6 “Root
-Update” is active at phase 1/5, milestone 0/8 for fresh Preflight; provisional
-Gray and Red are preserved but unaccepted. The earlier
-prepared alignment and its Status `2521574d` snapshot remain historical
-context.
+Update” is active at phase 2/5, milestone 3/8. Clean Green `a59d4df8`, tree
+`d4a530e7`, is under immutable `T6-R1` review. The earlier prepared alignment
+and its Status `2521574d` snapshot remain historical context.
 
-Task 7 “npm Package Manager Release and Local Linking” is Complete at phase 4/4,
-milestone 7/7. Accepted lane `a2942781`, tree `fe36fc3f`, is squash-integrated at
-`e19d429e` with the same tree. Its Linux host journey passed; Darwin and Windows
-have stage-and-pack evidence only. ARM, publication, and live link or unlink
-remain unproven and unauthorized.
+Task 7 “npm Package Manager Release and Local Linking” retains its immutable
+complete historical horizons and is provisionally reopened at phase 2/3,
+milestone 3/5. Its disjoint local-use lane aligns the Loader with the replacement
+CLI, records an unaccepted centralized `.agents` interoperability idea, and
+prepares one reversible machine-local npm link. Live preflight found no existing
+`open-forge` command or accepted Open Forge package link to displace. Copied
+restore assets retain their originating-worktree paths, so the interrupted
+copied-assets publish probe is non-evidence. The reviewed prose candidate must
+be integrated into the clean already-restored main worktree before the Overseer
+may release the exact link effect. ARM and publication remain unauthorized.
+Both `T7-LR1` writing and `T7-LR2` package/local-link safety review passed the
+nine-path candidate with no material finding. Candidate refreeze and commit are
+active.
 
 Task 3 “Route Update” remains Complete from accepted closeout `27df8325`, tree
 `b68d4349`, with final executable behavior `8a398f2e`, tree `3bb4a224`.
@@ -298,8 +305,9 @@ slices. CLI Quality Remediation is Complete and squash-integrated at
 `862cbf2a847b5adac77c6923e51f2c28c315415f`, exact tree
 `571f104f507c3f72b7404cc0dacd86c818ec0a2e`, from reviewed implementation
 `a4ccf19a3489d06f20a0fd940219be1acb22646d`. Task 3 “Route Update” is Complete
-at accepted closeout `27df8325`, tree `b68d4349`. Root Update is now active for
-fresh Preflight after the complete Route Mutation M2 lane.
+at accepted closeout `27df8325`, tree `b68d4349`. Root Update clean Green
+`a59d4df8`, tree `d4a530e7`, is now under immutable `T6-R1` review after the
+complete Route Mutation M2 lane.
 
 Route Init candidate `cb62b19`, tree `be93900`, has a warning-free Release
 build; managed Unit `1481/1481`, Integration `695/695`, generated serialization
@@ -445,12 +453,12 @@ accepted identities and evidence. Task 16's completion grace is consumed. Task
 `bb41e1c9993a7ea28a7b380e442350fc2bbae73c`; local squash integration is
 `5a2e650aa7623a2f19ff885ae664e56daded2df0`, the same exact tree, from parent
 `0d269b7a`, tree `8863d176`. Its completion-bearing update has `1 update
-remaining` grace. Task 6 “Root Update” is active at phase 1/5, milestone 0/8
-for fresh Preflight. Its clean provisional Gray/Red lane remains preserved and
-unaccepted; no C# Implementer is assigned before Preflight disposition.
+remaining` grace. Task 6 “Root Update” is active at phase 2/5, milestone 3/8.
+Curie's clean Green is `a59d4df8`, tree `d4a530e7`; immutable `T6-R1` review is
+active.
 
 Route Remove completes the Route Mutation M2 lane, so root Update M3 is active
-for Preflight. Task 12 and the adoption slice remain integrated.
+for Green review. Task 12 and the adoption slice remain integrated.
 
 Initial read-only M2 preparation completed on five clean no-op branches from
 `33913dfe7f8f80598ca4765c516d308ed179c3ab` without a preparation commit, Gray,
@@ -499,22 +507,28 @@ JSON, and redirected flows never prompt.
 - Do not implement public Index selection, binding, application, locking,
   recovery, or result presentation in the Generated Navigation lane.
 - Do not download additional dependencies without exact authorization.
-- Do not contact remotes, publish, globally install, deploy, or push.
+- Do not contact remotes, publish, deploy, or push. Do not install globally
+  except for Task 7's exact reversible local npm link after reviewed integration
+  and Overseer release.
 
 ## Next Actions
 
-1. Continue active [Task 6 Root Update](../cli-development/tasks/lifecycle/update.md)
-   at phase 1/5, milestone 0/8. Sagan revalidates provisional Gray `ed614488`
-   and Red `69a1bd83` against the activation baseline before any material is
-   transplanted. Every C# owner personally reads and fingerprints `_csharp.md`,
-   `design.md`, and `style.md`.
-2. Continue after Task 6 in this order: Task 17 Extension Update → Task 18
+1. Continue active [Task 7 npm Package Manager Release and Local Linking](../cli-development/tasks/delivery/01-npm-packages.md)
+   in parallel with Task 6. Refreeze the passed nine-path candidate, commit it,
+   and return the exact pre-link request. Link only from the verified integrated
+   restored tree after exact Overseer release.
+2. Continue active [Task 6 Root Update](../cli-development/tasks/lifecycle/update.md)
+   at phase 2/5, milestone 3/8. Sagan completes immutable `T6-R1` review of clean
+   Green `a59d4df8`, tree `d4a530e7`, then groups any accepted correction.
+   Every C# owner personally reads and fingerprints `_csharp.md`, `design.md`,
+   and `style.md`.
+3. Continue after Task 6 in this order: Task 17 Extension Update → Task 18
    Extension Remove → Task 19 Repair
    → Task 20 Cleanup → Task 10 CLI Command Surface Audit → conditional Task 21
    CLI Command Surface Remediation → Task 13 Native linux-x64 CI and
    Reproducible Artifacts → Task 22 Final Documentation, Acceptance, and
    Release.
-3. Retain thin D1 as current `linux-x64` build/smoke, packed
+4. Retain thin D1 as current `linux-x64` build/smoke, packed
    install/invocation, and checksums. Keep future RIDs, signatures, SBOM,
    provenance, OIDC, and support floors behind a later explicit decision.
 
