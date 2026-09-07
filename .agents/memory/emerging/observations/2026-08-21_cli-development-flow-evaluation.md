@@ -679,3 +679,199 @@ existing owner. No replacement occurred. Confirm continuity or interruption
 before interpreting an omitted handle as stopped work. These observations
 retain owner and root coordination errors alongside successful checks; they
 provide no measured model-quality, cost, or latency comparison.
+
+### Library Consumer Gray Corrections
+
+The Astra/high owner found finite Repair effect and receipt variants using
+runtime type dispatch during prefreeze inspection. The same Astra/high Gray
+author corrected four affected models to finite enum selection with guarded
+concrete payloads. The finding concerns those finite domain concepts under the
+C# design rules; it does not establish a general ban on inheritance or type
+patterns. Original residual identity remains separate from forward Repair
+preparation and cleanup.
+
+A pure Status aggregation Unit seed also supplied Library-unavailable facts
+while its existing oracle expected only six non-Library findings. Correct Green
+would have added a Library-unavailable finding. The same author supplied explicit
+typed missing-record and zero-Library facts, preserving assertions. This is a
+fixture correction, not an empty production fallback or filesystem evidence.
+
+The first consumer Gray freeze covered 90 changed C# paths and the complete
+469-file task source scope. The Release solution build passed with zero warnings
+or errors; all source hashes remained unchanged during execution. Full relative
+format selection reported 40 entries: WHITESPACE 3, IDE0066 4, IDE0301 2,
+IDE0305 22, CA1822 6, CA1859 1, and CA2208 2. GPT-5.6 Luna/max executed the
+exact commands; it did not decide acceptance. The same Gray author owns grouped
+corrections. The owner also detected `T23-GRAY-IDENTITY-007`, a receipt
+construction guard gap requiring the complete original candidate and ordered
+entries plus Before/After contexts. Gray remains unaccepted until renewed gates
+and the identity correction qualify. These are detected draft defects and rework,
+not proof of measured Astra superiority. The Task 23 record preserves final
+qualification and freeze identities.
+
+The user then narrowed this continuation to immutable consumer Gray, complete
+qualified Red, and a detailed Green preflight/handoff followed by a halt.
+No Green implementer was assigned. Earlier broader release language is superseded
+for this continuation; the task and subsequent queue remain incomplete.
+
+The grouped correction froze 97 C# paths, including 28 newly tracked files.
+The renewed full solution build and eleven help checks passed; one Doctor Unit
+fixture local became unused after the required static-call adaptation. Its
+IDE0059 report appeared twice. The same author removed that local, then the
+one-file informational format check and affected Unit build passed. Consumer
+Gray was accepted at `cdcc988f`, tree `12552d3b`, with 98 total paths including
+the Task record. Root reproduced every delta blob/mode, all 476 whole-task C#
+hashes and line limits, and the exact 454 + 21 + 1 unchanged/renewed format
+coverage. All three build logs report zero warnings/errors. The exact two-file
+root prose adoption at `af402efb` changes no executable source. These results
+accept the contract boundary only; final Red and Green remain separate gates.
+
+Final Red inspection found an inherited Doctor exhaustive oracle still asserting
+108 findings, while the accepted Task 23 contract and frozen consumer Gray
+require 120. The owner and root accepted a bounded additive extension under the
+original consumer Red author: retain the 108 literal rows and spellings, add
+exactly twelve Library kinds and the accepted typed proposal/subject enum
+members, and retain exhaustive and undefined-value checks. The 108-to-120 count
+change and predecessor identity belong to explicit changed lineage; this is
+not unchanged regression evidence or an implementation correction.
+
+During final Red preparation, Hopper caught its own proposed capability oracle
+before execution (`T23-RED-EVIDENCE-003`). Doctor must not probe capabilities,
+and an unrelated unregistered working link cannot require discovery of
+`Supported`; the accepted fact is nullable when evidence does not prove a state.
+The corrected test meaning preserves independent lifecycle ownership, no
+`Unsupported` inference from missing lifecycle, and nonempty supplied evidence;
+explicit capability states remain Unit inputs. This is an overstrong draft
+oracle corrected before finalization, not an executed failure or production
+defect. Hamilton placed the actually shared Repair/Cleanup/Doctor recovery
+fixture at
+`src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Shared/LibraryRecovery/`,
+without widening TestSupport.
+
+The owner's pre-execution inspection then found `T23-RED-EVIDENCE-004` in
+Hopper's first eight-file freeze: Integration ZIP fixtures synthesized verified
+observations without independent final readback. The fixture could fail before
+the intended production stage, so its setup did not yet qualify the oracle.
+The original freeze is preserved at SHA256
+`4d956a1c0e962514da1769021278f2b21c633d4bf5bc2f67fc94950ecc32142f`.
+The same author must independently encode a healthy archive, prove it through
+the existing real reader at the unique workspace's canonical store, and only
+then tamper for stale-payload cases. Cleanup covers newly owned fixture artifacts
+only; the deferred general test-environment cleanup idea remains separate.
+
+Hamilton then escalated an ambiguous antecedent in Repair's generic successful
+bundle-deletion wording before freezing the original-bundle preservation oracle.
+Root inspected the actual Repair contract passages and Library recovery design,
+and verified the Repair contracts were unchanged between `c3f01acb` and
+`af402efb`. The bounded reading is that successful cleanup concerns Repair's new
+forward preparation. Selected Library entries consume the original bundle as
+evidence; the original ZIP, including unselected entries, remains byte-identical
+for explicit Cleanup. The frozen `OriginalResidual` and `ForwardCleanup` facts
+already encode that distinction. Root accepted a concise contract/preflight
+clarification with predecessor evidence, without a production shape change,
+new recovery policy, or review-budget use. This resolved textual ambiguity
+before implementation rather than inferring original deletion from generic
+forward-recovery language.
+
+The combined final Red freeze contained 33 test paths, including 27 new files,
+and 507 whole-task C# inputs; root reproduced every source hash, mode, full-file
+line limit and unchanged Core/Root production boundary. First execution found
+81 complete formatter entries at 49 unique sites and three compiler errors in
+new Hamilton tests: one CS8604 and two CS8602, excluding repeated log emissions.
+The build failed before discovery or test execution; forecast row counts are
+not observed outcomes. The same Hamilton context owns its compiler and
+conformance corrections, and Turing owns one collection-expression correction.
+Hopper's eight files remained unchanged and format-clean. Root required
+compiler-proven null handling and unchanged production/settings, with the
+original freeze and failed execution retained. This records author rework and
+gate detection without converting an uncompiled draft into qualified Red.
+
+The twelve corrected test files retained existing assertions and used explicit
+`Assert.NotNull` flow guards. Root reproduced the renewed 507-file freeze and
+exact test-only delta. The renewed relative format report was empty, the
+Release solution build passed with zero warnings/errors, and full metadata
+discovery succeeded: 2,582 Unit, 1,453 Integration, and 208 EndToEnd cases.
+These are discovery counts, not passing or causally qualified execution counts;
+final focused Red qualification remains a separate boundary.
+
+The first focused execution ran all 1,375 selected rows without skips; source
+and executable identities remained pinned and eleven help checks passed.
+Observed pass/fail counts were Library Unit 125/458, Integration 62/314,
+public 0/15; affected controls Unit 219/15, Integration 108/56; Doctor public
+2/1. These outcomes are not accepted Red merely because failures were expected.
+Causal inspection found six new Extension Remove fixtures missing a parent
+directory and one Repair Unit unavailable observation missing its required
+failure fact. Two inherited finite/schema oracles also required inspection
+against accepted Status/Repair additions. The original authors resumed bounded
+qualification, with source and artifacts frozen until the grouped correction
+packet; production and Green remained held.
+
+Turing's 64 new rows qualified as 28 passes and 36 named-stage failures;
+Hopper's 42 qualified as 18 passes and 24 named-stage failures. Their setup
+prerequisites passed, including eleven corrected archive cases. Prepared
+lineage reproduced all 454 Unit outcomes and 253 of 258 Integration outcomes;
+the five changes were confined to the affected Status/Doctor consumer rows.
+
+Hamilton's bounded four-file correction retained predecessor bytes and hashes
+at `artifacts/task23-final-red/correction-1/predecessors.json`, SHA256
+`8c1826f3d60977b568836ed12aaf71695777462c78169ffd9c8c2c335e963895`.
+`T23-RED-EVIDENCE-007` covers the seven setup failures.
+`T23-RED-EVIDENCE-008` extends the Status finite oracle with the ten Library
+kinds already listed in its Interface, retaining all 37 prior rows/order, and
+adds `libraryExecution` before `mode` to Repair's property-order oracle,
+retaining the fifteen existing fields and shared envelope. Root checked the
+actual contract and frozen Gray declaration. The same author owns the four
+files and renewal of every direct shared-fixture caller; no production change,
+new test-case expansion or review-budget use was accepted.
+
+The four-file renewal passed formatting/build with zero diagnostics, warnings
+or errors. Its 79 Unit cases qualified as 18 passes and 61 named-stage failures.
+The six Remove rows remained unqualified: three non-ordinary-tree and three
+unowned-entry disposal failures masked earlier assertions. The same author was
+returned to read-only inspection of the complete fixture ownership, snapshot
+and disposal invariants and a proven link-aware fixture before further edits.
+A directory-only patch had not qualified the fixture's full contract.
+
+The owner also disclosed a receipt gap: the first execution pinned fourteen
+apphost/Core/Root artifacts but omitted test DLL hashes. Root retained that
+limitation and authorized one fresh final execution of the selected 1,375 rows
+after the six fixtures qualify, with all loaded Open Forge-owned test, support,
+Core/Root assemblies, selected executables/version markers and runtime outputs
+pinned before and after. This bounded rerun closes a concrete final artifact
+identity gap; it does not recreate historical evidence or trigger full managed
+and Native AOT gates. Existing verified locked dependency/toolchain provenance
+remains sufficient without hashing the complete SDK/package cache.
+
+The exact-entry fixture lifetime correction qualified all six Remove rows:
+real installation, lifecycle, source and link setup completed; failures reached
+operation assertions with no setup/disposal exceptions. The observed blocked
+versus failed outcome does not expose the caught inner exception. Attribution
+to the missing record-reader stage remains an inference from frozen call order
+and validated preconditions, and later safety assertions remain unexecuted.
+
+The final fresh selected run executed 1,375 cases: 518 passed and 857 failed,
+with zero skips; eleven help checks passed. Root reproduced every selection/
+execution multiset and unique discovery identity, and verified all 39 current
+runtime hashes and modes against the before/after pins. The inventory covers
+35 Open Forge-owned assembly/metadata files and the four executables selected
+by the actual command arguments. Root's initial broad filename check included
+three unused apphost aliases; the check was corrected to actual executable
+selection without changing the candidate. Final per-row qualification, scope,
+source and commit identities belong to the Task 23 acceptance receipt. This
+closes a preparation evidence boundary, not Library Green or release acceptance.
+
+### Final Library Red stop and model observation limit
+
+Noether sealed Red at `fa29630d` and the prose-only preflight at `9fa03c9e`.
+Root independently verified the 508 immutable C# identities, exact 35-test
+Red delta with 27 additions, and all 277 indexed evidence artifacts. Final
+execution covered 1,375 rows: 518 passed, 857 qualified failures, zero skipped;
+eleven help checks passed. No Green owner was released. The owner and all
+five descendants returned their leases and stopped at phase 2/5, milestone 3/8.
+
+Astra/high authors and owner completed the bounded Gray/Red slice, with the
+compiler, analyzer, fixture and runtime-identity corrections recorded above.
+Those corrections remain part of the result. This session has no matched
+model trial or complete comparable usage accounting; it supports retaining
+explicit evidence gates and the selected allocation, not claiming Astra
+quality or cost superiority over prior Sol/Luna work.

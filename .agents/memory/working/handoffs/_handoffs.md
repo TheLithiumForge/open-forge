@@ -27,13 +27,13 @@ A Handoff is a sealed snapshot for another reader. It preserves the boundary-spe
 
 ## Entries
 
-Current transfer: [CLI Astra restart](2026-09-07_cli-astra-restart.md), with its
-[exact dirty inventory](2026-09-07_cli-astra-restart-inventory.md). Read these
-for the 2026-09-07 transfer. Generated navigation refresh currently reports
+Current transfer: [Workspace Libraries Green handoff](2026-09-07_library-green-handoff.md).
+Read it for the frozen Gray/Red stop and detailed implementation preflight. Generated navigation refresh currently reports
 `index.metadata-incomplete` for an existing direct child; preserve the sealed
 historical files while resolving that separate metadata issue.
 
 <!-- open-forge:generated-index:start -->
+
 - [Sealed continuation state for the CLI release program at the Queue 31 route move and remove review boundary.](2026-08-16_cli-release-gate-2-queue-31.md) - #Memory #Working #Handoff #KeepInMind
 - [Sealed continuation state for the CLI release program after Queue 31 integration and before Queue 32 cleanup disposition.](2026-08-16_cli-release-gate-2-queue-32.md) - #Memory #Working #Handoff #KeepInMind
 - [Sealed continuation state for the CLI release program after Queue 32 integration and before Queue 33 completion disposition.](2026-08-16_cli-release-gate-2-queue-33.md) - #Memory #Working #Handoff #KeepInMind
@@ -42,4 +42,5 @@ historical files while resolving that separate metadata issue.
 - [Sealed continuation state for Find Child 2 after Gray acceptance and during incomplete Red evidence authoring](2026-08-24_cli-find-query-red-start.md) - #Memory #Working #Handoff #KeepInMind #CLI #Find #Red #Contextual
 - [Sealed continuation state for accepted Find before local integration and equality proof](2026-08-25_cli-find-accepted.md) - #Memory #Working #Handoff #KeepInMind #CLI #Find #Acceptance #Contextual
 - [Handoff for resuming Route Create Green and later protected integration](2026-08-31_cli-route-create-green.md) - #Memory #Working #Handoff #Active #KeepInMind #CLI #Route #Development #Evidence #Git
+
 <!-- open-forge:generated-index:end -->

@@ -6,6 +6,15 @@ open-forge:
 
 # Complete The Replacement CLI
 
+## Current Continuation Boundary
+
+Task 23 consumer contracts, immutable Gray, qualified frozen Red, and the
+detailed Green implementation preflight are complete at phase 2/5, milestone
+3/8: `[###-----]`. Execution is halted before Green as the user requested.
+Task 23 remains incomplete; no Green implementer is assigned and all task
+agents are idle. Earlier continuation language below is superseded by this
+stop. Later tasks and unresolved Task 24/25 product choices remain preserved.
+
 ## Task State
 
 - State: Active. Find, References, Context, Extension List, Modern C#
@@ -96,11 +105,12 @@ and the 59-path Cleanup delta matched by bytes and modes. The
 [Cleanup Task](operations/cleanup.md#root-acceptance-and-integration) records
 final focused/full evidence and both resolved C1 findings.
 
-[Task 23 “Workspace Libraries”](workspace-libraries.md) is now active at
-phase 2/5, milestone 2/8 under Noether, Task Mastermind, GPT-6 Astra/high.
-Its next boundary is merging exact `148d378d`, then completing post-Cleanup
-consumer Gray and final Red before Green. Prepared `1aa461dc` and accepted
-contract `c3f01acb` remain preserved. This is the remaining command task.
+[Task 23 “Workspace Libraries”](workspace-libraries.md) is stopped at phase
+2/5, milestone 3/8 after accepted consumer Gray `cdcc988f`, qualified final Red
+`fa29630d`, and the detailed Green preflight `9fa03c9e`. Noether and all
+workers are idle. Task 23 remains the unfinished command task; Green starts
+only after user resumption. Prepared `1aa461dc` and accepted `c3f01acb`
+remain preserved.
 The [project control ledger](../project-control.md) owns current queue and
 completion visibility; earlier execution snapshots below are historical.
 

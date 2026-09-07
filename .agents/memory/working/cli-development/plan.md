@@ -6,6 +6,15 @@ open-forge:
 
 # Replacement CLI Development Plan
 
+## Current Stop Boundary
+
+Task 23 consumer contracts, immutable Gray, qualified frozen Red, and the
+detailed Green implementation preflight are complete at phase 2/5, milestone
+3/8: `[###-----]`. Execution is halted before Green as the user requested.
+Task 23 remains incomplete; no Green implementer is assigned and all task
+agents are idle. Earlier continuation language below is superseded by this
+stop. Later tasks and unresolved Task 24/25 product choices remain preserved.
+
 ## Current Accepted Checkpoint
 
 Task 20 “Cleanup” (phase 5/5): milestone 8/8 is complete and root-accepted.
@@ -19,13 +28,17 @@ failures, skips, or warnings. Both accepted R1 findings resolved in the single
 C1; no additional review or full execution is required for exact integration
 and prose closeout.
 
-Task 23 “Workspace Libraries” (phase 2/5): milestone 2/8 is active under
-Noether, Task Mastermind (`.apm/agents/task-mastermind.agent.md`), GPT-6
-Astra/high. Merge the exact `148d378d` codebase, then complete consumer Gray
-and final Red before Green. Prepared `1aa461dc` evidence and accepted contract
-`c3f01acb`, including the future typed Library Repair exception, remain intact.
-Task 19 “Repair” remains complete and dequeued with grace zero. The project
-control ledger records consumed Task 20 completion grace.
+Task 23 “Workspace Libraries” (phase 2/5): milestone 3/8 is stopped before
+Green. Consumer Gray is accepted at `cdcc988f`, tree `12552d3b`; Repair prose
+clarification `05674893` preserves original Library residual bundles for
+explicit Cleanup. Final Red is `fa29630d`, tree `b9177404`; the final prose-only
+preflight tip is `9fa03c9e`, tree `e80f31d8`. The selected run executed 1,375
+cases: 518 passed, 857 qualified failures, zero skipped; eleven help checks
+passed. Root verified all 508 immutable C# files, 27 formerly untracked tests,
+and 277 evidence artifacts. This accepts the contract/Red boundary only.
+The detailed Task preflight defines Green's remaining implementation and gates.
+No Green owner is assigned; Noether and all descendants are idle. Tasks 19 and
+20 remain complete and dequeued with completion grace zero.
 
 This checkpoint supersedes earlier execution snapshots below; their commit
 and evidence histories remain historical. The project control ledger and child
@@ -50,8 +63,7 @@ Task 22 “Final Documentation, Acceptance, and Release”.
 Tasks 24 and 25 may prepare functional drafts during command work. The user
 must review those final drafts before implementation. Task 26 follows the
 functional decisions and retains a pure behavior-preserving scope. No new
-phase or milestone horizon is assigned to Tasks 24–26. Task 23 Red remains
-read-only until immutable Gray acceptance. Earlier receipts retain their
+phase or milestone horizon is assigned to Tasks 24–26. Task 23 Gray and final Red are now frozen; implementation remains halted. Earlier receipts retain their
 historical meaning and do not establish fresh evidence for dirty drafts.
 
 ## Task And Planning Boundary
@@ -63,9 +75,8 @@ historical meaning and do not establish fresh evidence for dirty drafts.
   Plan maintenance within that direction.
 - Last updated: 2026-09-07.
 - Current active horizon: Task 23 “Workspace Libraries” at phase 2/5,
-  milestone 2/8. Tasks 19 and 20 are complete and integrated. Noether is
-  released to merge `148d378d`, then finish consumer Gray and final Red before
-  Green. Tasks 24 and 25 await user comments on their functional drafts;
+  milestone 3/8, halted before Green after the sealed handoff. Tasks 19 and 20
+  are complete and integrated. Noether and all descendants are idle. Tasks 24 and 25 await user comments on their functional drafts;
   Task 26 is a pure refactor after those decisions. Tasks 24–26 have no
   accepted phase or milestone horizon. Task 10, conditional Task 21, Task 13
   (phase 1/3, milestone 2/6), and Task 22 follow in queue order.
@@ -967,7 +978,7 @@ Status or Doctor public contracts or the persisted operational-command order.
 | O1A  | Complete: Task 15 and Task 16 are both phase 5/5, milestone 8/8                                                                                                                                                                               | Preserve the explicit producer-owned contributor inventory. Task 16's accepted 108-kind horizon supplies producer-backed emissions for all 19 Extension kinds; Task 17 closed the bridge-registration observation and no Extension observation horizon remains.                                                                                                                                                                                                                                                                                | M4A                                           | Sequential adoption slice                              | Operations                              | Doctor managed `1768/937/175`; native `937/175`; managed-on-native `175`; exact public Doctor `3/3`; every gate had zero failures/skips and the Release build had zero warnings/errors |
 | M4B  | Complete: Tasks 17 and 18 are phase 5/5, milestone 8/8                                                                                                                                                                                        | Task 17's accepted bridge-registration observation is in the contributor inventory. Task 18 has no installed-manifest scan or Doctor producer obligation.                                                                                                                                                                                                                                                                                                                                                                                      | M3, M4A, O1A                                  | Sequential lifecycle mutation                          | Extension mutation                      | Task 18 candidate `9326a921`, final feature tip `8a6fa8de`, and squash integration `f445a55a`, tree `3b0fb29d`; post-integration Release and focused `55/27/3/3` receipts pass         |
 | O2   | Complete: Task 19 and Task 20 at phase 5/5, milestone 8/8                                                                                                                                                                                     | Repair integrated at `11e7a5ed`; Cleanup accepted and integrated at `148d378d`, exact candidate tree `ab7e4881`.                                                                                                                                                                                                                                                                                                                                                                                                                               | M2-M4B, O1A                                   | Sequential                                             | Operations                              | Complete inventory, plan/apply/recovery, cleanup, and idempotence evidence                                                                                                             |
-| T23  | Active at phase 2/5, milestone 2/8                                                                                                                                                                                                            | Merge exact post-Cleanup `148d378d`, preserve prepared `1aa461dc` and accepted `c3f01acb`, then complete consumer Gray and final Red before Green.                                                                                                                                                                                                                                                                                                                                                                                             | O2, accepted Library contracts and design     | Sequential last-stage improvement                      | Workspace Libraries                     | Link-aware Route Update/Index/Move/Remove guard, real-filesystem regression, library contract, lifecycle, recovery, and exact three-journey evidence                                   |
+| T23  | Stopped at phase 2/5, milestone 3/8                                                                                                                                                                                                           | Consumer Gray `cdcc988f`, qualified Red `fa29630d`, and final preflight `9fa03c9e` accepted; halted before Green.                                                                                                                                                                                                                                                                                                                                                                                                                              | O2, accepted Library contracts and design     | Sequential last-stage improvement                      | Workspace Libraries                     | Link-aware Route Update/Index/Move/Remove guard, real-filesystem regression, library contract, lifecycle, recovery, and exact three-journey evidence                                   |
 | T24  | Queued; no active phase or milestone horizon                                                                                                                                                                                                  | Implement accepted Extension package vocabulary and consumer-owned destination permissions after the remaining commands and user review of the final draft.                                                                                                                                                                                                                                                                                                                                                                                    | T23, accepted Extensions idea                 | Later post-command functional work                     | Extensions Evolution                    | Accepted package-layout decision, exact destination permissions, ownership, recovery, and command-owned evidence                                                                       |
 | T25  | Queued; no active phase or milestone horizon                                                                                                                                                                                                  | Decide consumer-approved Library symlink projections beyond `.agents` while preserving separate Library ownership and lifecycle.                                                                                                                                                                                                                                                                                                                                                                                                               | T23, T24 decisions, accepted Libraries design | Later post-command functional work                     | Library destination projections         | Exact projection policy, path safety, source preservation, ownership, recovery, and command-owned evidence                                                                             |
 | T26  | Queued; no active phase or milestone horizon                                                                                                                                                                                                  | Consolidate duplicated six-command Extension internals only after Tasks 24 and 25; preserve accepted behavior through differential evidence.                                                                                                                                                                                                                                                                                                                                                                                                   | T24, T25                                      | Later post-command refactor                            | Extension internal consolidation        | Exact three public journeys per command, differential behavior lock, managed/native/packed preservation                                                                                |
@@ -1028,9 +1039,10 @@ program items through the later boundaries that own them:
       attestation, and support-floor matrices remain outside current evidence.
 - [x] Complete and integrate Task 19 Repair and Task 20 Cleanup at `11e7a5ed`
       and `148d378d`, respectively.
-- [ ] Complete Task 23's post-Cleanup consumer Gray and final Red on the exact
-      `148d378d` codebase, then Green and integration. This is the remaining
-      command task.
+- [x] Freeze Task 23 consumer Gray and qualified final Red after Cleanup;
+      seal the detailed Green handoff and halt at phase 2/5, milestone 3/8.
+- [ ] After user resumption, complete Task 23 Green, review, acceptance gates
+      and integration. This is the remaining command task.
 - [x] Keep the simplified O1 Status/Doctor and O2 Repair/Cleanup split reflected
       in the work graph. Task 17 closed the last accepted Extension Doctor
       observation; Task 18 has no Doctor producer obligation.
@@ -1230,8 +1242,8 @@ passed. `CLI-EDGE-001` remains non-product only.
 Tasks 17, 18, and 19 remain complete and dequeued. Task 20 “Cleanup” is
 complete at phase 5/5, milestone 8/8 and integrated at `148d378d`; completion
 visibility follows the project control ledger. Task 23 “Workspace Libraries”
-is active at phase 2/5, milestone 2/8 for consumer Gray and final Red before
-Green. Tasks 24–26 remain queued with no phase or milestone horizon. Task 10,
+is stopped at phase 2/5, milestone 3/8 after consumer Gray, qualified final Red,
+and the detailed Green handoff. Tasks 24–26 remain queued with no phase or milestone horizon. Task 10,
 conditional Task 21, Task 13, and Task 22 follow in their accepted order.
 
 ## Verification And Integration

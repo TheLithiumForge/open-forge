@@ -32,7 +32,7 @@ Read the [program Task](00-cli-development.md),
 - [x] [Operational Commands](operations/_operations.md) — Complete: Status, Doctor, Repair, and Cleanup are integrated; Task 20 Cleanup completed at phase 5/5, milestone 8/8 in `148d378d` — Implementer: Overseer-managed command lanes
 - [ ] [CLI Command Surface Audit](cli-command-surface-audit.md) — Task 10 is queued until after the retained command sequence; audit only, with no implementation mutation — Implementer: Dedicated Review Mastermind
 - [ ] [CLI Delivery](delivery/_delivery.md) — Planned — Implementer: Not assigned
-- [ ] [Task 23: Workspace Libraries](workspace-libraries.md) — Active at phase 2/5, milestone 2/8; integrate post-Cleanup consumers on `148d378d`, refreeze Gray and affected Red, then implement; accepted contract tip `c3f01acb`
+- [ ] [Task 23: Workspace Libraries](workspace-libraries.md) — Stopped at phase 2/5, milestone 3/8; consumer Gray and qualified Red frozen; detailed Green handoff sealed at `9fa03c9e`; await user resumption before implementation.
 - [ ] [Task 24: Extensions Evolution](extensions-evolution.md) — Queued post-command package-vocabulary and Extension destination-permission decisions; no active phase or milestone horizon
 - [ ] [Task 25: Workspace Library Destination Projections](workspace-library-destination-projections.md) — Queued post-command Library symlink destination decisions; no active phase or milestone horizon
 - [ ] [Task 26: Extension Internal Consolidation](extension-internal-consolidation.md) — Queued pure refactor after all commands and Tasks 24–25; no active phase or milestone horizon

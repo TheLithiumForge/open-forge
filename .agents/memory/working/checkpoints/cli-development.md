@@ -6,6 +6,15 @@ open-forge:
 
 # CLI Development Checkpoint
 
+## Current Stop Boundary
+
+Task 23 consumer contracts, immutable Gray, qualified frozen Red, and the
+detailed Green implementation preflight are complete at phase 2/5, milestone
+3/8: `[###-----]`. Execution is halted before Green as the user requested.
+Task 23 remains incomplete; no Green implementer is assigned and all task
+agents are idle. Earlier continuation language below is superseded by this
+stop. Later tasks and unresolved Task 24/25 product choices remain preserved.
+
 ## Current Accepted Checkpoint
 
 Task 20 “Cleanup” (phase 5/5): milestone 8/8 is complete and root-accepted.
@@ -19,13 +28,17 @@ failures, skips, or warnings. Both accepted R1 findings resolved in the single
 C1; no additional review or full execution is required for exact integration
 and prose closeout.
 
-Task 23 “Workspace Libraries” (phase 2/5): milestone 2/8 is active under
-Noether, Task Mastermind (`.apm/agents/task-mastermind.agent.md`), GPT-6
-Astra/high. Merge the exact `148d378d` codebase, then complete consumer Gray
-and final Red before Green. Prepared `1aa461dc` evidence and accepted contract
-`c3f01acb`, including the future typed Library Repair exception, remain intact.
-Task 19 “Repair” remains complete and dequeued with grace zero. The project
-control ledger records consumed Task 20 completion grace.
+Task 23 “Workspace Libraries” (phase 2/5): milestone 3/8 is stopped before
+Green. Consumer Gray is accepted at `cdcc988f`, tree `12552d3b`; Repair prose
+clarification `05674893` preserves original Library residual bundles for
+explicit Cleanup. Final Red is `fa29630d`, tree `b9177404`; the final prose-only
+preflight tip is `9fa03c9e`, tree `e80f31d8`. The selected run executed 1,375
+cases: 518 passed, 857 qualified failures, zero skipped; eleven help checks
+passed. Root verified all 508 immutable C# files, 27 formerly untracked tests,
+and 277 evidence artifacts. This accepts the contract/Red boundary only.
+The detailed Task preflight defines Green's remaining implementation and gates.
+No Green owner is assigned; Noether and all descendants are idle. Tasks 19 and
+20 remain complete and dequeued with completion grace zero.
 
 This checkpoint supersedes earlier execution snapshots below; their commit
 and evidence histories remain historical. The project control ledger and child
@@ -63,9 +76,9 @@ release.
 
 - Last updated: 2026-09-07.
 
-Task 23 “Workspace Libraries” is the remaining command task, active at phase
-2/5, milestone 2/8 for the post-Cleanup consumer boundary and final Red before
-Green. Tasks 19 and 20 are complete and integrated. Task 19 is dequeued; Task
+Task 23 “Workspace Libraries” is the remaining command task, stopped at phase
+2/5, milestone 3/8 after frozen Gray, qualified final Red, and the detailed
+Green handoff. Tasks 19 and 20 are complete and integrated. Task 19 is dequeued; Task
 20 completion visibility follows the project control ledger.
 
 Tasks 24 “Extensions Evolution”, 25 “Workspace Library Destination
