@@ -8,14 +8,14 @@ open-forge:
 
 ## Task State
 
-- State: Active through Task 19 “Repair” at phase 4/5, milestone 3/8. Repair
-  Preflight, Gray, and Red are accepted. Task 18 integration was merged at
-  `f0437512`; refrozen transition `eae8eb36` opened Green, which remains a
-  draft pending focused verification and acceptance.
+- State: Active through Task 20 “Cleanup” at phase 4/5, milestone 3/8.
+  Repair is complete at phase 5/5, milestone 8/8 and integrated at `11e7a5ed`,
+  exact accepted tree `b2bd951fde4e3afdad87f64a692597e3d167f609`. Cleanup
+  retains accepted Red and may refreeze on that baseline before Green.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Initial prerequisites: Task 14 “Extension Install” for Status, then Status for
-  Doctor. Status, Doctor, and Task 18 “Extension Remove” are complete. Repair is
-  active, and Cleanup retains its command-local dependency on Repair.
+  Doctor. Status, Doctor, Extension Remove, and Repair are complete. Cleanup
+  remains the final operational command.
 
 ## Shared Boundary
 
@@ -53,14 +53,16 @@ healthy.
 
 - [x] [Task 15: implement complete baseline workspace, lifecycle, managed-source, generated, and recovery-bundle status facts](status.md) — Complete
 - [x] [Task 16: implement diagnosis domains, severity, recommendations, and complete doctor projections](doctor.md) — Complete; no remaining Extension observation horizon
-- [ ] [Task 19: implement explicit repair planning, dry run, application, verification, and recovery](repair.md) — Active at phase 4/5, milestone 3/8; Green draft after accepted merge/refreeze `eae8eb36` — Task Mastermind allocated by the Overseer
-- [ ] [Task 20: implement lease-validated cleanup of recognized recovery bundles and drafts](cleanup.md) — Task-locally active at phase 4/5, milestone 3/8 with accepted Red; queued after Task 19 for Green — Green owner assigned after Task 19 integration
+- [x] [Task 19: implement explicit repair planning, dry run, application, verification, and recovery](repair.md) — Complete at phase 5/5, milestone 8/8; integrated at `11e7a5ed`
+- [ ] [Task 20: implement lease-validated cleanup of recognized recovery bundles and drafts](cleanup.md) — Active at phase 4/5, milestone 3/8; accepted Red, baseline refreeze before Green — Faraday and continuing Brilliant Implementer, Astra/high
 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
+
 - [Implement lease-validated cleanup of recognized recovery bundles and drafts](cleanup.md) - #Memory #Working #CLI #Task #Cleanup #Mutation #Contextual
 - [Implement diagnosis domains, severity, recommendations, and complete doctor projections](doctor.md) - #Memory #Working #CLI #Task #Doctor #Diagnosis #Contextual
 - [Implement explicit repair planning, dry run, application, verification, and recovery](repair.md) - #Memory #Working #CLI #Task #Repair #Mutation #Recovery #Contextual
 - [Implement complete workspace, lifecycle, managed-source, generated, and recovery-bundle status facts](status.md) - #Memory #Working #CLI #Task #Status #Observation #Contextual
+
 <!-- open-forge:generated-index:end -->

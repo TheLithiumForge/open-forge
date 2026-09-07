@@ -292,3 +292,171 @@ This shows a storage cost from accumulated worktree build outputs; it is not
 evidence that a particular model caused the disk pressure. Rebuild only active
 required evidence after cleanup, and never reuse removed binaries or restore
 assets as proof of current execution.
+
+### Repair Review And Correction Evidence
+
+Repair candidate `f33f5ebb` passed managed Unit 1,969/1,969, Integration
+1,039/1,039, and EndToEnd 190/190; native Integration and EndToEnd passed
+1,039/1,039 and 190/190, and managed EndToEnd against the native CLI passed
+190/190. All twelve required execution gates passed without warnings or skips.
+The exact-command worker used GPT-5.6 Luna/max; the Astra/high owner checked
+the source, logs, counts, and thirteen artifact identities independently.
+
+Fresh whole-task review by GPT-6 Astra/high returned four material findings:
+automatic selection could bypass invalid explicit relink intent, separately
+parsed identical relinks did not coalesce structurally, planned effects claimed
+verification, and cancellation could misstate status and verified counts.
+Some defects crossed inherited Gray, original Red, and newly authored Green
+boundaries. Passing execution gates had not exercised these cases.
+
+One original Red assertion expected a non-no-op dry-run effect to be verified.
+The accepted contract forbids claiming verification of unwritten bytes. The
+Overseer authorized only that assertion's correction to planned, retained its
+original hash, and required failure against unchanged production. The grouped
+correction evidence selected seventeen cases: ten intended failures, seven
+passing controls, and no skips. Every other frozen original test and the three
+public Repair journeys remained unchanged. Correction implementation and final
+acceptance are pending at this observation boundary.
+
+This supports retaining independent contract-based review and testing separately
+parsed values rather than reusing the same nested collection instance. It does
+not establish lower cost or general superiority over the previous models.
+
+### Library Contract Completeness And Authority Versions
+
+Independent Red exposed three missing inputs or callable boundaries after
+initial Gray acceptance: typed prior-missing/link recovery comparison, independent
+completion facts for mutation status precedence, and ancestor/missing-parent
+observations for pure planning. The same Gray author corrected these through one
+bounded addendum. The owner also caught an overly strict recovery guard that
+required the original operation identity instead of allowing a later explicitly
+authorized lease for the same workspace. These are first-pass rework and owner
+detection, not a clean authoring result.
+
+The owner initially described automatic Library compensation wiring. A Red
+author challenged it before edits, and the owner corrected it to monotonic
+effects with retained recovery. The Overseer later made a different mistake:
+it used Task 19's earlier Repair contract to reject Task 23's deferred typed
+recovery integration. Noether supplied the immutable Task 23 contract blobs and
+the accepted `c3f01acb` history. The Overseer confirmed the later narrow
+`library.recovery-safe-exact` exception and withdrew its false positive. No
+accepted contract or production bytes were changed by that intervention.
+
+Keep the current Task 19 contract and the accepted future Task 23 contract delta
+distinct when assessing cross-command work. Preserve the later exception at the
+post-Task 20 baseline refreeze; it adds no generic rollback, automatic Library
+compensation, source-target mutation, or new public syntax. The evidence-backed
+owner challenge prevented accepted future scope from being silently removed.
+
+### Avoidable Verification Work
+
+The Repair owner's `dotnet test --help` invoked the SDK's dynamic test-runner
+restore against the default package source. It was stopped and the existing
+cache-only restore was re-established without changing dependencies or audit
+configuration. Use the recorded commands when the repository already defines
+the gate; help discovery is not necessarily free of build-system effects.
+
+The Library owner briefly treated a task-local publication restriction as
+forbidding the repository's ordinary same-worktree development publication.
+The Overseer clarified the boundary, but a redundant Root build had already
+completed in 28.87 seconds. Preserve the actual receipt; repeating a passing
+build solely to change receipt wording adds no relevant proof.
+
+A whole-task scan after Repair's baseline merge also found an inherited Gray
+null suppression missed by a Green-only changed-file scan. The same author
+replaced it with compiler-proven conditional out-nullability before the full
+gates. Apply conformance to the complete task delta, including inherited phases.
+
+### Whole-Task Conformance And Correction Rework
+
+Repair's complete Task delta exposed forty-five Core formatting diagnostics,
+frozen-test diagnostics, and nine private Root builder return-type diagnostics
+that narrower phase checks had missed. The Overseer inspected and authorized
+static planner conversion, five frozen test call-site adjustments with two
+imports, eleven literal formatting corrections across seven frozen test files,
+and the nine concrete private return types. The planner assertion correction
+remains the only changed behavioral expectation. Exact patches and old/new test
+hashes preserve each exception; final focused and full gates must use the new
+source identity.
+
+The owner then found a nested ternary in the new correction, contrary to the
+loaded C# design directive, and returned it to the same author before commit.
+This is new correction-pass rework, distinct from inherited conformance debt.
+Neither personally reading a directive nor passing a compiler gate proves
+conformance without inspecting the resulting source.
+
+Cleanup preparation applied severity-info formatting verification to its whole
+Task delta: fourteen Core, seven Unit, eight Integration, and two EndToEnd
+files. All four commands passed with empty reports and unchanged source hashes.
+No restore, build, test, or source edit ran. This is bounded preparatory evidence;
+it does not release Green before Repair integration.
+
+### Library Red Failure Attribution
+
+The first Library Red run discovered 433 Unit cases (73 passed, 360 failed) and
+254 Integration cases (13 passed, 241 failed), without skips. All fifteen public
+journeys failed at their leaf's deliberately unimplemented request binder,
+three per command. Fresh help succeeded, ruling out the suspected general
+startup failure. The later domain assertions were not reached; these failures
+prove only the current prerequisite boundary.
+
+Individual cause inspection also found native-parser/help expectation mistakes,
+malformed healthy-route fixtures, Application setup errors, record-rejection
+assertions that could pass for the wrong reason, and JSON assertions unreachable
+behind human-renderer stubs. The same three Red authors corrected one bounded
+pack while preserving the fifteen public journeys. These are first-pass test
+creation defects and rework, not evidence of broad coverage from a large count.
+
+A candidate improvement is to calibrate one representative native-error,
+fixture, and independent renderer path before extending a large test matrix.
+This remains an observation to evaluate, not a new universal workflow rule or
+an unmeasured claim of model cost or quality superiority.
+
+### Accepted Repair Correction And Integration
+
+The final source pass found three nested conditional expressions across the
+correction: the owner found post-verification and deletion-finding cases; root
+found the validation-cancellation case inside an invocation argument. The same
+author corrected all three before the final freeze. Producer revalidation also
+found preparation cancellation returning Incomplete instead of the contract's
+Failed result when residual facts were incomplete. A separate Unit assertion
+failed first, then passed after the typed application state was corrected.
+
+Correction `fe1ae684` passed 119 focused cases and twelve full gates: managed
+1979/1045/190, native 1045/190, and managed-on-native 190, without warnings,
+failures or skips. Root independently checked the logs and thirteen artifact
+hashes. Final Task-only candidate `de315968` was integrated at `11e7a5ed` with
+exact tree equality; all 2,655 target-tree inputs matched. This closes Repair,
+including the recorded rework, rather than establishing a clean first-pass
+implementation or a comparative model-cost result.
+
+### Library Passing Controls And Prepared Evidence
+
+Further cause inspection found four passing Route Move/Remove tests stopped at
+missing lifecycle ownership before link safety. Correction 002 first reused an
+invalid complete-coverage fixture with no managed targets; stronger assertions
+caught it. After qualifying real ownership, a source-unsafe-only expectation
+still rejected the equally valid reference-unsafe stage. The accepted contracts
+pin safety and the target, not ordering between those stages. The final four
+controls passed with exact target findings and preserved raw links/snapshots.
+
+Two whitespace-only raw-string lines then failed Git's staged whitespace check
+although dotnet format had preserved them. Exact indentation cleanup retained
+the string values; affected checks were refreshed. Run the cheap authored-diff
+whitespace check before expensive execution, retaining the staged check as well.
+
+Prepared commit `1aa461dc` freezes 126 paths and 89 test files. Its verified
+receipt overlay contains Unit 454 (73 pass, 381 fail), Integration 258 (37 pass,
+221 fail), and fifteen public binder-prerequisite failures. Twenty-three affected
+rows use refreshed receipts; unchanged rows retain their pinned prior receipts.
+Root checked accepted production blobs, test hashes/modes, nine artifact hashes
+and 727 direct-source row pins. Six consumer rows remain deferred. This accepts
+prepared evidence only; final Red and Green still require the post-Cleanup
+consumer boundary. All substantive owners/authors used Astra/high; the evidence
+records their detected defects and correction cost without a measured ranking.
+
+Root's later prose-import gate caught a machine-specific package-cache path in
+the committed Library Task record. The current record now describes that source
+without naming a workstation path. Repository formatting also normalized that
+record. These are owner closeout prose defects caught before root integration;
+immutable history and all prepared C# and evidence identities remain preserved.

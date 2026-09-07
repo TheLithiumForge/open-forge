@@ -84,20 +84,18 @@ open-forge:
   `retained`, and `unknown`.
 - Responsible role: Overseer.
 - Task source: This file.
-- Last updated: 2026-09-06.
+- Last updated: 2026-09-07.
 
 ## Current Execution Horizon
 
-Tasks 16 “Doctor”, 17 “Extension Update”, and 18 “Extension Remove” are
-complete. Task 18 is squash-integrated at `f445a55a`, tree `3b0fb29d`, and is
-dequeued after consumed completion grace. Task 19 “Repair” is active at phase
-4/5, milestone 3/8 with coherent Green open from refrozen transition
-`eae8eb36`. Task 20 “Cleanup” is
-task-locally active at phase 4/5, milestone 3/8 with accepted Red while queued
-after Task 19 for Green. [Task 23 “Workspace Libraries”](workspace-libraries.md)
-is task-locally active at phase 2/5, milestone 1/8 for Gray correction and
-queued after Task 20 for Green and integration. It completes the remaining
-command sequence. [Task 24 “Extensions Evolution”](extensions-evolution.md),
+Task 19 “Repair” is complete at phase 5/5, milestone 8/8 and integrated at
+`11e7a5ed`, exact tree `b2bd951fde4e3afdad87f64a692597e3d167f609`. The six
+Extension commands were already complete. Task 20 “Cleanup” is active at
+phase 4/5, milestone 3/8, ready to refreeze accepted Red on integrated Repair
+and enter Green. [Task 23 “Workspace Libraries”](workspace-libraries.md) is
+phase 2/5, milestone 2/8 with prepared commit `1aa461dc` accepted. Final Red,
+Green and integration remain after Task 20. These two Tasks complete the
+remaining command sequence. [Task 24 “Extensions Evolution”](extensions-evolution.md),
 [Task 25 “Workspace Library Destination Projections”](workspace-library-destination-projections.md),
 and [Task 26 “Extension Internal Consolidation”](extension-internal-consolidation.md)
 are queued post-command work with no phase or milestone

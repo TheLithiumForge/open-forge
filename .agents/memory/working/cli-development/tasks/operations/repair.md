@@ -8,16 +8,16 @@ open-forge:
 
 ## Task State
 
-- State: Acceptance-ready at phase 5 of 5, milestone 7 of 8. Preflight,
-  Gray, Red, the upstream merge/refreeze gate, coherent Green, full managed
-  and Native AOT verification, fresh whole-task review, and the single
-  grouped correction with fresh complete evidence are accepted. Milestone 8
-  is recommended to the Overseer; local integration remains with that owner.
+- State: Complete at phase 5 of 5, milestone 8 of 8. The Overseer accepted
+  the grouped correction and all final evidence, then squash-integrated final
+  candidate `de315968` into `develop` at `11e7a5ed`, with the exact same tree
+  `b2bd951fde4e3afdad87f64a692597e3d167f609`. All 81 C# files retain the
+  fully tested `fe1ae684` source identity; the final candidate changed only
+  this Task receipt. Cleanup may refreeze against the integrated baseline.
 - Permanent mapping: Task 19 “Repair” in the
   [project control ledger](../../project-control.md).
 - Queue relation: Task 18 “Extension Remove” is complete and integrated. Task
-  20 “Cleanup” has accepted Red but holds Green until Task 19 is accepted and
-  integrated.
+  20 “Cleanup” has accepted Red and may begin its baseline refreeze and Green.
 - Parent: [Operational Commands](_operations.md).
 - Contracts: [Interface](../../../../crystallized/documents/cli/contracts/repair/interface.md)
   and [Behavior](../../../../crystallized/documents/cli/contracts/repair/behavior.md).
@@ -298,9 +298,9 @@ composition exposes the existing public syntax.
 Fresh evidence after the storage interruption passed all six selections:
 
 | Command | Unit | Integration | Published |
-| --- | ---: | ---: | ---: |
-| Repair | 60 | 13 | 3 |
-| Doctor | 21 | 3 | 3 |
+| ------- | ---: | ----------: | --------: |
+| Repair  |   60 |          13 |         3 |
+| Doctor  |   21 |           3 |         3 |
 
 All 103 tests passed with zero failures or skips. The three fresh Release
 project builds had zero warnings and errors. Four no-restore, severity-info
@@ -373,14 +373,14 @@ All twelve gates passed; the owner independently checked exact commands,
 source freshness, counts, log hashes, all thirteen artifact identities, and a
 clean index/worktree. No gate reported warnings, failed tests, or skipped tests.
 
-| Execution | Passed tests |
-| --- | ---: |
-| Managed Unit | 1969 |
-| Managed Integration | 1039 |
-| Managed EndToEnd | 190 |
-| Native Integration | 1039 |
-| Native EndToEnd | 190 |
-| Managed EndToEnd against the native CLI | 190 |
+| Execution                               | Passed tests |
+| --------------------------------------- | -----------: |
+| Managed Unit                            |         1969 |
+| Managed Integration                     |         1039 |
+| Managed EndToEnd                        |          190 |
+| Native Integration                      |         1039 |
+| Native EndToEnd                         |          190 |
+| Managed EndToEnd against the native CLI |          190 |
 
 The sequence also passed the cache-only locked restore, Release solution
 build, three supported `linux-x64` Native AOT publishes, and the managed
@@ -418,12 +418,12 @@ fingerprints below. It independently corroborated the full receipts and
 artifact identities, preserved Doctor seam, and static composition, but
 returned `CHANGES_REQUIRED` for four material gaps not covered by passing tests.
 
-| Finding | Accepted correction | Earliest affected boundary |
-| --- | --- | --- |
-| T19-R1-001, P1 | Honor every explicit tuple's expected literal and target before forming its union with automatic selection. | Missing Red union coverage and Green selection. |
-| T19-R1-002, P2 | Deduplicate independently parsed identical relinks by normalized tuple fields in request and binding paths. | Gray request normalization. |
-| T19-R1-003, P2 | Start effects as Planned and derive terminal step outcomes from actual application and verification. | Original Red planner oracle, then Green lifecycle/results. |
-| T19-R1-004, P2 | Preserve actual applied/verified subsets and terminal interruption without manufactured blocking or pending facts. | Gray status formation and Green completion. |
+| Finding        | Accepted correction                                                                                                | Earliest affected boundary                                 |
+| -------------- | ------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| T19-R1-001, P1 | Honor every explicit tuple's expected literal and target before forming its union with automatic selection.        | Missing Red union coverage and Green selection.            |
+| T19-R1-002, P2 | Deduplicate independently parsed identical relinks by normalized tuple fields in request and binding paths.        | Gray request normalization.                                |
+| T19-R1-003, P2 | Start effects as Planned and derive terminal step outcomes from actual application and verification.               | Original Red planner oracle, then Green lifecycle/results. |
+| T19-R1-004, P2 | Preserve actual applied/verified subsets and terminal interruption without manufactured blocking or pending facts. | Gray status formation and Green completion.                |
 
 The Task Mastermind revalidated these findings against current immutable source
 and accepted contracts, then released the single `T19-C1` packet to the same
@@ -456,11 +456,11 @@ remained exact `f33f5ebb`; source manifest with the new evidence was
 Both fresh builds had zero warnings/errors; both new test files passed
 severity-info formatting before their freeze. The selected runs produced:
 
-| Selected evidence | Failed as intended | Passing controls | Skipped |
-| --- | ---: | ---: | ---: |
-| New selection and normalization Unit cases, 9 | 4 | 5 | 0 |
-| Original planner cases, 2 | 1 | 1 | 0 |
-| New lifecycle Integration cases, 6 | 5 | 1 | 0 |
+| Selected evidence                             | Failed as intended | Passing controls | Skipped |
+| --------------------------------------------- | -----------------: | ---------------: | ------: |
+| New selection and normalization Unit cases, 9 |                  4 |                5 |       0 |
+| Original planner cases, 2                     |                  1 |                1 |       0 |
+| New lifecycle Integration cases, 6            |                  5 |                1 |       0 |
 
 The selection failures proved stale/unadmitted explicit authority bypass and
 independent duplicate request/binder rejection. Controls preserved a matching
@@ -622,14 +622,14 @@ artifact hashes, the three native-code generation markers and the clean Git
 state. This is evidence of that division's completed work, not a comparative
 speed or cost claim. No additional formal review or correction cycle occurred.
 
-| Complete corrected evidence | Passed | Failed | Skipped |
-| --- | ---: | ---: | ---: |
-| Managed Unit | 1,979 | 0 | 0 |
-| Managed Integration | 1,045 | 0 | 0 |
-| Managed EndToEnd | 190 | 0 | 0 |
-| Native Integration, linux-x64 | 1,045 | 0 | 0 |
-| Native EndToEnd, linux-x64 | 190 | 0 | 0 |
-| Managed EndToEnd against native CLI | 190 | 0 | 0 |
+| Complete corrected evidence         | Passed | Failed | Skipped |
+| ----------------------------------- | -----: | -----: | ------: |
+| Managed Unit                        |  1,979 |      0 |       0 |
+| Managed Integration                 |  1,045 |      0 |       0 |
+| Managed EndToEnd                    |    190 |      0 |       0 |
+| Native Integration, linux-x64       |  1,045 |      0 |       0 |
+| Native EndToEnd, linux-x64          |    190 |      0 |       0 |
+| Managed EndToEnd against native CLI |    190 |      0 |       0 |
 
 All twelve gates exited zero without warnings. Cache-only locked restore
 retained the existing audit configuration; it proves cached dependency

@@ -6,6 +6,25 @@ open-forge:
 
 # CLI Development Checkpoint
 
+## Current Accepted Checkpoint
+
+Task 19 “Repair” is complete at phase 5/5, milestone 8/8, integrated at
+`11e7a5ed` with exact accepted tree `b2bd951fde4e3afdad87f64a692597e3d167f609`.
+Focused 119 and full managed 1979/1045/190, native 1045/190, and
+managed-on-native 190 passed without failures, skips or warnings.
+
+Task 20 “Cleanup” is active at phase 4/5, milestone 3/8: refreeze its accepted
+Red and callable boundary on integrated Repair, then implement. Faraday and
+its continuous Brilliant Implementer use GPT-6 Astra/high. Task 23 “Workspace
+Libraries” remains phase 2/5, milestone 2/8; prepared commit `1aa461dc` is
+accepted, but final Red/Green waits for post-Task 20 consumer integration.
+
+This checkpoint supersedes earlier execution snapshots below; their commit and
+evidence histories remain historical. The project control ledger and child
+Task records own current status. Tasks 24–26, Task 10, conditional Task 21,
+Task 13 and Task 22 retain the accepted queue order. The Task 24/25 functional
+draft still awaits user comments; no publication is authorized.
+
 ## Latest Transfer Boundary
 
 The user re-enabled every pending task on 2026-09-07. The sealed restart

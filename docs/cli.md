@@ -2,8 +2,8 @@
 
 The accepted replacement Open Forge CLI design specifies one future production
 executable for an optional, stateless, deterministic, and idempotent native tool
-for the human-readable Framework. Its development implementation contains the
-accepted foundations and completed read-only command slices, but it has no
+for the human-readable Framework. Its development implementation contains
+read-only and mutating commands, but it has no
 accepted shipping executable and is not released. This document summarizes its
 accepted command interface. The accepted shared
 implementation choices are defined in the [CLI Architecture](../.agents/memory/crystallized/documents/cli/architecture.md);
@@ -221,7 +221,8 @@ residual draft or final path without restoration, rollback, compensation, or
 current-target classification. Whole-command
 success removes the recognized bundle only after final verification; cleanup
 failure is `attention`. The seven statuses and human/JSON stream rules are
-shared. No retained command is implemented or shipped yet.
+shared. All six Extension commands are implemented in the development CLI;
+the replacement CLI remains unreleased.
 
 See the [Extension documentation](extensions.md) and the
 [Extension contract group](../.agents/memory/crystallized/documents/cli/contracts/extension/_extension.md)
@@ -1010,9 +1011,8 @@ behavior.
 
 ### Move or remove a routed subject
 
-The accepted structural mutation commands are shallow grouped command leaves.
-They are part of the non-shipping replacement CLI and are not implemented or
-released yet:
+The structural mutation commands are implemented as shallow grouped command
+leaves in the development CLI, which remains unreleased:
 
 ```text
 open-forge route move <source-reference> <destination-target>
