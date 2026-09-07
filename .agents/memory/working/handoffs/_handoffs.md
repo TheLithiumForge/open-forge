@@ -27,8 +27,8 @@ A Handoff is a sealed snapshot for another reader. It preserves the boundary-spe
 
 ## Entries
 
-Current transfer: [Workspace Libraries Green handoff](2026-09-07_library-green-handoff.md).
-Read it for the frozen Gray/Red stop and detailed implementation preflight. Generated navigation refresh currently reports
+Current transfer: [Workspace Libraries Sol implementation](2026-09-07_library-sol-implementation-handoff.md).
+Read it first, then its linked frozen Gray/Red handoff and detailed preflight. Generated navigation refresh currently reports
 `index.metadata-incomplete` for an existing direct child; preserve the sealed
 historical files while resolving that separate metadata issue.
 

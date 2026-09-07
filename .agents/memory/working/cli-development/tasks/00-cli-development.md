@@ -6,6 +6,17 @@ open-forge:
 
 # Complete The Replacement CLI
 
+## Sol Implementation Transfer
+
+The user selected Sol for the next Task 23 implementation session, then a return
+to the Astra Overseer. The [Sol transfer](../../handoffs/2026-09-07_library-sol-implementation-handoff.md)
+supersedes earlier Astra-only allocation and pending-resumption wording for that
+slice: GPT-5.6 Sol/xhigh owns substantive work; Luna/max handles bounded routine
+execution. The receiving session may begin Green after live-state verification,
+then complete Task 23 review and acceptance evidence and return a clean feature
+candidate. This session remains halted at phase 2/5, milestone 3/8. No worker
+is running; later tasks, integration and publication are not part of the transfer.
+
 ## Current Continuation Boundary
 
 Task 23 consumer contracts, immutable Gray, qualified frozen Red, and the
