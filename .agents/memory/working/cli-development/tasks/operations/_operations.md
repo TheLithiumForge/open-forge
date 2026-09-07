@@ -8,14 +8,15 @@ open-forge:
 
 ## Task State
 
-- State: Active through Task 20 “Cleanup” at phase 4/5, milestone 3/8.
-  Repair is complete at phase 5/5, milestone 8/8 and integrated at `11e7a5ed`,
-  exact accepted tree `b2bd951fde4e3afdad87f64a692597e3d167f609`. Cleanup
-  retains accepted Red and may refreeze on that baseline before Green.
+- State: Complete. Task 20 “Cleanup” is root-accepted at phase 5/5,
+  milestone 8/8 and squash-integrated at `148d378d`, exact candidate tree
+  `ab7e488192b435fdefa0b8d30bf1dc853a6b2327`. Task 19 “Repair” is complete
+  at phase 5/5, milestone 8/8 and integrated at `11e7a5ed`, exact accepted
+  tree `b2bd951fde4e3afdad87f64a692597e3d167f609`.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Initial prerequisites: Task 14 “Extension Install” for Status, then Status for
-  Doctor. Status, Doctor, Extension Remove, and Repair are complete. Cleanup
-  remains the final operational command.
+  Doctor. Status, Doctor, Extension Remove, Repair, and Cleanup are complete.
+  Task 23 Workspace Libraries follows at the program boundary.
 
 ## Shared Boundary
 
@@ -54,7 +55,7 @@ healthy.
 - [x] [Task 15: implement complete baseline workspace, lifecycle, managed-source, generated, and recovery-bundle status facts](status.md) — Complete
 - [x] [Task 16: implement diagnosis domains, severity, recommendations, and complete doctor projections](doctor.md) — Complete; no remaining Extension observation horizon
 - [x] [Task 19: implement explicit repair planning, dry run, application, verification, and recovery](repair.md) — Complete at phase 5/5, milestone 8/8; integrated at `11e7a5ed`
-- [ ] [Task 20: implement lease-validated cleanup of recognized recovery bundles and drafts](cleanup.md) — Active at phase 4/5, milestone 3/8; accepted Red, baseline refreeze before Green — Faraday and continuing Brilliant Implementer, Astra/high
+- [x] [Task 20: implement lease-validated cleanup of recognized recovery bundles and drafts](cleanup.md) — Complete at phase 5/5, milestone 8/8; root-accepted and integrated at `148d378d`
 
 ## Entries
 

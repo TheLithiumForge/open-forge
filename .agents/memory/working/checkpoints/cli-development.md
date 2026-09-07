@@ -8,22 +8,33 @@ open-forge:
 
 ## Current Accepted Checkpoint
 
-Task 19 “Repair” is complete at phase 5/5, milestone 8/8, integrated at
-`11e7a5ed` with exact accepted tree `b2bd951fde4e3afdad87f64a692597e3d167f609`.
-Focused 119 and full managed 1979/1045/190, native 1045/190, and
-managed-on-native 190 passed without failures, skips or warnings.
+Task 20 “Cleanup” (phase 5/5): milestone 8/8 is complete and root-accepted.
+Candidate `4be87eaab21080f51eb7e2d753db96cc3ed7e2b2` is squash-integrated at
+`148d378da376d196de183d9564261658164d9d23`, with exact candidate tree
+`ab7e488192b435fdefa0b8d30bf1dc853a6b2327`. Root verified every one of 2,705
+tracked file identities and all 59 delta paths by bytes and modes. Final focused
+250 Unit, 117 Integration, and three public cases pass. Full managed
+2021/1077/193, native 1077/193, and managed-on-native 193 pass with zero
+failures, skips, or warnings. Both accepted R1 findings resolved in the single
+C1; no additional review or full execution is required for exact integration
+and prose closeout.
 
-Task 20 “Cleanup” is active at phase 4/5, milestone 3/8: refreeze its accepted
-Red and callable boundary on integrated Repair, then implement. Faraday and
-its continuous Brilliant Implementer use GPT-6 Astra/high. Task 23 “Workspace
-Libraries” remains phase 2/5, milestone 2/8; prepared commit `1aa461dc` is
-accepted, but final Red/Green waits for post-Task 20 consumer integration.
+Task 23 “Workspace Libraries” (phase 2/5): milestone 2/8 is active under
+Noether, Task Mastermind (`.apm/agents/task-mastermind.agent.md`), GPT-6
+Astra/high. Merge the exact `148d378d` codebase, then complete consumer Gray
+and final Red before Green. Prepared `1aa461dc` evidence and accepted contract
+`c3f01acb`, including the future typed Library Repair exception, remain intact.
+Task 19 “Repair” remains complete and dequeued with grace zero. The project
+control ledger records consumed Task 20 completion grace.
 
-This checkpoint supersedes earlier execution snapshots below; their commit and
-evidence histories remain historical. The project control ledger and child
-Task records own current status. Tasks 24–26, Task 10, conditional Task 21,
-Task 13 and Task 22 retain the accepted queue order. The Task 24/25 functional
-draft still awaits user comments; no publication is authorized.
+This checkpoint supersedes earlier execution snapshots below; their commit
+and evidence histories remain historical. The project control ledger and child
+Task records define current status. Tasks 24–26, Task 10, conditional Task 21,
+Task 13 (phase 1/3, milestone 2/6), and Task 22 retain their queue order.
+Task 24/25 functional drafts await user comments; Task 26 is a pure refactor.
+Publication is not authorized. Test-environment cleanup remains an idea.
+Substantive work uses Astra/high, with high the maximum; routine execution
+uses Luna/max.
 
 ## Latest Transfer Boundary
 
@@ -52,13 +63,10 @@ release.
 
 - Last updated: 2026-09-07.
 
-Current execution is Task 19 “Repair” at phase 4/5, milestone 3/8, with coherent
-Green active from refrozen transition `eae8eb36`. Task 20 “Cleanup” is
-task-locally active at phase 4/5, milestone 3/8 with accepted Red and Green
-held. Task 23 “Workspace Libraries” is task-locally active at phase 2/5,
-milestone 1/8 for Gray correction while queued after Task 20 for Green and
-integration. These three tasks complete the remaining command sequence. Task
-18 “Extension Remove” is complete and dequeued after consumed grace.
+Task 23 “Workspace Libraries” is the remaining command task, active at phase
+2/5, milestone 2/8 for the post-Cleanup consumer boundary and final Red before
+Green. Tasks 19 and 20 are complete and integrated. Task 19 is dequeued; Task
+20 completion visibility follows the project control ledger.
 
 Tasks 24 “Extensions Evolution”, 25 “Workspace Library Destination
 Projections”, and 26 “Extension Internal Consolidation” are queued post-command work

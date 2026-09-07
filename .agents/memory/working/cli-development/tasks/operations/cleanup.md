@@ -18,14 +18,16 @@ open-forge:
   both review findings and the omitted owner line-length gate; fresh gates and
   targeted revalidation passed. Final owner acceptance is recorded below.
 - Current position: phase 5 of 5, completed milestone 8 of 8. Task 19 is
-  accepted and integrated. Cleanup is complete in its owned lane; central
-  integration and queue control remain with the Overseer.
+  accepted and integrated. Cleanup is root-accepted and squash-integrated at
+  `148d378da376d196de183d9564261658164d9d23`, exact candidate tree
+  `ab7e488192b435fdefa0b8d30bf1dc853a6b2327`. Queue control remains with
+  the Overseer.
 - Immutable preparation base: branch `codex/cleanup-implementation`, commit
   `76e8e5f1f58e60a9de159318d10e7b3e9f8fc9c9`, tree
   `ed698b992b68f76b037b4567d154eadbc013239b`.
-- Central project-control, plan, and checkpoint state is unchanged by this
-  record. The Overseer separately released Green after Task 19 acceptance
-  and integration.
+- Central project-control, plan, and checkpoint records now reflect accepted
+  Cleanup integration and Task 23 activation. The released Green and owner
+  acceptance snapshots below retain their original evidence boundaries.
 - Permanent mapping: Task 20 “Cleanup” in the
   [project control ledger](../../project-control.md).
 - Parent: [Operational Commands](_operations.md).
@@ -321,14 +323,14 @@ the one grouped correction after `T20-R1`.
 All required execution gates passed against source candidate `e339e461` with
 zero failures, skips, or warnings:
 
-| Gate | Executed |
-| --- | ---: |
-| Managed Unit | 2017 |
-| Managed Integration | 1070 |
-| Managed EndToEnd | 193 |
-| Native Integration, `linux-x64` | 1070 |
-| Native EndToEnd, `linux-x64` | 193 |
-| Managed EndToEnd against native root | 193 |
+| Gate                                 | Executed |
+| ------------------------------------ | -------: |
+| Managed Unit                         |     2017 |
+| Managed Integration                  |     1070 |
+| Managed EndToEnd                     |      193 |
+| Native Integration, `linux-x64`      |     1070 |
+| Native EndToEnd, `linux-x64`         |      193 |
+| Managed EndToEnd against native root |      193 |
 
 The native root, Integration, and EndToEnd publications succeeded and produced
 ELF executables. Root version output and its marker both report `0.0.0-dev`.
@@ -521,7 +523,48 @@ Milestones 7 and 8 are complete. The continuous author was `cleanup_brilliant`
 (GPT-5.6 Luna/max); the sole review and targeted C1 closure used `cleanup_r1`
 (GPT-6 Astra/high). No further review, correction, or council was consumed.
 Execution evidence covers local Linux x64; other platforms were not exercised.
-No global installation, remote publication, or central integration occurred.
+No global installation or remote publication occurred. Central integration had
+not occurred at this owner-acceptance boundary; the receipt below records its
+subsequent completion.
+
+## Root Acceptance And Integration
+
+The Overseer accepted final owner candidate
+`4be87eaab21080f51eb7e2d753db96cc3ed7e2b2`, exact tree
+`ab7e488192b435fdefa0b8d30bf1dc853a6b2327`, and squash-integrated it into
+local `develop` at `148d378da376d196de183d9564261658164d9d23`, the same tree.
+The candidate changes only prose after final tested source `d6edbd53`; its
+final receipt is `artifacts/task20-candidate/final-acceptance.json` in the
+Cleanup implementation worktree.
+
+Root freshly verified all 2,705 tracked files by bytes and modes, every path
+in the 59-path delta (54 C# and five Markdown files), and exact staged/current
+tree equality. The integration checker initially treated an added-file manifest
+`oldMode` of `000000` as different from an absent predecessor. Correcting that
+receipt parser established all 59 delta identities and all 2,705 input
+identities. This was an integration-evidence parsing error, not a candidate
+defect, and required no source correction.
+
+Root acceptance includes the final focused 250 Unit, 117 Integration, and
+three public cases; full managed 2021/1077/193, native 1077/193, and
+managed-on-native 193; three AOT generation and native-identity checks; all
+54 C# files at no more than 200 characters per line; and five empty
+repository-relative format reports with actual analyzer execution. Failures,
+skips, and warnings are zero. Static, protected, callable, and prohibited
+scoped gates are complete. Exact integration and this prose closeout do not
+invalidate the accepted executable evidence or require duplicate full tests.
+
+The same R1 reviewer resolved `T20-R1-001` (P1, physical recovery ancestor and
+bucket links) and `T20-R1-002` (P2, missing human paths and dry-run conditions)
+within the single C1. Closure artifact `artifacts/task20-c1-review/c1.json`
+has SHA-256
+`62f290227f513bc7f3d3452edad5479f530fc775c5c963ae4ced7793931e59b3`.
+R1 and C1 remaining budgets are zero. There was no R2.
+
+The Task is complete at phase 5/5, milestone 8/8. The project control ledger
+owns completion grace and releases Task 23 to consume exact `148d378d`,
+refreeze consumer Gray, and complete final Red before Green. Supported
+execution evidence remains Linux x64; publication is not authorized.
 
 ## Accepted Preflight Authorities
 
@@ -718,11 +761,11 @@ operand, selector, prompt, or hidden Doctor/Repair/lifecycle operation.
 Two provisional commits are retained only as preparation evidence:
 
 - `9f8781f108586758767cd2976659d70bfe10a11a` (`feat(cli): prepare cleanup
-  planning contracts`) contains only `CleanupDefinitions.cs`,
+planning contracts`) contains only `CleanupDefinitions.cs`,
   `Models/Planning/CleanupCatalogue.cs`, `Models/Planning/CleanupPlan.cs`, and
   `Models/Request/CleanupRequest.cs` from the larger Gray ownership set above.
 - `7389818f9eabd45502e4a30f0805dd9b7941961b` (`test(cli): freeze cleanup
-  catalogue contracts`) contains only `CleanupRequestTests.cs` and
+catalogue contracts`) contains only `CleanupRequestTests.cs` and
   `Models/Planning/CleanupCatalogueAndPlanningTests.cs` under the Cleanup Unit
   test directory. Those filenames are evidence and are not the accepted Red
   ownership names above.

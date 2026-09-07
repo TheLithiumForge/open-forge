@@ -29,10 +29,10 @@ Read the [program Task](00-cli-development.md),
 - [x] [CLI Architecture Authority Remediation](cli-architecture-authority-remediation.md) — Task 12 is Complete after all twelve authority dispositions, one fresh Task review/correction, protected-identity closeout, and two bounded integration findings/correction — Implementer: Dedicated Task Mastermind with one Brilliant Implementer and one fresh review
 - [x] [Root Tooling Placement Remediation](root-tooling-placement.md) — Complete and squash-integrated at `f8377094`, exact tree `c05c2ed6`; dequeued after completion-update grace — Implementer: Task 11 Task Mastermind with one Brilliant Implementer and one fresh review
 - [x] [Lifecycle Commands](lifecycle/_lifecycle.md) — Complete: Extension Create, Extension Install, root Install, root Update, Extension Update, and Extension Remove are integrated — Implementer: Overseer-managed command lanes
-- [ ] [Operational Commands](operations/_operations.md) — Active through Task 19 Repair at phase 4/5, milestone 3/8 with coherent Green open; Task 20 is task-locally phase 4/5, milestone 3/8 with Green held — Implementer: Overseer-managed command lanes
+- [x] [Operational Commands](operations/_operations.md) — Complete: Status, Doctor, Repair, and Cleanup are integrated; Task 20 Cleanup completed at phase 5/5, milestone 8/8 in `148d378d` — Implementer: Overseer-managed command lanes
 - [ ] [CLI Command Surface Audit](cli-command-surface-audit.md) — Task 10 is queued until after the retained command sequence; audit only, with no implementation mutation — Implementer: Dedicated Review Mastermind
 - [ ] [CLI Delivery](delivery/_delivery.md) — Planned — Implementer: Not assigned
-- [ ] [Task 23: Workspace Libraries](workspace-libraries.md) — Task-locally active at phase 2/5, milestone 1/8 for Gray correction; queued after Task 20 for Green and integration; accepted contract tip `c3f01acb`
+- [ ] [Task 23: Workspace Libraries](workspace-libraries.md) — Active at phase 2/5, milestone 2/8; integrate post-Cleanup consumers on `148d378d`, refreeze Gray and affected Red, then implement; accepted contract tip `c3f01acb`
 - [ ] [Task 24: Extensions Evolution](extensions-evolution.md) — Queued post-command package-vocabulary and Extension destination-permission decisions; no active phase or milestone horizon
 - [ ] [Task 25: Workspace Library Destination Projections](workspace-library-destination-projections.md) — Queued post-command Library symlink destination decisions; no active phase or milestone horizon
 - [ ] [Task 26: Extension Internal Consolidation](extension-internal-consolidation.md) — Queued pure refactor after all commands and Tasks 24–25; no active phase or milestone horizon
@@ -69,6 +69,7 @@ define execution state.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
+
 - [Parent outcome, scope, authority, and acceptance for the complete replacement CLI program](00-cli-development.md) - #Memory #Working #CLI #Task #Program #Architecture #Development #Contextual #Active
 - [Audit the current replacement CLI Architecture authority and route misplaced detail to narrower sources without changing accepted meaning](cli-architecture-authority-audit.md) - #Memory #Working #Contextual #Complete #CLI #Task #Architecture #Audit #Authority #Documentation
 - [Apply the accepted CLI Architecture authority audit without changing product behavior or requirement strength](cli-architecture-authority-remediation.md) - #Memory #Working #Contextual #Complete #CLI #Task #Architecture #Authority #Documentation #Remediation
@@ -96,4 +97,5 @@ define execution state.
 - [Audit symbolic constants, generated-region authority, and composable active-test foundations across the replacement CLI](test-architecture-and-constants.md) - #Memory #Working #CLI #Task #Testing #Architecture #Constants #Fixtures #Snapshot #Contextual
 - [Execute the accepted Workspace Libraries contracts through bounded preparation, implementation, evidence, and integration](workspace-libraries.md) - #Memory #Working #CLI #Task #Workspace #Library #Contextual #Active #Queued
 - [Prepare consumer-approved Workspace Library projections beyond the .agents tree](workspace-library-destination-projections.md) - #Memory #Working #CLI #Task #Workspace #Library #Destination #Symlink #Contextual #Queued
+
 <!-- open-forge:generated-index:end -->

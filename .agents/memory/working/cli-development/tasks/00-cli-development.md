@@ -88,18 +88,30 @@ open-forge:
 
 ## Current Execution Horizon
 
-Task 19 “Repair” is complete at phase 5/5, milestone 8/8 and integrated at
-`11e7a5ed`, exact tree `b2bd951fde4e3afdad87f64a692597e3d167f609`. The six
-Extension commands were already complete. Task 20 “Cleanup” is active at
-phase 4/5, milestone 3/8, ready to refreeze accepted Red on integrated Repair
-and enter Green. [Task 23 “Workspace Libraries”](workspace-libraries.md) is
-phase 2/5, milestone 2/8 with prepared commit `1aa461dc` accepted. Final Red,
-Green and integration remain after Task 20. These two Tasks complete the
-remaining command sequence. [Task 24 “Extensions Evolution”](extensions-evolution.md),
-[Task 25 “Workspace Library Destination Projections”](workspace-library-destination-projections.md),
-and [Task 26 “Extension Internal Consolidation”](extension-internal-consolidation.md)
-are queued post-command work with no phase or milestone
-horizon. Task 10, conditional Task 21, Task 13, and Task 22 follow in the queue.
+Task 19 “Repair” and Task 20 “Cleanup” are complete at phase 5/5,
+milestone 8/8. Repair is integrated at `11e7a5ed`; Cleanup candidate
+`4be87eaa` is root-accepted and squash-integrated at `148d378d`, exact tree
+`ab7e488192b435fdefa0b8d30bf1dc853a6b2327`. All 2,705 tracked file identities
+and the 59-path Cleanup delta matched by bytes and modes. The
+[Cleanup Task](operations/cleanup.md#root-acceptance-and-integration) records
+final focused/full evidence and both resolved C1 findings.
+
+[Task 23 “Workspace Libraries”](workspace-libraries.md) is now active at
+phase 2/5, milestone 2/8 under Noether, Task Mastermind, GPT-6 Astra/high.
+Its next boundary is merging exact `148d378d`, then completing post-Cleanup
+consumer Gray and final Red before Green. Prepared `1aa461dc` and accepted
+contract `c3f01acb` remain preserved. This is the remaining command task.
+The [project control ledger](../project-control.md) owns current queue and
+completion visibility; earlier execution snapshots below are historical.
+
+[Task 24 “Extensions Evolution”](extensions-evolution.md) and
+[Task 25 “Workspace Library Destination Projections”](workspace-library-destination-projections.md)
+await user comments on their functional drafts.
+[Task 26 “Extension Internal Consolidation”](extension-internal-consolidation.md)
+is a pure refactor after those decisions. Tasks 24–26 have no phase or
+milestone horizon. Task 10 audit, conditional Task 21 remediation, Task 13
+(phase 1/3, milestone 2/6), and Task 22 follow in the queue. Publication is not
+authorized; test-environment cleanup remains an idea.
 
 ## Problem Statement
 

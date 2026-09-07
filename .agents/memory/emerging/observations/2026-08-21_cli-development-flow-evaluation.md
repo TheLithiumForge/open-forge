@@ -460,3 +460,175 @@ the committed Library Task record. The current record now describes that source
 without naming a workstation path. Repository formatting also normalized that
 record. These are owner closeout prose defects caught before root integration;
 immutable history and all prepared C# and evidence identities remain preserved.
+
+### Cleanup Gray Corrections And Green Evidence
+
+Cleanup applied the fixture-qualification lesson before freezing supplemental
+Red: a complete eligible catalogue and matching held lease reached the intended
+unsupported session callable. Freeze `af15f1b6` contains eleven real filesystem
+session cases and three pure progress cases. Preparation still required
+correcting an enum assertion's integer type and a ZIP manifest-order fixture.
+A build receipt predating new Core inputs was excluded. Missing assets after
+artifact cleanup were restored from the existing package cache without changing
+dependencies or audit configuration.
+
+Two inherited Gray gaps required bounded same-author corrections. An invalid
+workspace could not form a truthful result because every plan required a valid
+request; a dedicated empty NotEstablished plan now carries no deletion
+authority. Only positive nullness assertions and compiler-proven locals changed
+in two original Unit files, with predecessor hashes and exact patches retained.
+A nonordinary draft also needed to represent unavailable verification while
+remaining blocked and preserved. Correction `75851d82` passed the original
+thirty-one Unit cases and two new boundary cases. Neither correction changed
+the public contract or consumed the independent review/correction budget.
+
+Before freezing Green, the author found failed lease/session opening could
+report planned paths as retained without current disposition evidence. Two
+additional pure cases failed first; the correction uses the existing Unknown
+state and an explicit no-deletion-attempt cause. A new Green exception also
+named a local variable instead of a parameter. A small enum-projection method
+now names its actual parameter and retains exhaustive handling.
+
+### Cleanup Formatting Selection And Frozen-Test Corrections
+
+The later whole-task pass exposed inherited diagnostics despite the earlier
+clean formatting receipt. A controlled probe retained unchanged known-diagnostic
+source: absolute include paths completed with an empty report, while repository
+relative includes reported the diagnostics. This establishes that local
+selection limitation; it does not prove a general dotnet-format defect. The
+owner withdrew the old blanket clean interpretation. Current coverage binds
+the intended paths and hashes to actual project-analyzer execution logs.
+
+The first textual diagnostic summary also missed two lowercase xUnit2024 IDs;
+reconciling the full JSON reports exposed them. Root inspected and authorized
+only equivalent collection/default syntax, interpolation format, attribute-mask
+assertion form, and stateless helper qualifications across ten original test
+files. Making one helper static exposed a further stateless caller. The final
+packet covers seventeen test diagnostics and two owned Gray parameter names.
+Refreeze `907df556` preserves exact patches and predecessor hashes. Assertions,
+actions and the three public journeys remain intact. All five repository
+relative severity-info checks then passed, covering the complete fifty-file
+Task C# delta. No suppression or extra review/correction cycle was introduced.
+
+### Cleanup Focused Green And Native Preparation
+
+Fresh focused evidence passed 106 lower-tier cases before the three public
+journeys found a missing human success label: two passed and one failed. The
+same author corrected production text without changing the test. A broad
+consumer wildcard discovered zero tests; that receipt was rejected and replaced
+with source-derived class selections. These failures remain in the receipt.
+
+Immutable Green `e339e461` passed 246 Unit, 110 Integration and three public
+cases, with no failures, skips or warnings. Root independently verified all
+1,996 source/configuration files, both manifest hashes, fifty format/design
+source hashes, and sixteen positive-discovery focused receipt log hashes.
+Prose-only candidate `1fc542a1` preserves that tested source. The owner froze all
+2,701 current tracked inputs before staging and accounted for zero untracked
+paths. Full gates passed: managed 2017/1070/193, native 1070/193 and
+managed-on-native 193, without failures, skips or warnings. Root verified eleven
+command log hashes, all three native artifact hashes/lengths/ELF identities,
+and the three native-code generation markers. Review candidate `fc1ec902`
+changes only the Task receipt after `1fc542a1`. The sole independent review is
+active; final acceptance remains pending.
+
+Noether used the immutable candidate for read-only Library integration
+preparation while full gates ran. The packet identifies two shared files that
+need semantic combination, direct static caller adaptations, exhaustive Library
+vocabulary, and preservation of complete typed recovery identity comparison.
+Task 23 remains phase 2/5, milestone 2/8; final Red and Green are held until its
+accepted prerequisite baseline and consumer refreeze.
+
+Faraday, the continuous author and the planned reviewer use Astra/high. The
+exact full-gate executor uses Luna/max. These observations retain inherited and
+authored defects, qualified failures, selection mistakes and correction work;
+they do not establish a clean first pass or a measured model-quality or cost
+advantage over the earlier allocation.
+
+### Cleanup Review And Missing Static Gate
+
+The single Astra/high review returned two material findings after passing
+execution gates. P1: lexical bucket admission allowed an ordinary exact-name
+draft to be enumerated and deleted through a linked recovery directory. P2:
+human views omitted newly observed preserved paths and the required dry-run
+lease/final-validation contingency. Root and the owner confirmed both exact
+contract/source traces before releasing one grouped correction to the same
+author. The existing single-candidate guard and catalogue producer policy remain
+protected; the new Cleanup/session boundary uses existing physical-path
+components. Ancestor evidence uses isolated directories through that same
+production boundary rather than changing shared recovery-storage ancestors.
+
+Root separately requested the required static/protected/callable/line-length
+receipts. The owner had omitted the line-length gate; the complete fifty-file
+scan found thirteen overlong lines. Three were new production lines and ten
+were attribute-list layout in four frozen added test files. This is owner gate
+omission `T20-GATE-001`, separate from the review findings. Root authorized only
+newline/indentation changes in those test lines. Refreeze `b3e3d87e` retains
+preimages, exact patches and every token/string/oracle. Other static inventories
+reported no unexpected ownership or configuration/JavaScript changes and no
+production prohibited-pattern hits. The two null-forgiving matches were the
+unchanged original negative-input assertions. These lexical screens retain
+explicit limits and do not replace semantic inspection.
+
+### Cleanup Qualified Correction Evidence
+
+The first linked-bucket fixture had teardown and ownership qualification
+failures; those receipts were rejected. The same author corrected the new
+fixture, then qualified one real case before expanding the matrix. With
+catalogue eligibility, exact name, target bytes and link ownership established,
+the old operation deleted an owned external test draft through the bucket link.
+Teardown completed cleanly. This is a decisive reproduction of the accepted
+finding; the earlier fixture failures are not equivalent proof.
+
+New-test theory accessibility and missing-import compile failures also required
+correction. C1 Red `4dd94b67`, tree `0658ec1c`, freezes seven filesystem and four
+renderer failures. They reach external deletion, falsely complete preview,
+incorrect session admission, linked-bucket deletion during a held session, the
+new unsupported ancestor-check callable, or the missing human result facts.
+The source correction is written and all fifty-four Task C# files meet the line
+limit; fresh focused and full evidence remains pending. The original reviewer
+will revalidate the accepted IDs within C1, without another whole-task review.
+These results preserve both the successful defect detection and the author/
+owner rework; they still provide no controlled comparison with the prior model
+allocation.
+
+### Cleanup Final Correction And Accepted Integration
+
+The final new storage-boundary implementation raised `CA2208` at
+`RecoveryDeletionStorageBoundary.cs:72`: `nameof(component)` named a local
+observation. The same author replaced it with `nameof(directory)`, the actual
+method parameter. The literal diagnostic/correction trail is preserved in
+`artifacts/task20-c1-green/core-parameter-correction.json`. No frozen assertion
+changed. This is author conformance rework before fresh verification.
+
+Final source `d6edbd53`, tree `7a4085c6`, passed 250 Unit, 117 Integration,
+and the original three public cases. Fresh full gates passed managed
+2021/1077/193, native 1077/193, and managed-on-native 193, with zero
+failures, skips, or warnings. All three AOT generation and native-identity
+checks passed. All 54 Task C# files met the 200-character line limit, and
+five repository-relative format reports were empty with actual analyzer
+execution. Static, protected, callable, and prohibited scoped gates were
+complete. This supersedes the pending verification statements above while
+preserving their failed receipts, selection mistakes, and corrections.
+
+The same independent reviewer revalidated only the accepted IDs within C1.
+`T20-R1-001` (P1, physical recovery ancestor and bucket links) and
+`T20-R1-002` (P2, missing human paths and dry-run conditions) are resolved.
+The closure artifact `artifacts/task20-c1-review/c1.json` has SHA-256
+`62f290227f513bc7f3d3452edad5479f530fc775c5c963ae4ced7793931e59b3`.
+The one review and one correction are consumed; no R2 was added.
+
+Root accepted candidate `4be87eaa` and squash-integrated it at `148d378d`,
+with exact tree `ab7e488192b435fdefa0b8d30bf1dc853a6b2327`. Fresh integration
+verification matched all 2,705 tracked files by bytes and modes and the
+complete 59-path delta: 54 C# and five Markdown files. The first integration
+checker misread added-file manifest `oldMode: 000000` against an absent
+predecessor. Correcting the parser established the full identity match. That
+failure belonged to receipt interpretation and did not require a candidate
+change. Exact staged/current tree verification preserved the accepted final
+execution evidence without duplicating full tests.
+
+Cleanup is complete. The post-Cleanup Library consumer Gray and final Red
+boundary is released on exact `148d378d`, preserving prepared `1aa461dc` and
+accepted `c3f01acb`. This occurrence records successful defect detection,
+author corrections, an omitted owner gate, and a root receipt-parser error.
+It provides no measured model-quality, cost, or latency superiority claim.
