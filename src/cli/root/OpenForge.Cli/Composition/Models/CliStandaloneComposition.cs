@@ -13,6 +13,8 @@ internal sealed record CliStandaloneComposition
 
     public required ICliCommandBinding DoctorBinding { get; init; }
 
+    public required ICliCommandBinding RepairBinding { get; init; }
+
     public required ICliCommandBinding ContextBinding { get; init; }
 
     public required ICliCommandBinding ReferencesBinding { get; init; }

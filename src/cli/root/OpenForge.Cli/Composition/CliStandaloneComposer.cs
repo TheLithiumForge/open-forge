@@ -1,3 +1,16 @@
+using OpenForge.Cli.Core.Commands.Repair.Models.Result;
+using OpenForge.Cli.Core.Commands.Context.Models.Request;
+using OpenForge.Cli.Core.Commands.References.Models.Request;
+using OpenForge.Cli.Core.Commands.Update.Models.Request;
+using OpenForge.Cli.Core.Commands.Install.Models.Request;
+using OpenForge.Cli.Core.Commands.Doctor.Models.Request;
+using OpenForge.Cli.Core.Commands.Status.Models.Request;
+using OpenForge.Cli.Core.Commands.Index.Models.Request;
+using OpenForge.Cli.Core.Commands.Find.Models.Request;
+using OpenForge.Cli.Core.Commands.Repair.Models.Request;
+using OpenForge.Cli.Core.Commands.Repair;
+using OpenForge.Cli.Core.Commands.Repair.Models.Binding;
+using OpenForge.Cli.Core.Commands.Repair.Shared.Rendering;
 using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Core.Commands.Context;
 using OpenForge.Cli.Core.Commands.Context.Models.Binding;
@@ -54,6 +67,7 @@ internal static class CliStandaloneComposer
         var indexSymbols = IndexBinding.CreateSymbols();
         var statusSymbols = StatusBinding.CreateSymbols();
         var doctorSymbols = DoctorBinding.CreateSymbols();
+        var repairSymbols = RepairBinding.CreateSymbols();
         var contextSymbols = ContextBinding.CreateSymbols();
         var referencesSymbols = ReferencesBinding.CreateSymbols();
         var installSymbols = InstallBinding.CreateSymbols();
@@ -67,6 +81,7 @@ internal static class CliStandaloneComposer
                 operationalContributors,
                 lifecycleSnapshotReader),
             DoctorBinding = BuildDoctor(doctorSymbols, operationalContributors),
+            RepairBinding = BuildRepair(repairSymbols, interactiveSession, lockStoreRoot, operationalContributors),
             ContextBinding = BuildContext(contextSymbols),
             ReferencesBinding = BuildReferences(referencesSymbols),
             InstallBinding = BuildInstall(installSymbols, interactiveSession, lockStoreRoot),
@@ -77,6 +92,7 @@ internal static class CliStandaloneComposer
                 new CliRootLeaf(indexSymbols.IndexCommand, []),
                 new CliRootLeaf(statusSymbols.StatusCommand, []),
                 new CliRootLeaf(doctorSymbols.DoctorCommand, []),
+                new CliRootLeaf(repairSymbols.RepairCommand, []),
                 new CliRootLeaf(contextSymbols.ContextCommand, []),
                 new CliRootLeaf(referencesSymbols.ReferencesCommand, []),
                 new CliRootLeaf(installSymbols.InstallCommand, []),
@@ -85,7 +101,19 @@ internal static class CliStandaloneComposer
         };
     }
 
-    private static ICliCommandBinding BuildFind(FindSymbols symbols)
+    private static CliCommandBinding<RepairRequest, RepairResult> BuildRepair(
+        RepairSymbols symbols,
+        CliInteractiveSession interactiveSession,
+        WorkspaceLockStoreRoot? lockStoreRoot,
+        OperationalContributorCatalogue operationalContributors)
+        => RepairBinding.Close(
+            symbols,
+            RepairPresentation.CreateHelp(),
+            RepairOperationFactory.Create(interactiveSession, lockStoreRoot, operationalContributors).ExecuteAsync,
+            RepairPresentation.CreateRenderers(),
+            RepairPresentation.RenderDiagnostic);
+
+    private static CliCommandBinding<FindRequest, FindResult> BuildFind(FindSymbols symbols)
         => FindBinding.Close(
             symbols,
             new FindBindingComponents
@@ -98,7 +126,7 @@ internal static class CliStandaloneComposer
                 DiagnosticRenderer = FindDiagnosticRenderer.Render,
             });
 
-    private static ICliCommandBinding BuildIndex(
+    private static CliCommandBinding<IndexRequest, IndexResult> BuildIndex(
         IndexSymbols symbols,
         WorkspaceLockStoreRoot? lockStoreRoot)
         => IndexBinding.Close(
@@ -110,7 +138,7 @@ internal static class CliStandaloneComposer
                 IndexJsonRenderer.Render),
             diagnosticRenderer: IndexDiagnosticRenderer.Render);
 
-    private static ICliCommandBinding BuildStatus(
+    private static CliCommandBinding<StatusRequest, StatusResult> BuildStatus(
         StatusSymbols symbols,
         OperationalContributorCatalogue operationalContributors,
         LifecycleDocumentSnapshotReader lifecycleSnapshotReader)
@@ -128,7 +156,7 @@ internal static class CliStandaloneComposer
                 DiagnosticRenderer = StatusDiagnosticRenderer.Render,
             });
 
-    private static ICliCommandBinding BuildDoctor(
+    private static CliCommandBinding<DoctorRequest, DoctorResult> BuildDoctor(
         DoctorSymbols symbols,
         OperationalContributorCatalogue operationalContributors)
         => DoctorBinding.Close(
@@ -143,7 +171,7 @@ internal static class CliStandaloneComposer
                 DiagnosticRenderer = DoctorDiagnosticRenderer.Render,
             });
 
-    private static ICliCommandBinding BuildInstall(
+    private static CliCommandBinding<InstallRequest, InstallResult> BuildInstall(
         InstallSymbols symbols,
         CliInteractiveSession interactiveSession,
         WorkspaceLockStoreRoot? lockStoreRoot)
@@ -158,7 +186,7 @@ internal static class CliStandaloneComposer
                 InstallJsonRenderer.Render),
             diagnosticRenderer: InstallDiagnosticRenderer.Render);
 
-    private static ICliCommandBinding BuildUpdate(
+    private static CliCommandBinding<UpdateRequest, UpdateResult> BuildUpdate(
         UpdateSymbols symbols,
         CliInteractiveSession interactiveSession,
         WorkspaceLockStoreRoot? lockStoreRoot)
@@ -173,7 +201,7 @@ internal static class CliStandaloneComposer
                 UpdateJsonRenderer.Render),
             diagnosticRenderer: UpdateDiagnosticRenderer.Render);
 
-    private static ICliCommandBinding BuildReferences(ReferencesSymbols symbols)
+    private static CliCommandBinding<ReferencesRequest, ReferencesResult> BuildReferences(ReferencesSymbols symbols)
         => ReferencesBinding.Close(
             symbols,
             new ReferencesBindingComponents
@@ -186,7 +214,7 @@ internal static class CliStandaloneComposer
                 DiagnosticRenderer = ReferencesDiagnosticRenderer.Render,
             });
 
-    private static ICliCommandBinding BuildContext(ContextSymbols symbols)
+    private static CliCommandBinding<ContextRequest, ContextResult> BuildContext(ContextSymbols symbols)
         => ContextBinding.Close(
             symbols,
             new ContextBindingComponents

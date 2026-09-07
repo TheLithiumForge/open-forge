@@ -101,6 +101,7 @@ internal static class CliCompositionRoot
                 standalone.IndexBinding,
                 standalone.StatusBinding,
                 standalone.DoctorBinding,
+                standalone.RepairBinding,
                 standalone.ContextBinding,
                 standalone.ReferencesBinding,
                 standalone.InstallBinding,
@@ -143,6 +144,7 @@ internal static class CliCompositionRoot
                   find              Find Markdown sources by authored tags and structural headings.
                   status            Inspect workspace, context, lifecycle, generated-navigation, and recovery status.
                   doctor            Diagnose workspace, route, reference, lifecycle, and recovery facts without changing them.
+                  repair            Preview or apply selected local-reference repairs with recovery.
                   extension list    List installed and available Extension packages.
                   extension inspect Inspect one installed or available Extension package.
                   extension create  Create one local Extension package scaffold.
