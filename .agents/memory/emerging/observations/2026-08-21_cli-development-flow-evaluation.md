@@ -253,3 +253,42 @@ six intended Integration failures before the corresponding implementation.
 The original Red files and three public journeys per command stayed fixed.
 This establishes independent failure evidence for a newly identified coverage
 gap; it does not yet establish the quality of the completed implementation.
+
+### New Draft Defects And Owner Detection
+
+Repair’s Astra-authored supplemental test needed a teardown-only correction
+after its target-drift assertions passed. Four later analyzer-only corrections
+required another supplemental freeze update. These are author defects caught
+before acceptance, not clean first-pass evidence. Format supplemental tests
+before freezing their Red hashes. A wrong Doctor selection also produced zero
+tests; the minimum-count gate rejected it before an acceptance claim.
+
+The Repair author separately found missing fresh diagnosis after pre-effect
+refusal/failure. The added one-case oracle failed on the earlier implementation
+with the intended observation-status mismatch; all unrelated inputs survived
+the bounded compiler-input swap unchanged. Corrected acceptance remains pending.
+
+Library finding `T23-GRAY-ARCH-001` identified six newly authored plan/application
+dependencies on presentation types. The owner caught this before Gray acceptance
+and required domain-owned facts plus one semantic result graph consumed by both
+renderers. Record both the author defect and owner detection; neither establishes
+model superiority or measured cost savings.
+
+Root also repeated the already documented handoff Index metadata-incomplete
+condition during unrelated navigation work. It made no changes; targeting only
+the relevant Task parents then passed. Keep known failure conditions in compact
+resumption context to avoid unnecessary probes.
+
+### Storage And Repeated Build Contexts
+
+The user interrupted work when the Windows host volume was nearly full. Local
+inventory found 27.35 GiB in 111 regenerable build-output directories and about
+1.1 GiB of retained recovery archives attributed to temporary test workspaces.
+Only the build outputs were removed under explicit authorization. Exact dirty
+work, task evidence, recovery data, and the global installation were preserved.
+The user deferred test-environment cleanup as an idea and resumed command work.
+
+This shows a storage cost from accumulated worktree build outputs; it is not
+evidence that a particular model caused the disk pressure. Rebuild only active
+required evidence after cleanup, and never reuse removed binaries or restore
+assets as proof of current execution.

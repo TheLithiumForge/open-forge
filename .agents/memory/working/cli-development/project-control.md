@@ -49,6 +49,29 @@ the new routed identity but returned incomplete loading facts; an unchanged
 Directive returned the same condition. This is not a complete Route Inspect
 acceptance claim and remains input for the later command-surface audit.
 
+## Build Storage Interruption
+
+The user briefly paused all CLI work for storage investigation, then authorized
+removing build artifacts only and resumed the original queue. The Overseer
+removed 111 inventoried, ignored `artifacts/bin`, `artifacts/obj`, and
+`artifacts/publish` directories, totaling about 27.35 GiB. Verification retained
+all 92 worktree HEAD/status snapshots and the bytes/modes of 252 dirty or
+untracked paths. Task evidence, preservation snapshots, recovery data, and the
+main `artifacts/npm` global CLI installation remained intact.
+
+Removed binaries and restore assets cannot support later no-build or no-restore
+claims. Active owners restore locked dependencies from the existing local cache
+without disabling NuGet audit or changing package versions, then rebuild their
+required evidence. Historical worktrees need no blanket rebuild. Repair and
+Library owners resumed their existing implementation contexts; Cleanup retains
+its prerequisite hold.
+
+The user deferred [test-environment cleanup](../../emerging/ideas/test-environment-cleanup.md)
+as an idea. No cleanup hook or test-infrastructure change was implemented.
+Progress reports show each Task separately: phase, a milestone bar with one
+character per accepted milestone, and completed/total milestones. Unassigned
+horizons have no invented bar or denominator.
+
 ## Latest Transfer Direction
 
 On 2026-09-07 the user requested an Astra restart handover and re-enabled all
