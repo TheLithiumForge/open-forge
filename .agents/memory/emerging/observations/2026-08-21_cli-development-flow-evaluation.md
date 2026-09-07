@@ -632,3 +632,50 @@ boundary is released on exact `148d378d`, preserving prepared `1aa461dc` and
 accepted `c3f01acb`. This occurrence records successful defect detection,
 author corrections, an omitted owner gate, and a root receipt-parser error.
 It provides no measured model-quality, cost, or latency superiority claim.
+
+### Library Post-Cleanup Baseline
+
+Applying the independent line-length gate before consumer work exposed forty
+lines over 200 characters in four prepared test files at `1aa461dc`. Thirty-seven
+were inherited Route Move theory declarations. This was an omitted preparation
+gate; the inherited lines are not attributed to the resumed Astra authors.
+The owner pinned the exact four-file predecessor inventory, and root verified
+its hashes and reproduced all forty lines. Authorized newline/indentation-only
+patches remained separate from the required static-caller adaptations and
+preserved tokens, strings, actions, and oracles under the original owners.
+
+The first repository-relative analyzer pass found eight unique informational
+diagnostics in three existing Extension Remove bodies newly touched by static
+caller adaptation: seven IDE0305 and one CA1859. Complete JSON retained fifteen
+entries from repeated passes. The same Gray author corrected only those owned
+bodies; renewed formatting was empty. Root verified the complete 385-file
+current C# delta and its hashes, including 382 unchanged inputs and the three
+renewed files. All 385 files met the line limit. This is bounded conformance
+work on an inherited scope, not evidence of new behavioral defects.
+
+Source merge `c9fcd98a`, tree `843d0cad`, builds all six projects with zero
+warnings or errors. Existing Integration controls pass 143/143. Unit controls
+pass 186/187; Cleanup's missing Library producer/operation vocabulary remains
+an explicit consumer obligation. Prepared Unit 454 (73 pass, 381 fail) and
+Integration 258 (37 pass, 221 fail) retain their accepted row multisets, including
+duplicate theory display names and exact failure messages. Nine Library,
+Repair, Cleanup, and Remove help checks exit successfully. These results do
+not establish completed Library behavior. Prose merge `e1c80f41`, tree
+`afe0d60e`, adopts exactly eight central closeout files without changing code.
+
+The same Astra/high Gray author now owns consumer shapes. The accepted outline
+keeps one Library fact graph for Status and Doctor, a finite typed Library
+Repair sibling without a Markdown surrogate, independent Remove ownership and
+no-follow checks, and bounded Cleanup vocabulary and bundle validation. Existing
+regression oracles remain fixed while intermediate Gray names missing stages.
+One coordination sentence briefly assigned consumer evidence to Hopper; the
+owner corrected it to Hamilton before any release or edit. The original Red
+ownership and the reserved R1/C1 budgets remain intact.
+
+Runtime listing alone also proved insufficient to infer lost ownership: after
+context restoration, the listing omitted Noether, a same-name spawn attempt was
+rejected, and a canonical follow-up obtained a live acknowledgement from the
+existing owner. No replacement occurred. Confirm continuity or interruption
+before interpreting an omitted handle as stopped work. These observations
+retain owner and root coordination errors alongside successful checks; they
+provide no measured model-quality, cost, or latency comparison.
