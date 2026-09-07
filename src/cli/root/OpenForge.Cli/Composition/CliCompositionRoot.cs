@@ -102,6 +102,7 @@ internal static class CliCompositionRoot
                 standalone.StatusBinding,
                 standalone.DoctorBinding,
                 standalone.RepairBinding,
+                standalone.CleanupBinding,
                 standalone.ContextBinding,
                 standalone.ReferencesBinding,
                 standalone.InstallBinding,

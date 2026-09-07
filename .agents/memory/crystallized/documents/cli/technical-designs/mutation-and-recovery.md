@@ -318,6 +318,31 @@ activity, define Cleanup results, or choose operation-level removal timing.
 Unknown, malformed, mismatched, differently keyed, or lookalike artifacts remain
 untouched.
 
+Cleanup's multiple-candidate application uses an opaque deletion-validation
+session opened from the held same-workspace lease and its frozen complete
+catalogue. Opening re-enumerates the selected workspace bucket once and compares
+the whole filtered catalogue's relevant identity and semantic facts before any
+deletion. An unavailable, blocked, changed, or cancelled opening grants no
+deletion authority.
+
+Before catalogue enumeration, Cleanup and session opening validate the physical
+recovery-directory chain through the existing managed path-component reader.
+They repeat that check after observation; the held session also checks it before
+candidate validation and deletion. A link, non-directory, or unavailable
+component prevents deletion authority. These checks belong to Cleanup and its
+session; the shared catalogue and existing single-candidate guard retain their
+producer and deletion policies.
+
+The session accepts only an unchanged member of that validated catalogue. Each
+deletion checks the live matching lease and immediately repeats the final's
+semantic validation or the ordinary draft's exact name, path, and kind checks,
+then performs bounded file deletion and proves absence. It does not recatalogue
+after its own deletions. Candidate selection, ordinal ordering, stopping, and
+operation-level effect and residual reporting remain with Cleanup. Empty
+catalogues and dry runs do not acquire a lease or open a session. The session
+adds no persistent state, activity inference, producer policy, or public
+operation; existing single-candidate callers retain their guard policy.
+
 ## Related Current Sources
 
 - [CLI Architecture](../architecture.md)

@@ -20,7 +20,9 @@ This is the accepted current Crystallized contract set for the non-shipping root
 `cleanup` operation. The local Interface Contract defines what a caller may
 enter and observe. The local Behavior Contract defines deterministic catalogue
 formation, deletion, safety, recovery-bundle handling, and conformance. The new
-CLI does not ship yet; implementation and executable proof remain pending Gate 5.
+CLI does not ship yet. Its development implementation provides this operation;
+[Task 20: Cleanup](../../../../../working/cli-development/tasks/operations/cleanup.md)
+records the implementation and execution evidence.
 
 ## Contract Roles
 

@@ -1,3 +1,9 @@
+using OpenForge.Cli.Core.Commands.Cleanup;
+using OpenForge.Cli.Core.Commands.Cleanup.Models.Binding;
+using OpenForge.Cli.Core.Commands.Cleanup.Models.Request;
+using OpenForge.Cli.Core.Commands.Cleanup.Models.Result;
+using OpenForge.Cli.Core.Commands.Cleanup.Shared.Application;
+using OpenForge.Cli.Core.Commands.Cleanup.Shared.Rendering;
 using OpenForge.Cli.Core.Commands.Repair.Models.Result;
 using OpenForge.Cli.Core.Commands.Context.Models.Request;
 using OpenForge.Cli.Core.Commands.References.Models.Request;
@@ -68,6 +74,7 @@ internal static class CliStandaloneComposer
         var statusSymbols = StatusBinding.CreateSymbols();
         var doctorSymbols = DoctorBinding.CreateSymbols();
         var repairSymbols = RepairBinding.CreateSymbols();
+        var cleanupSymbols = CleanupBinding.CreateSymbols();
         var contextSymbols = ContextBinding.CreateSymbols();
         var referencesSymbols = ReferencesBinding.CreateSymbols();
         var installSymbols = InstallBinding.CreateSymbols();
@@ -82,6 +89,7 @@ internal static class CliStandaloneComposer
                 lifecycleSnapshotReader),
             DoctorBinding = BuildDoctor(doctorSymbols, operationalContributors),
             RepairBinding = BuildRepair(repairSymbols, interactiveSession, lockStoreRoot, operationalContributors),
+            CleanupBinding = BuildCleanup(cleanupSymbols, lockStoreRoot),
             ContextBinding = BuildContext(contextSymbols),
             ReferencesBinding = BuildReferences(referencesSymbols),
             InstallBinding = BuildInstall(installSymbols, interactiveSession, lockStoreRoot),
@@ -93,6 +101,7 @@ internal static class CliStandaloneComposer
                 new CliRootLeaf(statusSymbols.StatusCommand, []),
                 new CliRootLeaf(doctorSymbols.DoctorCommand, []),
                 new CliRootLeaf(repairSymbols.RepairCommand, []),
+                new CliRootLeaf(cleanupSymbols.CleanupCommand, []),
                 new CliRootLeaf(contextSymbols.ContextCommand, []),
                 new CliRootLeaf(referencesSymbols.ReferencesCommand, []),
                 new CliRootLeaf(installSymbols.InstallCommand, []),
@@ -100,6 +109,16 @@ internal static class CliStandaloneComposer
             ],
         };
     }
+
+    private static CliCommandBinding<CleanupRequest, CleanupResult> BuildCleanup(CleanupSymbols symbols, WorkspaceLockStoreRoot? lockStoreRoot)
+        => CleanupBinding.Close(symbols, new CleanupBindingComponents
+        {
+            Help = CleanupHelpSections.Create(),
+            Operation = new CleanupOperation(lockStoreRoot),
+            InvalidResultFactory = CleanupInvalidResultFactory.Create,
+            Renderers = new CliRendererSet<CleanupResult>(CleanupPresentation.Human, CleanupPresentation.Json),
+            DiagnosticRenderer = CleanupPresentation.Diagnostic,
+        });
 
     private static CliCommandBinding<RepairRequest, RepairResult> BuildRepair(
         RepairSymbols symbols,

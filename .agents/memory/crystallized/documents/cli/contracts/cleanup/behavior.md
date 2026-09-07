@@ -25,7 +25,9 @@ The [Shared Result Coordinates](../shared/result-coordinates/interface.md) defin
 the accepted shared structured schema and process-status mapping. The [CLI
 Architecture](../../architecture.md) defines source and runtime boundaries,
 BCL-first filesystem structure, the workspace-lock boundary, and recovery
-identity relationships. Implementation and executable proof remain pending Gate 5. The shared
+identity relationships.
+[Task 20: Cleanup](../../../../../working/cli-development/tasks/operations/cleanup.md)
+records the development implementation and execution evidence. The shared
 [Global CLI Flags Behavior Contract](../shared/global-flags/behavior.md) owns
 shared request, workspace, presentation, terminal, and repetition meaning.
 Doctor, Repair, Index, lifecycle, package, and Gate 6 sources retain their own
@@ -368,7 +370,7 @@ A conforming implementation must demonstrate:
 - no Doctor, Repair, Index, Framework or Extension lifecycle, package, build,
   arbitrary filesystem, or Gate 6 documentation/history/release cleanup.
 
-Gate 5 executable proof should use real isolated workspaces and real filesystem
+Executable proof uses real isolated workspaces and real filesystem
 identity, workspace association, and external-root boundaries. The CLI
 Architecture defines the accepted parser, filesystem, concurrency, package, and
 source boundaries. The [Mutation And Recovery Technical

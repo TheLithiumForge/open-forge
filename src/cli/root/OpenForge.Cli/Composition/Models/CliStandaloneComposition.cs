@@ -15,6 +15,8 @@ internal sealed record CliStandaloneComposition
 
     public required ICliCommandBinding RepairBinding { get; init; }
 
+    public required ICliCommandBinding CleanupBinding { get; init; }
+
     public required ICliCommandBinding ContextBinding { get; init; }
 
     public required ICliCommandBinding ReferencesBinding { get; init; }

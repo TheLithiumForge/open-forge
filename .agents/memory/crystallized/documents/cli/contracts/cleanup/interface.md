@@ -27,8 +27,9 @@ the accepted shared structured schema and process-status mapping. The [CLI
 Architecture](../../architecture.md) defines source and runtime boundaries,
 BCL-first filesystem structure, the workspace-lock boundary, and recovery
 identity relationships. This Interface Contract remains the authority for cleanup's public
-meaning. Implementation and executable proof remain pending Gate 5; those
-pending proofs do not weaken the observable boundaries below.
+meaning. The development implementation provides this operation;
+[Task 20: Cleanup](../../../../../working/cli-development/tasks/operations/cleanup.md)
+records its implementation and execution evidence. The CLI remains non-shipping.
 
 ## Purpose And Operation Boundary
 
@@ -399,18 +400,17 @@ Cleanup does not:
   cleanup, reverse a verified deletion, or replay a saved plan; or
 - create or write an activity marker, PID, journal, lock metadata, or another
   activity mechanism; or
-- change the accepted Architecture. Implementation and executable proof for
-  the accepted boundaries remain pending Gate 5.
+- change the accepted Architecture.
 
 The [Shared Result Coordinates](../shared/result-coordinates/interface.md) define
 the structured schema and process-status mapping. The [CLI
 Architecture](../../architecture.md) defines cleanup's cross-cutting artifact
-identity, filesystem, concurrency, and runtime structure. Gate 5 provides
-implementation and executable proof for those decisions.
+identity, filesystem, concurrency, and runtime structure. The development
+implementation follows these decisions; Task 20 records its verification.
 
 ## Verification Requirements
 
-Future conformance evidence must cover:
+Conformance evidence must cover:
 
 - exact root syntax, no operands, no wizard or prompts, shared flags, terminal
   modes, and idempotent Boolean repetition;
