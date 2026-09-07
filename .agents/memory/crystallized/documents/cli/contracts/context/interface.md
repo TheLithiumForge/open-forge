@@ -413,7 +413,7 @@ truncate, summarize, or remove generated regions.
 ### Headings
 
 ```text
-open-forge context directives/writing --content=headings
+open-forge context directives/public-facing-writing --content=headings
 ```
 
 `headings` returns the parsed heading outline for every emitted physical layer

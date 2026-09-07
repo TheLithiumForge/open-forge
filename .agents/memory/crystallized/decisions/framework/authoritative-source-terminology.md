@@ -34,7 +34,7 @@ Open Forge prefers stating role and authority relationships directly. Use `user`
 
 Orchestrators and subagents are agents. An orchestrator may relay user direction or exercise delegated authority within a stated scope, but it does not need a separate `operator` role. Use `decision-maker` only when responsibility for a consequential choice is specifically relevant.
 
-The repository-only [Writing Directive](../../../../directives/writing.md) enforces maintainer use of the [Open Forge Dictionary](../../documents/maintenance/helpers/dictionary.md) when applying this terminology in this repository; neither source is installed in adopting workspaces.
+The repository-only [Writing Directive](../../../../directives/public-facing-writing.md) enforces maintainer use of the [Open Forge Dictionary](../../documents/maintenance/helpers/dictionary.md) when applying this terminology in this repository; neither source is installed in adopting workspaces.
 
 ## Rationale
 
@@ -77,5 +77,5 @@ The accepted vocabulary requires contextual editing rather than global search an
 ## Decision Relationships
 
 - [User-facing writing](user-facing-writing.md)
-- [Repository Writing Directive](../../../../directives/writing.md)
+- [Repository Writing Directive](../../../../directives/public-facing-writing.md)
 - [Distinct Core primitive roles](core-primitives.md)

@@ -6,7 +6,7 @@ open-forge:
 
 # Maintenance Helpers
 
-These helpers support repository authoring, review, and ongoing maintenance through consistent terminology and knowledge placement. The repository-only [Writing Directive](../../../../../directives/writing.md) makes the [Writing Standard](../writing.md) and these helpers mandatory for repository prose; they are not shipped Framework concepts or vocabulary that users must learn.
+These helpers support repository authoring, review, and ongoing maintenance through consistent terminology and knowledge placement. The repository-only [Writing Directive](../../../../../directives/public-facing-writing.md) makes the [Writing Standard](../writing.md) and these helpers mandatory for repository prose; they are not shipped Framework concepts or vocabulary that users must learn.
 
 ## Axioms
 

@@ -90,16 +90,18 @@ open-forge:
 
 Tasks 16 “Doctor”, 17 “Extension Update”, and 18 “Extension Remove” are
 complete. Task 18 is squash-integrated at `f445a55a`, tree `3b0fb29d`, and is
-Recently completed with `1 update remaining`. Task 19 “Repair” is active at
-phase 3/5, milestone 3/8 with accepted Gray and Red; merge and refreeze against
-integrated Task 18 are pending, and Green is not open. Task 20 “Cleanup” is
+dequeued after consumed completion grace. Task 19 “Repair” is active at phase
+4/5, milestone 3/8 with coherent Green open from refrozen transition
+`eae8eb36`. Task 20 “Cleanup” is
 task-locally active at phase 4/5, milestone 3/8 with accepted Red while queued
 after Task 19 for Green. [Task 23 “Workspace Libraries”](workspace-libraries.md)
-is task-locally active at phase 2/5, milestone 1/8 for Gray/Red preparation and
-queued after Task 20 for Green and integration. [Task 24 “Extensions
-Evolution”](extensions-evolution.md) has completed read-only Preflight and remains
-prepared and inactive at milestone 0/8 behind Task 23. Tasks 10, 21, 13, and 22
-remain recorded but explicitly postponed.
+is task-locally active at phase 2/5, milestone 1/8 for Gray correction and
+queued after Task 20 for Green and integration. It completes the remaining
+command sequence. [Task 24 “Extensions Evolution”](extensions-evolution.md),
+[Task 25 “Workspace Library Destination Projections”](workspace-library-destination-projections.md),
+and [Task 26 “Extension Internal Consolidation”](extension-internal-consolidation.md)
+are queued post-command work with no phase or milestone
+horizon. Task 10, conditional Task 21, Task 13, and Task 22 follow in the queue.
 
 ## Problem Statement
 

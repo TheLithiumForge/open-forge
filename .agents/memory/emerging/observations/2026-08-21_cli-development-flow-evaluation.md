@@ -181,3 +181,75 @@ This comparison does not support claims that the current flow is:
 The supported conclusion is limited to the structural and evidence dimensions
 listed above, the identified planning and closeout costs, and the need to test the
 next slice before promoting a reusable workflow rule.
+
+## Astra Restart Comparison
+
+The maintainer explicitly requested model-performance observations for the
+2026-09-07 restart. This bounded comparison therefore records the actual model
+and reasoning allocation: GPT-6 Astra/high for substantive task ownership,
+implementation, and review; GPT-5.6 Luna/max for bounded exploration, literal
+mechanical work, and exact verification. This is a current experiment, not a
+change to the installed Framework or proof of general model superiority.
+
+The [restart handoff](../../working/handoffs/2026-09-07_cli-astra-restart.md)
+and [inventory](../../working/handoffs/2026-09-07_cli-astra-restart-inventory.md)
+preserve the inherited baseline. Repair had an uncompiled operation draft;
+Library recovery had 19 passing Unit cases and one failure, followed by an
+unverified null suppression. These were known defects at transfer, so fixing
+them does not count as an independent discovery by the new model.
+
+Early evidence from the restart is bounded:
+
+- Astra's Repair owner reproduced a warning-free Core Release build from the
+  preserved draft. Full operation and interaction acceptance remain pending.
+- Astra's Library owner replaced the suppression with explicit delete and
+  non-delete branches. Nonincremental Core and Root Release builds passed with
+  zero warnings or errors. Focused recovery evidence remains pending at this
+  observation boundary.
+- Astra's Library owner found that the Task's second Inspect public journey
+  used an unknown supplied ID while the accepted Interface required an omitted
+  ID. The Overseer checked the Interface and returned the Task to that exact
+  public scenario, retaining unknown-ID evidence at a lower tier. This is an
+  evidence-authority correction before Red, not a product change.
+- Astra's Repair owners identified missing interaction and application-integrity
+  evidence in the six accepted Integration cases. Supplemental evidence must
+  demonstrate the failures before implementation, preserve the original frozen
+  cases, and retain exactly three public Repair journeys. Its result is pending.
+
+The comparison must distinguish inherited defects, independent findings,
+accepted corrections, false positives, and final gate outcomes. Record useful
+follow-up evidence here after task acceptance. No controlled speed, cost, token,
+or same-task model comparison is available yet.
+
+### Continuity Cost At Restart
+
+The Plan, project ledger, checkpoint, and Overseer memory contain repeated
+historical receipts alongside current state. Large combined reads repeatedly
+truncated tool output during restart; one Task owner independently reported
+the same occurrence. The recovery was to read the required complete sources in
+bounded chunks and select current governing sections of the broader records.
+This preserves authority while reducing repeated historical output. It does
+not waive complete C# or handoff reading, or change Loader rules.
+
+The existing workflow already calls for compact Working Memory. A later
+coherent maintenance pass should keep current state in those sources and move
+useful completed receipts to a linked historical record, preserving evidence
+and immutable handoffs. This observation does not authorize deleting history.
+
+### Correction Evidence During Resumption
+
+The Library owner replaced the inherited recovery null suppression with
+compiler-proven branches and obtained a fresh 20/20 recovery Unit result.
+Subsequent Integration compilation exposed missed static fixture callers;
+severity-info formatting then exposed nine instance members needing static
+modifiers in that corrected test scope. These are unfinished inherited
+migration consequences. The owner subsequently froze correction `02df72d3`
+after four warning-free builds, severity-info formatting, and focused recovery
+Unit 20/20 and Integration 10/10 with zero failures or skips. Do not count each
+sequential gate as a separate review or as evidence of lower cost.
+
+Repair’s supplemental interaction evidence produced nine intended Unit and
+six intended Integration failures before the corresponding implementation.
+The original Red files and three public journeys per command stayed fixed.
+This establishes independent failure evidence for a newly identified coverage
+gap; it does not yet establish the quality of the completed implementation.

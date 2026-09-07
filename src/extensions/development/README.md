@@ -40,7 +40,7 @@ through the base Framework or an explicit package dependency:
 - `.agents/directives/decision-authority.md`
 - `.agents/directives/execution-safety.md`
 - `.agents/directives/review-evidence.md`
-- `.agents/directives/writing.md`
+- `.agents/directives/public-facing-writing.md`
 - `.agents/guidance/adaptive-collaboration.md`
 - `.agents/guidance/calibrated-agent-reasoning.md`
 - `.agents/patterns/testing/`

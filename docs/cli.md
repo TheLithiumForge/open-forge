@@ -341,7 +341,7 @@ Continuity context (may load again)
 
 Largest continuity sources
   2.4 KiB   memory/working/checkpoints
-  1.9 KiB   directives/writing
+  1.9 KiB   directives/public-facing-writing
   1.1 KiB   memory/crystallized/documents
 
 Workspace structure
@@ -578,8 +578,8 @@ and canonical path per result, preceded by a summary line:
 
 ```text
 result=complete	coverage=complete	universe=default	matches=2
+directives/public-facing-writing	.agents/directives/public-facing-writing.md
 directives/security	.agents/directives/security.md
-directives/writing	.agents/directives/writing.md
 ```
 
 A filtered compact result uses `universe=filtered` in that summary line without
@@ -608,19 +608,19 @@ Source universe:
 Coverage: complete
 Matches: 2
 
+directives/public-facing-writing
+  Path: .agents/directives/public-facing-writing.md
+  Description: Write clear, consistent user communication and source prose
+  Matched:
+    Directive — frontmatter, base
+    Instructions — heading, base, line 9
+
 directives/security
   Path: .agents/directives/security.md
   Description: Apply required workspace security boundaries
   Matched:
     Directive — frontmatter, base
     Instructions — heading, base, line 11
-
-directives/writing
-  Path: .agents/directives/writing.md
-  Description: Write clear, consistent user communication and source prose
-  Matched:
-    Directive — frontmatter, base
-    Instructions — heading, base, line 9
 ```
 
 `--content` independently selects result content through the values

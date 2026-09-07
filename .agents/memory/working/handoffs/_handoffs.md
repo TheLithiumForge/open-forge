@@ -27,6 +27,12 @@ A Handoff is a sealed snapshot for another reader. It preserves the boundary-spe
 
 ## Entries
 
+Current transfer: [CLI Astra restart](2026-09-07_cli-astra-restart.md), with its
+[exact dirty inventory](2026-09-07_cli-astra-restart-inventory.md). Read these
+for the 2026-09-07 transfer. Generated navigation refresh currently reports
+`index.metadata-incomplete` for an existing direct child; preserve the sealed
+historical files while resolving that separate metadata issue.
+
 <!-- open-forge:generated-index:start -->
 - [Sealed continuation state for the CLI release program at the Queue 31 route move and remove review boundary.](2026-08-16_cli-release-gate-2-queue-31.md) - #Memory #Working #Handoff #KeepInMind
 - [Sealed continuation state for the CLI release program after Queue 31 integration and before Queue 32 cleanup disposition.](2026-08-16_cli-release-gate-2-queue-32.md) - #Memory #Working #Handoff #KeepInMind

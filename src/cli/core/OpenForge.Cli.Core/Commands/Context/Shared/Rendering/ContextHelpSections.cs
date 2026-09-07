@@ -28,7 +28,7 @@ internal static class ContextHelpSections
                 heading: "Examples",
                 body: """
                   open-forge context
-                  open-forge context directives/writing --content=headings,section:Instructions
+                  open-forge context directives/public-facing-writing --content=headings,section:Instructions
                   open-forge context memory --additions-only --follow-links=2 --json
                 """),
             new CliHelpSection(heading: "Results and streams", body: ResultsAndStreams()),

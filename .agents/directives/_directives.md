@@ -29,7 +29,7 @@ Directives contain required instructions.
 - [Binding Open Forge-maintenance instructions, narrowed by CLI, Framework, testing, and TypeScript scopes](open-forge/_open-forge.md) - #Directive #CLI #Framework #Testing #TypeScript
 - [Keep architecture and cross-cutting contracts in one accepted top-down model before delegating closed implementation slices](program-architecture.md) - #LoadNow #Core #Directive #Architecture #Planning #Task #Delegation #Integration
 - [Calibrate development rigor, safety, and complexity to the project's real consequences before adding exceptional machinery](proportional-development.md) - #LoadNow #Core #Directive #Development #Design #Safety #Simplicity #Platform #Risk #Decision
+- [Write clear, consistent user communication and Open Forge source prose with proportionate authoring and review](public-facing-writing.md) - #LoadNow #Core #Directive #Writing #Terminology
 - [Preserve material review findings with stable identity while avoiding duplicate rationale, repeated review, and observation noise](review-evidence.md) - #LoadNow #Core #Directive #Review #Evidence #Reasoning #Tradeoff #Observation #Dogfooding
 - [Keep behavior and its directly related source, contracts, tests, fixtures, and support together at the narrowest useful scope](source-locality.md) - #LoadNow #Core #Directive #Source #Locality #Contract #Testing #Structure
-- [Write clear, consistent user communication and Open Forge source prose with proportionate authoring and review](writing.md) - #LoadNow #Core #Directive #Writing #Terminology
 <!-- open-forge:generated-index:end -->

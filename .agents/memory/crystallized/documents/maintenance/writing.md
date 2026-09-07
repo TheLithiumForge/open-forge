@@ -11,7 +11,7 @@ open-forge:
 
 Use this repository-only standard when writing or reviewing Open Forge text. This includes public documentation, installable Framework source, current documents, maintenance documents, CLI text, and first-party packages. Workspaces that install Open Forge do not receive this standard.
 
-This standard does not define Markdown syntax, component behavior, code identifiers, external formats, quotations, or archived text. [Canonical Markdown Syntax](../framework/markdown/syntax.md) defines Markdown notation. The source for each component defines what its text must mean. The root [Writing Directive](../../../../directives/writing.md) makes this standard mandatory for repository work. Use the [Open Forge Dictionary](helpers/dictionary.md) when choosing Open Forge terms.
+This standard does not define Markdown syntax, component behavior, code identifiers, external formats, quotations, or archived text. [Canonical Markdown Syntax](../framework/markdown/syntax.md) defines Markdown notation. The source for each component defines what its text must mean. The root [Writing Directive](../../../../directives/public-facing-writing.md) makes this standard mandatory for repository work. Use the [Open Forge Dictionary](helpers/dictionary.md) when choosing Open Forge terms.
 
 ## Values
 

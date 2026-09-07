@@ -6,6 +6,25 @@ open-forge:
 
 # CLI Development Checkpoint
 
+## Latest Transfer Boundary
+
+The user re-enabled every pending task on 2026-09-07. The sealed restart
+[handoff](../handoffs/2026-09-07_cli-astra-restart.md) and
+[inventory](../handoffs/2026-09-07_cli-astra-restart-inventory.md) preserve the transfer evidence;
+current queue state is reconciled here and in the project control ledger.
+Repair remains phase 4/5, milestone 3/8 with an unfinished Green draft.
+Library remains phase 2/5, milestone 1/8 with Gray correction active and Red
+read-only until immutable Gray acceptance. Cleanup retains accepted Red at
+phase 4/5, milestone 3/8, with Green held for Repair integration and refreeze.
+
+The transfer captured 28 dirty Repair paths, 102 dirty Library paths, and
+eleven dirty queue paths with empty indexes. These are historical inventories,
+not fresh correctness evidence or live counts. Main overlapping draft bytes
+and the queue draft were preserved before reconciliation. Current owners
+inspect their own live lanes and use only their own worktree artifacts. Every
+C# author and reviewer personally reads and fingerprints the complete current
+C# directives and applies the relevant Patterns throughout the work.
+
 ## Goal
 
 Complete the replacement CLI from its accepted Architecture and command
@@ -14,17 +33,18 @@ release.
 
 - Last updated: 2026-09-07.
 
-Current execution is Task 19 “Repair” at phase 3/5, milestone 3/8, with accepted
-Gray and Red. Merge and refreeze against integrated Task 18 are pending, and
-Green is not open. Task 20 “Cleanup” is task-locally active at phase 4/5,
-milestone 3/8 with accepted Red and Green held. Task 18 “Extension Remove” is Complete and Recently completed with
-`1 update remaining`. The queued last-stage implementation order after Task 20 is
-Task 23 “Workspace Libraries”, then Task 24 “Extensions Evolution”. Task 17 is
-complete and dequeued with consumed grace. Tasks 10, 21, 13, and 22 remain
-explicitly postponed. Task 23 is task-locally active at phase 2/5, milestone
-1/8 for Gray/Red preparation while queued after Task 20 for Green and
-integration. Task 24 has completed read-only Preflight and remains prepared and
-inactive at milestone 0/8 behind Task 23.
+Current execution is Task 19 “Repair” at phase 4/5, milestone 3/8, with coherent
+Green active from refrozen transition `eae8eb36`. Task 20 “Cleanup” is
+task-locally active at phase 4/5, milestone 3/8 with accepted Red and Green
+held. Task 23 “Workspace Libraries” is task-locally active at phase 2/5,
+milestone 1/8 for Gray correction while queued after Task 20 for Green and
+integration. These three tasks complete the remaining command sequence. Task
+18 “Extension Remove” is complete and dequeued after consumed grace.
+
+Tasks 24 “Extensions Evolution”, 25 “Workspace Library Destination
+Projections”, and 26 “Extension Internal Consolidation” are queued post-command work
+with no phase or milestone horizon. Task 10, conditional Task 21, Task 13, and Task 22
+also remain queued.
 
 ## Current State
 
@@ -448,10 +468,10 @@ candidate `9326a921`, final feature tip `8a6fa8de`, and squash integration
 ledger. The post-integration Release build had zero warnings and errors;
 focused Extension Remove Unit `55/55`, Integration `27/27`, public Remove
 `3/3`, and retained public Doctor `3/3` passed with zero failures and skips.
-Task 19 “Repair” is active at phase 3/5, milestone 3/8. Its accepted lane is
+Task 19 “Repair” is active at phase 4/5, milestone 3/8. Its accepted lane is
 record tip `fb8ce672`, tree `129ef2ab`, with Gray `140920d3` and Red
-`af59c957`. Its current step is merge and refreeze against integrated Task 18;
-Green remains closed.
+`af59c957`. Integrated Task 18 was merged at `f0437512`, tree `25d88102`; the
+refrozen transition `eae8eb36`, tree `4b2523e8`, opened coherent Green.
 
 [Mutation Foundation](../cli-development/tasks/mutation-foundation/_mutation-foundation.md)
 is Complete. Public [Index](../cli-development/tasks/read-only/index-command.md)
@@ -678,13 +698,15 @@ prior package outputs remain archived intact.
 
 Task 17 “Extension Update” is Complete at phase 5/5 and milestone 8/8. Review
 `T17-R1` and correction `T17-C1` are consumed; completion grace is consumed.
-Task 18 “Extension Remove” is Complete at phase 5/5, milestone 8/8 and
-integrated. Task 19 “Repair” is active at phase 3/5, milestone 3/8 with accepted
-Gray and Red. Task 20 “Cleanup” is task-locally active at phase 4/5, milestone
-3/8 with accepted Red and Green held. Task 23 “Workspace Libraries” is
-task-locally active at phase 2/5, milestone 1/8 for Gray/Red preparation while
-queued after Task 20 for Green and integration. Task 24 “Extensions Evolution”
-is prepared and inactive at milestone 0/8 behind Task 23.
+Task 18 “Extension Remove” is Complete, integrated, and dequeued after consumed
+grace. Task 19 “Repair” is active at phase 4/5, milestone 3/8 with coherent
+Green open from refrozen transition `eae8eb36`. Task 20 “Cleanup” is
+task-locally active at phase 4/5, milestone 3/8 with accepted Red and Green
+held. Task 23 “Workspace Libraries” is task-locally active at phase 2/5,
+milestone 1/8 for Gray correction while queued after Task 20 for Green and
+integration. Tasks 24 “Extensions Evolution”, 25 “Workspace Library
+Destination Projections”, and 26 “Extension Internal Consolidation” are
+queued post-command work with no active phase or milestone horizon.
 
 The accepted candidate commit `3bcb602569e7e2243a0780e1ff9cbd8f424b6457`, tree
 `63f5b22c9c73dd9aaf2044c88401e5b91638e143`, is integrated into local `develop`
@@ -697,10 +719,10 @@ added, 20 modified, and 0 deleted; its sorted-path SHA-256 is
 final full-gate basis is commit `d3c29a2b20e77c18484b5ab58056063e019d469e`,
 tree `18f76ed403fbe2e9047ad68f289b7c89100421b4`.
 
-Task 18 “Extension Remove” is Complete and integrated. Task 17 is complete and
-dequeued after its completion grace was consumed. Task 19 “Repair” is the
-active task at phase 3/5, milestone 3/8. Task 20 retains accepted Red and holds
-Green behind Task 19.
+Task 18 “Extension Remove” is Complete, integrated, and dequeued after consumed
+grace. Task 17 is complete and dequeued after its completion grace was consumed.
+Task 19 “Repair” is the active task at phase 4/5, milestone 3/8 with coherent
+Green open. Task 20 retains accepted Red and holds Green behind Task 19.
 
 Rejected evidence included SHA-qualified native build configuration, main-repo
 `NODE_PATH`, npm offline materializations, and pre-closure stage attempts. Only
@@ -808,14 +830,16 @@ JSON, and redirected flows never prompt.
 
 ## Next Actions
 
-1. Merge and refreeze Task 19 “Repair” at phase 3/5, milestone 3/8 against
-   integrated Task 18 before opening Green.
-2. Keep Task 20's accepted Red while Green waits for Task 19. Continue Task 23
-   Gray/Red preparation, but keep its Green and integration after Task 20. Keep
-   Task 24 prepared and inactive behind Task 23.
-3. Keep Tasks 10, 21, 13, and 22 explicitly postponed. Require a distinct
-   activation/refreeze before Task 23 Green. Require a distinct maintainer
-   review and contract freeze for Task 24's final draft before implementation.
+1. Complete Task 19 Repair Green and milestone-4 acceptance. Preserve Task
+   20's accepted Red, then refreeze and open its Green after Task 19 integration.
+2. Complete Task 23 Gray correction, then its accepted Red boundary. Keep
+   semantic Green and integration after Task 20.
+3. Prepare final functional drafts for Tasks 24 and 25 during independent
+   command work and return them to the user before implementation. Complete
+   accepted Task 24 work, then Task 25, before Task 26's pure six-command
+   refactor. Do not assign their phase or milestone horizons in this queue edit.
+4. Run Task 10, conditional Task 21 for accepted findings, Task 13, and Task 22
+   in that order. Publication still requires its separately authorized boundary.
 
 ## Current Sources
 
@@ -824,3 +848,15 @@ JSON, and redirected flows never prompt.
 - [Development Plan](../cli-development/plan.md)
 - [Program Task](../cli-development/tasks/00-cli-development.md)
 - [Repository-Root Developer Workflow Task](../cli-development/tasks/repository-root-developer-workflow.md)
+
+## Extension Queue Reconciliation
+
+Done: Preserved all eleven inherited queue drafts and reconciled the older main
+idea and checkpoint changes with the user's re-enabled queue. The invalid old
+Task 24 milestone 0/8 draft was superseded; no horizon is accepted.
+Now: Task 24 “Extensions Evolution”, with no accepted phase or milestone
+horizon, has functional draft preparation active.
+Next: Return final Tasks 24 and 25 functional drafts to the user before
+implementation; maintain the dependency order in the project control ledger.
+Blocker: Package vocabulary and destination-permission proposals still require
+user review. They do not block Repair or bounded Library Gray work.

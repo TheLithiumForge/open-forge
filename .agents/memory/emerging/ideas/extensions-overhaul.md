@@ -51,16 +51,25 @@ Extension lifecycle design.
 - How can any richer relation remain visible without recreating package-manager
   complexity or weakening exact ownership?
 
-### Destinations Beyond `.agents`
+### Destinations And Package Directory Vocabulary
 
 The current replacement CLI deliberately restricts Extension installation to
 strict descendants of `.agents/`; `.apm/` and every other manager root are
-rejected. [Workspace Libraries](workspace-libraries.md) is a separate candidate
-for live projection into ordinary `.agents/**` paths. Its proposed first
-release does not add non-`.agents` destinations, and it does not change the
-Extension boundary. A future Extension lifecycle could still reuse a reviewed
-destination-permission model, but it needs its own accepted ownership, update,
-removal, recovery, and security contract.
+rejected. [Workspace Libraries](workspace-libraries.md) is the separate accepted
+first-release design for live projection into ordinary `.agents/**` paths. It
+does not add non-`.agents` destinations and does not change the Extension
+boundary. Permanent Task 25 preserves a later Library-specific destination
+projection decision. A neutral destination-admission capability may be shared
+only after Extension copies and Library links prove identical path-safety
+meaning; their permission and ownership lifecycles remain separate.
+
+Task 24 must compare `payload/`, the original singular `content/` candidate,
+and the user's `contents/` suggestion as one atomic package-layout decision.
+This remains narrower than a general distribution redesign. No spelling is
+accepted yet. Consumer-owned exact destination allowlists must
+remain separate from package and source metadata: neither can authorize its
+own destinations. Permission may admit a path but does not transfer another
+manager's meaning or ownership.
 
 - Should a package be able to request typed content for another manager without
   claiming that manager's semantics?
@@ -70,8 +79,10 @@ removal, recovery, and security contract.
   letting source-controlled metadata grant itself new destinations?
 - Does another manager treat an installed file as instructions, configuration,
   or executable behavior that needs a stronger review boundary?
-- Would `content/` eventually describe multi-manager package files more clearly
-  than `payload/`, and what compatibility path would preserve existing packages?
+- Would `content/` or `contents/` eventually describe multi-manager package
+  files more clearly than `payload/`, or should `payload/` remain the transport
+  directory? The choice must be reviewed atomically; recording it does not
+  authorize compatibility machinery.
 
 ### Multi-root And Multi-manager Ownership
 
@@ -91,17 +102,26 @@ lifecycle distinct from Extension installation. It is accepted contextual input
 for queued Task 23, does not create another Framework root, and does not
 authorize packaging or externalizing `local/extensions`.
 
-## Queued Task 24 Horizon
+## Post-command Task Split
 
-This accepted idea is linked to queued permanent Task 24 “Extensions Evolution”.
-Task 24 follows Task 23 as a post-command last-stage improvement after Task 20
-and remains outside the active command sequence. Read-only Preflight and draft
-preparation may run now, but the idea remains contextual input and is not an
-implementation contract. The final drafted Extension contracts and CLI package
-require a distinct maintainer review and contract freeze before implementation.
-The [Task 24 record](../../working/cli-development/tasks/extensions-evolution.md)
-is the queue authority. No phase or milestone horizon is assigned until
-activation, and no release plan is part of this queued horizon.
+This idea remains the source for queued permanent Task 24 “Extensions
+Evolution”. Task 24 owns the package-directory decision and consumer-owned
+Extension destination permissions. [Task
+25](../../working/cli-development/tasks/workspace-library-destination-projections.md)
+separately owns any later Library relative-link destinations beyond `.agents/`.
+[Task 26](../../working/cli-development/tasks/extension-internal-consolidation.md)
+owns only the differential-locked six-command internal refactor and public-test
+streamlining after both behavior tasks are settled.
+
+Task 19 “Repair”, Task 20 “Cleanup”, and Task 23 “Workspace Libraries” finish
+the remaining command sequence first. Tasks 24, 25, and 26 are queued with no phase or
+milestone horizon. Read-only functional preparation may overlap command work. Shared and
+public
+implementation remains serialized. The final drafted contracts for
+Tasks 24 and 25 require user review before implementation. The user has
+authorized Task 26; the Overseer freezes its exact differential oracles and
+execution plan before activation. No release plan follows from this queue. The earlier preparation tip
+`8a153f23` remains non-authoritative internal-refactor input for Task 26.
 
 ### Catalogue Governance
 

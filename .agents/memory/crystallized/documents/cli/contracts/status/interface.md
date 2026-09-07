@@ -487,7 +487,7 @@ Continuity context (may load again)
 
 Largest continuity sources
   2.4 KiB   memory/crystallized/documents/cli
-  1.9 KiB   directives/writing
+  1.9 KiB   directives/public-facing-writing
   1.1 KiB   memory/crystallized/documents
 
 Workspace structure

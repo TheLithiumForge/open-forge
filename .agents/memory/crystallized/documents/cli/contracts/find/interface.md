@@ -336,8 +336,8 @@ complete public selection, matching, projection, and result meaning.
 
   ```text
   result=complete	coverage=complete	universe=default	matches=2
+  directives/public-facing-writing	.agents/directives/public-facing-writing.md
   directives/security	.agents/directives/security.md
-  directives/writing	.agents/directives/writing.md
   ```
 
   The compact stream has no heading, workspace block, query explanation,
@@ -386,19 +386,19 @@ complete public selection, matching, projection, and result meaning.
   Projection coverage: not requested
   Matches: 2
 
+  directives/public-facing-writing
+    Path: .agents/directives/public-facing-writing.md
+    Description: Write clear, consistent user communication and source prose
+    Matched:
+      Directive — frontmatter, base
+      Instructions — heading, base, line 9
+
   directives/security
     Path: .agents/directives/security.md
     Description: Apply required workspace security boundaries
     Matched:
       Directive — frontmatter, base
       Instructions — heading, base, line 11
-
-  directives/writing
-    Path: .agents/directives/writing.md
-    Description: Write clear, consistent user communication and source prose
-    Matched:
-      Directive — frontmatter, base
-      Instructions — heading, base, line 9
   ```
 
   For a filtered universe, the same block uses `Mode: filtered` and shows the

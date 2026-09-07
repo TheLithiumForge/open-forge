@@ -9,9 +9,12 @@ open-forge:
 ## Task State
 
 - State: Task-locally Active at phase 2 of 5, milestone 1 of 8. The accepted
-  contract freeze is complete, and Gray and Red preparation are active. In the
+  contract freeze is complete, and Gray correction is active. Red authors
+  remain read-only until immutable Gray acceptance. In the
   project queue, Task 23 remains Queued after Task 20 “Cleanup” for semantic
-  Green and integration, and it precedes Task 24 “Extensions Evolution”.
+  Green and integration. It completes the remaining command sequence before
+  queued Tasks 24 “Extensions Evolution”, 25 “Workspace Library Destination
+  Projections”, and 26 “Extension Internal Consolidation”.
 - Permanent mapping: Task 23 “Workspace Libraries” in the
   [project control ledger](../project-control.md).
 - Accepted contract source at the recorded tip:
@@ -41,9 +44,14 @@ real relative file symlinks with no copy fallback or initial Git diagnostics or
 actions. The accepted contracts and technical design now govern bounded
 preparation; Green still requires the post-Task 20 baseline refreeze.
 
+The first release remains strictly `.agents/**`-only. Task 25 separately
+preserves a possible later consumer-approved destination expansion; it does not
+widen the active Task 23 contract or implementation.
+
 ## Activation Conditions
 
-Gray and Red preparation may proceed against the accepted contracts. Semantic
+Gray correction may proceed against the accepted contracts. Red authors remain
+read-only until immutable Gray acceptance. Semantic
 Green and integration wait for Task 20 integration and an exact baseline
 refreeze. The link-aware guard for Route Update, Index, Route Move, and Route
 Remove, together with a real-filesystem regression, must be accepted before any

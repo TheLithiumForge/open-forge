@@ -8,9 +8,10 @@ open-forge:
 
 ## Task State
 
-- State: Active through Task 19 “Repair” at phase 3/5, milestone 3/8. Repair
-  Preflight, Gray, and Red are accepted; merge and refreeze against integrated
-  Task 18 are pending, and Green is not open.
+- State: Active through Task 19 “Repair” at phase 4/5, milestone 3/8. Repair
+  Preflight, Gray, and Red are accepted. Task 18 integration was merged at
+  `f0437512`; refrozen transition `eae8eb36` opened Green, which remains a
+  draft pending focused verification and acceptance.
 - Parent: [Complete The Replacement CLI](../00-cli-development.md).
 - Initial prerequisites: Task 14 “Extension Install” for Status, then Status for
   Doctor. Status, Doctor, and Task 18 “Extension Remove” are complete. Repair is
@@ -52,16 +53,14 @@ healthy.
 
 - [x] [Task 15: implement complete baseline workspace, lifecycle, managed-source, generated, and recovery-bundle status facts](status.md) — Complete
 - [x] [Task 16: implement diagnosis domains, severity, recommendations, and complete doctor projections](doctor.md) — Complete; no remaining Extension observation horizon
-- [ ] [Task 19: implement explicit repair planning, dry run, application, verification, and recovery](repair.md) — Active at phase 3/5, milestone 3/8; accepted Gray/Red lane awaits merge and refreeze; Green not open — Task Mastermind: Kepler II
-- [ ] [Task 20: implement lease-validated cleanup of recognized recovery bundles and drafts](cleanup.md) — Task-locally active at phase 4/5, milestone 3/8 with accepted Red; queued after Task 19 for Green — Task Mastermind: Hubble II
+- [ ] [Task 19: implement explicit repair planning, dry run, application, verification, and recovery](repair.md) — Active at phase 4/5, milestone 3/8; Green draft after accepted merge/refreeze `eae8eb36` — Task Mastermind allocated by the Overseer
+- [ ] [Task 20: implement lease-validated cleanup of recognized recovery bundles and drafts](cleanup.md) — Task-locally active at phase 4/5, milestone 3/8 with accepted Red; queued after Task 19 for Green — Green owner assigned after Task 19 integration
 
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
 - [Implement lease-validated cleanup of recognized recovery bundles and drafts](cleanup.md) - #Memory #Working #CLI #Task #Cleanup #Mutation #Contextual
 - [Implement diagnosis domains, severity, recommendations, and complete doctor projections](doctor.md) - #Memory #Working #CLI #Task #Doctor #Diagnosis #Contextual
 - [Implement explicit repair planning, dry run, application, verification, and recovery](repair.md) - #Memory #Working #CLI #Task #Repair #Mutation #Recovery #Contextual
 - [Implement complete workspace, lifecycle, managed-source, generated, and recovery-bundle status facts](status.md) - #Memory #Working #CLI #Task #Status #Observation #Contextual
-
 <!-- open-forge:generated-index:end -->

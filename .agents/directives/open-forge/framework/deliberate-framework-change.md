@@ -23,5 +23,5 @@ open-forge:
 
 ### Verification
 
-- Follow the already-loaded repository [Writing Directive](../../writing.md) when writing or reviewing Open Forge prose.
+- Follow the already-loaded repository [Writing Directive](../../public-facing-writing.md) when writing or reviewing Open Forge prose.
 - Verify changed behavior through the public interface that exposes it when one exists.

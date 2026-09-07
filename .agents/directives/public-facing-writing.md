@@ -4,7 +4,7 @@ open-forge:
   tags: [LoadNow, Core, Directive, Writing, Terminology]
 ---
 
-# Writing
+# Public Facing Writing
 
 ## Instructions
 

@@ -166,6 +166,6 @@ When accepted direction changes, update every source that answers a distinct
 affected question. Preserve useful old reasoning in the appropriate historical
 route instead of leaving competing current descriptions.
 
-Follow the repository [Writing Directive](../.agents/directives/writing.md),
+Follow the repository [Writing Directive](../.agents/directives/public-facing-writing.md),
 [Writing Standard](../.agents/memory/crystallized/documents/maintenance/writing.md),
 and [Dictionary](../.agents/memory/crystallized/documents/maintenance/helpers/dictionary.md).

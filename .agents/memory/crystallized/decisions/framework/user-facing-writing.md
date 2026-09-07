@@ -16,7 +16,7 @@ Open Forge maintainers write for technically literate readers who may be new to 
 
 The voice is calm, neutral, boring, and direct. Open Forge uses the same term for the same concept and does not change words only for variety. It assumes basic software knowledge but does not require engineering or prior Open Forge experience.
 
-The repository-only [Writing Directive](../../../../directives/writing.md) makes this behavior mandatory. The [Writing Standard](../../documents/maintenance/writing.md) defines the complete practice, and this Decision records why it was chosen.
+The repository-only [Writing Directive](../../../../directives/public-facing-writing.md) makes this behavior mandatory. The [Writing Standard](../../documents/maintenance/writing.md) defines the complete practice, and this Decision records why it was chosen.
 
 Current installed and public files describe the accepted contract. Historical alternatives and rejected prototypes remain in Decisions or archives. Route descriptions stay compact but contain enough trigger, purpose, or outcome for selection, while detailed meaning stays in the routed destination.
 
@@ -48,7 +48,7 @@ Concise prose still requires judgment. The shortest wording is not always the cl
 
 ## Authoritative Sources
 
-- [Repository Writing Directive](../../../../directives/writing.md)
+- [Repository Writing Directive](../../../../directives/public-facing-writing.md)
 - [Open Forge Writing Standard](../../documents/maintenance/writing.md)
 - [Open Forge Dictionary](../../documents/maintenance/helpers/dictionary.md)
 - [Open Forge Markdown scope](../../documents/framework/markdown/_markdown.md)

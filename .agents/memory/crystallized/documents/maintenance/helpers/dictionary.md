@@ -31,7 +31,7 @@ The dictionary helps maintainers choose consistent words. It does not replace th
 | `managed route`       | Route whose declared manager may update known files as a lifecycle action.          | Management does not create runtime authority.                                              |
 | `overwrite companion` | User-owned `{name}.overwrite.md` file loaded after `{name}.md`.                     | It shares the base file's route and is not indexed separately.                             |
 
-Relative to the Directives entrypoint, `writing.md` is a sibling file, `open-forge/_open-forge.md` is a child entrypoint, and `open-forge/framework/deliberate-framework-change.md` is a descendant. Avoid `non-entrypoint` when the exact relationship is known.
+Relative to the Directives entrypoint, `public-facing-writing.md` is a sibling file, `open-forge/_open-forge.md` is a child entrypoint, and `open-forge/framework/deliberate-framework-change.md` is a descendant. Avoid `non-entrypoint` when the exact relationship is known.
 
 The [routing model](../../framework/routing/model.md), [scope rules](../../framework/routing/scope.md), and [overwrite rules](../../framework/routing/overwrites.md) define the complete behavior.
 
