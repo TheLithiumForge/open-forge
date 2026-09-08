@@ -220,7 +220,7 @@ public sealed class PublishedExtensionRemoveProcessTests
         Assert.Equal(string.Empty, extension.StandardError);
     }
 
-    private static IReadOnlyDictionary<string, string> SnapshotWorkspaceAndSource(
+    private static SortedDictionary<string, string> SnapshotWorkspaceAndSource(
         PublishedExtensionInstallWorkspace working)
     {
         var snapshot = new SortedDictionary<string, string>(StringComparer.Ordinal);
@@ -248,7 +248,7 @@ public sealed class PublishedExtensionRemoveProcessTests
         AssertOrder(
             root.GetProperty("result"),
             "mode", "prune", "automatic", "selection", "dependencies", "paths",
-            "generatedNavigation", "effects", "lifecycle", "recovery", "verification",
+            "generatedNavigation", "effects", "permissions", "lifecycle", "recovery", "verification",
             "packageSourceUnchanged", "findings");
         Assert.Equal(mode, root.GetProperty("result").GetProperty("mode").GetString());
     }
@@ -271,7 +271,7 @@ public sealed class PublishedExtensionRemoveProcessTests
     }
 
     private static string[] EffectPlans(JsonElement result)
-        => result.GetProperty("effects")
+        => [.. result.GetProperty("effects")
             .EnumerateArray()
             .Select(effect => string.Join(
                 "\u001f",
@@ -279,8 +279,7 @@ public sealed class PublishedExtensionRemoveProcessTests
                 effect.GetProperty("packageId").GetString() ?? string.Empty,
                 effect.GetProperty("kind").GetString() ?? string.Empty,
                 effect.GetProperty("action").GetString() ?? string.Empty,
-                effect.GetProperty("residual").GetString() ?? string.Empty))
-            .ToArray();
+                effect.GetProperty("residual").GetString() ?? string.Empty))];
 
     private static void AssertOrder(JsonElement element, params string[] names)
         => Assert.Equal(names, element.EnumerateObject().Select(property => property.Name));

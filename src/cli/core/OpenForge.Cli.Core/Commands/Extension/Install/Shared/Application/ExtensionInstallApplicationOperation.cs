@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
+using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Application;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
@@ -10,18 +12,21 @@ namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Application;
 internal sealed class ExtensionInstallApplicationOperation(
     WorkspaceLockManager lockManager,
     ExtensionInstallApplicationPreconditionValidator preconditionValidator,
+    ExtensionPermissionOperation permissions,
     ExtensionInstallEffectApplication effectApplication)
 {
+    private readonly ExtensionPermissionOperation _permissions = permissions;
     private readonly WorkspaceLockManager _lockManager = lockManager;
     private readonly ExtensionInstallApplicationPreconditionValidator _preconditionValidator = preconditionValidator;
     private readonly ExtensionInstallEffectApplication _effectApplication = effectApplication;
 
     internal async ValueTask<ExtensionInstallApplicationStageResult> ExecuteAsync(
-        ExtensionInstallPlan plan,
+        ExtensionInstallExecutionPlan execution,
         CancellationToken cancellationToken)
     {
+        var plan = execution.Content;
         var operationId = Guid.NewGuid();
-        var progress = ExtensionInstallApplicationProgress.Start(plan, preparation: null);
+        var progress = ExtensionInstallApplicationProgress.Start(execution, preparation: null);
         WorkspaceLockResult lockResult;
         try
         {
@@ -60,7 +65,7 @@ internal sealed class ExtensionInstallApplicationOperation(
         await using (lease.ConfigureAwait(false))
         {
             return await ExecuteUnderLeaseAsync(
-                new ExtensionInstallApplicationLease(plan, lease, operationId),
+                new ExtensionInstallApplicationLease(execution, lease, operationId),
                 progress,
                 cancellationToken).ConfigureAwait(false);
         }
@@ -104,11 +109,28 @@ internal sealed class ExtensionInstallApplicationOperation(
                         "The Extension Install plan changed before application."));
         }
 
+        try
+        {
+            if (!await _permissions.RevalidateAsync(context.Lease, context.Execution.Permission, cancellationToken).ConfigureAwait(false))
+            {
+                return Stop(progress, ExtensionInstallFindingCode.PermissionsChanged,
+                    "Consumer permission changed after the Extension plan was reviewed.");
+            }
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return Stop(progress, ExtensionInstallFindingCode.Interrupted, "Extension permission revalidation was interrupted.");
+        }
+        catch (Exception)
+        {
+            return Stop(progress, ExtensionInstallFindingCode.PermissionsChanged, "Consumer permission could not be revalidated.");
+        }
+
         RecoveryBundlePreparationResult preparation;
         try
         {
             preparation = await ExtensionInstallRecoveryOperation.PrepareAsync(
-                context.Plan,
+                context.Execution,
                 context.OperationId,
                 cancellationToken).ConfigureAwait(false);
         }
@@ -131,15 +153,34 @@ internal sealed class ExtensionInstallApplicationOperation(
                     "Extension Install recovery preparation failed unexpectedly."));
         }
 
-        var preparationBoundary = ReadPreparationBoundary(context.Plan, progress, preparation);
+        var preparationBoundary = ReadPreparationBoundary(context.Execution, progress, preparation);
         if (preparationBoundary is not null)
         {
             return preparationBoundary;
         }
 
         progress = ExtensionInstallApplicationProgress.Start(
-            context.Plan,
+            context.Execution,
             preparation.Preparation);
+        try
+        {
+            var permission = await _permissions.ApplyAsync(context.Lease, context.Execution.Permission,
+                preparation.Preparation, cancellationToken).ConfigureAwait(false);
+            progress = progress with { Permissions = permission.Result };
+            if (permission.Failure is { } failure)
+            {
+                return Stop(progress, ExtensionInstallDefinitions.ReadPermissionFinding(failure), "The consumer permission write did not complete with verification.");
+            }
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return Stop(progress, ExtensionInstallFindingCode.Interrupted, "Extension permission application was interrupted.");
+        }
+        catch (Exception)
+        {
+            return Stop(progress with { Permissions = progress.Permissions with { Outcome = WorkspacePermissionOutcome.CompletionUnknown } },
+                ExtensionInstallFindingCode.PermissionWriteFailed, "Consumer permission write completion could not be determined.");
+        }
         var application = await _effectApplication.ApplyAsync(
             new ExtensionInstallEffectApplicationInput
             {
@@ -169,7 +210,7 @@ internal sealed class ExtensionInstallApplicationOperation(
     }
 
     private static ExtensionInstallApplicationStageResult? ReadPreparationBoundary(
-        ExtensionInstallPlan plan,
+        ExtensionInstallExecutionPlan plan,
         ExtensionInstallApplicationProgress progress,
         RecoveryBundlePreparationResult result)
     {
@@ -220,7 +261,7 @@ internal sealed class ExtensionInstallApplicationOperation(
         };
 
     private static ExtensionInstallRecoveryState ReadPreparationRecoveryState(
-        ExtensionInstallPlan plan,
+        ExtensionInstallExecutionPlan plan,
         RecoveryBundlePreparationResult result)
     {
         if (result.ResidualPath is not null)

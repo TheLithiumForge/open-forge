@@ -267,13 +267,12 @@ internal sealed partial class FileChangeApplier(
                 return true;
             }
 
-            if (preparation.Attribution.Producer == RecoveryBundleProducer.Library
-                && preparation.MatchesChange(lease.Request, change))
+            if (preparation.MatchesChange(lease.Request, change))
             {
                 return true;
             }
 
-            cause = "Create file application accepts only exact Library recovery preparation for a reversible record create.";
+            cause = "Create file application requires exact recovery preparation for a reversible create.";
             return false;
         }
 

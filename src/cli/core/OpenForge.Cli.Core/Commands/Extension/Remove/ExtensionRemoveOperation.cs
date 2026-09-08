@@ -1,3 +1,7 @@
+using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Application;
+using OpenForge.Cli.Core.Commands.Extension.Models.Permissions;
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
+using OpenForge.Cli.Core.Framework.Permissions.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
@@ -11,9 +15,11 @@ namespace OpenForge.Cli.Core.Commands.Extension.Remove;
 internal sealed class ExtensionRemoveOperation(
     ExtensionRemovePlanner planner,
     MutationPreflight preflight,
+    ExtensionPermissionOperation permissions,
     ExtensionRemoveApplicationOperation application)
 {
     private readonly ExtensionRemovePlanner _planner = planner;
+    private readonly ExtensionPermissionOperation _permissions = permissions;
     private readonly MutationPreflight _preflight = preflight;
     private readonly ExtensionRemoveApplicationOperation _application = application;
 
@@ -50,7 +56,7 @@ internal sealed class ExtensionRemoveOperation(
                     "Extension Remove planning failed unexpectedly."));
         }
 
-        if (build.Plan is not { } plan || plan.IsNoOp)
+        if (build.Plan is not { } plan)
         {
             return build.Result;
         }
@@ -93,9 +99,39 @@ internal sealed class ExtensionRemoveOperation(
                     ?? "The complete Extension Remove plan is stale, unavailable, or unsafe.");
         }
 
-        return request.IsDryRun
-            ? build.Result
-            : await _application.ExecuteAsync(plan, build.Result, cancellationToken)
-                .ConfigureAwait(false);
+        ExtensionPermissionStage permission;
+        try
+        {
+            var required = plan.Planning.Decisions.Select(decision => decision.Path)
+                .Where(path => !ExtensionDestinationPolicy.IsImplicit(path.Path))
+                .SelectMany(path => path.SelectedOwnerIds.Select(id =>
+                    new ExtensionPermissionTarget(new WorkspacePermissionRequirement(new ExtensionPermissionSubject(id), path.Path),
+                        path.Action == ExtensionRemovePathAction.Delete ? ExtensionPermissionEffect.Delete : ExtensionPermissionEffect.ReleaseOwnership)));
+            permission = await _permissions.DetermineAsync(new(request.Workspace, [.. required], SourceIdentity: null,
+                AllowPrompt: !request.IsDryRun && !request.Automatic && request.AllowInteraction), cancellationToken).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return ExtensionRemoveResultFactory.PlanBoundary(plan, build.Result, ExtensionRemoveFindingCode.Interrupted,
+                "Extension permission approval was interrupted.");
+        }
+        catch (Exception)
+        {
+            return ExtensionRemoveResultFactory.PlanBoundary(plan, build.Result, ExtensionRemoveFindingCode.OperationFailed,
+                "Extension permission determination failed unexpectedly.");
+        }
+        if (permission.Failure is { } failure)
+        {
+            return ExtensionRemoveResultFactory.PlanBoundary(plan, build.Result, ExtensionRemoveDefinitions.ReadPermissionFinding(failure),
+                "The requested Extension destinations require valid consumer permission.") with
+            { Permissions = permission.Result };
+        }
+        var execution = new ExtensionRemoveExecutionPlan(plan, permission);
+        var planned = build.Result with { Permissions = permission.Result };
+        if (request.IsDryRun || execution.IsNoOp)
+        {
+            return planned;
+        }
+        return await _application.ExecuteAsync(execution, planned, cancellationToken).ConfigureAwait(false);
     }
 }

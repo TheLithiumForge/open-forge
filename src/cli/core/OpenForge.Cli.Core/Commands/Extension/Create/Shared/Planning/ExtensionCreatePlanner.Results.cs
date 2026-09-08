@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Extensions;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Operation;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Resolution;
@@ -134,7 +135,7 @@ internal sealed partial class ExtensionCreatePlanner
                 Kind = ExtensionCreateEffectKind.PayloadAgentsDirectory,
                 Path = Path.Combine(
                     destination,
-                    ExtensionCreateDefinitions.PayloadDirectoryName,
+                    ExtensionPackageLayout.ContentDirectoryName,
                     ExtensionCreateDefinitions.AgentsDirectoryName) + Path.DirectorySeparatorChar,
             },
         ];

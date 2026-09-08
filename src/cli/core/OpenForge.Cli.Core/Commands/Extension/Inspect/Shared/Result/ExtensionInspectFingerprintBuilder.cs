@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 using System.Security.Cryptography;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
@@ -24,15 +25,14 @@ internal sealed class ExtensionInspectFingerprintBuilder(MarkdownFingerprintRead
         var paths = ExtensionInspectInstalledClosureReader.Read(lifecycle.Packages, package)
             .SelectMany(value => value.Paths)
             .ToHashSet(StringComparer.Ordinal);
-        return lifecycle.Paths
+        return [.. lifecycle.Paths
             .Where(path => paths.Contains(path.Path))
-            .OrderBy(path => path.Path, StringComparer.Ordinal)
-            .ToArray();
+            .OrderBy(path => path.Path, StringComparer.Ordinal)];
     }
 
     internal static IReadOnlyList<ExtensionInspectFingerprintFact> ReadBaselineFingerprints(
         IReadOnlyList<LifecycleInstalledPath> records)
-        => records
+        => [.. records
             .Select(record => new ExtensionInspectFingerprintFact
             {
                 Path = record.Path,
@@ -46,8 +46,7 @@ internal sealed class ExtensionInspectFingerprintBuilder(MarkdownFingerprintRead
                     Origin = ExtensionInspectFingerprintOrigin.PersistedBaseline,
                 },
             })
-            .OrderBy(fact => fact.Path, StringComparer.Ordinal)
-            .ToArray();
+            .OrderBy(fact => fact.Path, StringComparer.Ordinal)];
 
     internal IReadOnlyList<ExtensionInspectFingerprintFact> ReadCurrentFingerprints(
         IReadOnlyList<ExtensionInspectCurrentPath> paths,
@@ -81,7 +80,7 @@ internal sealed class ExtensionInspectFingerprintBuilder(MarkdownFingerprintRead
             });
         }
 
-        return values.OrderBy(fact => fact.Path, StringComparer.Ordinal).ToArray();
+        return [.. values.OrderBy(fact => fact.Path, StringComparer.Ordinal)];
     }
 
     internal IReadOnlyList<ExtensionInspectFingerprintFact> ReadIntendedFingerprints(
@@ -98,8 +97,8 @@ internal sealed class ExtensionInspectFingerprintBuilder(MarkdownFingerprintRead
                 ExtensionInspectFindingPolicy.Add(findings, new ExtensionInspectFindingInput
                 {
                     Code = ExtensionInspectFindingCode.FingerprintUnavailable,
-                    Subject = path.Owners.FirstOrDefault(),
-                    PackageId = path.Owners.FirstOrDefault(),
+                    Subject = path.Owners.Count == 0 ? null : path.Owners[0],
+                    PackageId = path.Owners.Count == 0 ? null : path.Owners[0],
                     Path = path.Path,
                     Cause = "Intended package bytes were not retained for fingerprinting.",
                 });
@@ -118,7 +117,7 @@ internal sealed class ExtensionInspectFingerprintBuilder(MarkdownFingerprintRead
             });
         }
 
-        return values.OrderBy(fact => fact.Path, StringComparer.Ordinal).ToArray();
+        return [.. values.OrderBy(fact => fact.Path, StringComparer.Ordinal)];
     }
 
     private ExtensionInspectFingerprint ReadOperationFingerprint(
@@ -128,6 +127,17 @@ internal sealed class ExtensionInspectFingerprintBuilder(MarkdownFingerprintRead
         ICollection<ExtensionInspectFinding> findings,
         IDictionary<string, MarkdownFingerprintFacts> markdownFacts)
     {
+        if (!ExtensionDestinationPolicy.IsImplicit(path))
+        {
+            return new ExtensionInspectFingerprint
+            {
+                Kind = ExtensionInspectFingerprintKind.ExactBytes,
+                Policy = ExtensionInspectDefinitions.FingerprintPolicy,
+                Sha256 = Convert.ToHexStringLower(SHA256.HashData(bytes.Span)),
+                Origin = origin,
+            };
+        }
+
         var markdown = IsMarkdown(path);
         var facts = _fingerprintReader.Read(bytes.Span, supportedMarkdown: markdown);
         if (markdown)

@@ -7,6 +7,16 @@ open-forge:
 
 # Open Forge Extensions MVP Architecture
 
+## Replacement CLI Boundary
+
+The historical MVP design below retains its original `payload/` and overlay
+semantics. The non-shipping replacement CLI instead uses the accepted
+[Extension package layout](../cli/contracts/extension/_extension.md#package-layout)
+and [consumer permission contracts](../cli/contracts/shared/workspace-permissions/_workspace-permissions.md).
+Current first-party source packages use `content/`; the frozen MVP executable is
+not updated to consume them. This distinction does not introduce a compatibility
+reader into either implementation.
+
 ## Status And Scope
 
 Open Forge Extensions are a dogfooded MVP whose long-term architecture remains intentionally open. This document is authoritative for the coherent current view of:

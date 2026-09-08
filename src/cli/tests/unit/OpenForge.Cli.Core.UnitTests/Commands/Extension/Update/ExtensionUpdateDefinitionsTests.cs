@@ -61,7 +61,9 @@ public sealed class ExtensionUpdateDefinitionsTests
         ]);
 
         Assert.Empty(parse.Errors);
-        Assert.Equal(["toolkit"], parse.GetValue(symbols.StableIds)!);
+        var stableIds = parse.GetValue(symbols.StableIds);
+        Assert.NotNull(stableIds);
+        Assert.Equal(["toolkit"], stableIds);
         Assert.Equal("/catalogue", parse.GetValue(symbols.Source));
         Assert.True(parse.GetValue(symbols.Force));
         Assert.True(parse.GetValue(symbols.Prune));
@@ -72,7 +74,6 @@ public sealed class ExtensionUpdateDefinitionsTests
     [Fact(DisplayName = "Extension Update maps every finding to its stable machine code and semantic status"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
     public void FindingDefinitionsMapEveryCodeAndStatus()
     {
-        Assert.Equal(30, ExtensionUpdateDefinitions.FindingCodes.Count);
         Assert.Equal(
         [
             ("extension-update.invalid-input", CliSemanticStatus.Invalid),
@@ -88,7 +89,12 @@ public sealed class ExtensionUpdateDefinitionsTests
             ("extension-update.lifecycle-blocked", CliSemanticStatus.Blocked),
             ("extension-update.managed-divergence", CliSemanticStatus.Attention),
             ("extension-update.ownership-conflict", CliSemanticStatus.Blocked),
-            ("extension-update.target-outside-agents", CliSemanticStatus.Blocked),
+            ("extension-update.permission-required", CliSemanticStatus.Blocked),
+            ("extension-update.permission-declined", CliSemanticStatus.Blocked),
+            ("extension-update.permissions-invalid", CliSemanticStatus.Blocked),
+            ("extension-update.permissions-unavailable", CliSemanticStatus.Incomplete),
+            ("extension-update.permissions-changed", CliSemanticStatus.Blocked),
+            ("extension-update.permission-write-failed", CliSemanticStatus.Failed),
             ("extension-update.target-unsafe", CliSemanticStatus.Blocked),
             ("extension-update.projection-unavailable", CliSemanticStatus.Incomplete),
             ("extension-update.generated-region-unsafe", CliSemanticStatus.Blocked),

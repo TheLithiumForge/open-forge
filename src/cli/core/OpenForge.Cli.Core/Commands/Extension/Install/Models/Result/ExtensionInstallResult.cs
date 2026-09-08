@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Request;
 using OpenForge.Cli.Core.Framework.Workspace;
@@ -20,7 +21,12 @@ internal enum ExtensionInstallFindingCode
     ManagedDivergence,
     InitialForceRequired,
     OwnershipConflict,
-    TargetOutsideAgents,
+    PermissionRequired,
+    PermissionDeclined,
+    PermissionsInvalid,
+    PermissionsUnavailable,
+    PermissionsChanged,
+    PermissionWriteFailed,
     TargetUnsafe,
     ProjectionUnavailable,
     GeneratedRegionUnsafe,
@@ -180,10 +186,7 @@ internal sealed record ExtensionInstallFootprint
         IEnumerable<string> generatedRegions,
         IEnumerable<string> directories)
     {
-        if (packageCount < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(packageCount));
-        }
+        ArgumentOutOfRangeException.ThrowIfNegative(packageCount);
 
         PackageCount = packageCount;
         PayloadTargets = ExtensionInstallResultSnapshots.SnapshotStrings(payloadTargets, nameof(payloadTargets));
@@ -218,11 +221,10 @@ internal sealed record ExtensionInstallGeneratedNavigation
         IEnumerable<ExtensionInstallGeneratedRegion> regions)
     {
         ArgumentNullException.ThrowIfNull(regions);
-        Regions = new ReadOnlyCollection<ExtensionInstallGeneratedRegion>(regions
+        Regions = new ReadOnlyCollection<ExtensionInstallGeneratedRegion>([.. regions
             .Select(value => value ?? throw new ArgumentException(
                 "Generated Navigation regions cannot contain null members.",
-                nameof(regions)))
-            .ToArray());
+                nameof(regions)))]);
     }
 
     internal IReadOnlyList<ExtensionInstallGeneratedRegion> Regions { get; }
@@ -296,6 +298,8 @@ internal sealed record ExtensionInstallResultFacts
 
     internal required ExtensionInstallGeneratedNavigation? GeneratedNavigation { get; init; }
 
+    internal WorkspacePermissionResult Permissions { get; init; } = WorkspacePermissionResult.NotEvaluated;
+
     internal required ExtensionInstallLifecycle Lifecycle { get; init; }
 
     internal required ExtensionInstallRecovery Recovery { get; init; }
@@ -313,10 +317,10 @@ internal sealed record ExtensionInstallResultFacts
                     value.Selection.SelectedBy,
                     value.Selection.RootIds),
             Source = value.Source,
-            Packages = value.Packages.Select(package => new ExtensionInstallPackage(
+            Packages = [.. value.Packages.Select(package => new ExtensionInstallPackage(
                 package.Id,
                 package.SelectedRoot,
-                package.Dependencies)).ToArray(),
+                package.Dependencies))],
             Framework = value.Framework,
             Footprint = value.Footprint is null
                 ? null
@@ -325,11 +329,12 @@ internal sealed record ExtensionInstallResultFacts
                     value.Footprint.PayloadTargets,
                     value.Footprint.GeneratedRegions,
                     value.Footprint.Directories),
-            Effects = value.Effects.ToArray(),
+            Effects = [.. value.Effects],
             GeneratedNavigation = value.GeneratedNavigation is null
                 ? null
                 : new ExtensionInstallGeneratedNavigation(
                     value.GeneratedNavigation.Regions),
+            Permissions = value.Permissions,
             Lifecycle = value.Lifecycle,
             Recovery = new ExtensionInstallRecovery(
                 value.Recovery.State,
@@ -373,18 +378,18 @@ internal sealed record ExtensionInstallResult : ICliCommandResult
         Footprint = facts.Footprint;
         Effects = Snapshot(facts.Effects, nameof(facts.Effects));
         GeneratedNavigation = facts.GeneratedNavigation;
+        Permissions = facts.Permissions;
         Lifecycle = facts.Lifecycle;
         Recovery = facts.Recovery;
         Verification = facts.Verification;
-        Findings = new ReadOnlyCollection<ExtensionInstallFinding>(findings
+        Findings = new ReadOnlyCollection<ExtensionInstallFinding>([.. findings
             .Select(value => value ?? throw new ArgumentException(
                 "Extension Install findings cannot contain null members.",
                 nameof(findings)))
             .OrderBy(value => value.Code)
             .ThenBy(value => value.Target is null ? 0 : 1)
             .ThenBy(value => value.Target, StringComparer.Ordinal)
-            .ThenBy(value => value.Cause, StringComparer.Ordinal)
-            .ToArray());
+            .ThenBy(value => value.Cause, StringComparer.Ordinal)]);
         Status = ReadStatus(Findings);
         Next = ExtensionInstallDefinitions.ReadNextAction(Status, Findings, input.Request);
     }
@@ -416,6 +421,8 @@ internal sealed record ExtensionInstallResult : ICliCommandResult
     internal IReadOnlyList<ExtensionInstallEffect> Effects { get; }
 
     internal ExtensionInstallGeneratedNavigation? GeneratedNavigation { get; }
+
+    internal WorkspacePermissionResult Permissions { get; }
 
     internal ExtensionInstallLifecycle Lifecycle { get; }
 
@@ -487,15 +494,14 @@ internal sealed record ExtensionInstallResult : ICliCommandResult
             => new(workspace, mode, force, automatic, Request: null);
     }
 
-    private static IReadOnlyList<T> Snapshot<T>(
+    private static ReadOnlyCollection<T> Snapshot<T>(
         IEnumerable<T> values,
         string parameterName)
         where T : class
-        => new ReadOnlyCollection<T>(values
+        => new([.. values
             .Select(value => value ?? throw new ArgumentException(
                 "Extension Install result collections cannot contain null members.",
-                parameterName))
-            .ToArray());
+                parameterName))]);
 
     private static CliSemanticStatus ReadStatus(
         IReadOnlyList<ExtensionInstallFinding> findings)
@@ -522,10 +528,9 @@ file static class ExtensionInstallResultSnapshots
         string parameterName)
     {
         ArgumentNullException.ThrowIfNull(values, parameterName);
-        return new ReadOnlyCollection<string>(values
+        return new ReadOnlyCollection<string>([.. values
             .Select(value => value ?? throw new ArgumentException(
                 "Extension Install string collections cannot contain null members.",
-                parameterName))
-            .ToArray());
+                parameterName))]);
     }
 }

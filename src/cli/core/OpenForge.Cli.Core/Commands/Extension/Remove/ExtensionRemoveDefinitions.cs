@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Extension.Models.Permissions;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Selection;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Request;
@@ -39,6 +40,19 @@ internal static class ExtensionRemoveDefinitions
     internal static IReadOnlyList<ExtensionRemoveFindingCode> FindingCodes { get; } =
         Array.AsReadOnly(Enum.GetValues<ExtensionRemoveFindingCode>());
 
+    internal static ExtensionRemoveFindingCode ReadPermissionFinding(ExtensionPermissionFailure failure)
+        => failure switch
+        {
+            ExtensionPermissionFailure.Required => ExtensionRemoveFindingCode.PermissionRequired,
+            ExtensionPermissionFailure.Declined => ExtensionRemoveFindingCode.PermissionDeclined,
+            ExtensionPermissionFailure.Invalid => ExtensionRemoveFindingCode.PermissionsInvalid,
+            ExtensionPermissionFailure.Unavailable => ExtensionRemoveFindingCode.PermissionsUnavailable,
+            ExtensionPermissionFailure.Changed => ExtensionRemoveFindingCode.PermissionsChanged,
+            ExtensionPermissionFailure.WriteFailed => ExtensionRemoveFindingCode.PermissionWriteFailed,
+            ExtensionPermissionFailure.Interrupted => ExtensionRemoveFindingCode.Interrupted,
+            _ => throw new ArgumentOutOfRangeException(nameof(failure), failure, "The permission failure is not defined."),
+        };
+
     internal static string ReadMachineName(ExtensionRemoveFindingCode code)
         => code switch
         {
@@ -52,7 +66,12 @@ internal static class ExtensionRemoveDefinitions
             ExtensionRemoveFindingCode.DependencyBlocked => "extension-remove.dependency-blocked",
             ExtensionRemoveFindingCode.OwnershipConflict => "extension-remove.ownership-conflict",
             ExtensionRemoveFindingCode.ManagedDivergence => "extension-remove.managed-divergence",
-            ExtensionRemoveFindingCode.TargetOutsideAgents => "extension-remove.target-outside-agents",
+            ExtensionRemoveFindingCode.PermissionRequired => "extension-remove.permission-required",
+            ExtensionRemoveFindingCode.PermissionDeclined => "extension-remove.permission-declined",
+            ExtensionRemoveFindingCode.PermissionsInvalid => "extension-remove.permissions-invalid",
+            ExtensionRemoveFindingCode.PermissionsUnavailable => "extension-remove.permissions-unavailable",
+            ExtensionRemoveFindingCode.PermissionsChanged => "extension-remove.permissions-changed",
+            ExtensionRemoveFindingCode.PermissionWriteFailed => "extension-remove.permission-write-failed",
             ExtensionRemoveFindingCode.TargetUnsafe => "extension-remove.target-unsafe",
             ExtensionRemoveFindingCode.ProjectionUnavailable => "extension-remove.projection-unavailable",
             ExtensionRemoveFindingCode.GeneratedRegionUnsafe => "extension-remove.generated-region-unsafe",
@@ -81,12 +100,16 @@ internal static class ExtensionRemoveDefinitions
             ExtensionRemoveFindingCode.FrameworkUnavailable
                 or ExtensionRemoveFindingCode.LifecycleUnavailable
                 or ExtensionRemoveFindingCode.ProjectionUnavailable
-                or ExtensionRemoveFindingCode.RecoveryUnavailable => CliSemanticStatus.Incomplete,
+                or ExtensionRemoveFindingCode.RecoveryUnavailable
+                or ExtensionRemoveFindingCode.PermissionsUnavailable => CliSemanticStatus.Incomplete,
             ExtensionRemoveFindingCode.FrameworkUnsafe
                 or ExtensionRemoveFindingCode.LifecycleBlocked
                 or ExtensionRemoveFindingCode.DependencyBlocked
                 or ExtensionRemoveFindingCode.OwnershipConflict
-                or ExtensionRemoveFindingCode.TargetOutsideAgents
+                or ExtensionRemoveFindingCode.PermissionRequired
+                or ExtensionRemoveFindingCode.PermissionDeclined
+                or ExtensionRemoveFindingCode.PermissionsInvalid
+                or ExtensionRemoveFindingCode.PermissionsChanged
                 or ExtensionRemoveFindingCode.TargetUnsafe
                 or ExtensionRemoveFindingCode.GeneratedRegionUnsafe
                 or ExtensionRemoveFindingCode.WorkspaceLockUnavailable
@@ -100,7 +123,8 @@ internal static class ExtensionRemoveDefinitions
                 or ExtensionRemoveFindingCode.LifecyclePublicationFailed
                 or ExtensionRemoveFindingCode.VerificationFailed
                 or ExtensionRemoveFindingCode.RecoveryFailed
-                or ExtensionRemoveFindingCode.OperationFailed => CliSemanticStatus.Failed,
+                or ExtensionRemoveFindingCode.OperationFailed
+                or ExtensionRemoveFindingCode.PermissionWriteFailed => CliSemanticStatus.Failed,
             ExtensionRemoveFindingCode.Interrupted => CliSemanticStatus.Interrupted,
             _ => throw new ArgumentOutOfRangeException(
                 nameof(code),

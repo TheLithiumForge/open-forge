@@ -72,13 +72,13 @@ internal sealed class ExtensionCreateDestinationInspector(PhysicalPathResolver p
             if (!IsOrdinaryDirectory(destinationPhysicalIdentity)
                 || !HasExactEntries(
                     destinationPhysicalIdentity,
-                    [ExtensionCreateDefinitions.ManifestFileName, ExtensionCreateDefinitions.PayloadDirectoryName]))
+                    [ExtensionCreateDefinitions.ManifestFileName, ExtensionPackageLayout.ContentDirectoryName]))
             {
                 return Collision(destinationPhysicalIdentity, "The destination is not the exact scaffold.");
             }
 
             var manifestPath = Path.Combine(destinationPhysicalIdentity, ExtensionCreateDefinitions.ManifestFileName);
-            var payloadPath = Path.Combine(destinationPhysicalIdentity, ExtensionCreateDefinitions.PayloadDirectoryName);
+            var payloadPath = Path.Combine(destinationPhysicalIdentity, ExtensionPackageLayout.ContentDirectoryName);
             var agentsPath = Path.Combine(payloadPath, ExtensionCreateDefinitions.AgentsDirectoryName);
             if (!IsOrdinaryFile(manifestPath)
                 || !IsOrdinaryDirectory(payloadPath)

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 using OpenForge.Cli.Core.Commands.Extension.Update.Shared.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Update.Shared.Application;
 using OpenForge.Cli.Core.Framework.Extensions;
@@ -29,15 +30,18 @@ internal static class ExtensionUpdateOperationFactory
             validator,
             new FrameworkLifecycleCurrentnessReader(physicalPathResolver),
             physicalPathResolver);
+        var permissions = new ExtensionPermissionOperation(interactiveSession);
         return new ExtensionUpdateOperation(
             planner,
             new MutationPreflight(validator),
+            permissions,
             new ExtensionUpdateApplicationOperation(
                 lockStoreRoot is null
                     ? WorkspaceLockManager.CreateForCurrentUser()
                     : new WorkspaceLockManager(lockStoreRoot),
                 planner,
                 revalidator,
+                permissions,
                 new ExtensionUpdateEffectApplier(
                     new DirectoryCreationApplier(revalidator, validator),
                     new FileChangeApplier(revalidator, validator))));

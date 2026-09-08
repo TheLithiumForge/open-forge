@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using System.Text;
 using OpenForge.Cli.Core.Framework.Extensions;
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
@@ -49,7 +50,7 @@ public sealed class ExtensionPackageContractTests
     [InlineData(".agents/café.md", false)]
     public void TargetPathGrammarIsExact(string value, bool expected)
     {
-        var actual = ExtensionTargetPath.TryNormalize(value, out var normalized);
+        var actual = PortableWorkspacePath.TryNormalize(value, out var normalized);
 
         Assert.Equal(expected, actual);
         Assert.Equal(expected ? value : string.Empty, normalized);

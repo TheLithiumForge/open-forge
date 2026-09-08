@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Permissions.Shared.Serialization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Presentation;
@@ -33,7 +34,7 @@ internal static class ExtensionInstallJsonProjection
                     {
                         CliWorkspaceSelectionMethod.CurrentDirectory => "current-directory",
                         CliWorkspaceSelectionMethod.ExplicitWorkspace => "explicit-workspace",
-                        _ => throw new ArgumentOutOfRangeException(),
+                        _ => throw new ArgumentOutOfRangeException(nameof(result), result.Workspace.SelectedBy, "The workspace selection method is not defined."),
                     },
                 },
             Result = new ExtensionInstallJsonResult
@@ -44,7 +45,7 @@ internal static class ExtensionInstallJsonProjection
                 Selection = result.Selection is null ? null : new ExtensionInstallJsonSelection
                 {
                     SelectedBy = ExtensionInstallDefinitions.ReadMachineName(result.Selection.SelectedBy),
-                    RootIds = result.Selection.RootIds.ToArray(),
+                    RootIds = [.. result.Selection.RootIds],
                 },
                 Source = result.Source is null ? null : new ExtensionInstallJsonSource
                 {
@@ -53,12 +54,12 @@ internal static class ExtensionInstallJsonProjection
                     Identity = result.Source.Identity,
                     PackageCount = result.Source.PackageCount,
                 },
-                Packages = result.Packages.Select(package => new ExtensionInstallJsonPackage
+                Packages = [.. result.Packages.Select(package => new ExtensionInstallJsonPackage
                 {
                     Id = package.Id,
                     SelectedRoot = package.SelectedRoot,
-                    Dependencies = package.Dependencies.ToArray(),
-                }).ToArray(),
+                    Dependencies = [.. package.Dependencies],
+                })],
                 Framework = result.Framework is null ? null : new ExtensionInstallJsonFramework
                 {
                     InventoryFingerprint = result.Framework.InventoryFingerprint,
@@ -68,11 +69,11 @@ internal static class ExtensionInstallJsonProjection
                 Footprint = result.Footprint is null ? null : new ExtensionInstallJsonFootprint
                 {
                     PackageCount = result.Footprint.PackageCount,
-                    PayloadTargets = result.Footprint.PayloadTargets.ToArray(),
-                    GeneratedRegions = result.Footprint.GeneratedRegions.ToArray(),
-                    Directories = result.Footprint.Directories.ToArray(),
+                    PayloadTargets = [.. result.Footprint.PayloadTargets],
+                    GeneratedRegions = [.. result.Footprint.GeneratedRegions],
+                    Directories = [.. result.Footprint.Directories],
                 },
-                Effects = result.Effects.Select(effect => new ExtensionInstallJsonEffect
+                Effects = [.. result.Effects.Select(effect => new ExtensionInstallJsonEffect
                 {
                     Path = effect.Path,
                     PackageId = effect.PackageId,
@@ -80,17 +81,18 @@ internal static class ExtensionInstallJsonProjection
                     Action = ExtensionInstallDefinitions.ReadMachineName(effect.Action),
                     Outcome = ExtensionInstallDefinitions.ReadMachineName(effect.Outcome),
                     Residual = ExtensionInstallDefinitions.ReadMachineName(effect.Residual),
-                }).ToArray(),
+                })],
                 GeneratedNavigation = result.GeneratedNavigation is null
                     ? null
                     : new ExtensionInstallJsonNavigation
                     {
-                        Regions = result.GeneratedNavigation.Regions.Select(region => new ExtensionInstallJsonRegion
+                        Regions = [.. result.GeneratedNavigation.Regions.Select(region => new ExtensionInstallJsonRegion
                         {
                             Path = region.Path,
                             State = ExtensionInstallDefinitions.ReadMachineName(region.State),
-                        }).ToArray(),
+                        })],
                     },
+                Permissions = WorkspacePermissionJsonProjection.Create(result.Permissions),
                 Lifecycle = new ExtensionInstallJsonLifecycle
                 {
                     Action = ExtensionInstallDefinitions.ReadMachineName(result.Lifecycle.Action),
@@ -99,7 +101,7 @@ internal static class ExtensionInstallJsonProjection
                 Recovery = new ExtensionInstallJsonRecovery
                 {
                     State = ExtensionInstallDefinitions.ReadMachineName(result.Recovery.State),
-                    ProtectedPaths = result.Recovery.ProtectedPaths.ToArray(),
+                    ProtectedPaths = [.. result.Recovery.ProtectedPaths],
                     ResidualPath = result.Recovery.ResidualPath,
                 },
                 Verification = new ExtensionInstallJsonVerification
@@ -111,13 +113,13 @@ internal static class ExtensionInstallJsonProjection
                     FrameworkLifecycle = ExtensionInstallDefinitions.ReadMachineName(
                         result.Verification.FrameworkLifecycle),
                 },
-                Findings = result.Findings.Select(finding => new ExtensionInstallJsonFinding
+                Findings = [.. result.Findings.Select(finding => new ExtensionInstallJsonFinding
                 {
                     Code = ExtensionInstallDefinitions.ReadMachineName(finding.Code),
                     Status = CliStatusDefinitions.Read(finding.Status).MachineName,
                     Target = finding.Target,
                     Cause = finding.Cause,
-                }).ToArray(),
+                })],
             },
             Next = result.Next is null
                 ? null

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Extension.Models.Permissions;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Selection;
@@ -54,6 +55,19 @@ internal static class ExtensionUpdateDefinitions
     internal static IReadOnlyList<ExtensionUpdateFindingCode> FindingCodes { get; } =
         Array.AsReadOnly(Enum.GetValues<ExtensionUpdateFindingCode>());
 
+    internal static ExtensionUpdateFindingCode ReadPermissionFinding(ExtensionPermissionFailure failure)
+        => failure switch
+        {
+            ExtensionPermissionFailure.Required => ExtensionUpdateFindingCode.PermissionRequired,
+            ExtensionPermissionFailure.Declined => ExtensionUpdateFindingCode.PermissionDeclined,
+            ExtensionPermissionFailure.Invalid => ExtensionUpdateFindingCode.PermissionsInvalid,
+            ExtensionPermissionFailure.Unavailable => ExtensionUpdateFindingCode.PermissionsUnavailable,
+            ExtensionPermissionFailure.Changed => ExtensionUpdateFindingCode.PermissionsChanged,
+            ExtensionPermissionFailure.WriteFailed => ExtensionUpdateFindingCode.PermissionWriteFailed,
+            ExtensionPermissionFailure.Interrupted => ExtensionUpdateFindingCode.Interrupted,
+            _ => throw new ArgumentOutOfRangeException(nameof(failure), failure, "The permission failure is not defined."),
+        };
+
     internal static string ReadMachineName(ExtensionUpdateFindingCode code)
         => code switch
         {
@@ -70,7 +84,12 @@ internal static class ExtensionUpdateDefinitions
             ExtensionUpdateFindingCode.LifecycleBlocked => "extension-update.lifecycle-blocked",
             ExtensionUpdateFindingCode.ManagedDivergence => "extension-update.managed-divergence",
             ExtensionUpdateFindingCode.OwnershipConflict => "extension-update.ownership-conflict",
-            ExtensionUpdateFindingCode.TargetOutsideAgents => "extension-update.target-outside-agents",
+            ExtensionUpdateFindingCode.PermissionRequired => "extension-update.permission-required",
+            ExtensionUpdateFindingCode.PermissionDeclined => "extension-update.permission-declined",
+            ExtensionUpdateFindingCode.PermissionsInvalid => "extension-update.permissions-invalid",
+            ExtensionUpdateFindingCode.PermissionsUnavailable => "extension-update.permissions-unavailable",
+            ExtensionUpdateFindingCode.PermissionsChanged => "extension-update.permissions-changed",
+            ExtensionUpdateFindingCode.PermissionWriteFailed => "extension-update.permission-write-failed",
             ExtensionUpdateFindingCode.TargetUnsafe => "extension-update.target-unsafe",
             ExtensionUpdateFindingCode.ProjectionUnavailable => "extension-update.projection-unavailable",
             ExtensionUpdateFindingCode.GeneratedRegionUnsafe => "extension-update.generated-region-unsafe",
@@ -101,13 +120,17 @@ internal static class ExtensionUpdateDefinitions
                 or ExtensionUpdateFindingCode.FrameworkUnavailable
                 or ExtensionUpdateFindingCode.LifecycleUnavailable
                 or ExtensionUpdateFindingCode.ProjectionUnavailable
-                or ExtensionUpdateFindingCode.RecoveryUnavailable => CliSemanticStatus.Incomplete,
+                or ExtensionUpdateFindingCode.RecoveryUnavailable
+                or ExtensionUpdateFindingCode.PermissionsUnavailable => CliSemanticStatus.Incomplete,
             ExtensionUpdateFindingCode.FrameworkUnsafe
                 or ExtensionUpdateFindingCode.SourceOverlap
                 or ExtensionUpdateFindingCode.SourceIdentityConflict
                 or ExtensionUpdateFindingCode.LifecycleBlocked
                 or ExtensionUpdateFindingCode.OwnershipConflict
-                or ExtensionUpdateFindingCode.TargetOutsideAgents
+                or ExtensionUpdateFindingCode.PermissionRequired
+                or ExtensionUpdateFindingCode.PermissionDeclined
+                or ExtensionUpdateFindingCode.PermissionsInvalid
+                or ExtensionUpdateFindingCode.PermissionsChanged
                 or ExtensionUpdateFindingCode.TargetUnsafe
                 or ExtensionUpdateFindingCode.GeneratedRegionUnsafe
                 or ExtensionUpdateFindingCode.WorkspaceLockUnavailable
@@ -121,7 +144,8 @@ internal static class ExtensionUpdateDefinitions
                 or ExtensionUpdateFindingCode.LifecyclePublicationFailed
                 or ExtensionUpdateFindingCode.VerificationFailed
                 or ExtensionUpdateFindingCode.RecoveryFailed
-                or ExtensionUpdateFindingCode.OperationFailed => CliSemanticStatus.Failed,
+                or ExtensionUpdateFindingCode.OperationFailed
+                or ExtensionUpdateFindingCode.PermissionWriteFailed => CliSemanticStatus.Failed,
             ExtensionUpdateFindingCode.Interrupted => CliSemanticStatus.Interrupted,
             _ => throw new ArgumentOutOfRangeException(
                 nameof(code),

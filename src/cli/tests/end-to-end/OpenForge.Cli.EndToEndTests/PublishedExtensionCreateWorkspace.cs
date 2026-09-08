@@ -25,7 +25,7 @@ internal sealed class PublishedExtensionCreateWorkspace : IDisposable
 
     internal string ManifestPath => _catalogue.Combine(StableId, "extension.json");
 
-    internal string PayloadAgentsPath => _catalogue.Combine(StableId, "payload", ".agents");
+    internal string PayloadAgentsPath => _catalogue.Combine(StableId, "content", ".agents");
 
     internal IReadOnlyDictionary<string, string> SnapshotCatalogue() => _catalogue.SnapshotHashes();
 

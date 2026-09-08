@@ -201,10 +201,10 @@ navigation does not define:
 - [Implement ordered context selection, exact content projection, and explicit contained-link expansion](context.md) - #Memory #Working #CLI #Task #Context #ReadOnly #Loading #Contextual
 - [Implement exact Extension package inspection without mutation or installation behavior](extension-inspect.md) - #Memory #Working #CLI #Task #Extension #Inspect #ReadOnly #Contextual
 - [Implement Extension catalogue and source listing without lifecycle inference](extension-list.md) - #Memory #Working #CLI #Task #Extension #List #ReadOnly #Contextual
-- [Author and accept deterministic CommonMark-aware source discovery and Find projections](find.md) - #Memory #Working #CLI #Task #Find #ReadOnly #Markdown #Contextual
 - [Bind, present, and accept the non-shipping Find command through its public views, JSON, diagnostics, and evidence](find-presentation-acceptance.md) - #Memory #Working #CLI #Task #Find #ReadOnly #Presentation #Acceptance #NativeAOT #Contextual
 - [Implement the exact Find query operation over the accepted source catalogue and fixed Markdown facts](find-query-operation.md) - #Memory #Working #CLI #Task #Find #ReadOnly #Query #Markdown #Matching #Projection #Contextual
 - [Establish the neutral Framework source catalogue and migrate Route List and Inspect without public behavior change](find-source-catalogue.md) - #Memory #Working #CLI #Task #Find #ReadOnly #Sources #Route #Framework #Architecture #Contextual
+- [Author and accept deterministic CommonMark-aware source discovery and Find projections](find.md) - #Memory #Working #CLI #Task #Find #ReadOnly #Markdown #Contextual
 - [Implement deterministic generated Entries projection and idempotent index application](index-command.md) - #Memory #Working #CLI #Task #Index #Generated #Mutation #Contextual
 - [Establish pure deterministic Generated Navigation projection and bounded-region facts without effects](index-generated-navigation-foundation.md) - #Memory #Working #CLI #Task #Index #Generated #Framework #ReadOnly #Contextual
 - [Implement direct incoming and outgoing reference facts with shared source-universe filters](references-command.md) - #Memory #Working #CLI #Task #References #ReadOnly #Links #Contextual

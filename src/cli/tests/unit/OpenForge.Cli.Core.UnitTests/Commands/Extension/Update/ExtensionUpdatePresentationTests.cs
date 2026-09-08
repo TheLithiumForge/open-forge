@@ -64,7 +64,7 @@ public sealed class ExtensionUpdatePresentationTests
         Assert.Equal(
         [
             "mode", "force", "prune", "automatic", "selection", "source", "packages",
-            "comparisons", "generatedNavigation", "effects", "lifecycle", "recovery",
+            "comparisons", "generatedNavigation", "effects", "permissions", "lifecycle", "recovery",
             "verification", "findings",
         ],
             root.GetProperty("result").EnumerateObject().Select(property => property.Name));

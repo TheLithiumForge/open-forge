@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Request;
@@ -24,7 +25,7 @@ internal sealed record ExtensionUpdateResult : ICliCommandResult
         if (!Enum.IsDefined(formation.Mode))
         {
             throw new ArgumentOutOfRangeException(
-                nameof(formation.Mode),
+                nameof(formation),
                 formation.Mode,
                 "The Extension Update mode is not defined.");
         }
@@ -40,18 +41,18 @@ internal sealed record ExtensionUpdateResult : ICliCommandResult
         Comparisons = Snapshot(formation.Facts.Comparisons, nameof(formation.Facts.Comparisons));
         GeneratedNavigation = formation.Facts.GeneratedNavigation;
         Effects = Snapshot(formation.Facts.Effects, nameof(formation.Facts.Effects));
+        Permissions = formation.Facts.Permissions;
         Lifecycle = formation.Facts.Lifecycle;
         Recovery = formation.Facts.Recovery;
         Verification = formation.Facts.Verification;
-        Findings = new ReadOnlyCollection<ExtensionUpdateFinding>(formation.Findings
+        Findings = new ReadOnlyCollection<ExtensionUpdateFinding>([.. formation.Findings
             .Select(value => value ?? throw new ArgumentException(
                 "Extension Update findings cannot contain null members.",
-                nameof(formation.Findings)))
+                nameof(formation)))
             .OrderBy(value => value.Code)
             .ThenBy(value => value.Target is null ? 0 : 1)
             .ThenBy(value => value.Target, StringComparer.Ordinal)
-            .ThenBy(value => value.Cause, StringComparer.Ordinal)
-            .ToArray());
+            .ThenBy(value => value.Cause, StringComparer.Ordinal)]);
         Status = ReadStatus(Findings);
         Next = ExtensionUpdateDefinitions.ReadNextAction(
             Status,
@@ -89,6 +90,8 @@ internal sealed record ExtensionUpdateResult : ICliCommandResult
     internal ExtensionUpdateGeneratedNavigation? GeneratedNavigation { get; }
 
     internal IReadOnlyList<ExtensionUpdateEffect> Effects { get; }
+
+    internal WorkspacePermissionResult Permissions { get; init; }
 
     internal ExtensionUpdateLifecycle Lifecycle { get; }
 
@@ -154,13 +157,12 @@ internal sealed record ExtensionUpdateResult : ICliCommandResult
             CliSemanticStatus.Complete);
     }
 
-    private static IReadOnlyList<T> Snapshot<T>(
+    private static ReadOnlyCollection<T> Snapshot<T>(
         IEnumerable<T> values,
         string parameterName)
         where T : class
-        => new ReadOnlyCollection<T>(values
+        => new([.. values
             .Select(value => value ?? throw new ArgumentException(
                 "Extension Update result collections cannot contain null members.",
-                parameterName))
-            .ToArray());
+                parameterName))]);
 }

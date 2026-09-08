@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Application;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Planning;
@@ -15,10 +16,12 @@ namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Application;
 internal sealed class ExtensionInstallApplicationPreconditionValidator(
     ExtensionInstallSourceResolver sourceResolver,
     ExtensionInstallFoundationReader foundationReader,
-    MutationRevalidator revalidator)
+    MutationRevalidator revalidator,
+    FileExpectationValidator validator)
 {
     private readonly ExtensionInstallSourceResolver _sourceResolver = sourceResolver;
     private readonly ExtensionInstallFoundationReader _foundationReader = foundationReader;
+    private readonly FileExpectationValidator _validator = validator;
     private readonly MutationRevalidator _revalidator = revalidator;
 
     internal async ValueTask<ExtensionInstallApplicationPrecondition> ValidateAsync(
@@ -98,7 +101,24 @@ internal sealed class ExtensionInstallApplicationPreconditionValidator(
                 "Workspace ownership, topology, lifecycle, or Framework facts changed after planning.");
         }
 
-        var validation = await _revalidator.ValidateAsync(
+        var changingPaths = plan.AllFileChanges.Select(change => change.LogicalPath).ToHashSet(StringComparer.Ordinal);
+        foreach (var target in plan.Topology.IntendedTargetBytes)
+        {
+            var relative = target.Key.Replace('/', Path.DirectorySeparatorChar);
+            var logical = Path.Combine(plan.Request.Workspace.LexicalRoot, relative);
+            if (changingPaths.Contains(logical))
+            {
+                continue;
+            }
+            var expectation = FileExpectation.File(logical, Path.Combine(plan.Request.Workspace.PhysicalRoot, relative), FileExpectation.Hash(target.Value.AsSpan()));
+            var check = await _validator.ValidateAsync(plan.Request.Workspace, expectation, cancellationToken).ConfigureAwait(false);
+            if (check.State != FileExpectationValidationState.Matched)
+            {
+                return Stop(check.State == FileExpectationValidationState.Cancelled ? ExtensionInstallFindingCode.Interrupted : ExtensionInstallFindingCode.TargetChanged,
+                    "An unchanged Extension target changed after planning.", target.Key);
+            }
+        }
+        var validation = plan.IsNoOp ? MutationValidationResult.Valid() : await _revalidator.ValidateAsync(
             lease,
             plan.DirectoryCreations,
             plan.AllFileChanges,
@@ -120,7 +140,7 @@ internal sealed class ExtensionInstallApplicationPreconditionValidator(
                     validation.Cause
                         ?? "An Extension Install target changed or became unsafe before effects.")),
             _ => throw new ArgumentOutOfRangeException(
-                nameof(validation),
+                nameof(plan),
                 validation.State,
                 "The mutation validation state is not defined."),
         };
@@ -143,7 +163,7 @@ internal sealed class ExtensionInstallApplicationPreconditionValidator(
                 "The Extension source read state is not defined."),
         };
 
-    private static IReadOnlyList<ExtensionPackageFact>? ReadSelectedPackages(
+    private static List<ExtensionPackageFact>? ReadSelectedPackages(
         ExtensionInstallPlan plan,
         ExtensionSourceReadResult source)
     {

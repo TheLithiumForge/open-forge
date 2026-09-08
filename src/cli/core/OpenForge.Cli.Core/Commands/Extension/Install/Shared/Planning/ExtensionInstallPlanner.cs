@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
@@ -33,8 +35,7 @@ internal sealed class ExtensionInstallPlanner
         _sourceResolver = new ExtensionInstallSourceResolver(physicalPathResolver);
         _selectionResolver = new ExtensionInstallSelectionResolver(
             interactiveSession,
-            new ExtensionInstallDependencyClosureResolver(),
-            new ExtensionInstallPayloadNormalizer());
+            new ExtensionInstallDependencyClosureResolver());
         _foundationReader = new ExtensionInstallFoundationReader(
             lifecycleStore,
             new FrameworkLifecycleCurrentnessReader(physicalPathResolver));
@@ -227,17 +228,25 @@ internal sealed class ExtensionInstallPlanner
         IEnumerable<string> targetPaths,
         CancellationToken cancellationToken)
     {
+        var unsafeTarget = targetPaths.FirstOrDefault(path => !ExtensionDestinationPolicy.IsAllowed(request.Workspace, path));
+        if (unsafeTarget is not null)
+        {
+            return new ExtensionInstallFinding(ExtensionInstallFindingCode.TargetUnsafe,
+                "The Extension destination is a protected workspace or recovery path.", unsafeTarget);
+        }
         var record = await LibrariesRecordReader.ReadAsync(
             _physicalPathResolver,
             request.Workspace,
             cancellationToken).ConfigureAwait(false);
         if (record.State == LibrariesRecordReadState.Complete)
         {
-            var claimedPaths = record.Record!.Libraries
+            var document = record.Record
+                ?? throw new InvalidOperationException("A complete Library record observation requires its document.");
+            var claimedPaths = document.Libraries
                 .SelectMany(library => library.Paths)
-                .Select(path => path.Value)
+                .Select(path => PortableWorkspacePath.CreatePortableKey(path.Value))
                 .ToHashSet(StringComparer.Ordinal);
-            var conflict = targetPaths.FirstOrDefault(claimedPaths.Contains);
+            var conflict = targetPaths.FirstOrDefault(path => claimedPaths.Contains(PortableWorkspacePath.CreatePortableKey(path)));
             return conflict is null
                 ? null
                 : new ExtensionInstallFinding(

@@ -64,7 +64,7 @@ public sealed class ExtensionRemovePresentationTests
         Assert.Equal(
         [
             "mode", "prune", "automatic", "selection", "dependencies", "paths",
-            "generatedNavigation", "effects", "lifecycle", "recovery", "verification",
+            "generatedNavigation", "effects", "permissions", "lifecycle", "recovery", "verification",
             "packageSourceUnchanged", "findings",
         ],
             commandResult.EnumerateObject().Select(property => property.Name));

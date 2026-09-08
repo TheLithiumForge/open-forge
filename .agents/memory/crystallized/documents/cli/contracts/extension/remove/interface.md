@@ -21,6 +21,43 @@ resolution and mutation. The [Extension group entrypoint](../_extension.md),
 [Global CLI Flags](../../shared/global-flags/interface.md), and current Index
 contracts own their shared boundaries. No Technical Design exists.
 
+## Consumer Destination Permissions
+
+Consume the [Workspace Permissions Interface](../../shared/workspace-permissions/interface.md) and
+[Behavior](../../shared/workspace-permissions/behavior.md). Require exact grants for every selected owned external path, including
+Keep-as-unmanaged paths and shared-owner retention. Derive these requirements
+from trusted ownership without reading package source.
+Existing `.agents/` targets need no grant; their prior safety and ownership
+checks remain. Revocation blocks the complete selected lifecycle operation,
+including ownership release, until exact explicit reapproval. Unrelated
+installed packages do not enter this request's required set.
+
+An eligible human apply request asks once for the complete missing set after
+safe preflight. JSON, automatic, redirected and dry-run execution never ask the
+permission question or create grants. Existing selection and force/prune
+questions keep their separate rules. Force and prune never supply permission.
+Malformed or unsafe permission storage is diagnosed without overwriting it.
+
+Permission create/replace is a declared control-file effect. Revalidate the
+observed document and approved plan under the existing workspace lease. Cover
+prior permission bytes or proven absence in the one verified operation bundle,
+then persist and verify approval before content and lifecycle effects. Later
+failure retains the grant and its actual outcome. Restoration is manual; no
+new automatic Repair behavior follows.
+
+The result adds `permissions` immediately before `lifecycle`, using the exact
+shared member order and meanings. Human output presents those same facts before
+lifecycle publication. Add these ordered findings immediately before the
+existing general target-safety findings: `remove` uses the prefix
+`extension-remove.`, followed by `permission-required`,
+`permission-declined`, `permissions-invalid`, `permissions-unavailable`,
+`permissions-changed`, and `permission-write-failed`, in that order.
+Their statuses are respectively `blocked`, `blocked`, `blocked`, `incomplete`,
+`blocked`, and `failed`. A failed or unknown permission effect remains failed;
+caller cancellation before an effect keeps the existing interrupted outcome.
+Missing grants direct to rerun interactively or edit the displayed exact
+consumer entries. Invalid storage directs to inspect and correct that file.
+
 ## Purpose And Boundary
 
 `remove` releases explicit managed Extension package ownership and performs only
@@ -79,7 +116,7 @@ plan, runtime history, journal, recovery evidence, or session.
 
 Before the first target effect, application prepares and verifies exactly one
 immutable ZIP recovery bundle for the complete operation when the plan contains
-an existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or `Delete`). The bundle
+an existing-target effect (`Replace`, `ReplaceGeneratedRegion`, or `Delete`) or a permission-file Create. The bundle
 is outside the workspace under
 `Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
 Environment.SpecialFolderOption.Create)/OpenForge/recovery/v1`; no temporary,
@@ -98,8 +135,8 @@ prior byte lengths, hashes and payload names, and intended final absence or
 length/hash. Ordered ordinal payload entries contain the exact prior bytes for
 every existing-target effect. The bundle is immutable after preparation.
 
-Every planned existing-target effect must match one verified bundle entry; Create and
-no-op effects create no entry. All preparation completes before the first
+Every planned existing-target effect must match one verified bundle entry. Ordinary content Create and no-op effects create no entry. Permission-file
+Create has a reversible prior-absence entry. All preparation completes before the first
 mutation. `FileChangeApplier` requires matching preparation for each
 existing-target effect and performs one final effect per target. Before
 post-verification deletion begins, a handled application, verification,

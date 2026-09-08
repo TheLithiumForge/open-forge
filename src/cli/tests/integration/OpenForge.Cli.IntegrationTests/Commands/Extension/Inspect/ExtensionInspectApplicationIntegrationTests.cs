@@ -241,10 +241,11 @@ public sealed class ExtensionInspectApplicationIntegrationTests
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
-    [Theory(DisplayName = "Extension Inspect blocks ambiguous source shape and duplicate active identity without selecting a candidate"), Trait("Feature", "extension-inspect"), Trait("Evidence", "Integration")]
+    [Theory(DisplayName = "Extension Inspect blocks ambiguous source shape and duplicate active identity without selecting a candidate"),
+     Trait("Feature", "extension-inspect"), Trait("Evidence", "Integration")]
     [InlineData("source-shape", (int)ExtensionInspectFindingCode.SourceAmbiguous, 0)]
     [InlineData("duplicate-identity", (int)ExtensionInspectFindingCode.IdentityAmbiguous, 2)]
-    public async Task AmbiguousSourceAndIdentityRemainUnselected(
+    public static async Task AmbiguousSourceAndIdentityRemainUnselected(
         string scenario,
         int expectedFinding,
         int expectedCandidates)
@@ -278,7 +279,7 @@ public sealed class ExtensionInspectApplicationIntegrationTests
     [InlineData("incomplete", (int)ExtensionInspectFindingCode.DependencyIncomplete, (int)CliSemanticStatus.Incomplete, (int)ExtensionInspectDependencyState.Incomplete)]
     [InlineData("cycle", (int)ExtensionInspectFindingCode.DependencyCycle, (int)CliSemanticStatus.Blocked, (int)ExtensionInspectDependencyState.Blocked)]
     [InlineData("conflict", (int)ExtensionInspectFindingCode.DependencyConflict, (int)CliSemanticStatus.Blocked, (int)ExtensionInspectDependencyState.NotStarted)]
-    public async Task DependencyFailuresRetainOnlySafeClosureFacts(
+    public static async Task DependencyFailuresRetainOnlySafeClosureFacts(
         string scenario,
         int expectedFinding,
         int expectedStatus,
@@ -345,7 +346,7 @@ public sealed class ExtensionInspectApplicationIntegrationTests
     [Theory(DisplayName = "Extension Inspect blocks unsafe targets and conflicting closure ownership"), Trait("Feature", "extension-inspect"), Trait("Evidence", "Integration")]
     [InlineData("unsafe-target", (int)ExtensionInspectFindingCode.PathInvalid)]
     [InlineData("ownership", (int)ExtensionInspectFindingCode.OwnershipConflict)]
-    public async Task UnsafeTargetsAndOwnershipAreBlocked(
+    public static async Task UnsafeTargetsAndOwnershipAreBlocked(
         string scenario,
         int expectedFinding)
     {
@@ -621,7 +622,7 @@ public sealed class ExtensionInspectApplicationIntegrationTests
                       "dependencies": []
                     }
                     """);
-                source.WriteText("payload/.agents/toolkit.md", intendedContent);
+                source.WriteText("content/.agents/toolkit.md", intendedContent);
                 return new InspectFixture(workspace, source);
             }
             catch
@@ -703,7 +704,7 @@ public sealed class ExtensionInspectApplicationIntegrationTests
                 """);
             foreach (var (path, content) in payload)
             {
-                Source.WriteText($"{prefix}payload/{path}", content);
+                Source.WriteText($"{prefix}content/{path}", content);
             }
         }
 
@@ -717,7 +718,7 @@ public sealed class ExtensionInspectApplicationIntegrationTests
             var prefix = string.IsNullOrEmpty(directory) ? string.Empty : $"{directory}/";
             foreach (var (path, content) in payload)
             {
-                Source.WriteBytes($"{prefix}payload/{path}", content);
+                Source.WriteBytes($"{prefix}content/{path}", content);
             }
         }
 

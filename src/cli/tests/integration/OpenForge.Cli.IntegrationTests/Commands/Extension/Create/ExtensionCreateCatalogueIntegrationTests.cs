@@ -9,7 +9,8 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Create;
 
 public sealed class ExtensionCreateCatalogueIntegrationTests
 {
-    [Fact(DisplayName = "Extension Create accepts empty and populated marker-free catalogue parents while ignoring unrelated siblings"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Extension Create accepts empty and populated marker-free catalogue parents while ignoring unrelated siblings"),
+     Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task EmptyAndPopulatedParentsAreEligibleAndSiblingsArePreserved()
     {
         using var emptyCatalogue = TemporaryWorkspace.Create("extension-create-empty-catalogue");
@@ -44,7 +45,7 @@ public sealed class ExtensionCreateCatalogueIntegrationTests
     [Theory(DisplayName = "Extension Create rejects a missing or file-valued catalogue parent without writing"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     [InlineData("missing")]
     [InlineData("file")]
-    public async Task InvalidCatalogueParentsAreNoWrite(string parentKind)
+    public static async Task InvalidCatalogueParentsAreNoWrite(string parentKind)
     {
         using var owner = TemporaryWorkspace.Create("extension-create-invalid-parent");
         var path = parentKind == "missing"
@@ -80,7 +81,7 @@ public sealed class ExtensionCreateCatalogueIntegrationTests
             Assert.Equal(CliSemanticStatus.Complete, result.Status);
             Assert.Equal(Path.Combine(alias, "development-toolkit"), result.Destination);
             Assert.True(File.Exists(Path.Combine(destination, "extension.json")));
-            Assert.True(Directory.Exists(Path.Combine(destination, "payload", ".agents")));
+            Assert.True(Directory.Exists(Path.Combine(destination, "content", ".agents")));
         }
         finally
         {
@@ -93,7 +94,7 @@ public sealed class ExtensionCreateCatalogueIntegrationTests
     {
         using var catalogue = TemporaryWorkspace.Create("extension-create-exact-destination");
         catalogue.CreateFile("other-package/extension.json", "invalid sibling");
-        catalogue.CreateFile("other-package/payload/unrelated.txt", "preserve");
+        catalogue.CreateFile("other-package/content/unrelated.txt", "preserve");
 
         try
         {
@@ -104,7 +105,7 @@ public sealed class ExtensionCreateCatalogueIntegrationTests
 
             Assert.Equal(CliSemanticStatus.Complete, result.Status);
             Assert.Equal("invalid sibling", File.ReadAllText(catalogue.Combine("other-package", "extension.json")));
-            Assert.Equal("preserve", File.ReadAllText(catalogue.Combine("other-package", "payload", "unrelated.txt")));
+            Assert.Equal("preserve", File.ReadAllText(catalogue.Combine("other-package", "content", "unrelated.txt")));
         }
         finally
         {

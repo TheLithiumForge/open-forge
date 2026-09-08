@@ -229,7 +229,10 @@ regions, omitted bytes, hash, encoding, or fallback requires a new policy value.
 Apply the policy in this order:
 
 1. Start with the exact original bytes and do not pre-normalize them. Only a
-   supported Markdown package path can receive semantic treatment.
+   supported Markdown package path under `.agents/` can receive semantic
+   treatment. External destinations use exact SHA-256 identities directly,
+   including Markdown and marker-like bytes, without fallback findings or
+   generated-region observations.
 2. Decode with strict UTF-8. Retain a leading `EF BB BF` as U+FEFF at its
    original position; BOM presence and absence remain distinct. Any NUL is a
    binary boundary. Unsupported kind, binary/NUL input, invalid UTF-8,
@@ -327,6 +330,13 @@ unavailable, invalid, or blocked sides retain that relation state. A formatting
 or line-ending difference with equal admitted semantic fingerprints is not a
 divergence. An exact-byte fallback never qualifies for an actionable semantic
 three-way recommendation.
+
+For external destinations, persisted and operation-time exact-byte identities
+support these same path relations when their policy, kind and hash are
+comparable. This reports byte equality or difference only. It grants no
+semantic equivalence or mutation authority and does not widen the existing
+semantic-only actionable recommendation gate. Internal Markdown fallback
+retains its existing comparison limitations.
 
 ## Findings, Status, And `next`
 

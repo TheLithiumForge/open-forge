@@ -7,13 +7,11 @@ namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Planning;
 
 internal sealed class ExtensionInstallSelectionResolver(
     CliInteractiveSession interactiveSession,
-    ExtensionInstallDependencyClosureResolver dependencyClosureResolver,
-    ExtensionInstallPayloadNormalizer payloadNormalizer)
+    ExtensionInstallDependencyClosureResolver dependencyClosureResolver)
 {
     private readonly CliInteractiveSession _interactiveSession = interactiveSession;
     private readonly ExtensionInstallDependencyClosureResolver _dependencyClosureResolver =
         dependencyClosureResolver;
-    private readonly ExtensionInstallPayloadNormalizer _payloadNormalizer = payloadNormalizer;
 
     internal async ValueTask<ExtensionInstallSelectionResolution> ResolveAsync(
         ExtensionInstallRequest request,
@@ -44,7 +42,7 @@ internal sealed class ExtensionInstallSelectionResolver(
                 closure.Finding);
         }
 
-        var normalization = _payloadNormalizer.Normalize(closure.Packages);
+        var normalization = ExtensionInstallPayloadNormalizer.Normalize(closure.Packages);
         if (normalization.Finding is not null)
         {
             return new ExtensionInstallSelectionResolution(

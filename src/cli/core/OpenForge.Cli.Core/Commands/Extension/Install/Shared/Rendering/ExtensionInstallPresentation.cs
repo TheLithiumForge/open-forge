@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 using System.Globalization;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
@@ -130,6 +131,7 @@ internal static class ExtensionInstallPresentation
             builder.AppendLine("Generated navigation: unavailable");
         }
 
+        ExtensionPermissionPresentation.Append(builder, result.Permissions);
         builder.AppendLine($"""
             Lifecycle: {ExtensionInstallDefinitions.ReadMachineName(result.Lifecycle.Action)} / {ExtensionInstallDefinitions.ReadMachineName(result.Lifecycle.Outcome)}
             Recovery: {ExtensionInstallDefinitions.ReadMachineName(result.Recovery.State)}

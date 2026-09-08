@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Extension.Models.Permissions;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
 using OpenForge.Cli.Core.Framework.Workspace;
@@ -48,6 +49,19 @@ internal static class ExtensionInstallDefinitions
     internal static IReadOnlyList<ExtensionInstallFindingCode> FindingCodes { get; } =
         Array.AsReadOnly(Enum.GetValues<ExtensionInstallFindingCode>());
 
+    internal static ExtensionInstallFindingCode ReadPermissionFinding(ExtensionPermissionFailure failure)
+        => failure switch
+        {
+            ExtensionPermissionFailure.Required => ExtensionInstallFindingCode.PermissionRequired,
+            ExtensionPermissionFailure.Declined => ExtensionInstallFindingCode.PermissionDeclined,
+            ExtensionPermissionFailure.Invalid => ExtensionInstallFindingCode.PermissionsInvalid,
+            ExtensionPermissionFailure.Unavailable => ExtensionInstallFindingCode.PermissionsUnavailable,
+            ExtensionPermissionFailure.Changed => ExtensionInstallFindingCode.PermissionsChanged,
+            ExtensionPermissionFailure.WriteFailed => ExtensionInstallFindingCode.PermissionWriteFailed,
+            ExtensionPermissionFailure.Interrupted => ExtensionInstallFindingCode.Interrupted,
+            _ => throw new ArgumentOutOfRangeException(nameof(failure), failure, "The permission failure is not defined."),
+        };
+
     internal static string ReadMachineName(ExtensionInstallFindingCode code)
         => code switch
         {
@@ -63,7 +77,12 @@ internal static class ExtensionInstallDefinitions
             ExtensionInstallFindingCode.ManagedDivergence => "extension-install.managed-divergence",
             ExtensionInstallFindingCode.InitialForceRequired => "extension-install.initial-force-required",
             ExtensionInstallFindingCode.OwnershipConflict => "extension-install.ownership-conflict",
-            ExtensionInstallFindingCode.TargetOutsideAgents => "extension-install.target-outside-agents",
+            ExtensionInstallFindingCode.PermissionRequired => "extension-install.permission-required",
+            ExtensionInstallFindingCode.PermissionDeclined => "extension-install.permission-declined",
+            ExtensionInstallFindingCode.PermissionsInvalid => "extension-install.permissions-invalid",
+            ExtensionInstallFindingCode.PermissionsUnavailable => "extension-install.permissions-unavailable",
+            ExtensionInstallFindingCode.PermissionsChanged => "extension-install.permissions-changed",
+            ExtensionInstallFindingCode.PermissionWriteFailed => "extension-install.permission-write-failed",
             ExtensionInstallFindingCode.TargetUnsafe => "extension-install.target-unsafe",
             ExtensionInstallFindingCode.ProjectionUnavailable => "extension-install.projection-unavailable",
             ExtensionInstallFindingCode.GeneratedRegionUnsafe => "extension-install.generated-region-unsafe",
@@ -93,14 +112,18 @@ internal static class ExtensionInstallDefinitions
                 or ExtensionInstallFindingCode.FrameworkUnavailable
                 or ExtensionInstallFindingCode.LifecycleUnavailable
                 or ExtensionInstallFindingCode.ProjectionUnavailable
-                or ExtensionInstallFindingCode.RecoveryUnavailable => CliSemanticStatus.Incomplete,
+                or ExtensionInstallFindingCode.RecoveryUnavailable
+                or ExtensionInstallFindingCode.PermissionsUnavailable => CliSemanticStatus.Incomplete,
             ExtensionInstallFindingCode.SourceInvalid => CliSemanticStatus.Invalid,
             ExtensionInstallFindingCode.FrameworkUnsafe
                 or ExtensionInstallFindingCode.LifecycleBlocked
                 or ExtensionInstallFindingCode.ManagedDivergence
                 or ExtensionInstallFindingCode.InitialForceRequired
                 or ExtensionInstallFindingCode.OwnershipConflict
-                or ExtensionInstallFindingCode.TargetOutsideAgents
+                or ExtensionInstallFindingCode.PermissionRequired
+                or ExtensionInstallFindingCode.PermissionDeclined
+                or ExtensionInstallFindingCode.PermissionsInvalid
+                or ExtensionInstallFindingCode.PermissionsChanged
                 or ExtensionInstallFindingCode.TargetUnsafe
                 or ExtensionInstallFindingCode.GeneratedRegionUnsafe
                 or ExtensionInstallFindingCode.WorkspaceLockUnavailable
@@ -113,7 +136,8 @@ internal static class ExtensionInstallDefinitions
                 or ExtensionInstallFindingCode.LifecyclePublicationFailed
                 or ExtensionInstallFindingCode.VerificationFailed
                 or ExtensionInstallFindingCode.RecoveryFailed
-                or ExtensionInstallFindingCode.OperationFailed => CliSemanticStatus.Failed,
+                or ExtensionInstallFindingCode.OperationFailed
+                or ExtensionInstallFindingCode.PermissionWriteFailed => CliSemanticStatus.Failed,
             ExtensionInstallFindingCode.Interrupted => CliSemanticStatus.Interrupted,
             _ => throw Undefined(nameof(code), code),
         };

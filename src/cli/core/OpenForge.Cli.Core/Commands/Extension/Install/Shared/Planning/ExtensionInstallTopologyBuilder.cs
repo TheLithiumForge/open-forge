@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Request;
@@ -58,7 +60,7 @@ internal sealed class ExtensionInstallTopologyBuilder
                 "Current authored source catalogue facts are unsafe or unavailable.");
         }
         var packageSources = packageBytes
-            .Where(pair => SourceFormClassifier.TryClassify(pair.Key, out _))
+            .Where(pair => ExtensionDestinationPolicy.IsImplicit(pair.Key) && SourceFormClassifier.TryClassify(pair.Key, out _))
             .Select(pair => CreatePackageSource(request, pair.Key))
             .ToDictionary(
                 source => source.Identity.CanonicalBasePath,
@@ -135,11 +137,11 @@ internal sealed class ExtensionInstallTopologyBuilder
                     : ExtensionInstallGeneratedRegionState.Changed));
             if (packageBytes.ContainsKey(region.CanonicalPath))
             {
-                packageBytes[region.CanonicalPath] = change.ExpectedDocumentBytes.ToArray();
+                packageBytes[region.CanonicalPath] = [.. change.ExpectedDocumentBytes];
             }
             else
             {
-                generated.Add(region.CanonicalPath, change.ExpectedDocumentBytes.ToArray());
+                generated.Add(region.CanonicalPath, [.. change.ExpectedDocumentBytes]);
             }
         }
 
@@ -157,7 +159,7 @@ internal sealed class ExtensionInstallTopologyBuilder
 
     private static PayloadBytes ReadPayload(ExtensionPackageFileFact file)
     {
-        if (!ExtensionTargetPath.TryNormalize(file.TargetPath, out var normalized)
+        if (!PortableWorkspacePath.TryNormalize(file.TargetPath, out var normalized)
             || file.Bytes is not { } bytes
             || file.Sha256 is not { } sha256)
         {
@@ -167,7 +169,7 @@ internal sealed class ExtensionInstallTopologyBuilder
 
         return new PayloadBytes(
             normalized,
-            ExtensionTargetPath.CreatePortableKey(normalized),
+            PortableWorkspacePath.CreatePortableKey(normalized),
             sha256,
             bytes.ToArray());
     }
@@ -189,9 +191,9 @@ internal sealed class ExtensionInstallTopologyBuilder
         return canonical;
     }
 
-    private async ValueTask<IReadOnlySet<string>> ReadEligibleOverlayPathsAsync(
+    private async ValueTask<HashSet<string>> ReadEligibleOverlayPathsAsync(
         SourceCatalogue catalogue,
-        IReadOnlySet<string> packagePaths,
+        HashSet<string> packagePaths,
         CancellationToken cancellationToken)
     {
         var eligible = new HashSet<string>(StringComparer.Ordinal);
@@ -238,7 +240,7 @@ internal sealed class ExtensionInstallTopologyBuilder
 
     private static bool IsExactOverlayIssue(
         SourceCatalogueIssue issue,
-        IReadOnlySet<string> packagePaths)
+        HashSet<string> packagePaths)
         => issue.Code == SourceCatalogueIssueCode.IdentityUnavailable
             && packagePaths.Contains(issue.AttemptedCanonicalPath)
             && issue.RelatedPaths.All(packagePaths.Contains);

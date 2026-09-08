@@ -29,6 +29,19 @@ file grants, prompt-free automation/dry-run, and explicit permission effects.
 This supersedes its earlier manual-edit-only recommendation. Task 25 still
 requires the accepted Task 23 baseline and frozen Task 24 shared boundaries.
 
+## Pending Source Selection And Recovery Boundary
+
+The consumer must be able to discover or nominate a never-approved external
+file before the CLI can ask for permission. Inventorying only `.agents/` and
+already-approved paths cannot do that. The root asked the user to choose
+explicit external paths or all eligible files in the contained source root;
+Task 24 proceeds independently while this Task 25 choice remains open.
+
+Permission changes use the existing bundle as recoverable evidence but are not
+automatic Library repairs. Exclude the permission control-file entry from
+`LibraryResidualAttributionReader.IsAttributedEntry`; link repair must not
+restore or revoke consumer grants. Add focused regression evidence at Task 25.
+
 ## Candidate Boundary
 
 This task prepares a proposal for consumer-approved relative-symlink projections to

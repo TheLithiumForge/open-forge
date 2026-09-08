@@ -73,7 +73,12 @@ public sealed class ExtensionInstallContractTests
             ("extension-install.managed-divergence", CliSemanticStatus.Blocked),
             ("extension-install.initial-force-required", CliSemanticStatus.Blocked),
             ("extension-install.ownership-conflict", CliSemanticStatus.Blocked),
-            ("extension-install.target-outside-agents", CliSemanticStatus.Blocked),
+            ("extension-install.permission-required", CliSemanticStatus.Blocked),
+            ("extension-install.permission-declined", CliSemanticStatus.Blocked),
+            ("extension-install.permissions-invalid", CliSemanticStatus.Blocked),
+            ("extension-install.permissions-unavailable", CliSemanticStatus.Incomplete),
+            ("extension-install.permissions-changed", CliSemanticStatus.Blocked),
+            ("extension-install.permission-write-failed", CliSemanticStatus.Failed),
             ("extension-install.target-unsafe", CliSemanticStatus.Blocked),
             ("extension-install.projection-unavailable", CliSemanticStatus.Incomplete),
             ("extension-install.generated-region-unsafe", CliSemanticStatus.Blocked),
@@ -173,7 +178,7 @@ public sealed class ExtensionInstallContractTests
         var bytes = includeReviewedBytes ? "payload"u8.ToArray() : null;
         var file = ExtensionPackageFileFact.Create(new ExtensionPackageFileSnapshot
         {
-            Path = $"payload/{target}",
+            Path = $"content/{target}",
             TargetPath = target,
             State = (ExtensionPackageFileReadState)stateValue,
             ByteLength = bytes?.Length,
@@ -197,7 +202,7 @@ public sealed class ExtensionInstallContractTests
                 Payload = [file],
             });
 
-        var result = new ExtensionInstallPayloadNormalizer().Normalize([package]);
+        var result = ExtensionInstallPayloadNormalizer.Normalize([package]);
 
         Assert.Empty(result.Packages);
         var finding = Assert.IsType<ExtensionInstallFinding>(result.Finding);

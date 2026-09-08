@@ -104,6 +104,11 @@ The result has one explicit projection state:
   by its state and finding. Inspect never fabricates zero, empty, trusted,
   available, or absent facts.
 
+External destinations have exact-byte fingerprints and no generated-region
+entries, including when their filenames denote Markdown. Comparable external
+baseline/current/intended hashes determine byte relations; the existing
+semantic-only recommendation gate remains unchanged.
+
 The result distinguishes a known empty collection from unavailable coverage. A
 known empty count is `0`. A count whose input could not be established is
 `null`. Every array is present, including arrays in partial and event results.
@@ -878,7 +883,7 @@ evidence. Every member is present and follows the frozen order above.
         "dependencies": [],
         "payload": [
           {
-            "path": "payload/development-toolkit.md",
+            "path": "content/development-toolkit.md",
             "targetPath": ".agents/extensions/development-toolkit.md",
             "state": "available",
             "byteLength": 8,
@@ -905,7 +910,7 @@ evidence. Every member is present and follows the frozen order above.
       "declared": [
         {
           "path": ".agents/extensions/development-toolkit.md",
-          "sourcePath": "payload/development-toolkit.md",
+          "sourcePath": "content/development-toolkit.md",
           "state": "available"
         }
       ],

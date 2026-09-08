@@ -125,7 +125,8 @@ public sealed class ExtensionCreatePresentationTests
         Assert.Equal("/catalogue", document.Result.Catalogue);
         Assert.Equal("/catalogue/development-toolkit", document.Result.Destination);
         Assert.Equal("development-toolkit", document.Result.Id);
-        Assert.Equal("Development Toolkit", document.Result.Manifest!.Name);
+        Assert.NotNull(document.Result.Manifest);
+        Assert.Equal("Development Toolkit", document.Result.Manifest.Name);
         Assert.Equal("Open Forge Extension package development-toolkit.", document.Result.Manifest.Description);
         Assert.Equal("0.1.0", document.Result.Manifest.Version);
         Assert.Empty(document.Result.Manifest.Dependencies);
@@ -140,7 +141,8 @@ public sealed class ExtensionCreatePresentationTests
         Assert.False(document.Result.WorkspaceLifecycleChanged);
     }
 
-    [Fact(DisplayName = "Extension Create human renderer exposes compact and expanded plan, effect, verification, and unchanged-workspace facts"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Extension Create human renderer exposes compact and expanded plan, effect, verification, and unchanged-workspace facts"),
+     Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
     public void HumanViewsExposeCompleteFacts()
     {
         var result = CreateResult(CliSemanticStatus.Complete);
@@ -170,7 +172,7 @@ public sealed class ExtensionCreatePresentationTests
         Assert.Contains("Manifest: Development Toolkit; Open Forge Extension package development-toolkit.; 0.1.0", expanded, StringComparison.Ordinal);
         Assert.Contains("Dependencies: none", expanded, StringComparison.Ordinal);
         Assert.Contains("extension.json", expanded, StringComparison.Ordinal);
-        Assert.Contains("payload/.agents", expanded, StringComparison.Ordinal);
+        Assert.Contains("content/.agents", expanded, StringComparison.Ordinal);
         Assert.Contains("Verification: catalogue=verified, destination=verified, manifest=verified, payload=verified", expanded, StringComparison.Ordinal);
         Assert.Contains("Workspace lifecycle: unchanged", expanded, StringComparison.Ordinal);
         Assert.Contains("Status: complete", expanded, StringComparison.Ordinal);
@@ -225,7 +227,7 @@ public sealed class ExtensionCreatePresentationTests
                 new CliPresentation(CliOutputFormat.Human, CliView.Expanded, CliVerbosity.Verbose)));
 
         Assert.NotNull(diagnostic);
-        Assert.True(diagnostic!.Length <= CliRenderingStage.MaximumDiagnosticLength);
+        Assert.True(diagnostic.Length <= CliRenderingStage.MaximumDiagnosticLength);
         Assert.DoesNotContain('\n', diagnostic);
         Assert.DoesNotContain('\r', diagnostic);
         Assert.Contains("extension-create.destination-collision", diagnostic, StringComparison.Ordinal);
@@ -291,12 +293,12 @@ public sealed class ExtensionCreatePresentationTests
             IntendedEffects =
             [
                 new() { Kind = ExtensionCreateEffectKind.ManifestFile, Path = "/catalogue/development-toolkit/extension.json" },
-                new() { Kind = ExtensionCreateEffectKind.PayloadAgentsDirectory, Path = "/catalogue/development-toolkit/payload/.agents/" },
+                new() { Kind = ExtensionCreateEffectKind.PayloadAgentsDirectory, Path = "/catalogue/development-toolkit/content/.agents/" },
             ],
             AppliedEffects =
             [
                 new() { Kind = ExtensionCreateEffectKind.ManifestFile, Path = "/catalogue/development-toolkit/extension.json" },
-                new() { Kind = ExtensionCreateEffectKind.PayloadAgentsDirectory, Path = "/catalogue/development-toolkit/payload/.agents/" },
+                new() { Kind = ExtensionCreateEffectKind.PayloadAgentsDirectory, Path = "/catalogue/development-toolkit/content/.agents/" },
             ],
             Verification = new ExtensionCreateVerification
             {

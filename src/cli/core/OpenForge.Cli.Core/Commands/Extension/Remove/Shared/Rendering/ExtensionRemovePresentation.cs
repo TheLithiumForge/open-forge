@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 using System.Globalization;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
@@ -125,6 +126,7 @@ internal static class ExtensionRemovePresentation
             ExtensionRemoveDefinitions.ReadMachineName(result.Lifecycle.Coverage),
             ExtensionRemoveDefinitions.ReadMachineName(result.Lifecycle.Action),
             ExtensionRemoveDefinitions.ReadMachineName(result.Lifecycle.Outcome));
+        ExtensionPermissionPresentation.Append(builder, result.Permissions);
         builder.AppendLine($"Lifecycle: {lifecycle}");
         builder.AppendLine($"Recovery: {ExtensionRemoveDefinitions.ReadMachineName(result.Recovery.State)}");
         builder.AppendLine($"Protected paths: {Values(result.Recovery.ProtectedPaths)}");

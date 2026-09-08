@@ -9,7 +9,6 @@ internal static class ExtensionCreateDefinitions
     internal const int SchemaVersion = 1;
     internal const string CommandIdentity = "extension create";
     internal const string ManifestFileName = "extension.json";
-    internal const string PayloadDirectoryName = "payload";
     internal const string AgentsDirectoryName = ".agents";
     internal const string DefaultPackageVersion = "0.1.0";
 

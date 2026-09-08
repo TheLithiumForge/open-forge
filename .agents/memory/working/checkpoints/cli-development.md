@@ -24,13 +24,16 @@ The original sealed Sol handoff remains on its feature branch because it embeds
 a host-specific worktree path; it was not rewritten or copied into main.
 Task 23's Task record owns the detailed correction and acceptance receipts.
 All six Extension commands, Repair, Cleanup and the five Library commands are
-complete. Task 23 enters completion visibility with two subsequent updates.
+complete. Task 23 is integrated at `a157d439` and dequeued with grace zero.
 
-Task 24 “Extensions Evolution” begins contract preparation at phase 1/5,
-milestone 0/8. The user accepted `content/` and a consumer allowlist with a CLI
-question for missing grants. The revised functional draft includes exact-file
-approval, remembered grants, prompt-free dry-run/automation, and explicit
-permission effects. Root continues Task 24 → Task 25 → Task 26 pure refactor
+Task 24 “Extensions Evolution” is complete at phase 5/5, milestone 8/8.
+Our packages use `content/`; consumer approval and exact grants govern external
+Extension destinations. The three fresh review findings are fixed. Full managed
+acceptance passes 2719/1518/188; native passes 1518/188 and managed-on-native
+passes 188, with zero failures/skips/warnings and zero formatting diagnostics.
+The Task record and canonical receipt own exact source/runtime evidence.
+Local integration follows the final forward feature commit.
+Root continues Task 25 → Task 26 pure refactor
 → Task 10 audit → conditional Task 21 → Task 13 → Task 22. Later publication
 and global installation refresh remain unauthorized. General test-environment
 cleanup remains an idea. The current Task capsules govern scoped execution;
@@ -77,7 +80,7 @@ The user re-enabled every pending task on 2026-09-07. The sealed restart
 [inventory](../handoffs/2026-09-07_cli-astra-restart-inventory.md) preserve the transfer evidence;
 current queue state is reconciled here and in the project control ledger.
 Repair remains phase 4/5, milestone 3/8 with an unfinished Green draft.
-Library remains phase 2/5, milestone 1/8 with Gray correction active and Red
+Library remains phase 2/5, milestone 2/8 with Gray correction active and Red
 read-only until immutable Gray acceptance. Cleanup retains accepted Red at
 phase 4/5, milestone 3/8, with Green held for Repair integration and refreeze.
 

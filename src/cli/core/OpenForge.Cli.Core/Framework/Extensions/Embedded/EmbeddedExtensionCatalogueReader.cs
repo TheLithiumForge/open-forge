@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -72,7 +73,7 @@ internal static class EmbeddedExtensionCatalogueReader
 
     private static ExtensionPackageFact ValidateAssets(
         EmbeddedExtensionInventoryPackage package,
-        ISet<string> expectedAssets)
+        HashSet<string> expectedAssets)
     {
         string? previousPath = null;
         byte[]? manifestBytes = null;
@@ -80,7 +81,7 @@ internal static class EmbeddedExtensionCatalogueReader
         foreach (var asset in package.Assets)
         {
             if (asset is null
-                || !ExtensionTargetPath.TryNormalize(asset.Path, out var path)
+                || !PortableWorkspacePath.TryNormalize(asset.Path, out var path)
                 || !IsLowerSha256(asset.Sha256)
                 || previousPath is not null && string.CompareOrdinal(previousPath, path) >= 0)
             {
@@ -104,10 +105,10 @@ internal static class EmbeddedExtensionCatalogueReader
             {
                 manifestBytes = bytes.ToArray();
             }
-            else if (path.StartsWith("payload/", StringComparison.Ordinal))
+            else if (path.StartsWith(ExtensionPackageLayout.ContentPathPrefix, StringComparison.Ordinal))
             {
-                var target = path["payload/".Length..];
-                if (!ExtensionTargetPath.TryNormalize(target, out var normalizedTarget))
+                var target = path[ExtensionPackageLayout.ContentPathPrefix.Length..];
+                if (!PortableWorkspacePath.TryNormalize(target, out var normalizedTarget))
                 {
                     throw new JsonException("An embedded Extension payload target path is invalid.");
                 }
@@ -144,7 +145,7 @@ internal static class EmbeddedExtensionCatalogueReader
         => value is { Length: SHA256.HashSizeInBytes * 2 }
             && value.All(character => character is >= '0' and <= '9' or >= 'a' and <= 'f');
 
-    private static void ValidateClosure(IReadOnlyList<ExtensionPackageFact> packages)
+    private static void ValidateClosure(List<ExtensionPackageFact> packages)
     {
         var ids = packages.Select(package => package.Id).ToHashSet(StringComparer.Ordinal);
         if (ids.Count != packages.Count

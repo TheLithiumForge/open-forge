@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
 
@@ -162,7 +163,7 @@ internal sealed record InstallEffect
                 or InstallEffectOutcome.VerificationFailed
                 or InstallEffectOutcome.CompletionUnknown => true,
             _ => throw new ArgumentOutOfRangeException(
-                nameof(input.Outcome),
+                nameof(input),
                 input.Outcome,
                 "The Install effect outcome is not defined."),
         };
@@ -172,7 +173,7 @@ internal sealed record InstallEffect
                 or InstallEffectResidual.Retained
                 or InstallEffectResidual.Unknown => true,
             _ => throw new ArgumentOutOfRangeException(
-                nameof(input.Residual),
+                nameof(input),
                 input.Residual,
                 "The Install effect residual is not defined."),
         };
@@ -230,7 +231,7 @@ internal sealed record InstallEffect
 
     private static void ValidateCanonicalPath(string? path, string name)
     {
-        if (!ExtensionTargetPath.TryNormalize(path, out var normalized)
+        if (!PortableWorkspacePath.TryNormalize(path, out var normalized)
             || !string.Equals(path, normalized, StringComparison.Ordinal))
         {
             throw new ArgumentException(
@@ -361,7 +362,7 @@ internal sealed record InstallResultFacts
                     or InstallManagementClassification.ManagedDivergence
                     or InstallManagementClassification.EligibleInitialOccupant => true,
                 _ => throw new ArgumentOutOfRangeException(
-                    nameof(input.Classification),
+                    nameof(input),
                     value,
                     "The Install management classification is not defined."),
             };
@@ -370,7 +371,7 @@ internal sealed record InstallResultFacts
         var effectValues = input.Effects
             .Select(effect => effect ?? throw new ArgumentException(
                 "Install effects cannot contain null members.",
-                nameof(input.Effects)))
+                nameof(input)))
             .ToArray();
 
         Source = input.Source;

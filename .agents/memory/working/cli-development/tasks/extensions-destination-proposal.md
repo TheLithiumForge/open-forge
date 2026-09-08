@@ -28,7 +28,8 @@ Task 26 remains the later behavior-preserving six-command refactor.
 Keeping `payload/` avoids a rename but retains transport-oriented wording.
 The accepted direction is one atomic pre-release switch to `content/` across package creation,
 reading, embedded assets, examples, and evidence. Do not add aliases or dual
-readers. Existing installed ownership remains identified by destination paths;
+readers. The user explicitly declined legacy handling; update the first-party packages
+and current reader only. Existing installed ownership remains identified by destination paths;
 a package directory rename alone does not reinstall files.
 
 A proposed package has this shape:
@@ -75,7 +76,7 @@ consumer workspace. This proposed shape grants only exact external file paths:
 These are proposed fields, not current CLI syntax or accepted schemas. Each
 root property is required. Unknown, duplicate, null, or incorrectly typed
 properties are rejected. IDs use their existing grammars. Entries and paths
-are unique and sorted. Paths are canonical workspace-relative `/` paths with
+are unique; readers accept authored order and writers sort canonically. Paths are canonical workspace-relative `/` paths with
 no empty, dot, parent, backslash, absolute, or glob spelling. Each path names
 one file, never a directory subtree. A Library grant also binds its recorded
 source root. Extension grants apply to the selected stable ID; the existing
@@ -107,7 +108,8 @@ nothing and produces no permission or content effects. Do not widen the grant
 to a folder, future source additions or a different identity. Each dependency
 has its own exact grants; a Library grant also binds its source root.
 
-Dry-run lists missing grants and planned effects without prompting or writing.
+Dry-run lists missing grants and planned effects without a permission question
+or writing. Existing command-selection questions keep their own contracts.
 JSON, redirected/noninteractive input and `--automatic` never prompt or grant
 permission. They return the missing grants and a concrete next action: rerun
 interactively or edit the exact consumer permission entries. `--force` and
@@ -123,8 +125,10 @@ and report this declared control-file effect before applying approved content.
 A failed permission write prevents content effects. If a later effect fails,
 truthfully report that the approved permission remains; no automatic rollback
 or hidden grant removal occurs. Permission admission and content ownership
-remain distinct. Exact control-file recovery and result coordinates must be
-frozen with the existing mutation/recovery contracts before implementation.
+remain distinct. Preserve prior control-file bytes or proven absence in the
+existing operation recovery bundle. Restoring permission is an explicit manual
+edit; this does not add an automatic Repair operation. Exact result coordinates
+are defined in the pending Task 24 contract pack.
 
 Malformed or unsafe permission storage is diagnosed and never overwritten by
 an approval prompt. Package-contained permission files do not grant authority.
@@ -158,8 +162,11 @@ The source root remains contained and read-only. The Library record retains
 `id`, `sourceRoot`, and ordered managed `paths`; the raw relative link is
 derived from those facts, as in the accepted Task 23 design. Extending admitted
 paths needs an explicit contract freeze and does not silently change Task 23's
-strict reader. Source additions outside `.agents/` are eligible only when their
-exact path has a consumer grant. Required observations cover the complete
+strict reader. Source additions outside `.agents/` require exact consumer permission before
+projection. How the CLI discovers never-approved external source files remains
+an open Task 25 choice: explicit path selection or a broader source inventory.
+The existing approved-path proposal alone cannot discover new missing grants.
+Required observations cover the complete
 `.agents/` inventory plus every approved external source path. An unavailable
 observation never becomes evidence of retirement.
 
@@ -221,7 +228,7 @@ recovery; and exactly three simple public journeys per command. Reuse existing
 interactive test boundaries for prompt decisions. Full managed and supported
 Native AOT gates follow each accepted Task's applicability check.
 
-## Preparation Capsule And Provenance
+## Historical Preparation Capsule And Provenance
 
 Profile: Direct prose reconciliation and candidate design. One Task Mastermind
 owns this slice. Independent review and council budgets are zero; no dedicated

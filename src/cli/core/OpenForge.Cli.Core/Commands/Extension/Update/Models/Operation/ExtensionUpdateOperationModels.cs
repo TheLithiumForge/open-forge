@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Result;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
@@ -67,6 +68,8 @@ internal sealed record ExtensionUpdateApplicationLease
 
 internal sealed record ExtensionUpdateApplicationOutcome
 {
+    internal WorkspacePermissionResult Permissions { get; init; } = WorkspacePermissionResult.NotEvaluated;
+
     internal required IReadOnlyList<ExtensionUpdateEffect> Effects { get; init; }
 
     internal required ExtensionUpdateLifecycle Lifecycle { get; init; }

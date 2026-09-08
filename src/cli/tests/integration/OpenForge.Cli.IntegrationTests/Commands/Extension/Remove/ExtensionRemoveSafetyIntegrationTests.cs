@@ -235,7 +235,7 @@ public sealed class ExtensionRemoveSafetyIntegrationTests
             Assert.Contains(
                 document.RootElement.GetProperty("result").GetProperty("findings").EnumerateArray(),
                 finding => finding.GetProperty("code").GetString()
-                    is "extension-remove.target-outside-agents" or "extension-remove.target-unsafe");
+                    == "extension-remove.target-unsafe");
             Assert.Equal(lifecycleBefore, workspace.ReadText(
                 ExtensionInstallIntegrationWorkspace.LifecyclePath));
             Assert.Equal("outside content\n", File.ReadAllText(outsidePath));
@@ -269,7 +269,7 @@ public sealed class ExtensionRemoveSafetyIntegrationTests
             ["Extension"],
             $"# {heading}\n");
 
-    private static IReadOnlyDictionary<string, string> SnapshotRecovery(string directory)
+    private static Dictionary<string, string> SnapshotRecovery(string directory)
     {
         if (!Directory.Exists(directory))
         {

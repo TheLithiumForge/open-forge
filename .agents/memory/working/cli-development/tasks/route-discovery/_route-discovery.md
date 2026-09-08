@@ -76,10 +76,10 @@ waiver. No routing-tool success or generated-index refresh is claimed.
 
 <!-- open-forge:generated-index:start -->
 - [Routes completed leaf Tasks for Route Discovery without changing their historical Task meaning](done/_done.md) - #Memory #Working #CLI #Task #Route #Discovery #Complete #Contextual
-- [Implement and accept route inspect, then promote only route facts proved identical by both commands](route-inspect.md) - #Memory #Working #CLI #Task #Route #Inspect #Promotion #Contextual #Complete
 - [Run integrated route-inspect acceptance, promotion closeout, edge dispositions, and delivery-boundary audits](route-inspect-acceptance.md) - #Memory #Working #CLI #Task #Route #Inspect #Acceptance #NativeAOT #Contextual #Complete
 - [Freeze route-inspect callable contracts and map every guarantee to evidence before behavior](route-inspect-contracts.md) - #Memory #Working #CLI #Task #Route #Inspect #Contract #Evidence #Contextual #Complete
 - [Complete the already-accepted Route Inspect interactive source-collision selection](route-inspect-interaction-correction.md) - #Memory #Working #CLI #Task #Route #Inspect #Interaction #Correction #Contextual
 - [Bind, execute, and present route inspect once through compact, expanded, JSON, diagnostics, and help surfaces](route-inspect-presentation.md) - #Memory #Working #CLI #Task #Route #Inspect #Presentation #Contextual #Complete
 - [Form the inspect-local route profile from one accepted graph and fact set without adding diagnosis or mutation](route-inspect-profile.md) - #Memory #Working #CLI #Task #Route #Inspect #Profile #Contextual #Complete
+- [Implement and accept route inspect, then promote only route facts proved identical by both commands](route-inspect.md) - #Memory #Working #CLI #Task #Route #Inspect #Promotion #Contextual #Complete
 <!-- open-forge:generated-index:end -->

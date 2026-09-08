@@ -68,7 +68,7 @@ public sealed class ExtensionCreateModelsTests
         var effects = new ExtensionCreateEffect[]
         {
             new() { Kind = ExtensionCreateEffectKind.ManifestFile, Path = "/catalogue/development-toolkit/extension.json" },
-            new() { Kind = ExtensionCreateEffectKind.PayloadAgentsDirectory, Path = "/catalogue/development-toolkit/payload/.agents/" },
+            new() { Kind = ExtensionCreateEffectKind.PayloadAgentsDirectory, Path = "/catalogue/development-toolkit/content/.agents/" },
         };
         var plan = new ExtensionCreatePlan
         {
@@ -89,7 +89,7 @@ public sealed class ExtensionCreateModelsTests
         Assert.Null(plan.DestinationPhysicalIdentity);
         Assert.Equal(ExtensionCreateMode.Apply, plan.Mode);
         Assert.Equal([ExtensionCreateEffectKind.ManifestFile, ExtensionCreateEffectKind.PayloadAgentsDirectory], plan.IntendedEffects.Select(effect => effect.Kind));
-        Assert.Equal(["/catalogue/development-toolkit/extension.json", "/catalogue/development-toolkit/payload/.agents/"], plan.IntendedEffects.Select(effect => effect.Path));
+        Assert.Equal(["/catalogue/development-toolkit/extension.json", "/catalogue/development-toolkit/content/.agents/"], plan.IntendedEffects.Select(effect => effect.Path));
         Assert.Equal([1, 2, 3], plan.ManifestBytes.ToArray());
         Assert.False(plan.IsVerifiedNoOp);
     }
@@ -110,14 +110,16 @@ public sealed class ExtensionCreateModelsTests
         Assert.Equal("/catalogue", result.Catalogue);
         Assert.Equal("/catalogue/development-toolkit", result.Destination);
         Assert.Equal("development-toolkit", result.StableId);
-        Assert.Equal("Development Toolkit", result.Manifest!.Name);
+        Assert.NotNull(result.Manifest);
+        Assert.Equal("Development Toolkit", result.Manifest.Name);
         Assert.Equal(2, result.IntendedEffects.Count);
         Assert.Single(result.AppliedEffects);
         Assert.Equal(ExtensionCreateVerificationState.Verified, result.Verification.Destination);
         Assert.Null(result.Next);
     }
 
-    [Theory(DisplayName = "Extension Create next-action mapping has no attention action and one bounded action for every other named status"), Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
+    [Theory(DisplayName = "Extension Create next-action mapping has no attention action and one bounded action for every other named status"),
+     Trait("Feature", "extension-create"), Trait("Evidence", "Unit")]
     [InlineData(CliSemanticStatus.Complete, "none")]
     [InlineData(CliSemanticStatus.Incomplete, "open-forge extension create --verbose")]
     [InlineData(CliSemanticStatus.Attention, "none")]
@@ -139,7 +141,7 @@ public sealed class ExtensionCreateModelsTests
         }
 
         Assert.NotNull(next);
-        Assert.Equal(expectedCommand, next!.Command);
+        Assert.Equal(expectedCommand, next.Command);
         Assert.False(string.IsNullOrWhiteSpace(next.Reason));
     }
 
@@ -207,9 +209,9 @@ public sealed class ExtensionCreateModelsTests
             IntendedEffects =
             [
                 new() { Kind = ExtensionCreateEffectKind.ManifestFile, Path = "/catalogue/development-toolkit/extension.json" },
-                new() { Kind = ExtensionCreateEffectKind.PayloadAgentsDirectory, Path = "/catalogue/development-toolkit/payload/.agents/" },
+                new() { Kind = ExtensionCreateEffectKind.PayloadAgentsDirectory, Path = "/catalogue/development-toolkit/content/.agents/" },
             ],
-            AppliedEffects = appliedEffects.ToArray(),
+            AppliedEffects = [.. appliedEffects],
             Verification = Verified(),
             Findings = [],
             Next = status == CliSemanticStatus.Complete ? null : ExtensionCreateDefinitions.ReadNext(status),

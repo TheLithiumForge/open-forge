@@ -17,10 +17,11 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
 
 public sealed class ExtensionInstallTargetPolicyIntegrationTests
 {
-    [Theory(DisplayName = "Extension Install force cannot replace authored or marker-ambiguous sources through command composition"), Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
+    [Theory(DisplayName = "Extension Install force cannot replace authored or marker-ambiguous sources through command composition"),
+     Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
     [InlineData("valid-authored")]
     [InlineData("malformed-marker")]
-    public async Task ComposedForceCannotReplaceProtectedSource(string scenario)
+    public static async Task ComposedForceCannotReplaceProtectedSource(string scenario)
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create(
             "extension-install-authored-source-policy");
@@ -95,14 +96,16 @@ public sealed class ExtensionInstallTargetPolicyIntegrationTests
     [Theory(DisplayName = "Extension Install force cannot replace Framework or current authored targets"), Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
     [InlineData(".agents/loader.md", "framework")]
     [InlineData(".agents/user/_user.md", "authored")]
-    public async Task ForceCannotReplaceProtectedWorkspaceTargets(
+    public static async Task ForceCannotReplaceProtectedWorkspaceTargets(
         string target,
         string protection)
     {
         var root = Path.Combine(
             Path.GetTempPath(),
             $"extension-install-target-policy-{Guid.NewGuid():N}");
-        Directory.CreateDirectory(Path.GetDirectoryName(Path.Combine(root, target))!);
+        var parent = Path.GetDirectoryName(Path.Combine(root, target));
+        Assert.NotNull(parent);
+        Directory.CreateDirectory(parent);
         await File.WriteAllTextAsync(
             Path.Combine(root, target),
             "# Existing protected source\n",
@@ -126,6 +129,8 @@ public sealed class ExtensionInstallTargetPolicyIntegrationTests
                 new CliInteractiveSession(TextReader.Null, TextWriter.Null, canPrompt: false),
                 new FileExpectationValidator(new PhysicalPathResolver()));
             var package = Package(target);
+            var payloadBytes = package.Payload[0].Bytes;
+            Assert.NotNull(payloadBytes);
 
             var result = await inspector.InspectAsync(
                 new ExtensionInstallTargetInspectionInput
@@ -142,7 +147,7 @@ public sealed class ExtensionInstallTargetPolicyIntegrationTests
                     Topology = ExtensionInstallTopology.Create(
                         new Dictionary<string, byte[]>(StringComparer.Ordinal)
                         {
-                            [target] = package.Payload[0].Bytes!.Value.ToArray(),
+                            [target] = payloadBytes.Value.ToArray(),
                         },
                         new Dictionary<string, byte[]>(StringComparer.Ordinal),
                         []),
@@ -172,7 +177,7 @@ public sealed class ExtensionInstallTargetPolicyIntegrationTests
         var bytes = Encoding.UTF8.GetBytes(contents);
         var file = ExtensionPackageFileFact.Create(new ExtensionPackageFileSnapshot
         {
-            Path = $"payload/{target}",
+            Path = $"content/{target}",
             TargetPath = target,
             State = ExtensionPackageFileReadState.Available,
             ByteLength = bytes.Length,
@@ -213,14 +218,14 @@ public sealed class ExtensionInstallTargetPolicyIntegrationTests
                 Version = null,
                 InventoryFingerprint = new string('0', 64),
             },
-            Targets = targets.Select(target => new FrameworkLifecycleTarget
+            Targets = [.. targets.Select(target => new FrameworkLifecycleTarget
             {
                 Path = target,
                 SourceAssetPath = target,
                 Region = null,
                 BaselineFingerprint = new string('0', 64),
                 FingerprintKind = LifecycleSchema.ExactBytesFingerprintKind,
-            }).ToArray(),
+            })],
             GeneratedRegions = [],
         };
 }

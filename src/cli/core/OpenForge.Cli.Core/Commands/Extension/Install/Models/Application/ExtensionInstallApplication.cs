@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
@@ -15,9 +16,12 @@ internal sealed record ExtensionInstallApplicationPrecondition(
 }
 
 internal sealed record ExtensionInstallApplicationLease(
-    ExtensionInstallPlan Plan,
+    ExtensionInstallExecutionPlan Execution,
     WorkspaceLockLease Lease,
-    Guid OperationId);
+    Guid OperationId)
+{
+    internal ExtensionInstallPlan Plan => Execution.Content;
+}
 
 internal sealed record ExtensionInstallEffectApplicationInput
 {
@@ -70,6 +74,8 @@ internal sealed record ExtensionInstallApplicationProgress
         RecoveryPreparation = recoveryPreparation;
     }
 
+    internal WorkspacePermissionResult Permissions { get; init; } = WorkspacePermissionResult.NotEvaluated;
+
     internal ImmutableArray<ExtensionInstallEffect> Effects { get; init; }
 
     internal ExtensionInstallLifecycleOutcome LifecycleOutcome { get; init; }
@@ -81,36 +87,43 @@ internal sealed record ExtensionInstallApplicationProgress
     internal RecoveryBundlePreparation? RecoveryPreparation { get; init; }
 
     internal static ExtensionInstallApplicationProgress Start(
-        ExtensionInstallPlan plan,
+        ExtensionInstallExecutionPlan execution,
         RecoveryBundlePreparation? preparation)
     {
-        ArgumentNullException.ThrowIfNull(plan);
+        ArgumentNullException.ThrowIfNull(execution);
+        var plan = execution.Content;
         var protectedPaths = preparation?.Entries
             .OrderBy(entry => entry.Ordinal)
             .Select(entry => entry.TargetPath)
             .ToArray() ?? [];
         return new ExtensionInstallApplicationProgress(
-            plan.Facts.Effects.Select(effect => effect with
+            [.. plan.Facts.Effects.Select(effect => effect with
             {
                 Outcome = ExtensionInstallEffectOutcome.NotStarted,
                 Residual = ExtensionInstallEffectResidual.None,
-            }).ToImmutableArray(),
+            })],
             plan.Facts.Lifecycle.Action switch
             {
                 ExtensionInstallLifecycleAction.None => ExtensionInstallLifecycleOutcome.NotRequested,
                 ExtensionInstallLifecycleAction.Preserve => ExtensionInstallLifecycleOutcome.AlreadyCurrent,
                 ExtensionInstallLifecycleAction.Publish => ExtensionInstallLifecycleOutcome.NotStarted,
                 _ => throw new ArgumentOutOfRangeException(
-                    nameof(plan),
+                    nameof(execution),
                     plan.Facts.Lifecycle.Action,
                     "The Extension lifecycle action is not defined."),
             },
             new ExtensionInstallRecovery(
-                ReadInitialRecoveryState(plan, preparation),
+                ReadInitialRecoveryState(execution, preparation),
                 protectedPaths,
                 preparation?.BundlePath),
             UnknownVerification(),
-            preparation);
+            preparation)
+        {
+            Permissions = execution.Permission.Result with
+            {
+                Outcome = execution.Permission.Change is null ? WorkspacePermissionOutcome.NotRequested : WorkspacePermissionOutcome.NotStarted,
+            },
+        };
     }
 
     internal ExtensionInstallApplicationProgress RecordEffect(
@@ -150,7 +163,7 @@ internal sealed record ExtensionInstallApplicationProgress
     internal ExtensionInstallApplicationProgress RetainWorkspaceEffects()
         => this with
         {
-            Effects = Effects.Select(effect => effect.Outcome switch
+            Effects = [.. Effects.Select(effect => effect.Outcome switch
             {
                 ExtensionInstallEffectOutcome.Planned
                     or ExtensionInstallEffectOutcome.NotStarted => effect,
@@ -167,11 +180,11 @@ internal sealed record ExtensionInstallApplicationProgress
                     nameof(effect),
                     effect.Outcome,
                     "The Extension effect outcome is not defined."),
-            }).ToImmutableArray(),
+            })],
         };
 
     private static ExtensionInstallRecoveryState ReadInitialRecoveryState(
-        ExtensionInstallPlan plan,
+        ExtensionInstallExecutionPlan plan,
         RecoveryBundlePreparation? preparation)
     {
         if (preparation is not null)

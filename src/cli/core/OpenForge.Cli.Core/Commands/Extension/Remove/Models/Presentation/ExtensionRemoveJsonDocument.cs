@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Permissions.Models.Presentation;
 namespace OpenForge.Cli.Core.Commands.Extension.Remove.Models.Presentation;
 
 internal sealed class ExtensionRemoveJsonDocument
@@ -40,6 +41,7 @@ internal sealed class ExtensionRemoveJsonResult
 
     public required ExtensionRemoveJsonEffect[] Effects { get; init; }
 
+    public required WorkspacePermissionJson Permissions { get; init; }
     public required ExtensionRemoveJsonLifecycle Lifecycle { get; init; }
 
     public required ExtensionRemoveJsonRecovery Recovery { get; init; }

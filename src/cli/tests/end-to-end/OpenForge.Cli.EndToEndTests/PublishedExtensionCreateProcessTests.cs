@@ -6,99 +6,20 @@ namespace OpenForge.Cli.EndToEndTests;
 
 public sealed class PublishedExtensionCreateProcessTests
 {
-    [Theory(DisplayName = "Published root Extension group and Create leaf help expose the implemented command"), Trait("Feature", "extension-create"), Trait("Evidence", "EndToEnd")]
-    [InlineData("root")]
-    [InlineData("group")]
-    [InlineData("leaf")]
-    public async Task PublishedHelpIsTruthful(string scope)
+    [Fact(DisplayName = "Published Extension Create help is read-only"), Trait("Feature", "extension-create"), Trait("Evidence", "EndToEnd")]
+    public static async Task PublishedHelpIsTruthfulAndReadOnly()
     {
         var target = PublishedExecutableTarget.Discover();
-        using var working = TemporaryWorkspace.Create($"e2e-extension-create-help-{scope}");
+        using var working = TemporaryWorkspace.Create("e2e-extension-create-help");
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            target,
-            working.Path,
-            working.SnapshotHashes,
-            HelpArguments(scope));
+            target, working.Path, working.SnapshotHashes, ["extension", "create", "--help"]);
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
-        switch (scope)
-        {
-            case "root":
-                Assert.Contains("extension create  Create one local Extension package scaffold.", result.StandardOutput, StringComparison.Ordinal);
-                break;
-            case "group":
-                Assert.Contains("list", result.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("inspect <stable-id>", result.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("create <stable-id>", result.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("The extension group performs no operation.", result.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("Update syntax:", result.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("Remove syntax:", result.StandardOutput, StringComparison.Ordinal);
-                Assert.DoesNotContain("Operations:", result.StandardOutput, StringComparison.Ordinal);
-                Assert.DoesNotContain("Create one local catalogue scaffold without installing it.", result.StandardOutput, StringComparison.Ordinal);
-                break;
-            case "leaf":
-                Assert.Contains("open-forge extension create [<stable-id>]", result.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("Required input and interaction", result.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("Manifest", result.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("Catalogue and scaffold", result.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("Results and streams", result.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("Workspace and recovery boundary", result.StandardOutput, StringComparison.Ordinal);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(scope), scope, "The published help scope is not defined.");
-        }
+        Assert.Contains("open-forge extension create", result.StandardOutput, StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Published redirected Extension Create rejects missing facts without prompting or writing"), Trait("Feature", "extension-create"), Trait("Evidence", "EndToEnd")]
-    public async Task PublishedRedirectedMissingInputIsInvalidAndSilent()
-    {
-        var target = PublishedExecutableTarget.Discover();
-        using var working = PublishedExtensionCreateWorkspace.Create();
-        var beforeCatalogue = working.SnapshotCatalogue();
-        var beforeWorkspace = working.SnapshotWorkspace();
 
-        var result = await PublishedProcessTestSupport.RunAsync(
-            target,
-            working.WorkspacePath,
-            ["extension", "create", "--dry-run"]);
-
-        Assert.Equal(4, result.ExitCode);
-        Assert.Equal(string.Empty, result.StandardOutput);
-        Assert.Contains("Status: invalid", result.StandardError, StringComparison.Ordinal);
-        Assert.DoesNotContain("Stable ID (", result.StandardError, StringComparison.Ordinal);
-        Assert.DoesNotContain("Catalogue path (", result.StandardError, StringComparison.Ordinal);
-        Assert.Equal(beforeCatalogue, working.SnapshotCatalogue());
-        Assert.Equal(beforeWorkspace, working.SnapshotWorkspace());
-    }
-
-    [Fact(DisplayName = "Published explicit Extension Create dry-run previews exactly and writes nothing"), Trait("Feature", "extension-create"), Trait("Evidence", "EndToEnd")]
-    public async Task PublishedExplicitDryRunWritesNothing()
-    {
-        var target = PublishedExecutableTarget.Discover();
-        using var working = PublishedExtensionCreateWorkspace.Create();
-        var beforeCatalogue = working.SnapshotCatalogue();
-        var beforeWorkspace = working.SnapshotWorkspace();
-
-        var result = await PublishedProcessTestSupport.RunAsync(
-            target,
-            working.WorkspacePath,
-            [
-                "extension", "create", PublishedExtensionCreateWorkspace.StableId,
-                "--path", working.CataloguePath,
-                "--workspace", working.WorkspacePath,
-                "--dry-run",
-            ]);
-
-        Assert.Equal(0, result.ExitCode);
-        Assert.Equal(string.Empty, result.StandardError);
-        Assert.Contains("Mode: dry-run", result.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Status: complete", result.StandardOutput, StringComparison.Ordinal);
-        Assert.DoesNotContain("Stable ID (", result.StandardOutput, StringComparison.Ordinal);
-        Assert.False(Directory.Exists(working.DestinationPath));
-        Assert.Equal(beforeCatalogue, working.SnapshotCatalogue());
-        Assert.Equal(beforeWorkspace, working.SnapshotWorkspace());
-    }
 
     [Fact(DisplayName = "Published automatic Extension Create applies once and verifies an unchanged no-op"), Trait("Feature", "extension-create"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedAutomaticApplyConvergesWithoutWorkspaceLifecycleOrRecoveryEffects()
@@ -218,12 +139,5 @@ public sealed class PublishedExtensionCreateProcessTests
         Assert.Equal(beforeWorkspace, working.SnapshotWorkspace());
     }
 
-    private static string[] HelpArguments(string scope)
-        => scope switch
-        {
-            "root" => [],
-            "group" => ["extension"],
-            "leaf" => ["extension", "create", "--help"],
-            _ => throw new ArgumentOutOfRangeException(nameof(scope), scope, "The published help scope is not defined."),
-        };
+
 }

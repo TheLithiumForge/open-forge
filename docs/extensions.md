@@ -22,7 +22,7 @@ open-forge extension remove [<stable-id>...] [--prune] [--automatic] [--dry-run]
 
 The bare group shows help and performs no operation or wizard. `list` and
 `inspect` are read-only. `create` writes only
-`<catalogue>/<id>/extension.json` and `payload/.agents/` under its catalogue
+`<catalogue>/<id>/extension.json` and `content/.agents/` under its catalogue
 destination. Its `--path` is not a package source, and the shared `--workspace`
 flag is a no-op for create. Create uses a separate exact-destination, collision,
 and revalidation path with no workspace lease, none of `Replace`,
@@ -101,6 +101,18 @@ evidence.
 See the [CLI command contracts](cli.md#extension-operations) for the public
 overview and the routed [Extension contract group](../.agents/memory/crystallized/documents/cli/contracts/extension/_extension.md)
 for complete Interface and Behavior contracts.
+
+External files such as `.apm/agents/reviewer.md` require exact consumer grants
+in `.agents/open-forge.permissions.json`. A human apply request shows missing
+files and asks whether to remember approval; the default is No. JSON, automatic,
+redirected and dry-run requests report missing grants without asking or writing.
+Force and prune never bypass this check. If approval is saved and a later content
+change fails, the result reports that the grant remains.
+
+The replacement CLI and first-party packages use `content/` package layout.
+Existing JSON members that describe payload facts retain their names. The frozen executable described below
+retains its historical format; first-party source packages now target the
+replacement CLI.
 
 ## Frozen executable: `open-forge-old`
 

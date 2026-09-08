@@ -44,6 +44,42 @@ without duplicating implementation mechanics. Gate 5 must prove
 source-generated YamlDotNet and STJ serialization, fixed Markdig where used,
 real `System.IO`, Native AOT, OS locking, isolated tests, and package journeys.
 
+## Consumer Destination Permissions
+
+Consume the [Workspace Permissions Interface](../../shared/workspace-permissions/interface.md) and
+[Behavior](../../shared/workspace-permissions/behavior.md). Require an exact grant per package for every external target in the complete
+selected dependency closure.
+Existing `.agents/` targets need no grant; their prior safety and ownership
+checks remain. Revocation blocks the complete selected lifecycle operation,
+including ownership release, until exact explicit reapproval. Unrelated
+installed packages do not enter this request's required set.
+
+An eligible human apply request asks once for the complete missing set after
+safe preflight. JSON, automatic, redirected and dry-run execution never ask the
+permission question or create grants. Existing selection and force/prune
+questions keep their separate rules. Force and prune never supply permission.
+Malformed or unsafe permission storage is diagnosed without overwriting it.
+
+Permission create/replace is a declared control-file effect. Revalidate the
+observed document and approved plan under the existing workspace lease. Cover
+prior permission bytes or proven absence in the one verified operation bundle,
+then persist and verify approval before content and lifecycle effects. Later
+failure retains the grant and its actual outcome. Restoration is manual; no
+new automatic Repair behavior follows.
+
+The result adds `permissions` immediately before `lifecycle`, using the exact
+shared member order and meanings. Human output presents those same facts before
+lifecycle publication. Add these ordered findings immediately before the
+existing general target-safety findings: `install` uses the prefix
+`extension-install.`, followed by `permission-required`,
+`permission-declined`, `permissions-invalid`, `permissions-unavailable`,
+`permissions-changed`, and `permission-write-failed`, in that order.
+Their statuses are respectively `blocked`, `blocked`, `blocked`, `incomplete`,
+`blocked`, and `failed`. A failed or unknown permission effect remains failed;
+caller cancellation before an effect keeps the existing interrupted outcome.
+Missing grants direct to rerun interactively or edit the displayed exact
+consumer entries. Invalid storage directs to inspect and correct that file.
+
 ## Purpose And Boundary
 
 `extension install` establishes managed ownership for explicitly selected absent
@@ -231,18 +267,13 @@ and metadata using current Index rules. Generated interiors are derived
 navigation, not package-owned authored bytes. A missing, duplicate, reversed,
 nested, or ambiguous boundary blocks; force does not repair it.
 
-Every package payload target must be a canonical strict descendant of
-`.agents/`. Validate that command-local restriction for every package in the
-complete dependency closure before planning. The established Framework anchor
-keeps `.agents` itself outside both the package payload and command-local
-directory-effect sets. Only legitimately missing strict descendant directories
-beneath that established anchor may be ordinary lease-bound directory-create
-effects. A target outside `.agents/`, including any `.apm/` target, rejects the
-complete request before a plan, lock, recovery artifact, or workspace effect
-exists. This restriction does not change or narrow the shared
-`ExtensionTargetPath` grammar. A possible future `.apm/` root remains a
-deferred, non-authoritative idea and has no target, ownership, lifecycle,
-recovery, or security meaning in this contract.
+Every package payload target must be a canonical portable workspace-relative
+file. Validate complete closure, exact consumer grants for external files, and
+all protected destination rules before permission or content effects. The
+established Framework anchor keeps `.agents` itself outside both payload and
+directory-effect sets. Only declared missing ordinary parents beneath the
+workspace can be directory-create effects; an external grant covers the exact
+file and does not grant ownership of its parents or siblings.
 
 Extension payloads also cannot target the lifecycle document, repository
 metadata, recovery bundles or drafts, workspace overwrite companions, Framework
@@ -286,13 +317,14 @@ Environment.SpecialFolderOption.Create)` and its application-owned
 `incomplete` result. The operation prepares exactly one immutable ZIP bundle
 outside the workspace under a deterministic normalized
 physical workspace path key and operation ID when it contains one or more
-existing-target effects (`Replace`, `ReplaceGeneratedRegion`, or `Delete`). An
-operation containing only Create effects or
-no-ops creates no bundle. Its source-generated
+existing-target effects (`Replace`, `ReplaceGeneratedRegion`, or `Delete`). An operation containing only ordinary content Create effects or no-ops
+creates no bundle. Permission-file Create requires its prior-absence bundle
+entry even when there is no existing-target effect. Its source-generated
 schema-v1 `manifest.json` and streamed ordinal payload entries record
 command/operation/workspace identity, ordered relative targets, change kinds,
 exact prior bytes/lengths/hashes, and intended final absence or length/hash.
-`Create` and semantic/byte no-op effects have no entry. A CreateNew draft is
+Ordinary content `Create` and semantic/byte no-op effects have no entry.
+Permission-file `Create` has a reversible prior-absence entry. A CreateNew draft is
 closed and reopened for semantic manifest, exact ordered entry, length, hash,
 and payload-byte validation, moved within the same directory to its deterministic
 final name, and reopened and verified. Only the valid final ZIP forms the opaque
@@ -324,7 +356,7 @@ separate lease-bound contract.
 Human and JSON presentation consume one immutable `ExtensionInstallResult`.
 Expanded human output presents the result facts in the same order as the JSON
 payload: mode, force, automatic, selection, source, packages, Framework anchor,
-footprint, effects, Generated Navigation, lifecycle, recovery, verification,
+footprint, effects, Generated Navigation, permissions, lifecycle, recovery, verification,
 findings, status, and at most one next action. Compact output may omit
 supporting detail, but it cannot change a fact, finding, status, next action,
 stream, or exit. Help describes the same exact selection, interaction, force,
@@ -353,13 +385,15 @@ order. Every property is present for every semantic status:
 10. `generatedNavigation`: `null` or one atomic object whose sole member is the
     non-null `regions` array; each region contains `path` and `state`, in that
     order;
-11. `lifecycle`: one object whose members are `action` and `outcome`, in that
+11. `permissions`: the complete object defined by the Workspace Permissions
+    Interface, in its declared member order;
+12. `lifecycle`: one object whose members are `action` and `outcome`, in that
     order;
-12. `recovery`: one object whose members are `state`, `protectedPaths`, and
+13. `recovery`: one object whose members are `state`, `protectedPaths`, and
     `residualPath`, in that order;
-13. `verification`: one object whose members are `targets`, `topology`,
+14. `verification`: one object whose members are `targets`, `topology`,
     `extensionsLifecycle`, and `frameworkLifecycle`, in that order;
-14. `findings`: a non-null ordered array whose members are `code`, `status`,
+15. `findings`: a non-null ordered array whose members are `code`, `status`,
     `target`, and `cause`, in that order.
 
 Every array is present and non-null, including nested `rootIds`, `dependencies`,
@@ -387,13 +421,13 @@ The three `footprint` arrays contain unique canonical workspace-relative paths
 in ordinal order. `payloadTargets` contains only package payload paths,
 `generatedRegions` contains only generated host paths, and `directories`
 contains only legitimately missing planned descendant directory-create paths
-beneath the established `.agents` anchor; it never contains `.agents` itself.
+beneath the workspace for admitted targets; it never contains `.agents` itself.
 
 Effect order is the exact planned and application order for target and generated
 effects. Dependencies precede dependents. Lifecycle publication follows those
 effects separately and is the final workspace file effect when required. Effect
 `kind` is `directory`, `package-file`, or `generated-region`. A directory action
-is `create` only for one such missing descendant beneath the established anchor;
+is `create` only for one declared missing ordinary parent of an admitted target;
 a package-file action is `create` or `replace`; and a generated-region action is
 `replace`. `packageId` is the exact package that owns a package effect and is
 otherwise `null`. Effect `outcome` is `planned`, `not-started`, `verified`,
@@ -432,7 +466,12 @@ declaration and primary ordering sequence:
 | `extension-install.managed-divergence`           | `blocked`     | A managed package differs from its baseline and requires Extension Update.                |
 | `extension-install.initial-force-required`       | `blocked`     | An eligible initial occupant remains without exact force authority.                       |
 | `extension-install.ownership-conflict`           | `blocked`     | Another owner or manager conflicts with a selected effect.                                |
-| `extension-install.target-outside-agents`        | `blocked`     | A package payload target is not a strict descendant of `.agents/`.                        |
+| `extension-install.permission-required`          | `blocked`     | Exact external destination grants are missing.                                            |
+| `extension-install.permission-declined`          | `blocked`     | The caller declined the complete missing grant set.                                       |
+| `extension-install.permissions-invalid`          | `blocked`     | The consumer permission document is malformed or unsafe.                                  |
+| `extension-install.permissions-unavailable`      | `incomplete`  | Required consumer permission facts cannot be read completely.                             |
+| `extension-install.permissions-changed`          | `blocked`     | The observed permission document changed before application.                              |
+| `extension-install.permission-write-failed`      | `failed`      | Permission publication or verification failed or completion is unknown.                   |
 | `extension-install.target-unsafe`                | `blocked`     | A selected target is unsafe, reserved, colliding, or cannot be revalidated.               |
 | `extension-install.projection-unavailable`       | `incomplete`  | Intended topology or Generated Navigation cannot be formed completely.                    |
 | `extension-install.generated-region-unsafe`      | `blocked`     | A required generated-region boundary is missing, malformed, or ambiguous.                 |

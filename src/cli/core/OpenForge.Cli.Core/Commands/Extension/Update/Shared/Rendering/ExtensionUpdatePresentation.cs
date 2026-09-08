@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 using System.Globalization;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Result;
@@ -109,6 +110,7 @@ internal static class ExtensionUpdatePresentation
             ExtensionUpdateDefinitions.ReadMachineName(result.Lifecycle.Coverage),
             ExtensionUpdateDefinitions.ReadMachineName(result.Lifecycle.Action),
             ExtensionUpdateDefinitions.ReadMachineName(result.Lifecycle.Outcome));
+        ExtensionPermissionPresentation.Append(builder, result.Permissions);
         builder.AppendLine($"""
             Lifecycle: {lifecycle}
             Recovery: {ExtensionUpdateDefinitions.ReadMachineName(result.Recovery.State)}

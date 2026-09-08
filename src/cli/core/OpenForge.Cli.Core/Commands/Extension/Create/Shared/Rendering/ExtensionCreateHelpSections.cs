@@ -35,7 +35,7 @@ internal static class ExtensionCreateHelpSections
                 """
                   --path selects one existing safely resolved ordinary catalogue directory; no marker is required and the parent is never created. Only <catalogue>/<stable-id>/ is inspected.
                   An absent destination can be created and an exact scaffold is a verified no-op.
-                  Divergent, partial, additional, unknown, or colliding content blocks. The scaffold contains only extension.json and payload/.agents/.
+                  Divergent, partial, additional, unknown, or colliding content blocks. The scaffold contains only extension.json and content/.agents/.
                 """),
             new CliHelpSection(
                 "Modes and global options",

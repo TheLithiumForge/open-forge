@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Application;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
@@ -27,15 +28,18 @@ internal static class ExtensionRemoveOperationFactory
             lifecycleStore,
             new LifecycleOwnershipReader(physicalPathResolver),
             physicalPathResolver);
+        var permissions = new ExtensionPermissionOperation(interactiveSession);
         return new ExtensionRemoveOperation(
             planner,
             new MutationPreflight(validator),
+            permissions,
             new ExtensionRemoveApplicationOperation(
                 lockStoreRoot is null
                     ? WorkspaceLockManager.CreateForCurrentUser()
                     : new WorkspaceLockManager(lockStoreRoot),
                 planner,
                 revalidator,
+                permissions,
                 new FileChangeApplier(
                     revalidator,
                     validator)));

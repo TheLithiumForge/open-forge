@@ -19,15 +19,15 @@ Templates provide starting content only. Copy the most relevant Template, adapt 
 Preview the complete package:
 
 ```sh
-open-forge extend development-toolkit --dry-run
+open-forge extension install development-toolkit --dry-run
 ```
 
 Install it:
 
 ```sh
-open-forge extend development-toolkit
+open-forge extension install development-toolkit
 ```
 
-Review and commit the resulting files and `open-forge.extensions.json`.
+Review and commit the resulting files and `.agents/open-forge.lifecycle.json`.
 
 The package is one managed unit. After installation, every file is ordinary user-owned workspace content. Remove routes that provide no local value, or use the CLI to remove the package while its recorded files remain unchanged.

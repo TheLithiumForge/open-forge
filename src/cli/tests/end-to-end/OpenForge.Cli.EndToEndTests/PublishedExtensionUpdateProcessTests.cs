@@ -41,7 +41,7 @@ public sealed class PublishedExtensionUpdateProcessTests
         var sourcePayloadPath = Path.Combine(
             working.CataloguePath,
             "toolkit",
-            "payload",
+            "content",
             ".agents",
             "toolkit",
             "_toolkit.md");
@@ -152,7 +152,7 @@ public sealed class PublishedExtensionUpdateProcessTests
         Assert.Equal(string.Empty, seeded.StandardError);
     }
 
-    private static IReadOnlyDictionary<string, string> SnapshotWorkspaceAndSource(
+    private static SortedDictionary<string, string> SnapshotWorkspaceAndSource(
         PublishedExtensionInstallWorkspace working)
     {
         var snapshot = new SortedDictionary<string, string>(StringComparer.Ordinal);

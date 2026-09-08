@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Request;
@@ -88,7 +89,7 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
                 return new ExtensionUpdateReconciliation(
                     comparisons,
                     effects,
-                    directories.Values.ToArray(),
+                    [.. directories.Values],
                     current,
                     findings,
                     admittedOverrides,
@@ -187,23 +188,22 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
                 Id = package.Id,
                 Version = package.Version,
                 Source = input.SourceIdentity,
-                Dependencies = package.Dependencies.Order(StringComparer.Ordinal).ToArray(),
-                Paths = paths.Order(StringComparer.Ordinal).ToArray(),
+                Dependencies = [.. package.Dependencies.Order(StringComparer.Ordinal)],
+                Paths = [.. paths.Order(StringComparer.Ordinal)],
             };
         }).OrderBy(package => package.Id, StringComparer.Ordinal).ToArray();
         return new ExtensionUpdateReconciliation(
             comparisons,
             effects,
-            directories.Values
+            [.. directories.Values
                 .OrderBy(value => value.LogicalPath.Count(character =>
                     character == Path.DirectorySeparatorChar))
-                .ThenBy(value => value.LogicalPath, StringComparer.Ordinal)
-                .ToArray(),
+                .ThenBy(value => value.LogicalPath, StringComparer.Ordinal)],
             new ExtensionLifecycleState
             {
                 Coverage = LifecycleSchema.CompleteCoverage,
                 Packages = intendedPackages,
-                Paths = nextPaths.Values.OrderBy(path => path.Path, StringComparer.Ordinal).ToArray(),
+                Paths = [.. nextPaths.Values.OrderBy(path => path.Path, StringComparer.Ordinal)],
             },
             findings,
             admittedOverrides,
@@ -280,7 +280,7 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
         CancellationToken cancellationToken)
     {
         var parent = Path.GetDirectoryName(relativePath.Replace('/', Path.DirectorySeparatorChar));
-        while (parent is not null
+        while (!string.IsNullOrEmpty(parent)
             && parent.Replace(Path.DirectorySeparatorChar, '/') != ".agents")
         {
             var canonical = parent.Replace(Path.DirectorySeparatorChar, '/');
@@ -350,33 +350,43 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
                 snapshot.Bytes.AsSpan(),
                 input.Managed.FingerprintKind)
             : null;
-        var currentState = snapshot.Kind == FileExpectationKind.Missing
-            ? ExtensionUpdateComparisonCurrentState.Missing
-            : input.Managed is not null && string.Equals(
-                currentFingerprint,
-                input.Managed.BaselineFingerprint,
-                StringComparison.Ordinal)
-                ? ExtensionUpdateComparisonCurrentState.BaselineEquivalent
-                : ExtensionUpdateComparisonCurrentState.Changed;
-        var intendedBytes = input.SourceFile is null
-            ? null
-            : input.Topology.IntendedTargetBytes[input.Path];
-        var intendedIdentity = intendedBytes is null ? default : Fingerprint(intendedBytes);
-        var intendedState = input.SourceFile is null
-            ? ExtensionUpdateComparisonIntendedState.Retired
-            : input.Managed is null
-                ? ExtensionUpdateComparisonIntendedState.New
-                : string.Equals(
-                    input.Managed.BaselineFingerprint,
-                    intendedIdentity.Fingerprint,
-                    StringComparison.Ordinal)
-                    ? ExtensionUpdateComparisonIntendedState.Same
-                    : ExtensionUpdateComparisonIntendedState.Changed;
-        var retirement = input.SourceFile is null
-            ? currentState == ExtensionUpdateComparisonCurrentState.BaselineEquivalent
+        var currentState = ExtensionUpdateComparisonCurrentState.Changed;
+        if (snapshot.Kind == FileExpectationKind.Missing)
+        {
+            currentState = ExtensionUpdateComparisonCurrentState.Missing;
+        }
+        else if (input.Managed is not null && string.Equals(currentFingerprint, input.Managed.BaselineFingerprint, StringComparison.Ordinal))
+        {
+            currentState = ExtensionUpdateComparisonCurrentState.BaselineEquivalent;
+        }
+        var intendedBytes = input.SourceFile is null ? null : input.Topology.IntendedTargetBytes[input.Path];
+        (string? Fingerprint, string? Kind) intendedIdentity = default;
+        if (intendedBytes is not null)
+        {
+            intendedIdentity = ExtensionDestinationPolicy.IsImplicit(input.Path)
+                ? Fingerprint(intendedBytes)
+                : (FileExpectation.Hash(intendedBytes), LifecycleSchema.ExactBytesFingerprintKind);
+        }
+        var intendedState = ExtensionUpdateComparisonIntendedState.Changed;
+        if (input.SourceFile is null)
+        {
+            intendedState = ExtensionUpdateComparisonIntendedState.Retired;
+        }
+        else if (input.Managed is null)
+        {
+            intendedState = ExtensionUpdateComparisonIntendedState.New;
+        }
+        else if (string.Equals(input.Managed.BaselineFingerprint, intendedIdentity.Fingerprint, StringComparison.Ordinal))
+        {
+            intendedState = ExtensionUpdateComparisonIntendedState.Same;
+        }
+        var retirement = ExtensionUpdateRetirementEligibility.NotApplicable;
+        if (input.SourceFile is null)
+        {
+            retirement = currentState == ExtensionUpdateComparisonCurrentState.BaselineEquivalent
                 ? ExtensionUpdateRetirementEligibility.Eligible
-                : ExtensionUpdateRetirementEligibility.Ineligible
-            : ExtensionUpdateRetirementEligibility.NotApplicable;
+                : ExtensionUpdateRetirementEligibility.Ineligible;
+        }
         comparisons.Add(new ExtensionUpdateComparison(
             input.Path,
             input.Package.Id,
@@ -436,7 +446,7 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
                     input.Path));
                 if (snapshot.Kind == FileExpectationKind.File)
                 {
-                    admittedOverrides[input.Path] = snapshot.Bytes.ToArray();
+                    admittedOverrides[input.Path] = [.. snapshot.Bytes];
                 }
                 else
                 {
@@ -457,6 +467,11 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
             var change = snapshot.Kind == FileExpectationKind.Missing
                 ? PlannedFileChange.Create(snapshot.Expectation, intendedBytes)
                 : PlannedFileChange.Replace(snapshot.Expectation, intendedBytes);
+            var logicalAction = ExtensionUpdateChangeAction.Replace;
+            if (snapshot.Kind == FileExpectationKind.Missing)
+            {
+                logicalAction = input.Managed is null ? ExtensionUpdateChangeAction.Create : ExtensionUpdateChangeAction.Restore;
+            }
             effects.Add(Effect(new PackageEffectInput
             {
                 Path = input.Path,
@@ -464,11 +479,7 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
                 Action = snapshot.Kind == FileExpectationKind.Missing
                     ? ExtensionUpdateEffectAction.Create
                     : ExtensionUpdateEffectAction.Replace,
-                LogicalAction = snapshot.Kind == FileExpectationKind.Missing
-                    ? input.Managed is null
-                        ? ExtensionUpdateChangeAction.Create
-                        : ExtensionUpdateChangeAction.Restore
-                    : ExtensionUpdateChangeAction.Replace,
+                LogicalAction = logicalAction,
                 SourceAssetPaths = intendedProvenance[input.Path],
                 Change = change,
                 Before = snapshot,
@@ -526,7 +537,7 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
         {
             if (snapshot.Kind == FileExpectationKind.File)
             {
-                admittedOverrides[input.Path] = snapshot.Bytes.ToArray();
+                admittedOverrides[input.Path] = [.. snapshot.Bytes];
             }
             else
             {
@@ -549,7 +560,7 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
                 input.Path));
             if (snapshot.Kind == FileExpectationKind.File)
             {
-                admittedOverrides[input.Path] = snapshot.Bytes.ToArray();
+                admittedOverrides[input.Path] = [.. snapshot.Bytes];
             }
             else
             {
@@ -668,7 +679,7 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
         => new()
         {
             Path = path.Path,
-            Owners = owners.Order(StringComparer.Ordinal).ToArray(),
+            Owners = [.. owners.Order(StringComparer.Ordinal)],
             BaselineFingerprint = path.BaselineFingerprint,
             FingerprintKind = path.FingerprintKind,
         };
@@ -679,8 +690,8 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
             Id = package.Id,
             Version = package.Version,
             Source = package.Source,
-            Dependencies = package.Dependencies.ToArray(),
-            Paths = package.Paths.ToArray(),
+            Dependencies = [.. package.Dependencies],
+            Paths = [.. package.Paths],
         };
 
     private sealed record PackagePathInput(

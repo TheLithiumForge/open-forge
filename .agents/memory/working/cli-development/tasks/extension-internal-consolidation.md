@@ -43,3 +43,13 @@ may run in parallel after those boundaries freeze.
 No behavior change, new command, compatibility machinery, runtime registry,
 JavaScript path, remote action, destructive external action, or publication is
 authorized.
+
+## Task 24 Acceptance Input
+
+Task 24 completed the source-enumeration correction, current `content/` naming,
+consumer permission behavior and eighteen public Extension journeys. Its fresh
+review also aligned external Inspect identities and closed selected destination
+ancestry/control-file gaps. These are accepted behavior, not remaining refactor
+work. Retain their lower-tier regressions and public count. Re-evaluate the
+older source-universe/manifest/graph preparation against the final Task 25
+baseline before freezing any shared foundation; do not repeat completed work.

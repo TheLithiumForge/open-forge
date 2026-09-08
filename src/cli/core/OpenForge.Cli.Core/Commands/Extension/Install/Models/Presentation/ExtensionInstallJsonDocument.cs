@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Permissions.Models.Presentation;
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Models.Presentation;
 
 internal sealed class ExtensionInstallJsonDocument
@@ -28,6 +29,7 @@ internal sealed class ExtensionInstallJsonResult
     public required ExtensionInstallJsonFootprint? Footprint { get; init; }
     public required ExtensionInstallJsonEffect[] Effects { get; init; }
     public required ExtensionInstallJsonNavigation? GeneratedNavigation { get; init; }
+    public required WorkspacePermissionJson Permissions { get; init; }
     public required ExtensionInstallJsonLifecycle Lifecycle { get; init; }
     public required ExtensionInstallJsonRecovery Recovery { get; init; }
     public required ExtensionInstallJsonVerification Verification { get; init; }

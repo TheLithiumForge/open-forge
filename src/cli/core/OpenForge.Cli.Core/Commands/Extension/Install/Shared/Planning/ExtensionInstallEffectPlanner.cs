@@ -37,7 +37,7 @@ internal sealed class ExtensionInstallEffectPlanner(
         foreach (var path in input.Topology.IntendedTargetBytes.Keys.Order(StringComparer.Ordinal))
         {
             var parent = Path.GetDirectoryName(path.Replace('/', Path.DirectorySeparatorChar));
-            while (parent is not null
+            while (!string.IsNullOrEmpty(parent)
                 && parent.Replace(Path.DirectorySeparatorChar, '/') != ".agents")
             {
                 var canonical = parent.Replace(Path.DirectorySeparatorChar, '/');
@@ -181,7 +181,7 @@ internal sealed class ExtensionInstallEffectPlanner(
         }
 
         return new ExtensionInstallEffectPlan(
-            new ReadOnlyCollection<ExtensionInstallPlannedEffect>(effects.ToArray()),
+            new ReadOnlyCollection<ExtensionInstallPlannedEffect>([.. effects]),
             lifecyclePlan.Change,
             lifecycleRecovery,
             lifecyclePlan.State == LifecycleWritePlanState.Unchanged

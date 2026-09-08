@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Application;
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
+using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
@@ -18,18 +21,28 @@ internal sealed class ExtensionRemoveApplicationOperation(
     WorkspaceLockManager lockManager,
     ExtensionRemovePlanner planner,
     MutationRevalidator revalidator,
+    ExtensionPermissionOperation permissions,
     FileChangeApplier fileApplier)
 {
+    private readonly ExtensionPermissionOperation _permissions = permissions;
     private readonly WorkspaceLockManager _lockManager = lockManager;
     private readonly ExtensionRemovePlanner _planner = planner;
     private readonly MutationRevalidator _revalidator = revalidator;
     private readonly FileChangeApplier _fileApplier = fileApplier;
 
     internal async ValueTask<ExtensionRemoveResult> ExecuteAsync(
-        ExtensionRemovePlan plan,
+        ExtensionRemoveExecutionPlan execution,
         ExtensionRemoveResult planned,
         CancellationToken cancellationToken)
     {
+        var plan = execution.Content;
+        planned = planned with
+        {
+            Permissions = planned.Permissions with
+            {
+                Outcome = execution.Permission.Change is null ? WorkspacePermissionOutcome.NotRequested : WorkspacePermissionOutcome.NotStarted,
+            },
+        };
         var operationId = Guid.NewGuid();
         WorkspaceLockResult lockResult;
         try
@@ -74,7 +87,7 @@ internal sealed class ExtensionRemoveApplicationOperation(
         await using (lease.ConfigureAwait(false))
         {
             return await ExecuteUnderLeaseAsync(
-                plan,
+                execution,
                 planned,
                 lease,
                 operationId,
@@ -92,12 +105,13 @@ internal sealed class ExtensionRemoveApplicationOperation(
             .Cast<PlannedFileChange>()];
 
     private async ValueTask<ExtensionRemoveResult> ExecuteUnderLeaseAsync(
-        ExtensionRemovePlan plan,
+        ExtensionRemoveExecutionPlan execution,
         ExtensionRemoveResult planned,
         WorkspaceLockLease lease,
         Guid operationId,
         CancellationToken cancellationToken)
     {
+        var plan = execution.Content;
         ExtensionRemovePlanBuild rebuilt;
         try
         {
@@ -166,11 +180,27 @@ internal sealed class ExtensionRemoveApplicationOperation(
                 validation.Cause ?? "An Extension Remove target changed before effects.");
         }
 
+        try
+        {
+            if (!await _permissions.RevalidateAsync(lease, execution.Permission, cancellationToken).ConfigureAwait(false))
+            {
+                return BeforeEffects(plan, planned, ExtensionRemoveFindingCode.PermissionsChanged, "Consumer permission changed after review.");
+            }
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return BeforeEffects(plan, planned, ExtensionRemoveFindingCode.Interrupted, "Extension permission revalidation was interrupted.");
+        }
+        catch (Exception)
+        {
+            return BeforeEffects(plan, planned, ExtensionRemoveFindingCode.PermissionsChanged, "Consumer permission could not be revalidated.");
+        }
+
         RecoveryBundlePreparationResult preparationResult;
         try
         {
             preparationResult = await ExtensionRemoveRecoveryApplication.PrepareAsync(
-                plan,
+                execution,
                 operationId,
                 cancellationToken).ConfigureAwait(false);
         }
@@ -205,6 +235,27 @@ internal sealed class ExtensionRemoveApplicationOperation(
         }
 
         var preparation = preparationResult.Preparation;
+        try
+        {
+            var permission = await _permissions.ApplyAsync(lease, execution.Permission, preparation, cancellationToken).ConfigureAwait(false);
+            planned = planned with { Permissions = permission.Result };
+            if (permission.Failure is { } failure)
+            {
+                return BeforeEffects(plan, planned, ExtensionRemoveDefinitions.ReadPermissionFinding(failure),
+                    "The consumer permission write was not verified.", RecoveryAfterFailure(preparation));
+            }
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return BeforeEffects(plan, planned, ExtensionRemoveFindingCode.Interrupted,
+                "Extension permission application was interrupted.", RecoveryAfterFailure(preparation));
+        }
+        catch (Exception)
+        {
+            planned = planned with { Permissions = planned.Permissions with { Outcome = WorkspacePermissionOutcome.CompletionUnknown } };
+            return BeforeEffects(plan, planned, ExtensionRemoveFindingCode.PermissionWriteFailed,
+                "Consumer permission write completion could not be determined.", RecoveryAfterFailure(preparation));
+        }
         var effects = plan.Effects
             .Select(effect => WithOutcome(effect.Result, ExtensionRemoveEffectOutcome.NotStarted))
             .ToArray();

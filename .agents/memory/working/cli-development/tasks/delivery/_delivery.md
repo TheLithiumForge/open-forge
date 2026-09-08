@@ -46,10 +46,8 @@ and outside this delivery.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
 - [Prepare and prove the thin npm package graph and explicit local-link workflow](01-npm-packages.md) - #Memory #Working #CLI #Task #Delivery #Npm #Package #Contextual
 - [Complete current linux-x64 native CI and reproducible artifact collection](02-native-ci.md) - #Memory #Working #CLI #Task #Distribution #NativeAOT #CI #Contextual
 - [Preserve future signatures, SBOM, provenance, and OIDC expansion behind explicit acceptance](03-supply-chain.md) - #Memory #Working #CLI #Task #Distribution #SupplyChain #Security #Contextual
 - [Align public documentation, run complete x64 acceptance, publish from main, and close the program](04-release.md) - #Memory #Working #CLI #Task #Distribution #Documentation #Release #Contextual
-
 <!-- open-forge:generated-index:end -->

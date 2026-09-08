@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
@@ -33,6 +35,7 @@ internal sealed class ExtensionInstallTargetInspector(
         var frameworkPaths = input.FrameworkLifecycle.Targets
             .Select(target => target.Path)
             .Concat(input.FrameworkLifecycle.GeneratedRegions.Select(region => region.Path))
+            .Select(PortableWorkspacePath.CreatePortableKey)
             .ToHashSet(StringComparer.Ordinal);
         var intendedByPath = new Dictionary<string, ExtensionInstallIntendedPath>(StringComparer.Ordinal);
         foreach (var package in packages)
@@ -44,7 +47,9 @@ internal sealed class ExtensionInstallTargetInspector(
                     ? intendedBytes.ToArray()
                     : throw new InvalidDataException(
                         "A validated package file requires one final topology target.");
-                var identity = Fingerprint(bytes);
+                var identity = ExtensionDestinationPolicy.IsImplicit(path)
+                    ? Fingerprint(bytes)
+                    : (Fingerprint: FileExpectation.Hash(bytes), Kind: LifecycleSchema.ExactBytesFingerprintKind);
                 if (intendedByPath.TryGetValue(path, out var existing))
                 {
                     if (!string.Equals(existing.Fingerprint, identity.Fingerprint, StringComparison.Ordinal)
@@ -78,7 +83,7 @@ internal sealed class ExtensionInstallTargetInspector(
         var eligible = new List<string>();
         foreach (var intended in intendedByPath.Values.OrderBy(value => value.Path, StringComparer.Ordinal))
         {
-            if (frameworkPaths.Contains(intended.Path))
+            if (frameworkPaths.Contains(PortableWorkspacePath.CreatePortableKey(intended.Path)))
             {
                 return Stop(
                     ExtensionInstallFindingCode.OwnershipConflict,
@@ -86,6 +91,12 @@ internal sealed class ExtensionInstallTargetInspector(
                     intended.Path);
             }
 
+            var alias = currentPaths.Keys.FirstOrDefault(path => path != intended.Path
+                && PortableWorkspacePath.CreatePortableKey(path) == PortableWorkspacePath.CreatePortableKey(intended.Path));
+            if (alias is not null)
+            {
+                return Stop(ExtensionInstallFindingCode.OwnershipConflict, "The Extension destination aliases a managed path.", intended.Path);
+            }
             var observation = await ObserveAsync(request, intended.Path, cancellationToken)
                 .ConfigureAwait(false);
             if (observation.Finding is not null)
@@ -132,7 +143,7 @@ internal sealed class ExtensionInstallTargetInspector(
                         intended.Path);
                 }
 
-                if (!input.InitialForceEligiblePaths.Contains(intended.Path))
+                if (ExtensionDestinationPolicy.IsImplicit(intended.Path) && !input.InitialForceEligiblePaths.Contains(intended.Path))
                 {
                     return Stop(
                         ExtensionInstallFindingCode.OwnershipConflict,
@@ -181,11 +192,10 @@ internal sealed class ExtensionInstallTargetInspector(
                 Id = package.Id,
                 Version = package.Version,
                 Source = sourceIdentity,
-                Dependencies = package.Dependencies.Order(StringComparer.Ordinal).ToArray(),
-                Paths = package.Payload.Select(RequiredTargetPath)
+                Dependencies = [.. package.Dependencies.Order(StringComparer.Ordinal)],
+                Paths = [.. package.Payload.Select(RequiredTargetPath)
                     .Distinct(StringComparer.Ordinal)
-                    .Order(StringComparer.Ordinal)
-                    .ToArray(),
+                    .Order(StringComparer.Ordinal)],
             }))
             .OrderBy(package => package.Id, StringComparer.Ordinal)
             .ToArray();
@@ -194,7 +204,7 @@ internal sealed class ExtensionInstallTargetInspector(
             .Concat(intendedByPath.Values.Select(path => new LifecycleExtensionPathV1
             {
                 Path = path.Path,
-                Owners = path.Owners.Order(StringComparer.Ordinal).ToArray(),
+                Owners = [.. path.Owners.Order(StringComparer.Ordinal)],
                 BaselineFingerprint = path.Fingerprint,
                 FingerprintKind = path.FingerprintKind,
             }))
@@ -310,7 +320,7 @@ internal sealed class ExtensionInstallTargetInspector(
                 FileExpectation.Hash(bytes),
                 LifecycleSchema.ExactBytesFingerprintKind),
             _ => throw new ArgumentOutOfRangeException(
-                nameof(facts),
+                nameof(bytes),
                 facts.State,
                 "The Markdown fingerprint state is not defined."),
         };

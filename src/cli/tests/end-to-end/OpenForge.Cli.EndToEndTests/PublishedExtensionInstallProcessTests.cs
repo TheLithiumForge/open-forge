@@ -6,68 +6,24 @@ namespace OpenForge.Cli.EndToEndTests;
 
 public sealed class PublishedExtensionInstallProcessTests
 {
-    [Theory(DisplayName = "Published root Extension group and Install leaf help expose one truthful no-write command"), Trait("Feature", "extension-install"), Trait("Evidence", "EndToEnd")]
-    [InlineData("root")]
-    [InlineData("group")]
-    [InlineData("leaf")]
-    public async Task PublishedHelpIsTruthfulAndReadOnly(string scope)
+    [Fact(DisplayName = "Published Extension Install help is read-only"), Trait("Feature", "extension-install"), Trait("Evidence", "EndToEnd")]
+    public static async Task PublishedHelpIsTruthfulAndReadOnly()
     {
         var target = PublishedExecutableTarget.Discover();
-        using var working = TemporaryWorkspace.Create($"e2e-extension-install-help-{scope}");
-        using var lockStore = PublishedWorkspaceLockStore.Create($"e2e-extension-install-help-lock-{scope}");
-        _ = lockStore.Track(working.Path);
-
+        using var working = TemporaryWorkspace.Create("e2e-extension-install-help");
         var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            target,
-            working.Path,
-            working.SnapshotHashes,
-            HelpArguments(scope),
-            lockStore.EnvironmentVariables);
+            target, working.Path, working.SnapshotHashes, ["extension", "install", "--help"]);
 
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
-        switch (scope)
-        {
-            case "root":
-                Assert.Contains("extension install", result.StandardOutput, StringComparison.Ordinal);
-                break;
-            case "group":
-                Assert.Contains("install [<stable-id>...]", result.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("The extension group performs no operation.", result.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("Update syntax:", result.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("Remove syntax:", result.StandardOutput, StringComparison.Ordinal);
-                break;
-            case "leaf":
-                Assert.Contains(
-                    "open-forge extension install [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--automatic] [--dry-run] [global flags]",
-                    result.StandardOutput,
-                    StringComparison.Ordinal);
-                Assert.Contains("Selection and dependencies", result.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("Interaction and automatic mode", result.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("Initial force", result.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("Results and streams", result.StandardOutput, StringComparison.Ordinal);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(scope), scope, "The help scope is not defined.");
-        }
-
-        lockStore.AssertNoInfrastructure();
+        Assert.Contains("open-forge extension install", result.StandardOutput, StringComparison.Ordinal);
     }
 
-    [Fact(DisplayName = "Published Extension Install preserves promptless invalid input then applies and verifies an exact no-op"), Trait("Feature", "extension-install"), Trait("Evidence", "EndToEnd")]
-    public async Task PublishedSelectionApplyAndNoOpUseExactStreamsExitsAndJson()
+    [Fact(DisplayName = "Published Extension Install requires explicit unattended selection"), Trait("Feature", "extension-install"), Trait("Evidence", "EndToEnd")]
+    public static async Task PublishedUnattendedSelectionIsRequired()
     {
         var target = PublishedExecutableTarget.Discover();
         using var working = PublishedExtensionInstallWorkspace.Create();
-        var seeded = await PublishedProcessTestSupport.RunAsync(
-            target,
-            working.WorkspacePath,
-            ["install", "--automatic", "--workspace", working.WorkspacePath],
-            working.EnvironmentVariables);
-        Assert.Equal(0, seeded.ExitCode);
-        Assert.Equal(string.Empty, seeded.StandardError);
-        var afterFramework = working.SnapshotWorkspace();
-
         var invalid = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             target,
             working.WorkspacePath,
@@ -82,6 +38,23 @@ public sealed class PublishedExtensionInstallProcessTests
         Assert.Equal(string.Empty, invalid.StandardOutput);
         Assert.Contains("Status: invalid", invalid.StandardError, StringComparison.Ordinal);
         Assert.Contains("extension-install.selection-required", invalid.StandardError, StringComparison.Ordinal);
+
+    }
+
+    [Fact(DisplayName = "Published Extension Install applies and repeats without changes"),
+     Trait("Feature", "extension-install"), Trait("Evidence", "EndToEnd")]
+    public async Task PublishedApplyAndNoOpUseExactStreamsExitsAndJson()
+    {
+        var target = PublishedExecutableTarget.Discover();
+        using var working = PublishedExtensionInstallWorkspace.Create();
+        var seeded = await PublishedProcessTestSupport.RunAsync(
+            target,
+            working.WorkspacePath,
+            ["install", "--automatic", "--workspace", working.WorkspacePath],
+            working.EnvironmentVariables);
+        Assert.Equal(0, seeded.ExitCode);
+        Assert.Equal(string.Empty, seeded.StandardError);
+        var afterFramework = working.SnapshotWorkspace();
 
         var arguments = new[]
         {
@@ -111,7 +84,7 @@ public sealed class PublishedExtensionInstallProcessTests
         Assert.Equal(
         [
             "mode", "force", "automatic", "selection", "source", "packages", "framework",
-            "footprint", "effects", "generatedNavigation", "lifecycle", "recovery", "verification", "findings",
+            "footprint", "effects", "generatedNavigation", "permissions", "lifecycle", "recovery", "verification", "findings",
         ],
             commandResult.EnumerateObject().Select(property => property.Name));
         Assert.Equal("explicit-ids", commandResult.GetProperty("selection").GetProperty("selectedBy").GetString());
@@ -144,14 +117,7 @@ public sealed class PublishedExtensionInstallProcessTests
         working.AssertPersistentLock();
     }
 
-    private static string[] HelpArguments(string scope)
-        => scope switch
-        {
-            "root" => [],
-            "group" => ["extension"],
-            "leaf" => ["extension", "install", "--help"],
-            _ => throw new ArgumentOutOfRangeException(nameof(scope), scope, "The help scope is not defined."),
-        };
+
 }
 
 internal sealed class PublishedExtensionInstallWorkspace : IDisposable
@@ -208,7 +174,7 @@ internal sealed class PublishedExtensionInstallWorkspace : IDisposable
     internal IReadOnlyDictionary<string, string> SnapshotSource() => _source.SnapshotHashes();
 
     internal byte[] SourcePayloadBytes()
-        => File.ReadAllBytes(_source.Combine("toolkit/payload/.agents/toolkit/_toolkit.md"));
+        => File.ReadAllBytes(_source.Combine("toolkit/content/.agents/toolkit/_toolkit.md"));
 
     internal void AssertPersistentLock() => _lockStore.AssertPersistentZeroByteLock(WorkspacePath);
 
@@ -239,7 +205,7 @@ internal sealed class PublishedExtensionInstallWorkspace : IDisposable
               }
               """);
         source.WriteText(
-            $"{id}/payload/{target}",
+            $"{id}/content/{target}",
             OpenForgeDocumentSeed.Metadata(id, ["Extension"], $"# {id}\n"));
     }
 

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Permissions.Models.Presentation;
 namespace OpenForge.Cli.Core.Commands.Extension.Update.Models.Presentation;
 
 internal sealed class ExtensionUpdateJsonDocument
@@ -44,6 +45,7 @@ internal sealed class ExtensionUpdateJsonResult
 
     public required ExtensionUpdateJsonEffect[] Effects { get; init; }
 
+    public required WorkspacePermissionJson Permissions { get; init; }
     public required ExtensionUpdateJsonLifecycle Lifecycle { get; init; }
 
     public required ExtensionUpdateJsonRecovery Recovery { get; init; }

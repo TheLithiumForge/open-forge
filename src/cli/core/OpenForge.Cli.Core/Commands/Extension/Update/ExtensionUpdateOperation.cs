@@ -1,3 +1,9 @@
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem;
+using OpenForge.Cli.Core.Commands.Extension.Update.Models.Application;
+using OpenForge.Cli.Core.Commands.Extension.Models.Permissions;
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
+using OpenForge.Cli.Core.Framework.Permissions.Models.Planning;
+using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Result;
@@ -11,9 +17,11 @@ namespace OpenForge.Cli.Core.Commands.Extension.Update;
 internal sealed class ExtensionUpdateOperation(
     ExtensionUpdatePlanner planner,
     MutationPreflight preflight,
+    ExtensionPermissionOperation permissions,
     ExtensionUpdateApplicationOperation application)
 {
     private readonly ExtensionUpdatePlanner _planner = planner;
+    private readonly ExtensionPermissionOperation _permissions = permissions;
     private readonly MutationPreflight _preflight = preflight;
     private readonly ExtensionUpdateApplicationOperation _application = application;
 
@@ -65,7 +73,7 @@ internal sealed class ExtensionUpdateOperation(
                     "Extension Update planning failed unexpectedly."));
         }
 
-        if (build.Plan is not { } plan || plan.IsNoOp)
+        if (build.Plan is not { } plan)
         {
             return build.Result;
         }
@@ -105,14 +113,53 @@ internal sealed class ExtensionUpdateOperation(
                     ?? "The complete Extension Update plan is stale, unavailable, or unsafe.");
         }
 
-        if (request.Mode == ExtensionUpdateMode.DryRun)
+        ExtensionPermissionStage permission;
+        try
         {
-            return build.Result;
+            var selectedIds = plan.Packages.Select(package => package.Id).ToHashSet(StringComparer.Ordinal);
+            var requirements = plan.Packages.SelectMany(package => package.Payload
+                .Where(file => file.TargetPath is { } path && !ExtensionDestinationPolicy.IsImplicit(path))
+                .Select(file => new WorkspacePermissionRequirement(new ExtensionPermissionSubject(package.Id),
+                    file.TargetPath ?? throw new InvalidOperationException("A planned Extension target requires its path."))))
+                .Concat(plan.CurrentLifecycle.Packages.Where(package => selectedIds.Contains(package.Id))
+                    .SelectMany(package => package.Paths.Where(path => !ExtensionDestinationPolicy.IsImplicit(path))
+                        .Select(path => new WorkspacePermissionRequirement(new ExtensionPermissionSubject(package.Id), path))));
+            var targets = requirements.Select(requirement => new ExtensionPermissionTarget(requirement, ReadPermissionEffect(plan, requirement)));
+            permission = await _permissions.DetermineAsync(new(request.Workspace, [.. targets], plan.SourceRead.Identity,
+                request.Mode == ExtensionUpdateMode.Apply && !request.Automatic && request.AllowInteraction), cancellationToken).ConfigureAwait(false);
         }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return PlanBoundary(plan, ExtensionUpdateFindingCode.Interrupted, "Extension permission approval was interrupted.");
+        }
+        catch (Exception)
+        {
+            return PlanBoundary(plan, ExtensionUpdateFindingCode.OperationFailed, "Extension permission determination failed unexpectedly.");
+        }
+        if (permission.Failure is { } failure)
+        {
+            return PlanBoundary(plan, ExtensionUpdateDefinitions.ReadPermissionFinding(failure),
+                "The requested Extension destinations require valid consumer permission.") with
+            { Permissions = permission.Result };
+        }
+        var execution = new ExtensionUpdateExecutionPlan(plan, permission);
+        if (request.Mode == ExtensionUpdateMode.DryRun || execution.IsNoOp)
+        {
+            return build.Result with { Permissions = permission.Result };
+        }
+        var outcome = await _application.ExecuteAsync(execution, cancellationToken).ConfigureAwait(false);
+        return Application(plan, outcome) with { Permissions = outcome.Permissions };
+    }
 
-        var outcome = await _application.ExecuteAsync(plan, cancellationToken)
-            .ConfigureAwait(false);
-        return Application(plan, outcome);
+    private static ExtensionPermissionEffect ReadPermissionEffect(ExtensionUpdatePlan plan, WorkspacePermissionRequirement requirement)
+    {
+        var change = plan.Effects.FirstOrDefault(effect => effect.Result.Path == requirement.Path)?.FileChange;
+        if (change is not null)
+        {
+            return change.Kind == PlannedFileChangeKind.Delete ? ExtensionPermissionEffect.Delete : ExtensionPermissionEffect.Copy;
+        }
+        var retained = plan.IntendedLifecycle.Packages.Any(package => package.Id == requirement.Subject.Id && package.Paths.Contains(requirement.Path));
+        return retained ? ExtensionPermissionEffect.Preserve : ExtensionPermissionEffect.ReleaseOwnership;
     }
 
     private static ExtensionUpdateResult PlanBoundary(
@@ -135,7 +182,7 @@ internal sealed class ExtensionUpdateOperation(
                     ExtensionUpdateVerificationState.NotRequested,
                     ExtensionUpdateVerificationState.NotRequested,
                     ExtensionUpdateVerificationState.NotRequested)),
-            plan.Result.Findings.Append(new ExtensionUpdateFinding(code, cause)).ToArray());
+            [.. plan.Result.Findings, new ExtensionUpdateFinding(code, cause)]);
 
     private static ExtensionUpdateResult Application(
         ExtensionUpdatePlan plan,
@@ -150,7 +197,7 @@ internal sealed class ExtensionUpdateOperation(
                 outcome.Verification),
             outcome.Finding is null
                 ? plan.Result.Findings
-                : plan.Result.Findings.Append(outcome.Finding).ToArray());
+                : [.. plan.Result.Findings, outcome.Finding]);
 
     private static ExtensionUpdateResultFacts ApplicationFacts(
         ExtensionUpdatePlan plan,

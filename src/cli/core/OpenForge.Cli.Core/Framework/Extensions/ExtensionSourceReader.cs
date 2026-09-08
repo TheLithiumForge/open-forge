@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using OpenForge.Cli.Core.Framework.Extensions.Embedded;
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
@@ -80,7 +81,17 @@ internal sealed class ExtensionSourceReader(PhysicalPathResolver physicalPathRes
         var rootManifest = ResolveCandidate(lexicalSource, physicalSource, Path.Combine(lexicalSource, "extension.json"));
         if (rootManifest.State == PhysicalPathState.Contained)
         {
-            if (HasCataloguePackage(lexicalSource, physicalSource, cancellationToken))
+            bool hasCataloguePackage;
+            try
+            {
+                hasCataloguePackage = HasCataloguePackage(lexicalSource, physicalSource, cancellationToken);
+            }
+            catch (Exception exception) when (exception is UnauthorizedAccessException or IOException)
+            {
+                return Unavailable(lexicalSource, exception.Message);
+            }
+
+            if (hasCataloguePackage)
             {
                 return Blocked(
                     lexicalSource,
@@ -110,24 +121,12 @@ internal sealed class ExtensionSourceReader(PhysicalPathResolver physicalPathRes
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        string[] directories;
-        try
-        {
-            directories = Directory.GetDirectories(lexicalSource);
-        }
-        catch (UnauthorizedAccessException)
-        {
-            return false;
-        }
-        catch (IOException)
-        {
-            return false;
-        }
+        var directories = Directory.GetDirectories(lexicalSource);
 
         foreach (var directory in directories.Order(StringComparer.Ordinal))
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (string.Equals(Path.GetFileName(directory), "payload", StringComparison.Ordinal))
+            if (string.Equals(Path.GetFileName(directory), ExtensionPackageLayout.ContentDirectoryName, StringComparison.Ordinal))
             {
                 continue;
             }
@@ -160,9 +159,7 @@ internal sealed class ExtensionSourceReader(PhysicalPathResolver physicalPathRes
         string[] packageDirectories;
         try
         {
-            packageDirectories = Directory.GetDirectories(lexicalSource)
-                .Order(StringComparer.Ordinal)
-                .ToArray();
+            packageDirectories = [.. Directory.GetDirectories(lexicalSource).Order(StringComparer.Ordinal)];
         }
         catch (UnauthorizedAccessException exception)
         {
@@ -287,7 +284,7 @@ internal sealed class ExtensionSourceReader(PhysicalPathResolver physicalPathRes
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        var payloadRoot = Path.Combine(lexicalPackage, "payload");
+        var payloadRoot = Path.Combine(lexicalPackage, ExtensionPackageLayout.ContentDirectoryName);
         var payloadResolution = ResolveCandidate(lexicalPackage, physicalPackage, payloadRoot);
         if (payloadResolution.State == PhysicalPathState.Missing)
         {
@@ -298,7 +295,7 @@ internal sealed class ExtensionSourceReader(PhysicalPathResolver physicalPathRes
         {
             return
             [
-                UnreadFile("payload", null, ExtensionPackageFileReadState.Blocked),
+                UnreadFile(ExtensionPackageLayout.ContentDirectoryName, null, ExtensionPackageFileReadState.Blocked),
             ];
         }
 
@@ -312,8 +309,8 @@ internal sealed class ExtensionSourceReader(PhysicalPathResolver physicalPathRes
             string[] directories;
             try
             {
-                files = Directory.GetFiles(directory).Order(StringComparer.Ordinal).ToArray();
-                directories = Directory.GetDirectories(directory).Order(StringComparer.Ordinal).ToArray();
+                files = [.. Directory.GetFiles(directory).Order(StringComparer.Ordinal)];
+                directories = [.. Directory.GetDirectories(directory).Order(StringComparer.Ordinal)];
             }
             catch (Exception exception) when (exception is UnauthorizedAccessException or IOException)
             {
@@ -365,10 +362,10 @@ internal sealed class ExtensionSourceReader(PhysicalPathResolver physicalPathRes
     {
         cancellationToken.ThrowIfCancellationRequested();
         var relative = Path.GetRelativePath(lexicalPackage, file).Replace('\\', '/');
-        var target = relative.StartsWith("payload/", StringComparison.Ordinal)
-            ? relative["payload/".Length..]
+        var target = relative.StartsWith(ExtensionPackageLayout.ContentPathPrefix, StringComparison.Ordinal)
+            ? relative[ExtensionPackageLayout.ContentPathPrefix.Length..]
             : string.Empty;
-        if (!ExtensionTargetPath.TryNormalize(target, out var normalizedTarget))
+        if (!PortableWorkspacePath.TryNormalize(target, out var normalizedTarget))
         {
             return UnreadFile(relative, null, ExtensionPackageFileReadState.Invalid);
         }
@@ -416,10 +413,10 @@ internal sealed class ExtensionSourceReader(PhysicalPathResolver physicalPathRes
         ExtensionPackageFileReadState state)
     {
         var relative = Path.GetRelativePath(lexicalPackage, entry).Replace('\\', '/');
-        var target = relative.StartsWith("payload/", StringComparison.Ordinal)
-            ? relative["payload/".Length..]
+        var target = relative.StartsWith(ExtensionPackageLayout.ContentPathPrefix, StringComparison.Ordinal)
+            ? relative[ExtensionPackageLayout.ContentPathPrefix.Length..]
             : string.Empty;
-        return ExtensionTargetPath.TryNormalize(target, out var normalizedTarget)
+        return PortableWorkspacePath.TryNormalize(target, out var normalizedTarget)
             ? UnreadFile(relative, normalizedTarget, state)
             : UnreadFile(relative, null, ExtensionPackageFileReadState.Invalid);
     }

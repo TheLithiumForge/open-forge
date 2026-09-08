@@ -92,7 +92,7 @@ internal sealed class ExtensionCreateDestinationWriter
 
     private void CreatePayload(ExtensionCreatePlan plan, ExtensionCreateEffect effect)
     {
-        var payload = Path.Combine(plan.Destination, ExtensionCreateDefinitions.PayloadDirectoryName);
+        var payload = Path.Combine(plan.Destination, ExtensionPackageLayout.ContentDirectoryName);
         var agents = Path.Combine(payload, ExtensionCreateDefinitions.AgentsDirectoryName);
         RequireExactEffectPath(effect.Path.TrimEnd(Path.DirectorySeparatorChar), agents);
         RequireMissing(plan, payload);

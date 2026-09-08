@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
@@ -38,9 +39,12 @@ internal static class ExtensionRemoveLibraryBoundaryPolicy
             return leafFinding;
         }
 
-        if (boundary.Record.State == LibrariesRecordReadState.Complete
-            && boundary.Record.Record!.Libraries.Any(library =>
-                library.Paths.Any(path => string.Equals(path.Value, boundary.Path, StringComparison.Ordinal))))
+        if (boundary.Record.State == LibrariesRecordReadState.Complete && boundary.Record.Record is not { })
+        {
+            throw new InvalidOperationException("A complete Library record observation requires its document.");
+        }
+        if (boundary.Record.Record is { } record && record.Libraries.Any(library =>
+                library.Paths.Any(path => PortableWorkspacePath.CreatePortableKey(path.Value) == PortableWorkspacePath.CreatePortableKey(boundary.Path))))
         {
             return new ExtensionRemoveFinding(
                 ExtensionRemoveFindingCode.OwnershipConflict,

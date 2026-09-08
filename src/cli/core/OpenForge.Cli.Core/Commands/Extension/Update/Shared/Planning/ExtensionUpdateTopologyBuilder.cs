@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Request;
@@ -57,7 +59,7 @@ internal sealed class ExtensionUpdateTopologyBuilder
 
         foreach (var pair in input.Admission.Overrides)
         {
-            packageBytes[pair.Key] = pair.Value.ToArray();
+            packageBytes[pair.Key] = [.. pair.Value];
         }
         if (catalogue.Issues.Any(issue => issue.Code != SourceCatalogueIssueCode.RootMissing
             && !(issue.Code == SourceCatalogueIssueCode.IdentityUnavailable
@@ -69,7 +71,7 @@ internal sealed class ExtensionUpdateTopologyBuilder
         }
 
         var packageSources = packageBytes
-            .Where(pair => SourceFormClassifier.TryClassify(pair.Key, out _))
+            .Where(pair => ExtensionDestinationPolicy.IsImplicit(pair.Key) && SourceFormClassifier.TryClassify(pair.Key, out _))
             .Select(pair => CreatePackageSource(request, pair.Key))
             .ToDictionary(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal);
         var intendedSources = catalogue.Sources
@@ -148,11 +150,11 @@ internal sealed class ExtensionUpdateTopologyBuilder
             generatedEntries.Add(region.CanonicalPath, region.Entries);
             if (packageBytes.ContainsKey(region.CanonicalPath))
             {
-                packageBytes[region.CanonicalPath] = change.ExpectedDocumentBytes.ToArray();
+                packageBytes[region.CanonicalPath] = [.. change.ExpectedDocumentBytes];
             }
             else
             {
-                generated.Add(region.CanonicalPath, change.ExpectedDocumentBytes.ToArray());
+                generated.Add(region.CanonicalPath, [.. change.ExpectedDocumentBytes]);
             }
         }
 
@@ -170,17 +172,17 @@ internal sealed class ExtensionUpdateTopologyBuilder
 
     private static PayloadBytes ReadPayload(ExtensionPackageFileFact file)
     {
-        if (!ExtensionTargetPath.TryNormalize(file.TargetPath, out var normalized)
+        if (!PortableWorkspacePath.TryNormalize(file.TargetPath, out var normalized)
             || file.Bytes is not { } bytes
             || file.Sha256 is not { } sha256
-            || !normalized.StartsWith(".agents/", StringComparison.Ordinal))
+            || !ExtensionDestinationPolicy.IsAllowed(normalized))
         {
             throw new InvalidDataException(
                 "A selected Extension payload lost its safe normalized target or reviewed bytes.");
         }
 
-        var portableKey = ExtensionTargetPath.CreatePortableKey(normalized);
-        if (portableKey == ExtensionTargetPath.CreatePortableKey(LifecycleSchema.RelativePath)
+        var portableKey = PortableWorkspacePath.CreatePortableKey(normalized);
+        if (portableKey == PortableWorkspacePath.CreatePortableKey(LifecycleSchema.RelativePath)
             || SourceFormClassifier.TryClassify(portableKey, out var form)
             && form == SourceDocumentForm.OverwriteCompanion)
         {

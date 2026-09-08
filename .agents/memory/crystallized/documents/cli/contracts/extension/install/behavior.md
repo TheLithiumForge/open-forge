@@ -21,6 +21,29 @@ relationships, parser and filesystem boundaries, and cross-cutting implementatio
 structure. This behavior does not duplicate those mechanics or
 claim their Gate 5 proof.
 
+## Consumer Destination Permissions
+
+Consume the [Workspace Permissions Interface](../../shared/workspace-permissions/interface.md) and
+[Behavior](../../shared/workspace-permissions/behavior.md). Require an exact grant per package for every external target in the complete
+selected dependency closure.
+Existing `.agents/` targets need no grant; their prior safety and ownership
+checks remain. Revocation blocks the complete selected lifecycle operation,
+including ownership release, until exact explicit reapproval. Unrelated
+installed packages do not enter this request's required set.
+
+An eligible human apply request asks once for the complete missing set after
+safe preflight. JSON, automatic, redirected and dry-run execution never ask the
+permission question or create grants. Existing selection and force/prune
+questions keep their separate rules. Force and prune never supply permission.
+Malformed or unsafe permission storage is diagnosed without overwriting it.
+
+Permission create/replace is a declared control-file effect. Revalidate the
+observed document and approved plan under the existing workspace lease. Cover
+prior permission bytes or proven absence in the one verified operation bundle,
+then persist and verify approval before content and lifecycle effects. Later
+failure retains the grant and its actual outcome. Restoration is manual; no
+new automatic Repair behavior follows.
+
 ## Complete Typed Flow
 
 ```text
@@ -169,8 +192,8 @@ unavailable, return `incomplete`; if it is unsafe or ambiguous, return
 unavailable anchor and produces `incomplete` before planning; an unsafe or
 ambiguous container remains `blocked`. Extension Install never plans creation of
 `.agents` itself. The shared directory-creation capability remains unchanged;
-after the anchor is established, this command may consume it only for explicitly
-planned missing descendant directories beneath `.agents`.
+after the anchor is established, this command may consume it for explicitly
+planned missing ordinary parents of admitted workspace-relative targets.
 
 ## Manifest And Dependency Closure
 
@@ -181,15 +204,12 @@ source universe, offline and without semver negotiation. Reject unknown IDs,
 duplicate active IDs, duplicate dependency declarations, invalid manifests,
 cycles, unsafe paths, conflicting source identities, and incomplete closure.
 
-Validate every payload target in that complete closure as a canonical strict
-descendant of `.agents/` before planning. Reject `.agents` itself and every
-target outside it, including `.apm/`, before a plan, lock, recovery artifact, or
-workspace effect exists. Only legitimately missing descendant directories
-beneath the established `.agents` anchor may enter the command-local directory
-effect set. This is Extension Install policy only. It consumes the shared
-directory-creation capability and `ExtensionTargetPath` grammar without
-changing, narrowing, or replacing either shared authority. The deferred `.apm/`
-idea creates no behavior or implementation authority here.
+Validate every target in the complete closure as a canonical portable
+workspace-relative file. Require exact consumer permission for each external
+target under the shared permission contract. Reject `.agents` itself, protected
+paths, linked ancestry and collisions before effects. A grant does not widen
+ownership or permit unsafe targets. Only explicitly planned missing ordinary
+parents beneath the workspace enter the command-local directory effect set.
 
 Deduplicate the closure by stable package identity and order dependencies before
 dependents. Keep selected roots, dependency edges, and order facts in the one
@@ -269,7 +289,7 @@ the Index contract. Generated interiors are derived and not package-owned.
 Reject package paths targeting the lifecycle document, repository metadata,
 recovery or temporary artifacts, workspace-owned overwrite companions, Framework
 root/provider blocks, another manager's path, or any location that fails the
-command-local `.agents/`-descendant restriction. Missing, duplicate, reversed,
+consumer destination-admission rules. Missing, duplicate, reversed,
 nested, misplaced, or ambiguous generated boundaries block; force never repairs
 them. Include generated effects in the same parent plan and never invoke a hidden
 index subprocess.
@@ -317,13 +337,15 @@ Environment.SpecialFolderOption.Create)` and its application-owned
 `OpenForge/recovery/v1` subtree. There is no temporary-directory, repository,
 `HOME`, or custom-platform fallback; unavailable storage is a pre-effect
 `incomplete` result. It prepares exactly one immutable ZIP bundle outside the
-workspace. An operation containing only
-Create effects or no-ops does not resolve recovery storage and creates no bundle.
+workspace. An operation containing only ordinary content Create effects or no-ops
+does not resolve recovery storage and creates no bundle. Permission-file Create
+requires its prior-absence bundle entry even without an existing-target effect.
 Its source-generated
 schema-v1 `manifest.json` and streamed ordinal payload entries record
 command/operation/workspace identity, ordered relative targets, change kinds,
 exact prior bytes/lengths/hashes, and intended final absence or length/hash.
-`Create` and semantic/byte no-op effects have no entry. A CreateNew draft is
+Ordinary content `Create` and semantic/byte no-op effects have no entry.
+Permission-file `Create` has a reversible prior-absence entry. A CreateNew draft is
 closed and reopened for semantic manifest, exact ordered entry, length, hash,
 and payload-byte validation, moved within the same directory to its deterministic
 final name, and reopened and verified. Only the valid final ZIP forms the opaque

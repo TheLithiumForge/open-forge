@@ -89,7 +89,7 @@ The intended scaffold has exactly these effects:
 
 ```text
 <catalogue>/<id>/extension.json
-<catalogue>/<id>/payload/.agents/
+<catalogue>/<id>/content/.agents/
 ```
 
 The plan does not include README, payload source files, dependency closure,

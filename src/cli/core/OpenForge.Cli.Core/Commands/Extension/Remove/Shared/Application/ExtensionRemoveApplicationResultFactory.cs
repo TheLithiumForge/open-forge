@@ -25,7 +25,7 @@ internal static class ExtensionRemoveApplicationResultFactory
                 [],
                 residualPath: null),
             NotRequestedVerification(),
-            planned.Findings.Append(new ExtensionRemoveFinding(code, cause)).ToArray());
+            [.. planned.Findings, new ExtensionRemoveFinding(code, cause)]);
 
     internal static ExtensionRemoveResult AfterPreparation(
         ExtensionRemovePlan plan,
@@ -44,7 +44,7 @@ internal static class ExtensionRemoveApplicationResultFactory
             Lifecycle(plan, lifecycleOutcome),
             RecoveryAfterFailure(preparation),
             verification ?? NotRequestedVerification(),
-            planned.Findings.Append(new ExtensionRemoveFinding(code, cause, target)).ToArray());
+            [.. planned.Findings, new ExtensionRemoveFinding(code, cause, target)]);
 
     internal static ExtensionRemoveResult Result(
         ExtensionRemovePlan plan,
@@ -64,7 +64,8 @@ internal static class ExtensionRemoveApplicationResultFactory
             lifecycle,
             recovery,
             verification,
-            findings);
+            findings) with
+        { Permissions = planned.Permissions };
 
     internal static ExtensionRemoveLifecycle Lifecycle(
         ExtensionRemovePlan plan,
@@ -136,7 +137,7 @@ internal static class ExtensionRemoveApplicationResultFactory
                 => ExtensionRemoveEffectOutcome.VerificationFailed,
             FilesystemEffectState.Applied => ExtensionRemoveEffectOutcome.Verified,
             FilesystemEffectState.Unknown => ExtensionRemoveEffectOutcome.CompletionUnknown,
-            _ => throw new ArgumentOutOfRangeException(),
+            _ => throw new ArgumentOutOfRangeException(nameof(receipt), receipt.EffectState, "The filesystem receipt state is not defined."),
         };
 
     internal static ExtensionRemoveFindingCode ReadFinding(FileChangeReceipt receipt)
@@ -149,7 +150,7 @@ internal static class ExtensionRemoveApplicationResultFactory
             null when receipt.VerificationState == FilesystemVerificationState.Failed
                 => ExtensionRemoveFindingCode.VerificationFailed,
             null => ExtensionRemoveFindingCode.WriteFailed,
-            _ => throw new ArgumentOutOfRangeException(),
+            _ => throw new ArgumentOutOfRangeException(nameof(receipt), receipt.NotStartedReason, "The filesystem receipt state is not defined."),
         };
 
     internal static ExtensionRemoveLifecycleOutcome ReadLifecycleOutcome(
@@ -161,7 +162,7 @@ internal static class ExtensionRemoveApplicationResultFactory
                 => ExtensionRemoveLifecycleOutcome.VerificationFailed,
             FilesystemEffectState.Applied => ExtensionRemoveLifecycleOutcome.Verified,
             FilesystemEffectState.Unknown => ExtensionRemoveLifecycleOutcome.CompletionUnknown,
-            _ => throw new ArgumentOutOfRangeException(),
+            _ => throw new ArgumentOutOfRangeException(nameof(receipt), receipt.EffectState, "The filesystem receipt state is not defined."),
         };
 
     internal static ExtensionRemoveFindingCode ReadLifecycleFinding(FileChangeReceipt receipt)
@@ -172,7 +173,7 @@ internal static class ExtensionRemoveApplicationResultFactory
             FilesystemNotStartedReason.ContractRejected => ExtensionRemoveFindingCode.OperationFailed,
             FilesystemNotStartedReason.ApplicationFailed
                 or null => ExtensionRemoveFindingCode.LifecyclePublicationFailed,
-            _ => throw new ArgumentOutOfRangeException(),
+            _ => throw new ArgumentOutOfRangeException(nameof(receipt), receipt.NotStartedReason, "The filesystem receipt state is not defined."),
         };
 
     private static ExtensionRemoveEffectResidual ReadResidual(ExtensionRemoveEffectOutcome outcome)
@@ -193,8 +194,7 @@ internal static class ExtensionRemoveApplicationResultFactory
             state);
 
     private static IReadOnlyList<string> ReadProtectedPaths(RecoveryBundlePreparation preparation)
-        => preparation.Entries
+        => [.. preparation.Entries
             .OrderBy(entry => entry.Ordinal)
-            .Select(entry => entry.TargetPath)
-            .ToArray();
+            .Select(entry => entry.TargetPath)];
 }

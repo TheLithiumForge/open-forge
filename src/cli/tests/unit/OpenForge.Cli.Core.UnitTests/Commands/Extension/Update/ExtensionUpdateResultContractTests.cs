@@ -18,7 +18,7 @@ public sealed class ExtensionUpdateResultContractTests
             "toolkit",
             ExtensionUpdateComparisonTargetKind.PackageFile,
             region: null,
-            sourceAssetPath: "toolkit/payload/.agents/toolkit.md",
+            sourceAssetPath: "toolkit/content/.agents/toolkit.md",
             ExtensionUpdateComparisonFingerprintKind.OpenForgeMarkdownV1,
             baselineFingerprint: Fingerprint('a'),
             currentFingerprint: Fingerprint('a'),
@@ -30,7 +30,7 @@ public sealed class ExtensionUpdateResultContractTests
             ExtensionUpdateComparisonTargetKind.PackageFile,
             ExtensionUpdateChangeAction.Replace,
             region: null,
-            sourceAssetPath: "toolkit/payload/.agents/toolkit.md");
+            sourceAssetPath: "toolkit/content/.agents/toolkit.md");
         var effect = new ExtensionUpdateEffect(
             ".agents/toolkit.md",
             "toolkit",

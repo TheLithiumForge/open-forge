@@ -22,6 +22,30 @@ Architecture](../../../architecture.md) defines the cross-cutting implementation
 boundary; this behavior does not duplicate those mechanics
 or claim their Gate 5 proof.
 
+## Consumer Destination Permissions
+
+Consume the [Workspace Permissions Interface](../../shared/workspace-permissions/interface.md) and
+[Behavior](../../shared/workspace-permissions/behavior.md). Require exact grants for intended external targets and previously owned
+external targets in the selected update plan, including retirement and
+preserved paths.
+Existing `.agents/` targets need no grant; their prior safety and ownership
+checks remain. Revocation blocks the complete selected lifecycle operation,
+including ownership release, until exact explicit reapproval. Unrelated
+installed packages do not enter this request's required set.
+
+An eligible human apply request asks once for the complete missing set after
+safe preflight. JSON, automatic, redirected and dry-run execution never ask the
+permission question or create grants. Existing selection and force/prune
+questions keep their separate rules. Force and prune never supply permission.
+Malformed or unsafe permission storage is diagnosed without overwriting it.
+
+Permission create/replace is a declared control-file effect. Revalidate the
+observed document and approved plan under the existing workspace lease. Cover
+prior permission bytes or proven absence in the one verified operation bundle,
+then persist and verify approval before content and lifecycle effects. Later
+failure retains the grant and its actual outcome. Restoration is manual; no
+new automatic Repair behavior follows.
+
 ## Complete Typed Flow
 
 ```text
@@ -216,7 +240,7 @@ section, package IDs, dependency closure, paths, owners, routes, generated
 markers, containment, and expected bytes. For an applying plan, it also
 prepares exactly one immutable ZIP recovery bundle outside the workspace whenever
 the plan contains an existing-target effect (`Replace`,
-`ReplaceGeneratedRegion`, or `Delete`).
+`ReplaceGeneratedRegion`, or `Delete`) or a permission-file Create.
 The storage root is
 `Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
 Environment.SpecialFolderOption.Create)/OpenForge/recovery/v1`; there is no
@@ -235,8 +259,8 @@ and intended final absence or length/hash. Only the valid final ZIP forms the
 opaque `RecoveryBundlePreparation`; the draft remains `Incomplete`. The bundle
 is immutable thereafter.
 
-Every planned existing-target effect has exactly one matching verified entry; Create
-and no-op effects have none. All preparation completes before the first effect.
+Every planned existing-target effect has exactly one matching verified entry. Ordinary content Create and no-op effects have none. Permission-file
+Create has a reversible prior-absence entry. All preparation completes before the first effect.
 `FileChangeApplier` refuses an existing-target effect without its matching preparation
 and performs one final effect per target. Immediately before effects, revalidate
 all volatile facts. Apply dependency-first payload and generated effects, then

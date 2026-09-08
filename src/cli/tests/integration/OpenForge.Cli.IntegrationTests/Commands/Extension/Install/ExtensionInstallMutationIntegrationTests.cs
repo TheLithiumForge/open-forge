@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using OpenForge.Cli.Core.Commands.Extension.Install;
@@ -73,7 +74,8 @@ public sealed class ExtensionInstallMutationIntegrationTests
             TestContext.Current.CancellationToken);
         Assert.Equal(MutationValidationState.Valid, validation.State);
         var preparationResult = await ExtensionInstallRecoveryOperation.PrepareAsync(
-            plan,
+            new ExtensionInstallExecutionPlan(plan, new(null,
+                WorkspacePermissionResult.NotEvaluated with { Decision = WorkspacePermissionDecision.NotRequired }, null, null, null)),
             operationId,
             TestContext.Current.CancellationToken);
         Assert.NotNull(preparationResult.Preparation);
@@ -92,7 +94,9 @@ public sealed class ExtensionInstallMutationIntegrationTests
                 Plan = plan,
                 Lease = lease,
                 Validation = validation,
-                Progress = ExtensionInstallApplicationProgress.Start(plan, preparation),
+                Progress = ExtensionInstallApplicationProgress.Start(
+                    new ExtensionInstallExecutionPlan(plan, new(null,
+                        WorkspacePermissionResult.NotEvaluated with { Decision = WorkspacePermissionDecision.NotRequired }, null, null, null)), preparation),
             },
             TestContext.Current.CancellationToken);
 
@@ -196,7 +200,7 @@ public sealed class ExtensionInstallMutationIntegrationTests
         Assert.Equal(
         [
             "mode", "force", "automatic", "selection", "source", "packages", "framework",
-            "footprint", "effects", "generatedNavigation", "lifecycle", "recovery", "verification", "findings",
+            "footprint", "effects", "generatedNavigation", "permissions", "lifecycle", "recovery", "verification", "findings",
         ],
             Names(result));
         Assert.Equal("apply", result.GetProperty("mode").GetString());
@@ -402,7 +406,8 @@ public sealed class ExtensionInstallMutationIntegrationTests
             TestContext.Current.CancellationToken);
         await using var lease = Assert.IsType<WorkspaceLockLease>(lockResult.Lease);
         var preparationResult = await ExtensionInstallRecoveryOperation.PrepareAsync(
-            plan,
+            new ExtensionInstallExecutionPlan(plan, new(null,
+                WorkspacePermissionResult.NotEvaluated with { Decision = WorkspacePermissionDecision.NotRequired }, null, null, null)),
             operationId,
             TestContext.Current.CancellationToken);
         var preparation = Assert.IsType<OpenForge.Cli.Core.Framework.Recovery.Models.RecoveryBundlePreparation>(

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
@@ -38,11 +39,10 @@ internal sealed record ExtensionRemoveGeneratedNavigation
         IEnumerable<ExtensionRemoveGeneratedRegion> regions)
     {
         ArgumentNullException.ThrowIfNull(regions);
-        Regions = new ReadOnlyCollection<ExtensionRemoveGeneratedRegion>(regions
+        Regions = new ReadOnlyCollection<ExtensionRemoveGeneratedRegion>([.. regions
             .Select(value => value ?? throw new ArgumentException(
                 "Extension Remove generated-navigation regions cannot contain null members.",
-                nameof(regions)))
-            .ToArray());
+                nameof(regions)))]);
     }
 
     internal IReadOnlyList<ExtensionRemoveGeneratedRegion> Regions { get; }
@@ -252,6 +252,8 @@ internal sealed record ExtensionRemoveResultFacts
     internal required ExtensionRemoveGeneratedNavigation? GeneratedNavigation { get; init; }
 
     internal required IReadOnlyList<ExtensionRemoveEffect> Effects { get; init; }
+
+    internal WorkspacePermissionResult Permissions { get; init; } = WorkspacePermissionResult.NotEvaluated;
 
     internal required ExtensionRemoveLifecycle Lifecycle { get; init; }
 

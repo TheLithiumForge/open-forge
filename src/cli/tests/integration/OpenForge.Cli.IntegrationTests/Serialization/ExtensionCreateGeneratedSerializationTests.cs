@@ -118,7 +118,7 @@ public sealed class ExtensionCreateGeneratedSerializationTests
                 new ExtensionCreateEffect
                 {
                     Kind = ExtensionCreateEffectKind.PayloadAgentsDirectory,
-                    Path = "/catalogue/development-toolkit/payload/.agents/",
+                    Path = "/catalogue/development-toolkit/content/.agents/",
                 },
             ],
             AppliedEffects = [],

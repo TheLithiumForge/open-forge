@@ -1,3 +1,8 @@
+using OpenForge.Cli.Core.Commands.Extension.Install.Models.Application;
+using OpenForge.Cli.Core.Commands.Extension.Models.Permissions;
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
+using OpenForge.Cli.Core.Framework.Permissions.Models.Planning;
+using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Planning;
@@ -34,12 +39,14 @@ internal static class ExtensionInstallOperationFactory
             physicalPathResolver,
             validator,
             lifecycleStore);
+        var permissions = new ExtensionPermissionOperation(interactiveSession);
         return new ExtensionInstallOperation(
             new ExtensionInstallPlanner(
                 interactiveSession,
                 physicalPathResolver,
                 lifecycleStore),
             new MutationPreflight(validator),
+            permissions,
             new ExtensionInstallApplicationOperation(
                 lockStoreRoot is null
                     ? WorkspaceLockManager.CreateForCurrentUser()
@@ -47,7 +54,9 @@ internal static class ExtensionInstallOperationFactory
                 new ExtensionInstallApplicationPreconditionValidator(
                     new ExtensionInstallSourceResolver(physicalPathResolver),
                     foundationReader,
-                    revalidator),
+                    revalidator,
+                    validator),
+                permissions,
                 new ExtensionInstallEffectApplication(
                     new DirectoryCreationApplier(revalidator, validator),
                     new FileChangeApplier(revalidator, validator),
@@ -58,10 +67,12 @@ internal static class ExtensionInstallOperationFactory
 internal sealed class ExtensionInstallOperation(
     ExtensionInstallPlanner planner,
     MutationPreflight preflight,
+    ExtensionPermissionOperation permissions,
     ExtensionInstallApplicationOperation application)
 {
     private readonly ExtensionInstallPlanner _planner = planner;
     private readonly MutationPreflight _preflight = preflight;
+    private readonly ExtensionPermissionOperation _permissions = permissions;
     private readonly ExtensionInstallApplicationOperation _application = application;
 
     internal async ValueTask<ExtensionInstallResult> ExecuteAsync(
@@ -114,11 +125,6 @@ internal sealed class ExtensionInstallOperation(
             return build.Result;
         }
 
-        if (plan.IsNoOp)
-        {
-            return ExtensionInstallResultFactory.NoOp(plan);
-        }
-
         MutationValidationResult preflight;
         try
         {
@@ -157,16 +163,46 @@ internal sealed class ExtensionInstallOperation(
                         ?? "The complete Extension Install plan is stale, unavailable, or unsafe."));
         }
 
+        ExtensionPermissionStage permission;
+        try
+        {
+            var required = plan.Packages.SelectMany(package => package.Payload
+                .Where(file => file.TargetPath is { } path && !ExtensionDestinationPolicy.IsImplicit(path))
+                .Select(file => new WorkspacePermissionRequirement(new ExtensionPermissionSubject(package.Id),
+                    file.TargetPath ?? throw new InvalidOperationException("A planned Extension target requires its path."))));
+            var changedPaths = plan.Effects.Where(effect => effect.FileChange is not null)
+                .Select(effect => effect.Result.Path).ToHashSet(StringComparer.Ordinal);
+            var targets = required.Select(requirement => new ExtensionPermissionTarget(requirement,
+                changedPaths.Contains(requirement.Path) ? ExtensionPermissionEffect.Copy : ExtensionPermissionEffect.Preserve));
+            permission = await _permissions.DetermineAsync(new(request.Workspace, [.. targets], plan.SourceRead.Identity,
+                request.Mode == ExtensionInstallMode.Apply && !request.Automatic && request.AllowInteraction), cancellationToken).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return ExtensionInstallResultFactory.PlanBoundary(plan,
+                new(ExtensionInstallFindingCode.Interrupted, "Extension permission approval was interrupted."));
+        }
+        catch (Exception)
+        {
+            return ExtensionInstallResultFactory.PlanBoundary(plan,
+                new(ExtensionInstallFindingCode.OperationFailed, "Extension permission determination failed unexpectedly."));
+        }
+        if (permission.Failure is { } failure)
+        {
+            return ExtensionInstallResultFactory.PlanBoundary(plan,
+                new(ExtensionInstallDefinitions.ReadPermissionFinding(failure), "The requested Extension destinations require valid consumer permission."), permission.Result);
+        }
+        var execution = new ExtensionInstallExecutionPlan(plan, permission);
+        if (execution.IsNoOp)
+        {
+            return ExtensionInstallResultFactory.NoOp(plan, permission.Result);
+        }
         if (request.Mode == ExtensionInstallMode.DryRun)
         {
-            return build.Result;
+            return new(request, plan.Facts with { Permissions = permission.Result }, build.Result.Findings);
         }
 
-        var outcome = await _application.ExecuteAsync(plan, cancellationToken)
-            .ConfigureAwait(false);
-        return ExtensionInstallResultFactory.Application(
-            plan,
-            outcome.Progress,
-            outcome.Finding);
+        var outcome = await _application.ExecuteAsync(execution, cancellationToken).ConfigureAwait(false);
+        return ExtensionInstallResultFactory.Application(plan, outcome.Progress, outcome.Finding);
     }
 }

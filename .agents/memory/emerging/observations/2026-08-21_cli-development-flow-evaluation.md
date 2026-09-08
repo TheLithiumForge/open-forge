@@ -897,3 +897,123 @@ error in the root correction, not evidence of universal model ranking. Retain
 personal directive loading, exact consumer enumeration before model moves, and
 full-context evidence for comparison. The user chose sequential direct Astra
 continuation after Sol implementation; no matched cost/quality trial exists.
+
+### Task 24 architecture narrowed after contract check — 2026-09-08
+
+The Astra/high read-only destination architect initially proposed a new
+automatic permission-restoration Repair entry. Root challenged whether the
+shared recovery contract required it. The follow-up distinguished recoverable
+pre-effect evidence from Repair's finite automatic catalogue and withdrew the
+proposal. Existing reversible ordinary-file entries preserve prior permission
+bytes or absence; explicit manual restoration satisfies this boundary. Task 25
+must exclude the permission control-file entry from generic Library residual
+attribution so automatic link recovery cannot change grants.
+
+This is one observed correction of an overextended design, not a model-quality
+comparison. Check the exact required outcome before expanding adjacent command
+scope. The same investigation found a real product gap: enumerating only
+already-approved external Library paths cannot discover never-approved files
+for the requested prompt. That source-selection choice remains with the user.
+
+The one Astra/high M1 writing review found two material permission-result
+ambiguities: planned action did not distinguish unknown completion, and an
+unobserved permission state was labelled not-required. Root adopted explicit
+receipt outcomes and not-evaluated. Its third finding concerned old package
+layout; the user explicitly declined legacy handling for this pre-public
+project. Root removed the proposed diagnostic and retained only the current
+folder rename and first-party updates. Calibrate compatibility work to actual
+publication and the user's chosen boundary; review findings are advisory, not
+authority to add legacy behavior.
+
+## Task 24 Red Preparation Observation
+
+Sequential root Astra work froze ten new test/fixture files and eight existing
+oracle updates before Green. The final qualified evidence is 76 Unit cases
+(37 pass, 39 fail) and 53 Integration cases (19 pass, 34 fail), zero skips;
+Task 24 owns the detailed receipt. A real filesystem case reproduced swallowed
+source-enumeration failure without an injected production seam.
+
+Preparation also exposed one compiler platform-guard error in a deferred test
+callback and one unsupported internal wildcard in runner selection. Both were
+corrected explicitly before qualification. The platform guard must be visible
+inside the callback; outer flow does not establish its later execution context.
+The current evidence supports these narrow lessons. It does not yet establish
+better implementation quality or cost than the accepted Sol Library result;
+Task 24 Green and independent review are still pending.
+
+## Task 24 Permission Foundation Observation
+
+M5's first build passed all 53 original permission Unit cases. Informational
+formatting then made a stateless existing Normalize method static and updated its
+Core caller, while an unselected Unit caller retained instance syntax. The next
+whole-solution build failed with CS0176. Completing the static conversion and
+removing the now-unused injected object restored the warning-free build. The
+final selected result is 65/65 permission Unit and 10/10 permission Integration;
+the broader Unit selection retains only the already-frozen M6 finding-catalogue
+failure. Exact attempts are retained in the Task 24 M5 artifacts.
+
+This is concrete evidence that informational formatting can alter a callable
+surface and edits can extend beyond the initial selected file set. Re-inventory
+all changed paths and compile all affected projects after formatting. A
+pre-format passing test run cannot establish the post-format candidate.
+
+Astra/high's bounded architecture follow-up selected command-private execution
+envelopes after inspecting the three command plans. Root accepted this fit to
+preserve their existing immutable construction and positional validation. The
+recommendation is not yet implementation or comparative model-performance proof.
+
+## Task 24 Command Integration Observation
+
+M6's command-private execution envelopes preserved existing content plan and
+positional validation contracts while adding one prior permission effect.
+Focused evidence caught an important boundary: an otherwise unchanged Install
+can still need a permission write, while the existing content revalidator
+requires a nonempty effect set. The correction leaves the neutral revalidator's
+contract intact, validates the empty content stage explicitly, and rechecks
+unchanged target bytes under the same lease. Real approval callbacks prove that
+changes during the question cannot inherit the earlier approval.
+
+The initial broader run also reproduced an external overwrite-companion gap:
+source-form classification intentionally excludes files outside Open Forge
+routes, so it cannot be the admission check for all workspace destinations.
+The owned suffix predicate now supplies that protection without making external
+Markdown routable. Earlier negative tests passing under blanket rejection were
+insufficient proof of the later approved path.
+
+The final local M6 result is 288 Unit, 221 Integration and eighteen public cases,
+all passing without skips after a warning-free build. Several compiler, fixture,
+selection and behavioral corrections were needed first; raw attempts remain in
+the Task artifacts. This supports the bounded implementation lessons above,
+not a claim of superior Astra cost or first-pass reliability over Sol. Root
+runtime model/reasoning metadata was not exposed; the separately invoked
+architecture helper was explicitly Astra/high. Fresh review and full acceptance
+remain necessary before comparing completed outcomes.
+
+## Task 24 Review Corrections
+
+The fresh whole-task review found three concrete gaps after the focused Green
+suite passed. Real-filesystem regressions reproduced protected-content deletion
+through a contained parent link, occupation of a reserved control-file identity
+as a directory, and external Markdown interpretation by the unchanged Inspect
+consumer. Four Unit cases and five Integration cases failed at their intended
+assertions; two changes made during approval were already blocked by existing
+lease revalidation.
+
+The reusable boundary is wider than leaf admission: inspect every selected
+current and intended destination's ancestry, including retired and released
+ownership, and reserve file identities against descendant use. An exact-byte
+writer also requires its read-only consumer to preserve the same identity and
+opaque-content meaning. A passing mutation-focused suite does not establish
+those direct-consumer facts. The grouped correction uses existing filesystem
+observations and local policy, without adding a registry or platform substitute.
+
+## Whole-Task Formatting Receipt
+
+Task 24's whole-task informational formatter reported 22 affected files even
+though its diagnostic fixers could not apply the changes and Git showed no
+byte changes. The owner manually corrected the bounded diagnostics, checked
+actual source diffs, and obtained a final zero-diagnostic verification before
+full managed/native execution. Formatter output alone did not prove an applied
+change. Wider selections also exposed concrete collection call-site constraints
+that the narrower runs had not resolved; compilation and source inventory were
+necessary checks after those adjustments.

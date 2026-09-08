@@ -11,7 +11,8 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Create;
 
 public sealed class ExtensionCreateStagingIntegrationTests
 {
-    [Fact(DisplayName = "Extension Create cancellation after planning reports planned destination and no started scaffold effects"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Extension Create cancellation after planning reports planned destination and no started scaffold effects"),
+     Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task CancellationAfterPlanningRetainsTruthfulPreEffectVerification()
     {
         using var catalogue = TemporaryWorkspace.Create("extension-create-staging-cancel");
@@ -124,7 +125,7 @@ public sealed class ExtensionCreateStagingIntegrationTests
             var retainedManifest = await File.ReadAllBytesAsync(
                 manifestPath,
                 TestContext.Current.CancellationToken);
-            File.WriteAllText(catalogue.Combine("development-toolkit", "payload"), "collision");
+            File.WriteAllText(catalogue.Combine("development-toolkit", "content"), "collision");
 
             var second = await writer.ApplyAsync(
                 plan,
@@ -134,7 +135,7 @@ public sealed class ExtensionCreateStagingIntegrationTests
             Assert.False(second.Applied);
             Assert.Equal(ExtensionCreateFindingCode.ApplicationFailed, second.Finding?.Code);
             Assert.Equal(retainedManifest, await File.ReadAllBytesAsync(manifestPath, TestContext.Current.CancellationToken));
-            Assert.Equal("collision", File.ReadAllText(catalogue.Combine("development-toolkit", "payload")));
+            Assert.Equal("collision", File.ReadAllText(catalogue.Combine("development-toolkit", "content")));
         }
         finally
         {

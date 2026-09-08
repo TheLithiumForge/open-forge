@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using System.Security.Cryptography;
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models;
@@ -69,7 +70,7 @@ internal static class LifecycleFrameworkValidator
             if (previousTarget is { } previous && Compare(previous, key) >= 0
                 || !targetKeys.Add(key)
                 || !portableTargetKeys.Add((
-                    ExtensionTargetPath.CreatePortableKey(path),
+                    PortableWorkspacePath.CreatePortableKey(path),
                     target.Region)))
             {
                 return LifecycleSectionValidation.Blocked(
@@ -97,7 +98,7 @@ internal static class LifecycleFrameworkValidator
             if (previousGenerated is { } previous && Compare(previous, key) >= 0
                 || !generatedKeys.Add(key)
                 || !portableGeneratedKeys.Add((
-                    ExtensionTargetPath.CreatePortableKey(path),
+                    PortableWorkspacePath.CreatePortableKey(path),
                     generated.Region))
                 || !targetKeys.Contains(key))
             {
@@ -131,19 +132,19 @@ internal static class LifecycleFrameworkValidator
         }
 
         var frameworkPaths = framework.Targets
-            .Select(target => ExtensionTargetPath.CreatePortableKey(target.Path))
+            .Select(target => PortableWorkspacePath.CreatePortableKey(target.Path))
             .Concat(framework.GeneratedRegions.Select(
-                region => ExtensionTargetPath.CreatePortableKey(region.Path)))
+                region => PortableWorkspacePath.CreatePortableKey(region.Path)))
             .ToHashSet(StringComparer.Ordinal);
         return extensions.Paths.Any(path => frameworkPaths.Contains(
-                ExtensionTargetPath.CreatePortableKey(path.Path)))
+                PortableWorkspacePath.CreatePortableKey(path.Path)))
             ? LifecycleSectionValidation.Blocked(
                 "Framework and Extension lifecycle sections cannot claim the same path.")
             : LifecycleSectionValidation.Valid();
     }
 
     private static bool TryNormalizePath(string path, out string normalized)
-        => ExtensionTargetPath.TryNormalize(path, out normalized);
+        => PortableWorkspacePath.TryNormalize(path, out normalized);
 
     private static bool IsValidRegion(string? region)
         => region is null || !string.IsNullOrWhiteSpace(region);

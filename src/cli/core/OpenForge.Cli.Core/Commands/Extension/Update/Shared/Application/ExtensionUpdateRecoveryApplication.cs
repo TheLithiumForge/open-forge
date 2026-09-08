@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Extension.Update.Models.Application;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Result;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
@@ -10,17 +11,17 @@ namespace OpenForge.Cli.Core.Commands.Extension.Update.Shared.Application;
 internal static class ExtensionUpdateRecoveryApplication
 {
     internal static ValueTask<RecoveryBundlePreparationResult> PrepareAsync(
-        ExtensionUpdatePlan plan,
+        ExtensionUpdateExecutionPlan plan,
         Guid operationId,
         CancellationToken cancellationToken)
         => RecoveryBundleStore.PrepareAsync(
             RecoveryBundleInput.Create(
-                plan.Request.Workspace,
+                plan.Content.Request.Workspace,
                 ExtensionUpdateDefinitions.CommandIdentity,
                 RecoveryBundleAttribution.Create(
                     RecoveryBundleProducer.Extension,
                     RecoveryBundleOperation.Update,
-                    plan.Request.Workspace),
+                    plan.Content.Request.Workspace),
                 operationId,
                 plan.RecoveryTargets),
             cancellationToken);

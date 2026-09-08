@@ -18,7 +18,7 @@ public sealed class EmbeddedExtensionCatalogueIntegrationTests
     private const int PackageArchiveOrder = 1;
     private const string InventoryAssetPath = "inventory.json";
     private const string ManifestAssetPath = "extension.json";
-    private const string PayloadAssetPrefix = "payload/";
+    private const string PayloadAssetPrefix = "content/";
 
     [Fact(DisplayName = "Embedded Extension catalogue matches every authored package, asset, and hash"), Trait("Feature", "extension-discovery"), Trait("Evidence", "Integration")]
     public void EmbeddedCatalogueMatchesAuthoredPackagesAssetsAndHashes()

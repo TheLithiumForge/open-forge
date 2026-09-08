@@ -74,11 +74,12 @@ public sealed class ExtensionInstallPlanningIntegrationTests
         Assert.Equal(before, workspace.Snapshot());
     }
 
-    [Theory(DisplayName = "Extension Install resolves exact IDs all and single-package inference with mandatory dependency closure"), Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
+    [Theory(DisplayName = "Extension Install resolves exact IDs all and single-package inference with mandatory dependency closure"),
+     Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
     [InlineData("explicit-ids", "explicit-ids")]
     [InlineData("explicit-all", "explicit-all")]
     [InlineData("single-package", "single-package-inference")]
-    public async Task SelectionModesResolveOneExactSourceUniverse(
+    public static async Task SelectionModesResolveOneExactSourceUniverse(
         string scenario,
         string expectedSelectedBy)
     {
@@ -156,7 +157,8 @@ public sealed class ExtensionInstallPlanningIntegrationTests
         Assert.Equal(lockInfrastructureBefore, workspace.LockInfrastructureExists);
     }
 
-    [Fact(DisplayName = "Extension Install treats an absent agents container as an unavailable Framework anchor without effects"), Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Extension Install treats an absent agents container as an unavailable Framework anchor without effects"),
+     Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
     public async Task MissingFrameworkAnchorIsIncompleteAndNeverCreated()
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-install-missing-anchor");
@@ -191,12 +193,12 @@ public sealed class ExtensionInstallPlanningIntegrationTests
         Assert.Equal(beforeSource, source.Snapshot());
     }
 
-    [Theory(DisplayName = "Extension Install rejects every payload target that is not a strict agents descendant before lease acquisition"), Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
-    [InlineData("README.md")]
-    [InlineData(".agents")]
-    [InlineData(".apm/toolkit.md")]
-    public async Task TargetOutsideAgentsIsRejectedBeforePlanningAndLock(
-        string target)
+    [Theory(DisplayName = "Extension Install blocks unapproved external and protected destinations before lease acquisition"), Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
+    [InlineData("README.md", "extension-install.permission-required")]
+    [InlineData(".agents", "extension-install.target-unsafe")]
+    [InlineData(".apm/toolkit.md", "extension-install.permission-required")]
+    public static async Task UnapprovedOrProtectedTargetIsBlockedBeforeLock(
+        string target, string expectedCode)
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-install-target-policy");
         await workspace.SeedFrameworkAsync();
@@ -220,12 +222,18 @@ public sealed class ExtensionInstallPlanningIntegrationTests
         using var document = JsonDocument.Parse(run.StandardOutput);
         var result = document.RootElement.GetProperty("result");
         Assert.Contains(result.GetProperty("findings").EnumerateArray(), finding =>
-            finding.GetProperty("code").GetString() == "extension-install.target-outside-agents"
-            && finding.GetProperty("target").GetString() == target);
+            finding.GetProperty("code").GetString() == expectedCode);
+        if (expectedCode == "extension-install.permission-required")
+        {
+            Assert.Contains(result.GetProperty("permissions").GetProperty("missing").EnumerateArray(),
+                requirement => requirement.GetProperty("path").GetString() == target);
+        }
         Assert.DoesNotContain(result.GetProperty("findings").EnumerateArray(), finding =>
             finding.GetProperty("code").GetString() == "extension-install.workspace-lock-unavailable");
-        Assert.Empty(result.GetProperty("effects").EnumerateArray());
-        Assert.Equal("not-required", result.GetProperty("recovery").GetProperty("state").GetString());
+        Assert.All(result.GetProperty("effects").EnumerateArray(), effect =>
+            Assert.Equal("not-started", effect.GetProperty("outcome").GetString()));
+        Assert.Equal(expectedCode == "extension-install.permission-required" ? "not-created" : "not-required",
+            result.GetProperty("recovery").GetProperty("state").GetString());
         Assert.Equal(beforeWorkspace, workspace.Snapshot());
         Assert.Equal(beforeSource, source.Snapshot());
     }
@@ -257,10 +265,10 @@ public sealed class ExtensionInstallPlanningIntegrationTests
         };
 
     private static IReadOnlyList<string?> Strings(JsonElement array)
-        => array.EnumerateArray().Select(value => value.GetString()).ToArray();
+        => [.. array.EnumerateArray().Select(value => value.GetString())];
 
     private static IReadOnlyList<string?> Strings(JsonElement array, string property)
-        => array.EnumerateArray().Select(value => value.GetProperty(property).GetString()).ToArray();
+        => [.. array.EnumerateArray().Select(value => value.GetProperty(property).GetString())];
 
     private static string Document(string description, string body)
         => OpenForge.Cli.TestSupport.OpenForgeDocumentSeed.Metadata(

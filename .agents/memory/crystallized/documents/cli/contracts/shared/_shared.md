@@ -12,6 +12,7 @@ open-forge:
 This is the permanent Crystallized route for shared CLI contract sets. The
 [Global CLI Flags](global-flags/_global-flags.md), [CLI Source References](source-references/_source-references.md),
 the [Shared Source-Universe Filters](source-universe-filters/_source-universe-filters.md),
+[Workspace Permissions](workspace-permissions/_workspace-permissions.md),
 and [Shared Result Coordinates](result-coordinates/_result-coordinates.md) child
 entrypoints route their accepted current Interface and Behavior contracts. These
 contracts define current behavior for the new CLI; they do not ship yet.
@@ -41,6 +42,9 @@ Behavior file for technology-neutral resolution and conformance.
   accepted public shared result envelope, source-location, semantic-status,
   process-exit, primary-stream, and compatibility Interface and its
   technology-neutral formation Behavior.
+- [`workspace-permissions/`](workspace-permissions/_workspace-permissions.md)
+  routes the consumer-owned exact grant document, approval, result coordinates
+  and permission publication boundary. Consumers opt in explicitly.
 - Each Interface file defines its complete caller-visible public contract. Each
   Behavior file defines technology-neutral resolution, invariants, safety, result
   formation, and conformance for that Interface.
@@ -60,4 +64,5 @@ Behavior file for technology-neutral resolution and conformance.
 - [Accepted shared CLI result envelope, source-location, status, exit, stream, and compatibility contracts](result-coordinates/_result-coordinates.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Shared #Result #JSON #Status #CurrentTruth
 - [Accepted current shared source-reference Interface and Behavior contract set](source-references/_source-references.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Source #Reference #CurrentTruth
 - [Permanent route for the shared operation-specific source-universe filter contracts](source-universe-filters/_source-universe-filters.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Shared #Source #Universe #Filter #CurrentTruth
+- [Route the accepted consumer-owned exact destination permission contracts](workspace-permissions/_workspace-permissions.md) - #Memory #Crystallized #CLI #Contract #Shared #Permission #CurrentTruth
 <!-- open-forge:generated-index:end -->

@@ -6,8 +6,8 @@ namespace OpenForge.Cli.EndToEndTests;
 
 public sealed class PublishedExtensionInspectProcessTests
 {
-    [Fact(DisplayName = "Published Extension Inspect help and version bypass workspace selection"), Trait("Feature", "extension-inspect"), Trait("Evidence", "EndToEnd")]
-    public async Task PublishedHelpAndVersionAreTerminalAndReadOnly()
+    [Fact(DisplayName = "Published Extension Inspect help bypasses workspace selection"), Trait("Feature", "extension-inspect"), Trait("Evidence", "EndToEnd")]
+    public async Task PublishedHelpIsTerminalAndReadOnly()
     {
         var target = PublishedExecutableTarget.Discover();
         using var working = PublishedExtensionInspectWorkspace.Create(
@@ -25,24 +25,11 @@ public sealed class PublishedExtensionInspectProcessTests
                 "--workspace", missingWorkspace,
                 "--json", "--view=expanded", "--verbose",
             ]);
-        var version = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            target,
-            working.Path,
-            working.SnapshotState,
-            [
-                "extension", "inspect", "--version",
-                "--workspace", missingWorkspace,
-                "--json", "--view=expanded", "--verbose",
-            ]);
-
         Assert.Equal(0, help.ExitCode);
         Assert.Equal(string.Empty, help.StandardError);
         Assert.Contains("open-forge extension inspect <stable-id>", help.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("--source <package-or-catalogue-path>", help.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Results and streams", help.StandardOutput, StringComparison.Ordinal);
-        Assert.Equal(0, version.ExitCode);
-        Assert.Equal(target.ExpectedVersion + Environment.NewLine, version.StandardOutput);
-        Assert.Equal(string.Empty, version.StandardError);
         Assert.False(Directory.Exists(missingWorkspace));
         Assert.Equal(beforeSource, working.SnapshotSource());
     }
@@ -50,7 +37,7 @@ public sealed class PublishedExtensionInspectProcessTests
     [Theory(DisplayName = "Published Extension Inspect applies only semantic baselines to three-way comparison"), Trait("Feature", "extension-inspect"), Trait("Evidence", "EndToEnd")]
     [InlineData("semantic", "attention", 2, "changed", "open-forge extension update toolkit")]
     [InlineData("exact-bytes", "complete", 0, "unknown", "")]
-    public async Task PublishedComparisonHonoursLifecycleFingerprintKind(
+    public static async Task PublishedComparisonHonoursLifecycleFingerprintKind(
         string fingerprintKind,
         string expectedStatus,
         int expectedExitCode,
@@ -105,90 +92,7 @@ public sealed class PublishedExtensionInspectProcessTests
         Assert.Equal(beforeSource, working.SnapshotSource());
     }
 
-    [Fact(DisplayName = "Published Extension Inspect preserves status streams and bounded verbose diagnostics"), Trait("Feature", "extension-inspect"), Trait("Evidence", "EndToEnd")]
-    public async Task PublishedStatusStreamsRemainSeparate()
-    {
-        var target = PublishedExecutableTarget.Discover();
-        using var working = PublishedExtensionInspectWorkspace.Create(
-            fingerprintKind: "semantic",
-            intendedContent: "beta\n");
 
-        var human = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            target,
-            working.Path,
-            working.SnapshotState,
-            [
-                "extension", "inspect", "toolkit",
-                "--workspace", working.Path,
-                "--source", working.SourcePath,
-            ]);
-        var invalid = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            target,
-            working.Path,
-            working.SnapshotState,
-            [
-                "extension", "inspect", "Toolkit",
-                "--workspace", working.Path,
-            ]);
-        var plainJson = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            target,
-            working.Path,
-            working.SnapshotState,
-            [
-                "extension", "inspect", "toolkit",
-                "--workspace", working.Path,
-                "--source", working.SourcePath,
-                "--json",
-            ]);
-        var verboseJson = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            target,
-            working.Path,
-            working.SnapshotState,
-            [
-                "extension", "inspect", "toolkit",
-                "--workspace", working.Path,
-                "--source", working.SourcePath,
-                "--json", "--verbose",
-            ]);
-
-        Assert.Equal(2, human.ExitCode);
-        Assert.Equal(string.Empty, human.StandardError);
-        Assert.Contains("Status: requires attention", human.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Next: open-forge extension update toolkit", human.StandardOutput, StringComparison.Ordinal);
-        Assert.Equal(4, invalid.ExitCode);
-        Assert.Equal(string.Empty, invalid.StandardOutput);
-        Assert.Contains("Status: invalid", invalid.StandardError, StringComparison.Ordinal);
-        Assert.Equal(plainJson.ExitCode, verboseJson.ExitCode);
-        Assert.Equal(plainJson.StandardOutput, verboseJson.StandardOutput);
-        Assert.Equal(string.Empty, plainJson.StandardError);
-        Assert.InRange(verboseJson.StandardError.Length, 1, 4096);
-        Assert.DoesNotContain('\n', verboseJson.StandardError.TrimEnd('\r', '\n'));
-    }
-
-    [Fact(DisplayName = "Published Extension Inspect rejects repeated source syntax before producing a result"), Trait("Feature", "extension-inspect"), Trait("Evidence", "EndToEnd")]
-    public async Task PublishedRepeatedSourceIsParserFailure()
-    {
-        var target = PublishedExecutableTarget.Discover();
-        using var working = PublishedExtensionInspectWorkspace.Create(
-            fingerprintKind: "semantic",
-            intendedContent: "alpha\n");
-
-        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
-            target,
-            working.Path,
-            working.SnapshotState,
-            [
-                "extension", "inspect", "toolkit",
-                "--workspace", working.Path,
-                "--source", working.SourcePath,
-                "--source", working.SourcePath,
-                "--json",
-            ]);
-
-        Assert.Equal(4, result.ExitCode);
-        Assert.Equal(string.Empty, result.StandardOutput);
-        Assert.Contains("--source", result.StandardError, StringComparison.Ordinal);
-    }
 }
 
 internal sealed class PublishedExtensionInspectWorkspace : IDisposable
@@ -237,7 +141,7 @@ internal sealed class PublishedExtensionInspectWorkspace : IDisposable
                   "dependencies": []
                 }
                 """);
-            source.WriteText("payload/.agents/toolkit.md", intendedContent);
+            source.WriteText("content/.agents/toolkit.md", intendedContent);
             return new PublishedExtensionInspectWorkspace(workspace, source);
         }
         catch

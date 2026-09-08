@@ -141,7 +141,7 @@ The exact scaffold writes only:
 
 ```text
 <catalogue>/<id>/extension.json
-<catalogue>/<id>/payload/.agents/
+<catalogue>/<id>/content/.agents/
 ```
 
 It does not install a README, payload content, Framework files, Extension files,
@@ -182,7 +182,7 @@ Illustrative output:
 Open Forge extension create development-toolkit
 Catalogue: D:/packages/open-forge
 Created: D:/packages/open-forge/development-toolkit/extension.json
-Created: D:/packages/open-forge/development-toolkit/payload/.agents/
+Created: D:/packages/open-forge/development-toolkit/content/.agents/
 Workspace lifecycle: unchanged
 Status: complete
 ```

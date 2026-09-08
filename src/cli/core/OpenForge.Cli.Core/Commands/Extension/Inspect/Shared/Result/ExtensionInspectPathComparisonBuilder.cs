@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models;
 
@@ -35,7 +36,7 @@ internal static class ExtensionInspectPathComparisonBuilder
                 }
                 else if (!owners.Contains(package.Id, StringComparer.Ordinal))
                 {
-                    currentOwners[path] = owners.Append(package.Id).Order(StringComparer.Ordinal).ToArray();
+                    currentOwners[path] = [.. owners.Append(package.Id).Order(StringComparer.Ordinal)];
                 }
             }
         }
@@ -57,7 +58,7 @@ internal static class ExtensionInspectPathComparisonBuilder
                 }
                 else if (!owners.Contains(owner, StringComparer.Ordinal))
                 {
-                    intendedOwners[targetPath] = owners.Append(owner).Order(StringComparer.Ordinal).ToArray();
+                    intendedOwners[targetPath] = [.. owners.Append(owner).Order(StringComparer.Ordinal)];
                 }
             }
         }
@@ -170,9 +171,12 @@ internal static class ExtensionInspectPathComparisonBuilder
             return ExtensionInspectPathRelation.Unknown;
         }
 
-        if (baseline.Kind != ExtensionInspectFingerprintKind.Semantic
-            || current.Kind != ExtensionInspectFingerprintKind.Semantic
-            || intended.Kind != ExtensionInspectFingerprintKind.Semantic)
+        var comparableKind = ExtensionDestinationPolicy.IsImplicit(path)
+            ? ExtensionInspectFingerprintKind.Semantic
+            : ExtensionInspectFingerprintKind.ExactBytes;
+        if (baseline.Kind != comparableKind
+            || current.Kind != comparableKind
+            || intended.Kind != comparableKind)
         {
             return ExtensionInspectPathRelation.Unknown;
         }

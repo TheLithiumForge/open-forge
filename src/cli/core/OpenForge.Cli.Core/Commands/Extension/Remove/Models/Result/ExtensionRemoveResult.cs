@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
@@ -24,7 +25,7 @@ internal sealed record ExtensionRemoveResult : ICliCommandResult
         if (!Enum.IsDefined(formation.Mode))
         {
             throw new ArgumentOutOfRangeException(
-                nameof(formation.Mode),
+                nameof(formation),
                 formation.Mode,
                 "The Extension Remove mode is not defined.");
         }
@@ -38,19 +39,19 @@ internal sealed record ExtensionRemoveResult : ICliCommandResult
         Paths = Snapshot(formation.Facts.Paths, nameof(formation.Facts.Paths));
         GeneratedNavigation = formation.Facts.GeneratedNavigation;
         Effects = Snapshot(formation.Facts.Effects, nameof(formation.Facts.Effects));
+        Permissions = formation.Facts.Permissions;
         Lifecycle = formation.Facts.Lifecycle;
         Recovery = formation.Facts.Recovery;
         Verification = formation.Facts.Verification;
         PackageSourceUnchanged = formation.Facts.PackageSourceUnchanged;
-        Findings = new ReadOnlyCollection<ExtensionRemoveFinding>(formation.Findings
+        Findings = new ReadOnlyCollection<ExtensionRemoveFinding>([.. formation.Findings
             .Select(value => value ?? throw new ArgumentException(
                 "Extension Remove findings cannot contain null members.",
-                nameof(formation.Findings)))
+                nameof(formation)))
             .OrderBy(value => value.Code)
             .ThenBy(value => value.Target is null ? 0 : 1)
             .ThenBy(value => value.Target, StringComparer.Ordinal)
-            .ThenBy(value => value.Cause, StringComparer.Ordinal)
-            .ToArray());
+            .ThenBy(value => value.Cause, StringComparer.Ordinal)]);
         Status = ReadStatus(Findings);
         Next = ExtensionRemoveDefinitions.ReadNextAction(Status, Findings);
     }
@@ -78,6 +79,8 @@ internal sealed record ExtensionRemoveResult : ICliCommandResult
     internal ExtensionRemoveGeneratedNavigation? GeneratedNavigation { get; }
 
     internal IReadOnlyList<ExtensionRemoveEffect> Effects { get; }
+
+    internal WorkspacePermissionResult Permissions { get; init; }
 
     internal ExtensionRemoveLifecycle Lifecycle { get; }
 
@@ -126,15 +129,14 @@ internal sealed record ExtensionRemoveResult : ICliCommandResult
             Findings = findings ?? throw new ArgumentNullException(nameof(findings)),
         });
 
-    private static IReadOnlyList<T> Snapshot<T>(
+    private static ReadOnlyCollection<T> Snapshot<T>(
         IEnumerable<T> values,
         string parameterName)
         where T : class
-        => new ReadOnlyCollection<T>(values
+        => new([.. values
             .Select(value => value ?? throw new ArgumentException(
                 "Extension Remove result collections cannot contain null members.",
-                parameterName))
-            .ToArray());
+                parameterName))]);
 
     private static CliSemanticStatus ReadStatus(
         IReadOnlyList<ExtensionRemoveFinding> findings)

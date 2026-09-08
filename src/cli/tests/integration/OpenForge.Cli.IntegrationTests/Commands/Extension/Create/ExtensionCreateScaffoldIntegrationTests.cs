@@ -26,13 +26,13 @@ public sealed class ExtensionCreateScaffoldIntegrationTests
             Assert.Equal(CliSemanticStatus.Complete, result.Status);
             Assert.True(Directory.Exists(destination));
             Assert.True(File.Exists(Path.Combine(destination, "extension.json")));
-            Assert.True(Directory.Exists(Path.Combine(destination, "payload", ".agents")));
+            Assert.True(Directory.Exists(Path.Combine(destination, "content", ".agents")));
             Assert.Equal(
-                ["extension.json", "payload"],
+                ["content", "extension.json"],
                 Directory.EnumerateFileSystemEntries(destination).Select(Path.GetFileName).Order(StringComparer.Ordinal));
-            Assert.Empty(Directory.EnumerateFileSystemEntries(Path.Combine(destination, "payload", ".agents")));
+            Assert.Empty(Directory.EnumerateFileSystemEntries(Path.Combine(destination, "content", ".agents")));
             Assert.False(File.Exists(Path.Combine(destination, "README.md")));
-            Assert.False(File.Exists(Path.Combine(destination, "payload", "content.md")));
+            Assert.False(File.Exists(Path.Combine(destination, "content", "content.md")));
 
             var manifestBytes = await File.ReadAllBytesAsync(
                 Path.Combine(destination, "extension.json"),
@@ -73,14 +73,16 @@ public sealed class ExtensionCreateScaffoldIntegrationTests
         Assert.False(Directory.Exists(catalogue.Combine("development-toolkit")));
     }
 
-    [Fact(DisplayName = "Extension Create treats an exact scaffold as a verified no-op and remains byte-stable on the second apply"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Extension Create treats an exact scaffold as a verified no-op and remains byte-stable on the second apply"),
+     Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     public async Task ExactScaffoldIsVerifiedNoOpAndRepeatIsStable()
     {
         using var catalogue = TemporaryWorkspace.Create("extension-create-no-op");
         var destination = catalogue.Combine("development-toolkit");
-        var manifest = "{\"id\":\"development-toolkit\",\"name\":\"Development Toolkit\",\"description\":\"Open Forge Extension package development-toolkit.\",\"version\":\"0.1.0\",\"dependencies\":[]}";
+        var manifest =
+            "{\"id\":\"development-toolkit\",\"name\":\"Development Toolkit\",\"description\":\"Open Forge Extension package development-toolkit.\",\"version\":\"0.1.0\",\"dependencies\":[]}";
         catalogue.CreateFile("development-toolkit/extension.json", manifest);
-        catalogue.CreateDirectory("development-toolkit/payload/.agents");
+        catalogue.CreateDirectory("development-toolkit/content/.agents");
         var before = catalogue.SnapshotHashes();
         try
         {
@@ -108,7 +110,8 @@ public sealed class ExtensionCreateScaffoldIntegrationTests
         }
     }
 
-    [Theory(DisplayName = "Extension Create blocks every divergent or colliding destination without overwriting existing bytes"), Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
+    [Theory(DisplayName = "Extension Create blocks every divergent or colliding destination without overwriting existing bytes"),
+     Trait("Feature", "extension-create"), Trait("Evidence", "Integration")]
     [InlineData("divergent-manifest")]
     [InlineData("partial-scaffold")]
     [InlineData("additional-entry")]
@@ -117,7 +120,7 @@ public sealed class ExtensionCreateScaffoldIntegrationTests
     [InlineData("manifest-directory")]
     [InlineData("case-alias")]
     [InlineData("unicode-lookalike")]
-    public async Task DivergentDestinationsAreBlocked(string scenario)
+    public static async Task DivergentDestinationsAreBlocked(string scenario)
     {
         using var catalogue = TemporaryWorkspace.Create("extension-create-collisions");
         var destination = catalogue.Combine("development-toolkit");
@@ -125,7 +128,7 @@ public sealed class ExtensionCreateScaffoldIntegrationTests
         {
             case "divergent-manifest":
                 catalogue.CreateFile("development-toolkit/extension.json", "{\"id\":\"different\"}");
-                catalogue.CreateDirectory("development-toolkit/payload/.agents");
+                catalogue.CreateDirectory("development-toolkit/content/.agents");
                 break;
             case "partial-scaffold":
                 catalogue.CreateFile("development-toolkit/extension.json", "{}");
@@ -136,7 +139,7 @@ public sealed class ExtensionCreateScaffoldIntegrationTests
                 break;
             case "payload-content":
                 CreateExactScaffold(catalogue);
-                catalogue.CreateFile("development-toolkit/payload/.agents/content.md", "retain");
+                catalogue.CreateFile("development-toolkit/content/.agents/content.md", "retain");
                 break;
             case "destination-file":
                 catalogue.CreateFile("development-toolkit", "retain");
@@ -146,11 +149,11 @@ public sealed class ExtensionCreateScaffoldIntegrationTests
                 break;
             case "case-alias":
                 catalogue.CreateFile("development-toolkit/Extension.json", "retain");
-                catalogue.CreateDirectory("development-toolkit/payload/.agents");
+                catalogue.CreateDirectory("development-toolkit/content/.agents");
                 break;
             case "unicode-lookalike":
                 catalogue.CreateFile("development-toolkit/extensiоn.json", "retain");
-                catalogue.CreateDirectory("development-toolkit/payload/.agents");
+                catalogue.CreateDirectory("development-toolkit/content/.agents");
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(scenario), scenario, "The collision scenario is not defined.");
@@ -201,7 +204,7 @@ public sealed class ExtensionCreateScaffoldIntegrationTests
         catalogue.CreateFile(
             "development-toolkit/extension.json",
             "{\"id\":\"development-toolkit\",\"name\":\"Development Toolkit\",\"description\":\"Open Forge Extension package development-toolkit.\",\"version\":\"0.1.0\",\"dependencies\":[]}");
-        catalogue.CreateDirectory("development-toolkit/payload/.agents");
+        catalogue.CreateDirectory("development-toolkit/content/.agents");
     }
 
     private static async Task<ExtensionCreateResult> ExecuteAsync(

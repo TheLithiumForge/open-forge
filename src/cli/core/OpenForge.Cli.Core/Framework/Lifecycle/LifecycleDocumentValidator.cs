@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using System.Security.Cryptography;
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
 using OpenForge.Cli.Core.Framework.Lifecycle.Models;
@@ -134,7 +135,8 @@ internal static class LifecycleDocumentValidator
             if (previousPackageId is not null
                 && string.CompareOrdinal(previousPackageId, package.Id) >= 0)
             {
-                return Blocked("Lifecycle package identities are duplicated or not in stable order.", packages, workspaceBinding: LifecycleWorkspaceBinding.Matched, fingerprintPolicy: fingerprintPolicy);
+                return Blocked("Lifecycle package identities are duplicated or not in stable order.",
+                    packages, workspaceBinding: LifecycleWorkspaceBinding.Matched, fingerprintPolicy: fingerprintPolicy);
             }
 
             if (!packageById.TryAdd(package.Id, package)
@@ -142,7 +144,8 @@ internal static class LifecycleDocumentValidator
                 || !IsDistinctOrdered(package.Dependencies)
                 || !TryNormalizePaths(package.Paths, out var normalizedPaths))
             {
-                return Blocked("A lifecycle package contains ambiguous dependency or path identity.", packages, workspaceBinding: LifecycleWorkspaceBinding.Matched, fingerprintPolicy: fingerprintPolicy);
+                return Blocked("A lifecycle package contains ambiguous dependency or path identity.",
+                    packages, workspaceBinding: LifecycleWorkspaceBinding.Matched, fingerprintPolicy: fingerprintPolicy);
             }
 
             previousPackageId = package.Id;
@@ -162,7 +165,7 @@ internal static class LifecycleDocumentValidator
         foreach (var path in extensions.Paths)
         {
             if (path is null
-                || !ExtensionTargetPath.TryNormalize(path.Path, out var normalizedPath)
+                || !PortableWorkspacePath.TryNormalize(path.Path, out var normalizedPath)
                 || path.Owners is null
                 || path.Owners.Length == 0
                 || HasInvalidIds(path.Owners)
@@ -175,7 +178,7 @@ internal static class LifecycleDocumentValidator
             }
 
             if ((previousPath is not null && string.CompareOrdinal(previousPath, normalizedPath) >= 0)
-                || !pathByIdentity.TryAdd(ExtensionTargetPath.CreatePortableKey(normalizedPath), path))
+                || !pathByIdentity.TryAdd(PortableWorkspacePath.CreatePortableKey(normalizedPath), path))
             {
                 return Blocked("Lifecycle path identities are duplicated or not in stable order.", packages, workspaceBinding: LifecycleWorkspaceBinding.Matched, fingerprintPolicy: fingerprintPolicy);
             }
@@ -188,12 +191,13 @@ internal static class LifecycleDocumentValidator
             if (package.Dependencies.Contains(package.Id, StringComparer.Ordinal)
                 || package.Dependencies.Any(dependency => !packageById.ContainsKey(dependency))
                 || package.Paths.Any(path => !pathByIdentity.TryGetValue(
-                        ExtensionTargetPath.CreatePortableKey(path),
+                        PortableWorkspacePath.CreatePortableKey(path),
                         out var record)
                     || !string.Equals(path, record.Path, StringComparison.Ordinal)
                     || !record.Owners.Contains(package.Id, StringComparer.Ordinal)))
             {
-                return Blocked("Lifecycle package dependency or path ownership is not reciprocal.", packages, workspaceBinding: LifecycleWorkspaceBinding.Matched, fingerprintPolicy: fingerprintPolicy);
+                return Blocked("Lifecycle package dependency or path ownership is not reciprocal.",
+                    packages, workspaceBinding: LifecycleWorkspaceBinding.Matched, fingerprintPolicy: fingerprintPolicy);
             }
         }
 
@@ -243,7 +247,7 @@ internal static class LifecycleDocumentValidator
 
     private static IReadOnlyList<LifecycleInstalledPath> ReadPaths(
         IReadOnlyDictionary<string, LifecycleExtensionPathV1> paths)
-        => paths.Values
+        => [.. paths.Values
             .OrderBy(path => path.Path, StringComparer.Ordinal)
             .Select(path => new LifecycleInstalledPath
             {
@@ -251,31 +255,30 @@ internal static class LifecycleDocumentValidator
                 Owners = Array.AsReadOnly(path.Owners.ToArray()),
                 BaselineFingerprint = path.BaselineFingerprint,
                 FingerprintKind = path.FingerprintKind,
-            })
-            .ToArray();
+            })];
 
     private static bool TryNormalizePaths(string[] paths, out string[] normalized)
     {
         normalized = new string[paths.Length];
         for (var index = 0; index < paths.Length; index++)
         {
-            if (!ExtensionTargetPath.TryNormalize(paths[index], out normalized[index]))
+            if (!PortableWorkspacePath.TryNormalize(paths[index], out normalized[index]))
             {
                 return false;
             }
         }
 
         return IsDistinctOrdered(normalized)
-            && normalized.Select(ExtensionTargetPath.CreatePortableKey).Distinct(StringComparer.Ordinal).Count()
+            && normalized.Select(PortableWorkspacePath.CreatePortableKey).Distinct(StringComparer.Ordinal).Count()
                 == normalized.Length;
     }
 
     private static bool HasInvalidIds(IEnumerable<string> values)
         => values.Any(value => !ExtensionIdentity.IsValidStableId(value));
 
-    private static bool IsDistinctOrdered(IReadOnlyList<string> values)
+    private static bool IsDistinctOrdered(string[] values)
     {
-        for (var index = 1; index < values.Count; index++)
+        for (var index = 1; index < values.Length; index++)
         {
             if (string.CompareOrdinal(values[index - 1], values[index]) >= 0)
             {
@@ -371,7 +374,7 @@ internal static class LifecycleDocumentValidator
             cause: cause,
             coverageFacts: new LifecycleCoverageFacts
             {
-                Paths = (paths ?? []).ToArray(),
+                Paths = [.. (paths ?? [])],
                 Coverage = LifecycleCoverageState.Blocked,
                 WorkspaceBinding = workspaceBinding,
                 FingerprintPolicy = fingerprintPolicy,

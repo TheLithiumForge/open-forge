@@ -10,17 +10,17 @@ namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Application;
 internal static class ExtensionInstallRecoveryOperation
 {
     internal static ValueTask<RecoveryBundlePreparationResult> PrepareAsync(
-        ExtensionInstallPlan plan,
+        ExtensionInstallExecutionPlan plan,
         Guid operationId,
         CancellationToken cancellationToken)
         => RecoveryBundleStore.PrepareAsync(
             RecoveryBundleInput.Create(
-                plan.Request.Workspace,
+                plan.Content.Request.Workspace,
                 ExtensionInstallDefinitions.CommandIdentity,
                 RecoveryBundleAttribution.Create(
                     RecoveryBundleProducer.Extension,
                     RecoveryBundleOperation.Install,
-                    plan.Request.Workspace),
+                    plan.Content.Request.Workspace),
                 operationId,
                 plan.RecoveryTargets),
             cancellationToken);

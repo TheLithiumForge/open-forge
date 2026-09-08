@@ -12,7 +12,7 @@ public sealed class ExtensionUpdateEffectContractTests
             ExtensionUpdateComparisonTargetKind.PackageFile,
             ExtensionUpdateChangeAction.Replace,
             region: null,
-            sourceAssetPath: "toolkit/payload/.agents/toolkit.md");
+            sourceAssetPath: "toolkit/content/.agents/toolkit.md");
         var generated = new ExtensionUpdateLogicalChange(
             ExtensionUpdateComparisonTargetKind.GeneratedRegion,
             ExtensionUpdateChangeAction.Replace,
@@ -20,7 +20,7 @@ public sealed class ExtensionUpdateEffectContractTests
             sourceAssetPath: null);
 
         Assert.Equal(ExtensionUpdateComparisonTargetKind.PackageFile, package.Kind);
-        Assert.Equal("toolkit/payload/.agents/toolkit.md", package.SourceAssetPath);
+        Assert.Equal("toolkit/content/.agents/toolkit.md", package.SourceAssetPath);
         Assert.Null(package.Region);
         Assert.Equal(ExtensionUpdateComparisonTargetKind.GeneratedRegion, generated.Kind);
         Assert.Equal("entries", generated.Region);
@@ -29,12 +29,12 @@ public sealed class ExtensionUpdateEffectContractTests
             ExtensionUpdateComparisonTargetKind.PackageFile,
             ExtensionUpdateChangeAction.Replace,
             "entries",
-            "toolkit/payload/.agents/toolkit.md"));
+            "toolkit/content/.agents/toolkit.md"));
         Assert.Throws<ArgumentException>(() => new ExtensionUpdateLogicalChange(
             ExtensionUpdateComparisonTargetKind.GeneratedRegion,
             ExtensionUpdateChangeAction.Replace,
             "entries",
-            "toolkit/payload/.agents/toolkit.md"));
+            "toolkit/content/.agents/toolkit.md"));
     }
 
     [Fact(DisplayName = "Extension Update effects snapshot ordered logical changes and reject unsafe shape"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
@@ -46,7 +46,7 @@ public sealed class ExtensionUpdateEffectContractTests
                 ExtensionUpdateComparisonTargetKind.PackageFile,
                 ExtensionUpdateChangeAction.Replace,
                 region: null,
-                sourceAssetPath: "toolkit/payload/.agents/toolkit.md"),
+                sourceAssetPath: "toolkit/content/.agents/toolkit.md"),
             new ExtensionUpdateLogicalChange(
                 ExtensionUpdateComparisonTargetKind.GeneratedRegion,
                 ExtensionUpdateChangeAction.Replace,
@@ -66,7 +66,7 @@ public sealed class ExtensionUpdateEffectContractTests
             ExtensionUpdateComparisonTargetKind.PackageFile,
             ExtensionUpdateChangeAction.Preserve,
             region: null,
-            sourceAssetPath: "toolkit/payload/.agents/other.md");
+            sourceAssetPath: "toolkit/content/.agents/other.md");
 
         Assert.Equal(".agents/toolkit.md", effect.Path);
         Assert.Equal("toolkit", effect.PackageId);

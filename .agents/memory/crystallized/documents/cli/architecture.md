@@ -534,6 +534,21 @@ Technical Design](technical-designs/workspace-libraries.md). No copy fallback,
 Git operation, native interop, external destination, path remapping, glob, or
 write-through mutation is part of this architecture.
 
+### Consumer Workspace Permissions
+
+`Framework/Permissions/` owns strict consumer grant representation, observation,
+exact identity lookup and proposed permission-file changes. Extension commands
+own required-grant policy, prompting, results, lease orchestration and content
+application. Permission is separate from lifecycle ownership. Neutral immutable
+facts may also serve Library consumers when their contracts select this shared
+meaning; no consumer imports another command's policy.
+
+The [Workspace Permissions contracts](contracts/shared/workspace-permissions/_workspace-permissions.md)
+and [Technical Design](technical-designs/workspace-permissions.md) own the exact
+schema, approval, result and recovery behavior. Existing BCL file effects and
+recovery cover permission writes. There is no new automatic Repair catalogue
+entry, DI, runtime registry, independent transaction or compatibility reader.
+
 ### Embedded Framework Distribution
 
 `Framework/Distribution/` owns one neutral embedded Framework payload reader and

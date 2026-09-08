@@ -45,8 +45,8 @@ inspect or report repository state or claim history evidence. Standalone
 Extension Create is the explicit create-only exception: it has no
 Replace/Delete, no recovery bundle, and no workspace lease. The lifecycle
 document stores no plan, runtime history, journal, recovery evidence, or session.
-Files outside this exact document are ordinary workspace content, not lifecycle
-input.
+The consumer permission document is separate admission input, not lifecycle
+state; other files are not lifecycle input.
 
 The CLI distribution embeds Framework and first-party Extension assets with
 deterministic inventory and hash proof. That proof identifies distributed source
@@ -56,6 +56,30 @@ a proven runtime implementation.
 Installed files retain the meaning of their destination routes. Package metadata
 and lifecycle ownership are evidence and management facts; they do not create
 Framework runtime meaning or authority.
+
+## Package Layout
+
+The replacement CLI reads, creates, inventories and embeds `content/` only.
+Each file below it retains its workspace-relative destination. First-party folders, embedded asset keys, scaffolds, help and examples use
+this same layout. The user explicitly excludes legacy handling: update our own packages and
+use `content/` throughout the replacement CLI. Do not add old-folder detection,
+diagnostics, aliases or migration. A package without `content/` retains the
+existing empty-package semantics.
+
+The rename does not rename JSON members such as `payload` or `payloadTargets`,
+internal payload concepts, or stable effect tags. Those describe contributed
+data, rather than a directory. Path values in them use `content/` when they
+identify source files. Manifest and lifecycle schemas stay unchanged. Installed
+ownership identifies destinations and does not depend on the package folder.
+The frozen legacy `src/cli-mvp/` implementation remains historical and is not
+a second supported source format for the replacement CLI.
+
+## Consumer Permissions
+
+Extension Install, Update and Remove consume the
+[Workspace Permissions Interface](../shared/workspace-permissions/interface.md)
+and [Behavior](../shared/workspace-permissions/behavior.md). Each command owns
+its required grants and preserves its existing ownership and force boundaries.
 
 ## Child Contract Sets
 

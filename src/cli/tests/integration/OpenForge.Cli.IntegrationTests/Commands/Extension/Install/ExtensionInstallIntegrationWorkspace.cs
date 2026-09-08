@@ -249,7 +249,7 @@ internal sealed class ExtensionInstallIntegrationWorkspace : IDisposable
         Directory.Delete(directory);
     }
 
-    private void AppendRecoverySnapshot(IDictionary<string, string> snapshot)
+    private void AppendRecoverySnapshot(SortedDictionary<string, string> snapshot)
     {
         var storeRoot = RecoveryBundlePathIdentity.ResolveStoreRoot(
             Environment.SpecialFolderOption.None);
@@ -364,17 +364,17 @@ internal sealed class ExtensionInstallCatalogue : IDisposable
               """);
         foreach (var (target, contents) in payload)
         {
-            _source.WriteText($"{id}/payload/{target}", contents);
+            _source.WriteText($"{id}/content/{target}", contents);
         }
     }
 
     internal string PackagePath(string id) => _source.Combine(id);
 
     internal byte[] ReadPayloadBytes(string id, string target)
-        => File.ReadAllBytes(_source.Combine($"{id}/payload/{target}"));
+        => File.ReadAllBytes(_source.Combine($"{id}/content/{target}"));
 
     internal void ReplacePayload(string id, string target, string contents)
-        => _source.ReplaceText($"{id}/payload/{target}", contents);
+        => _source.ReplaceText($"{id}/content/{target}", contents);
 
     public void Dispose() => _source.Dispose();
 }

@@ -76,7 +76,7 @@ public sealed class ExtensionUpdateMutationIntegrationTests
         await InstallAllAsync(workspace, source);
         File.Delete(Path.Combine(
             source.PackagePath("toolkit"),
-            "payload",
+            "content",
             ".agents",
             "toolkit",
             "_toolkit.md"));

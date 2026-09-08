@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 using System.Security.Cryptography;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning;
@@ -199,6 +201,21 @@ internal sealed class ExtensionUpdatePlanner(
             .Concat(currentLifecycle.Packages
                 .Where(package => selectedSet.Contains(package.Id))
                 .SelectMany(package => package.Paths));
+        var unsafeTarget = libraryTargets.FirstOrDefault(path => !ExtensionDestinationPolicy.IsAllowed(path));
+        if (unsafeTarget is not null)
+        {
+            return Stop(request, new ExtensionUpdateFinding(ExtensionUpdateFindingCode.TargetUnsafe,
+                "The Extension destination is not an eligible workspace file.", unsafeTarget), selection, SourceFact(source));
+        }
+        var managedPaths = currentLifecycle.Paths.Select(path => path.Path).ToArray();
+        var alias = closure.Packages.SelectMany(package => package.Payload).Select(file => file.TargetPath).OfType<string>()
+            .FirstOrDefault(target => managedPaths.Any(path => path != target
+                && PortableWorkspacePath.CreatePortableKey(path) == PortableWorkspacePath.CreatePortableKey(target)));
+        if (alias is not null)
+        {
+            return Stop(request, new ExtensionUpdateFinding(ExtensionUpdateFindingCode.OwnershipConflict,
+                "The Extension destination aliases a managed path.", alias), selection, SourceFact(source));
+        }
         var libraryBoundary = await ReadLibraryBoundaryAsync(
             request,
             libraryTargets,
@@ -314,6 +331,15 @@ internal sealed class ExtensionUpdatePlanner(
                 reconciliation.Finding);
         }
 
+        var frameworkPaths = frameworkLifecycle.Targets.Select(target => target.Path)
+            .Concat(frameworkLifecycle.GeneratedRegions.Select(region => region.Path))
+            .Select(PortableWorkspacePath.CreatePortableKey).ToHashSet(StringComparer.Ordinal);
+        var frameworkConflict = libraryTargets.FirstOrDefault(path => frameworkPaths.Contains(PortableWorkspacePath.CreatePortableKey(path)));
+        if (frameworkConflict is not null)
+        {
+            return Stop(request, new ExtensionUpdateFinding(ExtensionUpdateFindingCode.OwnershipConflict,
+                "The Extension target is owned by the installed Framework.", frameworkConflict), selection, SourceFact(source));
+        }
         var currentness = await _frameworkCurrentness.ReadAsync(
             request.Workspace,
             frameworkLifecycle,
@@ -443,17 +469,26 @@ internal sealed class ExtensionUpdatePlanner(
         IEnumerable<string> targetPaths,
         CancellationToken cancellationToken)
     {
+        var unsafeTarget = targetPaths.FirstOrDefault(path => !ExtensionDestinationPolicy.IsAllowed(request.Workspace, path)
+            || !ExtensionDestinationInspector.HasOrdinaryAncestors(_physicalPathResolver, request.Workspace, path, cancellationToken));
+        if (unsafeTarget is not null)
+        {
+            return new ExtensionUpdateFinding(ExtensionUpdateFindingCode.TargetUnsafe,
+                "The Extension destination is a protected workspace or recovery path.", unsafeTarget);
+        }
         var record = await LibrariesRecordReader.ReadAsync(
             _physicalPathResolver,
             request.Workspace,
             cancellationToken).ConfigureAwait(false);
         if (record.State == LibrariesRecordReadState.Complete)
         {
-            var claimedPaths = record.Record!.Libraries
+            var document = record.Record
+                ?? throw new InvalidOperationException("A complete Library record observation requires its document.");
+            var claimedPaths = document.Libraries
                 .SelectMany(library => library.Paths)
-                .Select(path => path.Value)
+                .Select(path => PortableWorkspacePath.CreatePortableKey(path.Value))
                 .ToHashSet(StringComparer.Ordinal);
-            var conflict = targetPaths.FirstOrDefault(claimedPaths.Contains);
+            var conflict = targetPaths.FirstOrDefault(path => claimedPaths.Contains(PortableWorkspacePath.CreatePortableKey(path)));
             return conflict is null
                 ? null
                 : new ExtensionUpdateFinding(

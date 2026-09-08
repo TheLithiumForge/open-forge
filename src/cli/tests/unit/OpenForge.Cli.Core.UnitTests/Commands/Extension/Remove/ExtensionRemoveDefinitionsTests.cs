@@ -45,7 +45,12 @@ public sealed class ExtensionRemoveDefinitionsTests
             ("extension-remove.dependency-blocked", CliSemanticStatus.Blocked),
             ("extension-remove.ownership-conflict", CliSemanticStatus.Blocked),
             ("extension-remove.managed-divergence", CliSemanticStatus.Attention),
-            ("extension-remove.target-outside-agents", CliSemanticStatus.Blocked),
+            ("extension-remove.permission-required", CliSemanticStatus.Blocked),
+            ("extension-remove.permission-declined", CliSemanticStatus.Blocked),
+            ("extension-remove.permissions-invalid", CliSemanticStatus.Blocked),
+            ("extension-remove.permissions-unavailable", CliSemanticStatus.Incomplete),
+            ("extension-remove.permissions-changed", CliSemanticStatus.Blocked),
+            ("extension-remove.permission-write-failed", CliSemanticStatus.Failed),
             ("extension-remove.target-unsafe", CliSemanticStatus.Blocked),
             ("extension-remove.projection-unavailable", CliSemanticStatus.Incomplete),
             ("extension-remove.generated-region-unsafe", CliSemanticStatus.Blocked),
@@ -65,7 +70,6 @@ public sealed class ExtensionRemoveDefinitionsTests
         ],
             ExtensionRemoveDefinitions.FindingCodes.Select(code =>
                 (ExtensionRemoveDefinitions.ReadMachineName(code), ExtensionRemoveDefinitions.ReadStatus(code))));
-        Assert.Equal(27, ExtensionRemoveDefinitions.FindingCodes.Count);
         Assert.Equal(
             ExtensionRemoveDefinitions.FindingCodes.Count,
             ExtensionRemoveDefinitions.FindingCodes.Distinct().Count());

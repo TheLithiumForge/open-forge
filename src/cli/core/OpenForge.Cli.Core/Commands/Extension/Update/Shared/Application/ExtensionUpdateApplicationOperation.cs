@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Commands.Extension.Update.Models.Application;
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
+using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Operation;
@@ -21,18 +24,21 @@ internal sealed class ExtensionUpdateApplicationOperation(
     WorkspaceLockManager lockManager,
     ExtensionUpdatePlanner planner,
     MutationRevalidator revalidator,
+    ExtensionPermissionOperation permissions,
     ExtensionUpdateEffectApplier effectApplier)
 {
+    private readonly ExtensionPermissionOperation _permissions = permissions;
     private readonly WorkspaceLockManager _lockManager = lockManager;
     private readonly ExtensionUpdatePlanner _planner = planner;
     private readonly MutationRevalidator _revalidator = revalidator;
     private readonly ExtensionUpdateEffectApplier _effectApplier = effectApplier;
 
     internal async ValueTask<ExtensionUpdateApplicationOutcome> ExecuteAsync(
-        ExtensionUpdatePlan plan,
+        ExtensionUpdateExecutionPlan execution,
         CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(plan);
+        ArgumentNullException.ThrowIfNull(execution);
+        var plan = execution.Content;
         var operationId = Guid.NewGuid();
         WorkspaceLockResult lockResult;
         try
@@ -46,12 +52,12 @@ internal sealed class ExtensionUpdateApplicationOperation(
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            return Stop(plan, ExtensionUpdateFindingCode.Interrupted,
+            return Stop(execution, ExtensionUpdateFindingCode.Interrupted,
                 "Extension Update lock acquisition was interrupted.");
         }
         catch (Exception)
         {
-            return Stop(plan, ExtensionUpdateFindingCode.WorkspaceLockUnavailable,
+            return Stop(execution, ExtensionUpdateFindingCode.WorkspaceLockUnavailable,
                 "Extension Update lock acquisition failed unexpectedly.");
         }
 
@@ -59,7 +65,7 @@ internal sealed class ExtensionUpdateApplicationOperation(
             || lockResult.Lease is not { } lease)
         {
             return Stop(
-                plan,
+                execution,
                 lockResult.State == WorkspaceLockState.Cancelled
                     ? ExtensionUpdateFindingCode.Interrupted
                     : ExtensionUpdateFindingCode.WorkspaceLockUnavailable,
@@ -68,17 +74,18 @@ internal sealed class ExtensionUpdateApplicationOperation(
 
         await using (lease.ConfigureAwait(false))
         {
-            return await ExecuteUnderLeaseAsync(plan, lease, operationId, cancellationToken)
+            return await ExecuteUnderLeaseAsync(execution, lease, operationId, cancellationToken)
                 .ConfigureAwait(false);
         }
     }
 
     private async ValueTask<ExtensionUpdateApplicationOutcome> ExecuteUnderLeaseAsync(
-        ExtensionUpdatePlan plan,
+        ExtensionUpdateExecutionPlan execution,
         WorkspaceLockLease lease,
         Guid operationId,
         CancellationToken cancellationToken)
     {
+        var plan = execution.Content;
         ExtensionUpdatePlanBuild rebuilt;
         try
         {
@@ -87,19 +94,19 @@ internal sealed class ExtensionUpdateApplicationOperation(
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            return Stop(plan, ExtensionUpdateFindingCode.Interrupted,
+            return Stop(execution, ExtensionUpdateFindingCode.Interrupted,
                 "Extension Update semantic revalidation was interrupted.");
         }
         catch (Exception)
         {
-            return Stop(plan, ExtensionUpdateFindingCode.OperationFailed,
+            return Stop(execution, ExtensionUpdateFindingCode.OperationFailed,
                 "Extension Update semantic revalidation failed unexpectedly.");
         }
 
         if (rebuilt.Plan is not { } current || !Matches(plan, current))
         {
             return Stop(
-                plan,
+                execution,
                 ExtensionUpdateFindingCode.TargetChanged,
                 "Source, lifecycle, Framework, topology, ownership, or plan facts changed after planning.");
         }
@@ -107,7 +114,7 @@ internal sealed class ExtensionUpdateApplicationOperation(
         MutationValidationResult validation;
         try
         {
-            validation = await _revalidator.ValidateAsync(
+            validation = plan.IsNoOp ? MutationValidationResult.Valid() : await _revalidator.ValidateAsync(
                 lease,
                 plan.DirectoryCreations,
                 plan.AllFileChanges,
@@ -115,63 +122,116 @@ internal sealed class ExtensionUpdateApplicationOperation(
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            return Stop(plan, ExtensionUpdateFindingCode.Interrupted,
+            return Stop(execution, ExtensionUpdateFindingCode.Interrupted,
                 "Extension Update plan revalidation was interrupted.");
         }
         catch (Exception)
         {
-            return Stop(plan, ExtensionUpdateFindingCode.OperationFailed,
+            return Stop(execution, ExtensionUpdateFindingCode.OperationFailed,
                 "Extension Update plan revalidation failed unexpectedly.");
         }
 
         if (validation.State != MutationValidationState.Valid)
         {
             return Stop(
-                plan,
+                execution,
                 validation.State == MutationValidationState.Cancelled
                     ? ExtensionUpdateFindingCode.Interrupted
                     : ExtensionUpdateFindingCode.TargetChanged,
                 validation.Cause ?? "An Extension Update target changed before effects.");
         }
 
+        try
+        {
+            if (!await _permissions.RevalidateAsync(lease, execution.Permission, cancellationToken).ConfigureAwait(false))
+            {
+                return Stop(execution, ExtensionUpdateFindingCode.PermissionsChanged, "Consumer permission changed after review.");
+            }
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return Stop(execution, ExtensionUpdateFindingCode.Interrupted, "Extension permission revalidation was interrupted.");
+        }
+        catch (Exception)
+        {
+            return Stop(execution, ExtensionUpdateFindingCode.PermissionsChanged, "Consumer permission could not be revalidated.");
+        }
+
         RecoveryBundlePreparationResult preparationResult;
         try
         {
             preparationResult = await ExtensionUpdateRecoveryApplication.PrepareAsync(
-                plan,
+                execution,
                 operationId,
                 cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            return Stop(plan, ExtensionUpdateFindingCode.Interrupted,
+            return Stop(execution, ExtensionUpdateFindingCode.Interrupted,
                 "Extension Update recovery preparation was interrupted.",
-                context: new ApplicationFailureContext { RecoveryUnknown = true });
+                context: new ExtensionUpdateApplicationFailureContext { RecoveryUnknown = true });
         }
         catch (Exception)
         {
-            return Stop(plan, ExtensionUpdateFindingCode.RecoveryUnavailable,
+            return Stop(execution, ExtensionUpdateFindingCode.RecoveryUnavailable,
                 "Extension Update recovery preparation failed unexpectedly.",
-                context: new ApplicationFailureContext { RecoveryUnknown = true });
+                context: new ExtensionUpdateApplicationFailureContext { RecoveryUnknown = true });
         }
         if (preparationResult.State is not RecoveryBundlePreparationState.NotNeeded
             and not RecoveryBundlePreparationState.Prepared)
         {
+            var preparationCode = ExtensionUpdateFindingCode.RecoveryUnavailable;
+            if (preparationResult.State == RecoveryBundlePreparationState.Cancelled)
+            {
+                preparationCode = ExtensionUpdateFindingCode.Interrupted;
+            }
+            else if (preparationResult.State == RecoveryBundlePreparationState.Blocked)
+            {
+                preparationCode = ExtensionUpdateFindingCode.RecoveryConflict;
+            }
+            else if (preparationResult.State != RecoveryBundlePreparationState.Incomplete)
+            {
+                throw new InvalidOperationException("The recovery preparation state is not defined.");
+            }
             return Stop(
-                plan,
-                preparationResult.State == RecoveryBundlePreparationState.Cancelled
-                    ? ExtensionUpdateFindingCode.Interrupted
-                    : preparationResult.State == RecoveryBundlePreparationState.Blocked
-                        ? ExtensionUpdateFindingCode.RecoveryConflict
-                        : ExtensionUpdateFindingCode.RecoveryUnavailable,
+                execution,
+                preparationCode,
                 preparationResult.Cause ?? "Extension Update recovery preparation is unavailable.",
-                context: new ApplicationFailureContext
+                context: new ExtensionUpdateApplicationFailureContext
                 {
                     RecoveryResidualPath = preparationResult.ResidualPath,
                 });
         }
 
         var preparation = preparationResult.Preparation;
+        var permissionResult = execution.Permission.Result with
+        {
+            Outcome = execution.Permission.Change is null ? WorkspacePermissionOutcome.NotRequested : WorkspacePermissionOutcome.NotStarted,
+        };
+        try
+        {
+            var permission = await _permissions.ApplyAsync(lease, execution.Permission, preparation, cancellationToken).ConfigureAwait(false);
+            permissionResult = permission.Result;
+            if (permission.Failure is { } failure)
+            {
+                return Stop(execution, ExtensionUpdateDefinitions.ReadPermissionFinding(failure), "The consumer permission write was not verified.",
+                    context: new ExtensionUpdateApplicationFailureContext { Preparation = preparation, Permissions = permissionResult });
+            }
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return Stop(execution, ExtensionUpdateFindingCode.Interrupted, "Extension permission application was interrupted.",
+                context: new ExtensionUpdateApplicationFailureContext { Preparation = preparation, Permissions = permissionResult });
+        }
+        catch (Exception)
+        {
+            return Stop(execution, ExtensionUpdateFindingCode.PermissionWriteFailed, "Consumer permission write completion could not be determined.",
+                context: new ExtensionUpdateApplicationFailureContext
+                {
+                    Preparation = preparation,
+                    Permissions = permissionResult with { Outcome = WorkspacePermissionOutcome.CompletionUnknown },
+                });
+        }
         var effects = plan.Effects.Select(effect => effect.Result).ToArray();
         var checkIndex = 0;
         foreach (var directory in plan.DirectoryCreations)
@@ -185,14 +245,15 @@ internal sealed class ExtensionUpdateApplicationOperation(
                 || receipt.VerificationState != FilesystemVerificationState.Verified)
             {
                 return Stop(
-                    plan,
+                    execution,
                     receipt.NotStartedReason == FilesystemNotStartedReason.Cancelled
                         ? ExtensionUpdateFindingCode.Interrupted
                         : ExtensionUpdateFindingCode.WriteFailed,
                     receipt.Cause ?? "An Extension Update parent directory could not be created and verified.",
                     directory.LogicalPath,
-                    new ApplicationFailureContext
+                    new ExtensionUpdateApplicationFailureContext
                     {
+                        Permissions = permissionResult,
                         Preparation = preparation,
                     });
             }
@@ -221,12 +282,13 @@ internal sealed class ExtensionUpdateApplicationOperation(
                 }
 
                 return Stop(
-                    plan,
+                    execution,
                     ReadFinding(receipt),
                     receipt.Cause ?? "An Extension Update target could not be applied and verified.",
                     effect.Result.Path,
-                    new ApplicationFailureContext
+                    new ExtensionUpdateApplicationFailureContext
                     {
+                        Permissions = permissionResult,
                         Effects = effects,
                         Preparation = preparation,
                     });
@@ -249,12 +311,13 @@ internal sealed class ExtensionUpdateApplicationOperation(
             if (!IsVerified(receipt))
             {
                 return Stop(
-                    plan,
+                    execution,
                     ExtensionUpdateFindingCode.LifecyclePublicationFailed,
                     receipt.Cause ?? "The Extension lifecycle could not be published and verified.",
                     ".agents/open-forge.lifecycle.json",
-                    new ApplicationFailureContext
+                    new ExtensionUpdateApplicationFailureContext
                     {
+                        Permissions = permissionResult,
                         Effects = effects,
                         Preparation = preparation,
                         LifecycleOutcome = ExtensionUpdateLifecycleOutcome.VerificationFailed,
@@ -275,11 +338,12 @@ internal sealed class ExtensionUpdateApplicationOperation(
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
             return Stop(
-                plan,
+                execution,
                 ExtensionUpdateFindingCode.Interrupted,
                 "Final Extension Update verification was interrupted.",
-                context: new ApplicationFailureContext
+                context: new ExtensionUpdateApplicationFailureContext
                 {
+                    Permissions = permissionResult,
                     Effects = effects,
                     Preparation = preparation,
                     LifecycleOutcome = lifecycleOutcome,
@@ -288,11 +352,12 @@ internal sealed class ExtensionUpdateApplicationOperation(
         catch (Exception)
         {
             return Stop(
-                plan,
+                execution,
                 ExtensionUpdateFindingCode.VerificationFailed,
                 "Final Extension Update verification failed unexpectedly.",
-                context: new ApplicationFailureContext
+                context: new ExtensionUpdateApplicationFailureContext
                 {
+                    Permissions = permissionResult,
                     Effects = effects,
                     Preparation = preparation,
                     LifecycleOutcome = lifecycleOutcome,
@@ -303,11 +368,12 @@ internal sealed class ExtensionUpdateApplicationOperation(
             || !AppliedMatches(plan, verifiedPlan))
         {
             return Stop(
-                plan,
+                execution,
                 ExtensionUpdateFindingCode.VerificationFailed,
                 "Final Extension Update topology or lifecycle verification did not match the plan.",
-                context: new ApplicationFailureContext
+                context: new ExtensionUpdateApplicationFailureContext
                 {
+                    Permissions = permissionResult,
                     Effects = effects,
                     Preparation = preparation,
                     LifecycleOutcome = lifecycleOutcome,
@@ -324,6 +390,7 @@ internal sealed class ExtensionUpdateApplicationOperation(
         {
             return new ExtensionUpdateApplicationOutcome
             {
+                Permissions = permissionResult,
                 Effects = effects,
                 Lifecycle = Lifecycle(plan, lifecycleOutcome),
                 Recovery = recovery.Recovery,
@@ -334,6 +401,7 @@ internal sealed class ExtensionUpdateApplicationOperation(
 
         return new ExtensionUpdateApplicationOutcome
         {
+            Permissions = permissionResult,
             Effects = effects,
             Lifecycle = Lifecycle(plan, lifecycleOutcome),
             Recovery = recovery.Recovery,
@@ -343,36 +411,21 @@ internal sealed class ExtensionUpdateApplicationOperation(
     }
 
     private static ExtensionUpdateApplicationOutcome Stop(
-        ExtensionUpdatePlan plan,
+        ExtensionUpdateExecutionPlan execution,
         ExtensionUpdateFinding finding,
-        ApplicationFailureContext? context = null)
+        ExtensionUpdateApplicationFailureContext? context = null)
     {
-        context ??= new ApplicationFailureContext();
+        var plan = execution.Content;
+        context ??= new ExtensionUpdateApplicationFailureContext();
         return new ExtensionUpdateApplicationOutcome
         {
+            Permissions = context.Permissions ?? execution.Permission.Result with
+            {
+                Outcome = execution.Permission.Change is null ? WorkspacePermissionOutcome.NotRequested : WorkspacePermissionOutcome.NotStarted,
+            },
             Effects = context.Effects,
             Lifecycle = Lifecycle(plan, context.LifecycleOutcome),
-            Recovery = context.RecoveryUnknown
-                ? new ExtensionUpdateRecovery(
-                    ExtensionUpdateRecoveryState.Unknown,
-                    [],
-                    residualPath: null)
-                : context.Preparation is null && context.RecoveryResidualPath is null
-                ? new ExtensionUpdateRecovery(
-                    plan.RequiresRecovery
-                        ? ExtensionUpdateRecoveryState.NotCreated
-                        : ExtensionUpdateRecoveryState.NotRequired,
-                    [],
-                    residualPath: null)
-                : context.Preparation is null
-                    ? new ExtensionUpdateRecovery(
-                        ExtensionUpdateRecoveryState.Unknown,
-                        [],
-                        context.RecoveryResidualPath)
-                : new ExtensionUpdateRecovery(
-                    ExtensionUpdateRecoveryState.Retained,
-                    ProtectedPaths(context.Preparation),
-                    context.Preparation.BundlePath),
+            Recovery = ReadRecovery(execution, context),
             Verification = new ExtensionUpdateVerification(
                 ExtensionUpdateVerificationState.NotRequested,
                 ExtensionUpdateVerificationState.NotRequested,
@@ -382,12 +435,12 @@ internal sealed class ExtensionUpdateApplicationOperation(
     }
 
     private static ExtensionUpdateApplicationOutcome Stop(
-        ExtensionUpdatePlan plan,
+        ExtensionUpdateExecutionPlan execution,
         ExtensionUpdateFindingCode code,
         string cause,
         string? target = null,
-        ApplicationFailureContext? context = null)
-        => Stop(plan, new ExtensionUpdateFinding(code, cause, target), context);
+        ExtensionUpdateApplicationFailureContext? context = null)
+        => Stop(execution, new ExtensionUpdateFinding(code, cause, target), context);
 
     private static ExtensionUpdateLifecycle Lifecycle(
         ExtensionUpdatePlan plan,
@@ -524,17 +577,20 @@ internal sealed class ExtensionUpdateApplicationOperation(
                 && pair.First.IntendedBytes.AsSpan().SequenceEqual(
                     pair.Second.IntendedBytes.AsSpan()));
 
-    private sealed class ApplicationFailureContext
+    private static ExtensionUpdateRecovery ReadRecovery(ExtensionUpdateExecutionPlan execution, ExtensionUpdateApplicationFailureContext context)
     {
-        internal IReadOnlyList<ExtensionUpdateEffect> Effects { get; init; } = [];
-
-        internal RecoveryBundlePreparation? Preparation { get; init; }
-
-        internal ExtensionUpdateLifecycleOutcome LifecycleOutcome { get; init; }
-            = ExtensionUpdateLifecycleOutcome.NotStarted;
-
-        internal string? RecoveryResidualPath { get; init; }
-
-        internal bool RecoveryUnknown { get; init; }
+        if (context.RecoveryUnknown)
+        {
+            return new(ExtensionUpdateRecoveryState.Unknown, [], residualPath: null);
+        }
+        if (context.Preparation is { } preparation)
+        {
+            return new(ExtensionUpdateRecoveryState.Retained, ProtectedPaths(preparation), preparation.BundlePath);
+        }
+        if (context.RecoveryResidualPath is { } residual)
+        {
+            return new(ExtensionUpdateRecoveryState.Unknown, [], residual);
+        }
+        return new(execution.RequiresRecovery ? ExtensionUpdateRecoveryState.NotCreated : ExtensionUpdateRecoveryState.NotRequired, [], residualPath: null);
     }
 }

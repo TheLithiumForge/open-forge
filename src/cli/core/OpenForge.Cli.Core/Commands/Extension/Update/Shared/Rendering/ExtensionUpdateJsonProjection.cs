@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Permissions.Shared.Serialization;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Presentation;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Result;
@@ -32,7 +33,7 @@ internal static class ExtensionUpdateJsonProjection
                     {
                         CliWorkspaceSelectionMethod.CurrentDirectory => "current-directory",
                         CliWorkspaceSelectionMethod.ExplicitWorkspace => "explicit-workspace",
-                        _ => throw new ArgumentOutOfRangeException(),
+                        _ => throw new ArgumentOutOfRangeException(nameof(result), result.Workspace.SelectedBy, "The workspace selection method is not defined."),
                     },
                 },
             Result = new ExtensionUpdateJsonResult
@@ -46,7 +47,7 @@ internal static class ExtensionUpdateJsonProjection
                     : new ExtensionUpdateJsonSelection
                     {
                         SelectedBy = ExtensionUpdateDefinitions.ReadMachineName(result.Selection.SelectedBy),
-                        RootIds = result.Selection.RootIds.ToArray(),
+                        RootIds = [.. result.Selection.RootIds],
                     },
                 Source = result.Source is null
                     ? null
@@ -57,13 +58,13 @@ internal static class ExtensionUpdateJsonProjection
                         Identity = result.Source.Identity,
                         PackageCount = result.Source.PackageCount,
                     },
-                Packages = result.Packages.Select(package => new ExtensionUpdateJsonPackage
+                Packages = [.. result.Packages.Select(package => new ExtensionUpdateJsonPackage
                 {
                     Id = package.Id,
                     SelectedRoot = package.SelectedRoot,
-                    Dependencies = package.Dependencies.ToArray(),
-                }).ToArray(),
-                Comparisons = result.Comparisons.Select(comparison => new ExtensionUpdateJsonComparison
+                    Dependencies = [.. package.Dependencies],
+                })],
+                Comparisons = [.. result.Comparisons.Select(comparison => new ExtensionUpdateJsonComparison
                 {
                     Path = comparison.Path,
                     PackageId = comparison.PackageId,
@@ -78,33 +79,34 @@ internal static class ExtensionUpdateJsonProjection
                     IntendedState = ExtensionUpdateDefinitions.ReadMachineName(comparison.IntendedState),
                     RetirementEligibility = ExtensionUpdateDefinitions.ReadMachineName(
                         comparison.RetirementEligibility),
-                }).ToArray(),
+                })],
                 GeneratedNavigation = result.GeneratedNavigation is null
                     ? null
                     : new ExtensionUpdateJsonNavigation
                     {
-                        Regions = result.GeneratedNavigation.Regions.Select(region => new ExtensionUpdateJsonRegion
+                        Regions = [.. result.GeneratedNavigation.Regions.Select(region => new ExtensionUpdateJsonRegion
                         {
                             Path = region.Path,
                             State = ExtensionUpdateDefinitions.ReadMachineName(region.State),
-                        }).ToArray(),
+                        })],
                     },
-                Effects = result.Effects.Select(effect => new ExtensionUpdateJsonEffect
+                Effects = [.. result.Effects.Select(effect => new ExtensionUpdateJsonEffect
                 {
                     Path = effect.Path,
                     PackageId = effect.PackageId,
                     Kind = ExtensionUpdateDefinitions.ReadMachineName(effect.Kind),
                     Action = ExtensionUpdateDefinitions.ReadMachineName(effect.Action),
-                    Changes = effect.Changes.Select(change => new ExtensionUpdateJsonChange
+                    Changes = [.. effect.Changes.Select(change => new ExtensionUpdateJsonChange
                     {
                         Kind = ExtensionUpdateDefinitions.ReadMachineName(change.Kind),
                         Action = ExtensionUpdateDefinitions.ReadMachineName(change.Action),
                         Region = change.Region,
                         SourceAssetPath = change.SourceAssetPath,
-                    }).ToArray(),
+                    })],
                     Outcome = ExtensionUpdateDefinitions.ReadMachineName(effect.Outcome),
                     Residual = ExtensionUpdateDefinitions.ReadMachineName(effect.Residual),
-                }).ToArray(),
+                })],
+                Permissions = WorkspacePermissionJsonProjection.Create(result.Permissions),
                 Lifecycle = new ExtensionUpdateJsonLifecycle
                 {
                     Trust = ExtensionUpdateDefinitions.ReadMachineName(result.Lifecycle.Trust),
@@ -115,7 +117,7 @@ internal static class ExtensionUpdateJsonProjection
                 Recovery = new ExtensionUpdateJsonRecovery
                 {
                     State = ExtensionUpdateDefinitions.ReadMachineName(result.Recovery.State),
-                    ProtectedPaths = result.Recovery.ProtectedPaths.ToArray(),
+                    ProtectedPaths = [.. result.Recovery.ProtectedPaths],
                     ResidualPath = result.Recovery.ResidualPath,
                 },
                 Verification = new ExtensionUpdateJsonVerification
@@ -125,13 +127,13 @@ internal static class ExtensionUpdateJsonProjection
                     ExtensionsLifecycle = ExtensionUpdateDefinitions.ReadMachineName(
                         result.Verification.ExtensionsLifecycle),
                 },
-                Findings = result.Findings.Select(finding => new ExtensionUpdateJsonFinding
+                Findings = [.. result.Findings.Select(finding => new ExtensionUpdateJsonFinding
                 {
                     Code = ExtensionUpdateDefinitions.ReadMachineName(finding.Code),
                     Status = CliStatusDefinitions.Read(finding.Status).MachineName,
                     Target = finding.Target,
                     Cause = finding.Cause,
-                }).ToArray(),
+                })],
             },
             Next = result.Next is null
                 ? null

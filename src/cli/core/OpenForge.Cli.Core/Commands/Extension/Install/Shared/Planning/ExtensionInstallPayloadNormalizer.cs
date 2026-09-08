@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
@@ -6,12 +8,12 @@ using OpenForge.Cli.Core.Framework.Lifecycle;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Planning;
 
-internal sealed class ExtensionInstallPayloadNormalizer
+internal static class ExtensionInstallPayloadNormalizer
 {
-    internal ExtensionInstallPayloadNormalization Normalize(
+    internal static ExtensionInstallPayloadNormalization Normalize(
         IReadOnlyList<ExtensionPackageFact> packages)
     {
-        var entries = new List<NormalizedPayload>();
+        var entries = new List<ExtensionInstallNormalizedPayload>();
         foreach (var package in packages)
         {
             foreach (var file in package.Payload)
@@ -23,37 +25,15 @@ internal sealed class ExtensionInstallPayloadNormalizer
                     return Stop(availabilityFinding);
                 }
 
-                if (!ExtensionTargetPath.TryNormalize(file.TargetPath, out var normalized)
-                    || !normalized.StartsWith(".agents/", StringComparison.Ordinal)
-                    || normalized.Length <= ".agents/".Length)
+                if (!PortableWorkspacePath.TryNormalize(file.TargetPath, out var normalized)
+                    || !ExtensionDestinationPolicy.IsAllowed(normalized))
                 {
-                    return Stop(
-                        ExtensionInstallFindingCode.TargetOutsideAgents,
-                        "Every Extension payload target must be a strict descendant of .agents/.",
-                        target);
+                    return Stop(ExtensionInstallFindingCode.TargetUnsafe,
+                        "The Extension destination is not an eligible workspace file.", target);
                 }
+                var portableKey = PortableWorkspacePath.CreatePortableKey(normalized);
 
-                var portableKey = ExtensionTargetPath.CreatePortableKey(normalized);
-                if (portableKey == ExtensionTargetPath.CreatePortableKey(LifecycleSchema.RelativePath))
-                {
-                    return Stop(
-                        ExtensionInstallFindingCode.TargetUnsafe,
-                        "Extension packages cannot target the lifecycle document.",
-                        normalized);
-                }
-
-                if (Framework.Sources.Identity.SourceFormClassifier.TryClassify(
-                        portableKey,
-                        out var form)
-                    && form == Framework.Sources.Models.Identity.SourceDocumentForm.OverwriteCompanion)
-                {
-                    return Stop(
-                        ExtensionInstallFindingCode.TargetUnsafe,
-                        "Extension packages cannot target workspace-owned overwrite companions.",
-                        normalized);
-                }
-
-                entries.Add(new NormalizedPayload(package.Id, file, normalized, portableKey));
+                entries.Add(new ExtensionInstallNormalizedPayload(package.Id, file, normalized, portableKey));
             }
         }
 
@@ -83,12 +63,12 @@ internal sealed class ExtensionInstallPayloadNormalizer
                 Name = package.Name,
                 Description = package.Description,
                 Version = package.Version,
-                Dependencies = package.Dependencies.ToArray(),
+                Dependencies = [.. package.Dependencies],
             },
             new ExtensionPackageContentsFact
             {
                 ManifestPath = package.ManifestPath,
-                Payload = entries.Where(entry => entry.PackageId == package.Id)
+                Payload = [.. entries.Where(entry => entry.PackageId == package.Id)
                     .GroupBy(entry => entry.PortableKey, StringComparer.Ordinal)
                     .Select(group => group.OrderBy(entry => entry.File.Path, StringComparer.Ordinal).First())
                     .Select(entry => ExtensionPackageFileFact.Create(new ExtensionPackageFileSnapshot
@@ -99,8 +79,7 @@ internal sealed class ExtensionInstallPayloadNormalizer
                         ByteLength = entry.File.ByteLength,
                         Sha256 = entry.File.Sha256,
                         Bytes = entry.File.Bytes,
-                    }))
-                    .ToArray(),
+                    }))],
             })).ToArray();
         return new ExtensionInstallPayloadNormalization(normalizedPackages, finding: null);
     }
@@ -109,38 +88,30 @@ internal sealed class ExtensionInstallPayloadNormalizer
         ExtensionPackageFileFact file,
         string target)
     {
-        switch (file.State)
+        return file.State switch
         {
-            case ExtensionPackageFileReadState.Available
-                when file.Bytes is not null && file.Sha256 is not null:
-                return null;
-            case ExtensionPackageFileReadState.Available:
-            case ExtensionPackageFileReadState.Missing:
-            case ExtensionPackageFileReadState.Unavailable:
-                return new ExtensionInstallFinding(
-                    ExtensionInstallFindingCode.SourceUnavailable,
-                    "A selected Extension payload is unavailable or incomplete.",
-                    target);
-            case ExtensionPackageFileReadState.Invalid:
-            case ExtensionPackageFileReadState.Blocked:
-                return new ExtensionInstallFinding(
-                    ExtensionInstallFindingCode.SourceInvalid,
-                    "A selected Extension payload is invalid or blocked.",
-                    target);
-            case ExtensionPackageFileReadState.Cancelled:
-                return new ExtensionInstallFinding(
-                    ExtensionInstallFindingCode.Interrupted,
-                    "Extension payload reading was interrupted.",
-                    target);
-            default:
-                throw new ArgumentOutOfRangeException(
-                    nameof(file),
-                    file.State,
-                    "The Extension package-file state is not defined.");
-        }
+            ExtensionPackageFileReadState.Available
+                when file.Bytes is not null && file.Sha256 is not null => null,
+            ExtensionPackageFileReadState.Available or ExtensionPackageFileReadState.Missing or ExtensionPackageFileReadState.Unavailable => new ExtensionInstallFinding(
+                ExtensionInstallFindingCode.SourceUnavailable,
+                "A selected Extension payload is unavailable or incomplete.",
+                target),
+            ExtensionPackageFileReadState.Invalid or ExtensionPackageFileReadState.Blocked => new ExtensionInstallFinding(
+                ExtensionInstallFindingCode.SourceInvalid,
+                "A selected Extension payload is invalid or blocked.",
+                target),
+            ExtensionPackageFileReadState.Cancelled => new ExtensionInstallFinding(
+                ExtensionInstallFindingCode.Interrupted,
+                "Extension payload reading was interrupted.",
+                target),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(file),
+                file.State,
+                "The Extension package-file state is not defined."),
+        };
     }
 
-    private static bool HaveEqualContent(IReadOnlyList<NormalizedPayload> values)
+    private static bool HaveEqualContent(ExtensionInstallNormalizedPayload[] values)
     {
         if (values[0].File is not { Sha256: { } firstHash, Bytes: { } firstBytes })
         {
@@ -162,9 +133,4 @@ internal sealed class ExtensionInstallPayloadNormalizer
     private static ExtensionInstallPayloadNormalization Stop(ExtensionInstallFinding finding)
         => new(packages: [], finding);
 
-    private sealed record NormalizedPayload(
-        string PackageId,
-        ExtensionPackageFileFact File,
-        string NormalizedPath,
-        string PortableKey);
 }

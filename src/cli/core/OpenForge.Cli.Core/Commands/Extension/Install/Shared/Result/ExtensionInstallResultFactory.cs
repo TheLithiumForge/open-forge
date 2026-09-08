@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Application;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Request;
@@ -166,11 +167,12 @@ internal static class ExtensionInstallResultFactory
         IEnumerable<ExtensionInstallFinding> findings)
         => new(request, facts, findings);
 
-    internal static ExtensionInstallResult NoOp(ExtensionInstallPlan plan)
+    internal static ExtensionInstallResult NoOp(ExtensionInstallPlan plan, WorkspacePermissionResult permissions)
         => Result(
             plan.Request,
             plan.Facts with
             {
+                Permissions = permissions,
                 Effects = [],
                 Lifecycle = plan.Facts.Lifecycle with
                 {
@@ -190,15 +192,17 @@ internal static class ExtensionInstallResultFactory
 
     internal static ExtensionInstallResult PlanBoundary(
         ExtensionInstallPlan plan,
-        ExtensionInstallFinding finding)
+        ExtensionInstallFinding finding,
+        WorkspacePermissionResult? permissions = null)
         => Result(
             plan.Request,
             plan.Facts with
             {
-                Effects = plan.Facts.Effects.Select(effect => effect with
+                Permissions = permissions ?? plan.Facts.Permissions,
+                Effects = [.. plan.Facts.Effects.Select(effect => effect with
                 {
                     Outcome = ExtensionInstallEffectOutcome.NotStarted,
-                }).ToArray(),
+                })],
                 Lifecycle = plan.Facts.Lifecycle with
                 {
                     Outcome = plan.Facts.Lifecycle.Action == ExtensionInstallLifecycleAction.Publish
@@ -222,6 +226,7 @@ internal static class ExtensionInstallResultFactory
             plan.Facts with
             {
                 Effects = progress.Effects,
+                Permissions = progress.Permissions,
                 Lifecycle = plan.Facts.Lifecycle with
                 {
                     Outcome = progress.LifecycleOutcome,

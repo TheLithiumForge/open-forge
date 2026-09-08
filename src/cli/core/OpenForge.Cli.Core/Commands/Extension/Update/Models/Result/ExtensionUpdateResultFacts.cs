@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Permissions.Models.Result;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Request;
@@ -208,11 +209,10 @@ internal sealed record ExtensionUpdateGeneratedNavigation
         IEnumerable<ExtensionUpdateGeneratedRegion> regions)
     {
         ArgumentNullException.ThrowIfNull(regions);
-        Regions = new ReadOnlyCollection<ExtensionUpdateGeneratedRegion>(regions
+        Regions = new ReadOnlyCollection<ExtensionUpdateGeneratedRegion>([.. regions
             .Select(value => value ?? throw new ArgumentException(
                 "Extension Update generated-navigation regions cannot contain null members.",
-                nameof(regions)))
-            .ToArray());
+                nameof(regions)))]);
     }
 
     internal IReadOnlyList<ExtensionUpdateGeneratedRegion> Regions { get; }
@@ -392,6 +392,8 @@ internal sealed record ExtensionUpdateResultFacts
     internal required ExtensionUpdateGeneratedNavigation? GeneratedNavigation { get; init; }
 
     internal required IReadOnlyList<ExtensionUpdateEffect> Effects { get; init; }
+
+    internal WorkspacePermissionResult Permissions { get; init; } = WorkspacePermissionResult.NotEvaluated;
 
     internal required ExtensionUpdateLifecycle Lifecycle { get; init; }
 

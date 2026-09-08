@@ -21,7 +21,7 @@ internal static class SourceFormClassifier
         }
 
         var fileName = SourceLogicalPath.ReadFileName(canonicalPath);
-        if (fileName.EndsWith(OverwriteSuffix, StringComparison.Ordinal))
+        if (HasOverwriteSuffix(fileName))
         {
             form = SourceDocumentForm.OverwriteCompanion;
             return true;
@@ -42,6 +42,9 @@ internal static class SourceFormClassifier
         form = ReadEntrypointForm(fileName, parent) ?? SourceDocumentForm.Markdown;
         return true;
     }
+
+    internal static bool HasOverwriteSuffix(string path)
+        => path.EndsWith(OverwriteSuffix, StringComparison.Ordinal);
 
     internal static bool Matches(string canonicalPath, SourceDocumentForm form)
     {

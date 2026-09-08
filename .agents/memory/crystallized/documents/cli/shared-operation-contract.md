@@ -347,7 +347,7 @@ the workspace. The bundle contains the exact prior bytes and state-specific
 prior and intended identity for every covered effect. This includes ordinary
 existing-file `Replace`, `ReplaceGeneratedRegion`, and `Delete` effects,
 relative-file-link `Create` and `Delete` effects, and the prior-missing ordinary
-`Create` that creates the Library record. Semantic or byte no-op targets have no
+`Create` that creates the Library record or consumer permission document. Semantic or byte no-op targets have no
 bundle entry. An operation containing only no-ops creates no bundle. Unavailable
 required storage forms a pre-effect incomplete result. Unknown, malformed,
 mismatched, or colliding artifacts do not authorize an effect.

@@ -33,7 +33,7 @@ Read the [program Task](00-cli-development.md),
 - [ ] [CLI Command Surface Audit](cli-command-surface-audit.md) — Task 10 is queued until after the retained command sequence; audit only, with no implementation mutation — Implementer: Dedicated Review Mastermind
 - [ ] [CLI Delivery](delivery/_delivery.md) — Planned — Implementer: Not assigned
 - [x] [Task 23: Workspace Libraries](workspace-libraries.md) — Complete, phase 5/5, milestone 8/8; Sol return and root placement correction accepted at `25c65bf8`.
-- [ ] [Task 24: Extensions Evolution](extensions-evolution.md) — Queued post-command package-vocabulary and Extension destination-permission decisions; no active phase or milestone horizon
+- [ ] [Task 24: Extensions Evolution](extensions-evolution.md) — Active, phase 2/5, milestone 2/8; semantic and callable contracts frozen, Red next
 - [ ] [Task 25: Workspace Library Destination Projections](workspace-library-destination-projections.md) — Queued post-command Library symlink destination decisions; no active phase or milestone horizon
 - [ ] [Task 26: Extension Internal Consolidation](extension-internal-consolidation.md) — Queued pure refactor after all commands and Tasks 24–25; no active phase or milestone horizon
 
@@ -69,7 +69,6 @@ define execution state.
 ## Entries
 
 <!-- open-forge:generated-index:start -->
-
 - [Parent outcome, scope, authority, and acceptance for the complete replacement CLI program](00-cli-development.md) - #Memory #Working #CLI #Task #Program #Architecture #Development #Contextual #Active
 - [Audit the current replacement CLI Architecture authority and route misplaced detail to narrower sources without changing accepted meaning](cli-architecture-authority-audit.md) - #Memory #Working #Contextual #Complete #CLI #Task #Architecture #Audit #Authority #Documentation
 - [Apply the accepted CLI Architecture authority audit without changing product behavior or requirement strength](cli-architecture-authority-remediation.md) - #Memory #Working #Contextual #Complete #CLI #Task #Architecture #Authority #Documentation #Remediation
@@ -79,7 +78,8 @@ define execution state.
 - [Package, prove, document, and release the complete native CLI without partial publication](delivery/_delivery.md) - #Memory #Working #CLI #Task #Distribution #NativeAOT #SupplyChain #Release #Contextual
 - [Prepare the behavior-preserving six-command Extension refactor until functional Extension and Library destination work is settled](extension-internal-consolidation.md) - #Memory #Working #CLI #Task #Extension #Refactoring #Testing #Contextual #Queued
 - [Review the candidate Extension content layout and exact consumer permissions for copied files and Library links](extensions-destination-proposal.md) - #Memory #Working #CLI #Extension #Library #Proposal #Contextual #Candidate
-- [Prepare functional Extension package vocabulary and consumer-owned destinations after the remaining commands](extensions-evolution.md) - #Memory #Working #CLI #Task #Extension #Evolution #Content #Destination #Contextual #Queued
+- [Review the concrete Task 24 content rename, permission contracts, implementation seams and decisive evidence before M1 freeze](extensions-evolution-contract-draft.md) - #Memory #Working #CLI #Extension #Permission #Contract #Design #Contextual #Candidate
+- [Track completed Extension content naming, consumer permission, review corrections and full acceptance](extensions-evolution.md) - #Memory #Working #CLI #Task #Extension #Evolution #Content #Destination #Contextual #Complete
 - [Build and accept the actual command-free C# workspace, Core, host, safety, tests, and Native AOT foundation](foundation/_foundation.md) - #Memory #Working #CLI #Task #Foundation #Architecture #DotNet #NativeAOT #Contextual #Complete
 - [Improve cross-cutting CLI parser, test, callable, and project structure without changing accepted command meaning](generic-improvements/_generic-improvements.md) - #Memory #Working #CLI #Task #Generic #Parser #Testing #Architecture #Contextual #Complete
 - [Implement root and Extension creation, installation, update, and removal lifecycle commands](lifecycle/_lifecycle.md) - #Memory #Working #CLI #Task #Lifecycle #Extension #Install #Update #Contextual
@@ -95,7 +95,6 @@ define execution state.
 - [Implement retained route mutation commands on the accepted mutation foundation](route-mutation/_route-mutation.md) - #Memory #Working #CLI #Task #Route #Mutation #Contextual
 - [Add the interaction, Framework distribution, lifecycle provenance, and directory-create prerequisites for the next command wave](shared-foundations/_shared-foundations.md) - #Memory #Working #CLI #Task #Foundation #Shell #Framework #Lifecycle #Contextual
 - [Audit symbolic constants, generated-region authority, and composable active-test foundations across the replacement CLI](test-architecture-and-constants.md) - #Memory #Working #CLI #Task #Testing #Architecture #Constants #Fixtures #Snapshot #Contextual
-- [Execute the accepted Workspace Libraries contracts through bounded preparation, implementation, evidence, and integration](workspace-libraries.md) - #Memory #Working #CLI #Task #Workspace #Library #Contextual #Active #Queued
+- [Execute the accepted Workspace Libraries contracts through bounded preparation, implementation, evidence, and integration](workspace-libraries.md) - #Memory #Working #CLI #Task #Workspace #Library #Contextual #Active
 - [Prepare consumer-approved Workspace Library projections beyond the .agents tree](workspace-library-destination-projections.md) - #Memory #Working #CLI #Task #Workspace #Library #Destination #Symlink #Contextual #Queued
-
 <!-- open-forge:generated-index:end -->

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Application;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
@@ -10,25 +11,19 @@ namespace OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Application;
 internal static class ExtensionRemoveRecoveryApplication
 {
     internal static ValueTask<RecoveryBundlePreparationResult> PrepareAsync(
-        ExtensionRemovePlan plan,
+        ExtensionRemoveExecutionPlan plan,
         Guid operationId,
         CancellationToken cancellationToken)
         => RecoveryBundleStore.PrepareAsync(
             RecoveryBundleInput.Create(
-                plan.Request.Workspace,
+                plan.Content.Request.Workspace,
                 ExtensionRemoveDefinitions.CommandIdentity,
                 RecoveryBundleAttribution.Create(
                     RecoveryBundleProducer.Extension,
                     RecoveryBundleOperation.Remove,
-                    plan.Request.Workspace),
+                    plan.Content.Request.Workspace),
                 operationId,
-                [.. plan.Effects
-                    .Select(effect => effect.RecoveryTarget)
-                    .Where(target => target is not null)
-                    .Cast<RecoveryBundleTarget>()
-                    .Append(plan.LifecycleRecoveryTarget)
-                    .Where(target => target is not null)
-                    .Cast<RecoveryBundleTarget>()]),
+                plan.RecoveryTargets),
             cancellationToken);
 
     internal static async ValueTask<ExtensionRemoveRecoveryCleanup> CleanupAsync(
