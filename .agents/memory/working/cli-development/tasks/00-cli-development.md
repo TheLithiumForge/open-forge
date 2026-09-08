@@ -32,7 +32,8 @@ Extension destinations. The three fresh review findings are fixed. Full managed
 acceptance passes 2719/1518/188; native passes 1518/188 and managed-on-native
 passes 188, with zero failures/skips/warnings and zero formatting diagnostics.
 The Task record and canonical receipt own exact source/runtime evidence.
-Local integration follows the final forward feature commit.
+Task 24 is integrated into local develop at `2eedaf87`, with the exact
+accepted feature tree. Task 25 awaits the external source-selection decision.
 Root continues Task 25 → Task 26 pure refactor
 → Task 10 audit → conditional Task 21 → Task 13 → Task 22. Later publication
 and global installation refresh remain unauthorized. General test-environment

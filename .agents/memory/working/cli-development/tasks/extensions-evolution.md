@@ -8,7 +8,7 @@ open-forge:
 
 ## Task State
 
-- State: Complete and accepted; local integration pending.
+- State: Complete, accepted and integrated into local develop.
 - Permanent mapping: Task 24 “Extensions Evolution” in the
   [project control ledger](../project-control.md).
 - Parent: [Complete The Replacement CLI](00-cli-development.md).
@@ -480,3 +480,17 @@ analyzer corrections above. A forward feature commit freezes this receipt and
 current state before the accepted task is squash-integrated onto `develop`.
 Task 25's source-selection decision remains open; Task 26 stays later pure
 refactoring. No legacy handling was added for the content rename.
+
+## Accepted Local Integration
+
+Feature candidate `3802fb039593c87fbb68a7888c2928e4877ad828` was squash-integrated into local `develop`
+at `2eedaf872a48c8eb3e80f7feb50bea8e69cfd638`. Both have tree `c56ea6b9b17dca7ae9f12b29903c78ddd07be580`. The complete Git tree, all 3,120
+source bytes and their executable modes match. Ordinary checkout normalized
+24 non-executable permission modes; this is recorded separately from Git mode
+identity in `artifacts/task24-m8/integration.json`. The initial overly strict
+POSIX-mode check stopped on that normalization; the complete subsequent
+comparison confirmed the accepted tree and content. No source repair or history
+amendment was needed. Full execution receipts remain valid for the identical
+source; this forward state update changes prose and acceptance metadata only.
+
+Task 24 is complete. Task 25 awaits the user's external source-selection choice.

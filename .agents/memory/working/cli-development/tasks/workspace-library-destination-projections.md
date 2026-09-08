@@ -77,3 +77,14 @@ The [joint functional proposal](extensions-destination-proposal.md) presents
 recommended package vocabulary, consumer permission, concrete copy and link
 examples, lifecycle behavior, and the remaining user decision. It is contextual
 and must reach the user before implementation.
+
+## Ready Dependency Baseline
+
+Task 24 is accepted and integrated at `2eedaf87`; all original CLI commands,
+including the five Library commands, were already integrated before that
+Extension enhancement. Shared permission observation, evaluation, publication
+and result contracts now have full managed and linux-x64 Native AOT evidence.
+The only current Task 25 product blocker is how external source files are
+selected before offering missing grants. The pending explicit-path versus
+whole-eligible-source choice remains unaccepted. No Library projection
+implementation has begun.

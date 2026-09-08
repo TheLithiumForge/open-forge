@@ -1,11 +1,11 @@
 {
   "task": "Task 24 Extensions Evolution",
   "boundary": "M8 full managed and supported linux-x64 Native AOT acceptance",
-  "status": "accepted source; integration pending",
+  "status": "accepted and integrated",
   "acceptedBase": "a157d439a8f130ef80ad7a87b0d3fcc6b7440d4d",
   "reviewedCandidate": "233a180d31d70d0ce94b1082a1400e6c2e398497",
   "correctionCommit": "e541d5749c23294e9970a5d615007eeb85434f64",
-  "finalSource": "Exact source-freeze identity includes inspected analyzer corrections; final commit follows this forward receipt.",
+  "finalSource": "All executable inputs match the full-gate source freeze. The final feature candidate adds only receipt and prose updates; integration preserves its exact Git tree.",
   "sourceFreeze": {
     "path": "artifacts/task24-m8/source-freeze.json",
     "sha256": "be35591b504c9c74fdd070d3a60edfdb1e105ac3398453775a86b89dabb101bf"
@@ -516,5 +516,8 @@
   "unitDiscoveryExpansionEvidence": {
     "path": "artifacts/task24-m8/unit-discovery-expansion-verified.json",
     "sha256": "49c55fd0b47ec7ca7da14b54e12c7da3e57217eb84661064f6c9bcaf148bd7e0"
-  }
+  },
+  "finalSourceCommit": "3802fb039593c87fbb68a7888c2928e4877ad828",
+  "integrationCommit": "2eedaf872a48c8eb3e80f7feb50bea8e69cfd638",
+  "integrationTree": "c56ea6b9b17dca7ae9f12b29903c78ddd07be580"
 }
